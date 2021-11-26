@@ -1,0 +1,28 @@
+{
+    "name": "simple-3d-engine",
+    "version-string": "0.0.1",
+    "supports": "windows & x64 & static",
+    "dependencies": [
+        "glad",
+        {
+            "name": "glfw3",
+            "default-features": false,
+            "platform": "windows & x64 & static"
+        },
+        "glm",
+        {
+            "name": "imgui",
+            "default-features": false,
+            "features": [
+                "glfw-binding",
+                "opengl3-binding"
+            ]
+        },
+        {
+            "name": "assimp",
+            "default-features": false,
+            "platform": "windows & x64 & static"
+        },
+        "stb"
+    ]
+}

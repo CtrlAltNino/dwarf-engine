@@ -1,0 +1,19 @@
+# 3ds Max Wavefront OBJ Exporter v0.97b - (c)2007 guruware
+# File Created: 01.02.2016 15:06:28
+
+newmtl R2D2_texture
+	Ns 9.999999
+	Ni 1.500000
+	d 1.000000
+	Tr 0.000000
+	Tf 1.000000 1.000000 1.000000 
+	illum 2
+	Ka 0.588235 0.588235 0.588235
+	Kd 0.588235 0.588235 0.588235
+	Ks 0.000000 0.000000 0.000000
+	Ke 0.000000 0.000000 0.000000
+	map_Ka R2_diffuse.png
+	map_Kd R2_diffuse.png
+	map_Ks R2_spec.png
+	map_bump R2_bump.png
+	bump R2_bump.png
