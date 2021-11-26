@@ -6,6 +6,7 @@
 # custom
 build/
 vcpkg_installed/
+imgui.ini
 
 # User-specific files
 *.rsuser
