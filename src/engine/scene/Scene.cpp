@@ -4,7 +4,8 @@
 
 Scene::Scene(const char* sceneName)
 	: sceneCamera(glm::vec3(0, 2, 5), Quaternion::fromEulerAngles(25, 0, 0)),
-		clearColor(DEFAULT_CLEAR_COLOR){
+		clearColor(DEFAULT_CLEAR_COLOR),
+		lastMousePos(glm::vec2(-1)) {
 	this->sceneName = sceneName;
 }
 
