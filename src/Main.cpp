@@ -1,15 +1,10 @@
+// system
 #include<iostream>
 #include<fstream>
 #include<stdlib.h>
 #include<string>
-#ifdef _WIN32
-#include <Windows.h>
-#else 
-#include <unistd.h>
-#endif
-#include <cstdlib>
-#include <time.h>
 
+// dependencies
 #include<glad/glad.h>
 #include<GLFW/glfw3.h>
 #include<glm/glm.hpp>
@@ -19,6 +14,7 @@
 #include<imgui_impl_glfw.h>
 #include<imgui_impl_opengl3.h>
 
+// engine related
 #include"engine/rendering/BasicMaterial.h"
 #include"engine/data/Quaternion.h"
 #include"engine/scene/Scene.h"
@@ -27,7 +23,11 @@
 #include"engine/data/VBO.h"
 #include"engine/data/EBO.h"
 
-const glm::vec2 initialWindowSize = glm::vec2(1280, 720);
+// macros
+#define INITIAL_WINDOW_WIDTH (1280)
+#define INITIAL_WINDOW_HEIGHT (720)
+
+// global variables
 Scene scene = Scene("Test Scene");
 
 GLfloat verticesTriangle[] =
@@ -103,11 +103,6 @@ GLuint indicesCube[] =
 	5, 4, 6, // Hinten links
 	6, 4, 7, // Hinten rechts
 };
-
-const float FrameLimit = 144;
-const float CameraRotationSpeed = 0.3;
-const float CameraRotationRadius = 5;
-
 
 std::string readFile(const char* filePath) {
 	std::string content;
@@ -216,16 +211,23 @@ int main() {
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	GLFWwindow* window = glfwCreateWindow(initialWindowSize.x, initialWindowSize.y, "S3DE", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(INITIAL_WINDOW_WIDTH, INITIAL_WINDOW_HEIGHT, "S3DE", NULL, NULL);
 	if (window == NULL) {
 		std::cout << "Failed to create GLFW window" << std::endl;
 		glfwTerminate();
 		return -1;
 	}
+
+	GLFWimage icon[1];
+	int numColChannel;
+	icon[0].pixels = stbi_load("icon.png", &icon[0].width, &icon[0].height, &numColChannel, 0); //rgba channels 
+	std::cout << "height: " << icon->width << " | width: " << icon->height << std::endl;
+	glfwSetWindowIcon(window, 1, icon);
+	stbi_image_free(icon[0].pixels);
 	glfwMakeContextCurrent(window);
 	gladLoadGL();
 	glfwSetWindowFocusCallback(window, window_focus_callback);
-	glViewport(0, 0, initialWindowSize.x, initialWindowSize.y);
+	glViewport(0, 0, INITIAL_WINDOW_WIDTH, INITIAL_WINDOW_HEIGHT);
 	
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
@@ -234,7 +236,6 @@ int main() {
 	ImGui_ImplOpenGL3_Init("#version 130");
 	
 	
-	InitScene(&scene);
 
 	double lastTime = glfwGetTime();
 	double cooldown = 0.5f;
@@ -242,11 +243,16 @@ int main() {
 	glfwSwapInterval(0);
 	glEnable(GL_DEPTH_TEST);
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	glfwMaximizeWindow(window);
+	glfwSwapBuffers(window);
 	int width, height;
 	float moveSpeed = 4;
 	float rotateSpeed = 95;
 	float cameraRotationSpeed = 75;
 	float cameraMovementSpeed = 4;
+
+	InitScene(&scene);
 
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
@@ -275,13 +281,6 @@ int main() {
 		double currentTime = glfwGetTime();
 		double delta = currentTime - lastTime;
 		lastTime = currentTime;
-
-		double currentCursorXPos, currentCursorYPos;
-		glfwGetCursorPos(window, &currentCursorXPos, &currentCursorYPos);
-
-		scene.deltaMousePos = glm::vec2(currentCursorXPos - scene.lastMousePos.x, currentCursorYPos - scene.lastMousePos.y);
-
-		scene.lastMousePos = glm::vec2(currentCursorXPos, currentCursorYPos);
 		
 		int state = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT);
 		if (state == GLFW_PRESS)
@@ -289,10 +288,24 @@ int main() {
 			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 			scene.sceneCamera.transform.rotate(glm::vec3(0, 1, 0), scene.deltaMousePos.x * (float)delta * cameraRotationSpeed);
 			scene.sceneCamera.transform.rotate(scene.sceneCamera.transform.getRotation() * glm::vec3(1, 0, 0), scene.deltaMousePos.y * (float)delta * cameraRotationSpeed);
+
+			double currentCursorXPos, currentCursorYPos;
+			glfwGetCursorPos(window, &currentCursorXPos, &currentCursorYPos);
+
+			if (scene.lastMousePos != glm::vec2(-1)) {
+				scene.deltaMousePos = glm::vec2(currentCursorXPos - scene.lastMousePos.x, currentCursorYPos - scene.lastMousePos.y);
+			}
+			else {
+				scene.deltaMousePos = glm::vec2(0);
+			}
+
+			scene.lastMousePos = glm::vec2(currentCursorXPos, currentCursorYPos);
 			
 		}
 		else {
 			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+			scene.deltaMousePos = glm::vec2(0);
+			scene.lastMousePos = glm::vec2(-1);
 		}	
 		
 		int stateW = glfwGetKey(window, GLFW_KEY_W);
