@@ -13,6 +13,9 @@ Simple 3D Engine, or in short S3DE, is a WIP Engine written in C++ and using Ope
   - Runtime import of ressources (models, textures, shaders)
   - Animation System
   - Multi Threading
+  - Framerate limiting
+  - VSync
+
 - <u>Basic Rendering Features:</u>
   - Full implementation of Forward, Deffered, and Forward+ Rendering
   - Transparency Sorting
