@@ -116,6 +116,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <OutputFile>$(OutDir)s3de$(TargetExt)</OutputFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -129,10 +130,12 @@
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
+      <OutputFile>$(OutDir)s3de$(TargetExt)</OutputFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -146,6 +149,7 @@
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <OutputFile>$(OutDir)s3de$(TargetExt)</OutputFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -159,10 +163,12 @@
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
+      <OutputFile>$(OutDir)s3de$(TargetExt)</OutputFile>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
@@ -173,6 +179,7 @@
     <ClCompile Include="src\engine\data\Texture.cpp" />
     <ClCompile Include="src\engine\data\VAO.cpp" />
     <ClCompile Include="src\engine\data\VBO.cpp" />
+    <ClCompile Include="src\engine\editor\EditorProperties.cpp" />
     <ClCompile Include="src\engine\rendering\BasicMaterial.cpp" />
     <ClCompile Include="src\engine\rendering\Material.cpp" />
     <ClCompile Include="src\engine\rendering\Shader.cpp" />
@@ -185,6 +192,7 @@
     <ClCompile Include="src\Main.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="resource.h" />
     <ClInclude Include="src\engine\data\Color.h" />
     <ClInclude Include="src\engine\data\EBO.h" />
     <ClInclude Include="src\engine\data\Mesh.h" />
@@ -193,6 +201,7 @@
     <ClInclude Include="src\engine\data\VAO.h" />
     <ClInclude Include="src\engine\data\VBO.h" />
     <ClInclude Include="src\engine\data\Vertex.h" />
+    <ClInclude Include="src\engine\editor\EditorProperties.h" />
     <ClInclude Include="src\engine\rendering\BasicMaterial.h" />
     <ClInclude Include="src\engine\rendering\Material.h" />
     <ClInclude Include="src\engine\rendering\Shader.h" />
@@ -201,6 +210,15 @@
     <ClInclude Include="src\engine\scene\Renderer.h" />
     <ClInclude Include="src\engine\scene\Scene.h" />
     <ClInclude Include="src\engine\scene\Transform.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Simple 3D Engine.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="C:\Users\ninom\Desktop\icon.ico" />
+    <Image Include="C:\Users\ninom\Desktop\icon.png" />
+    <Image Include="C:\Users\ninom\Desktop\S3DE Assets\icon.ico" />
+    <Image Include="C:\Users\ninom\Desktop\s3de-icon.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

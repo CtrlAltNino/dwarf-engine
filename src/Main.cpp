@@ -22,87 +22,14 @@
 #include"engine/data/VAO.h"
 #include"engine/data/VBO.h"
 #include"engine/data/EBO.h"
+#include"engine/editor/EditorProperties.h"
 
 // macros
-#define INITIAL_WINDOW_WIDTH (1280)
-#define INITIAL_WINDOW_HEIGHT (720)
 
 // global variables
 Scene scene = Scene("Test Scene");
-
-GLfloat verticesTriangle[] =
-{
-	-0.5f, -0.5f * float(sqrt(3)) / 3, 0.0f,
-	0.5, -0.5f * float(sqrt(3)) / 3, 0.0f,
-	0.0f, 0.5f * float(sqrt(3)) * 2 / 3, 0.0f
-};
-
-GLuint indicesTriangle[] =
-{
-	0, 1, 2
-};
-
-GLfloat verticesQuad[] =
-{
-	-0.5f, -0.5f, 0.0f, 0.0f, 1.0f,
-	0.5f, -0.5f, 0.0f, 1.0f, 1.0f,
-	0.5f, 0.5f, 0.0f, 1.0f, 0.0f,
-	-0.5f, 0.5f, 0.0f, 0.0f, 0.0f
-};
-
-GLuint indicesQuad[] =
-{
-	0, 1, 3,
-	3, 1, 2
-};
-
-GLfloat verticesGrid[] =
-{
-	-1.0f, 0.0f, 1.0f, 0.0f, 1.0f,
-	1.0f, 0.0f, 1.0f, 1.0f, 1.0f,
-	1.0f, 0.0f, -1.0f, 1.0f, 0.0f,
-	-1.0f, 0.0f, -1.0f, 0.0f, 0.0f
-};
-
-GLuint indicesGrid[] =
-{
-	0, 1, 3,
-	3, 1, 2
-};
-
-GLfloat verticesCube[] =
-{
-	// Position           // UV Coordinates
-	-0.5f, -0.5f, 0.5f,   0.0f, 1.0f,   // 0 Vorne links unten
-	0.5f, -0.5f, 0.5f,    1.0f, 1.0f,    // 1 Vorne rechts unten
-	0.5f, 0.5f, 0.5f,     1.0f, 0.0f,     // 2 Vorne rechts oben
-	-0.5f, 0.5f, 0.5f,    0.0f, 0.0f,    // 3 Vorne links oben
-	-0.5f, -0.5f, -0.5f,  1.0f, 1.0f,  // 4 Hinten links unten
-	0.5f, -0.5f, -0.5f,   0.0f, 1.0f,   // 5 Hinten rechts unten
-	0.5f, 0.5f, -0.5f,    0.0f, 0.0f,     // 6 Hinten rechts oben
-	-0.5f, 0.5f, -0.5f,   1.0f, 0.0f   // 7 Hinten links oben
-};
-
-GLuint indicesCube[] =
-{
-	0, 1, 3, // Vorne links
-	3, 1, 2, // Vorne rechts
-	
-	4, 0, 7, // Links links
-	7, 0, 3, // Links rechts
-	
-	1, 5, 2, // Rechts links
-	2, 5, 6, // Rechts rechts
-	
-	3, 2, 7, // Oben links
-	7, 2, 6, // Oben rechts
-	
-	4, 5, 0, // Unten links
-	0, 5, 1, // Unten rechts
-	
-	5, 4, 6, // Hinten links
-	6, 4, 7, // Hinten rechts
-};
+EditorProperties editorProperties = EditorProperties();
+static int menuBarHeight;
 
 std::string readFile(const char* filePath) {
 	std::string content;
@@ -128,7 +55,7 @@ void window_focus_callback(GLFWwindow* window, int focused)
 	if (focused)
 	{
 		// The window gained input focus
-		std::cout << "Focused" << std::endl;
+		//std::cout << "Focused" << std::endl;
 		double lastCursorXPos, lastCursorYPos;
 		glfwGetCursorPos(window, &lastCursorXPos, &lastCursorYPos);
 		scene.lastMousePos = glm::vec2(lastCursorXPos, lastCursorYPos);
@@ -136,7 +63,7 @@ void window_focus_callback(GLFWwindow* window, int focused)
 	else
 	{
 		// The window lost input focus
-		std::cout << "De focused" << std::endl;
+		// std::cout << "De focused" << std::endl;
 	}
 }
 
@@ -206,36 +133,298 @@ void InitScene(Scene* scene) {
 	testScene.sceneCamera.transform.setRotation(glm::vec3(15, 0, 0));
 }
 
+int windowState = 2;
+int windowXPos = 0;
+int windowYPos = 0;
+int windowWidth = 0;
+int windowHeight = 0;
+int wasPreviouslyMaximized = 0;
+
+void fullscreen(GLFWwindow* window, GLFWmonitor* _monitor, const GLFWvidmode* mode) {
+	if (windowState == 2) {
+		wasPreviouslyMaximized = glfwGetWindowAttrib(window, GLFW_MAXIMIZED);
+		glfwGetWindowPos(window, &windowXPos, &windowYPos);
+		glfwGetWindowSize(window, &windowWidth, &windowHeight);
+	}
+	//glfwWindowHint(GLFW_DECORATED, GLFW_TRUE);
+	glfwSetWindowAttrib(window, GLFW_DECORATED, GLFW_TRUE);
+	glfwSetWindowMonitor(window, _monitor, 0, 0, mode->width, mode->height, mode->refreshRate);
+}
+
+void windowed(GLFWwindow* window) {
+	//glfwWindowHint(GLFW_DECORATED, GLFW_TRUE);
+	glfwSetWindowAttrib(window, GLFW_DECORATED, GLFW_TRUE);
+	glfwSetWindowMonitor(window, nullptr, windowXPos, windowYPos, windowWidth, windowHeight, NULL);
+	if (wasPreviouslyMaximized) {
+		//std::cout << "maximizing" << std::endl;
+		glfwMaximizeWindow(window);
+	}
+}
+
+void borderlessFullscreen(GLFWwindow* window, const GLFWvidmode* mode) {
+	if (windowState == 2) {
+		wasPreviouslyMaximized = glfwGetWindowAttrib(window, GLFW_MAXIMIZED);
+		glfwGetWindowPos(window, &windowXPos, &windowYPos);
+		glfwGetWindowSize(window, &windowWidth, &windowHeight);
+	}
+	
+	/*int maximized = glfwGetWindowAttrib(window, GLFW_MAXIMIZED);
+	if (maximized) {
+		glfwRestoreWindow(window);
+	}*/
+	//glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
+	glfwSetWindowAttrib(window, GLFW_DECORATED, GLFW_FALSE);
+	glfwSetWindowMonitor(window, nullptr, 0, 0, mode->width, mode->height, NULL);
+}
+
+static void ShowExampleMenuFile()
+{
+	//IMGUI_DEMO_MARKER("Examples/Menu");
+	ImGui::MenuItem("(demo menu)", NULL, false, false);
+	if (ImGui::MenuItem("New")) {}
+	if (ImGui::MenuItem("Open", "Ctrl+O")) {}
+	if (ImGui::BeginMenu("Open Recent"))
+	{
+		ImGui::MenuItem("fish_hat.c");
+		ImGui::MenuItem("fish_hat.inl");
+		ImGui::MenuItem("fish_hat.h");
+		if (ImGui::BeginMenu("More.."))
+		{
+			ImGui::MenuItem("Hello");
+			ImGui::MenuItem("Sailor");
+			if (ImGui::BeginMenu("Recurse.."))
+			{
+				ShowExampleMenuFile();
+				ImGui::EndMenu();
+			}
+			ImGui::EndMenu();
+		}
+		ImGui::EndMenu();
+	}
+	if (ImGui::MenuItem("Save", "Ctrl+S")) {}
+	if (ImGui::MenuItem("Save As..")) {}
+
+	ImGui::Separator();
+	//IMGUI_DEMO_MARKER("Examples/Menu/Options");
+	if (ImGui::BeginMenu("Options"))
+	{
+		static bool enabled = true;
+		ImGui::MenuItem("Enabled", "", &enabled);
+		ImGui::BeginChild("child", ImVec2(0, 60), true);
+		for (int i = 0; i < 10; i++)
+			ImGui::Text("Scrolling Text %d", i);
+		ImGui::EndChild();
+		static float f = 0.5f;
+		static int n = 0;
+		ImGui::SliderFloat("Value", &f, 0.0f, 1.0f);
+		ImGui::InputFloat("Input", &f, 0.1f);
+		ImGui::Combo("Combo", &n, "Yes\0No\0Maybe\0\0");
+		ImGui::EndMenu();
+	}
+
+	//IMGUI_DEMO_MARKER("Examples/Menu/Colors");
+	if (ImGui::BeginMenu("Colors"))
+	{
+		float sz = ImGui::GetTextLineHeight();
+		for (int i = 0; i < ImGuiCol_COUNT; i++)
+		{
+			const char* name = ImGui::GetStyleColorName((ImGuiCol)i);
+			ImVec2 p = ImGui::GetCursorScreenPos();
+			ImGui::GetWindowDrawList()->AddRectFilled(p, ImVec2(p.x + sz, p.y + sz), ImGui::GetColorU32((ImGuiCol)i));
+			ImGui::Dummy(ImVec2(sz, sz));
+			ImGui::SameLine();
+			ImGui::MenuItem(name);
+		}
+		ImGui::EndMenu();
+	}
+
+	// Here we demonstrate appending again to the "Options" menu (which we already created above)
+	// Of course in this demo it is a little bit silly that this function calls BeginMenu("Options") twice.
+	// In a real code-base using it would make senses to use this feature from very different code locations.
+	if (ImGui::BeginMenu("Options")) // <-- Append!
+	{
+		//IMGUI_DEMO_MARKER("Examples/Menu/Append to an existing menu");
+		static bool b = true;
+		ImGui::Checkbox("SomeOption", &b);
+		ImGui::EndMenu();
+	}
+
+	if (ImGui::BeginMenu("Disabled", false)) // Disabled
+	{
+		IM_ASSERT(0);
+	}
+	if (ImGui::MenuItem("Checked", NULL, true)) {}
+	if (ImGui::MenuItem("Quit", "Alt+F4")) {}
+}
+
+static void DrawMainMenu()
+{
+	if (ImGui::BeginMainMenuBar())
+	{
+		ImVec2 size = ImGui::GetWindowSize();
+		menuBarHeight = size.y;
+		if (ImGui::BeginMenu("File"))
+		{
+			ShowExampleMenuFile();
+			ImGui::EndMenu();
+		}
+		if (ImGui::BeginMenu("Edit"))
+		{
+			if (ImGui::MenuItem("Undo", "CTRL+Z")) {}
+			if (ImGui::MenuItem("Redo", "CTRL+Y", false, false)) {}  // Disabled item
+			ImGui::Separator();
+			if (ImGui::MenuItem("Cut", "CTRL+X")) {}
+			if (ImGui::MenuItem("Copy", "CTRL+C")) {}
+			if (ImGui::MenuItem("Paste", "CTRL+V")) {}
+			ImGui::EndMenu();
+		}
+		ImGui::EndMainMenuBar();
+	}
+}
+
+void DrawEditorSettings(GLFWwindow* window, GLFWmonitor* _monitor, const GLFWvidmode* mode) {
+	ImGuiWindowFlags window_flags = 0;
+
+	window_flags |= ImGuiWindowFlags_NoMove;
+	//window_flags |= ImGuiWindowFlags_NoResize;
+	window_flags |= ImGuiWindowFlags_NoCollapse;
+	window_flags |= ImGuiWindowFlags_NoTitleBar;
+	//window_flags |= ImGuiWindowFlags_MenuBar;
+	// Main body of the Demo window starts here.
+
+	int fWidth, fHeight;
+	
+	glfwGetFramebufferSize(window, &fWidth, &fHeight);
+
+
+	ImGui::SetNextWindowPos(ImVec2(0, menuBarHeight));
+	//ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(400, fHeight-menuBarHeight));
+	//ImGui::PushStyleVar(ImGuiStyleVar_Window)
+	//ImGui::SetNextWindowSize(ImVec2(0.2 * fWidth, fHeight - menuBarHeight));
+	//ImVec2 windowSize = ImGui::GetWindowSize();
+	ImVec2 minSize = ImVec2(400, fHeight - menuBarHeight);
+	ImVec2 maxSize = ImVec2(fWidth, fHeight - menuBarHeight);
+	//ImGui::SetWindowSize(ImVec2(windowSize.x, fHeight - menuBarHeight));
+	ImGui::SetNextWindowSizeConstraints(minSize, maxSize);
+	if (!ImGui::Begin("Editor Settings", NULL, window_flags))
+	{
+		// Early out if the window is collapsed, as an optimization.
+		ImGui::End();
+		return;
+	}
+
+	static float fov = scene.sceneCamera.getFov();
+	ImGui::Text("Hello, world!");
+	ImGui::SliderFloat("Field of view", &fov, 45.0f, 105.0f);
+	ImGui::SliderFloat("Mouse sensitivity", &editorProperties.cameraRotationSpeed, 0.05, 0.3);
+	scene.sceneCamera.setFov(fov);
+	//ImGui::Text(std::string("ImGui fps: " + std::to_string(io.Framerate)).c_str());
+	ImGui::Text(std::string("glfwGetTime() fps: " + std::to_string(1.0 / scene.deltaTime)).c_str());
+	const char* items[] = { "30", "60", "75", "120", "144", "Uncapped" };
+	static int item_current = 4;
+	ImGui::Combo("FPS Cap", &item_current, items, IM_ARRAYSIZE(items));
+
+	switch (item_current) {
+	case 0: editorProperties.FrameLimit = 30;
+		break;
+	case 1: editorProperties.FrameLimit = 60;
+		break;
+	case 2: editorProperties.FrameLimit = 75;
+		break;
+	case 3: editorProperties.FrameLimit = 120;
+		break;
+	case 4: editorProperties.FrameLimit = 144;
+		break;
+	case 5: editorProperties.FrameLimit = -1;
+		break;
+	default: editorProperties.FrameLimit = 60;
+	}
+	//ImGui::BeginCombo("Frame Cap", "60");
+	//ImGui::Combo("30", 0,);
+	//ImGui::EndCombo();
+	//ImGui::ShowDemoWindow();
+
+	const char* windowModeItems[] = { "Borderless Fullscreen", "Fullscreen", "Windowed" };
+	static int currentWindowMode = 2;
+	ImGui::PushItemWidth(ImGui::GetWindowWidth() * 0.62f);
+	ImGui::Combo("Window Mode", &currentWindowMode, windowModeItems, IM_ARRAYSIZE(windowModeItems));
+	ImGui::SameLine();
+	if (ImGui::Button("Apply")) {
+		switch (currentWindowMode) {
+		case 0:
+			if (windowState != currentWindowMode) {
+				borderlessFullscreen(window, mode);
+				windowState = currentWindowMode;
+			}
+			break;
+		case 1:
+			if (windowState != currentWindowMode) {
+				fullscreen(window, _monitor, mode);
+				windowState = currentWindowMode;
+			}
+			break;
+		case 2:
+			if (windowState != currentWindowMode) {
+				windowed(window);
+				windowState = currentWindowMode;
+			}
+			break;
+		}
+	}
+
+	static bool vsync = false;
+
+	ImGui::Checkbox("Vertical Synchronisation", &vsync);
+
+	glfwSwapInterval(vsync ? 1 : 0);
+
+
+	ImGui::End();
+
+	//ImGui::PopStyleVar();
+}
+
 int main() {
 	glfwInit();
+	// get resolution of monitor
+	GLFWmonitor* _monitor = glfwGetPrimaryMonitor();
+	const GLFWvidmode* mode = glfwGetVideoMode(_monitor);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	GLFWwindow* window = glfwCreateWindow(INITIAL_WINDOW_WIDTH, INITIAL_WINDOW_HEIGHT, "S3DE", NULL, NULL);
+	glfwWindowHint(GLFW_RED_BITS, mode->redBits);
+	glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
+	glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
+	glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
+	glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
+	
+	GLFWwindow* window = glfwCreateWindow(INITIAL_WINDOW_WIDTH, INITIAL_WINDOW_HEIGHT, "Simple 3D Engine", NULL, NULL);
 	if (window == NULL) {
 		std::cout << "Failed to create GLFW window" << std::endl;
 		glfwTerminate();
 		return -1;
 	}
 
+	glfwSetWindowSizeLimits(window, 1280, 720, GLFW_DONT_CARE, GLFW_DONT_CARE);
+
 	GLFWimage icon[1];
 	int numColChannel;
-	icon[0].pixels = stbi_load("icon.png", &icon[0].width, &icon[0].height, &numColChannel, 0); //rgba channels 
-	std::cout << "height: " << icon->width << " | width: " << icon->height << std::endl;
+	icon[0].pixels = stbi_load("icon.png", &icon[0].width, &icon[0].height, &numColChannel, 0); //rgba channels
 	glfwSetWindowIcon(window, 1, icon);
 	stbi_image_free(icon[0].pixels);
 	glfwMakeContextCurrent(window);
 	gladLoadGL();
 	glfwSetWindowFocusCallback(window, window_focus_callback);
 	glViewport(0, 0, INITIAL_WINDOW_WIDTH, INITIAL_WINDOW_HEIGHT);
+
+	if (glfwRawMouseMotionSupported())
+		glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
 	
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui::StyleColorsDark();
 	ImGui_ImplOpenGL3_Init("#version 130");
-	
-	
 
 	double lastTime = glfwGetTime();
 	double cooldown = 0.5f;
@@ -244,12 +433,10 @@ int main() {
 	glEnable(GL_DEPTH_TEST);
 	glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
 	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glfwMaximizeWindow(window);
 	glfwSwapBuffers(window);
 	int width, height;
 	float moveSpeed = 4;
 	float rotateSpeed = 95;
-	float cameraRotationSpeed = 75;
 	float cameraMovementSpeed = 4;
 
 	InitScene(&scene);
@@ -257,20 +444,17 @@ int main() {
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		
+		double currentTime = glfwGetTime();
+		scene.deltaTime = currentTime - lastTime;
+		lastTime = currentTime;
 
 		ImGui_ImplOpenGL3_NewFrame();
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
-
-		{
-			static float f = 0.0f;
-			static int counter = 0;
-			static float fov = scene.sceneCamera.getFov();
-			ImGui::Text("Hello, world!");
-			ImGui::SliderFloat("FOV", &fov, 15.0f, 105.0f);
-			scene.sceneCamera.setFov(fov);
-			ImGui::ShowDemoWindow();
-		}
+		//ImGui::ShowDemoWindow();
+		DrawMainMenu();
+		DrawEditorSettings(window, _monitor, mode);
 
 		glfwGetWindowSize(window, &width, &height);
 		glViewport(0, 0, width, height);
@@ -278,16 +462,11 @@ int main() {
 			scene.sceneCamera.setAspectRatio((float)width / height);
 		}
 		
-		double currentTime = glfwGetTime();
-		double delta = currentTime - lastTime;
-		lastTime = currentTime;
 		
 		int state = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT);
 		if (state == GLFW_PRESS)
 		{
 			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-			scene.sceneCamera.transform.rotate(glm::vec3(0, 1, 0), scene.deltaMousePos.x * (float)delta * cameraRotationSpeed);
-			scene.sceneCamera.transform.rotate(scene.sceneCamera.transform.getRotation() * glm::vec3(1, 0, 0), scene.deltaMousePos.y * (float)delta * cameraRotationSpeed);
 
 			double currentCursorXPos, currentCursorYPos;
 			glfwGetCursorPos(window, &currentCursorXPos, &currentCursorYPos);
@@ -300,6 +479,14 @@ int main() {
 			}
 
 			scene.lastMousePos = glm::vec2(currentCursorXPos, currentCursorYPos);
+
+			if (scene.deltaMousePos.length() > 0) {
+				float crsSquared = editorProperties.cameraRotationSpeed * editorProperties.cameraRotationSpeed;
+				float yAngle = scene.deltaMousePos.x * crsSquared;
+				float xAngle = scene.deltaMousePos.y * crsSquared;
+				scene.sceneCamera.transform.rotate(glm::vec3(0, 1, 0), yAngle);
+				scene.sceneCamera.transform.rotate(scene.sceneCamera.transform.getRotation() * glm::vec3(1, 0, 0), xAngle);
+			}
 			
 		}
 		else {
@@ -322,11 +509,11 @@ int main() {
 		
 		if (glm::length(movementVector) > 0) {
 			movementVector = glm::normalize(movementVector);
-			movementVector *= (float)delta * moveSpeed * ((stateLeftShift == GLFW_PRESS) ? 2 : 1);
+			movementVector *= scene.deltaTime * moveSpeed * ((stateLeftShift == GLFW_PRESS) ? 2 : 1);
 		}
 		
 		scene.sceneCamera.transform.translate(scene.sceneCamera.transform.getRotation() * movementVector);
-		scene.sceneObjects.at(2).transform.rotate(glm::vec3(0, delta * 88, 0));
+		scene.sceneObjects.at(2).transform.rotate(glm::vec3(0, scene.deltaTime * 88, 0));
 		//scene.sceneObjects.at(3).transform.rotate(glm::vec3(0, delta * 180, 0));
 		scene.drawScene();
 
@@ -334,6 +521,10 @@ int main() {
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 
 		glfwSwapBuffers(window);
+
+		while (glfwGetTime() < currentTime + (editorProperties.FrameLimit != -1 ? 1.0 / editorProperties.FrameLimit : 0)) {
+			// TODO: Update this when implementing multi threading
+		}
 	}
 
 	/*VAO1.Delete();

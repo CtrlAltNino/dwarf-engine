@@ -66,6 +66,9 @@
     <ClCompile Include="src\Main.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="src\engine\editor\EditorProperties.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\engine\data\Color.h">
@@ -116,5 +119,30 @@
     <ClInclude Include="src\engine\scene\Transform.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="resource.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="src\engine\editor\EditorProperties.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Simple 3D Engine.rc">
+      <Filter>Resource Files</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="C:\Users\ninom\Desktop\s3de-icon.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="C:\Users\ninom\Desktop\icon.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="C:\Users\ninom\Desktop\icon.png">
+      <Filter>Resource Files</Filter>
+    </Image>
+    <Image Include="C:\Users\ninom\Desktop\S3DE Assets\icon.ico">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

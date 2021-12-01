@@ -19,6 +19,7 @@ public:
 	std::vector<Object> sceneObjects;
 	glm::vec2 deltaMousePos;
 	glm::vec2 lastMousePos;
+	float deltaTime;
 	// ========== Constructors ==========
 	
 	Scene(const char* sceneName);
