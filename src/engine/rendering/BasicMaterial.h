@@ -14,6 +14,9 @@ struct MaterialSettings {
 	bool isTransparent = false;
 	bool cullFaces = true;
 	GLenum cullMode = GL_BACK;
+	float fogStart = 10;
+	float fogEnd = 60;
+	glm::vec4 fogColor = glm::vec4(0.1, 0.1, 0.1, 1);
 };
 
 class BasicMaterial{

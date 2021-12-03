@@ -145,4 +145,16 @@
       <Filter>Resource Files</Filter>
     </Image>
   </ItemGroup>
+  <ItemGroup>
+    <CopyFileToFolders Include="data\shaders\default.frag" />
+    <CopyFileToFolders Include="data\shaders\default.vert" />
+    <CopyFileToFolders Include="data\shaders\grid.frag" />
+    <CopyFileToFolders Include="data\shaders\grid.vert" />
+    <CopyFileToFolders Include="data\resources\icon.ico">
+      <Filter>Resource Files</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="data\resources\icon.png">
+      <Filter>Resource Files</Filter>
+    </CopyFileToFolders>
+  </ItemGroup>
 </Project>

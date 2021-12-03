@@ -105,6 +105,9 @@ void BasicMaterial::updateShaderParameters(glm::mat4x4 modelMatrix, glm::mat4x4 
 	GLuint pmID = glGetUniformLocation(shader.ID, "projectionMatrix");
 	GLuint colorId = glGetUniformLocation(shader.ID, "color");
 	GLuint shininessId = glGetUniformLocation(shader.ID, "shininess");
+	GLuint fogStartID = glGetUniformLocation(shader.ID, "fogStart");
+	GLuint fogEndID = glGetUniformLocation(shader.ID, "fogEnd");
+	GLuint fogColorID = glGetUniformLocation(shader.ID, "fogColor");
 
 	GLuint albedoUni = glGetUniformLocation(this->shader.ID, "useAlbedoMap");
 	GLuint specularUni = glGetUniformLocation(this->shader.ID, "useSpecularMap");
@@ -142,7 +145,12 @@ void BasicMaterial::updateShaderParameters(glm::mat4x4 modelMatrix, glm::mat4x4 
 	else {
 		glUniform1f(normalUni, 0);
 	}
+
+	std::cout << settings.fogColor.x << std::endl;
 	
+	glUniform1f(fogStartID, settings.fogStart);
+	glUniform1f(fogEndID, settings.fogEnd);
+	glUniform4f(fogColorID, settings.fogColor.x, settings.fogColor.y, settings.fogColor.z, settings.fogColor.w);
 	glUniform1f(shininessId, settings.shininess);
 	glUniform4f(colorId, color.r, color.g, color.b, color.a);
 	glUniformMatrix4fv(mmID, 1, GL_FALSE, &modelMatrix[0][0]);

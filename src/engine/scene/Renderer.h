@@ -24,7 +24,7 @@ public:
 
 	// ========== Getters ==========
 
-	BasicMaterial getMaterial();
+	BasicMaterial* getMaterial();
 	//Mesh getMesh();
 
 	// ========== Setters ==========

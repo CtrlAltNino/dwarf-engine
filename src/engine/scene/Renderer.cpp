@@ -7,8 +7,8 @@ Renderer::Renderer(BasicMaterial* material, const char* modelFileName)
 
 // ========== Getters ==========
 
-BasicMaterial Renderer::getMaterial() {
-	return material;
+BasicMaterial* Renderer::getMaterial() {
+	return &material;
 }
 
 // ========== Setters ==========

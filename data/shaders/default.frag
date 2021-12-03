@@ -1,4 +1,9 @@
 #version 330 core
+#define APPLY_FOG(color) { \
+	float distance = length(cameraPos - worldPos); \
+	color = mix(color, fogColor, clamp(remap(distance, fogStart, fogEnd, 0, 1), 0, 1)); \
+};
+
 out vec4 FragColor;
 
 in vec2 texCoord;
@@ -19,6 +24,9 @@ uniform sampler2D normalMap;
 uniform float useNormalMap;
 uniform vec4 color;
 uniform float shininess;
+uniform float fogStart;
+uniform float fogEnd;
+uniform vec4 fogColor;
 
 uniform vec4 cameraPos;
 uniform float _Time;
@@ -29,6 +37,10 @@ vec3 lightDir = vec3(-0.8, -0.7, -0.3);
 vec3 lightColor = vec3(0.9, 0.9, 0.8);
 float lightIntensity = 1;
 float ambientStrength = 0.05f;
+
+float remap(float value, float min1, float max1, float min2, float max2) {
+  return min2 + (value - min1) * (max2 - min2) / (max1 - min1);
+}
 
 void main(){
 	vec4 objectColor = color;
@@ -59,5 +71,6 @@ void main(){
 	}
 	
 	FragColor = vec4((ambientColor + diffuseColor + specularColor) * objectColor.rgb, objectColor.a);
+	APPLY_FOG(FragColor)
 	//FragColor = vec4(normal, 1);
 }

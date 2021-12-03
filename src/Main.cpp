@@ -30,6 +30,11 @@
 Scene scene = Scene("Test Scene");
 EditorProperties editorProperties = EditorProperties();
 static int menuBarHeight;
+static float menuPercent;
+std::string projectPath = "project/";
+glm::vec4 fogColor = glm::vec4(0.1, 0.1, 0.1, 1);
+float fogStart = 10;
+float fogEnd = 60;
 
 std::string readFile(const char* filePath) {
 	std::string content;
@@ -71,12 +76,12 @@ void InitScene(Scene* scene) {
 	Scene& testScene = *(Scene*)scene;
 	// Creating Objects
 	BasicMaterial cubeMat = BasicMaterial("default");
-	cubeMat.setAlbedoMap("data/textures/popcat.jpg");
+	cubeMat.setAlbedoMap((projectPath + "textures/popcat.jpg").c_str());
 	cubeMat.settings.cullMode = GL_BACK;
 	cubeMat.settings.cullFaces = true;
 	
 	Transform cubeTransform = Transform(glm::vec3(0, 1, 0), glm::vec3(0, 0, 0));
-	Renderer cubeRenderer = Renderer(&cubeMat, "data/models/cube3.obj");
+	Renderer cubeRenderer = Renderer(&cubeMat, (projectPath + "models/cube3.obj").c_str());
 	Object cube = Object("Popcat cube", &cubeTransform, &cubeRenderer);
 	//cube.active = false;
 	testScene.sceneObjects.push_back(cube);
@@ -85,7 +90,7 @@ void InitScene(Scene* scene) {
 	monkeyMat.settings.cullFaces = true;
 	monkeyMat.settings.cullMode = GL_BACK;
 	monkeyMat.setColor(1, 0, 1, 1);
-	Renderer monkeyRenderer = Renderer(&monkeyMat, "data/models/monkey2.obj");
+	Renderer monkeyRenderer = Renderer(&monkeyMat, (projectPath + "models/monkey2.obj").c_str());
 	Transform monkeyTransform = Transform(glm::vec3(0, 3, 0), glm::vec3(0, 0, 0));
 	Object monkey = Object("Monkey", &monkeyTransform, &monkeyRenderer);
 	//monkey.active = false;
@@ -96,10 +101,10 @@ void InitScene(Scene* scene) {
 	r2d2Mat.settings.cullMode = GL_BACK;
 	r2d2Mat.settings.shininess = 20;
 	//r2d2Mat.setColor(0, 0.7, 0.1, 1);
-	r2d2Mat.setAlbedoMap("data/models/r2d2/R2_diffuse.png");
-	r2d2Mat.setSpecularMap("data/models/r2d2/R2_spec.png");
-	r2d2Mat.setNormalMap("data/models/r2d2/NormalMap.png");
-	Renderer r2d2Renderer = Renderer(&r2d2Mat, "data/models/r2d2/Low_Poly_R2D2.obj");
+	r2d2Mat.setAlbedoMap((projectPath + "models/r2d2/R2_diffuse.png").c_str());
+	r2d2Mat.setSpecularMap((projectPath + "models/r2d2/R2_spec.png").c_str());
+	r2d2Mat.setNormalMap((projectPath + "models/r2d2/NormalMap.png").c_str());
+	Renderer r2d2Renderer = Renderer(&r2d2Mat, (projectPath + "models/r2d2/Low_Poly_R2D2.obj").c_str());
 	Transform r2d2Transform = Transform(glm::vec3(3, 0, 0), glm::vec3(0, 0, 0));
 	Object r2d2 = Object("R2D2", &r2d2Transform, &r2d2Renderer);
 	r2d2.transform.setScale(glm::vec3(0.3, 0.3, 0.3));
@@ -110,10 +115,10 @@ void InitScene(Scene* scene) {
 	sfMat.settings.cullMode = GL_BACK;
 	sfMat.settings.shininess = 20;
 	//r2d2Mat.setColor(0, 0.7, 0.1, 1);
-	sfMat.setAlbedoMap("data/models/SF_Fighter/SF_Fighter-Albedo.jpg");
-	sfMat.setSpecularMap("data/models/SF_Fighter/SF_Fighter-Specular.jpg");
-	sfMat.setNormalMap("data/models/SF_Fighter/SF_Fighter-Normal.jpg");
-	Renderer sfRenderer = Renderer(&sfMat, "data/models/SF_Fighter/SciFi_Fighter.fbx");
+	sfMat.setAlbedoMap((projectPath + "models/SF_Fighter/SF_Fighter-Albedo.jpg").c_str());
+	sfMat.setSpecularMap((projectPath + "models/SF_Fighter/SF_Fighter-Specular.jpg").c_str());
+	sfMat.setNormalMap((projectPath + "models/SF_Fighter/SF_Fighter-Normal.jpg").c_str());
+	Renderer sfRenderer = Renderer(&sfMat, (projectPath + "models/SF_Fighter/SciFi_Fighter.fbx").c_str());
 	Transform sfTransform = Transform(glm::vec3(17, 2, -20), glm::vec3(-80, -30, 0));
 	Object sf = Object("Space Ship", &sfTransform, &sfRenderer);
 	sf.transform.setScale(glm::vec3(2, 2, 2));
@@ -124,7 +129,7 @@ void InitScene(Scene* scene) {
 	gridMat.settings.cullMode = GL_BACK;
 	gridMat.settings.cullFaces = false;
 	Transform gridTransform = Transform(glm::vec3(0, 0, 0), glm::vec3(0, 0, 0));
-	Renderer gridRenderer = Renderer(&gridMat, "data/models/plane.obj");
+	Renderer gridRenderer = Renderer(&gridMat, (projectPath + "models/plane.obj").c_str());
 	Object grid = Object("Grid", &gridTransform, &gridRenderer);
 	grid.transform.setScale(glm::vec3(50, 1, 50));
 	testScene.sceneObjects.push_back(grid);
@@ -300,7 +305,8 @@ void DrawEditorSettings(GLFWwindow* window, GLFWmonitor* _monitor, const GLFWvid
 	ImGui::SetNextWindowPos(ImVec2(0, menuBarHeight));
 	//ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(400, fHeight-menuBarHeight));
 	//ImGui::PushStyleVar(ImGuiStyleVar_Window)
-	//ImGui::SetNextWindowSize(ImVec2(0.2 * fWidth, fHeight - menuBarHeight));
+	ImGui::SetNextWindowSize(ImVec2(menuPercent * fWidth, fHeight - menuBarHeight));
+
 	//ImVec2 windowSize = ImGui::GetWindowSize();
 	ImVec2 minSize = ImVec2(400, fHeight - menuBarHeight);
 	ImVec2 maxSize = ImVec2(fWidth, fHeight - menuBarHeight);
@@ -376,8 +382,20 @@ void DrawEditorSettings(GLFWwindow* window, GLFWmonitor* _monitor, const GLFWvid
 
 	ImGui::Checkbox("Vertical Synchronisation", &vsync);
 
-	glfwSwapInterval(vsync ? 1 : 0);
+	ImGui::ColorPicker3("Fog Color", &fogColor[0]);
+	ImGui::SliderFloat("Fog Start Distance", &fogStart, 0, 100);
+	ImGui::SliderFloat("Fog End Distance", &fogEnd, 0, 100);
 
+	for (int i = 0; i < scene.sceneObjects.size(); i++) {
+		Object* currObj = &scene.sceneObjects[i];
+		currObj->renderer.getMaterial()->settings.fogColor = fogColor;
+		currObj->renderer.getMaterial()->settings.fogStart = fogStart;
+		currObj->renderer.getMaterial()->settings.fogEnd = fogEnd;
+	}
+	
+	
+	glfwSwapInterval(vsync ? 1 : 0);
+	menuPercent = ImGui::GetWindowSize().x / fWidth;
 
 	ImGui::End();
 
@@ -409,7 +427,7 @@ int main() {
 
 	GLFWimage icon[1];
 	int numColChannel;
-	icon[0].pixels = stbi_load("icon.png", &icon[0].width, &icon[0].height, &numColChannel, 0); //rgba channels
+	icon[0].pixels = stbi_load("data/resources/icon.png", &icon[0].width, &icon[0].height, &numColChannel, 0); //rgba channels
 	glfwSetWindowIcon(window, 1, icon);
 	stbi_image_free(icon[0].pixels);
 	glfwMakeContextCurrent(window);
@@ -425,6 +443,8 @@ int main() {
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui::StyleColorsDark();
 	ImGui_ImplOpenGL3_Init("#version 130");
+
+	io.ConfigWindowsResizeFromEdges = false;
 
 	double lastTime = glfwGetTime();
 	double cooldown = 0.5f;
