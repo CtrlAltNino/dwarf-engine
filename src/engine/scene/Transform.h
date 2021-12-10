@@ -7,7 +7,7 @@
 #include<vector>
 #include <glm/gtx/transform.hpp> // after <glm/glm.hpp>
 #include<iostream>
-#include"../data/Quaternion.h"
+#include"../data structures/Quaternion.h"
 
 class Transform {
 private:

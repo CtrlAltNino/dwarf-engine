@@ -9,7 +9,7 @@
 #include<assimp/postprocess.h>
 #include<assimp/material.h>
 #include"../rendering/BasicMaterial.h"
-#include"../data/Mesh.h"
+#include"../data structures/Mesh.h"
 
 class Renderer {
 private:

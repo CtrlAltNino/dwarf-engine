@@ -23,7 +23,7 @@ std::vector<Mesh> Renderer::meshFromFile(const char* fileName) {
 	const aiScene* scene = aiImportFile(fileName, aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_FlipUVs);
 	const aiVector3D Zero3D(0.0f, 0.0f, 0.0f);
 
-	if (!scene) {
+	if ((scene == nullptr) || !scene) {
 		std::cerr << "Could not load file " << fileName << ": " << aiGetErrorString() << std::endl;
 	}
 

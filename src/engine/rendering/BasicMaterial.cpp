@@ -145,8 +145,6 @@ void BasicMaterial::updateShaderParameters(glm::mat4x4 modelMatrix, glm::mat4x4 
 	else {
 		glUniform1f(normalUni, 0);
 	}
-
-	std::cout << settings.fogColor.x << std::endl;
 	
 	glUniform1f(fogStartID, settings.fogStart);
 	glUniform1f(fogEndID, settings.fogEnd);

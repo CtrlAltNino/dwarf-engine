@@ -16,13 +16,14 @@
 
 // engine related
 #include"engine/rendering/BasicMaterial.h"
-#include"engine/data/Quaternion.h"
+#include"engine/data structures/Quaternion.h"
 #include"engine/scene/Scene.h"
 #include"engine/rendering/Shader.h"
-#include"engine/data/VAO.h"
-#include"engine/data/VBO.h"
-#include"engine/data/EBO.h"
+#include"engine/data structures/VAO.h"
+#include"engine/data structures/VBO.h"
+#include"engine/data structures/EBO.h"
 #include"engine/editor/EditorProperties.h"
+#include"engine/project launcher/ProjectLauncher.h"
 
 // macros
 
@@ -36,24 +37,7 @@ glm::vec4 fogColor = glm::vec4(0.1, 0.1, 0.1, 1);
 float fogStart = 10;
 float fogEnd = 60;
 
-std::string readFile(const char* filePath) {
-	std::string content;
-	std::ifstream fileStream(filePath, std::ios::in);
 
-	if (!fileStream.is_open()) {
-		std::cerr << "Could not read file " << filePath << ". File does not exist." << std::endl;
-		return "";
-	}
-
-	std::string line = "";
-	while (!fileStream.eof()) {
-		std::getline(fileStream, line);
-		content.append(line + "\n");
-	}
-
-	fileStream.close();
-	return content;
-}
 
 void window_focus_callback(GLFWwindow* window, int focused)
 {
@@ -75,61 +59,61 @@ void window_focus_callback(GLFWwindow* window, int focused)
 void InitScene(Scene* scene) {
 	Scene& testScene = *(Scene*)scene;
 	// Creating Objects
-	BasicMaterial cubeMat = BasicMaterial("default");
-	cubeMat.setAlbedoMap((projectPath + "textures/popcat.jpg").c_str());
+	BasicMaterial cubeMat = BasicMaterial("data/engine/shaders/default");
+	cubeMat.setAlbedoMap((projectPath + "/Assets/textures/popcat.jpg").c_str());
 	cubeMat.settings.cullMode = GL_BACK;
 	cubeMat.settings.cullFaces = true;
 	
 	Transform cubeTransform = Transform(glm::vec3(0, 1, 0), glm::vec3(0, 0, 0));
-	Renderer cubeRenderer = Renderer(&cubeMat, (projectPath + "models/cube3.obj").c_str());
+	Renderer cubeRenderer = Renderer(&cubeMat, (projectPath + "/Assets/models/cube.obj").c_str());
 	Object cube = Object("Popcat cube", &cubeTransform, &cubeRenderer);
 	//cube.active = false;
 	testScene.sceneObjects.push_back(cube);
 	
-	BasicMaterial monkeyMat = BasicMaterial("default");
+	BasicMaterial monkeyMat = BasicMaterial("data/engine/shaders/default");
 	monkeyMat.settings.cullFaces = true;
 	monkeyMat.settings.cullMode = GL_BACK;
 	monkeyMat.setColor(1, 0, 1, 1);
-	Renderer monkeyRenderer = Renderer(&monkeyMat, (projectPath + "models/monkey2.obj").c_str());
+	Renderer monkeyRenderer = Renderer(&monkeyMat, (projectPath + "/Assets/models/suzanne.obj").c_str());
 	Transform monkeyTransform = Transform(glm::vec3(0, 3, 0), glm::vec3(0, 0, 0));
 	Object monkey = Object("Monkey", &monkeyTransform, &monkeyRenderer);
 	//monkey.active = false;
 	testScene.sceneObjects.push_back(monkey);
 
-	BasicMaterial r2d2Mat = BasicMaterial("default");
+	BasicMaterial r2d2Mat = BasicMaterial("data/engine/shaders/default");
 	r2d2Mat.settings.cullFaces = true;
 	r2d2Mat.settings.cullMode = GL_BACK;
 	r2d2Mat.settings.shininess = 20;
 	//r2d2Mat.setColor(0, 0.7, 0.1, 1);
-	r2d2Mat.setAlbedoMap((projectPath + "models/r2d2/R2_diffuse.png").c_str());
-	r2d2Mat.setSpecularMap((projectPath + "models/r2d2/R2_spec.png").c_str());
-	r2d2Mat.setNormalMap((projectPath + "models/r2d2/NormalMap.png").c_str());
-	Renderer r2d2Renderer = Renderer(&r2d2Mat, (projectPath + "models/r2d2/Low_Poly_R2D2.obj").c_str());
+	r2d2Mat.setAlbedoMap((projectPath + "/Assets/textures/r2d2_diffuse.png").c_str());
+	r2d2Mat.setSpecularMap((projectPath + "/Assets/textures/r2d2_specular.png").c_str());
+	r2d2Mat.setNormalMap((projectPath + "/Assets/textures/r2d2_normalmap.png").c_str());
+	Renderer r2d2Renderer = Renderer(&r2d2Mat, (projectPath + "/Assets/models/r2d2.obj").c_str());
 	Transform r2d2Transform = Transform(glm::vec3(3, 0, 0), glm::vec3(0, 0, 0));
 	Object r2d2 = Object("R2D2", &r2d2Transform, &r2d2Renderer);
 	r2d2.transform.setScale(glm::vec3(0.3, 0.3, 0.3));
 	testScene.sceneObjects.push_back(r2d2);
 
-	BasicMaterial sfMat = BasicMaterial("default");
+	BasicMaterial sfMat = BasicMaterial("data/engine/shaders/default");
 	sfMat.settings.cullFaces = true;
 	sfMat.settings.cullMode = GL_BACK;
 	sfMat.settings.shininess = 20;
 	//r2d2Mat.setColor(0, 0.7, 0.1, 1);
-	sfMat.setAlbedoMap((projectPath + "models/SF_Fighter/SF_Fighter-Albedo.jpg").c_str());
-	sfMat.setSpecularMap((projectPath + "models/SF_Fighter/SF_Fighter-Specular.jpg").c_str());
-	sfMat.setNormalMap((projectPath + "models/SF_Fighter/SF_Fighter-Normal.jpg").c_str());
-	Renderer sfRenderer = Renderer(&sfMat, (projectPath + "models/SF_Fighter/SciFi_Fighter.fbx").c_str());
+	sfMat.setAlbedoMap((projectPath + "/Assets/textures/spaceship_diffuse.jpg").c_str());
+	sfMat.setSpecularMap((projectPath + "/Assets/textures/spaceship_specular.jpg").c_str());
+	sfMat.setNormalMap((projectPath + "/Assets/textures/spaceship_normalmap.jpg").c_str());
+	Renderer sfRenderer = Renderer(&sfMat, (projectPath + "/Assets/models/spaceship.fbx").c_str());
 	Transform sfTransform = Transform(glm::vec3(17, 2, -20), glm::vec3(-80, -30, 0));
 	Object sf = Object("Space Ship", &sfTransform, &sfRenderer);
 	sf.transform.setScale(glm::vec3(2, 2, 2));
 	testScene.sceneObjects.push_back(sf);
 
-	BasicMaterial gridMat = BasicMaterial("grid");
+	BasicMaterial gridMat = BasicMaterial("data/engine/shaders/grid");
 	gridMat.settings.isTransparent = true;
 	gridMat.settings.cullMode = GL_BACK;
 	gridMat.settings.cullFaces = false;
 	Transform gridTransform = Transform(glm::vec3(0, 0, 0), glm::vec3(0, 0, 0));
-	Renderer gridRenderer = Renderer(&gridMat, (projectPath + "models/plane.obj").c_str());
+	Renderer gridRenderer = Renderer(&gridMat, (projectPath + "/Assets/models/plane.obj").c_str());
 	Object grid = Object("Grid", &gridTransform, &gridRenderer);
 	grid.transform.setScale(glm::vec3(50, 1, 50));
 	testScene.sceneObjects.push_back(grid);
@@ -402,7 +386,8 @@ void DrawEditorSettings(GLFWwindow* window, GLFWmonitor* _monitor, const GLFWvid
 	//ImGui::PopStyleVar();
 }
 
-int main() {
+int OpenProjectInOpenGL(std::string path) {
+	projectPath = path;
 	glfwInit();
 	// get resolution of monitor
 	GLFWmonitor* _monitor = glfwGetPrimaryMonitor();
@@ -415,7 +400,7 @@ int main() {
 	glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
 	glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
 	glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
-	
+
 	GLFWwindow* window = glfwCreateWindow(INITIAL_WINDOW_WIDTH, INITIAL_WINDOW_HEIGHT, "Simple 3D Engine", NULL, NULL);
 	if (window == NULL) {
 		std::cout << "Failed to create GLFW window" << std::endl;
@@ -427,7 +412,7 @@ int main() {
 
 	GLFWimage icon[1];
 	int numColChannel;
-	icon[0].pixels = stbi_load("data/resources/icon.png", &icon[0].width, &icon[0].height, &numColChannel, 0); //rgba channels
+	icon[0].pixels = stbi_load("data/engine/img/icons/icon.png", &icon[0].width, &icon[0].height, &numColChannel, 0); //rgba channels
 	glfwSetWindowIcon(window, 1, icon);
 	stbi_image_free(icon[0].pixels);
 	glfwMakeContextCurrent(window);
@@ -437,7 +422,7 @@ int main() {
 
 	if (glfwRawMouseMotionSupported())
 		glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
-	
+
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
@@ -464,7 +449,7 @@ int main() {
 	while (!glfwWindowShouldClose(window)) {
 		glfwPollEvents();
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		
+
 		double currentTime = glfwGetTime();
 		scene.deltaTime = currentTime - lastTime;
 		lastTime = currentTime;
@@ -481,8 +466,8 @@ int main() {
 		if ((width != 0) && (height != 0)) {
 			scene.sceneCamera.setAspectRatio((float)width / height);
 		}
-		
-		
+
+
 		int state = glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT);
 		if (state == GLFW_PRESS)
 		{
@@ -507,14 +492,14 @@ int main() {
 				scene.sceneCamera.transform.rotate(glm::vec3(0, 1, 0), yAngle);
 				scene.sceneCamera.transform.rotate(scene.sceneCamera.transform.getRotation() * glm::vec3(1, 0, 0), xAngle);
 			}
-			
+
 		}
 		else {
 			glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
 			scene.deltaMousePos = glm::vec2(0);
 			scene.lastMousePos = glm::vec2(-1);
-		}	
-		
+		}
+
 		int stateW = glfwGetKey(window, GLFW_KEY_W);
 		int stateA = glfwGetKey(window, GLFW_KEY_A);
 		int stateS = glfwGetKey(window, GLFW_KEY_S);
@@ -522,16 +507,16 @@ int main() {
 		int stateE = glfwGetKey(window, GLFW_KEY_E);
 		int stateQ = glfwGetKey(window, GLFW_KEY_Q);
 		int stateLeftShift = glfwGetKey(window, GLFW_KEY_LEFT_SHIFT);
-		glm::vec3 movementVector = {((stateA == GLFW_PRESS) ? -1 : 0) + ((stateD == GLFW_PRESS) ? 1 : 0),
+		glm::vec3 movementVector = { ((stateA == GLFW_PRESS) ? -1 : 0) + ((stateD == GLFW_PRESS) ? 1 : 0),
 			((stateQ == GLFW_PRESS) ? -1 : 0) + ((stateE == GLFW_PRESS) ? 1 : 0),
 			((stateW == GLFW_PRESS) ? -1 : 0) + ((stateS == GLFW_PRESS) ? 1 : 0) };
-		
-		
+
+
 		if (glm::length(movementVector) > 0) {
 			movementVector = glm::normalize(movementVector);
 			movementVector *= scene.deltaTime * moveSpeed * ((stateLeftShift == GLFW_PRESS) ? 2 : 1);
 		}
-		
+
 		scene.sceneCamera.transform.translate(scene.sceneCamera.transform.getRotation() * movementVector);
 		scene.sceneObjects.at(2).transform.rotate(glm::vec3(0, scene.deltaTime * 88, 0));
 		//scene.sceneObjects.at(3).transform.rotate(glm::vec3(0, delta * 180, 0));
@@ -563,5 +548,40 @@ int main() {
 
 	glfwDestroyWindow(window);
 	glfwTerminate();
-	return 0;
+}
+
+int OpenProject(std::string path, RenderingApi api) {
+	int returnCode = 0;
+	
+	switch (api) {
+	case RenderingApi::OpenGL:
+		returnCode = OpenProjectInOpenGL(path);
+		break;
+	case RenderingApi::DX11:
+		std::cout << "Couldn't open project: DirectX 11 is not yet supported!";
+		break;
+	case RenderingApi::DX12:
+		std::cout << "Couldn't open project: DirectX 12 is not yet supported!";
+		break;
+	case RenderingApi::Vulkan:
+		std::cout << "Couldn't open project: Vulkan is not yet supported!";
+		break;
+	}
+
+	return returnCode;
+}
+
+int main() {
+	int returnCode = 0;
+	ProjectLauncher chooser = ProjectLauncher();
+	ProjectReturnData projectData = chooser.Run();
+
+	if ((projectData.name != "") && (projectData.path != "")) {
+		returnCode = OpenProject(projectData.path, projectData.api);
+	}
+	else {
+		std::cout << "Not opening any project!" << std::endl;
+	}
+	
+	return returnCode;
 }

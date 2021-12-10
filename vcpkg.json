@@ -23,6 +23,11 @@
             "default-features": false,
             "platform": "windows & x64 & static"
         },
-        "stb"
+        "stb",
+        {
+            "name": "nlohmann-json",
+            "default-features": false,
+            "platform": "windows & x64 & static"
+        }
     ]
 }

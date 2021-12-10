@@ -1,7 +1,7 @@
 #include"Shader.h"
 
 std::string get_file_contents(const char* filename) {
-	std::ifstream in(std::string("data/shaders/") + std::string(filename), std::ios::binary);
+	std::ifstream in(std::string(filename), std::ios::binary);
 	if (in) {
 		std::string contents;
 		in.seekg(0, std::ios::end);

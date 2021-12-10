@@ -5,7 +5,7 @@
 #include<glm/glm.hpp>
 #include"Transform.h"
 #include"Renderer.h"
-#include"../data/Mesh.h"
+#include"../data structures/Mesh.h"
 
 class Object {
 private:

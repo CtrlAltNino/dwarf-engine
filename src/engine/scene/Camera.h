@@ -6,7 +6,7 @@
 #include<glm/glm.hpp>
 #include<glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/transform.hpp> // after <glm/glm.hpp>
-#include"../data/Quaternion.h"
+#include"../data structures/Quaternion.h"
 
 class Camera {
 private:
