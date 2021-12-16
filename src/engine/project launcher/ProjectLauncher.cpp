@@ -44,7 +44,7 @@ ProjectReturnData ProjectLauncher::Run() {
 	if ((state == ProjectChooserState::Done) && !projectList.empty() && projectList.size() > selectedProjectId) {
 		projectData.name = projectList[selectedProjectId].name;
 		projectData.path = projectList[selectedProjectId].path;
-		projectData.api = selectedApi;
+		projectData.renderingApi = selectedApi;
 		projectList[selectedProjectId].lastOpened = time(0);
 		SaveProjectList();
 	}
@@ -76,7 +76,7 @@ int ProjectLauncher::CreateWindow() {
 
 	GLFWimage icon[1];
 	int numColChannel;
-	icon[0].pixels = stbi_load("data/resources/icon.png", &icon[0].width, &icon[0].height, &numColChannel, 0); //rgba channels
+	icon[0].pixels = stbi_load("data/engine/img/icons/icon.png", &icon[0].width, &icon[0].height, &numColChannel, 0); //rgba channels
 	glfwSetWindowIcon(window, 1, icon);
 	stbi_image_free(icon[0].pixels);
 	glfwMakeContextCurrent(window);
@@ -113,8 +113,13 @@ void ProjectLauncher::Render() {
 		state = ProjectChooserState::Choosing;
 		ImGui::OpenPopup("Project not found!");
 	}
+	else if (state == ProjectChooserState::CreateNewProject) {
+		state = ProjectChooserState::Choosing;
+		ImGui::OpenPopup("Create new project");
+	}
 
 	RenderProjectNotFoundModal();
+	RenderCreateNewProjectModal();
 
 	//if (state == ProjectChooserState::ProjectNotFound) {
 	//	RenderProjectNotFoundModal();
@@ -151,13 +156,13 @@ void ProjectLauncher::RenderProjectList(int fWidth, int fHeight) {
 
 	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 10));
 	ImGui::PushFont(headerFont);
-	ImGui::Text("Open a Project");
+	ImGui::Text("Your Projects");
 	ImGui::PopFont();
 	ImGui::Separator();
 	ImGui::PopStyleVar(1);
 
 
-	const int COLUMNS_COUNT = 3;
+	const int COLUMNS_COUNT = 4;
 	const float ROW_HEIGHT = 50;
 	const float HEADER_ROW_HEIGHT = 40;
 	ImVec2 cellPadding = ImVec2(10.0f, 10.0f);
@@ -171,6 +176,7 @@ void ProjectLauncher::RenderProjectList(int fWidth, int fHeight) {
 		ImGui::TableSetupColumn("Name");
 		ImGui::TableSetupColumn("Path");
 		ImGui::TableSetupColumn("Last opened");
+		ImGui::TableSetupColumn("API");
 		//ImGui::Columns(3);
 		//ImGui::SetColumnWidth(0, 50);
 
@@ -214,79 +220,91 @@ void ProjectLauncher::RenderProjectList(int fWidth, int fHeight) {
 		for (int row = 0; row < projectList.size(); row++)
 		{
 			ImGui::TableNextRow(ImGuiTableRowFlags_None, ROW_HEIGHT);
-			time_t currentTime = time(0);
-			time_t lastOpenedTime = projectList[row].lastOpened;
-			struct tm ct;
-			struct tm lot;
-			localtime_s(&ct, &currentTime);
-			localtime_s(&lot, &lastOpenedTime);
 			for (int column = 0; column < COLUMNS_COUNT; column++)
 			{
 				ImGui::TableSetColumnIndex(column);
 				std::string cellText = "";
 				switch (column) {
 				case 0:
-					ImGui::PushItemWidth(50);
+					ImGui::PushItemWidth(40);
 					cellText = projectList[row].name.c_str();
 					break;
 				case 1:
-					ImGui::PushItemWidth(150);
+					ImGui::PushItemWidth(100);
 					cellText = projectList[row].path.c_str();
 					break;
 				case 2:
-					ImGui::PushItemWidth(50);
-					if (ct.tm_year != lot.tm_year) {
-						int diff = ct.tm_year - lot.tm_year;
-						if (diff == 1) {
-							cellText = "a year ago";
+				{
+					ImGui::PushItemWidth(35);
+					time_t lastOpenedTime = projectList[row].lastOpened;
+					if (lastOpenedTime != -1) {
+						time_t currentTime = time(0);
+						struct tm ct;
+						struct tm lot;
+						localtime_s(&ct, &currentTime);
+						localtime_s(&lot, &lastOpenedTime);
+						if (ct.tm_year != lot.tm_year) {
+							int diff = ct.tm_year - lot.tm_year;
+							if (diff == 1) {
+								cellText = "a year ago";
+							}
+							else {
+								cellText = std::to_string(diff) + " years ago";
+							}
+						}
+						else if (ct.tm_mon != lot.tm_mon) {
+							int diff = ct.tm_mon - lot.tm_mon;
+							if (diff == 1) {
+								cellText = "a month ago";
+							}
+							else {
+								cellText = std::to_string(diff) + " months ago";
+							}
+						}
+						else if (ct.tm_mday != lot.tm_mday) {
+							int diff = ct.tm_mday - lot.tm_mday;
+							if (diff == 1) {
+								cellText = "a day ago";
+							}
+							else {
+								cellText = std::to_string(diff) + " days ago";
+							}
+						}
+						else if (ct.tm_hour != lot.tm_hour) {
+							int diff = ct.tm_hour - lot.tm_hour;
+							if (diff == 1) {
+								cellText = "an hour ago";
+							}
+							else {
+								cellText = std::to_string(diff) + " hours ago";
+							}
+						}
+						else if (ct.tm_min != lot.tm_min) {
+							int diff = ct.tm_min - lot.tm_min;
+							if (diff == 1) {
+								cellText = "a minute ago";
+							}
+							else {
+								cellText = std::to_string(diff) + " minutes ago";
+							}
 						}
 						else {
-							cellText = std::to_string(diff) + " years ago";
-						}
-					}
-					else if (ct.tm_mon != lot.tm_mon) {
-						int diff = ct.tm_mon - lot.tm_mon;
-						if (diff == 1) {
-							cellText = "a month ago";
-						}
-						else {
-							cellText = std::to_string(diff) + " months ago";
-						}
-					}
-					else if (ct.tm_mday != lot.tm_mday) {
-						int diff = ct.tm_mday - lot.tm_mday;
-						if (diff == 1) {
-							cellText = "a day ago";
-						}
-						else {
-							cellText = std::to_string(diff) + " days ago";
-						}
-					}
-					else if (ct.tm_hour != lot.tm_hour) {
-						int diff = ct.tm_hour - lot.tm_hour;
-						if (diff == 1) {
-							cellText = "an hour ago";
-						}
-						else {
-							cellText = std::to_string(diff) + " hours ago";
-						}
-					}
-					else if (ct.tm_min != lot.tm_min) {
-						int diff = ct.tm_min - lot.tm_min;
-						if (diff == 1) {
-							cellText = "a minute ago";
-						}
-						else {
-							cellText = std::to_string(diff) + " minutes ago";
+							cellText = "a few seconds ago";
 						}
 					}
 					else {
-						cellText = "a few seconds ago";
+						cellText = "never";
 					}
+					break;
+				}
+				case 3:
+					ImGui::PushItemWidth(45);
+					cellText = projectList[row].renderingApi.c_str();
 					break;
 				}
 
 				if (column == 0) {
+					// TODO: Implement right click menu for projects (open project in explorer, delete project, remove from list)
 					//ImGui::GetWindowContentRegionWidth();
 					draw_list->ChannelsSplit(2);
 
@@ -322,31 +340,26 @@ void ProjectLauncher::RenderProjectList(int fWidth, int fHeight) {
 
 					draw_list->ChannelsMerge();
 				}
-				else {
+				else if(column == 1) {
 					ImGui::SetCursorPosY(ImGui::GetCursorPosY() + (ROW_HEIGHT / 2) - ImGui::GetFontSize() / 2);
 					float textWidth = ImGui::CalcTextSize(cellText.c_str(), (const char*)0, false).x;
 					float columnWidth = ImGui::GetContentRegionAvail().x - 8;
-					//std::cout << ImGui::GetFontSize() << std::endl;
-					//ImGui::Width
-					int availableCharacters = (int)(columnWidth / 6.5);
+					int availableCharacters = (int)(columnWidth / (textWidth/cellText.length()));
 					
-					/*if (column == 1) {
-						std::cout << "Path: " << cellText << std::endl;
-						std::cout << "Text Width: " << textWidth << std::endl;
-						std::cout << "Column Width: " << columnWidth << std::endl;
-						std::cout << "Calculated available characters: " << availableCharacters << std::endl;
-					}*/
-					
-					if (textWidth > columnWidth) {
+					if ((column == 1) && (textWidth > columnWidth)) {
 						cellText.resize(availableCharacters);
 						cellText.resize(availableCharacters + 3, '.');
 					}
 					
 					ImGui::Text(cellText.c_str());
 				}
+				else {
+					ImGui::SetCursorPosY(ImGui::GetCursorPosY() + (ROW_HEIGHT / 2) - ImGui::GetFontSize() / 2);
+					ImGui::Text(cellText.c_str());
+				}
+				
 				if(column != 1)
 					ImGui::PopItemWidth();
-				//ImGui::Selectable(buf, column_selected[column]);
 			}
 		}
 		ImGui::EndTable();
@@ -393,8 +406,9 @@ void ProjectLauncher::RenderButtons(int fWidth, int fHeight) {
 	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(86 / 255.0, 95 / 255.0, 114 / 255.0, 1));
 	ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(129 / 255.0, 161 / 255.0, 193 / 255.0, 1));
 	ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 10);
-	if (ImGui::Button("Create new project", ImVec2(ImGui::GetContentRegionAvail().x, 75)) && (selectedProjectId != -1)) {
-		state = ProjectChooserState::Done;
+	if (ImGui::Button("Create new project", ImVec2(ImGui::GetContentRegionAvail().x, 75))) {
+		// TODO Open modal for creating a new project
+		state = ProjectChooserState::CreateNewProject;
 	}
 
 	if (ImGui::IsItemHovered()) {
@@ -416,10 +430,13 @@ void ProjectLauncher::RenderButtons(int fWidth, int fHeight) {
 		ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
 	}
 
-	ImGui::PopStyleVar(1);
+	ImGui::PopStyleVar(3);
+	ImGui::PopStyleColor(5);
+	ImGui::PopFont();
 
-	// Dropdown for renderin api
-	ImGui::PushFont(headerFont);
+	// TODO: Move this dropdown to the modal for creating a new project
+	// Dropdown for rendering api
+	/*ImGui::PushFont(headerFont);
 	ImGui::Text("Rendering API");
 	ImGui::PopFont();
 	ImGui::Separator();
@@ -520,9 +537,9 @@ void ProjectLauncher::RenderButtons(int fWidth, int fHeight) {
 	ImGui::PopStyleColor(3);
 
 	ImGui::PopFont();
-
+	*/
 	ImGui::End();
-	ImGui::PopStyleColor(2);
+	//ImGui::PopStyleColor(2);
 }
 
 void ProjectLauncher::RenderBottomInformation(int fWidth, int fHeight) {
@@ -556,51 +573,244 @@ void ProjectLauncher::RenderBottomInformation(int fWidth, int fHeight) {
 }
 
 void ProjectLauncher::RenderProjectNotFoundModal() {
-	// Always center this window when appearing
+	// Centering Modal
 	ImVec2 center = ImGui::GetMainViewport()->GetCenter();
 	ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
-	if (ImGui::BeginPopupModal("Project not found!", NULL, ImGuiWindowFlags_AlwaysAutoResize)) {
-		std::string outputText = std::string("The project at \n\"") + projectList[selectedProjectId].path + "\"\ncould not be found.\n\nDo you want to remove it from the list?";
-		ImGui::Text(outputText.c_str());
+
+	// ==================== Popup Modal ====================
+	if (ImGui::BeginPopupModal("Project not found!", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove)) {
+
+		// ==================== Information Text ====================
+		std::string informationText = std::string("The project at \n\"") + projectList[selectedProjectId].path + "\"\ncould not be found.\n\nDo you want to remove it from the list?";
+		ImGui::Text(informationText.c_str());
+		
 		ImGui::Separator();
 
-		//static int unused_i = 0;
-		//ImGui::Combo("Combo", &unused_i, "Delete\0Delete harder\0");
-
-		static bool dont_ask_me_next_time = false;
-		//ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
-		//ImGui::Checkbox("Don't ask me next time", &dont_ask_me_next_time);
-		//ImGui::PopStyleVar();
-
+		// ==================== Remove Button ====================
 		if (ImGui::Button("Remove", ImVec2(120, 0))) {
 			RemoveProjectFromList(selectedProjectId);
 			ImGui::CloseCurrentPopup();
 		}
-		
+
+		// ==================== Cancel Button ====================
 		ImGui::SetItemDefaultFocus();
 		ImGui::SameLine();
 		if (ImGui::Button("Cancel", ImVec2(120, 0))) {
 			ImGui::CloseCurrentPopup();
 		}
+		
 		ImGui::EndPopup();
 	}
 }
+
+void ProjectLauncher::RenderCreateNewProjectModal() {
+	// Centering Modal ====================
+	ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+	ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+	
+	// Setting the dimming background color
+	ImGui::PushStyleColor(ImGuiCol_ModalWindowDimBg, ImVec4(0.2, 0.2, 0.2 , 0.6));
+	
+	// Setting the font for the modal window title
+	ImGui::PushFont(headerFont);
+	
+	// ==================== Popup Modal ====================
+	if (ImGui::BeginPopupModal("Create new project", NULL, ImGuiWindowFlags_AlwaysAutoResize )) {
+		// ==================== Name Input ====================
+		static char newProjectName[128] = "New project";
+		ImGui::InputText("", newProjectName, IM_ARRAYSIZE(newProjectName));
+
+		ImGui::Separator();
+
+		// ==================== Rendering API Selection Dropdown ====================
+		{
+			// Rendering Title
+			/*ImGui::PushFont(headerFont);
+			ImGui::Text("Rendering API");
+			ImGui::PopFont();*/
+			
+			ImGui::Separator();
+
+			// Setting up combo
+			const char* apis[] = { "OpenGL", "DirectX 11", "DirectX 12", "Vulkan" };
+			static int currentApiIndex = 0;
+			const char* combo_preview_value = apis[currentApiIndex];
+			
+			/*ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth());
+			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 4);
+			ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 4);
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 8));
+			ImGui::PushStyleVar(ImGuiStyleVar_SelectableTextAlign, ImVec2(0.5f, 0.5f));
+			ImGui::PushFont(textFont);
+
+			// Coloring the combo preview
+			ImGui::PushStyleColor(ImGuiCol_FrameBg, IM_COL32(59, 66, 82, 255));
+			ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, IM_COL32(76, 86, 106, 255));
+			ImGui::PushStyleColor(ImGuiCol_FrameBgActive, IM_COL32(255, 0, 0, 255));
+
+			// Coloring the selected combo item
+			ImGui::PushStyleColor(ImGuiCol_Header, IM_COL32(59, 66, 82, 255));
+			ImGui::PushStyleColor(ImGuiCol_HeaderHovered, IM_COL32(67, 76, 94, 255));
+
+			// Coloring the combo popup background
+			ImGui::PushStyleColor(ImGuiCol_PopupBg, IM_COL32(46, 52, 64, 255));*/
+
+			if (ImGui::BeginCombo("", combo_preview_value)) {
+				ImDrawList* draw_list = ImGui::GetWindowDrawList();
+				
+				// Looping through all the combo entries
+				for (int n = 0; n < IM_ARRAYSIZE(apis); n++)
+				{
+					const bool is_selected = (currentApiIndex == n);
+
+					// Selectable settings
+					ImGui::PushStyleVar(ImGuiStyleVar_SelectableTextAlign, ImVec2(0.5f, 0.5f));
+					ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0, 0, 0, 0));
+					ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0, 0, 0, 0));
+					ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0, 0, 0, 0));
+					
+					// For drawing a custom Selectable background, we split the channel
+					// Now we can draw the text in the foreground, and the colored, rounded rectangle in the background
+					//draw_list->ChannelsSplit(2);
+					//draw_list->ChannelsSetCurrent(1);
+
+					// ==================== Rendering Selectable ====================
+					/*if (ImGui::Selectable(apis[n], is_selected)) {
+						currentApiIndex = n;
+						switch (currentApiIndex) {
+						case 0:
+							selectedApi = RenderingApi::OpenGL;
+							break;
+						case 1:
+							selectedApi = RenderingApi::DX11;
+							break;
+						case 2:
+							selectedApi = RenderingApi::DX12;
+							break;
+						case 3:
+							selectedApi = RenderingApi::Vulkan;
+							break;
+						}
+					}*/
+
+					// Reset Style
+					ImGui::PopStyleVar(1);
+					ImGui::PopStyleColor(3);
+					
+					// Drawing the background rectangle
+					/*if (ImGui::IsItemHovered()) {
+						ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+						draw_list->ChannelsSetCurrent(0);
+						ImVec2 p_min = ImGui::GetItemRectMin();
+						ImVec2 p_max = ImGui::GetItemRectMax();
+						ImU32 rectCol = ImGui::IsMouseDown(ImGuiMouseButton_Left) ? IM_COL32(76, 86, 106, 255) : IM_COL32(67, 76, 94, 255);
+
+						ImGui::GetWindowDrawList()->AddRectFilled(p_min, p_max, rectCol, 10);
+					}
+					else if (is_selected) {
+						draw_list->ChannelsSetCurrent(0);
+						ImVec2 p_min = ImGui::GetItemRectMin();
+						ImVec2 p_max = ImGui::GetItemRectMax();
+						ImU32 rectCol = IM_COL32(59, 66, 82, 255);
+
+						ImGui::GetWindowDrawList()->AddRectFilled(p_min, p_max, rectCol, 10);
+					}*/
+
+					//draw_list->ChannelsMerge();
+
+					// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+					//if (is_selected)
+					//	ImGui::SetItemDefaultFocus();
+				}
+
+				ImGui::EndCombo();
+			}
+			//ImGui::PopFont();
+
+			// Use Hand cursor when hovering over the combo
+			/*if (ImGui::IsItemHovered()) {
+				ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+			}*/
+
+			// Reset remaining style attributes
+			//ImGui::PopStyleVar(4);
+			//ImGui::PopStyleColor(6);
+		}
+
+		// ==================== Create Button ====================
+		ImGui::PushFont(textFont);
+		if (ImGui::Button("Create", ImVec2(120, 0))) {
+			RemoveProjectFromList(selectedProjectId);
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::PopFont();
+
+		// ==================== Cancel Button ====================
+		ImGui::SetItemDefaultFocus();
+		ImGui::SameLine();
+		ImGui::PushFont(textFont);
+		if (ImGui::Button("Cancel", ImVec2(120, 0))) {
+			ImGui::CloseCurrentPopup();
+		}
+		ImGui::PopFont();
+		
+		ImGui::EndPopup();
+	}
+	ImGui::PopFont();
+	ImGui::PopStyleColor();
+}
+
+void ProjectLauncher::AddProjectWrapper() {
+	std::thread thread_object(&ProjectLauncher::AddProject, this);
+	thread_object.detach();
+}
+
 
 void ProjectLauncher::AddProject() {
 	// File Dialog um einen Pfad zu kriegen
 	// Im Pfad nach einer projectSettings.sproj suchen
 	// Projectinformation (Name, Pfad, letzte Modifikationszeit)
-	ProjectInformation newProject;
-	newProject.name = "hallo";
-	newProject.path = "lul";
-	newProject.lastOpened = time(0)-(60*60*3);
-	
-	projectList.push_back({
-			newProject
-		});
+	nfdchar_t* outPath = NULL;
+	const nfdchar_t* filter = "sproj";
 
-	// Aktualisierte Projektliste speichern
-	SaveProjectList();
+	// TODO implement file dialog in another thread to not interrupt
+	// TODO rename "open" button to "add project" or something
+	// TODO focus on the opened dialog when trying to return to the project launcher window \
+	(if that is not the default behaviour, finding out when implementing the dialog in another thread)
+	//nfdresult_t result = NFD_OpenDialog(filter, NULL, &outPath);
+	nfdresult_t result = NFD_PickFolder(NULL, &outPath);
+	
+	if (result == NFD_OKAY) {
+		// check if a project with the same path already exists
+		bool alreadyPresent = false;
+		for (int i = 0; (i < projectList.size()) && !alreadyPresent; i++) {
+			alreadyPresent = projectList[i].path == outPath;
+		}
+		
+		if (!alreadyPresent) {
+			ProjectInformation newProject = ExtractProjectInformation(outPath);
+			if (newProject.name != "") {
+
+				projectList.push_back(newProject);
+				SortProjectList();
+				// Aktualisierte Projektliste speichern
+				SaveProjectList();
+			}
+			else {
+				// TODO: Open modal to signal that no project could be found at the given path
+			}
+		}
+		else {
+			// TODO: Modal to notify the project is already present in the current project list
+		}
+		free(outPath);
+	}
+	else if (result == NFD_CANCEL) {
+		//puts("User pressed cancel.");
+	}
+	else {
+		//printf("Error: %s\n", NFD_GetError());
+	}
 }
 
 void ProjectLauncher::LoadProjectList() {
@@ -623,13 +833,17 @@ void ProjectLauncher::LoadProjectList() {
 					projectToAdd.lastOpened = jsonObject["projects"][i]["lastOpened"];
 				}
 
+				if (jsonObject["projects"][i].contains("renderingApi")) {
+					projectToAdd.renderingApi = jsonObject["projects"][i]["renderingApi"];
+				}
+
 				projectList.push_back({
 						projectToAdd
 					});
 			}
 
 			// After adding all the projects, sort them
-			SortProjects();
+			SortProjectList();
 		}
 	}
 }
@@ -645,14 +859,31 @@ void ProjectLauncher::SaveProjectList() {
 		jsonObject["projects"][i]["name"] = projectList[i].name;
 		jsonObject["projects"][i]["path"] = projectList[i].path;
 		jsonObject["projects"][i]["lastOpened"] = projectList[i].lastOpened;
+		jsonObject["projects"][i]["renderingApi"] = projectList[i].renderingApi;
 	}
 
 	std::string fileContent = jsonObject.dump(4);
 	FileHandler::writeToFile("data/savedProjects.json", fileContent);
 }
 
-void ProjectLauncher::CheckProjectListIntegrity() {
+ProjectInformation ProjectLauncher::ExtractProjectInformation(const char* path) {
+	std::string projectSettingsPath = (std::string(path) + "/projectSettings.sproj");
+	std::string fileContent = FileHandler::readFile(projectSettingsPath.c_str());
+	
+	ProjectInformation foundInfo;
 
+	if (!fileContent.empty()) {
+		nlohmann::json jsonObject = nlohmann::json::parse(fileContent);
+
+		if (jsonObject.contains("projectInformation")) {
+			foundInfo.name = jsonObject["projectInformation"]["projectName"];
+			foundInfo.path = path;
+			foundInfo.renderingApi = jsonObject["projectInformation"]["renderingApi"];
+			foundInfo.lastOpened = -1;
+		}
+	}
+
+	return foundInfo;
 }
 
 void ProjectLauncher::UpdateSortOrder(int columnId) {
@@ -664,7 +895,7 @@ void ProjectLauncher::UpdateSortOrder(int columnId) {
 		else {
 			sortOrder = ProjectSortOrder::Name;
 		}
-		SortProjects();
+		SortProjectList();
 		break;
 	case 1: break;
 	case 2:
@@ -674,7 +905,16 @@ void ProjectLauncher::UpdateSortOrder(int columnId) {
 		else {
 			sortOrder = ProjectSortOrder::Date;
 		}
-		SortProjects();
+		SortProjectList();
+		break;
+	case 3:
+		if (sortOrder == ProjectSortOrder::Api) {
+			sortOrder = ProjectSortOrder::ApiReverse;
+		}
+		else {
+			sortOrder = ProjectSortOrder::Api;
+		}
+		SortProjectList();
 		break;
 	}
 }
@@ -695,7 +935,15 @@ bool projectDateReverseComparator(ProjectInformation p1, ProjectInformation p2) 
 	return p1.lastOpened < p2.lastOpened;
 }
 
-void ProjectLauncher::SortProjects() {
+bool projectApiComparator(ProjectInformation p1, ProjectInformation p2) {
+	return p1.renderingApi > p2.renderingApi;
+}
+
+bool projectApiReverseComparator(ProjectInformation p1, ProjectInformation p2) {
+	return p1.renderingApi < p2.renderingApi;
+}
+
+void ProjectLauncher::SortProjectList() {
 	switch (sortOrder) {
 	case ProjectSortOrder::Name:
 		std::sort(projectList.begin(), projectList.end(), projectNameComparator);
@@ -708,6 +956,12 @@ void ProjectLauncher::SortProjects() {
 		break;
 	case ProjectSortOrder::DateReverse:
 		std::sort(projectList.begin(), projectList.end(), projectDateReverseComparator);
+		break;
+	case ProjectSortOrder::Api:
+		std::sort(projectList.begin(), projectList.end(), projectApiComparator);
+		break;
+	case ProjectSortOrder::ApiReverse:
+		std::sort(projectList.begin(), projectList.end(), projectApiReverseComparator);
 		break;
 	}
 }

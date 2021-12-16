@@ -548,6 +548,7 @@ int OpenProjectInOpenGL(std::string path) {
 
 	glfwDestroyWindow(window);
 	glfwTerminate();
+	return 0;
 }
 
 int OpenProject(std::string path, RenderingApi api) {
@@ -577,10 +578,10 @@ int main() {
 	ProjectReturnData projectData = chooser.Run();
 
 	if ((projectData.name != "") && (projectData.path != "")) {
-		returnCode = OpenProject(projectData.path, projectData.api);
+		returnCode = OpenProject(projectData.path, projectData.renderingApi);
 	}
 	else {
-		std::cout << "Not opening any project!" << std::endl;
+		//std::cout << "Not opening any project!" << std::endl;
 	}
 	
 	return returnCode;

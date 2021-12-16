@@ -1,0 +1,6 @@
+{
+    "projectInformation": {
+        "projectName": "OpenGL demo",
+        "renderingApi": "OpenGL"
+    }
+}

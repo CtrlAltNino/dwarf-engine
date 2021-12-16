@@ -6,6 +6,7 @@
 #include<stdlib.h>
 #include<string>
 #include<vector>
+#include<thread>
 
 // dependencies
 #include<glad/glad.h>
@@ -16,23 +17,25 @@
 #include<imgui_impl_opengl3.h>
 #include<nlohmann/json.hpp>
 #include<ctime>
+#include<nfd.h>
 
 #include"../../utilities/FileHandler.h";
 
-enum class ProjectChooserState {Choosing, Done, ProjectNotFound, Canceled};
+enum class ProjectChooserState {Choosing, Done, ProjectNotFound, CreateNewProject, Canceled};
 enum class RenderingApi {OpenGL, DX11, DX12, Vulkan};
-enum class ProjectSortOrder {Name, NameReverse, Date, DateReverse};
+enum class ProjectSortOrder {Name, NameReverse, Date, DateReverse, Api, ApiReverse};
 
 struct ProjectReturnData {
 	std::string name;
 	std::string path;
-	RenderingApi api;
+	RenderingApi renderingApi;
 };
 
 struct ProjectInformation {
 	std::string name;
 	std::string path;
 	int lastOpened;
+	std::string renderingApi;
 };
 
 struct WindowInformation {
@@ -60,15 +63,16 @@ private:
 	void LoadProjectList();
 	void SaveProjectList();
 	void AddProject();
+	void AddProjectWrapper();
 	void CheckProjectListIntegrity();
 	void RenderProjectList(int fWidth, int fHeight);
 	void RenderButtons(int fWidth, int fHeight);
 	void RenderBottomInformation(int fWidth, int fHeight);
 	void RenderProjectNotFoundModal();
-	void SortProjects();
+	void RenderCreateNewProjectModal();
+	void SortProjectList();
 	void UpdateSortOrder(int columnId);
-
-	
+	ProjectInformation ExtractProjectInformation(const char* path);
 public:
 	ProjectLauncher();
 	ProjectReturnData Run();

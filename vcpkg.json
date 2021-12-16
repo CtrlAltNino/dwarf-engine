@@ -28,6 +28,11 @@
             "name": "nlohmann-json",
             "default-features": false,
             "platform": "windows & x64 & static"
+        },
+        {
+            "name": "nativefiledialog",
+            "default-features": false,
+            "platform": "windows & x64 & static"
         }
     ]
 }
