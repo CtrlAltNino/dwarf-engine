@@ -10,9 +10,10 @@ ProjectLauncher::ProjectLauncher() {
 
 ProjectReturnData ProjectLauncher::Run() {
 	glfwInit();
-	LoadProjectList();
+	InitProjectLauncher();
+	
 	if (window == nullptr) {
-		CreateWindow();
+		InitWindow();
 	}
 
 	InitializeIMGUI();
@@ -52,7 +53,27 @@ ProjectReturnData ProjectLauncher::Run() {
 	return projectData;
 }
 
-int ProjectLauncher::CreateWindow() {
+void ProjectLauncher::InitProjectLauncher() {
+	//defaultProjectPath
+	LoadProjectList();
+
+	static char str[128];
+	{
+		PWSTR path = NULL;
+		HRESULT hr = SHGetKnownFolderPath(FOLDERID_Documents, 0, NULL, &path);
+
+		if (SUCCEEDED(hr)) {
+			//newProjectPath = (const char*)path;
+			size_t i;
+			wcstombs_s(&i, str, (size_t)128, path, (size_t)127);
+			defaultProjectPath = std::string((const char*)str);
+		}
+
+		CoTaskMemFree(path);
+	}
+}
+
+int ProjectLauncher::InitWindow() {
 	// get resolution of monitor
 	GLFWmonitor* _monitor = glfwGetPrimaryMonitor();
 	const GLFWvidmode* mode = glfwGetVideoMode(_monitor);
@@ -613,41 +634,145 @@ void ProjectLauncher::RenderCreateNewProjectModal() {
 	
 	// Setting the font for the modal window title
 	ImGui::PushFont(headerFont);
-	ImGui::SetNextWindowSize(ImVec2(400, 0));
+	ImGui::SetNextWindowSize(ImVec2(450, 0));
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(20, 20));
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 10);
+	ImGui::PushStyleColor(ImGuiCol_PopupBg, IM_COL32(46, 52, 64, 255));
 	
 	// ==================== Popup Modal ====================
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowTitleAlign, ImVec2(0.5f, 0.5f));
+	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 10));
 	if (ImGui::BeginPopupModal("Create new project", NULL, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize )) {
+		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(4, 8));
 		// ==================== Name Input ====================
-		static char newProjectName[128] = "New project";
-		ImGui::PushFont(textFont);
-		ImGui::InputTextWithHint("Name", "hint", newProjectName, IM_ARRAYSIZE(newProjectName));
-
-		ImGui::PopFont();
-
-		ImGui::Separator();
-
-		// Project Path Selector
 		{
-			ImGui::PushFont(textFont);
-			static const char* newProjectPath = "C:/users/nino/documents/s3de";
-			ImGui::Text(newProjectPath);
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 5);
+			// Title
+			ImGui::PushFont(headerFont);
+			ImGui::Text("Name");
+			ImGui::PopFont();
+
 			ImGui::SameLine();
-			if (ImGui::Button("Browse...")) {
-				// Directory Dialog
+			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvailWidth() - 200);
+
+			// Text Input
+			static char newProjectName[128] = "New project";
+			ImGui::PushFont(textFont);
+			ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth());
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(5, 5));
+			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5);
+			ImGui::PushStyleColor(ImGuiCol_FrameBg, IM_COL32(59, 66, 82, 255));
+			ImGui::InputTextWithHint("##projectName", "hint", newProjectName, IM_ARRAYSIZE(newProjectName));
+			ImGui::PopStyleVar(2);
+			ImGui::PopStyleColor();
+			ImGui::PopItemWidth();
+			ImGui::PopFont();
+		}
+
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+		ImGui::Separator();
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
+		
+		// ==================== Project Path Selector ====================
+		{
+			ImDrawList* draw_list = ImGui::GetWindowDrawList();
+			// Title
+			ImGui::PushFont(headerFont);
+			ImGui::Text("Path");
+			ImGui::PopFont();
+
+			ImGui::SameLine();
+			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvailWidth() - 300);
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+			
+			draw_list->ChannelsSplit(2);
+			draw_list->ChannelsSetCurrent(1);
+			// Path preview
+			ImGui::PushFont(textFont);
+			static std::string newProjectPath = defaultProjectPath;
+			std::string renderText = newProjectPath;
+
+			float pathPreviewWidth = ImGui::GetContentRegionAvailWidth() - 35;
+
+			draw_list->ChannelsSetCurrent(1);
+			float textWidth = ImGui::CalcTextSize(renderText.c_str(), (const char*)0, false).x;
+			float columnWidth = ImGui::GetContentRegionAvail().x - 55;
+			int availableCharacters = (int)(columnWidth / (textWidth / renderText.length()));
+
+			if ((textWidth > columnWidth)) {
+				renderText.resize(availableCharacters);
+				renderText.resize(availableCharacters + 3, '.');
 			}
+			ImGui::Text(renderText.c_str());
+
+			draw_list->ChannelsSetCurrent(0);
+			ImVec2 p_min = ImVec2(ImGui::GetItemRectMin().x - 5, ImGui::GetItemRectMin().y - 5);
+			ImVec2 p_max = ImVec2(ImGui::GetItemRectMin().x + pathPreviewWidth, ImGui::GetItemRectMax().y + 5);
+
+			ImGui::GetWindowDrawList()->AddRectFilled(p_min, p_max, IM_COL32(59, 66, 82, 255), 3);
+
+			draw_list->ChannelsMerge();
+			
+			ImGui::SameLine();
+
+			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvailWidth() - 30);
+
+			float width = ImGui::GetContentRegionAvailWidth();
+			
+			// Browse path button
+			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5);
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 5);
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
+			if (ImGui::Button("...", ImVec2(width,25))) {
+				// Directory Dialog
+				// File Dialog um einen Pfad zu kriegen
+				// Im Pfad nach einer projectSettings.sproj suchen
+				// Projectinformation (Name, Pfad, letzte Modifikationszeit)
+				nfdchar_t* outPath = NULL;
+				const nfdchar_t* filter = "sproj";
+
+				// TODO implement file dialog in another thread to not interrupt
+				// TODO rename "open" button to "add project" or something
+				// TODO focus on the opened dialog when trying to return to the project launcher window \
+				(if that is not the default behaviour, finding out when implementing the dialog in another thread)
+				//nfdresult_t result = NFD_OpenDialog(filter, NULL, &outPath);
+				nfdresult_t result = NFD_PickFolder((const nfdchar_t*)newProjectPath.c_str(), &outPath);
+
+				if (result == NFD_OKAY) {
+					newProjectPath = std::string(outPath);
+					free(outPath);
+				}
+				else if (result == NFD_CANCEL) {
+					//puts("User pressed cancel.");
+				}
+				else {
+					//printf("Error: %s\n", NFD_GetError());
+				}
+			}
+			ImGui::PopStyleVar(2);
+
+			if (ImGui::IsItemHovered()) {
+				ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+			}
+
 
 			ImGui::PopFont();
 		}
 
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 		ImGui::Separator();
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
 
+		// ==================== Project Template Selector ====================
 		{
 			// Template Title
 			ImGui::PushFont(headerFont);
 			ImGui::Text("Template");
 			ImGui::PopFont();
 
-			ImGui::Separator();
+			//ImGui::Separator();
+			ImGui::SameLine();
+			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvailWidth() - 150);
 
 			// Setting up combo
 			const char* templates[] = { "Blank", "Demo1" };
@@ -673,7 +798,7 @@ void ProjectLauncher::RenderCreateNewProjectModal() {
 			// Coloring the combo popup background
 			ImGui::PushStyleColor(ImGuiCol_PopupBg, IM_COL32(46, 52, 64, 255));
 
-			if (ImGui::BeginCombo("Template", template_preview_value)) {
+			if (ImGui::BeginCombo("##template", template_preview_value)) {
 				ImDrawList* draw_list = ImGui::GetWindowDrawList();
 
 				// Looping through all the combo entries
@@ -691,6 +816,7 @@ void ProjectLauncher::RenderCreateNewProjectModal() {
 					// Now we can draw the text in the foreground, and the colored, rounded rectangle in the background
 					draw_list->ChannelsSplit(2);
 					draw_list->ChannelsSetCurrent(1);
+					ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 
 					// ==================== Rendering Selectable ====================
 					if (ImGui::Selectable(templates[n], is_selected)) {
@@ -709,7 +835,7 @@ void ProjectLauncher::RenderCreateNewProjectModal() {
 						ImVec2 p_max = ImGui::GetItemRectMax();
 						ImU32 rectCol = ImGui::IsMouseDown(ImGuiMouseButton_Left) ? IM_COL32(76, 86, 106, 255) : IM_COL32(67, 76, 94, 255);
 
-						ImGui::GetWindowDrawList()->AddRectFilled(p_min, p_max, rectCol, 10);
+						ImGui::GetWindowDrawList()->AddRectFilled(p_min, p_max, rectCol, 5);
 					}
 					else if (is_selected) {
 						draw_list->ChannelsSetCurrent(0);
@@ -717,7 +843,7 @@ void ProjectLauncher::RenderCreateNewProjectModal() {
 						ImVec2 p_max = ImGui::GetItemRectMax();
 						ImU32 rectCol = IM_COL32(59, 66, 82, 255);
 
-						ImGui::GetWindowDrawList()->AddRectFilled(p_min, p_max, rectCol, 10);
+						ImGui::GetWindowDrawList()->AddRectFilled(p_min, p_max, rectCol, 5);
 					}
 
 					draw_list->ChannelsMerge();
@@ -741,7 +867,9 @@ void ProjectLauncher::RenderCreateNewProjectModal() {
 			ImGui::PopStyleColor(6);
 		}
 
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 		ImGui::Separator();
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
 
 		// ==================== Rendering API Selection Dropdown ====================
 		{
@@ -750,7 +878,9 @@ void ProjectLauncher::RenderCreateNewProjectModal() {
 			ImGui::Text("Rendering API");
 			ImGui::PopFont();
 			
-			ImGui::Separator();
+			//ImGui::Separator();
+			ImGui::SameLine();
+			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvailWidth() - 150);
 
 			// Setting up combo
 			const char* apis[] = { "OpenGL", "DirectX 11", "DirectX 12", "Vulkan" };
@@ -776,7 +906,7 @@ void ProjectLauncher::RenderCreateNewProjectModal() {
 			// Coloring the combo popup background
 			ImGui::PushStyleColor(ImGuiCol_PopupBg, IM_COL32(46, 52, 64, 255));
 
-			if (ImGui::BeginCombo("Rendering API", combo_preview_value)) {
+			if (ImGui::BeginCombo("##renderingApi", combo_preview_value)) {
 				ImDrawList* draw_list = ImGui::GetWindowDrawList();
 				
 				// Looping through all the combo entries
@@ -794,6 +924,8 @@ void ProjectLauncher::RenderCreateNewProjectModal() {
 					// Now we can draw the text in the foreground, and the colored, rounded rectangle in the background
 					draw_list->ChannelsSplit(2);
 					draw_list->ChannelsSetCurrent(1);
+
+					ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 
 					// ==================== Rendering Selectable ====================
 					if (ImGui::Selectable(apis[n], is_selected)) {
@@ -826,7 +958,7 @@ void ProjectLauncher::RenderCreateNewProjectModal() {
 						ImVec2 p_max = ImGui::GetItemRectMax();
 						ImU32 rectCol = ImGui::IsMouseDown(ImGuiMouseButton_Left) ? IM_COL32(76, 86, 106, 255) : IM_COL32(67, 76, 94, 255);
 
-						ImGui::GetWindowDrawList()->AddRectFilled(p_min, p_max, rectCol, 10);
+						ImGui::GetWindowDrawList()->AddRectFilled(p_min, p_max, rectCol, 5);
 					}
 					else if (is_selected) {
 						draw_list->ChannelsSetCurrent(0);
@@ -834,7 +966,7 @@ void ProjectLauncher::RenderCreateNewProjectModal() {
 						ImVec2 p_max = ImGui::GetItemRectMax();
 						ImU32 rectCol = IM_COL32(59, 66, 82, 255);
 
-						ImGui::GetWindowDrawList()->AddRectFilled(p_min, p_max, rectCol, 10);
+						ImGui::GetWindowDrawList()->AddRectFilled(p_min, p_max, rectCol, 5);
 					}
 
 					draw_list->ChannelsMerge();
@@ -858,31 +990,57 @@ void ProjectLauncher::RenderCreateNewProjectModal() {
 			ImGui::PopStyleColor(6);
 		}
 
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
+		ImGui::Separator();
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 20);
+
+		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(76 / 255.0, 86 / 255.0, 106 / 255.0, 1));
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(86 / 255.0, 95 / 255.0, 114 / 255.0, 1));
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(129 / 255.0, 161 / 255.0, 193 / 255.0, 1));
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5);
+
 		// ==================== Create Button ====================
-		ImGui::PushFont(textFont);
-		if (ImGui::Button("Create", ImVec2(120, 0))) {
-			// Create folder at the path with the project name
-			// Create and fill projectSettings.sproj appropriately
-			// If using a template, copy the corresponding files
-			// Add project to saved project list
-			// Launch project after creating, or just close the popup?
-			ImGui::CloseCurrentPopup();
+		{
+			ImGui::PushFont(textFont);
+			if (ImGui::Button("Create", ImVec2(ImGui::GetContentRegionAvailWidth() / 2 - 8, 40))) {
+				// Create folder at the path with the project name
+				// Create and fill projectSettings.sproj appropriately
+				// If using a template, copy the corresponding files
+				// Add project to saved project list
+				// Launch project after creating, or just close the popup?
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::PopFont();
+
+			if (ImGui::IsItemHovered()) {
+				ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+			}
 		}
-		ImGui::PopFont();
 
 		// ==================== Cancel Button ====================
-		ImGui::SetItemDefaultFocus();
-		ImGui::SameLine();
-		ImGui::PushFont(textFont);
-		if (ImGui::Button("Cancel", ImVec2(120, 0))) {
-			ImGui::CloseCurrentPopup();
+		{
+			ImGui::SetItemDefaultFocus();
+			ImGui::SameLine();
+			ImGui::PushFont(textFont);
+			if (ImGui::Button("Cancel", ImVec2(ImGui::GetContentRegionAvailWidth(), 40))) {
+				ImGui::CloseCurrentPopup();
+			}
+			ImGui::PopFont();
+
+			if (ImGui::IsItemHovered()) {
+				ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+			}
 		}
-		ImGui::PopFont();
+
+		ImGui::PopStyleVar();
+		ImGui::PopStyleColor(3);
 		
+		ImGui::PopStyleVar();
 		ImGui::EndPopup();
 	}
+	ImGui::PopStyleVar(4);
 	ImGui::PopFont();
-	ImGui::PopStyleColor();
+	ImGui::PopStyleColor(2);
 }
 
 void ProjectLauncher::AddProjectWrapper() {

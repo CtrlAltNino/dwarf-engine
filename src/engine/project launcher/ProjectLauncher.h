@@ -7,6 +7,9 @@
 #include<string>
 #include<vector>
 #include<thread>
+#include<Windows.h>
+#include<KnownFolders.h>
+#include<ShlObj.h>
 
 // dependencies
 #include<glad/glad.h>
@@ -54,8 +57,9 @@ private:
 	ImFont* textFont;
 	RenderingApi selectedApi = RenderingApi::OpenGL;
 	ProjectSortOrder sortOrder = ProjectSortOrder::Date;
+	std::string defaultProjectPath;
 	
-	int CreateWindow();
+	int InitWindow();
 	int InitializeIMGUI();
 	void Render();
 	void RemoveProjectFromList(int id);
@@ -72,6 +76,7 @@ private:
 	void RenderCreateNewProjectModal();
 	void SortProjectList();
 	void UpdateSortOrder(int columnId);
+	void InitProjectLauncher();
 	ProjectInformation ExtractProjectInformation(const char* path);
 public:
 	ProjectLauncher();
