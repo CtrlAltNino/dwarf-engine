@@ -8,6 +8,36 @@ ProjectLauncher::ProjectLauncher() {
 	
 }
 
+std::string GetSettingsPath() {
+	std::string savedProjectsPath = "";
+	static char str[128];
+	
+	// Get Documents directory path
+	{
+		PWSTR path = NULL;
+		HRESULT hr = SHGetKnownFolderPath(FOLDERID_Documents, 0, NULL, &path);
+
+		if (SUCCEEDED(hr)) {
+			size_t i;
+			wcstombs_s(&i, str, (size_t)128, path, (size_t)127);
+			savedProjectsPath = std::string((const char*)str);
+		}
+
+		CoTaskMemFree(path);
+	}
+	
+	if (savedProjectsPath != "") {
+		size_t pos;
+		while ((pos = savedProjectsPath.find('\\')) != std::string::npos) {
+			savedProjectsPath.replace(pos, 1, "/");
+		}
+		savedProjectsPath += "/Simple 3D Engine/settings/";
+	}
+	
+	//return "C:/Users/ninom/Documents/yeet";
+	return savedProjectsPath;
+}
+
 ProjectReturnData ProjectLauncher::Run() {
 	glfwInit();
 	InitProjectLauncher();
@@ -188,6 +218,7 @@ void ProjectLauncher::RenderProjectList(int fWidth, int fHeight) {
 	const float HEADER_ROW_HEIGHT = 40;
 	ImVec2 cellPadding = ImVec2(10.0f, 10.0f);
 	ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, cellPadding);
+	//ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 10);
 	ImGui::PushStyleColor(ImGuiCol_TableBorderLight, ImVec4(0, 0, 0, 0));
 	ImGui::PushStyleColor(ImGuiCol_TableBorderStrong, ImVec4(0, 0, 0, 0));
 	ImGui::PushStyleColor(ImGuiCol_TableHeaderBg, IM_COL32(59, 66, 82, 255));
@@ -211,9 +242,12 @@ void ProjectLauncher::RenderProjectList(int fWidth, int fHeight) {
 		ImGui::PushFont(headerFont);
 		ImGui::PushStyleColor(ImGuiCol_HeaderHovered, IM_COL32(76, 86, 106, 255));
 		ImGui::PushStyleColor(ImGuiCol_HeaderActive, IM_COL32(129, 161, 193, 255));
-		ImGui::PushStyleVar(ImGuiStyleVar_TabRounding, 10);
+		/*ImGui::PushStyleVar(ImGuiStyleVar_TabRounding, 10);
 		ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 10);
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 10);
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 10);
+		ImGui::PushStyleVar(ImGuiStyleVar_GrabRounding, 10);
+		ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 10);*/
 		for (int column = 0; column < COLUMNS_COUNT; column++)
 		{
 			ImGui::TableSetColumnIndex(column);
@@ -233,7 +267,7 @@ void ProjectLauncher::RenderProjectList(int fWidth, int fHeight) {
 			ImGui::PopID();
 		}
 		ImGui::PopStyleColor(2);
-		ImGui::PopStyleVar(3);
+		//ImGui::PopStyleVar(6);
 		ImGui::PopFont();
 
 		//ImGui::Separator();
@@ -337,6 +371,60 @@ void ProjectLauncher::RenderProjectList(int fWidth, int fHeight) {
 					ImGui::Selectable(cellText.c_str(), rowSelected[row], ImGuiSelectableFlags_SpanAllColumns, ImVec2(0, ROW_HEIGHT));
 					ImGui::PopStyleVar(1);
 					ImGui::PopStyleColor(2);
+					
+					{
+						ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(10, 10));
+						ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 5);
+						ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5);
+						ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(8, 8));
+						ImGui::PushStyleColor(ImGuiCol_Button, IM_COL32(0, 0, 0, 0));
+						ImGui::PushStyleColor(ImGuiCol_ButtonHovered, IM_COL32(94, 129, 172, 255));
+						ImGui::PushStyleColor(ImGuiCol_ButtonActive, IM_COL32(115, 148, 188, 255));
+						ImGui::PushStyleColor(ImGuiCol_PopupBg, IM_COL32(76, 86, 106, 255));
+						ImGui::SetNextWindowSize(ImVec2(0, 0));
+						if (ImGui::BeginPopupContextItem()) // <-- use last item id as popup id
+						{
+							//ImGui::Text("This a popup for \"%s\"!", names[n]);
+							if (ImGui::Button("Open in file browser", ImVec2(ImGui::GetContentRegionAvailWidth(), 0))) {
+								std::string projectPath = projectList[row].path;
+								size_t pos;
+								while ((pos = projectPath.find('\\')) != std::string::npos) {
+									projectPath.replace(pos, 1, "/");
+								}
+								//std::cout << projectPath << std::endl;
+								//system(std::string("explorer "" \"" + projectPath + "\" > nul").c_str());
+
+								wchar_t* commandStr = new wchar_t[4096];
+								wchar_t* argStr = new wchar_t[4096];
+								MultiByteToWideChar(CP_ACP, 0, "explore", -1, commandStr, 4096);
+								MultiByteToWideChar(CP_ACP, 0, projectPath.c_str(), -1, argStr, 4096);
+
+								ShellExecute(NULL, commandStr, argStr, NULL, NULL, SW_SHOWNORMAL);
+								ImGui::CloseCurrentPopup();
+							}
+
+							if (ImGui::IsItemHovered())
+								ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+
+							if (ImGui::Button("Remove project from list", ImVec2(ImGui::GetContentRegionAvailWidth(), 0))) {
+								RemoveProjectFromList(row);
+								ImGui::CloseCurrentPopup();
+							}
+
+							if (ImGui::IsItemHovered())
+								ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+
+							/*if (ImGui::Button("Close", ImVec2(ImGui::GetContentRegionAvailWidth(), 0)))
+								ImGui::CloseCurrentPopup();
+
+							if (ImGui::IsItemHovered())
+								ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);*/
+							
+							ImGui::EndPopup();
+						}
+						ImGui::PopStyleVar(4);
+						ImGui::PopStyleColor(4);
+					}
 
 					if (ImGui::IsItemClicked()) {
 						selectedProjectId = row;
@@ -390,6 +478,7 @@ void ProjectLauncher::RenderProjectList(int fWidth, int fHeight) {
 	}
 
 	ImGui::End();
+	//ImGui::PopStyleVar(1);
 	ImGui::PopStyleColor(2);
 }
 
@@ -630,23 +719,27 @@ void ProjectLauncher::RenderCreateNewProjectModal() {
 	ImGui::SetNextWindowPos(center, ImGuiCond_Always, ImVec2(0.5f, 0.5f));
 	
 	// Setting the dimming background color
-	ImGui::PushStyleColor(ImGuiCol_ModalWindowDimBg, ImVec4(0.2, 0.2, 0.2 , 0.6));
+	ImGui::PushStyleColor(ImGuiCol_ModalWindowDimBg, ImVec4(0, 0, 0 , 0.7));
 	
 	// Setting the font for the modal window title
 	ImGui::PushFont(headerFont);
 	ImGui::SetNextWindowSize(ImVec2(450, 0));
-	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(20, 20));
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(10, 10));
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 10);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
 	ImGui::PushStyleColor(ImGuiCol_PopupBg, IM_COL32(46, 52, 64, 255));
+	ImGui::PushStyleColor(ImGuiCol_TitleBgActive, IM_COL32(94, 129, 172, 255));
 	
 	// ==================== Popup Modal ====================
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowTitleAlign, ImVec2(0.5f, 0.5f));
 	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 10));
 	if (ImGui::BeginPopupModal("Create new project", NULL, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize )) {
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(4, 8));
+
+		static char newProjectName[128] = "";
 		// ==================== Name Input ====================
 		{
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 5);
+			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 			// Title
 			ImGui::PushFont(headerFont);
 			ImGui::Text("Name");
@@ -656,23 +749,23 @@ void ProjectLauncher::RenderCreateNewProjectModal() {
 			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvailWidth() - 200);
 
 			// Text Input
-			static char newProjectName[128] = "New project";
 			ImGui::PushFont(textFont);
 			ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth());
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(5, 5));
 			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5);
 			ImGui::PushStyleColor(ImGuiCol_FrameBg, IM_COL32(59, 66, 82, 255));
-			ImGui::InputTextWithHint("##projectName", "hint", newProjectName, IM_ARRAYSIZE(newProjectName));
+			ImGui::InputTextWithHint("##projectName", "Enter name", newProjectName, IM_ARRAYSIZE(newProjectName));
 			ImGui::PopStyleVar(2);
 			ImGui::PopStyleColor();
 			ImGui::PopItemWidth();
 			ImGui::PopFont();
 		}
 
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
 		ImGui::Separator();
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
 		
+		static std::string newProjectPath = defaultProjectPath;
 		// ==================== Project Path Selector ====================
 		{
 			ImDrawList* draw_list = ImGui::GetWindowDrawList();
@@ -689,15 +782,14 @@ void ProjectLauncher::RenderCreateNewProjectModal() {
 			draw_list->ChannelsSetCurrent(1);
 			// Path preview
 			ImGui::PushFont(textFont);
-			static std::string newProjectPath = defaultProjectPath;
 			std::string renderText = newProjectPath;
 
 			float pathPreviewWidth = ImGui::GetContentRegionAvailWidth() - 35;
 
 			draw_list->ChannelsSetCurrent(1);
 			float textWidth = ImGui::CalcTextSize(renderText.c_str(), (const char*)0, false).x;
-			float columnWidth = ImGui::GetContentRegionAvail().x - 55;
-			int availableCharacters = (int)(columnWidth / (textWidth / renderText.length()));
+			float columnWidth = ImGui::GetContentRegionAvail().x - 40;
+			int availableCharacters = (int)(columnWidth / (textWidth / renderText.length()))-3;
 
 			if ((textWidth > columnWidth)) {
 				renderText.resize(availableCharacters);
@@ -759,10 +851,11 @@ void ProjectLauncher::RenderCreateNewProjectModal() {
 			ImGui::PopFont();
 		}
 
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
 		ImGui::Separator();
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
 
+		static int currentTemplateIndex = 0;
 		// ==================== Project Template Selector ====================
 		{
 			// Template Title
@@ -776,7 +869,6 @@ void ProjectLauncher::RenderCreateNewProjectModal() {
 
 			// Setting up combo
 			const char* templates[] = { "Blank", "Demo1" };
-			static int currentTemplateIndex = 0;
 			const char* template_preview_value = templates[currentTemplateIndex];
 
 			ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth());
@@ -818,10 +910,12 @@ void ProjectLauncher::RenderCreateNewProjectModal() {
 					draw_list->ChannelsSetCurrent(1);
 					ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 
+					//ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(8, 8));
 					// ==================== Rendering Selectable ====================
-					if (ImGui::Selectable(templates[n], is_selected)) {
+					if (ImGui::Selectable(templates[n], is_selected, 0, ImVec2(0, 16 + 10))) {
 						currentTemplateIndex = n;
 					}
+					//ImGui::PopStyleVar();
 
 					// Reset Style
 					ImGui::PopStyleVar(1);
@@ -867,10 +961,11 @@ void ProjectLauncher::RenderCreateNewProjectModal() {
 			ImGui::PopStyleColor(6);
 		}
 
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
 		ImGui::Separator();
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
 
+		static int currentApiIndex = 0;
 		// ==================== Rendering API Selection Dropdown ====================
 		{
 			// Rendering Title
@@ -884,7 +979,6 @@ void ProjectLauncher::RenderCreateNewProjectModal() {
 
 			// Setting up combo
 			const char* apis[] = { "OpenGL", "DirectX 11", "DirectX 12", "Vulkan" };
-			static int currentApiIndex = 0;
 			const char* combo_preview_value = apis[currentApiIndex];
 			
 			ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth());
@@ -928,7 +1022,7 @@ void ProjectLauncher::RenderCreateNewProjectModal() {
 					ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 
 					// ==================== Rendering Selectable ====================
-					if (ImGui::Selectable(apis[n], is_selected)) {
+					if (ImGui::Selectable(apis[n], is_selected, 0, ImVec2(0, 16 + 10))) {
 						currentApiIndex = n;
 						switch (currentApiIndex) {
 						case 0:
@@ -992,7 +1086,7 @@ void ProjectLauncher::RenderCreateNewProjectModal() {
 
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
 		ImGui::Separator();
-		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 20);
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
 
 		ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(76 / 255.0, 86 / 255.0, 106 / 255.0, 1));
 		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(86 / 255.0, 95 / 255.0, 114 / 255.0, 1));
@@ -1008,6 +1102,13 @@ void ProjectLauncher::RenderCreateNewProjectModal() {
 				// If using a template, copy the corresponding files
 				// Add project to saved project list
 				// Launch project after creating, or just close the popup?
+				CreateProject(newProjectName, newProjectPath.c_str(), (RenderingApi)currentApiIndex, (ProjectTemplate)currentTemplateIndex);
+				
+				strcpy_s(newProjectName, "");
+				newProjectPath = defaultProjectPath;
+				currentTemplateIndex = 0;
+				currentApiIndex = 0;
+				
 				ImGui::CloseCurrentPopup();
 			}
 			ImGui::PopFont();
@@ -1023,6 +1124,10 @@ void ProjectLauncher::RenderCreateNewProjectModal() {
 			ImGui::SameLine();
 			ImGui::PushFont(textFont);
 			if (ImGui::Button("Cancel", ImVec2(ImGui::GetContentRegionAvailWidth(), 40))) {
+				strcpy_s(newProjectName, "");
+				newProjectPath = defaultProjectPath;
+				currentTemplateIndex = 0;
+				currentApiIndex = 0;
 				ImGui::CloseCurrentPopup();
 			}
 			ImGui::PopFont();
@@ -1038,9 +1143,9 @@ void ProjectLauncher::RenderCreateNewProjectModal() {
 		ImGui::PopStyleVar();
 		ImGui::EndPopup();
 	}
-	ImGui::PopStyleVar(4);
+	ImGui::PopStyleVar(5);
 	ImGui::PopFont();
-	ImGui::PopStyleColor(2);
+	ImGui::PopStyleColor(3);
 }
 
 void ProjectLauncher::AddProjectWrapper() {
@@ -1096,8 +1201,23 @@ void ProjectLauncher::AddProject() {
 	}
 }
 
+void ProjectLauncher::AddProjectToList(ProjectInformation projectInformation) {
+	bool alreadyPresent = false;
+	for (int i = 0; (i < projectList.size()) && !alreadyPresent; i++) {
+		alreadyPresent = projectList[i].path == projectInformation.path;
+	}
+
+	if (!alreadyPresent) {
+		projectList.push_back(projectInformation);
+		SortProjectList();
+		// Aktualisierte Projektliste speichern
+		SaveProjectList();
+	}
+}
+
 void ProjectLauncher::LoadProjectList() {
-	std::string fileContent = FileHandler::readFile("data/savedProjects.json");
+	std::string savedProjectsPath = GetSettingsPath() + "savedProjects.json";
+	std::string fileContent = FileHandler::readFile(savedProjectsPath.c_str());
 	if (!fileContent.empty()) {
 		nlohmann::json jsonObject = nlohmann::json::parse(fileContent);
 
@@ -1146,7 +1266,13 @@ void ProjectLauncher::SaveProjectList() {
 	}
 
 	std::string fileContent = jsonObject.dump(4);
-	FileHandler::writeToFile("data/savedProjects.json", fileContent);
+	std::string settingsPath = GetSettingsPath();
+	if (!FileHandler::checkIfDirectoyExists(settingsPath)) {
+		FileHandler::createDirectoryS(GetSettingsPath());
+	}
+	std::string savedProjectsPath = settingsPath + "savedProjects.json";
+	//std::cout << "Saving savedProjects.json to: " << GetSettingsPath() << std::endl;
+	FileHandler::writeToFile(savedProjectsPath.c_str(), fileContent);
 }
 
 ProjectInformation ProjectLauncher::ExtractProjectInformation(const char* path) {
@@ -1167,6 +1293,135 @@ ProjectInformation ProjectLauncher::ExtractProjectInformation(const char* path) 
 	}
 
 	return foundInfo;
+}
+
+int ProjectLauncher::CreateProject(const char* projectName, const char* projectPath, RenderingApi renderingApi, ProjectTemplate projectTemplate) {
+	std::string projectDirectory = std::string(projectPath) + "/" + projectName;
+	if (!FileHandler::checkIfDirectoyExists(projectDirectory)) {
+		std::string projectSettingsPath = (std::string(projectPath) + "/" + projectName + "/projectSettings.sproj").c_str();
+		size_t pos;
+		while ((pos = projectSettingsPath.find('\\')) != std::string::npos) {
+			projectSettingsPath.replace(pos, 1, "/");
+		}
+		if (!FileHandler::checkIfFileExists(projectSettingsPath.c_str())) {
+			FileHandler::createDirectoryS(projectDirectory);
+
+			if (projectTemplate == ProjectTemplate::Blank) {
+				nlohmann::json jsonObject;
+				jsonObject["projectInformation"]["projectName"] = projectName;
+
+				switch (renderingApi) {
+				case RenderingApi::OpenGL:
+					jsonObject["projectInformation"]["renderingApi"] = "OpenGL";
+					break;
+				case RenderingApi::DX11:
+					jsonObject["projectInformation"]["renderingApi"] = "DX11";
+					break;
+				case RenderingApi::DX12:
+					jsonObject["projectInformation"]["renderingApi"] = "DX12";
+					break;
+				case RenderingApi::Vulkan:
+					jsonObject["projectInformation"]["renderingApi"] = "Vulkan";
+					break;
+				default:
+					jsonObject["projectInformation"]["renderingApi"] = "None";
+					break;
+				}
+
+				std::string fileContent = jsonObject.dump(4);
+				FileHandler::writeToFile((std::string(projectPath) + "/" + projectName + "/projectSettings.sproj").c_str(), fileContent);
+			}
+			else {
+				std::string templateProjectDirectory = "";
+				std::string templateApiDirectory = "";
+
+				switch (projectTemplate) {
+				case ProjectTemplate::Demo1:
+					templateProjectDirectory = "demo1";
+					break;
+				}
+
+				switch (renderingApi) {
+				case RenderingApi::OpenGL:
+					templateApiDirectory = "opengl";
+					break;
+				case RenderingApi::DX11:
+					templateApiDirectory = "dx11";
+					break;
+				case RenderingApi::DX12:
+					templateApiDirectory = "dx12";
+					break;
+				case RenderingApi::Vulkan:
+					templateApiDirectory = "vulkan";
+					break;
+				}
+
+				templateProjectDirectory = "data/demo projects/" + templateApiDirectory + "/" + templateProjectDirectory;
+
+				std::string copyCommand = std::string("Xcopy \"" + templateProjectDirectory
+					+ "\" \""
+					+ std::string(projectPath) + "/" + projectName
+					+ "\" /E/H/C/I/y/D");
+				
+				//std::cout << copyCommand << std::endl;
+
+				// Update the projectSettings.sproj "projectName" entry
+				std::string templateProjectSettingsDirectory = templateProjectDirectory + "/projectSettings.sproj";
+				std::string fileContent = FileHandler::readFile(templateProjectSettingsDirectory.c_str());
+
+				if (!fileContent.empty()) {
+					nlohmann::json jsonObject = nlohmann::json::parse(fileContent);
+					jsonObject["projectInformation"]["projectName"] = projectName;
+
+					std::string newFileContent = jsonObject.dump(4);
+					FileHandler::writeToFile(projectSettingsPath.c_str(), newFileContent);
+				}
+				else {
+					std::cout << "yikes bro" << std::endl;
+				}
+
+
+				system(copyCommand.c_str());
+			}
+
+			size_t pos;
+			while ((pos = projectDirectory.find('/')) != std::string::npos) {
+				projectDirectory.replace(pos, 1, "\\");
+			}
+
+			ProjectInformation newProjectInformation;
+			newProjectInformation.name = projectName;
+			newProjectInformation.path = projectDirectory;
+			newProjectInformation.lastOpened = -1;
+			
+			switch (renderingApi) {
+			case RenderingApi::OpenGL:
+				newProjectInformation.renderingApi = "OpenGL";
+				break;
+			case RenderingApi::DX11:
+				newProjectInformation.renderingApi = "DirectX11";
+				break;
+			case RenderingApi::DX12:
+				newProjectInformation.renderingApi = "OpenGL";
+				break;
+			case RenderingApi::Vulkan:
+				newProjectInformation.renderingApi = "OpenGL";
+				break;
+			}
+
+			AddProjectToList(newProjectInformation);
+
+			return 0;
+		}
+		else {
+			// wtf
+			std::cout << "projectSettings.json already exists at project directory!" << std::endl;
+		}
+	}
+	else {
+		// Project folder already exists
+		std::cout << "Project folder already exists at: " << (std::string(projectPath) + "/" + projectName) << std::endl;
+	}
 }
 
 void ProjectLauncher::UpdateSortOrder(int columnId) {

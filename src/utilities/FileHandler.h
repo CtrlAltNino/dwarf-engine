@@ -3,6 +3,7 @@
 #include<fstream>
 #include<string>
 #include<fstream>
+#include<Windows.h>
 
 class FileHandler{
 public:
@@ -44,6 +45,34 @@ public:
 
 		//We need to close every file which you open.
 		file.close();
+	}
+
+	static bool checkIfDirectoyExists(const char* path) {
+		DWORD ftyp = GetFileAttributesA(path);
+		if (ftyp == INVALID_FILE_ATTRIBUTES)
+			return false;  //something is wrong with your path!
+
+		if (ftyp & FILE_ATTRIBUTE_DIRECTORY)
+			return true;   // this is a directory!
+
+		return false;    // this is not a directory!
+	}
+
+	static bool checkIfDirectoyExists(std::string path) {
+		return checkIfDirectoyExists(path.c_str());
+	}
+
+	static void createDirectoryC(const char* path) {
+		WCHAR    str[sizeof(path)];
+		MultiByteToWideChar(0, 0, path, 5, str, 6);
+		LPCWSTR cstr = str;
+
+		//CreateDirectory(cstr, NULL);
+		system((std::string("mkdir \"") + path + "\"").c_str());
+	}
+
+	static void createDirectoryS(std::string path) {
+		createDirectoryC(path.c_str());
 	}
 };
 

@@ -154,41 +154,41 @@
     <CopyFileToFolders Include="data\engine\fonts\Roboto-Light.ttf" />
     <CopyFileToFolders Include="data\engine\fonts\Roboto-Regular.ttf" />
     <CopyFileToFolders Include="data\engine\fonts\Roboto-Thin.ttf" />
-    <CopyFileToFolders Include="data\demo projects\opengl\Assets\models\cube.obj" />
-    <CopyFileToFolders Include="data\demo projects\opengl\Assets\models\plane.obj" />
-    <CopyFileToFolders Include="data\demo projects\opengl\Assets\models\r2d2.obj" />
-    <CopyFileToFolders Include="data\demo projects\opengl\Assets\models\spaceship.fbx" />
-    <CopyFileToFolders Include="data\demo projects\opengl\Assets\models\suzanne.obj" />
-    <CopyFileToFolders Include="data\demo projects\opengl\Assets\textures\popcat.jpg">
+    <CopyFileToFolders Include="data\demo projects\opengl\demo1\Assets\models\cube.obj" />
+    <CopyFileToFolders Include="data\demo projects\opengl\demo1\Assets\models\plane.obj" />
+    <CopyFileToFolders Include="data\demo projects\opengl\demo1\Assets\models\r2d2.obj" />
+    <CopyFileToFolders Include="data\demo projects\opengl\demo1\Assets\models\spaceship.fbx" />
+    <CopyFileToFolders Include="data\demo projects\opengl\demo1\Assets\models\suzanne.obj" />
+    <CopyFileToFolders Include="data\demo projects\opengl\demo1\Assets\textures\popcat.jpg">
       <Filter>Resource Files</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="data\demo projects\opengl\Assets\textures\r2d2_bumpmap.png">
+    <CopyFileToFolders Include="data\demo projects\opengl\demo1\Assets\textures\r2d2_bumpmap.png">
       <Filter>Resource Files</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="data\demo projects\opengl\Assets\textures\r2d2_diffuse.png">
+    <CopyFileToFolders Include="data\demo projects\opengl\demo1\Assets\textures\r2d2_diffuse.png">
       <Filter>Resource Files</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="data\demo projects\opengl\Assets\textures\r2d2_normalmap.png">
+    <CopyFileToFolders Include="data\demo projects\opengl\demo1\Assets\textures\r2d2_normalmap.png">
       <Filter>Resource Files</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="data\demo projects\opengl\Assets\textures\spaceship_diffuse.jpg">
+    <CopyFileToFolders Include="data\demo projects\opengl\demo1\Assets\textures\r2d2_specular.png">
       <Filter>Resource Files</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="data\demo projects\opengl\Assets\textures\spaceship_gloss.jpg">
+    <CopyFileToFolders Include="data\demo projects\opengl\demo1\Assets\textures\spaceship_diffuse.jpg">
       <Filter>Resource Files</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="data\demo projects\opengl\Assets\textures\spaceship_glow.jpg">
+    <CopyFileToFolders Include="data\demo projects\opengl\demo1\Assets\textures\spaceship_gloss.jpg">
       <Filter>Resource Files</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="data\demo projects\opengl\Assets\textures\spaceship_normalmap.jpg">
+    <CopyFileToFolders Include="data\demo projects\opengl\demo1\Assets\textures\spaceship_glow.jpg">
       <Filter>Resource Files</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="data\demo projects\opengl\Assets\textures\spaceship_specular.jpg">
+    <CopyFileToFolders Include="data\demo projects\opengl\demo1\Assets\textures\spaceship_normalmap.jpg">
       <Filter>Resource Files</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="data\demo projects\opengl\projectSettings.sproj" />
-    <CopyFileToFolders Include="data\demo projects\opengl\Assets\textures\r2d2_specular.png">
+    <CopyFileToFolders Include="data\demo projects\opengl\demo1\Assets\textures\spaceship_specular.jpg">
       <Filter>Resource Files</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="data\demo projects\opengl\demo1\projectSettings.sproj" />
   </ItemGroup>
 </Project>

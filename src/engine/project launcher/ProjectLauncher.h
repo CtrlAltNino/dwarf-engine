@@ -10,6 +10,7 @@
 #include<Windows.h>
 #include<KnownFolders.h>
 #include<ShlObj.h>
+#include<filesystem>
 
 // dependencies
 #include<glad/glad.h>
@@ -27,6 +28,7 @@
 enum class ProjectChooserState {Choosing, Done, ProjectNotFound, CreateNewProject, Canceled};
 enum class RenderingApi {OpenGL, DX11, DX12, Vulkan};
 enum class ProjectSortOrder {Name, NameReverse, Date, DateReverse, Api, ApiReverse};
+enum class ProjectTemplate {Blank, Demo1};
 
 struct ProjectReturnData {
 	std::string name;
@@ -68,6 +70,7 @@ private:
 	void SaveProjectList();
 	void AddProject();
 	void AddProjectWrapper();
+	void AddProjectToList(ProjectInformation projectInformation);
 	void CheckProjectListIntegrity();
 	void RenderProjectList(int fWidth, int fHeight);
 	void RenderButtons(int fWidth, int fHeight);
@@ -78,6 +81,7 @@ private:
 	void UpdateSortOrder(int columnId);
 	void InitProjectLauncher();
 	ProjectInformation ExtractProjectInformation(const char* path);
+	int CreateProject(const char* projectName, const char* projectPath, RenderingApi renderingApi, ProjectTemplate projectTemplate);
 public:
 	ProjectLauncher();
 	ProjectReturnData Run();
