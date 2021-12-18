@@ -606,37 +606,55 @@ void ProjectLauncher::RenderProjectNotFoundModal() {
 void ProjectLauncher::RenderCreateNewProjectModal() {
 	// Centering Modal ====================
 	ImVec2 center = ImGui::GetMainViewport()->GetCenter();
-	ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+	ImGui::SetNextWindowPos(center, ImGuiCond_Always, ImVec2(0.5f, 0.5f));
 	
 	// Setting the dimming background color
 	ImGui::PushStyleColor(ImGuiCol_ModalWindowDimBg, ImVec4(0.2, 0.2, 0.2 , 0.6));
 	
 	// Setting the font for the modal window title
 	ImGui::PushFont(headerFont);
+	ImGui::SetNextWindowSize(ImVec2(400, 0));
 	
 	// ==================== Popup Modal ====================
-	if (ImGui::BeginPopupModal("Create new project", NULL, ImGuiWindowFlags_AlwaysAutoResize )) {
+	if (ImGui::BeginPopupModal("Create new project", NULL, ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoResize )) {
 		// ==================== Name Input ====================
 		static char newProjectName[128] = "New project";
-		ImGui::InputText("", newProjectName, IM_ARRAYSIZE(newProjectName));
+		ImGui::PushFont(textFont);
+		ImGui::InputTextWithHint("Name", "hint", newProjectName, IM_ARRAYSIZE(newProjectName));
+
+		ImGui::PopFont();
 
 		ImGui::Separator();
 
-		// ==================== Rendering API Selection Dropdown ====================
+		// Project Path Selector
 		{
-			// Rendering Title
-			/*ImGui::PushFont(headerFont);
-			ImGui::Text("Rendering API");
-			ImGui::PopFont();*/
-			
+			ImGui::PushFont(textFont);
+			static const char* newProjectPath = "C:/users/nino/documents/s3de";
+			ImGui::Text(newProjectPath);
+			ImGui::SameLine();
+			if (ImGui::Button("Browse...")) {
+				// Directory Dialog
+			}
+
+			ImGui::PopFont();
+		}
+
+		ImGui::Separator();
+
+		{
+			// Template Title
+			ImGui::PushFont(headerFont);
+			ImGui::Text("Template");
+			ImGui::PopFont();
+
 			ImGui::Separator();
 
 			// Setting up combo
-			const char* apis[] = { "OpenGL", "DirectX 11", "DirectX 12", "Vulkan" };
-			static int currentApiIndex = 0;
-			const char* combo_preview_value = apis[currentApiIndex];
-			
-			/*ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth());
+			const char* templates[] = { "Blank", "Demo1" };
+			static int currentTemplateIndex = 0;
+			const char* template_preview_value = templates[currentTemplateIndex];
+
+			ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth());
 			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 4);
 			ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 4);
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 8));
@@ -653,52 +671,38 @@ void ProjectLauncher::RenderCreateNewProjectModal() {
 			ImGui::PushStyleColor(ImGuiCol_HeaderHovered, IM_COL32(67, 76, 94, 255));
 
 			// Coloring the combo popup background
-			ImGui::PushStyleColor(ImGuiCol_PopupBg, IM_COL32(46, 52, 64, 255));*/
+			ImGui::PushStyleColor(ImGuiCol_PopupBg, IM_COL32(46, 52, 64, 255));
 
-			if (ImGui::BeginCombo("", combo_preview_value)) {
+			if (ImGui::BeginCombo("Template", template_preview_value)) {
 				ImDrawList* draw_list = ImGui::GetWindowDrawList();
-				
+
 				// Looping through all the combo entries
-				for (int n = 0; n < IM_ARRAYSIZE(apis); n++)
+				for (int n = 0; n < 2; n++)
 				{
-					const bool is_selected = (currentApiIndex == n);
+					const bool is_selected = (currentTemplateIndex == n);
 
 					// Selectable settings
 					ImGui::PushStyleVar(ImGuiStyleVar_SelectableTextAlign, ImVec2(0.5f, 0.5f));
 					ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0, 0, 0, 0));
 					ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0, 0, 0, 0));
 					ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0, 0, 0, 0));
-					
+
 					// For drawing a custom Selectable background, we split the channel
 					// Now we can draw the text in the foreground, and the colored, rounded rectangle in the background
-					//draw_list->ChannelsSplit(2);
-					//draw_list->ChannelsSetCurrent(1);
+					draw_list->ChannelsSplit(2);
+					draw_list->ChannelsSetCurrent(1);
 
 					// ==================== Rendering Selectable ====================
-					/*if (ImGui::Selectable(apis[n], is_selected)) {
-						currentApiIndex = n;
-						switch (currentApiIndex) {
-						case 0:
-							selectedApi = RenderingApi::OpenGL;
-							break;
-						case 1:
-							selectedApi = RenderingApi::DX11;
-							break;
-						case 2:
-							selectedApi = RenderingApi::DX12;
-							break;
-						case 3:
-							selectedApi = RenderingApi::Vulkan;
-							break;
-						}
-					}*/
+					if (ImGui::Selectable(templates[n], is_selected)) {
+						currentTemplateIndex = n;
+					}
 
 					// Reset Style
 					ImGui::PopStyleVar(1);
 					ImGui::PopStyleColor(3);
-					
+
 					// Drawing the background rectangle
-					/*if (ImGui::IsItemHovered()) {
+					if (ImGui::IsItemHovered()) {
 						ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
 						draw_list->ChannelsSetCurrent(0);
 						ImVec2 p_min = ImGui::GetItemRectMin();
@@ -714,33 +718,154 @@ void ProjectLauncher::RenderCreateNewProjectModal() {
 						ImU32 rectCol = IM_COL32(59, 66, 82, 255);
 
 						ImGui::GetWindowDrawList()->AddRectFilled(p_min, p_max, rectCol, 10);
-					}*/
+					}
 
-					//draw_list->ChannelsMerge();
+					draw_list->ChannelsMerge();
 
 					// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
-					//if (is_selected)
-					//	ImGui::SetItemDefaultFocus();
+					if (is_selected)
+						ImGui::SetItemDefaultFocus();
 				}
 
 				ImGui::EndCombo();
 			}
-			//ImGui::PopFont();
+			ImGui::PopFont();
 
 			// Use Hand cursor when hovering over the combo
-			/*if (ImGui::IsItemHovered()) {
+			if (ImGui::IsItemHovered()) {
 				ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
-			}*/
+			}
 
 			// Reset remaining style attributes
-			//ImGui::PopStyleVar(4);
-			//ImGui::PopStyleColor(6);
+			ImGui::PopStyleVar(4);
+			ImGui::PopStyleColor(6);
+		}
+
+		ImGui::Separator();
+
+		// ==================== Rendering API Selection Dropdown ====================
+		{
+			// Rendering Title
+			ImGui::PushFont(headerFont);
+			ImGui::Text("Rendering API");
+			ImGui::PopFont();
+			
+			ImGui::Separator();
+
+			// Setting up combo
+			const char* apis[] = { "OpenGL", "DirectX 11", "DirectX 12", "Vulkan" };
+			static int currentApiIndex = 0;
+			const char* combo_preview_value = apis[currentApiIndex];
+			
+			ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth());
+			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 4);
+			ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 4);
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 8));
+			ImGui::PushStyleVar(ImGuiStyleVar_SelectableTextAlign, ImVec2(0.5f, 0.5f));
+			ImGui::PushFont(textFont);
+
+			// Coloring the combo preview
+			ImGui::PushStyleColor(ImGuiCol_FrameBg, IM_COL32(59, 66, 82, 255));
+			ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, IM_COL32(76, 86, 106, 255));
+			ImGui::PushStyleColor(ImGuiCol_FrameBgActive, IM_COL32(255, 0, 0, 255));
+
+			// Coloring the selected combo item
+			ImGui::PushStyleColor(ImGuiCol_Header, IM_COL32(59, 66, 82, 255));
+			ImGui::PushStyleColor(ImGuiCol_HeaderHovered, IM_COL32(67, 76, 94, 255));
+
+			// Coloring the combo popup background
+			ImGui::PushStyleColor(ImGuiCol_PopupBg, IM_COL32(46, 52, 64, 255));
+
+			if (ImGui::BeginCombo("Rendering API", combo_preview_value)) {
+				ImDrawList* draw_list = ImGui::GetWindowDrawList();
+				
+				// Looping through all the combo entries
+				for (int n = 0; n < 4; n++)
+				{
+					const bool is_selected = (currentApiIndex == n);
+
+					// Selectable settings
+					ImGui::PushStyleVar(ImGuiStyleVar_SelectableTextAlign, ImVec2(0.5f, 0.5f));
+					ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0, 0, 0, 0));
+					ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0, 0, 0, 0));
+					ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0, 0, 0, 0));
+					
+					// For drawing a custom Selectable background, we split the channel
+					// Now we can draw the text in the foreground, and the colored, rounded rectangle in the background
+					draw_list->ChannelsSplit(2);
+					draw_list->ChannelsSetCurrent(1);
+
+					// ==================== Rendering Selectable ====================
+					if (ImGui::Selectable(apis[n], is_selected)) {
+						currentApiIndex = n;
+						switch (currentApiIndex) {
+						case 0:
+							selectedApi = RenderingApi::OpenGL;
+							break;
+						case 1:
+							selectedApi = RenderingApi::DX11;
+							break;
+						case 2:
+							selectedApi = RenderingApi::DX12;
+							break;
+						case 3:
+							selectedApi = RenderingApi::Vulkan;
+							break;
+						}
+					}
+
+					// Reset Style
+					ImGui::PopStyleVar(1);
+					ImGui::PopStyleColor(3);
+					
+					// Drawing the background rectangle
+					if (ImGui::IsItemHovered()) {
+						ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+						draw_list->ChannelsSetCurrent(0);
+						ImVec2 p_min = ImGui::GetItemRectMin();
+						ImVec2 p_max = ImGui::GetItemRectMax();
+						ImU32 rectCol = ImGui::IsMouseDown(ImGuiMouseButton_Left) ? IM_COL32(76, 86, 106, 255) : IM_COL32(67, 76, 94, 255);
+
+						ImGui::GetWindowDrawList()->AddRectFilled(p_min, p_max, rectCol, 10);
+					}
+					else if (is_selected) {
+						draw_list->ChannelsSetCurrent(0);
+						ImVec2 p_min = ImGui::GetItemRectMin();
+						ImVec2 p_max = ImGui::GetItemRectMax();
+						ImU32 rectCol = IM_COL32(59, 66, 82, 255);
+
+						ImGui::GetWindowDrawList()->AddRectFilled(p_min, p_max, rectCol, 10);
+					}
+
+					draw_list->ChannelsMerge();
+
+					// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+					if (is_selected)
+						ImGui::SetItemDefaultFocus();
+				}
+
+				ImGui::EndCombo();
+			}
+			ImGui::PopFont();
+
+			// Use Hand cursor when hovering over the combo
+			if (ImGui::IsItemHovered()) {
+				ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+			}
+
+			// Reset remaining style attributes
+			ImGui::PopStyleVar(4);
+			ImGui::PopStyleColor(6);
 		}
 
 		// ==================== Create Button ====================
 		ImGui::PushFont(textFont);
 		if (ImGui::Button("Create", ImVec2(120, 0))) {
-			RemoveProjectFromList(selectedProjectId);
+			// Create folder at the path with the project name
+			// Create and fill projectSettings.sproj appropriately
+			// If using a template, copy the corresponding files
+			// Add project to saved project list
+			// Launch project after creating, or just close the popup?
 			ImGui::CloseCurrentPopup();
 		}
 		ImGui::PopFont();
