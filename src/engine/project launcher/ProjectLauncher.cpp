@@ -40,12 +40,12 @@ std::string GetSettingsPath() {
 
 ProjectReturnData ProjectLauncher::Run() {
 	glfwInit();
-	InitProjectLauncher();
 	
 	if (window == nullptr) {
 		InitWindow();
 	}
 
+	InitProjectLauncher();
 	InitializeIMGUI();
 
 	while (((state != ProjectChooserState::Done) && (state != ProjectChooserState::Canceled)) && !glfwWindowShouldClose(window)) {
@@ -86,6 +86,9 @@ ProjectReturnData ProjectLauncher::Run() {
 void ProjectLauncher::InitProjectLauncher() {
 	//defaultProjectPath
 	LoadProjectList();
+	githubIcon = new Texture("data/engine/img/icons/github.png", GL_LINEAR, GL_REPEAT, GL_RGBA, GL_UNSIGNED_BYTE);
+	patreonIcon = new Texture("data/engine/img/icons/patreon.png", GL_LINEAR, GL_REPEAT, GL_RGBA, GL_UNSIGNED_BYTE);
+	twitterIcon = new Texture("data/engine/img/icons/twitter.png", GL_LINEAR, GL_REPEAT, GL_RGBA, GL_UNSIGNED_BYTE);
 
 	static char str[128];
 	{
@@ -675,7 +678,96 @@ void ProjectLauncher::RenderBottomInformation(int fWidth, int fHeight) {
 		return;
 	}
 
-	ImGui::Text("An open source project created by flash-miller - 2021");
+	ImGui::Text("An open source project created by flash-miller");
+	const char* versionText = "S3DE - version 2022.0a1";
+	float textWidth = ImGui::CalcTextSize(versionText, (const char*)0, false).x;
+
+
+	ImGui::SameLine();
+	ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 20);
+	ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(229, 233, 240, 255));
+	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(5, 0));
+	static ImVec2 iconSize = ImVec2(18,18);
+	static float verticalIconOffset = 2;
+	
+	{
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() - verticalIconOffset);
+		ImGui::Image((ImTextureID)githubIcon->ID, iconSize);
+		if (ImGui::IsItemHovered()) {
+			ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+		}
+		if (ImGui::IsItemClicked()) {
+			ShellExecute(0, 0, L"https://github.com/flash-miller/simple-3d-engine", 0, 0, SW_SHOW);
+		}
+		
+		ImGui::SameLine();
+
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + verticalIconOffset);
+		ImGui::Text("GitHub");
+		if (ImGui::IsItemHovered()) {
+			ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+		}
+		if (ImGui::IsItemClicked()) {
+			ShellExecute(0, 0, L"https://github.com/flash-miller/simple-3d-engine", 0, 0, SW_SHOW);
+		}
+	}
+
+	ImGui::SameLine();
+	ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10);
+	
+	{
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() - verticalIconOffset);
+		ImGui::Image((ImTextureID)patreonIcon->ID, iconSize);
+		if (ImGui::IsItemHovered()) {
+			ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+		}
+		if (ImGui::IsItemClicked()) {
+			ShellExecute(0, 0, L"https://patreon.com/flash-miller", 0, 0, SW_SHOW);
+		}
+		
+		ImGui::SameLine();
+
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + verticalIconOffset);
+		ImGui::Text("Patreon");
+		if (ImGui::IsItemHovered()) {
+			ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+		}
+		if (ImGui::IsItemClicked()) {
+			ShellExecute(0, 0, L"https://patreon.com/flash-miller", 0, 0, SW_SHOW);
+		}
+	}
+
+	ImGui::SameLine();
+	ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10);
+
+	{
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() - verticalIconOffset);
+		ImGui::Image((ImTextureID)twitterIcon->ID, iconSize);
+		if (ImGui::IsItemHovered()) {
+			ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+		}
+		if (ImGui::IsItemClicked()) {
+			ShellExecute(0, 0, L"https://twitter.com/flash_miller", 0, 0, SW_SHOW);
+		}
+		
+		ImGui::SameLine();
+
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + verticalIconOffset);
+		ImGui::Text("Twitter");
+		if (ImGui::IsItemHovered()) {
+			ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+		}
+		if (ImGui::IsItemClicked()) {
+			ShellExecute(0, 0, L"https://twitter.com/flash_miller", 0, 0, SW_SHOW);
+		}
+	}
+	
+	ImGui::PopStyleColor();
+	ImGui::PopStyleVar();
+
+	ImGui::SameLine();
+	ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvailWidth() - textWidth);
+	ImGui::Text(versionText);
 
 	ImGui::End();
 	ImGui::PopStyleColor(2);
@@ -685,32 +777,88 @@ void ProjectLauncher::RenderBottomInformation(int fWidth, int fHeight) {
 void ProjectLauncher::RenderProjectNotFoundModal() {
 	// Centering Modal
 	ImVec2 center = ImGui::GetMainViewport()->GetCenter();
-	ImGui::SetNextWindowPos(center, ImGuiCond_Appearing, ImVec2(0.5f, 0.5f));
+	ImGui::SetNextWindowPos(center, ImGuiCond_Always, ImVec2(0.5f, 0.5f));
+	// Setting the dimming background color
+	ImGui::PushStyleColor(ImGuiCol_ModalWindowDimBg, ImVec4(0, 0, 0, 0.7));
+
+	// Setting the font for the modal window title
+	ImGui::PushFont(headerFont);
+	ImGui::SetNextWindowSize(ImVec2(350, 0));
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(10, 10));
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 10);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
+	ImGui::PushStyleColor(ImGuiCol_PopupBg, IM_COL32(46, 52, 64, 255));
+	ImGui::PushStyleColor(ImGuiCol_TitleBgActive, IM_COL32(94, 129, 172, 255));
+
+	// ==================== Popup Modal ====================
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowTitleAlign, ImVec2(0.5f, 0.5f));
+	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 10));
 
 	// ==================== Popup Modal ====================
 	if (ImGui::BeginPopupModal("Project not found!", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove)) {
-
+		ImGui::PushFont(textFont);
 		// ==================== Information Text ====================
-		std::string informationText = std::string("The project at \n\"") + projectList[selectedProjectId].path + "\"\ncould not be found.\n\nDo you want to remove it from the list?";
-		ImGui::Text(informationText.c_str());
+		std::string pathText = projectList[selectedProjectId].path;
+
+		float textWidth = ImGui::CalcTextSize(pathText.c_str(), (const char*)0, false).x;
+		
+		ImGui::Text("The project you are trying to open could not be found:");
+
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
+		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + (ImGui::GetContentRegionAvailWidth() / 2 - textWidth / 2));
+		ImGui::Text(projectList[selectedProjectId].path.c_str());
+		
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 20);
+		ImGui::Text("Do you want to remove it from the list?");
+
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
 		
 		ImGui::Separator();
 
+		ImGui::PushStyleColor(ImGuiCol_Button, IM_COL32(191, 97, 106, 255));
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, IM_COL32(198, 111, 120, 255));
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, IM_COL32(216, 134, 142, 255));
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5);
+
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
+
 		// ==================== Remove Button ====================
-		if (ImGui::Button("Remove", ImVec2(120, 0))) {
+		if (ImGui::Button("Remove", ImVec2(ImGui::GetContentRegionAvailWidth() / 2 - 10, 0))) {
 			RemoveProjectFromList(selectedProjectId);
 			ImGui::CloseCurrentPopup();
 		}
 
+		if (ImGui::IsItemHovered()) {
+			ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+		}
+
+		ImGui::PopStyleColor(3);
+		ImGui::PushStyleColor(ImGuiCol_Button, IM_COL32(76, 86, 106, 255));
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, IM_COL32(86, 95, 114, 255));
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, IM_COL32(129, 161, 193, 255));
+
 		// ==================== Cancel Button ====================
 		ImGui::SetItemDefaultFocus();
 		ImGui::SameLine();
-		if (ImGui::Button("Cancel", ImVec2(120, 0))) {
+		if (ImGui::Button("Cancel", ImVec2(ImGui::GetContentRegionAvailWidth(), 0))) {
 			ImGui::CloseCurrentPopup();
 		}
 		
+		if (ImGui::IsItemHovered()) {
+			ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+		}
+
+
+		ImGui::PopStyleVar();
+		ImGui::PopStyleColor(3);
+		
+		ImGui::PopFont();
+		
 		ImGui::EndPopup();
 	}
+	ImGui::PopStyleVar(5);
+	ImGui::PopFont();
+	ImGui::PopStyleColor(3);
 }
 
 void ProjectLauncher::RenderCreateNewProjectModal() {

@@ -24,6 +24,7 @@
 #include<nfd.h>
 
 #include"../../utilities/FileHandler.h";
+#include"../data structures/Texture.h";
 
 enum class ProjectChooserState {Choosing, Done, ProjectNotFound, CreateNewProject, Canceled};
 enum class RenderingApi {OpenGL, DX11, DX12, Vulkan};
@@ -60,6 +61,9 @@ private:
 	RenderingApi selectedApi = RenderingApi::OpenGL;
 	ProjectSortOrder sortOrder = ProjectSortOrder::Date;
 	std::string defaultProjectPath;
+	Texture* githubIcon;
+	Texture* patreonIcon;
+	Texture* twitterIcon;
 	
 	int InitWindow();
 	int InitializeIMGUI();

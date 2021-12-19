@@ -190,5 +190,14 @@
       <Filter>Resource Files</Filter>
     </CopyFileToFolders>
     <CopyFileToFolders Include="data\demo projects\opengl\demo1\projectSettings.sproj" />
+    <CopyFileToFolders Include="data\engine\img\icons\github.png">
+      <Filter>Resource Files</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="data\engine\img\icons\twitter.png">
+      <Filter>Resource Files</Filter>
+    </CopyFileToFolders>
+    <CopyFileToFolders Include="data\engine\img\icons\patreon.png">
+      <Filter>Resource Files</Filter>
+    </CopyFileToFolders>
   </ItemGroup>
 </Project>
