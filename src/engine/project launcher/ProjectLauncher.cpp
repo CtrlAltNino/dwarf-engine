@@ -376,10 +376,10 @@ void ProjectLauncher::RenderProjectList(int fWidth, int fHeight) {
 					ImGui::PopStyleColor(2);
 					
 					{
-						ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(10, 10));
+						ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(5, 5));
 						ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 5);
 						ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5);
-						ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(8, 8));
+						ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 10));
 						ImGui::PushStyleColor(ImGuiCol_Button, IM_COL32(0, 0, 0, 0));
 						ImGui::PushStyleColor(ImGuiCol_ButtonHovered, IM_COL32(94, 129, 172, 255));
 						ImGui::PushStyleColor(ImGuiCol_ButtonActive, IM_COL32(115, 148, 188, 255));
