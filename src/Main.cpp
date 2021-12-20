@@ -558,10 +558,10 @@ int OpenProject(std::string path, RenderingApi api) {
 	case RenderingApi::OpenGL:
 		returnCode = OpenProjectInOpenGL(path);
 		break;
-	case RenderingApi::DX11:
+	case RenderingApi::DirectX11:
 		std::cout << "Couldn't open project: DirectX 11 is not yet supported!";
 		break;
-	case RenderingApi::DX12:
+	case RenderingApi::DirectX12:
 		std::cout << "Couldn't open project: DirectX 12 is not yet supported!";
 		break;
 	case RenderingApi::Vulkan:

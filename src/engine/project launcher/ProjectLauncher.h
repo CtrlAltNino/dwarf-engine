@@ -26,8 +26,8 @@
 #include"../../utilities/FileHandler.h";
 #include"../data structures/Texture.h";
 
-enum class ProjectChooserState {Choosing, Done, ProjectNotFound, CreateNewProject, Canceled};
-enum class RenderingApi {OpenGL, DX11, DX12, Vulkan};
+enum class ProjectChooserState {Choosing, Done, ProjectNotFound, CreateNewProject, ChangeRenderingApi, Canceled};
+enum class RenderingApi {OpenGL, DirectX11, DirectX12, Vulkan};
 enum class ProjectSortOrder {Name, NameReverse, Date, DateReverse, Api, ApiReverse};
 enum class ProjectTemplate {Blank, Demo1};
 
@@ -41,7 +41,7 @@ struct ProjectInformation {
 	std::string name;
 	std::string path;
 	int lastOpened;
-	std::string renderingApi;
+	int renderingApi;
 };
 
 struct WindowInformation {
@@ -58,7 +58,7 @@ private:
 	ProjectChooserState state = ProjectChooserState::Choosing;
 	ImFont* headerFont;
 	ImFont* textFont;
-	RenderingApi selectedApi = RenderingApi::OpenGL;
+	//RenderingApi selectedApi = RenderingApi::OpenGL;
 	ProjectSortOrder sortOrder = ProjectSortOrder::Date;
 	std::string defaultProjectPath;
 	Texture* githubIcon;
@@ -81,12 +81,14 @@ private:
 	void RenderBottomInformation(int fWidth, int fHeight);
 	void RenderProjectNotFoundModal();
 	void RenderCreateNewProjectModal();
+	void RenderChangeRenderingApiModal();
+	void ChangeRenderingApi(int id, RenderingApi api);
 	void SortProjectList();
 	void UpdateSortOrder(int columnId);
 	void InitProjectLauncher();
 	ProjectInformation ExtractProjectInformation(const char* path);
 	int CreateProject(const char* projectName, const char* projectPath, RenderingApi renderingApi, ProjectTemplate projectTemplate);
 public:
-	ProjectLauncher();
+	const char* apiStrings[4] = { "OpenGL", "DirectX 11", "DirectX 12", "Vulkan" };
 	ProjectReturnData Run();
 };

@@ -4,10 +4,6 @@
 #define PROJECT_BUTTON_WINDOW_WIDTH (200)
 #define PROJECT_INFORMATION_HEIGHT (30)
 
-ProjectLauncher::ProjectLauncher() {
-	
-}
-
 std::string GetSettingsPath() {
 	std::string savedProjectsPath = "";
 	static char str[128];
@@ -48,6 +44,8 @@ ProjectReturnData ProjectLauncher::Run() {
 	InitProjectLauncher();
 	InitializeIMGUI();
 
+	glfwShowWindow(window);
+
 	while (((state != ProjectChooserState::Done) && (state != ProjectChooserState::Canceled)) && !glfwWindowShouldClose(window)) {
 		glfwPollEvents();
 		
@@ -75,7 +73,7 @@ ProjectReturnData ProjectLauncher::Run() {
 	if ((state == ProjectChooserState::Done) && !projectList.empty() && projectList.size() > selectedProjectId) {
 		projectData.name = projectList[selectedProjectId].name;
 		projectData.path = projectList[selectedProjectId].path;
-		projectData.renderingApi = selectedApi;
+		projectData.renderingApi = (RenderingApi)projectList[selectedProjectId].renderingApi;
 		projectList[selectedProjectId].lastOpened = time(0);
 		SaveProjectList();
 	}
@@ -117,7 +115,8 @@ int ProjectLauncher::InitWindow() {
 	glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
 	glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
 	glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
-
+	glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+	
 	window = glfwCreateWindow(INITIAL_WINDOW_WIDTH, INITIAL_WINDOW_HEIGHT, "Simple 3D Engine - Project Launcher", NULL, NULL);
 	if (window == NULL) {
 		std::cout << "Failed to create GLFW window" << std::endl;
@@ -136,6 +135,7 @@ int ProjectLauncher::InitWindow() {
 	glfwMakeContextCurrent(window);
 	gladLoadGL();
 	glViewport(0, 0, INITIAL_WINDOW_WIDTH, INITIAL_WINDOW_HEIGHT);
+
 	return 0;
 }
 
@@ -171,9 +171,14 @@ void ProjectLauncher::Render() {
 		state = ProjectChooserState::Choosing;
 		ImGui::OpenPopup("Create new project");
 	}
+	else if (state == ProjectChooserState::ChangeRenderingApi) {
+		state = ProjectChooserState::Choosing;
+		ImGui::OpenPopup("Change rendering API");
+	}
 
 	RenderProjectNotFoundModal();
 	RenderCreateNewProjectModal();
+	RenderChangeRenderingApiModal();
 
 	//if (state == ProjectChooserState::ProjectNotFound) {
 	//	RenderProjectNotFoundModal();
@@ -275,10 +280,11 @@ void ProjectLauncher::RenderProjectList(int fWidth, int fHeight) {
 
 		//ImGui::Separator();
 		ImGui::PushFont(textFont);
+		//for (int row = 0; row < projectList.size(); row += (deleted ? 0 : 1))
 		for (int row = 0; row < projectList.size(); row++)
 		{
 			ImGui::TableNextRow(ImGuiTableRowFlags_None, ROW_HEIGHT);
-			for (int column = 0; column < COLUMNS_COUNT; column++)
+			for (int column = 0; (column < COLUMNS_COUNT) && (row < projectList.size()); column++)
 			{
 				ImGui::TableSetColumnIndex(column);
 				std::string cellText = "";
@@ -357,7 +363,7 @@ void ProjectLauncher::RenderProjectList(int fWidth, int fHeight) {
 				}
 				case 3:
 					ImGui::PushItemWidth(45);
-					cellText = projectList[row].renderingApi.c_str();
+					cellText = apiStrings[projectList[row].renderingApi];
 					break;
 				}
 
@@ -385,7 +391,7 @@ void ProjectLauncher::RenderProjectList(int fWidth, int fHeight) {
 						ImGui::PushStyleColor(ImGuiCol_ButtonActive, IM_COL32(115, 148, 188, 255));
 						ImGui::PushStyleColor(ImGuiCol_PopupBg, IM_COL32(76, 86, 106, 255));
 						ImGui::SetNextWindowSize(ImVec2(0, 0));
-						if (ImGui::BeginPopupContextItem()) // <-- use last item id as popup id
+						if (ImGui::BeginPopupContextItem("Project options")) // <-- use last item id as popup id
 						{
 							//ImGui::Text("This a popup for \"%s\"!", names[n]);
 							if (ImGui::Button("Open in file browser", ImVec2(ImGui::GetContentRegionAvailWidth(), 0))) {
@@ -403,6 +409,19 @@ void ProjectLauncher::RenderProjectList(int fWidth, int fHeight) {
 								MultiByteToWideChar(CP_ACP, 0, projectPath.c_str(), -1, argStr, 4096);
 
 								ShellExecute(NULL, commandStr, argStr, NULL, NULL, SW_SHOWNORMAL);
+								ImGui::CloseCurrentPopup();
+							}
+
+							if (ImGui::IsItemHovered())
+								ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+
+							if (ImGui::Button("Change rendering API", ImVec2(ImGui::GetContentRegionAvailWidth(), 0))) {
+								// Change rendering API
+								// Open Popup modal with dropdown
+								//ImGui::OpenPopup("Change rendering API");
+								state = ProjectChooserState::ChangeRenderingApi;
+								selectedProjectId = row;
+
 								ImGui::CloseCurrentPopup();
 							}
 
@@ -546,113 +565,7 @@ void ProjectLauncher::RenderButtons(int fWidth, int fHeight) {
 	ImGui::PopStyleVar(3);
 	ImGui::PopStyleColor(5);
 	ImGui::PopFont();
-
-	// TODO: Move this dropdown to the modal for creating a new project
-	// Dropdown for rendering api
-	/*ImGui::PushFont(headerFont);
-	ImGui::Text("Rendering API");
-	ImGui::PopFont();
-	ImGui::Separator();
-
-
-	ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 4);
-	const char* apis[] = { "OpenGL", "DirectX 11", "DirectX 12", "Vulkan" };
-	static int currentApiIndex = 0;
-	const char* combo_preview_value = apis[currentApiIndex];
-	ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth());
-	ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 4);
-	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10,8));
-	ImGui::PushStyleVar(ImGuiStyleVar_SelectableTextAlign, ImVec2(0.5f, 0.5f));
-
-	// Coloring the combo preview
-	ImGui::PushStyleColor(ImGuiCol_FrameBg, IM_COL32(59, 66, 82, 255));
-	ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, IM_COL32(76, 86, 106, 255));
-	ImGui::PushStyleColor(ImGuiCol_FrameBgActive, IM_COL32(255, 0, 0, 255));
-	
-	// Coloring the selected combo item
-	ImGui::PushStyleColor(ImGuiCol_Header, IM_COL32(59, 66, 82, 255));
-	ImGui::PushStyleColor(ImGuiCol_HeaderHovered, IM_COL32(67, 76, 94, 255));
-	//ImGui::PushStyleColor(ImGuiCol_HeaderActive, IM_COL32(1, 0, 0, 1));
-	
-	// Coloring the combo popup background
-	//ImGui::PushStyleColor(ImGuiCol_PopupBg, IM_COL32(76, 86, 106, 255));
-	ImGui::PushStyleColor(ImGuiCol_PopupBg, IM_COL32(46, 52, 64, 255));
-
-	if (ImGui::BeginCombo("", combo_preview_value)) {
-		ImDrawList* draw_list = ImGui::GetWindowDrawList();
-		for (int n = 0; n < IM_ARRAYSIZE(apis); n++)
-		{
-			const bool is_selected = (currentApiIndex == n);
-			draw_list->ChannelsSplit(2);
-
-			ImGui::PushStyleVar(ImGuiStyleVar_SelectableTextAlign, ImVec2(0.5f, 0.5f));
-			ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0, 0, 0, 0));
-			ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0, 0, 0, 0));
-			ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0, 0, 0, 0));
-			draw_list->ChannelsSetCurrent(1);
-
-			if (ImGui::Selectable(apis[n], is_selected)) {
-				currentApiIndex = n;
-				switch (currentApiIndex) {
-				case 0:
-					selectedApi = RenderingApi::OpenGL;
-					break;
-				case 1:
-					selectedApi = RenderingApi::DX11;
-					break;
-				case 2:
-					selectedApi = RenderingApi::DX12;
-					break;
-				case 3:
-					selectedApi = RenderingApi::Vulkan;
-					break;
-				}
-			}
-
-			ImGui::PopStyleVar(1);
-			ImGui::PopStyleColor(3);
-			if (ImGui::IsItemHovered()) {
-				ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
-				draw_list->ChannelsSetCurrent(0);
-				ImVec2 p_min = ImGui::GetItemRectMin();
-				ImVec2 p_max = ImGui::GetItemRectMax();
-				ImU32 rectCol = ImGui::IsMouseDown(ImGuiMouseButton_Left) ? IM_COL32(76, 86, 106, 255) : IM_COL32(67, 76, 94, 255);
-
-				ImGui::GetWindowDrawList()->AddRectFilled(p_min, p_max, rectCol, 10);
-			}
-			else if (is_selected) {
-				draw_list->ChannelsSetCurrent(0);
-				ImVec2 p_min = ImGui::GetItemRectMin();
-				ImVec2 p_max = ImGui::GetItemRectMax();
-				ImU32 rectCol = IM_COL32(59, 66, 82, 255);
-
-				ImGui::GetWindowDrawList()->AddRectFilled(p_min, p_max, rectCol, 10);
-			}
-			
-			draw_list->ChannelsMerge();
-
-			// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
-			if (is_selected)
-				ImGui::SetItemDefaultFocus();
-		}
-		
-		ImGui::EndCombo();
-	}
-
-	ImGui::PopStyleColor(6);
-	ImGui::PopStyleVar(3);
-
-	if (ImGui::IsItemHovered()) {
-		ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
-	}
-
-	ImGui::PopStyleVar(3);
-	ImGui::PopStyleColor(3);
-
-	ImGui::PopFont();
-	*/
 	ImGui::End();
-	//ImGui::PopStyleColor(2);
 }
 
 void ProjectLauncher::RenderBottomInformation(int fWidth, int fHeight) {
@@ -772,6 +685,230 @@ void ProjectLauncher::RenderBottomInformation(int fWidth, int fHeight) {
 	ImGui::End();
 	ImGui::PopStyleColor(2);
 	ImGui::PopFont();
+}
+
+void ProjectLauncher::RenderChangeRenderingApiModal() {
+	// Centering Modal
+	ImVec2 center = ImGui::GetMainViewport()->GetCenter();
+	ImGui::SetNextWindowPos(center, ImGuiCond_Always, ImVec2(0.5f, 0.5f));
+	// Setting the dimming background color
+	ImGui::PushStyleColor(ImGuiCol_ModalWindowDimBg, ImVec4(0, 0, 0, 0.7));
+
+	// Setting the font for the modal window title
+	ImGui::PushFont(headerFont);
+	ImGui::SetNextWindowSize(ImVec2(425, 0));
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(10, 10));
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 10);
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
+	ImGui::PushStyleColor(ImGuiCol_PopupBg, IM_COL32(46, 52, 64, 255));
+	ImGui::PushStyleColor(ImGuiCol_TitleBgActive, IM_COL32(94, 129, 172, 255));
+
+	// ==================== Popup Modal ====================
+	ImGui::PushStyleVar(ImGuiStyleVar_WindowTitleAlign, ImVec2(0.5f, 0.5f));
+	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 10));
+
+	// ==================== Popup Modal ====================
+	if (ImGui::BeginPopupModal("Change rendering API", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove)) {
+		ImGui::PushFont(textFont);
+		// ==================== Information Text ====================
+		ImGui::Text("You are about to change the rendering API of a project. This can\nbreak the project.\n\nIf this is to happen, you can safely revert back to the previous\nrendering API.\
+			\n\nIt is advised to first make sure that:\
+			\n- Custom shaders have an equivelant to the selected rendering API\
+			\n- Used plugins are compatible with the selected rendering API\
+			\n- Added source code is compatible with the selected rendering API");
+
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
+
+		ImGui::Separator();
+
+		/*ImGui::PushStyleColor(ImGuiCol_Button, IM_COL32(191, 97, 106, 255));
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, IM_COL32(198, 111, 120, 255));
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, IM_COL32(216, 134, 142, 255));*/
+		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5);
+
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
+
+		static int currentApiIndex = (int)projectList[selectedProjectId].renderingApi;
+		// ==================== Rendering API Selection Dropdown ====================
+		{
+			// Rendering Title
+			ImGui::PushFont(headerFont);
+			ImGui::Text("Rendering API");
+			ImGui::PopFont();
+
+			//ImGui::Separator();
+			ImGui::SameLine();
+			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvailWidth() - 150);
+
+			// Setting up combo
+			const char* apis[] = { "OpenGL", "DirectX 11", "DirectX 12", "Vulkan" };
+			const char* combo_preview_value = apis[currentApiIndex];
+
+			ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth());
+			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 4);
+			ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 4);
+			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 8));
+			ImGui::PushStyleVar(ImGuiStyleVar_SelectableTextAlign, ImVec2(0.5f, 0.5f));
+			ImGui::PushFont(textFont);
+
+			// Coloring the combo preview
+			ImGui::PushStyleColor(ImGuiCol_FrameBg, IM_COL32(59, 66, 82, 255));
+			ImGui::PushStyleColor(ImGuiCol_FrameBgHovered, IM_COL32(76, 86, 106, 255));
+			ImGui::PushStyleColor(ImGuiCol_FrameBgActive, IM_COL32(255, 0, 0, 255));
+
+			// Coloring the selected combo item
+			ImGui::PushStyleColor(ImGuiCol_Header, IM_COL32(59, 66, 82, 255));
+			ImGui::PushStyleColor(ImGuiCol_HeaderHovered, IM_COL32(67, 76, 94, 255));
+
+			// Coloring the combo popup background
+			ImGui::PushStyleColor(ImGuiCol_PopupBg, IM_COL32(46, 52, 64, 255));
+
+			if (ImGui::BeginCombo("##renderingApi", combo_preview_value)) {
+				ImDrawList* draw_list = ImGui::GetWindowDrawList();
+
+				// Looping through all the combo entries
+				for (int n = 0; n < 4; n++)
+				{
+					const bool is_selected = (currentApiIndex == n);
+
+					// Selectable settings
+					ImGui::PushStyleVar(ImGuiStyleVar_SelectableTextAlign, ImVec2(0.5f, 0.5f));
+					ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0, 0, 0, 0));
+					ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0, 0, 0, 0));
+					ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0, 0, 0, 0));
+
+					// For drawing a custom Selectable background, we split the channel
+					// Now we can draw the text in the foreground, and the colored, rounded rectangle in the background
+					draw_list->ChannelsSplit(2);
+					draw_list->ChannelsSetCurrent(1);
+
+					ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+
+					// ==================== Rendering Selectable ====================
+					if (ImGui::Selectable(apis[n], is_selected, 0, ImVec2(0, 16 + 10))) {
+						currentApiIndex = n;
+					}
+
+					// Reset Style
+					ImGui::PopStyleVar(1);
+					ImGui::PopStyleColor(3);
+
+					// Drawing the background rectangle
+					if (ImGui::IsItemHovered()) {
+						ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+						draw_list->ChannelsSetCurrent(0);
+						ImVec2 p_min = ImGui::GetItemRectMin();
+						ImVec2 p_max = ImGui::GetItemRectMax();
+						ImU32 rectCol = ImGui::IsMouseDown(ImGuiMouseButton_Left) ? IM_COL32(76, 86, 106, 255) : IM_COL32(67, 76, 94, 255);
+
+						ImGui::GetWindowDrawList()->AddRectFilled(p_min, p_max, rectCol, 5);
+					}
+					else if (is_selected) {
+						draw_list->ChannelsSetCurrent(0);
+						ImVec2 p_min = ImGui::GetItemRectMin();
+						ImVec2 p_max = ImGui::GetItemRectMax();
+						ImU32 rectCol = IM_COL32(59, 66, 82, 255);
+
+						ImGui::GetWindowDrawList()->AddRectFilled(p_min, p_max, rectCol, 5);
+					}
+
+					draw_list->ChannelsMerge();
+
+					// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+					if (is_selected)
+						ImGui::SetItemDefaultFocus();
+				}
+
+				ImGui::EndCombo();
+			}
+			ImGui::PopFont();
+
+			// Use Hand cursor when hovering over the combo
+			if (ImGui::IsItemHovered()) {
+				ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+			}
+
+			// Reset remaining style attributes
+			ImGui::PopStyleVar(4);
+			ImGui::PopStyleColor(6);
+		}
+
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
+		ImGui::Separator();
+		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
+
+		ImGui::PushStyleColor(ImGuiCol_Button, IM_COL32(76, 86, 106, 255));
+		ImGui::PushStyleColor(ImGuiCol_ButtonHovered, IM_COL32(86, 95, 114, 255));
+		ImGui::PushStyleColor(ImGuiCol_ButtonActive, IM_COL32(129, 161, 193, 255));
+		
+		// ==================== Apply Button ====================
+		if (ImGui::Button("Apply", ImVec2(ImGui::GetContentRegionAvailWidth() / 2 - 10, 0))) {
+			ChangeRenderingApi(selectedProjectId, (RenderingApi)currentApiIndex);
+			ImGui::CloseCurrentPopup();
+		}
+
+		if (ImGui::IsItemHovered()) {
+			ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+		}
+
+		//ImGui::PopStyleColor(3);
+
+		// ==================== Cancel Button ====================
+		ImGui::SetItemDefaultFocus();
+		ImGui::SameLine();
+		if (ImGui::Button("Cancel", ImVec2(ImGui::GetContentRegionAvailWidth(), 0))) {
+			ImGui::CloseCurrentPopup();
+		}
+
+		if (ImGui::IsItemHovered()) {
+			ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+		}
+
+
+		ImGui::PopStyleVar();
+		ImGui::PopStyleColor(3);
+
+		ImGui::PopFont();
+
+		ImGui::EndPopup();
+	}
+	ImGui::PopStyleVar(5);
+	ImGui::PopFont();
+	ImGui::PopStyleColor(3);
+}
+
+void ProjectLauncher::ChangeRenderingApi(int id, RenderingApi api) {
+	//ProjectInformation info = ExtractProjectInformation(projectList[id].path.c_str());
+	std::string projectSettingsPath = (projectList[id].path + "/projectSettings.sproj").c_str();
+	size_t pos;
+	while ((pos = projectSettingsPath.find('\\')) != std::string::npos) {
+		projectSettingsPath.replace(pos, 1, "/");
+	}
+	
+	if (FileHandler::checkIfFileExists(projectSettingsPath.c_str())) {
+		// Update the projectSettings.sproj "projectName" entry
+		//std::string templateProjectSettingsDirectory = templateProjectDirectory + "/projectSettings.sproj";
+		std::string fileContent = FileHandler::readFile(projectSettingsPath.c_str());
+
+		if (!fileContent.empty()) {
+			nlohmann::json jsonObject = nlohmann::json::parse(fileContent);
+			if (jsonObject["projectInformation"]["renderingApi"] != (int)api) {
+				jsonObject["projectInformation"]["renderingApi"] = (int)api;
+
+				std::string newFileContent = jsonObject.dump(4);
+				FileHandler::writeToFile(projectSettingsPath.c_str(), newFileContent);
+				projectList[selectedProjectId].renderingApi = (int)api;
+				SaveProjectList();
+			}
+		}
+		else {
+			std::cout << "yikes bro" << std::endl;
+		}
+	}
+	else {
+		// wtf
+		std::cout << "There is no projectSettings.json file to be found for the mentioned project!" << std::endl;
+	}
 }
 
 void ProjectLauncher::RenderProjectNotFoundModal() {
@@ -1172,20 +1309,6 @@ void ProjectLauncher::RenderCreateNewProjectModal() {
 					// ==================== Rendering Selectable ====================
 					if (ImGui::Selectable(apis[n], is_selected, 0, ImVec2(0, 16 + 10))) {
 						currentApiIndex = n;
-						switch (currentApiIndex) {
-						case 0:
-							selectedApi = RenderingApi::OpenGL;
-							break;
-						case 1:
-							selectedApi = RenderingApi::DX11;
-							break;
-						case 2:
-							selectedApi = RenderingApi::DX12;
-							break;
-						case 3:
-							selectedApi = RenderingApi::Vulkan;
-							break;
-						}
 					}
 
 					// Reset Style
@@ -1457,24 +1580,7 @@ int ProjectLauncher::CreateProject(const char* projectName, const char* projectP
 			if (projectTemplate == ProjectTemplate::Blank) {
 				nlohmann::json jsonObject;
 				jsonObject["projectInformation"]["projectName"] = projectName;
-
-				switch (renderingApi) {
-				case RenderingApi::OpenGL:
-					jsonObject["projectInformation"]["renderingApi"] = "OpenGL";
-					break;
-				case RenderingApi::DX11:
-					jsonObject["projectInformation"]["renderingApi"] = "DX11";
-					break;
-				case RenderingApi::DX12:
-					jsonObject["projectInformation"]["renderingApi"] = "DX12";
-					break;
-				case RenderingApi::Vulkan:
-					jsonObject["projectInformation"]["renderingApi"] = "Vulkan";
-					break;
-				default:
-					jsonObject["projectInformation"]["renderingApi"] = "None";
-					break;
-				}
+				jsonObject["projectInformation"]["renderingApi"] = (int)renderingApi;
 
 				std::string fileContent = jsonObject.dump(4);
 				FileHandler::writeToFile((std::string(projectPath) + "/" + projectName + "/projectSettings.sproj").c_str(), fileContent);
@@ -1493,10 +1599,10 @@ int ProjectLauncher::CreateProject(const char* projectName, const char* projectP
 				case RenderingApi::OpenGL:
 					templateApiDirectory = "opengl";
 					break;
-				case RenderingApi::DX11:
+				case RenderingApi::DirectX11:
 					templateApiDirectory = "dx11";
 					break;
-				case RenderingApi::DX12:
+				case RenderingApi::DirectX12:
 					templateApiDirectory = "dx12";
 					break;
 				case RenderingApi::Vulkan:
@@ -1541,21 +1647,7 @@ int ProjectLauncher::CreateProject(const char* projectName, const char* projectP
 			newProjectInformation.name = projectName;
 			newProjectInformation.path = projectDirectory;
 			newProjectInformation.lastOpened = -1;
-			
-			switch (renderingApi) {
-			case RenderingApi::OpenGL:
-				newProjectInformation.renderingApi = "OpenGL";
-				break;
-			case RenderingApi::DX11:
-				newProjectInformation.renderingApi = "DirectX11";
-				break;
-			case RenderingApi::DX12:
-				newProjectInformation.renderingApi = "OpenGL";
-				break;
-			case RenderingApi::Vulkan:
-				newProjectInformation.renderingApi = "OpenGL";
-				break;
-			}
+			newProjectInformation.renderingApi = (int)renderingApi;
 
 			AddProjectToList(newProjectInformation);
 
