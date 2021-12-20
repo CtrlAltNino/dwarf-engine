@@ -231,14 +231,15 @@ void ProjectLauncher::RenderProjectList(int fWidth, int fHeight) {
 	ImGui::PushStyleColor(ImGuiCol_TableBorderStrong, ImVec4(0, 0, 0, 0));
 	ImGui::PushStyleColor(ImGuiCol_TableHeaderBg, IM_COL32(59, 66, 82, 255));
 	// /*ImGuiTableFlags_Borders | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable |*/ ImGuiTableFlags_SizingStretchProp | ImGuiTableFlags_RowBg
-	if (ImGui::BeginTable("Project entries", COLUMNS_COUNT, ImGuiTableFlags_Borders | ImGuiTableFlags_SizingStretchProp))
+	if (ImGui::BeginTable("Project entries", COLUMNS_COUNT, ImGuiTableFlags_Borders))
 	{
-		ImGui::TableSetupColumn("Name");
-		ImGui::TableSetupColumn("Path");
-		ImGui::TableSetupColumn("Last opened");
-		ImGui::TableSetupColumn("API");
-		//ImGui::Columns(3);
-		//ImGui::SetColumnWidth(0, 50);
+		float initialWidth = ImGui::GetContentRegionAvailWidth();
+		ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_NoResize | ImGuiTableColumnFlags_NoReorder | ImGuiTableColumnFlags_WidthFixed, initialWidth * 0.2);
+		ImGui::TableSetupColumn("Path", ImGuiTableColumnFlags_NoResize | ImGuiTableColumnFlags_NoReorder | ImGuiTableColumnFlags_WidthFixed, initialWidth * 0.4);
+		ImGui::TableSetupColumn("Last opened", ImGuiTableColumnFlags_NoResize | ImGuiTableColumnFlags_NoReorder | ImGuiTableColumnFlags_WidthFixed, initialWidth * 0.2);
+		ImGui::TableSetupColumn("API", ImGuiTableColumnFlags_NoResize | ImGuiTableColumnFlags_NoReorder | ImGuiTableColumnFlags_WidthFixed, initialWidth * 0.2);
+		//ImGui::Columns(4);
+		//ImGui::SetColumnWidth(-1, 50);
 
 		// Dummy entire-column selection storage
 		// FIXME: It would be nice to actually demonstrate full-featured selection using those checkbox.
@@ -290,16 +291,13 @@ void ProjectLauncher::RenderProjectList(int fWidth, int fHeight) {
 				std::string cellText = "";
 				switch (column) {
 				case 0:
-					ImGui::PushItemWidth(40);
 					cellText = projectList[row].name.c_str();
 					break;
 				case 1:
-					ImGui::PushItemWidth(100);
 					cellText = projectList[row].path.c_str();
 					break;
 				case 2:
 				{
-					ImGui::PushItemWidth(35);
 					time_t lastOpenedTime = projectList[row].lastOpened;
 					if (lastOpenedTime != -1) {
 						time_t currentTime = time(0);
@@ -362,14 +360,21 @@ void ProjectLauncher::RenderProjectList(int fWidth, int fHeight) {
 					break;
 				}
 				case 3:
-					ImGui::PushItemWidth(45);
 					cellText = apiStrings[projectList[row].renderingApi];
 					break;
 				}
 
 				if (column == 0) {
-					// TODO: Implement right click menu for projects (open project in explorer, delete project, remove from list)
-					//ImGui::GetWindowContentRegionWidth();
+					float textWidth = ImGui::CalcTextSize(cellText.c_str(), (const char*)0, false).x;
+					float columnWidth = ImGui::GetContentRegionAvail().x - 8;
+					int availableCharacters = (int)(columnWidth / (textWidth / cellText.length()));
+
+					if (textWidth > columnWidth) {
+						cellText.resize(availableCharacters);
+						cellText.resize(availableCharacters + 3, '.');
+					}
+					
+					
 					draw_list->ChannelsSplit(2);
 
 					ImGui::PushStyleVar(ImGuiStyleVar_SelectableTextAlign, ImVec2(0, 0.5f));
@@ -477,7 +482,7 @@ void ProjectLauncher::RenderProjectList(int fWidth, int fHeight) {
 					float columnWidth = ImGui::GetContentRegionAvail().x - 8;
 					int availableCharacters = (int)(columnWidth / (textWidth/cellText.length()));
 					
-					if ((column == 1) && (textWidth > columnWidth)) {
+					if (textWidth > columnWidth) {
 						cellText.resize(availableCharacters);
 						cellText.resize(availableCharacters + 3, '.');
 					}
@@ -488,9 +493,6 @@ void ProjectLauncher::RenderProjectList(int fWidth, int fHeight) {
 					ImGui::SetCursorPosY(ImGui::GetCursorPosY() + (ROW_HEIGHT / 2) - ImGui::GetFontSize() / 2);
 					ImGui::Text(cellText.c_str());
 				}
-				
-				if(column != 1)
-					ImGui::PopItemWidth();
 			}
 		}
 		ImGui::EndTable();
