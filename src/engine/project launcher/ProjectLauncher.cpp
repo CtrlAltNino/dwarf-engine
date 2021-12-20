@@ -203,8 +203,8 @@ void ProjectLauncher::RenderProjectList(int fWidth, int fHeight) {
 	ImGui::SetNextWindowPos(ImVec2(0, 0));
 	ImGui::SetNextWindowSize(ImVec2(fWidth - PROJECT_BUTTON_WINDOW_WIDTH, fHeight - PROJECT_INFORMATION_HEIGHT));
 	//ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(59 / 255.0, 66 / 255.0, 82 / 255.0, 1.0));
-	ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(59 / 255.0, 66 / 255.0, 82 / 255.0, 0));
-	ImGui::PushStyleColor(ImGuiCol_WindowBg, ImVec4(46 / 255.0, 52 / 255.0, 64 / 255.0, 1.0));
+	ImGui::PushStyleColor(ImGuiCol_Border, IM_COL32(0, 0, 0, 0));
+	ImGui::PushStyleColor(ImGuiCol_WindowBg, IM_COL32(46, 52, 64, 255));
 
 	if (!ImGui::Begin("Project List", NULL, window_flags))
 	{
@@ -231,13 +231,13 @@ void ProjectLauncher::RenderProjectList(int fWidth, int fHeight) {
 	ImGui::PushStyleColor(ImGuiCol_TableBorderStrong, ImVec4(0, 0, 0, 0));
 	ImGui::PushStyleColor(ImGuiCol_TableHeaderBg, IM_COL32(59, 66, 82, 255));
 	// /*ImGuiTableFlags_Borders | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable |*/ ImGuiTableFlags_SizingStretchProp | ImGuiTableFlags_RowBg
-	if (ImGui::BeginTable("Project entries", COLUMNS_COUNT, ImGuiTableFlags_Borders))
+	if (ImGui::BeginTable("Project entries", COLUMNS_COUNT, ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_PreciseWidths))
 	{
-		float initialWidth = ImGui::GetContentRegionAvailWidth();
+		float initialWidth = ImGui::GetContentRegionAvailWidth() - 80;
 		ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_NoResize | ImGuiTableColumnFlags_NoReorder | ImGuiTableColumnFlags_WidthFixed, initialWidth * 0.2);
 		ImGui::TableSetupColumn("Path", ImGuiTableColumnFlags_NoResize | ImGuiTableColumnFlags_NoReorder | ImGuiTableColumnFlags_WidthFixed, initialWidth * 0.4);
-		ImGui::TableSetupColumn("Last opened", ImGuiTableColumnFlags_NoResize | ImGuiTableColumnFlags_NoReorder | ImGuiTableColumnFlags_WidthFixed, initialWidth * 0.2);
-		ImGui::TableSetupColumn("API", ImGuiTableColumnFlags_NoResize | ImGuiTableColumnFlags_NoReorder | ImGuiTableColumnFlags_WidthFixed, initialWidth * 0.2);
+		ImGui::TableSetupColumn("Last opened", ImGuiTableColumnFlags_NoResize | ImGuiTableColumnFlags_NoReorder | ImGuiTableColumnFlags_WidthFixed, initialWidth * 0.3);
+		ImGui::TableSetupColumn("API", ImGuiTableColumnFlags_NoResize | ImGuiTableColumnFlags_NoReorder | ImGuiTableColumnFlags_WidthFixed, initialWidth * 0.1);
 		//ImGui::Columns(4);
 		//ImGui::SetColumnWidth(-1, 50);
 
