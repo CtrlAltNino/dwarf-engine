@@ -236,8 +236,8 @@ void ProjectLauncher::RenderProjectList(int fWidth, int fHeight) {
 		float initialWidth = ImGui::GetContentRegionAvailWidth() - 80;
 		ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_NoResize | ImGuiTableColumnFlags_NoReorder | ImGuiTableColumnFlags_WidthFixed, initialWidth * 0.2);
 		ImGui::TableSetupColumn("Path", ImGuiTableColumnFlags_NoResize | ImGuiTableColumnFlags_NoReorder | ImGuiTableColumnFlags_WidthFixed, initialWidth * 0.4);
-		ImGui::TableSetupColumn("Last opened", ImGuiTableColumnFlags_NoResize | ImGuiTableColumnFlags_NoReorder | ImGuiTableColumnFlags_WidthFixed, initialWidth * 0.3);
-		ImGui::TableSetupColumn("API", ImGuiTableColumnFlags_NoResize | ImGuiTableColumnFlags_NoReorder | ImGuiTableColumnFlags_WidthFixed, initialWidth * 0.1);
+		ImGui::TableSetupColumn("Last opened", ImGuiTableColumnFlags_NoResize | ImGuiTableColumnFlags_NoReorder | ImGuiTableColumnFlags_WidthFixed, initialWidth * 0.25);
+		ImGui::TableSetupColumn("API", ImGuiTableColumnFlags_NoResize | ImGuiTableColumnFlags_NoReorder | ImGuiTableColumnFlags_WidthFixed, initialWidth * 0.15);
 		//ImGui::Columns(4);
 		//ImGui::SetColumnWidth(-1, 50);
 
