@@ -73,7 +73,7 @@ ProjectReturnData ProjectLauncher::Run() {
 	if ((state == ProjectChooserState::Done) && !projectList.empty() && projectList.size() > selectedProjectId) {
 		projectData.name = projectList[selectedProjectId].name;
 		projectData.path = projectList[selectedProjectId].path;
-		projectData.renderingApi = (RenderingApi)projectList[selectedProjectId].renderingApi;
+		projectData.graphicsApi = (GraphicsApi)projectList[selectedProjectId].graphicsApi;
 		projectList[selectedProjectId].lastOpened = time(0);
 		SaveProjectList();
 	}
@@ -171,14 +171,14 @@ void ProjectLauncher::Render() {
 		state = ProjectChooserState::Choosing;
 		ImGui::OpenPopup("Create new project");
 	}
-	else if (state == ProjectChooserState::ChangeRenderingApi) {
+	else if (state == ProjectChooserState::ChangeGraphicsApi) {
 		state = ProjectChooserState::Choosing;
-		ImGui::OpenPopup("Change rendering API");
+		ImGui::OpenPopup("Change Graphics API");
 	}
 
 	RenderProjectNotFoundModal();
 	RenderCreateNewProjectModal();
-	RenderChangeRenderingApiModal();
+	RenderChangeGraphicsApiModal();
 
 	//if (state == ProjectChooserState::ProjectNotFound) {
 	//	RenderProjectNotFoundModal();
@@ -360,7 +360,7 @@ void ProjectLauncher::RenderProjectList(int fWidth, int fHeight) {
 					break;
 				}
 				case 3:
-					cellText = apiStrings[projectList[row].renderingApi];
+					cellText = graphicsApiNames[projectList[row].graphicsApi];
 					break;
 				}
 
@@ -420,11 +420,8 @@ void ProjectLauncher::RenderProjectList(int fWidth, int fHeight) {
 							if (ImGui::IsItemHovered())
 								ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
 
-							if (ImGui::Button("Change rendering API", ImVec2(ImGui::GetContentRegionAvailWidth(), 0))) {
-								// Change rendering API
-								// Open Popup modal with dropdown
-								//ImGui::OpenPopup("Change rendering API");
-								state = ProjectChooserState::ChangeRenderingApi;
+							if (ImGui::Button("Change Graphics API", ImVec2(ImGui::GetContentRegionAvailWidth(), 0))) {
+								state = ProjectChooserState::ChangeGraphicsApi;
 								selectedProjectId = row;
 
 								ImGui::CloseCurrentPopup();
@@ -689,7 +686,7 @@ void ProjectLauncher::RenderBottomInformation(int fWidth, int fHeight) {
 	ImGui::PopFont();
 }
 
-void ProjectLauncher::RenderChangeRenderingApiModal() {
+void ProjectLauncher::RenderChangeGraphicsApiModal() {
 	// Centering Modal
 	ImVec2 center = ImGui::GetMainViewport()->GetCenter();
 	ImGui::SetNextWindowPos(center, ImGuiCond_Always, ImVec2(0.5f, 0.5f));
@@ -710,14 +707,15 @@ void ProjectLauncher::RenderChangeRenderingApiModal() {
 	ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 10));
 
 	// ==================== Popup Modal ====================
-	if (ImGui::BeginPopupModal("Change rendering API", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove)) {
+	if (ImGui::BeginPopupModal("Change Graphics API", NULL, ImGuiWindowFlags_AlwaysAutoResize | ImGuiWindowFlags_NoMove)) {
 		ImGui::PushFont(textFont);
 		// ==================== Information Text ====================
-		ImGui::Text("You are about to change the rendering API of a project. This can\nbreak the project.\n\nIf this is to happen, you can safely revert back to the previous\nrendering API.\
-			\n\nIt is advised to first make sure that:\
-			\n- Custom shaders have an equivelant to the selected rendering API\
-			\n- Used plugins are compatible with the selected rendering API\
-			\n- Added source code is compatible with the selected rendering API");
+		ImGui::Text("You are about to change the graphics API of a project.\nThis can break the project.\n\
+			\n\nIf you project becomes unable to launch, you can safely revert back\nto the previous graphics API.\
+			\n\nPlease make sure that:\
+			\n- Custom shaders have an equivelant to the selected graphics API\
+			\n- Used plugins are compatible with the graphics API you choose\
+			\n- Added source code supports the graphics API");
 
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
 
@@ -730,12 +728,12 @@ void ProjectLauncher::RenderChangeRenderingApiModal() {
 
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
 
-		static int currentApiIndex = (int)projectList[selectedProjectId].renderingApi;
-		// ==================== Rendering API Selection Dropdown ====================
+		static int currentApiIndex = (int)projectList[selectedProjectId].graphicsApi;
+		// ==================== Graphics API Selection Dropdown ====================
 		{
-			// Rendering Title
+			// Graphics Title
 			ImGui::PushFont(headerFont);
-			ImGui::Text("Rendering API");
+			ImGui::Text("Graphics API");
 			ImGui::PopFont();
 
 			//ImGui::Separator();
@@ -765,7 +763,7 @@ void ProjectLauncher::RenderChangeRenderingApiModal() {
 			// Coloring the combo popup background
 			ImGui::PushStyleColor(ImGuiCol_PopupBg, IM_COL32(46, 52, 64, 255));
 
-			if (ImGui::BeginCombo("##renderingApi", combo_preview_value)) {
+			if (ImGui::BeginCombo("##graphicsApi", combo_preview_value)) {
 				ImDrawList* draw_list = ImGui::GetWindowDrawList();
 
 				// Looping through all the combo entries
@@ -786,7 +784,7 @@ void ProjectLauncher::RenderChangeRenderingApiModal() {
 
 					ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 
-					// ==================== Rendering Selectable ====================
+					// ==================== Graphics Selectable ====================
 					if (ImGui::Selectable(apis[n], is_selected, 0, ImVec2(0, 16 + 10))) {
 						currentApiIndex = n;
 					}
@@ -845,7 +843,7 @@ void ProjectLauncher::RenderChangeRenderingApiModal() {
 		
 		// ==================== Apply Button ====================
 		if (ImGui::Button("Apply", ImVec2(ImGui::GetContentRegionAvailWidth() / 2 - 10, 0))) {
-			ChangeRenderingApi(selectedProjectId, (RenderingApi)currentApiIndex);
+			ChangeGraphicsApi(selectedProjectId, (GraphicsApi)currentApiIndex);
 			ImGui::CloseCurrentPopup();
 		}
 
@@ -879,7 +877,7 @@ void ProjectLauncher::RenderChangeRenderingApiModal() {
 	ImGui::PopStyleColor(3);
 }
 
-void ProjectLauncher::ChangeRenderingApi(int id, RenderingApi api) {
+void ProjectLauncher::ChangeGraphicsApi(int id, GraphicsApi api) {
 	//ProjectInformation info = ExtractProjectInformation(projectList[id].path.c_str());
 	std::string projectSettingsPath = (projectList[id].path + "/projectSettings.sproj").c_str();
 	size_t pos;
@@ -894,12 +892,12 @@ void ProjectLauncher::ChangeRenderingApi(int id, RenderingApi api) {
 
 		if (!fileContent.empty()) {
 			nlohmann::json jsonObject = nlohmann::json::parse(fileContent);
-			if (jsonObject["projectInformation"]["renderingApi"] != (int)api) {
-				jsonObject["projectInformation"]["renderingApi"] = (int)api;
+			if (jsonObject["projectInformation"]["graphicsApi"] != (int)api) {
+				jsonObject["projectInformation"]["graphicsApi"] = (int)api;
 
 				std::string newFileContent = jsonObject.dump(4);
 				FileHandler::writeToFile(projectSettingsPath.c_str(), newFileContent);
-				projectList[selectedProjectId].renderingApi = (int)api;
+				projectList[selectedProjectId].graphicsApi = (int)api;
 				SaveProjectList();
 			}
 		}
@@ -1253,11 +1251,11 @@ void ProjectLauncher::RenderCreateNewProjectModal() {
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
 
 		static int currentApiIndex = 0;
-		// ==================== Rendering API Selection Dropdown ====================
+		// ==================== Graphics API Selection Dropdown ====================
 		{
-			// Rendering Title
+			// Graphics Title
 			ImGui::PushFont(headerFont);
-			ImGui::Text("Rendering API");
+			ImGui::Text("Graphics API");
 			ImGui::PopFont();
 			
 			//ImGui::Separator();
@@ -1287,7 +1285,7 @@ void ProjectLauncher::RenderCreateNewProjectModal() {
 			// Coloring the combo popup background
 			ImGui::PushStyleColor(ImGuiCol_PopupBg, IM_COL32(46, 52, 64, 255));
 
-			if (ImGui::BeginCombo("##renderingApi", combo_preview_value)) {
+			if (ImGui::BeginCombo("##graphicsApi", combo_preview_value)) {
 				ImDrawList* draw_list = ImGui::GetWindowDrawList();
 				
 				// Looping through all the combo entries
@@ -1375,7 +1373,7 @@ void ProjectLauncher::RenderCreateNewProjectModal() {
 				// If using a template, copy the corresponding files
 				// Add project to saved project list
 				// Launch project after creating, or just close the popup?
-				CreateProject(newProjectName, newProjectPath.c_str(), (RenderingApi)currentApiIndex, (ProjectTemplate)currentTemplateIndex);
+				CreateProject(newProjectName, newProjectPath.c_str(), (GraphicsApi)currentApiIndex, (ProjectTemplate)currentTemplateIndex);
 				
 				strcpy_s(newProjectName, "");
 				newProjectPath = defaultProjectPath;
@@ -1509,8 +1507,8 @@ void ProjectLauncher::LoadProjectList() {
 					projectToAdd.lastOpened = jsonObject["projects"][i]["lastOpened"];
 				}
 
-				if (jsonObject["projects"][i].contains("renderingApi")) {
-					projectToAdd.renderingApi = jsonObject["projects"][i]["renderingApi"];
+				if (jsonObject["projects"][i].contains("graphicsApi")) {
+					projectToAdd.graphicsApi = jsonObject["projects"][i]["graphicsApi"];
 				}
 
 				projectList.push_back({
@@ -1535,7 +1533,7 @@ void ProjectLauncher::SaveProjectList() {
 		jsonObject["projects"][i]["name"] = projectList[i].name;
 		jsonObject["projects"][i]["path"] = projectList[i].path;
 		jsonObject["projects"][i]["lastOpened"] = projectList[i].lastOpened;
-		jsonObject["projects"][i]["renderingApi"] = projectList[i].renderingApi;
+		jsonObject["projects"][i]["graphicsApi"] = projectList[i].graphicsApi;
 	}
 
 	std::string fileContent = jsonObject.dump(4);
@@ -1560,7 +1558,7 @@ ProjectInformation ProjectLauncher::ExtractProjectInformation(const char* path) 
 		if (jsonObject.contains("projectInformation")) {
 			foundInfo.name = jsonObject["projectInformation"]["projectName"];
 			foundInfo.path = path;
-			foundInfo.renderingApi = jsonObject["projectInformation"]["renderingApi"];
+			foundInfo.graphicsApi = jsonObject["projectInformation"]["graphicsApi"];
 			foundInfo.lastOpened = -1;
 		}
 	}
@@ -1568,7 +1566,7 @@ ProjectInformation ProjectLauncher::ExtractProjectInformation(const char* path) 
 	return foundInfo;
 }
 
-int ProjectLauncher::CreateProject(const char* projectName, const char* projectPath, RenderingApi renderingApi, ProjectTemplate projectTemplate) {
+int ProjectLauncher::CreateProject(const char* projectName, const char* projectPath, GraphicsApi graphicsApi, ProjectTemplate projectTemplate) {
 	std::string projectDirectory = std::string(projectPath) + "/" + projectName;
 	if (!FileHandler::checkIfDirectoyExists(projectDirectory)) {
 		std::string projectSettingsPath = (std::string(projectPath) + "/" + projectName + "/projectSettings.sproj").c_str();
@@ -1582,7 +1580,7 @@ int ProjectLauncher::CreateProject(const char* projectName, const char* projectP
 			if (projectTemplate == ProjectTemplate::Blank) {
 				nlohmann::json jsonObject;
 				jsonObject["projectInformation"]["projectName"] = projectName;
-				jsonObject["projectInformation"]["renderingApi"] = (int)renderingApi;
+				jsonObject["projectInformation"]["graphicsApi"] = (int)graphicsApi;
 
 				std::string fileContent = jsonObject.dump(4);
 				FileHandler::writeToFile((std::string(projectPath) + "/" + projectName + "/projectSettings.sproj").c_str(), fileContent);
@@ -1597,17 +1595,17 @@ int ProjectLauncher::CreateProject(const char* projectName, const char* projectP
 					break;
 				}
 
-				switch (renderingApi) {
-				case RenderingApi::OpenGL:
+				switch (graphicsApi) {
+				case GraphicsApi::OpenGL:
 					templateApiDirectory = "opengl";
 					break;
-				case RenderingApi::DirectX11:
+				case GraphicsApi::DirectX11:
 					templateApiDirectory = "dx11";
 					break;
-				case RenderingApi::DirectX12:
+				case GraphicsApi::DirectX12:
 					templateApiDirectory = "dx12";
 					break;
-				case RenderingApi::Vulkan:
+				case GraphicsApi::Vulkan:
 					templateApiDirectory = "vulkan";
 					break;
 				}
@@ -1649,7 +1647,7 @@ int ProjectLauncher::CreateProject(const char* projectName, const char* projectP
 			newProjectInformation.name = projectName;
 			newProjectInformation.path = projectDirectory;
 			newProjectInformation.lastOpened = -1;
-			newProjectInformation.renderingApi = (int)renderingApi;
+			newProjectInformation.graphicsApi = (int)graphicsApi;
 
 			AddProjectToList(newProjectInformation);
 
@@ -1716,11 +1714,11 @@ bool projectDateReverseComparator(ProjectInformation p1, ProjectInformation p2) 
 }
 
 bool projectApiComparator(ProjectInformation p1, ProjectInformation p2) {
-	return p1.renderingApi > p2.renderingApi;
+	return p1.graphicsApi > p2.graphicsApi;
 }
 
 bool projectApiReverseComparator(ProjectInformation p1, ProjectInformation p2) {
-	return p1.renderingApi < p2.renderingApi;
+	return p1.graphicsApi < p2.graphicsApi;
 }
 
 void ProjectLauncher::SortProjectList() {

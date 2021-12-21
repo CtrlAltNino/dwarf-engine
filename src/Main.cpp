@@ -551,20 +551,20 @@ int OpenProjectInOpenGL(std::string path) {
 	return 0;
 }
 
-int OpenProject(std::string path, RenderingApi api) {
+int OpenProject(std::string path, GraphicsApi api) {
 	int returnCode = 0;
 	
 	switch (api) {
-	case RenderingApi::OpenGL:
+	case GraphicsApi::OpenGL:
 		returnCode = OpenProjectInOpenGL(path);
 		break;
-	case RenderingApi::DirectX11:
+	case GraphicsApi::DirectX11:
 		std::cout << "Couldn't open project: DirectX 11 is not yet supported!";
 		break;
-	case RenderingApi::DirectX12:
+	case GraphicsApi::DirectX12:
 		std::cout << "Couldn't open project: DirectX 12 is not yet supported!";
 		break;
-	case RenderingApi::Vulkan:
+	case GraphicsApi::Vulkan:
 		std::cout << "Couldn't open project: Vulkan is not yet supported!";
 		break;
 	}
@@ -578,7 +578,7 @@ int main() {
 	ProjectReturnData projectData = chooser.Run();
 
 	if ((projectData.name != "") && (projectData.path != "")) {
-		returnCode = OpenProject(projectData.path, projectData.renderingApi);
+		returnCode = OpenProject(projectData.path, projectData.graphicsApi);
 	}
 	else {
 		//std::cout << "Not opening any project!" << std::endl;

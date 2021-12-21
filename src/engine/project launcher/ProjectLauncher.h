@@ -26,22 +26,22 @@
 #include"../../utilities/FileHandler.h";
 #include"../data structures/Texture.h";
 
-enum class ProjectChooserState {Choosing, Done, ProjectNotFound, CreateNewProject, ChangeRenderingApi, Canceled};
-enum class RenderingApi {OpenGL, DirectX11, DirectX12, Vulkan};
+enum class ProjectChooserState {Choosing, Done, ProjectNotFound, CreateNewProject, ChangeGraphicsApi, Canceled};
+enum class GraphicsApi {OpenGL, DirectX11, DirectX12, Vulkan};
 enum class ProjectSortOrder {Name, NameReverse, Date, DateReverse, Api, ApiReverse};
 enum class ProjectTemplate {Blank, Demo1};
 
 struct ProjectReturnData {
 	std::string name;
 	std::string path;
-	RenderingApi renderingApi;
+	GraphicsApi graphicsApi;
 };
 
 struct ProjectInformation {
 	std::string name;
 	std::string path;
 	int lastOpened;
-	int renderingApi;
+	int graphicsApi;
 };
 
 struct WindowInformation {
@@ -58,7 +58,6 @@ private:
 	ProjectChooserState state = ProjectChooserState::Choosing;
 	ImFont* headerFont;
 	ImFont* textFont;
-	//RenderingApi selectedApi = RenderingApi::OpenGL;
 	ProjectSortOrder sortOrder = ProjectSortOrder::Date;
 	std::string defaultProjectPath;
 	Texture* githubIcon;
@@ -81,14 +80,14 @@ private:
 	void RenderBottomInformation(int fWidth, int fHeight);
 	void RenderProjectNotFoundModal();
 	void RenderCreateNewProjectModal();
-	void RenderChangeRenderingApiModal();
-	void ChangeRenderingApi(int id, RenderingApi api);
+	void RenderChangeGraphicsApiModal();
+	void ChangeGraphicsApi(int id, GraphicsApi api);
 	void SortProjectList();
 	void UpdateSortOrder(int columnId);
 	void InitProjectLauncher();
 	ProjectInformation ExtractProjectInformation(const char* path);
-	int CreateProject(const char* projectName, const char* projectPath, RenderingApi renderingApi, ProjectTemplate projectTemplate);
+	int CreateProject(const char* projectName, const char* projectPath, GraphicsApi graphicsApi, ProjectTemplate projectTemplate);
 public:
-	const char* apiStrings[4] = { "OpenGL", "DirectX 11", "DirectX 12", "Vulkan" };
+	const char* graphicsApiNames[4] = { "OpenGL", "DirectX 11", "DirectX 12", "Vulkan" };
 	ProjectReturnData Run();
 };
