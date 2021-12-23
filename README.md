@@ -47,35 +47,38 @@ In S3DE, you will never be forced to use an abstract layer to access functionali
 
 S3DE is not providing tutorials for how to implement certain features or writing shaders, merely details on how the shipped features have been implemented (through documentation and the code itself). If you are for example just starting out with shader programming, you can use S3DE as a way to quickly try out and visualize these in any graphics API you want. Drop in your shaders, models and textures (or use existing ones) and directly see your creation. Changes in your shader will then be applied in real time.
 
-### Planned Features
+### Features
 
+- <u>Workflow:</u>
+  - S3DE relies on a project based workflow, which you can manage with the project launcher
+  - Per project you manage various assets (textures, models, shaders, etc...), plugins and scenes
+  - The possibility to use scenes enables the reuse of assets for different purposes as you can set a lot of settings on a per scene basis
 - <u>General Engine Features:</u>
   - Saving and loading of S3DE projects
   - GUI that reflects the state of the scene
-  - Improved management of models
-  - Runtime import of ressources (models, textures, shaders)
-  - Animation System
-  - Multi Threading
+  - Runtime import of resources (models, textures, shaders)
+  - Support for various model files
+  - Animation support
+  - Multi threading
   - Framerate limiting
+  - Window settings (windowed, fullscreen, borderless)
   - VSync
-
 - <u>Basic Rendering Features:</u>
-  - Full implementation of Forward, Deffered, and Forward+ Rendering
-  - Transparency Sorting
-  - Modularity that allows to quickly integrate new Post Processing Effects
-  - Fog System
-  - Motion Vectors
-  - Depth Buffer
-
+  - Full implementation of forward, deffered, and forward+ rendering
+  - Transparency sorting
+  - Modularity that allows to quickly integrate new post processing effects
+  - Basic depth based fog system
+  - Motion vectors
+  - Depth buffer
 - <u>Advanced Graphical Features:</u>
-  - Particle Effect System
-  - Anti Aliasing Implementations (MSAA, FXAA, TAA)
-  - Shadow Mapping
-  - Light Mapping
-  - Reflection Probes
-  - Depth of Field
-  - Motion Blur (Camera based and Object based)
-  - Chromatic Aberration
-  - Screen Space Reflections
-  - Subsurface Scattering
-  - More Advanced Lighting Models
+  - Particle effect system
+  - Anti aliasing implementations (MSAA, FXAA, TAA)
+  - Shadow mapping
+  - Light mapping
+  - Reflection probes
+  - Depth of field
+  - Motion blur (Camera based and object based)
+  - Chromatic aberration
+  - Screen space reflections
+  - Subsurface scattering
+  - More advanced lighting models
