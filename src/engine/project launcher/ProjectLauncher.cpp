@@ -524,10 +524,10 @@ void ProjectLauncher::RenderButtons(int fWidth, int fHeight) {
 		return;
 	}
 
-	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 10));
 	ImGui::PushFont(headerFont);
 	ImGui::Text("Add Project");
 	ImGui::PopFont();
+	ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 6);
 	ImGui::Separator();
 	ImGui::PushFont(textFont);
 	/*if (ImGui::Button("Open project", ImVec2(ImGui::GetContentRegionAvail().x, 75)) && (selectedProjectId != -1)) {
@@ -537,6 +537,9 @@ void ProjectLauncher::RenderButtons(int fWidth, int fHeight) {
 	ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(86 / 255.0, 95 / 255.0, 114 / 255.0, 1));
 	ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(129 / 255.0, 161 / 255.0, 193 / 255.0, 1));
 	ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 10);
+
+	ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+	
 	if (ImGui::Button("Create new project", ImVec2(ImGui::GetContentRegionAvail().x, 75))) {
 		// TODO Open modal for creating a new project
 		state = ProjectChooserState::CreateNewProject;
@@ -552,7 +555,8 @@ void ProjectLauncher::RenderButtons(int fWidth, int fHeight) {
 		DeleteProjectFromList(selectedProjectId);
 	}*/
 
-	ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 20));
+	ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+	
 	if (ImGui::Button("Add existing project", ImVec2(ImGui::GetContentRegionAvail().x, 75))) {
 		AddProject();
 	}
@@ -561,7 +565,39 @@ void ProjectLauncher::RenderButtons(int fWidth, int fHeight) {
 		ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
 	}
 
-	ImGui::PopStyleVar(3);
+	ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 15);
+
+	ImGui::PushFont(headerFont);
+	ImGui::Text("Options");
+	ImGui::PopFont();
+	ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 6);
+	ImGui::Separator();
+	ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+	
+	if (ImGui::Button("Manage plugins", ImVec2(ImGui::GetContentRegionAvail().x, 75))) {
+		// Open plugin manager modal
+		// Contains list of plugins that are present and their state (working, not working, warnings)
+		// Add plugin button
+		// Button to open up the plugin folder
+		// Activating and deactivating plugins happens on a project level
+	}
+
+	if (ImGui::IsItemHovered()) {
+		ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+	}
+	
+	ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+
+	if (ImGui::Button("Settings", ImVec2(ImGui::GetContentRegionAvail().x, 75))) {
+		// Open settings modal
+		// Manage settings for the launcher and general engine settings?
+	}
+
+	if (ImGui::IsItemHovered()) {
+		ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+	}
+
+	ImGui::PopStyleVar(1);
 	ImGui::PopStyleColor(5);
 	ImGui::PopFont();
 	ImGui::End();
