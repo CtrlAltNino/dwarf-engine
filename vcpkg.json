@@ -15,7 +15,8 @@
             "default-features": false,
             "features": [
                 "glfw-binding",
-                "opengl3-binding"
+                "opengl3-binding",
+                "experimental-docking"
             ]
         },
         {
