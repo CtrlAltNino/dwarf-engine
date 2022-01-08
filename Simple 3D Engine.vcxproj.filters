@@ -147,10 +147,10 @@
     <CopyFileToFolders Include="data\engine\img\icons\icon.png">
       <Filter>Resource Files</Filter>
     </CopyFileToFolders>
-    <CopyFileToFolders Include="data\engine\shaders\default\default.frag" />
-    <CopyFileToFolders Include="data\engine\shaders\default\default.vert" />
-    <CopyFileToFolders Include="data\engine\shaders\grid\grid.frag" />
-    <CopyFileToFolders Include="data\engine\shaders\grid\grid.vert" />
+    <CopyFileToFolders Include="data\engine\shaders\default\opengl\default.frag" />
+    <CopyFileToFolders Include="data\engine\shaders\default\opengl\default.vert" />
+    <CopyFileToFolders Include="data\engine\shaders\grid\opengl\grid.frag" />
+    <CopyFileToFolders Include="data\engine\shaders\grid\opengl\grid.vert" />
     <CopyFileToFolders Include="data\engine\fonts\Roboto-Light.ttf" />
     <CopyFileToFolders Include="data\engine\fonts\Roboto-Regular.ttf" />
     <CopyFileToFolders Include="data\engine\fonts\Roboto-Thin.ttf" />
@@ -199,5 +199,7 @@
     <CopyFileToFolders Include="data\engine\img\icons\patreon.png">
       <Filter>Resource Files</Filter>
     </CopyFileToFolders>
+    <CopyFileToFolders Include="data\engine\shaders\error\opengl\error.frag" />
+    <CopyFileToFolders Include="data\engine\shaders\error\opengl\error.vert" />
   </ItemGroup>
 </Project>
