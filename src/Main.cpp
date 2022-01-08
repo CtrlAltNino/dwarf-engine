@@ -10,9 +10,10 @@
 #include<glm/glm.hpp>
 #include<glm/gtc/matrix_transform.hpp>
 #include<stb_image.h>
-#include<imgui.h>
+//#include<imgui.h>
 #include<imgui_impl_glfw.h>
 #include<imgui_impl_opengl3.h>
+#include<imgui_internal.h>
 
 // engine related
 #include"engine/rendering/BasicMaterial.h"
@@ -59,7 +60,7 @@ void window_focus_callback(GLFWwindow* window, int focused)
 void InitScene(Scene* scene) {
 	Scene& testScene = *(Scene*)scene;
 	// Creating Objects
-	BasicMaterial cubeMat = BasicMaterial("data/engine/shaders/default");
+	BasicMaterial cubeMat = BasicMaterial("data/engine/shaders/opengl/default");
 	cubeMat.setAlbedoMap((projectPath + "/Assets/textures/popcat.jpg").c_str());
 	cubeMat.settings.cullMode = GL_BACK;
 	cubeMat.settings.cullFaces = true;
@@ -70,7 +71,7 @@ void InitScene(Scene* scene) {
 	//cube.active = false;
 	testScene.sceneObjects.push_back(cube);
 	
-	BasicMaterial monkeyMat = BasicMaterial("data/engine/shaders/default");
+	BasicMaterial monkeyMat = BasicMaterial("data/engine/shaders/opengl/error");
 	monkeyMat.settings.cullFaces = true;
 	monkeyMat.settings.cullMode = GL_BACK;
 	monkeyMat.setColor(1, 0, 1, 1);
@@ -80,7 +81,7 @@ void InitScene(Scene* scene) {
 	//monkey.active = false;
 	testScene.sceneObjects.push_back(monkey);
 
-	BasicMaterial r2d2Mat = BasicMaterial("data/engine/shaders/default");
+	BasicMaterial r2d2Mat = BasicMaterial("data/engine/shaders/opengl/default");
 	r2d2Mat.settings.cullFaces = true;
 	r2d2Mat.settings.cullMode = GL_BACK;
 	r2d2Mat.settings.shininess = 20;
@@ -94,7 +95,7 @@ void InitScene(Scene* scene) {
 	r2d2.transform.setScale(glm::vec3(0.3, 0.3, 0.3));
 	testScene.sceneObjects.push_back(r2d2);
 
-	BasicMaterial sfMat = BasicMaterial("data/engine/shaders/default");
+	BasicMaterial sfMat = BasicMaterial("data/engine/shaders/opengl/default");
 	sfMat.settings.cullFaces = true;
 	sfMat.settings.cullMode = GL_BACK;
 	sfMat.settings.shininess = 20;
@@ -108,7 +109,7 @@ void InitScene(Scene* scene) {
 	sf.transform.setScale(glm::vec3(2, 2, 2));
 	testScene.sceneObjects.push_back(sf);
 
-	BasicMaterial gridMat = BasicMaterial("data/engine/shaders/grid");
+	BasicMaterial gridMat = BasicMaterial("data/engine/shaders/opengl/grid");
 	gridMat.settings.isTransparent = true;
 	gridMat.settings.cullMode = GL_BACK;
 	gridMat.settings.cullFaces = false;
@@ -425,9 +426,12 @@ int OpenProjectInOpenGL(std::string path) {
 
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
+	
+	io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 	ImGui_ImplGlfw_InitForOpenGL(window, true);
 	ImGui::StyleColorsDark();
 	ImGui_ImplOpenGL3_Init("#version 130");
+
 
 	io.ConfigWindowsResizeFromEdges = false;
 
@@ -458,8 +462,10 @@ int OpenProjectInOpenGL(std::string path) {
 		ImGui_ImplGlfw_NewFrame();
 		ImGui::NewFrame();
 		//ImGui::ShowDemoWindow();
-		DrawMainMenu();
-		DrawEditorSettings(window, _monitor, mode);
+		//ImGui::ShowDock
+		//DrawMainMenu();
+		//DrawEditorSettings(window, _monitor, mode);
+		ImGui::ShowDemoWindow();
 
 		glfwGetWindowSize(window, &width, &height);
 		glViewport(0, 0, width, height);
@@ -524,6 +530,12 @@ int OpenProjectInOpenGL(std::string path) {
 
 		ImGui::Render();
 		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+		if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+		{
+			ImGui::UpdatePlatformWindows();
+			ImGui::RenderPlatformWindowsDefault();
+		}
+
 
 		glfwSwapBuffers(window);
 
@@ -558,10 +570,10 @@ int OpenProject(std::string path, GraphicsApi api) {
 	case GraphicsApi::OpenGL:
 		returnCode = OpenProjectInOpenGL(path);
 		break;
-	case GraphicsApi::DirectX11:
+	case GraphicsApi::D3D11:
 		std::cout << "Couldn't open project: DirectX 11 is not yet supported!";
 		break;
-	case GraphicsApi::DirectX12:
+	case GraphicsApi::D3D12:
 		std::cout << "Couldn't open project: DirectX 12 is not yet supported!";
 		break;
 	case GraphicsApi::Vulkan:

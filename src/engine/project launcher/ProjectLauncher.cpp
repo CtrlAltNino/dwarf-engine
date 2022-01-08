@@ -117,7 +117,7 @@ int ProjectLauncher::InitWindow() {
 	glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
 	glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 	
-	window = glfwCreateWindow(INITIAL_WINDOW_WIDTH, INITIAL_WINDOW_HEIGHT, "Simple 3D Engine - Project Launcher", NULL, NULL);
+	window = glfwCreateWindow(INITIAL_WINDOW_WIDTH, INITIAL_WINDOW_HEIGHT, "Project Launcher", NULL, NULL);
 	if (window == NULL) {
 		std::cout << "Failed to create GLFW window" << std::endl;
 		glfwTerminate();
@@ -385,6 +385,10 @@ void ProjectLauncher::RenderProjectList(int fWidth, int fHeight) {
 					ImGui::Selectable(cellText.c_str(), rowSelected[row], ImGuiSelectableFlags_SpanAllColumns, ImVec2(0, ROW_HEIGHT));
 					ImGui::PopStyleVar(1);
 					ImGui::PopStyleColor(2);
+
+					if (ImGui::IsItemClicked(1)) {
+						selectedProjectId = row;
+					}
 					
 					{
 						ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(5, 5));
@@ -396,7 +400,8 @@ void ProjectLauncher::RenderProjectList(int fWidth, int fHeight) {
 						ImGui::PushStyleColor(ImGuiCol_ButtonActive, IM_COL32(115, 148, 188, 255));
 						ImGui::PushStyleColor(ImGuiCol_PopupBg, IM_COL32(76, 86, 106, 255));
 						ImGui::SetNextWindowSize(ImVec2(0, 0));
-						if (ImGui::BeginPopupContextItem("Project options")) // <-- use last item id as popup id
+						//std::cout << "Selected Project ID: " << selectedProjectId << " | row: " << row << std::endl;
+						if ((selectedProjectId == row) && ImGui::BeginPopupContextItem("Project options")) // <-- use last item id as popup id
 						{
 							//ImGui::Text("This a popup for \"%s\"!", names[n]);
 							if (ImGui::Button("Open in file browser", ImVec2(ImGui::GetContentRegionAvailWidth(), 0))) {
@@ -451,6 +456,7 @@ void ProjectLauncher::RenderProjectList(int fWidth, int fHeight) {
 					}
 
 					if (ImGui::IsItemClicked()) {
+						std::cout << "rightclick" << std::endl;
 						selectedProjectId = row;
 						if (FileHandler::checkIfFileExists((projectList[row].path + "/projectSettings.sproj").c_str())) {
 							state = ProjectChooserState::Done;
@@ -627,7 +633,7 @@ void ProjectLauncher::RenderBottomInformation(int fWidth, int fHeight) {
 	}
 
 	ImGui::Text("An open source project created by flash-miller");
-	const char* versionText = "S3DE - version 2022.0a1";
+	const char* versionText = "early development version";
 	float textWidth = ImGui::CalcTextSize(versionText, (const char*)0, false).x;
 
 
@@ -777,7 +783,7 @@ void ProjectLauncher::RenderChangeGraphicsApiModal() {
 			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvailWidth() - 150);
 
 			// Setting up combo
-			const char* apis[] = { "OpenGL", "DirectX 11", "DirectX 12", "Vulkan" };
+			const char* apis[] = { "OpenGL", "Direct3D 11", "Direct3D 12", "Vulkan" };
 			const char* combo_preview_value = apis[currentApiIndex];
 
 			ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth());
@@ -1299,7 +1305,7 @@ void ProjectLauncher::RenderCreateNewProjectModal() {
 			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvailWidth() - 150);
 
 			// Setting up combo
-			const char* apis[] = { "OpenGL", "DirectX 11", "DirectX 12", "Vulkan" };
+			const char* apis[] = { "OpenGL", "Direct3D 11", "Direct3D 12", "Vulkan" };
 			const char* combo_preview_value = apis[currentApiIndex];
 			
 			ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth());
@@ -1635,10 +1641,10 @@ int ProjectLauncher::CreateProject(const char* projectName, const char* projectP
 				case GraphicsApi::OpenGL:
 					templateApiDirectory = "opengl";
 					break;
-				case GraphicsApi::DirectX11:
+				case GraphicsApi::D3D11:
 					templateApiDirectory = "dx11";
 					break;
-				case GraphicsApi::DirectX12:
+				case GraphicsApi::D3D12:
 					templateApiDirectory = "dx12";
 					break;
 				case GraphicsApi::Vulkan:

@@ -27,7 +27,7 @@
 #include"../data structures/Texture.h";
 
 enum class ProjectChooserState {Choosing, Done, ProjectNotFound, CreateNewProject, ChangeGraphicsApi, Canceled};
-enum class GraphicsApi {OpenGL, DirectX11, DirectX12, Vulkan};
+enum class GraphicsApi {OpenGL, D3D11, D3D12, Vulkan};
 enum class ProjectSortOrder {Name, NameReverse, Date, DateReverse, Api, ApiReverse};
 enum class ProjectTemplate {Blank, Demo1};
 
@@ -88,6 +88,6 @@ private:
 	ProjectInformation ExtractProjectInformation(const char* path);
 	int CreateProject(const char* projectName, const char* projectPath, GraphicsApi graphicsApi, ProjectTemplate projectTemplate);
 public:
-	const char* graphicsApiNames[4] = { "OpenGL", "DirectX 11", "DirectX 12", "Vulkan" };
+	const char* graphicsApiNames[4] = { "OpenGL", "Direct3D 11", "Direct3D 12", "Vulkan" };
 	ProjectReturnData Run();
 };
