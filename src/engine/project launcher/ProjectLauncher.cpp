@@ -824,7 +824,9 @@ void ProjectLauncher::RenderChangeGraphicsApiModal() {
 					draw_list->ChannelsSplit(2);
 					draw_list->ChannelsSetCurrent(1);
 
-					ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+					if (n > 0) {
+						ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+					}
 
 					// ==================== Graphics Selectable ====================
 					if (ImGui::Selectable(apis[n], is_selected, 0, ImVec2(0, 16 + 10))) {
@@ -1202,6 +1204,7 @@ void ProjectLauncher::RenderCreateNewProjectModal() {
 			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 4);
 			ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 4);
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 8));
+			//ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
 			ImGui::PushStyleVar(ImGuiStyleVar_SelectableTextAlign, ImVec2(0.5f, 0.5f));
 			ImGui::PushFont(textFont);
 
@@ -1235,7 +1238,9 @@ void ProjectLauncher::RenderCreateNewProjectModal() {
 					// Now we can draw the text in the foreground, and the colored, rounded rectangle in the background
 					draw_list->ChannelsSplit(2);
 					draw_list->ChannelsSetCurrent(1);
-					ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+					if (n > 0) {
+						ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+					}
 
 					//ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(8, 8));
 					// ==================== Rendering Selectable ====================
@@ -1346,7 +1351,9 @@ void ProjectLauncher::RenderCreateNewProjectModal() {
 					draw_list->ChannelsSplit(2);
 					draw_list->ChannelsSetCurrent(1);
 
-					ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+					if (n > 0) {
+						ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+					}
 
 					// ==================== Rendering Selectable ====================
 					if (ImGui::Selectable(apis[n], is_selected, 0, ImVec2(0, 16 + 10))) {
