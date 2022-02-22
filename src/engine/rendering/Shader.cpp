@@ -25,6 +25,10 @@ Shader::Shader(const char* vertexFile, const char* fragmentFile) {
 	InitializeShader(vertexFile, fragmentFile);
 }
 
+Shader::Shader(vertexShaderName vName, fragmentShaderName fName) {
+	InitializeShader(vName, fName);
+}
+
 void Shader::InitializeShader(const char* vertexFile, const char* fragmentFile) {
 	std::string vertexCode = get_file_contents(vertexFile);
 	std::string fragmentCode = get_file_contents(fragmentFile);
