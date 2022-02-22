@@ -1154,8 +1154,8 @@ void ProjectLauncher::RenderCreateNewProjectModal() {
 
 				// TODO implement file dialog in another thread to not interrupt
 				// TODO rename "open" button to "add project" or something
-				// TODO focus on the opened dialog when trying to return to the project launcher window \
-				(if that is not the default behaviour, finding out when implementing the dialog in another thread)
+				// TODO focus on the opened dialog when trying to return to the project launcher window 
+				//(if that is not the default behaviour, finding out when implementing the dialog in another thread)
 				//nfdresult_t result = NFD_OpenDialog(filter, NULL, &outPath);
 				nfdresult_t result = NFD_PickFolder((const nfdchar_t*)newProjectPath.c_str(), &outPath);
 
@@ -1483,8 +1483,8 @@ void ProjectLauncher::AddProject() {
 
 	// TODO implement file dialog in another thread to not interrupt
 	// TODO rename "open" button to "add project" or something
-	// TODO focus on the opened dialog when trying to return to the project launcher window \
-	(if that is not the default behaviour, finding out when implementing the dialog in another thread)
+	// TODO focus on the opened dialog when trying to return to the project launcher window
+	//(if that is not the default behaviour, finding out when implementing the dialog in another thread)
 	//nfdresult_t result = NFD_OpenDialog(filter, NULL, &outPath);
 	nfdresult_t result = NFD_PickFolder(NULL, &outPath);
 	
@@ -1705,11 +1705,13 @@ int ProjectLauncher::CreateProject(const char* projectName, const char* projectP
 		else {
 			// wtf
 			std::cout << "projectSettings.json already exists at project directory!" << std::endl;
+			return 1;
 		}
 	}
 	else {
 		// Project folder already exists
 		std::cout << "Project folder already exists at: " << (std::string(projectPath) + "/" + projectName) << std::endl;
+		return 2;
 	}
 }
 
