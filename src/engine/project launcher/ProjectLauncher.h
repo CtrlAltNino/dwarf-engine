@@ -7,10 +7,13 @@
 #include<string>
 #include<vector>
 #include<thread>
+
+#ifdef _WIN32
 #include<Windows.h>
 #include<KnownFolders.h>
 #include<ShlObj.h>
 #include<filesystem>
+#endif
 
 // dependencies
 #include<glad/glad.h>
