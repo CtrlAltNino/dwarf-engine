@@ -34,6 +34,11 @@
             "name": "nativefiledialog",
             "default-features": false,
             "platform": "windows & x64 & static"
+        },
+        {
+            "name": "bext-di",
+            "default-features": false,
+            "platform": "windows & x64 & static"
         }
     ]
 }
