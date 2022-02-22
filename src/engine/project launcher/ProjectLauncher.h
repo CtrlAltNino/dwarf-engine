@@ -26,8 +26,8 @@
 #include<ctime>
 #include<nfd.h>
 
-#include"../../utilities/FileHandler.h";
-#include"../data structures/Texture.h";
+#include "../../utilities/FileHandler.h"
+#include "../data structures/Texture.h"
 
 enum class ProjectChooserState {Choosing, Done, ProjectNotFound, CreateNewProject, ChangeGraphicsApi, Canceled};
 enum class GraphicsApi {OpenGL, D3D11, D3D12, Vulkan};
