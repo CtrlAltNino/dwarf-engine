@@ -1,7 +1,7 @@
 {
     "name": "simple-3d-engine",
     "version-string": "0.0.1",
-    "supports": "windows & x64 & static",
+    "supports": "(windows & x64 & static) | (linux & x64 & static) | (osx & x64 & static)",
     "dependencies": [
         "glad",
         {

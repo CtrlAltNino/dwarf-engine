@@ -1,0 +1,10 @@
+target_sources(s3de
+    PRIVATE
+        Color.cpp
+        EBO.cpp
+        Mesh.cpp
+        Quaternion.cpp
+        Texture.cpp
+        VAO.cpp
+        VBO.cpp
+)
