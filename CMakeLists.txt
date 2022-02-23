@@ -20,14 +20,21 @@ IF (WIN32)
     set(APP_ICON_RESOURCE_WINDOWS "${CMAKE_CURRENT_SOURCE_DIR}/app_icon_windows.rc")
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
     set(EXECUTABLE_ADDITIONAL_SETTINGS ${APP_ICON_RESOURCE_WINDOWS})
+    
+    # Hiding the console window in release mode
+    set(CMAKE_EXE_LINKER_FLAGS_RELEASE "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
+    
+    add_executable(s3de "")
 ELSEIF (APPLE)
     set(VCPKG_TARGET_TRIPLET "x64-osx-static")
+    add_executable(s3de "")
 ELSEIF (UNIX AND NOT APPLE)
     set(CMAKE_TOOLCHAIN_FILE "~/Documents/dev/vcpkg/scripts/buildsystems/vcpkg.cmake")
     set(VCPKG_TARGET_TRIPLET "x64-linux")
+    add_executable(s3de "")
 ENDIF()
 
-add_executable(s3de "" ${EXECUTABLE_ADDITIONAL_SETTINGS})
+target_sources(s3de PRIVATE ${EXECUTABLE_ADDITIONAL_SETTINGS})
 
 # Project declaration
 project(Simple3DEngine VERSION 0.0.1)
