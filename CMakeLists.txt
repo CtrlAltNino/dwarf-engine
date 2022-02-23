@@ -9,10 +9,10 @@ ADD_DEFINITIONS(-DUNICODE)
 ADD_DEFINITIONS(-D_UNICODE)
 
 # Need to find a way to make the path to the vcpkg.cmake file dynamic, maybe I can even store it in the repo
-set(CMAKE_TOOLCHAIN_FILE "E:/dev/vcpkg/scripts/buildsystems/vcpkg.cmake")
 
 # Platform dependant settings
 IF (WIN32)
+    set(CMAKE_TOOLCHAIN_FILE "E:/dev/vcpkg/scripts/buildsystems/vcpkg.cmake")
     set(VCPKG_TARGET_TRIPLET "x64-windows-static")
     set(APP_ICON_RESOURCE_WINDOWS "${CMAKE_CURRENT_SOURCE_DIR}/app_icon_windows.rc")
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
@@ -20,7 +20,9 @@ IF (WIN32)
 ELSEIF (APPLE)
     set(VCPKG_TARGET_TRIPLET "x64-osx-static")
 ELSEIF (UNIX AND NOT APPLE)
-    set(VCPKG_TARGET_TRIPLET "x64-linux-static")
+    set(CMAKE_TOOLCHAIN_FILE "~/Documents/dev/vcpkg/scripts/buildsystems/vcpkg.cmake")
+    set(VCPKG_TARGET_TRIPLET "x64-linux")
+    add_executable(s3de "")
 ENDIF()
 
 # Project declaration
