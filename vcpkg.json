@@ -1,13 +1,13 @@
 {
     "name": "simple-3d-engine",
     "version-string": "0.0.1",
-    "supports": "(windows & x64 & static) | (linux & x64 & static) | (osx & x64 & static)",
+    "supports": "(windows & x64 & static) | (linux & x64) | (osx & x64 & static)",
     "dependencies": [
         "glad",
         {
             "name": "glfw3",
             "default-features": false,
-            "platform": "windows & x64 & static"
+            "platform": "(windows & x64 & static) | (linux & x64) | (osx & x64 & static)"
         },
         "glm",
         {
@@ -22,23 +22,23 @@
         {
             "name": "assimp",
             "default-features": false,
-            "platform": "windows & x64 & static"
+            "platform": "(windows & x64 & static) | (linux & x64) | (osx & x64 & static)"
         },
         "stb",
         {
             "name": "nlohmann-json",
             "default-features": false,
-            "platform": "windows & x64 & static"
+            "platform": "(windows & x64 & static) | (linux & x64) | (osx & x64 & static)"
         },
         {
             "name": "nativefiledialog",
             "default-features": false,
-            "platform": "windows & x64 & static"
+            "platform": "(windows & x64 & static) | (linux & x64) | (osx & x64 & static)"
         },
         {
             "name": "bext-di",
             "default-features": false,
-            "platform": "windows & x64 & static"
+            "platform": "(windows & x64 & static) | (linux & x64) | (osx & x64 & static)"
         }
     ]
 }
