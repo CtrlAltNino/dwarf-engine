@@ -594,6 +594,11 @@ int main() {
 	ProjectLauncher chooser = ProjectLauncher();
 	ProjectReturnData projectData = chooser.Run();
 
+	size_t pos;
+	while ((pos = projectData.path.find('\\')) != std::string::npos) {
+		projectData.path.replace(pos, 1, "/");
+	}
+
 	if ((projectData.name != "") && (projectData.path != "")) {
 		returnCode = OpenProject(projectData.path, projectData.graphicsApi);
 	}

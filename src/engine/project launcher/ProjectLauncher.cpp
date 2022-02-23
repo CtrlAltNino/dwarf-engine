@@ -113,14 +113,14 @@ int ProjectLauncher::InitWindow() {
 	// get resolution of monitor
 	GLFWmonitor* _monitor = glfwGetPrimaryMonitor();
 	const GLFWvidmode* mode = glfwGetVideoMode(_monitor);
-	//glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-	//glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
-	//glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	//glfwWindowHint(GLFW_RED_BITS, mode->redBits);
-	//glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
-	//glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
-	//glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
-	//glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	glfwWindowHint(GLFW_RED_BITS, mode->redBits);
+	glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
+	glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
+	glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
+	glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 	
 	window = glfwCreateWindow(INITIAL_WINDOW_WIDTH, INITIAL_WINDOW_HEIGHT, "Project Launcher", NULL, NULL);
 	if (window == NULL) {
@@ -151,8 +151,8 @@ int ProjectLauncher::InitializeIMGUI() {
 	ImGui::StyleColorsDark();
 	ImGui_ImplOpenGL3_Init("#version 130");
 	io.Fonts->AddFontDefault();
-	headerFont = io.Fonts->AddFontFromFileTTF("data\\engine\\fonts\\Roboto-Light.ttf", 26);
-	textFont = io.Fonts->AddFontFromFileTTF("data\\engine\\fonts\\Roboto-Regular.ttf", 15);
+	headerFont = io.Fonts->AddFontFromFileTTF("data/engine/fonts/Roboto-Light.ttf", 26);
+	textFont = io.Fonts->AddFontFromFileTTF("data/engine/fonts/Roboto-Regular.ttf", 15);
 
 	return 0;
 }
@@ -1709,8 +1709,8 @@ int ProjectLauncher::CreateProject(const char* projectName, const char* projectP
 			}
 
 			size_t pos;
-			while ((pos = projectDirectory.find('/')) != std::string::npos) {
-				projectDirectory.replace(pos, 1, "\\");
+			while ((pos = projectDirectory.find('\\')) != std::string::npos) {
+				projectDirectory.replace(pos, 1, "/");
 			}
 
 			ProjectInformation newProjectInformation;
