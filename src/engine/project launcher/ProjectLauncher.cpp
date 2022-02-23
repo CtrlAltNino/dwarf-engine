@@ -6,6 +6,8 @@
 
 std::string GetSettingsPath() {
 	std::string savedProjectsPath = "";
+
+	#if _WIN32
 	static char str[128];
 	
 	// Get Documents directory path
@@ -21,6 +23,7 @@ std::string GetSettingsPath() {
 
 		CoTaskMemFree(path);
 	}
+	#endif
 	
 	if (savedProjectsPath != "") {
 		size_t pos;
@@ -88,6 +91,7 @@ void ProjectLauncher::InitProjectLauncher() {
 	patreonIcon = new Texture("data/engine/img/icons/patreon.png", GL_LINEAR, GL_REPEAT, GL_RGBA, GL_UNSIGNED_BYTE);
 	twitterIcon = new Texture("data/engine/img/icons/twitter.png", GL_LINEAR, GL_REPEAT, GL_RGBA, GL_UNSIGNED_BYTE);
 
+	#if _WIN32
 	static char str[128];
 	{
 		PWSTR path = NULL;
@@ -102,20 +106,21 @@ void ProjectLauncher::InitProjectLauncher() {
 
 		CoTaskMemFree(path);
 	}
+	#endif
 }
 
 int ProjectLauncher::InitWindow() {
 	// get resolution of monitor
 	GLFWmonitor* _monitor = glfwGetPrimaryMonitor();
 	const GLFWvidmode* mode = glfwGetVideoMode(_monitor);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	glfwWindowHint(GLFW_RED_BITS, mode->redBits);
-	glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
-	glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
-	glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
-	glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+	//glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
+	//glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
+	//glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+	//glfwWindowHint(GLFW_RED_BITS, mode->redBits);
+	//glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
+	//glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
+	//glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
+	//glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 	
 	window = glfwCreateWindow(INITIAL_WINDOW_WIDTH, INITIAL_WINDOW_HEIGHT, "Project Launcher", NULL, NULL);
 	if (window == NULL) {
@@ -233,7 +238,8 @@ void ProjectLauncher::RenderProjectList(int fWidth, int fHeight) {
 	// /*ImGuiTableFlags_Borders | ImGuiTableFlags_Reorderable | ImGuiTableFlags_Hideable |*/ ImGuiTableFlags_SizingStretchProp | ImGuiTableFlags_RowBg
 	if (ImGui::BeginTable("Project entries", COLUMNS_COUNT, ImGuiTableFlags_Borders | ImGuiTableFlags_SizingFixedFit | ImGuiTableFlags_PreciseWidths))
 	{
-		float initialWidth = ImGui::GetContentRegionAvailWidth() - 80;
+		
+		float initialWidth = ImGui::GetContentRegionAvail().x - 80;
 		ImGui::TableSetupColumn("Name", ImGuiTableColumnFlags_NoResize | ImGuiTableColumnFlags_NoReorder | ImGuiTableColumnFlags_WidthFixed, initialWidth * 0.2);
 		ImGui::TableSetupColumn("Path", ImGuiTableColumnFlags_NoResize | ImGuiTableColumnFlags_NoReorder | ImGuiTableColumnFlags_WidthFixed, initialWidth * 0.4);
 		ImGui::TableSetupColumn("Last opened", ImGuiTableColumnFlags_NoResize | ImGuiTableColumnFlags_NoReorder | ImGuiTableColumnFlags_WidthFixed, initialWidth * 0.25);
@@ -303,8 +309,10 @@ void ProjectLauncher::RenderProjectList(int fWidth, int fHeight) {
 						time_t currentTime = time(0);
 						struct tm ct;
 						struct tm lot;
+						#if _WIN32
 						localtime_s(&ct, &currentTime);
 						localtime_s(&lot, &lastOpenedTime);
+						#endif
 						if (ct.tm_year != lot.tm_year) {
 							int diff = ct.tm_year - lot.tm_year;
 							if (diff == 1) {
@@ -404,7 +412,7 @@ void ProjectLauncher::RenderProjectList(int fWidth, int fHeight) {
 						if ((selectedProjectId == row) && ImGui::BeginPopupContextItem("Project options")) // <-- use last item id as popup id
 						{
 							//ImGui::Text("This a popup for \"%s\"!", names[n]);
-							if (ImGui::Button("Open in file browser", ImVec2(ImGui::GetContentRegionAvailWidth(), 0))) {
+							if (ImGui::Button("Open in file browser", ImVec2(ImGui::GetContentRegionAvail().x, 0))) {
 								std::string projectPath = projectList[row].path;
 								size_t pos;
 								while ((pos = projectPath.find('\\')) != std::string::npos) {
@@ -412,20 +420,21 @@ void ProjectLauncher::RenderProjectList(int fWidth, int fHeight) {
 								}
 								//std::cout << projectPath << std::endl;
 								//system(std::string("explorer "" \"" + projectPath + "\" > nul").c_str());
-
+								#if _WIN32
 								wchar_t* commandStr = new wchar_t[4096];
 								wchar_t* argStr = new wchar_t[4096];
 								MultiByteToWideChar(CP_ACP, 0, "explore", -1, commandStr, 4096);
 								MultiByteToWideChar(CP_ACP, 0, projectPath.c_str(), -1, argStr, 4096);
 
 								ShellExecute(NULL, commandStr, argStr, NULL, NULL, SW_SHOWNORMAL);
+								#endif
 								ImGui::CloseCurrentPopup();
 							}
 
 							if (ImGui::IsItemHovered())
 								ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
 
-							if (ImGui::Button("Change Graphics API", ImVec2(ImGui::GetContentRegionAvailWidth(), 0))) {
+							if (ImGui::Button("Change Graphics API", ImVec2(ImGui::GetContentRegionAvail().x, 0))) {
 								state = ProjectChooserState::ChangeGraphicsApi;
 								selectedProjectId = row;
 
@@ -435,7 +444,7 @@ void ProjectLauncher::RenderProjectList(int fWidth, int fHeight) {
 							if (ImGui::IsItemHovered())
 								ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
 
-							if (ImGui::Button("Remove project from list", ImVec2(ImGui::GetContentRegionAvailWidth(), 0))) {
+							if (ImGui::Button("Remove project from list", ImVec2(ImGui::GetContentRegionAvail().x, 0))) {
 								RemoveProjectFromList(row);
 								ImGui::CloseCurrentPopup();
 							}
@@ -443,7 +452,7 @@ void ProjectLauncher::RenderProjectList(int fWidth, int fHeight) {
 							if (ImGui::IsItemHovered())
 								ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
 
-							/*if (ImGui::Button("Close", ImVec2(ImGui::GetContentRegionAvailWidth(), 0)))
+							/*if (ImGui::Button("Close", ImVec2(ImGui::GetContentRegionAvail().x, 0)))
 								ImGui::CloseCurrentPopup();
 
 							if (ImGui::IsItemHovered())
@@ -651,7 +660,9 @@ void ProjectLauncher::RenderBottomInformation(int fWidth, int fHeight) {
 			ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
 		}
 		if (ImGui::IsItemClicked()) {
+			#if _WIN32
 			ShellExecute(0, 0, L"https://github.com/flash-miller/simple-3d-engine", 0, 0, SW_SHOW);
+			#endif
 		}
 		
 		ImGui::SameLine();
@@ -662,7 +673,9 @@ void ProjectLauncher::RenderBottomInformation(int fWidth, int fHeight) {
 			ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
 		}
 		if (ImGui::IsItemClicked()) {
+			#if _WIN32
 			ShellExecute(0, 0, L"https://github.com/flash-miller/simple-3d-engine", 0, 0, SW_SHOW);
+			#endif
 		}
 	}
 
@@ -676,7 +689,9 @@ void ProjectLauncher::RenderBottomInformation(int fWidth, int fHeight) {
 			ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
 		}
 		if (ImGui::IsItemClicked()) {
+			#if _WIN32
 			ShellExecute(0, 0, L"https://patreon.com/flash-miller", 0, 0, SW_SHOW);
+			#endif
 		}
 		
 		ImGui::SameLine();
@@ -687,7 +702,9 @@ void ProjectLauncher::RenderBottomInformation(int fWidth, int fHeight) {
 			ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
 		}
 		if (ImGui::IsItemClicked()) {
+			#if _WIN32
 			ShellExecute(0, 0, L"https://patreon.com/flash-miller", 0, 0, SW_SHOW);
+			#endif
 		}
 	}
 
@@ -701,7 +718,9 @@ void ProjectLauncher::RenderBottomInformation(int fWidth, int fHeight) {
 			ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
 		}
 		if (ImGui::IsItemClicked()) {
+			#if _WIN32
 			ShellExecute(0, 0, L"https://twitter.com/flash_miller", 0, 0, SW_SHOW);
+			#endif
 		}
 		
 		ImGui::SameLine();
@@ -712,7 +731,9 @@ void ProjectLauncher::RenderBottomInformation(int fWidth, int fHeight) {
 			ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
 		}
 		if (ImGui::IsItemClicked()) {
+			#if _WIN32
 			ShellExecute(0, 0, L"https://twitter.com/flash_miller", 0, 0, SW_SHOW);
+			#endif
 		}
 	}
 	
@@ -720,7 +741,7 @@ void ProjectLauncher::RenderBottomInformation(int fWidth, int fHeight) {
 	ImGui::PopStyleVar();
 
 	ImGui::SameLine();
-	ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvailWidth() - textWidth);
+	ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - textWidth);
 	ImGui::Text(versionText);
 
 	ImGui::End();
@@ -780,13 +801,13 @@ void ProjectLauncher::RenderChangeGraphicsApiModal() {
 
 			//ImGui::Separator();
 			ImGui::SameLine();
-			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvailWidth() - 150);
+			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - 150);
 
 			// Setting up combo
 			const char* apis[] = { "OpenGL", "Direct3D 11", "Direct3D 12", "Vulkan" };
 			const char* combo_preview_value = apis[currentApiIndex];
 
-			ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth());
+			ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
 			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 4);
 			ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 4);
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 8));
@@ -886,7 +907,7 @@ void ProjectLauncher::RenderChangeGraphicsApiModal() {
 		ImGui::PushStyleColor(ImGuiCol_ButtonActive, IM_COL32(129, 161, 193, 255));
 		
 		// ==================== Apply Button ====================
-		if (ImGui::Button("Apply", ImVec2(ImGui::GetContentRegionAvailWidth() / 2 - 10, 0))) {
+		if (ImGui::Button("Apply", ImVec2(ImGui::GetContentRegionAvail().x / 2 - 10, 0))) {
 			ChangeGraphicsApi(selectedProjectId, (GraphicsApi)currentApiIndex);
 			ImGui::CloseCurrentPopup();
 		}
@@ -900,7 +921,7 @@ void ProjectLauncher::RenderChangeGraphicsApiModal() {
 		// ==================== Cancel Button ====================
 		ImGui::SetItemDefaultFocus();
 		ImGui::SameLine();
-		if (ImGui::Button("Cancel", ImVec2(ImGui::GetContentRegionAvailWidth(), 0))) {
+		if (ImGui::Button("Cancel", ImVec2(ImGui::GetContentRegionAvail().x, 0))) {
 			ImGui::CloseCurrentPopup();
 		}
 
@@ -986,7 +1007,7 @@ void ProjectLauncher::RenderProjectNotFoundModal() {
 		ImGui::Text("The project you are trying to open could not be found:");
 
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
-		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + (ImGui::GetContentRegionAvailWidth() / 2 - textWidth / 2));
+		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + (ImGui::GetContentRegionAvail().x / 2 - textWidth / 2));
 		ImGui::Text(projectList[selectedProjectId].path.c_str());
 		
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 20);
@@ -1004,7 +1025,7 @@ void ProjectLauncher::RenderProjectNotFoundModal() {
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
 
 		// ==================== Remove Button ====================
-		if (ImGui::Button("Remove", ImVec2(ImGui::GetContentRegionAvailWidth() / 2 - 10, 0))) {
+		if (ImGui::Button("Remove", ImVec2(ImGui::GetContentRegionAvail().x / 2 - 10, 0))) {
 			RemoveProjectFromList(selectedProjectId);
 			ImGui::CloseCurrentPopup();
 		}
@@ -1021,7 +1042,7 @@ void ProjectLauncher::RenderProjectNotFoundModal() {
 		// ==================== Cancel Button ====================
 		ImGui::SetItemDefaultFocus();
 		ImGui::SameLine();
-		if (ImGui::Button("Cancel", ImVec2(ImGui::GetContentRegionAvailWidth(), 0))) {
+		if (ImGui::Button("Cancel", ImVec2(ImGui::GetContentRegionAvail().x, 0))) {
 			ImGui::CloseCurrentPopup();
 		}
 		
@@ -1075,11 +1096,11 @@ void ProjectLauncher::RenderCreateNewProjectModal() {
 			ImGui::PopFont();
 
 			ImGui::SameLine();
-			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvailWidth() - 200);
+			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - 200);
 
 			// Text Input
 			ImGui::PushFont(textFont);
-			ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth());
+			ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(5, 5));
 			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5);
 			ImGui::PushStyleColor(ImGuiCol_FrameBg, IM_COL32(59, 66, 82, 255));
@@ -1104,7 +1125,7 @@ void ProjectLauncher::RenderCreateNewProjectModal() {
 			ImGui::PopFont();
 
 			ImGui::SameLine();
-			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvailWidth() - 300);
+			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - 300);
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 			
 			draw_list->ChannelsSplit(2);
@@ -1113,7 +1134,7 @@ void ProjectLauncher::RenderCreateNewProjectModal() {
 			ImGui::PushFont(textFont);
 			std::string renderText = newProjectPath;
 
-			float pathPreviewWidth = ImGui::GetContentRegionAvailWidth() - 35;
+			float pathPreviewWidth = ImGui::GetContentRegionAvail().x - 35;
 
 			draw_list->ChannelsSetCurrent(1);
 			float textWidth = ImGui::CalcTextSize(renderText.c_str(), (const char*)0, false).x;
@@ -1136,9 +1157,9 @@ void ProjectLauncher::RenderCreateNewProjectModal() {
 			
 			ImGui::SameLine();
 
-			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvailWidth() - 30);
+			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - 30);
 
-			float width = ImGui::GetContentRegionAvailWidth();
+			float width = ImGui::GetContentRegionAvail().x;
 			
 			// Browse path button
 			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5);
@@ -1194,13 +1215,13 @@ void ProjectLauncher::RenderCreateNewProjectModal() {
 
 			//ImGui::Separator();
 			ImGui::SameLine();
-			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvailWidth() - 150);
+			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - 150);
 
 			// Setting up combo
 			const char* templates[] = { "Blank", "Demo1" };
 			const char* template_preview_value = templates[currentTemplateIndex];
 
-			ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth());
+			ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
 			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 4);
 			ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 4);
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 8));
@@ -1307,13 +1328,13 @@ void ProjectLauncher::RenderCreateNewProjectModal() {
 			
 			//ImGui::Separator();
 			ImGui::SameLine();
-			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvailWidth() - 150);
+			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - 150);
 
 			// Setting up combo
 			const char* apis[] = { "OpenGL", "Direct3D 11", "Direct3D 12", "Vulkan" };
 			const char* combo_preview_value = apis[currentApiIndex];
 			
-			ImGui::PushItemWidth(ImGui::GetContentRegionAvailWidth());
+			ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
 			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 4);
 			ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 4);
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 8));
@@ -1416,7 +1437,7 @@ void ProjectLauncher::RenderCreateNewProjectModal() {
 		// ==================== Create Button ====================
 		{
 			ImGui::PushFont(textFont);
-			if (ImGui::Button("Create", ImVec2(ImGui::GetContentRegionAvailWidth() / 2 - 8, 40))) {
+			if (ImGui::Button("Create", ImVec2(ImGui::GetContentRegionAvail().x / 2 - 8, 40))) {
 				// Create folder at the path with the project name
 				// Create and fill projectSettings.sproj appropriately
 				// If using a template, copy the corresponding files
@@ -1424,7 +1445,7 @@ void ProjectLauncher::RenderCreateNewProjectModal() {
 				// Launch project after creating, or just close the popup?
 				CreateProject(newProjectName, newProjectPath.c_str(), (GraphicsApi)currentApiIndex, (ProjectTemplate)currentTemplateIndex);
 				
-				strcpy_s(newProjectName, "");
+				strcpy(newProjectName, "");
 				newProjectPath = defaultProjectPath;
 				currentTemplateIndex = 0;
 				currentApiIndex = 0;
@@ -1443,8 +1464,8 @@ void ProjectLauncher::RenderCreateNewProjectModal() {
 			ImGui::SetItemDefaultFocus();
 			ImGui::SameLine();
 			ImGui::PushFont(textFont);
-			if (ImGui::Button("Cancel", ImVec2(ImGui::GetContentRegionAvailWidth(), 40))) {
-				strcpy_s(newProjectName, "");
+			if (ImGui::Button("Cancel", ImVec2(ImGui::GetContentRegionAvail().x, 40))) {
+				strcpy(newProjectName, "");
 				newProjectPath = defaultProjectPath;
 				currentTemplateIndex = 0;
 				currentApiIndex = 0;

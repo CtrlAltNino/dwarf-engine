@@ -3,7 +3,10 @@
 #include<fstream>
 #include<string>
 #include<fstream>
-#include<Windows.h>
+
+#ifdef _WIN32
+	#include<Windows.h>
+#endif
 
 class FileHandler{
 public:
@@ -48,12 +51,14 @@ public:
 	}
 
 	static bool checkIfDirectoyExists(const char* path) {
+		#if _WIN32
 		DWORD ftyp = GetFileAttributesA(path);
 		if (ftyp == INVALID_FILE_ATTRIBUTES)
 			return false;  //something is wrong with your path!
 
 		if (ftyp & FILE_ATTRIBUTE_DIRECTORY)
 			return true;   // this is a directory!
+		#endif
 
 		return false;    // this is not a directory!
 	}
@@ -63,9 +68,11 @@ public:
 	}
 
 	static void createDirectoryC(const char* path) {
+		#if _WIN32
 		WCHAR    str[sizeof(path)];
 		MultiByteToWideChar(0, 0, path, 5, str, 6);
 		LPCWSTR cstr = str;
+		#endif
 
 		//CreateDirectory(cstr, NULL);
 		system((std::string("mkdir \"") + path + "\"").c_str());
