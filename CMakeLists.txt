@@ -10,20 +10,24 @@ ADD_DEFINITIONS(-D_UNICODE)
 
 # Need to find a way to make the path to the vcpkg.cmake file dynamic, maybe I can even store it in the repo
 
+# Declaring a variable that can contain various settings for the executable
+set(EXECUTABLE_ADDITIONAL_SETTINGS "")
+
 # Platform dependant settings
 IF (WIN32)
     set(CMAKE_TOOLCHAIN_FILE "E:/dev/vcpkg/scripts/buildsystems/vcpkg.cmake")
     set(VCPKG_TARGET_TRIPLET "x64-windows-static")
     set(APP_ICON_RESOURCE_WINDOWS "${CMAKE_CURRENT_SOURCE_DIR}/app_icon_windows.rc")
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-    add_executable(s3de "" ${APP_ICON_RESOURCE_WINDOWS})
+    set(EXECUTABLE_ADDITIONAL_SETTINGS ${APP_ICON_RESOURCE_WINDOWS})
 ELSEIF (APPLE)
     set(VCPKG_TARGET_TRIPLET "x64-osx-static")
 ELSEIF (UNIX AND NOT APPLE)
     set(CMAKE_TOOLCHAIN_FILE "~/Documents/dev/vcpkg/scripts/buildsystems/vcpkg.cmake")
     set(VCPKG_TARGET_TRIPLET "x64-linux")
-    add_executable(s3de "")
 ENDIF()
+
+add_executable(s3de "" ${EXECUTABLE_ADDITIONAL_SETTINGS})
 
 # Project declaration
 project(Simple3DEngine VERSION 0.0.1)
