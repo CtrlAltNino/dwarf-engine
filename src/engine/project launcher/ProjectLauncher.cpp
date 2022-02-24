@@ -465,7 +465,6 @@ void ProjectLauncher::RenderProjectList(int fWidth, int fHeight) {
 					}
 
 					if (ImGui::IsItemClicked()) {
-						std::cout << "rightclick" << std::endl;
 						selectedProjectId = row;
 						if (FileHandler::checkIfFileExists((projectList[row].path + "/projectSettings.sproj").c_str())) {
 							state = ProjectChooserState::Done;
