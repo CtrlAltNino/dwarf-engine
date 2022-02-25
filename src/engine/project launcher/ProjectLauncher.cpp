@@ -753,7 +753,9 @@ void ProjectLauncher::RenderChangeGraphicsApiModal() {
 	ImVec2 center = ImGui::GetMainViewport()->GetCenter();
 	ImGui::SetNextWindowPos(center, ImGuiCond_Always, ImVec2(0.5f, 0.5f));
 	// Setting the dimming background color
-	ImGui::PushStyleColor(ImGuiCol_ModalWindowDimBg, ImVec4(0, 0, 0, 0.7));
+	//ImGui::PushStyleColor(ImGuiCol_ModalWindowDimBg, ImVec4(0, 0, 0, 0.7));
+	ImGuiStyle* style = &ImGui::GetStyle(); (void)style;
+	style->Colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0, 0, 0, 0.7);
 
 	// Setting the font for the modal window title
 	ImGui::PushFont(headerFont);
@@ -938,7 +940,7 @@ void ProjectLauncher::RenderChangeGraphicsApiModal() {
 	}
 	ImGui::PopStyleVar(5);
 	ImGui::PopFont();
-	ImGui::PopStyleColor(3);
+	ImGui::PopStyleColor(2);
 }
 
 void ProjectLauncher::ChangeGraphicsApi(int id, GraphicsApi api) {
@@ -980,7 +982,9 @@ void ProjectLauncher::RenderProjectNotFoundModal() {
 	ImVec2 center = ImGui::GetMainViewport()->GetCenter();
 	ImGui::SetNextWindowPos(center, ImGuiCond_Always, ImVec2(0.5f, 0.5f));
 	// Setting the dimming background color
-	ImGui::PushStyleColor(ImGuiCol_ModalWindowDimBg, ImVec4(0, 0, 0, 0.7));
+	//ImGui::PushStyleColor(ImGuiCol_ModalWindowDimBg, ImVec4(0, 0, 0, 0.7));
+	ImGuiStyle* style = &ImGui::GetStyle(); (void)style;
+	style->Colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0, 0, 0, 0.7);
 
 	// Setting the font for the modal window title
 	ImGui::PushFont(headerFont);
@@ -1059,7 +1063,7 @@ void ProjectLauncher::RenderProjectNotFoundModal() {
 	}
 	ImGui::PopStyleVar(5);
 	ImGui::PopFont();
-	ImGui::PopStyleColor(3);
+	ImGui::PopStyleColor(2);
 }
 
 void ProjectLauncher::RenderCreateNewProjectModal() {
@@ -1067,8 +1071,6 @@ void ProjectLauncher::RenderCreateNewProjectModal() {
 	ImVec2 center = ImGui::GetMainViewport()->GetCenter();
 	ImGui::SetNextWindowPos(center, ImGuiCond_Always, ImVec2(0.5f, 0.5f));
 	
-	// Setting the dimming background color
-	ImGui::PushStyleColor(ImGuiCol_ModalWindowDimBg, ImVec4(0, 0, 0 , 0.7));
 	
 	// Setting the font for the modal window title
 	ImGui::PushFont(headerFont);
@@ -1078,6 +1080,10 @@ void ProjectLauncher::RenderCreateNewProjectModal() {
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
 	ImGui::PushStyleColor(ImGuiCol_PopupBg, IM_COL32(46, 52, 64, 255));
 	ImGui::PushStyleColor(ImGuiCol_TitleBgActive, IM_COL32(94, 129, 172, 255));
+	// Setting the dimming background color
+	//ImGui::PushStyleColor(ImGuiCol_ModalWindowDimBg, ImVec4(0, 0, 0, 0.7));
+	ImGuiStyle* style = &ImGui::GetStyle(); (void)style;
+	style->Colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0, 0, 0, 0.7);
 	
 	// ==================== Popup Modal ====================
 	ImGui::PushStyleVar(ImGuiStyleVar_WindowTitleAlign, ImVec2(0.5f, 0.5f));
@@ -1485,7 +1491,7 @@ void ProjectLauncher::RenderCreateNewProjectModal() {
 	}
 	ImGui::PopStyleVar(5);
 	ImGui::PopFont();
-	ImGui::PopStyleColor(3);
+	ImGui::PopStyleColor(2);
 }
 
 void ProjectLauncher::AddProjectWrapper() {

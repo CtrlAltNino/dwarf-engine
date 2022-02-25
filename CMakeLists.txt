@@ -76,6 +76,6 @@ target_link_libraries(s3de PRIVATE nlohmann_json nlohmann_json::nlohmann_json)
 
 # Copy files to build folder
 add_custom_command(TARGET 
- s3de 
- POST_BUILD COMMAND ${CMAKE_COMMAND} 
- -E copy_directory ${CMAKE_SOURCE_DIR}/data $<TARGET_FILE_DIR:s3de>/data)
+    s3de 
+    POST_BUILD COMMAND ${CMAKE_COMMAND} 
+    -E copy_directory ${CMAKE_SOURCE_DIR}/data $<TARGET_FILE_DIR:s3de>/data)
