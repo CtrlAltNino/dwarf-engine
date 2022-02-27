@@ -61,7 +61,7 @@ class ProjectListHandler {
                 while ((pos = savedProjectsPath.find('\\')) != std::string::npos) {
                     savedProjectsPath.replace(pos, 1, "/");
                 }
-                savedProjectsPath += "/Simple 3D Engine/settings/";
+                savedProjectsPath += "/Dwarf Engine/settings/";
             }
             
             //return "C:/Users/ninom/Documents/yeet";

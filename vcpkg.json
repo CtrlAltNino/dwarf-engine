@@ -1,5 +1,5 @@
 {
-    "name": "simple-3d-engine",
+    "name": "dwarf-engine",
     "version-string": "0.0.1",
     "supports": "(windows & x64 & static) | (linux & x64) | (osx & x64 & static)",
     "dependencies": [
