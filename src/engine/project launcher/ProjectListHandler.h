@@ -69,8 +69,8 @@ class ProjectListHandler {
         }
     
     public:
-        static std::vector<ProjectInformation> GetProjectList(){
-            return projectList;
+        static std::vector<ProjectInformation>* GetProjectList(){
+            return &projectList;
         }
 
         static ProjectInformation GetProjectInformation(int id){
@@ -85,6 +85,7 @@ class ProjectListHandler {
             std::string projectSettingsPath = (std::string(path) + "/projectSettings.sproj");
             std::string fileContent = FileHandler::readFile(projectSettingsPath.c_str());
             
+            std::cout << fileContent << std::endl;
             ProjectInformation foundInfo;
 
             if (!fileContent.empty()) {
@@ -94,7 +95,7 @@ class ProjectListHandler {
                     foundInfo.name = jsonObject["projectInformation"]["projectName"];
                     foundInfo.path = path;
                     foundInfo.graphicsApi = jsonObject["projectInformation"]["graphicsApi"];
-                    foundInfo.lastOpened = jsonObject["projectInformation"]["lastOpened"];
+                    foundInfo.lastOpened = jsonObject.contains("lastOpened") ? jsonObject["projectInformation"]["lastOpened"] : -1;
                 }
             }
 
@@ -133,7 +134,7 @@ class ProjectListHandler {
                     }
 
                     // After adding all the projects, sort them
-                    ProjectSorter::SortProjectList(projectList);
+                    ProjectSorter::SortProjectList(&projectList);
                 }
             }
             return success;
@@ -147,7 +148,7 @@ class ProjectListHandler {
 
             if (!alreadyPresent) {
                 projectList.push_back(projectInformation);
-                ProjectSorter::SortProjectList(projectList);
+                ProjectSorter::SortProjectList(&projectList);
                 // Aktualisierte Projektliste speichern
                 SaveProjectList();
             }
@@ -187,7 +188,7 @@ class ProjectListHandler {
                     if (newProject.name != "") {
 
                         projectList.push_back(newProject);
-                        ProjectSorter::SortProjectList(projectList);
+                        ProjectSorter::SortProjectList(&projectList);
                         // Aktualisierte Projektliste speichern
                         SaveProjectList();
                     }

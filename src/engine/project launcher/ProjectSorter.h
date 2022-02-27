@@ -11,7 +11,7 @@ enum class ProjectSortOrder {Name, NameReverse, Date, DateReverse, Api, ApiRever
 
 class ProjectSorter{
     private:
-        static inline ProjectSortOrder sortOrder;
+        static inline ProjectSortOrder sortOrder = ProjectSortOrder::Name;
 
         static bool projectNameComparator(ProjectInformation p1, ProjectInformation p2) {
             return p1.name > p2.name;
@@ -66,32 +66,30 @@ class ProjectSorter{
                 else {
                     sortOrder = ProjectSortOrder::Api;
                 }
-                //SortProjectList();
                 break;
             }
         }
 
-        static std::vector<ProjectInformation> SortProjectList(std::vector<ProjectInformation> projectList) {
+        static void SortProjectList(std::vector<ProjectInformation>* projectList) {
             switch (sortOrder) {
             case ProjectSortOrder::Name:
-                std::sort(projectList.begin(), projectList.end(), projectNameComparator);
+                std::sort(projectList->begin(), projectList->end(), projectNameComparator);
                 break;
             case ProjectSortOrder::NameReverse:
-                std::sort(projectList.begin(), projectList.end(), projectNameReverseComparator);
+                std::sort(projectList->begin(), projectList->end(), projectNameReverseComparator);
                 break;
             case ProjectSortOrder::Date:
-                std::sort(projectList.begin(), projectList.end(), projectDateComparator);
+                std::sort(projectList->begin(), projectList->end(), projectDateComparator);
                 break;
             case ProjectSortOrder::DateReverse:
-                std::sort(projectList.begin(), projectList.end(), projectDateReverseComparator);
+                std::sort(projectList->begin(), projectList->end(), projectDateReverseComparator);
                 break;
             case ProjectSortOrder::Api:
-                std::sort(projectList.begin(), projectList.end(), projectApiComparator);
+                std::sort(projectList->begin(), projectList->end(), projectApiComparator);
                 break;
             case ProjectSortOrder::ApiReverse:
-                std::sort(projectList.begin(), projectList.end(), projectApiReverseComparator);
+                std::sort(projectList->begin(), projectList->end(), projectApiReverseComparator);
                 break;
             }
-            return projectList;
         }
 };

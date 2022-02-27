@@ -80,7 +80,6 @@ class ProjectCreator {
                         // Update the projectSettings.sproj "projectName" entry
                         std::string templateProjectSettingsDirectory = templateProjectDirectory + "/projectSettings.sproj";
                         std::string fileContent = FileHandler::readFile(templateProjectSettingsDirectory.c_str());
-
                         if (!fileContent.empty()) {
                             nlohmann::json jsonObject = nlohmann::json::parse(fileContent);
                             jsonObject["projectInformation"]["projectName"] = projectName;

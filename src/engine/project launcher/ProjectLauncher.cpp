@@ -149,7 +149,7 @@ void ProjectLauncher::Render() {
 }
 
 void ProjectLauncher::RenderProjectList(int fWidth, int fHeight) {
-	std::vector<ProjectInformation> projectList = ProjectListHandler::GetProjectList();
+	std::vector<ProjectInformation> projectList = *ProjectListHandler::GetProjectList();
 	static bool* rowSelected = new bool[projectList.size()];
 	ImGuiWindowFlags window_flags = 0;
 	window_flags |= ImGuiWindowFlags_NoMove;
@@ -231,6 +231,7 @@ void ProjectLauncher::RenderProjectList(int fWidth, int fHeight) {
 
 			if (ImGui::IsItemClicked()) {
 				ProjectSorter::UpdateSortOrder(column);
+				ProjectSorter::SortProjectList(ProjectListHandler::GetProjectList());
 			}
 
 			ImGui::PopID();
@@ -675,7 +676,7 @@ void ProjectLauncher::RenderBottomInformation(int fWidth, int fHeight) {
 }
 
 void ProjectLauncher::RenderChangeGraphicsApiModal() {
-	std::vector<ProjectInformation> projectList = ProjectListHandler::GetProjectList();
+	std::vector<ProjectInformation> projectList = *ProjectListHandler::GetProjectList();
 	// Centering Modal
 	ImVec2 center = ImGui::GetMainViewport()->GetCenter();
 	ImGui::SetNextWindowPos(center, ImGuiCond_Always, ImVec2(0.5f, 0.5f));
@@ -871,7 +872,7 @@ void ProjectLauncher::RenderChangeGraphicsApiModal() {
 }
 
 void ProjectLauncher::RenderProjectNotFoundModal() {
-	std::vector<ProjectInformation> projectList = ProjectListHandler::GetProjectList();
+	std::vector<ProjectInformation> projectList = *ProjectListHandler::GetProjectList();
 	// Centering Modal
 	ImVec2 center = ImGui::GetMainViewport()->GetCenter();
 	ImGui::SetNextWindowPos(center, ImGuiCond_Always, ImVec2(0.5f, 0.5f));
