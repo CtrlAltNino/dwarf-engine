@@ -1,4 +1,4 @@
-target_sources(s3de
+target_sources(${targetName}
     PRIVATE
         Camera.cpp
         Object.cpp

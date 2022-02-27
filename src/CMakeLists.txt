@@ -1,6 +1,6 @@
 smtg_add_subdirectories()
 
-target_sources(s3de
+target_sources(${targetName}
     PRIVATE
         Main.cpp
 )

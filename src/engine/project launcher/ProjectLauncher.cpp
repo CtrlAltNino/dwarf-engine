@@ -4,40 +4,7 @@
 #define PROJECT_BUTTON_WINDOW_WIDTH (200)
 #define PROJECT_INFORMATION_HEIGHT (30)
 
-std::string GetSettingsPath() {
-	std::string savedProjectsPath = "";
-
-	#if _WIN32
-	static char str[128];
-	
-	// Get Documents directory path
-	{
-		PWSTR path = NULL;
-		HRESULT hr = SHGetKnownFolderPath(FOLDERID_Documents, 0, NULL, &path);
-
-		if (SUCCEEDED(hr)) {
-			size_t i;
-			wcstombs_s(&i, str, (size_t)128, path, (size_t)127);
-			savedProjectsPath = std::string((const char*)str);
-		}
-
-		CoTaskMemFree(path);
-	}
-	#endif
-	
-	if (savedProjectsPath != "") {
-		size_t pos;
-		while ((pos = savedProjectsPath.find('\\')) != std::string::npos) {
-			savedProjectsPath.replace(pos, 1, "/");
-		}
-		savedProjectsPath += "/Simple 3D Engine/settings/";
-	}
-	
-	//return "C:/Users/ninom/Documents/yeet";
-	return savedProjectsPath;
-}
-
-ProjectReturnData ProjectLauncher::Run() {
+void ProjectLauncher::Run(ProjectData* projectData) {
 	glfwInit();
 	
 	if (window == nullptr) {
@@ -71,42 +38,28 @@ ProjectReturnData ProjectLauncher::Run() {
 	glfwDestroyWindow(window);
 	glfwTerminate();
 
-	ProjectReturnData projectData;
+	//ProjectData projectData;
 
-	if ((state == ProjectChooserState::Done) && !projectList.empty() && projectList.size() > selectedProjectId) {
-		projectData.name = projectList[selectedProjectId].name;
-		projectData.path = projectList[selectedProjectId].path;
-		projectData.graphicsApi = (GraphicsApi)projectList[selectedProjectId].graphicsApi;
-		projectList[selectedProjectId].lastOpened = time(0);
-		SaveProjectList();
+	if (state == ProjectChooserState::Done) {
+		ProjectInformation projectInformation = ProjectListHandler::GetProjectInformation(selectedProjectId);
+		if(projectInformation.name != ""){
+			projectData->name = projectInformation.name;
+			projectData->path = projectInformation.path;
+			projectData->graphicsApi = (GraphicsApi)projectInformation.graphicsApi;
+			ProjectListHandler::RegisterProjectOpening(selectedProjectId);
+		}
 	}
 	
-	return projectData;
+	//return projectData;
 }
 
 void ProjectLauncher::InitProjectLauncher() {
 	//defaultProjectPath
-	LoadProjectList();
-	githubIcon = new Texture("data/engine/img/icons/github.png", GL_LINEAR, GL_REPEAT, GL_RGBA, GL_UNSIGNED_BYTE);
-	patreonIcon = new Texture("data/engine/img/icons/patreon.png", GL_LINEAR, GL_REPEAT, GL_RGBA, GL_UNSIGNED_BYTE);
-	twitterIcon = new Texture("data/engine/img/icons/twitter.png", GL_LINEAR, GL_REPEAT, GL_RGBA, GL_UNSIGNED_BYTE);
-
-	#if _WIN32
-	static char str[128];
-	{
-		PWSTR path = NULL;
-		HRESULT hr = SHGetKnownFolderPath(FOLDERID_Documents, 0, NULL, &path);
-
-		if (SUCCEEDED(hr)) {
-			//newProjectPath = (const char*)path;
-			size_t i;
-			wcstombs_s(&i, str, (size_t)128, path, (size_t)127);
-			defaultProjectPath = std::string((const char*)str);
-		}
-
-		CoTaskMemFree(path);
-	}
-	#endif
+	ProjectListHandler::LoadProjectList();
+	ProjectCreator::InitProjectCreator();
+	githubIcon = new Texture(GITHUB_PNG_ICON_PATH, GL_LINEAR, GL_REPEAT, GL_RGBA, GL_UNSIGNED_BYTE);
+	patreonIcon = new Texture(PATREON_PNG_ICON_PATH, GL_LINEAR, GL_REPEAT, GL_RGBA, GL_UNSIGNED_BYTE);
+	twitterIcon = new Texture(TWITTER_PNG_ICON_PATH, GL_LINEAR, GL_REPEAT, GL_RGBA, GL_UNSIGNED_BYTE);
 }
 
 int ProjectLauncher::InitWindow() {
@@ -122,7 +75,7 @@ int ProjectLauncher::InitWindow() {
 	glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
 	glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
 	
-	window = glfwCreateWindow(INITIAL_WINDOW_WIDTH, INITIAL_WINDOW_HEIGHT, "Project Launcher", NULL, NULL);
+	window = glfwCreateWindow(INITIAL_WINDOW_WIDTH, INITIAL_WINDOW_HEIGHT, "Dwarf Engine Project Launcher", NULL, NULL);
 	if (window == NULL) {
 		std::cout << "Failed to create GLFW window" << std::endl;
 		glfwTerminate();
@@ -134,7 +87,7 @@ int ProjectLauncher::InitWindow() {
 
 	GLFWimage icon[1];
 	int numColChannel;
-	icon[0].pixels = stbi_load("data/engine/img/icons/icon.png", &icon[0].width, &icon[0].height, &numColChannel, 0); //rgba channels
+	icon[0].pixels = stbi_load(APPLICATION_PNG_ICON_PATH, &icon[0].width, &icon[0].height, &numColChannel, 0); //rgba channels
 	glfwSetWindowIcon(window, 1, icon);
 	stbi_image_free(icon[0].pixels);
 	glfwMakeContextCurrent(window);
@@ -151,8 +104,8 @@ int ProjectLauncher::InitializeIMGUI() {
 	ImGui::StyleColorsDark();
 	ImGui_ImplOpenGL3_Init("#version 130");
 	io.Fonts->AddFontDefault();
-	headerFont = io.Fonts->AddFontFromFileTTF("data/engine/fonts/Roboto-Light.ttf", 26);
-	textFont = io.Fonts->AddFontFromFileTTF("data/engine/fonts/Roboto-Regular.ttf", 15);
+	headerFont = io.Fonts->AddFontFromFileTTF(FONT_ROBOTO_LIGHT_PATH, 26);
+	textFont = io.Fonts->AddFontFromFileTTF(FONT_ROBOTO_REGULAR_PATH, 15);
 
 	return 0;
 }
@@ -196,6 +149,7 @@ void ProjectLauncher::Render() {
 }
 
 void ProjectLauncher::RenderProjectList(int fWidth, int fHeight) {
+	std::vector<ProjectInformation> projectList = ProjectListHandler::GetProjectList();
 	static bool* rowSelected = new bool[projectList.size()];
 	ImGuiWindowFlags window_flags = 0;
 	window_flags |= ImGuiWindowFlags_NoMove;
@@ -276,7 +230,7 @@ void ProjectLauncher::RenderProjectList(int fWidth, int fHeight) {
 			}
 
 			if (ImGui::IsItemClicked()) {
-				UpdateSortOrder(column);
+				ProjectSorter::UpdateSortOrder(column);
 			}
 
 			ImGui::PopID();
@@ -309,10 +263,10 @@ void ProjectLauncher::RenderProjectList(int fWidth, int fHeight) {
 						time_t currentTime = time(0);
 						struct tm ct;
 						struct tm lot;
-						#if _WIN32
+						//#if _WIN32
 						localtime_s(&ct, &currentTime);
 						localtime_s(&lot, &lastOpenedTime);
-						#endif
+						//#endif
 						if (ct.tm_year != lot.tm_year) {
 							int diff = ct.tm_year - lot.tm_year;
 							if (diff == 1) {
@@ -389,7 +343,6 @@ void ProjectLauncher::RenderProjectList(int fWidth, int fHeight) {
 					ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0, 0, 0, 0));
 					ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0, 0, 0, 0));
 					draw_list->ChannelsSetCurrent(1);
-					//std::cout << row << std::endl;
 					ImGui::Selectable(cellText.c_str(), rowSelected[row], ImGuiSelectableFlags_SpanAllColumns, ImVec2(0, ROW_HEIGHT));
 					ImGui::PopStyleVar(1);
 					ImGui::PopStyleColor(2);
@@ -408,26 +361,11 @@ void ProjectLauncher::RenderProjectList(int fWidth, int fHeight) {
 						ImGui::PushStyleColor(ImGuiCol_ButtonActive, IM_COL32(115, 148, 188, 255));
 						ImGui::PushStyleColor(ImGuiCol_PopupBg, IM_COL32(76, 86, 106, 255));
 						ImGui::SetNextWindowSize(ImVec2(0, 0));
-						//std::cout << "Selected Project ID: " << selectedProjectId << " | row: " << row << std::endl;
 						if ((selectedProjectId == row) && ImGui::BeginPopupContextItem("Project options")) // <-- use last item id as popup id
 						{
 							//ImGui::Text("This a popup for \"%s\"!", names[n]);
 							if (ImGui::Button("Open in file browser", ImVec2(ImGui::GetContentRegionAvail().x, 0))) {
-								std::string projectPath = projectList[row].path;
-								size_t pos;
-								while ((pos = projectPath.find('\\')) != std::string::npos) {
-									projectPath.replace(pos, 1, "/");
-								}
-								//std::cout << projectPath << std::endl;
-								//system(std::string("explorer "" \"" + projectPath + "\" > nul").c_str());
-								#if _WIN32
-								wchar_t* commandStr = new wchar_t[4096];
-								wchar_t* argStr = new wchar_t[4096];
-								MultiByteToWideChar(CP_ACP, 0, "explore", -1, commandStr, 4096);
-								MultiByteToWideChar(CP_ACP, 0, projectPath.c_str(), -1, argStr, 4096);
-
-								ShellExecute(NULL, commandStr, argStr, NULL, NULL, SW_SHOWNORMAL);
-								#endif
+								FileHandler::OpenPathInFileBrowser(projectList[row].path);
 								ImGui::CloseCurrentPopup();
 							}
 
@@ -445,7 +383,7 @@ void ProjectLauncher::RenderProjectList(int fWidth, int fHeight) {
 								ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
 
 							if (ImGui::Button("Remove project from list", ImVec2(ImGui::GetContentRegionAvail().x, 0))) {
-								RemoveProjectFromList(row);
+								ProjectListHandler::RemoveProjectFromList(row);
 								ImGui::CloseCurrentPopup();
 							}
 
@@ -572,7 +510,7 @@ void ProjectLauncher::RenderButtons(int fWidth, int fHeight) {
 	ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 	
 	if (ImGui::Button("Add existing project", ImVec2(ImGui::GetContentRegionAvail().x, 75))) {
-		AddProject();
+		ProjectListHandler::OpenAddProjectWindow();
 	}
 
 	if (ImGui::IsItemHovered()) {
@@ -659,9 +597,7 @@ void ProjectLauncher::RenderBottomInformation(int fWidth, int fHeight) {
 			ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
 		}
 		if (ImGui::IsItemClicked()) {
-			#if _WIN32
-			ShellExecute(0, 0, L"https://github.com/flash-miller/simple-3d-engine", 0, 0, SW_SHOW);
-			#endif
+			BrowserLinkOpener::OpenLink(GITHUB_LINK);
 		}
 		
 		ImGui::SameLine();
@@ -672,9 +608,7 @@ void ProjectLauncher::RenderBottomInformation(int fWidth, int fHeight) {
 			ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
 		}
 		if (ImGui::IsItemClicked()) {
-			#if _WIN32
-			ShellExecute(0, 0, L"https://github.com/flash-miller/simple-3d-engine", 0, 0, SW_SHOW);
-			#endif
+			BrowserLinkOpener::OpenLink(GITHUB_LINK);
 		}
 	}
 
@@ -688,9 +622,7 @@ void ProjectLauncher::RenderBottomInformation(int fWidth, int fHeight) {
 			ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
 		}
 		if (ImGui::IsItemClicked()) {
-			#if _WIN32
-			ShellExecute(0, 0, L"https://patreon.com/flash-miller", 0, 0, SW_SHOW);
-			#endif
+			BrowserLinkOpener::OpenLink(PATREON_LINK);
 		}
 		
 		ImGui::SameLine();
@@ -701,9 +633,7 @@ void ProjectLauncher::RenderBottomInformation(int fWidth, int fHeight) {
 			ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
 		}
 		if (ImGui::IsItemClicked()) {
-			#if _WIN32
-			ShellExecute(0, 0, L"https://patreon.com/flash-miller", 0, 0, SW_SHOW);
-			#endif
+			BrowserLinkOpener::OpenLink(PATREON_LINK);
 		}
 	}
 
@@ -717,9 +647,7 @@ void ProjectLauncher::RenderBottomInformation(int fWidth, int fHeight) {
 			ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
 		}
 		if (ImGui::IsItemClicked()) {
-			#if _WIN32
-			ShellExecute(0, 0, L"https://twitter.com/flash_miller", 0, 0, SW_SHOW);
-			#endif
+			BrowserLinkOpener::OpenLink(TWITTER_LINK);
 		}
 		
 		ImGui::SameLine();
@@ -730,9 +658,7 @@ void ProjectLauncher::RenderBottomInformation(int fWidth, int fHeight) {
 			ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
 		}
 		if (ImGui::IsItemClicked()) {
-			#if _WIN32
-			ShellExecute(0, 0, L"https://twitter.com/flash_miller", 0, 0, SW_SHOW);
-			#endif
+			BrowserLinkOpener::OpenLink(TWITTER_LINK);
 		}
 	}
 	
@@ -749,6 +675,7 @@ void ProjectLauncher::RenderBottomInformation(int fWidth, int fHeight) {
 }
 
 void ProjectLauncher::RenderChangeGraphicsApiModal() {
+	std::vector<ProjectInformation> projectList = ProjectListHandler::GetProjectList();
 	// Centering Modal
 	ImVec2 center = ImGui::GetMainViewport()->GetCenter();
 	ImGui::SetNextWindowPos(center, ImGuiCond_Always, ImVec2(0.5f, 0.5f));
@@ -909,7 +836,7 @@ void ProjectLauncher::RenderChangeGraphicsApiModal() {
 		
 		// ==================== Apply Button ====================
 		if (ImGui::Button("Apply", ImVec2(ImGui::GetContentRegionAvail().x / 2 - 10, 0))) {
-			ChangeGraphicsApi(selectedProjectId, (GraphicsApi)currentApiIndex);
+			ProjectListHandler::ChangeGraphicsApi(selectedProjectId, (GraphicsApi)currentApiIndex);
 			ImGui::CloseCurrentPopup();
 		}
 
@@ -943,41 +870,8 @@ void ProjectLauncher::RenderChangeGraphicsApiModal() {
 	ImGui::PopStyleColor(2);
 }
 
-void ProjectLauncher::ChangeGraphicsApi(int id, GraphicsApi api) {
-	//ProjectInformation info = ExtractProjectInformation(projectList[id].path.c_str());
-	std::string projectSettingsPath = (projectList[id].path + "/projectSettings.sproj").c_str();
-	size_t pos;
-	while ((pos = projectSettingsPath.find('\\')) != std::string::npos) {
-		projectSettingsPath.replace(pos, 1, "/");
-	}
-	
-	if (FileHandler::checkIfFileExists(projectSettingsPath.c_str())) {
-		// Update the projectSettings.sproj "projectName" entry
-		//std::string templateProjectSettingsDirectory = templateProjectDirectory + "/projectSettings.sproj";
-		std::string fileContent = FileHandler::readFile(projectSettingsPath.c_str());
-
-		if (!fileContent.empty()) {
-			nlohmann::json jsonObject = nlohmann::json::parse(fileContent);
-			if (jsonObject["projectInformation"]["graphicsApi"] != (int)api) {
-				jsonObject["projectInformation"]["graphicsApi"] = (int)api;
-
-				std::string newFileContent = jsonObject.dump(4);
-				FileHandler::writeToFile(projectSettingsPath.c_str(), newFileContent);
-				projectList[selectedProjectId].graphicsApi = (int)api;
-				SaveProjectList();
-			}
-		}
-		else {
-			std::cout << "yikes bro" << std::endl;
-		}
-	}
-	else {
-		// wtf
-		std::cout << "There is no projectSettings.json file to be found for the mentioned project!" << std::endl;
-	}
-}
-
 void ProjectLauncher::RenderProjectNotFoundModal() {
+	std::vector<ProjectInformation> projectList = ProjectListHandler::GetProjectList();
 	// Centering Modal
 	ImVec2 center = ImGui::GetMainViewport()->GetCenter();
 	ImGui::SetNextWindowPos(center, ImGuiCond_Always, ImVec2(0.5f, 0.5f));
@@ -1029,7 +923,7 @@ void ProjectLauncher::RenderProjectNotFoundModal() {
 
 		// ==================== Remove Button ====================
 		if (ImGui::Button("Remove", ImVec2(ImGui::GetContentRegionAvail().x / 2 - 10, 0))) {
-			RemoveProjectFromList(selectedProjectId);
+			ProjectListHandler::RemoveProjectFromList(selectedProjectId);
 			ImGui::CloseCurrentPopup();
 		}
 
@@ -1120,7 +1014,7 @@ void ProjectLauncher::RenderCreateNewProjectModal() {
 		ImGui::Separator();
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
 		
-		static std::string newProjectPath = defaultProjectPath;
+		static std::string newProjectPath = ProjectCreator::GetDefaultProjectPath();
 		// ==================== Project Path Selector ====================
 		{
 			ImDrawList* draw_list = ImGui::GetWindowDrawList();
@@ -1448,10 +1342,10 @@ void ProjectLauncher::RenderCreateNewProjectModal() {
 				// If using a template, copy the corresponding files
 				// Add project to saved project list
 				// Launch project after creating, or just close the popup?
-				CreateProject(newProjectName, newProjectPath.c_str(), (GraphicsApi)currentApiIndex, (ProjectTemplate)currentTemplateIndex);
-				
+				//CreateProject(newProjectName, newProjectPath.c_str(), (GraphicsApi)currentApiIndex, (ProjectTemplate)currentTemplateIndex);
+				ProjectCreator::CreateProject(newProjectName, newProjectPath.c_str(), (GraphicsApi)currentApiIndex, (ProjectTemplate)currentTemplateIndex);
 				strcpy(newProjectName, "");
-				newProjectPath = defaultProjectPath;
+				//newProjectPath = FileHandler::defaultProjectPath;
 				currentTemplateIndex = 0;
 				currentApiIndex = 0;
 				
@@ -1471,7 +1365,7 @@ void ProjectLauncher::RenderCreateNewProjectModal() {
 			ImGui::PushFont(textFont);
 			if (ImGui::Button("Cancel", ImVec2(ImGui::GetContentRegionAvail().x, 40))) {
 				strcpy(newProjectName, "");
-				newProjectPath = defaultProjectPath;
+				//newProjectPath = FileHandler::defaultProjectPath;
 				currentTemplateIndex = 0;
 				currentApiIndex = 0;
 				ImGui::CloseCurrentPopup();
@@ -1492,331 +1386,4 @@ void ProjectLauncher::RenderCreateNewProjectModal() {
 	ImGui::PopStyleVar(5);
 	ImGui::PopFont();
 	ImGui::PopStyleColor(2);
-}
-
-void ProjectLauncher::AddProjectWrapper() {
-	std::thread thread_object(&ProjectLauncher::AddProject, this);
-	thread_object.detach();
-}
-
-
-void ProjectLauncher::AddProject() {
-	// File Dialog um einen Pfad zu kriegen
-	// Im Pfad nach einer projectSettings.sproj suchen
-	// Projectinformation (Name, Pfad, letzte Modifikationszeit)
-	nfdchar_t* outPath = NULL;
-	const nfdchar_t* filter = "sproj";
-
-	// TODO implement file dialog in another thread to not interrupt
-	// TODO rename "open" button to "add project" or something
-	// TODO focus on the opened dialog when trying to return to the project launcher window
-	//(if that is not the default behaviour, finding out when implementing the dialog in another thread)
-	//nfdresult_t result = NFD_OpenDialog(filter, NULL, &outPath);
-	nfdresult_t result = NFD_PickFolder(NULL, &outPath);
-	
-	if (result == NFD_OKAY) {
-		// check if a project with the same path already exists
-		bool alreadyPresent = false;
-		for (int i = 0; (i < projectList.size()) && !alreadyPresent; i++) {
-			alreadyPresent = projectList[i].path == outPath;
-		}
-		
-		if (!alreadyPresent) {
-			ProjectInformation newProject = ExtractProjectInformation(outPath);
-			if (newProject.name != "") {
-
-				projectList.push_back(newProject);
-				SortProjectList();
-				// Aktualisierte Projektliste speichern
-				SaveProjectList();
-			}
-			else {
-				// TODO: Open modal to signal that no project could be found at the given path
-			}
-		}
-		else {
-			// TODO: Modal to notify the project is already present in the current project list
-		}
-		free(outPath);
-	}
-	else if (result == NFD_CANCEL) {
-		//puts("User pressed cancel.");
-	}
-	else {
-		//printf("Error: %s\n", NFD_GetError());
-	}
-}
-
-void ProjectLauncher::AddProjectToList(ProjectInformation projectInformation) {
-	bool alreadyPresent = false;
-	for (int i = 0; (i < projectList.size()) && !alreadyPresent; i++) {
-		alreadyPresent = projectList[i].path == projectInformation.path;
-	}
-
-	if (!alreadyPresent) {
-		projectList.push_back(projectInformation);
-		SortProjectList();
-		// Aktualisierte Projektliste speichern
-		SaveProjectList();
-	}
-}
-
-void ProjectLauncher::LoadProjectList() {
-	std::string savedProjectsPath = GetSettingsPath() + "savedProjects.json";
-	std::string fileContent = FileHandler::readFile(savedProjectsPath.c_str());
-	if (!fileContent.empty()) {
-		nlohmann::json jsonObject = nlohmann::json::parse(fileContent);
-
-		if (jsonObject.contains("projects")) {
-			for (int i = 0; i < jsonObject["projects"].size(); i++) {
-				ProjectInformation projectToAdd;
-				if (jsonObject["projects"][i].contains("name")) {
-					projectToAdd.name = jsonObject["projects"][i]["name"];
-				}
-
-				if (jsonObject["projects"][i].contains("path")) {
-					projectToAdd.path = jsonObject["projects"][i]["path"];
-				}
-
-				if (jsonObject["projects"][i].contains("lastOpened")) {
-					projectToAdd.lastOpened = jsonObject["projects"][i]["lastOpened"];
-				}
-
-				if (jsonObject["projects"][i].contains("graphicsApi")) {
-					projectToAdd.graphicsApi = jsonObject["projects"][i]["graphicsApi"];
-				}
-
-				projectList.push_back({
-						projectToAdd
-					});
-			}
-
-			// After adding all the projects, sort them
-			SortProjectList();
-		}
-	}
-}
-
-void ProjectLauncher::RemoveProjectFromList(int id) {
-	projectList.erase(projectList.begin() + id);
-	SaveProjectList();
-}
-
-void ProjectLauncher::SaveProjectList() {
-	nlohmann::json jsonObject;
-	for (int i = 0; i < projectList.size(); i++) {
-		jsonObject["projects"][i]["name"] = projectList[i].name;
-		jsonObject["projects"][i]["path"] = projectList[i].path;
-		jsonObject["projects"][i]["lastOpened"] = projectList[i].lastOpened;
-		jsonObject["projects"][i]["graphicsApi"] = projectList[i].graphicsApi;
-	}
-
-	std::string fileContent = jsonObject.dump(4);
-	std::string settingsPath = GetSettingsPath();
-	if (!FileHandler::checkIfDirectoyExists(settingsPath)) {
-		FileHandler::createDirectoryS(GetSettingsPath());
-	}
-	std::string savedProjectsPath = settingsPath + "savedProjects.json";
-	//std::cout << "Saving savedProjects.json to: " << GetSettingsPath() << std::endl;
-	FileHandler::writeToFile(savedProjectsPath.c_str(), fileContent);
-}
-
-ProjectInformation ProjectLauncher::ExtractProjectInformation(const char* path) {
-	std::string projectSettingsPath = (std::string(path) + "/projectSettings.sproj");
-	std::string fileContent = FileHandler::readFile(projectSettingsPath.c_str());
-	
-	ProjectInformation foundInfo;
-
-	if (!fileContent.empty()) {
-		nlohmann::json jsonObject = nlohmann::json::parse(fileContent);
-
-		if (jsonObject.contains("projectInformation")) {
-			foundInfo.name = jsonObject["projectInformation"]["projectName"];
-			foundInfo.path = path;
-			foundInfo.graphicsApi = jsonObject["projectInformation"]["graphicsApi"];
-			foundInfo.lastOpened = -1;
-		}
-	}
-
-	return foundInfo;
-}
-
-int ProjectLauncher::CreateProject(const char* projectName, const char* projectPath, GraphicsApi graphicsApi, ProjectTemplate projectTemplate) {
-	std::string projectDirectory = std::string(projectPath) + "/" + projectName;
-	if (!FileHandler::checkIfDirectoyExists(projectDirectory)) {
-		std::string projectSettingsPath = (std::string(projectPath) + "/" + projectName + "/projectSettings.sproj").c_str();
-		size_t pos;
-		while ((pos = projectSettingsPath.find('\\')) != std::string::npos) {
-			projectSettingsPath.replace(pos, 1, "/");
-		}
-		if (!FileHandler::checkIfFileExists(projectSettingsPath.c_str())) {
-			FileHandler::createDirectoryS(projectDirectory);
-
-			if (projectTemplate == ProjectTemplate::Blank) {
-				nlohmann::json jsonObject;
-				jsonObject["projectInformation"]["projectName"] = projectName;
-				jsonObject["projectInformation"]["graphicsApi"] = (int)graphicsApi;
-
-				std::string fileContent = jsonObject.dump(4);
-				FileHandler::writeToFile((std::string(projectPath) + "/" + projectName + "/projectSettings.sproj").c_str(), fileContent);
-			}
-			else {
-				std::string templateProjectDirectory = "";
-				std::string templateApiDirectory = "";
-
-				switch (projectTemplate) {
-				case ProjectTemplate::Demo1:
-					templateProjectDirectory = "demo1";
-					break;
-				}
-
-				switch (graphicsApi) {
-				case GraphicsApi::OpenGL:
-					templateApiDirectory = "opengl";
-					break;
-				case GraphicsApi::D3D11:
-					templateApiDirectory = "dx11";
-					break;
-				case GraphicsApi::D3D12:
-					templateApiDirectory = "dx12";
-					break;
-				case GraphicsApi::Vulkan:
-					templateApiDirectory = "vulkan";
-					break;
-				}
-
-				templateProjectDirectory = "data/demo projects/" + templateApiDirectory + "/" + templateProjectDirectory;
-
-				std::string copyCommand = std::string("Xcopy \"" + templateProjectDirectory
-					+ "\" \""
-					+ std::string(projectPath) + "/" + projectName
-					+ "\" /E/H/C/I/y/D");
-				
-				//std::cout << copyCommand << std::endl;
-
-				// Update the projectSettings.sproj "projectName" entry
-				std::string templateProjectSettingsDirectory = templateProjectDirectory + "/projectSettings.sproj";
-				std::string fileContent = FileHandler::readFile(templateProjectSettingsDirectory.c_str());
-
-				if (!fileContent.empty()) {
-					nlohmann::json jsonObject = nlohmann::json::parse(fileContent);
-					jsonObject["projectInformation"]["projectName"] = projectName;
-
-					std::string newFileContent = jsonObject.dump(4);
-					FileHandler::writeToFile(projectSettingsPath.c_str(), newFileContent);
-				}
-				else {
-					std::cout << "yikes bro" << std::endl;
-				}
-
-
-				system(copyCommand.c_str());
-			}
-
-			size_t pos;
-			while ((pos = projectDirectory.find('\\')) != std::string::npos) {
-				projectDirectory.replace(pos, 1, "/");
-			}
-
-			ProjectInformation newProjectInformation;
-			newProjectInformation.name = projectName;
-			newProjectInformation.path = projectDirectory;
-			newProjectInformation.lastOpened = -1;
-			newProjectInformation.graphicsApi = (int)graphicsApi;
-
-			AddProjectToList(newProjectInformation);
-
-			return 0;
-		}
-		else {
-			// wtf
-			std::cout << "projectSettings.json already exists at project directory!" << std::endl;
-			return 1;
-		}
-	}
-	else {
-		// Project folder already exists
-		std::cout << "Project folder already exists at: " << (std::string(projectPath) + "/" + projectName) << std::endl;
-		return 2;
-	}
-}
-
-void ProjectLauncher::UpdateSortOrder(int columnId) {
-	switch (columnId) {
-	case 0:
-		if (sortOrder == ProjectSortOrder::Name) {
-			sortOrder = ProjectSortOrder::NameReverse;
-		}
-		else {
-			sortOrder = ProjectSortOrder::Name;
-		}
-		SortProjectList();
-		break;
-	case 1: break;
-	case 2:
-		if (sortOrder == ProjectSortOrder::Date) {
-			sortOrder = ProjectSortOrder::DateReverse;
-		}
-		else {
-			sortOrder = ProjectSortOrder::Date;
-		}
-		SortProjectList();
-		break;
-	case 3:
-		if (sortOrder == ProjectSortOrder::Api) {
-			sortOrder = ProjectSortOrder::ApiReverse;
-		}
-		else {
-			sortOrder = ProjectSortOrder::Api;
-		}
-		SortProjectList();
-		break;
-	}
-}
-
-bool projectNameComparator(ProjectInformation p1, ProjectInformation p2) {
-	return p1.name > p2.name;
-}
-
-bool projectNameReverseComparator(ProjectInformation p1, ProjectInformation p2) {
-	return p1.name < p2.name;
-}
-
-bool projectDateComparator(ProjectInformation p1, ProjectInformation p2) {
-	return p1.lastOpened > p2.lastOpened;
-}
-
-bool projectDateReverseComparator(ProjectInformation p1, ProjectInformation p2) {
-	return p1.lastOpened < p2.lastOpened;
-}
-
-bool projectApiComparator(ProjectInformation p1, ProjectInformation p2) {
-	return p1.graphicsApi > p2.graphicsApi;
-}
-
-bool projectApiReverseComparator(ProjectInformation p1, ProjectInformation p2) {
-	return p1.graphicsApi < p2.graphicsApi;
-}
-
-void ProjectLauncher::SortProjectList() {
-	switch (sortOrder) {
-	case ProjectSortOrder::Name:
-		std::sort(projectList.begin(), projectList.end(), projectNameComparator);
-		break;
-	case ProjectSortOrder::NameReverse:
-		std::sort(projectList.begin(), projectList.end(), projectNameReverseComparator);
-		break;
-	case ProjectSortOrder::Date:
-		std::sort(projectList.begin(), projectList.end(), projectDateComparator);
-		break;
-	case ProjectSortOrder::DateReverse:
-		std::sort(projectList.begin(), projectList.end(), projectDateReverseComparator);
-		break;
-	case ProjectSortOrder::Api:
-		std::sort(projectList.begin(), projectList.end(), projectApiComparator);
-		break;
-	case ProjectSortOrder::ApiReverse:
-		std::sort(projectList.begin(), projectList.end(), projectApiReverseComparator);
-		break;
-	}
 }

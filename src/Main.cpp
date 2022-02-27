@@ -387,8 +387,8 @@ void DrawEditorSettings(GLFWwindow* window, GLFWmonitor* _monitor, const GLFWvid
 	//ImGui::PopStyleVar();
 }
 
-int OpenProjectInOpenGL(std::string path) {
-	projectPath = path;
+int OpenProjectInOpenGL(ProjectData projectData) {
+	projectPath = projectData.path;
 	glfwInit();
 	// get resolution of monitor
 	GLFWmonitor* _monitor = glfwGetPrimaryMonitor();
@@ -405,7 +405,7 @@ int OpenProjectInOpenGL(std::string path) {
 	glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
 	glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
 
-	GLFWwindow* window = glfwCreateWindow(INITIAL_WINDOW_WIDTH, INITIAL_WINDOW_HEIGHT, "Simple 3D Engine", NULL, NULL);
+	GLFWwindow* window = glfwCreateWindow(INITIAL_WINDOW_WIDTH, INITIAL_WINDOW_HEIGHT, ("Dwarf Engine - " + projectData.name).c_str(), NULL, NULL);
 	if (window == NULL) {
 		std::cout << "Failed to create GLFW window" << std::endl;
 		glfwTerminate();
@@ -568,12 +568,12 @@ int OpenProjectInOpenGL(std::string path) {
 	return 0;
 }
 
-int OpenProject(std::string path, GraphicsApi api) {
+int OpenProject(ProjectData projectData) {
 	int returnCode = 0;
 	
-	switch (api) {
+	switch (projectData.graphicsApi) {
 	case GraphicsApi::OpenGL:
-		returnCode = OpenProjectInOpenGL(path);
+		returnCode = OpenProjectInOpenGL(projectData);
 		break;
 	case GraphicsApi::D3D11:
 		std::cout << "Couldn't open project: DirectX 11 is not yet supported!";
@@ -592,7 +592,9 @@ int OpenProject(std::string path, GraphicsApi api) {
 int main() {
 	int returnCode = 0;
 	ProjectLauncher chooser = ProjectLauncher();
-	ProjectReturnData projectData = chooser.Run();
+	ProjectData projectData;
+	
+	chooser.Run(&projectData);
 
 	size_t pos;
 	while ((pos = projectData.path.find('\\')) != std::string::npos) {
@@ -600,7 +602,7 @@ int main() {
 	}
 
 	if ((projectData.name != "") && (projectData.path != "")) {
-		returnCode = OpenProject(projectData.path, projectData.graphicsApi);
+		returnCode = OpenProject(projectData);
 	}
 	else {
 		//std::cout << "Not opening any project!" << std::endl;
