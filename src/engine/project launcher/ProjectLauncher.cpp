@@ -265,8 +265,8 @@ void ProjectLauncher::RenderProjectList(int fWidth, int fHeight) {
 						struct tm ct;
 						struct tm lot;
 						//#if _WIN32
-						localtime_r(&currentTime, &ct);
-						localtime_r(&lastOpenedTime, &lot);
+						TimeUtilities::GetLocalTime(&currentTime, &ct);
+						TimeUtilities::GetLocalTime(&lastOpenedTime, &lot);
 						//#endif
 						if (ct.tm_year != lot.tm_year) {
 							int diff = ct.tm_year - lot.tm_year;

@@ -16,7 +16,6 @@
 #include<imgui_impl_glfw.h>
 #include<imgui_impl_opengl3.h>
 #include<nlohmann/json.hpp>
-#include <time.h>
 #include<nfd.h>
 
 #include "../../utilities/FileHandler.h"
@@ -25,6 +24,7 @@
 #include "ProjectListHandler.h"
 #include "ProjectSorter.h"
 #include "BrowserLinkOpener.h"
+#include "TimeUtilities.h"
 
 enum class ProjectChooserState {Choosing, Done, ProjectNotFound, CreateNewProject, ChangeGraphicsApi, Canceled};
 //enum class GraphicsApi {OpenGL, D3D11, D3D12, Vulkan};
