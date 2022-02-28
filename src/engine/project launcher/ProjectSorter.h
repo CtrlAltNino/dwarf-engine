@@ -11,7 +11,7 @@ enum class ProjectSortOrder {Name, NameReverse, Date, DateReverse, Api, ApiRever
 
 class ProjectSorter{
     private:
-        static inline ProjectSortOrder sortOrder = ProjectSortOrder::Name;
+        static inline ProjectSortOrder sortOrder = ProjectSortOrder::Date;
 
         static bool projectNameComparator(ProjectInformation p1, ProjectInformation p2) {
             return p1.name > p2.name;
@@ -22,7 +22,11 @@ class ProjectSorter{
         }
 
         static bool projectDateComparator(ProjectInformation p1, ProjectInformation p2) {
-            return p1.lastOpened > p2.lastOpened;
+            if(p1.lastOpened != -1){
+                return p1.lastOpened > p2.lastOpened;
+            }else{
+                return false;
+            }
         }
 
         static bool projectDateReverseComparator(ProjectInformation p1, ProjectInformation p2) {

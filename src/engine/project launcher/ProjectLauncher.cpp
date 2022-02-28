@@ -260,66 +260,7 @@ void ProjectLauncher::RenderProjectList(int fWidth, int fHeight) {
 				case 2:
 				{
 					time_t lastOpenedTime = projectList[row].lastOpened;
-					if (lastOpenedTime != -1) {
-						time_t currentTime = time(0);
-						struct tm ct;
-						struct tm lot;
-						//#if _WIN32
-						TimeUtilities::GetLocalTime(&currentTime, &ct);
-						TimeUtilities::GetLocalTime(&lastOpenedTime, &lot);
-						//#endif
-						if (ct.tm_year != lot.tm_year) {
-							int diff = ct.tm_year - lot.tm_year;
-							if (diff == 1) {
-								cellText = "a year ago";
-							}
-							else {
-								cellText = std::to_string(diff) + " years ago";
-							}
-						}
-						else if (ct.tm_mon != lot.tm_mon) {
-							int diff = ct.tm_mon - lot.tm_mon;
-							if (diff == 1) {
-								cellText = "a month ago";
-							}
-							else {
-								cellText = std::to_string(diff) + " months ago";
-							}
-						}
-						else if (ct.tm_mday != lot.tm_mday) {
-							int diff = ct.tm_mday - lot.tm_mday;
-							if (diff == 1) {
-								cellText = "a day ago";
-							}
-							else {
-								cellText = std::to_string(diff) + " days ago";
-							}
-						}
-						else if (ct.tm_hour != lot.tm_hour) {
-							int diff = ct.tm_hour - lot.tm_hour;
-							if (diff == 1) {
-								cellText = "an hour ago";
-							}
-							else {
-								cellText = std::to_string(diff) + " hours ago";
-							}
-						}
-						else if (ct.tm_min != lot.tm_min) {
-							int diff = ct.tm_min - lot.tm_min;
-							if (diff == 1) {
-								cellText = "a minute ago";
-							}
-							else {
-								cellText = std::to_string(diff) + " minutes ago";
-							}
-						}
-						else {
-							cellText = "a few seconds ago";
-						}
-					}
-					else {
-						cellText = "never";
-					}
+					cellText = lastOpenedTime == -1 ? "never" : TimeUtilities::CalculateTimePassedSinceNow(projectList[row].lastOpened);
 					break;
 				}
 				case 3:
