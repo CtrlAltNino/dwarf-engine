@@ -22,10 +22,7 @@ class TimeUtilities{
         static std::string CalculateTimePassedSinceNow(time_t passedTime){
             std::string timePassed = "";
             time_t currentTime = time(0);
-
             time_t timeDifference = currentTime - passedTime;
-
-            std::cout << "Seconds passed: " << timeDifference << std::endl;
 
             if(timeDifference < SECONDS_IN_MINUTE){
                 timePassed = "a few seconds ago";
