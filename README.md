@@ -53,7 +53,7 @@ In Dwarf, you will never be forced to use an abstract layer to access functional
 
 ### What Dwarf is NOT
 
-Dwarf is not providing tutorials on how to implement certain features or how to write shaders, merely details on how and why the shipped features have been implemented (through documentation and the source code itself). If you are, for example, just starting out with shader programming, you can use S3DE as a way to quickly try out and visualize these in any graphics API you want. Drop in your shaders, models and textures (or use existing ones) and directly see your creation. Changes in your shader will then be applied in real time.
+Dwarf is not providing tutorials on how to implement certain features or how to write shaders, merely details on how and why the shipped features have been implemented (through documentation and the source code itself). If you are, for example, just starting out with shader programming, you can use Dwarf as a way to quickly try out and visualize these in any graphics API you want. Drop in your shaders, models and textures (or use existing ones) and directly see your creation. Changes in your shader will then be applied in real time.
 
 ## Features
 
