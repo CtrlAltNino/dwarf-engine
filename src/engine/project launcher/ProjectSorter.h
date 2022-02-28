@@ -1,11 +1,13 @@
 #pragma once
 
-#include<iostream>
 #include<vector>
-#include<string>
-#include<algorithm>
 
 #include "ProjectLauncherUtilities.h"
+
+#define NAME_COLUMN_INDEX (0)
+#define PATH_COLUMN_INDEX (1)
+#define DATE_COLUMN_INDEX (2)
+#define API_COLUMN_INDEX (3)
 
 enum class ProjectSortOrder {Name, NameReverse, Date, DateReverse, Api, ApiReverse};
 
@@ -13,12 +15,19 @@ class ProjectSorter{
     private:
         static inline ProjectSortOrder sortOrder = ProjectSortOrder::Date;
 
+        static std::string ToLowerCase(std::string s) {
+            transform(s.begin(), s.end(), s.begin(),
+            [](auto c) { return std::tolower(c, std::locale()); }
+            );
+            return s;
+        }
+
         static bool projectNameComparator(ProjectInformation p1, ProjectInformation p2) {
-            return p1.name > p2.name;
+            return ToLowerCase(p1.name) < ToLowerCase(p2.name);
         }
 
         static bool projectNameReverseComparator(ProjectInformation p1, ProjectInformation p2) {
-            return p1.name < p2.name;
+            return ToLowerCase(p1.name) > ToLowerCase(p2.name);
         }
 
         static bool projectDateComparator(ProjectInformation p1, ProjectInformation p2) {
@@ -44,7 +53,7 @@ class ProjectSorter{
     public:
         static void UpdateSortOrder(int columnId) {
             switch (columnId) {
-            case 0:
+            case NAME_COLUMN_INDEX:
                 if (sortOrder == ProjectSortOrder::Name) {
                     sortOrder = ProjectSortOrder::NameReverse;
                 }
@@ -53,8 +62,8 @@ class ProjectSorter{
                 }
                 //SortProjectList();
                 break;
-            case 1: break;
-            case 2:
+            case PATH_COLUMN_INDEX: break;
+            case DATE_COLUMN_INDEX:
                 if (sortOrder == ProjectSortOrder::Date) {
                     sortOrder = ProjectSortOrder::DateReverse;
                 }
@@ -63,7 +72,7 @@ class ProjectSorter{
                 }
                 //SortProjectList();
                 break;
-            case 3:
+            case API_COLUMN_INDEX:
                 if (sortOrder == ProjectSortOrder::Api) {
                     sortOrder = ProjectSortOrder::ApiReverse;
                 }

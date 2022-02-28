@@ -13,10 +13,6 @@
 
 class FileHandler{
 public:
-	static void InitFileHandler(){
-		
-	}
-
 	static std::string CreateDefaultProjectPath(){
 		std::string defaultProjectPath;
 		

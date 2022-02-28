@@ -38,8 +38,6 @@ void ProjectLauncher::Run(ProjectData* projectData) {
 	glfwDestroyWindow(window);
 	glfwTerminate();
 
-	//ProjectData projectData;
-
 	if (state == ProjectChooserState::Done) {
 		ProjectInformation projectInformation = ProjectListHandler::GetProjectInformation(selectedProjectId);
 		if(projectInformation.name != ""){
@@ -49,12 +47,9 @@ void ProjectLauncher::Run(ProjectData* projectData) {
 			ProjectListHandler::RegisterProjectOpening(selectedProjectId);
 		}
 	}
-	
-	//return projectData;
 }
 
 void ProjectLauncher::InitProjectLauncher() {
-	//defaultProjectPath
 	ProjectListHandler::LoadProjectList();
 	ProjectCreator::InitProjectCreator();
 	githubIcon = new Texture(GITHUB_PNG_ICON_PATH, GL_LINEAR, GL_REPEAT, GL_RGBA, GL_UNSIGNED_BYTE);
