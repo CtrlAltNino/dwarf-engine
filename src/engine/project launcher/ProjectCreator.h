@@ -20,7 +20,7 @@ class ProjectCreator {
             return defaultProjectPath;
         }
         
-        static int ProjectCreator::CreateProject(const char* projectName,
+        static int CreateProject(const char* projectName,
                                     const char* projectPath,
                                     GraphicsApi graphicsApi,
                                     ProjectTemplate projectTemplate){

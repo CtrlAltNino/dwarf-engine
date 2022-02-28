@@ -95,7 +95,7 @@ class ProjectListHandler {
                     foundInfo.name = jsonObject["projectInformation"]["projectName"];
                     foundInfo.path = path;
                     foundInfo.graphicsApi = jsonObject["projectInformation"]["graphicsApi"];
-                    foundInfo.lastOpened = jsonObject.contains("lastOpened") ? jsonObject["projectInformation"]["lastOpened"] : -1;
+                    foundInfo.lastOpened = jsonObject.contains("lastOpened") ? (int)jsonObject["projectInformation"]["lastOpened"] : -1;
                 }
             }
 
