@@ -3,6 +3,7 @@
 #include<fstream>
 #include<string>
 #include<fstream>
+#include<regex>
 
 #ifdef _WIN32
 #include<Windows.h>
@@ -31,6 +32,21 @@ public:
 
 				CoTaskMemFree(path);
 			}
+		#endif
+
+		#if __linux__
+				std::string homeFolder = getenv("HOME");
+				std::string userDirMap = readFile((homeFolder + "/.config/user-dirs.dirs").c_str());
+
+				std::regex patternLine("XDG_DOCUMENTS.*");
+				std::regex patternPath("\/.*(?=\")");
+   				std::smatch match;
+			    std::cout << std::regex_search(userDirMap, match, patternLine) << std::endl;
+				std::string line = match[0];
+				std::regex_search(line, match, patternPath);
+				std::string path = match[0];
+			
+				defaultProjectPath = homeFolder + path;
 		#endif
 
 		return defaultProjectPath;
