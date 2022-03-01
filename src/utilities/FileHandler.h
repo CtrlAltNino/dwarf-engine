@@ -60,8 +60,8 @@ class FileHandler{
 			std::string subpath = "/Dwarf Engine/settings/";
 			#if _WIN32
 				path = GetDocumentsPath();
-			#elif
-				path = getenv("HOME") + "/.config/";
+			#elif __linux__
+				path = std::string(getenv("HOME")) + "/.config/";
 			#endif
 
 			return path + subpath;
@@ -139,13 +139,11 @@ class FileHandler{
 
 		static void createDirectoryC(const char* path) {
 			#if _WIN32
-			WCHAR    str[sizeof(path)];
-			MultiByteToWideChar(0, 0, path, 5, str, 6);
-			LPCWSTR cstr = str;
+				system((std::string("mkdir \"") + path + "\"").c_str());
+			#elif __linux__
+				system((std::string("mkdir -p \"") + path + "\"").c_str());
 			#endif
 
-			//CreateDirectory(cstr, NULL);
-			system((std::string("mkdir \"") + path + "\"").c_str());
 		}
 
 		static void createDirectoryS(std::string path) {

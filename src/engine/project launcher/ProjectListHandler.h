@@ -50,7 +50,6 @@ class ProjectListHandler {
             std::string projectSettingsPath = (std::string(path) + "/projectSettings.sproj");
             std::string fileContent = FileHandler::readFile(projectSettingsPath.c_str());
             
-            std::cout << fileContent << std::endl;
             ProjectInformation foundInfo;
 
             if (!fileContent.empty()) {

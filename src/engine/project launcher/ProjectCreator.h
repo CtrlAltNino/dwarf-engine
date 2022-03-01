@@ -107,7 +107,6 @@ class ProjectCreator {
                     newProjectInformation.graphicsApi = (int)graphicsApi;
 
                     AddProjectToList(newProjectInformation);*/
-                    std::cout << "Added project path: " << projectDirectory.c_str() << std::endl;
                     ProjectListHandler::AddProjectByPath(projectDirectory.c_str());
 
                     return 0;
