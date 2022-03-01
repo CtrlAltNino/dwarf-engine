@@ -1,6 +1,7 @@
 #pragma once
 
 #include<vector>
+#include<limits>
 
 #include "ProjectLauncherUtilities.h"
 
@@ -31,15 +32,21 @@ class ProjectSorter{
         }
 
         static bool projectDateComparator(ProjectInformation p1, ProjectInformation p2) {
-            if(p1.lastOpened != -1){
-                return p1.lastOpened > p2.lastOpened;
-            }else{
-                return false;
-            }
+            // Accomodating for never opened projects having "-1" as a value
+            int a = p1.lastOpened == -1 ? INT_MAX : p1.lastOpened;
+            int b = p2.lastOpened == -1 ? INT_MAX : p2.lastOpened;
+            
+            // Sorting by project name as fallback
+            return a == b ? projectNameComparator(p1, p2) : (a > b);
         }
 
         static bool projectDateReverseComparator(ProjectInformation p1, ProjectInformation p2) {
-            return p1.lastOpened < p2.lastOpened;
+            // Accomodating for never opened projects having "-1" as a value
+            int a = p1.lastOpened == -1 ? INT_MAX : p1.lastOpened;
+            int b = p2.lastOpened == -1 ? INT_MAX : p2.lastOpened;
+            
+            // Sorting by project name as fallback
+            return a == b ? projectNameComparator(p1, p2) : (a < b);
         }
 
         static bool projectApiComparator(ProjectInformation p1, ProjectInformation p2) {
