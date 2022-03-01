@@ -50,6 +50,7 @@ void ProjectLauncher::Run(ProjectData* projectData) {
 }
 
 void ProjectLauncher::InitProjectLauncher() {
+	FileHandler::InitFileHandler();
 	ProjectListHandler::LoadProjectList();
 	ProjectCreator::InitProjectCreator();
 	githubIcon = new Texture(GITHUB_PNG_ICON_PATH, GL_LINEAR, GL_REPEAT, GL_RGBA, GL_UNSIGNED_BYTE);

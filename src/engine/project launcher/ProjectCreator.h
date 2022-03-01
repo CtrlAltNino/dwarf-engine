@@ -13,7 +13,7 @@ class ProjectCreator {
     
     public:
         static void InitProjectCreator(){
-            defaultProjectPath = FileHandler::CreateDefaultProjectPath();
+            defaultProjectPath = FileHandler::GetDocumentsPath();
         }
 
         static std::string GetDefaultProjectPath(){

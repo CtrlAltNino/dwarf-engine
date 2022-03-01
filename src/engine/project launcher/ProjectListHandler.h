@@ -25,49 +25,14 @@ class ProjectListHandler {
             }
 
             std::string fileContent = jsonObject.dump(4);
-            std::string settingsPath = GetSettingsPath();
+            std::string settingsPath = FileHandler::GetProjectSettingsPath();
             if (!FileHandler::checkIfDirectoyExists(settingsPath)) {
-                FileHandler::createDirectoryS(GetSettingsPath());
+                FileHandler::createDirectoryS(settingsPath);
             }
-            std::string savedProjectsPath = settingsPath + "savedProjects.json";
-            //std::cout << "Saving savedProjects.json to: " << GetSettingsPath() << std::endl;
+            std::string savedProjectsPath = settingsPath + "/savedProjects.json";
             FileHandler::writeToFile(savedProjectsPath.c_str(), fileContent);
             return sucess;
         }
-
-        static std::string GetSettingsPath() {
-            std::string savedProjectsPath = "";
-
-            #if _WIN32
-            static char str[128];
-            
-            // Get Documents directory path
-            {
-                PWSTR path = NULL;
-                HRESULT hr = SHGetKnownFolderPath(FOLDERID_Documents, 0, NULL, &path);
-
-                if (SUCCEEDED(hr)) {
-                    size_t i;
-                    wcstombs_s(&i, str, (size_t)128, path, (size_t)127);
-                    savedProjectsPath = std::string((const char*)str);
-                }
-
-                CoTaskMemFree(path);
-            }
-            #endif
-            
-            if (savedProjectsPath != "") {
-                size_t pos;
-                while ((pos = savedProjectsPath.find('\\')) != std::string::npos) {
-                    savedProjectsPath.replace(pos, 1, "/");
-                }
-                savedProjectsPath += "/Dwarf Engine/settings/";
-            }
-            
-            //return "C:/Users/ninom/Documents/yeet";
-            return savedProjectsPath;
-        }
-    
     public:
         static std::vector<ProjectInformation>* GetProjectList(){
             return &projectList;
@@ -104,7 +69,7 @@ class ProjectListHandler {
 
         static bool LoadProjectList(){
             bool success = true;
-            std::string savedProjectsPath = GetSettingsPath() + "savedProjects.json";
+            std::string savedProjectsPath = FileHandler::GetProjectSettingsPath() + "/savedProjects.json";
             std::string fileContent = FileHandler::readFile(savedProjectsPath.c_str());
             if (!fileContent.empty()) {
                 nlohmann::json jsonObject = nlohmann::json::parse(fileContent);
