@@ -23,9 +23,9 @@ class BasicMaterial{
 private:
 	Color color = Color(1,1,1,1);
 	Shader shader;
-	Texture* albedoMap;
-	Texture* specularMap;
-	Texture* normalMap;
+	Texture* albedoMap = nullptr;
+	Texture* specularMap = nullptr;
+	Texture* normalMap = nullptr;
 public:
 	MaterialSettings settings;
 	// ========== Constructors ==========
