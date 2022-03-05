@@ -4,10 +4,14 @@
 #include<imgui_impl_glfw.h>
 #include<imgui_impl_opengl3.h>
 #include<imgui_internal.h>
+#include<vector>
 #include"../windowing/WindowManager.h"
+#include"../editor_modules/IModule.h"
 
 class EditorGui{
     private:
+        static inline std::vector<IModule*> guiModules;
+        
         static void InitGUI_OpenGL(){
             ImGui::CreateContext();
             io = &ImGui::GetIO();
@@ -54,7 +58,14 @@ class EditorGui{
         }
 
         static void RenderGUI(){
+            // Render default stuff
             ImGui::ShowDemoWindow();
+
+            // Render modules
+            for(int i = 0; i < guiModules.size(); i++){
+                std::cout << "Now rendering module" << std::endl;
+                guiModules.at(i)->RenderModuleWindow();
+            }
         }
 
         static void EndFrame(){
@@ -65,5 +76,9 @@ class EditorGui{
                 ImGui::UpdatePlatformWindows();
                 ImGui::RenderPlatformWindowsDefault();
             }
+        }
+
+        static void AddWindow(IModule *module){
+            guiModules.push_back(module);
         }
 };

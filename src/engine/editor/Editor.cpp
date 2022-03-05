@@ -115,6 +115,8 @@ Editor::Editor(ProjectData projectData)
 	
 	// 2. Initialize IMGUI
 	EditorGui::InitGUI();
+	//const PerformanceModule *pModule = new PerformanceModule(std::string("Performance statistics"), &(scene.deltaTime));
+	EditorGui::AddWindow(new PerformanceModule(std::string("Performance statistics"), &(scene.deltaTime)));
 
     // 3. Register assets in file structure
 

@@ -7,6 +7,8 @@
 #include"../scene/Scene.h"
 #include"EditorProperties.h"
 #include"InputHandler.h"
+#include"../editor_modules/IModule.h"
+#include"../editor_modules/PerformanceModule.h"
 
 class Editor{
     private:

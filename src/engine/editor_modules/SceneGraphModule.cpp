@@ -1,6 +1,7 @@
 #include "SceneGraphModule.h"
 
-SceneGraphModule::SceneGraphModule(Scene *scene){
+SceneGraphModule::SceneGraphModule(std::string moduleName, Scene *scene)
+:IModule(moduleName), scene(scene){
 
 }
 
