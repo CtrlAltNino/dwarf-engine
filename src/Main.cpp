@@ -1,46 +1,46 @@
 // system
 #include<iostream>
-#include<fstream>
-#include<stdlib.h>
+//#include<fstream>
+//#include<stdlib.h>
 #include<string>
 
 // dependencies
-#include<glad/glad.h>
-#include<GLFW/glfw3.h>
-#include<glm/glm.hpp>
-#include<glm/gtc/matrix_transform.hpp>
-#include<stb_image.h>
+//#include<glad/glad.h>
+//#include<GLFW/glfw3.h>
+//#include<glm/glm.hpp>
+//#include<glm/gtc/matrix_transform.hpp>
+//#include<stb_image.h>
 //#include<imgui.h>
-#include<imgui_impl_glfw.h>
-#include<imgui_impl_opengl3.h>
-#include<imgui_internal.h>
+//#include<imgui_impl_glfw.h>
+//#include<imgui_impl_opengl3.h>
+//#include<imgui_internal.h>
 
 // engine related
-#include"engine/rendering/BasicMaterial.h"
-#include"engine/data structures/Quaternion.h"
-#include"engine/scene/Scene.h"
-#include"engine/rendering/Shader.h"
-#include"engine/data structures/VAO.h"
-#include"engine/data structures/VBO.h"
-#include"engine/data structures/EBO.h"
-#include"engine/editor/EditorProperties.h"
+//#include"engine/rendering/BasicMaterial.h"
+//#include"engine/data structures/Quaternion.h"
+//#include"engine/scene/Scene.h"
+//#include"engine/rendering/Shader.h"
+//#include"engine/data structures/VAO.h"
+//#include"engine/data structures/VBO.h"
+//#include"engine/data structures/EBO.h"
+//#include"engine/editor/EditorProperties.h"
 #include"engine/project launcher/ProjectLauncher.h"
 
 // macros
 
 // global variables
-Scene scene = Scene("Test Scene");
-EditorProperties editorProperties = EditorProperties();
-static int menuBarHeight;
-static float menuPercent;
-std::string projectPath = "project/";
-glm::vec4 fogColor = glm::vec4(0.1, 0.1, 0.1, 1);
-float fogStart = 10;
-float fogEnd = 60;
+//Scene scene = Scene("Test Scene");
+//EditorProperties editorProperties = EditorProperties();
+//static int menuBarHeight;
+//static float menuPercent;
+//std::string projectPath = "";
+//glm::vec4 fogColor = glm::vec4(0.1, 0.1, 0.1, 1);
+//float fogStart = 10;
+//float fogEnd = 60;
 
 
 
-void window_focus_callback(GLFWwindow* window, int focused)
+/*void window_focus_callback(GLFWwindow* window, int focused)
 {
 	if (focused)
 	{
@@ -163,11 +163,11 @@ void borderlessFullscreen(GLFWwindow* window, const GLFWvidmode* mode) {
 		glfwRestoreWindow(window);
 	}*/
 	//glfwWindowHint(GLFW_DECORATED, GLFW_FALSE);
-	glfwSetWindowAttrib(window, GLFW_DECORATED, GLFW_FALSE);
-	glfwSetWindowMonitor(window, nullptr, 0, 0, mode->width, mode->height, NULL);
-}
+	//glfwSetWindowAttrib(window, GLFW_DECORATED, GLFW_FALSE);
+	//glfwSetWindowMonitor(window, nullptr, 0, 0, mode->width, mode->height, NULL);
+//}
 
-static void ShowExampleMenuFile()
+/*static void ShowExampleMenuFile()
 {
 	//IMGUI_DEMO_MARKER("Examples/Menu");
 	ImGui::MenuItem("(demo menu)", NULL, false, false);
@@ -385,9 +385,9 @@ void DrawEditorSettings(GLFWwindow* window, GLFWmonitor* _monitor, const GLFWvid
 	ImGui::End();
 
 	//ImGui::PopStyleVar();
-}
+}*/
 
-int OpenProjectInOpenGL(ProjectData projectData) {
+/*int OpenProjectInOpenGL(ProjectData projectData) {
 	projectPath = projectData.path;
 	glfwInit();
 	// get resolution of monitor
@@ -469,7 +469,7 @@ int OpenProjectInOpenGL(ProjectData projectData) {
 		//ImGui::ShowDemoWindow();
 		//ImGui::ShowDock
 		//DrawMainMenu();
-		DrawEditorSettings(window, _monitor, mode);
+		//DrawEditorSettings(window, _monitor, mode);
 		ImGui::ShowDemoWindow();
 
 		glfwGetWindowSize(window, &width, &height);
@@ -559,16 +559,16 @@ int OpenProjectInOpenGL(ProjectData projectData) {
 	gridShaderProgram.Delete();
 	glDeleteTextures(1, &texture);*/
 
-	ImGui_ImplGlfw_Shutdown();
+	/*ImGui_ImplGlfw_Shutdown();
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui::DestroyContext();
 
 	glfwDestroyWindow(window);
 	glfwTerminate();
 	return 0;
-}
+}*/
 
-int OpenProject(ProjectData projectData) {
+/*int OpenProject(ProjectData projectData) {
 	int returnCode = 0;
 	
 	switch (projectData.graphicsApi) {
@@ -587,26 +587,13 @@ int OpenProject(ProjectData projectData) {
 	}
 
 	return returnCode;
-}
+}*/
 
 int main() {
 	int returnCode = 0;
-	ProjectLauncher chooser = ProjectLauncher();
-	ProjectData projectData;
 	
-	chooser.Run(&projectData);
-
-	size_t pos;
-	while ((pos = projectData.path.find('\\')) != std::string::npos) {
-		projectData.path.replace(pos, 1, "/");
-	}
-
-	if ((projectData.name != "") && (projectData.path != "")) {
-		returnCode = OpenProject(projectData);
-	}
-	else {
-		//std::cout << "Not opening any project!" << std::endl;
-	}
+	ProjectLauncher launcher = ProjectLauncher();
+	returnCode = launcher.Run();
 	
 	return returnCode;
 }

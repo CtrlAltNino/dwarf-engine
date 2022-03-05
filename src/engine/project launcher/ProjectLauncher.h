@@ -25,19 +25,12 @@
 #include "ProjectSorter.h"
 #include "BrowserLinkOpener.h"
 #include "TimeUtilities.h"
+#include "../editor/Editor.h"
 
 enum class ProjectChooserState {Choosing, Done, ProjectNotFound, CreateNewProject, ChangeGraphicsApi, Canceled};
 //enum class GraphicsApi {OpenGL, D3D11, D3D12, Vulkan};
 //enum class ProjectSortOrder {Name, NameReverse, Date, DateReverse, Api, ApiReverse};
 //enum class ProjectTemplate {Blank, Demo1};
-
-struct ProjectData {
-	std::string name;
-	std::string path;
-	GraphicsApi graphicsApi;
-};
-
-
 
 struct WindowInformation {
 	int width;
@@ -49,6 +42,7 @@ private:
 	//std::vector<ProjectInformation> projectList;
 	WindowInformation windowInfo;
 	int selectedProjectId = -1;
+	int refreshRate;
 	GLFWwindow* window;
 	ProjectChooserState state = ProjectChooserState::Choosing;
 	ImFont* headerFont;
@@ -83,5 +77,5 @@ private:
 	//int CreateProject(const char* projectName, const char* projectPath, GraphicsApi graphicsApi, ProjectTemplate projectTemplate);
 public:
 	//const char* graphicsApiNames[4] = { "OpenGL", "Direct3D 11", "Direct3D 12", "Vulkan" };
-	void Run(ProjectData* projectData);
+	int Run();
 };

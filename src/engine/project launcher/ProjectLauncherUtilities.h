@@ -22,4 +22,10 @@ struct ProjectInformation {
 	int graphicsApi;
 };
 
+struct ProjectData {
+	std::string name;
+	std::string path;
+	GraphicsApi graphicsApi;
+};
+
 static const char* graphicsApiNames[4] = { "OpenGL", "Direct3D 11", "Direct3D 12", "Vulkan" };

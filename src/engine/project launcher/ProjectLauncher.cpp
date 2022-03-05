@@ -4,13 +4,11 @@
 #define PROJECT_BUTTON_WINDOW_WIDTH (200)
 #define PROJECT_INFORMATION_HEIGHT (30)
 
-void ProjectLauncher::Run(ProjectData* projectData) {
+int ProjectLauncher::Run() {
+	// TODO: Abstract the window creation + IMGUI Initialization
 	glfwInit();
 	
-	if (window == nullptr) {
-		InitWindow();
-	}
-
+	InitWindow();
 	InitProjectLauncher();
 	InitializeIMGUI();
 
@@ -18,6 +16,8 @@ void ProjectLauncher::Run(ProjectData* projectData) {
 
 	while (((state != ProjectChooserState::Done) && (state != ProjectChooserState::Canceled)) && !glfwWindowShouldClose(window)) {
 		glfwPollEvents();
+
+		double currentTime = glfwGetTime();
 		
 		glfwGetWindowSize(window, &windowInfo.width, &windowInfo.height);
 		glViewport(0, 0, windowInfo.width, windowInfo.height);
@@ -26,10 +26,6 @@ void ProjectLauncher::Run(ProjectData* projectData) {
 		Render();
 		
 		glfwSwapBuffers(window);
-
-		//while (glfwGetTime() < currentTime + (editorProperties.FrameLimit != -1 ? 1.0 / editorProperties.FrameLimit : 0)) {
-			// TODO: Update this when implementing multi threading
-		//}
 	}
 
 	ImGui_ImplGlfw_Shutdown();
@@ -38,15 +34,22 @@ void ProjectLauncher::Run(ProjectData* projectData) {
 	glfwDestroyWindow(window);
 	glfwTerminate();
 
+	ProjectData projectData = ProjectData();
+
 	if (state == ProjectChooserState::Done) {
 		ProjectInformation projectInformation = ProjectListHandler::GetProjectInformation(selectedProjectId);
 		if(projectInformation.name != ""){
-			projectData->name = projectInformation.name;
-			projectData->path = projectInformation.path;
-			projectData->graphicsApi = (GraphicsApi)projectInformation.graphicsApi;
+			projectData.name = projectInformation.name;
+			projectData.path = projectInformation.path;
+			projectData.graphicsApi = (GraphicsApi)projectInformation.graphicsApi;
 			ProjectListHandler::RegisterProjectOpening(selectedProjectId);
+
+			Editor editor = Editor(projectData);
+			editor.Run();
 		}
 	}
+
+	return 0;
 }
 
 void ProjectLauncher::InitProjectLauncher() {
@@ -70,6 +73,8 @@ int ProjectLauncher::InitWindow() {
 	glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
 	glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
 	glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
+
+	ProjectLauncher::refreshRate = mode->refreshRate;
 	
 	window = glfwCreateWindow(INITIAL_WINDOW_WIDTH, INITIAL_WINDOW_HEIGHT, "Dwarf Engine Project Launcher", NULL, NULL);
 	if (window == NULL) {
