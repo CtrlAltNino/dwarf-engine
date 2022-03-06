@@ -43,7 +43,7 @@ class WindowManager{
             glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
             glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
 
-            window_opengl = glfwCreateWindow(INITIAL_WINDOW_WIDTH, INITIAL_WINDOW_HEIGHT, ("Dwarf Engine - " + projectName).c_str(), NULL, NULL);
+            window_opengl = glfwCreateWindow(INITIAL_WINDOW_WIDTH, INITIAL_WINDOW_HEIGHT, ("Dwarf Engine Editor - " + projectName + " - Scene name (OpenGL)").c_str(), NULL, NULL);
             
             if (window_opengl == NULL) {
                 std::cout << "Failed to create GLFW window" << std::endl;

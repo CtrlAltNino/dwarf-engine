@@ -116,7 +116,7 @@ Editor::Editor(ProjectData projectData)
 	// 2. Initialize IMGUI
 	EditorGui::InitGUI();
 	//const PerformanceModule *pModule = new PerformanceModule(std::string("Performance statistics"), &(scene.deltaTime));
-	EditorGui::AddWindow(new PerformanceModule(std::string("Performance statistics"), &(scene.deltaTime)));
+	//EditorGui::AddWindow(new PerformanceModule(&(scene.deltaTime)));
 
     // 3. Register assets in file structure
 
@@ -147,15 +147,15 @@ void Editor::Run(){
 		}
 
 		// Editor Camera updates
-		UpdateEditorCamera();
+		//UpdateEditorCamera();
 		
 		// ===== Animation stuff =====
-		scene.sceneObjects.at(2).transform.rotate(glm::vec3(0, scene.deltaTime * 88, 0));
+		//scene.sceneObjects.at(2).transform.rotate(glm::vec3(0, scene.deltaTime * 88, 0));
 		//scene.sceneObjects.at(3).transform.rotate(glm::vec3(0, delta * 180, 0));
 
 		// ===== Drawing Geometry =====
 		// TODO: Draw to a framebuffer
-		scene.drawScene();
+		//scene.drawScene();
 
 		// ===== Post processing =====
 		// TODO: Implement
@@ -175,4 +175,8 @@ void Editor::Run(){
 			// TODO: Update this when implementing multi threading
 		}
 	}
+}
+
+Scene* Editor::GetScene() {
+	return &scene;
 }

@@ -1,3 +1,5 @@
+#pragma once
+
 #include "IModule.h"
 #include<iostream>
 
@@ -5,6 +7,6 @@ class PerformanceModule : public IModule{
     private:
         float* frametime;
     public:
-        PerformanceModule(std::string moduleName, float* frametime);
+        PerformanceModule(float* frametime);
         void RenderModuleWindow() override;
 };

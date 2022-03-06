@@ -1,7 +1,7 @@
 #include "PerformanceModule.h"
 
-PerformanceModule::PerformanceModule(std::string moduleName, float* frametime)
-    :IModule(moduleName), frametime(frametime){ }
+PerformanceModule::PerformanceModule(float* frametime)
+    :IModule("Performance statistics"), frametime(frametime){ }
 
 void PerformanceModule::RenderModuleWindow(){
     ImGuiWindowFlags window_flags = 0;

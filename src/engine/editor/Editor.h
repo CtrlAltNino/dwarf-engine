@@ -17,5 +17,7 @@ class Editor{
         void UpdateEditorCamera();
     public:
         Editor(ProjectData projectData);
+        PerformanceModule* CreatePerformanceModule();
+        Scene* GetScene();
         void Run();
 };
