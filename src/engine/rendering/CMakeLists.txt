@@ -3,4 +3,5 @@ target_sources(${targetName}
         BasicMaterial.cpp
         Material.cpp
         Shader.cpp
+        RenderTextureOpenGL.cpp
 )

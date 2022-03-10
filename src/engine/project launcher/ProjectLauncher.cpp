@@ -44,8 +44,10 @@ int ProjectLauncher::Run() {
 			projectData.graphicsApi = (GraphicsApi)projectInformation.graphicsApi;
 			ProjectListHandler::RegisterProjectOpening(selectedProjectId);
 
-			Editor editor = Editor(projectData);
-			editor.Run();
+			//Editor editor = Editor(projectData);
+			//editor.Run();
+			EditorController editor(projectData);
+			editor.RunLoop();
 		}
 	}
 

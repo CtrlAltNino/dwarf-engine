@@ -18,6 +18,7 @@
 #include<nlohmann/json.hpp>
 #include<nfd.h>
 
+#include"../../utilities/Common.h"
 #include "../../utilities/FileHandler.h"
 #include "../data structures/Texture.h"
 #include "ProjectCreator.h"
@@ -25,9 +26,10 @@
 #include "ProjectSorter.h"
 #include "BrowserLinkOpener.h"
 #include "TimeUtilities.h"
-#include "../editor/Editor.h"
+//#include "../editor/Editor.h"
+#include"../editor/EditorController.h"
 
-enum class ProjectChooserState {Choosing, Done, ProjectNotFound, CreateNewProject, ChangeGraphicsApi, Canceled};
+//enum class ProjectChooserState {Choosing, Done, ProjectNotFound, CreateNewProject, ChangeGraphicsApi, Canceled};
 //enum class GraphicsApi {OpenGL, D3D11, D3D12, Vulkan};
 //enum class ProjectSortOrder {Name, NameReverse, Date, DateReverse, Api, ApiReverse};
 //enum class ProjectTemplate {Blank, Demo1};
