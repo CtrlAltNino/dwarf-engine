@@ -25,11 +25,13 @@ class EditorController : public IModelListener, public IViewListener {
         int guiModuleIDCount = 0;
         std::vector<IModule*> guiModules;
         std::string projectPath;
-        void UpdateEditorCamera();
+        float deltaTime;
         //void InitScene(std::string projectPath);
     public:
         EditorController(ProjectData projectData);
         void RunLoop();
+        virtual void UpdateEditorCamera(Camera* camera);
         virtual void AddWindow(MODULE_TYPE moduleType);
         virtual void RemoveWindow(int index);
+        virtual float GetDeltaTime();
 };

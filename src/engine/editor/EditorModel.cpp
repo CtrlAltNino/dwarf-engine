@@ -66,8 +66,8 @@ void EditorModel::InitScene(std::string projectPath) {
 	grid.transform.setScale(glm::vec3(50, 1, 50));
 	scene.sceneObjects.push_back(grid);
 	
-	scene.sceneCamera.transform.setPosition(glm::vec3(0, 2, 5));
-	scene.sceneCamera.transform.setRotation(glm::vec3(15, 0, 0));
+	//scene.sceneCamera.transform.setPosition(glm::vec3(0, 2, 5));
+	//scene.sceneCamera.transform.setRotation(glm::vec3(15, 0, 0));
 }
 
 Scene* EditorModel::GetScene() {

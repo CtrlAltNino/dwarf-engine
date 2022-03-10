@@ -3,7 +3,7 @@
 // ========== Constructors ==========
 
 Scene::Scene(const char* sceneName)
-	: sceneCamera(glm::vec3(0, 2, 5), Quaternion::fromEulerAngles(25, 0, 0)),
+	: /*sceneCamera(glm::vec3(0, 2, 5), Quaternion::fromEulerAngles(25, 0, 0)),*/
 		clearColor(DEFAULT_CLEAR_COLOR),
 		lastMousePos(glm::vec2(-1)) {
 	this->sceneName = sceneName;
@@ -31,11 +31,11 @@ void Scene::setClearColor(Color clearColor) {
 
 // ========== Scene Functions ==========
 
-void Scene::drawScene() {
+void Scene::drawScene(Camera camera) {
 	for (int i = 0; i < sceneObjects.size(); i++) {
 		Object currentSceneObject = sceneObjects.at(i);
 		if (currentSceneObject.active) {
-			sceneObjects.at(i).render(sceneCamera.getViewMatrix(), sceneCamera.getProjectionMatrix());
+			sceneObjects.at(i).render(camera.getViewMatrix(), camera.getProjectionMatrix());
 		}
 	}
 	//sceneObjects.at(0).render(sceneCamera.getViewMatrix(), sceneCamera.getProjectionMatrix());

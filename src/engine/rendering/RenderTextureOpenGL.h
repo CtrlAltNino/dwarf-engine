@@ -9,6 +9,7 @@ class RenderTextureOpenGL : public IRenderTexture{
     private:
         GLuint fbo;
         GLuint textureColorBuffer;
+        GLuint rbo;
     public:
         RenderTextureOpenGL();
         virtual int GetID();
