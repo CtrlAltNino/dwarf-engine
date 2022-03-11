@@ -84,6 +84,9 @@ target_link_libraries(${targetName} PRIVATE nlohmann_json nlohmann_json::nlohman
 find_package(efsw CONFIG REQUIRED)
 target_link_libraries(${targetName} PRIVATE efsw::efsw)
 
+find_package(Threads REQUIRED)
+target_link_libraries(${targetName} PRIVATE Threads::Threads)
+
 # Copy files to build folder
 add_custom_command(TARGET 
 ${targetName} 

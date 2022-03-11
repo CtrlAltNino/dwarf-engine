@@ -180,7 +180,7 @@ void EditorController::RemoveWindow(int index){
 		if(guiModules[i]->GetIndex() == index){
 			switch(guiModules[i]->GetModuleType()){
 				case MODULE_TYPE::SCENE_VIEWER:
-					windowManager->RemoveRenderTexture((int)((SceneViewerModule*)guiModules[i])->GetTextureID());
+					windowManager->RemoveRenderTexture((intptr_t)((SceneViewerModule*)guiModules[i])->GetTextureID());
 					break;
 			}
 			guiModules.erase(guiModules.begin()+i);
