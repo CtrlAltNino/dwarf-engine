@@ -4,16 +4,28 @@
 
 #include<glm/glm.hpp>
 #include<glm/vec2.hpp>
+#include<set>
 
-enum class KEYCODE {KEYCODE_W, KEYCODE_A, KEYCODE_S, KEYCODE_D, KEYCODE_E, KEYCODE_Q, KEYCODE_LEFT_SHIFT};
-enum class MOUSE_BUTTON {LEFT_MOUSE, MIDDLE_MOUSE, RIGHT_MOUSE};
+#define KEYCODE_INITIALIZER {W, A, S, D, E, Q, LEFT_SHIFT}
+#define MOUSE_BUTTON_INITIALIZER {LEFT, RIGHT, MIDDLE}
+enum KEYCODE KEYCODE_INITIALIZER;
+enum MOUSE_BUTTON MOUSE_BUTTON_INITIALIZER;
 
 class IInputManager{
-    private:
+    protected:
         IWindowManager* windowManager;
+        std::set<KEYCODE> keyPressSet;
+        std::set<MOUSE_BUTTON> mousePressSet;
     public:
+        virtual bool GetKey(KEYCODE key)=0;
         virtual bool GetKeyDown(KEYCODE key)=0;
+        virtual bool GetKeyUp(KEYCODE key)=0;
+        
+        virtual bool GetMouse(MOUSE_BUTTON mButton)=0;
         virtual bool GetMouseDown(MOUSE_BUTTON mButton)=0;
+        virtual bool GetMouseUp(MOUSE_BUTTON mButton)=0;
+        
         virtual void SetMouseVisibility(bool visibilityState)=0;
         virtual glm::vec2 GetMousePos()=0;
+        virtual void UpdatePressStates()=0;
 };

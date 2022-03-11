@@ -20,11 +20,11 @@ class SceneViewerModule : public IModule{
 
         float aspectRatio;
         glm::vec2 resolution;
-        Camera* camera;
+        Camera* camera = nullptr;
         bool cameraUpdating = false;
         void UpdateCamera();
-        glm::vec2 lastMousePos;
-        glm::vec2 deltaMousePos;
+        glm::vec2 lastMousePos = glm::vec2(-1);
+        glm::vec2 deltaMousePos = glm::vec2(0);
     public:
         SceneViewerModule(IViewListener *listener, IRenderTexture* renderTexture, IInputManager* inputManager, int index);
         void RenderModuleWindow() override;

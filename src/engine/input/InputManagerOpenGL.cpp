@@ -3,50 +3,28 @@
 
 InputManagerOpenGL::InputManagerOpenGL(WindowManagerOpenGL* wm) : windowManager(wm){ }
 
-bool InputManagerOpenGL::GetKeyDown(KEYCODE key){
-    int glfwKey = -1;
-    switch(key){
-        case KEYCODE::KEYCODE_A:
-            glfwKey = GLFW_KEY_A;
-            break;
-        case KEYCODE::KEYCODE_D:
-            glfwKey = GLFW_KEY_D;
-            break;
-        case KEYCODE::KEYCODE_S:
-            glfwKey = GLFW_KEY_S;
-            break;
-        case KEYCODE::KEYCODE_W:
-            glfwKey = GLFW_KEY_W;
-            break;
-        case KEYCODE::KEYCODE_Q:
-            glfwKey = GLFW_KEY_Q;
-            break;
-        case KEYCODE::KEYCODE_E:
-            glfwKey = GLFW_KEY_E;
-            break;
-        case KEYCODE::KEYCODE_LEFT_SHIFT:
-            glfwKey = GLFW_KEY_LEFT_SHIFT;
-            break;
-    }
+bool InputManagerOpenGL::GetKey(KEYCODE key){
+    return glfwGetKey(windowManager->GetOpenGLWindow(), keyCodeMap[key]) == GLFW_PRESS;
+}
 
-    return glfwGetKey(windowManager->GetOpenGLWindow(), glfwKey) == GLFW_PRESS;
+bool InputManagerOpenGL::GetKeyDown(KEYCODE key){
+    return (keyPressSet.count(key) == 0) && glfwGetKey(windowManager->GetOpenGLWindow(), keyCodeMap[key]) == GLFW_PRESS;
+}
+
+bool InputManagerOpenGL::GetKeyUp(KEYCODE key){
+    return (keyPressSet.count(key) != 0) && glfwGetKey(windowManager->GetOpenGLWindow(), keyCodeMap[key]) == GLFW_RELEASE;
+}
+
+bool InputManagerOpenGL::GetMouse(MOUSE_BUTTON mButton){
+    return glfwGetMouseButton(windowManager->GetOpenGLWindow(), mouseCodeMap[mButton]) == GLFW_PRESS;
 }
 
 bool InputManagerOpenGL::GetMouseDown(MOUSE_BUTTON mButton){
-    int glfwMouse = -1;
-    switch(mButton){
-        case MOUSE_BUTTON::LEFT_MOUSE:
-            glfwMouse = GLFW_MOUSE_BUTTON_LEFT;
-            break;
-        case MOUSE_BUTTON::MIDDLE_MOUSE:
-            glfwMouse = GLFW_MOUSE_BUTTON_MIDDLE;
-            break;
-        case MOUSE_BUTTON::RIGHT_MOUSE:
-            glfwMouse = GLFW_MOUSE_BUTTON_RIGHT;
-            break;
-    }
+    return (mousePressSet.count(mButton) == 0) && glfwGetMouseButton(windowManager->GetOpenGLWindow(), mouseCodeMap[mButton]) == GLFW_PRESS;
+}
 
-    return glfwGetMouseButton(windowManager->GetOpenGLWindow(), glfwMouse) == GLFW_PRESS;
+bool InputManagerOpenGL::GetMouseUp(MOUSE_BUTTON mButton){
+    return (mousePressSet.count(mButton) != 0) && glfwGetMouseButton(windowManager->GetOpenGLWindow(), mouseCodeMap[mButton]) == GLFW_RELEASE;
 }
 
 void InputManagerOpenGL::SetMouseVisibility(bool visibilityState){
@@ -57,4 +35,25 @@ glm::vec2 InputManagerOpenGL::GetMousePos(){
     double mouseX, mouseY;
     glfwGetCursorPos(windowManager->GetOpenGLWindow(), &mouseX, &mouseY);
     return glm::vec2(mouseX, mouseY);
+}
+
+void InputManagerOpenGL::UpdatePressStates(){
+    // Update shit
+    KEYCODE kArr[] KEYCODE_INITIALIZER;
+    MOUSE_BUTTON mArr[] MOUSE_BUTTON_INITIALIZER;
+    keyPressSet.clear();
+
+    for(const KEYCODE &kCode : kArr){
+        if(glfwGetKey(windowManager->GetOpenGLWindow(), keyCodeMap[kCode]) == GLFW_PRESS){
+            keyPressSet.insert(kCode);
+        }
+    }
+
+    mousePressSet.clear();
+
+    for(const MOUSE_BUTTON &mCode : mArr){
+        if(glfwGetMouseButton(windowManager->GetOpenGLWindow(), mouseCodeMap[mCode]) == GLFW_PRESS){
+            mousePressSet.insert(mCode);
+        }
+    }
 }

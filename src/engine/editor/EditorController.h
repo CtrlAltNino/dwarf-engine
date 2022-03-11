@@ -30,7 +30,7 @@ class EditorController : public IModelListener, public IViewListener {
     public:
         EditorController(ProjectData projectData);
         void RunLoop();
-        virtual void UpdateEditorCamera(Camera* camera);
+        //virtual void UpdateEditorCamera(Camera* camera);
         virtual void AddWindow(MODULE_TYPE moduleType);
         virtual void RemoveWindow(int index);
         virtual float GetDeltaTime();

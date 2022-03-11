@@ -45,10 +45,11 @@ void SceneViewerModule::RenderModuleWindow(){
     std::cout << "Right mouse down: " << inputManager->GetMouseDown(MOUSE_BUTTON::RIGHT_MOUSE) << std::endl;*/
     //ImGui::IsMouse
     //std::cout << "Cursor pos: " << ImGui::GetCursorPos().x << " | " << ImGui::GetCursorPos().y << std::endl;
-    if(!cameraUpdating && ImGui::IsMouseHoveringRect(ImGui::GetItemRectMin(), ImVec2(ImGui::GetItemRectMin().x + imageSize.x, ImGui::GetItemRectMin().y + imageSize.y)) && inputManager->GetMouseDown(MOUSE_BUTTON::RIGHT_MOUSE)){
-        std::cout << "Hovered and right clicked" << std::endl;
+    if(!cameraUpdating && ImGui::IsMouseHoveringRect(ImGui::GetItemRectMin(), ImVec2(ImGui::GetItemRectMin().x + imageSize.x, ImGui::GetItemRectMin().y + imageSize.y)) && inputManager->GetMouseDown(MOUSE_BUTTON::RIGHT)){
+        ImGui::SetWindowFocus(GetIdentifier().c_str());
         cameraUpdating = true;
     }
+
     //ImGui::
     /*if (ImGui::IsMouseDragging(1)) {
         std::cout << "YEEEEEEEEET" << std::endl;
@@ -78,7 +79,7 @@ ImTextureID SceneViewerModule::GetTextureID(){
 }
 
 void SceneViewerModule::UpdateCamera(){
-	if (inputManager->GetMouseDown(MOUSE_BUTTON::RIGHT_MOUSE))
+	if (inputManager->GetMouse(MOUSE_BUTTON::RIGHT) && ImGui::IsWindowFocused())
 	{
 		inputManager->SetMouseVisibility(false);
 		glm::vec2 mousePos = inputManager->GetMousePos();
@@ -107,13 +108,13 @@ void SceneViewerModule::UpdateCamera(){
         cameraUpdating = false;
 	}
 
-	glm::vec3 movementVector = { (inputManager->GetKeyDown(KEYCODE::KEYCODE_A) ? -1 : 0) + (inputManager->GetKeyDown(KEYCODE::KEYCODE_D) ? 1 : 0),
-		(inputManager->GetKeyDown(KEYCODE::KEYCODE_Q) ? -1 : 0) + (inputManager->GetKeyDown(KEYCODE::KEYCODE_E) ? 1 : 0),
-		(inputManager->GetKeyDown(KEYCODE::KEYCODE_W) ? -1 : 0) + (inputManager->GetKeyDown(KEYCODE::KEYCODE_S) ? 1 : 0) };
+	glm::vec3 movementVector = { (inputManager->GetKey(KEYCODE::A) ? -1 : 0) + (inputManager->GetKey(KEYCODE::D) ? 1 : 0),
+		(inputManager->GetKey(KEYCODE::Q) ? -1 : 0) + (inputManager->GetKey(KEYCODE::E) ? 1 : 0),
+		(inputManager->GetKey(KEYCODE::W) ? -1 : 0) + (inputManager->GetKey(KEYCODE::S) ? 1 : 0) };
 
 	if (glm::length(movementVector) > 0) {
 		movementVector = glm::normalize(movementVector);
-		movementVector *= viewListener->GetDeltaTime() * EditorProperties::moveSpeed * (inputManager->GetKeyDown(KEYCODE::KEYCODE_LEFT_SHIFT) ? 2 : 1);
+		movementVector *= viewListener->GetDeltaTime() * EditorProperties::moveSpeed * (inputManager->GetKey(KEYCODE::LEFT_SHIFT) ? 2 : 1);
 	}
 
 	camera->transform.translate(camera->transform.getRotation() * movementVector);

@@ -28,9 +28,9 @@ EditorController::EditorController(ProjectData projectData) : editorModel(this),
 	windowManager->SetWindowName("Dwarf Engine Editor - " + projectData.name + " - " +editorModel.GetScene()->getSceneName() + " (" +(graphicsApiNames[(int)projectData.graphicsApi]) +")");
 }
 
-void EditorController::UpdateEditorCamera(Camera* camera){
+/*void EditorController::UpdateEditorCamera(Camera* camera){
     Scene* scene = editorModel.GetScene();
-	if (inputManager->GetMouseDown(MOUSE_BUTTON::RIGHT_MOUSE))
+	if (inputManager->GetMouseDown(MOUSE_BUTTON::RIGHT))
 	{
 		//inputManager->SetMouseVisibility(false);
 		glm::vec2 mousePos = inputManager->GetMousePos();
@@ -68,7 +68,7 @@ void EditorController::UpdateEditorCamera(Camera* camera){
 	}
 
 	camera->transform.translate(camera->transform.getRotation() * movementVector);
-}
+}*/
 
 void EditorController::RunLoop(){
     double lastFrameTime = 0;
@@ -133,9 +133,19 @@ void EditorController::RunLoop(){
 		//editorView.EndFrame();
 		//EditorGui::RenderGUI();
 		//EditorGui::EndFrame();
+		/*if(inputManager->GetMouseDown(LEFT)){
+			std::cout << "Left mouse button down" << std::endl;
+		}
+		if(inputManager->GetMouse(LEFT)){
+			std::cout << "Left mouse button being pressed" << std::endl;
+		}
+		if(inputManager->GetMouseUp(LEFT)){
+			std::cout << "Left mouse button up" << std::endl;
+		}*/
 
 		// ===== Windowing Stuff =====
 		windowManager->EndFrame();
+		inputManager->UpdatePressStates();
 
 		// ===== Framerate managing =====
 		while (glfwGetTime() < currentFrameTime + (EditorProperties::FrameLimit != -1 ? 1.0 / EditorProperties::FrameLimit : 0)) {
