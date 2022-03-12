@@ -11,15 +11,18 @@ void SceneViewerModule::RenderModuleWindow(){
     ImGuiWindowFlags window_flags = 0;
 	window_flags |= ImGuiWindowFlags_NoCollapse;
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0,0));
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(800,500));
 
     if (!ImGui::Begin(GetIdentifier().c_str(), &windowOpened, window_flags))
+
+    
 	{
 		// Early out if the window is collapsed, as an optimization.
 		ImGui::End();
 		return;
 	}
 
-    ImGui::PopStyleVar();
+    ImGui::PopStyleVar(2);
     const char* renderingModes[] = { "Free", "Aspect Ratio", "Fixed Resolution"};
 	const char* combo_preview_value = renderingModes[selectedRenderingMode];
 
