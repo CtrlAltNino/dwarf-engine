@@ -1,6 +1,7 @@
 #version 330 core
 out vec4 FragColor;
 in vec3 worldPos;
+in mat4 viewMatrixO;
 
 // Edge length of the squares
 float gridSize = 1.0f;
@@ -21,5 +22,6 @@ void main(){
 	vec2 manipulatedCoords = (worldPos.xz + offset) / gridSize;
 	float factorX =  pow(1.0f - smoothstep(fade * (thickness / 2.0f), (thickness / 2.0f), min(fract(manipulatedCoords.x), ceil(manipulatedCoords.x) - manipulatedCoords.x)), fadePower);
 	float factorY =  pow(1.0f - smoothstep(fade * (thickness / 2.0f), (thickness / 2.0f), min(fract(manipulatedCoords.y), ceil(manipulatedCoords.y) - manipulatedCoords.y)), fadePower);
-	FragColor = vec4(color, clamp(max(factorX, factorY), 0, 1) * transparency);
+	float distanceFade = clamp(smoothstep(1, 0, -30 + length((inverse(viewMatrixO) * vec4(0, 0, 0, 1)).xz - worldPos.xz)),0,1);
+	FragColor = vec4(color, clamp(max(factorX, factorY), 0, 1) * transparency * distanceFade);
 }
