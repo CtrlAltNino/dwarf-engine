@@ -1,0 +1,43 @@
+#pragma once
+
+#include"../../editor/EditorProperties.h"
+#include "../IModule.h"
+#include"../../rendering/IRenderTexture.h"
+#include"../../scene/Camera.h"
+#include<iostream>
+#include<imgui_internal.h>
+#include<glm/vec2.hpp>
+#include<glm/vec3.hpp>
+#include"../../data structures/Quaternion.h"
+#include"../../input/IInputManager.h"
+#include<cmath>
+
+#define MIN_RESOLUTION_WIDTH 10
+#define MIN_RESOLUTION_HEIGHT 10
+#define MAX_RESOLUTION_WIDTH 5120
+#define MAX_RESOLUTION_HEIGHT 2160
+
+class SceneViewerModule : public IModule{
+    private:
+        //ImTextureID textureID;
+        IRenderTexture* renderTexture;
+        IInputManager* inputManager;
+        IWindowManager* windowManager;
+
+        int selectedRenderingMode = 0;
+        int cAspectRatio[2] = {16, 9};
+        int cResolution[2] = {renderTexture->GetResolution().x, renderTexture->GetResolution().y};
+
+        float aspectRatio;
+        glm::vec2 resolution;
+        Camera* camera = nullptr;
+        bool cameraUpdating = false;
+        void UpdateCamera();
+        glm::ivec2 CalculateDesiredResolution(glm::ivec2 availableResolution, float targetAspectRatio);
+        glm::vec2 lastMousePos = glm::vec2(-1);
+        glm::vec2 deltaMousePos = glm::vec2(0);
+    public:
+        SceneViewerModule(IViewListener *listener, IRenderTexture* renderTexture, IInputManager* inputManager, int index);
+        void RenderModuleWindow() override;
+        ImTextureID GetTextureID();
+};

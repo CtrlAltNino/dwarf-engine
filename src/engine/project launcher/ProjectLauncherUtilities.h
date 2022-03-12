@@ -1,7 +1,8 @@
 #pragma once
 #include<string>
+#include"../../utilities/Common.h"
 
-enum class GraphicsApi {OpenGL, D3D11, D3D12, Vulkan};
+enum class ProjectChooserState {Choosing, Done, ProjectNotFound, CreateNewProject, ChangeGraphicsApi, Canceled};
 enum class ProjectTemplate {Blank, Demo1};
 #define GITHUB_PNG_ICON_PATH "data/engine/img/icons/github.png"
 #define PATREON_PNG_ICON_PATH "data/engine/img/icons/patreon.png"
@@ -21,5 +22,3 @@ struct ProjectInformation {
 	int lastOpened;
 	int graphicsApi;
 };
-
-static const char* graphicsApiNames[4] = { "OpenGL", "Direct3D 11", "Direct3D 12", "Vulkan" };

@@ -15,7 +15,7 @@ private:
 	const char* sceneName;
 	Color clearColor;
 public:
-	Camera sceneCamera;
+	//Camera sceneCamera;
 	std::vector<Object> sceneObjects;
 	glm::vec2 deltaMousePos;
 	glm::vec2 lastMousePos;
@@ -36,7 +36,7 @@ public:
 	
 	// ========== Scene Functions ==========
 	
-	void drawScene();
+	void drawScene(Camera camera);
 };
 
 #endif

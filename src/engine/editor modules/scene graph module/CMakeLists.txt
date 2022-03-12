@@ -1,4 +1,4 @@
 target_sources(${targetName}
     PRIVATE
-        WindowManagerOpenGL.cpp
+        SceneGraphModule.cpp
 )
