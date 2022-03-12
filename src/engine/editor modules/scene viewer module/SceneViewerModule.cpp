@@ -2,23 +2,16 @@
 
 SceneViewerModule::SceneViewerModule(IViewListener *listener, IRenderTexture* renderTexture, IInputManager* inputManager, int index)
     :IModule(listener, "Scene viewer", MODULE_TYPE::PERFORMANCE, index),
-    camera(new Camera(glm::vec3(0, 2, 5), Quaternion::fromEulerAngles(25, 0, 0))),
     renderTexture(renderTexture),
     inputManager(inputManager){
-        renderTexture->SetCamera(camera);
+        renderTexture->SetCamera(new Camera(glm::vec3(0, 2, 5), Quaternion::fromEulerAngles(25, 0, 0)));
     }
 
 void SceneViewerModule::RenderModuleWindow(){
     ImGuiWindowFlags window_flags = 0;
-
-	//window_flags |= ImGuiWindowFlags_NoMove;
-	//window_flags |= ImGuiWindowFlags_NoResize;
 	window_flags |= ImGuiWindowFlags_NoCollapse;
-	//window_flags |= ImGuiWindowFlags_NoTitleBar;
-	//window_flags |= ImGuiWindowFlags_MenuBar;
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0,0));
 
-    //if (!ImGui::Begin((moduleLabel + "##" + std::to_string(index)).c_str(), NULL, window_flags))
     if (!ImGui::Begin(GetIdentifier().c_str(), &windowOpened, window_flags))
 	{
 		// Early out if the window is collapsed, as an optimization.
@@ -29,8 +22,6 @@ void SceneViewerModule::RenderModuleWindow(){
     ImGui::PopStyleVar();
     const char* renderingModes[] = { "Free", "Aspect Ratio", "Fixed Resolution"};
 	const char* combo_preview_value = renderingModes[selectedRenderingMode];
-    
-    
 
     ImGui::PushItemWidth(150);
     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0,0));
@@ -96,21 +87,9 @@ void SceneViewerModule::RenderModuleWindow(){
         ImGui::EndCombo();
     }
 
-    renderTexture->SetRenderMode((RENDER_MODE)selectedRenderingMode);
-    glm::ivec2 availableResolution = glm::ivec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y);
-    glm::ivec2 desiredResolution;
-    float targetAspectRatio;
+    availableResolution = glm::ivec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y);
     
-    if(selectedRenderingMode == 0){
-        desiredResolution = availableResolution;
-        targetAspectRatio = (double)availableResolution.x / (double)availableResolution.y;
-        /*if(availableResolution != renderTexture->GetResolution()){
-            renderTexture->SetResolution(availableResolution.x, availableResolution.y);
-            renderTexture->SetAspectRatio(availableResolution.x/availableResolution.y);
-        }*/
-    }else if(selectedRenderingMode == 1){
-        //int cAspectRatio[2] = {16, 9};
-        
+    if(selectedRenderingMode == 1){
         ImGui::SameLine(0, 10);
         ImGui::Text("Aspect ratio");
         
@@ -121,11 +100,7 @@ void SceneViewerModule::RenderModuleWindow(){
 
         cAspectRatio[0] = std::max(1, std::min(MAX_RESOLUTION_WIDTH, cAspectRatio[0]));
         cAspectRatio[1] = std::max(1, std::min(MAX_RESOLUTION_HEIGHT, cAspectRatio[1]));
-
-        desiredResolution = CalculateDesiredResolution(availableResolution, (double)cAspectRatio[0] / (double)cAspectRatio[1]);
-        targetAspectRatio = (double)cAspectRatio[0] / (double)cAspectRatio[1];
     }else if(selectedRenderingMode == 2){
-        //static int cResolution[2] = {renderTexture->GetResolution().x, renderTexture->GetResolution().y};
         ImGui::SameLine(0, 10);
         ImGui::Text("Resolution");
         
@@ -134,39 +109,25 @@ void SceneViewerModule::RenderModuleWindow(){
         
         cResolution[0] = std::max(MIN_RESOLUTION_WIDTH, std::min(MAX_RESOLUTION_WIDTH, cResolution[0]));
         cResolution[1] = std::max(MIN_RESOLUTION_WIDTH, std::min(MAX_RESOLUTION_WIDTH, cResolution[1]));
-
-        //glm::ivec2 crvec(cResolution[0], cResolution[1]);
-        desiredResolution = glm::ivec2(cResolution[0], cResolution[1]);
-        targetAspectRatio = (double)cResolution[0] / (double)cResolution[1];
     }
     
     ImGui::PopStyleVar();
     ImGui::PopItemWidth();
     ImVec2 minRect = ImGui::GetCursorScreenPos();
-    
-    if(((double)availableResolution.x / (double)availableResolution.y) < targetAspectRatio){
-        minRect.y += std::fabs((double)availableResolution.y - (double)availableResolution.x / targetAspectRatio) / 2.0;
-    }else if(((double)availableResolution.x / (double)availableResolution.y) > targetAspectRatio){
-        minRect.x += std::fabs((double)availableResolution.x - (double)availableResolution.y * targetAspectRatio) / 2.0;
-    }
-
-    //ImVec2 maxRect (minRect.x + (double)availableResolution.x * targetAspectRatio, minRect.y + (double)availableResolution.y * targetAspectRatio);
     ImVec2 maxRect (ImGui::GetCursorScreenPos().x + ImGui::GetContentRegionAvail().x,
                     ImGui::GetCursorScreenPos().y + ImGui::GetContentRegionAvail().y);
-
-    if(((double)availableResolution.x / (double)availableResolution.y) < targetAspectRatio){
-        maxRect.y -= std::fabs((double)availableResolution.y - (double)availableResolution.x / targetAspectRatio) / 2.0;
-    }else if(((double)availableResolution.x / (double)availableResolution.y) > targetAspectRatio){
-        maxRect.x -= std::fabs((double)availableResolution.x - (double)availableResolution.y * targetAspectRatio) / 2.0;
+    
+    if((RENDER_MODE)selectedRenderingMode != RENDER_MODE::FREE){
+        if(((double)availableResolution.x / (double)availableResolution.y) < targetAspectRatio){
+            double diff = std::fabs((double)availableResolution.y - (double)availableResolution.x / targetAspectRatio) / 2.0;
+            minRect.y += diff;
+            maxRect.y -= diff;
+        }else if(((double)availableResolution.x / (double)availableResolution.y) > targetAspectRatio){
+            double diff = std::fabs((double)availableResolution.x - (double)availableResolution.y * targetAspectRatio) / 2.0;
+            minRect.x += diff;
+            maxRect.x -= diff;
+        }
     }
-    
-    
-    
-    /*if(((double)availableResolution.x / (double)availableResolution.y) < targetAspectRatio){
-        maxRect.y -= std::fabs((double)availableResolution.y - (double)availableResolution.y) / targetAspectRatio;
-    }else if(((double)availableResolution.x / (double)availableResolution.y) > targetAspectRatio){
-        maxRect.x -= std::fabs((double)availableResolution.x - (double)availableResolution.x) * targetAspectRatio;
-    }*/
     
     ImDrawList* drawList = ImGui::GetWindowDrawList();
     drawList->AddImage((ImTextureID)renderTexture->GetTexture(),
@@ -193,19 +154,6 @@ void SceneViewerModule::RenderModuleWindow(){
 
     if(cameraUpdating)
         UpdateCamera();
-
-    if(renderTexture->GetResolution() != desiredResolution){
-        std::cout << "Available resolution: x=" << availableResolution.x << " | y=" << availableResolution.y << std::endl;
-        std::cout << "Desired resolution: x=" << desiredResolution.x << " | y=" << desiredResolution.y << std::endl;
-        std::cout << "Target aspectRatio: " << targetAspectRatio << std::endl;
-        renderTexture->SetResolution(desiredResolution.x, desiredResolution.y);
-        renderTexture->SetAspectRatio(desiredResolution.x/desiredResolution.y);
-    }
-
-    /*glm::ivec2 resolution = renderTexture->GetResolution();
-    ImVec2 imWSize = ImGui::GetContentRegionAvail();
-    glm::ivec2 windowSize = glm::vec2(imWSize.x, imWSize.y);*/
-    
 
     ImGui::End();
 
@@ -236,8 +184,8 @@ void SceneViewerModule::UpdateCamera(){
 			float crsSquared = EditorProperties::cameraRotationSpeed * EditorProperties::cameraRotationSpeed;
 			float yAngle = deltaMousePos.x * crsSquared;
 			float xAngle = deltaMousePos.y * crsSquared;
-			camera->transform.rotate(glm::vec3(0, 1, 0), yAngle);
-			camera->transform.rotate(camera->transform.getRotation() * glm::vec3(1, 0, 0), xAngle);
+			renderTexture->GetCamera()->transform.rotate(glm::vec3(0, 1, 0), yAngle);
+			renderTexture->GetCamera()->transform.rotate(renderTexture->GetCamera()->transform.getRotation() * glm::vec3(1, 0, 0), xAngle);
 		}
 	}
 	else {
@@ -256,7 +204,7 @@ void SceneViewerModule::UpdateCamera(){
 		movementVector *= viewListener->GetDeltaTime() * EditorProperties::moveSpeed * (inputManager->GetKey(KEYCODE::LEFT_SHIFT) ? 2 : 1);
 	}
 
-	camera->transform.translate(camera->transform.getRotation() * movementVector);
+	renderTexture->GetCamera()->transform.translate(renderTexture->GetCamera()->transform.getRotation() * movementVector);
 }
 
 glm::ivec2 SceneViewerModule::CalculateDesiredResolution(glm::ivec2 availableResolution, float targetAspectRatio){
@@ -269,4 +217,26 @@ glm::ivec2 SceneViewerModule::CalculateDesiredResolution(glm::ivec2 availableRes
     }
 
     return desiredResolution;
+}
+
+void SceneViewerModule::StartFrame(){
+    glm::ivec2 desiredResolution;
+    
+    if(selectedRenderingMode == 0){
+        desiredResolution = availableResolution;
+        targetAspectRatio = (double)availableResolution.x / (double)availableResolution.y;
+    }else if(selectedRenderingMode == 1){
+        desiredResolution = CalculateDesiredResolution(availableResolution, (double)cAspectRatio[0] / (double)cAspectRatio[1]);
+        targetAspectRatio = (double)desiredResolution.x / (double)desiredResolution.y;
+    }else if(selectedRenderingMode == 2){
+        desiredResolution = glm::ivec2(cResolution[0], cResolution[1]);
+        targetAspectRatio = (double)cResolution[0] / (double)cResolution[1];
+    }
+    
+    if(renderTexture->GetResolution() != desiredResolution){
+        renderTexture->SetRenderMode((RENDER_MODE)selectedRenderingMode);
+        renderTexture->SetResolution(desiredResolution.x, desiredResolution.y);
+        renderTexture->SetAspectRatio(desiredResolution.x/desiredResolution.y);
+        renderTexture->UpdateTextureResolution();
+    }
 }

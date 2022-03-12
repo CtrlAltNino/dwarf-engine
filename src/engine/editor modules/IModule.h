@@ -30,5 +30,6 @@ class IModule {
         ImGuiID GetImGuiID(){
             return ImGui::GetID(GetIdentifier().c_str());
         }
-        virtual void RenderModuleWindow() {};
+        virtual void RenderModuleWindow()=0;
+        virtual void StartFrame()=0;
 };

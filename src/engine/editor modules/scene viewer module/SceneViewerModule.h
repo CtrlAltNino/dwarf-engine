@@ -19,25 +19,30 @@
 
 class SceneViewerModule : public IModule{
     private:
-        //ImTextureID textureID;
+        // Maintaining important dependencies
         IRenderTexture* renderTexture;
         IInputManager* inputManager;
         IWindowManager* windowManager;
 
+        // GUI exposed values
         int selectedRenderingMode = 0;
         int cAspectRatio[2] = {16, 9};
         int cResolution[2] = {renderTexture->GetResolution().x, renderTexture->GetResolution().y};
 
-        float aspectRatio;
-        glm::vec2 resolution;
-        Camera* camera = nullptr;
+        // Camera relevant values
         bool cameraUpdating = false;
-        void UpdateCamera();
-        glm::ivec2 CalculateDesiredResolution(glm::ivec2 availableResolution, float targetAspectRatio);
         glm::vec2 lastMousePos = glm::vec2(-1);
         glm::vec2 deltaMousePos = glm::vec2(0);
+
+        // Resolution memory
+        glm::ivec2 availableResolution;
+        float targetAspectRatio;
+        
+        glm::ivec2 CalculateDesiredResolution(glm::ivec2 availableResolution, float targetAspectRatio);
+        void UpdateCamera();
     public:
         SceneViewerModule(IViewListener *listener, IRenderTexture* renderTexture, IInputManager* inputManager, int index);
         void RenderModuleWindow() override;
         ImTextureID GetTextureID();
+        void StartFrame() override;
 };

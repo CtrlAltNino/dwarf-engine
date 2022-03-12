@@ -10,4 +10,5 @@ class PerformanceModule : public IModule{
     public:
         PerformanceModule(IViewListener *listener, float* frametime, int id);
         void RenderModuleWindow() override;
+        void StartFrame() override {}
 };

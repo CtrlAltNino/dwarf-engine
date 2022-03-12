@@ -9,4 +9,5 @@ class SceneGraphModule : public IModule {
     public:
         SceneGraphModule(IViewListener *listener, Scene *scene, int index);
         void RenderModuleWindow() override;
+        void StartFrame() override {}
 };

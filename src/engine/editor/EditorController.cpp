@@ -77,6 +77,9 @@ void EditorController::RunLoop(){
 	// TODO abstract the close condition
     while (!windowManager->ShouldWindowCloseSignal()) {
 		windowManager->StartFrame();
+		for(int i = 0; i < guiModules.size(); i++){
+			guiModules.at(i)->StartFrame();
+		}
         //editorView.StartFrame();
 		//EditorGui::StartFrame();
 		

@@ -44,16 +44,16 @@ class IRenderTexture {
         void SetResolution(int width, int height){
             textureWidth = width;
             textureHeight = height;
-            UpdateTextureResolution();
+            //UpdateTextureResolution();
         }
 
         void SetAspectRatio(float aspectRatio){
             aspectRatio = aspectRatio;
-            UpdateTextureResolution();
+            //UpdateTextureResolution();
         }
 
         void SetRenderMode(RENDER_MODE renderMode){
             renderMode = renderMode;
-            UpdateTextureResolution();
+            //UpdateTextureResolution();
         }
 };
