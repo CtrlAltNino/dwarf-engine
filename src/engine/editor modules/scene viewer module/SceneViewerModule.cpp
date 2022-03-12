@@ -16,6 +16,7 @@ void SceneViewerModule::RenderModuleWindow(){
 	window_flags |= ImGuiWindowFlags_NoCollapse;
 	//window_flags |= ImGuiWindowFlags_NoTitleBar;
 	//window_flags |= ImGuiWindowFlags_MenuBar;
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0,0));
 
     //if (!ImGui::Begin((moduleLabel + "##" + std::to_string(index)).c_str(), NULL, window_flags))
     if (!ImGui::Begin(GetIdentifier().c_str(), &windowOpened, window_flags))
@@ -25,48 +26,186 @@ void SceneViewerModule::RenderModuleWindow(){
 		return;
 	}
 
-    ImVec2 pos = ImGui::GetCursorScreenPos();
+    ImGui::PopStyleVar();
+    const char* renderingModes[] = { "Free", "Aspect Ratio", "Fixed Resolution"};
+	const char* combo_preview_value = renderingModes[selectedRenderingMode];
+    
+    
+
+    ImGui::PushItemWidth(150);
+    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0,0));
+
+    if (ImGui::BeginCombo("##renderingMode", combo_preview_value)) {
+        //ImDrawList* draw_list = ImGui::GetWindowDrawList();
+
+        // Looping through all the combo entries
+        for (int n = 0; n < 3; n++)
+        {
+            const bool is_selected = (selectedRenderingMode == n);
+
+            // Selectable settings
+            /*ImGui::PushStyleVar(ImGuiStyleVar_SelectableTextAlign, ImVec2(0.5f, 0.5f));
+            ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0, 0, 0, 0));
+            ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0, 0, 0, 0));
+            ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0, 0, 0, 0));*/
+
+            // For drawing a custom Selectable background, we split the channel
+            // Now we can draw the text in the foreground, and the colored, rounded rectangle in the background
+            //draw_list->ChannelsSplit(2);
+            //draw_list->ChannelsSetCurrent(1);
+
+            /*if (n > 0) {
+                ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+            }*/
+
+            // ==================== Graphics Selectable ====================
+            if (ImGui::Selectable(renderingModes[n], is_selected, 0, ImVec2(0, 16 + 10))) {
+                selectedRenderingMode = n;
+            }
+
+            // Reset Style
+            //ImGui::PopStyleVar(1);
+            //ImGui::PopStyleColor(3);
+
+            // Drawing the background rectangle
+            /*if (ImGui::IsItemHovered()) {
+                ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+                draw_list->ChannelsSetCurrent(0);
+                ImVec2 p_min = ImGui::GetItemRectMin();
+                ImVec2 p_max = ImGui::GetItemRectMax();
+                ImU32 rectCol = ImGui::IsMouseDown(ImGuiMouseButton_Left) ? IM_COL32(76, 86, 106, 255) : IM_COL32(67, 76, 94, 255);
+
+                ImGui::GetWindowDrawList()->AddRectFilled(p_min, p_max, rectCol, 5);
+            }
+            else if (is_selected) {
+                draw_list->ChannelsSetCurrent(0);
+                ImVec2 p_min = ImGui::GetItemRectMin();
+                ImVec2 p_max = ImGui::GetItemRectMax();
+                ImU32 rectCol = IM_COL32(59, 66, 82, 255);
+
+                ImGui::GetWindowDrawList()->AddRectFilled(p_min, p_max, rectCol, 5);
+            }*/
+
+            //draw_list->ChannelsMerge();
+
+            // Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+            if (is_selected)
+                ImGui::SetItemDefaultFocus();
+        }
+
+        ImGui::EndCombo();
+    }
+
+    renderTexture->SetRenderMode((RENDER_MODE)selectedRenderingMode);
+    glm::ivec2 availableResolution = glm::ivec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y);
+    glm::ivec2 desiredResolution;
+    float targetAspectRatio;
+    
+    if(selectedRenderingMode == 0){
+        desiredResolution = availableResolution;
+        targetAspectRatio = (double)availableResolution.x / (double)availableResolution.y;
+        /*if(availableResolution != renderTexture->GetResolution()){
+            renderTexture->SetResolution(availableResolution.x, availableResolution.y);
+            renderTexture->SetAspectRatio(availableResolution.x/availableResolution.y);
+        }*/
+    }else if(selectedRenderingMode == 1){
+        //int cAspectRatio[2] = {16, 9};
+        
+        ImGui::SameLine(0, 10);
+        ImGui::Text("Aspect ratio");
+        
+        ImGui::SameLine(0, 10);
+        ImGui::InputInt("##aspectWidth", &(cAspectRatio[0]));
+        ImGui::SameLine(0, 10);
+        ImGui::InputInt("##aspectHeight", &(cAspectRatio[1]));
+
+        cAspectRatio[0] = std::max(1, std::min(MAX_RESOLUTION_WIDTH, cAspectRatio[0]));
+        cAspectRatio[1] = std::max(1, std::min(MAX_RESOLUTION_HEIGHT, cAspectRatio[1]));
+
+        desiredResolution = CalculateDesiredResolution(availableResolution, (double)cAspectRatio[0] / (double)cAspectRatio[1]);
+        targetAspectRatio = (double)cAspectRatio[0] / (double)cAspectRatio[1];
+    }else if(selectedRenderingMode == 2){
+        //static int cResolution[2] = {renderTexture->GetResolution().x, renderTexture->GetResolution().y};
+        ImGui::SameLine(0, 10);
+        ImGui::Text("Resolution");
+        
+        ImGui::SameLine(0, 10);
+        ImGui::InputInt2("", cResolution);
+        
+        cResolution[0] = std::max(MIN_RESOLUTION_WIDTH, std::min(MAX_RESOLUTION_WIDTH, cResolution[0]));
+        cResolution[1] = std::max(MIN_RESOLUTION_WIDTH, std::min(MAX_RESOLUTION_WIDTH, cResolution[1]));
+
+        //glm::ivec2 crvec(cResolution[0], cResolution[1]);
+        desiredResolution = glm::ivec2(cResolution[0], cResolution[1]);
+        targetAspectRatio = (double)cResolution[0] / (double)cResolution[1];
+    }
+    
+    ImGui::PopStyleVar();
+    ImGui::PopItemWidth();
+    ImVec2 minRect = ImGui::GetCursorScreenPos();
+    
+    if(((double)availableResolution.x / (double)availableResolution.y) < targetAspectRatio){
+        minRect.y += std::fabs((double)availableResolution.y - (double)availableResolution.x / targetAspectRatio) / 2.0;
+    }else if(((double)availableResolution.x / (double)availableResolution.y) > targetAspectRatio){
+        minRect.x += std::fabs((double)availableResolution.x - (double)availableResolution.y * targetAspectRatio) / 2.0;
+    }
+
+    //ImVec2 maxRect (minRect.x + (double)availableResolution.x * targetAspectRatio, minRect.y + (double)availableResolution.y * targetAspectRatio);
+    ImVec2 maxRect (ImGui::GetCursorScreenPos().x + ImGui::GetContentRegionAvail().x,
+                    ImGui::GetCursorScreenPos().y + ImGui::GetContentRegionAvail().y);
+
+    if(((double)availableResolution.x / (double)availableResolution.y) < targetAspectRatio){
+        maxRect.y -= std::fabs((double)availableResolution.y - (double)availableResolution.x / targetAspectRatio) / 2.0;
+    }else if(((double)availableResolution.x / (double)availableResolution.y) > targetAspectRatio){
+        maxRect.x -= std::fabs((double)availableResolution.x - (double)availableResolution.y * targetAspectRatio) / 2.0;
+    }
+    
+    
+    
+    /*if(((double)availableResolution.x / (double)availableResolution.y) < targetAspectRatio){
+        maxRect.y -= std::fabs((double)availableResolution.y - (double)availableResolution.y) / targetAspectRatio;
+    }else if(((double)availableResolution.x / (double)availableResolution.y) > targetAspectRatio){
+        maxRect.x -= std::fabs((double)availableResolution.x - (double)availableResolution.x) * targetAspectRatio;
+    }*/
+    
     ImDrawList* drawList = ImGui::GetWindowDrawList();
-    //auto app = SSEngine::App::main;
-    //uint f_tex = app->getFrameBuffer();
     drawList->AddImage((ImTextureID)renderTexture->GetTexture(),
-        pos,
-        ImVec2(pos.x + renderTexture->GetResolution().x, pos.y + renderTexture->GetResolution().y),
+        minRect,
+        maxRect,
         ImVec2(0, 1),
         ImVec2(1, 0));
     ImVec2 imageSize = ImVec2(renderTexture->GetResolution().x, renderTexture->GetResolution().y);
-    //ImGui::Image((ImTextureID)renderTexture->GetTexture(), imageSize);
-    /*if (ImGui::IsItemHovered()) {
-        ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
-    }*/
-    /*std::cout << "Identifier: " << GetIdentifier().c_str() << std::endl;
-    std::cout << "cameraUpdating: " << cameraUpdating << std::endl;
-    std::cout << "Mouse Hovering Rect: " << ImGui::IsMouseHoveringRect(ImGui::GetCursorPos(), imageSize) << std::endl;
-    std::cout << "Right mouse down: " << inputManager->GetMouseDown(MOUSE_BUTTON::RIGHT_MOUSE) << std::endl;*/
-    //ImGui::IsMouse
-    //std::cout << "Cursor pos: " << ImGui::GetCursorPos().x << " | " << ImGui::GetCursorPos().y << std::endl;
-    if(!cameraUpdating && ImGui::IsMouseHoveringRect(ImGui::GetItemRectMin(), ImVec2(ImGui::GetItemRectMin().x + imageSize.x, ImGui::GetItemRectMin().y + imageSize.y)) && inputManager->GetMouseDown(MOUSE_BUTTON::RIGHT)){
+    drawList->ChannelsMerge();
+
+    ImVec2 hoverRectMin = ImVec2(ImGui::GetWindowPos().x + ImGui::GetCursorPos().x,
+                                    ImGui::GetWindowPos().y + ImGui::GetCursorPos().y);
+    
+    ImVec2 hoverRectMax = ImVec2(ImGui::GetWindowPos().x + ImGui::GetCursorPos().x + ImGui::GetContentRegionAvail().x,
+                                    ImGui::GetWindowPos().y + ImGui::GetCursorPos().y + ImGui::GetContentRegionAvail().y);
+    
+    // TODO: Add cursor collision with other windows that may block 
+    if(!cameraUpdating && ImGui::IsMouseHoveringRect(hoverRectMin,
+                            hoverRectMax)
+                        && inputManager->GetMouseDown(MOUSE_BUTTON::RIGHT)){
         ImGui::SetWindowFocus(GetIdentifier().c_str());
         cameraUpdating = true;
     }
 
-    //ImGui::
-    /*if (ImGui::IsMouseDragging(1)) {
-        std::cout << "YEEEEEEEEET" << std::endl;
-        //BrowserLinkOpener::OpenLink(GITHUB_LINK);
-        viewListener->UpdateEditorCamera(camera);
-    }*/
-
     if(cameraUpdating)
         UpdateCamera();
 
-    glm::vec2 resolution = renderTexture->GetResolution();
-    ImVec2 imWSize = ImGui::GetWindowSize();
-    glm::vec2 windowSize = glm::vec2(imWSize.x, imWSize.y);
-    if(windowSize != resolution){
-        renderTexture->SetResolution(windowSize.x, windowSize.y);
-        renderTexture->SetAspectRatio(windowSize.x/windowSize.y);
+    if(renderTexture->GetResolution() != desiredResolution){
+        std::cout << "Available resolution: x=" << availableResolution.x << " | y=" << availableResolution.y << std::endl;
+        std::cout << "Desired resolution: x=" << desiredResolution.x << " | y=" << desiredResolution.y << std::endl;
+        std::cout << "Target aspectRatio: " << targetAspectRatio << std::endl;
+        renderTexture->SetResolution(desiredResolution.x, desiredResolution.y);
+        renderTexture->SetAspectRatio(desiredResolution.x/desiredResolution.y);
     }
+
+    /*glm::ivec2 resolution = renderTexture->GetResolution();
+    ImVec2 imWSize = ImGui::GetContentRegionAvail();
+    glm::ivec2 windowSize = glm::vec2(imWSize.x, imWSize.y);*/
+    
 
     ImGui::End();
 
@@ -118,4 +257,16 @@ void SceneViewerModule::UpdateCamera(){
 	}
 
 	camera->transform.translate(camera->transform.getRotation() * movementVector);
+}
+
+glm::ivec2 SceneViewerModule::CalculateDesiredResolution(glm::ivec2 availableResolution, float targetAspectRatio){
+    glm::ivec2 desiredResolution = availableResolution;
+
+    if(((double)availableResolution.x / (double)availableResolution.y) < targetAspectRatio){
+        desiredResolution.y = (double)availableResolution.x / targetAspectRatio;
+    }else if(((double)availableResolution.x / (double)availableResolution.y) > targetAspectRatio){
+        desiredResolution.x = (double)availableResolution.y * targetAspectRatio;
+    }
+
+    return desiredResolution;
 }

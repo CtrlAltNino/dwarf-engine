@@ -31,8 +31,8 @@ class IRenderTexture {
             return renderMode;
         }
         
-        glm::vec2 GetResolution() {
-            return glm::vec2(textureWidth, textureHeight);
+        glm::ivec2 GetResolution() {
+            return glm::ivec2(textureWidth, textureHeight);
         }
         
         float GetAspectRatio() {
