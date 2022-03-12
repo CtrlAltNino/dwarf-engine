@@ -119,14 +119,16 @@ void SceneViewerModule::RenderModuleWindow(){
     ImVec2 minRect = ImGui::GetCursorScreenPos();
     ImVec2 maxRect (ImGui::GetCursorScreenPos().x + ImGui::GetContentRegionAvail().x,
                     ImGui::GetCursorScreenPos().y + ImGui::GetContentRegionAvail().y);
+
+    UpdateRenderTexture();
     
     if((RENDER_MODE)selectedRenderingMode != RENDER_MODE::FREE){
         if(((double)availableResolution.x / (double)availableResolution.y) < targetAspectRatio){
-            double diff = std::fabs((double)availableResolution.y - (double)availableResolution.x / targetAspectRatio) / 2.0;
-            minRect.y += diff;
+            double diff = std::ceil(std::fabs((double)availableResolution.y - (double)availableResolution.x / targetAspectRatio) / 2.0);
+            minRect.y +=  diff;
             maxRect.y -= diff;
         }else if(((double)availableResolution.x / (double)availableResolution.y) > targetAspectRatio){
-            double diff = std::fabs((double)availableResolution.x - (double)availableResolution.y * targetAspectRatio) / 2.0;
+            double diff = std::ceil(std::fabs((double)availableResolution.x - (double)availableResolution.y * targetAspectRatio) / 2.0);
             minRect.x += diff;
             maxRect.x -= diff;
         }
@@ -214,15 +216,19 @@ glm::ivec2 SceneViewerModule::CalculateDesiredResolution(glm::ivec2 availableRes
     glm::ivec2 desiredResolution = availableResolution;
 
     if(((double)availableResolution.x / (double)availableResolution.y) < targetAspectRatio){
-        desiredResolution.y = (double)availableResolution.x / targetAspectRatio;
+        desiredResolution.y = std::ceil((double)availableResolution.x / targetAspectRatio);
     }else if(((double)availableResolution.x / (double)availableResolution.y) > targetAspectRatio){
-        desiredResolution.x = (double)availableResolution.y * targetAspectRatio;
+        desiredResolution.x = std::ceil((double)availableResolution.y * targetAspectRatio);
     }
 
     return desiredResolution;
 }
 
 void SceneViewerModule::StartFrame(){
+
+}
+
+void SceneViewerModule::UpdateRenderTexture(){
     glm::ivec2 desiredResolution;
     
     if(selectedRenderingMode == 0){

@@ -40,6 +40,7 @@ class SceneViewerModule : public IModule{
         
         glm::ivec2 CalculateDesiredResolution(glm::ivec2 availableResolution, float targetAspectRatio);
         void UpdateCamera();
+        void UpdateRenderTexture();
     public:
         SceneViewerModule(IViewListener *listener, IRenderTexture* renderTexture, IInputManager* inputManager, int index);
         void RenderModuleWindow() override;

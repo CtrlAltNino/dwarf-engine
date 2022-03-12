@@ -103,6 +103,14 @@ void EditorController::RunLoop(){
 		scene->sceneObjects.at(2).transform.rotate(glm::vec3(0, deltaTime * 88, 0));
 		//scene.sceneObjects.at(3).transform.rotate(glm::vec3(0, delta * 180, 0));
 
+		// ===== GUI Rendering
+        editorView.RenderGui();
+		
+		// Render modules
+		for(int i = 0; i < guiModules.size(); i++){
+			guiModules.at(i)->RenderModuleWindow();
+		}
+
 		// ===== Drawing Geometry =====
 		// TODO: Draw to a framebuffer
 		std::vector<IRenderTexture*> *renderTextures = windowManager->GetRenderTextures();
@@ -125,13 +133,7 @@ void EditorController::RunLoop(){
 		// ===== Gizmo rendering =====
 		// TODO: Implement
 
-		// ===== GUI Rendering
-        editorView.RenderGui();
 		
-		// Render modules
-		for(int i = 0; i < guiModules.size(); i++){
-			guiModules.at(i)->RenderModuleWindow();
-		}
         
 		//editorView.EndFrame();
 		//EditorGui::RenderGUI();
