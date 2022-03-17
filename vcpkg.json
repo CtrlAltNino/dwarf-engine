@@ -21,6 +21,7 @@
         "nativefiledialog",
         "bext-di",
         "efsw",
-        "imguizmo"
+        "imguizmo",
+        "entt"
     ]
 }
