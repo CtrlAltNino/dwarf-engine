@@ -20,6 +20,7 @@
         "nlohmann-json",
         "nativefiledialog",
         "bext-di",
-        "efsw"
+        "efsw",
+        "imguizmo"
     ]
 }
