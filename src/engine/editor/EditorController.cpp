@@ -1,7 +1,7 @@
 #include"EditorController.h"
 
 EditorController::EditorController(ProjectData projectData) : editorModel(this), editorView(this){
-	std::cout << "1" << std::endl;
+	projectPath = projectData.path;
 	switch(projectData.graphicsApi){
 		case GraphicsApi::OpenGL:
 			std::cout << "2" << std::endl;
@@ -77,11 +77,10 @@ void EditorController::RunLoop(){
 	// TODO abstract the close condition
     while (!windowManager->ShouldWindowCloseSignal()) {
 		windowManager->StartFrame();
+        editorView.StartFrame();
 		for(int i = 0; i < guiModules.size(); i++){
 			guiModules.at(i)->StartFrame();
 		}
-        //editorView.StartFrame();
-		//EditorGui::StartFrame();
 		
 		// ===== Time related stuff
 		lastFrameTime = currentFrameTime;
@@ -92,12 +91,6 @@ void EditorController::RunLoop(){
 
 		// Abstract viewport stuff (Context and framebuffer wise)
 		glViewport(0, 0, windowManager->GetWidth(), windowManager->GetHeight());
-		/*if ((windowManager->GetWidth() != 0) && (windowManager->GetHeight() != 0)) {
-			scene->sceneCamera.setAspectRatio((float)windowManager->GetWidth() / windowManager->GetHeight());
-		}*/
-
-		// Editor Camera updates
-		//UpdateEditorCamera();
 		
 		// ===== Animation stuff =====
 		scene->sceneObjects.at(2).transform.rotate(glm::vec3(0, deltaTime * 88, 0));
@@ -114,6 +107,7 @@ void EditorController::RunLoop(){
 		// ===== Drawing Geometry =====
 		// TODO: Draw to a framebuffer
 		std::vector<IRenderTexture*> *renderTextures = windowManager->GetRenderTextures();
+		renderTime = glfwGetTime();
 		for(int i = 0; i < renderTextures->size(); i++){
 			if ((windowManager->GetWidth() != 0) && (windowManager->GetHeight() != 0)) {
 				renderTextures->at(i)->GetCamera()->setAspectRatio((float)renderTextures->at(i)->GetResolution().x / renderTextures->at(i)->GetResolution().y);
@@ -126,6 +120,7 @@ void EditorController::RunLoop(){
 			scene->drawScene(*renderTextures->at(i)->GetCamera());
 			renderTextures->at(i)->Unbind();
 		}
+		renderTime = glfwGetTime() - renderTime;
 
 		// ===== Post processing =====
 		// TODO: Implement
@@ -133,20 +128,7 @@ void EditorController::RunLoop(){
 		// ===== Gizmo rendering =====
 		// TODO: Implement
 
-		
-        
-		//editorView.EndFrame();
-		//EditorGui::RenderGUI();
-		//EditorGui::EndFrame();
-		/*if(inputManager->GetMouseDown(LEFT)){
-			std::cout << "Left mouse button down" << std::endl;
-		}
-		if(inputManager->GetMouse(LEFT)){
-			std::cout << "Left mouse button being pressed" << std::endl;
-		}
-		if(inputManager->GetMouseUp(LEFT)){
-			std::cout << "Left mouse button up" << std::endl;
-		}*/
+		editorView.EndFrame();
 
 		// ===== Windowing Stuff =====
 		windowManager->EndFrame();
@@ -163,14 +145,17 @@ void EditorController::AddWindow(MODULE_TYPE moduleType){
 	IModule* guiModule = nullptr;
 	switch(moduleType){
 		case MODULE_TYPE::PERFORMANCE:
-			guiModule = new PerformanceModule((IViewListener*)this, &deltaTime, guiModuleIDCount++);
+			guiModule = new PerformanceModule((IViewListener*)this, &deltaTime, &renderTime, guiModuleIDCount++);
 			break;
 		case MODULE_TYPE::SCENE_GRAPH:
 			guiModule = new SceneGraphModule((IViewListener*)this, editorModel.GetScene(), guiModuleIDCount++);
 			break;
 		case MODULE_TYPE::SCENE_VIEWER:
-			IRenderTexture* newRT = windowManager->AddRenderTexture();
-			guiModule = new SceneViewerModule((IViewListener*)this, newRT, inputManager, guiModuleIDCount++);
+			//IRenderTexture* newRT = windowManager->AddRenderTexture();
+			guiModule = new SceneViewerModule((IViewListener*)this, windowManager->AddRenderTexture(), inputManager, guiModuleIDCount++);
+			break;
+		case MODULE_TYPE::ASSET_BROWSER:
+			guiModule = new AssetBrowserModule((IViewListener*)this, projectPath + "/Assets", guiModuleIDCount++);
 			break;
 	}
 

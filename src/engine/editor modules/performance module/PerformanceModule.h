@@ -1,14 +1,17 @@
 #pragma once
 
 #include "../IModule.h"
+#include "../../windowing/IWindowManager.h"
+#include<string>
 #include<iostream>
 #include<imgui_internal.h>
 
 class PerformanceModule : public IModule{
     private:
-        float* frametime;
+        double* frametime;
+        double* renderTime;
     public:
-        PerformanceModule(IViewListener *listener, float* frametime, int id);
+        PerformanceModule(IViewListener *listener, double* frametime, double* renderTime, int id);
         void RenderModuleWindow() override;
         void StartFrame() override {}
 };

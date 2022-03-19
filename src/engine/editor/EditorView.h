@@ -7,6 +7,7 @@
 #include"../editor modules/IModule.h"
 #include"EditorCommon.h"
 
+
 class EditorView {
     private:
         ImGuiIO* io;
@@ -15,8 +16,8 @@ class EditorView {
     public:
         EditorView(IViewListener* listener);
         void Init();
-        //void StartFrame();
+        void StartFrame();
         void RenderGui();
-        //void EndFrame();
+        void EndFrame();
         void DockWindowToFocused(std::string windowName);
 };

@@ -15,6 +15,7 @@
 #include"../editor modules/performance module/PerformanceModule.h"
 #include"../editor modules/scene graph module/SceneGraphModule.h"
 #include"../editor modules/scene viewer module/SceneViewerModule.h"
+#include"../editor modules/asset browser module/AssetBrowserModule.h"
 
 class EditorController : public IModelListener, public IViewListener {
     private:
@@ -25,7 +26,8 @@ class EditorController : public IModelListener, public IViewListener {
         int guiModuleIDCount = 0;
         std::vector<IModule*> guiModules;
         std::string projectPath;
-        float deltaTime;
+        double deltaTime;
+        double renderTime;
         //void InitScene(std::string projectPath);
     public:
         EditorController(ProjectData projectData);

@@ -1,7 +1,7 @@
 #include"EditorView.h"
 
 EditorView::EditorView(IViewListener* listener) : viewListener(listener){
-
+    //ImGui::SetFont
 }
 
 void EditorView::RenderDockSpace(){
@@ -124,7 +124,9 @@ void EditorView::RenderDockSpace(){
             if(ImGui::MenuItem("Performance statistics")){
                 viewListener->AddWindow(MODULE_TYPE::PERFORMANCE);
             }
-            ImGui::MenuItem("Asset browser");
+            if(ImGui::MenuItem("Asset browser")){
+                viewListener->AddWindow(MODULE_TYPE::ASSET_BROWSER);
+            }
             ImGui::MenuItem("Inspector");
             ImGui::MenuItem("Console");
             ImGui::EndMenu();
@@ -149,20 +151,9 @@ void EditorView::Init(){
 
 }
 
-/*void EditorView::StartFrame(){
-    //focusedWindowName = "";
-    switch(WindowManager::GetActiveGraphicsApi()){
-        case GraphicsApi::OpenGL:
-            
-            break;
-        case GraphicsApi::D3D11:
-            break;
-        case GraphicsApi::D3D12:
-            break;
-        case GraphicsApi::Vulkan:
-            break;
-    }
-}*/
+void EditorView::StartFrame(){
+    
+}
 
 void EditorView::RenderGui(){
     // Render default stuff
@@ -174,17 +165,9 @@ void EditorView::RenderGui(){
     
 }
 
-/*void EditorView::EndFrame(){
-    //std::cout << "Active ID: " << ImGui::GetActiveID() << std::endl;
-    //std::cout << "MyDockSpace ID: " << ImGui::GetID("MyDockSpace") << std::endl;
-    ImGui::Render();
-    ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-    if (io->ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
-    {
-        ImGui::UpdatePlatformWindows();
-        ImGui::RenderPlatformWindowsDefault();
-    }
-}*/
+void EditorView::EndFrame(){
+    
+}
 
 void EditorView::DockWindowToFocused(std::string windowName){
     //ImGuiViewport* viewport = ImGui::GetMainViewport();
