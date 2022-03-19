@@ -44,10 +44,7 @@ void WindowManagerOpenGL::CreateEditorWindow(){
     stbi_image_free(icon[0].pixels);
     glfwMakeContextCurrent(window);
     gladLoadGL();
-    //glfwSetWindowFocusCallback(window, window_focus_callback);
     glViewport(0, 0, INITIAL_WINDOW_WIDTH, INITIAL_WINDOW_HEIGHT);
-    
-    std::cout << "Window created with OpenGL version: " << glGetString(GL_VERSION) << std::endl;
 
     if (glfwRawMouseMotionSupported())
         glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
@@ -58,22 +55,10 @@ void WindowManagerOpenGL::CreateEditorWindow(){
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glfwSwapBuffers(window);
 
-    //unsigned int framebuffer;
-    glGenFramebuffers(1, &fbo);
-    glBindFramebuffer(GL_FRAMEBUFFER, fbo);  
-
-    // generate texture
-    unsigned int textureColorBuffer;
-    glGenTextures(1, &textureColorBuffer);
-    glBindTexture(GL_TEXTURE_2D, textureColorBuffer);
-    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB, 800, 600, 0, GL_RGB, GL_UNSIGNED_BYTE, NULL);
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR );
-    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    glBindTexture(GL_TEXTURE_2D, 0);
-
-    // attach it to currently bound framebuffer object
-    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, textureColorBuffer, 0);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);  
+    
+    IWindowManager::rendererName = (char*)glad_glGetString(GL_RENDERER);
+    IWindowManager::vendorName = (char*)glad_glGetString(GL_VENDOR);
+    IWindowManager::apiVersion = std::string("OpenGL ") + (char*)glad_glGetString(GL_VERSION);
 }
 
 void WindowManagerOpenGL::SetWindowName(std::string windowName){
@@ -92,9 +77,12 @@ void WindowManagerOpenGL::StartFrame(){
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplGlfw_NewFrame();
     ImGui::NewFrame();
+    ImGui::PushFont(fonts["normalTextFont"]);
 }
 
 void WindowManagerOpenGL::EndFrame(){
+    ImGui::PopFont();
+    
     ImGuiIO* io = &ImGui::GetIO();
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -130,6 +118,11 @@ void WindowManagerOpenGL::InitImGui(){
 
     ImGui::StyleColorsDark();
     io->ConfigWindowsResizeFromEdges = true;
+    io->Fonts->AddFontDefault();
+    IWindowManager::fonts["normalTextFont"] = io->Fonts->AddFontFromFileTTF(INTER_REGULAR_PATH, 15);
+    IWindowManager::fonts["largeTextFont"] = io->Fonts->AddFontFromFileTTF(INTER_REGULAR_PATH, 20);
+    IWindowManager::fonts["smallHeaderFont"] = io->Fonts->AddFontFromFileTTF(INTER_BOLD_PATH, 20);
+    IWindowManager::fonts["largeHeaderFont"] = io->Fonts->AddFontFromFileTTF(INTER_BOLD_PATH, 26);
 }
 
 GLFWwindow* WindowManagerOpenGL::GetOpenGLWindow(){
