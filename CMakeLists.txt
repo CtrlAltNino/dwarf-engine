@@ -87,6 +87,12 @@ target_link_libraries(${targetName} PRIVATE efsw::efsw)
 find_package(Threads REQUIRED)
 target_link_libraries(${targetName} PRIVATE Threads::Threads)
 
+find_package(imguizmo CONFIG REQUIRED)
+target_link_libraries(${targetName} PRIVATE imguizmo::imguizmo)
+
+find_package(EnTT CONFIG REQUIRED)
+target_link_libraries(${targetName} PRIVATE EnTT::EnTT)
+
 # Copy files to build folder
 add_custom_command(TARGET 
 ${targetName} 
