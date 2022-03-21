@@ -1,5 +1,9 @@
 #include"Texture.h"
 
+Texture::Texture(const char* filePath) : Texture(filePath, GL_LINEAR, GL_REPEAT, GL_RGB, GL_UNSIGNED_BYTE) {
+
+}
+
 Texture::Texture(const char* filePath, GLint filter, GLint wrap, GLint colorFormat, GLint dataFormat) {
 	int numColCh;
 	unsigned char* bytes = stbi_load(filePath, &this->width, &this->height, &numColCh, 0);

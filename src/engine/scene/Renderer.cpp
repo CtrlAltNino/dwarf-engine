@@ -2,19 +2,19 @@
 
 // ========== Constructors ==========
 
-Renderer::Renderer(BasicMaterial* material, const char* modelFileName)
-	: material(*(BasicMaterial*)material), meshes(meshFromFile(modelFileName)) {}
+Renderer::Renderer(Material* material, const char* modelFileName)
+	: material(*(Material*)material), meshes(meshFromFile(modelFileName)) {}
 
 // ========== Getters ==========
 
-BasicMaterial* Renderer::getMaterial() {
+Material* Renderer::getMaterial() {
 	return &material;
 }
 
 // ========== Setters ==========
 
-void Renderer::setMaterial(BasicMaterial* material) {
-	this->material = *(BasicMaterial*)material;
+void Renderer::setMaterial(Material material) {
+	material = material;
 }
 
 // ========== Renderer Functions ==========
@@ -107,9 +107,12 @@ std::vector<Mesh> Renderer::meshFromFile(const char* fileName) {
 
 void Renderer::render(glm::mat4x4 modelMatrix, glm::mat4x4 viewMatrix, glm::mat4x4 projectionMatrix) {
 	material.bind();
-	material.updateShaderParameters(modelMatrix, viewMatrix, projectionMatrix);
+	material.UpdateMVP(modelMatrix, viewMatrix, projectionMatrix);
+	material.UpdateUniforms();
+	//std::cout << "Model matrix" << std::endl;
+	//material->updateShaderParameters(modelMatrix, viewMatrix, projectionMatrix);
 
-	if (material.settings.isTransparent) {
+	/*if (material.settings.isTransparent) {
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 	}
@@ -118,6 +121,29 @@ void Renderer::render(glm::mat4x4 modelMatrix, glm::mat4x4 viewMatrix, glm::mat4
 		glEnable(GL_CULL_FACE);
 		glCullFace(material.settings.cullMode);
 	}
+
+	
+	for (int i = 0; i < meshes.size(); i++) {
+		meshes.at(i).bind();
+		glDrawElements(GL_TRIANGLES, meshes.at(i).indices2.size(), GL_UNSIGNED_INT, 0);
+		meshes.at(i).unbind();
+	}
+
+	glDisable(GL_BLEND);
+	glDisable(GL_CULL_FACE);*/
+
+	if (material.isTransparent) {
+		glEnable(GL_BLEND);
+		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+	}
+
+	glEnable(GL_CULL_FACE);
+	glCullFace(GL_BACK);
+
+	/*if (material.settings.cullFaces) {
+		glEnable(GL_CULL_FACE);
+		glCullFace(material.settings.cullMode);
+	}*/
 
 	
 	for (int i = 0; i < meshes.size(); i++) {

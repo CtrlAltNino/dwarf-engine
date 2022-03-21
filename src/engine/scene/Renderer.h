@@ -14,23 +14,23 @@
 
 class Renderer {
 private:
-	BasicMaterial material;
+	Material material;
 	//Mesh mesh;
 	std::vector<Mesh> meshes;
 public:
 	// ========== Constructors ==========
 	
 	//Renderer(BasicMaterial* material, Mesh* mesh);
-	Renderer(BasicMaterial* material, const char* modelFileName);
+	Renderer(Material* material, const char* modelFileName);
 
 	// ========== Getters ==========
 
-	BasicMaterial* getMaterial();
+	Material* getMaterial();
 	//Mesh getMesh();
 
 	// ========== Setters ==========
 
-	void setMaterial(BasicMaterial* material);
+	void setMaterial(Material material);
 	//void setMesh(Mesh* mesh);
 
 	// ========== Renderer Functions ==========
