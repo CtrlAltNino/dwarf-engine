@@ -6,4 +6,5 @@ target_sources(${targetName}
         EditorController.cpp
         EditorModel.cpp
         EditorView.cpp
+        UID.cpp
 )

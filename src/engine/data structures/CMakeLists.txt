@@ -2,6 +2,7 @@ target_sources(${targetName}
     PRIVATE
         Color.cpp
         EBO.cpp
+        Entity.cpp
         Mesh.cpp
         Quaternion.cpp
         Texture.cpp
