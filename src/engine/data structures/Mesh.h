@@ -22,6 +22,7 @@ private:
 	//EBO ebo = EBO(indices, indicesSize);
 	//VBO vbo = VBO(vertices, verticesSize);
 public:
+	int materialIndex = 0;
 	std::vector<Vertex> vertices2;
 	std::vector<GLuint> indices2;
 	EBO ebo = EBO(indices2);

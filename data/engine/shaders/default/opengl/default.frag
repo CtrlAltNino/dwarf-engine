@@ -28,8 +28,8 @@ uniform float fogStart;
 uniform float fogEnd;
 uniform vec4 fogColor;
 
-uniform vec4 cameraPos;
-uniform float _Time;
+//uniform vec4 cameraPos;
+//uniform float _Time;
 
 
 float scrollSpeed = 2;

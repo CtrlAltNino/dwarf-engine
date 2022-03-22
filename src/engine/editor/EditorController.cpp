@@ -21,7 +21,7 @@ EditorController::EditorController(ProjectData projectData) : editorModel(this),
     // 4. Start file watcher
 
     // 5. Open last scene
-	editorModel.InitScene(projectData.path);
+	editorModel.InitSceneNew(projectData.path);
     editorView.Init();
     //AddWindow(MODULE_TYPE::PERFORMANCE);
 
@@ -93,7 +93,7 @@ void EditorController::RunLoop(){
 		glViewport(0, 0, windowManager->GetWidth(), windowManager->GetHeight());
 		
 		// ===== Animation stuff =====
-		scene->sceneObjects.at(2).transform.rotate(glm::vec3(0, deltaTime * 88, 0));
+		//scene->sceneObjects.at(2).transform.rotate(glm::vec3(0, deltaTime * 88, 0));
 		//scene.sceneObjects.at(3).transform.rotate(glm::vec3(0, delta * 180, 0));
 
 		// ===== GUI Rendering

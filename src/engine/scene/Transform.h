@@ -39,6 +39,7 @@ public:
 
 	// ========== Transform Operations ==========
 	
+	void reset();
 	void translate(glm::vec3 translationVector);
 	void rotate(glm::vec3 eulerAngles);
 	void rotate(glm::vec3 rotationAxis, float angle);

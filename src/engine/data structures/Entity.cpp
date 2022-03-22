@@ -1,7 +1,5 @@
 #include"Entity.h"
 
-Entity::Entity(entt::entity handle, Scene* scene)
+Entity::Entity(entt::entity handle, EntityProvider* entProvider)
     : entityHandle(handle),
-        scene(scene){
-
-}
+        entProvider(entProvider){}

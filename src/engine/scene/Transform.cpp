@@ -86,6 +86,12 @@ void Transform::setScale(glm::vec3 scale) {
 
 // ========== Transform Operations ==========
 
+void Transform::reset(){
+	setPosition(glm::vec3(0));
+	setRotation(glm::vec3(0));
+	setScale(glm::vec3(1));
+}
+
 void Transform::translate(glm::vec3 translationVector) {
 	this->position += translationVector;
 }
