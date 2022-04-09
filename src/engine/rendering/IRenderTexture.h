@@ -17,7 +17,7 @@ class IRenderTexture {
         virtual void Unbind()=0;
 
         virtual int GetID()=0;
-        virtual int GetTexture()=0;
+        virtual void* GetTexture()=0;
 
         void SetCamera(Camera* camera){
             this->camera = camera;

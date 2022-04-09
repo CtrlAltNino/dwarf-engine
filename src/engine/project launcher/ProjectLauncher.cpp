@@ -537,7 +537,7 @@ void ProjectLauncher::RenderBottomInformation(int fWidth, int fHeight) {
 	
 	{
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() - verticalIconOffset);
-		ImGui::Image((ImTextureID)githubIcon->ID, iconSize);
+		ImGui::Image((ImTextureID)((uintptr_t)githubIcon->ID), iconSize);
 		if (ImGui::IsItemHovered()) {
 			ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
 		}
@@ -562,7 +562,7 @@ void ProjectLauncher::RenderBottomInformation(int fWidth, int fHeight) {
 	
 	{
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() - verticalIconOffset);
-		ImGui::Image((ImTextureID)patreonIcon->ID, iconSize);
+		ImGui::Image((ImTextureID)((uintptr_t)patreonIcon->ID), iconSize);
 		if (ImGui::IsItemHovered()) {
 			ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
 		}
@@ -587,7 +587,8 @@ void ProjectLauncher::RenderBottomInformation(int fWidth, int fHeight) {
 
 	{
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() - verticalIconOffset);
-		ImGui::Image((ImTextureID)twitterIcon->ID, iconSize);
+		//reinterpret_cast
+		ImGui::Image((ImTextureID)((uintptr_t)twitterIcon->ID), iconSize);
 		if (ImGui::IsItemHovered()) {
 			ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
 		}

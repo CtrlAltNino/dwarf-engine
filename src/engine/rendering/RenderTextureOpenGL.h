@@ -15,7 +15,7 @@ class RenderTextureOpenGL : public IRenderTexture{
     public:
         RenderTextureOpenGL();
         virtual int GetID();
-        virtual int GetTexture();
+        virtual void* GetTexture();
         virtual void Bind();
         virtual void Unbind();
         virtual void UpdateTextureResolution();
