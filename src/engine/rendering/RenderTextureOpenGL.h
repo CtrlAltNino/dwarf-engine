@@ -1,9 +1,11 @@
 #pragma once
 
-#include"IRenderTexture.h"
+#include "../../utilities/dpch.h"
+
 #include<glad/glad.h>
 #include<GLFW/glfw3.h>
-#include<iostream>
+
+#include"IRenderTexture.h"
 
 class RenderTextureOpenGL : public IRenderTexture{
     private:
@@ -13,7 +15,7 @@ class RenderTextureOpenGL : public IRenderTexture{
     public:
         RenderTextureOpenGL();
         virtual int GetID();
-        virtual int GetTexture();
+        virtual void* GetTexture();
         virtual void Bind();
         virtual void Unbind();
         virtual void UpdateTextureResolution();

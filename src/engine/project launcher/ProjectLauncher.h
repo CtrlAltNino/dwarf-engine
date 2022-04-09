@@ -1,12 +1,7 @@
 #pragma once
 
 // system
-#include<iostream>
-#include<fstream>
-#include<stdlib.h>
-#include<string>
-#include<vector>
-#include<thread>
+#include "../../utilities/dpch.h"
 
 // dependencies
 #include<glad/glad.h>

@@ -1,10 +1,11 @@
 #pragma once
 
+#include "../../../utilities/dpch.h"
+
+#include<imgui_internal.h>
+
 #include "../IModule.h"
 #include "../../windowing/IWindowManager.h"
-#include<string>
-#include<iostream>
-#include<imgui_internal.h>
 
 class PerformanceModule : public IModule{
     private:

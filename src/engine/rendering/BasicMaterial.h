@@ -1,13 +1,14 @@
-#ifndef BASIC_MATERIAL_CLASS_H
-#define BASIC_MATERIAL_CLASS_H
+#pragma once
+
+#include "../../utilities/dpch.h"
 
 #include<glad/glad.h>
-#include"../data structures/Color.h"
-#include"Shader.h"
-#include"../data structures/Texture.h"
-#include"Material.h"
 #include<glm/glm.hpp>
-#include<regex>
+
+#include"Shader.h"
+#include"Material.h"
+#include"../data structures/Color.h"
+#include"../data structures/Texture.h"
 
 struct MaterialSettings {
 	float shininess = 4;
@@ -59,5 +60,3 @@ public:
 	void free();
 	void updateShaderParameters(glm::mat4x4 modelMatrix, glm::mat4x4 viewMatrix, glm::mat4x4 projectionMatrix);
 };
-
-#endif

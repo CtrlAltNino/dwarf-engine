@@ -1,8 +1,9 @@
 #pragma once
 
+#include "../../utilities/dpch.h"
+
 #include"IInputManager.h"
 #include"../windowing/WindowManagerOpenGL.h"
-#include<map>
 
 class InputManagerOpenGL : public IInputManager {
     private:

@@ -4,7 +4,6 @@ EditorController::EditorController(ProjectData projectData) : editorModel(this),
 	projectPath = projectData.path;
 	switch(projectData.graphicsApi){
 		case GraphicsApi::OpenGL:
-			std::cout << "2" << std::endl;
 			windowManager = new WindowManagerOpenGL();
 			inputManager = new InputManagerOpenGL((WindowManagerOpenGL*)windowManager);
 			break;
@@ -27,48 +26,6 @@ EditorController::EditorController(ProjectData projectData) : editorModel(this),
 
 	windowManager->SetWindowName("Dwarf Engine Editor - " + projectData.name + " - " +editorModel.GetScene()->getSceneName() + " (" +(graphicsApiNames[(int)projectData.graphicsApi]) +")");
 }
-
-/*void EditorController::UpdateEditorCamera(Camera* camera){
-    Scene* scene = editorModel.GetScene();
-	if (inputManager->GetMouseDown(MOUSE_BUTTON::RIGHT))
-	{
-		//inputManager->SetMouseVisibility(false);
-		glm::vec2 mousePos = inputManager->GetMousePos();
-
-		if (scene->lastMousePos != glm::vec2(-1)) {
-			scene->deltaMousePos = glm::vec2(mousePos.x - scene->lastMousePos.x, mousePos.y - scene->lastMousePos.y);
-		}
-		else {
-			scene->deltaMousePos = glm::vec2(0);
-		}
-
-		scene->lastMousePos = glm::vec2(mousePos.x, mousePos.y);
-
-		if (scene->deltaMousePos.length() > 0) {
-			float crsSquared = EditorProperties::cameraRotationSpeed * EditorProperties::cameraRotationSpeed;
-			float yAngle = scene->deltaMousePos.x * crsSquared;
-			float xAngle = scene->deltaMousePos.y * crsSquared;
-			camera->transform.rotate(glm::vec3(0, 1, 0), yAngle);
-			camera->transform.rotate(camera->transform.getRotation() * glm::vec3(1, 0, 0), xAngle);
-		}
-	}
-	else {
-		inputManager->SetMouseVisibility(true);
-		scene->deltaMousePos = glm::vec2(0);
-		scene->lastMousePos = glm::vec2(-1);
-	}
-
-	glm::vec3 movementVector = { (inputManager->GetKeyDown(KEYCODE::KEYCODE_A) ? -1 : 0) + (inputManager->GetKeyDown(KEYCODE::KEYCODE_D) ? 1 : 0),
-		(inputManager->GetKeyDown(KEYCODE::KEYCODE_Q) ? -1 : 0) + (inputManager->GetKeyDown(KEYCODE::KEYCODE_E) ? 1 : 0),
-		(inputManager->GetKeyDown(KEYCODE::KEYCODE_W) ? -1 : 0) + (inputManager->GetKeyDown(KEYCODE::KEYCODE_S) ? 1 : 0) };
-
-	if (glm::length(movementVector) > 0) {
-		movementVector = glm::normalize(movementVector);
-		movementVector *= deltaTime * EditorProperties::moveSpeed * (inputManager->GetKeyDown(KEYCODE::KEYCODE_LEFT_SHIFT) ? 2 : 1);
-	}
-
-	camera->transform.translate(camera->transform.getRotation() * movementVector);
-}*/
 
 void EditorController::RunLoop(){
     double lastFrameTime = 0;
@@ -113,8 +70,6 @@ void EditorController::RunLoop(){
 				renderTextures->at(i)->GetCamera()->setAspectRatio((float)renderTextures->at(i)->GetResolution().x / renderTextures->at(i)->GetResolution().y);
 			}
 			glViewport(0, 0, renderTextures->at(i)->GetResolution().x, renderTextures->at(i)->GetResolution().y);
-			//scene->sceneCamera.setAspectRatio(renderTextures->at(i)->GetAspectRatio());
-			//scene->sceneCamera.setAspectRatio((float)renderTextures->at(i)->GetResolution().x / (float)renderTextures->at(i)->GetResolution().y);
 
 			renderTextures->at(i)->Bind();
 			scene->drawScene(*renderTextures->at(i)->GetCamera());

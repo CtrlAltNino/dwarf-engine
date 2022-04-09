@@ -1,12 +1,14 @@
-#ifndef CAMERA_CLASS_H
-#define CAMERA_CLASS_H
+#pragma once
 
-#include"Transform.h"
-#include<glad/glad.h>
-#include<glm/glm.hpp>
-#include<glm/gtc/matrix_transform.hpp>
+#include "../../utilities/dpch.h"
+
+#include <glad/glad.h>
+#include <glm/glm.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/transform.hpp> // after <glm/glm.hpp>
+
 #include"../data structures/Quaternion.h"
+#include"Transform.h"
 
 class Camera {
 private:
@@ -36,5 +38,3 @@ public:
 	// ========== Camera Functions ==========
 	
 };
-
-#endif

@@ -1,12 +1,11 @@
-#ifndef MESH_CLASS_H
-#define MESH_CLASS_H
+#pragma once
+
+#include "../../utilities/dpch.h"
 
 #include<glad/glad.h>
 #include<glm/glm.hpp>
-#include<stdlib.h>
-#include<iostream>
-#include<vector>
 #include<assimp/BaseImporter.h>
+
 #include"VAO.h"
 #include"VBO.h"
 #include"EBO.h"
@@ -48,5 +47,3 @@ public:
 	void unbind();
 	void free();
 };
-
-#endif

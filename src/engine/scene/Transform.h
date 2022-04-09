@@ -1,12 +1,10 @@
-#ifndef TRANSFORM_CLASS_H
-#define TRANSFORM_CLASS_H
+#pragma once
+
+#include "../../utilities/dpch.h"
 
 #include<glad/glad.h>
-#include<stdlib.h>
-#include<string>
-#include<vector>
 #include <glm/gtx/transform.hpp> // after <glm/glm.hpp>
-#include<iostream>
+
 #include"../data structures/Quaternion.h"
 
 class Transform {
@@ -46,5 +44,3 @@ public:
 	void rotateGlobally(glm::vec3 eulerAngles);
 	void lookAt();
 };
-
-#endif

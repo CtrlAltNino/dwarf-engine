@@ -1,6 +1,5 @@
 #include"WindowManagerOpenGL.h"
 
-
 void WindowManagerOpenGL::Init(){
     CreateEditorWindow();
     InitImGui();

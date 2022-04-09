@@ -1,16 +1,17 @@
 #pragma once
 
+#include "../../../utilities/dpch.h"
+
+#include<imgui_internal.h>
+#include<glm/vec2.hpp>
+#include<glm/vec3.hpp>
+
 #include"../../editor/EditorProperties.h"
 #include "../IModule.h"
 #include"../../rendering/IRenderTexture.h"
 #include"../../scene/Camera.h"
-#include<iostream>
-#include<imgui_internal.h>
-#include<glm/vec2.hpp>
-#include<glm/vec3.hpp>
 #include"../../data structures/Quaternion.h"
 #include"../../input/IInputManager.h"
-#include<cmath>
 
 #define MIN_RESOLUTION_WIDTH 10
 #define MIN_RESOLUTION_HEIGHT 10

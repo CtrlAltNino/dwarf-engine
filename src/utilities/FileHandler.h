@@ -1,9 +1,6 @@
 #pragma once
-#include<iostream>
-#include<fstream>
-#include<string>
-#include<fstream>
-#include<regex>
+
+#include "../../utilities/dpch.h"
 
 #ifdef _WIN32
 #include<Windows.h>

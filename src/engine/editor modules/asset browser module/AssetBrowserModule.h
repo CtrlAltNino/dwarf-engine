@@ -1,11 +1,10 @@
 #pragma once
 
-#include "../IModule.h"
-#include<iostream>
+#include "../../../utilities/dpch.h"
+
 #include<imgui_internal.h>
-#include<filesystem>
-#include<string>
-//#include"../../windowing/IWindowManager.h"
+
+#include "../IModule.h"
 
 class AssetBrowserModule : public IModule{
     private:

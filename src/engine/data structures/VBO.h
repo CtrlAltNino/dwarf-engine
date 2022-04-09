@@ -1,8 +1,9 @@
-#ifndef VBO_CLASS_H
-#define VBO_CLASS_H
+#pragma once
+
+#include "../../utilities/dpch.h"
 
 #include<glad/glad.h>
-#include<vector>
+
 #include"Vertex.h"
 
 class VBO {
@@ -15,6 +16,3 @@ public:
 	void Unbind();
 	void Delete();
 };
-
-#endif
-
