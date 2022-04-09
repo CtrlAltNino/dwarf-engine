@@ -1,13 +1,14 @@
 #pragma once
 
+#include "../../utilities/dpch.h"
+
 #include<glad/glad.h>
+#include<glm/glm.hpp>
+
 #include"../data structures/Color.h"
 #include"Shader.h"
 #include"../data structures/Texture.h"
 #include"Shader.h"
-#include<iostream>
-#include<map>
-#include<glm/glm.hpp>
 
 class Material {
 	private:

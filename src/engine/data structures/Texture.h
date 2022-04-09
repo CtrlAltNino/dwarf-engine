@@ -1,10 +1,9 @@
-#ifndef TEXTURE_CLASS_H
-#define TEXTURE_CLASS_H
+#pragma once
+
+#include "../../utilities/dpch.h"
 
 #include<glad/glad.h>
 #include<stb_image.h>
-#include<iostream>
-#include<regex>
 
 class Texture {
 public:
@@ -20,5 +19,3 @@ public:
 	int GetHeight();
 	int GetWidth();
 };
-
-#endif

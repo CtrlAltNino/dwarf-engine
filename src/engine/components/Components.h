@@ -1,13 +1,15 @@
 #pragma once
 
-#include<vector>
+#include "../../utilities/dpch.h"
+
 #include<glm/glm.hpp>
 #include<glm/gtc/matrix_transform.hpp>
+#include<entt/entt.hpp>
+
 #include"../editor/UID.h"
 #include"../data structures/Mesh.h"
 #include"../rendering/Material.h"
 #include"../data structures/Quaternion.h"
-#include<entt/entt.hpp>
 #include"../scene/Object.h"
 #include"../scene/Camera.h"
 

@@ -1,4 +1,7 @@
 #pragma once
+
+#include "../../utilities/dpch.h"
+
 #ifdef _WIN32
 #include<Windows.h>
 #include<KnownFolders.h>

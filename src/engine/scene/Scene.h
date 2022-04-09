@@ -1,17 +1,16 @@
 #pragma once
 
-//#include"../editor/UID.h"
-#include"../components/Components.h"
-#include"Object.h"
-#include"Camera.h"
-
-#include<glad/glad.h>
-#include<stdlib.h>
-#include<string>
-#include<vector>
-#include<entt/entt.hpp>
 #include"../data structures/Entity.h"
 #include"EntityProvider.h"
+#include"../components/Components.h"
+
+#include "../../utilities/dpch.h"
+
+#include<glad/glad.h>
+#include<entt/entt.hpp>
+
+#include"Object.h"
+#include"Camera.h"
 
 
 class Scene : public EntityProvider {

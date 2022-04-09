@@ -1,8 +1,10 @@
-#ifndef OBJECT_CLASS_H
-#define OBJECT_CLASS_H
+#pragma once
+
+#include "../../utilities/dpch.h"
 
 #include<glad/glad.h>
 #include<glm/glm.hpp>
+
 #include"Transform.h"
 #include"Renderer.h"
 #include"../data structures/Mesh.h"
@@ -32,5 +34,3 @@ public:
 	
 	void render(glm::mat4x4 viewMatrix, glm::mat4x4 projectionMatrix);
 };
-
-#endif

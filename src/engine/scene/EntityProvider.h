@@ -5,5 +5,4 @@
 class EntityProvider {
 	public:
         entt::registry m_Registry;
-        //virtual entt::registry GetRegistry() = 0;
 };

@@ -1,9 +1,10 @@
 #pragma once
 
+#include "../../utilities/dpch.h"
+
 #include <imgui.h>
-#include<imgui_impl_glfw.h>
-#include<imgui_internal.h>
-#include<string>
+#include <imgui_impl_glfw.h>
+#include <imgui_internal.h>
 
 #include"../editor/EditorCommon.h"
 

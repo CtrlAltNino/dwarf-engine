@@ -1,5 +1,7 @@
 #pragma once
 
+#include "../../utilities/dpch.h"
+
 #include<glad/glad.h>
 #include<glm/glm.hpp>
 // Material abstrahieren
@@ -7,7 +9,6 @@
 #include<assimp/scene.h>
 #include<assimp/postprocess.h>
 #include<assimp/material.h>
-#include<vector>
 
 #include"../data structures/Mesh.h"
 

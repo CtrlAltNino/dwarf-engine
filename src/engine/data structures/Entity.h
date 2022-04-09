@@ -1,14 +1,15 @@
 #pragma once
+
 #include"../components/Components.h"
 #include"../scene/Object.h"
 #include"../scene/Camera.h"
 
+#include "../../utilities/dpch.h"
+
 #include<glad/glad.h>
-#include<stdlib.h>
-#include<string>
-#include<vector>
 #include<entt/entt.hpp>
 #include<entt/entity/registry.hpp>
+
 #include"../editor/UID.h"
 #include"../components/Components.h"
 #include"../scene/EntityProvider.h"

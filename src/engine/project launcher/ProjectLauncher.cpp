@@ -1,6 +1,6 @@
 #include "ProjectLauncher.h"
-#define INITIAL_WINDOW_WIDTH (960)
-#define INITIAL_WINDOW_HEIGHT (540)
+#define LAUNCHER_INITIAL_WINDOW_WIDTH (960)
+#define LAUNCHER_INITIAL_WINDOW_HEIGHT (540)
 #define PROJECT_BUTTON_WINDOW_WIDTH (200)
 #define PROJECT_INFORMATION_HEIGHT (30)
 
@@ -78,15 +78,15 @@ int ProjectLauncher::InitWindow() {
 
 	ProjectLauncher::refreshRate = mode->refreshRate;
 	
-	window = glfwCreateWindow(INITIAL_WINDOW_WIDTH, INITIAL_WINDOW_HEIGHT, "Dwarf Engine Project Launcher", NULL, NULL);
+	window = glfwCreateWindow(LAUNCHER_INITIAL_WINDOW_WIDTH, LAUNCHER_INITIAL_WINDOW_HEIGHT, "Dwarf Engine Project Launcher", NULL, NULL);
 	if (window == NULL) {
 		std::cout << "Failed to create GLFW window" << std::endl;
 		glfwTerminate();
 		return -1;
 	}
 
-	glfwSetWindowPos(window, mode->width/2 - (INITIAL_WINDOW_WIDTH / 2), mode->height / 2 - (INITIAL_WINDOW_HEIGHT / 2));
-	glfwSetWindowSizeLimits(window, INITIAL_WINDOW_WIDTH, INITIAL_WINDOW_HEIGHT, GLFW_DONT_CARE, GLFW_DONT_CARE);
+	glfwSetWindowPos(window, mode->width/2 - (LAUNCHER_INITIAL_WINDOW_WIDTH / 2), mode->height / 2 - (LAUNCHER_INITIAL_WINDOW_HEIGHT / 2));
+	glfwSetWindowSizeLimits(window, LAUNCHER_INITIAL_WINDOW_WIDTH, LAUNCHER_INITIAL_WINDOW_HEIGHT, GLFW_DONT_CARE, GLFW_DONT_CARE);
 
 	GLFWimage icon[1];
 	int numColChannel;
@@ -95,7 +95,7 @@ int ProjectLauncher::InitWindow() {
 	stbi_image_free(icon[0].pixels);
 	glfwMakeContextCurrent(window);
 	gladLoadGL();
-	glViewport(0, 0, INITIAL_WINDOW_WIDTH, INITIAL_WINDOW_HEIGHT);
+	glViewport(0, 0, LAUNCHER_INITIAL_WINDOW_WIDTH, LAUNCHER_INITIAL_WINDOW_HEIGHT);
 
 	return 0;
 }

@@ -7,6 +7,8 @@
 #include<iostream>
 #include<GLFW/glfw3.h>
 
+#include "../../utilities/dpch.h"
+
 #include"IWindowManager.h"
 #include"../rendering/RenderTextureOpenGL.h"
 

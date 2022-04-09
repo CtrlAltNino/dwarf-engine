@@ -1,9 +1,11 @@
+#pragma once
+
+#include "../../../utilities/dpch.h"
+
 #include"../IModule.h"
 #include"../../scene/Scene.h"
 #include"../../editor/EditorCommon.h"
 #include"../../scene/EntityProvider.h"
-#include<string>
-#include<xhash>
 
 class SceneGraphModule : public IModule {
     private:

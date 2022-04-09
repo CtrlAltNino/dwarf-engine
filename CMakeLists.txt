@@ -39,6 +39,8 @@ ELSEIF (UNIX AND NOT APPLE)
     add_executable(${targetName} "")
 ENDIF()
 
+set(CMAKE_PCH_INSTANTIATE_TEMPLATES ON)
+
 target_sources(${targetName} PRIVATE ${EXECUTABLE_ADDITIONAL_SETTINGS})
 
 # Project declaration

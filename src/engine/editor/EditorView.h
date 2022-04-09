@@ -1,8 +1,8 @@
 #pragma once
 
+#include "../../utilities/dpch.h"
+
 #include<imgui_internal.h>
-#include<vector>
-#include<iostream>
 
 #include"../editor modules/IModule.h"
 #include"EditorCommon.h"

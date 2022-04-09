@@ -1,5 +1,4 @@
-#ifndef QUATERNION_CLASS_H
-#define QUATERNION_CLASS_H
+#pragma once
 
 #include<glad/glad.h>
 #include<glm/glm.hpp>
@@ -74,5 +73,3 @@ public:
 		return glm::vec3(result.x, result.y, result.z);
 	}
 };
-
-#endif

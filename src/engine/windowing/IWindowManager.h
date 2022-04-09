@@ -1,12 +1,12 @@
 #pragma once
 
+#include "../../utilities/dpch.h"
+
+#include<imgui_internal.h>
+#include<glm/vec4.hpp>
+
 #include"../../utilities/Common.h"
 #include"../rendering/IRenderTexture.h"
-#include<imgui_internal.h>
-#include<vector>
-#include<glm/vec4.hpp>
-#include<string>
-#include<map>
 
 #define INITIAL_WINDOW_WIDTH (1280)
 #define INITIAL_WINDOW_HEIGHT (720)

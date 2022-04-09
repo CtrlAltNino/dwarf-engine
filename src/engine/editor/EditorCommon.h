@@ -1,7 +1,7 @@
 #pragma once
 
-//#include"../scene/Camera.h"
-#include<string>
+#include "../../utilities/dpch.h"
+
 enum class MODULE_TYPE {PERFORMANCE, SCENE_GRAPH, CONSOLE, SCENE_VIEWER, ASSET_BROWSER, INSPECTOR};
 
 class IModelListener{

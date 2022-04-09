@@ -1,5 +1,6 @@
-#ifndef RENDERER_CLASS_H
-#define RENDERER_CLASS_H
+#pragma once
+
+#include "../../utilities/dpch.h"
 
 #include<glad/glad.h>
 #include<glm/glm.hpp>
@@ -10,7 +11,6 @@
 #include<assimp/material.h>
 #include"../rendering/BasicMaterial.h"
 #include"../data structures/Mesh.h"
-#include<vector>
 
 class Renderer {
 private:
@@ -38,5 +38,3 @@ public:
 	static std::vector<Mesh> meshFromFile(const char* fileName);
 	void render(glm::mat4x4 modelMatrix, glm::mat4x4 viewMatrix, glm::mat4x4 projectionMatrix);
 };
-
-#endif
