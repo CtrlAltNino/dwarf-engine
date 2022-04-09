@@ -1,10 +1,9 @@
 #pragma once
+#include "../../utilities/dpch.h"
 
 #include"../components/Components.h"
 #include"../scene/Object.h"
 #include"../scene/Camera.h"
-
-#include "../../utilities/dpch.h"
 
 #include<glad/glad.h>
 #include<entt/entt.hpp>

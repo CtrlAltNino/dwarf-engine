@@ -4,7 +4,6 @@ EditorController::EditorController(ProjectData projectData) : editorModel(this),
 	projectPath = projectData.path;
 	switch(projectData.graphicsApi){
 		case GraphicsApi::OpenGL:
-			std::cout << "2" << std::endl;
 			windowManager = new WindowManagerOpenGL();
 			inputManager = new InputManagerOpenGL((WindowManagerOpenGL*)windowManager);
 			break;

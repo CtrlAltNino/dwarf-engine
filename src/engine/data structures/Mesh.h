@@ -1,5 +1,4 @@
-#ifndef MESH_CLASS_H
-#define MESH_CLASS_H
+#pragma once
 
 #include "../../utilities/dpch.h"
 
@@ -48,5 +47,3 @@ public:
 	void unbind();
 	void free();
 };
-
-#endif
