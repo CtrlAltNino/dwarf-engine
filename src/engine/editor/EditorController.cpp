@@ -62,7 +62,10 @@ void EditorController::RunLoop(){
 		}
 
 		// ===== Drawing Geometry =====
-		// TODO: Draw to a framebuffer
+		// Loop through scene entities and submit them to renderer in some form
+		// Loop through render targets
+		// Set current camera settings (view matrix, projection matrix, etc...)
+		// Execute Render function of the Renderer
 		std::vector<IRenderTexture*> *renderTextures = windowManager->GetRenderTextures();
 		renderTime = glfwGetTime();
 		for(int i = 0; i < renderTextures->size(); i++){
