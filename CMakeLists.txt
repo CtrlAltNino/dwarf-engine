@@ -29,7 +29,10 @@ IF (WIN32)
     
     add_executable(${targetName} "")
 ELSEIF (APPLE)
-    set(VCPKG_TARGET_TRIPLET "x64-osx-static")
+    # ~/.vcpkg/vcpkg.path.txt
+    file(READ "$ENV{HOME}/.vcpkg/vcpkg.path.txt" VCPKG_PATH)
+    set(CMAKE_TOOLCHAIN_FILE "${VCPKG_PATH}/scripts/buildsystems/vcpkg.cmake")
+    set(VCPKG_TARGET_TRIPLET "x64-osx")
     add_executable(${targetName} "")
 ELSEIF (UNIX AND NOT APPLE)
     # ~/.vcpkg/vcpkg.path.txt
@@ -61,9 +64,6 @@ target_link_libraries(${targetName} PRIVATE assimp::assimp)
 
 find_path(BEXT_DI_INCLUDE_DIRS "boost/di.hpp")
 target_include_directories(${targetName} PRIVATE ${BEXT_DI_INCLUDE_DIRS})
-
-find_package(glad CONFIG REQUIRED)
-target_link_libraries(${targetName} PRIVATE glad::glad)
 
 find_package(glfw3 CONFIG REQUIRED)
 target_link_libraries(${targetName} PRIVATE glfw)
