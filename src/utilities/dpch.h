@@ -4,18 +4,17 @@
 #include<Windows.h>
 #include<KnownFolders.h>
 #include<ShlObj.h>
-#include<filesystem>
 #endif
 
 #ifdef __linux__
 #endif
 
+#include<filesystem>
 #include<iostream>
 #include<stdlib.h>
 #include<string>
 #include<vector>
 #include<string>
-#include<xhash>
 #include<regex>
 #include<random>
 #include<cmath>

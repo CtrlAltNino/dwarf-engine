@@ -1,6 +1,6 @@
 #pragma once
 
-#include "../../utilities/dpch.h"
+#include "dpch.h"
 
 #ifdef _WIN32
 #include<Windows.h>
