@@ -92,6 +92,8 @@ target_link_libraries(${targetName} PRIVATE imguizmo::imguizmo)
 find_package(EnTT CONFIG REQUIRED)
 target_link_libraries(${targetName} PRIVATE EnTT::EnTT)
 
+target_include_directories(${targetName} PRIVATE "lib")
+
 # Copy files to build folder
 add_custom_command(TARGET 
 ${targetName} 
