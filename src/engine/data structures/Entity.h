@@ -8,6 +8,7 @@
 #include<glad/glad.h>
 #include<entt/entt.hpp>
 #include<entt/entity/registry.hpp>
+#include<algorithm>
 
 #include"../editor/UID.h"
 #include"../components/Components.h"
@@ -55,14 +56,16 @@ class Entity {
             TransformComponent transform = GetComponent<TransformComponent>();
             Entity newParent = Entity(entity, entProvider);
             
-            if(entProvider->m_Registry.valid(transform.parent)){
+            if(transform.parent != entt::null){
                 Entity oldParent = Entity(transform.parent, entProvider);
+                //std::cout << "Old Parent: " << oldParent.GetComponent<TagComponent>().Tag << std::endl;
                 oldParent.RemoveChild(entityHandle);
             }
-            transform.parent = entity;
-            RemoveComponent<TransformComponent>();
-            AddComponent<TransformComponent>(transform);
-            newParent.AddChild(entityHandle);
+
+            GetComponent<TransformComponent>().parent = entity;
+            if(entProvider->m_Registry.valid(entity)){
+                newParent.AddChild(entityHandle);
+            }
         }
         
         void AddChild(entt::entity entity){
@@ -74,25 +77,52 @@ class Entity {
         }
         
         void RemoveChild(entt::entity entity){
-            TransformComponent transform = GetComponent<TransformComponent>();
-            auto it = std::find(transform.children.begin(), transform.children.end(), entity);
-            if(it != transform.children.end()){
-                transform.children.erase(it);
+            //TransformComponent transform = GetComponent<TransformComponent>();
+            auto it = std::find(GetComponent<TransformComponent>().children.begin(), GetComponent<TransformComponent>().children.end(), entity);
+            if(it != GetComponent<TransformComponent>().children.end()){
+                GetComponent<TransformComponent>().children.erase(it);
             }
         }
 
-        /*entt::entity GetParent(){
-            return
+        void SetChildIndex(int index){
+            std::vector<entt::entity>* siblings = &Entity(GetComponent<TransformComponent>().parent, entProvider).GetComponent<TransformComponent>().children;
+            auto it = std::find(siblings->begin(), siblings->end(), entityHandle);
+
+            //std::iter_swap(siblings->begin() + index, it);
+            siblings->erase(it);
+            siblings->insert(siblings->begin()+index, entityHandle);
         }
-        std::vector<entt::entity> GetChildren();*/
+
+        int GetChildIndex(){
+            int index = -1;
+            
+            std::vector<entt::entity> siblings = Entity(GetComponent<TransformComponent>().parent, entProvider).GetComponent<TransformComponent>().children;
+            auto it = std::find(siblings.begin(), siblings.end(), entityHandle);
+
+            // If element was found
+            if (it != siblings.end()) 
+            {
+                index = it - siblings.begin();
+            }
+
+            return index;
+        }
+
+        entt::entity GetParent(){
+            return GetComponent<TransformComponent>().parent;
+        }
+        
+        std::vector<entt::entity>* GetChildren(){
+            return &(GetComponent<TransformComponent>().children);
+        }
         
         entt::entity GetHandle() { return entityHandle; }
     private:
         EntityProvider* entProvider = nullptr;
         entt::entity entityHandle{ entt::null };
         
-        Entity* parent = nullptr;
-        std::vector<Entity*> children;
+        //Entity* parent = nullptr;
+        //std::vector<Entity*> children;
         
         //entt::registry registry;
 };

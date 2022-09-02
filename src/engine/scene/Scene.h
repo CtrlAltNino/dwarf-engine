@@ -13,8 +13,8 @@
 
 class Scene : public EntityProvider {
 public:
-	std::vector<Object> sceneObjects;
-	Entity rootEntity = Entity(entt::null, nullptr);
+	Entity rootEntity = CreateEntity("root");
+	Entity selectedEntity = Entity(entt::null, nullptr);
 	// ========== Constructors ==========
 	
 	Scene(const char* sceneName);
@@ -29,6 +29,7 @@ public:
 	Entity CreateEntity(const std::string& name = std::string());
 	Entity CreateEntityWithUID(UID uid, const std::string& name);
 	void drawScene(Camera camera);
+	void selectEntity(Entity entity);
 private:
 	const char* sceneName;
 	friend class Entity;

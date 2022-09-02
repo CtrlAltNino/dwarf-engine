@@ -12,6 +12,5 @@ class EditorModel{
     public:
         EditorModel(IModelListener* listener);
         void InitScene(std::string projectPath);
-        void InitSceneNew(std::string projectPath);
         Scene* GetScene();
 };

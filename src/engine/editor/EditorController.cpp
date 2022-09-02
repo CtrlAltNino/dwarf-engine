@@ -20,7 +20,7 @@ EditorController::EditorController(ProjectData projectData) : editorModel(this),
     // 4. Start file watcher
 
     // 5. Open last scene
-	editorModel.InitSceneNew(projectData.path);
+	editorModel.InitScene(projectData.path);
     editorView.Init();
     //AddWindow(MODULE_TYPE::PERFORMANCE);
 

@@ -14,7 +14,7 @@ void Material::UpdateUniforms(){
 	// Bind textures
 	char textureInputCounter = 0;
 	for(auto const& [key, val] : textures){
-		std::cout << key << std::endl;
+		// std::cout << key << std::endl;
 		glActiveTexture(GL_TEXTURE0+textureInputCounter);
 		glBindTexture(GL_TEXTURE_2D, val.ID);
 		
@@ -75,31 +75,31 @@ void Material::UpdateMVP(glm::mat4x4 modelMatrix, glm::mat4x4 viewMatrix, glm::m
 	glUniformMatrix4fv(pmID, 1, GL_FALSE, &projectionMatrix[0][0]);
 }
 
-void Material::UpdateShaderInput(const char* uniformName, Texture* val){
+void Material::SetUniform(const char* uniformName, Texture* val){
 	textures[uniformName] = *val;
 }
 
-void Material::UpdateShaderInput(const char* uniformName, bool val){
+void Material::SetUniform(const char* uniformName, bool val){
 	boolUniforms[uniformName] = val;
 }
 
-void Material::UpdateShaderInput(const char* uniformName, int val){
+void Material::SetUniform(const char* uniformName, int val){
 	integerUniforms[uniformName] = val;
 }
 
-void Material::UpdateShaderInput(const char* uniformName, float val){
+void Material::SetUniform(const char* uniformName, float val){
 	floatUniforms[uniformName] = val;
 }
 
-void Material::UpdateShaderInput(const char* uniformName, glm::vec2 val){
+void Material::SetUniform(const char* uniformName, glm::vec2 val){
 	vector2Uniforms[uniformName] = val;
 }
 
-void Material::UpdateShaderInput(const char* uniformName, glm::vec3 val){
+void Material::SetUniform(const char* uniformName, glm::vec3 val){
 	vector3Uniforms[uniformName] = val;
 }
 
-void Material::UpdateShaderInput(const char* uniformName, glm::vec4 val){
+void Material::SetUniform(const char* uniformName, glm::vec4 val){
 	vector4Uniforms[uniformName] = val;
 }
 

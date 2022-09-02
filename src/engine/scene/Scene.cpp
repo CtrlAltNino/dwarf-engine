@@ -5,7 +5,7 @@
 
 Scene::Scene(const char* sceneName)
 	: sceneName(sceneName) {
-	entt::entity entity = m_Registry.create();
+	// entt::entity entity = m_Registry.create();
 }
 
 Scene::~Scene(){ }
@@ -29,7 +29,7 @@ Entity Scene::CreateEntityWithUID(UID uid, const std::string& name){
 	auto& tag = entity.AddComponent<TagComponent>(name);
 	tag.Tag = name.empty() ? "Entity" : name;
 
-	//entity.SetParent(rootEntity.GetHandle());
+	entity.SetParent(rootEntity.GetHandle());
 
 	return entity;
 }
@@ -68,4 +68,9 @@ void Scene::drawScene(Camera camera) {
 			glDisable(GL_CULL_FACE);
 		}
     }
+}
+
+void Scene::selectEntity(Entity entity) {
+	std::cout << "Selecting: " << entity.GetComponent<TagComponent>().Tag << std::endl;
+	selectedEntity = entity;
 }

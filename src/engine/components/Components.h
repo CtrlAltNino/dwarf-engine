@@ -66,18 +66,7 @@ struct TransformComponent{
             // TODO Fix scale and rotation part of the model matrix
             glm::mat4 translationMatrix = glm::translate(glm::mat4(1.0f), position);
             glm::mat4 scaleMatrix = glm::scale(glm::mat4(1.0f), scale);
-            //glm::mat4 rotationMatrix = glm::rotate(glm::mat4(1.0f), rotation.GetAngle(), rotation.GetAxis());
             glm::mat4 rotationMatrix = rotation.getMatrix();
-            //std::cout << "Angle: " << rotation.GetAngle() << " | Axis: [" << rotation.GetAxis().x << ", " << rotation.GetAxis().y << ", " << rotation.GetAxis().z << "]" << std::endl;
-            //std::cout << "Quaterion: X = " << rotation.x << " | Y = " << rotation.y << " | Z = " << rotation.z << " | R = " << rotation.r << std::endl;
-            //std::cout << "Euler Angles: X = " << rotation.GetEulerAngles().x << " | Y = " << rotation.GetEulerAngles().y << " | Z = " << rotation.GetEulerAngles().z << std::endl;
-            /*float angle = glm::radians(15.0f);
-            glm::mat4 yeet = {
-                cos(angle), 0, -sin(angle), 0,
-                0, 1, 0, 0,
-                sin(angle), 0, cos(angle), 0,
-                0, 0, 0, 1
-            };*/
 
             return translationMatrix * rotationMatrix * scaleMatrix;
         }
