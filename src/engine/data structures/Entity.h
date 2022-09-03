@@ -51,6 +51,7 @@ class Entity {
         UID GetUID() { return GetComponent<IDComponent>().ID; }
 
         operator bool() const { return (std::uint32_t)entityHandle != 0; }
+        bool operator ==(const Entity &b){return entityHandle == b.entityHandle;}
 
         void SetParent(entt::entity entity){
             TransformComponent transform = GetComponent<TransformComponent>();

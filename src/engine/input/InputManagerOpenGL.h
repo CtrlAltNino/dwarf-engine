@@ -15,7 +15,8 @@ class InputManagerOpenGL : public IInputManager {
                                                 {KEYCODE::D, GLFW_KEY_D},
                                                 {KEYCODE::E, GLFW_KEY_E},
                                                 {KEYCODE::Q, GLFW_KEY_Q},
-                                                {KEYCODE::LEFT_SHIFT, GLFW_KEY_LEFT_SHIFT}};
+                                                {KEYCODE::LEFT_SHIFT, GLFW_KEY_LEFT_SHIFT},
+                                                {KEYCODE::LEFT_CONTROL, GLFW_KEY_LEFT_CONTROL}};
         
         std::map<MOUSE_BUTTON, int> mouseCodeMap = {{MOUSE_BUTTON::LEFT, GLFW_MOUSE_BUTTON_LEFT},
                                                 {MOUSE_BUTTON::RIGHT, GLFW_MOUSE_BUTTON_RIGHT},

@@ -71,6 +71,18 @@ void Scene::drawScene(Camera camera) {
 }
 
 void Scene::selectEntity(Entity entity) {
-	std::cout << "Selecting: " << entity.GetComponent<TagComponent>().Tag << std::endl;
-	selectedEntity = entity;
+	clearSelection();
+	addEntityToSelection(entity);
+}
+
+void Scene::addEntityToSelection(Entity entity){
+	selectedEntities.push_back(entity);
+}
+
+boolean Scene::isEntitySelected(Entity entity){
+	return std::find(selectedEntities.begin(), selectedEntities.end(), entity) != selectedEntities.end();
+}
+
+void Scene::clearSelection(){
+	selectedEntities.clear();
 }

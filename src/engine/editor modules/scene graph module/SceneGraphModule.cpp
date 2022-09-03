@@ -1,7 +1,7 @@
 #include "SceneGraphModule.h"
 
-SceneGraphModule::SceneGraphModule(IViewListener *listener, Scene *scene, int index)
-:IModule(listener, "Scene graph", MODULE_TYPE::SCENE_GRAPH, index), scene(scene){ }
+SceneGraphModule::SceneGraphModule(IViewListener *listener, Scene *scene, IInputManager* inputManager, int index)
+:IModule(listener, "Scene graph", MODULE_TYPE::SCENE_GRAPH, index), inputManager(inputManager), scene(scene){ }
 
 void SceneGraphModule::DrawNode(entt::entity entity){
     // Building the Entity
@@ -25,14 +25,22 @@ void SceneGraphModule::DrawNode(entt::entity entity){
         ImGui::Selectable(("       " + objectLabel).c_str());
     }
 
+    if(ImGui::IsItemClicked() && !inputManager->GetKey(KEYCODE::LEFT_CONTROL)){
+        
+    }
+
     // Selecting an item if its clicked
-    if(ImGui::IsItemClicked()){
+    if(ImGui::IsItemHovered() && ImGui::IsMouseReleased(ImGuiMouseButton_Left)){
         // Set to selected object
-        scene->selectEntity(ent);
+        if(inputManager->GetKey(KEYCODE::LEFT_CONTROL)){
+            scene->addEntityToSelection(ent);
+        }else{
+            scene->selectEntity(ent);
+        }
     }
 
     // Drawing an extra rect behind the node if its selected
-    if(scene->selectedEntity && scene->selectedEntity.GetHandle() == ent.GetHandle()){
+    if(scene->isEntitySelected(ent)){
         draw_list->ChannelsSetCurrent(0);
         ImVec2 p_min = ImGui::GetItemRectMin();
         ImVec2 p_max = ImGui::GetItemRectMax();
@@ -156,9 +164,13 @@ void SceneGraphModule::RenderModuleWindow(){
 		return;
 	}
 
-    ImVec2 cursorPos = ImGui::GetCursorPos();
+    //ImVec2 cursorPos = ImGui::GetCursorPos();
 
-    ImGui::Dummy(ImGui::GetContentRegionAvail());
+    /*ImGui::Dummy(ImGui::GetContentRegionAvail());
+
+    if(ImGui::IsItemClicked()){
+        scene->clearSelection();
+    }
 
     // If something is dropped on this node
     if(ImGui::BeginDragDropTarget()){
@@ -178,9 +190,9 @@ void SceneGraphModule::RenderModuleWindow(){
             droppedEntity.SetParent(scene->rootEntity.GetHandle());
         }
         ImGui::EndDragDropTarget();
-    }
+    }*/
 
-    ImGui::SetCursorPos(cursorPos);
+    //ImGui::SetCursorPos(cursorPos);
 
     /*for(int i = 0; i < scene->sceneObjects.size(); i++){
         ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow;
@@ -213,6 +225,32 @@ void SceneGraphModule::RenderModuleWindow(){
     while((container->begin() + it) != container->end()){
         DrawNode(*(container->begin() + it));
         it++;
+    }
+
+    ImGui::Dummy(ImGui::GetContentRegionAvail());
+
+    if(ImGui::IsItemClicked()){
+        scene->clearSelection();
+    }
+
+    // If something is dropped on this node
+    if(ImGui::BeginDragDropTarget()){
+        if (const ImGuiPayload* payload = ImGui::AcceptDragDropPayload("SceneGraphEntity")) {
+            IM_ASSERT(payload->DataSize == sizeof(entt::entity));
+
+            entt::entity payload_e = *(const entt::entity*)payload->Data;
+
+            Entity droppedEntity = Entity(payload_e, (EntityProvider*)scene);
+            
+            if(droppedEntity.GetComponent<TransformComponent>().parent != entt::null){
+                Entity parentOfDroppedEntity = Entity(droppedEntity.GetComponent<TransformComponent>().parent, (EntityProvider*)scene);
+                parentOfDroppedEntity.RemoveChild(payload_e);
+            }
+            
+
+            droppedEntity.SetParent(scene->rootEntity.GetHandle());
+        }
+        ImGui::EndDragDropTarget();
     }
 
     ImGui::End();
