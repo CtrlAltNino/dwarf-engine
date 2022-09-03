@@ -4,7 +4,13 @@
 #define PROJECT_BUTTON_WINDOW_WIDTH (200)
 #define PROJECT_INFORMATION_HEIGHT (30)
 
+using namespace Dwarf;
+
 int ProjectLauncher::Run() {
+	MTL::Device* device = MTL::CreateSystemDefaultDevice();
+	//id<MTLDevice> device = MTLCreateSystemDefaultDevice();
+	//if (!device)
+	//	exit(EXIT_FAILURE);
 	// TODO: Abstract the window creation + IMGUI Initialization
 	glfwInit();
 	

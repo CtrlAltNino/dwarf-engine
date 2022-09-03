@@ -1,6 +1,8 @@
 #include"Scene.h"
 #include"../components/Components.h"
 
+using namespace Dwarf;
+
 // ========== Constructors ==========
 
 Scene::Scene(const char* sceneName)

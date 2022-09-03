@@ -1,5 +1,7 @@
 #include"Object.h"
 
+using namespace Dwarf;
+
 // ========== Constructors ==========
 
 Object::Object(const char* objectName, Transform* transform, Renderer* renderer) : transform(*(Transform*)transform), renderer(*(Renderer*)renderer) {

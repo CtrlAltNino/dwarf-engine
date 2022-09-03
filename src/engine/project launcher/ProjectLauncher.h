@@ -4,7 +4,7 @@
 #include "../../utilities/dpch.h"
 
 // dependencies
-#include<glad/glad.h>
+//#include<glad/glad.h>
 #include<GLFW/glfw3.h>
 #include<stb_image.h>
 #include<imgui.h>
@@ -23,6 +23,14 @@
 #include "TimeUtilities.h"
 //#include "../editor/Editor.h"
 #include"../editor/EditorController.h"
+#include<Metal/Metal.hpp>
+#include<QuartzCore/QuartzCore.hpp>
+#include<simd/simd.h>
+
+#
+#include <assert.h>
+#include <stdlib.h>
+#include <stdio.h>
 
 //enum class ProjectChooserState {Choosing, Done, ProjectNotFound, CreateNewProject, ChangeGraphicsApi, Canceled};
 //enum class GraphicsApi {OpenGL, D3D11, D3D12, Vulkan};

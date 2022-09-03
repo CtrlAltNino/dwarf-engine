@@ -53,6 +53,19 @@ project(Dwarf\ Engine VERSION 0.0.1)
 smtg_add_subdirectories()
 
 # Linking dependencies
+
+IF(APPLE)
+    find_library(METAL Metal)
+    find_library(FOUNDATION Foundation)
+    find_library(QUARTZCORE QuartzCore)
+
+    target_link_libraries(${targetName} PRIVATE ${METAL})
+    target_link_libraries(${targetName} PRIVATE ${FOUNDATION})
+    target_link_libraries(${targetName} PRIVATE ${QUARTZCORE})
+
+    target_include_directories(${targetName} PRIVATE "lib/metal-cpp/")
+ENDIF()
+
 find_package(glad CONFIG REQUIRED)
 target_link_libraries(${targetName} PRIVATE glad::glad)
 
@@ -91,8 +104,6 @@ target_link_libraries(${targetName} PRIVATE imguizmo::imguizmo)
 
 find_package(EnTT CONFIG REQUIRED)
 target_link_libraries(${targetName} PRIVATE EnTT::EnTT)
-
-target_include_directories(${targetName} PRIVATE "lib")
 
 # Copy files to build folder
 add_custom_command(TARGET 

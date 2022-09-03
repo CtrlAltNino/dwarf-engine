@@ -1,5 +1,8 @@
 #include"EditorController.h"
 
+
+using namespace Dwarf;
+
 EditorController::EditorController(ProjectData projectData) : editorModel(this), editorView(this){
 	projectPath = projectData.path;
 	switch(projectData.graphicsApi){

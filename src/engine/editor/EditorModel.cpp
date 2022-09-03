@@ -1,5 +1,7 @@
 #include"EditorModel.h"
 
+using namespace Dwarf;
+
 EditorModel::EditorModel(IModelListener* listener) : modelListener(listener), scene("Test scene"){
     //InitScene(listener->GetProjectPath());
 }

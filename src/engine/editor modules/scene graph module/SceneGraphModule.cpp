@@ -1,5 +1,7 @@
 #include "SceneGraphModule.h"
 
+using namespace Dwarf;
+
 SceneGraphModule::SceneGraphModule(IViewListener *listener, Scene *scene, int index)
 :IModule(listener, "Scene graph", MODULE_TYPE::SCENE_GRAPH, index), scene(scene){ }
 
