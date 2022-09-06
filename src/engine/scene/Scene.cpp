@@ -76,7 +76,36 @@ void Scene::selectEntity(Entity entity) {
 }
 
 void Scene::addEntityToSelection(Entity entity){
-	selectedEntities.push_back(entity);
+	std::string index = GetTreeIndex(entity);
+
+	std::vector<Entity>::iterator cursor = selectedEntities.begin();
+	std::string cursorIndex;
+
+	while((cursor != selectedEntities.end()) && (cursorIndex = GetTreeIndex(*cursor)) < index){
+		cursor++;
+	}
+
+	if(cursor == selectedEntities.end()){
+		selectedEntities.push_back(entity);
+	}else{
+		selectedEntities.insert(cursor, entity);
+	}
+}
+
+std::string Scene::GetTreeIndex(Entity entity){
+	std::string index = "";
+	Entity cursor = entity;
+
+	while(cursor.GetHandle() != rootEntity.GetHandle()){
+		index = std::to_string(cursor.GetChildIndex()) + index;
+		cursor = Entity(cursor.GetParent(), this);
+	}
+
+	return index;
+}
+
+void Scene::removeEntityFromSelection(Entity entity){
+	selectedEntities.erase(std::find(selectedEntities.begin(), selectedEntities.end(), entity));
 }
 
 boolean Scene::isEntitySelected(Entity entity){

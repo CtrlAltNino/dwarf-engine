@@ -31,9 +31,11 @@ public:
 	void drawScene(Camera camera);
 	void selectEntity(Entity entity);
 	void addEntityToSelection(Entity entity);
+	void removeEntityFromSelection(Entity entity);
 	boolean isEntitySelected(Entity entity);
 	void clearSelection();
 private:
 	const char* sceneName;
 	friend class Entity;
+	std::string GetTreeIndex(Entity entity);
 };

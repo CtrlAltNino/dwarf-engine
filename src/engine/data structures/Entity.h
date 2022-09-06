@@ -91,7 +91,12 @@ class Entity {
 
             //std::iter_swap(siblings->begin() + index, it);
             siblings->erase(it);
-            siblings->insert(siblings->begin()+index, entityHandle);
+
+            if(index >= siblings->size()){
+                siblings->push_back(entityHandle);
+            }else{
+                siblings->insert(siblings->begin()+index, entityHandle);
+            }
         }
 
         int GetChildIndex(){
