@@ -81,7 +81,7 @@ void Scene::addEntityToSelection(Entity entity){
 	std::vector<Entity>::iterator cursor = selectedEntities.begin();
 	std::string cursorIndex;
 
-	while((cursor != selectedEntities.end()) && (cursorIndex = GetTreeIndex(*cursor)) < index){
+	while((cursor != selectedEntities.end()) && ((cursorIndex = GetTreeIndex(*cursor)) < index)){
 		cursor++;
 	}
 
