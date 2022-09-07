@@ -103,7 +103,7 @@ void EditorController::AddWindow(MODULE_TYPE moduleType){
 			guiModule = new PerformanceModule((IViewListener*)this, &deltaTime, &renderTime, guiModuleIDCount++);
 			break;
 		case MODULE_TYPE::SCENE_GRAPH:
-			guiModule = new SceneGraphModule((IViewListener*)this, editorModel.GetScene(), guiModuleIDCount++);
+			guiModule = new SceneGraphModule((IViewListener*)this, editorModel.GetScene(), inputManager, guiModuleIDCount++);
 			break;
 		case MODULE_TYPE::SCENE_VIEWER:
 			//IRenderTexture* newRT = windowManager->AddRenderTexture();

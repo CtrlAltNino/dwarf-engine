@@ -14,7 +14,7 @@
 class Scene : public EntityProvider {
 public:
 	Entity rootEntity = CreateEntity("root");
-	Entity selectedEntity = Entity(entt::null, nullptr);
+	std::vector<Entity> selectedEntities;
 	// ========== Constructors ==========
 	
 	Scene(const char* sceneName);
@@ -30,7 +30,12 @@ public:
 	Entity CreateEntityWithUID(UID uid, const std::string& name);
 	void drawScene(Camera camera);
 	void selectEntity(Entity entity);
+	void addEntityToSelection(Entity entity);
+	void removeEntityFromSelection(Entity entity);
+	boolean isEntitySelected(Entity entity);
+	void clearSelection();
 private:
 	const char* sceneName;
 	friend class Entity;
+	std::string GetTreeIndex(Entity entity);
 };

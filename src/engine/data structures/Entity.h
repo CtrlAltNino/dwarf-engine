@@ -51,6 +51,7 @@ class Entity {
         UID GetUID() { return GetComponent<IDComponent>().ID; }
 
         operator bool() const { return (std::uint32_t)entityHandle != 0; }
+        bool operator ==(const Entity &b){return entityHandle == b.entityHandle;}
 
         void SetParent(entt::entity entity){
             TransformComponent transform = GetComponent<TransformComponent>();
@@ -90,7 +91,12 @@ class Entity {
 
             //std::iter_swap(siblings->begin() + index, it);
             siblings->erase(it);
-            siblings->insert(siblings->begin()+index, entityHandle);
+
+            if(index >= siblings->size()){
+                siblings->push_back(entityHandle);
+            }else{
+                siblings->insert(siblings->begin()+index, entityHandle);
+            }
         }
 
         int GetChildIndex(){

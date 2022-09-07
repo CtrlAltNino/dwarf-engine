@@ -21,12 +21,13 @@ void AssetBrowserModule::RenderModuleWindow(){
 
 	//static bool b_open = true;
 
-    //if (!ImGui::Begin((moduleLabel + "##" + std::to_string(index)).c_str(), NULL, window_flags))
     ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(500,500));
+    //if (!ImGui::Begin((moduleLabel + "##" + std::to_string(index)).c_str(), NULL, window_flags))
     if (!ImGui::Begin(GetIdentifier().c_str(), &windowOpened, window_flags))
 	{
 		// Early out if the window is collapsed, as an optimization.
 		ImGui::End();
+        ImGui::PopStyleVar();
 		return;
 	}
 
@@ -44,7 +45,7 @@ void AssetBrowserModule::RenderModuleWindow(){
 
     ImGui::Columns(columnCount, 0, false);
     int id = 0;
-    ImGui::SetColumnWidth(-1, cellSize);
+    //ImGui::SetColumnWidth(-1, cellSize);
     
     for(auto& directoryEntry : std::filesystem::directory_iterator(currentDirectory)){
         const auto& path = directoryEntry.path();
@@ -69,8 +70,8 @@ void AssetBrowserModule::RenderModuleWindow(){
     }
 
     ImGui::End();
-
     ImGui::PopStyleVar();
+
 
 	
     if(!windowOpened)
