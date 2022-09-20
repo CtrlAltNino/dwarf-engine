@@ -109,7 +109,7 @@ bool WindowManagerOpenGL::ShouldWindowCloseSignal(){
 void WindowManagerOpenGL::InitImGui(){
     ImGui::CreateContext();
     ImGuiIO* io = &ImGui::GetIO();
-    
+    io->ConfigWindowsMoveFromTitleBarOnly = true;
     io->ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
     ImGui_ImplGlfw_InitForOpenGL(window, true);

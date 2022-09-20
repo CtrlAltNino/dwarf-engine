@@ -5,12 +5,16 @@
 #include<imgui_internal.h>
 #include<glm/vec2.hpp>
 #include<glm/vec3.hpp>
+#include<glm/gtc/quaternion.hpp>
+#include <glm/gtc/type_ptr.hpp>
+#include<ImGuizmo.h>
 
 #include"../../editor/EditorProperties.h"
 #include "../IModule.h"
 #include"../../rendering/IRenderTexture.h"
 #include"../../scene/Camera.h"
-#include"../../data structures/Quaternion.h"
+#include"../../scene/Scene.h"
+//#include"../../data structures/Quaternion.h"
 #include"../../input/IInputManager.h"
 
 #define MIN_RESOLUTION_WIDTH 10
@@ -24,6 +28,9 @@ class SceneViewerModule : public IModule{
         IRenderTexture* renderTexture;
         IInputManager* inputManager;
         IWindowManager* windowManager;
+        Scene* scene;
+        ImGuizmo::OPERATION gizmoType = ImGuizmo::OPERATION::TRANSLATE;
+        ImGuizmo::MODE gizmoMode = ImGuizmo::MODE::LOCAL;
 
         // GUI exposed values
         int selectedRenderingMode = 0;
@@ -42,8 +49,10 @@ class SceneViewerModule : public IModule{
         glm::ivec2 CalculateDesiredResolution(glm::ivec2 availableResolution, float targetAspectRatio);
         void UpdateCamera();
         void UpdateRenderTexture();
+        void RenderGizmos();
+        void UpdateGizmoType();
     public:
-        SceneViewerModule(IViewListener *listener, IRenderTexture* renderTexture, IInputManager* inputManager, int index);
+        SceneViewerModule(IViewListener *listener, IRenderTexture* renderTexture, IInputManager* inputManager, Scene* scene, int index);
         void RenderModuleWindow() override;
         ImTextureID GetTextureID();
         void StartFrame() override;

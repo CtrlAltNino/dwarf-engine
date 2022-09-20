@@ -4,5 +4,5 @@
 
 class EntityProvider {
 	public:
-        entt::registry m_Registry;
+                entt::registry m_Registry;
 };

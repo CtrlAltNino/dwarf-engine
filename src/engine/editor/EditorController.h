@@ -16,6 +16,7 @@
 #include"../editor modules/scene graph module/SceneGraphModule.h"
 #include"../editor modules/scene viewer module/SceneViewerModule.h"
 #include"../editor modules/asset browser module/AssetBrowserModule.h"
+#include"../editor modules/inspector module/InspectorModule.h"
 
 class EditorController : public IModelListener, public IViewListener {
     private:

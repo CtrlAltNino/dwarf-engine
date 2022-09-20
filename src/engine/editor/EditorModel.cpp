@@ -7,7 +7,7 @@ EditorModel::EditorModel(IModelListener* listener) : modelListener(listener), sc
 void EditorModel::InitScene(std::string projectPath) {
 	Entity cubeEntity = scene.CreateEntity("Popcat cube");
 	Shader cubeShader = Shader("data/engine/shaders/default/opengl/default");
-	Material cubeMat = Material(&cubeShader);
+	Material cubeMat = Material("Cube Material", &cubeShader);
 	cubeMat.SetUniform("useAlbedoMap", true);
 	cubeMat.SetUniform("fogStart", 10.0f);
 	cubeMat.SetUniform("fogEnd", 30.0f);
@@ -18,12 +18,12 @@ void EditorModel::InitScene(std::string projectPath) {
 	std::vector<Material> cubeMaterials;
 	cubeMaterials.push_back(cubeMat);
 	cubeEntity.AddComponent<MeshRendererComponent>(MeshLoader::meshFromFile((projectPath + "/Assets/models/cube.obj").c_str()), cubeMaterials);
-	cubeEntity.GetComponent<TransformComponent>().setPosition({0,1,0});
+	cubeEntity.GetComponent<TransformComponent>().position = {0,1,0};
 
 
 	Entity monkeyEntity = scene.CreateEntity("Monkey");
 	Shader monkeyShader = Shader("data/engine/shaders/error/opengl/error");
-	Material monkeyMat = Material(&monkeyShader);
+	Material monkeyMat = Material("Monkey Material", &monkeyShader);
 	monkeyMat.SetUniform("useAlbedoMap", true);
 	monkeyMat.SetUniform("fogStart", 10.0f);
 	monkeyMat.SetUniform("fogEnd", 30.0f);
@@ -33,13 +33,13 @@ void EditorModel::InitScene(std::string projectPath) {
 	std::vector<Material> monkeyMaterials;
 	monkeyMaterials.push_back(monkeyMat);
 	monkeyEntity.AddComponent<MeshRendererComponent>(MeshLoader::meshFromFile((projectPath + "/Assets/models/suzanne.obj").c_str()), monkeyMaterials);
-	monkeyEntity.GetComponent<TransformComponent>().setPosition({0,3,0});
+	monkeyEntity.GetComponent<TransformComponent>().position = {0,3,0};
 	monkeyEntity.SetParent(cubeEntity.GetHandle());
 
 
 	Entity r2d2Entity = scene.CreateEntity("R2D2");
 	Shader r2d2Shader = Shader("data/engine/shaders/default/opengl/default");
-	Material r2d2Mat = Material(&r2d2Shader);
+	Material r2d2Mat = Material("R2D2 Material", &r2d2Shader);
 	r2d2Mat.SetUniform("useAlbedoMap", true);
 	r2d2Mat.SetUniform("useNormalMap", true);
 	r2d2Mat.SetUniform("useSpecularMap", true);
@@ -54,13 +54,13 @@ void EditorModel::InitScene(std::string projectPath) {
 	std::vector<Material> r2d2Materials;
 	r2d2Materials.push_back(r2d2Mat);
 	r2d2Entity.AddComponent<MeshRendererComponent>(MeshLoader::meshFromFile((projectPath + "/Assets/models/r2d2.obj").c_str()), r2d2Materials);
-	r2d2Entity.GetComponent<TransformComponent>().setPosition({3,0,0});
-	r2d2Entity.GetComponent<TransformComponent>().setScale({0.3,0.3,0.3});
+	r2d2Entity.GetComponent<TransformComponent>().position = {3,0,0};
+	r2d2Entity.GetComponent<TransformComponent>().scale = {0.3,0.3,0.3};
 
 
 	Entity sfEntity = scene.CreateEntity("Space Ship");
 	Shader sfShader = Shader("data/engine/shaders/default/opengl/default");
-	Material sfMat = Material(&sfShader);
+	Material sfMat = Material("Scifi Ship Material", &sfShader);
 	sfMat.SetUniform("fogStart", 10.0f);
 	sfMat.SetUniform("fogEnd", 30.0f);
 	sfMat.SetUniform("shininess", 20.0f);
@@ -76,20 +76,24 @@ void EditorModel::InitScene(std::string projectPath) {
 	sfMaterials.push_back(sfMat);
 	sfEntity.AddComponent<MeshRendererComponent>(MeshLoader::meshFromFile((projectPath + "/Assets/models/spaceship.fbx").c_str()), sfMaterials);
 	//sf.transform.setScale(glm::vec3(2, 2, 2));
-	sfEntity.GetComponent<TransformComponent>().setPosition({17,2,-20});
-	sfEntity.GetComponent<TransformComponent>().setRotation({-80, -30, 0});
-	sfEntity.GetComponent<TransformComponent>().setScale({2,2,2});
+	sfEntity.GetComponent<TransformComponent>().position = {17,2,-20};
+	sfEntity.GetComponent<TransformComponent>().rotation = {-80, -30, 0};
+	sfEntity.GetComponent<TransformComponent>().scale = {2,2,2};
 
 
 	Entity gridEntity = scene.CreateEntity("Grid");
 	Shader gridShader = Shader("data/engine/shaders/grid/opengl/grid");
-	Material gridMat = Material(&gridShader);
+	Material gridMat = Material("Grid Material", &gridShader);
 	gridMat.isTransparent = true;
 	std::vector<Material> gridMaterials;
 	gridMaterials.push_back(gridMat);
 	gridEntity.AddComponent<MeshRendererComponent>(MeshLoader::meshFromFile((projectPath + "/Assets/models/plane.obj").c_str()), gridMaterials);
 	//grid.transform.setScale(glm::vec3(50, 1, 50));
-	gridEntity.GetComponent<TransformComponent>().setScale({50,1,50});
+	gridEntity.GetComponent<TransformComponent>().scale = {50,1,50};
+
+
+	Entity lightEntity = scene.CreateEntity("Light1");
+	lightEntity.AddComponent<LightComponent>();
 }
 
 Scene* EditorModel::GetScene() {

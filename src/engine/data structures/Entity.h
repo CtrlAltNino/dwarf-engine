@@ -36,16 +36,14 @@ class Entity {
         template<typename T>
         void RemoveComponent(){
             // TODO: Check if component is present
-            //if(HasComponent<T>()){
+            if(HasComponent<T>()){
                 entProvider->m_Registry.remove<T>(entityHandle);
-            //}
+            }
         }
 
         template<typename T>
         bool HasComponent(){
-            //entt::registry reg = entProvider->m_Registry;
-            //return reg.has<T>(entityHandle);
-            return false;
+            return entProvider->m_Registry.try_get<T>(entityHandle) != nullptr;
         }
 
         UID GetUID() { return GetComponent<IDComponent>().ID; }

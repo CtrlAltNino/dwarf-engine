@@ -3,7 +3,7 @@
 // ========== Makros ==========
 
 #define DEFAULT_CAMERA_POSITION glm::vec3(2, 2, 0)
-#define DEFAULT_CAMERA_ROTATION Quaternion::FromEulerAngles(30.0f, 0, 0)
+#define DEFAULT_CAMERA_ROTATION glm::quat({30,0,0})
 #define DEFAULT_CAMERA_FOV 75.0f
 #define DEFAULT_CAMERA_NEARPLANE 0.1f
 #define DEFAULT_CAMERA_FARPLANE 1000.0f
@@ -11,7 +11,7 @@
 
 // ========== Constructors ==========
 
-Camera::Camera(glm::vec3 position, Quaternion rotation, float fov, float nearPlane, float farPlane, float aspectRatio)
+Camera::Camera(glm::vec3 position, glm::vec3 rotation, float fov, float nearPlane, float farPlane, float aspectRatio)
 	: transform(position, rotation){
 	//this->transform = new Transform(position, rotation);
 	this->fov = fov;
@@ -20,7 +20,7 @@ Camera::Camera(glm::vec3 position, Quaternion rotation, float fov, float nearPla
 	this->aspectRatio = aspectRatio;
 }
 
-Camera::Camera(glm::vec3 position, Quaternion rotation)
+Camera::Camera(glm::vec3 position, glm::vec3 rotation)
 	: transform(position, rotation) {
 	//this->transform = new Transform(position, rotation);
 	this->fov = DEFAULT_CAMERA_FOV;
@@ -44,7 +44,10 @@ float Camera::getAspectRatio() {
 }
 
 glm::mat4x4 Camera::getViewMatrix() {
-	return transform.getRotation().getMatrix() * glm::translate(glm::mat4(1.0f), -transform.getPosition());
+	glm::mat4 rot = glm::rotate(glm::mat4(1.0f), transform.rotation.x * DEG_2_RAD, glm::vec3(1.0f, 0.0f, 0.0f))
+		* glm::rotate(glm::mat4(1.0f), transform.rotation.y * DEG_2_RAD, glm::vec3(0.0f, 1.0f, 0.0f));
+	
+	return rot * glm::translate(glm::mat4(1.0f), -transform.getPosition());
 }
 
 glm::mat4x4 Camera::getProjectionMatrix() {
@@ -53,8 +56,8 @@ glm::mat4x4 Camera::getProjectionMatrix() {
 
 // ========== Setters ==========
 
-void Camera::setTransform(Transform* transform) {
-	this->transform = *(Transform*)transform;
+void Camera::setTransform(TransformComponent* transform) {
+	this->transform = *(TransformComponent*)transform;
 }
 
 void Camera::setFov(float fov) {

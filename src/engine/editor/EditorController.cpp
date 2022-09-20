@@ -11,6 +11,8 @@ EditorController::EditorController(ProjectData projectData) : editorModel(this),
     windowManager->Init();
 	
 	// 2. Initialize IMGUI
+    ImGuiIO& io = ImGui::GetIO();
+    io.ConfigWindowsMoveFromTitleBarOnly = true;
 	//EditorGui::InitGUI();
 	//const PerformanceModule *pModule = new PerformanceModule(std::string("Performance statistics"), &(scene.deltaTime));
 	//EditorGui::AddWindow(new PerformanceModule(&(scene.deltaTime)));
@@ -107,10 +109,13 @@ void EditorController::AddWindow(MODULE_TYPE moduleType){
 			break;
 		case MODULE_TYPE::SCENE_VIEWER:
 			//IRenderTexture* newRT = windowManager->AddRenderTexture();
-			guiModule = new SceneViewerModule((IViewListener*)this, windowManager->AddRenderTexture(), inputManager, guiModuleIDCount++);
+			guiModule = new SceneViewerModule((IViewListener*)this, windowManager->AddRenderTexture(), inputManager, editorModel.GetScene(), guiModuleIDCount++);
 			break;
 		case MODULE_TYPE::ASSET_BROWSER:
 			guiModule = new AssetBrowserModule((IViewListener*)this, projectPath + "/Assets", guiModuleIDCount++);
+			break;
+		case MODULE_TYPE::INSPECTOR:
+			guiModule = new InspectorModule((IViewListener*)this, editorModel.GetScene(), guiModuleIDCount++);
 			break;
 	}
 
