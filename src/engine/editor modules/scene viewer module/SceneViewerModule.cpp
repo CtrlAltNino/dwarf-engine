@@ -1,10 +1,11 @@
 #include"SceneViewerModule.h"
 
-SceneViewerModule::SceneViewerModule(IViewListener *listener, IRenderTexture* renderTexture, IInputManager* inputManager, int index)
+SceneViewerModule::SceneViewerModule(IViewListener *listener, IRenderTexture* renderTexture, IInputManager* inputManager, Scene* scene, int index)
     :IModule(listener, "Scene viewer", MODULE_TYPE::PERFORMANCE, index),
     renderTexture(renderTexture),
-    inputManager(inputManager){
-        renderTexture->SetCamera(new Camera(glm::vec3(0, 2, 5), Quaternion::fromEulerAngles(25, 0, 0)));
+    inputManager(inputManager),
+    scene(scene){
+        renderTexture->SetCamera(new Camera({0, 2, 5}, {0,0,0}));
     }
 
 void SceneViewerModule::RenderModuleWindow(){
@@ -90,6 +91,44 @@ void SceneViewerModule::RenderModuleWindow(){
         ImGui::EndCombo();
     }
 
+    ImGui::SameLine();
+
+    ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 5);
+
+    if(this->gizmoMode == ImGuizmo::MODE::LOCAL){
+        if(ImGui::Button("Local")){
+            this->gizmoMode = ImGuizmo::MODE::WORLD;
+        }
+    }else{
+        if(ImGui::Button("World")){
+            this->gizmoMode = ImGuizmo::MODE::LOCAL;
+        }
+    }
+
+    ImGui::SameLine();
+
+    ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 5);
+
+    if(ImGui::Button("Translate")){
+        this->gizmoType = ImGuizmo::OPERATION::TRANSLATE;
+    }
+
+    ImGui::SameLine();
+
+    ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 5);
+
+    if(ImGui::Button("Rotate")){
+        this->gizmoType = ImGuizmo::OPERATION::ROTATE;
+    }
+
+    ImGui::SameLine();
+
+    ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 5);
+
+    if(ImGui::Button("Scale")){
+        this->gizmoType = ImGuizmo::OPERATION::SCALE;
+    }
+
     availableResolution = glm::ivec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y);
     
     if(selectedRenderingMode == 1){
@@ -160,6 +199,9 @@ void SceneViewerModule::RenderModuleWindow(){
     if(cameraUpdating)
         UpdateCamera();
 
+    if(scene->selectedEntities.size() == 1){
+        RenderGizmos();
+    }
     ImGui::End();
 
     if(!windowOpened)
@@ -186,11 +228,53 @@ void SceneViewerModule::UpdateCamera(){
 		lastMousePos = glm::vec2(mousePos.x, mousePos.y);
 
 		if (deltaMousePos.length() > 0) {
-			float crsSquared = EditorProperties::cameraRotationSpeed * EditorProperties::cameraRotationSpeed;
-			float yAngle = deltaMousePos.x * crsSquared;
-			float xAngle = deltaMousePos.y * crsSquared;
-			renderTexture->GetCamera()->transform.rotate(glm::vec3(0, 1, 0), yAngle);
-			renderTexture->GetCamera()->transform.rotate(renderTexture->GetCamera()->transform.getRotation() * glm::vec3(1, 0, 0), xAngle);
+			float yAngle = deltaMousePos.x * EditorProperties::cameraRotationSpeed;
+			float xAngle = deltaMousePos.y * EditorProperties::cameraRotationSpeed;
+
+
+
+            // TODO: Clamp rotation between -90 and 90 degrees
+            //renderTexture->GetCamera()->transform.rotation.rotate(renderTexture->GetCamera()->transform.rotation.getQuaternion() * glm::vec3(0,1,0), yAngle);
+            //renderTexture->GetCamera()->transform.rotation.rotate(glm::vec3(1,0,0), xAngle);
+            TransformComponent& tc = renderTexture->GetCamera()->transform;
+            
+            //tc.rotation.y += yAngle;
+            //tc.rotation.x += xAngle;
+
+            //glm::vec4 vecEuler = glm::vec4(tc.rotation.x, tc.rotation.y, tc.rotation.z, 1.0f);
+            //vecEuler = 
+            glm::mat4 mat = glm::rotate(glm::mat4(1.0f), xAngle * DEG_2_RAD, glm::vec3(1,0,0));
+
+            glm::vec3 rot;
+
+            rot.x = RAD_2_DEG * atan2f(mat[1][2], mat[2][2]);
+            //rot.y = RAD_2_DEG * atan2f(-mat[0][2], sqrtf(mat[1][2] * mat[1][2] + mat[2][2] * mat[2][2]));
+            //rot.z = RAD_2_DEG * atan2f(mat[0][1], mat[0][0]);
+
+            tc.rotation.x += rot.x;
+            tc.rotation.x = std::min(std::max(tc.rotation.x, -90.0f), 90.0f);
+
+            mat = glm::rotate(glm::mat4(1.0f), yAngle * DEG_2_RAD, glm::vec3(0,1,0));
+            //rot.x = RAD_2_DEG * atan2f(mat[1][2], mat[2][2]);
+            rot.y = RAD_2_DEG * atan2f(-mat[0][2], sqrtf(mat[1][2] * mat[1][2] + mat[2][2] * mat[2][2]));
+            //rot.z = RAD_2_DEG * atan2f(mat[0][1], mat[0][0]);
+
+            tc.rotation.y += rot.y;
+
+            std::cout << "Camera Euler Angles: x=" << tc.rotation.x << " y=" << tc.rotation.y << " z=" << tc.rotation.z << std::endl;
+            /*glm::quat q = renderTexture->GetCamera()->transform.rotation.getQuaternion();
+
+            float yaw = RAD_2_DEG * atan2(2.0f*(q.y*q.z + q.w*q.x), q.w*q.w - q.x*q.x - q.y*q.y + q.z*q.z);
+            float pitch = RAD_2_DEG * asin(-2.0f*(q.x*q.z - q.w*q.y));
+            float roll = RAD_2_DEG * atan2(2.0f*(q.x*q.y + q.w*q.z), q.w*q.w + q.x*q.x - q.y*q.y - q.z*q.z);
+            
+            glm::vec3 clampedRot = renderTexture->GetCamera()->transform.getEulerAngles();*/
+            //std::cout << "yaw=" << yaw << " pitch=" << pitch << " roll=" << roll << std::endl;
+            //std::cout << "Camera Euler Angles: x=" << clampedRot.x << " y=" << clampedRot.y << " z=" << clampedRot.z << std::endl;
+            //clampedRot.x = std::max(std::min(90.0f, clampedRot.x), -90.0f);
+            //std::cout << "\tCamera Euler Angles: x=" << clampedRot.x << " y=" << clampedRot.y << " z=" << clampedRot.z << std::endl;
+
+            //renderTexture->GetCamera()->transform.setRotation(renderTexture->GetCamera()->transform.rotation.getEulerAngles());
 		}
 	}
 	else {
@@ -209,7 +293,10 @@ void SceneViewerModule::UpdateCamera(){
 		movementVector *= viewListener->GetDeltaTime() * EditorProperties::moveSpeed * (inputManager->GetKey(KEYCODE::LEFT_SHIFT) ? 2 : 1);
 	}
 
-	renderTexture->GetCamera()->transform.translate(renderTexture->GetCamera()->transform.getRotation() * movementVector);
+    glm::vec4 deltaVec4 = glm::inverse(renderTexture->GetCamera()->transform.getRotationMatrix())
+    * glm::vec4(movementVector.x, movementVector.y, movementVector.z, 1.0f);
+
+	renderTexture->GetCamera()->transform.position += glm::vec3(deltaVec4.x, deltaVec4.y, deltaVec4.z);
 }
 
 glm::ivec2 SceneViewerModule::CalculateDesiredResolution(glm::ivec2 availableResolution, float targetAspectRatio){
@@ -226,6 +313,51 @@ glm::ivec2 SceneViewerModule::CalculateDesiredResolution(glm::ivec2 availableRes
 
 void SceneViewerModule::StartFrame(){
 
+}
+
+void SceneViewerModule::RenderGizmos(){
+    UpdateGizmoType();
+    ImGuizmo::SetOrthographic(false);
+    ImGuizmo::SetDrawlist();
+    float windowWidth = (float)ImGui::GetWindowWidth();
+    float windowHeight = (float)ImGui::GetWindowHeight();
+
+    ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowWidth, windowHeight);
+
+    TransformComponent& tc = scene->selectedEntities[0].GetComponent<TransformComponent>();
+    glm::mat4 transform = tc.getModelMatrix();
+
+    ImGuizmo::Manipulate(glm::value_ptr(renderTexture->GetCamera()->getViewMatrix()),
+        glm::value_ptr(renderTexture->GetCamera()->getProjectionMatrix()),
+        this->gizmoType, this->gizmoMode, (float*)glm::value_ptr(transform));
+
+    if(ImGuizmo::IsUsing()){
+        tc.position = glm::vec3(transform[3]);
+        glm::vec3 rotation;
+        glm::vec3 originalRotation = tc.rotation;
+        
+        ImGuizmo::DecomposeMatrixToComponents(glm::value_ptr(transform),
+            glm::value_ptr(tc.position),
+            glm::value_ptr(rotation),
+            glm::value_ptr(tc.scale));
+
+        glm::vec3 deltaRotation = rotation - tc.rotation;
+
+        tc.rotation += deltaRotation;
+        //tc.rotation = rotation;
+    }
+}
+
+void SceneViewerModule::UpdateGizmoType(){
+    if(ImGui::IsWindowFocused() && !inputManager->GetMouse(MOUSE_BUTTON::RIGHT)){
+        if(inputManager->GetKeyDown(KEYCODE::W)){
+            this->gizmoType = ImGuizmo::OPERATION::TRANSLATE;
+        }else if(inputManager->GetKeyDown(KEYCODE::E)){
+            this->gizmoType = ImGuizmo::OPERATION::ROTATE;
+        }else if(inputManager->GetKeyDown(KEYCODE::R)){
+            this->gizmoType = ImGuizmo::OPERATION::SCALE;
+        }
+    }
 }
 
 void SceneViewerModule::UpdateRenderTexture(){

@@ -15,6 +15,7 @@ class InputManagerOpenGL : public IInputManager {
                                                 {KEYCODE::D, GLFW_KEY_D},
                                                 {KEYCODE::E, GLFW_KEY_E},
                                                 {KEYCODE::Q, GLFW_KEY_Q},
+                                                {KEYCODE::R, GLFW_KEY_R},
                                                 {KEYCODE::LEFT_SHIFT, GLFW_KEY_LEFT_SHIFT},
                                                 {KEYCODE::LEFT_CONTROL, GLFW_KEY_LEFT_CONTROL}};
         

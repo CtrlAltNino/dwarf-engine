@@ -38,4 +38,5 @@ private:
 	const char* sceneName;
 	friend class Entity;
 	std::string GetTreeIndex(Entity entity);
+	glm::mat4 GetFullModelMatrix(TransformComponent transform);
 };

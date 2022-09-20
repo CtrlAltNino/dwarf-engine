@@ -1,6 +1,6 @@
 #include"Material.h"
 
-Material::Material(Shader* shader) : shader(*shader){}
+Material::Material(const char* name, Shader* shader) : name(name), shader(*shader){}
 
 Material::~Material(){
 	//shader.Delete();

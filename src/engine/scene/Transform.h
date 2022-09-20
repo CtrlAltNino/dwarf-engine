@@ -4,24 +4,26 @@
 
 #include<glad/glad.h>
 #include <glm/gtx/transform.hpp> // after <glm/glm.hpp>
+#include <glm/gtc/quaternion.hpp>
+#include <glm/gtx/quaternion.hpp>
 
-#include"../data structures/Quaternion.h"
+//#include"../data structures/Quaternion.h"
 
 class Transform {
 private:
 	glm::vec3 position, scale;
-	Quaternion rotation;
+	glm::quat rotation;
 public:
 	// ========== Constructors ==========
 	
 	Transform(glm::vec3 position);
-	Transform(glm::vec3 position, Quaternion rotation);
+	Transform(glm::vec3 position, glm::quat rotation);
 	Transform(glm::vec3 position, glm::vec3 eulerAngles);
 
 	// ========== Getters ==========
 	
 	glm::vec3 getPosition();
-	Quaternion getRotation();
+	glm::quat getRotation();
 	glm::vec3 getScale();
 	glm::vec3 getForward();
 	glm::vec3 getUp();
@@ -31,7 +33,7 @@ public:
 	// ========== Setters ==========
 	
 	void setPosition(glm::vec3);
-	void setRotation(Quaternion rotation);
+	void setRotation(glm::quat rotation);
 	void setRotation(glm::vec3 eulerAngles);
 	void setScale(glm::vec3 scale);
 

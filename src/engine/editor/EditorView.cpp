@@ -127,7 +127,9 @@ void EditorView::RenderDockSpace(){
             if(ImGui::MenuItem("Asset browser")){
                 viewListener->AddWindow(MODULE_TYPE::ASSET_BROWSER);
             }
-            ImGui::MenuItem("Inspector");
+            if(ImGui::MenuItem("Inspector")){
+                viewListener->AddWindow(MODULE_TYPE::INSPECTOR);
+            }
             ImGui::MenuItem("Console");
             ImGui::EndMenu();
         }

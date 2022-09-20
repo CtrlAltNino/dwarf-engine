@@ -174,6 +174,7 @@ void SceneGraphModule::RenderModuleWindow(){
 
     int it = 0;
     while((container->begin() + it) != container->end()){
+        std::cout << "yeet" << std::endl;
         DrawNode(*(container->begin() + it));
         it++;
     }

@@ -20,10 +20,11 @@ class Material {
 		std::map<std::string, glm::vec3> vector3Uniforms;
 		std::map<std::string, glm::vec4> vector4Uniforms;
 	public:
+		const char* name;
 		Shader shader;
 		bool isTransparent = false;
 		Material() = default;
-		Material(Shader* shader);
+		Material(const char* name, Shader* shader);
 		~Material();
 
 		void bind();
