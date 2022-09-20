@@ -326,6 +326,7 @@ void SceneViewerModule::RenderGizmos(){
 
     TransformComponent& tc = scene->selectedEntities[0].GetComponent<TransformComponent>();
     glm::mat4 transform = tc.getModelMatrix();
+    //glm::mat4 translation = glm::mat4(1.0f);
 
     ImGuizmo::Manipulate(glm::value_ptr(renderTexture->GetCamera()->getViewMatrix()),
         glm::value_ptr(renderTexture->GetCamera()->getProjectionMatrix()),

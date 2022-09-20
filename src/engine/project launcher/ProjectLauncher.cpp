@@ -725,7 +725,11 @@ void ProjectLauncher::RenderChangeGraphicsApiModal() {
 
 					// ==================== Graphics Selectable ====================
 					if (ImGui::Selectable(apis[n], is_selected, 0, ImVec2(0, 16 + 10))) {
-						currentApiIndex = n;
+						if(n != 0){
+							currentApiIndex = 0;
+						}else{
+							currentApiIndex = n;
+						}
 					}
 
 					// Reset Style
