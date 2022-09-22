@@ -678,7 +678,18 @@ void ProjectLauncher::RenderChangeGraphicsApiModal() {
 			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - 150);
 
 			// Setting up combo
-			const char* apis[] = { "OpenGL", "Direct3D 11", "Direct3D 12", "Vulkan" };
+			#if _WIN32
+				const char* apis[] = { "OpenGL", "Direct3D 11", "Direct3D 12", "Vulkan" };
+			#endif
+
+			#if __linux__
+				const char* apis[] = { "OpenGL", "Vulkan" };
+			#endif
+
+			#if __APPLE__ && __MACH__
+				const char* apis[] = { "Metal" };
+			#endif
+			
 			const char* combo_preview_value = apis[currentApiIndex];
 
 			ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
