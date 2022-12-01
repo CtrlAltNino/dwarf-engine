@@ -1,5 +1,12 @@
 #include"Material.h"
 
+Material::Material() {
+	shader = Shader();
+	shader.AddVertexShader("data/engine/shaders/default/opengl/default.vert");
+	shader.AddFragmentShader("data/engine/shaders/default/opengl/default.frag");
+	shader.CreateShaderProgram();
+}
+
 Material::Material(const char* name, Shader* shader) : name(name), shader(*shader){}
 
 Material::~Material(){

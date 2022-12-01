@@ -261,7 +261,7 @@ void SceneViewerModule::UpdateCamera(){
 
             tc.rotation.y += rot.y;
 
-            std::cout << "Camera Euler Angles: x=" << tc.rotation.x << " y=" << tc.rotation.y << " z=" << tc.rotation.z << std::endl;
+            //std::cout << "Camera Euler Angles: x=" << tc.rotation.x << " y=" << tc.rotation.y << " z=" << tc.rotation.z << std::endl;
             /*glm::quat q = renderTexture->GetCamera()->transform.rotation.getQuaternion();
 
             float yaw = RAD_2_DEG * atan2(2.0f*(q.y*q.z + q.w*q.x), q.w*q.w - q.x*q.x - q.y*q.y + q.z*q.z);

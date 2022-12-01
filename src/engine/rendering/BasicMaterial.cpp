@@ -2,13 +2,6 @@
 
 // ========== Constructors ==========
 
-BasicMaterial::BasicMaterial(const char* shaderName)
-	: shader(shaderName)
-	{
-	//GLuint tex0Uni = glGetUniformLocation(this->shader.ID, "tex0");
-	//glUniform1i(tex0Uni, 0);
-	//albedo(texturePath, GL_NEAREST, GL_REPEAT, GL_RGB, GL_UNSIGNED_BYTE)
-}
 
 // ========== Getters ==========
 

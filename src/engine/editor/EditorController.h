@@ -17,6 +17,7 @@
 #include"../editor modules/scene viewer module/SceneViewerModule.h"
 #include"../editor modules/asset browser module/AssetBrowserModule.h"
 #include"../editor modules/inspector module/InspectorModule.h"
+#include"../asset database/AssetDatabase.h"
 
 class EditorController : public IModelListener, public IViewListener {
     private:
@@ -24,6 +25,7 @@ class EditorController : public IModelListener, public IViewListener {
         IInputManager* inputManager = nullptr;
         EditorModel editorModel;
         EditorView editorView;
+        AssetDatabase assetDatabase;
         int guiModuleIDCount = 0;
         std::vector<IModule*> guiModules;
         std::string projectPath;
