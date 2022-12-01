@@ -1,27 +1,42 @@
 {
-    "name": "dwarf-engine",
-    "version-string": "0.0.1",
-    "supports": "(windows & x64 & static) | (linux & x64) | (osx & x64)",
-    "dependencies": [
-        "glad",
-        "glfw3",
-        "glm",
-        {
-            "name": "imgui",
-            "default-features": false,
-            "features": [
-                "glfw-binding",
-                "opengl3-binding",
-                "docking-experimental"
-            ]
-        },
-        "assimp",
-        "stb",
-        "nlohmann-json",
-        "nativefiledialog",
-        "bext-di",
-        "efsw",
-        "imguizmo",
-        "entt"
-    ]
+  "name": "dwarf-engine",
+  "version-string": "0.0.1",
+  "supports": "(windows & x64 & static) | (linux & x64) | (osx & x64)",
+  "dependencies": [
+    "glad",
+    "glfw3",
+    "glm",
+    {
+      "name": "imgui",
+      "default-features": false,
+      "features": [
+        "glfw-binding",
+        "opengl3-binding",
+        "docking-experimental"
+      ]
+    },
+    "assimp",
+    "stb",
+    "nlohmann-json",
+    "nativefiledialog",
+    "bext-di",
+    "efsw",
+    "imguizmo",
+    "entt"
+  ],
+  "overrides": [
+    { "name": "glad", "version": "0.1.36" },
+    { "name": "glfw3", "version": "3.3.8" },
+    { "name": "glm", "version": "0.9.9.8" },
+    { "name": "imgui", "version": "1.88" },
+    { "name": "assimp", "version": "5.2.5" },
+    { "name": "stb", "version": "2021-09-10" },
+    { "name": "nlohmann-json", "version": "3.11.2" },
+    { "name": "nativefiledialog", "version-date": "2022-01-20" },
+    { "name": "bext-di", "version": "1.2.0" },
+    { "name": "efsw", "version": "2020-06-08#3" },
+    { "name": "imguizmo", "version": "1.83" },
+    { "name": "entt", "version": "3.10.1" }
+  ],
+  "builtin-baseline": "934a99dc13cabb330824ae1a5ab4a53a9acc5a49"
 }

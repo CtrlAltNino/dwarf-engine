@@ -69,7 +69,7 @@ find_package(glfw3 CONFIG REQUIRED)
 target_link_libraries(${targetName} PRIVATE glfw)
 
 find_package(glm CONFIG REQUIRED)
-target_link_libraries(${targetName} PRIVATE glm::glm)
+target_link_libraries(${targetName} PRIVATE glm)
 
 find_package(imgui CONFIG REQUIRED)
 target_link_libraries(${targetName} PRIVATE imgui::imgui)
