@@ -55,13 +55,13 @@ glm::mat4x4 Transform::getModelMatrix() {
 	//std::cout << "Angle: " << rotation.GetAngle() << " | Axis: [" << rotation.GetAxis().x << ", " << rotation.GetAxis().y << ", " << rotation.GetAxis().z << "]" << std::endl;
 	//std::cout << "Quaterion: X = " << rotation.x << " | Y = " << rotation.y << " | Z = " << rotation.z << " | R = " << rotation.r << std::endl;
 	//std::cout << "Euler Angles: X = " << rotation.GetEulerAngles().x << " | Y = " << rotation.GetEulerAngles().y << " | Z = " << rotation.GetEulerAngles().z << std::endl;
-	float angle = glm::radians(15.0f);
+	/*float angle = glm::radians(15.0f);
 	glm::mat4 yeet = {
 		cos(angle), 0, -sin(angle), 0,
 		0, 1, 0, 0,
 		sin(angle), 0, cos(angle), 0,
 		0, 0, 0, 1
-	};
+	};*/
 
 	return translationMatrix * rotationMatrix * scaleMatrix;
 }

@@ -39,7 +39,7 @@ void AssetBrowserModule::RenderModuleWindow(){
     static float buttonSize = 128.0f;
     float cellSize = buttonSize + padding;
 
-    float panelWidth = ImGui::GetContentRegionAvailWidth();
+    float panelWidth = ImGui::GetContentRegionAvail().x;
     int columnCount = (int)(panelWidth / cellSize);
     if(columnCount < 1) columnCount = 1;
 

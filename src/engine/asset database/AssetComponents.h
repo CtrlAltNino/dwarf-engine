@@ -4,126 +4,123 @@
 #include "../data structures/Mesh.h"
 #include "../data structures/Texture.h"
 #include "../rendering/Material.h"
-#include "../rendering/Shader.h"
 #include "../../utilities/FileHandler.h"
+#include "AssetMetaDataHelper.h"
+#include "asset loader/ModelImporter.h"
+#include "asset loader/MaterialImporter.h"
 
-struct Path {
-    std::string path;
+struct PathComponent {
+    std::filesystem::path path;
+
+    PathComponent(std::filesystem::path path) : path(path) {}
 };
 
 struct MeshAsset {
-    Mesh mesh;
+    std::vector<Mesh> meshes;
+    std::filesystem::path path;
+    boolean loaded;
 
-    void LoadMesh(std::string path){
-        // Get Meta data if present
-        nlohmann::json json;
-        if(FileHandler::checkIfFileExists(path + ".meta")){
-            std::string fileContent = FileHandler::readFile(projectSettingsPath.c_str());
-            
-            ProjectInformation foundInfo;
+    MeshAsset(std::filesystem::path path) : path(path){}
 
-            if (!fileContent.empty()) {
-                json = nlohmann::json::parse(fileContent);
-            }
-        }
-        // Import mesh with assimp
-
-        // json.contains("projectInformation")
-
-        
+    // Loads the mesh from the asset path
+    void Load(){
+        // Use Mesh Importer with meta data to import mesh
+        meshes = ModelImporter::Import(this->path, AssetMetaDataHelper::GetMetaData(this->path));
+        loaded = true;
     }
 
-    nlohmann::json GetMetaData(std::string path){
-        nlohmann::json json;
-        
-        if(FileHandler::checkIfFileExists(path + ".meta")){
-            std::string fileContent = FileHandler::readFile(projectSettingsPath.c_str());
-            
-            ProjectInformation foundInfo;
-
-            if (!fileContent.empty()) {
-                json = nlohmann::json::parse(fileContent);
-            }
-        }
-
-        return json;
+    void Unload() {
+        // TODO
+        loaded = false;
     }
 
-    void SetMetaData(std::string directory, std::string assetName, nlohmann::json metaData){
-        std::string fileContent = metaData.dump(4);
-        if (!FileHandler::checkIfDirectoyExists(directory)) {
-            FileHandler::createDirectoryS(directory);
-        }
-        std::string savedProjectsPath = settingsPath + directory + ".meta";
-        FileHandler::writeToFile(savedProjectsPath.c_str(), fileContent);
-    }
-
-    Mesh* GetMesh(){
-        return &mesh;
+    // Retrieves the mesh
+    std::vector<Mesh>* Get(){
+        return &meshes;
     }
 };
 
 struct MaterialAsset {
     Material material;
+    std::filesystem::path path;
+    boolean loaded;
 
-    void LoadMaterial(std::string path){
-        // Get Meta data if present
-        // 
+    MaterialAsset(std::filesystem::path path) : path(path) { }
+
+    // Loads the material at the path
+    void Load(){
+        // Use Mesh Importer with meta data to import mesh
+        material = MaterialImporter::Import(this->path, AssetMetaDataHelper::GetMetaData(this->path));
     }
 
-    nlohmann::json GetMetaData(std::string path){
-        
+    // Loads the material at the path
+    void Unload(){
+        // TODO
     }
 
-    void SetMetaData(std::string path, nlohmann::json metaData){
-        
-    }
-
-    Material* GetMaterial(){
+    Material* Get(){
         return &material;
     }
 };
 
-struct ShaderAsset {
-    Shader shader;
+struct VertexShaderAsset {
+    std::filesystem::path path;
 
-    void LoadShader(std::string path){
+    VertexShaderAsset(std::filesystem::path path) : path(path) {}
+};
 
-    }
+struct FragmentShaderAsset {
+    std::filesystem::path path;
 
-    nlohmann::json GetMetaData(std::string path){
-        
-    }
+    FragmentShaderAsset(std::filesystem::path path) : path(path) {}
+};
 
-    void SetMetaData(std::string path, nlohmann::json metaData){
-        
-    }
+struct GeometryShaderAsset {
+    std::filesystem::path path;
 
-    Shader* GetShader(){
-        return &shader;
-    }
+    GeometryShaderAsset(std::filesystem::path path) : path(path) {}
+};
+
+struct TesselationControlShaderAsset {
+    std::filesystem::path path;
+
+    TesselationControlShaderAsset(std::filesystem::path path) : path(path) {}
+};
+
+struct TesselationEvaluationShaderAsset {
+    std::filesystem::path path;
+
+    TesselationEvaluationShaderAsset(std::filesystem::path pathh) : path(path) {}
+};
+
+struct ComputeShaderAsset {
+    std::filesystem::path path;
+
+    ComputeShaderAsset(std::filesystem::path path) : path(path) {}
 };
 
 struct TextureAsset {
     Texture texture;
+    std::filesystem::path path;
+    boolean loaded;
 
-    void LoadTexture(std::string path){
+    TextureAsset(std::filesystem::path path) : path(path) {}
 
+    void Load() {
+        loaded = true;
     }
 
-    nlohmann::json GetMetaData(std::string path){
-        
+    void Unload() {
+        loaded = false;
     }
 
-    void SetMetaData(std::string path, nlohmann::json metaData){
-        
-    }
-
-    Texture* GetTexture(){
+    Texture* Get() {
         return &texture;
     }
 };
 
 struct SceneAsset {
+    std::filesystem::path path;
 
+    SceneAsset(std::filesystem::path path) : path(path) {}
 };

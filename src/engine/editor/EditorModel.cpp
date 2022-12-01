@@ -6,7 +6,10 @@ EditorModel::EditorModel(IModelListener* listener) : modelListener(listener), sc
 
 void EditorModel::InitScene(std::string projectPath) {
 	Entity cubeEntity = scene.CreateEntity("Popcat cube");
-	Shader cubeShader = Shader("data/engine/shaders/default/opengl/default");
+	Shader cubeShader;
+	cubeShader.AddVertexShader("data/engine/shaders/default/opengl/default.vert");
+	cubeShader.AddFragmentShader("data/engine/shaders/default/opengl/default.frag");
+	cubeShader.CreateShaderProgram();
 	Material cubeMat = Material("Cube Material", &cubeShader);
 	cubeMat.SetUniform("useAlbedoMap", true);
 	cubeMat.SetUniform("fogStart", 10.0f);
@@ -22,7 +25,10 @@ void EditorModel::InitScene(std::string projectPath) {
 
 
 	Entity monkeyEntity = scene.CreateEntity("Monkey");
-	Shader monkeyShader = Shader("data/engine/shaders/error/opengl/error");
+	Shader monkeyShader;
+	monkeyShader.AddVertexShader("data/engine/shaders/error/opengl/error.vert");
+	monkeyShader.AddFragmentShader("data/engine/shaders/error/opengl/error.frag");
+	monkeyShader.CreateShaderProgram();
 	Material monkeyMat = Material("Monkey Material", &monkeyShader);
 	monkeyMat.SetUniform("useAlbedoMap", true);
 	monkeyMat.SetUniform("fogStart", 10.0f);
@@ -38,7 +44,10 @@ void EditorModel::InitScene(std::string projectPath) {
 
 
 	Entity r2d2Entity = scene.CreateEntity("R2D2");
-	Shader r2d2Shader = Shader("data/engine/shaders/default/opengl/default");
+	Shader r2d2Shader;
+	r2d2Shader.AddVertexShader("data/engine/shaders/default/opengl/default.vert");
+	r2d2Shader.AddFragmentShader("data/engine/shaders/default/opengl/default.frag");
+	r2d2Shader.CreateShaderProgram();
 	Material r2d2Mat = Material("R2D2 Material", &r2d2Shader);
 	r2d2Mat.SetUniform("useAlbedoMap", true);
 	r2d2Mat.SetUniform("useNormalMap", true);
@@ -59,7 +68,10 @@ void EditorModel::InitScene(std::string projectPath) {
 
 
 	Entity sfEntity = scene.CreateEntity("Space Ship");
-	Shader sfShader = Shader("data/engine/shaders/default/opengl/default");
+	Shader sfShader;
+	sfShader.AddVertexShader("data/engine/shaders/default/opengl/default.vert");
+	sfShader.AddFragmentShader("data/engine/shaders/default/opengl/default.frag");
+	sfShader.CreateShaderProgram();
 	Material sfMat = Material("Scifi Ship Material", &sfShader);
 	sfMat.SetUniform("fogStart", 10.0f);
 	sfMat.SetUniform("fogEnd", 30.0f);
@@ -82,7 +94,10 @@ void EditorModel::InitScene(std::string projectPath) {
 
 
 	Entity gridEntity = scene.CreateEntity("Grid");
-	Shader gridShader = Shader("data/engine/shaders/grid/opengl/grid");
+	Shader gridShader;
+	gridShader.AddVertexShader("data/engine/shaders/grid/opengl/grid.vert");
+	gridShader.AddFragmentShader("data/engine/shaders/grid/opengl/grid.frag");
+	gridShader.CreateShaderProgram();
 	Material gridMat = Material("Grid Material", &gridShader);
 	gridMat.isTransparent = true;
 	std::vector<Material> gridMaterials;

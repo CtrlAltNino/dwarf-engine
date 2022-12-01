@@ -1,4 +1,7 @@
 #include"Texture.h"
+#define STB_IMAGE_STATIC
+#define STB_IMAGE_IMPLEMENTATION
+#include<stb_image.h>
 
 Texture::Texture(const char* filePath) : Texture(filePath, GL_LINEAR, GL_REPEAT, GL_RGB, GL_UNSIGNED_BYTE) {
 

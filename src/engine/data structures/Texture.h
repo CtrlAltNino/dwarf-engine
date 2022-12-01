@@ -3,8 +3,7 @@
 #include "../../utilities/dpch.h"
 
 #include<glad/glad.h>
-#include<stb_image.h>
-
+#include "../../utilities/FileHandler.h"
 class Texture {
 public:
 	GLuint ID;

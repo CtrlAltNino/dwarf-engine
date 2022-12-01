@@ -6,7 +6,6 @@
 #include"../components/Components.h"
 
 #include<glad/glad.h>
-#include<entt/entt.hpp>
 
 #include"Object.h"
 #include"Camera.h"

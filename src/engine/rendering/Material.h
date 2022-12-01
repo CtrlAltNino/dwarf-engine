@@ -23,7 +23,7 @@ class Material {
 		const char* name;
 		Shader shader;
 		bool isTransparent = false;
-		Material() = default;
+		Material();
 		Material(const char* name, Shader* shader);
 		~Material();
 

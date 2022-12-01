@@ -17,12 +17,18 @@ struct fragmentShaderName {
 
 class Shader {
 private:
-	void InitializeShader(const char* vertexFile, const char* fragmentFile);
+	std::string vertexShaderSource;
+	std::string fragmentShaderSource;
+	std::string geometryShaderSource;
 public:
-	GLuint ID;
-	Shader(const char* vertexFile, const char* fragmentFile);
-	Shader(vertexShaderName, fragmentShaderName);
-	Shader(const char* shaderName);
+	// ID of the shader program
+	GLuint ID = -1;
+
+	void AddVertexShader(std::string filePath);
+	void AddFragmentShader(std::string filePath);
+	void AddGeometryShader(std::string filePath);
+
+	void CreateShaderProgram();
 
 	void Activate();
 	void Delete();

@@ -1,16 +1,29 @@
 #pragma once
 #include<entt/entt.hpp>
-#include"../editor/UID.h"
-#include"AssetReference.h"
 
-class AssetDatabase {
+#include"../editor/UID.h"
+#include <nlohmann/json.hpp>
+#include "../../utilities/FileHandler.h"
+#include "AssetReference.h"
+#include<entt/entity/registry.hpp>
+#include "AssetComponents.h"
+#include "AssetDirectoryListener.h"
+#include<filesystem>
+
+class AssetDatabase : public EntityProvider {
     private:
-        entt::registry m_Registry;
+        std::filesystem::path assetFolderPath;
+        efsw::FileWatcher * fileWatcher;
+        efsw::WatchID watchID;
+
+        void RecursiveImport(std::string directory);
+        AssetReference CreateAssetReference(std::string fileName);
+        AssetReference CreateAssetReferenceWithUID(UID uid, std::string fileName);
     public:
-        AssetDatabase();
-        ~AssetDatabase();
+        AssetDatabase(std::filesystem::path projectPath);
 
         void Init();
         void Clear();
-        AssetReference Retrieve(UID id);
+        // AssetReference Retrieve(UID id);
+        void Import(std::filesystem::path assetPath);
 };

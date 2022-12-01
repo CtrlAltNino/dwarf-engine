@@ -31,7 +31,7 @@ public:
 	MaterialSettings settings;
 	// ========== Constructors ==========
 	
-	BasicMaterial(const char* shaderName);
+	// BasicMaterial(const char* shaderName);
 
 	// ========== Getters ==========
 	

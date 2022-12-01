@@ -1,7 +1,8 @@
 #include"EditorController.h"
 
-EditorController::EditorController(ProjectData projectData) : editorModel(this), editorView(this){
+EditorController::EditorController(ProjectData projectData) : editorModel(this), editorView(this), assetDatabase(projectData.path) {
 	projectPath = projectData.path;
+	assetDatabase.Init();
 	switch(projectData.graphicsApi){
 		case GraphicsApi::OpenGL:
 			windowManager = new WindowManagerOpenGL();

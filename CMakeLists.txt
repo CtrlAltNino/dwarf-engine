@@ -7,8 +7,10 @@ include(${CMAKE_SOURCE_DIR}/helper.cmake)
 # Maybe move to windows only, need to test
 ADD_DEFINITIONS(-DUNICODE)
 ADD_DEFINITIONS(-D_UNICODE)
+add_compile_definitions(NOMINMAX)
 set(CMAKE_CXX_STANDARD 20)
 set(targetName dwarf-engine)
+set(VCPKG_FEATURE_FLAGS manifest)
 
 # Need to find a way to make the path to the vcpkg.cmake file dynamic, maybe I can even store it in the repo
 
@@ -50,10 +52,11 @@ project(Dwarf\ Engine VERSION 0.0.1)
 smtg_add_subdirectories()
 
 # Linking dependencies
+
 find_package(glad CONFIG REQUIRED)
 target_link_libraries(${targetName} PRIVATE glad::glad)
 
-find_path(STB_INCLUDE_DIRS "stb.h")
+find_path(STB_INCLUDE_DIRS "stb_c_lexer.h")
 target_include_directories(${targetName} PRIVATE ${STB_INCLUDE_DIRS})
 
 find_package(assimp CONFIG REQUIRED)
@@ -61,9 +64,6 @@ target_link_libraries(${targetName} PRIVATE assimp::assimp)
 
 find_path(BEXT_DI_INCLUDE_DIRS "boost/di.hpp")
 target_include_directories(${targetName} PRIVATE ${BEXT_DI_INCLUDE_DIRS})
-
-find_package(glad CONFIG REQUIRED)
-target_link_libraries(${targetName} PRIVATE glad::glad)
 
 find_package(glfw3 CONFIG REQUIRED)
 target_link_libraries(${targetName} PRIVATE glfw)
