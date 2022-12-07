@@ -27,12 +27,12 @@ EditorController::EditorController(ProjectData projectData) : editorModel(this),
     editorView.Init();
     //AddWindow(MODULE_TYPE::PERFORMANCE);
 
-	windowManager->SetWindowName("Dwarf Engine Editor - " + projectData.name + " - " +editorModel.GetScene()->getSceneName() + " (" +(graphicsApiNames[(int)projectData.graphicsApi]) +")");
+	windowManager->SetWindowTitle("Dwarf Engine Editor - " + projectData.name + " - " +editorModel.GetScene()->getSceneName() + " (" +(graphicsApiNames[(int)projectData.graphicsApi]) +")");
 }
 
 void EditorController::RunLoop(){
-    double lastFrameTime = 0;
-	double currentFrameTime = 0;
+    Uint64 lastFrameTime = 0;
+	Uint64 currentFrameTime = 0;
     Scene* scene = editorModel.GetScene();
 	// TODO abstract the close condition
     while (!windowManager->ShouldWindowCloseSignal()) {
@@ -45,12 +45,13 @@ void EditorController::RunLoop(){
 		// ===== Time related stuff
 		lastFrameTime = currentFrameTime;
 		// TODO abstract the time grabbing
-		currentFrameTime = glfwGetTime();
+		//currentFrameTime = glfwGetTime();
+		currentFrameTime = SDL_GetTicks64();
         // Delta time muss woanders vallah
 		deltaTime = currentFrameTime - lastFrameTime;
 
 		// Abstract viewport stuff (Context and framebuffer wise)
-		glViewport(0, 0, windowManager->GetWidth(), windowManager->GetHeight());
+		glViewport(0, 0, windowManager->GetWindowSize().x, windowManager->GetWindowSize().y);
 		
 		// ===== Animation stuff =====
 		//scene->sceneObjects.at(2).transform.rotate(glm::vec3(0, deltaTime * 88, 0));
@@ -67,9 +68,11 @@ void EditorController::RunLoop(){
 		// ===== Drawing Geometry =====
 		// TODO: Draw to a framebuffer
 		std::vector<IRenderTexture*> *renderTextures = windowManager->GetRenderTextures();
-		renderTime = glfwGetTime();
+		//renderTime = glfwGetTime();
+		//renderTime = SDL_GetTicks();
 		for(int i = 0; i < renderTextures->size(); i++){
-			if ((windowManager->GetWidth() != 0) && (windowManager->GetHeight() != 0)) {
+			//if ((windowManager->GetWidth() != 0) && (windowManager->GetHeight() != 0)) {
+			if (windowManager->GetWindowSize().length() > 0) {
 				renderTextures->at(i)->GetCamera()->setAspectRatio((float)renderTextures->at(i)->GetResolution().x / renderTextures->at(i)->GetResolution().y);
 			}
 			glViewport(0, 0, renderTextures->at(i)->GetResolution().x, renderTextures->at(i)->GetResolution().y);
@@ -78,7 +81,8 @@ void EditorController::RunLoop(){
 			scene->drawScene(*renderTextures->at(i)->GetCamera());
 			renderTextures->at(i)->Unbind();
 		}
-		renderTime = glfwGetTime() - renderTime;
+		//renderTime = glfwGetTime() - renderTime;
+		//renderTime = SDL_GetTicks() - renderTime;
 
 		// ===== Post processing =====
 		// TODO: Implement
@@ -93,7 +97,7 @@ void EditorController::RunLoop(){
 		inputManager->UpdatePressStates();
 
 		// ===== Framerate managing =====
-		while (glfwGetTime() < currentFrameTime + (EditorProperties::FrameLimit != -1 ? 1.0 / EditorProperties::FrameLimit : 0)) {
+		while (SDL_GetTicks() < currentFrameTime + 1000 * (EditorProperties::FrameLimit != -1 ? 1.0 / EditorProperties::FrameLimit : 0)) {
 			// TODO: Update this when implementing multi threading
 		}
 	}

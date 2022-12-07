@@ -11,6 +11,7 @@
       "default-features": false,
       "features": [
         "glfw-binding",
+        "sdl2-binding",
         "opengl3-binding",
         "docking-experimental"
       ]
@@ -22,7 +23,8 @@
     "bext-di",
     "efsw",
     "imguizmo",
-    "entt"
+    "entt",
+    "sdl2"
   ],
   "overrides": [
     { "name": "glad", "version": "0.1.36" },
@@ -36,7 +38,8 @@
     { "name": "bext-di", "version": "1.2.0" },
     { "name": "efsw", "version": "2020-06-08#3" },
     { "name": "imguizmo", "version": "1.83" },
-    { "name": "entt", "version": "3.10.1" }
+    { "name": "entt", "version": "3.10.1" },
+    { "name": "sdl2", "version": "2.24.0" }
   ],
   "builtin-baseline": "934a99dc13cabb330824ae1a5ab4a53a9acc5a49"
 }

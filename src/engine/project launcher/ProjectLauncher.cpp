@@ -6,33 +6,39 @@
 
 int ProjectLauncher::Run() {
 	// TODO: Abstract the window creation + IMGUI Initialization
-	glfwInit();
+
+	SDL_SetMainReady();
 	
 	InitWindow();
 	InitProjectLauncher();
 	InitializeIMGUI();
 
-	glfwShowWindow(window);
+	SDL_ShowWindow(window);
+	SDL_Event Event;
 
-	while (((state != ProjectChooserState::Done) && (state != ProjectChooserState::Canceled)) && !glfwWindowShouldClose(window)) {
-		glfwPollEvents();
-
-		double currentTime = glfwGetTime();
+	while (((state != ProjectChooserState::Done) && (state != ProjectChooserState::Canceled))) {
+		while(SDL_PollEvent(&Event)) {
+			ImGui_ImplSDL2_ProcessEvent(&Event);
+			if (Event.type == SDL_QUIT)
+			{
+				state = ProjectChooserState::Canceled;
+			}
+		}
 		
-		glfwGetWindowSize(window, &windowInfo.width, &windowInfo.height);
+		SDL_GetWindowSize(window, &windowInfo.width, &windowInfo.height);
 		glViewport(0, 0, windowInfo.width, windowInfo.height);
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 		
 		Render();
 		
-		glfwSwapBuffers(window);
+		SDL_GL_SwapWindow(window);
 	}
 
-	ImGui_ImplGlfw_Shutdown();
+	ImGui_ImplSDL2_Shutdown();
 	ImGui_ImplOpenGL3_Shutdown();
 	ImGui::DestroyContext();
-	glfwDestroyWindow(window);
-	glfwTerminate();
+	SDL_DestroyWindow(window);
+	SDL_Quit();
 
 	ProjectData projectData = ProjectData();
 
@@ -64,36 +70,36 @@ void ProjectLauncher::InitProjectLauncher() {
 }
 
 int ProjectLauncher::InitWindow() {
-	// get resolution of monitor
-	GLFWmonitor* _monitor = glfwGetPrimaryMonitor();
-	const GLFWvidmode* mode = glfwGetVideoMode(_monitor);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 6);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	glfwWindowHint(GLFW_RED_BITS, mode->redBits);
-	glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
-	glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
-	glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
-	glfwWindowHint(GLFW_VISIBLE, GLFW_FALSE);
-
-	ProjectLauncher::refreshRate = mode->refreshRate;
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
 	
-	window = glfwCreateWindow(LAUNCHER_INITIAL_WINDOW_WIDTH, LAUNCHER_INITIAL_WINDOW_HEIGHT, "Dwarf Engine Project Launcher", NULL, NULL);
+	/*window = glfwCreateWindow(LAUNCHER_INITIAL_WINDOW_WIDTH, LAUNCHER_INITIAL_WINDOW_HEIGHT, "Dwarf Engine Project Launcher", NULL, NULL);
 	if (window == NULL) {
 		std::cout << "Failed to create GLFW window" << std::endl;
 		glfwTerminate();
 		return -1;
+	}*/
+
+	Uint32 WindowFlags = 0;
+	WindowFlags |= SDL_WINDOW_OPENGL;
+	WindowFlags |= SDL_WINDOW_HIDDEN;
+	WindowFlags |= SDL_WINDOW_MOUSE_CAPTURE;
+	WindowFlags |= SDL_WINDOW_RESIZABLE;
+
+	window = SDL_CreateWindow("Dwarf Engine Project Launcher", 0, 0, LAUNCHER_INITIAL_WINDOW_WIDTH, LAUNCHER_INITIAL_WINDOW_HEIGHT, WindowFlags);
+	if (window == NULL) {
+		std::cout << "Failed to create window" << std::endl;
+		SDL_Quit();
+		return -1;
 	}
-
-	glfwSetWindowPos(window, mode->width/2 - (LAUNCHER_INITIAL_WINDOW_WIDTH / 2), mode->height / 2 - (LAUNCHER_INITIAL_WINDOW_HEIGHT / 2));
-	glfwSetWindowSizeLimits(window, LAUNCHER_INITIAL_WINDOW_WIDTH, LAUNCHER_INITIAL_WINDOW_HEIGHT, GLFW_DONT_CARE, GLFW_DONT_CARE);
-
-	GLFWimage icon[1];
-	int numColChannel;
-	icon[0].pixels = stbi_load(APPLICATION_PNG_ICON_PATH, &icon[0].width, &icon[0].height, &numColChannel, 0); //rgba channels
-	glfwSetWindowIcon(window, 1, icon);
-	stbi_image_free(icon[0].pixels);
-	glfwMakeContextCurrent(window);
+	context = SDL_GL_CreateContext(window);
+	
+	SDL_DisplayMode mode;
+	int dmCode = SDL_GetDesktopDisplayMode(SDL_GetWindowDisplayIndex(window), &mode);
+	
+	SDL_SetWindowMinimumSize(window, LAUNCHER_INITIAL_WINDOW_WIDTH, LAUNCHER_INITIAL_WINDOW_HEIGHT);
+	SDL_SetWindowPosition(window, mode.w/2 - (LAUNCHER_INITIAL_WINDOW_WIDTH / 2), mode.h / 2 - (LAUNCHER_INITIAL_WINDOW_HEIGHT / 2));
+	SDL_GL_SetSwapInterval(1);
 	gladLoadGL();
 	glViewport(0, 0, LAUNCHER_INITIAL_WINDOW_WIDTH, LAUNCHER_INITIAL_WINDOW_HEIGHT);
 
@@ -103,7 +109,7 @@ int ProjectLauncher::InitWindow() {
 int ProjectLauncher::InitializeIMGUI() {
 	ImGui::CreateContext();
 	ImGuiIO& io = ImGui::GetIO(); (void)io;
-	ImGui_ImplGlfw_InitForOpenGL(window, true);
+	ImGui_ImplSDL2_InitForOpenGL(window, context);
 	ImGui::StyleColorsDark();
 	ImGui_ImplOpenGL3_Init("#version 130");
 	io.Fonts->AddFontDefault();
@@ -115,14 +121,14 @@ int ProjectLauncher::InitializeIMGUI() {
 
 void ProjectLauncher::Render() {
 	ImGui_ImplOpenGL3_NewFrame();
-	ImGui_ImplGlfw_NewFrame();
+	ImGui_ImplSDL2_NewFrame();
 	ImGui::NewFrame();
 	int fWidth, fHeight;
-	glfwGetFramebufferSize(window, &fWidth, &fHeight);
+	SDL_GetWindowSize(window, &fWidth, &fHeight);
 
 	RenderProjectList(fWidth, fHeight);
 	RenderButtons(fWidth, fHeight);
-	RenderBottomInformation(fWidth, fHeight);
+	RenderFooter(fWidth, fHeight);
 
 	if (state == ProjectChooserState::ProjectNotFound) {
 		state = ProjectChooserState::Choosing;
@@ -500,7 +506,7 @@ void ProjectLauncher::RenderButtons(int fWidth, int fHeight) {
 	ImGui::End();
 }
 
-void ProjectLauncher::RenderBottomInformation(int fWidth, int fHeight) {
+void ProjectLauncher::RenderFooter(int fWidth, int fHeight) {
 	ImGuiWindowFlags window_flags = 0;
 	window_flags |= ImGuiWindowFlags_NoMove;
 	window_flags |= ImGuiWindowFlags_NoResize;
