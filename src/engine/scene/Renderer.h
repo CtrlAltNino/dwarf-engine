@@ -9,7 +9,8 @@
 #include<assimp/scene.h>
 #include<assimp/postprocess.h>
 #include<assimp/material.h>
-#include"../rendering/BasicMaterial.h"
+//#include"../rendering/BasicMaterial.h"
+#include"../rendering/Material.h"
 #include"../data structures/Mesh.h"
 
 class Renderer {

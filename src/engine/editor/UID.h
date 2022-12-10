@@ -2,6 +2,7 @@
 
 #include "../../utilities/dpch.h"
 
+/// @brief Class for 64 bit UIDs.
 class UID {
     public:
         UID();

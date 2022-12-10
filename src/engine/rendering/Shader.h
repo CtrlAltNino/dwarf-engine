@@ -4,6 +4,8 @@
 
 #include<glad/glad.h>
 
+// TODO: REDO SHADERS
+
 std::string get_file_contents(const char* filename);
 struct vertexShaderName {
 	const char* value;

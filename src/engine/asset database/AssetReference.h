@@ -8,12 +8,19 @@
 
 #include<entt/entt.hpp>
 
+/// @brief Enum representing the types of assets.
 enum class AssetType {Unknown, Mesh, Material, Texture, VertexShader, FragmentShader, TesselationControlShader, TesselationEvaluationShader, GeometryShader, ComputeShader};
 
+/// @brief Wrapper of an entity. It handles the access of the components.
 class AssetReference : public EntityProvider{
     private:
+        /// @brief Registry handle of the corresponding entity.
         entt::entity assetHandle;
+
+        /// @brief Type of the asset.
         AssetType type;
+
+        /// @brief Pointer to the holder of the ECS registry.
         EntityProvider* entProvider = nullptr;
     public:
         AssetReference(entt::entity assetHandle, EntityProvider* entProvider);
@@ -28,20 +35,31 @@ class AssetReference : public EntityProvider{
             return entProvider->m_Registry.emplace<T>(assetHandle, std::forward<Args>(args)...);
         }
 
+        /// @brief Returns the component of a given type.
+        /// @tparam T Type of component.
+        /// @return The found component.
         template<typename T>
         T& GetComponent(){
             // TODO: Check if component present
             return entProvider->m_Registry.get<T>(assetHandle);
         }
 
+        /// @brief Retrieves the handle of the asset entity.
+        /// @return The handle.
         entt::entity GetHandle() { return assetHandle; }
 
+        /// @brief Returns the UID of the asset.
+        /// @return The UID.
         UID GetUID() { return GetComponent<IDComponent>().ID; }
         
+        /// @brief Retrieves the type of the asset.
+        /// @return Asset type.
         AssetType GetType() {
             return type;
         }
 
+        /// @brief Retrieves the asset component of the asset, containing the actual payload.
+        /// @return The asset component.
         void* GetAsset() {
             switch(type){
                 case AssetType::Mesh:

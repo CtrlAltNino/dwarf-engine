@@ -2,7 +2,7 @@
 
 // ========== Constructors ==========
 
-Mesh::Mesh(GLfloat *vertices, GLuint *indices, int indicesSize, int verticesSize)
+/*Mesh::Mesh(GLfloat *vertices, GLuint *indices, int indicesSize, int verticesSize)
 	: vao(), vertices(vertices), indices(indices), indicesSize(indicesSize), verticesSize(verticesSize){
 	vao.LinkAttrib(vbo, 0, 3, GL_FLOAT, 5 * sizeof(float), (void*)0);
 	vao.LinkAttrib(vbo, 1, 2, GL_FLOAT, 5 * sizeof(float), (void*)(3 * sizeof(float)));
@@ -10,7 +10,7 @@ Mesh::Mesh(GLfloat *vertices, GLuint *indices, int indicesSize, int verticesSize
 	vao.Unbind();
 	vbo.Unbind();
 	ebo.Unbind();
-}
+}*/
 
 Mesh::Mesh(std::vector<Vertex> vertices2, std::vector<GLuint> indices2) : vertices2(vertices2), indices2(indices2) {
 	this->verticesSize = 0;
@@ -44,13 +44,13 @@ Mesh::Mesh(std::vector<Vertex> vertices2, std::vector<GLuint> indices2) : vertic
 
 // ========== Getters ==========
 
-GLfloat* Mesh::getVertices() {
+/*GLfloat* Mesh::getVertices() {
 	return vertices;
 }
 
 GLuint* Mesh::getIndices() {
 	return indices;
-}
+}*/
 
 int Mesh::getVerticesSize() {
 	return verticesSize;

@@ -12,8 +12,11 @@
 
 class ProjectListHandler {
     private:
+        /// @brief Currently loaded list of informations regarding projects.
         static inline std::vector<ProjectInformation> projectList;
 
+        /// @brief Saves the currently loaded list of project informations back to the disk.
+        /// @return True if successful, false if not.
         static bool SaveProjectList(){
             bool sucess = true;
             nlohmann::json jsonObject;
@@ -34,10 +37,15 @@ class ProjectListHandler {
             return sucess;
         }
     public:
+        /// @brief Returns the list of project informations.
+        /// @return Pointer to the list of project informations.
         static std::vector<ProjectInformation>* GetProjectList(){
             return &projectList;
         }
 
+        /// @brief Returns the project information of a given project.
+        /// @param id ID of the project.
+        /// @return Project information of the given project.
         static ProjectInformation GetProjectInformation(int id){
             ProjectInformation projectInformation;
             if(id < projectList.size()){
@@ -46,6 +54,9 @@ class ProjectListHandler {
             return projectInformation;
         }
 
+        /// @brief Reads the project information from a given project path.
+        /// @param path Path to the project.
+        /// @return Project information of a project loaded from the disk.
         static ProjectInformation ExtractProjectInformation(const char* path){
             std::string projectSettingsPath = (std::string(path) + "/projectSettings.sproj");
             std::string fileContent = FileHandler::readFile(projectSettingsPath.c_str());
@@ -66,6 +77,8 @@ class ProjectListHandler {
             return foundInfo;
         }
 
+        /// @brief Is loading the list of saved projects on the users computer into the global variable.
+        /// @return True if successful, false if not.
         static bool LoadProjectList(){
             bool success = true;
             std::string savedProjectsPath = FileHandler::GetProjectSettingsPath() + "/savedProjects.json";
@@ -104,6 +117,9 @@ class ProjectListHandler {
             return success;
         }
 
+        /// @brief Adds a project to the project list and saves the new list to the disk.
+        /// @param projectInformation The information of the project to add.
+        /// @return True if project is already present in list, false if not.
         static bool AddProject(ProjectInformation projectInformation){
             bool alreadyPresent = false;
             for (int i = 0; (i < projectList.size()) && !alreadyPresent; i++) {
@@ -120,10 +136,14 @@ class ProjectListHandler {
             return alreadyPresent;
         }
 
+        /// @brief Adds a project to the project list and saves the new list to the disk.
+        /// @param projectPath Path to the project to add.
+        /// @return True if project is already present in list, false if not.
         static bool AddProjectByPath(const char* projectPath){
             return AddProject(ExtractProjectInformation(projectPath));
         }
-
+        
+        /// @brief Opens a native file dialog to add a project to the project list.
         static void OpenAddProjectWindow(){
             // File Dialog um einen Pfad zu kriegen
             // Im Pfad nach einer projectSettings.sproj suchen
@@ -173,6 +193,9 @@ class ProjectListHandler {
             }
         }
 
+        /// @brief Changes the graphics API of a project.
+        /// @param id Project ID.
+        /// @param api Graphics API.
         static void ChangeGraphicsApi(int id, GraphicsApi api){
             //ProjectInformation info = ExtractProjectInformation(projectList[id].path.c_str());
             std::string projectSettingsPath = (projectList[id].path + "/projectSettings.sproj").c_str();
@@ -206,12 +229,16 @@ class ProjectListHandler {
                 std::cout << "There is no projectSettings.json file to be found for the mentioned project!" << std::endl;
             }
         }
-
+        
+        /// @brief Removes a project from the project list and saves the new list to the disk.
+        /// @param id ID of the project to remove.
         static void RemoveProjectFromList(int id){
             projectList.erase(projectList.begin() + id);
             SaveProjectList();
         }
 
+        /// @brief This function is being called when a project is being opened. It updates the "last time opened" timestamp of the project.
+        /// @param id ID of the project to be updated.
         static void RegisterProjectOpening(int id){
             projectList[id].lastOpened = time(0);
             

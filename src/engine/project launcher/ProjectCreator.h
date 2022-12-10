@@ -8,19 +8,30 @@
 #include"ProjectListHandler.h"
 #include "../../utilities/FileHandler.h"
 
+/// @brief Class that provides project creation functionality.
 class ProjectCreator {
     private:
+        /// @brief The default path where projects should be created.
         static inline std::string defaultProjectPath;
     
     public:
+        /// @brief Initialized the project creator.
         static void InitProjectCreator(){
             defaultProjectPath = FileHandler::GetDocumentsPath();
         }
 
+        /// @brief Returns the default project path.
+        /// @return Path to default directory to create projects in.
         static std::string GetDefaultProjectPath(){
             return defaultProjectPath;
         }
         
+        /// @brief Creates a project.
+        /// @param projectName Name of the project.
+        /// @param projectPath Path where the project should be created at.
+        /// @param graphicsApi API of the project.
+        /// @param projectTemplate Which template should be used for creating the project.
+        /// @return Error code.
         static int CreateProject(const char* projectName,
                                     const char* projectPath,
                                     GraphicsApi graphicsApi,

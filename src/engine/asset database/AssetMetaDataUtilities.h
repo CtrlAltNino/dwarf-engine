@@ -2,8 +2,12 @@
 #include <nlohmann/json.hpp>
 #include "../../utilities/FileHandler.h"
 
-class AssetMetaDataHelper {
+/// @brief Utilities for Reading and writing meta data.
+class AssetMetaDataUtilities {
     public:
+        /// @brief Retrieves the meta data from an asset path.
+        /// @param path Path to an asset.
+        /// @return Metadata in JSON.
         static nlohmann::json GetMetaData(std::filesystem::path path){
             std::string fileContent = FileHandler::readFile((path.string() + ".meta").c_str());
             nlohmann::json jsonObject;
@@ -15,6 +19,9 @@ class AssetMetaDataHelper {
             return jsonObject;
         }
         
+        /// @brief Writes the given metadata to a path.
+        /// @param path Path to write the metadata to.
+        /// @param metaData The metadata in JSON.
         static void SetMetaData(std::string path, nlohmann::json metaData){
             std::string fileContent = metaData.dump(4);
             
