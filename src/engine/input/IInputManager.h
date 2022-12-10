@@ -13,8 +13,10 @@
 enum KEYCODE KEYCODE_INITIALIZER;
 enum MOUSE_BUTTON MOUSE_BUTTON_INITIALIZER;
 
+/// @brief Interace for the input manager.
 class IInputManager{
     protected:
+        /// @brief Pointer to the window manager.
         IWindowManager* windowManager;
         std::set<KEYCODE> keyPressSet;
         std::set<MOUSE_BUTTON> mousePressSet;

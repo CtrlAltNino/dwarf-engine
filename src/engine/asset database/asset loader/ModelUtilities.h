@@ -8,10 +8,14 @@
 #include<assimp/postprocess.h>
 #include<assimp/material.h>
 
-
-class ModelImporter {
+/// @brief Utilities for importing models. 
+class ModelUtilities {
     public:
-        static std::vector<Mesh> Import(std::filesystem::path path, nlohmann::json metaData){
+        /// @brief Imports a model.
+        /// @param path Path to the model.
+        /// @return List of the imported meshes of a model.
+        static std::vector<Mesh> Import(std::filesystem::path path){
+            nlohmann::json metaData = AssetMetaDataUtilities::GetMetaData(path);
             const aiScene* scene = aiImportFile(path.string().c_str(), aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_FlipUVs);
             const aiVector3D Zero3D(0.0f, 0.0f, 0.0f);
 

@@ -4,13 +4,18 @@
 #include<glm/gtc/quaternion.hpp>
 #include<glm/gtx/quaternion.hpp>
 
+/// @brief Class representing a rotation in 3D space.
 class Rotation {
     #define RAD_2_DEG ((float)(180.0f/std::_Pi))
     #define DEG_2_RAD ((float)(std::_Pi / 180.0f))
     private:
+        /// @brief Euler representation of the rotation.
         glm::vec3 eulerAngles;
+
+        /// @brief Quaternion representation of the rotation.
         glm::quat quaternion;
 
+        /// @brief 
         void updateEulerAngles(){
             glm::vec3 result = RAD_2_DEG * glm::eulerAngles(this->quaternion);
 

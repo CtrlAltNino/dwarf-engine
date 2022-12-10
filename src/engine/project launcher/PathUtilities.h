@@ -2,8 +2,12 @@
 
 #include "../../utilities/dpch.h"
 
+/// @brief Utility functionalities for paths.
 class PathUtilities {
     public:
+        /// @brief Converts the backslashes in a path to forward slashes.
+        /// @param path Path to convert.
+        /// @return Converted path.
         static char* ConvertBackSlashesToForwardSlashes(std::string path){
             size_t pos;
             char *cstr = new char[path.length() + 1];

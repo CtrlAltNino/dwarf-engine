@@ -9,11 +9,17 @@
 #include<filesystem>
 #endif
 
+/// @brief This class handles all file related tasks of the editor and project launcher.
 class FileHandler{
 	private:
+		/// @brief Path to the documents directory.
 		static inline std::string documentsPath;
+
+		/// @brief Path to the project settings.
 		static inline std::string projectSettingsPath;
 
+		/// @brief Creates the platform depending path to the documents directory.
+		/// @return Absolute path to the documents directory.
 		static std::string CreateDocumentsFolderPath(){
 			std::string defaultProjectPath;
 			
@@ -52,6 +58,8 @@ class FileHandler{
 			return defaultProjectPath;
 		}
 
+		/// @brief Creates the path to the project settings.
+		/// @return Absolute path to where the project settings file is located.
 		static std::string CreateProjectSettingsPath(){
 			std::string path = "";
 			std::string subpath = "/Dwarf Engine/settings/";
@@ -64,24 +72,35 @@ class FileHandler{
 			return path + subpath;
 		}
 	public:
+		/// @brief Initializes the file handler.
 		static void InitFileHandler(){
 			documentsPath = CreateDocumentsFolderPath();
 			projectSettingsPath = CreateProjectSettingsPath();
 		}
 
+		/// @brief Returns the path to the document directory.
+		/// @return An absolute path.
 		static std::string GetDocumentsPath(){
 			return documentsPath;
 		}
 
+		/// @brief Returns the path to the project settings file.
+		/// @return An absolute path.
 		static std::string GetProjectSettingsPath(){
 			return projectSettingsPath;
 		}
 
+		/// @brief Checks if a file is present at a given path.
+		/// @param filePath Absolute path to a file.
+		/// @return True if file exists, false if not.
 		static bool checkIfFileExists(const char* filePath) {
 			std::ifstream fileStream(filePath, std::ios::in);
 			return fileStream.is_open();
 		}
 
+		/// @brief Reads a file and returns the content.
+		/// @param filePath Absolute path to a file.
+		/// @return The content of the file.
 		static std::string readFile(const char* filePath) {
 			std::string content;
 			std::ifstream fileStream(filePath, std::ios::in);
@@ -101,6 +120,9 @@ class FileHandler{
 			return content;
 		}
 
+		/// @brief Writes a string to a file at a given path.
+		/// @param filePath Path where to write the string to.
+		/// @param content Content to write.
 		static void writeToFile(const char* filePath, std::string content) {
 			//opening a file in writing mode which is default.
 			std::ofstream file;
@@ -117,6 +139,9 @@ class FileHandler{
 			file.close();
 		}
 
+		/// @brief Checks if a directory is present on the users disk.
+		/// @param path Path to a directory.
+		/// @return True if directory is present, false if not.
 		static bool checkIfDirectoyExists(const char* path) {
 			#if _WIN32
 			DWORD ftyp = GetFileAttributesA(path);
@@ -130,23 +155,31 @@ class FileHandler{
 			return false;    // this is not a directory!
 		}
 
+		/// @brief Checks if a directory is present on the users disk.
+		/// @param path Path to a directory.
+		/// @return True if directory is present, false if not.
 		static bool checkIfDirectoyExists(std::string path) {
 			return checkIfDirectoyExists(path.c_str());
 		}
 
+		/// @brief Creates a directory at a given path.
+		/// @param path Path to a directory.
 		static void createDirectoryC(const char* path) {
 			#if _WIN32
 				system((std::string("mkdir \"") + path + "\"").c_str());
 			#elif __linux__
 				system((std::string("mkdir -p \"") + path + "\"").c_str());
 			#endif
-
 		}
 
+		/// @brief Creates a directory at a given path.
+		/// @param path Path to a directory.
 		static void createDirectoryS(std::string path) {
 			createDirectoryC(path.c_str());
 		}
 
+		/// @brief Opens a path into a file browser.
+		/// @param path Path to open.
 		static void OpenPathInFileBrowser(std::string path){
 			size_t pos;
 			while ((pos = path.find('\\')) != std::string::npos) {
