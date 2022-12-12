@@ -1,5 +1,7 @@
 #include"WindowManagerOpenGL.h"
 
+WindowManagerOpenGL::WindowManagerOpenGL(InputManagerOpenGL* inputManager) : inputManager(inputManager) { }
+
 void WindowManagerOpenGL::Init(){
     shouldWindowClose = false;
     CreateEditorWindow();
@@ -88,6 +90,20 @@ void WindowManagerOpenGL::StartFrame(){
         {
             shouldWindowClose = true;
         }
+
+        switch(event.type){
+            case SDL_QUIT:
+                shouldWindowClose = true;
+                break;
+            case SDL_KEYDOWN:
+                inputManager->ProcessKeyDown(event.key.keysym.scancode);
+                //std::cout << "Key down: " << event.key.keysym.sym << std::endl;
+                break;
+            case SDL_KEYUP:
+                inputManager->ProcessKeyUp(event.key.keysym.scancode);
+                //std::cout << "Key up: " << event.key.keysym.sym << std::endl;
+                break;
+        }
     }
     //glfwPollEvents();
     //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -103,7 +119,6 @@ void WindowManagerOpenGL::StartFrame(){
     ImGui_ImplSDL2_NewFrame();
     ImGui::NewFrame();
     ImGui::PushFont(fonts["normalTextFont"]);
-    std::cout << "Window Manager start frame END" << std::endl;
 }
 
 void WindowManagerOpenGL::EndFrame(){

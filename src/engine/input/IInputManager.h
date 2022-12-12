@@ -61,5 +61,7 @@ class IInputManager{
          * Updates the states of the input states.
          * Call this every frame
         */
-        virtual void UpdatePressStates()=0;
+        //virtual void UpdatePressStates()=0;
+
+        virtual void StartFrame()=0;
 };

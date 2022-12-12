@@ -5,8 +5,9 @@ EditorController::EditorController(ProjectData projectData) : editorModel(this),
 	assetDatabase.Init();
 	switch(projectData.graphicsApi){
 		case GraphicsApi::OpenGL:
-			windowManager = new WindowManagerOpenGL();
-			inputManager = new InputManagerOpenGL((WindowManagerOpenGL*)windowManager);
+			inputManager = new InputManagerOpenGL();
+			windowManager = new WindowManagerOpenGL((InputManagerOpenGL*)inputManager);
+			//inputManager = new InputManagerOpenGL((WindowManagerOpenGL*)windowManager);
 			break;
 	}
     windowManager->Init();
@@ -31,11 +32,12 @@ EditorController::EditorController(ProjectData projectData) : editorModel(this),
 }
 
 void EditorController::RunLoop(){
-    Uint64 lastFrameTime = 0;
-	Uint64 currentFrameTime = 0;
+    double lastFrameTime = 0;
+	double currentFrameTime = 0;
     Scene* scene = editorModel.GetScene();
 	// TODO abstract the close condition
     while (!windowManager->ShouldWindowCloseSignal()) {
+		inputManager->StartFrame();
 		windowManager->StartFrame();
         editorView.StartFrame();
 		for(int i = 0; i < guiModules.size(); i++){
@@ -46,7 +48,7 @@ void EditorController::RunLoop(){
 		lastFrameTime = currentFrameTime;
 		// TODO abstract the time grabbing
 		//currentFrameTime = glfwGetTime();
-		currentFrameTime = SDL_GetTicks64();
+		currentFrameTime = SDL_GetTicks() / 1000.0f;
         // Delta time muss woanders vallah
 		deltaTime = currentFrameTime - lastFrameTime;
 
@@ -94,10 +96,10 @@ void EditorController::RunLoop(){
 
 		// ===== Windowing Stuff =====
 		windowManager->EndFrame();
-		inputManager->UpdatePressStates();
+		//inputManager->UpdatePressStates();
 
 		// ===== Framerate managing =====
-		while (SDL_GetTicks() < currentFrameTime + 1000 * (EditorProperties::FrameLimit != -1 ? 1.0 / EditorProperties::FrameLimit : 0)) {
+		while ((SDL_GetTicks() / 1000.0f) < currentFrameTime + (EditorProperties::FrameLimit != -1 ? 1.0 / EditorProperties::FrameLimit : 0)) {
 			// TODO: Update this when implementing multi threading
 		}
 	}

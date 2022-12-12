@@ -3,18 +3,20 @@
 #include "../../utilities/dpch.h"
 
 #include"IInputManager.h"
-#include"../windowing/WindowManagerOpenGL.h"
+#include<SDL2/SDL.h>
+#include<SDL2/SDL_opengl.h>
+//#include"../windowing/WindowManagerOpenGL.h"
 
 class InputManagerOpenGL : public IInputManager {
     private:
         /**
          * Pointer to the corresponding window manager
         */
-        WindowManagerOpenGL* windowManager;
+        //WindowManagerOpenGL* windowManager;
         /**
          * State of the keyboard as received by SDL2
         */
-        const Uint8* keyboardState;
+        //const Uint8* keyboardState;
         /**
          * Saved position of the current mouse position
         */
@@ -38,7 +40,17 @@ class InputManagerOpenGL : public IInputManager {
         /**
          * Mapping the engine specific key codes to the SDL2 codes
         */
-        std::map<KEYCODE, int> keyCodeMap = {{KEYCODE::W, SDL_SCANCODE_W},
+        std::map<SDL_Scancode, KEYCODE> keyCodeMap = {{SDL_SCANCODE_W, KEYCODE::W},
+                                                {SDL_SCANCODE_A, KEYCODE::A},
+                                                {SDL_SCANCODE_S, KEYCODE::S},
+                                                {SDL_SCANCODE_D, KEYCODE::D},
+                                                {SDL_SCANCODE_E, KEYCODE::E},
+                                                {SDL_SCANCODE_Q, KEYCODE::Q},
+                                                {SDL_SCANCODE_R, KEYCODE::R},
+                                                {SDL_SCANCODE_LSHIFT, KEYCODE::LEFT_SHIFT},
+                                                {SDL_SCANCODE_LCTRL, KEYCODE::LEFT_CONTROL}};
+        
+        /*std::map<KEYCODE, int> keyCodeMap = {{KEYCODE::W, SDL_SCANCODE_W},
                                                 {KEYCODE::A, SDL_SCANCODE_A},
                                                 {KEYCODE::S, SDL_SCANCODE_S},
                                                 {KEYCODE::D, SDL_SCANCODE_D},
@@ -46,8 +58,10 @@ class InputManagerOpenGL : public IInputManager {
                                                 {KEYCODE::Q, SDL_SCANCODE_Q},
                                                 {KEYCODE::R, SDL_SCANCODE_R},
                                                 {KEYCODE::LEFT_SHIFT, SDL_SCANCODE_LSHIFT},
-                                                {KEYCODE::LEFT_CONTROL, SDL_SCANCODE_LCTRL}};
-        
+                                                {KEYCODE::LEFT_CONTROL, SDL_SCANCODE_LCTRL}};*/
+        std::set<KEYCODE> keysDown;
+        std::set<KEYCODE> keysRepeat;
+        std::set<KEYCODE> keysUp;
         /*std::map<MOUSE_BUTTON, int> mouseCodeMap = {{MOUSE_BUTTON::LEFT, GLFW_MOUSE_BUTTON_LEFT},
                                                 {MOUSE_BUTTON::RIGHT, GLFW_MOUSE_BUTTON_RIGHT},
                                                 {MOUSE_BUTTON::MIDDLE, GLFW_MOUSE_BUTTON_MIDDLE}};*/
@@ -59,7 +73,8 @@ class InputManagerOpenGL : public IInputManager {
                                                 {MOUSE_BUTTON::RIGHT, 3},
                                                 {MOUSE_BUTTON::MIDDLE, 2}};
     public:
-        InputManagerOpenGL(WindowManagerOpenGL* wm);
+        //InputManagerOpenGL(WindowManagerOpenGL* wm);
+        InputManagerOpenGL();
         /**
          * Returns true while the specified key is being pressed
         */
@@ -100,5 +115,11 @@ class InputManagerOpenGL : public IInputManager {
          * Updates the states of the input states.
          * Call this every frame
         */
-        virtual void UpdatePressStates();
+        //virtual void UpdatePressStates();
+
+        virtual void StartFrame();
+
+        virtual void ProcessKeyDown(SDL_Scancode key);
+
+        virtual void ProcessKeyUp(SDL_Scancode key);
 };

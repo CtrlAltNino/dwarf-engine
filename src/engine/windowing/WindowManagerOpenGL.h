@@ -12,6 +12,7 @@
 
 #include"IWindowManager.h"
 #include"../rendering/RenderTextureOpenGL.h"
+#include"../input/InputManagerOpenGL.h"
 
 class WindowManagerOpenGL : public IWindowManager{
     private:
@@ -29,8 +30,11 @@ class WindowManagerOpenGL : public IWindowManager{
 
         /// @brief Reference to the OpenGL context of SDL2.
         SDL_GLContext context;
+
+        InputManagerOpenGL* inputManager;
         //std::vector<RenderTextureOpenGL> renderTextures;
     public:
+        WindowManagerOpenGL(InputManagerOpenGL* inputManager);
         /// @brief Initializes the window manager.
         virtual void Init();
 
