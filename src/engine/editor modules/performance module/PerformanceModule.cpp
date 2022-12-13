@@ -42,8 +42,8 @@ void PerformanceModule::RenderModuleWindow(){
 	ImGui::PopFont();
     
 	ImGui::Text(std::string("Frames per second: " + std::to_string(1.0 / *frametime)).c_str());
-    ImGui::Text(std::string("Frametime: " + std::to_string(*frametime * 1000) + " ms").c_str());
-    ImGui::Text(std::string("Render time: " + std::to_string(*renderTime * 1000) + " ms").c_str());
+    ImGui::Text(std::string("Frametime: " + std::to_string(*frametime) + " ms").c_str());
+    ImGui::Text(std::string("Render time: " + std::to_string(*renderTime) + " ms").c_str());
 
     ImGui::End();
 

@@ -1,6 +1,9 @@
 #include"WindowManagerOpenGL.h"
 
+WindowManagerOpenGL::WindowManagerOpenGL(InputManagerOpenGL* inputManager) : inputManager(inputManager) { }
+
 void WindowManagerOpenGL::Init(){
+    shouldWindowClose = false;
     CreateEditorWindow();
     InitImGui();
 }
@@ -9,11 +12,10 @@ GraphicsApi WindowManagerOpenGL::GetActiveApi(){
     return GraphicsApi::OpenGL;
 }
 
-
 void WindowManagerOpenGL::CreateEditorWindow(){
-    glfwInit();
+    //glfwInit();
     // get resolution of monitor
-    GLFWmonitor* _monitor = glfwGetPrimaryMonitor();
+    /*GLFWmonitor* _monitor = glfwGetPrimaryMonitor();
     const GLFWvidmode* mode = glfwGetVideoMode(_monitor);
     glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
     glfwWindowHint(GLFW_CLIENT_API, GLFW_OPENGL_API);
@@ -25,34 +27,49 @@ void WindowManagerOpenGL::CreateEditorWindow(){
     glfwWindowHint(GLFW_GREEN_BITS, mode->greenBits);
     glfwWindowHint(GLFW_BLUE_BITS, mode->blueBits);
     glfwWindowHint(GLFW_REFRESH_RATE, mode->refreshRate);
-    glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);
+    glfwWindowHint(GLFW_MAXIMIZED, GLFW_TRUE);*/
+	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
+    SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
+    
+    Uint32 WindowFlags = 0;
+	WindowFlags |= SDL_WINDOW_OPENGL;
+	WindowFlags |= SDL_WINDOW_HIDDEN;
+	WindowFlags |= SDL_WINDOW_MOUSE_CAPTURE;
+	WindowFlags |= SDL_WINDOW_RESIZABLE;
+	WindowFlags |= SDL_WINDOW_MAXIMIZED;
 
-    window = glfwCreateWindow(INITIAL_WINDOW_WIDTH, INITIAL_WINDOW_HEIGHT, "Dwarf Engine Editor", NULL, NULL);
+    //window = glfwCreateWindow(INITIAL_WINDOW_WIDTH, INITIAL_WINDOW_HEIGHT, "Dwarf Engine Editor", NULL, NULL);
+    window = SDL_CreateWindow("Dwarf Engine Project Launcher", 0, 0, INITIAL_WINDOW_WIDTH, INITIAL_WINDOW_HEIGHT, WindowFlags);
+    
+	context = SDL_GL_CreateContext(window);
     
     if (window == NULL) {
-        std::cout << "Failed to create GLFW window" << std::endl;
-        glfwTerminate();
+        std::cout << "Failed to create window" << std::endl;
+        SDL_Quit();
     }
 
-    glfwSetWindowSizeLimits(window, 1280, 720, GLFW_DONT_CARE, GLFW_DONT_CARE);
+    SDL_SetWindowMinimumSize(window, 1280, 720);
+    //glfwSetWindowSizeLimits(window, 1280, 720, GLFW_DONT_CARE, GLFW_DONT_CARE);
 
-    GLFWimage icon[1];
+    /*GLFWimage icon[1];
     int numColChannel;
     icon[0].pixels = stbi_load("data/engine/img/icons/icon.png", &icon[0].width, &icon[0].height, &numColChannel, 0); //rgba channels
     glfwSetWindowIcon(window, 1, icon);
     stbi_image_free(icon[0].pixels);
-    glfwMakeContextCurrent(window);
+    glfwMakeContextCurrent(window);*/
     gladLoadGL();
     glViewport(0, 0, INITIAL_WINDOW_WIDTH, INITIAL_WINDOW_HEIGHT);
 
-    if (glfwRawMouseMotionSupported())
-        glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);
+    /*if (glfwRawMouseMotionSupported())
+        glfwSetInputMode(window, GLFW_RAW_MOUSE_MOTION, GLFW_TRUE);*/
     
-    glfwSwapInterval(0);
+    //glfwSwapInterval(0);
+    SDL_GL_SetSwapInterval(0);
     glEnable(GL_DEPTH_TEST);
     glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glfwSwapBuffers(window);
+    //glfwSwapBuffers(window);
+    SDL_GL_SwapWindow(window);
 
     
     IWindowManager::rendererName = (char*)glad_glGetString(GL_RENDERER);
@@ -60,21 +77,46 @@ void WindowManagerOpenGL::CreateEditorWindow(){
     IWindowManager::apiVersion = std::string("OpenGL ") + (char*)glad_glGetString(GL_VERSION);
 }
 
-void WindowManagerOpenGL::SetWindowName(std::string windowName){
-    glfwSetWindowTitle(window, windowName.c_str());
+void WindowManagerOpenGL::SetWindowTitle(std::string windowName){
+    //glfwSetWindowTitle(window, windowName.c_str());
+    SDL_SetWindowTitle(window, windowName.c_str());
 }
 
 void WindowManagerOpenGL::StartFrame(){
-    glfwPollEvents();
+    SDL_Event event;
+    while(SDL_PollEvent(&event)) {
+        ImGui_ImplSDL2_ProcessEvent(&event);
+        if (event.type == SDL_QUIT)
+        {
+            shouldWindowClose = true;
+        }
+
+        switch(event.type){
+            case SDL_QUIT:
+                shouldWindowClose = true;
+                break;
+            case SDL_KEYDOWN:
+                inputManager->ProcessKeyDown(event.key.keysym.scancode);
+                //std::cout << "Key down: " << event.key.keysym.sym << std::endl;
+                break;
+            case SDL_KEYUP:
+                inputManager->ProcessKeyUp(event.key.keysym.scancode);
+                //std::cout << "Key up: " << event.key.keysym.sym << std::endl;
+                break;
+        }
+    }
+    //glfwPollEvents();
     //glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    glfwGetWindowSize(window, &width, &height);
+    //glfwGetWindowSize(window, &width, &height);
+	SDL_GetWindowSize(window, &this->windowSize.x, &this->windowSize.y);
     //glBindFramebuffer(GL_FRAMEBUFFER, fbo);
     glClearColor(0.1f, 0.1f, 0.1f, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT); // we're not using the stencil buffer now
     glEnable(GL_DEPTH_TEST);
 
     ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplGlfw_NewFrame();
+    //ImGui_ImplGlfw_NewFrame();
+    ImGui_ImplSDL2_NewFrame();
     ImGui::NewFrame();
     ImGui::PushFont(fonts["normalTextFont"]);
 }
@@ -91,19 +133,17 @@ void WindowManagerOpenGL::EndFrame(){
         ImGui::RenderPlatformWindowsDefault();
     }
     
-    glfwSwapBuffers(window);
+    //glfwSwapBuffers(window);
+    SDL_GL_SwapWindow(window);
 }
 
-int WindowManagerOpenGL::GetWidth(){
-    return width;
-}
-
-int WindowManagerOpenGL::GetHeight(){
-    return height;
+glm::ivec2 WindowManagerOpenGL::GetWindowSize(){
+    return this->windowSize;
 }
 
 bool WindowManagerOpenGL::ShouldWindowCloseSignal(){
-    return glfwWindowShouldClose(window);
+    //return glfwWindowShouldClose(window);
+    return shouldWindowClose;
 }
 
 void WindowManagerOpenGL::InitImGui(){
@@ -112,7 +152,8 @@ void WindowManagerOpenGL::InitImGui(){
     io->ConfigWindowsMoveFromTitleBarOnly = true;
     io->ConfigFlags |= ImGuiConfigFlags_DockingEnable;
 
-    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    //ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplSDL2_InitForOpenGL(window, context);
     ImGui_ImplOpenGL3_Init("#version 130");
 
     ImGui::StyleColorsDark();
@@ -124,7 +165,7 @@ void WindowManagerOpenGL::InitImGui(){
     IWindowManager::fonts["largeHeaderFont"] = io->Fonts->AddFontFromFileTTF(INTER_BOLD_PATH, 26);
 }
 
-GLFWwindow* WindowManagerOpenGL::GetOpenGLWindow(){
+SDL_Window* WindowManagerOpenGL::GetOpenGLWindow(){
     return window;
 }
 

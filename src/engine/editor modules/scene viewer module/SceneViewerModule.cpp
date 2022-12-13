@@ -194,6 +194,7 @@ void SceneViewerModule::RenderModuleWindow(){
                         && inputManager->GetMouseDown(MOUSE_BUTTON::RIGHT)){
         ImGui::SetWindowFocus(GetIdentifier().c_str());
         cameraUpdating = true;
+        // TODO: Use SDL_WarpMouseInWindow here to lock cursor
     }
 
     if(cameraUpdating)
