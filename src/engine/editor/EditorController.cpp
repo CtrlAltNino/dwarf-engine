@@ -47,8 +47,7 @@ void EditorController::RunLoop(){
 		// ===== Time related stuff
 		lastFrameTime = currentFrameTime;
 		// TODO abstract the time grabbing
-		//currentFrameTime = glfwGetTime();
-		currentFrameTime = SDL_GetTicks() / 1000.0f;
+		currentFrameTime = (double)SDL_GetTicks64() / 1000.0f;
         // Delta time muss woanders vallah
 		deltaTime = currentFrameTime - lastFrameTime;
 
@@ -70,8 +69,7 @@ void EditorController::RunLoop(){
 		// ===== Drawing Geometry =====
 		// TODO: Draw to a framebuffer
 		std::vector<IRenderTexture*> *renderTextures = windowManager->GetRenderTextures();
-		//renderTime = glfwGetTime();
-		//renderTime = SDL_GetTicks();
+		renderTime = (double)SDL_GetTicks64() / 1000.0f;
 		for(int i = 0; i < renderTextures->size(); i++){
 			//if ((windowManager->GetWidth() != 0) && (windowManager->GetHeight() != 0)) {
 			if (windowManager->GetWindowSize().length() > 0) {
@@ -83,8 +81,7 @@ void EditorController::RunLoop(){
 			scene->drawScene(*renderTextures->at(i)->GetCamera());
 			renderTextures->at(i)->Unbind();
 		}
-		//renderTime = glfwGetTime() - renderTime;
-		//renderTime = SDL_GetTicks() - renderTime;
+		renderTime = (double)SDL_GetTicks64() / 1000.0f - renderTime;
 
 		// ===== Post processing =====
 		// TODO: Implement
@@ -99,7 +96,7 @@ void EditorController::RunLoop(){
 		//inputManager->UpdatePressStates();
 
 		// ===== Framerate managing =====
-		while ((SDL_GetTicks() / 1000.0f) < currentFrameTime + (EditorProperties::FrameLimit != -1 ? 1.0 / EditorProperties::FrameLimit : 0)) {
+		while (((double)SDL_GetTicks64() / 1000.0f) < currentFrameTime + (EditorProperties::FrameLimit != -1 ? 1.0 / EditorProperties::FrameLimit : 0)) {
 			// TODO: Update this when implementing multi threading
 		}
 	}
