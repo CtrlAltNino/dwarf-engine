@@ -294,7 +294,10 @@ void SceneViewerModule::UpdateCamera(){
 		movementVector *= viewListener->GetDeltaTime() * EditorProperties::moveSpeed * (inputManager->GetKey(KEYCODE::LEFT_SHIFT) ? 2 : 1);
 	}
 
-    glm::vec4 deltaVec4 = glm::inverse(renderTexture->GetCamera()->transform.getRotationMatrix())
+    glm::mat4 rot = glm::rotate(glm::mat4(1.0f), renderTexture->GetCamera()->transform.rotation.x * DEG_2_RAD, glm::vec3(1.0f, 0.0f, 0.0f))
+		    * glm::rotate(glm::mat4(1.0f), renderTexture->GetCamera()->transform.rotation.y * DEG_2_RAD, glm::vec3(0.0f, 1.0f, 0.0f));
+
+    glm::vec4 deltaVec4 = glm::inverse(rot)
     * glm::vec4(movementVector.x, movementVector.y, movementVector.z, 1.0f);
 
 	renderTexture->GetCamera()->transform.position += glm::vec3(deltaVec4.x, deltaVec4.y, deltaVec4.z);

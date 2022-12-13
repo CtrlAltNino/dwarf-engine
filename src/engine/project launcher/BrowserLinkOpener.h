@@ -9,8 +9,11 @@
 #include<filesystem>
 #endif
 
+/// @brief Utility class to open links in the browser for different platforms/OS.
 class BrowserLinkOpener {
     public:
+        /// @brief Opens a link in the browser of the user.
+        /// @param link 
         static void OpenLink(const char* link){
             #if _WIN32
                 const size_t cSize = strlen(link)+1;

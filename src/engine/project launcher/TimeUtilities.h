@@ -9,8 +9,12 @@
 #define SECONDS_IN_MONTH (2419200)
 #define SECONDS_IN_YEAR (29030400)
 
+/// @brief Class providing some time utilities.
 class TimeUtilities{
     public:
+        /// @brief Gets the local time.
+        /// @param time Pointer to a time stamp.
+        /// @param buf Pointer to a date struct.
         static void GetLocalTime(time_t *time, struct tm *buf){
             #if _WIN32
                 localtime_s(buf, time);
@@ -19,6 +23,9 @@ class TimeUtilities{
             #endif
         }
 
+        /// @brief Calculates the time passed from a given time stamp, and formats it to a display string.
+        /// @param passedTime A time stamp.
+        /// @return The time passed formatted as a display string.
         static std::string CalculateTimePassedSinceNow(time_t passedTime){
             std::string timePassed = "";
             time_t currentTime = time(0);
