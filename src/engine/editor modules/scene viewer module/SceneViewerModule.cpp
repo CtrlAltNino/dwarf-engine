@@ -188,17 +188,22 @@ void SceneViewerModule::RenderModuleWindow(){
     ImVec2 hoverRectMax = ImVec2(ImGui::GetWindowPos().x + ImGui::GetCursorPos().x + ImGui::GetContentRegionAvail().x,
                                     ImGui::GetWindowPos().y + ImGui::GetCursorPos().y + ImGui::GetContentRegionAvail().y);
     
-    // TODO: Add cursor collision with other windows that may block 
-    if(!cameraUpdating && ImGui::IsMouseHoveringRect(hoverRectMin,
-                            hoverRectMax)
-                        && inputManager->GetMouseDown(MOUSE_BUTTON::RIGHT)){
-        ImGui::SetWindowFocus(GetIdentifier().c_str());
-        cameraUpdating = true;
-        // TODO: Use SDL_WarpMouseInWindow here to lock cursor
-    }
+    // TODO: Add cursor collision with other windows that may block
 
-    if(cameraUpdating)
+    static boolean cameraMovementStarted = false;
+
+    if(!cameraMovementStarted && ImGui::IsMouseHoveringRect(hoverRectMin, hoverRectMax)
+        && inputManager->GetMouse(MOUSE_BUTTON::RIGHT)){
+        cameraMovementStarted = true;
+        //windowManager->RelativeMouseMode(true);
+    }else if(cameraMovementStarted && inputManager->GetMouse(MOUSE_BUTTON::RIGHT)){
         UpdateCamera();
+        //windowManager->LockCursorAtPos(inputManager->GetMousePos());
+    }else if(cameraMovementStarted && !inputManager->GetMouse(MOUSE_BUTTON::RIGHT)){
+        cameraMovementStarted = false;
+        //windowManager->RelativeMouseMode(false);
+        deltaMousePos = glm::vec2(0);
+    }
 
     if(scene->selectedEntities.size() == 1){
         RenderGizmos();
@@ -214,93 +219,74 @@ ImTextureID SceneViewerModule::GetTextureID(){
 }
 
 void SceneViewerModule::UpdateCamera(){
-	if (inputManager->GetMouse(MOUSE_BUTTON::RIGHT) && ImGui::IsWindowFocused())
-	{
-		inputManager->SetMouseVisibility(false);
-		glm::vec2 mousePos = inputManager->GetMousePos();
+    deltaMousePos = inputManager->GetDeltaMousePos();
 
-		if (lastMousePos != glm::vec2(-1)) {
-			deltaMousePos = glm::vec2(mousePos.x - lastMousePos.x, mousePos.y - lastMousePos.y);
-		}
-		else {
-			deltaMousePos = glm::vec2(0);
-		}
+    if (deltaMousePos.length() > 0) {
+        float yAngle = deltaMousePos.x * EditorProperties::cameraRotationSpeed;
+        float xAngle = deltaMousePos.y * EditorProperties::cameraRotationSpeed;
 
-		lastMousePos = glm::vec2(mousePos.x, mousePos.y);
+        // TODO: Clamp rotation between -90 and 90 degrees
+        //renderTexture->GetCamera()->transform.rotation.rotate(renderTexture->GetCamera()->transform.rotation.getQuaternion() * glm::vec3(0,1,0), yAngle);
+        //renderTexture->GetCamera()->transform.rotation.rotate(glm::vec3(1,0,0), xAngle);
+        TransformComponent& tc = renderTexture->GetCamera()->transform;
+        
+        //tc.rotation.y += yAngle;
+        //tc.rotation.x += xAngle;
 
-		if (deltaMousePos.length() > 0) {
-			float yAngle = deltaMousePos.x * EditorProperties::cameraRotationSpeed;
-			float xAngle = deltaMousePos.y * EditorProperties::cameraRotationSpeed;
+        //glm::vec4 vecEuler = glm::vec4(tc.rotation.x, tc.rotation.y, tc.rotation.z, 1.0f);
+        //vecEuler = 
+        glm::mat4 mat = glm::rotate(glm::mat4(1.0f), xAngle * DEG_2_RAD, glm::vec3(1,0,0));
 
+        glm::vec3 rot;
 
+        rot.x = RAD_2_DEG * atan2f(mat[1][2], mat[2][2]);
+        //rot.y = RAD_2_DEG * atan2f(-mat[0][2], sqrtf(mat[1][2] * mat[1][2] + mat[2][2] * mat[2][2]));
+        //rot.z = RAD_2_DEG * atan2f(mat[0][1], mat[0][0]);
 
-            // TODO: Clamp rotation between -90 and 90 degrees
-            //renderTexture->GetCamera()->transform.rotation.rotate(renderTexture->GetCamera()->transform.rotation.getQuaternion() * glm::vec3(0,1,0), yAngle);
-            //renderTexture->GetCamera()->transform.rotation.rotate(glm::vec3(1,0,0), xAngle);
-            TransformComponent& tc = renderTexture->GetCamera()->transform;
-            
-            //tc.rotation.y += yAngle;
-            //tc.rotation.x += xAngle;
+        tc.rotation.x += rot.x;
+        tc.rotation.x = std::min(std::max(tc.rotation.x, -90.0f), 90.0f);
 
-            //glm::vec4 vecEuler = glm::vec4(tc.rotation.x, tc.rotation.y, tc.rotation.z, 1.0f);
-            //vecEuler = 
-            glm::mat4 mat = glm::rotate(glm::mat4(1.0f), xAngle * DEG_2_RAD, glm::vec3(1,0,0));
+        mat = glm::rotate(glm::mat4(1.0f), yAngle * DEG_2_RAD, glm::vec3(0,1,0));
+        //rot.x = RAD_2_DEG * atan2f(mat[1][2], mat[2][2]);
+        rot.y = RAD_2_DEG * atan2f(-mat[0][2], sqrtf(mat[1][2] * mat[1][2] + mat[2][2] * mat[2][2]));
+        //rot.z = RAD_2_DEG * atan2f(mat[0][1], mat[0][0]);
 
-            glm::vec3 rot;
+        tc.rotation.y += rot.y;
 
-            rot.x = RAD_2_DEG * atan2f(mat[1][2], mat[2][2]);
-            //rot.y = RAD_2_DEG * atan2f(-mat[0][2], sqrtf(mat[1][2] * mat[1][2] + mat[2][2] * mat[2][2]));
-            //rot.z = RAD_2_DEG * atan2f(mat[0][1], mat[0][0]);
+        //std::cout << "Camera Euler Angles: x=" << tc.rotation.x << " y=" << tc.rotation.y << " z=" << tc.rotation.z << std::endl;
+        /*glm::quat q = renderTexture->GetCamera()->transform.rotation.getQuaternion();
 
-            tc.rotation.x += rot.x;
-            tc.rotation.x = std::min(std::max(tc.rotation.x, -90.0f), 90.0f);
+        float yaw = RAD_2_DEG * atan2(2.0f*(q.y*q.z + q.w*q.x), q.w*q.w - q.x*q.x - q.y*q.y + q.z*q.z);
+        float pitch = RAD_2_DEG * asin(-2.0f*(q.x*q.z - q.w*q.y));
+        float roll = RAD_2_DEG * atan2(2.0f*(q.x*q.y + q.w*q.z), q.w*q.w + q.x*q.x - q.y*q.y - q.z*q.z);
+        
+        glm::vec3 clampedRot = renderTexture->GetCamera()->transform.getEulerAngles();*/
+        //std::cout << "yaw=" << yaw << " pitch=" << pitch << " roll=" << roll << std::endl;
+        //std::cout << "Camera Euler Angles: x=" << clampedRot.x << " y=" << clampedRot.y << " z=" << clampedRot.z << std::endl;
+        //clampedRot.x = std::max(std::min(90.0f, clampedRot.x), -90.0f);
+        //std::cout << "\tCamera Euler Angles: x=" << clampedRot.x << " y=" << clampedRot.y << " z=" << clampedRot.z << std::endl;
 
-            mat = glm::rotate(glm::mat4(1.0f), yAngle * DEG_2_RAD, glm::vec3(0,1,0));
-            //rot.x = RAD_2_DEG * atan2f(mat[1][2], mat[2][2]);
-            rot.y = RAD_2_DEG * atan2f(-mat[0][2], sqrtf(mat[1][2] * mat[1][2] + mat[2][2] * mat[2][2]));
-            //rot.z = RAD_2_DEG * atan2f(mat[0][1], mat[0][0]);
-
-            tc.rotation.y += rot.y;
-
-            //std::cout << "Camera Euler Angles: x=" << tc.rotation.x << " y=" << tc.rotation.y << " z=" << tc.rotation.z << std::endl;
-            /*glm::quat q = renderTexture->GetCamera()->transform.rotation.getQuaternion();
-
-            float yaw = RAD_2_DEG * atan2(2.0f*(q.y*q.z + q.w*q.x), q.w*q.w - q.x*q.x - q.y*q.y + q.z*q.z);
-            float pitch = RAD_2_DEG * asin(-2.0f*(q.x*q.z - q.w*q.y));
-            float roll = RAD_2_DEG * atan2(2.0f*(q.x*q.y + q.w*q.z), q.w*q.w + q.x*q.x - q.y*q.y - q.z*q.z);
-            
-            glm::vec3 clampedRot = renderTexture->GetCamera()->transform.getEulerAngles();*/
-            //std::cout << "yaw=" << yaw << " pitch=" << pitch << " roll=" << roll << std::endl;
-            //std::cout << "Camera Euler Angles: x=" << clampedRot.x << " y=" << clampedRot.y << " z=" << clampedRot.z << std::endl;
-            //clampedRot.x = std::max(std::min(90.0f, clampedRot.x), -90.0f);
-            //std::cout << "\tCamera Euler Angles: x=" << clampedRot.x << " y=" << clampedRot.y << " z=" << clampedRot.z << std::endl;
-
-            //renderTexture->GetCamera()->transform.setRotation(renderTexture->GetCamera()->transform.rotation.getEulerAngles());
-		}
-	}
-	else {
-		inputManager->SetMouseVisibility(true);
-		deltaMousePos = glm::vec2(0);
-		lastMousePos = glm::vec2(-1);
-        cameraUpdating = false;
-	}
+        //renderTexture->GetCamera()->transform.setRotation(renderTexture->GetCamera()->transform.rotation.getEulerAngles());
+    }
 
 	glm::vec3 movementVector = { (inputManager->GetKey(KEYCODE::A) ? -1 : 0) + (inputManager->GetKey(KEYCODE::D) ? 1 : 0),
 		(inputManager->GetKey(KEYCODE::Q) ? -1 : 0) + (inputManager->GetKey(KEYCODE::E) ? 1 : 0),
 		(inputManager->GetKey(KEYCODE::W) ? -1 : 0) + (inputManager->GetKey(KEYCODE::S) ? 1 : 0) };
 
-	if (glm::length(movementVector) > 0) {
+    std::cout << "Scene Viewer updating camera" << std::endl;
+    glm::mat4 rotMat = glm::rotate(glm::mat4(1.0f), renderTexture->GetCamera()->transform.rotation.x * DEG_2_RAD, glm::vec3(1.0f, 0.0f, 0.0f))
+		    * glm::rotate(glm::mat4(1.0f), renderTexture->GetCamera()->transform.rotation.y * DEG_2_RAD, glm::vec3(0.0f, 1.0f, 0.0f));
+	
+    if (glm::length(movementVector) > 0) {
 		movementVector = glm::normalize(movementVector);
 		movementVector *= viewListener->GetDeltaTime() * EditorProperties::moveSpeed * (inputManager->GetKey(KEYCODE::LEFT_SHIFT) ? 2 : 1);
+
+        glm::vec4 deltaVec4 = glm::inverse(rotMat) * glm::vec4(movementVector.x, movementVector.y, movementVector.z, 1.0f);
+
+        renderTexture->GetCamera()->transform.position += glm::vec3(deltaVec4.x, deltaVec4.y, deltaVec4.z);
 	}
 
-    glm::mat4 rot = glm::rotate(glm::mat4(1.0f), renderTexture->GetCamera()->transform.rotation.x * DEG_2_RAD, glm::vec3(1.0f, 0.0f, 0.0f))
-		    * glm::rotate(glm::mat4(1.0f), renderTexture->GetCamera()->transform.rotation.y * DEG_2_RAD, glm::vec3(0.0f, 1.0f, 0.0f));
-
-    glm::vec4 deltaVec4 = glm::inverse(rot)
-    * glm::vec4(movementVector.x, movementVector.y, movementVector.z, 1.0f);
-
-	renderTexture->GetCamera()->transform.position += glm::vec3(deltaVec4.x, deltaVec4.y, deltaVec4.z);
+    deltaMousePos = glm::vec2(0);
 }
 
 glm::ivec2 SceneViewerModule::CalculateDesiredResolution(glm::ivec2 availableResolution, float targetAspectRatio){

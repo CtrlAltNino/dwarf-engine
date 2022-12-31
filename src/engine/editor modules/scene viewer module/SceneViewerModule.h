@@ -60,9 +60,6 @@ class SceneViewerModule : public IModule{
         /// @brief Flag indicating if the user is currently navigating the camera.
         bool cameraUpdating = false;
 
-        /// @brief Stores the mouse position of the last frame.
-        glm::vec2 lastMousePos = glm::vec2(-1);
-
         /// @brief Stores the difference of the current frame, and last frame mouse position.
         glm::vec2 deltaMousePos = glm::vec2(0);
 

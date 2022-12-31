@@ -62,6 +62,10 @@ class WindowManagerOpenGL : public IWindowManager{
         /// @brief Returns if the window should be closed.
         /// @return True if the window should be closed, false if not.
         virtual bool ShouldWindowCloseSignal();
+        
+        virtual void LockCursorAtPos(glm::vec2 pos);
+
+        virtual void RelativeMouseMode(boolean enabled);
 
         /// @brief Executes all initializing IMGUI tasks.
         virtual void InitImGui();

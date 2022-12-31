@@ -78,4 +78,8 @@ class IWindowManager {
         /// @brief Returns the render textures maintained by the window.
         /// @return Pointer to a vector containing the render textures.
         virtual std::vector<IRenderTexture*>* GetRenderTextures() {return &renderTextures;}
+
+        virtual void LockCursorAtPos(glm::vec2 pos)=0;
+
+        virtual void RelativeMouseMode(boolean enabled)=0;
 };

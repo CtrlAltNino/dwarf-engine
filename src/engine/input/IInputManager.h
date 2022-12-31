@@ -17,6 +17,8 @@ class IInputManager{
     protected:
         /// @brief Pointer to the window manager.
         IWindowManager* windowManager;
+
+        glm::ivec2 deltaMousePos;
         //std::set<KEYCODE> keyPressSet;
         //std::set<MOUSE_BUTTON> mousePressSet;
     public:
@@ -55,6 +57,10 @@ class IInputManager{
          * Returns the current position of the cursor in a vector
         */
         virtual glm::vec2 GetMousePos()=0;
+
+        virtual void SetDeltaMousePos(float x, float y)=0;
+
+        virtual glm::vec2 GetDeltaMousePos()=0;
 
         /**
          * Updates the states of the input states.

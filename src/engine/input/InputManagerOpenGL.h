@@ -3,6 +3,8 @@
 #include "../../utilities/dpch.h"
 
 #include"IInputManager.h"
+#include<imgui_impl_opengl3.h>
+#include<imgui_impl_sdl.h>
 #include<SDL2/SDL.h>
 #include<SDL2/SDL_opengl.h>
 //#include"../windowing/WindowManagerOpenGL.h"
@@ -21,6 +23,7 @@ class InputManagerOpenGL : public IInputManager {
          * Saved position of the current mouse position
         */
         glm::ivec2 currentMousePos;
+        glm::ivec2 lastMousePos;
         
         /**
          * State of the mouse buttons
@@ -110,6 +113,10 @@ class InputManagerOpenGL : public IInputManager {
          * Returns the current position of the cursor in a vector
         */
         virtual glm::vec2 GetMousePos();
+
+        virtual void SetDeltaMousePos(float x, float y);
+
+        virtual glm::vec2 GetDeltaMousePos();
 
         /**
          * Updates the states of the input states.

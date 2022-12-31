@@ -182,3 +182,11 @@ void WindowManagerOpenGL::RemoveRenderTexture(int ID){
         }
     }
 }
+
+void WindowManagerOpenGL::LockCursorAtPos(glm::vec2 pos){
+    SDL_WarpMouseInWindow(this->window, pos.x, pos.y);
+}
+
+void WindowManagerOpenGL::RelativeMouseMode(boolean enabled){
+    SDL_SetRelativeMouseMode(enabled ? SDL_TRUE : SDL_FALSE);
+}
