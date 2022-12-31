@@ -18,6 +18,14 @@ const char* Scene::getSceneName() {
 
 // ========== Scene Functions ==========
 
+Entity Scene::CreateRootEntity(){
+	Entity entity = { m_Registry.create(), this};
+	entity.AddComponent<IDComponent>(UID());
+	entity.AddComponent<TransformComponent>();
+	auto& tag = entity.AddComponent<TagComponent>("Root");
+	return entity;
+}
+
 Entity Scene::CreateEntity(const std::string& name){
 	return CreateEntityWithUID(UID(), name);
 }

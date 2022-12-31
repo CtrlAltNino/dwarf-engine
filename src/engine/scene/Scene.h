@@ -14,7 +14,7 @@
 class Scene : public EntityProvider {
 public:
 	/// @brief The root entity in the scene graph.
-	Entity rootEntity = CreateEntity("root");
+	Entity rootEntity = CreateRootEntity();
 
 	/// @brief Entities that have been selected by the user.
 	std::vector<Entity> selectedEntities;
@@ -28,6 +28,10 @@ public:
 	const char* getSceneName();
 	
 	// ========== Scene Functions ==========
+
+	/// @brief Creates the root entity.
+	/// @return The created entity instance.
+	Entity CreateRootEntity();
 	
 	/// @brief Creates a new entity with a given name.
 	/// @param name Name of the entity.
