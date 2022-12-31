@@ -3,6 +3,7 @@
 #include "../../utilities/dpch.h"
 
 #include"../../utilities/Common.h"
+#include"../../utilities/TimeUtilities.h"
 #include"EditorCommon.h"
 #include"EditorModel.h"
 #include"EditorView.h"

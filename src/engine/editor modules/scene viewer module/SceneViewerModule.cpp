@@ -273,7 +273,6 @@ void SceneViewerModule::UpdateCamera(){
 		(inputManager->GetKey(KEYCODE::Q) ? -1 : 0) + (inputManager->GetKey(KEYCODE::E) ? 1 : 0),
 		(inputManager->GetKey(KEYCODE::W) ? -1 : 0) + (inputManager->GetKey(KEYCODE::S) ? 1 : 0) };
 
-    std::cout << "Scene Viewer updating camera" << std::endl;
     glm::mat4 rotMat = glm::rotate(glm::mat4(1.0f), renderTexture->GetCamera()->transform.rotation.x * DEG_2_RAD, glm::vec3(1.0f, 0.0f, 0.0f))
 		    * glm::rotate(glm::mat4(1.0f), renderTexture->GetCamera()->transform.rotation.y * DEG_2_RAD, glm::vec3(0.0f, 1.0f, 0.0f));
 	

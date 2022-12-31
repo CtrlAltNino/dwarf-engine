@@ -2,10 +2,10 @@
 
 PerformanceModule::PerformanceModule(IViewListener *listener, double* frametime, double* renderTime, int id)
     :IModule(listener, "Performance statistics", MODULE_TYPE::PERFORMANCE, id), frametime(frametime), renderTime(renderTime){
-		std::cout << "Module created with:" << std::endl;
+		/*std::cout << "Module created with:" << std::endl;
 		std::cout << "Name: " << moduleLabel << std::endl;
 		std::cout << "Index: " << moduleIndex << std::endl;
-		std::cout << "Identifier: " << GetIdentifier() << std::endl;
+		std::cout << "Identifier: " << GetIdentifier() << std::endl;*/
 }
 
 void PerformanceModule::RenderModuleWindow(){
@@ -42,8 +42,8 @@ void PerformanceModule::RenderModuleWindow(){
 	ImGui::PopFont();
     
 	ImGui::Text(std::string("Frames per second: " + std::to_string(1.0 / *frametime)).c_str());
-    ImGui::Text(std::string("Frametime: " + std::to_string(*frametime) + " ms").c_str());
-    ImGui::Text(std::string("Render time: " + std::to_string(*renderTime) + " ms").c_str());
+    ImGui::Text(std::string("Frametime: " + std::to_string(*frametime * 1000.0) + " ms").c_str());
+    ImGui::Text(std::string("Render time: " + std::to_string(*renderTime * 1000.0) + " ms").c_str());
 
     ImGui::End();
 

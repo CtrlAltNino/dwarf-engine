@@ -269,7 +269,7 @@ void ProjectLauncher::RenderProjectList(int fWidth, int fHeight) {
 				case 2:
 				{
 					time_t lastOpenedTime = projectList[row].lastOpened;
-					cellText = lastOpenedTime == -1 ? "never" : TimeUtilities::CalculateTimePassedSinceNow(projectList[row].lastOpened);
+					cellText = lastOpenedTime == -1 ? "never" : DPL::TimeUtilities::CalculateTimePassedSinceNow(projectList[row].lastOpened);
 					break;
 				}
 				case 3:

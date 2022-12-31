@@ -32,24 +32,25 @@ EditorController::EditorController(ProjectData projectData) : editorModel(this),
 }
 
 void EditorController::RunLoop(){
-    double lastFrameTime = 0;
-	double currentFrameTime = 0;
+	TimeStamp currentFrameStamp = TimeUtilities::GetCurrent();
+    TimeStamp lastFrameStamp = TimeUtilities::GetCurrent();
     Scene* scene = editorModel.GetScene();
+	
 	// TODO abstract the close condition
     while (!windowManager->ShouldWindowCloseSignal()) {
+		// ===== Time related stuff
+		lastFrameStamp = currentFrameStamp;
+		// TODO abstract the time grabbing
+		currentFrameStamp = TimeUtilities::GetCurrent();
+        // Delta time muss woanders vallah
+		deltaTime = TimeUtilities::GetDifferenceInSeconds(currentFrameStamp, lastFrameStamp);
+
 		inputManager->StartFrame();
 		windowManager->StartFrame();
         editorView.StartFrame();
 		for(int i = 0; i < guiModules.size(); i++){
 			guiModules.at(i)->StartFrame();
 		}
-		
-		// ===== Time related stuff
-		lastFrameTime = currentFrameTime;
-		// TODO abstract the time grabbing
-		currentFrameTime = (double)SDL_GetTicks64() / 1000.0f;
-        // Delta time muss woanders vallah
-		deltaTime = currentFrameTime - lastFrameTime;
 
 		// Abstract viewport stuff (Context and framebuffer wise)
 		glViewport(0, 0, windowManager->GetWindowSize().x, windowManager->GetWindowSize().y);
@@ -69,7 +70,11 @@ void EditorController::RunLoop(){
 		// ===== Drawing Geometry =====
 		// TODO: Draw to a framebuffer
 		std::vector<IRenderTexture*> *renderTextures = windowManager->GetRenderTextures();
-		renderTime = (double)SDL_GetTicks64() / 1000.0f;
+		//renderTime = (double)SDL_GetTicks64() / 1000.0f;
+		//Uint64 renderStart = SDL_GetTicks64();
+		//TimeStamp renderStart = TimeUtilities::GetTimeStamp();
+		//Uint64 renderStart = SDL_GetPerformanceCounter();
+		TimeStamp renderStart = TimeUtilities::GetCurrent();
 		for(int i = 0; i < renderTextures->size(); i++){
 			//if ((windowManager->GetWidth() != 0) && (windowManager->GetHeight() != 0)) {
 			if (windowManager->GetWindowSize().length() > 0) {
@@ -81,7 +86,11 @@ void EditorController::RunLoop(){
 			scene->drawScene(*renderTextures->at(i)->GetCamera());
 			renderTextures->at(i)->Unbind();
 		}
-		renderTime = (double)SDL_GetTicks64() / 1000.0f - renderTime;
+		
+		//renderTime = (SDL_GetTicks64() - renderStart) / 1000;
+		//renderTime = TimeUtilities::GetDifferenceInSeconds(TimeUtilities::GetTimeStamp(), renderStart);
+		//renderTime = (double)((SDL_GetPerformanceCounter() - renderStart) / (double)(SDL_GetPerformanceFrequency()));
+		renderTime = TimeUtilities::GetDifferenceInSeconds(TimeUtilities::GetCurrent(), renderStart);
 
 		// ===== Post processing =====
 		// TODO: Implement
@@ -96,9 +105,16 @@ void EditorController::RunLoop(){
 		//inputManager->UpdatePressStates();
 
 		// ===== Framerate managing =====
-		while (((double)SDL_GetTicks64() / 1000.0f) < currentFrameTime + (EditorProperties::FrameLimit != -1 ? 1.0 / EditorProperties::FrameLimit : 0)) {
+		//TimeStamp timeout = { currentFrameStamp.milisecondsSinceInit + (1 / EditorProperties::FrameLimit * 1000) };
+		//double timeout = (double)currentFrameStamp;
+		//timeout += 1000.0 / 144.0;
+		//while (((double)SDL_GetTicks64() / 1000.0f) < currentFrameTime + (EditorProperties::FrameLimit != -1 ? 1.0 / EditorProperties::FrameLimit : 0)) {
+		//while (EditorProperties::FrameLimit != -1 && (SDL_GetTicks64() < timeout)) {
+		while(TimeUtilities::GetDifferenceInSeconds(TimeUtilities::GetCurrent(), currentFrameStamp) < (1.0 / EditorProperties::FrameLimit)){
 			// TODO: Update this when implementing multi threading
 		}
+
+		//SDL_Delay(1000.0 / (60.0 - (double)((SDL_GetPerformanceCounter() - currentFrameStamp) / (double)(SDL_GetPerformanceFrequency()))));
 	}
 }
 
