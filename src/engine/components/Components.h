@@ -46,8 +46,8 @@ struct TagComponent{
 
 /// @brief A component holding a transform.
 struct TransformComponent{
-    #define RAD_2_DEG ((float)(180.0f/std::_Pi))
-    #define DEG_2_RAD ((float)(std::_Pi / 180.0f))
+    #define RAD_2_DEG ((float)(180.0f/M_PI))
+    #define DEG_2_RAD ((float)(M_PI / 180.0f))
 
     /// @brief Position of the entity.
     glm::vec3 position = { 0.0f, 0.0f, 0.0f };

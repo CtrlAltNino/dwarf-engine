@@ -53,6 +53,7 @@ class ProjectCreator {
                         jsonObject["projectInformation"]["graphicsApi"] = (int)graphicsApi;
 
                         std::string fileContent = jsonObject.dump(4);
+                        std::cout << (std::string(projectPath) + "/" + projectName) << std::endl;
                         FileHandler::writeToFile((std::string(projectPath) + "/" + projectName + "/projectSettings.sproj").c_str(), fileContent);
                     }
                     else {
@@ -63,6 +64,7 @@ class ProjectCreator {
                         case ProjectTemplate::Demo1:
                             templateProjectDirectory = "demo1";
                             break;
+                        case ProjectTemplate::Blank: break;
                         }
 
                         switch (graphicsApi) {
@@ -78,14 +80,24 @@ class ProjectCreator {
                         case GraphicsApi::Vulkan:
                             templateApiDirectory = "vulkan";
                             break;
+                        case GraphicsApi::Metal:
+                            templateApiDirectory = "metal";
+                            break;
                         }
 
                         templateProjectDirectory = "data/demo projects/" + templateApiDirectory + "/" + templateProjectDirectory;
 
-                        std::string copyCommand = std::string("Xcopy \"" + templateProjectDirectory
+                        #ifdef WIN32
+                            std::string copyCommand = std::string("Xcopy \"" + templateProjectDirectory
                             + "\" \""
                             + std::string(projectPath) + "/" + projectName
                             + "\" /E/H/C/I/y/D");
+                        #elif __APPLE__
+                            std::string copyCommand = std::string("cp -R \"./") 
+                                + templateProjectDirectory + "/\" \"" + std::string(projectPath) + "/" + projectName + "\"";
+                        #endif
+                        
+                        system(copyCommand.c_str());
                         
                         //std::cout << copyCommand << std::endl;
 
@@ -104,7 +116,6 @@ class ProjectCreator {
                         }
 
 
-                        system(copyCommand.c_str());
                     }
 
                     size_t pos;

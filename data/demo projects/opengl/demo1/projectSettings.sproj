@@ -1,6 +1,6 @@
 {
     "projectInformation": {
         "projectName": "OpenGL demo",
-        "graphicsApi": 0
+        "graphicsApi": 3
     }
 }

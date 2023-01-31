@@ -216,7 +216,7 @@ class ProjectListHandler {
 
                         std::string newFileContent = jsonObject.dump(4);
                         FileHandler::writeToFile(projectSettingsPath.c_str(), newFileContent);
-                        projectList[id].graphicsApi = (int)api;
+                        projectList[id].graphicsApi = api;
                         SaveProjectList();
                     }
                 }

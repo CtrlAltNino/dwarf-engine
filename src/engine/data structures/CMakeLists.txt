@@ -8,4 +8,6 @@ target_sources(${targetName}
         Texture.cpp
         VAO.cpp
         VBO.cpp
+        MetalTexture.cpp
+        OpenGLTexture.cpp
 )

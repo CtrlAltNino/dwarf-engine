@@ -10,10 +10,11 @@
       "name": "imgui",
       "default-features": false,
       "features": [
-        "glfw-binding",
         "sdl2-binding",
+        "sdl2-renderer-binding",
         "opengl3-binding",
-        "docking-experimental"
+        "docking-experimental",
+        "metal-binding"
       ]
     },
     "assimp",
@@ -24,7 +25,9 @@
     "efsw",
     "imguizmo",
     "entt",
-    "sdl2"
+    "sdl2",
+    "xxhash",
+    "platform-folders"
   ],
   "overrides": [
     { "name": "glad", "version": "0.1.36" },

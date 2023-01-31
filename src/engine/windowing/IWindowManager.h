@@ -8,8 +8,6 @@
 #include"../../utilities/Common.h"
 #include"../rendering/IRenderTexture.h"
 
-#define INITIAL_WINDOW_WIDTH (1280)
-#define INITIAL_WINDOW_HEIGHT (720)
 #define INTER_REGULAR_PATH "data/engine/fonts/Roboto-Regular.ttf"
 #define INTER_BOLD_PATH "data/engine/fonts/Inter-Bold.ttf"
 
@@ -18,12 +16,11 @@ class IWindowManager {
         /// @brief Clear color for the framebuffer of the window.
         glm::vec4 clearColor = glm::vec4(0.1,0.1,0.1,1);
 
-        /// @brief Current size of the window.
-        glm::ivec2 windowSize;
-
         /// @brief Render textures maintained by this window.
         std::vector<IRenderTexture*> renderTextures;
     public:
+    /// @brief Current size of the window.
+        glm::ivec2 windowSize;
         /// @brief Key: Name of the font. Value: Loaded fonts used in IMGUI.
         static inline std::map<std::string,ImFont*> fonts;
 
@@ -39,12 +36,14 @@ class IWindowManager {
         /// @brief Initializes the window manager.
         virtual void Init()=0;
 
+        virtual void Quit()=0;
+
         /// @brief Returns the used API.
         /// @return The used API represented as an enum.
         virtual GraphicsApi GetActiveApi()=0;
 
         /// @brief Creates the window of the Dwarf Engine editor.
-        virtual void CreateEditorWindow()=0;
+        virtual void CreateWindow(glm::ivec2 windowSize, glm::ivec2 minSize, const char* windowTitle)=0;
 
         /// @brief Changes the title of the window.
         /// @param windowName The new title.
@@ -81,5 +80,9 @@ class IWindowManager {
 
         virtual void LockCursorAtPos(glm::vec2 pos)=0;
 
-        virtual void RelativeMouseMode(boolean enabled)=0;
+        virtual void RelativeMouseMode(bool enabled)=0;
+
+        virtual void ShowWindow()=0;
+
+        virtual void HideWindow()=0;
 };

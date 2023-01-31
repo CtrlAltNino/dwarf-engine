@@ -1,14 +1,24 @@
 #pragma once
 
-#include<glad/glad.h>
-#include<imgui_impl_opengl3.h>
-#include<imgui_impl_sdl.h>
-#include<stb_image.h>
+// pre compiled header
+#include "../../utilities/dpch.h"
+
+// system
 #include<iostream>
+
+// OpenGL dependencies
+#include<glad/glad.h>
+
+// SDL
 #include<SDL2/SDL.h>
 #include<SDL2/SDL_opengl.h>
 
-#include "../../utilities/dpch.h"
+// IMGUI
+#include<imgui_impl_opengl3.h>
+#include<imgui_impl_sdl.h>
+
+// Other
+#include<stb_image.h>
 
 #include"IWindowManager.h"
 #include"../rendering/RenderTextureOpenGL.h"
@@ -38,12 +48,14 @@ class WindowManagerOpenGL : public IWindowManager{
         /// @brief Initializes the window manager.
         virtual void Init();
 
+        virtual void Quit();
+
         /// @brief Returns the used API.
         /// @return The used API represented as an enum.
         virtual GraphicsApi GetActiveApi();
 
         /// @brief Creates the window of the Dwarf Engine editor.
-        virtual void CreateEditorWindow();
+        virtual void CreateWindow(glm::ivec2 windowSize, glm::ivec2 minSize, const char* windowTitle);
 
         /// @brief Changes the title of the window.
         /// @param windowName The new title.
@@ -65,7 +77,7 @@ class WindowManagerOpenGL : public IWindowManager{
         
         virtual void LockCursorAtPos(glm::vec2 pos);
 
-        virtual void RelativeMouseMode(boolean enabled);
+        virtual void RelativeMouseMode(bool enabled);
 
         /// @brief Executes all initializing IMGUI tasks.
         virtual void InitImGui();
@@ -81,4 +93,8 @@ class WindowManagerOpenGL : public IWindowManager{
         /// @brief Returns the SDL2 Opengl window structure.
         /// @return SDL2 OpenGL window structure.
         SDL_Window* GetOpenGLWindow();
+
+        virtual void ShowWindow();
+
+        virtual void HideWindow();
 };

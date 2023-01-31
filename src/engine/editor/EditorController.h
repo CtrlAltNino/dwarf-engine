@@ -1,14 +1,14 @@
 #pragma once
 
-#include "../../utilities/dpch.h"
-
 #include"../../utilities/Common.h"
+
+#include"../input/IInputManager.h"
+#include"../windowing/IWindowManager.h"
+#include"../windowing/WindowManagerMetal.h"
 #include"../../utilities/TimeUtilities.h"
 #include"EditorCommon.h"
 #include"EditorModel.h"
 #include"EditorView.h"
-#include"../input/IInputManager.h"
-#include"../windowing/IWindowManager.h"
 #include"../windowing/WindowManagerOpenGL.h"
 #include"../input/InputManagerOpenGL.h"
 #include"EditorProperties.h"

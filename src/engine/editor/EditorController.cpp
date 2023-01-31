@@ -1,16 +1,29 @@
 #include"EditorController.h"
 
+#define EDITOR_INITIAL_WINDOW_WIDTH (1280)
+#define EDITOR_INITIAL_WINDOW_HEIGHT (720)
+
 EditorController::EditorController(ProjectData projectData) : editorModel(this), editorView(this), assetDatabase(projectData.path) {
 	projectPath = projectData.path;
 	assetDatabase.Init();
 	switch(projectData.graphicsApi){
+		case GraphicsApi::D3D11: break;
+		case GraphicsApi::D3D12: break;
+		case GraphicsApi::Metal:
+				inputManager = new InputManagerOpenGL();
+				windowManager = new WindowManagerMetal((InputManagerOpenGL*)inputManager);
+			break;
 		case GraphicsApi::OpenGL:
 			inputManager = new InputManagerOpenGL();
 			windowManager = new WindowManagerOpenGL((InputManagerOpenGL*)inputManager);
 			//inputManager = new InputManagerOpenGL((WindowManagerOpenGL*)windowManager);
 			break;
+		case GraphicsApi::Vulkan: break;
 	}
     windowManager->Init();
+
+	const char* title = ("Dwarf Engine Editor - " + projectData.name + " - " +editorModel.GetScene()->getSceneName() + " (" +(graphicsApiNames[(int)projectData.graphicsApi]) +")").c_str();
+	windowManager->CreateWindow({EDITOR_INITIAL_WINDOW_WIDTH, EDITOR_INITIAL_WINDOW_HEIGHT}, {EDITOR_INITIAL_WINDOW_WIDTH, EDITOR_INITIAL_WINDOW_HEIGHT}, title);
 	
 	// 2. Initialize IMGUI
     ImGuiIO& io = ImGui::GetIO();
@@ -28,7 +41,7 @@ EditorController::EditorController(ProjectData projectData) : editorModel(this),
     editorView.Init();
     //AddWindow(MODULE_TYPE::PERFORMANCE);
 
-	windowManager->SetWindowTitle("Dwarf Engine Editor - " + projectData.name + " - " +editorModel.GetScene()->getSceneName() + " (" +(graphicsApiNames[(int)projectData.graphicsApi]) +")");
+	//windowManager->SetWindowTitle("Dwarf Engine Editor - " + projectData.name + " - " +editorModel.GetScene()->getSceneName() + " (" +(graphicsApiNames[(int)projectData.graphicsApi]) +")");
 }
 
 void EditorController::RunLoop(){
@@ -137,6 +150,7 @@ void EditorController::AddWindow(MODULE_TYPE moduleType){
 		case MODULE_TYPE::INSPECTOR:
 			guiModule = new InspectorModule((IViewListener*)this, editorModel.GetScene(), guiModuleIDCount++);
 			break;
+		case MODULE_TYPE::CONSOLE: break;
 	}
 
 	if(guiModule != nullptr){
@@ -152,6 +166,11 @@ void EditorController::RemoveWindow(int index){
 				case MODULE_TYPE::SCENE_VIEWER:
 					windowManager->RemoveRenderTexture((intptr_t)((SceneViewerModule*)guiModules[i])->GetTextureID());
 					break;
+				case MODULE_TYPE::ASSET_BROWSER: break;
+				case MODULE_TYPE::CONSOLE: break;
+				case MODULE_TYPE::INSPECTOR: break;
+				case MODULE_TYPE::PERFORMANCE: break;
+				case MODULE_TYPE::SCENE_GRAPH: break;
 			}
 			guiModules.erase(guiModules.begin()+i);
 		}

@@ -5,7 +5,7 @@
 /// @brief Enum defining the states of the project launcher.
 enum class ProjectChooserState {Choosing, Done, ProjectNotFound, CreateNewProject, ChangeGraphicsApi, Canceled};
 
-/// @brief EEnum defining the available project templates.
+/// @brief Enum defining the available project templates.
 enum class ProjectTemplate {Blank, Demo1};
 #define GITHUB_PNG_ICON_PATH "data/engine/img/icons/github.png"
 #define PATREON_PNG_ICON_PATH "data/engine/img/icons/patreon.png"
@@ -24,5 +24,5 @@ struct ProjectInformation {
 	std::string name;
 	std::string path;
 	int lastOpened;
-	int graphicsApi;
+	GraphicsApi graphicsApi;
 };

@@ -2,8 +2,8 @@
 
 #include "../../../utilities/dpch.h"
 #include"../../scene/Scene.h"
-
 #include<imgui_internal.h>
+#include<math.h>
 #include "../IModule.h"
 
 /// @brief Module that renders a window, containing information of selected objects or assets.
