@@ -621,56 +621,58 @@ void ProjectLauncherView::RenderChangeGraphicsApiModal() {
 				// Looping through all the combo entries
 				for (int n = 0; n < sizeof(graphicsApiNames)/sizeof(graphicsApiNames[0]); n++)
 				{
-					const bool is_selected = (currentApiIndex == n);
+					if(apiAvailability[n]){
+						const bool is_selected = (currentApiIndex == n);
 
-					// Selectable settings
-					ImGui::PushStyleVar(ImGuiStyleVar_SelectableTextAlign, ImVec2(0.5f, 0.5f));
-					ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0, 0, 0, 0));
-					ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0, 0, 0, 0));
-					ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0, 0, 0, 0));
+						// Selectable settings
+						ImGui::PushStyleVar(ImGuiStyleVar_SelectableTextAlign, ImVec2(0.5f, 0.5f));
+						ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0, 0, 0, 0));
+						ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0, 0, 0, 0));
+						ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0, 0, 0, 0));
 
-					// For drawing a custom Selectable background, we split the channel
-					// Now we can draw the text in the foreground, and the colored, rounded rectangle in the background
-					draw_list->ChannelsSplit(2);
-					draw_list->ChannelsSetCurrent(1);
+						// For drawing a custom Selectable background, we split the channel
+						// Now we can draw the text in the foreground, and the colored, rounded rectangle in the background
+						draw_list->ChannelsSplit(2);
+						draw_list->ChannelsSetCurrent(1);
 
-					if (n > 0) {
-						ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+						if (n > 0) {
+							ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+						}
+
+						// ==================== Graphics Selectable ====================
+						if (ImGui::Selectable(graphicsApiNames[n], is_selected, 0, ImVec2(0, 16 + 10))) {
+							currentApiIndex = n;
+						}
+
+						// Reset Style
+						ImGui::PopStyleVar(1);
+						ImGui::PopStyleColor(3);
+
+						// Drawing the background rectangle
+						if (ImGui::IsItemHovered()) {
+							ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+							draw_list->ChannelsSetCurrent(0);
+							ImVec2 p_min = ImGui::GetItemRectMin();
+							ImVec2 p_max = ImGui::GetItemRectMax();
+							ImU32 rectCol = ImGui::IsMouseDown(ImGuiMouseButton_Left) ? IM_COL32(76, 86, 106, 255) : IM_COL32(67, 76, 94, 255);
+
+							ImGui::GetWindowDrawList()->AddRectFilled(p_min, p_max, rectCol, 5);
+						}
+						else if (is_selected) {
+							draw_list->ChannelsSetCurrent(0);
+							ImVec2 p_min = ImGui::GetItemRectMin();
+							ImVec2 p_max = ImGui::GetItemRectMax();
+							ImU32 rectCol = IM_COL32(59, 66, 82, 255);
+
+							ImGui::GetWindowDrawList()->AddRectFilled(p_min, p_max, rectCol, 5);
+						}
+
+						draw_list->ChannelsMerge();
+
+						// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+						if (is_selected)
+							ImGui::SetItemDefaultFocus();
 					}
-
-					// ==================== Graphics Selectable ====================
-					if (ImGui::Selectable(graphicsApiNames[n], is_selected, 0, ImVec2(0, 16 + 10))) {
-						currentApiIndex = n;
-					}
-
-					// Reset Style
-					ImGui::PopStyleVar(1);
-					ImGui::PopStyleColor(3);
-
-					// Drawing the background rectangle
-					if (ImGui::IsItemHovered()) {
-						ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
-						draw_list->ChannelsSetCurrent(0);
-						ImVec2 p_min = ImGui::GetItemRectMin();
-						ImVec2 p_max = ImGui::GetItemRectMax();
-						ImU32 rectCol = ImGui::IsMouseDown(ImGuiMouseButton_Left) ? IM_COL32(76, 86, 106, 255) : IM_COL32(67, 76, 94, 255);
-
-						ImGui::GetWindowDrawList()->AddRectFilled(p_min, p_max, rectCol, 5);
-					}
-					else if (is_selected) {
-						draw_list->ChannelsSetCurrent(0);
-						ImVec2 p_min = ImGui::GetItemRectMin();
-						ImVec2 p_max = ImGui::GetItemRectMax();
-						ImU32 rectCol = IM_COL32(59, 66, 82, 255);
-
-						ImGui::GetWindowDrawList()->AddRectFilled(p_min, p_max, rectCol, 5);
-					}
-
-					draw_list->ChannelsMerge();
-
-					// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
-					if (is_selected)
-						ImGui::SetItemDefaultFocus();
 				}
 
 				ImGui::EndCombo();
@@ -1119,56 +1121,58 @@ void ProjectLauncherView::RenderCreateNewProjectModal() {
 				// Looping through all the combo entries
 				for (int n = 0; n < sizeof(graphicsApiNames)/sizeof(graphicsApiNames[0]); n++)
 				{
-					const bool is_selected = (currentApiIndex == n);
+					if(apiAvailability[n]){
+						const bool is_selected = (currentApiIndex == n);
 
-					// Selectable settings
-					ImGui::PushStyleVar(ImGuiStyleVar_SelectableTextAlign, ImVec2(0.5f, 0.5f));
-					ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0, 0, 0, 0));
-					ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0, 0, 0, 0));
-					ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0, 0, 0, 0));
-					
-					// For drawing a custom Selectable background, we split the channel
-					// Now we can draw the text in the foreground, and the colored, rounded rectangle in the background
-					draw_list->ChannelsSplit(2);
-					draw_list->ChannelsSetCurrent(1);
+						// Selectable settings
+						ImGui::PushStyleVar(ImGuiStyleVar_SelectableTextAlign, ImVec2(0.5f, 0.5f));
+						ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0, 0, 0, 0));
+						ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0, 0, 0, 0));
+						ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0, 0, 0, 0));
+						
+						// For drawing a custom Selectable background, we split the channel
+						// Now we can draw the text in the foreground, and the colored, rounded rectangle in the background
+						draw_list->ChannelsSplit(2);
+						draw_list->ChannelsSetCurrent(1);
 
-					if (n > 0) {
-						ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+						if (n > 0) {
+							ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+						}
+
+						// ==================== Rendering Selectable ====================
+						if (ImGui::Selectable(graphicsApiNames[n], is_selected, 0, ImVec2(0, 16 + 10))) {
+							currentApiIndex = n;
+						}
+
+						// Reset Style
+						ImGui::PopStyleVar(1);
+						ImGui::PopStyleColor(3);
+						
+						// Drawing the background rectangle
+						if (ImGui::IsItemHovered()) {
+							ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+							draw_list->ChannelsSetCurrent(0);
+							ImVec2 p_min = ImGui::GetItemRectMin();
+							ImVec2 p_max = ImGui::GetItemRectMax();
+							ImU32 rectCol = ImGui::IsMouseDown(ImGuiMouseButton_Left) ? IM_COL32(76, 86, 106, 255) : IM_COL32(67, 76, 94, 255);
+
+							ImGui::GetWindowDrawList()->AddRectFilled(p_min, p_max, rectCol, 5);
+						}
+						else if (is_selected) {
+							draw_list->ChannelsSetCurrent(0);
+							ImVec2 p_min = ImGui::GetItemRectMin();
+							ImVec2 p_max = ImGui::GetItemRectMax();
+							ImU32 rectCol = IM_COL32(59, 66, 82, 255);
+
+							ImGui::GetWindowDrawList()->AddRectFilled(p_min, p_max, rectCol, 5);
+						}
+
+						draw_list->ChannelsMerge();
+
+						// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
+						if (is_selected)
+							ImGui::SetItemDefaultFocus();
 					}
-
-					// ==================== Rendering Selectable ====================
-					if (ImGui::Selectable(graphicsApiNames[n], is_selected, 0, ImVec2(0, 16 + 10))) {
-						currentApiIndex = n;
-					}
-
-					// Reset Style
-					ImGui::PopStyleVar(1);
-					ImGui::PopStyleColor(3);
-					
-					// Drawing the background rectangle
-					if (ImGui::IsItemHovered()) {
-						ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
-						draw_list->ChannelsSetCurrent(0);
-						ImVec2 p_min = ImGui::GetItemRectMin();
-						ImVec2 p_max = ImGui::GetItemRectMax();
-						ImU32 rectCol = ImGui::IsMouseDown(ImGuiMouseButton_Left) ? IM_COL32(76, 86, 106, 255) : IM_COL32(67, 76, 94, 255);
-
-						ImGui::GetWindowDrawList()->AddRectFilled(p_min, p_max, rectCol, 5);
-					}
-					else if (is_selected) {
-						draw_list->ChannelsSetCurrent(0);
-						ImVec2 p_min = ImGui::GetItemRectMin();
-						ImVec2 p_max = ImGui::GetItemRectMax();
-						ImU32 rectCol = IM_COL32(59, 66, 82, 255);
-
-						ImGui::GetWindowDrawList()->AddRectFilled(p_min, p_max, rectCol, 5);
-					}
-
-					draw_list->ChannelsMerge();
-
-					// Set the initial focus when opening the combo (scrolling + keyboard navigation focus)
-					if (is_selected)
-						ImGui::SetItemDefaultFocus();
 				}
 
 				ImGui::EndCombo();
