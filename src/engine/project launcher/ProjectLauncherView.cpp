@@ -925,7 +925,7 @@ void ProjectLauncherView::RenderCreateNewProjectModal() {
 			
 			// Browse path button
 			ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5);
-			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - 5);
+			//ImGui::SetCursorPosY(ImGui::GetCursorPosY());
 			ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
 			if (ImGui::Button("...", ImVec2(width,25))) {
 				// Directory Dialog
