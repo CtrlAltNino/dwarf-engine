@@ -1,14 +1,16 @@
 #pragma once
 
-#include "../../utilities/dpch.h"
-
 #include"../../utilities/Common.h"
+
+#include"../input/IInputManager.h"
+#include"../windowing/IWindowManager.h"
+#ifdef __APPLE__
+    #include"../windowing/WindowManagerMetal.h"
+#endif
 #include"../../utilities/TimeUtilities.h"
 #include"EditorCommon.h"
 #include"EditorModel.h"
 #include"EditorView.h"
-#include"../input/IInputManager.h"
-#include"../windowing/IWindowManager.h"
 #include"../windowing/WindowManagerOpenGL.h"
 #include"../input/InputManagerOpenGL.h"
 #include"EditorProperties.h"
@@ -46,6 +48,8 @@ class EditorController : public IModelListener, public IViewListener {
 
         /// @brief Path to the opened project.
         std::string projectPath;
+
+        std::string windowTitle;
 
         /// @brief Current delta time
         double deltaTime;

@@ -6,8 +6,8 @@
 
 /// @brief Class representing a rotation in 3D space.
 class Rotation {
-    #define RAD_2_DEG ((float)(180.0f/std::_Pi))
-    #define DEG_2_RAD ((float)(std::_Pi / 180.0f))
+    #define RAD_2_DEG ((float)(180.0f/std::numbers::pi))
+    #define DEG_2_RAD ((float)(std::numbers::pi / 180.0f))
     private:
         /// @brief Euler representation of the rotation.
         glm::vec3 eulerAngles;

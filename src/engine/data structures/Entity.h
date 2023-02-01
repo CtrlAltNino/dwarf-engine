@@ -5,7 +5,7 @@
 //#include"../scene/Object.h"
 #include"../scene/Camera.h"
 
-#include<glad/glad.h>
+//#include<glad/glad.h>
 #include<entt/entt.hpp>
 #include<entt/entity/registry.hpp>
 #include<algorithm>

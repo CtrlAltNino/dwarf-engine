@@ -1,12 +1,12 @@
 # Set the minimum required CMake Version
 cmake_minimum_required(VERSION 3.22)
 
-# Helper functions
-include(${CMAKE_SOURCE_DIR}/helper.cmake)
-
 # Maybe move to windows only, need to test
 ADD_DEFINITIONS(-DUNICODE)
 ADD_DEFINITIONS(-D_UNICODE)
+# Helper functions
+include(${CMAKE_SOURCE_DIR}/helper.cmake)
+
 add_compile_definitions(NOMINMAX)
 set(CMAKE_CXX_STANDARD 20)
 set(targetName dwarf-engine)
@@ -25,13 +25,16 @@ IF (WIN32)
     set(APP_ICON_RESOURCE_WINDOWS "${CMAKE_CURRENT_SOURCE_DIR}/app_icon_windows.rc")
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
     set(EXECUTABLE_ADDITIONAL_SETTINGS ${APP_ICON_RESOURCE_WINDOWS})
-    
     # Hiding the console window in release mode
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
     
     add_executable(${targetName} "")
 ELSEIF (APPLE)
-    set(VCPKG_TARGET_TRIPLET "x64-osx-static")
+    file(READ "$ENV{HOME}/.vcpkg/vcpkg.path.txt" VCPKG_PATH)
+    set(CMAKE_TOOLCHAIN_FILE "${VCPKG_PATH}/scripts/buildsystems/vcpkg.cmake")
+    set(VCPKG_LIBRARY_LINKAGE static)
+    set(VCPKG_TARGET_TRIPLET "x64-osx")
+    set(VCPKG_HOST_TRIPLET "x64-osx")
     add_executable(${targetName} "")
 ELSEIF (UNIX AND NOT APPLE)
     # ~/.vcpkg/vcpkg.path.txt
@@ -46,7 +49,7 @@ set(CMAKE_PCH_INSTANTIATE_TEMPLATES ON)
 target_sources(${targetName} PRIVATE ${EXECUTABLE_ADDITIONAL_SETTINGS})
 
 # Project declaration
-project(Dwarf\ Engine VERSION 0.0.1)
+project(Dwarf\ Engine VERSION 0.0.1 LANGUAGES C CXX OBJC OBJCXX)
 
 # Add the CMakeLists.txt files of the subdirectories
 smtg_add_subdirectories()
@@ -94,6 +97,25 @@ target_link_libraries(${targetName} PRIVATE imguizmo::imguizmo)
 
 find_package(EnTT CONFIG REQUIRED)
 target_link_libraries(${targetName} PRIVATE EnTT::EnTT)
+
+find_package(xxHash CONFIG REQUIRED)
+target_link_libraries(${targetName} PRIVATE xxHash::xxhash)
+
+find_package(platform_folders CONFIG REQUIRED)
+target_link_libraries(${targetName} PRIVATE sago::platform_folders)
+
+IF (APPLE)
+    find_library(METAL Metal)
+    find_library(FOUNDATION Foundation)
+    find_library(QUARTZCORE QuartzCore)
+
+    target_link_libraries(${targetName} PRIVATE ${METAL})
+    target_link_libraries(${targetName} PRIVATE ${FOUNDATION})
+    target_link_libraries(${targetName} PRIVATE ${QUARTZCORE})
+
+    #target_include_directories(${targetName} PRIVATE "lib/metal-cpp/")
+    target_include_directories(${targetName} PRIVATE ${CMAKE_SOURCE_DIR}/include/metal-cpp)
+ENDIF()
 
 # Copy files to build folder
 add_custom_command(TARGET 

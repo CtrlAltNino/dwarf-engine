@@ -5,7 +5,7 @@
 #include"EntityProvider.h"
 #include"../components/Components.h"
 
-#include<glad/glad.h>
+//#include<glad/glad.h>
 
 #include"Object.h"
 #include"Camera.h"
@@ -63,7 +63,7 @@ public:
 	/// @brief Checks if an entity is selected.
 	/// @param entity Entity instance.
 	/// @return True if selected, false if not.
-	boolean isEntitySelected(Entity entity);
+	bool isEntitySelected(Entity entity);
 
 	/// @brief Clears the selection list.
 	void clearSelection();

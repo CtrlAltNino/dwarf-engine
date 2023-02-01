@@ -190,7 +190,7 @@ void SceneViewerModule::RenderModuleWindow(){
     
     // TODO: Add cursor collision with other windows that may block
 
-    static boolean cameraMovementStarted = false;
+    static bool cameraMovementStarted = false;
 
     if(!cameraMovementStarted && ImGui::IsMouseHoveringRect(hoverRectMin, hoverRectMax)
         && inputManager->GetMouse(MOUSE_BUTTON::RIGHT)){

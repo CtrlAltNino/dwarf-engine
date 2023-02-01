@@ -69,8 +69,8 @@ void InspectorModule::RenderComponents(Entity entity) {
         TransformComponent* transform = &entity.GetComponent<TransformComponent>();
 
         ImGui::DragFloat3("Position", &transform->position.x, 0.015f);
-        static const float rad_2_deg = 180.0f / std::_Pi;
-        static const float deg_2_rad = std::_Pi / 180.0f;
+        static const float rad_2_deg = 180.0f / M_PI;
+        static const float deg_2_rad = M_PI / 180.0f;
         //glm::vec3 rot = rad_2_deg * glm::eulerAngles(transform->rotation);
         glm::vec3 rot = transform->getEulerAngles();
         ImGui::DragFloat3("Rotation", &rot.x, 0.05f);

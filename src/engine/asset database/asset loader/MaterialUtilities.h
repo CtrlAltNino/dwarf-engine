@@ -1,6 +1,6 @@
 #pragma once
-#include "../../utilities/dpch.h"
-#include "../rendering/Material.h"
+#include "../../../utilities/dpch.h"
+#include "../../rendering/Material.h"
 #include "../AssetMetaDataUtilities.h"
 
 /// @brief Utilities for importing Materials and exporting them to disk.

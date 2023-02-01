@@ -2,7 +2,7 @@
 
 #include "../../utilities/dpch.h"
 
-#include<glad/glad.h>
+//#include<glad/glad.h>
 #include <glm/gtx/transform.hpp> // after <glm/glm.hpp>
 #include <glm/gtc/quaternion.hpp>
 #include <glm/gtx/quaternion.hpp>

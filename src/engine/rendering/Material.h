@@ -2,7 +2,7 @@
 
 #include "../../utilities/dpch.h"
 
-#include<glad/glad.h>
+//#include<glad/glad.h>
 #include<glm/glm.hpp>
 
 #include"../data structures/Color.h"
@@ -119,6 +119,6 @@ class Material {
 			return mat;
 		}*/
 
-		static Material CreatePBRMaterial(){}
-		static Material CreateSpriteMaterial(){}
+		// static Material CreatePBRMaterial(){}
+		// static Material CreateSpriteMaterial(){}
 };

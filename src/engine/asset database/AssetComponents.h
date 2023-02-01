@@ -26,7 +26,7 @@ struct MeshAsset {
     std::filesystem::path path;
 
     /// @brief Flag indicating if the model is loaded.
-    boolean loaded;
+    bool loaded;
 
     MeshAsset(std::filesystem::path path) : path(path){}
 
@@ -59,7 +59,7 @@ struct MaterialAsset {
     std::filesystem::path path;
 
     /// @brief Flag indicating if the model is loaded.
-    boolean loaded;
+    bool loaded;
 
     MaterialAsset(std::filesystem::path path) : path(path) { }
 
@@ -118,7 +118,7 @@ struct TesselationEvaluationShaderAsset {
     /// @brief Path to the asset.
     std::filesystem::path path;
 
-    TesselationEvaluationShaderAsset(std::filesystem::path pathh) : path(path) {}
+    TesselationEvaluationShaderAsset(std::filesystem::path path) : path(path) {}
 };
 
 /// @brief Component containing a compute shader asset.
@@ -138,7 +138,7 @@ struct TextureAsset {
     std::filesystem::path path;
 
     /// @brief Flag indicating if the model is loaded.
-    boolean loaded;
+    bool loaded;
 
     TextureAsset(std::filesystem::path path) : path(path) {}
 

@@ -2,7 +2,7 @@
 
 #include "../../utilities/dpch.h"
 
-#include<glad/glad.h>
+//#include<glad/glad.h>
 #include<glm/glm.hpp>
 // Material abstrahieren
 #include<assimp/cimport.h>

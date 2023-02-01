@@ -10,11 +10,23 @@
       "name": "imgui",
       "default-features": false,
       "features": [
-        "glfw-binding",
         "sdl2-binding",
+        "sdl2-renderer-binding",
         "opengl3-binding",
         "docking-experimental"
-      ]
+      ],
+      "platform": "!osx"
+    },
+    {
+      "name": "imgui",
+      "default-features": false,
+      "features": [
+        "sdl2-binding",
+        "sdl2-renderer-binding",
+        "docking-experimental",
+        "metal-binding"
+      ],
+      "platform": "osx"
     },
     "assimp",
     "stb",
@@ -24,7 +36,9 @@
     "efsw",
     "imguizmo",
     "entt",
-    "sdl2"
+    "sdl2",
+    "xxhash",
+    "platform-folders"
   ],
   "overrides": [
     { "name": "glad", "version": "0.1.36" },

@@ -13,7 +13,7 @@ class EditorView {
         /// @brief IO instance of IMGUI.
         ImGuiIO* io;
 
-        /// @brief Interfaces controller to communicate with the controller.
+        /// @brief Interfaced controller to communicate with the controller.
         IViewListener* viewListener;
 
         /// @brief TODO IMGUI example function to render the base docking layout.

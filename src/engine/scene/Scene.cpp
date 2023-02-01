@@ -142,7 +142,7 @@ void Scene::removeEntityFromSelection(Entity entity){
 	selectedEntities.erase(std::find(selectedEntities.begin(), selectedEntities.end(), entity));
 }
 
-boolean Scene::isEntitySelected(Entity entity){
+bool Scene::isEntitySelected(Entity entity){
 	return std::find(selectedEntities.begin(), selectedEntities.end(), entity) != selectedEntities.end();
 }
 
