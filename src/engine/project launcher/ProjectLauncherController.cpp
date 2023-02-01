@@ -27,10 +27,11 @@ void ProjectLauncherController::Init(){
     #endif
 
     windowManager->Init();
-    windowManager->CreateWindow({LAUNCHER_INITIAL_WINDOW_WIDTH, LAUNCHER_INITIAL_WINDOW_HEIGHT},
+    windowManager->InitWindow({LAUNCHER_INITIAL_WINDOW_WIDTH, LAUNCHER_INITIAL_WINDOW_HEIGHT},
         {LAUNCHER_INITIAL_WINDOW_WIDTH, LAUNCHER_INITIAL_WINDOW_HEIGHT},
         "Dwarf Engine Project Launcher");
-
+    windowManager->ShowWindow();
+    
     // Initializing the project launcher model (e.g. loading the project list)
     model.Init();
 

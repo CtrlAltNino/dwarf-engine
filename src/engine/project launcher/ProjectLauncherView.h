@@ -5,10 +5,11 @@
 #include "ProjectLauncherModel.h"
 #include "TimeUtilities.h"
 #include "BrowserLinkOpener.h"
-#include <Metal/Metal.hpp>
-#include "../windowing/WindowManagerMetal.h"
+#ifdef __APPLE__
+    #include <Metal/Metal.hpp>
+    #include "../windowing/WindowManagerMetal.h"
+#endif
 #include "../data structures/ITexture.h"
-#include "../utilities/Common.h"
 #include "../asset database/asset loader/TextureUtilities.h"
 
 class ProjectLauncherView {

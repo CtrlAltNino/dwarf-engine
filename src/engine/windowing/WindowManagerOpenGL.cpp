@@ -17,7 +17,7 @@ GraphicsApi WindowManagerOpenGL::GetActiveApi(){
     return GraphicsApi::OpenGL;
 }
 
-void WindowManagerOpenGL::CreateWindow(glm::ivec2 windowSize, glm::ivec2 minSize, const char* windowTitle){
+void WindowManagerOpenGL::InitWindow(glm::ivec2 windowSize, glm::ivec2 minSize, const char* windowTitle){
     // SDL Setup
 	SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
@@ -27,7 +27,6 @@ void WindowManagerOpenGL::CreateWindow(glm::ivec2 windowSize, glm::ivec2 minSize
 	WindowFlags |= SDL_WINDOW_HIDDEN;
 	WindowFlags |= SDL_WINDOW_MOUSE_CAPTURE;
 	WindowFlags |= SDL_WINDOW_RESIZABLE;
-	WindowFlags |= SDL_WINDOW_MAXIMIZED;
 
     window = SDL_CreateWindow(windowTitle, 0, 0, windowSize.x, windowSize.y, WindowFlags);
 	if (window == NULL) {
@@ -35,7 +34,12 @@ void WindowManagerOpenGL::CreateWindow(glm::ivec2 windowSize, glm::ivec2 minSize
         SDL_Quit();
     }
     
+    SDL_DisplayMode mode;
+	int dmCode = SDL_GetDesktopDisplayMode(SDL_GetWindowDisplayIndex(window), &mode);
+    
     SDL_SetWindowMinimumSize(window, minSize.x, minSize.y);
+    //SDL_SetWindowSize(window, windowSize.x, windowSize.y);
+	SDL_SetWindowPosition(window, mode.w/2 - (windowSize.x / 2), mode.h / 2 - (windowSize.y / 2));
     context = SDL_GL_CreateContext(window);
     
     // OpenGL Setup

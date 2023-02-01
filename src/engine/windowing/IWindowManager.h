@@ -43,7 +43,7 @@ class IWindowManager {
         virtual GraphicsApi GetActiveApi()=0;
 
         /// @brief Creates the window of the Dwarf Engine editor.
-        virtual void CreateWindow(glm::ivec2 windowSize, glm::ivec2 minSize, const char* windowTitle)=0;
+        virtual void InitWindow(glm::ivec2 windowSize, glm::ivec2 minSize, const char* windowTitle)=0;
 
         /// @brief Changes the title of the window.
         /// @param windowName The new title.

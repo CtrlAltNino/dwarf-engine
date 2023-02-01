@@ -25,7 +25,7 @@ class TextureUtilities {
         // Builds texture without meta data
         static ITexture* CreateTexture(std::filesystem::path path) {
             #ifdef WIN32
-
+                return nullptr;
             #elif __linux__
 
             #elif __APPLE__

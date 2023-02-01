@@ -6,6 +6,9 @@
 #include<math.h>
 #include "../IModule.h"
 
+#define _USE_MATH_DEFINES
+#include<cmath>
+
 /// @brief Module that renders a window, containing information of selected objects or assets.
 class InspectorModule : public IModule{
     private:

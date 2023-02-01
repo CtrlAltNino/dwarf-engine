@@ -1,7 +1,6 @@
 #pragma once
 
 #include "../../utilities/dpch.h"
-
 #include<glm/glm.hpp>
 #include<glm/gtc/matrix_transform.hpp>
 #include<glm/gtc/quaternion.hpp>
@@ -15,6 +14,8 @@
 #include"../rendering/Material.h"
 //#include"../data structures/Quaternion.h"
 //#include"../scene/Object.h"
+#define _USE_MATH_DEFINES
+#include <math.h>
 
 /// @brief Enum representing light types.
 enum LIGHT_TYPE {DIRECTIONAL, POINT_LIGHT, SPOT_LIGHT};

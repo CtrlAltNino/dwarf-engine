@@ -13,9 +13,20 @@
         "sdl2-binding",
         "sdl2-renderer-binding",
         "opengl3-binding",
+        "docking-experimental"
+      ],
+      "platform": "!osx"
+    },
+    {
+      "name": "imgui",
+      "default-features": false,
+      "features": [
+        "sdl2-binding",
+        "sdl2-renderer-binding",
         "docking-experimental",
         "metal-binding"
-      ]
+      ],
+      "platform": "osx"
     },
     "assimp",
     "stb",

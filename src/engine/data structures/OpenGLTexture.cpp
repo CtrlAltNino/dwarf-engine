@@ -6,7 +6,7 @@
 // Constructor without meta data
 OpenGLTexture::OpenGLTexture(std::filesystem::path path) {
     int numColCh;
-	unsigned char* bytes = stbi_load(path.c_str(), &this->size.x, &this->size.y, &numColCh, 0);
+	unsigned char* bytes = stbi_load((const char*)path.c_str(), &this->size.x, &this->size.y, &numColCh, 0);
 
 	glGenTextures(1, &this->ID);
 	glActiveTexture(GL_TEXTURE0);

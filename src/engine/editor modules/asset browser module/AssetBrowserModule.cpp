@@ -50,7 +50,7 @@ void AssetBrowserModule::RenderModuleWindow(){
     for(auto& directoryEntry : std::filesystem::directory_iterator(currentDirectory)){
         const auto& path = directoryEntry.path();
         auto relativePath = std::filesystem::relative(path, assetDirectoryPath);
-        const char* filenameString = relativePath.filename().c_str();
+        const char* filenameString = (const char*)relativePath.filename().c_str();
 
         ImGui::Button("##entry", ImVec2(buttonSize, buttonSize));
         if(ImGui::IsItemHovered()){

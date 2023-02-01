@@ -55,7 +55,7 @@ class WindowManagerOpenGL : public IWindowManager{
         virtual GraphicsApi GetActiveApi();
 
         /// @brief Creates the window of the Dwarf Engine editor.
-        virtual void CreateWindow(glm::ivec2 windowSize, glm::ivec2 minSize, const char* windowTitle);
+        virtual void InitWindow(glm::ivec2 windowSize, glm::ivec2 minSize, const char* windowTitle);
 
         /// @brief Changes the title of the window.
         /// @param windowName The new title.

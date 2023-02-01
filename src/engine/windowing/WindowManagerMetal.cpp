@@ -18,7 +18,7 @@ GraphicsApi WindowManagerMetal::GetActiveApi(){
     return GraphicsApi::Metal;
 }
 
-void WindowManagerMetal::CreateWindow(glm::ivec2 windowSize, glm::ivec2 minSize, const char* windowTitle){
+void WindowManagerMetal::InitWindow(glm::ivec2 windowSize, glm::ivec2 minSize, const char* windowTitle){
     // SDL Setup
     Uint32 WindowFlags = 0;
 	WindowFlags |= SDL_WINDOW_HIDDEN;
