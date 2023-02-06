@@ -3,7 +3,7 @@
 #include "../../utilities/dpch.h"
 
 /// @brief Enum defining the types of GUI modules.
-enum class MODULE_TYPE {PERFORMANCE, SCENE_GRAPH, CONSOLE, SCENE_VIEWER, ASSET_BROWSER, INSPECTOR};
+enum class MODULE_TYPE { PERFORMANCE, SCENE_GRAPH, CONSOLE, SCENE_VIEWER, ASSET_BROWSER, INSPECTOR, DEBUG };
 
 class IModelListener{
     

@@ -130,6 +130,9 @@ void EditorView::RenderDockSpace(){
             if(ImGui::MenuItem("Inspector")){
                 viewListener->AddWindow(MODULE_TYPE::INSPECTOR);
             }
+            if(ImGui::MenuItem("Debug")){
+                viewListener->AddWindow(MODULE_TYPE::DEBUG);
+            }
             ImGui::MenuItem("Console");
             ImGui::EndMenu();
         }
