@@ -26,7 +26,7 @@ struct MeshAsset {
     std::filesystem::path path;
 
     /// @brief Flag indicating if the model is loaded.
-    bool loaded;
+    bool loaded = false;
 
     MeshAsset(std::filesystem::path path) : path(path){}
 
@@ -59,7 +59,7 @@ struct MaterialAsset {
     std::filesystem::path path;
 
     /// @brief Flag indicating if the model is loaded.
-    bool loaded;
+    bool loaded = false;
 
     MaterialAsset(std::filesystem::path path) : path(path) { }
 
@@ -138,7 +138,7 @@ struct TextureAsset {
     std::filesystem::path path;
 
     /// @brief Flag indicating if the model is loaded.
-    bool loaded;
+    bool loaded = false;
 
     TextureAsset(std::filesystem::path path) : path(path) {}
 

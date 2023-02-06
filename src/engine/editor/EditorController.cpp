@@ -156,6 +156,9 @@ void EditorController::AddWindow(MODULE_TYPE moduleType){
 		case MODULE_TYPE::INSPECTOR:
 			guiModule = new InspectorModule((IViewListener*)this, editorModel.GetScene(), guiModuleIDCount++);
 			break;
+		case MODULE_TYPE::DEBUG:
+			guiModule = new DebugModule((IViewListener*)this, &this->assetDatabase, guiModuleIDCount++);
+			break;
 		case MODULE_TYPE::CONSOLE: break;
 	}
 
