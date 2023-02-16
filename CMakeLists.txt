@@ -46,6 +46,8 @@ ENDIF()
 
 set(CMAKE_PCH_INSTANTIATE_TEMPLATES ON)
 
+include_directories(src)
+
 target_sources(${targetName} PRIVATE ${EXECUTABLE_ADDITIONAL_SETTINGS})
 
 # Project declaration

@@ -11,8 +11,3 @@ IF (APPLE)
             metalHelper.mm
     )
 ENDIF ()
-
-target_precompile_headers(${targetName}
-    PRIVATE
-        dpch.h
-)

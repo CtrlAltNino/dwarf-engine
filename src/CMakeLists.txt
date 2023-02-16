@@ -1,7 +1,6 @@
 smtg_add_subdirectories()
 
-target_sources(${targetName}
+target_precompile_headers(${targetName}
     PRIVATE
-        Main.cpp
+        dpch.h
 )
-
