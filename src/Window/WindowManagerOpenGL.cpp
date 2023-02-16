@@ -2,9 +2,7 @@
 
 namespace Dwarf {
 
-    WindowManagerOpenGL::WindowManagerOpenGL(InputManagerOpenGL* inputManager) : inputManager(inputManager) { }
-
-    void WindowManagerOpenGL::Init(){
+    WindowManagerOpenGL::WindowManagerOpenGL(InputManagerOpenGL* inputManager) : inputManager(inputManager) {
         shouldWindowClose = false;
     }
 

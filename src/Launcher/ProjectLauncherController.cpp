@@ -28,7 +28,6 @@ namespace Dwarf {
             windowManager = new WindowManagerMetal((InputManagerOpenGL*)inputManager);
         #endif
 
-        windowManager->Init();
         windowManager->InitWindow({LAUNCHER_INITIAL_WINDOW_WIDTH, LAUNCHER_INITIAL_WINDOW_HEIGHT},
             {LAUNCHER_INITIAL_WINDOW_WIDTH, LAUNCHER_INITIAL_WINDOW_HEIGHT},
             "Dwarf Engine Project Launcher");

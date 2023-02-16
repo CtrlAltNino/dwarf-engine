@@ -8,16 +8,19 @@ namespace Dwarf {
 	EditorController::EditorController(std::filesystem::path projectPath) : editorModel(this), editorView(this), assetDatabase(projectPath), projectPath(projectPath) {
 		// ========== Load .dproj file ==========
 		std::cout << "Initializing dwarf engine editor for project at [" << projectPath << "]" << std::endl;
-		std::filesystem::path projectSettingsPath = projectPath.append("/projectSettings.sproj");
+		std::filesystem::path projectSettingsPath = projectPath;
+		projectSettingsPath.append("projectSettings.sproj");
 		std::cout << "Loading .sproj project file at [" << projectSettingsPath << "]" << std::endl;
-		nlohmann::json projectSettings = nlohmann::json::parse(FileHandler::readFile(projectSettingsPath.string().c_str()));
+		nlohmann::json projectSettings = nlohmann::json::parse(FileHandler::readFile(projectSettingsPath.string().c_str()))["projectInformation"];
 		
 		// TODO: Create error popup for invalid project
 
 		// ========== Create input manager ==========
+		std::cout << "Initializing Input" << std::endl;
 		inputManager = new InputManagerOpenGL();
 
 		// ========== Create window manager ==========
+		std::cout << "Creating window manager" << std::endl;
 		switch((GraphicsApi)projectSettings["graphicsApi"]){
 			case GraphicsApi::D3D11: break;
 			case GraphicsApi::D3D12: break;
@@ -33,16 +36,15 @@ namespace Dwarf {
 		}
 
 		// ========== Create window ==========
-		windowManager->Init();
-
-		// this->windowTitle = ("Dwarf Engine Editor - " + projectSettings["projectName"] + " - " +editorModel.GetScene()->getSceneName() + " (" +(graphicsApiNames[projectSettings["graphicsApi"]]) +")").c_str();
+		std::cout << "Creating editor window" << std::endl;
 		windowManager->InitWindow({EDITOR_INITIAL_WINDOW_WIDTH, EDITOR_INITIAL_WINDOW_HEIGHT}, {EDITOR_INITIAL_WINDOW_WIDTH, EDITOR_INITIAL_WINDOW_HEIGHT}, this->windowTitle.c_str());
 		
 		// ========== Initialize Asset Database ==========
+		std::cout << "Loading asset database" << std::endl;
 		assetDatabase.Init();
-		//windowManager->ShowWindow();
 
 		// ========== Initialize Editor model
+		std::cout << "Loading last opened scene" << std::endl;
 		editorModel.InitScene(projectPath.string());
 
 		// ========== Initialize Editor view ==========
@@ -50,6 +52,7 @@ namespace Dwarf {
 		// Get monitor variables
 
 		// Initialize view
+		std::cout << "Setting up view" << std::endl;
 		editorView.Init();
 
 		// ========== Set window icon ==========
@@ -63,8 +66,8 @@ namespace Dwarf {
 		// ========== Set window size constraints ==========
 
 		// ========== Show window ==========
-		
-		
+		std::cout << "Making window visible" << std::endl;
+		windowManager->ShowWindow();
 		
 		
 		
@@ -90,8 +93,6 @@ namespace Dwarf {
 		TimeStamp currentFrameStamp = TimeUtilities::GetCurrent();
 		TimeStamp lastFrameStamp = TimeUtilities::GetCurrent();
 		Scene* scene = editorModel.GetScene();
-
-		windowManager->ShowWindow();
 		
 		// TODO abstract the close condition
 		while (!windowManager->ShouldWindowCloseSignal()) {

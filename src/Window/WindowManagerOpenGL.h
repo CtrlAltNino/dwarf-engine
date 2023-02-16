@@ -44,8 +44,6 @@ namespace Dwarf {
             //std::vector<RenderTextureOpenGL> renderTextures;
         public:
             WindowManagerOpenGL(InputManagerOpenGL* inputManager);
-            /// @brief Initializes the window manager.
-            virtual void Init();
 
             virtual void Quit();
 

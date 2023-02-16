@@ -33,9 +33,6 @@ namespace Dwarf {
             /// @brief Saved version of the context API.
             static inline std::string apiVersion;
 
-            /// @brief Initializes the window manager.
-            virtual void Init()=0;
-
             virtual void Quit()=0;
 
             /// @brief Returns the used API.
