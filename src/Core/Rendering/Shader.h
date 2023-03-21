@@ -4,36 +4,36 @@
 #include <glad/glad.h>
 
 // TODO: REDO SHADERS
+#include "Core/Base.h"
+#include "Core/Asset/AssetReference.h"
 
 namespace Dwarf {
 
-	std::string get_file_contents(const char* filename);
-	struct vertexShaderName {
-		const char* value;
-		constexpr operator const char* () const { return value; }
-	};
-
-	struct fragmentShaderName {
-		const char* value;
-		constexpr operator const char* () const { return value; }
-	};
+	//std::string get_file_contents(const char* filename);
 
 	class Shader {
-	private:
-		std::string vertexShaderSource;
-		std::string fragmentShaderSource;
-		std::string geometryShaderSource;
+	protected:
+		//std::string vertexShaderSource;
+		//std::string fragmentShaderSource;
+		//std::string geometryShaderSource;
 	public:
+		Shader();
+		~Shader();
 		// ID of the shader program
-		GLuint ID = -1;
+		//GLuint ID = -1;
 
-		void AddVertexShader(std::string filePath);
-		void AddFragmentShader(std::string filePath);
-		void AddGeometryShader(std::string filePath);
+		//void AddGeometryShader(std::string filePath);
 
-		void CreateShaderProgram();
+		virtual void Compile()=0;
 
-		void Activate();
-		void Delete();
+		//void Activate();
+		//void Delete();
+		static Ref<Shader> Create();
+
+		static void Init();
+
+		static Ref<Shader> s_DefaultShader;
+		static Ref<Shader> s_ErrorShader;
+		static Ref<Shader> s_GridShader;
 	};
 }

@@ -2,9 +2,9 @@
 
 #include <glm/vec2.hpp>
 
+#include "Core/Base.h"
 #include "Core/Scene/Camera.h"
 
-enum class RENDER_MODE {FREE, RESOLUTION, ASPECT_RATIO};
 
 namespace Dwarf {
     
@@ -21,10 +21,10 @@ namespace Dwarf {
             float aspectRatio = 1;
 
             /// @brief Defines the constrain mode of the render texture.
-            RENDER_MODE renderMode = RENDER_MODE::FREE;
+            //RENDER_MODE renderMode = RENDER_MODE::FREE;
 
             /// @brief Pointer to the camera of this render texture.
-            Camera* camera;
+            Ref<Camera> camera;
         public:
             /// @brief Binds this render texture.
             virtual void Bind()=0;
@@ -42,21 +42,21 @@ namespace Dwarf {
 
             /// @brief Assigns the camera.
             /// @param camera Pointer to a camera instance.
-            void SetCamera(Camera* camera){
+            void SetCamera(Ref<Camera> camera){
                 this->camera = camera;
             }
 
             /// @brief Returns a pointer to a camera instance.
             /// @return Pointer to a camera.
-            Camera* GetCamera(){
+            Ref<Camera> GetCamera(){
                 return camera;
             }
 
             /// @brief Returns the render mode of this render texture.
             /// @return The render mode.
-            RENDER_MODE GetRenderMode(){
+            /*RENDER_MODE GetRenderMode(){
                 return renderMode;
-            }
+            }*/
             
             /// @brief Returns the resolution of the render texture.
             /// @return The resolution as a 2D integer vector.

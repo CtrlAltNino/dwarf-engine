@@ -8,9 +8,9 @@ namespace Dwarf {
     class GraphInstruction {
         protected:
             /// @brief Pointer to the currently opened scene.
-            Scene* scene;
+            Ref<Scene> m_Scene;
         public:
-            GraphInstruction(Scene* scene):scene(scene){}
+            GraphInstruction(Ref<Scene> scene):m_Scene(scene){}
 
             /// @brief Executes the instruction.
             virtual void PerformInstruction()=0;

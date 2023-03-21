@@ -9,7 +9,7 @@ namespace Dwarf {
     static std::uniform_int_distribution<uint64_t> uniformDistribution;
 
 
-    UID::UID() : uuid(uniformDistribution(engine)){ }
+    UID::UID() : m_Uuid(uniformDistribution(engine)){ }
 
-    UID::UID(uint64_t uuid){}
+    UID::UID(uint64_t uuid) : m_Uuid(uuid){}
 }

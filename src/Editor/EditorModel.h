@@ -1,32 +1,47 @@
 #pragma once
 
-#include "Core/Scene/Entity.h"
+#include "Core/Base.h"
+
 #include "Core/Scene/Scene.h"
-#include "Core/Scene/MeshLoader.h"
-#include "Editor/EditorCommon.h"
-#include "Utilities/Common.h"
 
 namespace Dwarf {
+
+    enum INSPECTOR_SELECTION_TYPE { NONE, ASSET, ENTITY };
+    
+    struct SelectionContainer {
+        std::filesystem::path assetPath;
+        std::vector<Entity> selectedEntities;
+        INSPECTOR_SELECTION_TYPE selectionType = INSPECTOR_SELECTION_TYPE::NONE;
+    };
 
     /// @brief Model of the Editor's MVC structure.
     class EditorModel{
         private:
             /// @brief The currently opened scene instance.
-            Scene scene;
+            Ref<Scene> m_Scene;
+            
+            double m_DeltaTime;
 
-            GraphicsApi activeApi;
+            std::filesystem::path m_ProjectPath;
 
-            /// @brief Interfaced controller instance to communicate to the controller.
-            IModelListener* modelListener;
+            std::string m_ProjectName;
         public:
-            EditorModel(IModelListener* listener);
-
-            /// @brief DEBUG initializes the scene.
-            /// @param projectPath Path to the currently opened project.
-            void InitScene(std::string projectPath);
+            EditorModel(std::string name, std::filesystem::path projectPath);
 
             /// @brief Returns the currently opened scene.
             /// @return A pointer to the scene.
-            Scene* GetScene();
+            Ref<Scene> GetScene();
+
+            void SetScene(Ref<Scene> scene);
+
+            std::string GetName();
+
+            std::filesystem::path GetProjectPath();
+
+            void SetDeltaTime(double deltaTime);
+
+            double GetDeltaTime();
+
+            SelectionContainer m_Selection;
     };
 }

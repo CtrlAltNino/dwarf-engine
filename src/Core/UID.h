@@ -9,9 +9,9 @@ namespace Dwarf {
             UID(uint64_t uuid);
             UID(const UID&) = default;
 
-            operator uint64_t() const { return uuid; }
+            operator uint64_t() const { return m_Uuid; }
         private:
-            uint64_t uuid;
+            uint64_t m_Uuid;
     };
 }
 

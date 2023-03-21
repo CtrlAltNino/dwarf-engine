@@ -1,8 +1,23 @@
+#include "dpch.h"
+
+#include <nfd.h>
+
+#include "Editor/Editor.h"
 #include "Editor/EditorView.h"
+
+#include "Core/Asset/AssetDatabase.h"
+#include "Editor/Modules/Asset Browser/AssetBrowserWindow.h"
+#include "Editor/Modules/Debug/DebugWindow.h"
+#include "Editor/Modules/Inspector/InspectorWindow.h"
+#include "Editor/Modules/Performance/PerformanceWindow.h"
+#include "Editor/Modules/Scene Hierarchy/SceneHierarchyWindow.h"
+#include "Editor/Modules/Scene Viewer/SceneViewerWindow.h"
+
+#include "Core/Scene/SceneUtilities.h"
 
 namespace Dwarf {
 
-    EditorView::EditorView(IViewListener* listener) : viewListener(listener){
+    EditorView::EditorView(Ref<EditorModel> model) : m_Model(model){
         //ImGui::SetFont
     }
 
@@ -98,42 +113,72 @@ namespace Dwarf {
             if (ImGui::BeginMenu("File"))
             {
                 ImGui::MenuItem("Create new scene");
-                ImGui::MenuItem("Save scene");
-                ImGui::MenuItem("Load scene");
+                if(ImGui::MenuItem("Save scene")){
+                    SceneUtilities::SaveScene(m_Model->GetScene());
+                    AssetDatabase::Import(m_Model->GetScene()->GetPath());
+                    SceneUtilities::SetLastOpenedScene(m_Model->GetScene()->GetPath());
+                    Editor::Get().UpdateWindowTitle();
+                }
+                if(ImGui::MenuItem("Save scene as")){
+                    SceneUtilities::SaveSceneDialog(m_Model->GetScene());
+                    AssetDatabase::Import(m_Model->GetScene()->GetPath());
+                    SceneUtilities::SetLastOpenedScene(m_Model->GetScene()->GetPath());
+                    Editor::Get().UpdateWindowTitle();
+                }
+                if(ImGui::MenuItem("Load scene")){
+                    Ref<Scene> loadedScene = SceneUtilities::LoadSceneDialog();
+                    if(loadedScene){
+                        m_Model->SetScene(loadedScene);
+                        SceneUtilities::SetLastOpenedScene(m_Model->GetScene()->GetPath());
+                        Editor::Get().UpdateWindowTitle();
+                    }
+                }
                 ImGui::MenuItem("Return to project launcher");
                 ImGui::MenuItem("Quit");
                 ImGui::EndMenu();
             }
             if (ImGui::BeginMenu("Assets"))
             {
-                ImGui::MenuItem("Create asset");
-                ImGui::MenuItem("Import Asset");
+                if(ImGui::MenuItem("Create new material")){
+                    AssetDatabase::CreateNewMaterialAsset();
+                }
+                ImGui::MenuItem("Import Assets");
+                if(ImGui::MenuItem("Reimport Assets")){
+                    AssetDatabase::ReimportAssets();
+                }
                 ImGui::EndMenu();
             }
             if (ImGui::BeginMenu("Scene"))
             {
-                ImGui::MenuItem("Pause/Unpause scene");
+                if(ImGui::MenuItem("Create empty object")){
+                    Entity newEntity = m_Model->GetScene()->CreateEntity("New object");
+                    newEntity.AddComponent<MeshRendererComponent>();
+                }
+                if(ImGui::MenuItem("Create light")){
+                    Entity newEntity = m_Model->GetScene()->CreateEntity("New Light");
+                    newEntity.AddComponent<LightComponent>();
+                }
                 ImGui::EndMenu();
             }
             if (ImGui::BeginMenu("Window"))
             {
-                if(ImGui::MenuItem("Scene viewer")){
-                    viewListener->AddWindow(MODULE_TYPE::SCENE_VIEWER);
+                if(ImGui::MenuItem("Scene Viewer")){
+                    AddWindow(MODULE_TYPE::SCENE_VIEWER);
                 }
-                if(ImGui::MenuItem("Scene graph")){
-                    viewListener->AddWindow(MODULE_TYPE::SCENE_GRAPH);
+                if(ImGui::MenuItem("Scene Hierarchy")){
+                    AddWindow(MODULE_TYPE::SCENE_GRAPH);
                 }
-                if(ImGui::MenuItem("Performance statistics")){
-                    viewListener->AddWindow(MODULE_TYPE::PERFORMANCE);
+                if(ImGui::MenuItem("Performance")){
+                    AddWindow(MODULE_TYPE::PERFORMANCE);
                 }
-                if(ImGui::MenuItem("Asset browser")){
-                    viewListener->AddWindow(MODULE_TYPE::ASSET_BROWSER);
+                if(ImGui::MenuItem("Asset Browser")){
+                    AddWindow(MODULE_TYPE::ASSET_BROWSER);
                 }
                 if(ImGui::MenuItem("Inspector")){
-                    viewListener->AddWindow(MODULE_TYPE::INSPECTOR);
+                    AddWindow(MODULE_TYPE::INSPECTOR);
                 }
                 if(ImGui::MenuItem("Debug")){
-                    viewListener->AddWindow(MODULE_TYPE::DEBUG);
+                    AddWindow(MODULE_TYPE::DEBUG);
                 }
                 ImGui::MenuItem("Console");
                 ImGui::EndMenu();
@@ -150,30 +195,37 @@ namespace Dwarf {
 
             ImGui::EndMenuBar();
         }
-
         ImGui::End();
     }
 
     void EditorView::Init(){
-
+        AddWindow(MODULE_TYPE::SCENE_GRAPH);
+        AddWindow(MODULE_TYPE::INSPECTOR);
+        AddWindow(MODULE_TYPE::ASSET_BROWSER);
+        //AddWindow(MODULE_TYPE::SCENE_VIEWER);
+        //AddWindow(MODULE_TYPE::PERFORMANCE);
     }
 
-    void EditorView::StartFrame(){
-        
+    void EditorView::OnUpdate(double deltaTime){
+        for(int i = 0; i < m_GuiModules.size(); i++){
+            m_GuiModules.at(i)->OnUpdate(deltaTime);
+        }
     }
 
-    void EditorView::RenderGui(){
+    void EditorView::OnImGuiRender(){
         // Render default stuff
         RenderDockSpace();
         
-        
         //ImGui::ShowDemoWindow();
 
-        
-    }
-
-    void EditorView::EndFrame(){
-        
+        // Render modules
+        for(int i = 0; i < m_GuiModules.size(); i++){
+            if(m_GuiModules.at(i)->GetWindowClose()){
+                RemoveWindow(m_GuiModules.at(i)->GetIndex());
+            }else {
+                m_GuiModules.at(i)->OnImGuiRender();
+            }
+        }
     }
 
     void EditorView::DockWindowToFocused(std::string windowName){
@@ -210,7 +262,7 @@ namespace Dwarf {
         // we now dock our windows into the docking node we made above
 
 
-        ImGui::DockBuilderDockWindow("Performance statistics", dock_id_right);
+        //ImGui::DockBuilderDockWindow("Performance statistics", dock_id_right);
         //ImGui::DockBuilderDockWindow("Window 2", dock_id_right);
         //ImGui::DockBuilderDockWindow("Window 3", dock_id_left);
         //ImGui::DockBuilderDockWindow("Window 4", dock_id_down);
@@ -219,4 +271,41 @@ namespace Dwarf {
 
         ImGui::DockBuilderFinish(dockspace_id);
     }
+
+    void EditorView::AddWindow(MODULE_TYPE moduleType){
+		Ref<GuiModule> guiModule;
+		switch(moduleType){
+			case MODULE_TYPE::PERFORMANCE:
+				guiModule = CreateRef<PerformanceWindow>(PerformanceWindow(this->m_Model, m_GuiModuleIDCount++));
+				break;
+			case MODULE_TYPE::SCENE_GRAPH:
+				guiModule = CreateRef<SceneHierarchyWindow>(SceneHierarchyWindow(this->m_Model, m_GuiModuleIDCount++));
+				break;
+			case MODULE_TYPE::SCENE_VIEWER:
+				guiModule = CreateRef<SceneViewerWindow>(SceneViewerWindow(this->m_Model, m_GuiModuleIDCount++));
+				break;
+			case MODULE_TYPE::ASSET_BROWSER:
+				guiModule = CreateRef<AssetBrowserWindow>(AssetBrowserWindow(this->m_Model, m_GuiModuleIDCount++));
+				break;
+			case MODULE_TYPE::INSPECTOR:
+				guiModule = CreateRef<InspectorWindow>(InspectorWindow(this->m_Model, m_GuiModuleIDCount++));
+				break;
+			case MODULE_TYPE::DEBUG:
+				guiModule = CreateRef<DebugWindow>(DebugWindow(this->m_Model, m_GuiModuleIDCount++));
+				break;
+			case MODULE_TYPE::CONSOLE: break;
+		}
+
+		if(guiModule){
+			m_GuiModules.push_back(guiModule);
+		}
+	}
+
+    void EditorView::RemoveWindow(int index){
+		for(int i = 0; i < m_GuiModules.size(); i++){
+			if(m_GuiModules[i]->GetIndex() == index){
+				m_GuiModules.erase(m_GuiModules.begin()+i);
+			}
+		}
+	}
 }

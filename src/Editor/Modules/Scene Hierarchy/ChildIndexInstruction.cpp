@@ -2,12 +2,12 @@
 
 namespace Dwarf {
 
-    ChildIndexInstruction::ChildIndexInstruction(Scene* scene, std::vector<Entity> sourceEntities, int index)
-    : GraphInstruction(scene), sourceEntities(sourceEntities), index(index){ }
+    ChildIndexInstruction::ChildIndexInstruction(Ref<Scene> scene, std::vector<Entity> sourceEntities, int index)
+    : GraphInstruction(scene), m_SourceEntities(sourceEntities), m_Index(index){ }
 
     void ChildIndexInstruction::PerformInstruction(){
-        int startIndex = index;
-        for(Entity ent : sourceEntities){
+        int startIndex = m_Index;
+        for(Entity ent : m_SourceEntities){
             ent.SetChildIndex(startIndex++);
         }
     }

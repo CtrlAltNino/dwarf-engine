@@ -1,6 +1,6 @@
 target_sources(${targetName}
     PRIVATE
-        SceneGraphModule.cpp
+        SceneHierarchyWindow.cpp
         NewParentInstruction.cpp
         ChildIndexInstruction.cpp
 )

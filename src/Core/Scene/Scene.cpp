@@ -1,31 +1,37 @@
-#include "Core/Scene/Components.h"
+#include "Core/Scene/SceneComponents.h"
 #include "Core/Scene/Scene.h"
 
 namespace Dwarf {
 
 	// ========== Constructors ==========
 
-	Scene::Scene(const char* sceneName)
-		: sceneName(sceneName) {
-		// entt::entity entity = m_Registry.create();
+	Scene::Scene(std::filesystem::path path, SceneSettings settings)
+	: m_Name(path.empty() ? "New Scene" : path.stem().string()),
+	m_Path(path), m_Registry(CreateRef<entt::registry>(entt::registry())),
+	m_Settings(settings)
+	{
+		CreateRootEntity();
 	}
 
 	Scene::~Scene(){ }
 
 	// ========== Getters ==========
 
-	const char* Scene::getSceneName() {
-		return sceneName;
+	std::string Scene::GetName() {
+		return m_Name;
+	}
+
+	std::filesystem::path Scene::GetPath(){
+		return m_Path;
 	}
 
 	// ========== Scene Functions ==========
 
-	Entity Scene::CreateRootEntity(){
-		Entity entity = { m_Registry.create(), this};
-		entity.AddComponent<IDComponent>(UID());
-		entity.AddComponent<TransformComponent>();
-		auto& tag = entity.AddComponent<TagComponent>("Root");
-		return entity;
+	void Scene::CreateRootEntity(){
+		m_RootEntity = CreateRef<Entity>(m_Registry->create(), m_Registry);
+		m_RootEntity->AddComponent<IDComponent>(UID());
+		m_RootEntity->AddComponent<TransformComponent>();
+		auto& tag = m_RootEntity->AddComponent<TagComponent>("Root");
 	}
 
 	Entity Scene::CreateEntity(const std::string& name){
@@ -33,21 +39,21 @@ namespace Dwarf {
 	}
 
 	Entity Scene::CreateEntityWithUID(UID uid, const std::string& name){
-		Entity entity = { m_Registry.create(), this};
+		Entity entity(m_Registry->create(), m_Registry);
 		entity.AddComponent<IDComponent>(uid);
 		entity.AddComponent<TransformComponent>();
 		auto& tag = entity.AddComponent<TagComponent>(name);
 		tag.Tag = name.empty() ? "Entity" : name;
 
-		entity.SetParent(rootEntity.GetHandle());
+		entity.SetParent(m_RootEntity->GetHandle());
 
 		return entity;
 	}
 
-	void Scene::drawScene(Camera camera) {
+	/*void Scene::drawScene(Camera camera) {
 
-		glm::mat4x4 viewMatrix = camera.getViewMatrix();
-		glm::mat4x4 projectionMatrix = camera.getProjectionMatrix();
+		glm::mat4x4 viewMatrix = camera.GetViewMatrix();
+		glm::mat4x4 projectionMatrix = camera.GetProjectionMatrix();
 
 		auto view = m_Registry.view<TransformComponent, MeshRendererComponent>();
 
@@ -104,52 +110,25 @@ namespace Dwarf {
 
 		glDisable(GL_BLEND);
 		glDisable(GL_CULL_FACE);
+	}*/
+
+	Ref<entt::registry> Scene::GetRegistry(){
+		return m_Registry;
 	}
 
-	void Scene::selectEntity(Entity entity) {
-		clearSelection();
-		addEntityToSelection(entity);
+	Ref<Entity> Scene::GetRootEntity(){
+		return m_RootEntity;
 	}
 
-	void Scene::addEntityToSelection(Entity entity){
-		std::string index = GetTreeIndex(entity);
-
-		std::vector<Entity>::iterator cursor = selectedEntities.begin();
-		std::string cursorIndex;
-
-		while((cursor != selectedEntities.end()) && ((cursorIndex = GetTreeIndex(*cursor)) < index)){
-			cursor++;
-		}
-
-		if(cursor == selectedEntities.end()){
-			selectedEntities.push_back(entity);
-		}else{
-			selectedEntities.insert(cursor, entity);
-		}
+	SceneSettings Scene::GetSettings(){
+		return m_Settings;
 	}
 
-	std::string Scene::GetTreeIndex(Entity entity){
-		std::string index = "";
-		Entity cursor = entity;
+	void Scene::SetPath(std::filesystem::path path){
+		m_Path = path;
+		m_Name = path.stem().string();
 
-		while(cursor.GetHandle() != rootEntity.GetHandle()){
-			index = std::to_string(cursor.GetChildIndex()) + index;
-			cursor = Entity(cursor.GetParent(), this);
-		}
-
-		return index;
-	}
-
-	void Scene::removeEntityFromSelection(Entity entity){
-		selectedEntities.erase(std::find(selectedEntities.begin(), selectedEntities.end(), entity));
-	}
-
-	bool Scene::isEntitySelected(Entity entity){
-		return std::find(selectedEntities.begin(), selectedEntities.end(), entity) != selectedEntities.end();
-	}
-
-	void Scene::clearSelection(){
-		selectedEntities.clear();
+		// TODO UPDATE WINDOW TITLE BAR
 	}
 
 	glm::mat4 Scene::GetFullModelMatrix(TransformComponent transform){
@@ -161,7 +140,7 @@ namespace Dwarf {
 		entt::entity cursor = transform.parent;
 
 		if(cursor != entt::null){
-			Entity cur = Entity(cursor, this);
+			Entity cur = Entity(cursor, m_Registry);
 			matriceStack.push_back(cur.GetComponent<TransformComponent>().getModelMatrix());
 
 			cursor = cur.GetParent();

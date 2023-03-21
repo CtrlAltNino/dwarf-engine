@@ -2,32 +2,39 @@
 
 namespace Dwarf {
 
-	Material::Material() {
-		shader = Shader();
-		shader.AddVertexShader("data/engine/shaders/default/opengl/default.vert");
-		shader.AddFragmentShader("data/engine/shaders/default/opengl/default.frag");
-		shader.CreateShaderProgram();
+	Material::Material(std::string name) : m_Name(name) {
+		m_Shader = Shader::s_DefaultShader;
 	}
 
-	Material::Material(const char* name, Shader* shader) : name(name), shader(*shader){}
+	Material::Material(std::string name, Ref<Shader> shader) : m_Name(name), m_Shader(shader){}
 
-	Material::~Material(){
-		//shader.Delete();
+	Material::~Material(){ }
+
+	std::string Material::GetName(){
+		return m_Name;
 	}
 
-	void Material::bind() {
-		shader.Activate();
+	void Material::SetShader(Ref<Shader> shader){
+		m_Shader = shader;
 	}
 
-	void Material::UpdateUniforms(){
+	Ref<Shader> Material::GetShader(){
+		return m_Shader;
+	}
+
+	/*void Material::bind() {
+		shader->Activate();
+	}*/
+
+	/*void Material::UpdateUniforms(){
 		// Bind textures
 		char textureInputCounter = 0;
-		for(auto const& [key, val] : textures){
+		for(auto const& [key, val] : m_Textures){
 			// std::cout << key << std::endl;
 			glActiveTexture(GL_TEXTURE0+textureInputCounter);
 			glBindTexture(GL_TEXTURE_2D, val.ID);
 			
-			GLuint uniformID = glGetUniformLocation(shader.ID, key.c_str());
+			GLuint uniformID = glGetUniformLocation(shader->ID, key.c_str());
 			glUniform1i(uniformID, textureInputCounter);
 			
 			//glBindTexture(GL_TEXTURE_2D, 0);
@@ -38,123 +45,165 @@ namespace Dwarf {
 
 		GLuint uniformID;
 		// Bind booleans
-		for(auto const& [key, val] : boolUniforms){
-			uniformID = glGetUniformLocation(shader.ID, key.c_str());
+		for(auto const& [key, val] : m_BoolUniforms){
+			uniformID = glGetUniformLocation(shader->ID, key.c_str());
 			glUniform1f(uniformID, (float)val);
 		}
 
 		// Bind integers
-		for(auto const& [key, val] : integerUniforms){
-			uniformID = glGetUniformLocation(shader.ID, key.c_str());
+		for(auto const& [key, val] : m_IntegerUniforms){
+			uniformID = glGetUniformLocation(shader->ID, key.c_str());
 			glUniform1i(uniformID, val);
 		}
 
 		// Bind floats
 		for(auto const& [key, val] : floatUniforms){
-			uniformID = glGetUniformLocation(shader.ID, key.c_str());
+			uniformID = glGetUniformLocation(shader->ID, key.c_str());
 			glUniform1f(uniformID, val);
 		}
 
 		// Bind vector2
-		for(auto const& [key, val] : vector2Uniforms){
-			uniformID = glGetUniformLocation(shader.ID, key.c_str());
+		for(auto const& [key, val] : m_Vector2Uniforms){
+			uniformID = glGetUniformLocation(shader->ID, key.c_str());
 			glUniform2f(uniformID, val.x, val.y);
 		}
 
 		// Bind vector3
-		for(auto const& [key, val] : vector3Uniforms){
-			uniformID = glGetUniformLocation(shader.ID, key.c_str());
+		for(auto const& [key, val] : m_Vector3Uniforms){
+			uniformID = glGetUniformLocation(shader->ID, key.c_str());
 			glUniform3f(uniformID, val.x, val.y, val.z);
 		}
 
 		// Bind vector4
-		for(auto const& [key, val] : vector4Uniforms){
-			uniformID = glGetUniformLocation(shader.ID, key.c_str());
+		for(auto const& [key, val] : m_Vector4Uniforms){
+			uniformID = glGetUniformLocation(shader->ID, key.c_str());
 			glUniform4f(uniformID, val.x, val.y, val.z, val.w);
 		}
-	}
+	}*/
 
-	void Material::UpdateMVP(glm::mat4x4 modelMatrix, glm::mat4x4 viewMatrix, glm::mat4x4 projectionMatrix){
-		GLuint mmID = glGetUniformLocation(shader.ID, "modelMatrix");
-		GLuint vmID = glGetUniformLocation(shader.ID, "viewMatrix");
-		GLuint pmID = glGetUniformLocation(shader.ID, "projectionMatrix");
+	/*void Material::UpdateMVP(glm::mat4x4 modelMatrix, glm::mat4x4 viewMatrix, glm::mat4x4 projectionMatrix){
+		GLuint mmID = glGetUniformLocation(shader->ID, "modelMatrix");
+		GLuint vmID = glGetUniformLocation(shader->ID, "viewMatrix");
+		GLuint pmID = glGetUniformLocation(shader->ID, "projectionMatrix");
 
 		glUniformMatrix4fv(mmID, 1, GL_FALSE, &modelMatrix[0][0]);
 		glUniformMatrix4fv(vmID, 1, GL_FALSE, &viewMatrix[0][0]);
 		glUniformMatrix4fv(pmID, 1, GL_FALSE, &projectionMatrix[0][0]);
+	}*/
+
+	void Material::SetTexture(std::string uniformName, Ref<UID> val){
+		m_Textures[uniformName] = val;
 	}
 
-	void Material::SetUniform(const char* uniformName, Texture* val){
-		textures[uniformName] = *val;
+	void Material::SetUniform(std::string uniformName, bool val){
+		m_BoolUniforms[uniformName] = val;
 	}
 
-	void Material::SetUniform(const char* uniformName, bool val){
-		boolUniforms[uniformName] = val;
+	void Material::SetUniform(std::string uniformName, int val){
+		m_IntegerUniforms[uniformName] = val;
 	}
 
-	void Material::SetUniform(const char* uniformName, int val){
-		integerUniforms[uniformName] = val;
+	void Material::SetUniform(std::string uniformName, float val){
+		m_FloatUniforms[uniformName] = val;
 	}
 
-	void Material::SetUniform(const char* uniformName, float val){
-		floatUniforms[uniformName] = val;
+	void Material::SetUniform(std::string uniformName, glm::vec2 val){
+		m_Vector2Uniforms[uniformName] = val;
 	}
 
-	void Material::SetUniform(const char* uniformName, glm::vec2 val){
-		vector2Uniforms[uniformName] = val;
+	void Material::SetUniform(std::string uniformName, glm::vec3 val){
+		m_Vector3Uniforms[uniformName] = val;
 	}
 
-	void Material::SetUniform(const char* uniformName, glm::vec3 val){
-		vector3Uniforms[uniformName] = val;
-	}
-
-	void Material::SetUniform(const char* uniformName, glm::vec4 val){
-		vector4Uniforms[uniformName] = val;
+	void Material::SetUniform(std::string uniformName, glm::vec4 val){
+		m_Vector4Uniforms[uniformName] = val;
 	}
 
 	template<typename T>
-	void Material::RemoveShaderInput(const char* uniformName){
-		textures.erase(uniformName);
-		boolUniforms.erase(uniformName);
-		integerUniforms.erase(uniformName);
-		floatUniforms.erase(uniformName);
-		vector2Uniforms.erase(uniformName);
-		vector3Uniforms.erase(uniformName);
-		vector4Uniforms.erase(uniformName);
+	void Material::RemoveShaderInput(std::string uniformName){
+		m_Textures.erase(uniformName);
+		m_BoolUniforms.erase(uniformName);
+		m_IntegerUniforms.erase(uniformName);
+		m_FloatUniforms.erase(uniformName);
+		m_Vector2Uniforms.erase(uniformName);
+		m_Vector3Uniforms.erase(uniformName);
+		m_Vector4Uniforms.erase(uniformName);
 	}
 
 	template<>
-	void Material::RemoveShaderInput<Texture>(const char* uniformName){
-		textures.erase(uniformName);
+	void Material::RemoveShaderInput<Texture>(std::string uniformName){
+		m_Textures.erase(uniformName);
 	}
 
 	template<>
-	void Material::RemoveShaderInput<bool>(const char* uniformName){
-		boolUniforms.erase(uniformName);
+	void Material::RemoveShaderInput<bool>(std::string uniformName){
+		m_BoolUniforms.erase(uniformName);
 	}
 
 	template<>
-	void Material::RemoveShaderInput<int>(const char* uniformName){
-		integerUniforms.erase(uniformName);
+	void Material::RemoveShaderInput<int>(std::string uniformName){
+		m_IntegerUniforms.erase(uniformName);
 	}
 
 	template<>
-	void Material::RemoveShaderInput<float>(const char* uniformName){
-		floatUniforms.erase(uniformName);
+	void Material::RemoveShaderInput<float>(std::string uniformName){
+		m_FloatUniforms.erase(uniformName);
 	}
 
 	template<>
-	void Material::RemoveShaderInput<glm::vec2>(const char* uniformName){
-		vector2Uniforms.erase(uniformName);
+	void Material::RemoveShaderInput<glm::vec2>(std::string uniformName){
+		m_Vector2Uniforms.erase(uniformName);
 	}
 
 	template<>
-	void Material::RemoveShaderInput<glm::vec3>(const char* uniformName){
-		vector3Uniforms.erase(uniformName);
+	void Material::RemoveShaderInput<glm::vec3>(std::string uniformName){
+		m_Vector3Uniforms.erase(uniformName);
 	}
 
 	template<>
-	void Material::RemoveShaderInput<glm::vec4>(const char* uniformName){
-		vector4Uniforms.erase(uniformName);
+	void Material::RemoveShaderInput<glm::vec4>(std::string uniformName){
+		m_Vector4Uniforms.erase(uniformName);
+	}
+
+	void Material::SetTransparency(bool transparent){
+		m_Transparent = transparent;
+	}
+
+	bool Material::IsTransparent(){
+		return m_Transparent;
+	}
+
+	std::map<std::string, Ref<UID>> Material::GetTextures(){
+		return m_Textures;
+	}
+
+	/// @brief Boolean uniforms.
+	std::map<std::string, bool> Material::GetBoolUniforms(){
+		return m_BoolUniforms;
+	}
+
+	/// @brief Integer uniforms.
+	std::map<std::string, int> Material::GetIntegerUniforms(){
+		return m_IntegerUniforms;
+	}
+
+	/// @brief Float uniforms.
+	std::map<std::string, float> Material::GetFloatUniforms(){
+		return m_FloatUniforms;
+	}
+
+	/// @brief 2D vector uniforms.
+	std::map<std::string, glm::vec2> Material::Get2DUniforms(){
+		return m_Vector2Uniforms;
+	}
+	
+	/// @brief 3D vector uniforms.
+	std::map<std::string, glm::vec3> Material::Get3DUniforms(){
+		return m_Vector3Uniforms;
+	}
+	
+	/// @brief 4D vector uniforms.
+	std::map<std::string, glm::vec4> Material::Get4DUniforms(){
+		return m_Vector4Uniforms;
 	}
 }

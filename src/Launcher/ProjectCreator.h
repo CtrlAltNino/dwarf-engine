@@ -12,18 +12,18 @@ namespace Dwarf {
     class ProjectCreator {
         private:
             /// @brief The default path where projects should be created.
-            static inline std::string defaultProjectPath;
+            static inline std::filesystem::path s_DefaultProjectPath;
         
         public:
             /// @brief Initialized the project creator.
             static void InitProjectCreator(){
-                defaultProjectPath = FileHandler::GetDocumentsPath();
+                s_DefaultProjectPath = FileHandler::GetDocumentsPath();
             }
 
             /// @brief Returns the default project path.
             /// @return Path to default directory to create projects in.
-            static std::string GetDefaultProjectPath(){
-                return defaultProjectPath;
+            static std::filesystem::path GetDefaultProjectPath(){
+                return s_DefaultProjectPath;
             }
             
             /// @brief Creates a project.
@@ -33,19 +33,15 @@ namespace Dwarf {
             /// @param projectTemplate Which template should be used for creating the project.
             /// @return Error code.
             static int CreateProject(const char* projectName,
-                                        const char* projectPath,
+                                        std::filesystem::path projectPath,
                                         GraphicsApi graphicsApi,
                                         ProjectTemplate projectTemplate){
                 // Create Project blabla
-                std::string projectDirectory = std::string(projectPath) + "/" + projectName;
-                if (!FileHandler::checkIfDirectoyExists(projectDirectory)) {
-                    std::string projectSettingsPath = (std::string(projectPath) + "/" + projectName + "/projectSettings.sproj").c_str();
-                    size_t pos;
-                    while ((pos = projectSettingsPath.find('\\')) != std::string::npos) {
-                        projectSettingsPath.replace(pos, 1, "/");
-                    }
-                    if (!FileHandler::checkIfFileExists(projectSettingsPath.c_str())) {
-                        FileHandler::createDirectoryS(projectDirectory);
+                std::filesystem::path projectDirectory = projectPath / projectName;
+                if (!FileHandler::CheckIfDirectoyExists(projectDirectory)) {
+                    std::filesystem::path projectSettingsPath = projectPath / projectName / "projectSettings.dproj";
+                    if (!FileHandler::CheckIfFileExists(projectSettingsPath)) {
+                        FileHandler::CreateDirectory(projectDirectory);
 
                         if (projectTemplate == ProjectTemplate::Blank) {
                             nlohmann::json jsonObject;
@@ -53,12 +49,11 @@ namespace Dwarf {
                             jsonObject["projectInformation"]["graphicsApi"] = (int)graphicsApi;
 
                             std::string fileContent = jsonObject.dump(4);
-                            std::cout << (std::string(projectPath) + "/" + projectName) << std::endl;
-                            FileHandler::writeToFile((std::string(projectPath) + "/" + projectName + "/projectSettings.sproj").c_str(), fileContent);
+                            FileHandler::WriteToFile(projectPath / projectName / "projectSettings.dproj", fileContent);
                         }
                         else {
-                            std::string templateProjectDirectory = "";
-                            std::string templateApiDirectory = "";
+                            std::filesystem::path templateProjectDirectory = "";
+                            std::filesystem::path templateApiDirectory = "";
 
                             switch (projectTemplate) {
                             case ProjectTemplate::Demo1:
@@ -85,64 +80,48 @@ namespace Dwarf {
                                 break;
                             }
 
-                            templateProjectDirectory = "data/demo projects/" + templateApiDirectory + "/" + templateProjectDirectory;
+                            templateProjectDirectory = std::filesystem::path("data/demo projects") / templateApiDirectory / templateProjectDirectory;
 
                             #ifdef WIN32
-                                std::string copyCommand = std::string("Xcopy \"" + templateProjectDirectory
-                                + "\" \""
-                                + std::string(projectPath) + "/" + projectName
-                                + "\" /E/H/C/I/y/D");
+                                std::string copyCommand = std::string("Xcopy \"" +
+                                templateProjectDirectory.string() + "\" \"" + (projectPath / projectName).string() + "\" /E/H/C/I/y/D");
                             #elif __APPLE__
                                 std::string copyCommand = std::string("cp -R \"./") 
                                     + templateProjectDirectory + "/\" \"" + std::string(projectPath) + "/" + projectName + "\"";
                             #endif
                             
                             system(copyCommand.c_str());
-                            
-                            //std::cout << copyCommand << std::endl;
 
-                            // Update the projectSettings.sproj "projectName" entry
-                            std::string templateProjectSettingsDirectory = templateProjectDirectory + "/projectSettings.sproj";
-                            std::string fileContent = FileHandler::readFile(templateProjectSettingsDirectory.c_str());
+                            // Update the projectSettings.dproj "projectName" entry
+                            std::filesystem::path templateProjectSettingsDirectory = templateProjectDirectory / "projectSettings.dproj";
+                            std::string fileContent = FileHandler::ReadFile(templateProjectSettingsDirectory);
                             if (!fileContent.empty()) {
                                 nlohmann::json jsonObject = nlohmann::json::parse(fileContent);
                                 jsonObject["projectInformation"]["projectName"] = projectName;
 
                                 std::string newFileContent = jsonObject.dump(4);
-                                FileHandler::writeToFile(projectSettingsPath.c_str(), newFileContent);
+                                FileHandler::WriteToFile(projectSettingsPath.c_str(), newFileContent);
                             }
                             else {
-                                std::cout << "yikes bro" << std::endl;
+                                std::cout << "[PROJECT CREATOR] Could not read project settings" << std::endl;
                             }
 
 
                         }
 
-                        size_t pos;
-                        while ((pos = projectDirectory.find('\\')) != std::string::npos) {
-                            projectDirectory.replace(pos, 1, "/");
-                        }
-
-                        /*ProjectInformation newProjectInformation;
-                        newProjectInformation.name = projectName;
-                        newProjectInformation.path = projectDirectory;
-                        newProjectInformation.lastOpened = -1;
-                        newProjectInformation.graphicsApi = (int)graphicsApi;
-
-                        AddProjectToList(newProjectInformation);*/
                         ProjectListHandler::AddProjectByPath(projectDirectory.c_str());
 
                         return 0;
                     }
                     else {
                         // wtf
-                        std::cout << "projectSettings.json already exists at project directory!" << std::endl;
+                        std::cout << "[PROJECT CREATOR] projectSettings.dproj already exists at project directory!" << std::endl;
                         return 1;
                     }
                 }
                 else {
                     // Project folder already exists
-                    std::cout << "Project folder already exists at: " << (std::string(projectPath) + "/" + projectName) << std::endl;
+                    std::cout << "[PROJECT CREATOR] Project folder already exists at: " << (projectPath / projectName)<< std::endl;
                     return 2;
                 }
             }

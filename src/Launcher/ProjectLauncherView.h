@@ -1,41 +1,45 @@
 #pragma once
 
-#ifdef __APPLE__
-    #include <Metal/Metal.hpp>
-    #include "Window/WindowManagerMetal.h"
-#endif
-
+#include "Core/Base.h"
 #include "Utilities/Common.h"
-#include "Window/IWindowManager.h"
 #include "ProjectLauncherUtilities.h"
 #include "ProjectLauncherModel.h"
 #include "Utilities/TimeUtilities.h"
 #include "Utilities/BrowserLinkOpener.h"
 #include "Core/Rendering/ITexture.h"
-#include "Core/Asset/TextureFileHandler.h"
+#include "Core/Asset/TextureImporter.h"
+#include "Core/UI/ImGuiLayer.h"
+
+#include "imgui.h"
 
 namespace Dwarf {
 
     class ProjectLauncherView {
         private:
-            IWindowManager* windowManager;
+            //Ref<IWindowManager> windowManager;
 
-            ProjectLauncherModel* model;
+            Ref<ProjectLauncherModel> m_Model;
 
             /// @brief Font loaded into IMGUI for header text
-            ImFont* headerFont;
+            ImFont* m_HeaderFont;
 
             /// @brief Font loaded into IMGUI for regular text
-            ImFont* textFont;
+            ImFont* m_TextFont;
+
+            
+        //IWindowManager::fonts["normalTextFont"] = io->Fonts->AddFontFromFileTTF(INTER_REGULAR_PATH, 15);
+        //IWindowManager::fonts["largeTextFont"] = io->Fonts->AddFontFromFileTTF(INTER_REGULAR_PATH, 20);
+        //IWindowManager::fonts["smallHeaderFont"] = io->Fonts->AddFontFromFileTTF(INTER_BOLD_PATH, 20);
+        //IWindowManager::fonts["largeHeaderFont"] = io->Fonts->AddFontFromFileTTF(INTER_BOLD_PATH, 26);
 
             /// @brief Loaded image for the github icon
-            ITexture* githubIcon;
+            Ref<ITexture> m_GithubIcon;
 
             /// @brief Loaded image for the patreon icon
-            ITexture* patreonIcon;
+            Ref<ITexture> m_PatreonIcon;
 
             /// @brief Loaded image for the twitter icon
-            ITexture* twitterIcon;
+            Ref<ITexture> m_TwitterIcon;
             void RenderProjectList(int fWidth, int fHeight);
 
             void RenderButtons(int fWidth, int fHeight);
@@ -49,7 +53,7 @@ namespace Dwarf {
             void RenderCreateNewProjectModal();
         public:
             ProjectLauncherView();
-            void Init(IWindowManager* windowManager, ProjectLauncherModel* model);
+            void Init(Ref<ProjectLauncherModel> model);
             void Render();
     };
 }

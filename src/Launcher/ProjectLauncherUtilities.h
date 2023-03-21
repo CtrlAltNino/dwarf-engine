@@ -24,7 +24,7 @@ namespace Dwarf {
 	/// @brief Structure holding information about a project.
 	struct ProjectInformation {
 		std::string name;
-		std::string path;
+		std::filesystem::path path;
 		int lastOpened;
 		GraphicsApi graphicsApi;
 	};

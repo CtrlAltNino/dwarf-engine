@@ -8,13 +8,13 @@ namespace Dwarf {
     class ChildIndexInstruction : public GraphInstruction {
         private:
             /// @brief The entities to process.
-            std::vector<Entity> sourceEntities;
+            std::vector<Entity> m_SourceEntities;
 
             /// @brief Index to change the entities child index to.
-            int index;
+            int m_Index;
         public:
             /// @brief Executes the instruction.
             virtual void PerformInstruction();
-            ChildIndexInstruction(Scene* scene, std::vector<Entity> sourceEntities, int index);
+            ChildIndexInstruction(Ref<Scene> scene, std::vector<Entity> sourceEntities, int index);
     };
 }

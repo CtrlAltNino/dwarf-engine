@@ -3,99 +3,133 @@
 #include <glm/glm.hpp>
 #include <map>
 
+#include "Core/Base.h"
 #include "Core/Rendering/Shader.h"
 #include "Core/Rendering/Texture.h"
+//#include "Core/Asset/AssetReference.h"
+#include "Core/UID.h"
 
 namespace Dwarf {
 
 	/// @brief Class representing a modular Material.
 	class Material {
 		private:
-			/// @brief Textures used in this material.
-			std::map<std::string, Texture> textures = std::map<std::string, Texture>();
-
-			/// @brief Boolean uniforms.
-			std::map<std::string, bool> boolUniforms;
-
-			/// @brief Integer uniforms.
-			std::map<std::string, int> integerUniforms;
-
-			/// @brief Float uniforms.
-			std::map<std::string, float> floatUniforms;
-
-			/// @brief 2D vector uniforms.
-			std::map<std::string, glm::vec2> vector2Uniforms;
-			
-			/// @brief 3D vector uniforms.
-			std::map<std::string, glm::vec3> vector3Uniforms;
-			
-			/// @brief 4D vector uniforms.
-			std::map<std::string, glm::vec4> vector4Uniforms;
-		public:
 			/// @brief Name of the material.
-			const char* name;
+			std::string m_Name;
 
 			/// @brief Shader program for this material.
-			Shader shader;
-
+			Ref<Shader> m_Shader;
+			
 			/// @brief Flag indicating if this is a transparent object.
-			bool isTransparent = false;
-			Material();
-			Material(const char* name, Shader* shader);
+			bool m_Transparent;
+			
+			/// @brief Textures used in this material.
+			std::map<std::string, Ref<UID>> m_Textures;
+
+			/// @brief Boolean uniforms.
+			std::map<std::string, bool> m_BoolUniforms;
+
+			/// @brief Integer uniforms.
+			std::map<std::string, int> m_IntegerUniforms;
+
+			/// @brief Float uniforms.
+			std::map<std::string, float> m_FloatUniforms;
+
+			/// @brief 2D vector uniforms.
+			std::map<std::string, glm::vec2> m_Vector2Uniforms;
+			
+			/// @brief 3D vector uniforms.
+			std::map<std::string, glm::vec3> m_Vector3Uniforms;
+			
+			/// @brief 4D vector uniforms.
+			std::map<std::string, glm::vec4> m_Vector4Uniforms;
+		public:
+			Material(std::string name);
+			Material(std::string name, Ref<Shader> shader);
 			~Material();
 
+			std::string GetName();
+
+			Ref<Shader> GetShader();
+
+			void SetShader(Ref<Shader> shader);
+
 			/// @brief Binds the material and its settings.
-			void bind();
+			//void Bind();
 
 			/// @brief Updates the uniforms in the shader.
-			void UpdateUniforms();
+			//void UpdateUniforms();
 
 			/// @brief Updates the matrices in the shader.
 			/// @param modelMatrix Model matrix.
 			/// @param viewMatrix View matrix.
 			/// @param projectionMatrix Projection matrix.
-			void UpdateMVP(glm::mat4x4 modelMatrix, glm::mat4x4 viewMatrix, glm::mat4x4 projectionMatrix);
+			//void UpdateMVP(glm::mat4x4 modelMatrix, glm::mat4x4 viewMatrix, glm::mat4x4 projectionMatrix);
 
 			/// @brief Creates a new texture uniform.
 			/// @param uniformName Name of the uniform.
 			/// @param val Value of the uniform.
-			void SetUniform(const char* uniformName, Texture* val);
+			void SetTexture(std::string uniformName, Ref<UID> val);
 			
 			/// @brief Creates a new boolean uniform.
 			/// @param uniformName Name of the uniform.
 			/// @param val Value of the uniform.
-			void SetUniform(const char* uniformName, bool val);
+			void SetUniform(std::string uniformName, bool val);
 			
 			/// @brief Creates a new integer uniform.
 			/// @param uniformName Name of the uniform.
 			/// @param val Value of the uniform.
-			void SetUniform(const char* uniformName, int val);
+			void SetUniform(std::string uniformName, int val);
 			
 			/// @brief Creates a new float uniform.
 			/// @param uniformName Name of the uniform.
 			/// @param val Value of the uniform.
-			void SetUniform(const char* uniformName, float val);
+			void SetUniform(std::string uniformName, float val);
 			
 			/// @brief Creates a new 2D vector uniform.
 			/// @param uniformName Name of the uniform.
 			/// @param val Value of the uniform.
-			void SetUniform(const char* uniformName, glm::vec2 val);
+			void SetUniform(std::string uniformName, glm::vec2 val);
 			
 			/// @brief Creates a new 3D vector uniform.
 			/// @param uniformName Name of the uniform.
 			/// @param val Value of the uniform.
-			void SetUniform(const char* uniformName, glm::vec3 val);
+			void SetUniform(std::string uniformName, glm::vec3 val);
 			
 			/// @brief Creates a new 4D vector uniform.
 			/// @param uniformName Name of the uniform.
 			/// @param val Value of the uniform.
-			void SetUniform(const char* uniformName, glm::vec4 val);
+			void SetUniform(std::string uniformName, glm::vec4 val);
+
+			void SetTransparency(bool transparent);
+
+			bool IsTransparent();
+
+			std::map<std::string, Ref<UID>> GetTextures();
+
+			/// @brief Boolean uniforms.
+			std::map<std::string, bool> GetBoolUniforms();
+
+			/// @brief Integer uniforms.
+			std::map<std::string, int> GetIntegerUniforms();
+
+			/// @brief Float uniforms.
+			std::map<std::string, float> GetFloatUniforms();
+
+			/// @brief 2D vector uniforms.
+			std::map<std::string, glm::vec2> Get2DUniforms();
+			
+			/// @brief 3D vector uniforms.
+			std::map<std::string, glm::vec3> Get3DUniforms();
+			
+			/// @brief 4D vector uniforms.
+			std::map<std::string, glm::vec4> Get4DUniforms();
 
 			/// @brief Removes an uniform.
 			/// @tparam T Type of the uniform to remove.
 			/// @param uniformName Name of the uniform to remove.
 			template<typename T>
-			void RemoveShaderInput(const char* uniformName);
+			void RemoveShaderInput(std::string uniformName);
 			
 			/*static Material CreateBasicMaterial(){
 				Material mat(new Shader("data/engine/shaders/default/opengl/default"));

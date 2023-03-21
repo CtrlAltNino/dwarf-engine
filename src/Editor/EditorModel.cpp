@@ -1,12 +1,13 @@
+#include "dpch.h"
+
 #include "Editor/EditorModel.h"
 
 namespace Dwarf {
-
-	EditorModel::EditorModel(IModelListener* listener) : modelListener(listener), scene("Test scene"){
-		//InitScene(listener->GetProjectPath());
+	EditorModel::EditorModel(std::string name, std::filesystem::path projectPath) : m_ProjectName(name), m_ProjectPath(projectPath) {
+		//window = Window::Create();
 	}
 
-	void EditorModel::InitScene(std::string projectPath) {
+	/*void EditorModel::InitScene(std::string projectPath) {
 		Entity cubeEntity = scene.CreateEntity("Popcat cube");
 		Shader cubeShader;
 		cubeShader.AddVertexShader("data/engine/shaders/default/opengl/default.vert");
@@ -111,9 +112,29 @@ namespace Dwarf {
 
 		Entity lightEntity = scene.CreateEntity("Light1");
 		lightEntity.AddComponent<LightComponent>();
+	}*/
+
+	Ref<Scene> EditorModel::GetScene() {
+		return this->m_Scene;
 	}
 
-	Scene* EditorModel::GetScene() {
-		return &scene;
+	void EditorModel::SetScene(Ref<Scene> scene){
+		this->m_Scene = scene;
+	}
+
+	std::string EditorModel::GetName(){
+		return m_ProjectName;
+	}
+
+	std::filesystem::path EditorModel::GetProjectPath(){
+		return this->m_ProjectPath;
+	}
+
+	void EditorModel::SetDeltaTime(double deltaTime){
+		this->m_DeltaTime = deltaTime;
+	}
+
+	double EditorModel::GetDeltaTime(){
+		return this->m_DeltaTime;
 	}
 }

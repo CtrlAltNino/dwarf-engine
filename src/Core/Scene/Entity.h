@@ -1,20 +1,19 @@
 #pragma once
 
 #include <entt/entt.hpp>
-#include <entt/entity/registry.hpp>
 #include <algorithm>
 
+#include "Core/Base.h"
 #include "Core/UID.h"
-#include "Core/Scene/Components.h"
-#include "Core/Scene/EntityProvider.h"
-#include "Core/Scene/Camera.h"
+#include "Core/GenericComponents.h"
+#include "Core/Scene/SceneComponents.h"
 
 namespace Dwarf {
 
     /// @brief Class wrapping around an entity, providing gameobject functionality.
     class Entity {
         public:
-            Entity(entt::entity handle, EntityProvider* entProvider);
+            Entity(entt::entity handle, Ref<entt::registry> registry);
             Entity(const Entity& other) = default;
 
             /// @brief Adds a component to the entity.
@@ -25,7 +24,7 @@ namespace Dwarf {
             template<typename T, typename... Args>
             T& AddComponent(Args&&... args){
                 // TODO: Check component requirements
-                return entProvider->m_Registry.emplace<T>(entityHandle, std::forward<Args>(args)...);
+                return m_Registry->emplace<T>(m_EntityHandle, std::forward<Args>(args)...);
             }
 
             /// @brief Retrieves a component of the Entity if present.
@@ -34,7 +33,7 @@ namespace Dwarf {
             template<typename T>
             T& GetComponent(){
                 // TODO: Check if component present
-                return entProvider->m_Registry.get<T>(entityHandle);
+                return m_Registry->get<T>(m_EntityHandle);
             }
 
             /// @brief Removes a component from the entity.
@@ -43,7 +42,7 @@ namespace Dwarf {
             void RemoveComponent(){
                 // TODO: Check if component is present
                 if(HasComponent<T>()){
-                    entProvider->m_Registry.remove<T>(entityHandle);
+                    m_Registry->remove<T>(m_EntityHandle);
                 }
             }
 
@@ -52,31 +51,30 @@ namespace Dwarf {
             /// @return True if component is present, false if not.
             template<typename T>
             bool HasComponent(){
-                return entProvider->m_Registry.try_get<T>(entityHandle) != nullptr;
+                return m_Registry->try_get<T>(m_EntityHandle) != nullptr;
             }
 
             /// @brief Retrieves the UID of the entity.
             /// @return The UID.
-            UID GetUID() { return GetComponent<IDComponent>().ID; }
+            Ref<UID> GetUID() { return GetComponent<IDComponent>().ID; }
 
-            operator bool() const { return (std::uint32_t)entityHandle != 0; }
-            bool operator ==(const Entity &b){return entityHandle == b.entityHandle;}
+            operator bool() const { return (std::uint32_t)m_EntityHandle != 0; }
+            bool operator ==(const Entity &b){return m_EntityHandle == b.m_EntityHandle;}
 
             /// @brief Sets a new parent for this entity.
             /// @param entity The entity handle of the parent-to-be.
             void SetParent(entt::entity entity){
                 TransformComponent transform = GetComponent<TransformComponent>();
-                Entity newParent = Entity(entity, entProvider);
+                Entity newParent = Entity(entity, m_Registry);
                 
                 if(transform.parent != entt::null){
-                    Entity oldParent = Entity(transform.parent, entProvider);
-                    //std::cout << "Old Parent: " << oldParent.GetComponent<TagComponent>().Tag << std::endl;
-                    oldParent.RemoveChild(entityHandle);
+                    Entity oldParent = Entity(transform.parent, m_Registry);
+                    oldParent.RemoveChild(m_EntityHandle);
                 }
 
                 GetComponent<TransformComponent>().parent = entity;
-                if(entProvider->m_Registry.valid(entity)){
-                    newParent.AddChild(entityHandle);
+                if(m_Registry->valid(entity)){
+                    newParent.AddChild(m_EntityHandle);
                 }
             }
             
@@ -103,16 +101,16 @@ namespace Dwarf {
             /// @brief Sets the position this entity should take between its siblings.
             /// @param index Index for the list of childrens of this entity's parent. (Clamped to the number of children)
             void SetChildIndex(int index){
-                std::vector<entt::entity>* siblings = &Entity(GetComponent<TransformComponent>().parent, entProvider).GetComponent<TransformComponent>().children;
-                auto it = std::find(siblings->begin(), siblings->end(), entityHandle);
+                std::vector<entt::entity>* siblings = &Entity(GetComponent<TransformComponent>().parent, m_Registry).GetComponent<TransformComponent>().children;
+                auto it = std::find(siblings->begin(), siblings->end(), m_EntityHandle);
 
                 //std::iter_swap(siblings->begin() + index, it);
                 siblings->erase(it);
 
                 if(index >= siblings->size()){
-                    siblings->push_back(entityHandle);
+                    siblings->push_back(m_EntityHandle);
                 }else{
-                    siblings->insert(siblings->begin()+index, entityHandle);
+                    siblings->insert(siblings->begin()+index, m_EntityHandle);
                 }
             }
 
@@ -121,8 +119,8 @@ namespace Dwarf {
             int GetChildIndex(){
                 int index = -1;
                 
-                std::vector<entt::entity> siblings = Entity(GetComponent<TransformComponent>().parent, entProvider).GetComponent<TransformComponent>().children;
-                auto it = std::find(siblings.begin(), siblings.end(), entityHandle);
+                std::vector<entt::entity> siblings = Entity(GetComponent<TransformComponent>().parent, m_Registry).GetComponent<TransformComponent>().children;
+                auto it = std::find(siblings.begin(), siblings.end(), m_EntityHandle);
 
                 // If element was found
                 if (it != siblings.end()) 
@@ -145,17 +143,12 @@ namespace Dwarf {
                 return &(GetComponent<TransformComponent>().children);
             }
             
-            entt::entity GetHandle() { return entityHandle; }
+            entt::entity GetHandle() { return m_EntityHandle; }
         private:
             /// @brief Pointer to a holder of an ECS registry.
-            EntityProvider* entProvider = nullptr;
+            Ref<entt::registry> m_Registry;
 
             /// @brief The entity handle of this entity.
-            entt::entity entityHandle{ entt::null };
-            
-            //Entity* parent = nullptr;
-            //std::vector<Entity*> children;
-            
-            //entt::registry registry;
+            entt::entity m_EntityHandle{ entt::null };
     };
 }

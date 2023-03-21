@@ -1,7 +1,7 @@
 target_sources(${targetName}
     PRIVATE
         #ProjectLauncher.cpp
-        ProjectLauncherController.cpp
+        ProjectLauncher.cpp
         ProjectLauncherModel.cpp
         ProjectLauncherView.cpp
 )

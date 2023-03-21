@@ -1,13 +1,57 @@
-#include "Core/Asset/AssetDatabase.h"
+#include "dpch.h"
+
+#include "AssetDatabase.h"
+
+#include <nlohmann/json.hpp>
+
+#include "Utilities/FileHandler.h"
+#include "Core/Asset/AssetComponents.h"
+#include "Core/Asset/AssetDirectoryListener.h"
+#include "Core/Asset/AssetMetaData.h"
+#include "Core/Rendering/Renderer.h"
+#include "Core/Asset/MaterialSerializer.h"
 
 namespace Dwarf {
+    std::filesystem::path AssetDatabase::s_AssetFolderPath = "";
+    efsw::FileWatcher * AssetDatabase::s_FileWatcher;
+    efsw::WatchID AssetDatabase::s_WatchID;
+    Ref<entt::registry> AssetDatabase::s_Registry;
 
-    AssetDatabase::AssetDatabase(std::filesystem::path projectPath) : assetFolderPath(projectPath / "Assets") {}
+    void AssetDatabase::RecursiveImport(std::filesystem::path directory){
+        for(auto& directoryEntry : std::filesystem::directory_iterator(directory)){
+            if(directoryEntry.is_directory()) {
+                RecursiveImport(directoryEntry.path().string());
+            } else if (directoryEntry.is_regular_file() && directoryEntry.path().has_extension() && directoryEntry.path().extension() != ".meta") {
+                Import(directoryEntry.path());
+            }
+        }
+    }
 
-    void AssetDatabase::Init(){
+    /*template<typename T>
+    AssetReference<T> AssetDatabase::CreateAssetReference(std::filesystem::path assetPath){
+        std::string fileName = assetPath.filename().string();
+        std::filesystem::path metaDataPath = assetPath.concat(".meta");
+
+        if(FileHandler::CheckIfFileExists(metaDataPath.string().c_str())){
+            nlohmann::json metaData = AssetMetaData::GetMetaData(assetPath);
+            return AssetReference<T>(s_Registry->create(), fileName, s_Registry, UID(metaData["guid"]), assetPath);
+        }else {
+            return AssetReference<T>(s_Registry->create(), fileName, s_Registry, UID(), assetPath);
+        }
+    }*/
+
+    void AssetDatabase::ReimportAssets(){
+        s_Registry->clear();
+        RecursiveImport(s_AssetFolderPath);
+    }
+
+    void AssetDatabase::Init(std::filesystem::path projectPath){
+        s_AssetFolderPath = projectPath / "Assets";
+        s_Registry = CreateRef<entt::registry>(entt::registry());
+
         // Create the file system watcher instance
         // efsw::FileWatcher allow a first boolean parameter that indicates if it should start with the generic file watcher instead of the platform specific backend
-        this->fileWatcher = new efsw::FileWatcher();
+        s_FileWatcher = new efsw::FileWatcher();
 
         // Create the instance of your efsw::FileWatcherListener implementation
         AssetDirectoryListener * listener = new AssetDirectoryListener();
@@ -15,105 +59,84 @@ namespace Dwarf {
         // Add a folder to watch, and get the efsw::WatchID
         // It will watch the /tmp folder recursively ( the third parameter indicates that is recursive )
         // Reporting the files and directories changes to the instance of the listener
-        watchID = this->fileWatcher->addWatch( assetFolderPath.string(), listener, true );
+        s_WatchID = s_FileWatcher->addWatch( s_AssetFolderPath.string(), listener, true );
 
         // Start watching asynchronously the directories
-        this->fileWatcher->watch();
+        s_FileWatcher->watch();
 
-        RecursiveImport(assetFolderPath.string());
-    }
-
-    void AssetDatabase::RecursiveImport(std::string directory) {
-        for(auto& directoryEntry : std::filesystem::directory_iterator(directory)){
-            if(directoryEntry.is_directory()) {
-                RecursiveImport(directoryEntry.path().string());
-            } else if (directoryEntry.is_regular_file()) {
-                Import(directoryEntry.path());
-            }
-        }
+        ReimportAssets();
     }
 
     void AssetDatabase::Clear(){
-        this->fileWatcher->removeWatch( this->watchID );
+        s_FileWatcher->removeWatch( s_WatchID );
     }
 
-    /*AssetReference AssetDatabase::Retrieve(UID id){
-        return AssetReference();
-    }*/
-
-    AssetReference AssetDatabase::CreateAssetReference(std::string fileName){
-        return CreateAssetReferenceWithUID(UID(), fileName);
-    }
-
-    AssetReference AssetDatabase::CreateAssetReferenceWithUID(UID uid, std::string fileName){
-        AssetReference assetReference = { m_Registry.create(), this };
-        assetReference.AddComponent<IDComponent>(uid);
-        auto& tag = assetReference.AddComponent<TagComponent>(fileName);
-        tag.Tag = fileName.empty() ? "Asset" : fileName;
-
-        //entity.SetParent(rootEntity.GetHandle());
-
-        return assetReference;
-    }
-
-    void AssetDatabase::Import(std::filesystem::path assetPath) {
+    Ref<UID> AssetDatabase::Import(std::filesystem::path assetPath){
         std::string fileExtension = assetPath.extension().string();
         std::string fileName = assetPath.filename().string();
-        std::cout << "Trying to import file with extension [" << fileExtension << "] found at <" + assetPath.string() << ">" << std::endl;
-        // Get meta data
-        //nlohmann::json metaData = 
-
+        
         if(fileExtension == ".obj" || fileExtension == ".fbx") {
-            // Create asset reference with a mesh asset component
-            AssetReference newAssetReference = CreateAssetReference(fileName);
-            newAssetReference.AddComponent<PathComponent>(assetPath);
-            newAssetReference.AddComponent<MeshAsset>(assetPath);
+            return CreateAssetReference<MeshAsset>(assetPath).GetUID();
         } else if(fileExtension == ".dmat") {
-            // Create asset reference with a material asset component
-            AssetReference newAssetReference = CreateAssetReference(fileName);
-            newAssetReference.AddComponent<PathComponent>(assetPath);
-            newAssetReference.AddComponent<MaterialAsset>(assetPath);
+            return CreateAssetReference<MaterialAsset>(assetPath).GetUID();
         } else if(fileExtension == ".jpg" || fileExtension == ".png") {
-            // Create asset reference with a texture asset component
-            AssetReference newAssetReference = CreateAssetReference(fileName);
-            newAssetReference.AddComponent<PathComponent>(assetPath);
-            newAssetReference.AddComponent<TextureAsset>(assetPath);
+            return CreateAssetReference<TextureAsset>(assetPath).GetUID();
         } else if(fileExtension == ".dscene") {
-            // Create asset reference with a scene asset component
-            AssetReference newAssetReference = CreateAssetReference(fileName);
-            newAssetReference.AddComponent<PathComponent>(assetPath);
-            newAssetReference.AddComponent<SceneAsset>(assetPath);
+            return CreateAssetReference<SceneAsset>(assetPath).GetUID();
         } else if(fileExtension == ".vert") {
-            // Create asset reference with a vertex shader asset component
-            AssetReference newAssetReference = CreateAssetReference(fileName);
-            newAssetReference.AddComponent<PathComponent>(assetPath);
-            newAssetReference.AddComponent<VertexShaderAsset>(assetPath);
+            return CreateAssetReference<VertexShaderAsset>(assetPath).GetUID();
         } else if(fileExtension == ".tesc") {
-            // Create asset reference with a tesselation control shader asset component
-            AssetReference newAssetReference = CreateAssetReference(fileName);
-            newAssetReference.AddComponent<PathComponent>(assetPath);
-            newAssetReference.AddComponent<TesselationControlShaderAsset>(assetPath);
+            return CreateAssetReference<TesselationControlShaderAsset>(assetPath).GetUID();
         } else if(fileExtension == ".tese") {
-            // Create asset reference with a tesselation evaluation shader asset component
-            AssetReference newAssetReference = CreateAssetReference(fileName);
-            newAssetReference.AddComponent<PathComponent>(assetPath);
-            newAssetReference.AddComponent<TesselationEvaluationShaderAsset>(assetPath);
+            return CreateAssetReference<TesselationEvaluationShaderAsset>(assetPath).GetUID();
         } else if(fileExtension == ".geom") {
-            // Create asset reference with a geometry shader asset component
-            AssetReference newAssetReference = CreateAssetReference(fileName);
-            newAssetReference.AddComponent<PathComponent>(assetPath);
-            newAssetReference.AddComponent<GeometryShaderAsset>(assetPath);
+            return CreateAssetReference<GeometryShaderAsset>(assetPath).GetUID();
         } else if(fileExtension == ".frag") {
-            // Create asset reference with a fragment shader asset component
-            AssetReference newAssetReference = CreateAssetReference(fileName);
-            newAssetReference.AddComponent<PathComponent>(assetPath);
-            newAssetReference.AddComponent<FragmentShaderAsset>(assetPath);
+            return CreateAssetReference<FragmentShaderAsset>(assetPath).GetUID();
         } else if(fileExtension == ".comp") {
-            // Create asset reference with a compute shader asset component
-            AssetReference newAssetReference = CreateAssetReference(fileName);
-            newAssetReference.AddComponent<PathComponent>(assetPath);
-            newAssetReference.AddComponent<ComputeShaderAsset>(assetPath);
+            return CreateAssetReference<ComputeShaderAsset>(assetPath).GetUID();
+        } else if(fileExtension == ".metal"){
+            return CreateAssetReference<MetalShaderAsset>(assetPath).GetUID();
+        } else if(fileExtension == ".hlsl") {
+            return CreateAssetReference<HlslShaderAsset>(assetPath).GetUID();
+        } else{
+            return CreateAssetReference<UnknownAsset>(assetPath).GetUID();
         }
-        //return AssetReference();
+    }
+
+    bool AssetDatabase::Exists(Ref<UID> uid){
+        // Retrieve entt::entity with UID component
+        auto view = s_Registry->view<IDComponent>();
+        for(auto entity : view){
+            if(view.get<IDComponent>(entity).ID == uid){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    bool AssetDatabase::Exists(std::filesystem::path path){
+        // Retrieve entt::entity with UID component
+        auto view = s_Registry->view<PathComponent>();
+        for(auto entity : view){
+            if(view.get<PathComponent>(entity).Path == path){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    void AssetDatabase::CreateNewMaterialAsset(){
+        CreateNewMaterialAsset(s_AssetFolderPath);
+    }
+
+    void AssetDatabase::CreateNewMaterialAsset(std::filesystem::path path){
+        Material newMat = Material("New Material");
+        std::filesystem::path newMatPath = path / "New Material.dmat";
+        MaterialSerializer::Serialize(newMat, newMatPath);
+    }
+
+    std::filesystem::path AssetDatabase::GetAssetDirectoryPath(){
+        return s_AssetFolderPath;
     }
 }

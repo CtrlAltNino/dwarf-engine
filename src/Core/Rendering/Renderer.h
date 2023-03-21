@@ -6,6 +6,7 @@
 #include <assimp/postprocess.h>
 #include <assimp/material.h>
 
+#include "Utilities/Common.h"
 #include "Core/Rendering/Material.h"
 #include "Core/Rendering/Mesh.h"
 
@@ -16,7 +17,10 @@ namespace Dwarf {
 		Material material;
 		//Mesh mesh;
 		std::vector<Mesh> meshes;
+		static GraphicsApi Api;
+
 	public:
+		static GraphicsApi GetAPI();
 		// ========== Constructors ==========
 		
 		//Renderer(BasicMaterial* material, Mesh* mesh);

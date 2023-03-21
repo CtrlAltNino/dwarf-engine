@@ -14,7 +14,7 @@ namespace Dwarf {
             /// @param path Path to an asset.
             /// @return Metadata in JSON.
             static nlohmann::json GetMetaData(std::filesystem::path path){
-                std::string fileContent = FileHandler::readFile((path.string() + ".meta").c_str());
+                std::string fileContent = FileHandler::ReadFile(path.concat(".meta"));
                 nlohmann::json jsonObject;
 
                 if (!fileContent.empty()) {
@@ -27,14 +27,14 @@ namespace Dwarf {
             /// @brief Writes the given metadata to a path.
             /// @param path Path to write the metadata to.
             /// @param metaData The metadata in JSON.
-            static void SetMetaData(std::string path, nlohmann::json metaData){
+            static void SetMetaData(std::filesystem::path path, nlohmann::json metaData){
                 std::string fileContent = metaData.dump(4);
                 
-                if (!FileHandler::checkIfDirectoyExists(path)) {
-                    FileHandler::createDirectoryS(path);
+                if (!FileHandler::CheckIfDirectoyExists(path)) {
+                    FileHandler::CreateDirectory(path);
                 }
                 
-                FileHandler::writeToFile((path + ".meta").c_str(), fileContent);
+                FileHandler::WriteToFile(path.concat(".meta"), fileContent);
             }
     };
 }
