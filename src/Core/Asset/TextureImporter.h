@@ -25,54 +25,43 @@ namespace Dwarf {
                 switch(Renderer::GetAPI()){
                     #ifdef WIN32
                         case GraphicsApi::D3D11:
-                            return nullptr;
                             break;
                         case GraphicsApi::D3D12:
-                            return nullptr;
                             break;
                         case GraphicsApi::Metal:
-                            return nullptr;
                             break;
                         case GraphicsApi::OpenGL:
                             return CreateRef<OpenGLTexture>(OpenGLTexture(path));
                             break;
                         case GraphicsApi::Vulkan:
-                            return nullptr;
                             break;
                     #elif __linux__
                         case GraphicsApi::D3D11:
-                            return nullptr;
                             break;
                         case GraphicsApi::D3D12:
-                            return nullptr;
                             break;
                         case GraphicsApi::Metal:
-                            return nullptr;
                             break;
                         case GraphicsApi::OpenGL:
                             return CreateRef<OpenGLTexture>(OpenGLTexture(path));
                             break;
                         case GraphicsApi::Vulkan:
-                            return nullptr;
                             break;
                     #elif __APPLE__
                         case GraphicsApi::D3D11:
-                            return nullptr;
                             break;
                         case GraphicsApi::D3D12:
-                            return nullptr;
                             break;
                         case GraphicsApi::Metal:
                             return CreateRef<MetalTexture>(path);
                             break;
                         case GraphicsApi::OpenGL:
-                            return nullptr;
                             break;
                         case GraphicsApi::Vulkan:
-                            return nullptr;
                             break;
                     #endif
                 }
+                return nullptr;
             }
 
             static uintptr_t GetTexID(Ref<ITexture> texture, GraphicsApi api){

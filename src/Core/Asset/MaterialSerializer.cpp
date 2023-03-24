@@ -68,7 +68,8 @@ namespace Dwarf {
                 case GraphicsApi::D3D11: break;
                 case GraphicsApi::D3D12: break;
                 case GraphicsApi::OpenGL:
-                        Ref<Shader> shaderRef = material.GetShader();
+                {
+                    Ref<Shader> shaderRef = material.GetShader();
                         OpenGLShader* shader = (OpenGLShader*)shaderRef.get();
                         serializedMat["shader"]["vertexShader"] = (uint64_t)*shader->GetVertexShader();
                         serializedMat["shader"]["fragmentShader"] = (uint64_t)*shader->GetFragmentShader();
@@ -76,13 +77,15 @@ namespace Dwarf {
                             serializedMat["shader"]["geometryShader"] = (uint64_t)*shader->GetGeometryShader();
                         }
                     break;
+                }
                 case GraphicsApi::Metal: break;
                 case GraphicsApi::Vulkan: break;
 #elif __linux__
                 case GraphicsApi::D3D11: break;
                 case GraphicsApi::D3D12: break;
                 case GraphicsApi::OpenGL:
-                        Ref<Shader> shaderRef = material.GetShader();
+                {
+                    Ref<Shader> shaderRef = material.GetShader();
                         OpenGLShader* shader = (OpenGLShader*)shaderRef.get();
                         serializedMat["shader"]["vertexShader"] = (uint64_t)*shader->GetVertexShader();
                         serializedMat["shader"]["fragmentShader"] = (uint64_t)*shader->GetFragmentShader();
@@ -90,6 +93,7 @@ namespace Dwarf {
                             serializedMat["shader"]["geometryShader"] = (uint64_t)*shader->GetGeometryShader();
                         }
                     break;
+                }
                 case GraphicsApi::Metal: break;
                 case GraphicsApi::Vulkan: break;
 #elif __APPLE__
