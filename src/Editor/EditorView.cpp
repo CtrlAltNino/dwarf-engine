@@ -7,7 +7,7 @@
 
 #include "Core/Asset/AssetDatabase.h"
 #include "Editor/Modules/Asset Browser/AssetBrowserWindow.h"
-#include "Editor/Modules/Debug/DebugWindow.h"
+#include "Editor/Modules/Debug Information/DebugWindow.h"
 #include "Editor/Modules/Inspector/InspectorWindow.h"
 #include "Editor/Modules/Performance/PerformanceWindow.h"
 #include "Editor/Modules/Scene Hierarchy/SceneHierarchyWindow.h"
