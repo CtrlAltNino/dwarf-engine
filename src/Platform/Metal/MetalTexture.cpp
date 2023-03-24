@@ -3,7 +3,7 @@
 
 #include <stb_image.h>
 
-#include "Core/Rendering/MetalTexture.h"
+#include "Platform/Metal/MetalTexture.h"
 
 namespace Dwarf {
 
@@ -41,7 +41,9 @@ namespace Dwarf {
         pTextureDesc->release();
     }
 
-    Ref<MTL::Texture> MetalTexture::GetMetalTexture(){
-        return this->texture;
+    MetalTexture::~MetalTexture(){}
+
+    MTL::Texture* MetalTexture::GetMetalTexture(){
+        return texture;
     }
 }

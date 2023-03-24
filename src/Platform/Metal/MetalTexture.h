@@ -10,12 +10,13 @@
 
 namespace Dwarf {
     
-    class MetalTexture : ITexture {
+    class MetalTexture : public ITexture {
         private:
-            Ref<MTL::Texture> texture;
+            MTL::Texture* texture;
         public:
             MetalTexture(std::filesystem::path path);
-            Ref<MTL::Texture> GetMetalTexture();
+            ~MetalTexture();
+            MTL::Texture* GetMetalTexture();
             void* Get();
     };
 }

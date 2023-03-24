@@ -160,7 +160,7 @@ namespace Dwarf {
 
             ShellExecute(NULL, commandStr, argStr, NULL, NULL, SW_SHOWNORMAL);
         #elif __APPLE__
-            system(("open \"" + path + "\"").c_str());
+            system(("open \"" + path.string() + "\"").c_str());
         #endif
     }
 }

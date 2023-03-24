@@ -51,13 +51,13 @@ namespace Dwarf {
                 int count = 0;
                 for(auto entity : view){
                     availableAssets.push_back(entity);
-                    if(*view.get<IDComponent>(entity).ID == *assetID){
+                    if(*view.template get<IDComponent>(entity).ID == *assetID){
                         selectedAsset = count;
                     }
                     count++;
                 }
                 
-                const char* preview = selectedAsset == -1 ? "None" : view.get<TagComponent>(availableAssets[selectedAsset]).Tag.c_str();
+                const char* preview = selectedAsset == -1 ? "None" : view.template get<TagComponent>(availableAssets[selectedAsset]).Tag.c_str();
 
                 if(ImGui::BeginCombo(imguiID, preview)){
                     if(ImGui::Selectable("None", selectedAsset == -1, 0, ImVec2(0, 16 + 10))){
@@ -67,9 +67,9 @@ namespace Dwarf {
                     
                     for(int i = 0; i < availableAssets.size(); i++){
                         const bool is_selected = (selectedAsset == i);
-                        if (ImGui::Selectable(view.get<TagComponent>(availableAssets[i]).Tag.c_str(), is_selected, 0, ImVec2(0, 16 + 10))) {
+                        if (ImGui::Selectable(view.template get<TagComponent>(availableAssets[i]).Tag.c_str(), is_selected, 0, ImVec2(0, 16 + 10))) {
                             selectedAsset = i;
-                            assetID = view.get<IDComponent>(availableAssets[i]).ID;
+                            assetID = view.template get<IDComponent>(availableAssets[i]).ID;
                         }
                     }
 

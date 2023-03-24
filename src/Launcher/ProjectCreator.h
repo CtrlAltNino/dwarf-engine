@@ -87,7 +87,7 @@ namespace Dwarf {
                                 templateProjectDirectory.string() + "\" \"" + (projectPath / projectName).string() + "\" /E/H/C/I/y/D");
                             #elif __APPLE__
                                 std::string copyCommand = std::string("cp -R \"./") 
-                                    + templateProjectDirectory + "/\" \"" + std::string(projectPath) + "/" + projectName + "\"";
+                                    + templateProjectDirectory.string() + "/\" \"" + std::string(projectPath) + "/" + projectName + "\"";
                             #endif
                             
                             system(copyCommand.c_str());

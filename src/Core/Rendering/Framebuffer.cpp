@@ -9,8 +9,14 @@ namespace Dwarf {
 	{
 		switch (Renderer::GetAPI())
 		{
+#ifdef _WIN32
 			//case RendererAPI::API::None:    HZ_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
 			case GraphicsApi::OpenGL:  return CreateRef<OpenGLFramebuffer>(spec);
+#elif __linux__
+			case GraphicsApi::OpenGL:  return CreateRef<OpenGLFramebuffer>(spec);
+#elif __APPLE__
+			//case GraphicsApi::OpenGL:  return CreateRef<OpenGLFramebuffer>(spec);
+#endif
 		}
 
 		//HZ_CORE_ASSERT(false, "Unknown RendererAPI!");

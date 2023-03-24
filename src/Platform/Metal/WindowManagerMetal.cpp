@@ -1,4 +1,4 @@
-#include "Window/WindowManagerMetal.h"
+/*#include "Platform/macOS/WindowManagerMetal.h"
 
 namespace Dwarf {
 
@@ -196,4 +196,4 @@ namespace Dwarf {
     void WindowManagerMetal::HideWindow(){
         SDL_HideWindow(window);
     }
-}
+}*/

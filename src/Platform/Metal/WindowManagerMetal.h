@@ -1,4 +1,4 @@
-#pragma once
+/*#pragma once
 
 // system
 #include <iostream>
@@ -92,4 +92,4 @@ namespace Dwarf {
 
             virtual void HideWindow();
     };
-}
+}*/

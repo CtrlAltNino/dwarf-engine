@@ -1,9 +1,11 @@
 #pragma once
 
-#ifdef __APPLE__
-    #include "Core/Rendering/MetalTexture.h"
-#else
+#ifdef WIN32
     #include "Platform/OpenGL/OpenGLTexture.h"
+#elif __linux__
+    #include "Platform/OpenGL/OpenGLTexture.h"
+#elif __APPLE__
+    #include "Platform/Metal/MetalTexture.h"
 #endif
 
 #include <filesystem>
@@ -11,6 +13,7 @@
 
 #include "Core/Base.h"
 #include "Utilities/Common.h"
+#include "Core/Rendering/Renderer.h"
 
 namespace Dwarf {
 
@@ -19,14 +22,57 @@ namespace Dwarf {
         public:
              // Builds texture without meta data
             static Ref<ITexture> CreateTexture(std::filesystem::path path) {
-                #ifdef WIN32
-                    //return nullptr;
-                    return CreateRef<OpenGLTexture>(OpenGLTexture(path));
-                #elif __linux__
-                    return (ITexture)OpenGLTexture(path);
-                #elif __APPLE__
-                    return (ITexture)MetalTexture(path);
-                #endif
+                switch(Renderer::GetAPI()){
+                    #ifdef WIN32
+                        case GraphicsApi::D3D11:
+                            return nullptr;
+                            break;
+                        case GraphicsApi::D3D12:
+                            return nullptr;
+                            break;
+                        case GraphicsApi::Metal:
+                            return nullptr;
+                            break;
+                        case GraphicsApi::OpenGL:
+                            return CreateRef<OpenGLTexture>(OpenGLTexture(path));
+                            break;
+                        case GraphicsApi::Vulkan:
+                            return nullptr;
+                            break;
+                    #elif __linux__
+                        case GraphicsApi::D3D11:
+                            return nullptr;
+                            break;
+                        case GraphicsApi::D3D12:
+                            return nullptr;
+                            break;
+                        case GraphicsApi::Metal:
+                            return nullptr;
+                            break;
+                        case GraphicsApi::OpenGL:
+                            return CreateRef<OpenGLTexture>(OpenGLTexture(path));
+                            break;
+                        case GraphicsApi::Vulkan:
+                            return nullptr;
+                            break;
+                    #elif __APPLE__
+                        case GraphicsApi::D3D11:
+                            return nullptr;
+                            break;
+                        case GraphicsApi::D3D12:
+                            return nullptr;
+                            break;
+                        case GraphicsApi::Metal:
+                            return CreateRef<MetalTexture>(path);
+                            break;
+                        case GraphicsApi::OpenGL:
+                            return nullptr;
+                            break;
+                        case GraphicsApi::Vulkan:
+                            return nullptr;
+                            break;
+                    #endif
+                }
             }
 
             static uintptr_t GetTexID(Ref<ITexture> texture, GraphicsApi api){
@@ -41,9 +87,9 @@ namespace Dwarf {
                         case GraphicsApi::Vulkan: break;
                     }
                 #elif __linux__
-                    return (ITexture)OpenGLTexture(path);
+                    
                 #elif __APPLE__
-                    return (ITexture)MetalTexture(path);
+                    //id = ((MetalTexture*)texture.get())->GetMetalTexture();
                 #endif
 
                 return id;

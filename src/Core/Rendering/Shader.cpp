@@ -4,15 +4,15 @@
 #include "Core/Rendering/Renderer.h"
 
 #ifdef _WIN32
-	//#include "Platform/OpenGL/D3D11Shader.h"
-	//#include "Platform/OpenGL/D3D12Shader.h"
+	//#include "Platform/D3D11/D3D11Shader.h"
+	//#include "Platform/D3D12/D3D12Shader.h"
 	#include "Platform/OpenGL/OpenGLShader.h"
-	//#include "Platform/OpenGL/VulkanShader.h"
+	//#include "Platform/Vulkan/VulkanShader.h"
 #elif __linux__
 	#include "Platform/OpenGL/OpenGLShader.h"
-	#include "Platform/OpenGL/VulkanShader.h"
+	//#include "Platform/Vulkan/VulkanShader.h"
 #elif __APPLE__
-	#include "Platform/OpenGL/MetalShader.h"
+	#include "Platform/Metal/MetalShader.h"
 #endif
 
 namespace Dwarf {
@@ -92,11 +92,11 @@ namespace Dwarf {
 					s_GridShader = VulkanShader::CreateGridShader();
 				break;*/
 #elif __APPLE__
-			/*case GraphicsApi::Metal:
+			case GraphicsApi::Metal:
 					s_DefaultShader = MetalShader::CreateDefaultShader();
 					s_ErrorShader = MetalShader::CreateErrorShader();
 					s_GridShader = MetalShader::CreateGridShader();
-				break;*/
+				break;
 #endif
 		}
 
