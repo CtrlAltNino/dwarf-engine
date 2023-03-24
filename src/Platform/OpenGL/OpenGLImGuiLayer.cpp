@@ -29,6 +29,7 @@ namespace Dwarf {
 
 		io.ConfigWindowsResizeFromEdges = true;
         io.Fonts->AddFontDefault();
+		io.FontDefault = io.Fonts->AddFontFromFileTTF("data/engine/fonts/Roboto-Regular.ttf", 15.0f);
 
 		//float fontSize = 18.0f;// *2.0f;
 		//io.Fonts->AddFontFromFileTTF("assets/fonts/opensans/OpenSans-Bold.ttf", fontSize);

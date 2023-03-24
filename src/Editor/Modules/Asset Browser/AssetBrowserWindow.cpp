@@ -123,7 +123,7 @@ namespace Dwarf {
                 ImGui::SetCursorPos(cellMin);
                 
                 ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.0f);
-                if(m_SelectedAsset == directoryEntry.path()){
+                if(m_SelectedAsset == path){
                 ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0,1.0,1.0,0.2));
                 }else{
                     ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0,0,0,0));
@@ -145,7 +145,7 @@ namespace Dwarf {
                         }
                     }else if(ImGui::IsItemClicked()){
                         // TODO Select asset
-                        SelectAsset(directoryEntry.path());
+                        SelectAsset(path);
                     }
 
                     // TODO Drag Asset

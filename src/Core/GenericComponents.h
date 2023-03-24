@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Base.h"
+#include "Core/UID.h"
 
 namespace Dwarf {
     struct PathComponent {

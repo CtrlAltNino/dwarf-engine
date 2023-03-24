@@ -15,7 +15,7 @@
 #include "Utilities/FileHandler.h"
 
 namespace Dwarf {
-    
+    enum ASSET_TYPE { UNKNOWN, MODEL, TEXTURE, SCENE, MATERIAL, VERTEX_SHADER, TESC_SHADER, TESE_SHADER, GEOMETRY_SHADER, FRAGMENT_SHADER, COMPUTE_SHADER, METAL_SHADER, HLSL_SHADER };
     /// @brief Dwarf Engines asset database system. It handles an ECS registry containing entities for every usable Asset inside the "/Assets" directory.
     class AssetDatabase {
         private:
@@ -97,6 +97,40 @@ namespace Dwarf {
                     }
                 }
                 return nullptr;
+            }
+
+            static ASSET_TYPE GetType(std::filesystem::path assetPath){
+                if(assetPath.extension() == ".fbx"){
+                    return ASSET_TYPE::MODEL;
+                }else if(assetPath.extension() == ".obj"){
+                    return ASSET_TYPE::MODEL;
+                }else if(assetPath.extension() == ".jpg"){
+                    return ASSET_TYPE::TEXTURE;
+                }else if(assetPath.extension() == ".png"){
+                    return ASSET_TYPE::TEXTURE;
+                }else if(assetPath.extension() == ".vert"){
+                    return ASSET_TYPE::VERTEX_SHADER;
+                }else if(assetPath.extension() == ".tesc"){
+                    return ASSET_TYPE::TESC_SHADER;
+                }else if(assetPath.extension() == ".tese"){
+                    return ASSET_TYPE::TESE_SHADER;
+                }else if(assetPath.extension() == ".geom"){
+                    return ASSET_TYPE::GEOMETRY_SHADER;
+                }else if(assetPath.extension() == ".frag"){
+                    return ASSET_TYPE::FRAGMENT_SHADER;
+                }else if(assetPath.extension() == ".comp"){
+                    return ASSET_TYPE::COMPUTE_SHADER;
+                }else if(assetPath.extension() == ".metal"){
+                    return ASSET_TYPE::METAL_SHADER;
+                }else if(assetPath.extension() == ".hlsl"){
+                    return ASSET_TYPE::HLSL_SHADER;
+                }else if(assetPath.extension() == ".dscene"){
+                    return ASSET_TYPE::SCENE;
+                }else if(assetPath.extension() == ".dmat"){
+                    return ASSET_TYPE::MATERIAL;
+                }else{
+                    return ASSET_TYPE::UNKNOWN;
+                }
             }
     };
 }

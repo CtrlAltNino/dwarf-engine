@@ -213,6 +213,40 @@ namespace Dwarf {
     }
 
     void EditorView::OnImGuiRender(){
+        
+		ImGui::PushStyleColor(ImGuiCol_Text, COL_TEXT);
+
+        ImGui::PushStyleColor(ImGuiCol_WindowBg, COL_BG_DIM);
+		ImGui::PushStyleColor(ImGuiCol_Border, COL_DIM2);
+
+        ImGui::PushStyleColor(ImGuiCol_TitleBgActive, COL_WINDOW_HEADER_FOCUSED);
+        ImGui::PushStyleColor(ImGuiCol_TitleBg, COL_WINDOW_HEADER_UNFOCUSED);
+        
+        ImGui::PushStyleColor(ImGuiCol_TabUnfocused, COL_TAB_UNFOCUSED);
+        ImGui::PushStyleColor(ImGuiCol_TabUnfocusedActive, COL_TAB_UNFOCUSED_ACTIVE);
+
+        ImGui::PushStyleColor(ImGuiCol_Tab, COL_TAB);
+        ImGui::PushStyleColor(ImGuiCol_TabActive, COL_TAB_ACTIVE);
+        ImGui::PushStyleColor(ImGuiCol_TabHovered, COL_TAB_HOVERED);
+
+        ImGui::PushStyleColor(ImGuiCol_PopupBg, COL_POPUP_BG);
+
+        ImGui::PushStyleColor(ImGuiCol_Button, COL_BUTTON);
+        ImGui::PushStyleColor(ImGuiCol_ButtonActive, COL_BUTTON_ACTIVE);
+        ImGui::PushStyleColor(ImGuiCol_ButtonHovered, COL_BUTTON_HOVERED);
+
+        ImGui::PushStyleColor(ImGuiCol_Header, COL_BUTTON);
+        ImGui::PushStyleColor(ImGuiCol_HeaderActive, COL_BUTTON_ACTIVE);
+        ImGui::PushStyleColor(ImGuiCol_HeaderHovered, COL_BUTTON_HOVERED);
+        //ImGuiCol_FrameBg
+        
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 5.0f);
+        ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.0f);
+        ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 5.0f);
+
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(12, 12));
+        
+
         // Render default stuff
         RenderDockSpace();
         
@@ -226,6 +260,9 @@ namespace Dwarf {
                 m_GuiModules.at(i)->OnImGuiRender();
             }
         }
+
+        ImGui::PopStyleColor(17);
+        ImGui::PopStyleVar(4);
     }
 
     void EditorView::DockWindowToFocused(std::string windowName){

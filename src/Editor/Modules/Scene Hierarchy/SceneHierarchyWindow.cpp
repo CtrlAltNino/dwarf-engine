@@ -26,6 +26,8 @@ namespace Dwarf {
         // Bool do indicate if the node, which has children, is folded out
         bool opened = false;
         
+        ImGui::PushStyleColor(ImGuiCol_HeaderHovered, IM_COL32(0,0,0,0));
+        ImGui::PushStyleColor(ImGuiCol_HeaderActive, IM_COL32(0,0,0,0));
         // Drawing the node, depending on if it has children or not
         if(ent.GetComponent<TransformComponent>().children.size() != 0){
             opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)ent.GetHandle(), flags, objectLabel.c_str());
@@ -33,7 +35,7 @@ namespace Dwarf {
             //ImGui::Indent();
             ImGui::Selectable(("       " + objectLabel).c_str());
         }
-
+        ImGui::PopStyleColor(2);
         // If this node is being dragged
         if(ImGui::BeginDragDropSource(ImGuiDragDropFlags_AcceptBeforeDelivery)){
             if(!IsEntitySelected(ent)){
@@ -114,33 +116,36 @@ namespace Dwarf {
             ImGui::EndDragDropTarget();
         }
 
-        if(ImGui::IsItemHovered() && ImGui::IsMouseReleased(ImGuiMouseButton_Left)){
-            if(IsEntitySelected(ent)){
-                // Set to selected object
-                //if(model->GetInput()->GetKey(KEYCODE::LEFT_CONTROL)){
-                if(InputManager::GetKey(KEYCODE::LEFT_CONTROL)){
-                    RemoveEntityFromSelection(ent);
+        if(ImGui::IsItemHovered()){
+            if(ImGui::IsMouseReleased(ImGuiMouseButton_Left)){
+                if(IsEntitySelected(ent)){
+                    // Set to selected object
+                    //if(model->GetInput()->GetKey(KEYCODE::LEFT_CONTROL)){
+                    if(InputManager::GetKey(KEYCODE::LEFT_CONTROL)){
+                        RemoveEntityFromSelection(ent);
+                    }else{
+                        SelectEntity(ent);
+                    }
                 }else{
-                    SelectEntity(ent);
-                }
-            }else{
-                // Set to selected object
-                //if(model->GetInput()->GetKey(KEYCODE::LEFT_CONTROL)){
-                if(InputManager::GetKey(KEYCODE::LEFT_CONTROL)){
-                    AddEntityToSelection(ent);
-                }else{
-                    SelectEntity(ent);
+                    // Set to selected object
+                    //if(model->GetInput()->GetKey(KEYCODE::LEFT_CONTROL)){
+                    if(InputManager::GetKey(KEYCODE::LEFT_CONTROL)){
+                        AddEntityToSelection(ent);
+                    }else{
+                        SelectEntity(ent);
+                    }
                 }
             }
-        }
-
-        // Drawing an extra rect behind the node if its selected
-        if(IsEntitySelected(ent)){
+            
             draw_list->ChannelsSetCurrent(0);
-            ImVec2 p_min = ImGui::GetItemRectMin();
-            ImVec2 p_max = ImGui::GetItemRectMax();
-            ImU32 rectCol = IM_COL32(26, 86, 186, 255);
-            ImGui::GetWindowDrawList()->AddRectFilled(p_min, p_max, rectCol, 10);
+            ImU32 rectCol = IM_COL32(76, 86, 106, 255);
+            if(ImGui::IsMouseDown(0)){
+                rectCol = IM_COL32(86, 95, 114, 255);
+            }
+            draw_list->AddRectFilled(ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), rectCol, 5.0f);
+        }else if(IsEntitySelected(ent)){
+            draw_list->ChannelsSetCurrent(0);
+            draw_list->AddRectFilled(ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), IM_COL32(76, 86, 106, 255), 5.0f);
         }
         
         ImGui::PopStyleColor();
