@@ -9,7 +9,6 @@
 #include "Core/Rendering/Material.h"
 #include "Core/Asset/ModelImporter.h"
 #include "Core/Asset/MaterialSerializer.h"
-#include "Core/Asset/TextureImporter.h"
 #include "Core/Asset/AssetMetaData.h"
 
 namespace Dwarf {
@@ -100,7 +99,7 @@ namespace Dwarf {
         /// @brief Imported texture.
         Ref<Texture> m_Texture;
 
-        TextureAsset(std::filesystem::path path) : m_Texture(TextureImporter::CreateTexture(path)) { }
+        TextureAsset(std::filesystem::path path) : m_Texture(Texture::Create(path)) { }
 
         /// @brief Retrieves the texture.
         /// @return The imported texture instance.

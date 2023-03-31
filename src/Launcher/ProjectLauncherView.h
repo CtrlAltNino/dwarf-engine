@@ -6,7 +6,6 @@
 #include "Utilities/TimeUtilities.h"
 #include "Utilities/BrowserLinkOpener.h"
 #include "Core/Rendering/Texture.h"
-#include "Core/Asset/TextureImporter.h"
 #include "Core/UI/ImGuiLayer.h"
 
 #include "imgui.h"

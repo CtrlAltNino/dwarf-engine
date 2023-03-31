@@ -4,7 +4,6 @@
   "supports": "(windows & x64 & static) | (linux & x64)",
   "dependencies": [
     "glad",
-    "glfw3",
     "glm",
     {
       "name": "imgui",

@@ -1,7 +1,6 @@
 #include "Editor/Modules/Asset Browser/AssetBrowserWindow.h"
 #include "Core/Asset/AssetDatabase.h"
 #include "Input/InputManager.h"
-#include "Core/Asset/TextureImporter.h"
 #include "Core/Rendering/Renderer.h"
 #include "Core/Scene/SceneUtilities.h"
 #include <imgui_internal.h>
@@ -45,28 +44,28 @@ namespace Dwarf {
 
     void AssetBrowserWindow::LoadIcons(){
         std::filesystem::path iconPath("data/engine/img/icons/asset browser");
-        
-        m_DirectoryIcon = TextureImporter::CreateTexture(iconPath / "directoryIcon.png");
-            
-        m_FBXIcon = TextureImporter::CreateTexture(iconPath / "fbxIcon.png");
-        m_OBJIcon = TextureImporter::CreateTexture(iconPath / "objIcon.png");
-        
-        m_JPGIcon = TextureImporter::CreateTexture(iconPath / "jpgIcon.png");
-        m_PNGIcon = TextureImporter::CreateTexture(iconPath / "pngIcon.png");
 
-        m_VertexShaderIcon = TextureImporter::CreateTexture(iconPath / "vertexShaderIcon.png");
-        m_TessellationControlShaderIcon = TextureImporter::CreateTexture(iconPath / "tessellationControlShaderIcon.png");
-        m_TessellationEvaluationShaderIcon = TextureImporter::CreateTexture(iconPath / "tessellationEvaluationShaderIcon.png");
-        m_GeometryShaderIcon = TextureImporter::CreateTexture(iconPath / "geometryShaderIcon.png");
-        m_FragmentShaderIcon = TextureImporter::CreateTexture(iconPath / "fragmentShaderIcon.png");
-        m_ComputeShaderIcon = TextureImporter::CreateTexture(iconPath / "computeShaderIcon.png");
-        m_HLSLShaderIcon = TextureImporter::CreateTexture(iconPath / "hlslIcon.png");
+        m_DirectoryIcon = Texture::Create(iconPath / "directoryIcon.png");
 
-        m_SceneIcon = TextureImporter::CreateTexture(iconPath / "sceneIcon.png");
+        m_FBXIcon = Texture::Create(iconPath / "fbxIcon.png");
+        m_OBJIcon = Texture::Create(iconPath / "objIcon.png");
 
-        m_MaterialIcon = TextureImporter::CreateTexture(iconPath / "materialIcon.png");
+        m_JPGIcon = Texture::Create(iconPath / "jpgIcon.png");
+        m_PNGIcon = Texture::Create(iconPath / "pngIcon.png");
 
-        m_UnknownFileIcon = TextureImporter::CreateTexture(iconPath / "unknownFileIcon.png");
+        m_VertexShaderIcon = Texture::Create(iconPath / "vertexShaderIcon.png");
+        m_TessellationControlShaderIcon = Texture::Create(iconPath / "tessellationControlShaderIcon.png");
+        m_TessellationEvaluationShaderIcon = Texture::Create(iconPath / "tessellationEvaluationShaderIcon.png");
+        m_GeometryShaderIcon = Texture::Create(iconPath / "geometryShaderIcon.png");
+        m_FragmentShaderIcon = Texture::Create(iconPath / "fragmentShaderIcon.png");
+        m_ComputeShaderIcon = Texture::Create(iconPath / "computeShaderIcon.png");
+        m_HLSLShaderIcon = Texture::Create(iconPath / "hlslIcon.png");
+
+        m_SceneIcon = Texture::Create(iconPath / "sceneIcon.png");
+
+        m_MaterialIcon = Texture::Create(iconPath / "materialIcon.png");
+
+        m_UnknownFileIcon = Texture::Create(iconPath / "unknownFileIcon.png");
     }
 
     bool CompareDirectoryEntries(std::filesystem::directory_entry d1, std::filesystem::directory_entry d2){
@@ -261,40 +260,40 @@ namespace Dwarf {
                 
                 static ImTextureID texID;
                 if(directoryEntry.is_directory()){
-                    texID = (ImTextureID)TextureImporter::GetTexID(m_DirectoryIcon, Renderer::GetAPI());
+                    texID = (ImTextureID)m_DirectoryIcon->GetTextureID();
                 }else if(directoryEntry.is_regular_file()){
                     if(directoryEntry.path().has_extension()){
                         if(directoryEntry.path().extension() == ".fbx"){
-                            texID = (ImTextureID)TextureImporter::GetTexID(m_FBXIcon, Renderer::GetAPI());
+                            texID = (ImTextureID)m_FBXIcon->GetTextureID();
                         }else if(directoryEntry.path().extension() == ".obj"){
-                            texID = (ImTextureID)TextureImporter::GetTexID(m_OBJIcon, Renderer::GetAPI());
+                            texID = (ImTextureID)m_OBJIcon->GetTextureID();
                         }else if(directoryEntry.path().extension() == ".jpg"){
-                            texID = (ImTextureID)TextureImporter::GetTexID(m_JPGIcon, Renderer::GetAPI());
+                            texID = (ImTextureID)m_JPGIcon->GetTextureID();
                         }else if(directoryEntry.path().extension() == ".png"){
-                            texID = (ImTextureID)TextureImporter::GetTexID(m_PNGIcon, Renderer::GetAPI());
+                            texID = (ImTextureID)m_PNGIcon->GetTextureID();
                         }else if(directoryEntry.path().extension() == ".vert"){
-                            texID = (ImTextureID)TextureImporter::GetTexID(m_VertexShaderIcon, Renderer::GetAPI());
+                            texID = (ImTextureID)m_VertexShaderIcon->GetTextureID();
                         }else if(directoryEntry.path().extension() == ".tesc"){
-                            texID = (ImTextureID)TextureImporter::GetTexID(m_TessellationControlShaderIcon, Renderer::GetAPI());
+                            texID = (ImTextureID)m_TessellationControlShaderIcon->GetTextureID();
                         }else if(directoryEntry.path().extension() == ".tese"){
-                            texID = (ImTextureID)TextureImporter::GetTexID(m_TessellationEvaluationShaderIcon, Renderer::GetAPI());
+                            texID = (ImTextureID)m_TessellationEvaluationShaderIcon->GetTextureID();
                         }else if(directoryEntry.path().extension() == ".geom"){
-                            texID = (ImTextureID)TextureImporter::GetTexID(m_GeometryShaderIcon, Renderer::GetAPI());
+                            texID = (ImTextureID)m_GeometryShaderIcon->GetTextureID();
                         }else if(directoryEntry.path().extension() == ".frag"){
-                            texID = (ImTextureID)TextureImporter::GetTexID(m_FragmentShaderIcon, Renderer::GetAPI());
+                            texID = (ImTextureID)m_FragmentShaderIcon->GetTextureID();
                         }else if(directoryEntry.path().extension() == ".comp"){
-                            texID = (ImTextureID)TextureImporter::GetTexID(m_ComputeShaderIcon, Renderer::GetAPI());
+                            texID = (ImTextureID)m_ComputeShaderIcon->GetTextureID();
                         }else if(directoryEntry.path().extension() == ".hlsl"){
-                            texID = (ImTextureID)TextureImporter::GetTexID(m_HLSLShaderIcon, Renderer::GetAPI());
+                            texID = (ImTextureID)m_HLSLShaderIcon->GetTextureID();
                         }else if(directoryEntry.path().extension() == ".dscene"){
-                            texID = (ImTextureID)TextureImporter::GetTexID(m_SceneIcon, Renderer::GetAPI());
+                            texID = (ImTextureID)m_SceneIcon->GetTextureID();
                         }else if(directoryEntry.path().extension() == ".dmat"){
-                            texID = (ImTextureID)TextureImporter::GetTexID(m_MaterialIcon, Renderer::GetAPI());
+                            texID = (ImTextureID)m_MaterialIcon->GetTextureID();
                         }else{
-                            texID = (ImTextureID)TextureImporter::GetTexID(m_UnknownFileIcon, Renderer::GetAPI());
+                            texID = (ImTextureID)m_UnknownFileIcon->GetTextureID();
                         }
                     }else{
-                        texID = (ImTextureID)TextureImporter::GetTexID(m_UnknownFileIcon, Renderer::GetAPI());
+                        texID = (ImTextureID)m_UnknownFileIcon->GetTextureID();
                     }
                 }
                 ImGui::Image(texID, ImVec2(cellWidth - padding, cellWidth - padding));

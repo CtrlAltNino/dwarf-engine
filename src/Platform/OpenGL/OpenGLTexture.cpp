@@ -50,7 +50,7 @@ namespace Dwarf {
 		stbi_image_free(bytes);
 	}
 
-	GLuint OpenGLTexture::GetTextureId(){
+	uintptr_t OpenGLTexture::GetTextureID(){
 		return this->ID;
 	}
 }

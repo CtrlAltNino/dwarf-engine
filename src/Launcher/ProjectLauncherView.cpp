@@ -28,9 +28,9 @@ namespace Dwarf {
 		m_HeaderFont = io.Fonts->AddFontFromFileTTF(FONT_ROBOTO_LIGHT_PATH, 26);
 		m_TextFont = io.Fonts->AddFontFromFileTTF(FONT_ROBOTO_REGULAR_PATH, 15);
 
-		m_GithubIcon = TextureImporter::CreateTexture(std::filesystem::path(GITHUB_PNG_ICON_PATH));
-		m_PatreonIcon = TextureImporter::CreateTexture(std::filesystem::path(PATREON_PNG_ICON_PATH));
-		m_TwitterIcon = TextureImporter::CreateTexture(std::filesystem::path(TWITTER_PNG_ICON_PATH));
+		m_GithubIcon = Texture::Create(std::filesystem::path(GITHUB_PNG_ICON_PATH));
+		m_PatreonIcon = Texture::Create(std::filesystem::path(PATREON_PNG_ICON_PATH));
+		m_TwitterIcon = Texture::Create(std::filesystem::path(TWITTER_PNG_ICON_PATH));
 	}
 
 	void ProjectLauncherView::Render() {
@@ -443,11 +443,10 @@ namespace Dwarf {
 		static ImVec2 iconSize = ImVec2(18,18);
 		static float verticalIconOffset = 2;
 		GraphicsApi activeApi = ProjectLauncher::Get()->GetWindow()->GetApi();
-		
+
 		{
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - verticalIconOffset);
-			//ImTextureID texID = (ImTextureID)TextureImporter::GetTexID(githubIcon, windowManager->GetActiveApi());
-			ImTextureID texID = (ImTextureID)TextureImporter::GetTexID(m_GithubIcon, activeApi);
+			ImTextureID texID = (ImTextureID)m_GithubIcon->GetTextureID();
 			ImGui::Image(texID, iconSize);
 			if (ImGui::IsItemHovered()) {
 				ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
@@ -455,7 +454,7 @@ namespace Dwarf {
 			if (ImGui::IsItemClicked()) {
 				BrowserLinkOpener::OpenLink(GITHUB_LINK);
 			}
-			
+
 			ImGui::SameLine();
 
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + verticalIconOffset);
@@ -473,7 +472,7 @@ namespace Dwarf {
 		
 		{
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - verticalIconOffset);
-			ImTextureID texID = (ImTextureID)TextureImporter::GetTexID(m_PatreonIcon, activeApi);
+			ImTextureID texID = (ImTextureID)m_PatreonIcon->GetTextureID();
 			//std::cout << "patreon tex id: " << *(uintptr_t)texID << std::endl;
 			ImGui::Image(texID, iconSize);
 			if (ImGui::IsItemHovered()) {
@@ -501,7 +500,7 @@ namespace Dwarf {
 		{
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - verticalIconOffset);
 			//reinterpret_cast
-			ImTextureID texID = (ImTextureID)TextureImporter::GetTexID(m_TwitterIcon, activeApi);
+			ImTextureID texID = (ImTextureID)m_TwitterIcon->GetTextureID();
 			ImGui::Image(texID, iconSize);
 			if (ImGui::IsItemHovered()) {
 				ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);

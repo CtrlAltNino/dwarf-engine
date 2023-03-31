@@ -1,6 +1,8 @@
 #pragma once
 
 #include <glm/vec2.hpp>
+#include <filesystem>
+#include "Core/Base.h"
 
 namespace Dwarf {
     class Texture {
@@ -10,5 +12,9 @@ namespace Dwarf {
             glm::ivec2 GetSize(){
                 return size;
             }
+
+            static Ref<Texture> Create(std::filesystem::path path);
+
+            virtual uintptr_t GetTextureID()=0;
     };
 }

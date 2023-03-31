@@ -13,6 +13,6 @@ namespace Dwarf {
             GLuint ID;
         public:
             OpenGLTexture(std::filesystem::path path);
-            GLuint GetTextureId();
+            virtual uintptr_t GetTextureID() override;
     };
 }

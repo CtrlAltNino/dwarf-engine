@@ -420,7 +420,7 @@ namespace Dwarf {
         ImGui::Text(asset->GetPath().filename().string().c_str());
         ImGui::Text("Texture");
 
-        ImTextureID texID = (ImTextureID)TextureImporter::GetTexID(asset->GetAsset().m_Texture, Renderer::GetAPI());
+        ImTextureID texID = (ImTextureID)asset->GetAsset().m_Texture->GetTextureID();
         ImGui::Image(texID, ImVec2(256, 256));
 
         if(ImGui::Button("Reimport")){
