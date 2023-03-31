@@ -5,7 +5,7 @@
 #include "Core/Rendering/Renderer.h"
 
 namespace Dwarf {
-    
+
     /// @brief Utilities for importing Materials and exporting them to disk.
     class MaterialSerializer {
         public:

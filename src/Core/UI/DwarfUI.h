@@ -41,7 +41,7 @@ namespace Dwarf {
             static void ImageButton(ImTextureID texID, ImVec2 buttonSize, ImVec2 imageSize);
             static void InputField();
             static void Text();
-            
+
             template <typename T>
             static void AssetInput(Ref<UID> &assetID, const char* imguiID){
                 std::vector<entt::entity> availableAssets;
@@ -51,12 +51,12 @@ namespace Dwarf {
                 int count = 0;
                 for(auto entity : view){
                     availableAssets.push_back(entity);
-                    if(*view.template get<IDComponent>(entity).ID == *assetID){
+                    if(assetID && (*view.template get<IDComponent>(entity).ID == *assetID)){
                         selectedAsset = count;
                     }
                     count++;
                 }
-                
+
                 const char* preview = selectedAsset == -1 ? "None" : view.template get<TagComponent>(availableAssets[selectedAsset]).Tag.c_str();
 
                 if(ImGui::BeginCombo(imguiID, preview)){

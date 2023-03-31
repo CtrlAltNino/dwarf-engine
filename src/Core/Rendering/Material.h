@@ -13,16 +13,20 @@ namespace Dwarf {
 
 	/// @brief Class representing a modular Material.
 	class Material {
-		private:
+		public:
+			Material(std::string name);
+			Material(std::string name, Ref<Shader> shader);
+			~Material();
+
 			/// @brief Name of the material.
 			std::string m_Name;
 
 			/// @brief Shader program for this material.
 			Ref<Shader> m_Shader;
-			
+
 			/// @brief Flag indicating if this is a transparent object.
 			bool m_Transparent;
-			
+
 			/// @brief Textures used in this material.
 			std::map<std::string, Ref<UID>> m_Textures;
 
@@ -43,10 +47,6 @@ namespace Dwarf {
 			
 			/// @brief 4D vector uniforms.
 			std::map<std::string, glm::vec4> m_Vector4Uniforms;
-		public:
-			Material(std::string name);
-			Material(std::string name, Ref<Shader> shader);
-			~Material();
 
 			std::string GetName();
 

@@ -6,7 +6,9 @@ namespace Dwarf {
         Material deserializedMat(path.stem().string());
 
         nlohmann::json serializedMat = nlohmann::json::parse(FileHandler::ReadFile(path));
-        
+
+        deserializedMat.SetTransparency((bool)serializedMat["transparent"]);
+
         if(serializedMat.contains("shader") && serializedMat["shader"] != "default"){
             switch(Renderer::GetAPI()){
 #ifdef _WIN32

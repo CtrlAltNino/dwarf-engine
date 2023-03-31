@@ -56,5 +56,7 @@ namespace Dwarf {
 			/// @brief Opens a path into a file browser.
 			/// @param path Path to open.
 			static void OpenPathInFileBrowser(std::filesystem::path path);
+
+			static void LaunchFile(std::filesystem::path path);
 	};
 }

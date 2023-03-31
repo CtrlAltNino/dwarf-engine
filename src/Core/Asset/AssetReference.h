@@ -9,7 +9,7 @@
 //#include "Core/Scene/Components.h"
 
 namespace Dwarf {
-    
+
     /// @brief Enum representing the types of assets.
     //enum class AssetType {Unknown, Mesh, Material, Texture, VertexShader, FragmentShader, TesselationControlShader, TesselationEvaluationShader, GeometryShader, ComputeShader};
 

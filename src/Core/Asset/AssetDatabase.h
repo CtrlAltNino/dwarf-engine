@@ -32,6 +32,8 @@ namespace Dwarf {
             /// @param directory Absolute path to a directory.
             static void RecursiveImport(std::filesystem::path directory);
 
+            static void CompileShaders();
+
             /// @brief Creates an asset reference for an asset at a given path.
             /// @param assetPath Path to the asset.
             /// @return The created asset reference instance.
@@ -72,6 +74,16 @@ namespace Dwarf {
             static void CreateNewMaterialAsset(std::filesystem::path path);
 
             static std::filesystem::path GetAssetDirectoryPath();
+
+            static void Remove(Ref<UID> uid);
+            static void Remove(std::filesystem::path path);
+
+            template<typename T>
+            static void Reimport(Ref<AssetReference<T>> asset){
+                std::filesystem::path assetPath = asset->GetPath();
+                AssetDatabase::Remove(asset->GetUID());
+                AssetDatabase::Import(assetPath);
+            }
 
             static void ReimportAssets();
 

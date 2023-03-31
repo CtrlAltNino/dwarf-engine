@@ -6,6 +6,8 @@
 	#include <Windows.h>
 	#include <KnownFolders.h>
 	#include <ShlObj.h>
+    #include <shlwapi.h>
+    #include <objbase.h>
 #endif
 
 namespace Dwarf {
@@ -162,5 +164,20 @@ namespace Dwarf {
         #elif __APPLE__
             system(("open \"" + path.string() + "\"").c_str());
         #endif
+    }
+
+    void FileHandler::LaunchFile(std::filesystem::path path){
+        //Start-Process -FilePath "custom.frag"
+#if _WIN32
+            wchar_t* commandStr = new wchar_t[4096];
+            wchar_t* argStr = new wchar_t[4096];
+            MultiByteToWideChar(CP_ACP, 0, "open", -1, commandStr, 4096);
+            MultiByteToWideChar(CP_ACP, 0, path.make_preferred().string().c_str(), -1, argStr, 4096);
+
+            ShellExecute(NULL, NULL, argStr, NULL, NULL, SW_SHOWNORMAL);
+            //system(path.string().c_str());
+#elif __APPLE__
+            system(("open \"" + path.string() + "\"").c_str());
+#endif
     }
 }

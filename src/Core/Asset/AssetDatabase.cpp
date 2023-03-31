@@ -45,6 +45,23 @@ namespace Dwarf {
         RecursiveImport(s_AssetFolderPath);
     }
 
+    void AssetDatabase::Remove(Ref<UID> uid){
+        auto view = s_Registry->view<IDComponent>();
+        for(auto entity : view){
+            if(*view.get<IDComponent>(entity).ID == *uid){
+                s_Registry->destroy(entity);
+            }
+        }
+    }
+    void AssetDatabase::Remove(std::filesystem::path path){
+        auto view = s_Registry->view<PathComponent>();
+        for(auto entity : view){
+            if(view.get<PathComponent>(entity).Path == path){
+                s_Registry->destroy(entity);
+            }
+        }
+    }
+
     void AssetDatabase::Init(std::filesystem::path projectPath){
         s_AssetFolderPath = projectPath / "Assets";
         s_Registry = CreateRef<entt::registry>(entt::registry());
@@ -65,6 +82,17 @@ namespace Dwarf {
         s_FileWatcher->watch();
 
         ReimportAssets();
+
+        CompileShaders();
+    }
+
+    void AssetDatabase::CompileShaders(){
+        auto materialView = AssetDatabase::s_Registry->view<MaterialAsset>();
+
+        for(auto entity : materialView){
+            auto mat = materialView.get<MaterialAsset>(entity);
+            mat.m_Material->m_Shader->Compile();
+        }
     }
 
     void AssetDatabase::Clear(){
@@ -74,7 +102,7 @@ namespace Dwarf {
     Ref<UID> AssetDatabase::Import(std::filesystem::path assetPath){
         std::string fileExtension = assetPath.extension().string();
         std::string fileName = assetPath.filename().string();
-        
+
         if(fileExtension == ".obj" || fileExtension == ".fbx") {
             return CreateAssetReference<MeshAsset>(assetPath).GetUID();
         } else if(fileExtension == ".dmat") {
@@ -105,11 +133,13 @@ namespace Dwarf {
     }
 
     bool AssetDatabase::Exists(Ref<UID> uid){
-        // Retrieve entt::entity with UID component
-        auto view = s_Registry->view<IDComponent>();
-        for(auto entity : view){
-            if(view.get<IDComponent>(entity).ID == uid){
-                return true;
+        if(uid){
+            // Retrieve entt::entity with UID component
+            auto view = s_Registry->view<IDComponent>();
+            for(auto entity : view){
+                if(*view.get<IDComponent>(entity).ID == *uid){
+                    return true;
+                }
             }
         }
         return false;

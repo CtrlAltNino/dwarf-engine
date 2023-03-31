@@ -16,6 +16,7 @@ namespace Dwarf {
 		//std::string vertexShaderSource;
 		//std::string fragmentShaderSource;
 		//std::string geometryShaderSource;
+		boolean m_SuccessfullyCompiled;
 	public:
 		Shader();
 		~Shader();
@@ -25,6 +26,10 @@ namespace Dwarf {
 		//void AddGeometryShader(std::string filePath);
 
 		virtual void Compile()=0;
+
+		boolean IsCompiled(){
+			return m_SuccessfullyCompiled;
+		}
 
 		//void Activate();
 		//void Delete();

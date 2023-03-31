@@ -16,7 +16,7 @@ namespace Dwarf {
             /// @param path Path to the scene asset.
             /// @return The loaded scene.
             static Ref<Scene> Deserialize(std::filesystem::path path);
-            
+
             static void Serialize(Ref<Scene> scene);
 
             static nlohmann::json SerializeEntities(std::vector<entt::entity> entities, Ref<Scene> scene);
@@ -32,7 +32,7 @@ namespace Dwarf {
             static Ref<Scene> LoadSceneDialog();
 
             static Ref<Scene> LoadDefaultScene();
-            
+
             static void SetLastOpenedScene(std::filesystem::path path);
     };
 }

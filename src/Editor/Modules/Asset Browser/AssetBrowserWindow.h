@@ -32,7 +32,7 @@ namespace Dwarf {
 
             void RenderDirectory(std::filesystem::path path);
 
-            float m_IconScale = 1.5f;
+            float m_IconScale = 1.0f;
 
             Ref<ITexture> m_DirectoryIcon;
             
@@ -57,9 +57,25 @@ namespace Dwarf {
 
             Ref<ITexture> m_UnknownFileIcon;
 
+            bool firstFrame = true;
+
+            ImGuiID dockID;
+
+            ImGuiID footerID;
+
+            void RenderDirectoryLevel(std::filesystem::path directory);
+
+            void SetupDockspace(ImGuiID id);
+
             void SelectAsset(std::filesystem::path path);
 
             void ClearSelection();
+
+            void RenderFooter();
+
+            void RenderFolderStructure();
+
+            void RenderFolderContent();
         public:
             AssetBrowserWindow(Ref<EditorModel>model, int id);
 

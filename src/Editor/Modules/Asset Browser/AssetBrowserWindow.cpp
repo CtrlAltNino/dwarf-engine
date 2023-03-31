@@ -3,6 +3,8 @@
 #include "Input/InputManager.h"
 #include "Core/Asset/TextureImporter.h"
 #include "Core/Rendering/Renderer.h"
+#include "Core/Scene/SceneUtilities.h"
+#include <imgui_internal.h>
 
 namespace Dwarf {
 
@@ -12,6 +14,25 @@ namespace Dwarf {
             m_CurrentDirectory(m_AssetDirectoryPath){
                 m_DirectoryHistory.push_back(m_CurrentDirectory);
                 LoadIcons();
+    }
+
+    void AssetBrowserWindow::SetupDockspace(ImGuiID id){
+        //dockID = ImGui::GetID("AssetBrowserDockspace"); // The string chosen here is arbitrary (it just gives us something to work with)
+        ImGui::DockBuilderRemoveNode(id);             // Clear any preexisting layouts associated with the ID we just chose
+        ImGui::DockBuilderAddNode(id, ImGuiDockNodeFlags_HiddenTabBar);
+        //ImGui::DockBuilderSetNodeSize(dockID, ImVec2(300,300));
+
+        footerID = ImGui::DockBuilderSplitNode(id, ImGuiDir_Down, 0.07f, nullptr, &id);
+        ImGuiID folderStructureID = ImGui::DockBuilderSplitNode(id, ImGuiDir_Left, 0.3f, nullptr, &id);
+        ImGuiID folderContent = ImGui::DockBuilderSplitNode(folderStructureID, ImGuiDir_Right, 0.7f, nullptr, &folderStructureID);
+
+        // 6. Add windows to each docking space:
+        ImGui::DockBuilderDockWindow("FolderStructure", folderStructureID);
+        ImGui::DockBuilderDockWindow("Footer", footerID);
+        ImGui::DockBuilderDockWindow("FolderContent", folderContent);
+
+        // 7. We're done setting up our docking configuration:
+        ImGui::DockBuilderFinish(id);
     }
 
     void AssetBrowserWindow::OnUpdate(double deltaTime){
@@ -54,7 +75,98 @@ namespace Dwarf {
     }
 
     void AssetBrowserWindow::OnImGuiRender(){
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(500,500));
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0,0));
+        if (!ImGui::Begin(GetIdentifier().c_str(), &m_WindowOpened, 0))
+        {
+            // Early out if the window is collapsed, as an optimization.
+            ImGui::End();
+            ImGui::PopStyleVar(2);
+            return;
+        }
+        ImGui::PopStyleVar(2);
+
+        ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
+        dockspace_flags |= ImGuiDockNodeFlags_HiddenTabBar;
+        ImGuiID dockspace_id = ImGui::GetID("AssetBrowserDockspace");
+        ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
+
+        if(firstFrame){
+            firstFrame = false;
+            SetupDockspace(dockspace_id);
+        }
+
+        RenderFolderStructure();
+        RenderFolderContent();
+        RenderFooter();
+
+        ImGui::End();
+    }
+
+    void AssetBrowserWindow::RenderDirectoryLevel(std::filesystem::path directory){
+        for(auto& directoryEntry : std::filesystem::directory_iterator(directory)){
+            if(directoryEntry.is_directory()){
+                if(ImGui::CollapsingHeader(directoryEntry.path().stem().string().c_str())){
+                    ImGui::Indent(8.0f);
+                    RenderDirectoryLevel(directoryEntry.path());
+                    ImGui::Unindent(8.0f);
+                }
+
+                if(ImGui::IsItemClicked()){
+                    m_CurrentDirectory = directoryEntry.path();
+                }
+            }
+        }
+    }
+
+    void AssetBrowserWindow::RenderFolderStructure(){
         ImGuiWindowFlags window_flags = 0;
+        window_flags |= ImGuiWindowFlags_NoTitleBar;
+        window_flags |= ImGuiWindowFlags_NoMove;
+
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(150,150));
+        ImGui::Begin("FolderStructure", nullptr, window_flags);
+        if(ImGui::CollapsingHeader("Assets")){
+            if(ImGui::IsItemClicked()){
+                m_CurrentDirectory = AssetDatabase::GetAssetDirectoryPath();
+            }
+            ImGui::Indent(8.0f);
+            RenderDirectoryLevel(AssetDatabase::GetAssetDirectoryPath());
+            ImGui::Unindent(8.0f);
+        }
+        ImGui::End();
+        ImGui::PopStyleVar();
+    }
+
+    void AssetBrowserWindow::RenderFooter(){
+        ImGuiWindowFlags window_flags = 0;
+        window_flags |= ImGuiWindowFlags_NoTitleBar;
+        window_flags |= ImGuiWindowFlags_NoMove;
+        window_flags |= ImGuiWindowFlags_NoResize;
+        //ImGui::SetCursorPos(ImGui::Window)
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(500,500));
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(5.0f, 5.0f));
+        //ImGui::PushStyleVar(ImGuiStyleVar_Window, ImVec2(150,0));
+        //ImGui::SetNextWindowSize(ImVec2(0, 100));
+        ImGui::Begin("Footer", nullptr, window_flags);
+        if(ImGui::Button("<", ImVec2(20,20))){
+            GoBack();
+        }
+        ImGui::SameLine(0.0f, 5.0f);
+        if(ImGui::Button(">", ImVec2(20,20))){
+            GoForward();
+        }
+        ImGui::SameLine(0.0f, 5.0f);
+        ImGui::SliderFloat("Size", &m_IconScale, 1.0f, 2.0f);
+        ImGui::End();
+        ImGui::PopStyleVar(2);
+    }
+
+    void AssetBrowserWindow::RenderFolderContent(){
+        ImGuiWindowFlags window_flags = 0;
+        window_flags |= ImGuiWindowFlags_NoTitleBar;
+        window_flags |= ImGuiWindowFlags_NoMove;
+        //ImGuiWindowFlags window_flags = 0;
 
         //window_flags |= ImGuiWindowFlags_NoMove;
         //window_flags |= ImGuiWindowFlags_NoResize;
@@ -64,19 +176,7 @@ namespace Dwarf {
 
         //static bool b_open = true;
 
-        ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(500,500));
-        if (!ImGui::Begin(GetIdentifier().c_str(), &m_WindowOpened, window_flags))
-        {
-            // Early out if the window is collapsed, as an optimization.
-            ImGui::End();
-            ImGui::PopStyleVar();
-            return;
-        }
-
-        ImGui::Dummy(ImGui::GetContentRegionAvail());
-        if(ImGui::IsItemClicked()){
-            ClearSelection();
-        }
+        ImGui::Begin("FolderContent", nullptr, window_flags);
 
         float column = 0;
         float rowOffset = 0;
@@ -140,8 +240,11 @@ namespace Dwarf {
                     if(ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left)){
                         if(directoryEntry.is_directory()){
                             EnterDirectory(path.filename());
+                        }else if(directoryEntry.path().extension() == ".dscene"){
+                            m_Model->SetScene(SceneUtilities::LoadScene(directoryEntry.path()));
                         }else{
                             // TODO Open file
+                            FileHandler::LaunchFile(directoryEntry.path());
                         }
                     }else if(ImGui::IsItemClicked()){
                         // TODO Select asset
@@ -149,6 +252,10 @@ namespace Dwarf {
                     }
 
                     // TODO Drag Asset
+                }else{
+                    if(m_SelectedAsset == directoryEntry.path() && ImGui::IsWindowHovered() && (ImGui::IsMouseClicked(ImGuiMouseButton_Left))){
+                        ClearSelection();
+                    }
                 }
 
                 ImGui::SetCursorPos(ImVec2(cellMin.x + halfPadding, cellMin.y + halfPadding));
@@ -211,7 +318,6 @@ namespace Dwarf {
         }
 
         ImGui::End();
-        ImGui::PopStyleVar();
     }
 
     void AssetBrowserWindow::GoBack(){

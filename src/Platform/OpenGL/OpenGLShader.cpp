@@ -10,8 +10,34 @@ namespace Dwarf {
     OpenGLShader::~OpenGLShader() { }
 
     void OpenGLShader::Compile() {
-        std::string vertexShaderSource = FileHandler::ReadFile(AssetDatabase::Retrieve<VertexShaderAsset>(m_VertexShader)->GetAsset().m_Path);
-        std::string fragmentShaderSource = FileHandler::ReadFile(AssetDatabase::Retrieve<FragmentShaderAsset>(m_FragmentShader)->GetAsset().m_Path);
+		m_SuccessfullyCompiled = false;
+
+        std::string vertexShaderSource;
+		std::string tescShaderSource;
+		std::string teseShaderSource;
+		std::string geometryShaderSource;
+		std::string fragmentShaderSource;
+
+		if(AssetDatabase::Exists(m_VertexShader)){
+			vertexShaderSource = FileHandler::ReadFile(AssetDatabase::Retrieve<VertexShaderAsset>(m_VertexShader)->GetAsset().m_Path);
+		}
+
+		if(AssetDatabase::Exists(m_TessellationControlShader)){
+			tescShaderSource = FileHandler::ReadFile(AssetDatabase::Retrieve<TesselationControlShaderAsset>(m_TessellationControlShader)->GetAsset().m_Path);
+		}
+
+		if(AssetDatabase::Exists(m_TessellationEvaluationShader)){
+			teseShaderSource = FileHandler::ReadFile(AssetDatabase::Retrieve<TesselationEvaluationShaderAsset>(m_TessellationEvaluationShader)->GetAsset().m_Path);
+		}
+
+		if(AssetDatabase::Exists(m_GeometryShader)){
+			geometryShaderSource = FileHandler::ReadFile(AssetDatabase::Retrieve<GeometryShaderAsset>(m_GeometryShader)->GetAsset().m_Path);
+		}
+
+		if(AssetDatabase::Exists(m_FragmentShader)){
+			fragmentShaderSource = FileHandler::ReadFile(AssetDatabase::Retrieve<FragmentShaderAsset>(m_FragmentShader)->GetAsset().m_Path);
+		}
+
         if(vertexShaderSource.length() > 0 && fragmentShaderSource.length() > 0) {
 			const char* vertexSource = vertexShaderSource.c_str();
 			const char* fragmentSource = fragmentShaderSource.c_str();
@@ -20,9 +46,28 @@ namespace Dwarf {
 			glShaderSource(vertexShader, 1, &vertexSource, NULL);
 			glCompileShader(vertexShader);
 
+			GLint vertex_compiled;
+			glGetShaderInfoLog(vertexShader, 1024, &vert_log_length, vert_message);
+			glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &vertex_compiled);
+			if (vertex_compiled != GL_TRUE)
+			{
+				glDeleteShader(vertexShader);
+				return;
+			}
+
 			GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 			glShaderSource(fragmentShader, 1, &fragmentSource, NULL);
 			glCompileShader(fragmentShader);
+
+			GLint fragment_compiled;
+			glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &fragment_compiled);
+			glGetShaderInfoLog(fragmentShader, 1024, &frag_log_length, frag_message);
+			if (fragment_compiled != GL_TRUE)
+			{
+				glDeleteShader(vertexShader);
+				glDeleteShader(fragmentShader);
+				return;
+			}
 
 			m_ID = glCreateProgram();
 
@@ -30,30 +75,42 @@ namespace Dwarf {
 			glAttachShader(m_ID, fragmentShader);
 
 			//GLuint geometryShader = -1;
+			GLuint geometryShader = -1;
 
-			/*if(geometryShaderSource.length() > 0) {
+			if(geometryShaderSource.length() > 0) {
 				const char* geometrySource = geometryShaderSource.c_str();
 
 				GLuint geometryShader = glCreateShader(GL_GEOMETRY_SHADER);
 				glShaderSource(geometryShader, 1, &geometrySource, NULL);
 				glCompileShader(geometryShader);
-				
-				glAttachShader(ID, geometryShader);
-			}*/
+
+				GLint geometry_compiled;
+				glGetShaderiv(geometryShader, GL_COMPILE_STATUS, &geometry_compiled);
+				glGetShaderInfoLog(geometryShader, 1024, &geom_log_length, geom_message);
+				if (geometry_compiled != GL_TRUE)
+				{
+					glDeleteShader(vertexShader);
+					glDeleteShader(fragmentShader);
+					glDeleteShader(geometryShader);
+					return;
+				}
+			}
 
 			glLinkProgram(m_ID);
 
 			glDeleteShader(vertexShader);
 			glDeleteShader(fragmentShader);
 
-			/*if(geometryShader != -1) {
+			if(geometryShader != -1) {
 				glDeleteShader(geometryShader);
-			}*/
+			}
+
+			m_SuccessfullyCompiled = true;
 		}else {
 			// TODO log missing shader error
 		}
     }
-    
+
     void OpenGLShader::SetVertexShader(Ref<UID> vertexShader) {
 		m_VertexShader = vertexShader;
 	}

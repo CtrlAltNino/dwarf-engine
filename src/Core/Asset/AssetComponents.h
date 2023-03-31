@@ -36,64 +36,72 @@ namespace Dwarf {
     struct VertexShaderAsset {
         /// @brief Path to the asset.
         std::filesystem::path m_Path;
+        std::string m_FileContent;
 
-        VertexShaderAsset(std::filesystem::path path) : m_Path(path) {}
+        VertexShaderAsset(std::filesystem::path path) : m_Path(path), m_FileContent(FileHandler::ReadFile(m_Path)) {}
     };
 
     /// @brief Component containing a fragment shader asset.
     struct FragmentShaderAsset {
         /// @brief Path to the asset.
         std::filesystem::path m_Path;
+        std::string m_FileContent;
 
-        FragmentShaderAsset(std::filesystem::path path) : m_Path(path) {}
+        FragmentShaderAsset(std::filesystem::path path) : m_Path(path), m_FileContent(FileHandler::ReadFile(m_Path)) {}
     };
 
     /// @brief Component containing a geometry shader asset.
     struct GeometryShaderAsset {
         /// @brief Path to the asset.
         std::filesystem::path m_Path;
+        std::string m_FileContent;
 
-        GeometryShaderAsset(std::filesystem::path path) : m_Path(path) {}
+        GeometryShaderAsset(std::filesystem::path path) : m_Path(path), m_FileContent(FileHandler::ReadFile(m_Path)) {}
     };
 
     /// @brief Component containing a tesselation control shader asset.
     struct TesselationControlShaderAsset {
         /// @brief Path to the asset.
         std::filesystem::path m_Path;
+        std::string m_FileContent;
 
-        TesselationControlShaderAsset(std::filesystem::path path) : m_Path(path) {}
+        TesselationControlShaderAsset(std::filesystem::path path) : m_Path(path), m_FileContent(FileHandler::ReadFile(m_Path)) {}
     };
 
     /// @brief Component containing a tesselation evaluation shader asset.
     struct TesselationEvaluationShaderAsset {
         /// @brief Path to the asset.
         std::filesystem::path m_Path;
+        std::string m_FileContent;
 
-        TesselationEvaluationShaderAsset(std::filesystem::path path) : m_Path(path) {}
+        TesselationEvaluationShaderAsset(std::filesystem::path path) : m_Path(path), m_FileContent(FileHandler::ReadFile(m_Path)) {}
     };
 
     /// @brief Component containing a compute shader asset.
     struct ComputeShaderAsset {
         /// @brief Path to the asset.
         std::filesystem::path m_Path;
+        std::string m_FileContent;
 
-        ComputeShaderAsset(std::filesystem::path path) : m_Path(path) {}
+        ComputeShaderAsset(std::filesystem::path path) : m_Path(path), m_FileContent(FileHandler::ReadFile(m_Path)) {}
     };
 
     /// @brief Component containing a compute shader asset.
     struct MetalShaderAsset {
         /// @brief Path to the asset.
         std::filesystem::path m_Path;
+        std::string m_FileContent;
 
-        MetalShaderAsset(std::filesystem::path path) : m_Path(path) {}
+        MetalShaderAsset(std::filesystem::path path) : m_Path(path), m_FileContent(FileHandler::ReadFile(m_Path)) {}
     };
 
     /// @brief Component containing a compute shader asset.
     struct HlslShaderAsset {
         /// @brief Path to the asset.
         std::filesystem::path m_Path;
+        std::string m_FileContent;
 
-        HlslShaderAsset(std::filesystem::path path) : m_Path(path) {}
+        HlslShaderAsset(std::filesystem::path path) : m_Path(path), m_FileContent(FileHandler::ReadFile(m_Path)) {}
     };
 
     /// @brief Component containing a texture asset.
@@ -119,6 +127,8 @@ namespace Dwarf {
     };
 
     struct UnknownAsset {
-        UnknownAsset() {}
+        std::filesystem::path m_Path;
+        std::string m_FileContent;
+        UnknownAsset(std::filesystem::path path) : m_Path(path), m_FileContent(FileHandler::ReadFile(m_Path)) {}
     };
 }
