@@ -5,9 +5,7 @@ target_sources(${targetName}
         EBO.cpp
         Material.cpp
         Mesh.cpp
-        #RenderTextureOpenGL.cpp
         Shader.cpp
-        Texture.cpp
         VAO.cpp
         VBO.cpp
         Renderer.cpp

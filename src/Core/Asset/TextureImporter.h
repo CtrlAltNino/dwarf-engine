@@ -18,7 +18,7 @@ namespace Dwarf {
     class TextureImporter {
         public:
              // Builds texture without meta data
-            static Ref<ITexture> CreateTexture(std::filesystem::path path) {
+            static Ref<Texture> CreateTexture(std::filesystem::path path) {
                 switch(Renderer::GetAPI()){
                     #ifdef WIN32
                         case GraphicsApi::D3D12: break;
@@ -38,7 +38,7 @@ namespace Dwarf {
                 return nullptr;
             }
 
-            static uintptr_t GetTexID(Ref<ITexture> texture, GraphicsApi api){
+            static uintptr_t GetTexID(Ref<Texture> texture, GraphicsApi api){
                 uintptr_t id;
                 #ifdef WIN32
                     switch(api){

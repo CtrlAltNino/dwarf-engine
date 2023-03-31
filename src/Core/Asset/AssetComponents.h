@@ -5,7 +5,7 @@
 #include "Utilities/FileHandler.h"
 #include "Core/Base.h"
 #include "Core/Rendering/Mesh.h"
-#include "Core/Rendering/ITexture.h"
+#include "Core/Rendering/Texture.h"
 #include "Core/Rendering/Material.h"
 #include "Core/Asset/ModelImporter.h"
 #include "Core/Asset/MaterialSerializer.h"
@@ -87,15 +87,6 @@ namespace Dwarf {
     };
 
     /// @brief Component containing a compute shader asset.
-    struct MetalShaderAsset {
-        /// @brief Path to the asset.
-        std::filesystem::path m_Path;
-        std::string m_FileContent;
-
-        MetalShaderAsset(std::filesystem::path path) : m_Path(path), m_FileContent(FileHandler::ReadFile(m_Path)) {}
-    };
-
-    /// @brief Component containing a compute shader asset.
     struct HlslShaderAsset {
         /// @brief Path to the asset.
         std::filesystem::path m_Path;
@@ -107,13 +98,13 @@ namespace Dwarf {
     /// @brief Component containing a texture asset.
     struct TextureAsset {
         /// @brief Imported texture.
-        Ref<ITexture> m_Texture;
+        Ref<Texture> m_Texture;
 
         TextureAsset(std::filesystem::path path) : m_Texture(TextureImporter::CreateTexture(path)) { }
 
         /// @brief Retrieves the texture.
         /// @return The imported texture instance.
-        Ref<ITexture> Get() {
+        Ref<Texture> Get() {
             return m_Texture;
         }
     };

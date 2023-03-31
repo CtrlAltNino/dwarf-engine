@@ -33,9 +33,10 @@ namespace Dwarf {
 		/// @brief The transform of the camera, representing its position and rotation.
 		Ref<TransformComponent> m_Transform;
 		// ========== Constructors ==========
-		
-		Camera(glm::vec3 position, glm::vec3 rotation, float fov, float nearPlane, float farPlane, float aspectRatio);
+
+		Camera();
 		Camera(glm::vec3 position, glm::vec3 rotation);
+		Camera(glm::vec3 position, glm::vec3 rotation, float fov, float nearPlane, float farPlane, float aspectRatio);
 
 		// ========== Getters ==========
 		

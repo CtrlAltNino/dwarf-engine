@@ -60,7 +60,6 @@ namespace Dwarf {
         m_GeometryShaderIcon = TextureImporter::CreateTexture(iconPath / "geometryShaderIcon.png");
         m_FragmentShaderIcon = TextureImporter::CreateTexture(iconPath / "fragmentShaderIcon.png");
         m_ComputeShaderIcon = TextureImporter::CreateTexture(iconPath / "computeShaderIcon.png");
-        m_MetalShaderIcon = TextureImporter::CreateTexture(iconPath / "metalShaderIcon.png");
         m_HLSLShaderIcon = TextureImporter::CreateTexture(iconPath / "hlslIcon.png");
 
         m_SceneIcon = TextureImporter::CreateTexture(iconPath / "sceneIcon.png");
@@ -285,8 +284,6 @@ namespace Dwarf {
                             texID = (ImTextureID)TextureImporter::GetTexID(m_FragmentShaderIcon, Renderer::GetAPI());
                         }else if(directoryEntry.path().extension() == ".comp"){
                             texID = (ImTextureID)TextureImporter::GetTexID(m_ComputeShaderIcon, Renderer::GetAPI());
-                        }else if(directoryEntry.path().extension() == ".metal"){
-                            texID = (ImTextureID)TextureImporter::GetTexID(m_MetalShaderIcon, Renderer::GetAPI());
                         }else if(directoryEntry.path().extension() == ".hlsl"){
                             texID = (ImTextureID)TextureImporter::GetTexID(m_HLSLShaderIcon, Renderer::GetAPI());
                         }else if(directoryEntry.path().extension() == ".dscene"){

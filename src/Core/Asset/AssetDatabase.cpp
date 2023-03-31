@@ -123,8 +123,6 @@ namespace Dwarf {
             return CreateAssetReference<FragmentShaderAsset>(assetPath).GetUID();
         } else if(fileExtension == ".comp") {
             return CreateAssetReference<ComputeShaderAsset>(assetPath).GetUID();
-        } else if(fileExtension == ".metal"){
-            return CreateAssetReference<MetalShaderAsset>(assetPath).GetUID();
         } else if(fileExtension == ".hlsl") {
             return CreateAssetReference<HlslShaderAsset>(assetPath).GetUID();
         } else{

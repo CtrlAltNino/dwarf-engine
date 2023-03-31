@@ -189,8 +189,8 @@ namespace Dwarf {
 							cellText.resize(availableCharacters);
 							cellText.resize(availableCharacters + 3, '.');
 						}
-						
-						
+
+
 						draw_list->ChannelsSplit(2);
 
 						ImGui::PushStyleVar(ImGuiStyleVar_SelectableTextAlign, ImVec2(0, 0.5f));
@@ -1089,15 +1089,14 @@ namespace Dwarf {
 				ImGui::PushFont(m_HeaderFont);
 				ImGui::Text("Graphics API");
 				ImGui::PopFont();
-				
+
 				//ImGui::Separator();
 				ImGui::SameLine();
 				ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - 150);
 
 				// Setting up combo
-				//const char* apis[] = { "OpenGL", "Direct3D 11", "Direct3D 12", "Vulkan" };
 				const char* combo_preview_value = graphicsApiNames[currentApiIndex];
-				
+
 				ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
 				ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 4);
 				ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 4);

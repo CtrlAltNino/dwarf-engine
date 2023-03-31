@@ -15,7 +15,7 @@
 #include "Utilities/FileHandler.h"
 
 namespace Dwarf {
-    enum ASSET_TYPE { UNKNOWN, MODEL, TEXTURE, SCENE, MATERIAL, VERTEX_SHADER, TESC_SHADER, TESE_SHADER, GEOMETRY_SHADER, FRAGMENT_SHADER, COMPUTE_SHADER, METAL_SHADER, HLSL_SHADER };
+    enum ASSET_TYPE { UNKNOWN, MODEL, TEXTURE, SCENE, MATERIAL, VERTEX_SHADER, TESC_SHADER, TESE_SHADER, GEOMETRY_SHADER, FRAGMENT_SHADER, COMPUTE_SHADER, HLSL_SHADER };
     /// @brief Dwarf Engines asset database system. It handles an ECS registry containing entities for every usable Asset inside the "/Assets" directory.
     class AssetDatabase {
         private:
@@ -132,8 +132,6 @@ namespace Dwarf {
                     return ASSET_TYPE::FRAGMENT_SHADER;
                 }else if(assetPath.extension() == ".comp"){
                     return ASSET_TYPE::COMPUTE_SHADER;
-                }else if(assetPath.extension() == ".metal"){
-                    return ASSET_TYPE::METAL_SHADER;
                 }else if(assetPath.extension() == ".hlsl"){
                     return ASSET_TYPE::HLSL_SHADER;
                 }else if(assetPath.extension() == ".dscene"){

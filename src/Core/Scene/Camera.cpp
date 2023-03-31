@@ -6,20 +6,19 @@ namespace Dwarf {
 	// ========== Makros ==========
 
 	#define DEFAULT_CAMERA_POSITION glm::vec3(2, 2, 0)
-	#define DEFAULT_CAMERA_ROTATION glm::quat({30,0,0})
+	#define DEFAULT_CAMERA_ROTATION glm::vec3(30,0,0)
 	#define DEFAULT_CAMERA_FOV 75.0f
 	#define DEFAULT_CAMERA_NEARPLANE 0.1f
 	#define DEFAULT_CAMERA_FARPLANE 1000.0f
 	#define DEFAULT_CAMERA_ASPECT_RATIO (16.0f / 9.0f)
 
 	// ========== Constructors ==========
-
-	Camera::Camera(glm::vec3 position, glm::vec3 rotation, float fov, float nearPlane, float farPlane, float aspectRatio)
-		: m_Transform(CreateRef<TransformComponent>(position, rotation)),
-			m_Fov(fov),
-			m_NearPlane(nearPlane),
-			m_FarPlane(farPlane),
-			m_AspectRatio(aspectRatio) { }
+	Camera::Camera()
+		: 	m_Transform(CreateRef<TransformComponent>(DEFAULT_CAMERA_POSITION, DEFAULT_CAMERA_ROTATION)),
+			m_Fov(DEFAULT_CAMERA_FOV),
+			m_NearPlane(DEFAULT_CAMERA_NEARPLANE),
+			m_FarPlane(DEFAULT_CAMERA_FARPLANE),
+			m_AspectRatio(DEFAULT_CAMERA_ASPECT_RATIO) { }
 
 	Camera::Camera(glm::vec3 position, glm::vec3 rotation)
 		: m_Transform(CreateRef<TransformComponent>(position, rotation)),
@@ -27,6 +26,13 @@ namespace Dwarf {
 			m_NearPlane(DEFAULT_CAMERA_NEARPLANE),
 			m_FarPlane(DEFAULT_CAMERA_FARPLANE),
 			m_AspectRatio(DEFAULT_CAMERA_ASPECT_RATIO) { }
+
+	Camera::Camera(glm::vec3 position, glm::vec3 rotation, float fov, float nearPlane, float farPlane, float aspectRatio)
+		: m_Transform(CreateRef<TransformComponent>(position, rotation)),
+			m_Fov(fov),
+			m_NearPlane(nearPlane),
+			m_FarPlane(farPlane),
+			m_AspectRatio(aspectRatio) { }
 
 	// ========== Getters ==========
 

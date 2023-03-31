@@ -471,13 +471,6 @@ namespace Dwarf {
     }
 
     template<>
-    void InspectorWindow::RenderComponent<AssetReference<MetalShaderAsset>>(Ref<AssetReference<MetalShaderAsset>> asset){
-        ImGui::PushTextWrapPos(ImGui::GetContentRegionAvail().x);
-        ImGui::TextWrapped(asset->GetAsset().m_FileContent.c_str());
-        ImGui::PopTextWrapPos();
-    }
-
-    template<>
     void InspectorWindow::RenderComponent<AssetReference<HlslShaderAsset>>(Ref<AssetReference<HlslShaderAsset>> asset){
         ImGui::PushTextWrapPos(ImGui::GetContentRegionAvail().x);
         ImGui::TextWrapped(asset->GetAsset().m_FileContent.c_str());
@@ -544,9 +537,6 @@ namespace Dwarf {
                             break;
                         case HLSL_SHADER:
                             RenderComponent(AssetDatabase::Retrieve<HlslShaderAsset>(assetPath));
-                            break;
-                        case METAL_SHADER:
-                            RenderComponent(AssetDatabase::Retrieve<MetalShaderAsset>(assetPath));
                             break;
                         case COMPUTE_SHADER:
                             RenderComponent(AssetDatabase::Retrieve<ComputeShaderAsset>(assetPath));

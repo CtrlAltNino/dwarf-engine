@@ -4,11 +4,10 @@
 #include <filesystem>
 #include <nlohmann/json.hpp>
 
-#include "Core/Rendering/ITexture.h"
+#include "Core/Rendering/Texture.h"
 
 namespace Dwarf {
-        
-    class OpenGLTexture : public ITexture {
+    class OpenGLTexture : public Texture {
         private:
             /// @brief The OpenGL texture handle.
             GLuint ID;

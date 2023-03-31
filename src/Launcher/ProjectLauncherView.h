@@ -5,7 +5,7 @@
 #include "ProjectLauncherModel.h"
 #include "Utilities/TimeUtilities.h"
 #include "Utilities/BrowserLinkOpener.h"
-#include "Core/Rendering/ITexture.h"
+#include "Core/Rendering/Texture.h"
 #include "Core/Asset/TextureImporter.h"
 #include "Core/UI/ImGuiLayer.h"
 
@@ -32,13 +32,13 @@ namespace Dwarf {
         //IWindowManager::fonts["largeHeaderFont"] = io->Fonts->AddFontFromFileTTF(INTER_BOLD_PATH, 26);
 
             /// @brief Loaded image for the github icon
-            Ref<ITexture> m_GithubIcon;
+            Ref<Texture> m_GithubIcon;
 
             /// @brief Loaded image for the patreon icon
-            Ref<ITexture> m_PatreonIcon;
+            Ref<Texture> m_PatreonIcon;
 
             /// @brief Loaded image for the twitter icon
-            Ref<ITexture> m_TwitterIcon;
+            Ref<Texture> m_TwitterIcon;
             void RenderProjectList(int fWidth, int fHeight);
 
             void RenderButtons(int fWidth, int fHeight);
