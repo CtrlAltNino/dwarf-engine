@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Utilities/Common.h"
-
 namespace Dwarf {
 
 	/// @brief Enum defining the states of the project launcher.

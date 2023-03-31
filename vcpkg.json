@@ -1,7 +1,7 @@
 {
   "name": "dwarf-engine",
   "version-string": "0.0.1",
-  "supports": "(windows & x64 & static) | (linux & x64) | (osx & x64)",
+  "supports": "(windows & x64 & static) | (linux & x64)",
   "dependencies": [
     "glad",
     "glfw3",
@@ -10,23 +10,12 @@
       "name": "imgui",
       "default-features": false,
       "features": [
-        "sdl2-binding",
-        "sdl2-renderer-binding",
-        "opengl3-binding",
-        "docking-experimental"
-      ],
-      "platform": "!osx"
-    },
-    {
-      "name": "imgui",
-      "default-features": false,
-      "features": [
-        "sdl2-binding",
-        "sdl2-renderer-binding",
         "docking-experimental",
-        "metal-binding"
-      ],
-      "platform": "osx"
+        "sdl2-binding",
+        "dx12-binding",
+        "opengl3-binding",
+        "vulkan-binding"
+      ]
     },
     "assimp",
     "stb",

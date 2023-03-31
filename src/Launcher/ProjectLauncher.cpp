@@ -20,8 +20,6 @@ namespace Dwarf {
         
         #if defined(_WIN32) || defined(__linux__)
             props.Api = GraphicsApi::OpenGL;
-        #elif defined(__APPLE__)
-            props.Api = GraphicsApi::Metal;
         #endif
         
         m_Window = Window::Create(props);

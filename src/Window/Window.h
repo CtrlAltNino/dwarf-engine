@@ -4,7 +4,6 @@
 #include <glm/vec4.hpp>
 
 #include "Core/Base.h"
-#include "Utilities/Common.h"
 
 namespace Dwarf {
 

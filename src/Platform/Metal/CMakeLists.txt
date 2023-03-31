@@ -1,7 +1,0 @@
-IF (APPLE)
-    target_sources(${targetName}
-        PRIVATE
-            MetalShader.cpp
-            MetalTexture.cpp
-    )
-ENDIF()

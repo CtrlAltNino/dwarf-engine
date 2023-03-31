@@ -14,8 +14,6 @@ namespace Dwarf {
 			case GraphicsApi::OpenGL:  return CreateRef<OpenGLFramebuffer>(spec);
 #elif __linux__
 			case GraphicsApi::OpenGL:  return CreateRef<OpenGLFramebuffer>(spec);
-#elif __APPLE__
-			//case GraphicsApi::OpenGL:  return CreateRef<OpenGLFramebuffer>(spec);
 #endif
 		}
 

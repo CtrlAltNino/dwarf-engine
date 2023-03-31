@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Utilities/Common.h"
-
 #include "Window/Window.h"
 
 #include "Core/Base.h"

@@ -217,12 +217,7 @@ namespace Dwarf {
 							ImGui::SetNextWindowSize(ImVec2(0, 0));
 							if ((m_Model->GetSelectedProjectID() == row) && ImGui::BeginPopupContextItem("Project options")) // <-- use last item id as popup id
 							{
-								//ImGui::Text("This a popup for \"%s\"!", names[n]);
-								#if defined(WIN32) || defined(__linux__)
 								if (ImGui::Button("Open in file browser", ImVec2(ImGui::GetContentRegionAvail().x, 0))) {
-								#elif __APPLE__
-								if (ImGui::Button("Open in Finder", ImVec2(ImGui::GetContentRegionAvail().x, 0))) {
-								#endif
 									FileHandler::OpenPathInFileBrowser(projectList->at(row).path);
 									ImGui::CloseCurrentPopup();
 								}
@@ -597,18 +592,12 @@ namespace Dwarf {
 				ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - 150);
 
 				// Setting up combo
-				#if _WIN32
-					const char* apis[] = { "OpenGL", "Direct3D 11", "Direct3D 12", "Vulkan" };
-				#endif
-
-				#if __linux__
+#if _WIN32
+					const char* apis[] = { "Direct3D 12", "OpenGL",  "Vulkan" };
+#elif __linux__
 					const char* apis[] = { "OpenGL", "Vulkan" };
-				#endif
+#endif
 
-				#if __APPLE__ && __MACH__
-					const char* apis[] = { "Metal" };
-				#endif
-				
 				const char* combo_preview_value = graphicsApiNames[currentApiIndex];
 
 				ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);

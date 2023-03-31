@@ -6,7 +6,6 @@
 #include <assimp/postprocess.h>
 #include <assimp/material.h>
 
-#include "Utilities/Common.h"
 #include "Core/Rendering/Material.h"
 #include "Core/Rendering/Mesh.h"
 

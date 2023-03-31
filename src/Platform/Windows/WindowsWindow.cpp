@@ -32,21 +32,13 @@ namespace Dwarf {
         WindowFlags |= SDL_WINDOW_RESIZABLE;
         
         switch(props.Api){
-            case GraphicsApi::D3D11:
-                    
-                break;
-            case GraphicsApi::D3D12:
-
-                break;
+            case GraphicsApi::D3D12: break;
             case GraphicsApi::OpenGL:
                     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
                     SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
                     SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
                     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
                     WindowFlags |= SDL_WINDOW_OPENGL;
-                break;
-            case GraphicsApi::Metal:
-                    WindowFlags |= SDL_WINDOW_METAL;
                 break;
             case GraphicsApi::Vulkan:
                     WindowFlags |= SDL_WINDOW_VULKAN;

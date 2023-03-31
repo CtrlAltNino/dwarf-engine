@@ -12,10 +12,9 @@ namespace Dwarf {
         if(serializedMat.contains("shader") && serializedMat["shader"] != "default"){
             switch(Renderer::GetAPI()){
 #ifdef _WIN32
-                case GraphicsApi::D3D11: break;
                 case GraphicsApi::D3D12: break;
-                case GraphicsApi::Metal: break;
                 case GraphicsApi::OpenGL:
+                    {
                         Ref<Shader> shaderRef = Shader::Create();
                         OpenGLShader* shader = (OpenGLShader*)shaderRef.get();
                         shader->SetVertexShader(CreateRef<UID>(UID(serializedMat["shader"]["vertexShader"])));
@@ -24,11 +23,11 @@ namespace Dwarf {
                             shader->SetGeometryShader(CreateRef<UID>(UID(serializedMat["shader"]["geometryShader"])));
                         }
                         deserializedMat.SetShader(shaderRef);
-                    break;
+                        break;
+                    }
+                case GraphicsApi::Vulkan: break;
 #elif __linux__
-                case GraphicsApi::D3D11: break;
                 case GraphicsApi::D3D12: break;
-                case GraphicsApi::Metal: break;
                 case GraphicsApi::OpenGL:
                         Ref<Shader> shaderRef = Shader::Create();
                         OpenGLShader* shader = (OpenGLShader*)shaderRef.get();
@@ -39,20 +38,6 @@ namespace Dwarf {
                         }
                         deserializedMat.SetShader(shaderRef);
                     break;
-#elif __APPLE__
-                case GraphicsApi::D3D11: break;
-                case GraphicsApi::D3D12: break;
-                case GraphicsApi::Metal:
-                        /*Ref<Shader> shaderRef = Shader::Create();
-                        MetalShaders* shader = (MetalShaders*)shaderRef.get();
-                        shader->SetVertexShader(CreateRef<UID>(UID(serializedMat["shader"]["vertexShader"])));
-                        shader->SetFragmentShader(CreateRef<UID>(UID(serializedMat["shader"]["fragmentShader"])));
-                        if(serializedMat["shader"].contains("geometryShader")){
-                            shader->SetGeometryShader(CreateRef<UID>(UID(serializedMat["shader"]["geometryShader"])));
-                        }
-                        deserializedMat.SetShader(shaderRef);*/
-                    break;
-                case GraphicsApi::OpenGL: break;
                 case GraphicsApi::Vulkan: break;
 #endif
             }
@@ -67,7 +52,6 @@ namespace Dwarf {
         
         switch(Renderer::GetAPI()){
 #ifdef _WIN32
-                case GraphicsApi::D3D11: break;
                 case GraphicsApi::D3D12: break;
                 case GraphicsApi::OpenGL:
                 {
@@ -80,10 +64,8 @@ namespace Dwarf {
                         }
                     break;
                 }
-                case GraphicsApi::Metal: break;
                 case GraphicsApi::Vulkan: break;
 #elif __linux__
-                case GraphicsApi::D3D11: break;
                 case GraphicsApi::D3D12: break;
                 case GraphicsApi::OpenGL:
                 {
@@ -96,13 +78,6 @@ namespace Dwarf {
                         }
                     break;
                 }
-                case GraphicsApi::Metal: break;
-                case GraphicsApi::Vulkan: break;
-#elif __APPLE__
-                case GraphicsApi::D3D11: break;
-                case GraphicsApi::D3D12: break;
-                case GraphicsApi::Metal: break;
-                case GraphicsApi::OpenGL: break;
                 case GraphicsApi::Vulkan: break;
 #endif
         }

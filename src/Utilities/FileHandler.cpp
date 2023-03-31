@@ -50,12 +50,8 @@ namespace Dwarf {
             std::string line = match[0];
             std::regex_search(line, match, patternPath);
             std::string path = match[0];
-        
-            defaultProjectPath = homeFolder + path;
-        #endif
 
-        #if __APPLE__
-            defaultProjectPath = sago::getDocumentsFolder();
+            defaultProjectPath = homeFolder + path;
         #endif
 
         return defaultProjectPath;
@@ -70,13 +66,11 @@ namespace Dwarf {
             path = GetDocumentsPath();
         #elif __linux__
             path = std::string(getenv("HOME")) + "/.config/";
-        #elif __APPLE__
-            path = sago::getConfigHome();
         #endif
 
         return path / subpath;
     }
-    
+
     /// @brief Returns the path to the document directory.
     /// @return An absolute path.
     std::filesystem::path FileHandler::GetDocumentsPath(){
@@ -161,8 +155,6 @@ namespace Dwarf {
             MultiByteToWideChar(CP_ACP, 0, path.string().c_str(), -1, argStr, 4096);
 
             ShellExecute(NULL, commandStr, argStr, NULL, NULL, SW_SHOWNORMAL);
-        #elif __APPLE__
-            system(("open \"" + path.string() + "\"").c_str());
         #endif
     }
 
@@ -176,8 +168,6 @@ namespace Dwarf {
 
             ShellExecute(NULL, NULL, argStr, NULL, NULL, SW_SHOWNORMAL);
             //system(path.string().c_str());
-#elif __APPLE__
-            system(("open \"" + path.string() + "\"").c_str());
 #endif
     }
 }

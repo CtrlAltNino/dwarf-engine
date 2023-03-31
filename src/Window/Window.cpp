@@ -6,8 +6,6 @@
 #include "Platform/Windows/WindowsWindow.h"
 #elif __linux__
 //#include "Platform/Windows/LinuxWindow.h" - NOT SUPPORTED YET
-#elif __APPLE__
-//#include "Platform/Windows/MacWindow.h" - NOT SUPPORTED YET
 #endif
 
 namespace Dwarf {
@@ -17,8 +15,6 @@ namespace Dwarf {
 		return CreateScope<WindowsWindow>(props);
 #elif __linux__
 		//return CreateScope<LinuxWindow>(props); - NOT SUPPORTED YET
-#elif __APPLE__
-		//return CreateScope<MacWindow>(props); - NOT SUPPORTED YET
 #endif
 	}
 }

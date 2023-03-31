@@ -4,15 +4,12 @@
 #include "Core/Rendering/Renderer.h"
 
 #ifdef _WIN32
-	//#include "Platform/D3D11/D3D11Shader.h"
 	//#include "Platform/D3D12/D3D12Shader.h"
 	#include "Platform/OpenGL/OpenGLShader.h"
 	//#include "Platform/Vulkan/VulkanShader.h"
 #elif __linux__
 	#include "Platform/OpenGL/OpenGLShader.h"
 	//#include "Platform/Vulkan/VulkanShader.h"
-#elif __APPLE__
-	#include "Platform/Metal/MetalShader.h"
 #endif
 
 namespace Dwarf {
@@ -38,7 +35,6 @@ namespace Dwarf {
 	Ref<Shader> Shader::Create(){
 		switch(Renderer::GetAPI()){
 #ifdef _WIN32
-			//case GraphicsApi::D3D11: return CreateRef<D3D11Shader>(D3D11Shader());
 			//case GraphicsApi::D3D12: return CreateRef<D3D12Shader>(D3D12Shader());
 			case GraphicsApi::OpenGL:
 					return CreateRef<OpenGLShader>(OpenGLShader());
@@ -47,8 +43,6 @@ namespace Dwarf {
 #elif __linux__
 			case GraphicsApi::OpenGL: return CreateRef<OpenGLShader>(OpenGLShader());
 			//case GraphicsApi::Vulkan: return CreateRef<VulkanShader>(VulkanShader());
-#elif __APPLE__
-			//case GraphicsApi::Metal: return CreateRef<MetalShader>(MetalShader());
 #endif
 			default: return nullptr;
 		}
@@ -60,11 +54,6 @@ namespace Dwarf {
 	void Shader::Init(){
 		switch(Renderer::GetAPI()){
 #ifdef _WIN32
-			/*case GraphicsApi::D3D11:
-					s_DefaultShader = D3D11Shader::CreateDefaultShader();
-					s_ErrorShader = D3D11Shader::CreateErrorShader();
-					s_GridShader = D3D11Shader::CreateGridShader();
-				break;*/
 			/*case GraphicsApi::D3D12:
 					s_DefaultShader = D3D12Shader::CreateDefaultShader();
 					s_ErrorShader = D3D12Shader::CreateErrorShader();
@@ -91,12 +80,6 @@ namespace Dwarf {
 					s_ErrorShader = VulkanShader::CreateErrorShader();
 					s_GridShader = VulkanShader::CreateGridShader();
 				break;*/
-#elif __APPLE__
-			case GraphicsApi::Metal:
-					s_DefaultShader = MetalShader::CreateDefaultShader();
-					s_ErrorShader = MetalShader::CreateErrorShader();
-					s_GridShader = MetalShader::CreateGridShader();
-				break;
 #endif
 		}
 

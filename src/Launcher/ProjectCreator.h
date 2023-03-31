@@ -66,17 +66,11 @@ namespace Dwarf {
                             case GraphicsApi::OpenGL:
                                 templateApiDirectory = "opengl";
                                 break;
-                            case GraphicsApi::D3D11:
-                                templateApiDirectory = "dx11";
-                                break;
                             case GraphicsApi::D3D12:
                                 templateApiDirectory = "dx12";
                                 break;
                             case GraphicsApi::Vulkan:
                                 templateApiDirectory = "vulkan";
-                                break;
-                            case GraphicsApi::Metal:
-                                templateApiDirectory = "metal";
                                 break;
                             }
 
@@ -85,9 +79,6 @@ namespace Dwarf {
                             #ifdef WIN32
                                 std::string copyCommand = std::string("Xcopy \"" +
                                 templateProjectDirectory.string() + "\" \"" + (projectPath / projectName).string() + "\" /E/H/C/I/y/D");
-                            #elif __APPLE__
-                                std::string copyCommand = std::string("cp -R \"./") 
-                                    + templateProjectDirectory.string() + "/\" \"" + std::string(projectPath) + "/" + projectName + "\"";
                             #endif
                             
                             system(copyCommand.c_str());
