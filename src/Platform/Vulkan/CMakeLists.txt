@@ -1,4 +1,4 @@
 target_sources(${targetName}
     PRIVATE
-        ForwardRenderer.cpp
+        VulkanRendererApi.cpp
 )

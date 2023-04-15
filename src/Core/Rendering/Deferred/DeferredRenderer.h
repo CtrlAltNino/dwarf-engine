@@ -6,12 +6,12 @@
 #include "Core/Scene/Camera.h"
 
 namespace Dwarf{
-    class ForwardRenderer : public Renderer {
+    class DeferredRenderer : public Renderer {
         private:
-            Ref<RendererApi> m_RendererApi;
+            Ref<RendererApi> rendererApi;
         public:
-            ForwardRenderer();
-            ~ForwardRenderer();
+            DeferredRenderer();
+            ~DeferredRenderer();
             virtual void RenderScene(Ref<Scene> scene, Ref<Camera> camera) override;
             virtual Ref<Framebuffer> CreateFramebuffer(glm::ivec2 resolution) override;
     };

@@ -18,15 +18,10 @@ namespace Dwarf {
     enum class RENDER_MODE {FREE, RESOLUTION, ASPECT_RATIO};
 
     SceneViewerWindow::SceneViewerWindow(Ref<EditorModel> model, int index)
-        :GuiModule(model, "Scene Viewer", MODULE_TYPE::PERFORMANCE, index){
-            FramebufferSpecification fbSpec;
-            fbSpec.Attachments = { FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::RED_INTEGER, FramebufferTextureFormat::Depth };
-            fbSpec.Width = 1280;
-            fbSpec.Height = 720;
-            m_Framebuffer = Framebuffer::Create(fbSpec);
-
-            m_Camera = CreateRef<Camera>(Camera());
-        }
+            :GuiModule(model, "Scene Viewer", MODULE_TYPE::PERFORMANCE, index){
+        m_Framebuffer = Renderer::Get()->CreateFramebuffer({1280, 720});
+        m_Camera = CreateRef<Camera>(Camera());
+    }
 
     void SceneViewerWindow::OnUpdate(double deltaTime){
         if(m_Settings.CameraMovement && InputManager::GetMouse(MOUSE_BUTTON::RIGHT)){
@@ -34,6 +29,9 @@ namespace Dwarf {
         }
 
         // Render scene to the framebuffer with the camera
+        m_Framebuffer->Bind();
+        Renderer::Get()->RenderScene(m_Model->GetScene(), m_Camera);
+        m_Framebuffer->Unbind();
     }
 
     void SceneViewerWindow::OnImGuiRender(){

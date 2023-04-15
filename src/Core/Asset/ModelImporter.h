@@ -59,14 +59,14 @@ namespace Dwarf {
                     if (!mesh->HasTangentsAndBitangents()) {
                         for (int vertIdx = 0; vertIdx < vertices.size(); vertIdx += 3) {
                             // Shortcuts for vertices
-                            glm::vec3 v0 = vertices[vertIdx + 0].pos;
-                            glm::vec3 v1 = vertices[vertIdx + 1].pos;
-                            glm::vec3 v2 = vertices[vertIdx + 2].pos;
+                            glm::vec3 v0 = vertices[vertIdx + 0].Position;
+                            glm::vec3 v1 = vertices[vertIdx + 1].Position;
+                            glm::vec3 v2 = vertices[vertIdx + 2].Position;
 
                             // Shortcuts for UVs
-                            glm::vec2 uv0 = vertices[vertIdx + 0].uv;
-                            glm::vec2 uv1 = vertices[vertIdx + 1].uv;
-                            glm::vec2 uv2 = vertices[vertIdx + 2].uv;
+                            glm::vec2 uv0 = vertices[vertIdx + 0].UV;
+                            glm::vec2 uv1 = vertices[vertIdx + 1].UV;
+                            glm::vec2 uv2 = vertices[vertIdx + 2].UV;
 
                             // Edges of the triangle : position delta
                             glm::vec3 deltaPos1 = v1 - v0;
@@ -80,13 +80,13 @@ namespace Dwarf {
                             glm::vec3 tangent = (deltaPos1 * deltaUV2.y - deltaPos2 * deltaUV1.y) * r;
                             glm::vec3 bitangent = (deltaPos2 * deltaUV1.x - deltaPos1 * deltaUV2.x) * r;
 
-                            vertices[vertIdx].tangent = tangent;
-                            vertices[vertIdx+1].tangent = tangent;
-                            vertices[vertIdx+2].tangent = tangent;
+                            vertices[vertIdx].Tangent = tangent;
+                            vertices[vertIdx+1].Tangent = tangent;
+                            vertices[vertIdx+2].Tangent = tangent;
                             
-                            vertices[vertIdx].biTangent = bitangent;
-                            vertices[vertIdx + 1].biTangent = bitangent;
-                            vertices[vertIdx + 2].biTangent = bitangent;
+                            vertices[vertIdx].BiTangent = bitangent;
+                            vertices[vertIdx + 1].BiTangent = bitangent;
+                            vertices[vertIdx + 2].BiTangent = bitangent;
                         }
                     }
 

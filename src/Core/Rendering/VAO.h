@@ -15,13 +15,13 @@ namespace Dwarf {
 		
 		//void LinkVBO(VBO VBO, GLuint layout);
 		
-		/// @brief 
-		/// @param VBO 
-		/// @param layout 
-		/// @param numComponents 
-		/// @param type 
-		/// @param stride 
-		/// @param offset 
+		/// @brief
+		/// @param VBO
+		/// @param layout
+		/// @param numComponents
+		/// @param type
+		/// @param stride
+		/// @param offset
 		void LinkAttrib(VBO& VBO, GLuint layout, GLuint numComponents, GLenum type, GLsizeiptr stride, void* offset);
 		void Bind();
 		void Unbind();

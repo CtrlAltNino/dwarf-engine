@@ -7,6 +7,7 @@
 #include "Editor/Modules/GuiModule.h"
 #include "Input/InputManager.h"
 #include "Utilities/TimeUtilities.h"
+#include "Core/Rendering/Renderer.h"
 
 namespace Dwarf {
 
@@ -49,14 +50,17 @@ namespace Dwarf {
 		nlohmann::json projectSettings = nlohmann::json::parse(FileHandler::ReadFile(projectSettingsPath.string().c_str()))["projectInformation"];
 
 		WindowProps props("Dwarf Engine Editor", 1280, 720);
-        
+
         props.Api = (GraphicsApi)projectSettings["graphicsApi"];
-		
+
 		// TODO: Create error popup for invalid project
 
 		// ========== Create window ==========
 		std::cout << "[EDITOR INIT] Creating editor window" << std::endl;
 		m_Window = Window::Create(props);
+
+		// ========== Create renderer ==========
+		Renderer::Create(props.Api, Renderer::RendererType::Forward);
 
 		// ========== Initialize Asset Database ==========
 		std::cout << "[EDITOR INIT] Loading asset database" << std::endl;
@@ -114,7 +118,7 @@ namespace Dwarf {
 
 		TimeStamp currentFrameStamp = TimeUtilities::GetCurrent();
 		TimeStamp lastFrameStamp = TimeUtilities::GetCurrent();
-		
+
 		// TODO abstract the close condition
 		while (!m_Window->ShouldClose()) {
 			// ===== Time related stuff
@@ -125,7 +129,6 @@ namespace Dwarf {
 			m_Window->NewFrame();
 			InputManager::OnUpdate();
 			m_View->OnUpdate(m_Model->GetDeltaTime());
-			
 			m_View->OnImGuiRender();
 
 			// ===== Animation stuff =====
@@ -140,7 +143,7 @@ namespace Dwarf {
 
 			//view->EndFrame();
 			m_Window->EndFrame();
-			
+
 			while(TimeUtilities::GetDifferenceInSeconds(TimeUtilities::GetCurrent(), currentFrameStamp) < (1.0 / 60.0)){
 				// TODO: Update this when implementing multi threading
 			}

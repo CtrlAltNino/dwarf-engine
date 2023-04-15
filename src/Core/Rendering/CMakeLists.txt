@@ -12,4 +12,5 @@ target_sources(${targetName}
         GraphicsContext.cpp
         Framebuffer.cpp
         Texture.cpp
+        RendererApi.cpp
 )
