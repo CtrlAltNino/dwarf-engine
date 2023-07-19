@@ -12,6 +12,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(targetName dwarf-engine)
 set(VCPKG_FEATURE_FLAGS manifest)
 
+set(CMAKE_PCH_INSTANTIATE_TEMPLATES ON)
 # Need to find a way to make the path to the vcpkg.cmake file dynamic, maybe I can even store it in the repo
 
 # Declaring a variable that can contain various settings for the executable
@@ -37,7 +38,6 @@ ELSEIF (UNIX AND NOT APPLE)
     add_executable(${targetName} "")
 ENDIF()
 
-set(CMAKE_PCH_INSTANTIATE_TEMPLATES ON)
 
 include_directories(src)
 
