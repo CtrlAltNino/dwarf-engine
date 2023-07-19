@@ -1,3 +1,4 @@
+#include "dpch.h"
 #include "Launcher/ProjectLauncherView.h"
 #include "Launcher/ProjectLauncher.h"
 #include "Launcher/ProjectListHandler.h"

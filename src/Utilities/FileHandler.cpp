@@ -1,3 +1,4 @@
+#include "dpch.h"
 #include "Utilities/FileHandler.h"
 
 #include <sago/platform_folders.h>

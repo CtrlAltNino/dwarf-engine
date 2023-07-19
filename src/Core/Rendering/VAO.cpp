@@ -1,3 +1,4 @@
+#include "dpch.h"
 #include "Core/Rendering/VAO.h"
 
 namespace Dwarf {

@@ -1,3 +1,4 @@
+#include "dpch.h"
 #include "Core/Scene/SceneComponents.h"
 #include "Core/Scene/Scene.h"
 

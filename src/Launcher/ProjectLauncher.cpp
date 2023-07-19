@@ -1,3 +1,4 @@
+#include "dpch.h"
 #include "Launcher/ProjectLauncher.h"
 #include "Launcher/ProjectListHandler.h"
 #include "Utilities/TimeUtilities.h"

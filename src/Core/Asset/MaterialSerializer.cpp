@@ -1,3 +1,4 @@
+#include "dpch.h"
 #include "Core/Asset/MaterialSerializer.h"
 #include "Platform/OpenGL/OpenGLShader.h"
 

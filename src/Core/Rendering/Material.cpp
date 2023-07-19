@@ -1,3 +1,4 @@
+#include "dpch.h"
 #include"Core/Rendering/Material.h"
 
 namespace Dwarf {
