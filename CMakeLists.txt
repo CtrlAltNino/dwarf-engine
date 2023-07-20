@@ -10,7 +10,6 @@ include(${CMAKE_SOURCE_DIR}/helper.cmake)
 add_compile_definitions(NOMINMAX)
 set(CMAKE_CXX_STANDARD 20)
 set(targetName dwarf-engine)
-set(VCPKG_FEATURE_FLAGS manifest)
 
 set(CMAKE_PCH_INSTANTIATE_TEMPLATES ON)
 # Need to find a way to make the path to the vcpkg.cmake file dynamic, maybe I can even store it in the repo
