@@ -44,13 +44,12 @@ namespace Dwarf {
 
         ImGui::PopStyleVar(2);
         static const char* renderingModes[] = { "Free", "Aspect Ratio", "Fixed Resolution"};
-        static const char* combo_preview_value = renderingModes[m_Settings.RenderingConstraint];
 
         ImGui::PushItemWidth(150);
         ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0,0));
 
         // Rendering mode combo
-        if (ImGui::BeginCombo("##renderingMode", combo_preview_value)) {
+        if (ImGui::BeginCombo("##renderingMode", renderingModes[m_Settings.RenderingConstraint])) {
             for (int n = 0; n < 3; n++)
             {
                 const bool is_selected = (m_Settings.RenderingConstraint == n);
