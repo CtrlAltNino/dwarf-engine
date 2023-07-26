@@ -20,14 +20,32 @@ namespace Dwarf {
 		switch (Renderer::GetAPI())
 		{
 #ifdef _WIN32
-			//case GraphicsApi::D3D12:  return CreateRef<D3D12Framebuffer>(spec);
-			case GraphicsApi::OpenGL:  return CreateRef<OpenGLFramebuffer>(spec);
-			//case GraphicsApi::Vulkan:  return CreateRef<VulkanFramebuffer>(spec);
+			case GraphicsApi::D3D12:
+					//return CreateRef<D3D12Framebuffer>(spec);
+				break;
+			case GraphicsApi::Metal: break;
+			case GraphicsApi::OpenGL:
+					return CreateRef<OpenGLFramebuffer>(spec);
+				break;
+			case GraphicsApi::Vulkan:
+					//return CreateRef<VulkanFramebuffer>(spec);
+				break;
 #elif __linux__
-			case GraphicsApi::OpenGL:  return CreateRef<OpenGLFramebuffer>(spec);
-			//case GraphicsApi::Vulkan:  return CreateRef<VulkanFramebuffer>(spec);
+			case GraphicsApi::D3D12: break;
+			case GraphicsApi::Metal: break;
+			case GraphicsApi::OpenGL:
+					return CreateRef<OpenGLFramebuffer>(spec);
+				break;
+			case GraphicsApi::Vulkan:
+					//return CreateRef<VulkanFramebuffer>(spec);
+				break;
 #elif __APPLE__
-			//case GraphicsApi::Metal:  return CreateRef<MetalFramebuffer>(spec);
+			case GraphicsApi::D3D12: break;
+			case GraphicsApi::Metal:
+					//return CreateRef<MetalFramebuffer>(spec);
+				break;
+			case GraphicsApi::OpenGL: break;
+			case GraphicsApi::Vulkan: break;
 #endif
 		}
 		return nullptr;

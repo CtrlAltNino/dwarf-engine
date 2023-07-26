@@ -46,13 +46,15 @@ namespace Dwarf {
 #elif __APPLE__
 			case GraphicsApi::D3D12: break;
 			case GraphicsApi::Metal:
-					return CreateRef<MetalShader>(MetalShader());
+					//return CreateRef<MetalShader>(MetalShader());
 				break;
 			case GraphicsApi::OpenGL: break;
 			case GraphicsApi::Vulkan: break;
 #endif
 			default: return nullptr;
 		}
+
+		return nullptr;
 	}
 
 	Shader::Shader(){}
@@ -78,6 +80,19 @@ namespace Dwarf {
 					// s_GridShader = VulkanShader::CreateGridShader();
 				break;
 #elif __linux__
+			case GraphicsApi::D3D12: break;
+			case GraphicsApi::Metal: break;
+			case GraphicsApi::OpenGL:
+					s_DefaultShader = OpenGLShader::CreateDefaultShader();
+					s_ErrorShader = OpenGLShader::CreateErrorShader();
+					s_GridShader = OpenGLShader::CreateGridShader();
+				break;
+			case GraphicsApi::Vulkan:
+					// s_DefaultShader = VulkanShader::CreateDefaultShader();
+					// s_ErrorShader = VulkanShader::CreateErrorShader();
+					// s_GridShader = VulkanShader::CreateGridShader();
+				break;
+#elif __APPLE__
 			case GraphicsApi::D3D12: break;
 			case GraphicsApi::Metal:
 					// s_DefaultShader = MetalShader::CreateDefaultShader();

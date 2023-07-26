@@ -17,8 +17,10 @@ namespace Dwarf {
 		return CreateScope<WindowsWindow>(props);
 #elif __linux__
 		//return CreateScope<LinuxWindow>(props); - NOT SUPPORTED YET
+		return nullptr;
 #elif __APPLE__
 		//return CreateScope<OSXWindow>(props); - NOT SUPPORTED YET
+		return nullptr;
 #endif
 	}
 }

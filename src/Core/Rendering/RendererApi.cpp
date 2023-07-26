@@ -38,7 +38,7 @@ namespace Dwarf {
                     return CreateRef<VulkanRendererApi>();
                 break;
 #elif __APPLE__
-            case D3D12: break;
+            case GraphicsApi::D3D12: break;
             case GraphicsApi::OpenGL: break;
             case GraphicsApi::Metal:
                     //return CreateRef<MetalRendererApi>();
