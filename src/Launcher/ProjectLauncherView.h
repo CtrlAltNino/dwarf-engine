@@ -24,7 +24,6 @@ namespace Dwarf {
             /// @brief Font loaded into IMGUI for regular text
             ImFont* m_TextFont;
 
-            
         //IWindowManager::fonts["normalTextFont"] = io->Fonts->AddFontFromFileTTF(INTER_REGULAR_PATH, 15);
         //IWindowManager::fonts["largeTextFont"] = io->Fonts->AddFontFromFileTTF(INTER_REGULAR_PATH, 20);
         //IWindowManager::fonts["smallHeaderFont"] = io->Fonts->AddFontFromFileTTF(INTER_BOLD_PATH, 20);

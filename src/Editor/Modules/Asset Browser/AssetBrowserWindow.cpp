@@ -199,7 +199,7 @@ namespace Dwarf {
         combinedEntries.reserve(directories.size() + files.size());
         combinedEntries.insert(combinedEntries.end(), directories.begin(), directories.end());
         combinedEntries.insert(combinedEntries.end(), files.begin(), files.end());
-        
+
         //for(auto& directoryEntry : std::filesystem::directory_iterator(m_CurrentDirectory)){
         for(auto& directoryEntry : combinedEntries){
             const auto& path = directoryEntry.path();
@@ -212,14 +212,14 @@ namespace Dwarf {
                 float textWidth = cellWidth - padding;
                 float textHeight = ImGui::CalcTextSize(relativePath.stem().string().c_str(), (const char*)0, false, textWidth).y;
                 float cellHeight = cellWidth + textHeight + halfPadding;
-                
+
                 if(cellHeight > tallestCell){
                     tallestCell = cellHeight;
                 }
 
                 ImVec2 cellMin = {ImGui::GetWindowContentRegionMin().x + column * (cellWidth + halfPadding), ImGui::GetWindowContentRegionMin().y + rowOffset};
                 ImGui::SetCursorPos(cellMin);
-                
+
                 ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.0f);
                 if(m_SelectedAsset == path){
                 ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0,1.0,1.0,0.2));
@@ -231,7 +231,7 @@ namespace Dwarf {
                 ImGui::Button("##entry", ImVec2(cellWidth, cellHeight));
                 ImGui::PopStyleColor(3);
                 ImGui::PopStyleVar();
-                
+
                 if(ImGui::IsItemHovered())
                 {
                     ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
@@ -257,7 +257,7 @@ namespace Dwarf {
                 }
 
                 ImGui::SetCursorPos(ImVec2(cellMin.x + halfPadding, cellMin.y + halfPadding));
-                
+
                 static ImTextureID texID;
                 if(directoryEntry.is_directory()){
                     texID = (ImTextureID)m_DirectoryIcon->GetTextureID();

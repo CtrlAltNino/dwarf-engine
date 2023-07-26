@@ -46,7 +46,7 @@ namespace Dwarf {
 			glCullFace(material.settings.cullMode);
 		}
 
-		
+
 		for (int i = 0; i < meshes.size(); i++) {
 			meshes.at(i).bind();
 			glDrawElements(GL_TRIANGLES, meshes.at(i).indices2.size(), GL_UNSIGNED_INT, 0);
@@ -69,7 +69,7 @@ namespace Dwarf {
 			glCullFace(material.settings.cullMode);
 		}*/
 
-		
+
 		/*for (int i = 0; i < meshes.size(); i++) {
 			meshes.at(i).bind();
 			glDrawElements(GL_TRIANGLES, meshes.at(i).indices2.size(), GL_UNSIGNED_INT, 0);

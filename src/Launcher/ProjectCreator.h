@@ -13,7 +13,7 @@ namespace Dwarf {
         private:
             /// @brief The default path where projects should be created.
             static inline std::filesystem::path s_DefaultProjectPath;
-        
+
         public:
             /// @brief Initialized the project creator.
             static void InitProjectCreator(){
@@ -25,7 +25,7 @@ namespace Dwarf {
             static std::filesystem::path GetDefaultProjectPath(){
                 return s_DefaultProjectPath;
             }
-            
+
             /// @brief Creates a project.
             /// @param projectName Name of the project.
             /// @param projectPath Path where the project should be created at.

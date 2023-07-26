@@ -19,7 +19,7 @@ namespace Dwarf {
 		githubIcon = new Texture(GITHUB_PNG_ICON_PATH, GL_LINEAR, GL_REPEAT, GL_RGBA, GL_UNSIGNED_BYTE);
 		patreonIcon = new Texture(PATREON_PNG_ICON_PATH, GL_LINEAR, GL_REPEAT, GL_RGBA, GL_UNSIGNED_BYTE);
 		twitterIcon = new Texture(TWITTER_PNG_ICON_PATH, GL_LINEAR, GL_REPEAT, GL_RGBA, GL_UNSIGNED_BYTE);
-		
+
 		io.Fonts->AddFontDefault();
 		headerFont = io.Fonts->AddFontFromFileTTF(FONT_ROBOTO_LIGHT_PATH, 26);
 		textFont = io.Fonts->AddFontFromFileTTF(FONT_ROBOTO_REGULAR_PATH, 15);*/
@@ -205,7 +205,7 @@ namespace Dwarf {
 						if (ImGui::IsItemClicked(1)) {
 							m_Model->SetSelectedProjectID(row);
 						}
-						
+
 						{
 							ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(5, 5));
 							ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 5);
@@ -249,7 +249,7 @@ namespace Dwarf {
 
 								if (ImGui::IsItemHovered())
 									ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);*/
-								
+
 								ImGui::EndPopup();
 							}
 							ImGui::PopStyleVar(4);
@@ -345,7 +345,7 @@ namespace Dwarf {
 		ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 10);
 
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
-		
+
 		if (ImGui::Button("Create new project", ImVec2(ImGui::GetContentRegionAvail().x, 75))) {
 			// TODO Open modal for creating a new project
 			m_Model->SetState(ProjectChooserState::CreateNewProject);
@@ -362,7 +362,7 @@ namespace Dwarf {
 		}*/
 
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
-		
+
 		if (ImGui::Button("Add existing project", ImVec2(ImGui::GetContentRegionAvail().x, 75))) {
 			ProjectListHandler::OpenAddProjectWindow();
 		}
@@ -379,7 +379,7 @@ namespace Dwarf {
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 6);
 		ImGui::Separator();
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
-		
+
 		if (ImGui::Button("Manage plugins", ImVec2(ImGui::GetContentRegionAvail().x, 75))) {
 			// Open plugin manager modal
 			// Contains list of plugins that are present and their state (working, not working, warnings)
@@ -391,7 +391,7 @@ namespace Dwarf {
 		if (ImGui::IsItemHovered()) {
 			ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
 		}
-		
+
 		ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 
 		if (ImGui::Button("Settings", ImVec2(ImGui::GetContentRegionAvail().x, 75))) {
@@ -470,7 +470,7 @@ namespace Dwarf {
 
 		ImGui::SameLine();
 		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10);
-		
+
 		{
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - verticalIconOffset);
 			ImTextureID texID = (ImTextureID)m_PatreonIcon->GetTextureID();
@@ -482,7 +482,7 @@ namespace Dwarf {
 			if (ImGui::IsItemClicked()) {
 				BrowserLinkOpener::OpenLink(PATREON_LINK);
 			}
-			
+
 			ImGui::SameLine();
 
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + verticalIconOffset);
@@ -509,7 +509,7 @@ namespace Dwarf {
 			if (ImGui::IsItemClicked()) {
 				BrowserLinkOpener::OpenLink(TWITTER_LINK);
 			}
-			
+
 			ImGui::SameLine();
 
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + verticalIconOffset);
@@ -521,7 +521,7 @@ namespace Dwarf {
 				BrowserLinkOpener::OpenLink(TWITTER_LINK);
 			}
 		}
-		
+
 		ImGui::PopStyleColor();
 		ImGui::PopStyleVar();
 
@@ -592,12 +592,6 @@ namespace Dwarf {
 				ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - 150);
 
 				// Setting up combo
-#if _WIN32
-					const char* apis[] = { "Direct3D 12", "OpenGL",  "Vulkan" };
-#elif __linux__
-					const char* apis[] = { "OpenGL", "Vulkan" };
-#endif
-
 				const char* combo_preview_value = graphicsApiNames[currentApiIndex];
 
 				ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
@@ -700,7 +694,7 @@ namespace Dwarf {
 			ImGui::PushStyleColor(ImGuiCol_Button, IM_COL32(76, 86, 106, 255));
 			ImGui::PushStyleColor(ImGuiCol_ButtonHovered, IM_COL32(86, 95, 114, 255));
 			ImGui::PushStyleColor(ImGuiCol_ButtonActive, IM_COL32(129, 161, 193, 255));
-			
+
 			// ==================== Apply Button ====================
 			if (ImGui::Button("Apply", ImVec2(ImGui::GetContentRegionAvail().x / 2 - 10, 0))) {
 				ProjectListHandler::ChangeGraphicsApi(m_Model->GetSelectedProjectID(), (GraphicsApi)currentApiIndex);
@@ -765,18 +759,18 @@ namespace Dwarf {
 			ImGui::PushFont(m_TextFont);
 			// ==================== Information Text ====================
 			float textWidth = ImGui::CalcTextSize(projectList[m_Model->GetSelectedProjectID()].path.string().c_str(), (const char*)0, false).x;
-			
+
 			ImGui::Text("The project you are trying to open could not be found:");
 
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
 			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + (ImGui::GetContentRegionAvail().x / 2 - textWidth / 2));
 			ImGui::Text(projectList[m_Model->GetSelectedProjectID()].path.string().c_str());
-			
+
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 20);
 			ImGui::Text("Do you want to remove it from the list?");
 
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
-			
+
 			ImGui::Separator();
 
 			ImGui::PushStyleColor(ImGuiCol_Button, IM_COL32(191, 97, 106, 255));
@@ -807,7 +801,7 @@ namespace Dwarf {
 			if (ImGui::Button("Cancel", ImVec2(ImGui::GetContentRegionAvail().x, 0))) {
 				ImGui::CloseCurrentPopup();
 			}
-			
+
 			if (ImGui::IsItemHovered()) {
 				ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
 			}
@@ -815,9 +809,9 @@ namespace Dwarf {
 
 			ImGui::PopStyleVar();
 			ImGui::PopStyleColor(3);
-			
+
 			ImGui::PopFont();
-			
+
 			ImGui::EndPopup();
 		}
 		ImGui::PopStyleVar(5);
@@ -829,8 +823,7 @@ namespace Dwarf {
 		// Centering Modal ====================
 		ImVec2 center = ImGui::GetMainViewport()->GetCenter();
 		ImGui::SetNextWindowPos(center, ImGuiCond_Always, ImVec2(0.5f, 0.5f));
-		
-		
+
 		// Setting the font for the modal window title
 		ImGui::PushFont(m_HeaderFont);
 		ImGui::SetNextWindowSize(ImVec2(450, 0));
@@ -843,7 +836,7 @@ namespace Dwarf {
 		//ImGui::PushStyleColor(ImGuiCol_ModalWindowDimBg, ImVec4(0, 0, 0, 0.7));
 		ImGuiStyle* style = &ImGui::GetStyle(); (void)style;
 		style->Colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0, 0, 0, 0.7);
-		
+
 		// ==================== Popup Modal ====================
 		ImGui::PushStyleVar(ImGuiStyleVar_WindowTitleAlign, ImVec2(0.5f, 0.5f));
 		ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 10));
@@ -878,7 +871,7 @@ namespace Dwarf {
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
 			ImGui::Separator();
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
-			
+
 			static std::filesystem::path newProjectPath = ProjectCreator::GetDefaultProjectPath();
 			// ==================== Project Path Selector ====================
 			{
@@ -891,7 +884,7 @@ namespace Dwarf {
 				ImGui::SameLine();
 				ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - 300);
 				ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
-				
+
 				draw_list->ChannelsSplit(2);
 				draw_list->ChannelsSetCurrent(1);
 				// Path preview
@@ -918,13 +911,13 @@ namespace Dwarf {
 				ImGui::GetWindowDrawList()->AddRectFilled(p_min, p_max, IM_COL32(59, 66, 82, 255), 3);
 
 				draw_list->ChannelsMerge();
-				
+
 				ImGui::SameLine();
 
 				ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - 30);
 
 				float width = ImGui::GetContentRegionAvail().x;
-				
+
 				// Browse path button
 				ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5);
 				//ImGui::SetCursorPosY(ImGui::GetCursorPosY());
@@ -1118,7 +1111,7 @@ namespace Dwarf {
 
 				if (ImGui::BeginCombo("##graphicsApi", combo_preview_value)) {
 					ImDrawList* draw_list = ImGui::GetWindowDrawList();
-					
+
 					// Looping through all the combo entries
 					for (int n = 0; n < sizeof(graphicsApiNames)/sizeof(graphicsApiNames[0]); n++)
 					{
@@ -1130,7 +1123,7 @@ namespace Dwarf {
 							ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0, 0, 0, 0));
 							ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0, 0, 0, 0));
 							ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0, 0, 0, 0));
-							
+
 							// For drawing a custom Selectable background, we split the channel
 							// Now we can draw the text in the foreground, and the colored, rounded rectangle in the background
 							draw_list->ChannelsSplit(2);
@@ -1148,7 +1141,7 @@ namespace Dwarf {
 							// Reset Style
 							ImGui::PopStyleVar(1);
 							ImGui::PopStyleColor(3);
-							
+
 							// Drawing the background rectangle
 							if (ImGui::IsItemHovered()) {
 								ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
@@ -1214,7 +1207,7 @@ namespace Dwarf {
 					//newProjectPath = FileHandler::defaultProjectPath;
 					currentTemplateIndex = 0;
 					currentApiIndex = 0;
-					
+
 					ImGui::CloseCurrentPopup();
 				}
 				ImGui::PopFont();
@@ -1245,7 +1238,7 @@ namespace Dwarf {
 
 			ImGui::PopStyleVar();
 			ImGui::PopStyleColor(3);
-			
+
 			ImGui::PopStyleVar();
 			ImGui::EndPopup();
 		}

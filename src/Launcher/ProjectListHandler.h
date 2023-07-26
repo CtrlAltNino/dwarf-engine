@@ -59,7 +59,7 @@ namespace Dwarf {
             static ProjectInformation ExtractProjectInformation(std::filesystem::path path){
                 std::filesystem::path projectSettingsPath = path / "projectSettings.dproj";
                 std::string fileContent = FileHandler::ReadFile(projectSettingsPath);
-                
+
                 ProjectInformation foundInfo;
 
                 if (!fileContent.empty()) {
@@ -141,7 +141,7 @@ namespace Dwarf {
             static bool AddProjectByPath(std::filesystem::path projectPath){
                 return AddProject(ExtractProjectInformation(projectPath));
             }
-            
+
             /// @brief Opens a native file dialog to add a project to the project list.
             static void OpenAddProjectWindow(){
                 // File Dialog um einen Pfad zu kriegen
@@ -156,7 +156,7 @@ namespace Dwarf {
                 //(if that is not the default behaviour, finding out when implementing the dialog in another thread)
                 //nfdresult_t result = NFD_OpenDialog(filter, NULL, &outPath);
                 nfdresult_t result = NFD_PickFolder(NULL, &outPath);
-                
+
                 if (result == NFD_OKAY) {
                     // check if a project with the same path already exists
                     bool alreadyPresent = false;
@@ -165,7 +165,7 @@ namespace Dwarf {
                     for (int i = 0; (i < s_ProjectList.size()) && !alreadyPresent; i++) {
                         alreadyPresent = s_ProjectList[i].path == outPath;
                     }
-                    
+
                     if (!alreadyPresent) {
                         ProjectInformation newProject = ExtractProjectInformation(outPath);
                         if (newProject.name != "") {
@@ -202,7 +202,7 @@ namespace Dwarf {
                 /*while ((pos = projectSettingsPath.find('\\')) != std::string::npos) {
                     projectSettingsPath.replace(pos, 1, "/");
                 }*/
-                
+
                 if (FileHandler::CheckIfFileExists(projectSettingsPath)) {
                     // Update the projectSettings.dproj "projectName" entry
                     //std::string templateProjectSettingsDirectory = templateProjectDirectory + "/projectSettings.dproj";
@@ -228,7 +228,7 @@ namespace Dwarf {
                     std::cout << "[PROJECT LIST HANDLER] Error: Project settings file not found" << std::endl;
                 }
             }
-            
+
             /// @brief Removes a project from the project list and saves the new list to the disk.
             /// @param id ID of the project to remove.
             static void RemoveProjectFromList(int id){
@@ -240,7 +240,7 @@ namespace Dwarf {
             /// @param id ID of the project to be updated.
             static void RegisterProjectOpening(int id){
                 s_ProjectList[id].lastOpened = time(0);
-                
+
                 std::filesystem::path projectSettingsPath = (s_ProjectList[id].path / "projectSettings.dproj");
                 if (FileHandler::CheckIfFileExists(projectSettingsPath)) {
                     // Update the projectSettings.dproj "projectName" entry

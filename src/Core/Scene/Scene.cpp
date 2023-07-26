@@ -75,7 +75,7 @@ namespace Dwarf {
 
 					glEnable(GL_CULL_FACE);
 					glCullFace(GL_BACK);
-					
+
 					mesh.bind();
 					glDrawElements(GL_TRIANGLES, mesh.indices2.size(), GL_UNSIGNED_INT, 0);
 					mesh.unbind();
@@ -84,12 +84,12 @@ namespace Dwarf {
 				}
 			}
 		}
-		
+
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK);
-		
+
 		for(auto entity: view) {
 			auto &transform = view.get<TransformComponent>(entity);
 			auto &renderer = view.get<MeshRendererComponent>(entity);
@@ -101,7 +101,7 @@ namespace Dwarf {
 					//mat.UpdateMVP(transform.getModelMatrix(), viewMatrix, projectionMatrix);
 					mat.UpdateMVP(GetFullModelMatrix(transform), viewMatrix, projectionMatrix);
 					mat.UpdateUniforms();
-					
+
 					mesh.bind();
 					glDrawElements(GL_TRIANGLES, mesh.indices2.size(), GL_UNSIGNED_INT, 0);
 					mesh.unbind();

@@ -10,9 +10,9 @@
 
 namespace Dwarf {
     OpenGLImGuiLayer::OpenGLImGuiLayer() { }
-    
+
 	OpenGLImGuiLayer::~OpenGLImGuiLayer() {
-		
+
 	}
 
     void OpenGLImGuiLayer::OnAttach(void* window) {
@@ -89,7 +89,7 @@ namespace Dwarf {
             ImGui::UpdatePlatformWindows();
             ImGui::RenderPlatformWindowsDefault();
         }
-        
+
         //glfwSwapBuffers(window);
         //SDL_GL_SwapWindow(window);
     }

@@ -34,7 +34,7 @@ namespace Dwarf {
                 m_ModuleType(type),
                 m_Index(index)
                 {}
-            
+
             /// @brief Returns the name of the module.
             /// @return Name of the module.
             std::string GetModuleName() {return m_Label;}

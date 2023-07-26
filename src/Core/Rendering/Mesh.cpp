@@ -8,7 +8,7 @@
 	: vao(), vertices(vertices), indices(indices), indicesSize(indicesSize), verticesSize(verticesSize){
 	vao.LinkAttrib(vbo, 0, 3, GL_FLOAT, 5 * sizeof(float), (void*)0);
 	vao.LinkAttrib(vbo, 1, 2, GL_FLOAT, 5 * sizeof(float), (void*)(3 * sizeof(float)));
-	
+
 	vao.Unbind();
 	vbo.Unbind();
 	ebo.Unbind();
@@ -24,7 +24,7 @@ namespace Dwarf {
 		vao.Bind();
 		ebo = EBO(indices2);
 		vbo = VBO(vertices2);
-		
+
 		// vertex positions
 		glEnableVertexAttribArray(0);
 		glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);

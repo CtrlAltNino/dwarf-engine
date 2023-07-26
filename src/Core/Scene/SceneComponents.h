@@ -33,7 +33,7 @@ namespace Dwarf {
 
         /// @brief List of entity handles that are child entities.
         std::vector<entt::entity> children;
-        
+
         TransformComponent() = default;
         TransformComponent(const TransformComponent&) = default;
         TransformComponent(glm::vec3 pos)
@@ -42,7 +42,7 @@ namespace Dwarf {
             : position(pos), rotation(rot) {}
 
         // ========== Getters ==========
-        
+
         /// @brief Returns the position of the entity.
         /// @return The position as a 3D vector.
         glm::vec3 getPosition() { return position; }
@@ -91,7 +91,7 @@ namespace Dwarf {
 
         /// @brief Names of the light types.
         static inline const char* LIGHT_TYPE_NAMES[3] = {"Directional", "Point", "Spot"};
-        
+
         /// @brief The type of light this component represents.
         LIGHT_TYPE type = DIRECTIONAL;
 

@@ -1,6 +1,16 @@
 #include "dpch.h"
 #include "Core/Asset/MaterialSerializer.h"
+
+#ifdef _WIN32
+//#include "Platform/Direct3D12/D3D12Shader.h"
 #include "Platform/OpenGL/OpenGLShader.h"
+//#include "Platform/Vulkan/VulkanShader.h"
+#elif __linux__
+#include "Platform/OpenGL/OpenGLShader.h"
+//#include "Platform/Vulkan/VulkanShader.h"
+#elif __APPLE__
+//#include "Platform/Metal/MetalShader.h"
+#endif
 
 namespace Dwarf {
     Ref<Material> MaterialSerializer::Deserialize(std::filesystem::path path){
@@ -14,6 +24,7 @@ namespace Dwarf {
             switch(Renderer::GetAPI()){
 #ifdef _WIN32
                 case GraphicsApi::D3D12: break;
+                case GraphicsApi::Metal: break;
                 case GraphicsApi::OpenGL:
                     {
                         Ref<Shader> shaderRef = Shader::Create();
@@ -29,6 +40,7 @@ namespace Dwarf {
                 case GraphicsApi::Vulkan: break;
 #elif __linux__
                 case GraphicsApi::D3D12: break;
+                case GraphicsApi::Metal: break;
                 case GraphicsApi::OpenGL:
                         Ref<Shader> shaderRef = Shader::Create();
                         OpenGLShader* shader = (OpenGLShader*)shaderRef.get();
@@ -42,6 +54,7 @@ namespace Dwarf {
                 case GraphicsApi::Vulkan: break;
 #elif __APPLE__
                 case GraphicsApi::D3D12: break;
+                case GraphicsApi::Metal: break;
                 case GraphicsApi::OpenGL: break;
                 case GraphicsApi::Vulkan: break;
 #endif
@@ -54,10 +67,11 @@ namespace Dwarf {
         nlohmann::json serializedMat;
 
         serializedMat["transparent"] = material.IsTransparent();
-        
+
         switch(Renderer::GetAPI()){
 #ifdef _WIN32
                 case GraphicsApi::D3D12: break;
+                case GraphicsApi::Metal: break;
                 case GraphicsApi::OpenGL:
                 {
                     Ref<Shader> shaderRef = material.GetShader();
@@ -72,6 +86,7 @@ namespace Dwarf {
                 case GraphicsApi::Vulkan: break;
 #elif __linux__
                 case GraphicsApi::D3D12: break;
+                case GraphicsApi::Metal: break;
                 case GraphicsApi::OpenGL:
                 {
                     Ref<Shader> shaderRef = material.GetShader();
@@ -83,6 +98,11 @@ namespace Dwarf {
                         }
                     break;
                 }
+                case GraphicsApi::Vulkan: break;
+#elif __APPLE__
+                case GraphicsApi::D3D12: break;
+                case GraphicsApi::Metal: break;
+                case GraphicsApi::OpenGL: break;
                 case GraphicsApi::Vulkan: break;
 #endif
         }

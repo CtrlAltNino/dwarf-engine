@@ -18,7 +18,7 @@ namespace Dwarf {
                                                     {SDL_SCANCODE_R, KEYCODE::R},
                                                     {SDL_SCANCODE_LSHIFT, KEYCODE::LEFT_SHIFT},
                                                     {SDL_SCANCODE_LCTRL, KEYCODE::LEFT_CONTROL}};
-    
+
     std::set<KEYCODE> InputManager::s_KeysDown;
     std::set<KEYCODE> InputManager::s_KeysRepeat;
     std::set<KEYCODE> InputManager::s_KeysUp;
@@ -105,7 +105,7 @@ namespace Dwarf {
         if(s_KeysDown.contains(keycode)){
             s_KeysDown.erase(keycode);
         }
-        
+
         if(s_KeysRepeat.contains(keycode)){
             s_KeysRepeat.erase(keycode);
         }

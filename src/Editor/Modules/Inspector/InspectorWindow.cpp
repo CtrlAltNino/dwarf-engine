@@ -9,9 +9,14 @@
 #include <math.h>
 
 #ifdef _WIN32
+    //#include "Platform/Direct3D12/D3D12Shader.h"
     #include "Platform/OpenGL/OpenGLShader.h"
+    //#include "Platform/Vulkan/VulkanShader.h"
 #elif __linux__
     #include "Platform/OpenGL/OpenGLShader.h"
+    //#include "Platform/Vulkan/VulkanShader.h"
+#elif __APPLE__
+    //#include "Platform/Metal/MetalShader.h"
 #endif
 
 #define COMPONENT_PANEL_PADDING (8.0f)
@@ -176,6 +181,7 @@ namespace Dwarf {
             switch(Renderer::GetAPI()){
 #ifdef _WIN32
                 case GraphicsApi::D3D12: break;
+                case GraphicsApi::Metal: break;
                 case GraphicsApi::OpenGL:
                     {
                         OpenGLShader* shader = (OpenGLShader*)mat->m_Shader.get();
@@ -223,6 +229,12 @@ namespace Dwarf {
                 case GraphicsApi::Vulkan: break;
 #elif __linux__
                 case GraphicsApi::D3D12: break;
+                case GraphicsApi::Metal: break;
+                case GraphicsApi::OpenGL: break;
+                case GraphicsApi::Vulkan: break;
+#elif __APPLE__
+                case GraphicsApi::D3D12: break;
+                case GraphicsApi::Metal: break;
                 case GraphicsApi::OpenGL: break;
                 case GraphicsApi::Vulkan: break;
 #endif

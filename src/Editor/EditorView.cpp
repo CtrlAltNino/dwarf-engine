@@ -167,7 +167,7 @@ namespace Dwarf {
     }
 
     void EditorView::OnImGuiRender(){
-        
+
 		ImGui::PushStyleColor(ImGuiCol_Text, COL_TEXT);
 
         ImGui::PushStyleColor(ImGuiCol_WindowBg, COL_BG_DIM);
@@ -175,7 +175,7 @@ namespace Dwarf {
 
         ImGui::PushStyleColor(ImGuiCol_TitleBgActive, COL_WINDOW_HEADER_FOCUSED);
         ImGui::PushStyleColor(ImGuiCol_TitleBg, COL_WINDOW_HEADER_UNFOCUSED);
-        
+
         ImGui::PushStyleColor(ImGuiCol_TabUnfocused, COL_TAB_UNFOCUSED);
         ImGui::PushStyleColor(ImGuiCol_TabUnfocusedActive, COL_TAB_UNFOCUSED_ACTIVE);
 
@@ -193,17 +193,17 @@ namespace Dwarf {
         ImGui::PushStyleColor(ImGuiCol_HeaderActive, COL_BUTTON_ACTIVE);
         ImGui::PushStyleColor(ImGuiCol_HeaderHovered, COL_BUTTON_HOVERED);
         //ImGuiCol_FrameBg
-        
+
         ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 5.0f);
         ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.0f);
         ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 5.0f);
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(12, 12));
-        
+
 
         // Render default stuff
         RenderDockSpace();
-        
+
         //ImGui::ShowDemoWindow();
 
         // Render modules

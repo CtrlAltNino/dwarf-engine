@@ -18,11 +18,11 @@ namespace Dwarf {
     std::filesystem::path ProjectLauncher::Run() {
         // Initializing the project launcher model (e.g. loading the project list)
         WindowProps props("Dwarf Engine Project Launcher", 1100, 600);
-        
+
         #if defined(_WIN32) || defined(__linux__)
             props.Api = GraphicsApi::OpenGL;
         #endif
-        
+
         m_Window = Window::Create(props);
 
         m_Model = CreateScope<ProjectLauncherModel>(ProjectLauncherModel());
@@ -31,14 +31,14 @@ namespace Dwarf {
         // Initializing the view
         m_View = CreateScope<ProjectLauncherView>(ProjectLauncherView());
         m_View->Init(m_Model);
-        
+
         m_Window->ShowWindow();
 
         while (((m_Model->GetState() != ProjectChooserState::Done) && (m_Model->GetState() != ProjectChooserState::Canceled)) && !m_Window->ShouldClose()) {
             TimeStamp currentFrameStamp = TimeUtilities::GetCurrent();
 
             m_Window->NewFrame();
-            
+
             m_View->Render();
 
             m_Window->EndFrame();
@@ -59,7 +59,7 @@ namespace Dwarf {
                 ProjectListHandler::RegisterProjectOpening(selectedProjectId);
             }
         }
-        
+
         return projectPath;
     }
 }

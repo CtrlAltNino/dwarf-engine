@@ -52,7 +52,7 @@ namespace Dwarf {
 	glm::mat4x4 Camera::GetViewMatrix() {
 		glm::mat4 rot = glm::rotate(glm::mat4(1.0f), m_Transform->rotation.x * DEG_2_RAD, glm::vec3(1.0f, 0.0f, 0.0f))
 			* glm::rotate(glm::mat4(1.0f), m_Transform->rotation.y * DEG_2_RAD, glm::vec3(0.0f, 1.0f, 0.0f));
-		
+
 		return rot * glm::translate(glm::mat4(1.0f), -m_Transform->getPosition());
 	}
 
@@ -91,12 +91,12 @@ namespace Dwarf {
             //renderTexture->GetCamera()->transform.rotation.rotate(renderTexture->GetCamera()->transform.rotation.getQuaternion() * glm::vec3(0,1,0), yAngle);
             //renderTexture->GetCamera()->transform.rotation.rotate(glm::vec3(1,0,0), xAngle);
             //TransformComponent& tc = renderTexture->GetCamera()->transform;
-            
+
             //tc.rotation.y += yAngle;
             //tc.rotation.x += xAngle;
 
             //glm::vec4 vecEuler = glm::vec4(tc.rotation.x, tc.rotation.y, tc.rotation.z, 1.0f);
-            //vecEuler = 
+            //vecEuler =
             glm::mat4 mat = glm::rotate(glm::mat4(1.0f), xAngle * DEG_2_RAD, glm::vec3(1,0,0));
 
             glm::vec3 rot;
@@ -121,7 +121,7 @@ namespace Dwarf {
             float yaw = RAD_2_DEG * atan2(2.0f*(q.y*q.z + q.w*q.x), q.w*q.w - q.x*q.x - q.y*q.y + q.z*q.z);
             float pitch = RAD_2_DEG * asin(-2.0f*(q.x*q.z - q.w*q.y));
             float roll = RAD_2_DEG * atan2(2.0f*(q.x*q.y + q.w*q.z), q.w*q.w + q.x*q.x - q.y*q.y - q.z*q.z);
-            
+
             glm::vec3 clampedRot = renderTexture->GetCamera()->transform.getEulerAngles();*/
             //std::cout << "yaw=" << yaw << " pitch=" << pitch << " roll=" << roll << std::endl;
             //std::cout << "Camera Euler Angles: x=" << clampedRot.x << " y=" << clampedRot.y << " z=" << clampedRot.z << std::endl;
@@ -137,7 +137,7 @@ namespace Dwarf {
 
         glm::mat4 rotMat/* = glm::rotate(glm::mat4(1.0f), renderTexture->GetCamera()->transform.rotation.x * DEG_2_RAD, glm::vec3(1.0f, 0.0f, 0.0f))
                 * glm::rotate(glm::mat4(1.0f), renderTexture->GetCamera()->transform.rotation.y * DEG_2_RAD, glm::vec3(0.0f, 1.0f, 0.0f))*/;
-        
+
         if (glm::length(movementVector) > 0) {
             movementVector = glm::normalize(movementVector);
             movementVector *= /*model->GetDeltaTime() **/ m_MovementSpeed * (InputManager::GetKey(KEYCODE::LEFT_SHIFT) ? 2 : 1);

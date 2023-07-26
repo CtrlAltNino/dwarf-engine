@@ -5,7 +5,7 @@
 #include <SDL2/SDL_opengl.h>
 
 namespace Dwarf {
-    
+
     OpenGLContext::OpenGLContext(SDL_Window* windowHandle) : m_WindowHandle(windowHandle) { }
 
     OpenGLContext::~OpenGLContext(){
@@ -14,7 +14,7 @@ namespace Dwarf {
 
     void OpenGLContext::Init() {
         m_Context = SDL_GL_CreateContext(m_WindowHandle);
-        
+
         SDL_GL_MakeCurrent(m_WindowHandle, m_Context);
         gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress);
     }

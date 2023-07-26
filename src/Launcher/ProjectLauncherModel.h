@@ -22,7 +22,7 @@ namespace Dwarf {
             void SetState(ProjectChooserState state);
 
             int GetSelectedProjectID();
-            
+
             void SetSelectedProjectID(int id);
     };
 }

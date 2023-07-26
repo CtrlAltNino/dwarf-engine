@@ -52,7 +52,7 @@ namespace Dwarf {
                 // Accomodating for never opened projects having "-1" as a value
                 int a = p1.lastOpened == -1 ? INT_MAX : p1.lastOpened;
                 int b = p2.lastOpened == -1 ? INT_MAX : p2.lastOpened;
-                
+
                 // Sorting by project name as fallback
                 return a == b ? ProjectNameComparator(p1, p2) : (a > b);
             }
@@ -65,7 +65,7 @@ namespace Dwarf {
                 // Accomodating for never opened projects having "-1" as a value
                 int a = p1.lastOpened == -1 ? INT_MAX : p1.lastOpened;
                 int b = p2.lastOpened == -1 ? INT_MAX : p2.lastOpened;
-                
+
                 // Sorting by project name as fallback
                 return a == b ? ProjectNameComparator(p1, p2) : (a < b);
             }
@@ -79,16 +79,16 @@ namespace Dwarf {
             }
 
             /// @brief API comparator for reverse API sort order.
-            /// @param p1 
-            /// @param p2 
-            /// @return 
+            /// @param p1
+            /// @param p2
+            /// @return
             static bool ProjectApiReverseComparator(ProjectInformation p1, ProjectInformation p2) {
                 return p1.graphicsApi < p2.graphicsApi;
             }
-        
+
         public:
             /// @brief Updates the sort order, depending on which column title has been clicked.
-            /// @param columnId 
+            /// @param columnId
             static void UpdateSortOrder(int columnId) {
                 switch (columnId) {
                 case NAME_COLUMN_INDEX:

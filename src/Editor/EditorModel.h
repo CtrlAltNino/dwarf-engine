@@ -7,7 +7,7 @@
 namespace Dwarf {
 
     enum INSPECTOR_SELECTION_TYPE { NONE, ASSET, ENTITY };
-    
+
     struct SelectionContainer {
         std::filesystem::path assetPath;
         std::vector<Entity> selectedEntities;
@@ -19,7 +19,7 @@ namespace Dwarf {
         private:
             /// @brief The currently opened scene instance.
             Ref<Scene> m_Scene;
-            
+
             double m_DeltaTime;
 
             std::filesystem::path m_ProjectPath;

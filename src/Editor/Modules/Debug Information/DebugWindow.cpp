@@ -16,7 +16,7 @@ namespace Dwarf {
     void DebugWindow::OnUpdate(double deltaTime){
 
     }
-    
+
     void DebugWindow::OnImGuiRender(){
         ImGuiWindowFlags window_flags = 0;
 

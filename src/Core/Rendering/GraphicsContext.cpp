@@ -11,6 +11,8 @@
 #elif __linux__
 #include "Platform/OpenGL/OpenGLContext.h"
 //#include "Platform/Vulkan/VulkanContext.h" - NOT SUPPORTED YET
+#elif __APPLE__
+//#include "Platform/Metal/MetalContext.h" - NOT SUPPORTED YET
 #endif
 
 namespace Dwarf {
@@ -23,6 +25,8 @@ namespace Dwarf {
 #elif __linux__
             case GraphicsApi::OpenGL: return CreateScope<OpenGLContext>(static_cast<SDL_Window*>(window));
             //case GraphicsApi::Vulkan: return CreateScope<VulkanContext>(static_cast<SDL_Window*>(window)); - NOT SUPPORTED YET
+#elif __APPLE__
+            //case GraphicsApi::Metal: return CreateScope<MetalContext>(static_cast<SDL_Window*>(window)); - NOT SUPPORTED YET
 #endif
         }
         return nullptr;

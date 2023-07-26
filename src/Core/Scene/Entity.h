@@ -66,7 +66,7 @@ namespace Dwarf {
             void SetParent(entt::entity entity){
                 TransformComponent transform = GetComponent<TransformComponent>();
                 Entity newParent = Entity(entity, m_Registry);
-                
+
                 if(transform.parent != entt::null){
                     Entity oldParent = Entity(transform.parent, m_Registry);
                     oldParent.RemoveChild(m_EntityHandle);
@@ -77,7 +77,7 @@ namespace Dwarf {
                     newParent.AddChild(m_EntityHandle);
                 }
             }
-            
+
             /// @brief Adds a new child entity to this entity.
             /// @param entity Entity handle of the new child.
             void AddChild(entt::entity entity){
@@ -87,7 +87,7 @@ namespace Dwarf {
                     GetComponent<TransformComponent>().children.push_back(entity);
                 }
             }
-            
+
             /// @brief Removes a child from the list of children.
             /// @param entity Entity handle of the entity to remove.
             void RemoveChild(entt::entity entity){
@@ -118,7 +118,7 @@ namespace Dwarf {
             /// @return Index of this entity.
             int GetChildIndex(){
                 int index = -1;
-                
+
                 std::vector<entt::entity> siblings = Entity(GetComponent<TransformComponent>().parent, m_Registry).GetComponent<TransformComponent>().children;
                 auto it = std::find(siblings.begin(), siblings.end(), m_EntityHandle);
 
@@ -136,13 +136,13 @@ namespace Dwarf {
             entt::entity GetParent(){
                 return GetComponent<TransformComponent>().parent;
             }
-            
+
             /// @brief Returns the list of this entity's children.
             /// @return Pointer to the list of child entities.
             std::vector<entt::entity>* GetChildren(){
                 return &(GetComponent<TransformComponent>().children);
             }
-            
+
             entt::entity GetHandle() { return m_EntityHandle; }
         private:
             /// @brief Pointer to a holder of an ECS registry.

@@ -25,7 +25,7 @@ namespace Dwarf {
             //IWindowManager* windowManager;
             void EnterDirectory(std::filesystem::path path);
             void GoBack();
-            
+
             void GoForward();
 
             void LoadIcons();
@@ -35,10 +35,10 @@ namespace Dwarf {
             float m_IconScale = 1.0f;
 
             Ref<Texture> m_DirectoryIcon;
-            
+
             Ref<Texture> m_FBXIcon;
             Ref<Texture> m_OBJIcon;
-            
+
             Ref<Texture> m_JPGIcon;
             Ref<Texture> m_PNGIcon;
 

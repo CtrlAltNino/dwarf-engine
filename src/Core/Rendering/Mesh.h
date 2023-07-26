@@ -10,7 +10,7 @@
 #include "Core/Rendering/Vertex.h"
 
 namespace Dwarf {
-	
+
 	/// @brief Class representing a mesh.
 	class Mesh {
 	private:
@@ -47,12 +47,12 @@ namespace Dwarf {
 		/// @brief Object storing the vertex array buffer.
 		VBO vbo = VBO(vertices2);
 		// ========== Constructors ==========
-		
+
 		//Mesh(GLfloat* vertices, GLuint* indices, int verticesSize, int indicesSize);
 		Mesh(std::vector<Vertex> vertices2, std::vector<GLuint> indices2);
 
 		// ========== Getters ==========
-		
+
 		/// @brief Returns the vertices of a mesh.
 		/// @return The vertices.
 		GLfloat* getVertices();
@@ -82,7 +82,7 @@ namespace Dwarf {
 		VBO getVbo();
 
 		// ========== Mesh Functions ==========
-		
+
 		/// @brief Binds the mesh for rendering.
 		void bind();
 

@@ -5,7 +5,7 @@
 namespace Dwarf{
 
     class DwarfEngine {
-        public: 
+        public:
             DwarfEngine();
             ~DwarfEngine();
 

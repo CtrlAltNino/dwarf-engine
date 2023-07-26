@@ -64,7 +64,7 @@ namespace Dwarf {
                         selectedAsset = -1;
                         assetID = nullptr;
                     }
-                    
+
                     for(int i = 0; i < availableAssets.size(); i++){
                         const bool is_selected = (selectedAsset == i);
                         if (ImGui::Selectable(view.template get<TagComponent>(availableAssets[i]).Tag.c_str(), is_selected, 0, ImVec2(0, 16 + 10))) {

@@ -71,7 +71,7 @@ namespace Dwarf {
                 }else{
                     timePassed = std::to_string((long long)floor(timeDifference / (SECONDS_IN_YEAR))) + " years ago";
                 }
-                
+
                 return timePassed;
             }
     };

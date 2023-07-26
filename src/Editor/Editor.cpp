@@ -22,7 +22,7 @@ namespace Dwarf {
 	}
 
 	Editor::~Editor(){
-		
+
 	}
 
 	void Editor::UpdateWindowTitle(){

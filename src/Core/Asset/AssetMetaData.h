@@ -6,7 +6,7 @@
 #include "Utilities/FileHandler.h"
 
 namespace Dwarf {
-    
+
     /// @brief Utilities for Reading and writing meta data.
     class AssetMetaData {
         public:
@@ -23,17 +23,17 @@ namespace Dwarf {
 
                 return jsonObject;
             }
-            
+
             /// @brief Writes the given metadata to a path.
             /// @param path Path to write the metadata to.
             /// @param metaData The metadata in JSON.
             static void SetMetaData(std::filesystem::path path, nlohmann::json metaData){
                 std::string fileContent = metaData.dump(4);
-                
+
                 if (!FileHandler::CheckIfDirectoyExists(path)) {
                     FileHandler::CreateDirectory(path);
                 }
-                
+
                 FileHandler::WriteToFile(path.concat(".meta"), fileContent);
             }
     };

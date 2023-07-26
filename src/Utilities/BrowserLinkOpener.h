@@ -13,7 +13,7 @@ namespace Dwarf {
     class BrowserLinkOpener {
         public:
             /// @brief Opens a link in the browser of the user.
-            /// @param link 
+            /// @param link
             static void OpenLink(const char* link){
                 #if _WIN32
                     const size_t cSize = strlen(link)+1;

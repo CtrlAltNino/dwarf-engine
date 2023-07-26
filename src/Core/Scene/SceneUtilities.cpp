@@ -21,7 +21,7 @@ namespace Dwarf {
         nlohmann::json serializedScene = nlohmann::json::parse(FileHandler::ReadFile(path));
 
         SceneSettings settings;
-        
+
         settings.fogSettings.fogColor = {
                 serializedScene["fog"]["color"]["r"],
                 serializedScene["fog"]["color"]["g"],
@@ -131,9 +131,9 @@ namespace Dwarf {
                 }else{
                     serializedArray[entityCount]["meshRendererComponent"]["mesh"] = "null";
                 }
-                
+
                 int materialCount = 0;
-                
+
                 for(Ref<UID> materialID : meshRendererComponent.materials){
                     serializedArray[entityCount]["meshRendererComponent"]["materials"][materialCount++] = (uint64_t)(*materialID);
                 }
@@ -229,7 +229,7 @@ namespace Dwarf {
             if(!path.has_extension()){
                 path.concat(".dscene");
             }
-            
+
             scene->SetPath(path);
             Serialize(scene);
             free(savePath);
@@ -238,7 +238,7 @@ namespace Dwarf {
         {
             //puts("User pressed cancel.");
         }
-        else 
+        else
         {
             printf("Error: %s\n", NFD_GetError() );
         }
@@ -266,7 +266,7 @@ namespace Dwarf {
         {
             //puts("User pressed cancel.");
         }
-        else 
+        else
         {
             printf("Error: %s\n", NFD_GetError() );
         }

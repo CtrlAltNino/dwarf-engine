@@ -26,12 +26,12 @@ namespace Dwarf {
         m_Data.Height = props.Height;
         m_Data.Width = props.Width;
         m_Data.ShouldClose = false;
-        
+
         Uint32 WindowFlags = 0;
         WindowFlags |= SDL_WINDOW_HIDDEN;
         WindowFlags |= SDL_WINDOW_MOUSE_CAPTURE;
         WindowFlags |= SDL_WINDOW_RESIZABLE;
-        
+
         switch(props.Api){
             case GraphicsApi::D3D12: break;
             case GraphicsApi::OpenGL:
@@ -47,15 +47,15 @@ namespace Dwarf {
         }
 
         m_Window = SDL_CreateWindow(m_Data.Title.c_str(), 0, 0, (int)m_Data.Width, (int)m_Data.Height, WindowFlags);
-        
+
         if (m_Window == NULL) {
             std::cout << "[WINDOW CREATION] Error: Failed to create window" << std::endl;
             SDL_Quit();
         }
-        
+
         SDL_DisplayMode mode;
         int dmCode = SDL_GetDesktopDisplayMode(SDL_GetWindowDisplayIndex(m_Window), &mode);
-        
+
         SDL_SetWindowMinimumSize(m_Window, props.Width, props.Height);
         //SDL_SetWindowSize(window, windowSize.x, windowSize.y);
         SDL_SetWindowPosition(m_Window, mode.w/2 - (props.Width / 2), mode.h / 2 - (props.Height / 2));
@@ -65,6 +65,7 @@ namespace Dwarf {
 
         //SetVSync(true);
 
+        std::cout << (int)m_Api << std::endl;
         m_ImguiLayer = ImGuiLayer::Create(m_Api);
         m_ImguiLayer->OnAttach(m_Window);
 
@@ -96,7 +97,7 @@ namespace Dwarf {
         IWindowManager::fonts["largeTextFont"] = io->Fonts->AddFontFromFileTTF(INTER_REGULAR_PATH, 20);
         IWindowManager::fonts["smallHeaderFont"] = io->Fonts->AddFontFromFileTTF(INTER_BOLD_PATH, 20);
         IWindowManager::fonts["largeHeaderFont"] = io->Fonts->AddFontFromFileTTF(INTER_BOLD_PATH, 26);
-        
+
         // Rendering info
         IWindowManager::rendererName = (char*)glad_glGetString(GL_RENDERER);
         IWindowManager::vendorName = (char*)glad_glGetString(GL_VENDOR);
@@ -148,7 +149,7 @@ namespace Dwarf {
 
     void WindowManagerOpenGL::EndFrame(){
         ImGui::PopFont();
-        
+
         ImGuiIO* io = &ImGui::GetIO();
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
@@ -157,7 +158,7 @@ namespace Dwarf {
             ImGui::UpdatePlatformWindows();
             ImGui::RenderPlatformWindowsDefault();
         }
-        
+
         //glfwSwapBuffers(window);
         SDL_GL_SwapWindow(window);
     }
@@ -172,7 +173,7 @@ namespace Dwarf {
     }
 
     void WindowManagerOpenGL::InitImGui(){
-        
+
     }
 
     SDL_Window* WindowManagerOpenGL::GetOpenGLWindow(){

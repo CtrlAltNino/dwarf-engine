@@ -8,7 +8,7 @@
 
 namespace Dwarf {
 	enum FogType { LINEAR, EXPONENTIAL };
-	
+
 	struct FogSettings {
 		glm::vec3 fogColor = { 0.3, 0.3, 0.3 };
 		float fogStart = 20.0f;
@@ -33,7 +33,7 @@ namespace Dwarf {
 		// ========== Constructors ==========
 		Scene(std::filesystem::path path, SceneSettings settings);
 		~Scene();
-		
+
 		// ========== Getters ==========
 
 		std::string GetName();
@@ -45,7 +45,7 @@ namespace Dwarf {
 
 		// ========== Setters ==========
 		void SetPath(std::filesystem::path path);
-		
+
 		// ========== Scene Functions ==========
 
 		/// @brief Creates a new entity with a given name.
@@ -87,17 +87,17 @@ namespace Dwarf {
 		std::string m_Name;
 
 		std::filesystem::path m_Path;
-		
+
 		Ref<entt::registry> m_Registry;
 
 		SceneSettings m_Settings;
-		
+
 		/// @brief The root entity in the scene graph.
 		Ref<Entity> m_RootEntity;
 
 		/// @brief Entities that have been selected by the user.
 		std::vector<Entity> m_SelectedEntities;
-		
+
 		/// @brief Because of dependency cycle
 		friend class Entity;
 

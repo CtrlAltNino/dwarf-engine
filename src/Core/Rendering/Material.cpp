@@ -34,10 +34,10 @@ namespace Dwarf {
 			// std::cout << key << std::endl;
 			glActiveTexture(GL_TEXTURE0+textureInputCounter);
 			glBindTexture(GL_TEXTURE_2D, val.ID);
-			
+
 			GLuint uniformID = glGetUniformLocation(shader->ID, key.c_str());
 			glUniform1i(uniformID, textureInputCounter);
-			
+
 			//glBindTexture(GL_TEXTURE_2D, 0);
 			//glActiveTexture(0);
 
@@ -197,12 +197,12 @@ namespace Dwarf {
 	std::map<std::string, glm::vec2> Material::Get2DUniforms(){
 		return m_Vector2Uniforms;
 	}
-	
+
 	/// @brief 3D vector uniforms.
 	std::map<std::string, glm::vec3> Material::Get3DUniforms(){
 		return m_Vector3Uniforms;
 	}
-	
+
 	/// @brief 4D vector uniforms.
 	std::map<std::string, glm::vec4> Material::Get4DUniforms(){
 		return m_Vector4Uniforms;

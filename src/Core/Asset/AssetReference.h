@@ -64,7 +64,7 @@ namespace Dwarf {
             std::filesystem::path GetPath(){
                 return m_Registry->get<PathComponent>(m_AssetHandle).Path;
             }
-            
+
             /// @brief Retrieves the type of the asset.
             /// @return Asset type.
             /*AssetType GetType() {

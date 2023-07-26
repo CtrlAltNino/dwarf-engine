@@ -22,10 +22,10 @@ namespace Dwarf{
 
 		if(!projectPath.empty()){
 			std::cout << "Opening project at: <" << projectPath.string() << ">" << std::endl;
-			
+
 			auto editor = Dwarf::CreateEditor();
 			editor->Run(projectPath);
-			
+
 			//delete(editor);
 		}else{
 			std::cout << "Not opening any project" << std::endl;

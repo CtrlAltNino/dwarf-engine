@@ -11,6 +11,8 @@
 #elif __linux__
 	#include "Platform/OpenGL/OpenGLShader.h"
 	//#include "Platform/Vulkan/VulkanShader.h"
+#elif __APPLE__
+	//#include "Platform/Metal/MetalShader.h"
 #endif
 
 namespace Dwarf {
@@ -19,31 +21,35 @@ namespace Dwarf {
 	Ref<Shader> Shader::s_ErrorShader = nullptr;
 	Ref<Shader> Shader::s_GridShader = nullptr;
 
-	/*std::string get_file_contents(std::string filename) {
-		std::ifstream in(filename, std::ios::binary);
-		if (in) {
-			std::string contents;
-			in.seekg(0, std::ios::end);
-			contents.resize(in.tellg());
-			in.seekg(0, std::ios::beg);
-			in.read(&contents[0], contents.size());
-			in.close();
-			return(contents);
-		}
-		throw(errno);
-	}*/
-
 	Ref<Shader> Shader::Create(){
 		switch(Renderer::GetAPI()){
 #ifdef _WIN32
-			//case GraphicsApi::D3D12: return CreateRef<D3D12Shader>(D3D12Shader());
+			case GraphicsApi::D3D12:
+					//return CreateRef<D3D12Shader>(D3D12Shader());
+				break;
+			case GraphicsApi::Metal: break;
 			case GraphicsApi::OpenGL:
 					return CreateRef<OpenGLShader>(OpenGLShader());
 				break;
-			//case GraphicsApi::Vulkan: return CreateRef<VulkanShader>(VulkanShader());
+			case GraphicsApi::Vulkan:
+					//return CreateRef<VulkanShader>(VulkanShader());
+				break;
 #elif __linux__
-			case GraphicsApi::OpenGL: return CreateRef<OpenGLShader>(OpenGLShader());
-			//case GraphicsApi::Vulkan: return CreateRef<VulkanShader>(VulkanShader());
+			case GraphicsApi::D3D12: break;
+			case GraphicsApi::Metal: break;
+			case GraphicsApi::OpenGL:
+					return CreateRef<OpenGLShader>(OpenGLShader());
+				break;
+			case GraphicsApi::Vulkan:
+					//return CreateRef<VulkanShader>(VulkanShader());
+				break;
+#elif __APPLE__
+			case GraphicsApi::D3D12: break;
+			case GraphicsApi::Metal:
+					return CreateRef<MetalShader>(MetalShader());
+				break;
+			case GraphicsApi::OpenGL: break;
+			case GraphicsApi::Vulkan: break;
 #endif
 			default: return nullptr;
 		}
@@ -55,32 +61,31 @@ namespace Dwarf {
 	void Shader::Init(){
 		switch(Renderer::GetAPI()){
 #ifdef _WIN32
-			/*case GraphicsApi::D3D12:
-					s_DefaultShader = D3D12Shader::CreateDefaultShader();
-					s_ErrorShader = D3D12Shader::CreateErrorShader();
-					s_GridShader = D3D12Shader::CreateGridShader();
-				break;*/
+			case GraphicsApi::D3D12:
+					// s_DefaultShader = D3D12Shader::CreateDefaultShader();
+					// s_ErrorShader = D3D12Shader::CreateErrorShader();
+					// s_GridShader = D3D12Shader::CreateGridShader();
+				break;
+			case GraphicsApi::Metal: break;
 			case GraphicsApi::OpenGL:
 					s_DefaultShader = OpenGLShader::CreateDefaultShader();
 					s_ErrorShader = OpenGLShader::CreateErrorShader();
 					s_GridShader = OpenGLShader::CreateGridShader();
 				break;
-			/*case GraphicsApi::Vulkan:
-					s_DefaultShader = VulkanShader::CreateDefaultShader();
-					s_ErrorShader = VulkanShader::CreateErrorShader();
-					s_GridShader = VulkanShader::CreateGridShader();
-				break;*/
+			case GraphicsApi::Vulkan:
+					// s_DefaultShader = VulkanShader::CreateDefaultShader();
+					// s_ErrorShader = VulkanShader::CreateErrorShader();
+					// s_GridShader = VulkanShader::CreateGridShader();
+				break;
 #elif __linux__
-			case GraphicsApi::OpenGL:
-					s_DefaultShader = OpenGLShader::CreateDefaultShader();
-					s_ErrorShader = OpenGLShader::CreateErrorShader();
-					s_GridShader = OpenGLShader::CreateGridShader();
+			case GraphicsApi::D3D12: break;
+			case GraphicsApi::Metal:
+					// s_DefaultShader = MetalShader::CreateDefaultShader();
+					// s_ErrorShader = MetalShader::CreateErrorShader();
+					// s_GridShader = MetalShader::CreateGridShader();
 				break;
-			/*case GraphicsApi::Vulkan:
-					s_DefaultShader = VulkanShader::CreateDefaultShader();
-					s_ErrorShader = VulkanShader::CreateErrorShader();
-					s_GridShader = VulkanShader::CreateGridShader();
-				break;*/
+			case GraphicsApi::OpenGL: break;
+			case GraphicsApi::Vulkan: break;
 #endif
 		}
 
@@ -119,7 +124,7 @@ namespace Dwarf {
 				GLuint geometryShader = glCreateShader(GL_GEOMETRY_SHADER);
 				glShaderSource(geometryShader, 1, &geometrySource, NULL);
 				glCompileShader(geometryShader);
-				
+
 				glAttachShader(ID, geometryShader);
 			}
 

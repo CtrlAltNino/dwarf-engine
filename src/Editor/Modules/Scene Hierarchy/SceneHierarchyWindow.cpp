@@ -18,14 +18,14 @@ namespace Dwarf {
         ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow;
         std::string objectLabel = ent.GetComponent<TagComponent>().Tag;
         ImDrawList* draw_list = ImGui::GetWindowDrawList();
-        
+
         // Splitting the channel to draw an extra rect when selected
         draw_list->ChannelsSplit(2);
         draw_list->ChannelsSetCurrent(1);
 
         // Bool do indicate if the node, which has children, is folded out
         bool opened = false;
-        
+
         ImGui::PushStyleColor(ImGuiCol_HeaderHovered, IM_COL32(0,0,0,0));
         ImGui::PushStyleColor(ImGuiCol_HeaderActive, IM_COL32(0,0,0,0));
         // Drawing the node, depending on if it has children or not
@@ -54,7 +54,7 @@ namespace Dwarf {
 
         // If something is dropped on this node
         ImGui::PushStyleColor(ImGuiCol_DragDropTarget, ImVec4(0,0,0,0));
-        
+
         if(ImGui::BeginDragDropTarget()){
             float heightFrac = -1;
             const ImGuiPayload* payload = ImGui::GetDragDropPayload();
@@ -64,7 +64,7 @@ namespace Dwarf {
                 if(heightFrac < 0.33f){
                     ImVec2 p_min = ImGui::GetItemRectMin();
                     ImVec2 p_max = ImGui::GetItemRectMax();
-                    
+
                     ImVec2 p1 = ImVec2(p_min.x, p_min.y - 5);
                     ImVec2 p2 = ImVec2(p_min.x, p_min.y + 5);
                     ImVec2 p3 = ImVec2(p_min.x + 10, p_min.y);
@@ -136,7 +136,7 @@ namespace Dwarf {
                     }
                 }
             }
-            
+
             draw_list->ChannelsSetCurrent(0);
             ImU32 rectCol = IM_COL32(76, 86, 106, 255);
             if(ImGui::IsMouseDown(0)){
@@ -147,7 +147,7 @@ namespace Dwarf {
             draw_list->ChannelsSetCurrent(0);
             draw_list->AddRectFilled(ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), IM_COL32(76, 86, 106, 255), 5.0f);
         }
-        
+
         ImGui::PopStyleColor();
 
         // Merge channels
@@ -269,6 +269,6 @@ namespace Dwarf {
 	}
 
     void SceneHierarchyWindow::OnUpdate(double deltaTime){
-        
+
     }
 }

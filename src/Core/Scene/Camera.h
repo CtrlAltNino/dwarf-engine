@@ -39,7 +39,7 @@ namespace Dwarf {
 		Camera(glm::vec3 position, glm::vec3 rotation, float fov, float nearPlane, float farPlane, float aspectRatio);
 
 		// ========== Getters ==========
-		
+
 		/// @brief Returns the field of view.
 		/// @return Fov of the camera.
 		float GetFov();
@@ -59,9 +59,9 @@ namespace Dwarf {
 		/// @brief Returns the projection matrix of the camera.
 		/// @return 4x4 projection matrix.
 		glm::mat4x4 GetProjectionMatrix();
-		
+
 		// ========== Setters ==========
-		
+
 		/// @brief Sets the transform of the camera.
 		/// @param transform Pointer to a transform.
 		void SetTransform(Ref<TransformComponent> transform);
@@ -77,7 +77,7 @@ namespace Dwarf {
 		/// @brief Sets the aspect ratio of the camera.
 		/// @param aspectRatio Aspect ratio value.
 		void SetAspectRatio(float aspectRatio);
-		
+
 		// ========== Camera Functions ==========
 		void OnUpdate(double deltaTime);
 	};

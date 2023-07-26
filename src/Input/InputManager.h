@@ -21,12 +21,12 @@ namespace Dwarf {
             static glm::ivec2 s_CurrentMousePos;
             static glm::ivec2 s_LastMousePos;
             static glm::ivec2 s_DeltaMousePos;
-            
+
             /**
              * State of the mouse buttons
             */
             static std::map<MOUSE_BUTTON, int> s_MouseButtonStates;
-            
+
             /**
              * Mapping the engine specific key codes to the SDL2 codes
             */
@@ -34,7 +34,7 @@ namespace Dwarf {
             static std::set<KEYCODE> s_KeysDown;
             static std::set<KEYCODE> s_KeysRepeat;
             static std::set<KEYCODE> s_KeysUp;
-            
+
             /**
              * Mapping the engine specific key codes to the SDL2 codes
             */
@@ -52,7 +52,7 @@ namespace Dwarf {
              * Return true during the frame the specified key is being released
             */
             static bool GetKeyUp(KEYCODE key);
-            
+
             /**
              * Returns true while the specified mouse button is being pressed
             */
@@ -65,7 +65,7 @@ namespace Dwarf {
              * Return true during the frame the specified mouse button is being released
             */
             static bool GetMouseUp(MOUSE_BUTTON mButton);
-            
+
             /**
              * Toggles the visibility of the cursor
             */

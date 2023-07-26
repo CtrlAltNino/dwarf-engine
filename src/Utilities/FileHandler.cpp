@@ -22,7 +22,7 @@ namespace Dwarf {
     /// @return Absolute path to the documents directory.
     std::filesystem::path FileHandler::CreateDocumentsFolderPath(){
         std::filesystem::path defaultProjectPath;
-        
+
         #if _WIN32
             static char str[128];
             {

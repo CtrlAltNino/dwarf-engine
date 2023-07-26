@@ -3,9 +3,15 @@
 #include "Core/Rendering/Framebuffer.h"
 #include "Core/Rendering/Renderer.h"
 
-#if WIN32
+#ifdef _WIN32
+//#include "Platform/Direct3D12/D3D12Framebuffer.h"
 #include "Platform/OpenGL/OpenGLFramebuffer.h"
+//#include "Platform/Vulkan/VulkanFramebuffer.h"
+#elif __linux__
+#include "Platform/OpenGL/OpenGLFramebuffer.h"
+//#include "Platform/Vulkan/VulkanFramebuffer.h"
 #elif __APPLE__
+//#include "Platform/Metal/MetalFramebuffer.h"
 #endif
 
 namespace Dwarf {
@@ -14,16 +20,16 @@ namespace Dwarf {
 		switch (Renderer::GetAPI())
 		{
 #ifdef _WIN32
-			//case RendererAPI::API::None:    HZ_CORE_ASSERT(false, "RendererAPI::None is currently not supported!"); return nullptr;
+			//case GraphicsApi::D3D12:  return CreateRef<D3D12Framebuffer>(spec);
 			case GraphicsApi::OpenGL:  return CreateRef<OpenGLFramebuffer>(spec);
+			//case GraphicsApi::Vulkan:  return CreateRef<VulkanFramebuffer>(spec);
 #elif __linux__
 			case GraphicsApi::OpenGL:  return CreateRef<OpenGLFramebuffer>(spec);
+			//case GraphicsApi::Vulkan:  return CreateRef<VulkanFramebuffer>(spec);
 #elif __APPLE__
-			case GraphicsApi::Metal: break;
+			//case GraphicsApi::Metal:  return CreateRef<MetalFramebuffer>(spec);
 #endif
 		}
-
-		//HZ_CORE_ASSERT(false, "Unknown RendererAPI!");
 		return nullptr;
 	}
 }
