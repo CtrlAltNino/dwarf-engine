@@ -284,12 +284,12 @@ namespace Dwarf {
 						float textWidth = ImGui::CalcTextSize(cellText.c_str(), (const char*)0, false).x;
 						float columnWidth = ImGui::GetContentRegionAvail().x - 8;
 						int availableCharacters = (int)(columnWidth / (textWidth/cellText.length()));
-						
+
 						if (textWidth > columnWidth) {
 							cellText.resize(availableCharacters);
 							cellText.resize(availableCharacters + 3, '.');
 						}
-						
+
 						ImGui::Text(cellText.c_str());
 					}
 					else {

@@ -1,3 +1,4 @@
+IF (WIN32 OR (UNIX AND NOT APPLE))
 target_sources(${targetName}
     PRIVATE
         OpenGLContext.cpp
@@ -7,3 +8,4 @@ target_sources(${targetName}
         OpenGLTexture.cpp
         OpenGLRendererApi.cpp
 )
+ENDIF()

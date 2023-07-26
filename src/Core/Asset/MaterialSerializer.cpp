@@ -40,6 +40,10 @@ namespace Dwarf {
                         deserializedMat.SetShader(shaderRef);
                     break;
                 case GraphicsApi::Vulkan: break;
+#elif __APPLE__
+                case GraphicsApi::D3D12: break;
+                case GraphicsApi::OpenGL: break;
+                case GraphicsApi::Vulkan: break;
 #endif
             }
         }

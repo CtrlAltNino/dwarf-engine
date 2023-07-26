@@ -16,7 +16,7 @@ namespace Dwarf {
 		//std::string vertexShaderSource;
 		//std::string fragmentShaderSource;
 		//std::string geometryShaderSource;
-		boolean m_SuccessfullyCompiled;
+		bool m_SuccessfullyCompiled;
 	public:
 		Shader();
 		~Shader();
@@ -27,7 +27,7 @@ namespace Dwarf {
 
 		virtual void Compile()=0;
 
-		boolean IsCompiled(){
+		bool IsCompiled(){
 			return m_SuccessfullyCompiled;
 		}
 

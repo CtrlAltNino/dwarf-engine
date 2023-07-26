@@ -2,7 +2,11 @@
 
 #include "Core/Rendering/Framebuffer.h"
 #include "Core/Rendering/Renderer.h"
+
+#if WIN32
 #include "Platform/OpenGL/OpenGLFramebuffer.h"
+#elif __APPLE__
+#endif
 
 namespace Dwarf {
     Ref<Framebuffer> Framebuffer::Create(const FramebufferSpecification& spec)
@@ -14,6 +18,8 @@ namespace Dwarf {
 			case GraphicsApi::OpenGL:  return CreateRef<OpenGLFramebuffer>(spec);
 #elif __linux__
 			case GraphicsApi::OpenGL:  return CreateRef<OpenGLFramebuffer>(spec);
+#elif __APPLE__
+			case GraphicsApi::Metal: break;
 #endif
 		}
 

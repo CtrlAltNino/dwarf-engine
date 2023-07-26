@@ -35,6 +35,12 @@ ELSEIF (UNIX AND NOT APPLE)
     set(CMAKE_TOOLCHAIN_FILE "${VCPKG_PATH}/scripts/buildsystems/vcpkg.cmake")
     set(VCPKG_TARGET_TRIPLET "x64-linux")
     add_executable(${targetName} "")
+ELSEIF (APPLE)
+    # ~/.vcpkg/vcpkg.path.txt
+    file(READ "$ENV{HOME}/.vcpkg/vcpkg.path.txt" VCPKG_PATH)
+    set(CMAKE_TOOLCHAIN_FILE "${VCPKG_PATH}/scripts/buildsystems/vcpkg.cmake")
+    set(VCPKG_TARGET_TRIPLET "x64-osx")
+    add_executable(${targetName} "")
 ENDIF()
 
 

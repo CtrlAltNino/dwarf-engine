@@ -21,15 +21,17 @@ namespace Dwarf {
 	}
 
 	/// @brief Enum containing the different API's
-	enum class GraphicsApi { D3D12, OpenGL, Vulkan };
+	enum class GraphicsApi { D3D12, Metal, OpenGL, Vulkan };
 
 	/// @brief Array containing the API names.
-	static const char* graphicsApiNames[3] = { "Direct3D 12", "OpenGL", "Vulkan" };
+	static const char* graphicsApiNames[4] = { "Direct3D 12", "Metal", "OpenGL", "Vulkan" };
 
 	#ifdef WIN32
-		static bool apiAvailability[3] = { true, true, true, };
+		static bool apiAvailability[4] = { true, false, true, true, };
 	#elif __linux__
-		static bool apiAvailability[3] = { false, true, true, };
+		static bool apiAvailability[4] = { false, false, true, true, };
+	#elif __APPLE__
+		static bool apiAvailability[4] = { false, true, false, false, };
 	#endif
 
 }
