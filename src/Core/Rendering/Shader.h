@@ -1,7 +1,7 @@
 #pragma once
 
 #include <string>
-#include <glad/glad.h>
+//#include <glad/glad.h>
 
 // TODO: REDO SHADERS
 #include "Core/Base.h"

@@ -55,9 +55,10 @@ project(Dwarf\ Engine VERSION 0.0.1 LANGUAGES C CXX OBJC OBJCXX)
 smtg_add_subdirectories()
 
 # Linking dependencies
-
-find_package(glad CONFIG REQUIRED)
-target_link_libraries(${targetName} PRIVATE glad::glad)
+IF (WIN32 OR (UNIX AND NOT APPLE))
+    find_package(glad CONFIG REQUIRED)
+    target_link_libraries(${targetName} PRIVATE glad::glad)
+ENDIF()
 
 find_path(STB_INCLUDE_DIRS "stb_c_lexer.h")
 target_include_directories(${targetName} PRIVATE ${STB_INCLUDE_DIRS})
@@ -104,8 +105,21 @@ target_link_libraries(${targetName} PRIVATE xxHash::xxhash)
 find_package(platform_folders CONFIG REQUIRED)
 target_link_libraries(${targetName} PRIVATE sago::platform_folders)
 
+IF (APPLE)
+    find_library(METAL Metal)
+    find_library(FOUNDATION Foundation)
+    find_library(QUARTZCORE QuartzCore)
+
+    target_link_libraries(${targetName} PRIVATE ${METAL})
+    target_link_libraries(${targetName} PRIVATE ${FOUNDATION})
+    target_link_libraries(${targetName} PRIVATE ${QUARTZCORE})
+
+    #target_include_directories(${targetName} PRIVATE "lib/metal-cpp/")
+    target_include_directories(${targetName} PRIVATE ${CMAKE_SOURCE_DIR}/include/metal-cpp)
+ENDIF()
+
 # Copy files to build folder
-add_custom_command(TARGET 
-${targetName} 
-    POST_BUILD COMMAND ${CMAKE_COMMAND} 
+add_custom_command(TARGET
+${targetName}
+    POST_BUILD COMMAND ${CMAKE_COMMAND}
     -E copy_directory ${CMAKE_SOURCE_DIR}/data $<TARGET_FILE_DIR:${targetName}>/data)
