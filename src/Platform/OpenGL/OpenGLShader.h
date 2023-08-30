@@ -3,6 +3,8 @@
 #include "Core/Rendering/Shader.h"
 #include "Core/Base.h"
 
+#include <glad/glad.h>
+
 namespace Dwarf {
     class OpenGLShader : public Shader{
         private:

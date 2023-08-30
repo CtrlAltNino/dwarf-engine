@@ -12,10 +12,10 @@
 
 namespace Dwarf {
 
-    class OSXWindow : public Window{
+    class WindowsWindow : public Window{
         public:
-            OSXWindow(const WindowProps& props);
-            virtual ~OSXWindow();
+            WindowsWindow(const WindowProps& props);
+            virtual ~WindowsWindow();
 
             void NewFrame() override;
             void EndFrame() override;

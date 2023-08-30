@@ -116,7 +116,7 @@ namespace Dwarf {
                 if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
                 {
                     std::cout << "ERROR::ASSIMP::" << import.GetErrorString() << std::endl;
-                    return;
+                    return std::vector<Ref<Mesh>>();
                 }
 
                 return ModelImporter::ProcessNode(scene->mRootNode, scene);
@@ -149,7 +149,38 @@ namespace Dwarf {
             static Ref<Mesh> ProcessMesh(aiMesh* mesh, const aiScene* scene){
                 std::vector<Vertex> vertices;
                 std::vector<unsigned int> indices;
-                
+                unsigned int materialIndex = mesh->mMaterialIndex;
+
+                for(unsigned int i = 0; i < mesh->mNumVertices; i++)
+                {
+                    Vertex vertex;
+                    // process vertex positions, normals and texture coordinates
+                    vertex.Position = glm::vec3(mesh->mVertices[i].x, mesh->mVertices[i].y, mesh->mVertices[i].z);
+                    vertex.Normal = glm::vec3(mesh->mNormals[i].x, mesh->mNormals[i].y, mesh->mNormals[i].z);
+
+                    if(mesh->mTextureCoords[0]){
+                        vertex.UV = glm::vec2(mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y);
+                    }
+
+                    if(mesh->mTangents){
+                        vertex.Tangent = glm::vec3(mesh->mTangents[i].x, mesh->mTangents[i].y, mesh->mTangents[i].z);
+                    }
+
+                    if(mesh->mBitangents){
+                        vertex.BiTangent = glm::vec3(mesh->mBitangents[i].x, mesh->mBitangents[i].y, mesh->mBitangents[i].z);
+                    }
+
+                    vertices.push_back(vertex);
+                }
+
+                for(unsigned int i = 0; i < mesh->mNumFaces; i++)
+                {
+                    aiFace face = mesh->mFaces[i];
+                    for(unsigned int j = 0; j < face.mNumIndices; j++)
+                        indices.push_back(face.mIndices[j]);
+                }
+
+                return Mesh::Create(vertices, indices, materialIndex);
             }
     };
 }

@@ -4,28 +4,28 @@
 #include "Core/Rendering/Renderer.h"
 
 #ifdef _WIN32
-//#include "Platform/Direct3D12/D3D12Framebuffer.h"
+//#include "Platform/Direct3D12/D3D12Mesh.h"
 #include "Platform/OpenGL/OpenGLMesh.h"
-//#include "Platform/Vulkan/VulkanFramebuffer.h"
+//#include "Platform/Vulkan/VulkanMesh.h"
 #elif __linux__
-#include "Platform/OpenGL/OpenGLFramebuffer.h"
-//#include "Platform/Vulkan/VulkanFramebuffer.h"
+#include "Platform/OpenGL/OpenGLMesh.h"
+//#include "Platform/Vulkan/VulkanMesh.h"
 #elif __APPLE__
-//#include "Platform/Metal/MetalFramebuffer.h"
+//#include "Platform/Metal/MetalMesh.h"
 #endif
 
 namespace Dwarf {
-    Ref<Mesh> Mesh::Create(std::filesystem::path path)
+    Ref<Mesh> Mesh::Create(std::vector<Vertex> vertices, std::vector<unsigned int> indices, unsigned int materialIndex)
 	{
 		switch (Renderer::GetAPI())
 		{
 #ifdef _WIN32
 			case GraphicsApi::D3D12:
-					//return CreateRef<D3D12Framebuffer>(spec);
+					//return CreateRef<D3D12Mesh>(spec);
 				break;
 			case GraphicsApi::Metal: break;
 			case GraphicsApi::OpenGL:
-					return CreateRef<OpenGLMesh>(path);
+					return CreateRef<OpenGLMesh>(vertices, indices, materialIndex);
 				break;
 			case GraphicsApi::Vulkan:
 					//return CreateRef<VulkanFramebuffer>(spec);

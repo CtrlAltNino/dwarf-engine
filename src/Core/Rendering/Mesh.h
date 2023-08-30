@@ -6,25 +6,15 @@
 
 namespace Dwarf {
     class Mesh {
-        private:
+        protected:
             std::vector<Vertex> m_Vertices;
-            std::vector<int> m_Indices;
-            int m_MaterialIndex;
+            std::vector<unsigned int> m_Indices;
+            unsigned int m_MaterialIndex;
 
         public:
-            static Ref<Mesh> Create(std::filesystem::path path);
+            static Ref<Mesh> Create(std::vector<Vertex> vertices, std::vector<unsigned int> indices, unsigned int materialIndex);
 
-            virtual void GenerateBuffers() = 0;
-
-            /*void SetVertices();
-
-            void SetIndices();
-
-            void SetMaterialIndex();
-
-            std::vector<Vertex> GetVertices();
-
-            std::vector<int> GetIndices();*/
+            virtual void SetupMesh() = 0;
 
             int GetMaterialIndex();
     };
