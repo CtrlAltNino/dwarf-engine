@@ -77,7 +77,7 @@ namespace Dwarf {
                 return m_Registry->get<T>(m_AssetHandle);
                 /*switch(m_Type){
                     case AssetType::Mesh:
-                        return (void*)&m_Registry->get<MeshAsset>(m_AssetHandle);
+                        return (void*)&m_Registry->get<ModelAsset>(m_AssetHandle);
                         break;
                     case AssetType::Material:
                         return (void*)&m_Registry->get<MaterialAsset>(m_AssetHandle);

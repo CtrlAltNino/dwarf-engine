@@ -104,7 +104,7 @@ namespace Dwarf {
         std::string fileName = assetPath.filename().string();
 
         if(fileExtension == ".obj" || fileExtension == ".fbx") {
-            return CreateAssetReference<MeshAsset>(assetPath).GetUID();
+            return CreateAssetReference<ModelAsset>(assetPath).GetUID();
         } else if(fileExtension == ".dmat") {
             return CreateAssetReference<MaterialAsset>(assetPath).GetUID();
         } else if(fileExtension == ".jpg" || fileExtension == ".png") {

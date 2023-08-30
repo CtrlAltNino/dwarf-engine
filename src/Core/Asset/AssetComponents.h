@@ -13,11 +13,11 @@
 
 namespace Dwarf {
     /// @brief Component containing a model asset.
-    struct MeshAsset {
+    struct ModelAsset {
         /// @brief Vector of submeshes.
-        std::vector<Mesh> m_Meshes;
+        std::vector<Ref<Mesh>> m_Meshes;
 
-        MeshAsset(std::filesystem::path path) : m_Meshes(ModelImporter::Import(path)){ }
+        ModelAsset(std::filesystem::path path) : m_Meshes(ModelImporter::Import(path)){ }
     };
 
     /// @brief Component containing a material asset.

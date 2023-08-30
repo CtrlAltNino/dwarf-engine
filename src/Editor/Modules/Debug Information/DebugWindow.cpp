@@ -44,7 +44,7 @@ namespace Dwarf {
             ImGui::Text("Listing all imported assets and their UID's");
 
             auto materialView = AssetDatabase::s_Registry->view<MaterialAsset, PathComponent, TagComponent, IDComponent>();
-            auto modelView = AssetDatabase::s_Registry->view<MeshAsset, PathComponent, TagComponent, IDComponent>();
+            auto modelView = AssetDatabase::s_Registry->view<ModelAsset, PathComponent, TagComponent, IDComponent>();
             auto sceneView = AssetDatabase::s_Registry->view<SceneAsset, PathComponent, TagComponent, IDComponent>();
             auto vertexShaderView = AssetDatabase::s_Registry->view<VertexShaderAsset, PathComponent, TagComponent, IDComponent>();
             auto fragmentShaderView = AssetDatabase::s_Registry->view<FragmentShaderAsset, PathComponent, TagComponent, IDComponent>();

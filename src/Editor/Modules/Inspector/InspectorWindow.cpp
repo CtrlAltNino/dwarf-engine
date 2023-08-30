@@ -109,12 +109,12 @@ namespace Dwarf {
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
         //char* meshAssetName = (char*)"Yeet";
         //ImGui::InputText("Mesh", meshAssetName, sizeof(meshAssetName), ImGuiInputTextFlags_ReadOnly);
-        DwarfUI::AssetInput<MeshAsset>(component->mesh, "##meshAsset");
+        DwarfUI::AssetInput<ModelAsset>(component->mesh, "##modelAsset");
 
         //ImGuiInputTextFlags_ReadOnly
 
         if(component->mesh){
-            int numMeshes = AssetDatabase::Retrieve<MeshAsset>(component->mesh)->GetAsset().m_Meshes.size();
+            int numMeshes = AssetDatabase::Retrieve<ModelAsset>(component->mesh)->GetAsset().m_Meshes.size();
             ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
             ImGui::Text("Materials");
 
@@ -418,7 +418,7 @@ namespace Dwarf {
     }
 
     template<>
-    void InspectorWindow::RenderComponent<AssetReference<MeshAsset>>(Ref<AssetReference<MeshAsset>> asset){
+    void InspectorWindow::RenderComponent<AssetReference<ModelAsset>>(Ref<AssetReference<ModelAsset>> asset){
         ImGui::Text(asset->GetPath().filename().string().c_str());
         ImGui::Text("Model");
 
@@ -521,7 +521,7 @@ namespace Dwarf {
                 if(std::filesystem::is_regular_file(assetPath)){
                     switch(AssetDatabase::GetType(assetPath)){
                         case MODEL:
-                            RenderComponent(AssetDatabase::Retrieve<MeshAsset>(assetPath));
+                            RenderComponent(AssetDatabase::Retrieve<ModelAsset>(assetPath));
                             break;
                         case TEXTURE:
                             RenderComponent(AssetDatabase::Retrieve<TextureAsset>(assetPath));

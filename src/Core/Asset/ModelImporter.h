@@ -1,10 +1,9 @@
 #pragma once
 
 #include <glm/glm.hpp>
-#include <assimp/cimport.h>
+#include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
-#include <assimp/material.h>
 
 #include "Core/Rendering/Mesh.h"
 #include "Core/Asset/AssetMetaData.h"
@@ -12,13 +11,13 @@
 
 namespace Dwarf {
 
-    /// @brief Utilities for importing models. 
+    /// @brief Utilities for importing models.
     class ModelImporter {
         public:
             /// @brief Imports a model.
             /// @param path Path to the model.
             /// @return List of the imported meshes of a model.
-            static std::vector<Mesh> Import(std::filesystem::path path){
+            /*static std::vector<Mesh> ImportOld(std::filesystem::path path){
                 nlohmann::json metaData = AssetMetaData::GetMetaData(path);
                 const aiScene* scene = aiImportFile(path.string().c_str(), aiProcessPreset_TargetRealtime_MaxQuality | aiProcess_FlipUVs);
                 const aiVector3D Zero3D(0.0f, 0.0f, 0.0f);
@@ -44,7 +43,7 @@ namespace Dwarf {
                         aiVector3D aiBiTangent = mesh->HasTangentsAndBitangents() ? mesh->mBitangents[vertIdx] : Zero3D;
 
                         aiVector3D uv = mesh->HasTextureCoords(0) ? mesh->mTextureCoords[0][vertIdx] : Zero3D;
-                        
+
                         vertices.push_back(
                             {
                                 glm::vec3(pos.x, pos.y, pos.z),
@@ -83,7 +82,7 @@ namespace Dwarf {
                             vertices[vertIdx].Tangent = tangent;
                             vertices[vertIdx+1].Tangent = tangent;
                             vertices[vertIdx+2].Tangent = tangent;
-                            
+
                             vertices[vertIdx].BiTangent = bitangent;
                             vertices[vertIdx + 1].BiTangent = bitangent;
                             vertices[vertIdx + 2].BiTangent = bitangent;
@@ -97,12 +96,60 @@ namespace Dwarf {
                         indices.push_back(mesh->mFaces[faceIdx].mIndices[1]);
                         indices.push_back(mesh->mFaces[faceIdx].mIndices[2]);
                     }
-                    
+
                     meshes.push_back(Mesh(vertices, indices));
                 }
 
                 aiReleaseImport(scene);
                 return meshes;
+            }*/
+
+            // @brief Imports a model.
+            /// @param path Path to the model.
+            /// @return List of the imported meshes of a model.
+            static std::vector<Ref<Mesh>> Import(std::filesystem::path path){
+                nlohmann::json metaData = AssetMetaData::GetMetaData(path);
+
+                Assimp::Importer import;
+                const aiScene *scene = import.ReadFile(path.string(), aiProcess_Triangulate | aiProcess_FlipUVs);
+
+                if(!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
+                {
+                    std::cout << "ERROR::ASSIMP::" << import.GetErrorString() << std::endl;
+                    return;
+                }
+
+                return ModelImporter::ProcessNode(scene->mRootNode, scene);
+            }
+
+        private:
+            static std::vector<Ref<Mesh>> ProcessNode(aiNode* node, const aiScene* scene){
+                std::vector<Ref<Mesh>> meshes;
+
+                // process all the node's meshes (if any)
+                for(unsigned int i = 0; i < node->mNumMeshes; i++)
+                {
+                    aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
+                    meshes.push_back(ModelImporter::ProcessMesh(mesh, scene));
+                }
+                // then do the same for each of its children
+                for(unsigned int i = 0; i < node->mNumChildren; i++)
+                {
+                    std::vector<Ref<Mesh>> joinedMeshes;
+                    std::vector<Ref<Mesh>> recursedMeshes = ModelImporter::ProcessNode(node->mChildren[i], scene);
+                    joinedMeshes.reserve( meshes.size() + meshes.size() ); // preallocate memory
+                    joinedMeshes.insert( joinedMeshes.end(), meshes.begin(), meshes.end() );
+                    joinedMeshes.insert( joinedMeshes.end(), recursedMeshes.begin(), recursedMeshes.end() );
+                    meshes = joinedMeshes;
+                }
+
+                return meshes;
+            }
+
+            static Ref<Mesh> ProcessMesh(aiMesh* mesh, const aiScene* scene){
+                std::vector<Vertex> vertices;
+                std::vector<unsigned int> indices;
+                
             }
     };
 }

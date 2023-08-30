@@ -7,5 +7,6 @@ target_sources(${targetName}
         OpenGLShader.cpp
         OpenGLTexture.cpp
         OpenGLRendererApi.cpp
+        OpenGLMesh.cpp
 )
 ENDIF()
