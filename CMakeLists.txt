@@ -49,7 +49,7 @@ include_directories(src)
 target_sources(${targetName} PRIVATE ${EXECUTABLE_ADDITIONAL_SETTINGS})
 
 # Project declaration
-project(Dwarf\ Engine VERSION 0.0.1 LANGUAGES C CXX OBJC OBJCXX)
+project(Dwarf\ Engine VERSION 0.0.1 LANGUAGES C CXX)
 
 # Add the CMakeLists.txt files of the subdirectories
 smtg_add_subdirectories()

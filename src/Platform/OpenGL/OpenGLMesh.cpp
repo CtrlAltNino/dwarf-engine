@@ -22,8 +22,6 @@ namespace Dwarf {
 
     void OpenGLMesh::Bind(){
         glBindVertexArray(VAO);
-        glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     }
 
     void OpenGLMesh::Unbind(){
