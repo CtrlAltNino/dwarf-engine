@@ -9,7 +9,7 @@ namespace Dwarf {
     ForwardRenderer::~ForwardRenderer(){}
 
     void ForwardRenderer::RenderScene(Ref<Scene> scene, Ref<Camera> camera){
-
+        
     }
 
     Ref<Framebuffer> ForwardRenderer::CreateFramebuffer(glm::ivec2 resolution){

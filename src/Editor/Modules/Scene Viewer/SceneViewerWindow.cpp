@@ -133,6 +133,7 @@ namespace Dwarf {
                         ImGui::GetCursorScreenPos().y + ImGui::GetContentRegionAvail().y);
 
         //UpdateRenderTexture();
+        m_Framebuffer->Resize(maxRect.x - minRect.x, maxRect.y - minRect.y);
 
         if((RENDER_MODE)m_Settings.RenderingConstraint != RENDER_MODE::FREE){
             if(((double)m_Settings.ViewportSize.x / (double)m_Settings.ViewportSize.y) < m_Settings.targetAspectRatio){
