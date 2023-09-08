@@ -30,6 +30,7 @@ namespace Dwarf {
 
         // Render scene to the framebuffer with the camera
         m_Framebuffer->Bind();
+        Renderer::
         Renderer::Get()->RenderScene(m_Model->GetScene(), m_Camera);
         m_Framebuffer->Unbind();
     }
