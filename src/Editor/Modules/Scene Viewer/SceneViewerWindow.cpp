@@ -19,7 +19,7 @@ namespace Dwarf {
 
     SceneViewerWindow::SceneViewerWindow(Ref<EditorModel> model, int index)
             :GuiModule(model, "Scene Viewer", MODULE_TYPE::PERFORMANCE, index){
-        m_Framebuffer = Renderer::Get()->CreateFramebuffer({1280, 720});
+        m_Framebuffer = Renderer::Get()->CreateFramebuffer({512, 512});
         m_Camera = CreateRef<Camera>(Camera());
     }
 
@@ -30,7 +30,6 @@ namespace Dwarf {
 
         // Render scene to the framebuffer with the camera
         m_Framebuffer->Bind();
-        Renderer::
         Renderer::Get()->RenderScene(m_Model->GetScene(), m_Camera);
         m_Framebuffer->Unbind();
     }
@@ -134,7 +133,7 @@ namespace Dwarf {
                         ImGui::GetCursorScreenPos().y + ImGui::GetContentRegionAvail().y);
 
         //UpdateRenderTexture();
-        m_Framebuffer->Resize(maxRect.x - minRect.x, maxRect.y - minRect.y);
+        //m_Framebuffer->Resize(maxRect.x - minRect.x, maxRect.y - minRect.y);
 
         if((RENDER_MODE)m_Settings.RenderingConstraint != RENDER_MODE::FREE){
             if(((double)m_Settings.ViewportSize.x / (double)m_Settings.ViewportSize.y) < m_Settings.targetAspectRatio){

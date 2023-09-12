@@ -10,6 +10,7 @@
 #include "Editor/Modules/GuiModule.h"
 #include "Core/Scene/Camera.h"
 #include "Core/Rendering/Framebuffer.h"
+#include "Core/Rendering/Forward/ForwardRenderer.h"
 
 namespace Dwarf {
 

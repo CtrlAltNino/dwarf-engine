@@ -112,12 +112,11 @@ namespace Dwarf {
 
     /// @brief A component holding meshes and their corresponding materials, as well as other information on how to render these meshes.
     struct MeshRendererComponent{
-        /// @brief The submeshes of a model.
-        //std::vector<Mesh> meshes;
-        Ref<UID> mesh;
+        /// @brief ID of the mesh asset.
+        Ref<UID> meshAsset;
 
         /// @brief The materials with which the model is to be rendered. The list index of the materials corresponds to the material index of the submeshes.
-        std::vector<Ref<UID>> materials;
+        std::vector<Ref<UID>> materialAssets;
 
         /// @brief Flag that decides if this model should be used in the shadow cast pass.
         bool canCastShadow;
@@ -125,6 +124,6 @@ namespace Dwarf {
         MeshRendererComponent() = default;
         MeshRendererComponent(const MeshRendererComponent&) = default;
         MeshRendererComponent(Ref<UID> mesh, std::vector<Ref<UID>> materials)
-            : mesh(mesh), materials(materials) {}
+            : meshAsset(mesh), materialAssets(materials) {}
     };
 }

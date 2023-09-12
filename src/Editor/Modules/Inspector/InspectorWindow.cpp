@@ -109,25 +109,34 @@ namespace Dwarf {
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
         //char* meshAssetName = (char*)"Yeet";
         //ImGui::InputText("Mesh", meshAssetName, sizeof(meshAssetName), ImGuiInputTextFlags_ReadOnly);
-        DwarfUI::AssetInput<ModelAsset>(component->mesh, "##modelAsset");
+        DwarfUI::AssetInput<ModelAsset>(component->meshAsset, "##modelAsset");
 
         //ImGuiInputTextFlags_ReadOnly
 
-        if(component->mesh){
-            int numMeshes = AssetDatabase::Retrieve<ModelAsset>(component->mesh)->GetAsset().m_Meshes.size();
+        if(component->meshAsset){
+            int numMaterials = 0;
+            std::vector<Ref<Mesh>> meshes = AssetDatabase::Retrieve<ModelAsset>(component->meshAsset)->GetAsset().m_Meshes;
+
+            for(int i = 0; i < meshes.size(); i++)
+            {
+                if(meshes[i]->GetMaterialIndex() > numMaterials)
+                {
+                    numMaterials = meshes[i]->GetMaterialIndex();
+                }
+            }
             ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
             ImGui::Text("Materials");
 
-            if(component->materials.size() != numMeshes){
-                component->materials.resize(numMeshes);
+            if(component->materialAssets.size() != numMaterials){
+                component->materialAssets.resize(numMaterials);
             }
 
             ImGui::Indent(10.0f);
             // TODO: Slots for material assets
-            for(int i = 0; i < numMeshes; i++) {
+            for(int i = 0; i < numMaterials; i++) {
                 ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
                 //Ref<Material> currentMat = AssetDatabase::Retrieve<MaterialAsset>(component->materials[i])->GetAsset().m_Material;
-                DwarfUI::AssetInput<MaterialAsset>(component->materials.at(i), (std::string("##materialAsset") + std::to_string(i)).c_str());
+                DwarfUI::AssetInput<MaterialAsset>(component->materialAssets.at(i), (std::string("##materialAsset") + std::to_string(i)).c_str());
                 //ImGui::Text((std::to_string(i) + std::string(" - ") + std::string(currentMat->GetName())).c_str());
             }
         }

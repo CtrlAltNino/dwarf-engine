@@ -9,6 +9,8 @@ namespace Dwarf {
         m_Vertices = vertices;
         m_Indices = indices;
         m_MaterialIndex = materialIndex;
+        m_VertexCount = vertices.size();
+        m_IndexCount = indices.size();
 
         SetupMesh();
     }

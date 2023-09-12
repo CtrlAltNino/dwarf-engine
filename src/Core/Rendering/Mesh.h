@@ -16,6 +16,12 @@ namespace Dwarf {
 
             virtual void SetupMesh() = 0;
 
-            int GetMaterialIndex();
+            int GetMaterialIndex()
+            {
+                return m_MaterialIndex;
+            }
+
+            int m_VertexCount;
+            int m_IndexCount;
     };
 }

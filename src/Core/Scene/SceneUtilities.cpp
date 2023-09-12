@@ -126,15 +126,15 @@ namespace Dwarf {
 
             if(entity.HasComponent<MeshRendererComponent>()){
                 MeshRendererComponent meshRendererComponent = entity.GetComponent<MeshRendererComponent>();
-                if(meshRendererComponent.mesh){
-                    serializedArray[entityCount]["meshRendererComponent"]["mesh"] = (uint64_t)(*meshRendererComponent.mesh);
+                if(meshRendererComponent.meshAsset){
+                    serializedArray[entityCount]["meshRendererComponent"]["mesh"] = (uint64_t)(*meshRendererComponent.meshAsset);
                 }else{
                     serializedArray[entityCount]["meshRendererComponent"]["mesh"] = "null";
                 }
 
                 int materialCount = 0;
 
-                for(Ref<UID> materialID : meshRendererComponent.materials){
+                for(Ref<UID> materialID : meshRendererComponent.materialAssets){
                     serializedArray[entityCount]["meshRendererComponent"]["materials"][materialCount++] = (uint64_t)(*materialID);
                 }
 
@@ -191,12 +191,12 @@ namespace Dwarf {
             meshRendererComponent.canCastShadow = (bool)serializedEntity["meshRendererComponent"]["canCastShadows"];
 
             if(serializedEntity["meshRendererComponent"].contains("mesh") && serializedEntity["meshRendererComponent"]["mesh"] != "null"){
-                meshRendererComponent.mesh = CreateRef<UID>(UID((uint64_t)serializedEntity["meshRendererComponent"]["mesh"]));
+                meshRendererComponent.meshAsset = CreateRef<UID>(UID((uint64_t)serializedEntity["meshRendererComponent"]["mesh"]));
             }
 
             if(serializedEntity["meshRendererComponent"].contains("materials")){
                 for (auto& element : serializedEntity["meshRendererComponent"]["materials"]){
-                    meshRendererComponent.materials.push_back(CreateRef<UID>(UID((uint64_t)element)));
+                    meshRendererComponent.materialAssets.push_back(CreateRef<UID>(UID((uint64_t)element)));
                 }
             }
         }

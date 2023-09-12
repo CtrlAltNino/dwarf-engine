@@ -20,6 +20,14 @@ namespace Dwarf {
 
         deserializedMat.SetTransparency((bool)serializedMat["transparent"]);
 
+        if(serializedMat.contains("textures"))
+        {
+            for(auto texture : serializedMat["textures"].items())
+            {
+                deserializedMat.SetTexture(texture.key(), CreateRef<UID>(UID(texture.value())));
+            }
+        }
+
         if(serializedMat.contains("shader") && serializedMat["shader"] != "default"){
             switch(Renderer::GetAPI()){
 #ifdef _WIN32
