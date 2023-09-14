@@ -43,7 +43,7 @@ float remap(float value, float min1, float max1, float min2, float max2) {
 }
 
 void main(){
-	vec4 objectColor = color;
+	/*vec4 objectColor = color;
 	vec3 normal = normalize(normalWorld);
 
 	if(useNormalMap > 0){
@@ -71,6 +71,6 @@ void main(){
 	}
 	
 	FragColor = vec4((ambientColor + diffuseColor + specularColor) * objectColor.rgb, objectColor.a);
-	APPLY_FOG(FragColor)
-	//FragColor = vec4(normal, 1);
+	APPLY_FOG(FragColor)*/
+	FragColor = vec4(1,0,0,1);
 }

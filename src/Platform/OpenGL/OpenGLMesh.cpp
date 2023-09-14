@@ -33,11 +33,20 @@ namespace Dwarf {
     }
 
     void OpenGLMesh::SetupMesh(){
-        SetupVAO();
-        SetupVBO();
-        SetupEBO();
+        //SetupVAO();
+        //Bind();
+        //SetupVBO();
+        //SetupEBO();
+        glGenVertexArrays(1, &VAO);
+        glGenBuffers(1, &VBO);
+        glGenBuffers(1, &EBO);
+        glBindVertexArray(VAO);
 
-        Bind();
+        glBindBuffer(GL_ARRAY_BUFFER, VBO);
+		glBufferData(GL_ARRAY_BUFFER, m_Vertices.size() * sizeof(Vertex), &m_Vertices[0], GL_STATIC_DRAW);
+
+		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
+		glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_Indices.size() * sizeof(unsigned int), &m_Indices[0], GL_STATIC_DRAW);
 
         // vertex positions
 		glEnableVertexAttribArray(0);
@@ -55,6 +64,7 @@ namespace Dwarf {
 		glEnableVertexAttribArray(4);
 		glVertexAttribPointer(4, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, UV));
 
+        //glBindVertexArray(0);
         Unbind();
     }
 
@@ -65,14 +75,14 @@ namespace Dwarf {
     void OpenGLMesh::SetupVBO(){
         glGenBuffers(1, &VBO);
 		glBindBuffer(GL_ARRAY_BUFFER, VBO);
-		glBufferData(GL_ARRAY_BUFFER, m_Vertices.size() * sizeof(Vertex), &m_Vertices[0], GL_STATIC_DRAW);
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
+		glBufferData(GL_ARRAY_BUFFER, sizeof(m_Vertices), &m_Vertices[0], GL_STATIC_DRAW);
+        //glBindBuffer(GL_ARRAY_BUFFER, 0);
     }
 
     void OpenGLMesh::SetupEBO(){
         glGenBuffers(1, &EBO);
 		glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
 		glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_Indices.size() * sizeof(GLuint), &m_Indices[0], GL_STATIC_DRAW);
-        glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+        //glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
     }
 }

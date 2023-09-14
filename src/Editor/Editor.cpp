@@ -76,7 +76,7 @@ namespace Dwarf {
 			Ref<AssetReference<SceneAsset>> lastOpenedSceneAsset = AssetDatabase::Retrieve<SceneAsset>(CreateRef<UID>(UID(projectSettings["lastOpenedScene"])));
 			if(lastOpenedSceneAsset){
 				std::cout << "[EDITOR INIT] Loading last opened scene" << std::endl;
-				m_Model->SetScene(SceneUtilities::LoadScene(lastOpenedSceneAsset->GetAsset().m_Path));
+				m_Model->SetScene(SceneUtilities::LoadScene(lastOpenedSceneAsset->GetAsset()->m_Path));
 			}else{
 				std::cout << "[EDITOR INIT] No last opened scene found. Loading default scene" << std::endl;
 				m_Model->SetScene(SceneUtilities::LoadDefaultScene());

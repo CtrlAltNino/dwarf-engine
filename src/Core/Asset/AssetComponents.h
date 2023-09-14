@@ -29,6 +29,10 @@ namespace Dwarf {
             // Use Mesh Importer with meta data to import mesh
             m_Material = MaterialSerializer::Deserialize(path);
         }
+
+        ~MaterialAsset(){
+            std::cout << "oh no" << std::endl;
+        }
     };
 
     /// @brief Component containing a vertex shader asset.

@@ -6,7 +6,7 @@ namespace Dwarf {
     DeferredRenderer::DeferredRenderer(){}
     DeferredRenderer::~DeferredRenderer(){}
 
-    void DeferredRenderer::RenderScene(Ref<Scene> scene, Ref<Camera> camera){
+    void DeferredRenderer::RenderScene(Ref<Scene> scene, Ref<Camera> camera, glm::ivec2 viewportSize){
 
     }
 

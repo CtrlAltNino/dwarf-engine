@@ -19,23 +19,23 @@ namespace Dwarf {
 		std::string fragmentShaderSource;
 
 		if(AssetDatabase::Exists(m_VertexShader)){
-			vertexShaderSource = FileHandler::ReadFile(AssetDatabase::Retrieve<VertexShaderAsset>(m_VertexShader)->GetAsset().m_Path);
+			vertexShaderSource = FileHandler::ReadFile(AssetDatabase::Retrieve<VertexShaderAsset>(m_VertexShader)->GetAsset()->m_Path);
 		}
 
 		if(AssetDatabase::Exists(m_TessellationControlShader)){
-			tescShaderSource = FileHandler::ReadFile(AssetDatabase::Retrieve<TesselationControlShaderAsset>(m_TessellationControlShader)->GetAsset().m_Path);
+			tescShaderSource = FileHandler::ReadFile(AssetDatabase::Retrieve<TesselationControlShaderAsset>(m_TessellationControlShader)->GetAsset()->m_Path);
 		}
 
 		if(AssetDatabase::Exists(m_TessellationEvaluationShader)){
-			teseShaderSource = FileHandler::ReadFile(AssetDatabase::Retrieve<TesselationEvaluationShaderAsset>(m_TessellationEvaluationShader)->GetAsset().m_Path);
+			teseShaderSource = FileHandler::ReadFile(AssetDatabase::Retrieve<TesselationEvaluationShaderAsset>(m_TessellationEvaluationShader)->GetAsset()->m_Path);
 		}
 
 		if(AssetDatabase::Exists(m_GeometryShader)){
-			geometryShaderSource = FileHandler::ReadFile(AssetDatabase::Retrieve<GeometryShaderAsset>(m_GeometryShader)->GetAsset().m_Path);
+			geometryShaderSource = FileHandler::ReadFile(AssetDatabase::Retrieve<GeometryShaderAsset>(m_GeometryShader)->GetAsset()->m_Path);
 		}
 
 		if(AssetDatabase::Exists(m_FragmentShader)){
-			fragmentShaderSource = FileHandler::ReadFile(AssetDatabase::Retrieve<FragmentShaderAsset>(m_FragmentShader)->GetAsset().m_Path);
+			fragmentShaderSource = FileHandler::ReadFile(AssetDatabase::Retrieve<FragmentShaderAsset>(m_FragmentShader)->GetAsset()->m_Path);
 		}
 
         if(vertexShaderSource.length() > 0 && fragmentShaderSource.length() > 0) {
@@ -106,6 +106,7 @@ namespace Dwarf {
 			}
 
 			m_SuccessfullyCompiled = true;
+			std::cout << "Compiling shader" << std::endl;
 		}else {
 			// TODO log missing shader error
 		}

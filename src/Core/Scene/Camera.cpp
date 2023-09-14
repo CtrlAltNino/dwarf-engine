@@ -6,7 +6,7 @@ namespace Dwarf {
 
 	// ========== Makros ==========
 
-	#define DEFAULT_CAMERA_POSITION glm::vec3(2, 2, 0)
+	#define DEFAULT_CAMERA_POSITION glm::vec3(0, 2, 8)
 	#define DEFAULT_CAMERA_ROTATION glm::vec3(30,0,0)
 	#define DEFAULT_CAMERA_FOV 75.0f
 	#define DEFAULT_CAMERA_NEARPLANE 0.1f

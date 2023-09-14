@@ -73,8 +73,8 @@ namespace Dwarf {
 
             /// @brief Retrieves the asset component of the asset, containing the actual payload.
             /// @return The asset component.
-            T GetAsset() {
-                return m_Registry->get<T>(m_AssetHandle);
+            Ref<T> GetAsset() {
+                return CreateRef<T>(m_Registry->get<T>(m_AssetHandle));
                 /*switch(m_Type){
                     case AssetType::Mesh:
                         return (void*)&m_Registry->get<ModelAsset>(m_AssetHandle);

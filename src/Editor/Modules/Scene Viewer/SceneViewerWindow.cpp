@@ -18,7 +18,7 @@ namespace Dwarf {
     enum class RENDER_MODE {FREE, RESOLUTION, ASPECT_RATIO};
 
     SceneViewerWindow::SceneViewerWindow(Ref<EditorModel> model, int index)
-            :GuiModule(model, "Scene Viewer", MODULE_TYPE::PERFORMANCE, index){
+            :GuiModule(model, "Scene Viewer", MODULE_TYPE::SCENE_VIEWER, index){
         m_Framebuffer = Renderer::Get()->CreateFramebuffer({512, 512});
         m_Camera = CreateRef<Camera>(Camera());
     }
@@ -30,7 +30,7 @@ namespace Dwarf {
 
         // Render scene to the framebuffer with the camera
         m_Framebuffer->Bind();
-        Renderer::Get()->RenderScene(m_Model->GetScene(), m_Camera);
+        Renderer::Get()->RenderScene(m_Model->GetScene(), m_Camera, m_Settings.ViewportSize);
         m_Framebuffer->Unbind();
     }
 
@@ -102,7 +102,6 @@ namespace Dwarf {
         }
 
         // Rendering mode specific settings input
-        m_Settings.ViewportSize = glm::ivec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y);
 
         if(m_Settings.RenderingConstraint == RENDERING_CONSTRAINT::ASPECT_RATIO){
             ImGui::SameLine(0, 10);
@@ -133,7 +132,11 @@ namespace Dwarf {
                         ImGui::GetCursorScreenPos().y + ImGui::GetContentRegionAvail().y);
 
         //UpdateRenderTexture();
-        //m_Framebuffer->Resize(maxRect.x - minRect.x, maxRect.y - minRect.y);
+        if((m_Framebuffer->GetSpecification().Width != ImGui::GetContentRegionAvail().x) || (m_Framebuffer->GetSpecification().Height != ImGui::GetContentRegionAvail().y)){
+            m_Framebuffer->Resize(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y);
+            m_Settings.ViewportSize = glm::ivec2(m_Framebuffer->GetSpecification().Width, m_Framebuffer->GetSpecification().Height);
+            m_Camera->SetAspectRatio((float)ImGui::GetContentRegionAvail().x / (float)ImGui::GetContentRegionAvail().y);
+        }
 
         if((RENDER_MODE)m_Settings.RenderingConstraint != RENDER_MODE::FREE){
             if(((double)m_Settings.ViewportSize.x / (double)m_Settings.ViewportSize.y) < m_Settings.targetAspectRatio){
@@ -149,8 +152,8 @@ namespace Dwarf {
 
         // Rendering the framebuffer
         ImDrawList* drawList = ImGui::GetWindowDrawList();
-        uint64_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
-        drawList->AddImage(reinterpret_cast<void*>(textureID),
+        //uint64_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
+        drawList->AddImage(reinterpret_cast<void*>(GetFrameBufferForImGui()),
             minRect,
             maxRect,
             ImVec2(0, 1),
@@ -174,7 +177,7 @@ namespace Dwarf {
         }
 
         if(m_Model->m_Selection.selectedEntities.size() == 1){
-            RenderGizmos();
+            //RenderGizmos();
         }
         ImGui::End();
     }

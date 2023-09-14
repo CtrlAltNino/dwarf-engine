@@ -122,6 +122,7 @@ namespace Dwarf {
 			m_ColorAttachments.clear();
 			m_DepthAttachment = 0;
 		}
+			std::cout << "pls dont" << std::endl;
 
 		glCreateFramebuffers(1, &m_RendererID);
 		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);

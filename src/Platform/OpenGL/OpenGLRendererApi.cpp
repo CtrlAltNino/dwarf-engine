@@ -13,7 +13,7 @@ namespace Dwarf {
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		glEnable(GL_DEPTH_TEST);
-		//glEnable(GL_LINE_SMOOTH);
+		glEnable(GL_LINE_SMOOTH);
 		SetViewport(0,0,512,512);
 	}
 
@@ -37,6 +37,7 @@ namespace Dwarf {
 		Ref<OpenGLMesh> oglMesh = CreateRef<OpenGLMesh>(*static_cast<OpenGLMesh*>(mesh.get()));
 		Ref<OpenGLShader> oglShader = CreateRef<OpenGLShader>(*static_cast<OpenGLShader*>(material->GetShader().get()));
 
+		glUseProgram(oglShader->GetID());
 		GLuint mmID = glGetUniformLocation(oglShader->GetID(), "modelMatrix");
 		GLuint vmID = glGetUniformLocation(oglShader->GetID(), "viewMatrix");
 		GLuint pmID = glGetUniformLocation(oglShader->GetID(), "projectionMatrix");
@@ -44,14 +45,11 @@ namespace Dwarf {
 		glUniformMatrix4fv(mmID, 1, GL_FALSE, &modelMatrix[0][0]);
 		glUniformMatrix4fv(vmID, 1, GL_FALSE, &viewMatrix[0][0]);
 		glUniformMatrix4fv(pmID, 1, GL_FALSE, &projectionMatrix[0][0]);
-		glUseProgram(oglShader->GetID());
 		oglMesh->Bind();
-
-		std::cout << "Rendering indexed" << std::endl;
 
 		glDrawElements(GL_TRIANGLES, oglMesh->m_IndexCount, GL_UNSIGNED_INT, 0);
 
-		//oglMesh->Unbind();
-		//glUseProgram(0);
+		oglMesh->Unbind();
+		glUseProgram(0);
 	}
 }
