@@ -34,8 +34,8 @@ namespace Dwarf {
 
 	void OpenGLRendererApi::RenderIndexed(Ref<Mesh> mesh, Ref<Material> material, glm::mat4 modelMatrix, glm::mat4 viewMatrix, glm::mat4 projectionMatrix)
 	{
-		Ref<OpenGLMesh> oglMesh = CreateRef<OpenGLMesh>(*static_cast<OpenGLMesh*>(mesh.get()));
-		Ref<OpenGLShader> oglShader = CreateRef<OpenGLShader>(*static_cast<OpenGLShader*>(material->GetShader().get()));
+		Ref<OpenGLMesh> oglMesh = std::dynamic_pointer_cast<OpenGLMesh>(mesh);
+		Ref<OpenGLShader> oglShader = std::dynamic_pointer_cast<OpenGLShader>(material->GetShader());
 
 		glUseProgram(oglShader->GetID());
 		GLuint mmID = glGetUniformLocation(oglShader->GetID(), "modelMatrix");
