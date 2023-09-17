@@ -43,7 +43,7 @@ float remap(float value, float min1, float max1, float min2, float max2) {
 }
 
 void main(){
-	/*vec4 objectColor = color;
+	vec4 objectColor = color;
 	vec3 normal = normalize(normalWorld);
 
 	if(useNormalMap > 0){
@@ -67,10 +67,10 @@ void main(){
 	}
 	
 	if(useAlbedoMap > 0){
-		objectColor = objectColor * texture(albedoMap, texCoord);
+		//objectColor = objectColor * texture(albedoMap, texCoord);
 	}
 	
-	FragColor = vec4((ambientColor + diffuseColor + specularColor) * objectColor.rgb, objectColor.a);
-	APPLY_FOG(FragColor)*/
-	FragColor = vec4(1,0,0,1);
+	//FragColor = vec4((ambientColor + diffuseColor + specularColor) * objectColor.rgb, objectColor.a);
+	FragColor = texture(albedoMap, texCoord);
+	//APPLY_FOG(FragColor)
 }

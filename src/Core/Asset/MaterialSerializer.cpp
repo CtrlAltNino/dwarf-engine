@@ -28,6 +28,60 @@ namespace Dwarf {
             }
         }
 
+        if(serializedMat.contains("boolUniforms"))
+        {
+            for(auto boolUniform : serializedMat["boolUniforms"].items())
+            {
+                deserializedMat.SetUniform(boolUniform.key(), (bool)boolUniform.value());
+            }
+        }
+
+        if(serializedMat.contains("integerUniforms"))
+        {
+            for(auto integerUniform : serializedMat["integerUniforms"].items())
+            {
+                deserializedMat.SetUniform(integerUniform.key(), (int)integerUniform.value());
+            }
+        }
+
+        if(serializedMat.contains("floatUniforms"))
+        {
+            for(auto floatUniform : serializedMat["floatUniforms"].items())
+            {
+                deserializedMat.SetUniform(floatUniform.key(), (float)floatUniform.value());
+            }
+        }
+
+        if(serializedMat.contains("vec2Uniforms"))
+        {
+            for(auto vec2Uniform : serializedMat["vec2Uniforms"].items())
+            {
+                deserializedMat.SetUniform(vec2Uniform.key(), {(float)vec2Uniform.value()["x"],
+                    (float)vec2Uniform.value()["y"]});
+            }
+        }
+
+        if(serializedMat.contains("vec3Uniforms"))
+        {
+            for(auto vec3Uniform : serializedMat["vec3Uniforms"].items())
+            {
+                deserializedMat.SetUniform(vec3Uniform.key(), {(float)vec3Uniform.value()["x"],
+                    (float)vec3Uniform.value()["y"],
+                    (float)vec3Uniform.value()["z"]});
+            }
+        }
+
+        if(serializedMat.contains("vec4Uniforms"))
+        {
+            for(auto vec4Uniform : serializedMat["vec4Uniforms"].items())
+            {
+                deserializedMat.SetUniform(vec4Uniform.key(), {(float)vec4Uniform.value()["x"],
+                    (float)vec4Uniform.value()["y"],
+                    (float)vec4Uniform.value()["z"],
+                    (float)vec4Uniform.value()["w"]});
+            }
+        }
+
         if(serializedMat.contains("shader") && serializedMat["shader"] != "default"){
             switch(Renderer::GetAPI()){
 #ifdef _WIN32

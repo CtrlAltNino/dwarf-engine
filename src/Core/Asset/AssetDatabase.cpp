@@ -91,7 +91,7 @@ namespace Dwarf {
 
         for(auto entity : materialView){
             auto mat = materialView.get<MaterialAsset>(entity);
-            mat.m_Material->m_Shader->Compile();
+            mat.m_Material->GetShader()->Compile();
         }
     }
 
@@ -102,6 +102,15 @@ namespace Dwarf {
     Ref<UID> AssetDatabase::Import(std::filesystem::path assetPath){
         std::string fileExtension = assetPath.extension().string();
         std::string fileName = assetPath.filename().string();
+
+        std::cout << "assetPath: " << assetPath << std::endl;
+
+        // Remove asset if already present
+
+        if(AssetDatabase::Exists(assetPath))
+        {
+            AssetDatabase::Remove(assetPath);
+        }
 
         if(fileExtension == ".obj" || fileExtension == ".fbx") {
             return CreateAssetReference<ModelAsset>(assetPath).GetUID();
@@ -160,6 +169,9 @@ namespace Dwarf {
 
     void AssetDatabase::CreateNewMaterialAsset(std::filesystem::path path){
         Material newMat = Material("New Material");
+		newMat.SetUniform("color", {1,1,1,1});
+		newMat.SetUniform("useNormalMap", 1.0f);
+		newMat.SetUniform("shininess", 32.0f);
         std::filesystem::path newMatPath = path / "New Material.dmat";
         MaterialSerializer::Serialize(newMat, newMatPath);
     }

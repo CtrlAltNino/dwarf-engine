@@ -28,6 +28,10 @@ namespace Dwarf {
         MaterialAsset(std::filesystem::path path) {
             // Use Mesh Importer with meta data to import mesh
             m_Material = MaterialSerializer::Deserialize(path);
+            m_Material->GetShader()->Compile();
+            if(m_Material->GetShader()->IsCompiled()){
+                std::cout << "YOOT" << std::endl;
+            }
         }
     };
 

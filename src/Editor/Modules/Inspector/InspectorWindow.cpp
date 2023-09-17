@@ -181,236 +181,237 @@ namespace Dwarf {
             separatorMax, COL_BG_DIM);
         ImGui::SetCursorPosY(ImGui::GetCursorPosY() + COMPONENT_PANEL_PADDING * 2);
 
-        // Ref<Material> mat = asset->GetAsset()->m_Material;
+        Ref<Material> mat = asset->GetAsset()->m_Material;
 
-//         ImGui::Checkbox("Transparent", &mat->m_Transparent);
+        ImGui::Checkbox("Transparent", &mat->m_Transparent);
 
-//         if(ImGui::CollapsingHeader("Shader")){
-//             ImGui::Indent(8.0f);
-//             switch(Renderer::GetAPI()){
-// #ifdef _WIN32
-//                 case GraphicsApi::D3D12: break;
-//                 case GraphicsApi::Metal: break;
-//                 case GraphicsApi::OpenGL:
-//                     {
-//                         OpenGLShader* shader = (OpenGLShader*)mat->m_Shader.get();
-//                         ImGui::Text("Vertex Shader");
-//                         ImGui::SameLine();
-//                         DwarfUI::AssetInput<VertexShaderAsset>(shader->m_VertexShader, "##vertexShader");
+        if(ImGui::CollapsingHeader("Shader")){
+            ImGui::Indent(8.0f);
+            switch(Renderer::GetAPI()){
+#ifdef _WIN32
+                case GraphicsApi::D3D12: break;
+                case GraphicsApi::Metal: break;
+                case GraphicsApi::OpenGL:
+                    {
+                        OpenGLShader* shader = (OpenGLShader*)mat->m_Shader.get();
+                        ImGui::Text("Vertex Shader");
+                        ImGui::SameLine();
+                        DwarfUI::AssetInput<VertexShaderAsset>(shader->m_VertexShader, "##vertexShader");
 
-//                         if(shader->vert_log_length){
-//                             ImGui::Text(shader->vert_message);
-//                         }
+                        if(shader->vert_log_length){
+                            ImGui::Text(shader->vert_message);
+                        }
 
-//                         ImGui::Text("Tessellation Control Shader");
-//                         ImGui::SameLine();
-//                         DwarfUI::AssetInput<TesselationControlShaderAsset>(shader->m_TessellationControlShader, "##tessellationControlShader");
+                        ImGui::Text("Tessellation Control Shader");
+                        ImGui::SameLine();
+                        DwarfUI::AssetInput<TesselationControlShaderAsset>(shader->m_TessellationControlShader, "##tessellationControlShader");
 
-//                         if(shader->tesc_log_length > 0){
-//                             ImGui::Text(shader->tesc_message);
-//                         }
+                        if(shader->tesc_log_length > 0){
+                            ImGui::Text(shader->tesc_message);
+                        }
 
-//                         ImGui::Text("Tessellation Evaluation Shader");
-//                         ImGui::SameLine();
-//                         DwarfUI::AssetInput<TesselationEvaluationShaderAsset>(shader->m_TessellationEvaluationShader, "##tessellationEvaluationShader");
+                        ImGui::Text("Tessellation Evaluation Shader");
+                        ImGui::SameLine();
+                        DwarfUI::AssetInput<TesselationEvaluationShaderAsset>(shader->m_TessellationEvaluationShader, "##tessellationEvaluationShader");
 
-//                         if(shader->tese_log_length > 0){
-//                             ImGui::Text(shader->tese_message);
-//                         }
+                        if(shader->tese_log_length > 0){
+                            ImGui::Text(shader->tese_message);
+                        }
 
-//                         ImGui::Text("Geometry Shader");
-//                         ImGui::SameLine();
-//                         DwarfUI::AssetInput<GeometryShaderAsset>(shader->m_GeometryShader, "##geometryShader");
+                        ImGui::Text("Geometry Shader");
+                        ImGui::SameLine();
+                        DwarfUI::AssetInput<GeometryShaderAsset>(shader->m_GeometryShader, "##geometryShader");
 
-//                         if(shader->geom_log_length){
-//                             ImGui::Text(shader->geom_message);
-//                         }
+                        if(shader->geom_log_length){
+                            ImGui::Text(shader->geom_message);
+                        }
 
-//                         ImGui::Text("Fragment Shader");
-//                         ImGui::SameLine();
-//                         DwarfUI::AssetInput<FragmentShaderAsset>(shader->m_FragmentShader, "##fragmentShader");
+                        ImGui::Text("Fragment Shader");
+                        ImGui::SameLine();
+                        DwarfUI::AssetInput<FragmentShaderAsset>(shader->m_FragmentShader, "##fragmentShader");
 
-//                         if(shader->frag_log_length){
-//                             ImGui::Text(shader->frag_message);
-//                         }
-//                         break;
-//                     }
-//                 case GraphicsApi::Vulkan: break;
-// #elif __linux__
-//                 case GraphicsApi::D3D12: break;
-//                 case GraphicsApi::Metal: break;
-//                 case GraphicsApi::OpenGL: break;
-//                 case GraphicsApi::Vulkan: break;
-// #elif __APPLE__
-//                 case GraphicsApi::D3D12: break;
-//                 case GraphicsApi::Metal: break;
-//                 case GraphicsApi::OpenGL: break;
-//                 case GraphicsApi::Vulkan: break;
-// #endif
-//             }
+                        if(shader->frag_log_length){
+                            ImGui::Text(shader->frag_message);
+                        }
+                        break;
+                    }
+                case GraphicsApi::Vulkan: break;
+#elif __linux__
+                case GraphicsApi::D3D12: break;
+                case GraphicsApi::Metal: break;
+                case GraphicsApi::OpenGL: break;
+                case GraphicsApi::Vulkan: break;
+#elif __APPLE__
+                case GraphicsApi::D3D12: break;
+                case GraphicsApi::Metal: break;
+                case GraphicsApi::OpenGL: break;
+                case GraphicsApi::Vulkan: break;
+#endif
+            }
 
-//             if(ImGui::Button("Compile")){
-//                 mat->m_Shader->Compile();
-//             }
+            if(ImGui::Button("Compile")){
+                mat->m_Shader->Compile();
+            }
 
-//             ImGui::SameLine();
+            ImGui::SameLine();
 
-//             ImGui::Text(mat->m_Shader->IsCompiled() ? "Successfully Compiled" : "Couldn't compile");
-//         }
+            ImGui::Text(mat->m_Shader->IsCompiled() ? "Successfully Compiled" : "Couldn't compile");
+        }
 
-//         if(ImGui::CollapsingHeader("Textures")){
-//             ImGui::Indent(8.0f);
-//             int n = 0;
-//             for(auto i = mat->m_Textures.begin(); i != mat->m_Textures.end(); i++){
-//                 ImGui::Text(i->first.c_str());
-//                 ImGui::SameLine();
-//                 DwarfUI::AssetInput<TextureAsset>(i->second, (std::string("##textureAsset") + std::to_string(n++)).c_str());
-//             }
+        if(ImGui::CollapsingHeader("Textures")){
+            ImGui::Indent(8.0f);
+            int n = 0;
+            for(auto i = mat->m_Textures.begin(); i != mat->m_Textures.end(); i++){
+                ImGui::Text(i->first.c_str());
+                ImGui::SameLine();
+                DwarfUI::AssetInput<TextureAsset>(i->second, (std::string("##textureAsset") + std::to_string(n++)).c_str());
+            }
 
-//             static char newTextureName[128] = "";
-//             ImGui::InputTextWithHint("##textureName", "New Texture", newTextureName, IM_ARRAYSIZE(newTextureName));
-//             ImGui::SameLine();
-//             if(ImGui::Button("Add")){
-//                 mat->SetTexture(newTextureName, nullptr);
-//             }
-//         }
+            static char newTextureName[128] = "";
+            ImGui::InputTextWithHint("##textureName", "New Texture", newTextureName, IM_ARRAYSIZE(newTextureName));
+            ImGui::SameLine();
+            if(ImGui::Button("Add")){
+                mat->SetTexture(newTextureName, nullptr);
+            }
+        }
 
-//         if(ImGui::CollapsingHeader("Shader uniforms")){
-//             ImGui::Indent(8.0f);
-//             if (ImGui::CollapsingHeader("Booleans")){
-//                 ImGui::Indent(8.0f);
-//                 int n = 0;
-//                 for(auto i = mat->m_BoolUniforms.begin(); i != mat->m_BoolUniforms.end(); i++){
-//                     ImGui::Text(i->first.c_str());
-//                     ImGui::SameLine();
-//                     ImGui::Checkbox((std::string("##boolean") + std::to_string(n++)).c_str(), &i->second);
-//                     //DwarfUI::AssetInput<TextureAsset>(i->second, (std::string("##boolean") + std::to_string(n++)).c_str());
-//                 }
+        if(ImGui::CollapsingHeader("Shader uniforms")){
+            ImGui::Indent(8.0f);
+            if (ImGui::CollapsingHeader("Booleans")){
+                ImGui::Indent(8.0f);
+                int n = 0;
+                for(auto i = mat->m_BoolUniforms.begin(); i != mat->m_BoolUniforms.end(); i++){
+                    ImGui::Text(i->first.c_str());
+                    ImGui::SameLine();
+                    ImGui::Checkbox((std::string("##boolean") + std::to_string(n++)).c_str(), &i->second);
+                    //DwarfUI::AssetInput<TextureAsset>(i->second, (std::string("##boolean") + std::to_string(n++)).c_str());
+                }
 
-//                 static char newBooleanName[128] = "";
-//                 ImGui::InputTextWithHint("##boolName", "New boolean", newBooleanName, IM_ARRAYSIZE(newBooleanName));
-//                 ImGui::SameLine();
-//                 if(ImGui::Button("Add")){
-//                     mat->SetUniform(newBooleanName, false);
-//                 }
-//             }
+                static char newBooleanName[128] = "";
+                ImGui::InputTextWithHint("##boolName", "New boolean", newBooleanName, IM_ARRAYSIZE(newBooleanName));
+                ImGui::SameLine();
+                if(ImGui::Button("Add")){
+                    mat->SetUniform(newBooleanName, false);
+                }
+            }
 
-//             if (ImGui::CollapsingHeader("Integers")){
-//                 ImGui::Indent(8.0f);
-//                 int n = 0;
-//                 for(auto i = mat->m_IntegerUniforms.begin(); i != mat->m_IntegerUniforms.end(); i++){
-//                     ImGui::Text(i->first.c_str());
-//                     ImGui::SameLine();
-//                     //ImGui::Checkbox((std::string("##integer") + std::to_string(n++)).c_str(), &i->second);
-//                     ImGui::InputInt((std::string("##integer") + std::to_string(n++)).c_str(), &i->second);
-//                     //DwarfUI::AssetInput<TextureAsset>(i->second, (std::string("##boolean") + std::to_string(n++)).c_str());
-//                 }
+            if (ImGui::CollapsingHeader("Integers")){
+                ImGui::Indent(8.0f);
+                int n = 0;
+                for(auto i = mat->m_IntegerUniforms.begin(); i != mat->m_IntegerUniforms.end(); i++){
+                    ImGui::Text(i->first.c_str());
+                    ImGui::SameLine();
+                    //ImGui::Checkbox((std::string("##integer") + std::to_string(n++)).c_str(), &i->second);
+                    ImGui::InputInt((std::string("##integer") + std::to_string(n++)).c_str(), &i->second);
+                    //DwarfUI::AssetInput<TextureAsset>(i->second, (std::string("##boolean") + std::to_string(n++)).c_str());
+                }
 
-//                 static char newIntegerName[128] = "";
-//                 ImGui::InputTextWithHint("##integerName", "New integer", newIntegerName, IM_ARRAYSIZE(newIntegerName));
-//                 ImGui::SameLine();
-//                 if(ImGui::Button("Add")){
-//                     mat->SetUniform(newIntegerName, 0);
-//                 }
-//             }
+                static char newIntegerName[128] = "";
+                ImGui::InputTextWithHint("##integerName", "New integer", newIntegerName, IM_ARRAYSIZE(newIntegerName));
+                ImGui::SameLine();
+                if(ImGui::Button("Add")){
+                    mat->SetUniform(newIntegerName, 0);
+                }
+            }
 
-//             if (ImGui::CollapsingHeader("Floats")){
-//                 ImGui::Indent(8.0f);
-//                 int n = 0;
-//                 for(auto i = mat->m_FloatUniforms.begin(); i != mat->m_FloatUniforms.end(); i++){
-//                     ImGui::Text(i->first.c_str());
-//                     ImGui::SameLine();
-//                     //ImGui::Checkbox((std::string("##integer") + std::to_string(n++)).c_str(), &i->second);
-//                     ImGui::InputFloat((std::string("##float") + std::to_string(n++)).c_str(), &i->second);
-//                     //DwarfUI::AssetInput<TextureAsset>(i->second, (std::string("##boolean") + std::to_string(n++)).c_str());
-//                 }
+            if (ImGui::CollapsingHeader("Floats")){
+                ImGui::Indent(8.0f);
+                int n = 0;
+                for(auto i = mat->m_FloatUniforms.begin(); i != mat->m_FloatUniforms.end(); i++){
+                    ImGui::Text(i->first.c_str());
+                    ImGui::SameLine();
+                    //ImGui::Checkbox((std::string("##integer") + std::to_string(n++)).c_str(), &i->second);
+                    ImGui::InputFloat((std::string("##float") + std::to_string(n++)).c_str(), &i->second);
+                    //DwarfUI::AssetInput<TextureAsset>(i->second, (std::string("##boolean") + std::to_string(n++)).c_str());
+                }
 
-//                 static char newFloatName[128] = "";
-//                 ImGui::InputTextWithHint("##floatName", "New float", newFloatName, IM_ARRAYSIZE(newFloatName));
-//                 ImGui::SameLine();
-//                 if(ImGui::Button("Add")){
-//                     mat->SetUniform(newFloatName, 0.0f);
-//                 }
-//             }
+                static char newFloatName[128] = "";
+                ImGui::InputTextWithHint("##floatName", "New float", newFloatName, IM_ARRAYSIZE(newFloatName));
+                ImGui::SameLine();
+                if(ImGui::Button("Add")){
+                    mat->SetUniform(newFloatName, 0.0f);
+                }
+            }
 
-//             if (ImGui::CollapsingHeader("2D Uniforms")){
-//                 ImGui::Indent(8.0f);
-//                 int n = 0;
-//                 for(auto i = mat->m_Vector2Uniforms.begin(); i != mat->m_Vector2Uniforms.end(); i++){
-//                     ImGui::Text(i->first.c_str());
-//                     ImGui::SameLine();
-//                     //ImGui::Checkbox((std::string("##integer") + std::to_string(n++)).c_str(), &i->second);
-//                     ImGui::InputFloat2((std::string("##vec2") + std::to_string(n++)).c_str(), &i->second.x);
-//                     //DwarfUI::AssetInput<TextureAsset>(i->second, (std::string("##boolean") + std::to_string(n++)).c_str());
-//                 }
+            if (ImGui::CollapsingHeader("2D Uniforms")){
+                ImGui::Indent(8.0f);
+                int n = 0;
+                for(auto i = mat->m_Vector2Uniforms.begin(); i != mat->m_Vector2Uniforms.end(); i++){
+                    ImGui::Text(i->first.c_str());
+                    ImGui::SameLine();
+                    //ImGui::Checkbox((std::string("##integer") + std::to_string(n++)).c_str(), &i->second);
+                    ImGui::InputFloat2((std::string("##vec2") + std::to_string(n++)).c_str(), &i->second.x);
+                    //DwarfUI::AssetInput<TextureAsset>(i->second, (std::string("##boolean") + std::to_string(n++)).c_str());
+                }
 
-//                 static char newVec2Name[128] = "";
-//                 ImGui::InputTextWithHint("##vec2Name", "New 2D variable", newVec2Name, IM_ARRAYSIZE(newVec2Name));
-//                 ImGui::SameLine();
-//                 if(ImGui::Button("Add")){
-//                     mat->SetUniform(newVec2Name, {0,0});
-//                 }
-//             }
+                static char newVec2Name[128] = "";
+                ImGui::InputTextWithHint("##vec2Name", "New 2D variable", newVec2Name, IM_ARRAYSIZE(newVec2Name));
+                ImGui::SameLine();
+                if(ImGui::Button("Add")){
+                    mat->SetUniform(newVec2Name, {0,0});
+                }
+            }
 
-//             if (ImGui::CollapsingHeader("3D Uniforms")){
-//                 ImGui::Indent(8.0f);
-//                 int n = 0;
-//                 for(auto i = mat->m_Vector3Uniforms.begin(); i != mat->m_Vector3Uniforms.end(); i++){
-//                     ImGui::Text(i->first.c_str());
-//                     ImGui::SameLine();
-//                     //ImGui::Checkbox((std::string("##integer") + std::to_string(n++)).c_str(), &i->second);
-//                     ImGui::InputFloat3((std::string("##vec3") + std::to_string(n++)).c_str(), &i->second.x);
-//                     //DwarfUI::AssetInput<TextureAsset>(i->second, (std::string("##boolean") + std::to_string(n++)).c_str());
-//                 }
+            if (ImGui::CollapsingHeader("3D Uniforms")){
+                ImGui::Indent(8.0f);
+                int n = 0;
+                for(auto i = mat->m_Vector3Uniforms.begin(); i != mat->m_Vector3Uniforms.end(); i++){
+                    ImGui::Text(i->first.c_str());
+                    ImGui::SameLine();
+                    //ImGui::Checkbox((std::string("##integer") + std::to_string(n++)).c_str(), &i->second);
+                    ImGui::InputFloat3((std::string("##vec3") + std::to_string(n++)).c_str(), &i->second.x);
+                    //DwarfUI::AssetInput<TextureAsset>(i->second, (std::string("##boolean") + std::to_string(n++)).c_str());
+                }
 
-//                 static char newVec3Name[128] = "";
-//                 ImGui::InputTextWithHint("##vec3Name", "New 3D variable", newVec3Name, IM_ARRAYSIZE(newVec3Name));
-//                 ImGui::SameLine();
-//                 if(ImGui::Button("Add")){
-//                     mat->SetUniform(newVec3Name, {0,0,0});
-//                 }
-//             }
+                static char newVec3Name[128] = "";
+                ImGui::InputTextWithHint("##vec3Name", "New 3D variable", newVec3Name, IM_ARRAYSIZE(newVec3Name));
+                ImGui::SameLine();
+                if(ImGui::Button("Add")){
+                    mat->SetUniform(newVec3Name, {0,0,0});
+                }
+            }
 
-//             if (ImGui::CollapsingHeader("4D Uniforms")){
-//                 ImGui::Indent(8.0f);
-//                 int n = 0;
-//                 for(auto i = mat->m_Vector4Uniforms.begin(); i != mat->m_Vector4Uniforms.end(); i++){
-//                     ImGui::Text(i->first.c_str());
-//                     ImGui::SameLine();
-//                     //ImGui::Checkbox((std::string("##integer") + std::to_string(n++)).c_str(), &i->second);
-//                     //ImGui::InputFloat4((std::string("##vec4") + std::to_string(n++)).c_str(), &i->second.x);
-//                     ImGui::ColorPicker4((std::string("##vec4") + std::to_string(n++)).c_str(), &i->second.x);
-//                     //DwarfUI::AssetInput<TextureAsset>(i->second, (std::string("##boolean") + std::to_string(n++)).c_str());
-//                 }
+            if (ImGui::CollapsingHeader("4D Uniforms")){
+                ImGui::Indent(8.0f);
+                int n = 0;
+                for(auto i = mat->m_Vector4Uniforms.begin(); i != mat->m_Vector4Uniforms.end(); i++){
+                    ImGui::Text(i->first.c_str());
+                    ImGui::SameLine();
+                    //ImGui::Checkbox((std::string("##integer") + std::to_string(n++)).c_str(), &i->second);
+                    //ImGui::InputFloat4((std::string("##vec4") + std::to_string(n++)).c_str(), &i->second.x);
+                    ImGui::ColorPicker4((std::string("##vec4") + std::to_string(n++)).c_str(), &i->second.x);
+                    //DwarfUI::AssetInput<TextureAsset>(i->second, (std::string("##boolean") + std::to_string(n++)).c_str());
+                }
 
-//                 static char newVec4Name[128] = "";
-//                 ImGui::InputTextWithHint("##vec4Name", "New color", newVec4Name, IM_ARRAYSIZE(newVec4Name));
-//                 ImGui::SameLine();
-//                 if(ImGui::Button("Add")){
-//                     mat->SetUniform(newVec4Name, {1,1,1,1});
-//                 }
-//             }
-//         }
+                static char newVec4Name[128] = "";
+                ImGui::InputTextWithHint("##vec4Name", "New color", newVec4Name, IM_ARRAYSIZE(newVec4Name));
+                ImGui::SameLine();
+                if(ImGui::Button("Add")){
+                    mat->SetUniform(newVec4Name, {1,1,1,1});
+                }
+            }
+        }
 
-//         ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
-//         if(ImGui::Button("Save changes", ImVec2(100, 50))){
-//             MaterialSerializer::Serialize(*mat, asset->GetPath());
-//         }
+        ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
+        if(ImGui::Button("Save changes", ImVec2(100, 50))){
+            MaterialSerializer::Serialize(*mat, asset->GetPath());
+            AssetDatabase::Reimport(asset);
+        }
 
-//         ImGui::SameLine();
+        ImGui::SameLine();
 
-//         if(ImGui::Button("Reimport", ImVec2(100, 50))){
-//             AssetDatabase::Reimport(asset);
-//         }
+        if(ImGui::Button("Reimport", ImVec2(100, 50))){
+            AssetDatabase::Reimport(asset);
+        }
 
-//         draw_list->ChannelsSetCurrent(0);
+        draw_list->ChannelsSetCurrent(0);
 
         ImGui::EndGroup();
-//         ImGui::GetWindowDrawList()->AddRectFilled(ImGui::GetItemRectMin(),
-//             ImVec2(ImGui::GetItemRectMin().x + ImGui::GetContentRegionAvail().x, ImGui::GetItemRectMax().y + 2 * COMPONENT_PANEL_PADDING),
-//             IM_COL32(59, 66, 82, 255), 5.0f);
-//         ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3 * COMPONENT_PANEL_PADDING);
-//         draw_list->ChannelsMerge();
+        ImGui::GetWindowDrawList()->AddRectFilled(ImGui::GetItemRectMin(),
+            ImVec2(ImGui::GetItemRectMin().x + ImGui::GetContentRegionAvail().x, ImGui::GetItemRectMax().y + 2 * COMPONENT_PANEL_PADDING),
+            IM_COL32(59, 66, 82, 255), 5.0f);
+        ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3 * COMPONENT_PANEL_PADDING);
+        draw_list->ChannelsMerge();
     }
 
     template<>

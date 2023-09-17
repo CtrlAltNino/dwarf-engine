@@ -20,7 +20,7 @@ namespace Dwarf {
     SceneViewerWindow::SceneViewerWindow(Ref<EditorModel> model, int index)
             :GuiModule(model, "Scene Viewer", MODULE_TYPE::SCENE_VIEWER, index){
         m_Framebuffer = Renderer::Get()->CreateFramebuffer({512, 512});
-        m_Camera = CreateRef<Camera>(Camera());
+        m_Camera = CreateRef<Camera>();
     }
 
     void SceneViewerWindow::OnUpdate(double deltaTime){
@@ -133,8 +133,9 @@ namespace Dwarf {
 
         //UpdateRenderTexture();
         if((m_Framebuffer->GetSpecification().Width != ImGui::GetContentRegionAvail().x) || (m_Framebuffer->GetSpecification().Height != ImGui::GetContentRegionAvail().y)){
+            std::cout << "Resize" << std::endl;
             m_Framebuffer->Resize(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y);
-            m_Settings.ViewportSize = glm::ivec2(m_Framebuffer->GetSpecification().Width, m_Framebuffer->GetSpecification().Height);
+            m_Settings.ViewportSize = glm::ivec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y);
             m_Camera->SetAspectRatio((float)ImGui::GetContentRegionAvail().x / (float)ImGui::GetContentRegionAvail().y);
         }
 
@@ -177,7 +178,7 @@ namespace Dwarf {
         }
 
         if(m_Model->m_Selection.selectedEntities.size() == 1){
-            //RenderGizmos();
+            RenderGizmos();
         }
         ImGui::End();
     }

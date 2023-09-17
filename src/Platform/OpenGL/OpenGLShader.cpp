@@ -146,6 +146,7 @@ namespace Dwarf {
         defaultShader->SetVertexShader(AssetDatabase::Import(defaultShaderPath / "default.vert"));
         defaultShader->SetFragmentShader(AssetDatabase::Import(defaultShaderPath / "default.frag"));
         defaultShader->Compile();
+		std::cout << "Is compiled? " << (defaultShader->IsCompiled() ? " yes" : " no") << std::endl;
         return defaultShader;
     }
 

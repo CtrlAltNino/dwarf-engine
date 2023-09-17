@@ -80,8 +80,11 @@ namespace Dwarf {
 
             template<typename T>
             static void Reimport(Ref<AssetReference<T>> asset){
-                std::filesystem::path assetPath = asset->GetPath();
-                AssetDatabase::Remove(asset->GetUID());
+                Reimport(asset->GetPath());
+            }
+
+            static void Reimport(std::filesystem::path assetPath){
+                AssetDatabase::Remove(assetPath);
                 AssetDatabase::Import(assetPath);
             }
 
