@@ -273,6 +273,7 @@ namespace Dwarf {
             if(ImGui::Button("Add")){
                 mat->SetTexture(newTextureName, nullptr);
             }
+            ImGui::Unindent(8.0f);
         }
 
         if(ImGui::CollapsingHeader("Shader uniforms")){
@@ -293,6 +294,7 @@ namespace Dwarf {
                 if(ImGui::Button("Add")){
                     mat->SetUniform(newBooleanName, false);
                 }
+                ImGui::Unindent(8.0f);
             }
 
             if (ImGui::CollapsingHeader("Integers")){
@@ -312,6 +314,7 @@ namespace Dwarf {
                 if(ImGui::Button("Add")){
                     mat->SetUniform(newIntegerName, 0);
                 }
+                ImGui::Unindent(8.0f);
             }
 
             if (ImGui::CollapsingHeader("Floats")){
@@ -331,6 +334,7 @@ namespace Dwarf {
                 if(ImGui::Button("Add")){
                     mat->SetUniform(newFloatName, 0.0f);
                 }
+                ImGui::Unindent(8.0f);
             }
 
             if (ImGui::CollapsingHeader("2D Uniforms")){
@@ -350,6 +354,7 @@ namespace Dwarf {
                 if(ImGui::Button("Add")){
                     mat->SetUniform(newVec2Name, {0,0});
                 }
+                ImGui::Unindent(8.0f);
             }
 
             if (ImGui::CollapsingHeader("3D Uniforms")){
@@ -369,6 +374,7 @@ namespace Dwarf {
                 if(ImGui::Button("Add")){
                     mat->SetUniform(newVec3Name, {0,0,0});
                 }
+                ImGui::Unindent(8.0f);
             }
 
             if (ImGui::CollapsingHeader("4D Uniforms")){
@@ -389,7 +395,9 @@ namespace Dwarf {
                 if(ImGui::Button("Add")){
                     mat->SetUniform(newVec4Name, {1,1,1,1});
                 }
+                ImGui::Unindent(8.0f);
             }
+            ImGui::Unindent(8.0f);
         }
 
         ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
