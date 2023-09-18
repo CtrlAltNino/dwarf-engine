@@ -120,6 +120,14 @@ namespace Dwarf {
 		m_FragmentShader = fragmentShader;
 	}
 
+	void OpenGLShader::SetTesselaltionControlShader(Ref<UID> tessellationControlShader) {
+		m_TessellationControlShader = tessellationControlShader;
+	}
+
+	void OpenGLShader::SetTesselaltionEvaluationShader(Ref<UID> tessellationEvaluationShader) {
+		m_TessellationEvaluationShader = tessellationEvaluationShader;
+	}
+
     void OpenGLShader::SetGeometryShader(Ref<UID> geometryShader) {
 		m_GeometryShader = geometryShader;
 	}

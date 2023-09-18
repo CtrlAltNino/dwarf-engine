@@ -36,11 +36,15 @@ namespace Dwarf {
             ~OpenGLShader();
 
             void SetVertexShader(Ref<UID> vertexShader);
+            void SetTesselaltionControlShader(Ref<UID> tessellationControlShader);
+            void SetTesselaltionEvaluationShader(Ref<UID> tessellationEvaluationShader);
             void SetFragmentShader(Ref<UID> fragmentShader);
             void SetGeometryShader(Ref<UID> geometryShader);
 
             Ref<UID> GetVertexShader();
             Ref<UID> GetFragmentShader();
+            Ref<UID> GetTesselaltionControlShader();
+            Ref<UID> GetTesselaltionEvaluationShader();
             Ref<UID> GetGeometryShader();
 
             GLuint GetID();
