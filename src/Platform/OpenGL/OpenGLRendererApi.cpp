@@ -85,12 +85,18 @@ namespace Dwarf {
 		}
 
 		// Bind vector4
-		for(auto const& [key, val] : material->Get4DUniforms()){
+		/*for(auto const& [key, val] : material->Get4DUniforms()){
 			uniformID = glGetUniformLocation(shader->GetID(), key.c_str());
-			glUniform4f(uniformID, val.x, val.y, val.z, val.w);
-		}
+			glUniform4fv(uniformID, 4, &val.x);
+			//glUniform4f(uniformID, val.x, val.y, val.z, val.w);
+		}*/
+		
 
 		glUseProgram(shader->GetID());
+
+		uniformID = glGetUniformLocation(shader->GetID(), "color");
+		glUniform4f(uniformID, 1,1,0,1);
+		
 		GLuint mmID = glGetUniformLocation(shader->GetID(), "modelMatrix");
 		GLuint vmID = glGetUniformLocation(shader->GetID(), "viewMatrix");
 		GLuint pmID = glGetUniformLocation(shader->GetID(), "projectionMatrix");

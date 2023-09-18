@@ -142,19 +142,18 @@ namespace Dwarf {
 
     Ref<OpenGLShader> OpenGLShader::CreateDefaultShader(){
         Ref<OpenGLShader> defaultShader = CreateRef<OpenGLShader>(OpenGLShader());
-        std::filesystem::path defaultShaderPath = "data/engine/shaders/default/opengl/";
-        defaultShader->SetVertexShader(AssetDatabase::Import(defaultShaderPath / "default.vert"));
-        defaultShader->SetFragmentShader(AssetDatabase::Import(defaultShaderPath / "default.frag"));
+        //std::filesystem::path defaultShaderPath = "data/engine/shaders/default/opengl/";
+        defaultShader->SetVertexShader(AssetDatabase::Import(Shader::GetDefaultShaderPath() / "default.vert"));
+        defaultShader->SetFragmentShader(AssetDatabase::Import(Shader::GetDefaultShaderPath() / "default.frag"));
         defaultShader->Compile();
-		std::cout << "Is compiled? " << (defaultShader->IsCompiled() ? " yes" : " no") << std::endl;
         return defaultShader;
     }
 
     Ref<OpenGLShader> OpenGLShader::CreateErrorShader(){
         Ref<OpenGLShader> errorShader = CreateRef<OpenGLShader>(OpenGLShader());
         std::filesystem::path errorShaderPath = "data/engine/shaders/error/opengl/";
-        errorShader->SetVertexShader(AssetDatabase::Import(errorShaderPath / "error.vert"));
-        errorShader->SetFragmentShader(AssetDatabase::Import(errorShaderPath / "error.frag"));
+        errorShader->SetVertexShader(AssetDatabase::Import(Shader::GetErrorShaderPath() / "error.vert"));
+        errorShader->SetFragmentShader(AssetDatabase::Import(Shader::GetErrorShaderPath() / "error.frag"));
         errorShader->Compile();
         return errorShader;
     }
@@ -162,8 +161,8 @@ namespace Dwarf {
     Ref<OpenGLShader> OpenGLShader::CreateGridShader(){
         Ref<OpenGLShader> gridShader = CreateRef<OpenGLShader>(OpenGLShader());
         std::filesystem::path gridShaderPath = "data/engine/shaders/grid/opengl/";
-        gridShader->SetVertexShader(AssetDatabase::Import(gridShaderPath / "grid.vert"));
-        gridShader->SetFragmentShader(AssetDatabase::Import(gridShaderPath / "grid.frag"));
+        gridShader->SetVertexShader(AssetDatabase::Import(Shader::GetGridShaderPath() / "grid.vert"));
+        gridShader->SetFragmentShader(AssetDatabase::Import(Shader::GetGridShaderPath() / "grid.frag"));
         gridShader->Compile();
         return gridShader;
     }

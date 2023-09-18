@@ -65,7 +65,6 @@ namespace Dwarf {
 		// ========== Initialize Asset Database ==========
 		std::cout << "[EDITOR INIT] Loading asset database" << std::endl;
 		AssetDatabase::Init(projectPath);
-		Shader::Init();
 
 		// ========== Initialize Editor model
 		std::cout << "[EDITOR INIT] Initializing editor model" << std::endl;

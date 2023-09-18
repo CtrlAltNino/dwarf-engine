@@ -25,7 +25,7 @@ namespace Dwarf {
 			case efsw::Actions::Modified:
 				std::cout << "DIR (" << dir << ") FILE (" << filename << ") has event Modified" << std::endl;
 				if(path.has_extension() && path.extension() != ".meta"){
-					//AssetDatabase::Reimport(path);
+					AssetDatabase::Reimport(path);
 				}
 				break;
 			case efsw::Actions::Moved:

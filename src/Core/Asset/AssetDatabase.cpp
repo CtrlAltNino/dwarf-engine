@@ -42,6 +42,7 @@ namespace Dwarf {
 
     void AssetDatabase::ReimportAssets(){
         s_Registry->clear();
+		Shader::Init();
         RecursiveImport(s_AssetFolderPath);
     }
 
@@ -77,6 +78,7 @@ namespace Dwarf {
         // It will watch the /tmp folder recursively ( the third parameter indicates that is recursive )
         // Reporting the files and directories changes to the instance of the listener
         s_WatchID = s_FileWatcher->addWatch( s_AssetFolderPath.string(), listener, true );
+        s_WatchID = s_FileWatcher->addWatch( Shader::GetDefaultShaderPath().string(), listener, true );
 
         // Start watching asynchronously the directories
         s_FileWatcher->watch();
@@ -90,8 +92,9 @@ namespace Dwarf {
         auto materialView = AssetDatabase::s_Registry->view<MaterialAsset>();
 
         for(auto entity : materialView){
-            auto mat = materialView.get<MaterialAsset>(entity);
+            auto &mat = s_Registry->get<MaterialAsset>(entity);
             mat.m_Material->GetShader()->Compile();
+            std::cout << "Shader time" << std::endl;
         }
     }
 
@@ -172,6 +175,7 @@ namespace Dwarf {
 		newMat.SetUniform("color", {1,1,1,1});
 		newMat.SetUniform("useNormalMap", 1.0f);
 		newMat.SetUniform("shininess", 32.0f);
+        newMat.SetTexture("albedoMap", nullptr);
         std::filesystem::path newMatPath = path / "New Material.dmat";
         MaterialSerializer::Serialize(newMat, newMatPath);
     }

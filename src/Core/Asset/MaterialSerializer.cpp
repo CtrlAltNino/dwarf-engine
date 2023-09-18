@@ -24,7 +24,11 @@ namespace Dwarf {
         {
             for(auto texture : serializedMat["textures"].items())
             {
-                deserializedMat.SetTexture(texture.key(), CreateRef<UID>(UID(texture.value())));
+                if(texture.value() != -1){
+                    deserializedMat.SetTexture(texture.key(), CreateRef<UID>(UID(texture.value())));
+                }else{
+                    deserializedMat.SetTexture(texture.key(), nullptr);
+                }
             }
         }
 
@@ -170,7 +174,11 @@ namespace Dwarf {
         }
 
         for(auto const& [key, val] : material.GetTextures()){
-            serializedMat["textures"][key] = (uint64_t)*val;
+            if(val){
+                serializedMat["textures"][key] = (uint64_t)*val;
+            }else{
+                serializedMat["textures"][key] = -1;
+            }
         }
 
         for(auto const& [key, val] : material.GetBoolUniforms()){

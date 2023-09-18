@@ -57,6 +57,63 @@ namespace Dwarf {
 		return nullptr;
 	}
 
+	std::filesystem::path Shader::GetDefaultShaderPath(){
+		switch(Renderer::GetAPI()){
+			case GraphicsApi::D3D12:
+					return "data/engine/shaders/default/d3d12/";
+				break;
+			case GraphicsApi::Metal:
+					return "data/engine/shaders/default/metal/";
+				break;
+			case GraphicsApi::OpenGL:
+					return "data/engine/shaders/default/opengl/";
+				break;
+			case GraphicsApi::Vulkan:
+					return "data/engine/shaders/default/vulkan/";
+				break;
+		}
+
+		return "";
+	}
+
+	std::filesystem::path Shader::GetErrorShaderPath(){
+		switch(Renderer::GetAPI()){
+			case GraphicsApi::D3D12:
+					return "data/engine/shaders/error/d3d12/";
+				break;
+			case GraphicsApi::Metal:
+					return "data/engine/shaders/error/metal/";
+				break;
+			case GraphicsApi::OpenGL:
+					return "data/engine/shaders/error/opengl/";
+				break;
+			case GraphicsApi::Vulkan:
+					return "data/engine/shaders/error/vulkan/";
+				break;
+		}
+
+		return "";
+	}
+
+	std::filesystem::path Shader::GetGridShaderPath(){
+		switch(Renderer::GetAPI()){
+			case GraphicsApi::D3D12:
+					return "data/engine/shaders/grid/d3d12/";
+				break;
+			case GraphicsApi::Metal:
+					return "data/engine/shaders/grid/metal/";
+				break;
+			case GraphicsApi::OpenGL:
+					return "data/engine/shaders/grid/opengl/";
+				break;
+			case GraphicsApi::Vulkan:
+					return "data/engine/shaders/grid/vulkan/";
+				break;
+		}
+
+		return "";
+	}
+
 	Shader::Shader(){}
 	Shader::~Shader(){}
 

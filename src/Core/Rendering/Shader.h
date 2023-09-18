@@ -39,5 +39,9 @@ namespace Dwarf {
 		static Ref<Shader> s_DefaultShader;
 		static Ref<Shader> s_ErrorShader;
 		static Ref<Shader> s_GridShader;
+
+		static std::filesystem::path GetDefaultShaderPath();
+		static std::filesystem::path GetErrorShaderPath();
+		static std::filesystem::path GetGridShaderPath();
 	};
 }
