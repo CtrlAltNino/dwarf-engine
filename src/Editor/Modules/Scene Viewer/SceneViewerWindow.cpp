@@ -177,7 +177,7 @@ namespace Dwarf {
         }
 
         if(m_Model->m_Selection.selectedEntities.size() == 1){
-            RenderGizmos();
+            RenderGizmos(minRect, maxRect);
         }
         ImGui::End();
     }
@@ -198,14 +198,12 @@ namespace Dwarf {
         return desiredResolution;
     }
 
-    void SceneViewerWindow::RenderGizmos(){
+    void SceneViewerWindow::RenderGizmos(ImVec2 minRect, ImVec2 maxRect){
         UpdateGizmoType();
         ImGuizmo::SetOrthographic(false);
         ImGuizmo::SetDrawlist();
-        float windowWidth = (float)ImGui::GetWindowWidth();
-        float windowHeight = (float)ImGui::GetWindowHeight();
 
-        ImGuizmo::SetRect(ImGui::GetWindowPos().x, ImGui::GetWindowPos().y, windowWidth, windowHeight);
+        ImGuizmo::SetRect(minRect.x, minRect.y, maxRect.x-minRect.x, maxRect.y-minRect.y);
 
         TransformComponent& tc = m_Model->m_Selection.selectedEntities.at(0).GetComponent<TransformComponent>();
         glm::mat4 transform = tc.getModelMatrix();

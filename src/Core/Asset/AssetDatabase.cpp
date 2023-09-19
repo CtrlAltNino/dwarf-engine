@@ -17,6 +17,7 @@ namespace Dwarf {
     efsw::WatchID AssetDatabase::s_WatchID;
     Ref<entt::registry> AssetDatabase::s_Registry;
     std::map<std::filesystem::path, Shader*> AssetDatabase::s_ShaderAssetMap;
+    std::vector<Shader*> AssetDatabase::s_ShaderRecompilationStack;
 
     void AssetDatabase::RecursiveImport(std::filesystem::path directory){
         for(auto& directoryEntry : std::filesystem::directory_iterator(directory)){
@@ -180,5 +181,12 @@ namespace Dwarf {
 
     std::filesystem::path AssetDatabase::GetAssetDirectoryPath(){
         return s_AssetFolderPath;
+    }
+
+    void AssetDatabase::RecompileShaders(){
+        for(Shader* shader : s_ShaderRecompilationStack){
+            shader->Compile();
+        }
+        s_ShaderRecompilationStack.clear();
     }
 }

@@ -28,6 +28,8 @@ namespace Dwarf {
             /// @brief Watch ID for the EFSW file watcher.
             static efsw::WatchID s_WatchID;
 
+            static std::vector<Shader*> s_ShaderRecompilationStack;
+
             /// @brief Recursively imports all found assets in a given directory.
             /// @param directory Absolute path to a directory.
             static void RecursiveImport(std::filesystem::path directory);
@@ -80,12 +82,18 @@ namespace Dwarf {
             static void Remove(Ref<UID> uid);
             static void Remove(std::filesystem::path path);
 
+            static void RecompileShaders();
+
             static void AddShaderWatch(std::filesystem::path shaderAssetPath, Shader* shader){
                 s_ShaderAssetMap[shaderAssetPath] = shader;
             }
 
             static void RemoveShaderWatch(std::filesystem::path shaderAssetPath){
                 s_ShaderAssetMap.erase(shaderAssetPath);
+            }
+
+            static void AddShaderToRecompilationQueue(std::filesystem::path path){
+                s_ShaderRecompilationStack.push_back(s_ShaderAssetMap[path]);
             }
 
             template<typename T>

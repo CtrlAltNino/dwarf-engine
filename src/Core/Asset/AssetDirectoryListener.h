@@ -31,7 +31,8 @@ namespace Dwarf {
 
 				if(AssetDatabase::s_ShaderAssetMap.contains(path)){
 					std::cout << "A shader asset has been updated!" << std::endl;
-					AssetDatabase::s_ShaderAssetMap[path]->Compile();
+					//AssetDatabase::s_ShaderAssetMap[path]->Compile();
+					AssetDatabase::AddShaderToRecompilationQueue(path);
 				}
 
 				break;

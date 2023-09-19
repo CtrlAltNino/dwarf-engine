@@ -127,6 +127,7 @@ namespace Dwarf {
 
 			m_Window->NewFrame();
 			InputManager::OnUpdate();
+			AssetDatabase::RecompileShaders();
 			m_View->OnUpdate(m_Model->GetDeltaTime());
 			m_View->OnImGuiRender();
 
