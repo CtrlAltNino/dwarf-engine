@@ -133,7 +133,6 @@ namespace Dwarf {
 
         //UpdateRenderTexture();
         if((m_Framebuffer->GetSpecification().Width != ImGui::GetContentRegionAvail().x) || (m_Framebuffer->GetSpecification().Height != ImGui::GetContentRegionAvail().y)){
-            std::cout << "Resize" << std::endl;
             m_Framebuffer->Resize(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y);
             m_Settings.ViewportSize = glm::ivec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y);
             m_Camera->SetAspectRatio((float)ImGui::GetContentRegionAvail().x / (float)ImGui::GetContentRegionAvail().y);

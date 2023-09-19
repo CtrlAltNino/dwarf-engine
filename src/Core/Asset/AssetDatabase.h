@@ -57,6 +57,8 @@ namespace Dwarf {
         public:
             static Ref<entt::registry> s_Registry;
 
+            static std::map<std::filesystem::path, Shader*> s_ShaderAssetMap;
+
             /// @brief Initializes the asset database.
             static void Init(std::filesystem::path projectPath);
 
@@ -77,6 +79,14 @@ namespace Dwarf {
 
             static void Remove(Ref<UID> uid);
             static void Remove(std::filesystem::path path);
+
+            static void AddShaderWatch(std::filesystem::path shaderAssetPath, Shader* shader){
+                s_ShaderAssetMap[shaderAssetPath] = shader;
+            }
+
+            static void RemoveShaderWatch(std::filesystem::path shaderAssetPath){
+                s_ShaderAssetMap.erase(shaderAssetPath);
+            }
 
             template<typename T>
             static void Reimport(Ref<AssetReference<T>> asset){

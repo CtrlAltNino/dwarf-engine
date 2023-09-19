@@ -474,7 +474,6 @@ namespace Dwarf {
 		{
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - verticalIconOffset);
 			ImTextureID texID = (ImTextureID)m_PatreonIcon->GetTextureID();
-			//std::cout << "patreon tex id: " << *(uintptr_t)texID << std::endl;
 			ImGui::Image(texID, iconSize);
 			if (ImGui::IsItemHovered()) {
 				ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);

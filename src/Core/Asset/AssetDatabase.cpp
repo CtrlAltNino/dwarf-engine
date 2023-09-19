@@ -16,6 +16,7 @@ namespace Dwarf {
     efsw::FileWatcher * AssetDatabase::s_FileWatcher;
     efsw::WatchID AssetDatabase::s_WatchID;
     Ref<entt::registry> AssetDatabase::s_Registry;
+    std::map<std::filesystem::path, Shader*> AssetDatabase::s_ShaderAssetMap;
 
     void AssetDatabase::RecursiveImport(std::filesystem::path directory){
         for(auto& directoryEntry : std::filesystem::directory_iterator(directory)){
@@ -94,7 +95,6 @@ namespace Dwarf {
         for(auto entity : materialView){
             auto &mat = s_Registry->get<MaterialAsset>(entity);
             mat.m_Material->GetShader()->Compile();
-            std::cout << "Shader time" << std::endl;
         }
     }
 
@@ -105,8 +105,6 @@ namespace Dwarf {
     Ref<UID> AssetDatabase::Import(std::filesystem::path assetPath){
         std::string fileExtension = assetPath.extension().string();
         std::string fileName = assetPath.filename().string();
-
-        std::cout << "assetPath: " << assetPath << std::endl;
 
         // Remove asset if already present
 

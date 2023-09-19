@@ -24,9 +24,16 @@ namespace Dwarf {
 				break;
 			case efsw::Actions::Modified:
 				std::cout << "DIR (" << dir << ") FILE (" << filename << ") has event Modified" << std::endl;
+
 				if(path.has_extension() && path.extension() != ".meta"){
 					AssetDatabase::Reimport(path);
 				}
+
+				if(AssetDatabase::s_ShaderAssetMap.contains(path)){
+					std::cout << "A shader asset has been updated!" << std::endl;
+					AssetDatabase::s_ShaderAssetMap[path]->Compile();
+				}
+
 				break;
 			case efsw::Actions::Moved:
 					std::cout << "DIR (" << dir << ") FILE (" << filename << ") has event Moved from (" << oldFilename << ")" << std::endl;

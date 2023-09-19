@@ -7,22 +7,12 @@
 #include "Core/Asset/AssetReference.h"
 
 namespace Dwarf {
-
-	//std::string get_file_contents(const char* filename);
-
 	class Shader {
 	protected:
-		//std::string vertexShaderSource;
-		//std::string fragmentShaderSource;
-		//std::string geometryShaderSource;
 		bool m_SuccessfullyCompiled;
 	public:
 		Shader();
 		~Shader();
-		// ID of the shader program
-		//GLuint ID = -1;
-
-		//void AddGeometryShader(std::string filePath);
 
 		virtual void Compile()=0;
 
@@ -30,8 +20,6 @@ namespace Dwarf {
 			return m_SuccessfullyCompiled;
 		}
 
-		//void Activate();
-		//void Delete();
 		static Ref<Shader> Create();
 
 		static void Init();

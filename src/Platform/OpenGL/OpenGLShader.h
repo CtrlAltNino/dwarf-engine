@@ -9,8 +9,8 @@ namespace Dwarf {
     class OpenGLShader : public Shader{
         private:
             GLuint m_ID = -1;
-        public:
 
+        public:
             Ref<UID> m_VertexShader;
             Ref<UID> m_TessellationControlShader;
             Ref<UID> m_TessellationEvaluationShader;

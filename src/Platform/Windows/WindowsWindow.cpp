@@ -63,9 +63,6 @@ namespace Dwarf {
         m_Context = GraphicsContext::Create(m_Window);
 		m_Context->Init();
 
-        //SetVSync(true);
-
-        std::cout << (int)m_Api << std::endl;
         m_ImguiLayer = ImGuiLayer::Create(m_Api);
         m_ImguiLayer->OnAttach(m_Window);
 

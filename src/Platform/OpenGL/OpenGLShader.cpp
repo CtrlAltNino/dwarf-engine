@@ -6,10 +6,11 @@
 #include "Core/Asset/AssetComponents.h"
 
 namespace Dwarf {
-    OpenGLShader::OpenGLShader() { }
-    OpenGLShader::~OpenGLShader() { }
+    OpenGLShader::OpenGLShader() {}
+    OpenGLShader::~OpenGLShader() {}
 
     void OpenGLShader::Compile() {
+		std::cout << "Compiling Shader 1" << std::endl;
 		m_SuccessfullyCompiled = false;
 
         std::string vertexShaderSource;
@@ -19,8 +20,11 @@ namespace Dwarf {
 		std::string fragmentShaderSource;
 
 		if(AssetDatabase::Exists(m_VertexShader)){
-			vertexShaderSource = FileHandler::ReadFile(AssetDatabase::Retrieve<VertexShaderAsset>(m_VertexShader)->GetAsset()->m_Path);
+			std::filesystem::path vertexShaderPath = AssetDatabase::Retrieve<VertexShaderAsset>(m_VertexShader)->GetAsset()->m_Path;
+			vertexShaderSource = FileHandler::ReadFile(vertexShaderPath);
+			AssetDatabase::AddShaderWatch(vertexShaderPath, this);
 		}
+		std::cout << "Compiling Shader 2" << std::endl;
 
 		if(AssetDatabase::Exists(m_TessellationControlShader)){
 			tescShaderSource = FileHandler::ReadFile(AssetDatabase::Retrieve<TesselationControlShaderAsset>(m_TessellationControlShader)->GetAsset()->m_Path);
@@ -35,12 +39,19 @@ namespace Dwarf {
 		}
 
 		if(AssetDatabase::Exists(m_FragmentShader)){
+			std::filesystem::path fragmentShaderPath = AssetDatabase::Retrieve<FragmentShaderAsset>(m_FragmentShader)->GetAsset()->m_Path;
 			fragmentShaderSource = FileHandler::ReadFile(AssetDatabase::Retrieve<FragmentShaderAsset>(m_FragmentShader)->GetAsset()->m_Path);
+			AssetDatabase::AddShaderWatch(fragmentShaderPath, this);
 		}
 
+		std::cout << "Compiling Shader 3" << std::endl;
+
         if(vertexShaderSource.length() > 0 && fragmentShaderSource.length() > 0) {
+			std::cout << "Compiling Shader 4" << std::endl;
 			const char* vertexSource = vertexShaderSource.c_str();
 			const char* fragmentSource = fragmentShaderSource.c_str();
+
+			std::cout << vertexSource << std::endl;
 
 			GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
 			glShaderSource(vertexShader, 1, &vertexSource, NULL);
@@ -54,6 +65,7 @@ namespace Dwarf {
 				glDeleteShader(vertexShader);
 				return;
 			}
+			std::cout << "Compiling Shader 5" << std::endl;
 
 			GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
 			glShaderSource(fragmentShader, 1, &fragmentSource, NULL);
@@ -68,6 +80,7 @@ namespace Dwarf {
 				glDeleteShader(fragmentShader);
 				return;
 			}
+			std::cout << "Compiling Shader 6" << std::endl;
 
 			m_ID = glCreateProgram();
 
@@ -95,6 +108,7 @@ namespace Dwarf {
 					return;
 				}
 			}
+			std::cout << "Compiling Shader 7" << std::endl;
 
 			glLinkProgram(m_ID);
 
@@ -105,11 +119,12 @@ namespace Dwarf {
 				glDeleteShader(geometryShader);
 			}
 
+			std::cout << "Compiling Shader 8" << std::endl;
 			m_SuccessfullyCompiled = true;
-			std::cout << "Compiling shader" << std::endl;
 		}else {
 			// TODO log missing shader error
 		}
+		std::cout << "Compiling Shader END" << std::endl;
     }
 
     void OpenGLShader::SetVertexShader(Ref<UID> vertexShader) {
