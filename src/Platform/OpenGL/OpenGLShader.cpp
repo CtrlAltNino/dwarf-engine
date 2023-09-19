@@ -20,6 +20,7 @@ namespace Dwarf {
 		std::string fragmentShaderSource;
 
 		if(AssetDatabase::Exists(m_VertexShader)){
+			std::cout << "Found vertex shader" << std::endl;
 			std::filesystem::path vertexShaderPath = AssetDatabase::Retrieve<VertexShaderAsset>(m_VertexShader)->GetAsset()->m_Path;
 			vertexShaderSource = FileHandler::ReadFile(vertexShaderPath);
 			AssetDatabase::AddShaderWatch(vertexShaderPath, this);
@@ -39,6 +40,7 @@ namespace Dwarf {
 		}
 
 		if(AssetDatabase::Exists(m_FragmentShader)){
+			std::cout << "Found fragment shader" << std::endl;
 			std::filesystem::path fragmentShaderPath = AssetDatabase::Retrieve<FragmentShaderAsset>(m_FragmentShader)->GetAsset()->m_Path;
 			fragmentShaderSource = FileHandler::ReadFile(AssetDatabase::Retrieve<FragmentShaderAsset>(m_FragmentShader)->GetAsset()->m_Path);
 			AssetDatabase::AddShaderWatch(fragmentShaderPath, this);
@@ -51,14 +53,15 @@ namespace Dwarf {
 			const char* vertexSource = vertexShaderSource.c_str();
 			const char* fragmentSource = fragmentShaderSource.c_str();
 
-			std::cout << vertexSource << std::endl;
 
 			GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+			std::cout << "vertex shader id: " << vertexShader << std::endl;
 			glShaderSource(vertexShader, 1, &vertexSource, NULL);
 			glCompileShader(vertexShader);
 
 			GLint vertex_compiled;
 			glGetShaderInfoLog(vertexShader, 1024, &vert_log_length, vert_message);
+			std::cout << vert_message << std::endl;
 			glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &vertex_compiled);
 			if (vertex_compiled != GL_TRUE)
 			{

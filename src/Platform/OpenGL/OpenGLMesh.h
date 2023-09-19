@@ -17,9 +17,5 @@ namespace Dwarf {
 
         private:
             GLuint VAO, VBO, EBO;
-
-            void SetupVAO();
-            void SetupVBO();
-            void SetupEBO();
     };
 }
