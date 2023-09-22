@@ -18,6 +18,9 @@ namespace Dwarf {
 			Material(std::string name, Ref<Shader> shader);
 			~Material();
 
+			static Ref<Material> s_GridMaterial;
+			static void Init();
+
 			/// @brief Name of the material.
 			std::string m_Name;
 

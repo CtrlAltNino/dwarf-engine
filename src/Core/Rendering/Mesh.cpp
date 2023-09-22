@@ -15,6 +15,7 @@
 #endif
 
 namespace Dwarf {
+	Ref<Mesh> Mesh::s_GridMesh = nullptr;
     Ref<Mesh> Mesh::Create(std::vector<Vertex> vertices, std::vector<unsigned int> indices, unsigned int materialIndex)
 	{
 		switch (Renderer::GetAPI())
@@ -49,5 +50,17 @@ namespace Dwarf {
 #endif
 		}
 		return nullptr;
+	}
+
+	void Mesh::Init(){
+		s_GridMesh = Mesh::Create(
+			{
+				{{-50,0,50}, {0,1,0}},
+				{{50,0,50}, {0,1,0}},
+				{{50,0,-50}, {0,1,0}},
+				{{-50,0,-50}, {0,1,0}}
+			},
+			{0, 1, 2, 2, 3, 0}, 0
+		);
 	}
 }

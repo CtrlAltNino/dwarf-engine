@@ -96,14 +96,18 @@ namespace Dwarf {
                 s_ShaderRecompilationStack.push_back(s_ShaderAssetMap[path]);
             }
 
+            static void AddShaderToRecompilationQueue(Shader* shader){
+                s_ShaderRecompilationStack.push_back(shader);
+            }
+
             template<typename T>
             static void Reimport(Ref<AssetReference<T>> asset){
                 Reimport(asset->GetPath());
             }
 
-            static void Reimport(std::filesystem::path assetPath){
+            static Ref<UID> Reimport(std::filesystem::path assetPath){
                 AssetDatabase::Remove(assetPath);
-                AssetDatabase::Import(assetPath);
+                return AssetDatabase::Import(assetPath);
             }
 
             static void ReimportAssets();

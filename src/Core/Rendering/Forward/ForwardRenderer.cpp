@@ -4,6 +4,7 @@
 #include "Core/Asset/AssetDatabase.h"
 
 namespace Dwarf {
+
     ForwardRenderer::ForwardRenderer(){
         m_RendererApi = RendererApi::Create();
         m_RendererApi->Init();
@@ -39,6 +40,9 @@ namespace Dwarf {
                 }
             }
         }
+
+        // Render grid
+        m_RendererApi->RenderIndexed(Mesh::s_GridMesh, Material::s_GridMaterial, glm::mat4(1.0f), camera->GetViewMatrix(), camera->GetProjectionMatrix());
     }
 
     Ref<Framebuffer> ForwardRenderer::CreateFramebuffer(glm::ivec2 resolution){

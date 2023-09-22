@@ -3,6 +3,13 @@
 
 namespace Dwarf {
 
+	Ref<Material> Material::s_GridMaterial = nullptr;
+
+	void Material::Init(){
+		s_GridMaterial = CreateRef<Material>("grid material", Shader::s_GridShader);
+		s_GridMaterial->SetTransparency(true);
+	}
+
 	Material::Material(std::string name) : m_Name(name) {
 		m_Shader = Shader::s_DefaultShader;
 	}

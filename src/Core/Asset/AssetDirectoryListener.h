@@ -27,12 +27,28 @@ namespace Dwarf {
 
 				if(path.has_extension() && path.extension() != ".meta"){
 					AssetDatabase::Reimport(path);
-				}
-
-				if(AssetDatabase::s_ShaderAssetMap.contains(path)){
-					std::cout << "A shader asset has been updated!" << std::endl;
-					//AssetDatabase::s_ShaderAssetMap[path]->Compile();
-					AssetDatabase::AddShaderToRecompilationQueue(path);
+					switch(AssetDatabase::GetType(path)){
+						case ASSET_TYPE::COMPUTE_SHADER:
+						case ASSET_TYPE::FRAGMENT_SHADER :
+						case ASSET_TYPE::GEOMETRY_SHADER :
+						case ASSET_TYPE::HLSL_SHADER :
+						case ASSET_TYPE::TESC_SHADER :
+						case ASSET_TYPE::TESE_SHADER :
+						case ASSET_TYPE::VERTEX_SHADER :
+						{
+							if(AssetDatabase::s_ShaderAssetMap.contains(path)){
+								std::cout << "A shader asset has been updated!" << std::endl;
+								//AssetDatabase::s_ShaderAssetMap[path]->Compile();
+								AssetDatabase::AddShaderToRecompilationQueue(path);
+							}
+							break;
+						}
+						case ASSET_TYPE::MATERIAL :
+						{
+							Ref<AssetReference<MaterialAsset>> mat = AssetDatabase::Retrieve<MaterialAsset>(path);
+							AssetDatabase::AddShaderToRecompilationQueue(mat->GetAsset()->m_Material->GetShader().get());
+						}
+					}
 				}
 
 				break;

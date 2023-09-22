@@ -45,6 +45,8 @@ namespace Dwarf {
     void AssetDatabase::ReimportAssets(){
         s_Registry->clear();
 		Shader::Init();
+        Material::Init();
+        Mesh::Init();
         RecursiveImport(s_AssetFolderPath);
     }
 

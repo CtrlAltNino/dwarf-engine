@@ -41,6 +41,14 @@ namespace Dwarf {
 
 		glUseProgram(shader->GetID());
 
+		if (material->IsTransparent()) {
+			glEnable(GL_BLEND);
+			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+		}
+
+		glEnable(GL_CULL_FACE);
+		glCullFace(GL_BACK);
+
 		for(auto const& [key, val] : material->GetTextures()){
 			if(val){
 				glActiveTexture(GL_TEXTURE0+textureInputCounter);
@@ -103,6 +111,9 @@ namespace Dwarf {
 		glDrawElements(GL_TRIANGLES, oglMesh->m_IndexCount, GL_UNSIGNED_INT, 0);
 
 		oglMesh->Unbind();
+
+		glDisable(GL_BLEND);
+		glDisable(GL_CULL_FACE);
 		glUseProgram(0);
 	}
 }

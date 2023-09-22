@@ -81,7 +81,7 @@ namespace Dwarf {
 
 	// ========== Camera Functions ==========
 	void Camera::OnUpdate(double deltaTime){
-        static glm::ivec2 deltaMousePos = InputManager::GetDeltaMousePos();
+        glm::ivec2 deltaMousePos = InputManager::GetDeltaMousePos();
 
         if (deltaMousePos.length() > 0) {
             float yAngle = deltaMousePos.x * m_sensitivity;
@@ -135,12 +135,12 @@ namespace Dwarf {
             (InputManager::GetKey(KEYCODE::Q) ? -1 : 0) + (InputManager::GetKey(KEYCODE::E) ? 1 : 0),
             (InputManager::GetKey(KEYCODE::W) ? -1 : 0) + (InputManager::GetKey(KEYCODE::S) ? 1 : 0) };
 
-        glm::mat4 rotMat/* = glm::rotate(glm::mat4(1.0f), renderTexture->GetCamera()->transform.rotation.x * DEG_2_RAD, glm::vec3(1.0f, 0.0f, 0.0f))
-                * glm::rotate(glm::mat4(1.0f), renderTexture->GetCamera()->transform.rotation.y * DEG_2_RAD, glm::vec3(0.0f, 1.0f, 0.0f))*/;
+        glm::mat4 rotMat = glm::rotate(glm::mat4(1.0f), m_Transform->rotation.x * DEG_2_RAD, glm::vec3(1.0f, 0.0f, 0.0f))
+                * glm::rotate(glm::mat4(1.0f), m_Transform->rotation.y * DEG_2_RAD, glm::vec3(0.0f, 1.0f, 0.0f));
 
         if (glm::length(movementVector) > 0) {
             movementVector = glm::normalize(movementVector);
-            movementVector *= /*model->GetDeltaTime() **/ m_MovementSpeed * (InputManager::GetKey(KEYCODE::LEFT_SHIFT) ? 2 : 1);
+            movementVector *= deltaTime * m_MovementSpeed * (InputManager::GetKey(KEYCODE::LEFT_SHIFT) ? 2 : 1);
 
             glm::vec4 deltaVec4 = glm::inverse(rotMat) * glm::vec4(movementVector.x, movementVector.y, movementVector.z, 1.0f);
 
