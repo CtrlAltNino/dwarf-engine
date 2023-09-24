@@ -12,7 +12,7 @@ namespace Dwarf{
         public:
             ForwardRenderer();
             ~ForwardRenderer();
-            virtual void RenderScene(Ref<Scene> scene, Ref<Camera> camera, glm::ivec2 viewportSize) override;
+            virtual void RenderScene(Ref<Scene> scene, Ref<Camera> camera, glm::ivec2 viewportSize, boolean renderGrid) override;
             virtual Ref<Framebuffer> CreateFramebuffer(glm::ivec2 resolution) override;
     };
 }

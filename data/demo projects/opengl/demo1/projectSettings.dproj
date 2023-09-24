@@ -1,6 +1,8 @@
 {
     "projectInformation": {
-        "projectName": "OpenGL demo",
-        "graphicsApi": 2
+        "graphicsApi": 2,
+        "lastOpened": 1695554452,
+        "lastOpenedScene": 13180464931667993639,
+        "projectName": "OpenGL Demo"
     }
 }

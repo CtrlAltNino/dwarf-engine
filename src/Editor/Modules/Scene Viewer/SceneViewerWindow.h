@@ -45,6 +45,8 @@ namespace Dwarf {
         glm::ivec2 ViewportSize;
 
         bool CameraMovement = false;
+
+        bool RenderGrid = true;
     };
 
     /// @brief Module to render a window that displays the scene and render options.

@@ -29,6 +29,7 @@ namespace Dwarf {
             /// @param metaData The metadata in JSON.
             static void SetMetaData(std::filesystem::path path, nlohmann::json metaData){
                 std::string fileContent = metaData.dump(4);
+                std::cout << "Set meta data path: " << path << std::endl;
 
                 if (!FileHandler::CheckIfDirectoyExists(path)) {
                     FileHandler::CreateDirectory(path);

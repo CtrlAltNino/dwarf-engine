@@ -20,7 +20,7 @@ namespace Dwarf {
 			static RendererType GetType();
 			static void Create(GraphicsApi api, Renderer::RendererType type);
 			static Ref<Renderer> Get() { return s_Renderer; }
-			virtual void RenderScene(Ref<Scene> scene, Ref<Camera> camera, glm::ivec2 viewportSize)=0;
+			virtual void RenderScene(Ref<Scene> scene, Ref<Camera> camera, glm::ivec2 viewportSize, boolean renderGrid)=0;
 			virtual Ref<Framebuffer> CreateFramebuffer(glm::ivec2 resolution)=0;
 		private:
 			static GraphicsApi s_Api;

@@ -18,6 +18,8 @@ namespace Dwarf {
 			Material(std::string name, Ref<Shader> shader);
 			~Material();
 
+			static Ref<Material> s_DefaultMaterial;
+			static Ref<Material> s_ErrorMaterial;
 			static Ref<Material> s_GridMaterial;
 			static void Init();
 
@@ -133,6 +135,8 @@ namespace Dwarf {
 			/// @param uniformName Name of the uniform to remove.
 			template<typename T>
 			void RemoveShaderInput(std::string uniformName);
+
+			void GenerateShaderInputs();
 
 			/*static Material CreateBasicMaterial(){
 				Material mat(new Shader("data/engine/shaders/default/opengl/default"));

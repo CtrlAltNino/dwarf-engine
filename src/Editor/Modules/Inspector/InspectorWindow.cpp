@@ -412,6 +412,12 @@ namespace Dwarf {
             AssetDatabase::Reimport(asset);
         }
 
+        ImGui::SameLine();
+
+        if(ImGui::Button("Generate Inputs", ImVec2(100, 50))){
+            mat->GenerateShaderInputs();
+        }
+
         draw_list->ChannelsSetCurrent(0);
 
         ImGui::EndGroup();

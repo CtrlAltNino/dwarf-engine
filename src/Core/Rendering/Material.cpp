@@ -3,9 +3,13 @@
 
 namespace Dwarf {
 
+	Ref<Material> Material::s_DefaultMaterial = nullptr;
+	Ref<Material> Material::s_ErrorMaterial = nullptr;
 	Ref<Material> Material::s_GridMaterial = nullptr;
 
 	void Material::Init(){
+		s_DefaultMaterial = CreateRef<Material>("Default Material", Shader::s_DefaultShader);
+		s_ErrorMaterial = CreateRef<Material>("Error Material", Shader::s_ErrorShader);
 		s_GridMaterial = CreateRef<Material>("grid material", Shader::s_GridShader);
 		s_GridMaterial->SetTransparency(true);
 	}
@@ -213,5 +217,9 @@ namespace Dwarf {
 	/// @brief 4D vector uniforms.
 	std::map<std::string, glm::vec4> Material::Get4DUniforms(){
 		return m_Vector4Uniforms;
+	}
+
+	void Material::GenerateShaderInputs(){
+		// Get all shader inputs from abstract Shader function and put them in the maps
 	}
 }

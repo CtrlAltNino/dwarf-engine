@@ -12,7 +12,7 @@ namespace Dwarf {
     }
     ForwardRenderer::~ForwardRenderer(){}
 
-    void ForwardRenderer::RenderScene(Ref<Scene> scene, Ref<Camera> camera, glm::ivec2 viewportSize){
+    void ForwardRenderer::RenderScene(Ref<Scene> scene, Ref<Camera> camera, glm::ivec2 viewportSize, boolean renderGrid){
         m_RendererApi->Clear();
         m_RendererApi->SetViewport(0,0, viewportSize.x, viewportSize.y);
 
@@ -31,10 +31,14 @@ namespace Dwarf {
                 {
                     if(model->m_Meshes.at(i)->GetMaterialIndex()-1 < meshRenderer.materialAssets.size())
                     {
-                        if(meshRenderer.materialAssets.at(model->m_Meshes.at(i)->GetMaterialIndex()-1) != nullptr)
+                        if(meshRenderer.materialAssets.at(model->m_Meshes.at(i)->GetMaterialIndex()-1) != nullptr && AssetDatabase::Exists(meshRenderer.materialAssets.at(model->m_Meshes.at(i)->GetMaterialIndex()-1)))
                         {
                             Ref<MaterialAsset> material = AssetDatabase::Retrieve<MaterialAsset>(meshRenderer.materialAssets.at(model->m_Meshes.at(i)->GetMaterialIndex()-1))->GetAsset();
-                            m_RendererApi->RenderIndexed(model->m_Meshes.at(i), material->m_Material, modelMatrix, camera->GetViewMatrix(), camera->GetProjectionMatrix());
+                            if(material->m_Material->GetShader() != nullptr && material->m_Material->GetShader()->IsCompiled()){
+                                m_RendererApi->RenderIndexed(model->m_Meshes.at(i), material->m_Material, modelMatrix, camera->GetViewMatrix(), camera->GetProjectionMatrix());
+                            }else{
+                                m_RendererApi->RenderIndexed(model->m_Meshes.at(i), Material::s_ErrorMaterial, modelMatrix, camera->GetViewMatrix(), camera->GetProjectionMatrix());
+                            }
                         }
                     }
                 }
@@ -42,7 +46,9 @@ namespace Dwarf {
         }
 
         // Render grid
-        m_RendererApi->RenderIndexed(Mesh::s_GridMesh, Material::s_GridMaterial, glm::mat4(1.0f), camera->GetViewMatrix(), camera->GetProjectionMatrix());
+        if(renderGrid){
+            m_RendererApi->RenderIndexed(Mesh::s_GridMesh, Material::s_GridMaterial, glm::mat4(1.0f), camera->GetViewMatrix(), camera->GetProjectionMatrix());
+        }
     }
 
     Ref<Framebuffer> ForwardRenderer::CreateFramebuffer(glm::ivec2 resolution){

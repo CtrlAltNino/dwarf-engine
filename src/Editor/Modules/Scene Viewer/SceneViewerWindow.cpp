@@ -33,7 +33,7 @@ namespace Dwarf {
 
         // Render scene to the framebuffer with the camera
         m_Framebuffer->Bind();
-        Renderer::Get()->RenderScene(m_Model->GetScene(), m_Camera, m_Settings.ViewportSize);
+        Renderer::Get()->RenderScene(m_Model->GetScene(), m_Camera, m_Settings.ViewportSize, m_Settings.RenderGrid);
         m_Framebuffer->Unbind();
     }
 
@@ -125,6 +125,10 @@ namespace Dwarf {
             m_Settings.Resolution[0] = std::max(MIN_RESOLUTION_WIDTH, std::min(MAX_RESOLUTION_WIDTH, m_Settings.Resolution[0]));
             m_Settings.Resolution[1] = std::max(MIN_RESOLUTION_WIDTH, std::min(MAX_RESOLUTION_WIDTH, m_Settings.Resolution[1]));
         }
+
+        ImGui::SameLine(0, 5);
+
+        if(ImGui::Checkbox("Render Grid", &m_Settings.RenderGrid));
 
         ImGui::PopStyleVar();
         ImGui::PopItemWidth();

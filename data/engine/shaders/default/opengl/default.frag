@@ -71,5 +71,5 @@ void main(){
 	}
 
 	FragColor = vec4((ambientColor + diffuseColor + specularColor) * objectColor.rgb, objectColor.a);
-	APPLY_FOG(FragColor)
+	//APPLY_FOG(FragColor)
 }
