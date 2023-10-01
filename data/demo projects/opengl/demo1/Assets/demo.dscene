@@ -20,13 +20,13 @@
     "hierarchy": [
         {
             "children": null,
-            "guid": 1879919084434300167,
+            "guid": 6013903966012134916,
             "meshRendererComponent": {
                 "canCastShadows": false,
                 "materials": [
-                    7616102942245898002
+                    11764313023123806679
                 ],
-                "mesh": 234194044696984297
+                "mesh": 9723462344420123347
             },
             "name": "Olaf",
             "transformComponent": {

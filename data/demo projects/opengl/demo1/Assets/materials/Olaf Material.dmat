@@ -5,11 +5,11 @@
         "useNormalMap": 0.0
     },
     "shader": {
-        "fragmentShader": 9940113931578059243,
-        "vertexShader": 7371730067695295422
+        "fragmentShader": 14061746720130837310,
+        "vertexShader": 11679312884022831564
     },
     "textures": {
-        "albedoMap": 2988983726185017153
+        "albedoMap": 8627568511895203065
     },
     "transparent": true,
     "vec4Uniforms": {
