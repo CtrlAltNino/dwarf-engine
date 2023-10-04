@@ -213,4 +213,8 @@ namespace Dwarf {
         ImGui::End();
         ImGui::PopStyleVar();
     }
+
+    std::string DebugWindow::Serialize(){
+        return "";
+    }
 }

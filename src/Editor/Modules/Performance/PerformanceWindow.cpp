@@ -51,4 +51,8 @@ namespace Dwarf {
 
 		ImGui::End();
 	}
+
+    std::string PerformanceWindow::Serialize(){
+        return "";
+    }
 }

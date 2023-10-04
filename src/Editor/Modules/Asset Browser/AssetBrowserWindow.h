@@ -82,6 +82,8 @@ namespace Dwarf {
             void OnImGuiRender() override;
 
             /// @brief Executes all pre frame tasks.
-            void OnUpdate(double deltaTime) override;
+            virtual void OnUpdate(double deltaTime) override;
+
+            virtual std::string Serialize() override;
     };
 }

@@ -44,5 +44,7 @@ namespace Dwarf {
             void OnImGuiRender() override;
 
             void OnUpdate(double deltaTime) override;
+
+            virtual std::string Serialize() override;
     };
 }

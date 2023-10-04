@@ -271,4 +271,8 @@ namespace Dwarf {
     void SceneHierarchyWindow::OnUpdate(double deltaTime){
 
     }
+
+    std::string SceneHierarchyWindow::Serialize(){
+        return "";
+    }
 }

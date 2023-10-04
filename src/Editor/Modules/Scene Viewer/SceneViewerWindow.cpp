@@ -256,4 +256,15 @@ namespace Dwarf {
 
         return center / (float)m_Model->m_Selection.selectedEntities.size();
     }
+
+    std::string SceneViewerWindow::Serialize(){
+        nlohmann::json state;
+
+        // TODO Serialize scene viewer settings
+        // TODO Serialize camera settings
+        //state["openedPath"] = m_CurrentDirectory;
+
+        //return state.dump(4);
+        return "";
+    }
 }

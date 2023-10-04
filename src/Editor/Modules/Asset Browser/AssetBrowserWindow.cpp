@@ -353,4 +353,12 @@ namespace Dwarf {
         m_Model->m_Selection.assetPath = "";
         m_Model->m_Selection.selectionType = INSPECTOR_SELECTION_TYPE::NONE;
     }
+
+    std::string AssetBrowserWindow::Serialize(){
+        nlohmann::json state;
+
+        state["openedPath"] = m_CurrentDirectory;
+
+        return state.dump(4);
+    }
 }

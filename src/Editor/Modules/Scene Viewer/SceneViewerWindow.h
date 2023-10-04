@@ -86,5 +86,7 @@ namespace Dwarf {
             /// @brief Returns the frame buffer of the scene viewer as an IMGUI texture ID:
             /// @return The texture ID of the frame buffer.
             ImTextureID GetFrameBufferForImGui();
+
+            virtual std::string Serialize() override;
     };
 }

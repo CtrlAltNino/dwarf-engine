@@ -679,4 +679,8 @@ namespace Dwarf {
         }
         draw_list->ChannelsMerge();
     }
+
+    std::string InspectorWindow::Serialize(){
+        return "";
+    }
 }
