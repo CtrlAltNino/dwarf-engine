@@ -15,7 +15,7 @@ namespace Dwarf {
 			{
 			case efsw::Actions::Add:
 				std::cout << "DIR (" << dir << ") FILE (" << filename << ") has event Added" << std::endl;
-				if(path.has_extension() && path.extension() != ".meta"){
+				if(path.has_extension() && path.extension() != AssetMetaData::META_DATA_EXTENSION){
 					AssetDatabase::Import(path);
 				}
 				break;
@@ -25,7 +25,7 @@ namespace Dwarf {
 			case efsw::Actions::Modified:
 				std::cout << "DIR (" << dir << ") FILE (" << filename << ") has event Modified" << std::endl;
 
-				if(path.has_extension() && path.extension() != ".meta"){
+				if(path.has_extension() && path.extension() != AssetMetaData::META_DATA_EXTENSION){
 					AssetDatabase::Reimport(path);
 					switch(AssetDatabase::GetType(path)){
 						case ASSET_TYPE::COMPUTE_SHADER:
@@ -38,7 +38,6 @@ namespace Dwarf {
 						{
 							if(AssetDatabase::s_ShaderAssetMap.contains(path)){
 								std::cout << "A shader asset has been updated!" << std::endl;
-								//AssetDatabase::s_ShaderAssetMap[path]->Compile();
 								AssetDatabase::AddShaderToRecompilationQueue(path);
 							}
 							break;

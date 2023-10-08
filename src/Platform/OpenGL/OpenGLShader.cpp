@@ -5,46 +5,62 @@
 #include "Core/Asset/AssetDatabase.h"
 #include "Core/Asset/AssetComponents.h"
 
-namespace Dwarf {
-    OpenGLShader::OpenGLShader() {}
-    OpenGLShader::~OpenGLShader() {}
+namespace Dwarf
+{
+	OpenGLShader::OpenGLShader() {}
+	OpenGLShader::~OpenGLShader() {}
 
-    void OpenGLShader::Compile() {
+	void OpenGLShader::Compile()
+	{
 		m_SuccessfullyCompiled = false;
 
-        std::string vertexShaderSource;
+		std::string vertexShaderSource;
 		std::string tescShaderSource;
 		std::string teseShaderSource;
 		std::string geometryShaderSource;
 		std::string fragmentShaderSource;
 
-		if(AssetDatabase::Exists(m_VertexShader)){
-			std::filesystem::path vertexShaderPath = AssetDatabase::Retrieve<VertexShaderAsset>(m_VertexShader)->GetAsset()->m_Path;
+		if (m_VertexShaderAsset != nullptr && AssetDatabase::Exists(m_VertexShaderAsset))
+		{
+			std::filesystem::path vertexShaderPath = AssetDatabase::Retrieve<VertexShaderAsset>(m_VertexShaderAsset)->GetAsset()->m_Path;
 			vertexShaderSource = FileHandler::ReadFile(vertexShaderPath);
 			AssetDatabase::AddShaderWatch(vertexShaderPath, this);
 		}
-
-		if(AssetDatabase::Exists(m_TessellationControlShader)){
-			tescShaderSource = FileHandler::ReadFile(AssetDatabase::Retrieve<TesselationControlShaderAsset>(m_TessellationControlShader)->GetAsset()->m_Path);
+		else
+		{
+			vertexShaderSource = m_VertexShaderSource;
 		}
 
-		if(AssetDatabase::Exists(m_TessellationEvaluationShader)){
-			teseShaderSource = FileHandler::ReadFile(AssetDatabase::Retrieve<TesselationEvaluationShaderAsset>(m_TessellationEvaluationShader)->GetAsset()->m_Path);
+		if (AssetDatabase::Exists(m_TessellationControlShaderAsset))
+		{
+			tescShaderSource = FileHandler::ReadFile(AssetDatabase::Retrieve<TesselationControlShaderAsset>(m_TessellationControlShaderAsset)->GetAsset()->m_Path);
 		}
 
-		if(AssetDatabase::Exists(m_GeometryShader)){
-			geometryShaderSource = FileHandler::ReadFile(AssetDatabase::Retrieve<GeometryShaderAsset>(m_GeometryShader)->GetAsset()->m_Path);
+		if (AssetDatabase::Exists(m_TessellationEvaluationShaderAsset))
+		{
+			teseShaderSource = FileHandler::ReadFile(AssetDatabase::Retrieve<TesselationEvaluationShaderAsset>(m_TessellationEvaluationShaderAsset)->GetAsset()->m_Path);
 		}
 
-		if(AssetDatabase::Exists(m_FragmentShader)){
-			std::filesystem::path fragmentShaderPath = AssetDatabase::Retrieve<FragmentShaderAsset>(m_FragmentShader)->GetAsset()->m_Path;
-			fragmentShaderSource = FileHandler::ReadFile(AssetDatabase::Retrieve<FragmentShaderAsset>(m_FragmentShader)->GetAsset()->m_Path);
+		if (AssetDatabase::Exists(m_GeometryShaderAsset))
+		{
+			geometryShaderSource = FileHandler::ReadFile(AssetDatabase::Retrieve<GeometryShaderAsset>(m_GeometryShaderAsset)->GetAsset()->m_Path);
+		}
+
+		if (m_FragmentShaderAsset != nullptr && AssetDatabase::Exists(m_VertexShaderAsset))
+		{
+			std::filesystem::path fragmentShaderPath = AssetDatabase::Retrieve<FragmentShaderAsset>(m_FragmentShaderAsset)->GetAsset()->m_Path;
+			fragmentShaderSource = FileHandler::ReadFile(AssetDatabase::Retrieve<FragmentShaderAsset>(m_FragmentShaderAsset)->GetAsset()->m_Path);
 			AssetDatabase::AddShaderWatch(fragmentShaderPath, this);
 		}
+		else
+		{
+			fragmentShaderSource = m_FragmentShaderSource;
+		}
 
-        if(vertexShaderSource.length() > 0 && fragmentShaderSource.length() > 0) {
-			const char* vertexSource = vertexShaderSource.c_str();
-			const char* fragmentSource = fragmentShaderSource.c_str();
+		if (vertexShaderSource.length() > 0 && fragmentShaderSource.length() > 0)
+		{
+			const char *vertexSource = vertexShaderSource.c_str();
+			const char *fragmentSource = fragmentShaderSource.c_str();
 
 			GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
 			glShaderSource(vertexShader, 1, &vertexSource, NULL);
@@ -80,8 +96,9 @@ namespace Dwarf {
 
 			GLuint geometryShader = -1;
 
-			if(geometryShaderSource.length() > 0) {
-				const char* geometrySource = geometryShaderSource.c_str();
+			if (geometryShaderSource.length() > 0)
+			{
+				const char *geometrySource = geometryShaderSource.c_str();
 
 				GLuint geometryShader = glCreateShader(GL_GEOMETRY_SHADER);
 				glShaderSource(geometryShader, 1, &geometrySource, NULL);
@@ -104,73 +121,123 @@ namespace Dwarf {
 			glDeleteShader(vertexShader);
 			glDeleteShader(fragmentShader);
 
-			if(geometryShader != -1) {
+			if (geometryShader != -1)
+			{
 				glDeleteShader(geometryShader);
 			}
 
 			m_SuccessfullyCompiled = true;
-		}else {
+		}
+		else
+		{
 			// TODO log missing shader error
 		}
-    }
-
-    void OpenGLShader::SetVertexShader(Ref<UID> vertexShader) {
-		m_VertexShader = vertexShader;
 	}
 
-	void OpenGLShader::SetFragmentShader(Ref<UID> fragmentShader) {
-		m_FragmentShader = fragmentShader;
+	void OpenGLShader::SetVertexShader(Ref<UID> vertexShader)
+	{
+		m_VertexShaderAsset = vertexShader;
+		m_VertexShaderSource = nullptr;
 	}
 
-	void OpenGLShader::SetTesselaltionControlShader(Ref<UID> tessellationControlShader) {
-		m_TessellationControlShader = tessellationControlShader;
+	void OpenGLShader::SetVertexShader(std::string vertexShader)
+	{
+		m_VertexShaderAsset = nullptr;
+		m_VertexShaderSource = vertexShader;
 	}
 
-	void OpenGLShader::SetTesselaltionEvaluationShader(Ref<UID> tessellationEvaluationShader) {
-		m_TessellationEvaluationShader = tessellationEvaluationShader;
+	void OpenGLShader::SetFragmentShader(Ref<UID> fragmentShader)
+	{
+		m_FragmentShaderAsset = fragmentShader;
+		m_FragmentShaderSource = nullptr;
 	}
 
-    void OpenGLShader::SetGeometryShader(Ref<UID> geometryShader) {
-		m_GeometryShader = geometryShader;
+	void OpenGLShader::SetFragmentShader(std::string fragmentShader)
+	{
+		m_FragmentShaderAsset = nullptr;
+		m_FragmentShaderSource = fragmentShader;
 	}
 
-    Ref<UID> OpenGLShader::GetVertexShader() {
-		return m_VertexShader;
+	void OpenGLShader::SetTesselaltionControlShader(Ref<UID> tessellationControlShader)
+	{
+		m_TessellationControlShaderAsset = tessellationControlShader;
+		m_TessellationControlShaderSource = nullptr;
 	}
 
-	Ref<UID> OpenGLShader::GetFragmentShader() {
-		return m_FragmentShader;
+	void OpenGLShader::SetTesselaltionControlShader(std::string tessellationControlShader)
+	{
+		m_TessellationControlShaderAsset = nullptr;
+		m_TessellationControlShaderSource = tessellationControlShader;
 	}
 
-    Ref<UID> OpenGLShader::GetGeometryShader() {
-		return m_GeometryShader;
+	void OpenGLShader::SetTesselaltionEvaluationShader(Ref<UID> tessellationEvaluationShader)
+	{
+		m_TessellationEvaluationShaderAsset = tessellationEvaluationShader;
+		m_TessellationEvaluationShaderSource = nullptr;
 	}
 
-    GLuint OpenGLShader::GetID(){
-        return m_ID;
-    }
+	void OpenGLShader::SetTesselaltionEvaluationShader(std::string tessellationEvaluationShader)
+	{
+		m_TessellationEvaluationShaderAsset = nullptr;
+		m_TessellationEvaluationShaderSource = tessellationEvaluationShader;
+	}
 
-    Ref<OpenGLShader> OpenGLShader::CreateDefaultShader(){
-        Ref<OpenGLShader> defaultShader = CreateRef<OpenGLShader>(OpenGLShader());
-        defaultShader->SetVertexShader(AssetDatabase::Import(Shader::GetDefaultShaderPath() / "default.vert"));
-        defaultShader->SetFragmentShader(AssetDatabase::Import(Shader::GetDefaultShaderPath() / "default.frag"));
-        defaultShader->Compile();
-        return defaultShader;
-    }
+	void OpenGLShader::SetGeometryShader(Ref<UID> geometryShader)
+	{
+		m_GeometryShaderAsset = geometryShader;
+		m_GeometryShaderSource = nullptr;
+	}
 
-    Ref<OpenGLShader> OpenGLShader::CreateErrorShader(){
-        Ref<OpenGLShader> errorShader = CreateRef<OpenGLShader>(OpenGLShader());
-        errorShader->SetVertexShader(AssetDatabase::Import(Shader::GetErrorShaderPath() / "error.vert"));
-        errorShader->SetFragmentShader(AssetDatabase::Import(Shader::GetErrorShaderPath() / "error.frag"));
-        errorShader->Compile();
-        return errorShader;
-    }
+	void OpenGLShader::SetGeometryShader(std::string geometryShader)
+	{
+		m_GeometryShaderAsset = nullptr;
+		m_GeometryShaderSource = geometryShader;
+	}
 
-    Ref<OpenGLShader> OpenGLShader::CreateGridShader(){
-        Ref<OpenGLShader> gridShader = CreateRef<OpenGLShader>(OpenGLShader());
-        gridShader->SetVertexShader(AssetDatabase::Import(Shader::GetGridShaderPath() / "grid.vert"));
-        gridShader->SetFragmentShader(AssetDatabase::Import(Shader::GetGridShaderPath() / "grid.frag"));
-        gridShader->Compile();
-        return gridShader;
-    }
+	Ref<UID> OpenGLShader::GetVertexShader()
+	{
+		return m_VertexShaderAsset;
+	}
+
+	Ref<UID> OpenGLShader::GetFragmentShader()
+	{
+		return m_FragmentShaderAsset;
+	}
+
+	Ref<UID> OpenGLShader::GetGeometryShader()
+	{
+		return m_GeometryShaderAsset;
+	}
+
+	GLuint OpenGLShader::GetID()
+	{
+		return m_ID;
+	}
+
+	Ref<OpenGLShader> OpenGLShader::CreateDefaultShader()
+	{
+		Ref<OpenGLShader> defaultShader = CreateRef<OpenGLShader>(OpenGLShader());
+		defaultShader->SetVertexShader(FileHandler::ReadFile(Shader::GetDefaultShaderPath() / "default.vert"));
+		defaultShader->SetFragmentShader(FileHandler::ReadFile(Shader::GetDefaultShaderPath() / "default.frag"));
+		defaultShader->Compile();
+		return defaultShader;
+	}
+
+	Ref<OpenGLShader> OpenGLShader::CreateErrorShader()
+	{
+		Ref<OpenGLShader> errorShader = CreateRef<OpenGLShader>(OpenGLShader());
+		errorShader->SetVertexShader(FileHandler::ReadFile(Shader::GetErrorShaderPath() / "error.vert"));
+		errorShader->SetFragmentShader(FileHandler::ReadFile(Shader::GetErrorShaderPath() / "error.frag"));
+		errorShader->Compile();
+		return errorShader;
+	}
+
+	Ref<OpenGLShader> OpenGLShader::CreateGridShader()
+	{
+		Ref<OpenGLShader> gridShader = CreateRef<OpenGLShader>(OpenGLShader());
+		gridShader->SetVertexShader(FileHandler::ReadFile(Shader::GetGridShaderPath() / "grid.vert"));
+		gridShader->SetFragmentShader(FileHandler::ReadFile(Shader::GetGridShaderPath() / "grid.frag"));
+		gridShader->Compile();
+		return gridShader;
+	}
 }

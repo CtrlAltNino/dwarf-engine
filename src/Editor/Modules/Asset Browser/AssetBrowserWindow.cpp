@@ -205,7 +205,7 @@ namespace Dwarf {
             const auto& path = directoryEntry.path();
             auto relativePath = std::filesystem::relative(path, m_AssetDirectoryPath);
 
-            if(!(directoryEntry.path().has_extension() && directoryEntry.path().extension() == ".meta")){
+            if(!(directoryEntry.path().has_extension() && directoryEntry.path().extension() == AssetMetaData::META_DATA_EXTENSION)){
                 float padding = 16.0f * m_IconScale;
                 float halfPadding = padding / 2.0f;
                 float cellWidth = 64.0f * m_IconScale;

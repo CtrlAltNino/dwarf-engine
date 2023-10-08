@@ -1,17 +1,16 @@
 {
     "floatUniforms": {
         "shininess": 32.0,
-        "useAlbedoMap": 1.0,
         "useNormalMap": 0.0
     },
     "shader": {
-        "fragmentShader": 14061746720130837310,
-        "vertexShader": 11679312884022831564
+        "fragmentShader": "default",
+        "vertexShader": "default"
     },
     "textures": {
-        "albedoMap": 8627568511895203065
+        "albedoMap": -1
     },
-    "transparent": true,
+    "transparent": false,
     "vec4Uniforms": {
         "color": {
             "w": 1.0,

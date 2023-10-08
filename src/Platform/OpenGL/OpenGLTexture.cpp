@@ -19,7 +19,7 @@ namespace Dwarf {
 		glActiveTexture(GL_TEXTURE0);
 		glBindTexture(GL_TEXTURE_2D, this->ID);
 
-		if(FileHandler::CheckIfFileExists((path.string() + ".meta").c_str())){
+		if(FileHandler::CheckIfFileExists((path.string() + AssetMetaData::META_DATA_EXTENSION).c_str())){
 			//nlohmann::json metaData = AssetMetaData::GetMetaData(path);
 
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);

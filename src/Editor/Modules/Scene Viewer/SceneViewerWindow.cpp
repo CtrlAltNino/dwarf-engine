@@ -26,9 +26,6 @@ namespace Dwarf {
     void SceneViewerWindow::OnUpdate(double deltaTime){
         if(m_Settings.CameraMovement && InputManager::GetMouse(MOUSE_BUTTON::RIGHT)){
             m_Camera->OnUpdate(deltaTime);
-            std::cout << "Camera pos: x = " << m_Camera->m_Transform->position.x <<
-                " | y = " << m_Camera->m_Transform->position.y <<
-                " | z = " << m_Camera->m_Transform->position.z << std::endl;
         }
 
         // Render scene to the framebuffer with the camera

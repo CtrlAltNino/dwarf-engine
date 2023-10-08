@@ -42,8 +42,7 @@ namespace Dwarf {
             template<typename T>
             static AssetReference<T> CreateAssetReference(std::filesystem::path assetPath){
                 std::string fileName = assetPath.stem().string();
-                std::filesystem::path metaDataPath = assetPath.string() + ".meta";
-                std::cout << "meta data path: " << metaDataPath << std::endl;
+                std::filesystem::path metaDataPath = assetPath.string() + AssetMetaData::META_DATA_EXTENSION;
 
                 UID id = UID();
                 if(FileHandler::CheckIfFileExists(metaDataPath.string().c_str())){

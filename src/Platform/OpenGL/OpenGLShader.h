@@ -5,54 +5,71 @@
 
 #include <glad/glad.h>
 
-namespace Dwarf {
-    class OpenGLShader : public Shader{
-        private:
-            GLuint m_ID = -1;
+namespace Dwarf
+{
+    class OpenGLShader : public Shader
+    {
+    private:
+        GLuint m_ID = -1;
 
-        public:
-            Ref<UID> m_VertexShader;
-            Ref<UID> m_TessellationControlShader;
-            Ref<UID> m_TessellationEvaluationShader;
-            Ref<UID> m_GeometryShader;
-            Ref<UID> m_FragmentShader;
+    public:
+        Ref<UID> m_VertexShaderAsset;
+        Ref<UID> m_TessellationControlShaderAsset;
+        Ref<UID> m_TessellationEvaluationShaderAsset;
+        Ref<UID> m_GeometryShaderAsset;
+        Ref<UID> m_FragmentShaderAsset;
 
-            GLsizei vert_log_length;
-            GLchar vert_message[1024] = "";
+        std::string m_VertexShaderSource;
+        std::string m_TessellationControlShaderSource;
+        std::string m_TessellationEvaluationShaderSource;
+        std::string m_GeometryShaderSource;
+        std::string m_FragmentShaderSource;
 
-            GLsizei tesc_log_length;
-            GLchar tesc_message[1024] = "";
+        GLsizei vert_log_length;
+        GLchar vert_message[1024] = "";
 
-            GLsizei tese_log_length;
-            GLchar tese_message[1024] = "";
+        GLsizei tesc_log_length;
+        GLchar tesc_message[1024] = "";
 
-            GLsizei geom_log_length;
-            GLchar geom_message[1024] = "";
+        GLsizei tese_log_length;
+        GLchar tese_message[1024] = "";
 
-            GLsizei frag_log_length;
-            GLchar frag_message[1024] = "";
+        GLsizei geom_log_length;
+        GLchar geom_message[1024] = "";
 
-            OpenGLShader();
-            ~OpenGLShader();
+        GLsizei frag_log_length;
+        GLchar frag_message[1024] = "";
 
-            void SetVertexShader(Ref<UID> vertexShader);
-            void SetTesselaltionControlShader(Ref<UID> tessellationControlShader);
-            void SetTesselaltionEvaluationShader(Ref<UID> tessellationEvaluationShader);
-            void SetFragmentShader(Ref<UID> fragmentShader);
-            void SetGeometryShader(Ref<UID> geometryShader);
+        OpenGLShader();
+        ~OpenGLShader();
 
-            Ref<UID> GetVertexShader();
-            Ref<UID> GetFragmentShader();
-            Ref<UID> GetTesselaltionControlShader();
-            Ref<UID> GetTesselaltionEvaluationShader();
-            Ref<UID> GetGeometryShader();
+        void SetVertexShader(Ref<UID> vertexShader);
+        void SetVertexShader(std::string vertexShader);
 
-            GLuint GetID();
+        void SetTesselaltionControlShader(Ref<UID> tessellationControlShader);
+        void SetTesselaltionControlShader(std::string tessellationControlShader);
 
-            virtual void Compile() override;
+        void SetTesselaltionEvaluationShader(Ref<UID> tessellationEvaluationShader);
+        void SetTesselaltionEvaluationShader(std::string tessellationEvaluationShader);
 
-            static Ref<OpenGLShader> CreateDefaultShader();
-            static Ref<OpenGLShader> CreateErrorShader();
-            static Ref<OpenGLShader> CreateGridShader();
+        void SetGeometryShader(Ref<UID> geometryShader);
+        void SetGeometryShader(std::string geometryShader);
+
+        void SetFragmentShader(Ref<UID> fragmentShader);
+        void SetFragmentShader(std::string fragmentShader);
+
+        Ref<UID> GetVertexShader();
+        Ref<UID> GetFragmentShader();
+        Ref<UID> GetTesselaltionControlShader();
+        Ref<UID> GetTesselaltionEvaluationShader();
+        Ref<UID> GetGeometryShader();
+
+        GLuint GetID();
+
+        virtual void Compile() override;
+
+        static Ref<OpenGLShader> CreateDefaultShader();
+        static Ref<OpenGLShader> CreateErrorShader();
+        static Ref<OpenGLShader> CreateGridShader();
     };
 }

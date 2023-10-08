@@ -196,7 +196,7 @@ namespace Dwarf {
                         OpenGLShader* shader = (OpenGLShader*)mat->m_Shader.get();
                         ImGui::Text("Vertex Shader");
                         ImGui::SameLine();
-                        DwarfUI::AssetInput<VertexShaderAsset>(shader->m_VertexShader, "##vertexShader");
+                        DwarfUI::AssetInput<VertexShaderAsset>(shader->m_VertexShaderAsset, "##vertexShader");
 
                         if(shader->vert_log_length){
                             ImGui::Text(shader->vert_message);
@@ -204,7 +204,7 @@ namespace Dwarf {
 
                         ImGui::Text("Tessellation Control Shader");
                         ImGui::SameLine();
-                        DwarfUI::AssetInput<TesselationControlShaderAsset>(shader->m_TessellationControlShader, "##tessellationControlShader");
+                        DwarfUI::AssetInput<TesselationControlShaderAsset>(shader->m_TessellationControlShaderAsset, "##tessellationControlShader");
 
                         if(shader->tesc_log_length > 0){
                             ImGui::Text(shader->tesc_message);
@@ -212,7 +212,7 @@ namespace Dwarf {
 
                         ImGui::Text("Tessellation Evaluation Shader");
                         ImGui::SameLine();
-                        DwarfUI::AssetInput<TesselationEvaluationShaderAsset>(shader->m_TessellationEvaluationShader, "##tessellationEvaluationShader");
+                        DwarfUI::AssetInput<TesselationEvaluationShaderAsset>(shader->m_TessellationEvaluationShaderAsset, "##tessellationEvaluationShader");
 
                         if(shader->tese_log_length > 0){
                             ImGui::Text(shader->tese_message);
@@ -220,7 +220,7 @@ namespace Dwarf {
 
                         ImGui::Text("Geometry Shader");
                         ImGui::SameLine();
-                        DwarfUI::AssetInput<GeometryShaderAsset>(shader->m_GeometryShader, "##geometryShader");
+                        DwarfUI::AssetInput<GeometryShaderAsset>(shader->m_GeometryShaderAsset, "##geometryShader");
 
                         if(shader->geom_log_length){
                             ImGui::Text(shader->geom_message);
@@ -228,7 +228,7 @@ namespace Dwarf {
 
                         ImGui::Text("Fragment Shader");
                         ImGui::SameLine();
-                        DwarfUI::AssetInput<FragmentShaderAsset>(shader->m_FragmentShader, "##fragmentShader");
+                        DwarfUI::AssetInput<FragmentShaderAsset>(shader->m_FragmentShaderAsset, "##fragmentShader");
 
                         if(shader->frag_log_length){
                             ImGui::Text(shader->frag_message);

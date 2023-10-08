@@ -7,14 +7,16 @@
 
 namespace Dwarf {
 
+
     /// @brief Utilities for Reading and writing meta data.
     class AssetMetaData {
         public:
+            static constexpr const char* META_DATA_EXTENSION = ".dmeta";
             /// @brief Retrieves the meta data from an asset path.
             /// @param path Path to an asset.
             /// @return Metadata in JSON.
             static nlohmann::json GetMetaData(std::filesystem::path path){
-                std::string fileContent = FileHandler::ReadFile(path.concat(".meta"));
+                std::string fileContent = FileHandler::ReadFile(path.concat(META_DATA_EXTENSION));
                 nlohmann::json jsonObject;
 
                 if (!fileContent.empty()) {
@@ -29,13 +31,12 @@ namespace Dwarf {
             /// @param metaData The metadata in JSON.
             static void SetMetaData(std::filesystem::path path, nlohmann::json metaData){
                 std::string fileContent = metaData.dump(4);
-                std::cout << "Set meta data path: " << path << std::endl;
 
                 if (!FileHandler::CheckIfDirectoyExists(path)) {
                     FileHandler::CreateDirectory(path);
                 }
 
-                FileHandler::WriteToFile(path.concat(".meta"), fileContent);
+                FileHandler::WriteToFile(path.concat(META_DATA_EXTENSION), fileContent);
             }
     };
 }

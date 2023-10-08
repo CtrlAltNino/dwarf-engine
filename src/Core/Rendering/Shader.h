@@ -2,7 +2,6 @@
 
 #include <string>
 
-// TODO: REDO SHADERS
 #include "Core/Base.h"
 #include "Core/Asset/AssetReference.h"
 

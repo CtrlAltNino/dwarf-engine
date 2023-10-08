@@ -23,7 +23,7 @@ namespace Dwarf {
         for(auto& directoryEntry : std::filesystem::directory_iterator(directory)){
             if(directoryEntry.is_directory()) {
                 RecursiveImport(directoryEntry.path().string());
-            } else if (directoryEntry.is_regular_file() && directoryEntry.path().has_extension() && directoryEntry.path().extension() != ".meta") {
+            } else if (directoryEntry.is_regular_file() && directoryEntry.path().has_extension() && directoryEntry.path().extension() != AssetMetaData::META_DATA_EXTENSION) {
                 Import(directoryEntry.path());
             }
         }
