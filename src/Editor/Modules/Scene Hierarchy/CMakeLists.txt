@@ -1,6 +1,6 @@
 target_sources(${targetName}
     PRIVATE
-        SceneHierarchyWindow.cpp
-        NewParentInstruction.cpp
-        ChildIndexInstruction.cpp
+    SceneHierarchyWindow.cpp
+    NewParentInstruction.cpp
+    ChildIndexInstruction.cpp
 )

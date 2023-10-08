@@ -4,24 +4,27 @@
 #include "Editor/EditorModel.h"
 #include "Editor/Modules/GuiModule.h"
 
-namespace Dwarf {
+namespace Dwarf
+{
 
     /// @brief Module to render a window that displays performance statistics.
-    class PerformanceWindow : public GuiModule{
-        private:
-            /// @brief Pointer to the frame time.
-            Ref<double> m_Frametime;
+    class PerformanceWindow : public GuiModule
+    {
+    private:
+        /// @brief Pointer to the frame time.
+        Ref<double> m_Frametime;
 
-            /// @brief Pointer to the render time.
-            Ref<double> m_RenderTime;
-        public:
-            PerformanceWindow(Ref<EditorModel> model, int id);
+        /// @brief Pointer to the render time.
+        Ref<double> m_RenderTime;
 
-            /// @brief Renders the module window.
-            void OnImGuiRender() override;
+    public:
+        PerformanceWindow(Ref<EditorModel> model, int id);
 
-            void OnUpdate(double deltaTime) override;
+        /// @brief Renders the module window.
+        void OnImGuiRender() override;
 
-            virtual std::string Serialize() override;
+        void OnUpdate(double deltaTime) override;
+
+        virtual std::string Serialize() override;
     };
 }

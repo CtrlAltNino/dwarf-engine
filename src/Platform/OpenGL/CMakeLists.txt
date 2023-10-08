@@ -1,6 +1,6 @@
-IF (WIN32 OR (UNIX AND NOT APPLE))
-target_sources(${targetName}
-    PRIVATE
+IF(WIN32 OR(UNIX AND NOT APPLE))
+    target_sources(${targetName}
+        PRIVATE
         OpenGLMesh.cpp
         OpenGLContext.cpp
         OpenGLImGuiLayer.cpp
@@ -8,5 +8,5 @@ target_sources(${targetName}
         OpenGLShader.cpp
         OpenGLTexture.cpp
         OpenGLRendererApi.cpp
-)
+    )
 ENDIF()

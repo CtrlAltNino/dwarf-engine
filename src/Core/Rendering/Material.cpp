@@ -1,36 +1,42 @@
 #include "dpch.h"
-#include"Core/Rendering/Material.h"
+#include "Core/Rendering/Material.h"
 
-namespace Dwarf {
+namespace Dwarf
+{
 
 	Ref<Material> Material::s_DefaultMaterial = nullptr;
 	Ref<Material> Material::s_ErrorMaterial = nullptr;
 	Ref<Material> Material::s_GridMaterial = nullptr;
 
-	void Material::Init(){
+	void Material::Init()
+	{
 		s_DefaultMaterial = CreateRef<Material>("Default Material", Shader::s_DefaultShader);
 		s_ErrorMaterial = CreateRef<Material>("Error Material", Shader::s_ErrorShader);
 		s_GridMaterial = CreateRef<Material>("grid material", Shader::s_GridShader);
 		s_GridMaterial->SetTransparency(true);
 	}
 
-	Material::Material(std::string name) : m_Name(name) {
+	Material::Material(std::string name) : m_Name(name)
+	{
 		m_Shader = Shader::s_DefaultShader;
 	}
 
-	Material::Material(std::string name, Ref<Shader> shader) : m_Name(name), m_Shader(shader){}
+	Material::Material(std::string name, Ref<Shader> shader) : m_Name(name), m_Shader(shader) {}
 
-	Material::~Material(){ }
+	Material::~Material() {}
 
-	std::string Material::GetName(){
+	std::string Material::GetName()
+	{
 		return m_Name;
 	}
 
-	void Material::SetShader(Ref<Shader> shader){
+	void Material::SetShader(Ref<Shader> shader)
+	{
 		m_Shader = shader;
 	}
 
-	Ref<Shader> Material::GetShader(){
+	Ref<Shader> Material::GetShader()
+	{
 		return m_Shader;
 	}
 
@@ -103,36 +109,44 @@ namespace Dwarf {
 		glUniformMatrix4fv(pmID, 1, GL_FALSE, &projectionMatrix[0][0]);
 	}*/
 
-	void Material::SetTexture(std::string uniformName, Ref<UID> val){
+	void Material::SetTexture(std::string uniformName, Ref<UID> val)
+	{
 		m_Textures[uniformName] = val;
 	}
 
-	void Material::SetUniform(std::string uniformName, bool val){
+	void Material::SetUniform(std::string uniformName, bool val)
+	{
 		m_BoolUniforms[uniformName] = val;
 	}
 
-	void Material::SetUniform(std::string uniformName, int val){
+	void Material::SetUniform(std::string uniformName, int val)
+	{
 		m_IntegerUniforms[uniformName] = val;
 	}
 
-	void Material::SetUniform(std::string uniformName, float val){
+	void Material::SetUniform(std::string uniformName, float val)
+	{
 		m_FloatUniforms[uniformName] = val;
 	}
 
-	void Material::SetUniform(std::string uniformName, glm::vec2 val){
+	void Material::SetUniform(std::string uniformName, glm::vec2 val)
+	{
 		m_Vector2Uniforms[uniformName] = val;
 	}
 
-	void Material::SetUniform(std::string uniformName, glm::vec3 val){
+	void Material::SetUniform(std::string uniformName, glm::vec3 val)
+	{
 		m_Vector3Uniforms[uniformName] = val;
 	}
 
-	void Material::SetUniform(std::string uniformName, glm::vec4 val){
+	void Material::SetUniform(std::string uniformName, glm::vec4 val)
+	{
 		m_Vector4Uniforms[uniformName] = val;
 	}
 
-	template<typename T>
-	void Material::RemoveShaderInput(std::string uniformName){
+	template <typename T>
+	void Material::RemoveShaderInput(std::string uniformName)
+	{
 		m_Textures.erase(uniformName);
 		m_BoolUniforms.erase(uniformName);
 		m_IntegerUniforms.erase(uniformName);
@@ -142,84 +156,101 @@ namespace Dwarf {
 		m_Vector4Uniforms.erase(uniformName);
 	}
 
-	template<>
-	void Material::RemoveShaderInput<Texture>(std::string uniformName){
+	template <>
+	void Material::RemoveShaderInput<Texture>(std::string uniformName)
+	{
 		m_Textures.erase(uniformName);
 	}
 
-	template<>
-	void Material::RemoveShaderInput<bool>(std::string uniformName){
+	template <>
+	void Material::RemoveShaderInput<bool>(std::string uniformName)
+	{
 		m_BoolUniforms.erase(uniformName);
 	}
 
-	template<>
-	void Material::RemoveShaderInput<int>(std::string uniformName){
+	template <>
+	void Material::RemoveShaderInput<int>(std::string uniformName)
+	{
 		m_IntegerUniforms.erase(uniformName);
 	}
 
-	template<>
-	void Material::RemoveShaderInput<float>(std::string uniformName){
+	template <>
+	void Material::RemoveShaderInput<float>(std::string uniformName)
+	{
 		m_FloatUniforms.erase(uniformName);
 	}
 
-	template<>
-	void Material::RemoveShaderInput<glm::vec2>(std::string uniformName){
+	template <>
+	void Material::RemoveShaderInput<glm::vec2>(std::string uniformName)
+	{
 		m_Vector2Uniforms.erase(uniformName);
 	}
 
-	template<>
-	void Material::RemoveShaderInput<glm::vec3>(std::string uniformName){
+	template <>
+	void Material::RemoveShaderInput<glm::vec3>(std::string uniformName)
+	{
 		m_Vector3Uniforms.erase(uniformName);
 	}
 
-	template<>
-	void Material::RemoveShaderInput<glm::vec4>(std::string uniformName){
+	template <>
+	void Material::RemoveShaderInput<glm::vec4>(std::string uniformName)
+	{
 		m_Vector4Uniforms.erase(uniformName);
 	}
 
-	void Material::SetTransparency(bool transparent){
+	void Material::SetTransparency(bool transparent)
+	{
 		m_Transparent = transparent;
 	}
 
-	bool Material::IsTransparent(){
+	bool Material::IsTransparent()
+	{
 		return m_Transparent;
 	}
 
-	std::map<std::string, Ref<UID>> Material::GetTextures(){
+	std::map<std::string, Ref<UID>> Material::GetTextures()
+	{
 		return m_Textures;
 	}
 
 	/// @brief Boolean uniforms.
-	std::map<std::string, bool> Material::GetBoolUniforms(){
+	std::map<std::string, bool> Material::GetBoolUniforms()
+	{
 		return m_BoolUniforms;
 	}
 
 	/// @brief Integer uniforms.
-	std::map<std::string, int> Material::GetIntegerUniforms(){
+	std::map<std::string, int> Material::GetIntegerUniforms()
+	{
 		return m_IntegerUniforms;
 	}
 
 	/// @brief Float uniforms.
-	std::map<std::string, float> Material::GetFloatUniforms(){
+	std::map<std::string, float> Material::GetFloatUniforms()
+	{
 		return m_FloatUniforms;
 	}
 
 	/// @brief 2D vector uniforms.
-	std::map<std::string, glm::vec2> Material::Get2DUniforms(){
+	std::map<std::string, glm::vec2> Material::Get2DUniforms()
+	{
 		return m_Vector2Uniforms;
 	}
 
 	/// @brief 3D vector uniforms.
-	std::map<std::string, glm::vec3> Material::Get3DUniforms(){
+	std::map<std::string, glm::vec3> Material::Get3DUniforms()
+	{
 		return m_Vector3Uniforms;
 	}
 
 	/// @brief 4D vector uniforms.
-	std::map<std::string, glm::vec4> Material::Get4DUniforms(){
+	std::map<std::string, glm::vec4> Material::Get4DUniforms()
+	{
 		return m_Vector4Uniforms;
 	}
 
-	void Material::GenerateShaderInputs(){
+	void Material::GenerateShaderInputs()
+	{
 		// Get all shader inputs from abstract Shader function and put them in the maps
 	}
 }

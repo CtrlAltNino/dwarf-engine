@@ -1,6 +1,6 @@
-IF (WIN32)
+IF(WIN32)
     target_sources(${targetName}
         PRIVATE
-            WindowsWindow.cpp
+        WindowsWindow.cpp
     )
 ENDIF()

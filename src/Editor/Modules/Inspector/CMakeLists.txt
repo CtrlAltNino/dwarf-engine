@@ -1,4 +1,4 @@
 target_sources(${targetName}
     PRIVATE
-        InspectorWindow.cpp
+    InspectorWindow.cpp
 )

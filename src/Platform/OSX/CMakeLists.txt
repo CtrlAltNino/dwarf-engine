@@ -1,6 +1,6 @@
-IF (APPLE)
+IF(APPLE)
     target_sources(${targetName}
         PRIVATE
-            OSXWindow.cpp
+        OSXWindow.cpp
     )
 ENDIF()

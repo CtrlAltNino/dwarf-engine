@@ -6,28 +6,34 @@
 #include "Launcher/ProjectListHandler.h"
 #include "Utilities/FileHandler.h"
 
-namespace Dwarf {
+namespace Dwarf
+{
 
 	ProjectLauncherModel::ProjectLauncherModel() {}
 
-	void ProjectLauncherModel::Init(){
+	void ProjectLauncherModel::Init()
+	{
 		ProjectListHandler::LoadProjectList();
 		ProjectCreator::InitProjectCreator();
 	}
 
-	ProjectChooserState ProjectLauncherModel::GetState() {
+	ProjectChooserState ProjectLauncherModel::GetState()
+	{
 		return this->m_State;
 	}
 
-	void ProjectLauncherModel::SetState(ProjectChooserState state){
+	void ProjectLauncherModel::SetState(ProjectChooserState state)
+	{
 		this->m_State = state;
 	}
 
-	int ProjectLauncherModel::GetSelectedProjectID() {
+	int ProjectLauncherModel::GetSelectedProjectID()
+	{
 		return this->m_SelectedProjectId;
 	}
 
-	void ProjectLauncherModel::SetSelectedProjectID(int id) {
+	void ProjectLauncherModel::SetSelectedProjectID(int id)
+	{
 		this->m_SelectedProjectId = id;
 	}
 }

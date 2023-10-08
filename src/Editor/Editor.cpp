@@ -9,23 +9,27 @@
 #include "Utilities/TimeUtilities.h"
 #include "Core/Rendering/Renderer.h"
 
-namespace Dwarf {
+namespace Dwarf
+{
 
-	Editor* Editor::s_Instance = nullptr;
+	Editor *Editor::s_Instance = nullptr;
 
-	Editor* CreateEditor(){
+	Editor *CreateEditor()
+	{
 		return new Editor();
 	}
 
-	Editor::Editor() {
+	Editor::Editor()
+	{
 		s_Instance = this;
 	}
 
-	Editor::~Editor(){
-
+	Editor::~Editor()
+	{
 	}
 
-	void Editor::UpdateWindowTitle(){
+	void Editor::UpdateWindowTitle()
+	{
 		std::string windowTitle = "Dwarf Engine Editor - ";
 		windowTitle.append(m_Model->GetName());
 		windowTitle.append(" - ");
@@ -39,7 +43,8 @@ namespace Dwarf {
 		m_Window->SetWindowTitle(windowTitle);
 	}
 
-	void Editor::Init(std::filesystem::path projectPath) {
+	void Editor::Init(std::filesystem::path projectPath)
+	{
 		s_Instance = this;
 
 		// ========== Load .dproj file ==========
@@ -51,7 +56,7 @@ namespace Dwarf {
 
 		WindowProps props("Dwarf Engine Editor", 1280, 720);
 
-        props.Api = (GraphicsApi)projectSettings["graphicsApi"];
+		props.Api = (GraphicsApi)projectSettings["graphicsApi"];
 
 		// TODO: Create error popup for invalid project
 
@@ -71,16 +76,22 @@ namespace Dwarf {
 
 		this->m_Model = CreateRef<EditorModel>(EditorModel(projectSettings["projectName"], projectPath));
 
-		if(projectSettings.contains("lastOpenedScene")){
+		if (projectSettings.contains("lastOpenedScene"))
+		{
 			Ref<AssetReference<SceneAsset>> lastOpenedSceneAsset = AssetDatabase::Retrieve<SceneAsset>(CreateRef<UID>(UID(projectSettings["lastOpenedScene"])));
-			if(lastOpenedSceneAsset){
+			if (lastOpenedSceneAsset)
+			{
 				std::cout << "[EDITOR INIT] Loading last opened scene" << std::endl;
 				m_Model->SetScene(SceneUtilities::LoadScene(lastOpenedSceneAsset->GetAsset()->m_Path));
-			}else{
+			}
+			else
+			{
 				std::cout << "[EDITOR INIT] No last opened scene found. Loading default scene" << std::endl;
 				m_Model->SetScene(SceneUtilities::LoadDefaultScene());
 			}
-		}else{
+		}
+		else
+		{
 			std::cout << "[EDITOR INIT] No last opened scene found. Loading default scene" << std::endl;
 			m_Model->SetScene(SceneUtilities::LoadDefaultScene());
 		}
@@ -108,18 +119,20 @@ namespace Dwarf {
 
 		// ========== Show window ==========
 		std::cout << "[EDITOR INIT] Making window visible" << std::endl;
-		//m_Window->ShowWindow();
+		// m_Window->ShowWindow();
 		std::cout << "[EDITOR INIT] Editor initialization done" << std::endl;
 	}
 
-	void Editor::Run(std::filesystem::path projectPath){
+	void Editor::Run(std::filesystem::path projectPath)
+	{
 		Init(projectPath);
 
 		TimeStamp currentFrameStamp = TimeUtilities::GetCurrent();
 		TimeStamp lastFrameStamp = TimeUtilities::GetCurrent();
 
 		// TODO abstract the close condition
-		while (!m_Window->ShouldClose()) {
+		while (!m_Window->ShouldClose())
+		{
 			// ===== Time related stuff
 			lastFrameStamp = currentFrameStamp;
 			currentFrameStamp = TimeUtilities::GetCurrent();
@@ -132,8 +145,8 @@ namespace Dwarf {
 			m_View->OnImGuiRender();
 
 			// ===== Animation stuff =====
-			//scene->sceneObjects.at(2).transform.rotate(glm::vec3(0, deltaTime * 88, 0));
-			//scene.sceneObjects.at(3).transform.rotate(glm::vec3(0, delta * 180, 0));
+			// scene->sceneObjects.at(2).transform.rotate(glm::vec3(0, deltaTime * 88, 0));
+			// scene.sceneObjects.at(3).transform.rotate(glm::vec3(0, delta * 180, 0));
 
 			// ===== Post processing =====
 			// TODO: Implement
@@ -141,10 +154,11 @@ namespace Dwarf {
 			// ===== Gizmo rendering =====
 			// TODO: Implement
 
-			//view->EndFrame();
+			// view->EndFrame();
 			m_Window->EndFrame();
 
-			while(TimeUtilities::GetDifferenceInSeconds(TimeUtilities::GetCurrent(), currentFrameStamp) < (1.0 / 60.0)){
+			while (TimeUtilities::GetDifferenceInSeconds(TimeUtilities::GetCurrent(), currentFrameStamp) < (1.0 / 60.0))
+			{
 				// TODO: Update this when implementing multi threading
 			}
 		}

@@ -7,8 +7,10 @@
 #include "Editor/Editor.h"
 #include "Core/Asset/AssetDatabase.h"
 
-namespace Dwarf {
-    void SceneUtilities::SetLastOpenedScene(std::filesystem::path path){
+namespace Dwarf
+{
+    void SceneUtilities::SetLastOpenedScene(std::filesystem::path path)
+    {
         std::filesystem::path projectSettingsPath = Editor::Get().GetModel()->GetProjectPath() / "projectSettings.dproj";
         nlohmann::json projectSettings = nlohmann::json::parse(FileHandler::ReadFile(projectSettingsPath));
 
@@ -17,16 +19,16 @@ namespace Dwarf {
         FileHandler::WriteToFile(projectSettingsPath, projectSettings.dump(4));
     }
 
-    Ref<Scene> SceneUtilities::Deserialize(std::filesystem::path path){
+    Ref<Scene> SceneUtilities::Deserialize(std::filesystem::path path)
+    {
         nlohmann::json serializedScene = nlohmann::json::parse(FileHandler::ReadFile(path));
 
         SceneSettings settings;
 
         settings.fogSettings.fogColor = {
-                serializedScene["fog"]["color"]["r"],
-                serializedScene["fog"]["color"]["g"],
-                serializedScene["fog"]["color"]["b"]
-        };
+            serializedScene["fog"]["color"]["r"],
+            serializedScene["fog"]["color"]["g"],
+            serializedScene["fog"]["color"]["b"]};
         settings.fogSettings.fogStart = serializedScene["fog"]["fogStart"];
         settings.fogSettings.fogEnd = serializedScene["fog"]["fogEnd"];
         settings.fogSettings.type = (FogType)serializedScene["fog"]["type"];
@@ -34,17 +36,18 @@ namespace Dwarf {
         settings.globalLightSettings.color = {
             serializedScene["globalLight"]["color"]["r"],
             serializedScene["globalLight"]["color"]["g"],
-            serializedScene["globalLight"]["color"]["b"]
-        };
+            serializedScene["globalLight"]["color"]["b"]};
         settings.globalLightSettings.intensity = serializedScene["globalLight"]["intensity"];
 
-        if(serializedScene.contains("skyboxMaterial") && serializedScene["skyboxMaterial"] != "null"){
+        if (serializedScene.contains("skyboxMaterial") && serializedScene["skyboxMaterial"] != "null")
+        {
             settings.skyboxMaterial = CreateRef<UID>(UID((uint64_t)serializedScene["skyboxMaterial"]));
         }
 
         Ref<Scene> deserializedScene = CreateRef<Scene>(Scene(path, settings));
 
-        for (auto& element : serializedScene["hierarchy"]) {
+        for (auto &element : serializedScene["hierarchy"])
+        {
             Entity newEntity = DeserializeEntity(element, deserializedScene);
             newEntity.SetParent(deserializedScene->GetRootEntity()->GetHandle());
         }
@@ -52,7 +55,8 @@ namespace Dwarf {
         return deserializedScene;
     }
 
-    void SceneUtilities::Serialize(Ref<Scene> scene){
+    void SceneUtilities::Serialize(Ref<Scene> scene)
+    {
         nlohmann::json serializedScene;
 
         // Serializing Hierarchy
@@ -78,19 +82,24 @@ namespace Dwarf {
         serializedScene["globalLight"]["intensity"] = settings.globalLightSettings.intensity;
 
         // Serializing Skybox settings
-        if(settings.skyboxMaterial){
+        if (settings.skyboxMaterial)
+        {
             serializedScene["skyboxMaterial"] = (uint64_t)(*settings.skyboxMaterial);
-        }else{
+        }
+        else
+        {
             serializedScene["skyboxMaterial"] = "null";
         }
 
         FileHandler::WriteToFile(scene->GetPath(), serializedScene.dump(4));
     }
 
-    nlohmann::json SceneUtilities::SerializeEntities(std::vector<entt::entity> entities, Ref<Scene> scene){
+    nlohmann::json SceneUtilities::SerializeEntities(std::vector<entt::entity> entities, Ref<Scene> scene)
+    {
         int entityCount = 0;
         nlohmann::json serializedArray;
-        for(auto entityHandle: entities) {
+        for (auto entityHandle : entities)
+        {
             Entity entity(entityHandle, scene->GetRegistry());
 
             serializedArray[entityCount]["guid"] = (uint64_t)(*entity.GetComponent<IDComponent>().ID);
@@ -109,7 +118,8 @@ namespace Dwarf {
             serializedArray[entityCount]["transformComponent"]["scale"]["y"] = tc.getScale().y;
             serializedArray[entityCount]["transformComponent"]["scale"]["z"] = tc.getScale().z;
 
-            if(entity.HasComponent<LightComponent>()){
+            if (entity.HasComponent<LightComponent>())
+            {
                 LightComponent lightComponent = entity.GetComponent<LightComponent>();
                 serializedArray[entityCount]["lightComponent"]["type"] = (int)lightComponent.type;
 
@@ -124,17 +134,22 @@ namespace Dwarf {
                 serializedArray[entityCount]["lightComponent"]["openingAngle"] = (int)lightComponent.openingAngle;
             }
 
-            if(entity.HasComponent<MeshRendererComponent>()){
+            if (entity.HasComponent<MeshRendererComponent>())
+            {
                 MeshRendererComponent meshRendererComponent = entity.GetComponent<MeshRendererComponent>();
-                if(meshRendererComponent.meshAsset){
+                if (meshRendererComponent.meshAsset)
+                {
                     serializedArray[entityCount]["meshRendererComponent"]["mesh"] = (uint64_t)(*meshRendererComponent.meshAsset);
-                }else{
+                }
+                else
+                {
                     serializedArray[entityCount]["meshRendererComponent"]["mesh"] = "null";
                 }
 
                 int materialCount = 0;
 
-                for(Ref<UID> materialID : meshRendererComponent.materialAssets){
+                for (Ref<UID> materialID : meshRendererComponent.materialAssets)
+                {
                     serializedArray[entityCount]["meshRendererComponent"]["materials"][materialCount++] = (uint64_t)(*materialID);
                 }
 
@@ -149,34 +164,32 @@ namespace Dwarf {
         return serializedArray;
     }
 
-    Entity SceneUtilities::DeserializeEntity(nlohmann::json serializedEntity, Ref<Scene> scene){
+    Entity SceneUtilities::DeserializeEntity(nlohmann::json serializedEntity, Ref<Scene> scene)
+    {
         Entity newEntity = scene->CreateEntityWithUID(UID((uint64_t)serializedEntity["guid"]), serializedEntity["name"]);
 
         TransformComponent &tc = newEntity.GetComponent<TransformComponent>();
         tc.position = {
             serializedEntity["transformComponent"]["position"]["x"],
             serializedEntity["transformComponent"]["position"]["y"],
-            serializedEntity["transformComponent"]["position"]["z"]
-        };
+            serializedEntity["transformComponent"]["position"]["z"]};
         tc.rotation = {
             serializedEntity["transformComponent"]["rotation"]["x"],
             serializedEntity["transformComponent"]["rotation"]["y"],
-            serializedEntity["transformComponent"]["rotation"]["z"]
-        };
+            serializedEntity["transformComponent"]["rotation"]["z"]};
         tc.scale = {
             serializedEntity["transformComponent"]["scale"]["x"],
             serializedEntity["transformComponent"]["scale"]["y"],
-            serializedEntity["transformComponent"]["scale"]["z"]
-        };
+            serializedEntity["transformComponent"]["scale"]["z"]};
 
-        if(serializedEntity.contains("lightComponent")){
+        if (serializedEntity.contains("lightComponent"))
+        {
             LightComponent &lightComponent = newEntity.AddComponent<LightComponent>();
             lightComponent.type = (LightComponent::LIGHT_TYPE)serializedEntity["lightComponent"]["type"];
             lightComponent.lightColor = {
                 serializedEntity["lightComponent"]["lightColor"]["r"],
                 serializedEntity["lightComponent"]["lightColor"]["g"],
-                serializedEntity["lightComponent"]["lightColor"]["b"]
-            };
+                serializedEntity["lightComponent"]["lightColor"]["b"]};
 
             lightComponent.attenuation = serializedEntity["lightComponent"]["attenuation"];
 
@@ -185,23 +198,28 @@ namespace Dwarf {
             lightComponent.openingAngle = serializedEntity["lightComponent"]["openingAngle"];
         }
 
-        if(serializedEntity.contains("meshRendererComponent")){
+        if (serializedEntity.contains("meshRendererComponent"))
+        {
             MeshRendererComponent &meshRendererComponent = newEntity.AddComponent<MeshRendererComponent>();
 
             meshRendererComponent.canCastShadow = (bool)serializedEntity["meshRendererComponent"]["canCastShadows"];
 
-            if(serializedEntity["meshRendererComponent"].contains("mesh") && serializedEntity["meshRendererComponent"]["mesh"] != "null"){
+            if (serializedEntity["meshRendererComponent"].contains("mesh") && serializedEntity["meshRendererComponent"]["mesh"] != "null")
+            {
                 meshRendererComponent.meshAsset = CreateRef<UID>(UID((uint64_t)serializedEntity["meshRendererComponent"]["mesh"]));
             }
 
-            if(serializedEntity["meshRendererComponent"].contains("materials")){
-                for (auto& element : serializedEntity["meshRendererComponent"]["materials"]){
+            if (serializedEntity["meshRendererComponent"].contains("materials"))
+            {
+                for (auto &element : serializedEntity["meshRendererComponent"]["materials"])
+                {
                     meshRendererComponent.materialAssets.push_back(CreateRef<UID>(UID((uint64_t)element)));
                 }
             }
         }
 
-        for (auto& element : serializedEntity["children"]) {
+        for (auto &element : serializedEntity["children"])
+        {
             Entity childEntity = DeserializeEntity(element, scene);
             childEntity.SetParent(newEntity.GetHandle());
         }
@@ -209,24 +227,30 @@ namespace Dwarf {
         return newEntity;
     }
 
-    void SceneUtilities::SaveScene(Ref<Scene> scene){
-        if(!scene->GetPath().empty()){
+    void SceneUtilities::SaveScene(Ref<Scene> scene)
+    {
+        if (!scene->GetPath().empty())
+        {
             Serialize(scene);
-        }else{
+        }
+        else
+        {
             SaveSceneDialog(scene);
         }
     }
 
-    void SceneUtilities::SaveSceneDialog(Ref<Scene> scene){
+    void SceneUtilities::SaveSceneDialog(Ref<Scene> scene)
+    {
         nfdchar_t *savePath = NULL;
-        nfdresult_t result = NFD_SaveDialog( "dscene", AssetDatabase::GetAssetDirectoryPath().string().c_str(), &savePath );
-        if ( result == NFD_OKAY )
+        nfdresult_t result = NFD_SaveDialog("dscene", AssetDatabase::GetAssetDirectoryPath().string().c_str(), &savePath);
+        if (result == NFD_OKAY)
         {
-            //puts("Success!");
-            //puts(savePath);
+            // puts("Success!");
+            // puts(savePath);
             std::filesystem::path path(savePath);
 
-            if(!path.has_extension()){
+            if (!path.has_extension())
+            {
                 path.concat(".dscene");
             }
 
@@ -234,47 +258,50 @@ namespace Dwarf {
             Serialize(scene);
             free(savePath);
         }
-        else if ( result == NFD_CANCEL )
+        else if (result == NFD_CANCEL)
         {
-            //puts("User pressed cancel.");
+            // puts("User pressed cancel.");
         }
         else
         {
-            printf("Error: %s\n", NFD_GetError() );
+            printf("Error: %s\n", NFD_GetError());
         }
     }
 
-    Ref<Scene> SceneUtilities::LoadScene(std::filesystem::path path){
+    Ref<Scene> SceneUtilities::LoadScene(std::filesystem::path path)
+    {
         Ref<Scene> scene = Deserialize(path);
 
         return scene;
     }
 
-    Ref<Scene> SceneUtilities::LoadSceneDialog(){
+    Ref<Scene> SceneUtilities::LoadSceneDialog()
+    {
         Ref<Scene> scene;
         nfdchar_t *outPath = NULL;
-        nfdresult_t result = NFD_OpenDialog( "dscene", AssetDatabase::GetAssetDirectoryPath().string().c_str(), &outPath );
-        if ( result == NFD_OKAY )
+        nfdresult_t result = NFD_OpenDialog("dscene", AssetDatabase::GetAssetDirectoryPath().string().c_str(), &outPath);
+        if (result == NFD_OKAY)
         {
-            //puts("Success!");
-            //puts(outPath);
+            // puts("Success!");
+            // puts(outPath);
             std::filesystem::path path(outPath);
             scene = LoadScene(path);
             free(outPath);
         }
-        else if ( result == NFD_CANCEL )
+        else if (result == NFD_CANCEL)
         {
-            //puts("User pressed cancel.");
+            // puts("User pressed cancel.");
         }
         else
         {
-            printf("Error: %s\n", NFD_GetError() );
+            printf("Error: %s\n", NFD_GetError());
         }
 
         return scene;
     }
 
-    Ref<Scene> SceneUtilities::LoadDefaultScene(){
+    Ref<Scene> SceneUtilities::LoadDefaultScene()
+    {
         Ref<Scene> scene = CreateRef<Scene>(Scene(std::filesystem::path(""), SceneSettings()));
 
         // TODO Add default stuff

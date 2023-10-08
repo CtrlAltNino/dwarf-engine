@@ -4,26 +4,27 @@
 
 #include <glad/glad.h>
 
-namespace Dwarf {
-    OpenGLRendererApi::OpenGLRendererApi(){}
-    OpenGLRendererApi::~OpenGLRendererApi(){}
+namespace Dwarf
+{
+	OpenGLRendererApi::OpenGLRendererApi() {}
+	OpenGLRendererApi::~OpenGLRendererApi() {}
 
-    void OpenGLRendererApi::Init()
+	void OpenGLRendererApi::Init()
 	{
 		glEnable(GL_BLEND);
 		glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
 		glEnable(GL_DEPTH_TEST);
 		glEnable(GL_LINE_SMOOTH);
-		SetViewport(0,0,512,512);
+		SetViewport(0, 0, 512, 512);
 	}
 
-    void OpenGLRendererApi::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
+	void OpenGLRendererApi::SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height)
 	{
 		glViewport(x, y, width, height);
 	}
 
-    void OpenGLRendererApi::SetClearColor(const glm::vec4& color)
+	void OpenGLRendererApi::SetClearColor(const glm::vec4 &color)
 	{
 		glClearColor(color.r, color.g, color.b, color.a);
 	}
@@ -41,7 +42,8 @@ namespace Dwarf {
 
 		glUseProgram(shader->GetID());
 
-		if (material->IsTransparent()) {
+		if (material->IsTransparent())
+		{
 			glEnable(GL_BLEND);
 			glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 		}
@@ -49,9 +51,11 @@ namespace Dwarf {
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK);
 
-		for(auto const& [key, val] : material->GetTextures()){
-			if(val){
-				glActiveTexture(GL_TEXTURE0+textureInputCounter);
+		for (auto const &[key, val] : material->GetTextures())
+		{
+			if (val)
+			{
+				glActiveTexture(GL_TEXTURE0 + textureInputCounter);
 				glBindTexture(GL_TEXTURE_2D, AssetDatabase::Retrieve<TextureAsset>(val)->GetAsset()->m_Texture->GetTextureID());
 
 				GLuint uniformID = glGetUniformLocation(shader->GetID(), key.c_str());
@@ -63,39 +67,45 @@ namespace Dwarf {
 
 		GLuint uniformID;
 		// Bind booleans
-		for(auto const& [key, val] : material->GetBoolUniforms()){
+		for (auto const &[key, val] : material->GetBoolUniforms())
+		{
 			uniformID = glGetUniformLocation(shader->GetID(), key.c_str());
 			glUniform1f(uniformID, (float)val);
 		}
 
 		// Bind integers
-		for(auto const& [key, val] : material->GetIntegerUniforms()){
+		for (auto const &[key, val] : material->GetIntegerUniforms())
+		{
 			uniformID = glGetUniformLocation(shader->GetID(), key.c_str());
 			glUniform1i(uniformID, val);
 		}
 
 		// Bind floats
-		for(auto const& [key, val] : material->GetFloatUniforms()){
+		for (auto const &[key, val] : material->GetFloatUniforms())
+		{
 			uniformID = glGetUniformLocation(shader->GetID(), key.c_str());
 			glUniform1f(uniformID, val);
 		}
 
 		// Bind vector2
-		for(auto const& [key, val] : material->Get2DUniforms()){
+		for (auto const &[key, val] : material->Get2DUniforms())
+		{
 			uniformID = glGetUniformLocation(shader->GetID(), key.c_str());
 			glUniform2f(uniformID, val.x, val.y);
 		}
 
 		// Bind vector3
-		for(auto const& [key, val] : material->Get3DUniforms()){
+		for (auto const &[key, val] : material->Get3DUniforms())
+		{
 			uniformID = glGetUniformLocation(shader->GetID(), key.c_str());
 			glUniform3f(uniformID, val.x, val.y, val.z);
 		}
 
 		// Bind vector4
-		for(auto const& [key, val] : material->Get4DUniforms()){
+		for (auto const &[key, val] : material->Get4DUniforms())
+		{
 			uniformID = glGetUniformLocation(shader->GetID(), key.c_str());
-			//glUniform4fv(uniformID, 4, &val.x);
+			// glUniform4fv(uniformID, 4, &val.x);
 			glUniform4f(uniformID, val.x, val.y, val.z, val.w);
 		}
 

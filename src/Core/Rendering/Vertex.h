@@ -2,10 +2,12 @@
 
 #include <glm/glm.hpp>
 
-namespace Dwarf {
+namespace Dwarf
+{
 
 	/// @brief Structure that stores information of a vertex.
-	struct Vertex {
+	struct Vertex
+	{
 		/// @brief Position of the vertex.
 		glm::vec3 Position;
 

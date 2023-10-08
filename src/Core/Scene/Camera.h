@@ -9,10 +9,12 @@
 #include "Core/Base.h"
 #include "Core/Scene/SceneComponents.h"
 
-namespace Dwarf {
+namespace Dwarf
+{
 
 	/// @brief Class representing a camera.
-	class Camera {
+	class Camera
+	{
 	private:
 		/// @brief The camera's field of view expressed in degrees.
 		float m_Fov;
@@ -29,6 +31,7 @@ namespace Dwarf {
 		float m_sensitivity = 0.15f;
 
 		float m_MovementSpeed = 4.0f;
+
 	public:
 		/// @brief The transform of the camera, representing its position and rotation.
 		Ref<TransformComponent> m_Transform;

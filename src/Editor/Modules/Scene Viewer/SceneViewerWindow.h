@@ -12,16 +12,23 @@
 #include "Core/Rendering/Framebuffer.h"
 #include "Core/Rendering/Forward/ForwardRenderer.h"
 
-namespace Dwarf {
+namespace Dwarf
+{
 
-    #define MIN_RESOLUTION_WIDTH 10
-    #define MIN_RESOLUTION_HEIGHT 10
-    #define MAX_RESOLUTION_WIDTH 5120
-    #define MAX_RESOLUTION_HEIGHT 2160
+#define MIN_RESOLUTION_WIDTH 10
+#define MIN_RESOLUTION_HEIGHT 10
+#define MAX_RESOLUTION_WIDTH 5120
+#define MAX_RESOLUTION_HEIGHT 2160
 
-    enum RENDERING_CONSTRAINT { FREE, ASPECT_RATIO, FIXED_RESOLUTION };
+    enum RENDERING_CONSTRAINT
+    {
+        FREE,
+        ASPECT_RATIO,
+        FIXED_RESOLUTION
+    };
 
-    struct SceneViewerSettings {
+    struct SceneViewerSettings
+    {
         /// @brief Currently selected object manipulation type.
         ImGuizmo::OPERATION GizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
 
@@ -50,43 +57,45 @@ namespace Dwarf {
     };
 
     /// @brief Module to render a window that displays the scene and render options.
-    class SceneViewerWindow : public GuiModule{
-        private:
-            SceneViewerSettings m_Settings;
-            // Maintaining important dependencies
+    class SceneViewerWindow : public GuiModule
+    {
+    private:
+        SceneViewerSettings m_Settings;
+        // Maintaining important dependencies
 
-            /// @brief The render texture for this scene viewer.
-            Ref<Framebuffer> m_Framebuffer;
+        /// @brief The render texture for this scene viewer.
+        Ref<Framebuffer> m_Framebuffer;
 
-            Ref<Camera> m_Camera;
+        Ref<Camera> m_Camera;
 
-            /// @brief Calculates the cutout of the available resolution based on the given aspect ratio.
-            /// @param availableResolution Base resolution given.
-            /// @param targetAspectRatio Desired aspect ratio.
-            /// @return Resolution at the given aspect ratio.
-            glm::ivec2 CalculateDesiredResolution(glm::ivec2 availableResolution, float targetAspectRatio);
+        /// @brief Calculates the cutout of the available resolution based on the given aspect ratio.
+        /// @param availableResolution Base resolution given.
+        /// @param targetAspectRatio Desired aspect ratio.
+        /// @return Resolution at the given aspect ratio.
+        glm::ivec2 CalculateDesiredResolution(glm::ivec2 availableResolution, float targetAspectRatio);
 
-            glm::vec3 CalculateSelectionCenter();
+        glm::vec3 CalculateSelectionCenter();
 
-            /// @brief Updates the render texture.
-            //void UpdateFramebuffer();
+        /// @brief Updates the render texture.
+        // void UpdateFramebuffer();
 
-            /// @brief Renders the ImGuizmo gizmos.
-            void RenderGizmos(ImVec2 minRect, ImVec2 maxRect);
+        /// @brief Renders the ImGuizmo gizmos.
+        void RenderGizmos(ImVec2 minRect, ImVec2 maxRect);
 
-            /// @brief Handles the shortcut inputs for changing the gizmo type.
-            void UpdateGizmoType();
-        public:
-            SceneViewerWindow(Ref<EditorModel> model, int index);
+        /// @brief Handles the shortcut inputs for changing the gizmo type.
+        void UpdateGizmoType();
 
-            void OnUpdate(double deltaTime) override;
-            /// @brief Renders the module window.
-            void OnImGuiRender() override;
+    public:
+        SceneViewerWindow(Ref<EditorModel> model, int index);
 
-            /// @brief Returns the frame buffer of the scene viewer as an IMGUI texture ID:
-            /// @return The texture ID of the frame buffer.
-            ImTextureID GetFrameBufferForImGui();
+        void OnUpdate(double deltaTime) override;
+        /// @brief Renders the module window.
+        void OnImGuiRender() override;
 
-            virtual std::string Serialize() override;
+        /// @brief Returns the frame buffer of the scene viewer as an IMGUI texture ID:
+        /// @return The texture ID of the frame buffer.
+        ImTextureID GetFrameBufferForImGui();
+
+        virtual std::string Serialize() override;
     };
 }

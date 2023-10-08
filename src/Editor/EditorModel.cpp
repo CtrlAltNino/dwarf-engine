@@ -2,9 +2,11 @@
 
 #include "Editor/EditorModel.h"
 
-namespace Dwarf {
-	EditorModel::EditorModel(std::string name, std::filesystem::path projectPath) : m_ProjectName(name), m_ProjectPath(projectPath) {
-		//window = Window::Create();
+namespace Dwarf
+{
+	EditorModel::EditorModel(std::string name, std::filesystem::path projectPath) : m_ProjectName(name), m_ProjectPath(projectPath)
+	{
+		// window = Window::Create();
 	}
 
 	/*void EditorModel::InitScene(std::string projectPath) {
@@ -114,27 +116,33 @@ namespace Dwarf {
 		lightEntity.AddComponent<LightComponent>();
 	}*/
 
-	Ref<Scene> EditorModel::GetScene() {
+	Ref<Scene> EditorModel::GetScene()
+	{
 		return this->m_Scene;
 	}
 
-	void EditorModel::SetScene(Ref<Scene> scene){
+	void EditorModel::SetScene(Ref<Scene> scene)
+	{
 		this->m_Scene = scene;
 	}
 
-	std::string EditorModel::GetName(){
+	std::string EditorModel::GetName()
+	{
 		return m_ProjectName;
 	}
 
-	std::filesystem::path EditorModel::GetProjectPath(){
+	std::filesystem::path EditorModel::GetProjectPath()
+	{
 		return this->m_ProjectPath;
 	}
 
-	void EditorModel::SetDeltaTime(double deltaTime){
+	void EditorModel::SetDeltaTime(double deltaTime)
+	{
 		this->m_DeltaTime = deltaTime;
 	}
 
-	double EditorModel::GetDeltaTime(){
+	double EditorModel::GetDeltaTime()
+	{
 		return this->m_DeltaTime;
 	}
 }

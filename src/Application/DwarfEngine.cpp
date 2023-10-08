@@ -3,36 +3,43 @@
 #include "Launcher/ProjectLauncher.h"
 #include "Editor/Editor.h"
 
-namespace Dwarf{
+namespace Dwarf
+{
 
-	DwarfEngine* DwarfEngine::s_Instance = nullptr;
+	DwarfEngine *DwarfEngine::s_Instance = nullptr;
 
-	DwarfEngine::DwarfEngine() {
+	DwarfEngine::DwarfEngine()
+	{
 		s_Instance = this;
 	}
 
-	DwarfEngine::~DwarfEngine(){
-
+	DwarfEngine::~DwarfEngine()
+	{
 	}
 
-	void DwarfEngine::Run() {
+	void DwarfEngine::Run()
+	{
 		auto launcher = Dwarf::CreateLauncher();
 		std::filesystem::path projectPath = launcher->Run();
-		delete(launcher);
+		delete (launcher);
 
-		if(!projectPath.empty()){
+		if (!projectPath.empty())
+		{
 			std::cout << "Opening project at: <" << projectPath.string() << ">" << std::endl;
 
 			auto editor = Dwarf::CreateEditor();
 			editor->Run(projectPath);
 
-			//delete(editor);
-		}else{
+			// delete(editor);
+		}
+		else
+		{
 			std::cout << "Not opening any project" << std::endl;
 		}
 	}
 
-	DwarfEngine* Create(){
+	DwarfEngine *Create()
+	{
 		return new DwarfEngine();
 	}
 }

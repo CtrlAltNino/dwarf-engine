@@ -2,6 +2,7 @@
 
 #include "DwarfUI.h"
 
-namespace Dwarf {
-    
+namespace Dwarf
+{
+
 }

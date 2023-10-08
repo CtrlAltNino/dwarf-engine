@@ -5,159 +5,183 @@
 #include "Core/Rendering/Renderer.h"
 
 #ifdef _WIN32
-	//#include "Platform/D3D12/D3D12Shader.h"
-	#include "Platform/OpenGL/OpenGLShader.h"
-	//#include "Platform/Vulkan/VulkanShader.h"
+// #include "Platform/D3D12/D3D12Shader.h"
+#include "Platform/OpenGL/OpenGLShader.h"
+// #include "Platform/Vulkan/VulkanShader.h"
 #elif __linux__
-	#include "Platform/OpenGL/OpenGLShader.h"
-	//#include "Platform/Vulkan/VulkanShader.h"
+#include "Platform/OpenGL/OpenGLShader.h"
+// #include "Platform/Vulkan/VulkanShader.h"
 #elif __APPLE__
-	//#include "Platform/Metal/MetalShader.h"
+// #include "Platform/Metal/MetalShader.h"
 #endif
 
-namespace Dwarf {
+namespace Dwarf
+{
 
 	Ref<Shader> Shader::s_DefaultShader = nullptr;
 	Ref<Shader> Shader::s_ErrorShader = nullptr;
 	Ref<Shader> Shader::s_GridShader = nullptr;
 
-	Ref<Shader> Shader::Create(){
-		switch(Renderer::GetAPI()){
+	Ref<Shader> Shader::Create()
+	{
+		switch (Renderer::GetAPI())
+		{
 #ifdef _WIN32
-			case GraphicsApi::D3D12:
-					//return CreateRef<D3D12Shader>(D3D12Shader());
-				break;
-			case GraphicsApi::Metal: break;
-			case GraphicsApi::OpenGL:
-					return CreateRef<OpenGLShader>(OpenGLShader());
-				break;
-			case GraphicsApi::Vulkan:
-					//return CreateRef<VulkanShader>(VulkanShader());
-				break;
+		case GraphicsApi::D3D12:
+			// return CreateRef<D3D12Shader>(D3D12Shader());
+			break;
+		case GraphicsApi::Metal:
+			break;
+		case GraphicsApi::OpenGL:
+			return CreateRef<OpenGLShader>(OpenGLShader());
+			break;
+		case GraphicsApi::Vulkan:
+			// return CreateRef<VulkanShader>(VulkanShader());
+			break;
 #elif __linux__
-			case GraphicsApi::D3D12: break;
-			case GraphicsApi::Metal: break;
-			case GraphicsApi::OpenGL:
-					return CreateRef<OpenGLShader>(OpenGLShader());
-				break;
-			case GraphicsApi::Vulkan:
-					//return CreateRef<VulkanShader>(VulkanShader());
-				break;
+		case GraphicsApi::D3D12:
+			break;
+		case GraphicsApi::Metal:
+			break;
+		case GraphicsApi::OpenGL:
+			return CreateRef<OpenGLShader>(OpenGLShader());
+			break;
+		case GraphicsApi::Vulkan:
+			// return CreateRef<VulkanShader>(VulkanShader());
+			break;
 #elif __APPLE__
-			case GraphicsApi::D3D12: break;
-			case GraphicsApi::Metal:
-					//return CreateRef<MetalShader>(MetalShader());
-				break;
-			case GraphicsApi::OpenGL: break;
-			case GraphicsApi::Vulkan: break;
+		case GraphicsApi::D3D12:
+			break;
+		case GraphicsApi::Metal:
+			// return CreateRef<MetalShader>(MetalShader());
+			break;
+		case GraphicsApi::OpenGL:
+			break;
+		case GraphicsApi::Vulkan:
+			break;
 #endif
-			default: return nullptr;
+		default:
+			return nullptr;
 		}
 
 		return nullptr;
 	}
 
-	std::filesystem::path Shader::GetDefaultShaderPath(){
-		switch(Renderer::GetAPI()){
-			case GraphicsApi::D3D12:
-					return "data/engine/shaders/default/d3d12/";
-				break;
-			case GraphicsApi::Metal:
-					return "data/engine/shaders/default/metal/";
-				break;
-			case GraphicsApi::OpenGL:
-					return "data/engine/shaders/default/opengl/";
-				break;
-			case GraphicsApi::Vulkan:
-					return "data/engine/shaders/default/vulkan/";
-				break;
+	std::filesystem::path Shader::GetDefaultShaderPath()
+	{
+		switch (Renderer::GetAPI())
+		{
+		case GraphicsApi::D3D12:
+			return "data/engine/shaders/default/d3d12/";
+			break;
+		case GraphicsApi::Metal:
+			return "data/engine/shaders/default/metal/";
+			break;
+		case GraphicsApi::OpenGL:
+			return "data/engine/shaders/default/opengl/";
+			break;
+		case GraphicsApi::Vulkan:
+			return "data/engine/shaders/default/vulkan/";
+			break;
 		}
 
 		return "";
 	}
 
-	std::filesystem::path Shader::GetErrorShaderPath(){
-		switch(Renderer::GetAPI()){
-			case GraphicsApi::D3D12:
-					return "data/engine/shaders/error/d3d12/";
-				break;
-			case GraphicsApi::Metal:
-					return "data/engine/shaders/error/metal/";
-				break;
-			case GraphicsApi::OpenGL:
-					return "data/engine/shaders/error/opengl/";
-				break;
-			case GraphicsApi::Vulkan:
-					return "data/engine/shaders/error/vulkan/";
-				break;
+	std::filesystem::path Shader::GetErrorShaderPath()
+	{
+		switch (Renderer::GetAPI())
+		{
+		case GraphicsApi::D3D12:
+			return "data/engine/shaders/error/d3d12/";
+			break;
+		case GraphicsApi::Metal:
+			return "data/engine/shaders/error/metal/";
+			break;
+		case GraphicsApi::OpenGL:
+			return "data/engine/shaders/error/opengl/";
+			break;
+		case GraphicsApi::Vulkan:
+			return "data/engine/shaders/error/vulkan/";
+			break;
 		}
 
 		return "";
 	}
 
-	std::filesystem::path Shader::GetGridShaderPath(){
-		switch(Renderer::GetAPI()){
-			case GraphicsApi::D3D12:
-					return "data/engine/shaders/grid/d3d12/";
-				break;
-			case GraphicsApi::Metal:
-					return "data/engine/shaders/grid/metal/";
-				break;
-			case GraphicsApi::OpenGL:
-					return "data/engine/shaders/grid/opengl/";
-				break;
-			case GraphicsApi::Vulkan:
-					return "data/engine/shaders/grid/vulkan/";
-				break;
+	std::filesystem::path Shader::GetGridShaderPath()
+	{
+		switch (Renderer::GetAPI())
+		{
+		case GraphicsApi::D3D12:
+			return "data/engine/shaders/grid/d3d12/";
+			break;
+		case GraphicsApi::Metal:
+			return "data/engine/shaders/grid/metal/";
+			break;
+		case GraphicsApi::OpenGL:
+			return "data/engine/shaders/grid/opengl/";
+			break;
+		case GraphicsApi::Vulkan:
+			return "data/engine/shaders/grid/vulkan/";
+			break;
 		}
 
 		return "";
 	}
 
-	Shader::Shader(){}
-	Shader::~Shader(){}
+	Shader::Shader() {}
+	Shader::~Shader() {}
 
-	void Shader::Init(){
-		switch(Renderer::GetAPI()){
+	void Shader::Init()
+	{
+		switch (Renderer::GetAPI())
+		{
 #ifdef _WIN32
-			case GraphicsApi::D3D12:
-					// s_DefaultShader = D3D12Shader::CreateDefaultShader();
-					// s_ErrorShader = D3D12Shader::CreateErrorShader();
-					// s_GridShader = D3D12Shader::CreateGridShader();
-				break;
-			case GraphicsApi::Metal: break;
-			case GraphicsApi::OpenGL:
-					s_DefaultShader = OpenGLShader::CreateDefaultShader();
-					s_ErrorShader = OpenGLShader::CreateErrorShader();
-					s_GridShader = OpenGLShader::CreateGridShader();
-				break;
-			case GraphicsApi::Vulkan:
-					// s_DefaultShader = VulkanShader::CreateDefaultShader();
-					// s_ErrorShader = VulkanShader::CreateErrorShader();
-					// s_GridShader = VulkanShader::CreateGridShader();
-				break;
+		case GraphicsApi::D3D12:
+			// s_DefaultShader = D3D12Shader::CreateDefaultShader();
+			// s_ErrorShader = D3D12Shader::CreateErrorShader();
+			// s_GridShader = D3D12Shader::CreateGridShader();
+			break;
+		case GraphicsApi::Metal:
+			break;
+		case GraphicsApi::OpenGL:
+			s_DefaultShader = OpenGLShader::CreateDefaultShader();
+			s_ErrorShader = OpenGLShader::CreateErrorShader();
+			s_GridShader = OpenGLShader::CreateGridShader();
+			break;
+		case GraphicsApi::Vulkan:
+			// s_DefaultShader = VulkanShader::CreateDefaultShader();
+			// s_ErrorShader = VulkanShader::CreateErrorShader();
+			// s_GridShader = VulkanShader::CreateGridShader();
+			break;
 #elif __linux__
-			case GraphicsApi::D3D12: break;
-			case GraphicsApi::Metal: break;
-			case GraphicsApi::OpenGL:
-					s_DefaultShader = OpenGLShader::CreateDefaultShader();
-					s_ErrorShader = OpenGLShader::CreateErrorShader();
-					s_GridShader = OpenGLShader::CreateGridShader();
-				break;
-			case GraphicsApi::Vulkan:
-					// s_DefaultShader = VulkanShader::CreateDefaultShader();
-					// s_ErrorShader = VulkanShader::CreateErrorShader();
-					// s_GridShader = VulkanShader::CreateGridShader();
-				break;
+		case GraphicsApi::D3D12:
+			break;
+		case GraphicsApi::Metal:
+			break;
+		case GraphicsApi::OpenGL:
+			s_DefaultShader = OpenGLShader::CreateDefaultShader();
+			s_ErrorShader = OpenGLShader::CreateErrorShader();
+			s_GridShader = OpenGLShader::CreateGridShader();
+			break;
+		case GraphicsApi::Vulkan:
+			// s_DefaultShader = VulkanShader::CreateDefaultShader();
+			// s_ErrorShader = VulkanShader::CreateErrorShader();
+			// s_GridShader = VulkanShader::CreateGridShader();
+			break;
 #elif __APPLE__
-			case GraphicsApi::D3D12: break;
-			case GraphicsApi::Metal:
-					// s_DefaultShader = MetalShader::CreateDefaultShader();
-					// s_ErrorShader = MetalShader::CreateErrorShader();
-					// s_GridShader = MetalShader::CreateGridShader();
-				break;
-			case GraphicsApi::OpenGL: break;
-			case GraphicsApi::Vulkan: break;
+		case GraphicsApi::D3D12:
+			break;
+		case GraphicsApi::Metal:
+			// s_DefaultShader = MetalShader::CreateDefaultShader();
+			// s_ErrorShader = MetalShader::CreateErrorShader();
+			// s_GridShader = MetalShader::CreateGridShader();
+			break;
+		case GraphicsApi::OpenGL:
+			break;
+		case GraphicsApi::Vulkan:
+			break;
 #endif
 		}
 

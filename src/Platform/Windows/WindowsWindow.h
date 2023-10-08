@@ -10,55 +10,59 @@
 #include "Core/Rendering/GraphicsContext.h"
 #include "Core/UI/ImGuiLayer.h"
 
-namespace Dwarf {
+namespace Dwarf
+{
 
-    class WindowsWindow : public Window{
-        public:
-            WindowsWindow(const WindowProps& props);
-            virtual ~WindowsWindow();
+    class WindowsWindow : public Window
+    {
+    public:
+        WindowsWindow(const WindowProps &props);
+        virtual ~WindowsWindow();
 
-            void NewFrame() override;
-            void EndFrame() override;
+        void NewFrame() override;
+        void EndFrame() override;
 
-            unsigned int GetWidth() const override { return m_Data.Width; }
-            unsigned int GetHeight() const override { return m_Data.Height; }
+        unsigned int GetWidth() const override { return m_Data.Width; }
+        unsigned int GetHeight() const override { return m_Data.Height; }
 
-            virtual void ShowWindow() override;
-            virtual void HideWindow() override;
+        virtual void ShowWindow() override;
+        virtual void HideWindow() override;
 
-            // Window attributes
-            //void SetEventCallback(const EventCallbackFn& callback) override { m_Data.EventCallback = callback; }
-            void SetVSync(bool enabled) override;
-            bool IsVSync() override;
+        // Window attributes
+        // void SetEventCallback(const EventCallbackFn& callback) override { m_Data.EventCallback = callback; }
+        void SetVSync(bool enabled) override;
+        bool IsVSync() override;
 
-            bool ShouldClose() override;
+        bool ShouldClose() override;
 
-            void SetWindowTitle(std::string windowTitle) override;
+        void SetWindowTitle(std::string windowTitle) override;
 
-            virtual void* GetNativeWindow() const { return m_Window; }
+        virtual void *GetNativeWindow() const { return m_Window; }
 
-            virtual GraphicsApi GetApi() override;
+        virtual GraphicsApi GetApi() override;
 
-            virtual void MaximizeWindow() override;
-        private:
-            virtual void Init(const WindowProps& props);
-            virtual void Shutdown();
-        private:
-            SDL_Window* m_Window;
-            Scope<GraphicsContext> m_Context;
-            GraphicsApi m_Api;
-            Ref<ImGuiLayer> m_ImguiLayer;
+        virtual void MaximizeWindow() override;
 
-            struct WindowData
-            {
-                std::string Title;
-                unsigned int Width, Height;
-                bool VSync;
-                bool ShouldClose;
+    private:
+        virtual void Init(const WindowProps &props);
+        virtual void Shutdown();
 
-                //EventCallbackFn EventCallback;
-            };
+    private:
+        SDL_Window *m_Window;
+        Scope<GraphicsContext> m_Context;
+        GraphicsApi m_Api;
+        Ref<ImGuiLayer> m_ImguiLayer;
 
-            WindowData m_Data;
+        struct WindowData
+        {
+            std::string Title;
+            unsigned int Width, Height;
+            bool VSync;
+            bool ShouldClose;
+
+            // EventCallbackFn EventCallback;
+        };
+
+        WindowData m_Data;
     };
 }

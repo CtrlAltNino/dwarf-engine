@@ -2,9 +2,10 @@
 
 #include "Core/Base.h"
 
-namespace Dwarf {
+namespace Dwarf
+{
 
-    enum class FramebufferTextureFormat
+	enum class FramebufferTextureFormat
 	{
 		None = 0,
 
@@ -62,8 +63,8 @@ namespace Dwarf {
 
 		virtual uint32_t GetColorAttachmentRendererID(uint32_t index = 0) const = 0;
 
-		virtual const FramebufferSpecification& GetSpecification() const = 0;
+		virtual const FramebufferSpecification &GetSpecification() const = 0;
 
-		static Ref<Framebuffer> Create(const FramebufferSpecification& spec);
+		static Ref<Framebuffer> Create(const FramebufferSpecification &spec);
 	};
 }

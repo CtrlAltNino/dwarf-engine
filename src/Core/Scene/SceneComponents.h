@@ -13,20 +13,22 @@
 #include "Core/Rendering/Mesh.h"
 #include "Core/Rendering/Material.h"
 
-namespace Dwarf {
+namespace Dwarf
+{
     /// @brief A component holding a transform.
-    struct TransformComponent{
-        #define RAD_2_DEG ((float)(180.0f/M_PI))
-        #define DEG_2_RAD ((float)(M_PI / 180.0f))
+    struct TransformComponent
+    {
+#define RAD_2_DEG ((float)(180.0f / M_PI))
+#define DEG_2_RAD ((float)(M_PI / 180.0f))
 
         /// @brief Position of the entity.
-        glm::vec3 position = { 0.0f, 0.0f, 0.0f };
+        glm::vec3 position = {0.0f, 0.0f, 0.0f};
 
         /// @brief Rotation of the entity as euler angles.
-        glm::vec3 rotation = { 0.0f, 0.0f, 0.0f };
+        glm::vec3 rotation = {0.0f, 0.0f, 0.0f};
 
         /// @brief Scale of the entity.
-        glm::vec3 scale = { 1.0f, 1.0f, 1.0f };
+        glm::vec3 scale = {1.0f, 1.0f, 1.0f};
 
         /// @brief Entity handle of the hierarchical parent entity.
         entt::entity parent = entt::null;
@@ -35,7 +37,7 @@ namespace Dwarf {
         std::vector<entt::entity> children;
 
         TransformComponent() = default;
-        TransformComponent(const TransformComponent&) = default;
+        TransformComponent(const TransformComponent &) = default;
         TransformComponent(glm::vec3 pos)
             : position(pos) {}
         TransformComponent(glm::vec3 pos, glm::vec3 rot)
@@ -53,7 +55,8 @@ namespace Dwarf {
 
         /// @brief Returns the rotation of the entity as a matrix.
         /// @return The rotations as a 4x4 matrix.
-        glm::mat4 getRotationMatrix() {
+        glm::mat4 getRotationMatrix()
+        {
             return glm::toMat4(glm::quat(DEG_2_RAD * rotation));
         }
 
@@ -75,7 +78,8 @@ namespace Dwarf {
 
         /// @brief Returns the model matrix of the entity. A composite matrix of the translation, scale and rotation matrices.
         /// @return The model matrix as a 4x4 matrix.
-        glm::mat4x4 getModelMatrix(){
+        glm::mat4x4 getModelMatrix()
+        {
             glm::mat4 translationMatrix = glm::translate(glm::mat4(1.0f), position);
             glm::mat4 scaleMatrix = glm::scale(glm::mat4(1.0f), scale);
             glm::mat4 rotationMatrix = getRotationMatrix();
@@ -85,12 +89,18 @@ namespace Dwarf {
     };
 
     /// @brief Entity component holding light properties.
-    struct LightComponent{
+    struct LightComponent
+    {
         /// @brief Enum representing light types.
-        enum LIGHT_TYPE {DIRECTIONAL, POINT_LIGHT, SPOT_LIGHT};
+        enum LIGHT_TYPE
+        {
+            DIRECTIONAL,
+            POINT_LIGHT,
+            SPOT_LIGHT
+        };
 
         /// @brief Names of the light types.
-        static inline const char* LIGHT_TYPE_NAMES[3] = {"Directional", "Point", "Spot"};
+        static inline const char *LIGHT_TYPE_NAMES[3] = {"Directional", "Point", "Spot"};
 
         /// @brief The type of light this component represents.
         LIGHT_TYPE type = DIRECTIONAL;
@@ -111,7 +121,8 @@ namespace Dwarf {
     };
 
     /// @brief A component holding meshes and their corresponding materials, as well as other information on how to render these meshes.
-    struct MeshRendererComponent{
+    struct MeshRendererComponent
+    {
         /// @brief ID of the mesh asset.
         Ref<UID> meshAsset;
 
@@ -122,7 +133,7 @@ namespace Dwarf {
         bool canCastShadow;
 
         MeshRendererComponent() = default;
-        MeshRendererComponent(const MeshRendererComponent&) = default;
+        MeshRendererComponent(const MeshRendererComponent &) = default;
         MeshRendererComponent(Ref<UID> mesh, std::vector<Ref<UID>> materials)
             : meshAsset(mesh), materialAssets(materials) {}
     };

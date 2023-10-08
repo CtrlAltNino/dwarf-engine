@@ -6,43 +6,46 @@
 #include "Core/UI/DwarfUI.h"
 
 #define _USE_MATH_DEFINES
-#include<cmath>
+#include <cmath>
 
-namespace Dwarf {
+namespace Dwarf
+{
 
     /// @brief Module that renders a window, containing information of selected objects or assets.
-    class InspectorWindow : public GuiModule{
-        private:
-            /// @brief Pointer to the currently opened scene instance.
-            Ref<Scene> m_Scene;
+    class InspectorWindow : public GuiModule
+    {
+    private:
+        /// @brief Pointer to the currently opened scene instance.
+        Ref<Scene> m_Scene;
 
-            /// @brief Renders the components of an entity.
-            /// @param entity Entity to render in the inspector.
-            void RenderComponents(Entity entity);
+        /// @brief Renders the components of an entity.
+        /// @param entity Entity to render in the inspector.
+        void RenderComponents(Entity entity);
 
-            void BeginComponent(const char* componentHeader);
+        void BeginComponent(const char *componentHeader);
 
-            void EndComponent();
+        void EndComponent();
 
-            /*void RenderTagComponent(TagComponent component);
-            void RenderTransformComponent(TransformComponent component);
-            void RenderPathComponent(PathComponent component);
-            void RenderLightComponent(LightComponent component);
-            void RenderMeshRendererComponent(MeshRendererComponent component);*/
+        /*void RenderTagComponent(TagComponent component);
+        void RenderTransformComponent(TransformComponent component);
+        void RenderPathComponent(PathComponent component);
+        void RenderLightComponent(LightComponent component);
+        void RenderMeshRendererComponent(MeshRendererComponent component);*/
 
-            template <typename T>
-            void RenderComponent(T* component);
+        template <typename T>
+        void RenderComponent(T *component);
 
-            template <typename T>
-            void RenderComponent(Ref<T> component);
-        public:
-            InspectorWindow(Ref<EditorModel> listener, int id);
+        template <typename T>
+        void RenderComponent(Ref<T> component);
 
-            /// @brief Renders the module window.
-            void OnImGuiRender() override;
+    public:
+        InspectorWindow(Ref<EditorModel> listener, int id);
 
-            void OnUpdate(double deltaTime) override;
+        /// @brief Renders the module window.
+        void OnImGuiRender() override;
 
-            virtual std::string Serialize() override;
+        void OnUpdate(double deltaTime) override;
+
+        virtual std::string Serialize() override;
     };
 }

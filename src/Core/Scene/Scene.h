@@ -6,29 +6,38 @@
 #include "Core/Scene/Camera.h"
 #include "Core/Rendering/Framebuffer.h"
 
-namespace Dwarf {
-	enum FogType { LINEAR, EXPONENTIAL };
+namespace Dwarf
+{
+	enum FogType
+	{
+		LINEAR,
+		EXPONENTIAL
+	};
 
-	struct FogSettings {
-		glm::vec3 fogColor = { 0.3, 0.3, 0.3 };
+	struct FogSettings
+	{
+		glm::vec3 fogColor = {0.3, 0.3, 0.3};
 		float fogStart = 20.0f;
 		float fogEnd = 50.0f;
 		FogType type = FogType::LINEAR;
 	};
 
-	struct GlobalLightSettings {
-		glm::vec3 color = { 0.8, 0.6, 0.6};
+	struct GlobalLightSettings
+	{
+		glm::vec3 color = {0.8, 0.6, 0.6};
 		float intensity = 0.2;
 	};
 
-	struct SceneSettings {
+	struct SceneSettings
+	{
 		Ref<UID> skyboxMaterial;
 		FogSettings fogSettings;
 		GlobalLightSettings globalLightSettings;
 	};
 
 	/// @brief Class that represents a Dwarf Engine scene.
-	class Scene {
+	class Scene
+	{
 	public:
 		// ========== Constructors ==========
 		Scene(std::filesystem::path path, SceneSettings settings);
@@ -38,7 +47,7 @@ namespace Dwarf {
 
 		std::string GetName();
 		std::filesystem::path GetPath();
-		//std::vector<Entity>* GetSelectedEntities();
+		// std::vector<Entity>* GetSelectedEntities();
 		Ref<entt::registry> GetRegistry();
 		Ref<Entity> GetRootEntity();
 		SceneSettings GetSettings();
@@ -51,37 +60,37 @@ namespace Dwarf {
 		/// @brief Creates a new entity with a given name.
 		/// @param name Name of the entity.
 		/// @return The created entity instance.
-		Entity CreateEntity(const std::string& name = std::string());
+		Entity CreateEntity(const std::string &name = std::string());
 
 		/// @brief Creates a new entity with a given name a UID.
 		/// @param uid UID to use with the entity.
 		/// @param name Name of the entity.
 		/// @return The created entity instance.
-		Entity CreateEntityWithUID(UID uid, const std::string& name);
+		Entity CreateEntityWithUID(UID uid, const std::string &name);
 
 		/// @brief Draws the scene from the POV of a given camera.
 		/// @param camera Camera instance.
-		//void drawScene(Camera camera);
+		// void drawScene(Camera camera);
 
 		/// @brief Sets the selection to a single entity.
 		/// @param entity Entity instance.
-		//void SelectEntity(Entity entity);
+		// void SelectEntity(Entity entity);
 
 		/// @brief Adds an entity to the selection.
 		/// @param entity Entity instance.
-		//void AddEntityToSelection(Entity entity);
+		// void AddEntityToSelection(Entity entity);
 
 		/// @brief Removes an entity from the selection.
 		/// @param entity Entity instance.
-		//void RemoveEntityFromSelection(Entity entity);
+		// void RemoveEntityFromSelection(Entity entity);
 
 		/// @brief Checks if an entity is selected.
 		/// @param entity Entity instance.
 		/// @return True if selected, false if not.
-		//bool IsEntitySelected(Entity entity);
+		// bool IsEntitySelected(Entity entity);
 
 		/// @brief Clears the selection list.
-		//void ClearSelection();
+		// void ClearSelection();
 	private:
 		/// @brief Name of the opened scene.
 		std::string m_Name;

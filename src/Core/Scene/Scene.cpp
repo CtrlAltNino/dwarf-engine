@@ -2,48 +2,54 @@
 #include "Core/Scene/SceneComponents.h"
 #include "Core/Scene/Scene.h"
 
-namespace Dwarf {
+namespace Dwarf
+{
 
 	// ========== Constructors ==========
 
 	Scene::Scene(std::filesystem::path path, SceneSettings settings)
-	: m_Name(path.empty() ? "New Scene" : path.stem().string()),
-	m_Path(path), m_Registry(CreateRef<entt::registry>(entt::registry())),
-	m_Settings(settings)
+		: m_Name(path.empty() ? "New Scene" : path.stem().string()),
+		  m_Path(path), m_Registry(CreateRef<entt::registry>(entt::registry())),
+		  m_Settings(settings)
 	{
 		CreateRootEntity();
 	}
 
-	Scene::~Scene(){ }
+	Scene::~Scene() {}
 
 	// ========== Getters ==========
 
-	std::string Scene::GetName() {
+	std::string Scene::GetName()
+	{
 		return m_Name;
 	}
 
-	std::filesystem::path Scene::GetPath(){
+	std::filesystem::path Scene::GetPath()
+	{
 		return m_Path;
 	}
 
 	// ========== Scene Functions ==========
 
-	void Scene::CreateRootEntity(){
+	void Scene::CreateRootEntity()
+	{
 		m_RootEntity = CreateRef<Entity>(m_Registry->create(), m_Registry);
 		m_RootEntity->AddComponent<IDComponent>(UID());
 		m_RootEntity->AddComponent<TransformComponent>();
-		auto& tag = m_RootEntity->AddComponent<TagComponent>("Root");
+		auto &tag = m_RootEntity->AddComponent<TagComponent>("Root");
 	}
 
-	Entity Scene::CreateEntity(const std::string& name){
+	Entity Scene::CreateEntity(const std::string &name)
+	{
 		return CreateEntityWithUID(UID(), name);
 	}
 
-	Entity Scene::CreateEntityWithUID(UID uid, const std::string& name){
+	Entity Scene::CreateEntityWithUID(UID uid, const std::string &name)
+	{
 		Entity entity(m_Registry->create(), m_Registry);
 		entity.AddComponent<IDComponent>(uid);
 		entity.AddComponent<TransformComponent>();
-		auto& tag = entity.AddComponent<TagComponent>(name);
+		auto &tag = entity.AddComponent<TagComponent>(name);
 		tag.Tag = name.empty() ? "Entity" : name;
 
 		entity.SetParent(m_RootEntity->GetHandle());
@@ -113,26 +119,31 @@ namespace Dwarf {
 		glDisable(GL_CULL_FACE);
 	}*/
 
-	Ref<entt::registry> Scene::GetRegistry(){
+	Ref<entt::registry> Scene::GetRegistry()
+	{
 		return m_Registry;
 	}
 
-	Ref<Entity> Scene::GetRootEntity(){
+	Ref<Entity> Scene::GetRootEntity()
+	{
 		return m_RootEntity;
 	}
 
-	SceneSettings Scene::GetSettings(){
+	SceneSettings Scene::GetSettings()
+	{
 		return m_Settings;
 	}
 
-	void Scene::SetPath(std::filesystem::path path){
+	void Scene::SetPath(std::filesystem::path path)
+	{
 		m_Path = path;
 		m_Name = path.stem().string();
 
 		// TODO UPDATE WINDOW TITLE BAR
 	}
 
-	glm::mat4 Scene::GetFullModelMatrix(TransformComponent transform){
+	glm::mat4 Scene::GetFullModelMatrix(TransformComponent transform)
+	{
 		glm::mat4 parentMat = glm::mat4(1.0f);
 		std::vector<glm::mat4> matriceStack;
 
@@ -140,14 +151,16 @@ namespace Dwarf {
 
 		entt::entity cursor = transform.parent;
 
-		if(cursor != entt::null){
+		if (cursor != entt::null)
+		{
 			Entity cur = Entity(cursor, m_Registry);
 			matriceStack.push_back(cur.GetComponent<TransformComponent>().getModelMatrix());
 
 			cursor = cur.GetParent();
 		}
 
-		for(auto it = matriceStack.rbegin(); it < matriceStack.rend(); it++){
+		for (auto it = matriceStack.rbegin(); it < matriceStack.rend(); it++)
+		{
 			parentMat *= *it;
 		}
 

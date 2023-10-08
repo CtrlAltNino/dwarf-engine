@@ -5,17 +5,21 @@
 #include "Core/Base.h"
 #include "Core/Asset/AssetReference.h"
 
-namespace Dwarf {
-	class Shader {
+namespace Dwarf
+{
+	class Shader
+	{
 	protected:
 		bool m_SuccessfullyCompiled;
+
 	public:
 		Shader();
 		~Shader();
 
-		virtual void Compile()=0;
+		virtual void Compile() = 0;
 
-		bool IsCompiled(){
+		bool IsCompiled()
+		{
 			return m_SuccessfullyCompiled;
 		}
 
