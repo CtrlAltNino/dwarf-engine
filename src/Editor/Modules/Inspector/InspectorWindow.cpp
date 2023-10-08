@@ -32,58 +32,104 @@ namespace Dwarf
     void InspectorWindow::RenderComponent<IDComponent>(IDComponent *component)
     {
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
-        ImGui::Text(std::to_string(*component->ID).c_str());
+        ImGui::TextWrapped(std::to_string(*component->ID).c_str());
     }
 
     template <>
     void InspectorWindow::RenderComponent<TagComponent>(TagComponent *component)
     {
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
-        // TagComponent* tc = &entity.GetComponent<TagComponent>();
+        ImGui::TextWrapped("Name");
+        ImGui::SameLine();
         char *str0 = {(char *)component->Tag.c_str()};
-        ImGui::InputText("Name", str0, sizeof(char) * 64);
+        ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - COMPONENT_PANEL_PADDING);
+        ImGui::InputText("##tag_input", str0, sizeof(char) * 64);
         component->Tag = std::string(str0);
+        ImGui::PopItemWidth();
     }
 
     template <>
     void InspectorWindow::RenderComponent<TransformComponent>(TransformComponent *component)
     {
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
-        ImGui::DragFloat3("Position", &component->position.x, 0.015f);
+
+        ImGui::TextWrapped("Position");
+        ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
+
+        ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - COMPONENT_PANEL_PADDING);
+        ImGui::DragFloat3("##transform_position", &component->position.x, 0.015f);
+        ImGui::PopItemWidth();
+
+        ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
+
+        ImGui::TextWrapped("Rotation");
+        ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
+
         static const float rad_2_deg = 180.0f / M_PI;
         static const float deg_2_rad = M_PI / 180.0f;
-        // glm::vec3 rot = rad_2_deg * glm::eulerAngles(transform->rotation);
-        ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
         glm::vec3 rot = component->getEulerAngles();
-        ImGui::DragFloat3("Rotation", &rot.x, 0.05f);
+        ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - COMPONENT_PANEL_PADDING);
+        ImGui::DragFloat3("##transform_rotation", &rot.x, 0.05f);
         component->rotation = rot;
+        ImGui::PopItemWidth();
+
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
-        ImGui::DragFloat3("Scale", &component->scale.x, 0.015f);
+
+        ImGui::TextWrapped("Scale");
+        ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
+
+        ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - COMPONENT_PANEL_PADDING);
+        ImGui::DragFloat3("##transform_scale", &component->scale.x, 0.015f);
+        ImGui::PopItemWidth();
     }
 
     template <>
     void InspectorWindow::RenderComponent<LightComponent>(LightComponent *component)
     {
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
+
         static int item_current = 0;
-        ImGui::Combo("Light type", &item_current, LightComponent::LIGHT_TYPE_NAMES, IM_ARRAYSIZE(LightComponent::LIGHT_TYPE_NAMES));
+        ImGui::TextWrapped("Light type");
+        ImGui::SameLine();
+        ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - COMPONENT_PANEL_PADDING);
+        ImGui::Combo("##light_type", &item_current, LightComponent::LIGHT_TYPE_NAMES, IM_ARRAYSIZE(LightComponent::LIGHT_TYPE_NAMES));
+        ImGui::PopItemWidth();
         component->type = (LightComponent::LIGHT_TYPE)item_current;
 
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
-        ImGui::ColorEdit3("Color", (float *)&component->lightColor.r, ImGuiColorEditFlags_None);
+
+        ImGui::TextWrapped("Color");
+        ImGui::SameLine();
+        ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - COMPONENT_PANEL_PADDING);
+        ImGui::ColorEdit3("##light_color", (float *)&component->lightColor.r, ImGuiColorEditFlags_None);
+        ImGui::PopItemWidth();
+
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
-        ImGui::DragFloat("Attenuation", &component->attenuation, 0.015f);
+
+        ImGui::TextWrapped("Attenuation");
+        ImGui::SameLine();
+        ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - COMPONENT_PANEL_PADDING);
+        ImGui::DragFloat("##light_attenuation", &component->attenuation, 0.015f);
+        ImGui::PopItemWidth();
 
         if (component->type == LightComponent::LIGHT_TYPE::POINT_LIGHT)
         {
             ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
-            ImGui::DragFloat("Radius", &component->radius, 0.015f);
+            ImGui::TextWrapped("Radius");
+            ImGui::SameLine();
+            ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - COMPONENT_PANEL_PADDING);
+            ImGui::DragFloat("##light_point_radius", &component->radius, 0.015f);
+            ImGui::PopItemWidth();
         }
 
         if (component->type == LightComponent::LIGHT_TYPE::SPOT_LIGHT)
         {
             ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
-            ImGui::SliderFloat("Opening Angle", &component->openingAngle, 0.0f, 180.0f);
+            ImGui::TextWrapped("Opening Angle");
+            ImGui::SameLine();
+            ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - COMPONENT_PANEL_PADDING);
+            ImGui::SliderFloat("##light_spot_angle", &component->openingAngle, 0.0f, 180.0f);
+            ImGui::PopItemWidth();
         }
     }
 
@@ -94,7 +140,11 @@ namespace Dwarf
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
         // char* meshAssetName = (char*)"Yeet";
         // ImGui::InputText("Mesh", meshAssetName, sizeof(meshAssetName), ImGuiInputTextFlags_ReadOnly);
+        ImGui::TextWrapped("Model Asset");
+        ImGui::SameLine();
+        ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - COMPONENT_PANEL_PADDING);
         DwarfUI::AssetInput<ModelAsset>(component->meshAsset, "##modelAsset");
+        ImGui::PopItemWidth();
 
         if (component->meshAsset)
         {
@@ -109,18 +159,22 @@ namespace Dwarf
                 }
             }
             ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
-            ImGui::Text("Materials");
+            ImGui::TextWrapped("Materials");
 
             if (component->materialAssets.size() != numMaterials)
             {
                 component->materialAssets.resize(numMaterials);
             }
 
-            ImGui::Indent(10.0f);
+            ImGui::Indent(16.0f);
             for (int i = 0; i < numMaterials; i++)
             {
                 ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
+                ImGui::TextWrapped(std::to_string(i).c_str());
+                ImGui::SameLine();
+                ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - COMPONENT_PANEL_PADDING);
                 DwarfUI::AssetInput<MaterialAsset>(component->materialAssets.at(i), (std::string("##materialAsset") + std::to_string(i)).c_str());
+                ImGui::PopItemWidth();
             }
         }
     }
@@ -128,9 +182,17 @@ namespace Dwarf
     template <>
     void InspectorWindow::RenderComponent<AssetReference<UnknownAsset>>(Ref<AssetReference<UnknownAsset>> asset)
     {
-        ImGui::PushTextWrapPos(ImGui::GetContentRegionAvail().x);
-        ImGui::TextWrapped(asset->GetAsset()->m_FileContent.c_str());
-        ImGui::PopTextWrapPos();
+        ImGui::TextWrapped("File name: ");
+        ImGui::SameLine(0, 5.0f);
+        ImGui::TextWrapped(asset->GetPath().filename().string().c_str());
+
+        ImGui::TextWrapped("Path: ");
+        ImGui::SameLine(0, 5.0f);
+        ImGui::TextWrapped(asset->GetPath().string().c_str());
+
+        ImGui::TextWrapped("Type: ");
+        ImGui::SameLine(0, 5.0f);
+        ImGui::TextWrapped("Unknown");
     }
 
     template <>
@@ -141,28 +203,46 @@ namespace Dwarf
         draw_list->ChannelsSetCurrent(1);
 
         ImGui::BeginChild("##inspector_child", ImGui::GetContentRegionAvail(), false, ImGuiWindowFlags_AlwaysUseWindowPadding);
-        ImVec2 vec2 = ImGui::CalcTextSize(asset->GetPath().filename().string().c_str());
-        ImGui::SetCursorPos(ImVec2(
-            ImGui::GetContentRegionAvail().x / 2.0 - (vec2.x / 2.0),
-            ImGui::GetCursorPosY() + COMPONENT_PANEL_PADDING));
-        ImGui::Text(asset->GetPath().filename().string().c_str());
+        // ImVec2 vec2 = ImGui::CalcTextSize(asset->GetPath().filename().string().c_str());
+        // ImGui::SetCursorPos(ImVec2(
+        //     ImGui::GetContentRegionAvail().x / 2.0 - (vec2.x / 2.0),
+        //     ImGui::GetCursorPosY() + COMPONENT_PANEL_PADDING));
+
+        // ImGui::Text("Material");
+        // ImVec2 separatorMin = ImVec2(ImGui::GetWindowPos().x + ImGui::GetCursorPos().x + COMPONENT_PANEL_PADDING,
+        //                              ImGui::GetWindowPos().y + ImGui::GetCursorPos().y + COMPONENT_PANEL_PADDING / 2.0);
+        // ImVec2 separatorMax = ImVec2(ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMax().x - COMPONENT_PANEL_PADDING, separatorMin.y + 2);
+        // ImGui::GetWindowDrawList()->AddRectFilled(separatorMin,
+        //                                           separatorMax, COL_BG_DIM);
+
+        // ImGui::SetCursorPosY(ImGui::GetCursorPosY() + COMPONENT_PANEL_PADDING * 2);
+        ImGui::TextWrapped("File name: ");
+        ImGui::SameLine(0, 5.0f);
+        ImGui::TextWrapped(asset->GetPath().filename().string().c_str());
+
+        ImGui::TextWrapped("Path: ");
+        ImGui::SameLine(0, 5.0f);
+        ImGui::TextWrapped(asset->GetPath().string().c_str());
+
+        ImGui::TextWrapped("Type: ");
+        ImGui::SameLine(0, 5.0f);
+        ImGui::TextWrapped("Dwarf Engine Material");
+
+        ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
+        if (ImGui::Button("Reimport"))
+        {
+            // TODO Fix
+            AssetDatabase::Reimport(asset);
+        }
+
+        ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
+
         ImVec2 separatorMin = ImVec2(ImGui::GetWindowPos().x + ImGui::GetCursorPos().x + COMPONENT_PANEL_PADDING,
                                      ImGui::GetWindowPos().y + ImGui::GetCursorPos().y + COMPONENT_PANEL_PADDING / 2.0);
         ImVec2 separatorMax = ImVec2(ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMax().x - COMPONENT_PANEL_PADDING, separatorMin.y + 2);
         ImGui::GetWindowDrawList()->AddRectFilled(separatorMin,
                                                   separatorMax, COL_BG_DIM);
-        ImGui::SetCursorPosY(ImGui::GetCursorPosY() + COMPONENT_PANEL_PADDING * 2);
-
-        ImGui::Text("Dwarf Material");
-        ImGui::Text(asset->GetPath().string().c_str());
-        ImGui::Text(std::to_string((uint64_t)*asset->GetUID()).c_str());
-
-        separatorMin = ImVec2(ImGui::GetWindowPos().x + ImGui::GetCursorPos().x + COMPONENT_PANEL_PADDING,
-                              ImGui::GetWindowPos().y + ImGui::GetCursorPos().y + COMPONENT_PANEL_PADDING / 2.0);
-        separatorMax = ImVec2(ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMax().x - COMPONENT_PANEL_PADDING, separatorMin.y + 2);
-        ImGui::GetWindowDrawList()->AddRectFilled(separatorMin,
-                                                  separatorMax, COL_BG_DIM);
-        ImGui::SetCursorPosY(ImGui::GetCursorPosY() + COMPONENT_PANEL_PADDING * 2);
+        ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 20);
 
         Ref<Material> mat = asset->GetAsset()->m_Material;
 
@@ -183,49 +263,59 @@ namespace Dwarf
             case GraphicsApi::OpenGL:
             {
                 OpenGLShader *shader = (OpenGLShader *)mat->m_Shader.get();
-                ImGui::Text("Vertex Shader");
+                ImGui::TextWrapped("Vertex Shader");
                 ImGui::SameLine();
+                ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
                 DwarfUI::AssetInput<VertexShaderAsset>(shader->m_VertexShaderAsset, "##vertexShader");
+                ImGui::PopItemWidth();
 
                 if (shader->vert_log_length)
                 {
-                    ImGui::Text(shader->vert_message);
+                    ImGui::TextWrapped(shader->vert_message);
                 }
 
-                ImGui::Text("Tessellation Control Shader");
+                ImGui::TextWrapped("Tessellation Control Shader");
                 ImGui::SameLine();
+                ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
                 DwarfUI::AssetInput<TesselationControlShaderAsset>(shader->m_TessellationControlShaderAsset, "##tessellationControlShader");
+                ImGui::PopItemWidth();
 
                 if (shader->tesc_log_length > 0)
                 {
-                    ImGui::Text(shader->tesc_message);
+                    ImGui::TextWrapped(shader->tesc_message);
                 }
 
-                ImGui::Text("Tessellation Evaluation Shader");
+                ImGui::TextWrapped("Tessellation Evaluation Shader");
                 ImGui::SameLine();
+                ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
                 DwarfUI::AssetInput<TesselationEvaluationShaderAsset>(shader->m_TessellationEvaluationShaderAsset, "##tessellationEvaluationShader");
+                ImGui::PopItemWidth();
 
                 if (shader->tese_log_length > 0)
                 {
-                    ImGui::Text(shader->tese_message);
+                    ImGui::TextWrapped(shader->tese_message);
                 }
 
-                ImGui::Text("Geometry Shader");
+                ImGui::TextWrapped("Geometry Shader");
                 ImGui::SameLine();
+                ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
                 DwarfUI::AssetInput<GeometryShaderAsset>(shader->m_GeometryShaderAsset, "##geometryShader");
+                ImGui::PopItemWidth();
 
                 if (shader->geom_log_length)
                 {
-                    ImGui::Text(shader->geom_message);
+                    ImGui::TextWrapped(shader->geom_message);
                 }
 
-                ImGui::Text("Fragment Shader");
+                ImGui::TextWrapped("Fragment Shader");
                 ImGui::SameLine();
+                ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
                 DwarfUI::AssetInput<FragmentShaderAsset>(shader->m_FragmentShaderAsset, "##fragmentShader");
+                ImGui::PopItemWidth();
 
                 if (shader->frag_log_length)
                 {
-                    ImGui::Text(shader->frag_message);
+                    ImGui::TextWrapped(shader->frag_message);
                 }
                 break;
             }
@@ -259,7 +349,7 @@ namespace Dwarf
 
             ImGui::SameLine();
 
-            ImGui::Text(mat->m_Shader->IsCompiled() ? "Successfully Compiled" : "Couldn't compile");
+            ImGui::TextWrapped(mat->m_Shader->IsCompiled() ? "Successfully Compiled" : "Couldn't compile");
         }
 
         if (ImGui::CollapsingHeader("Textures"))
@@ -268,9 +358,11 @@ namespace Dwarf
             int n = 0;
             for (auto i = mat->m_Textures.begin(); i != mat->m_Textures.end(); i++)
             {
-                ImGui::Text(i->first.c_str());
+                ImGui::TextWrapped(i->first.c_str());
                 ImGui::SameLine();
+                ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
                 DwarfUI::AssetInput<TextureAsset>(i->second, (std::string("##textureAsset") + std::to_string(n++)).c_str());
+                ImGui::PopItemWidth();
             }
 
             static char newTextureName[128] = "";
@@ -295,7 +387,7 @@ namespace Dwarf
                 int n = 0;
                 for (auto i = mat->m_BoolUniforms.begin(); i != mat->m_BoolUniforms.end(); i++)
                 {
-                    ImGui::Text(i->first.c_str());
+                    ImGui::TextWrapped(i->first.c_str());
                     ImGui::SameLine();
                     ImGui::Checkbox((std::string("##boolean") + std::to_string(n++)).c_str(), &i->second);
                 }
@@ -318,7 +410,7 @@ namespace Dwarf
                 int n = 0;
                 for (auto i = mat->m_IntegerUniforms.begin(); i != mat->m_IntegerUniforms.end(); i++)
                 {
-                    ImGui::Text(i->first.c_str());
+                    ImGui::TextWrapped(i->first.c_str());
                     ImGui::SameLine();
                     ImGui::InputInt((std::string("##integer") + std::to_string(n++)).c_str(), &i->second);
                 }
@@ -341,7 +433,7 @@ namespace Dwarf
                 int n = 0;
                 for (auto i = mat->m_FloatUniforms.begin(); i != mat->m_FloatUniforms.end(); i++)
                 {
-                    ImGui::Text(i->first.c_str());
+                    ImGui::TextWrapped(i->first.c_str());
                     ImGui::SameLine();
                     ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
                     ImGui::InputFloat((std::string("##float") + std::to_string(n++)).c_str(), &i->second);
@@ -366,7 +458,7 @@ namespace Dwarf
                 int n = 0;
                 for (auto i = mat->m_Vector2Uniforms.begin(); i != mat->m_Vector2Uniforms.end(); i++)
                 {
-                    ImGui::Text(i->first.c_str());
+                    ImGui::TextWrapped(i->first.c_str());
                     ImGui::SameLine();
                     ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
                     ImGui::InputFloat2((std::string("##vec2") + std::to_string(n++)).c_str(), &i->second.x);
@@ -391,7 +483,7 @@ namespace Dwarf
                 int n = 0;
                 for (auto i = mat->m_Vector3Uniforms.begin(); i != mat->m_Vector3Uniforms.end(); i++)
                 {
-                    ImGui::Text(i->first.c_str());
+                    ImGui::TextWrapped(i->first.c_str());
                     ImGui::SameLine();
                     ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
                     ImGui::InputFloat3((std::string("##vec3") + std::to_string(n++)).c_str(), &i->second.x);
@@ -399,7 +491,9 @@ namespace Dwarf
                 }
 
                 static char newVec3Name[128] = "";
+                ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ADD_BUTTON_WIDTH);
                 ImGui::InputTextWithHint("##vec3Name", "New 3D variable", newVec3Name, IM_ARRAYSIZE(newVec3Name));
+                ImGui::PopItemWidth();
                 ImGui::SameLine();
                 if (ImGui::Button("Add"))
                 {
@@ -414,9 +508,11 @@ namespace Dwarf
                 int n = 0;
                 for (auto i = mat->m_Vector4Uniforms.begin(); i != mat->m_Vector4Uniforms.end(); i++)
                 {
-                    ImGui::Text(i->first.c_str());
+                    ImGui::TextWrapped(i->first.c_str());
                     ImGui::SameLine();
-                    ImGui::ColorPicker4((std::string("##vec4") + std::to_string(n++)).c_str(), &i->second.x);
+                    ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
+                    ImGui::ColorEdit4((std::string("##vec4") + std::to_string(n++)).c_str(), &i->second.x, ImGuiColorEditFlags_None);
+                    ImGui::PopItemWidth();
                 }
 
                 static char newVec4Name[128] = "";
@@ -442,13 +538,6 @@ namespace Dwarf
 
         ImGui::SameLine();
 
-        if (ImGui::Button("Reimport", ImVec2(100, 50)))
-        {
-            AssetDatabase::Reimport(asset);
-        }
-
-        ImGui::SameLine();
-
         if (ImGui::Button("Generate Inputs", ImVec2(100, 50)))
         {
             mat->GenerateShaderInputs();
@@ -468,45 +557,129 @@ namespace Dwarf
     template <>
     void InspectorWindow::RenderComponent<AssetReference<SceneAsset>>(Ref<AssetReference<SceneAsset>> asset)
     {
-        ImGui::Text(asset->GetPath().filename().string().c_str());
-        ImGui::Text("Dwarf scene");
+        ImDrawList *draw_list = ImGui::GetWindowDrawList();
+        draw_list->ChannelsSplit(2);
+        draw_list->ChannelsSetCurrent(1);
+
+        ImGui::BeginChild("##inspector_child", ImGui::GetContentRegionAvail(), false, ImGuiWindowFlags_AlwaysUseWindowPadding);
+
+        ImGui::TextWrapped("File name: ");
+        ImGui::SameLine(0, 5.0f);
+        ImGui::TextWrapped(asset->GetPath().filename().string().c_str());
+
+        ImGui::TextWrapped("Path: ");
+        ImGui::SameLine(0, 5.0f);
+        ImGui::TextWrapped(asset->GetPath().string().c_str());
+
+        ImGui::TextWrapped("Type: ");
+        ImGui::SameLine(0, 5.0f);
+        ImGui::TextWrapped("Dwarf Engine Scene");
+
+        ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
+        if (ImGui::Button("Reimport"))
+        {
+            AssetDatabase::Reimport(asset);
+        }
+
+        ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
+
+        ImVec2 separatorMin = ImVec2(ImGui::GetWindowPos().x + ImGui::GetCursorPos().x + COMPONENT_PANEL_PADDING,
+                                     ImGui::GetWindowPos().y + ImGui::GetCursorPos().y + COMPONENT_PANEL_PADDING / 2.0);
+        ImVec2 separatorMax = ImVec2(ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMax().x - COMPONENT_PANEL_PADDING, separatorMin.y + 2);
+        ImGui::GetWindowDrawList()->AddRectFilled(separatorMin,
+                                                  separatorMax, COL_BG_DIM);
+
+        ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 20);
+
         if (ImGui::Button("Load scene") && FileHandler::CheckIfFileExists(asset->GetPath()))
         {
             m_Model->SetScene(SceneUtilities::LoadScene(asset->GetPath()));
         }
 
-        if (ImGui::Button("Reimport"))
-        {
-            AssetDatabase::Reimport(asset);
-        }
+        draw_list->ChannelsSetCurrent(0);
+
+        float endY = ImGui::GetItemRectMax().y;
+        ImGui::EndChild();
+        ImGui::GetWindowDrawList()->AddRectFilled(ImGui::GetItemRectMin(),
+                                                  ImVec2(ImGui::GetItemRectMin().x + ImGui::GetContentRegionAvail().x, endY + 2 * COMPONENT_PANEL_PADDING),
+                                                  IM_COL32(59, 66, 82, 255), 5.0f);
+        ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3 * COMPONENT_PANEL_PADDING);
+        draw_list->ChannelsMerge();
     }
 
     template <>
     void InspectorWindow::RenderComponent<AssetReference<ModelAsset>>(Ref<AssetReference<ModelAsset>> asset)
     {
-        ImGui::Text(asset->GetPath().filename().string().c_str());
-        ImGui::Text("Model");
+        ImDrawList *draw_list = ImGui::GetWindowDrawList();
+        draw_list->ChannelsSplit(2);
+        draw_list->ChannelsSetCurrent(1);
 
+        ImGui::BeginChild("##inspector_child", ImGui::GetContentRegionAvail(), false, ImGuiWindowFlags_AlwaysUseWindowPadding);
+
+        ImGui::TextWrapped("File name: ");
+        ImGui::SameLine(0, 5.0f);
+        ImGui::TextWrapped(asset->GetPath().filename().string().c_str());
+
+        ImGui::TextWrapped("Path: ");
+        ImGui::SameLine(0, 5.0f);
+        ImGui::TextWrapped(asset->GetPath().string().c_str());
+
+        ImGui::TextWrapped("Type: ");
+        ImGui::SameLine(0, 5.0f);
+        ImGui::TextWrapped("Model");
+
+        ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
         if (ImGui::Button("Reimport"))
         {
             AssetDatabase::Reimport(asset);
         }
+
+        ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
+
+        ImVec2 separatorMin = ImVec2(ImGui::GetWindowPos().x + ImGui::GetCursorPos().x + COMPONENT_PANEL_PADDING,
+                                     ImGui::GetWindowPos().y + ImGui::GetCursorPos().y + COMPONENT_PANEL_PADDING / 2.0);
+        ImVec2 separatorMax = ImVec2(ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMax().x - COMPONENT_PANEL_PADDING, separatorMin.y + 2);
+        ImGui::GetWindowDrawList()->AddRectFilled(separatorMin,
+                                                  separatorMax, COL_BG_DIM);
+        ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 20);
+
+        ImGui::TextWrapped("TODO here will be settings for model import");
+
+        ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
+
+        ImGui::Text("Preview:");
+
+        draw_list->ChannelsSetCurrent(0);
+
+        float endY = ImGui::GetItemRectMax().y;
+        ImGui::EndChild();
+        ImGui::GetWindowDrawList()->AddRectFilled(ImGui::GetItemRectMin(),
+                                                  ImVec2(ImGui::GetItemRectMin().x + ImGui::GetContentRegionAvail().x, endY + 2 * COMPONENT_PANEL_PADDING),
+                                                  IM_COL32(59, 66, 82, 255), 5.0f);
+        ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3 * COMPONENT_PANEL_PADDING);
+        draw_list->ChannelsMerge();
     }
 
     template <>
     void InspectorWindow::RenderComponent<AssetReference<TextureAsset>>(Ref<AssetReference<TextureAsset>> asset)
     {
-        ImGui::Text("File name: ");
-        ImGui::SameLine(0, 5.0f);
-        ImGui::Text(asset->GetPath().filename().string().c_str());
+        ImDrawList *draw_list = ImGui::GetWindowDrawList();
+        draw_list->ChannelsSplit(2);
+        draw_list->ChannelsSetCurrent(1);
 
-        ImGui::Text("Path: ");
+        ImGui::BeginChild("##inspector_child", ImGui::GetContentRegionAvail(), false, ImGuiWindowFlags_AlwaysUseWindowPadding);
+
+        ImGui::TextWrapped("File name: ");
+        ImGui::SameLine(0, 5.0f);
+        ImGui::TextWrapped(asset->GetPath().filename().string().c_str());
+
+        ImGui::TextWrapped("Path: ");
         ImGui::SameLine(0, 5.0f);
         ImGui::TextWrapped(asset->GetPath().string().c_str());
 
-        ImGui::Text("Type: ");
+        ImGui::TextWrapped("Type: ");
         ImGui::SameLine(0, 5.0f);
-        ImGui::Text("Texture");
+        ImGui::TextWrapped("Texture");
 
         ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
         if (ImGui::Button("Reimport"))
@@ -514,68 +687,142 @@ namespace Dwarf
             AssetDatabase::Reimport(asset);
         }
 
-        float width = ImGui::GetContentRegionAvail().x;
         ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
-        ImGui::Text("Preview:");
+
+        ImVec2 separatorMin = ImVec2(ImGui::GetWindowPos().x + ImGui::GetCursorPos().x + COMPONENT_PANEL_PADDING,
+                                     ImGui::GetWindowPos().y + ImGui::GetCursorPos().y + COMPONENT_PANEL_PADDING / 2.0);
+        ImVec2 separatorMax = ImVec2(ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMax().x - COMPONENT_PANEL_PADDING, separatorMin.y + 2);
+        ImGui::GetWindowDrawList()->AddRectFilled(separatorMin,
+                                                  separatorMax, COL_BG_DIM);
+        ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 20);
+
+        float width = ImGui::GetContentRegionAvail().x;
+        ImGui::TextWrapped("Preview:");
 
         ImTextureID texID = (ImTextureID)asset->GetAsset()->m_Texture->GetTextureID();
         ImGui::Image(texID, ImVec2(width, width));
+
+        draw_list->ChannelsSetCurrent(0);
+
+        float endY = ImGui::GetItemRectMax().y;
+        ImGui::EndChild();
+        ImGui::GetWindowDrawList()->AddRectFilled(ImGui::GetItemRectMin(),
+                                                  ImVec2(ImGui::GetItemRectMin().x + ImGui::GetContentRegionAvail().x, endY + 2 * COMPONENT_PANEL_PADDING),
+                                                  IM_COL32(59, 66, 82, 255), 5.0f);
+        ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3 * COMPONENT_PANEL_PADDING);
+        draw_list->ChannelsMerge();
     }
 
     template <>
     void InspectorWindow::RenderComponent<AssetReference<VertexShaderAsset>>(Ref<AssetReference<VertexShaderAsset>> asset)
     {
-        ImGui::PushTextWrapPos(ImGui::GetContentRegionAvail().x);
-        ImGui::TextWrapped(asset->GetAsset()->m_FileContent.c_str());
-        ImGui::PopTextWrapPos();
+        ImGui::TextWrapped("File name: ");
+        ImGui::SameLine(0, 5.0f);
+        ImGui::TextWrapped(asset->GetPath().filename().string().c_str());
+
+        ImGui::TextWrapped("Path: ");
+        ImGui::SameLine(0, 5.0f);
+        ImGui::TextWrapped(asset->GetPath().string().c_str());
+
+        ImGui::TextWrapped("Type: ");
+        ImGui::SameLine(0, 5.0f);
+        ImGui::TextWrapped("Vertex shader");
     }
 
     template <>
     void InspectorWindow::RenderComponent<AssetReference<TesselationControlShaderAsset>>(Ref<AssetReference<TesselationControlShaderAsset>> asset)
     {
-        ImGui::PushTextWrapPos(ImGui::GetContentRegionAvail().x);
-        ImGui::TextWrapped(asset->GetAsset()->m_FileContent.c_str());
-        ImGui::PopTextWrapPos();
+        ImGui::TextWrapped("File name: ");
+        ImGui::SameLine(0, 5.0f);
+        ImGui::TextWrapped(asset->GetPath().filename().string().c_str());
+
+        ImGui::TextWrapped("Path: ");
+        ImGui::SameLine(0, 5.0f);
+        ImGui::TextWrapped(asset->GetPath().string().c_str());
+
+        ImGui::TextWrapped("Type: ");
+        ImGui::SameLine(0, 5.0f);
+        ImGui::TextWrapped("Tesselation control shader");
     }
 
     template <>
     void InspectorWindow::RenderComponent<AssetReference<TesselationEvaluationShaderAsset>>(Ref<AssetReference<TesselationEvaluationShaderAsset>> asset)
     {
-        ImGui::PushTextWrapPos(ImGui::GetContentRegionAvail().x);
-        ImGui::TextWrapped(asset->GetAsset()->m_FileContent.c_str());
-        ImGui::PopTextWrapPos();
+        ImGui::TextWrapped("File name: ");
+        ImGui::SameLine(0, 5.0f);
+        ImGui::TextWrapped(asset->GetPath().filename().string().c_str());
+
+        ImGui::TextWrapped("Path: ");
+        ImGui::SameLine(0, 5.0f);
+        ImGui::TextWrapped(asset->GetPath().string().c_str());
+
+        ImGui::TextWrapped("Type: ");
+        ImGui::SameLine(0, 5.0f);
+        ImGui::TextWrapped("Tesselation evaluation shader");
     }
 
     template <>
     void InspectorWindow::RenderComponent<AssetReference<GeometryShaderAsset>>(Ref<AssetReference<GeometryShaderAsset>> asset)
     {
-        ImGui::PushTextWrapPos(ImGui::GetContentRegionAvail().x);
-        ImGui::TextWrapped(asset->GetAsset()->m_FileContent.c_str());
-        ImGui::PopTextWrapPos();
+        ImGui::TextWrapped("File name: ");
+        ImGui::SameLine(0, 5.0f);
+        ImGui::TextWrapped(asset->GetPath().filename().string().c_str());
+
+        ImGui::TextWrapped("Path: ");
+        ImGui::SameLine(0, 5.0f);
+        ImGui::TextWrapped(asset->GetPath().string().c_str());
+
+        ImGui::TextWrapped("Type: ");
+        ImGui::SameLine(0, 5.0f);
+        ImGui::TextWrapped("Geometry shader");
     }
 
     template <>
     void InspectorWindow::RenderComponent<AssetReference<FragmentShaderAsset>>(Ref<AssetReference<FragmentShaderAsset>> asset)
     {
-        ImGui::PushTextWrapPos(ImGui::GetContentRegionAvail().x);
-        ImGui::TextWrapped(asset->GetAsset()->m_FileContent.c_str());
-        ImGui::PopTextWrapPos();
+        ImGui::TextWrapped("File name: ");
+        ImGui::SameLine(0, 5.0f);
+        ImGui::TextWrapped(asset->GetPath().filename().string().c_str());
+
+        ImGui::TextWrapped("Path: ");
+        ImGui::SameLine(0, 5.0f);
+        ImGui::TextWrapped(asset->GetPath().string().c_str());
+
+        ImGui::TextWrapped("Type: ");
+        ImGui::SameLine(0, 5.0f);
+        ImGui::TextWrapped("Fragment shader");
     }
 
     template <>
     void InspectorWindow::RenderComponent<AssetReference<ComputeShaderAsset>>(Ref<AssetReference<ComputeShaderAsset>> asset)
     {
-        ImGui::PushTextWrapPos(ImGui::GetContentRegionAvail().x);
-        ImGui::TextWrapped(asset->GetAsset()->m_FileContent.c_str());
-        ImGui::PopTextWrapPos();
+        ImGui::TextWrapped("File name: ");
+        ImGui::SameLine(0, 5.0f);
+        ImGui::TextWrapped(asset->GetPath().filename().string().c_str());
+
+        ImGui::TextWrapped("Path: ");
+        ImGui::SameLine(0, 5.0f);
+        ImGui::TextWrapped(asset->GetPath().string().c_str());
+
+        ImGui::TextWrapped("Type: ");
+        ImGui::SameLine(0, 5.0f);
+        ImGui::TextWrapped("Compute shader");
     }
 
     template <>
     void InspectorWindow::RenderComponent<AssetReference<HlslShaderAsset>>(Ref<AssetReference<HlslShaderAsset>> asset)
     {
-        ImGui::PushTextWrapPos(ImGui::GetContentRegionAvail().x);
-        ImGui::TextWrapped(asset->GetAsset()->m_FileContent.c_str());
-        ImGui::PopTextWrapPos();
+        ImGui::TextWrapped("File name: ");
+        ImGui::SameLine(0, 5.0f);
+        ImGui::TextWrapped(asset->GetPath().filename().string().c_str());
+
+        ImGui::TextWrapped("Path: ");
+        ImGui::SameLine(0, 5.0f);
+        ImGui::TextWrapped(asset->GetPath().string().c_str());
+
+        ImGui::TextWrapped("Type: ");
+        ImGui::SameLine(0, 5.0f);
+        ImGui::TextWrapped("Hlsl shader");
     }
 
     void InspectorWindow::OnImGuiRender()
@@ -598,7 +845,7 @@ namespace Dwarf
         case INSPECTOR_SELECTION_TYPE::ASSET:
         {
             // TODO Render Asset data
-            // ImGui::Text(m_Model->m_Selection.assetPath.stem().string().c_str());
+            // ImGui::TextWrapped(m_Model->m_Selection.assetPath.stem().string().c_str());
             // AssetDatabase::Retrieve(m_Model->m_Selection.assetPath);
             // if(!m_Model->m_Selection.assetPath FileHandler::)
             std::filesystem::path assetPath = m_Model->m_Selection.assetPath;
@@ -675,7 +922,7 @@ namespace Dwarf
         ImGui::SetCursorPos(ImVec2(
             ImGui::GetContentRegionAvail().x / 2.0 - (vec2.x / 2.0),
             ImGui::GetCursorPosY() + COMPONENT_PANEL_PADDING));
-        ImGui::Text(componentHeader);
+        ImGui::TextWrapped(componentHeader);
         ImVec2 separatorMin = ImVec2(ImGui::GetWindowPos().x + ImGui::GetCursorPos().x + COMPONENT_PANEL_PADDING,
                                      ImGui::GetWindowPos().y + ImGui::GetCursorPos().y + COMPONENT_PANEL_PADDING / 2.0);
         ImVec2 separatorMax = ImVec2(ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMax().x - COMPONENT_PANEL_PADDING, separatorMin.y + 2);
