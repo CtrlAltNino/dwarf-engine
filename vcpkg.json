@@ -34,11 +34,7 @@
     {
       "name": "imgui",
       "default-features": false,
-      "features": [
-        "docking-experimental",
-        "sdl2-binding",
-        "metal-binding"
-      ],
+      "features": ["docking-experimental", "sdl2-binding", "metal-binding"],
       "platform": "osx & x64"
     },
     "assimp",
