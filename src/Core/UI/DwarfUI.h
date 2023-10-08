@@ -63,6 +63,7 @@ namespace Dwarf
 
             const char *preview = (selectedAsset == -1) ? "None" : view.template get<TagComponent>(availableAssets[selectedAsset]).Tag.c_str();
 
+            ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
             if (ImGui::BeginCombo(imguiID, preview))
             {
                 if (ImGui::Selectable("None", selectedAsset == -1, 0, ImVec2(0, 16 + 10)))
@@ -83,6 +84,7 @@ namespace Dwarf
 
                 ImGui::EndCombo();
             }
+            ImGui::PopItemWidth();
         }
 
         template <>
@@ -105,6 +107,7 @@ namespace Dwarf
 
             const char *preview = (selectedAsset == -1) ? "Default" : view.template get<TagComponent>(availableAssets[selectedAsset]).Tag.c_str();
 
+            ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
             if (ImGui::BeginCombo(imguiID, preview))
             {
                 if (ImGui::Selectable("Default", selectedAsset == -1, 0, ImVec2(0, 16 + 10)))
@@ -125,6 +128,7 @@ namespace Dwarf
 
                 ImGui::EndCombo();
             }
+            ImGui::PopItemWidth();
         }
 
         template <>
@@ -147,6 +151,7 @@ namespace Dwarf
 
             const char *preview = (selectedAsset == -1) ? "Default" : view.template get<TagComponent>(availableAssets[selectedAsset]).Tag.c_str();
 
+            ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
             if (ImGui::BeginCombo(imguiID, preview))
             {
                 if (ImGui::Selectable("Default", selectedAsset == -1, 0, ImVec2(0, 16 + 10)))
@@ -167,6 +172,7 @@ namespace Dwarf
 
                 ImGui::EndCombo();
             }
+            ImGui::PopItemWidth();
         }
     };
 }

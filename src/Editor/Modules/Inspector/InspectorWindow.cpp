@@ -20,6 +20,7 @@
 #endif
 
 #define COMPONENT_PANEL_PADDING (8.0f)
+#define ADD_BUTTON_WIDTH (40.0f)
 
 namespace Dwarf
 {
@@ -47,15 +48,6 @@ namespace Dwarf
     template <>
     void InspectorWindow::RenderComponent<TransformComponent>(TransformComponent *component)
     {
-        // Render Position
-        // Render Rotation
-        // Render Scale
-
-        // ImGui::Text("Transform Component");
-        // ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 15);
-
-        // TransformComponent* transform = &entity.GetComponent<TransformComponent>();
-
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
         ImGui::DragFloat3("Position", &component->position.x, 0.015f);
         static const float rad_2_deg = 180.0f / M_PI;
@@ -72,13 +64,6 @@ namespace Dwarf
     template <>
     void InspectorWindow::RenderComponent<LightComponent>(LightComponent *component)
     {
-        // Render dropdown for for light type
-        // Render type depending variables
-        // ImGui::Text("Light Component");
-        // ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 15);
-
-        // LightComponent* lc = &entity.GetComponent<LightComponent>();
-
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
         static int item_current = 0;
         ImGui::Combo("Light type", &item_current, LightComponent::LIGHT_TYPE_NAMES, IM_ARRAYSIZE(LightComponent::LIGHT_TYPE_NAMES));
@@ -105,21 +90,11 @@ namespace Dwarf
     template <>
     void InspectorWindow::RenderComponent<MeshRendererComponent>(MeshRendererComponent *component)
     {
-        // ImGui::Text("Mesh Renderer Component");
-        // ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 15);
-
-        // Render Mesh asset reference
-        // Render Materials
-        // Render check box for casting shadows
-        // MeshRendererComponent* mrc = &entity.GetComponent<MeshRendererComponent>();
-
         // TODO: Slot for a mesh asset
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
         // char* meshAssetName = (char*)"Yeet";
         // ImGui::InputText("Mesh", meshAssetName, sizeof(meshAssetName), ImGuiInputTextFlags_ReadOnly);
         DwarfUI::AssetInput<ModelAsset>(component->meshAsset, "##modelAsset");
-
-        // ImGuiInputTextFlags_ReadOnly
 
         if (component->meshAsset)
         {
@@ -142,13 +117,10 @@ namespace Dwarf
             }
 
             ImGui::Indent(10.0f);
-            // TODO: Slots for material assets
             for (int i = 0; i < numMaterials; i++)
             {
                 ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
-                // Ref<Material> currentMat = AssetDatabase::Retrieve<MaterialAsset>(component->materials[i])->GetAsset().m_Material;
                 DwarfUI::AssetInput<MaterialAsset>(component->materialAssets.at(i), (std::string("##materialAsset") + std::to_string(i)).c_str());
-                // ImGui::Text((std::to_string(i) + std::string(" - ") + std::string(currentMat->GetName())).c_str());
             }
         }
     }
@@ -168,9 +140,8 @@ namespace Dwarf
         draw_list->ChannelsSplit(2);
         draw_list->ChannelsSetCurrent(1);
 
-        ImGui::BeginGroup();
+        ImGui::BeginChild("##inspector_child", ImGui::GetContentRegionAvail(), false, ImGuiWindowFlags_AlwaysUseWindowPadding);
         ImVec2 vec2 = ImGui::CalcTextSize(asset->GetPath().filename().string().c_str());
-        // ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING, ImGui::GetCursorPosY() + COMPONENT_PANEL_PADDING));
         ImGui::SetCursorPos(ImVec2(
             ImGui::GetContentRegionAvail().x / 2.0 - (vec2.x / 2.0),
             ImGui::GetCursorPosY() + COMPONENT_PANEL_PADDING));
@@ -182,7 +153,6 @@ namespace Dwarf
                                                   separatorMax, COL_BG_DIM);
         ImGui::SetCursorPosY(ImGui::GetCursorPosY() + COMPONENT_PANEL_PADDING * 2);
 
-        ImGui::Indent(14.0f);
         ImGui::Text("Dwarf Material");
         ImGui::Text(asset->GetPath().string().c_str());
         ImGui::Text(std::to_string((uint64_t)*asset->GetUID()).c_str());
@@ -197,6 +167,8 @@ namespace Dwarf
         Ref<Material> mat = asset->GetAsset()->m_Material;
 
         ImGui::Checkbox("Transparent", &mat->m_Transparent);
+
+        ImGui::SetCursorPosY(ImGui::GetCursorPosY() + COMPONENT_PANEL_PADDING);
 
         if (ImGui::CollapsingHeader("Shader"))
         {
@@ -302,7 +274,10 @@ namespace Dwarf
             }
 
             static char newTextureName[128] = "";
+
+            ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ADD_BUTTON_WIDTH);
             ImGui::InputTextWithHint("##textureName", "New Texture", newTextureName, IM_ARRAYSIZE(newTextureName));
+            ImGui::PopItemWidth();
             ImGui::SameLine();
             if (ImGui::Button("Add"))
             {
@@ -323,11 +298,12 @@ namespace Dwarf
                     ImGui::Text(i->first.c_str());
                     ImGui::SameLine();
                     ImGui::Checkbox((std::string("##boolean") + std::to_string(n++)).c_str(), &i->second);
-                    // DwarfUI::AssetInput<TextureAsset>(i->second, (std::string("##boolean") + std::to_string(n++)).c_str());
                 }
 
                 static char newBooleanName[128] = "";
+                ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ADD_BUTTON_WIDTH);
                 ImGui::InputTextWithHint("##boolName", "New boolean", newBooleanName, IM_ARRAYSIZE(newBooleanName));
+                ImGui::PopItemWidth();
                 ImGui::SameLine();
                 if (ImGui::Button("Add"))
                 {
@@ -344,13 +320,13 @@ namespace Dwarf
                 {
                     ImGui::Text(i->first.c_str());
                     ImGui::SameLine();
-                    // ImGui::Checkbox((std::string("##integer") + std::to_string(n++)).c_str(), &i->second);
                     ImGui::InputInt((std::string("##integer") + std::to_string(n++)).c_str(), &i->second);
-                    // DwarfUI::AssetInput<TextureAsset>(i->second, (std::string("##boolean") + std::to_string(n++)).c_str());
                 }
 
                 static char newIntegerName[128] = "";
+                ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ADD_BUTTON_WIDTH);
                 ImGui::InputTextWithHint("##integerName", "New integer", newIntegerName, IM_ARRAYSIZE(newIntegerName));
+                ImGui::PopItemWidth();
                 ImGui::SameLine();
                 if (ImGui::Button("Add"))
                 {
@@ -367,13 +343,15 @@ namespace Dwarf
                 {
                     ImGui::Text(i->first.c_str());
                     ImGui::SameLine();
-                    // ImGui::Checkbox((std::string("##integer") + std::to_string(n++)).c_str(), &i->second);
+                    ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
                     ImGui::InputFloat((std::string("##float") + std::to_string(n++)).c_str(), &i->second);
-                    // DwarfUI::AssetInput<TextureAsset>(i->second, (std::string("##boolean") + std::to_string(n++)).c_str());
+                    ImGui::PopItemWidth();
                 }
 
                 static char newFloatName[128] = "";
+                ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ADD_BUTTON_WIDTH);
                 ImGui::InputTextWithHint("##floatName", "New float", newFloatName, IM_ARRAYSIZE(newFloatName));
+                ImGui::PopItemWidth();
                 ImGui::SameLine();
                 if (ImGui::Button("Add"))
                 {
@@ -390,13 +368,15 @@ namespace Dwarf
                 {
                     ImGui::Text(i->first.c_str());
                     ImGui::SameLine();
-                    // ImGui::Checkbox((std::string("##integer") + std::to_string(n++)).c_str(), &i->second);
+                    ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
                     ImGui::InputFloat2((std::string("##vec2") + std::to_string(n++)).c_str(), &i->second.x);
-                    // DwarfUI::AssetInput<TextureAsset>(i->second, (std::string("##boolean") + std::to_string(n++)).c_str());
+                    ImGui::PopItemWidth();
                 }
 
                 static char newVec2Name[128] = "";
+                ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ADD_BUTTON_WIDTH);
                 ImGui::InputTextWithHint("##vec2Name", "New 2D variable", newVec2Name, IM_ARRAYSIZE(newVec2Name));
+                ImGui::PopItemWidth();
                 ImGui::SameLine();
                 if (ImGui::Button("Add"))
                 {
@@ -413,9 +393,9 @@ namespace Dwarf
                 {
                     ImGui::Text(i->first.c_str());
                     ImGui::SameLine();
-                    // ImGui::Checkbox((std::string("##integer") + std::to_string(n++)).c_str(), &i->second);
+                    ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
                     ImGui::InputFloat3((std::string("##vec3") + std::to_string(n++)).c_str(), &i->second.x);
-                    // DwarfUI::AssetInput<TextureAsset>(i->second, (std::string("##boolean") + std::to_string(n++)).c_str());
+                    ImGui::PopItemWidth();
                 }
 
                 static char newVec3Name[128] = "";
@@ -436,14 +416,13 @@ namespace Dwarf
                 {
                     ImGui::Text(i->first.c_str());
                     ImGui::SameLine();
-                    // ImGui::Checkbox((std::string("##integer") + std::to_string(n++)).c_str(), &i->second);
-                    // ImGui::InputFloat4((std::string("##vec4") + std::to_string(n++)).c_str(), &i->second.x);
                     ImGui::ColorPicker4((std::string("##vec4") + std::to_string(n++)).c_str(), &i->second.x);
-                    // DwarfUI::AssetInput<TextureAsset>(i->second, (std::string("##boolean") + std::to_string(n++)).c_str());
                 }
 
                 static char newVec4Name[128] = "";
+                ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ADD_BUTTON_WIDTH);
                 ImGui::InputTextWithHint("##vec4Name", "New color", newVec4Name, IM_ARRAYSIZE(newVec4Name));
+                ImGui::PopItemWidth();
                 ImGui::SameLine();
                 if (ImGui::Button("Add"))
                 {
@@ -477,9 +456,10 @@ namespace Dwarf
 
         draw_list->ChannelsSetCurrent(0);
 
-        ImGui::EndGroup();
+        float endY = ImGui::GetItemRectMax().y;
+        ImGui::EndChild();
         ImGui::GetWindowDrawList()->AddRectFilled(ImGui::GetItemRectMin(),
-                                                  ImVec2(ImGui::GetItemRectMin().x + ImGui::GetContentRegionAvail().x, ImGui::GetItemRectMax().y + 2 * COMPONENT_PANEL_PADDING),
+                                                  ImVec2(ImGui::GetItemRectMin().x + ImGui::GetContentRegionAvail().x, endY + 2 * COMPONENT_PANEL_PADDING),
                                                   IM_COL32(59, 66, 82, 255), 5.0f);
         ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3 * COMPONENT_PANEL_PADDING);
         draw_list->ChannelsMerge();
@@ -516,16 +496,30 @@ namespace Dwarf
     template <>
     void InspectorWindow::RenderComponent<AssetReference<TextureAsset>>(Ref<AssetReference<TextureAsset>> asset)
     {
+        ImGui::Text("File name: ");
+        ImGui::SameLine(0, 5.0f);
         ImGui::Text(asset->GetPath().filename().string().c_str());
+
+        ImGui::Text("Path: ");
+        ImGui::SameLine(0, 5.0f);
+        ImGui::TextWrapped(asset->GetPath().string().c_str());
+
+        ImGui::Text("Type: ");
+        ImGui::SameLine(0, 5.0f);
         ImGui::Text("Texture");
 
-        ImTextureID texID = (ImTextureID)asset->GetAsset()->m_Texture->GetTextureID();
-        ImGui::Image(texID, ImVec2(256, 256));
-
+        ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
         if (ImGui::Button("Reimport"))
         {
             AssetDatabase::Reimport(asset);
         }
+
+        float width = ImGui::GetContentRegionAvail().x;
+        ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
+        ImGui::Text("Preview:");
+
+        ImTextureID texID = (ImTextureID)asset->GetAsset()->m_Texture->GetTextureID();
+        ImGui::Image(texID, ImVec2(width, width));
     }
 
     template <>
@@ -588,16 +582,9 @@ namespace Dwarf
     {
         ImGuiWindowFlags window_flags = 0;
 
-        // window_flags |= ImGuiWindowFlags_NoMove;
-        // window_flags |= ImGuiWindowFlags_NoResize;
-        // window_flags |= ImGuiWindowFlags_NoCollapse;
-        // window_flags |= ImGuiWindowFlags_NoTitleBar;
-        // window_flags |= ImGuiWindowFlags_MenuBar;
-
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(14.0f, 14.0f));
+        ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(200.0f, 0));
 
-        // static bool b_open = true;
-        // if (!ImGui::Begin((moduleLabel + "##" + std::to_string(index)).c_str(), NULL, window_flags))
         if (!ImGui::Begin(GetIdentifier().c_str(), &m_WindowOpened, window_flags))
         {
             // Early out if the window is collapsed, as an optimization.
@@ -674,7 +661,7 @@ namespace Dwarf
 
         ImGui::End();
 
-        ImGui::PopStyleVar();
+        ImGui::PopStyleVar(2);
     }
 
     void InspectorWindow::OnUpdate(double deltaTime)
@@ -685,7 +672,6 @@ namespace Dwarf
     {
         ImGui::BeginGroup();
         ImVec2 vec2 = ImGui::CalcTextSize(componentHeader);
-        // ImGui::SetCursorPos(ImVec2(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING, ImGui::GetCursorPosY() + COMPONENT_PANEL_PADDING));
         ImGui::SetCursorPos(ImVec2(
             ImGui::GetContentRegionAvail().x / 2.0 - (vec2.x / 2.0),
             ImGui::GetCursorPosY() + COMPONENT_PANEL_PADDING));
@@ -705,7 +691,6 @@ namespace Dwarf
                                                   ImVec2(ImGui::GetItemRectMin().x + ImGui::GetContentRegionAvail().x, ImGui::GetItemRectMax().y + 2 * COMPONENT_PANEL_PADDING),
                                                   IM_COL32(59, 66, 82, 255), 5.0f);
         ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3 * COMPONENT_PANEL_PADDING);
-        // ImGui::Separator();
     }
 
     void InspectorWindow::RenderComponents(Entity entity)
