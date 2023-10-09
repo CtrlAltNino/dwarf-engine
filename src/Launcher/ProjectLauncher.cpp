@@ -21,7 +21,7 @@ namespace Dwarf
     std::filesystem::path ProjectLauncher::Run()
     {
         // Initializing the project launcher model (e.g. loading the project list)
-        WindowProps props("Dwarf Engine Project Launcher", 1100, 600);
+        WindowProps props("Dwarf Engine", 1100, 600);
 
 #if defined(_WIN32) || defined(__linux__)
         props.Api = GraphicsApi::OpenGL;
