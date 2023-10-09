@@ -10,7 +10,7 @@ namespace Dwarf
     {
         m_RendererApi = RendererApi::Create();
         m_RendererApi->Init();
-        m_RendererApi->SetClearColor(glm::vec4(0.0f, 0.0f, 0.0f, 1.0f));
+        m_RendererApi->SetClearColor(glm::vec4(0.065f, 0.07f, 0.085, 1.0f));
     }
     ForwardRenderer::~ForwardRenderer() {}
 
