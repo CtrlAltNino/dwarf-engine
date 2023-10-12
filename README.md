@@ -1,3 +1,5 @@
+![dwarf-engine-banner](https://github.com/flash-miller/dwarf-engine/blob/48a726511e9f49cb88681a106bb3afe30eb4cc5c/Dwarf%20Engine%20Banner.png)
+
 # Dwarf Engine
 
 ## Description
