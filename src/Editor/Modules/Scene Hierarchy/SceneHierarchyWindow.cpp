@@ -18,7 +18,7 @@ namespace Dwarf
         // Building the Entity
         Entity ent = Entity(entity, m_Model->GetScene()->GetRegistry());
         ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow;
-        std::string objectLabel = ent.GetComponent<TagComponent>().Tag;
+        std::string objectLabel = ent.GetComponent<NameComponent>().Name;
         ImDrawList *draw_list = ImGui::GetWindowDrawList();
 
         // Splitting the channel to draw an extra rect when selected
@@ -228,7 +228,7 @@ namespace Dwarf
         }
         ImGui::PushStyleColor(ImGuiCol_DragDropTarget, ImVec4(0, 0, 0, 0));
 
-        auto view = m_Model->GetScene()->GetRegistry()->view<TransformComponent, TagComponent, IDComponent>();
+        auto view = m_Model->GetScene()->GetRegistry()->view<TransformComponent, NameComponent, IDComponent>();
         std::vector<entt::entity> *container = &(m_Model->GetScene()->GetRootEntity()->GetComponent<TransformComponent>().children);
 
         int it = 0;

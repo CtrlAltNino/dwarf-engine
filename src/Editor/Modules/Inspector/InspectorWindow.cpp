@@ -36,15 +36,15 @@ namespace Dwarf
     }
 
     template <>
-    void InspectorWindow::RenderComponent<TagComponent>(TagComponent *component)
+    void InspectorWindow::RenderComponent<NameComponent>(NameComponent *component)
     {
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
         ImGui::TextWrapped("Name");
         ImGui::SameLine();
-        char *str0 = {(char *)component->Tag.c_str()};
+        char *str0 = {(char *)component->Name.c_str()};
         ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - COMPONENT_PANEL_PADDING);
-        ImGui::InputText("##tag_input", str0, sizeof(char) * 64);
-        component->Tag = std::string(str0);
+        ImGui::InputText("##name_input", str0, sizeof(char) * 64);
+        component->Name = std::string(str0);
         ImGui::PopItemWidth();
     }
 
@@ -945,21 +945,21 @@ namespace Dwarf
         ImDrawList *draw_list = ImGui::GetWindowDrawList();
         draw_list->ChannelsSplit(2);
 
-        if (entity.HasComponent<IDComponent>())
+        /*if (entity.HasComponent<IDComponent>())
         {
             draw_list->ChannelsSetCurrent(1);
             BeginComponent("ID Component");
             RenderComponent(&entity.GetComponent<IDComponent>());
             draw_list->ChannelsSetCurrent(0);
             EndComponent();
-        }
+        }*/
 
-        if (entity.HasComponent<TagComponent>())
+        if (entity.HasComponent<NameComponent>())
         {
             draw_list->ChannelsSetCurrent(1);
             ImDrawList *draw_list = ImGui::GetWindowDrawList();
-            BeginComponent("Tag Component");
-            RenderComponent(&entity.GetComponent<TagComponent>());
+            BeginComponent("Name");
+            RenderComponent(&entity.GetComponent<NameComponent>());
             draw_list->ChannelsSetCurrent(0);
             EndComponent();
         }
@@ -968,7 +968,7 @@ namespace Dwarf
         {
             draw_list->ChannelsSetCurrent(1);
             ImDrawList *draw_list = ImGui::GetWindowDrawList();
-            BeginComponent("Transform Component");
+            BeginComponent("Transform");
             RenderComponent(&entity.GetComponent<TransformComponent>());
             draw_list->ChannelsSetCurrent(0);
             EndComponent();
@@ -978,7 +978,7 @@ namespace Dwarf
         {
             draw_list->ChannelsSetCurrent(1);
             ImDrawList *draw_list = ImGui::GetWindowDrawList();
-            BeginComponent("Light Component");
+            BeginComponent("Light");
             RenderComponent(&entity.GetComponent<LightComponent>());
             draw_list->ChannelsSetCurrent(0);
             EndComponent();
@@ -988,7 +988,7 @@ namespace Dwarf
         {
             draw_list->ChannelsSetCurrent(1);
             ImDrawList *draw_list = ImGui::GetWindowDrawList();
-            BeginComponent("Mesh Renderer Component");
+            BeginComponent("Mesh Renderer");
             RenderComponent(&entity.GetComponent<MeshRendererComponent>());
             draw_list->ChannelsSetCurrent(0);
             EndComponent();

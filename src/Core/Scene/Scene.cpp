@@ -36,7 +36,7 @@ namespace Dwarf
 		m_RootEntity = CreateRef<Entity>(m_Registry->create(), m_Registry);
 		m_RootEntity->AddComponent<IDComponent>(UID());
 		m_RootEntity->AddComponent<TransformComponent>();
-		auto &tag = m_RootEntity->AddComponent<TagComponent>("Root");
+		auto &name = m_RootEntity->AddComponent<NameComponent>("Root");
 	}
 
 	Entity Scene::CreateEntity(const std::string &name)
@@ -49,8 +49,8 @@ namespace Dwarf
 		Entity entity(m_Registry->create(), m_Registry);
 		entity.AddComponent<IDComponent>(uid);
 		entity.AddComponent<TransformComponent>();
-		auto &tag = entity.AddComponent<TagComponent>(name);
-		tag.Tag = name.empty() ? "Entity" : name;
+		auto &nameComp = entity.AddComponent<NameComponent>(name);
+		nameComp.Name = name.empty() ? "Entity" : name;
 
 		entity.SetParent(m_RootEntity->GetHandle());
 

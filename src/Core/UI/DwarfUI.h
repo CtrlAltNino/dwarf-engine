@@ -48,7 +48,7 @@ namespace Dwarf
         {
             std::vector<entt::entity> availableAssets;
             int selectedAsset = -1;
-            auto view = AssetDatabase::AssetDatabase::s_Registry->view<IDComponent, TagComponent, T>();
+            auto view = AssetDatabase::AssetDatabase::s_Registry->view<IDComponent, NameComponent, T>();
 
             int count = 0;
             for (auto entity : view)
@@ -61,7 +61,7 @@ namespace Dwarf
                 count++;
             }
 
-            const char *preview = (selectedAsset == -1) ? "None" : view.template get<TagComponent>(availableAssets[selectedAsset]).Tag.c_str();
+            const char *preview = (selectedAsset == -1) ? "None" : view.template get<NameComponent>(availableAssets[selectedAsset]).Name.c_str();
 
             if (ImGui::BeginCombo(imguiID, preview))
             {
@@ -74,7 +74,7 @@ namespace Dwarf
                 for (int i = 0; i < availableAssets.size(); i++)
                 {
                     const bool is_selected = (selectedAsset == i);
-                    if (ImGui::Selectable(view.template get<TagComponent>(availableAssets[i]).Tag.c_str(), is_selected, 0, ImVec2(0, 16 + 10)))
+                    if (ImGui::Selectable(view.template get<NameComponent>(availableAssets[i]).Name.c_str(), is_selected, 0, ImVec2(0, 16 + 10)))
                     {
                         selectedAsset = i;
                         assetID = view.template get<IDComponent>(availableAssets[i]).ID;
@@ -90,7 +90,7 @@ namespace Dwarf
         {
             std::vector<entt::entity> availableAssets;
             int selectedAsset = -1;
-            auto view = AssetDatabase::AssetDatabase::s_Registry->view<IDComponent, TagComponent, VertexShaderAsset>();
+            auto view = AssetDatabase::AssetDatabase::s_Registry->view<IDComponent, NameComponent, VertexShaderAsset>();
 
             int count = 0;
             for (auto entity : view)
@@ -103,7 +103,7 @@ namespace Dwarf
                 count++;
             }
 
-            const char *preview = (selectedAsset == -1) ? "Default" : view.template get<TagComponent>(availableAssets[selectedAsset]).Tag.c_str();
+            const char *preview = (selectedAsset == -1) ? "Default" : view.template get<NameComponent>(availableAssets[selectedAsset]).Name.c_str();
 
             ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
             if (ImGui::BeginCombo(imguiID, preview))
@@ -117,7 +117,7 @@ namespace Dwarf
                 for (int i = 0; i < availableAssets.size(); i++)
                 {
                     const bool is_selected = (selectedAsset == i);
-                    if (ImGui::Selectable(view.template get<TagComponent>(availableAssets[i]).Tag.c_str(), is_selected, 0, ImVec2(0, 16 + 10)))
+                    if (ImGui::Selectable(view.template get<NameComponent>(availableAssets[i]).Name.c_str(), is_selected, 0, ImVec2(0, 16 + 10)))
                     {
                         selectedAsset = i;
                         assetID = view.template get<IDComponent>(availableAssets[i]).ID;
@@ -134,7 +134,7 @@ namespace Dwarf
         {
             std::vector<entt::entity> availableAssets;
             int selectedAsset = -1;
-            auto view = AssetDatabase::AssetDatabase::s_Registry->view<IDComponent, TagComponent, FragmentShaderAsset>();
+            auto view = AssetDatabase::AssetDatabase::s_Registry->view<IDComponent, NameComponent, FragmentShaderAsset>();
 
             int count = 0;
             for (auto entity : view)
@@ -147,7 +147,7 @@ namespace Dwarf
                 count++;
             }
 
-            const char *preview = (selectedAsset == -1) ? "Default" : view.template get<TagComponent>(availableAssets[selectedAsset]).Tag.c_str();
+            const char *preview = (selectedAsset == -1) ? "Default" : view.template get<NameComponent>(availableAssets[selectedAsset]).Name.c_str();
 
             ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
             if (ImGui::BeginCombo(imguiID, preview))
@@ -161,7 +161,7 @@ namespace Dwarf
                 for (int i = 0; i < availableAssets.size(); i++)
                 {
                     const bool is_selected = (selectedAsset == i);
-                    if (ImGui::Selectable(view.template get<TagComponent>(availableAssets[i]).Tag.c_str(), is_selected, 0, ImVec2(0, 16 + 10)))
+                    if (ImGui::Selectable(view.template get<NameComponent>(availableAssets[i]).Name.c_str(), is_selected, 0, ImVec2(0, 16 + 10)))
                     {
                         selectedAsset = i;
                         assetID = view.template get<IDComponent>(availableAssets[i]).ID;

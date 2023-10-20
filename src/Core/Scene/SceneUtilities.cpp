@@ -103,7 +103,7 @@ namespace Dwarf
             Entity entity(entityHandle, scene->GetRegistry());
 
             serializedArray[entityCount]["guid"] = (uint64_t)(*entity.GetComponent<IDComponent>().ID);
-            serializedArray[entityCount]["name"] = entity.GetComponent<TagComponent>().Tag;
+            serializedArray[entityCount]["name"] = entity.GetComponent<NameComponent>().Name;
 
             TransformComponent tc = entity.GetComponent<TransformComponent>();
             serializedArray[entityCount]["transformComponent"]["position"]["x"] = tc.getPosition().x;

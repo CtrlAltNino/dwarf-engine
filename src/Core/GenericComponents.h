@@ -26,15 +26,15 @@ namespace Dwarf
         IDComponent(const UID &other) : ID(CreateRef<UID>(other)) {}
     };
 
-    /// @brief Entity component holding a tag (Used for object names).
-    struct TagComponent
+    /// @brief Entity component holding a name (Used for object names).
+    struct NameComponent
     {
-        /// @brief The entitie's tag.
-        std::string Tag;
+        /// @brief The entitie's name.
+        std::string Name;
 
-        TagComponent() = default;
-        TagComponent(const TagComponent &) = default;
-        TagComponent(const std::string &tag)
-            : Tag(tag) {}
+        NameComponent() = default;
+        NameComponent(const NameComponent &) = default;
+        NameComponent(const std::string &name)
+            : Name(name) {}
     };
 }

@@ -44,24 +44,24 @@ namespace Dwarf
         {
             ImGui::Text("Listing all imported assets and their UID's");
 
-            auto materialView = AssetDatabase::s_Registry->view<MaterialAsset, PathComponent, TagComponent, IDComponent>();
-            auto modelView = AssetDatabase::s_Registry->view<ModelAsset, PathComponent, TagComponent, IDComponent>();
-            auto sceneView = AssetDatabase::s_Registry->view<SceneAsset, PathComponent, TagComponent, IDComponent>();
-            auto vertexShaderView = AssetDatabase::s_Registry->view<VertexShaderAsset, PathComponent, TagComponent, IDComponent>();
-            auto fragmentShaderView = AssetDatabase::s_Registry->view<FragmentShaderAsset, PathComponent, TagComponent, IDComponent>();
-            auto geometryShaderView = AssetDatabase::s_Registry->view<GeometryShaderAsset, PathComponent, TagComponent, IDComponent>();
-            auto computeShaderView = AssetDatabase::s_Registry->view<ComputeShaderAsset, PathComponent, TagComponent, IDComponent>();
-            auto tesselationControlShaderView = AssetDatabase::s_Registry->view<TesselationControlShaderAsset, PathComponent, TagComponent, IDComponent>();
-            auto tesselationEvaluationShaderView = AssetDatabase::s_Registry->view<TesselationEvaluationShaderAsset, PathComponent, TagComponent, IDComponent>();
-            auto textureView = AssetDatabase::s_Registry->view<TextureAsset, PathComponent, TagComponent, IDComponent>();
+            auto materialView = AssetDatabase::s_Registry->view<MaterialAsset, PathComponent, NameComponent, IDComponent>();
+            auto modelView = AssetDatabase::s_Registry->view<ModelAsset, PathComponent, NameComponent, IDComponent>();
+            auto sceneView = AssetDatabase::s_Registry->view<SceneAsset, PathComponent, NameComponent, IDComponent>();
+            auto vertexShaderView = AssetDatabase::s_Registry->view<VertexShaderAsset, PathComponent, NameComponent, IDComponent>();
+            auto fragmentShaderView = AssetDatabase::s_Registry->view<FragmentShaderAsset, PathComponent, NameComponent, IDComponent>();
+            auto geometryShaderView = AssetDatabase::s_Registry->view<GeometryShaderAsset, PathComponent, NameComponent, IDComponent>();
+            auto computeShaderView = AssetDatabase::s_Registry->view<ComputeShaderAsset, PathComponent, NameComponent, IDComponent>();
+            auto tesselationControlShaderView = AssetDatabase::s_Registry->view<TesselationControlShaderAsset, PathComponent, NameComponent, IDComponent>();
+            auto tesselationEvaluationShaderView = AssetDatabase::s_Registry->view<TesselationEvaluationShaderAsset, PathComponent, NameComponent, IDComponent>();
+            auto textureView = AssetDatabase::s_Registry->view<TextureAsset, PathComponent, NameComponent, IDComponent>();
 
             if (ImGui::TreeNode("Materials##1"))
             {
                 for (auto entity : materialView)
                 {
-                    auto [path, tag, id] = materialView.get<PathComponent, TagComponent, IDComponent>(entity);
+                    auto [path, name, id] = materialView.get<PathComponent, NameComponent, IDComponent>(entity);
                     ImGui::Text("Name");
-                    ImGui::Text(tag.Tag.c_str());
+                    ImGui::Text(name.Name.c_str());
                     ImGui::Text("Path");
                     ImGui::Text(path.Path.string().c_str());
                     ImGui::Text("ID");
@@ -76,9 +76,9 @@ namespace Dwarf
             {
                 for (auto entity : modelView)
                 {
-                    auto [path, tag, id] = modelView.get<PathComponent, TagComponent, IDComponent>(entity);
+                    auto [path, name, id] = modelView.get<PathComponent, NameComponent, IDComponent>(entity);
                     ImGui::Text("Name");
-                    ImGui::Text(tag.Tag.c_str());
+                    ImGui::Text(name.Name.c_str());
                     ImGui::Text("Path");
                     ImGui::Text(path.Path.string().c_str());
                     ImGui::Text("ID");
@@ -92,9 +92,9 @@ namespace Dwarf
             {
                 for (auto entity : sceneView)
                 {
-                    auto [path, tag, id] = sceneView.get<PathComponent, TagComponent, IDComponent>(entity);
+                    auto [path, name, id] = sceneView.get<PathComponent, NameComponent, IDComponent>(entity);
                     ImGui::Text("Name");
-                    ImGui::Text(tag.Tag.c_str());
+                    ImGui::Text(name.Name.c_str());
                     ImGui::Text("Path");
                     ImGui::Text(path.Path.string().c_str());
                     ImGui::Text("ID");
@@ -110,9 +110,9 @@ namespace Dwarf
                 {
                     for (auto entity : vertexShaderView)
                     {
-                        auto [path, tag, id] = vertexShaderView.get<PathComponent, TagComponent, IDComponent>(entity);
+                        auto [path, name, id] = vertexShaderView.get<PathComponent, NameComponent, IDComponent>(entity);
                         ImGui::Text("Name");
-                        ImGui::Text(tag.Tag.c_str());
+                        ImGui::Text(name.Name.c_str());
                         ImGui::Text("Path");
                         ImGui::Text(path.Path.string().c_str());
                         ImGui::Text("ID");
@@ -126,9 +126,9 @@ namespace Dwarf
                 {
                     for (auto entity : fragmentShaderView)
                     {
-                        auto [path, tag, id] = fragmentShaderView.get<PathComponent, TagComponent, IDComponent>(entity);
+                        auto [path, name, id] = fragmentShaderView.get<PathComponent, NameComponent, IDComponent>(entity);
                         ImGui::Text("Name");
-                        ImGui::Text(tag.Tag.c_str());
+                        ImGui::Text(name.Name.c_str());
                         ImGui::Text("Path");
                         ImGui::Text(path.Path.string().c_str());
                         ImGui::Text("ID");
@@ -142,9 +142,9 @@ namespace Dwarf
                 {
                     for (auto entity : geometryShaderView)
                     {
-                        auto [path, tag, id] = geometryShaderView.get<PathComponent, TagComponent, IDComponent>(entity);
+                        auto [path, name, id] = geometryShaderView.get<PathComponent, NameComponent, IDComponent>(entity);
                         ImGui::Text("Name");
-                        ImGui::Text(tag.Tag.c_str());
+                        ImGui::Text(name.Name.c_str());
                         ImGui::Text("Path");
                         ImGui::Text(path.Path.string().c_str());
                         ImGui::Text("ID");
@@ -158,9 +158,9 @@ namespace Dwarf
                 {
                     for (auto entity : computeShaderView)
                     {
-                        auto [path, tag, id] = computeShaderView.get<PathComponent, TagComponent, IDComponent>(entity);
+                        auto [path, name, id] = computeShaderView.get<PathComponent, NameComponent, IDComponent>(entity);
                         ImGui::Text("Name");
-                        ImGui::Text(tag.Tag.c_str());
+                        ImGui::Text(name.Name.c_str());
                         ImGui::Text("Path");
                         ImGui::Text(path.Path.string().c_str());
                         ImGui::Text("ID");
@@ -174,9 +174,9 @@ namespace Dwarf
                 {
                     for (auto entity : tesselationControlShaderView)
                     {
-                        auto [path, tag, id] = tesselationControlShaderView.get<PathComponent, TagComponent, IDComponent>(entity);
+                        auto [path, name, id] = tesselationControlShaderView.get<PathComponent, NameComponent, IDComponent>(entity);
                         ImGui::Text("Name");
-                        ImGui::Text(tag.Tag.c_str());
+                        ImGui::Text(name.Name.c_str());
                         ImGui::Text("Path");
                         ImGui::Text(path.Path.string().c_str());
                         ImGui::Text("ID");
@@ -190,9 +190,9 @@ namespace Dwarf
                 {
                     for (auto entity : tesselationEvaluationShaderView)
                     {
-                        auto [path, tag, id] = tesselationEvaluationShaderView.get<PathComponent, TagComponent, IDComponent>(entity);
+                        auto [path, name, id] = tesselationEvaluationShaderView.get<PathComponent, NameComponent, IDComponent>(entity);
                         ImGui::Text("Name");
-                        ImGui::Text(tag.Tag.c_str());
+                        ImGui::Text(name.Name.c_str());
                         ImGui::Text("Path");
                         ImGui::Text(path.Path.string().c_str());
                         ImGui::Text("ID");
@@ -208,9 +208,9 @@ namespace Dwarf
             {
                 for (auto entity : textureView)
                 {
-                    auto [path, tag, id] = textureView.get<PathComponent, TagComponent, IDComponent>(entity);
+                    auto [path, name, id] = textureView.get<PathComponent, NameComponent, IDComponent>(entity);
                     ImGui::Text("Name");
-                    ImGui::Text(tag.Tag.c_str());
+                    ImGui::Text(name.Name.c_str());
                     ImGui::Text("Path");
                     ImGui::Text(path.Path.string().c_str());
                     ImGui::Text("ID");

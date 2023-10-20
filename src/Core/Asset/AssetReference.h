@@ -32,7 +32,7 @@ namespace Dwarf
         {
             m_Registry->emplace<T>(assetHandle, assetPath);
             m_Registry->emplace<IDComponent>(assetHandle, uid);
-            m_Registry->emplace<TagComponent>(assetHandle, assetName);
+            m_Registry->emplace<NameComponent>(assetHandle, assetName);
             m_Registry->emplace<PathComponent>(assetHandle, assetPath);
         }
         // AssetReference(const AssetReference& other) = default;
