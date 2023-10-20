@@ -1,8 +1,10 @@
+#include "dpch.h"
 #include "Core/Scene/Entity.h"
 
-namespace Dwarf {
+namespace Dwarf
+{
 
-    Entity::Entity(entt::entity handle, EntityProvider* entProvider)
-        : entityHandle(handle),
-            entProvider(entProvider){}
+    Entity::Entity(entt::entity handle, Ref<entt::registry> registry)
+        : m_EntityHandle(handle),
+          m_Registry(registry) {}
 }

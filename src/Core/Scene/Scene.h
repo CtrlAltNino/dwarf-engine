@@ -1,75 +1,118 @@
 #pragma once
 
+#include "Core/Base.h"
 #include "Core/Scene/Entity.h"
-#include "Core/Scene/Components.h"
-#include "Core/Scene/EntityProvider.h"
+#include "Core/Scene/SceneComponents.h"
 #include "Core/Scene/Camera.h"
+#include "Core/Rendering/Framebuffer.h"
 
-namespace Dwarf {
+namespace Dwarf
+{
+	enum FogType
+	{
+		LINEAR,
+		EXPONENTIAL
+	};
+
+	struct FogSettings
+	{
+		glm::vec3 fogColor = {0.3, 0.3, 0.3};
+		float fogStart = 20.0f;
+		float fogEnd = 50.0f;
+		FogType type = FogType::LINEAR;
+	};
+
+	struct GlobalLightSettings
+	{
+		glm::vec3 color = {0.8, 0.6, 0.6};
+		float intensity = 0.2;
+	};
+
+	struct SceneSettings
+	{
+		Ref<UID> skyboxMaterial;
+		FogSettings fogSettings;
+		GlobalLightSettings globalLightSettings;
+	};
 
 	/// @brief Class that represents a Dwarf Engine scene.
-	class Scene : public EntityProvider {
+	class Scene
+	{
 	public:
-		/// @brief The root entity in the scene graph.
-		Entity rootEntity = CreateRootEntity();
-
-		/// @brief Entities that have been selected by the user.
-		std::vector<Entity> selectedEntities;
 		// ========== Constructors ==========
-		
-		Scene(const char* sceneName);
+		Scene(std::filesystem::path path, SceneSettings settings);
 		~Scene();
-		
+
 		// ========== Getters ==========
 
-		const char* getSceneName();
-		
+		std::string GetName();
+		std::filesystem::path GetPath();
+		// std::vector<Entity>* GetSelectedEntities();
+		Ref<entt::registry> GetRegistry();
+		Ref<Entity> GetRootEntity();
+		SceneSettings GetSettings();
+
+		// ========== Setters ==========
+		void SetPath(std::filesystem::path path);
+
 		// ========== Scene Functions ==========
 
-		/// @brief Creates the root entity.
-		/// @return The created entity instance.
-		Entity CreateRootEntity();
-		
 		/// @brief Creates a new entity with a given name.
 		/// @param name Name of the entity.
 		/// @return The created entity instance.
-		Entity CreateEntity(const std::string& name = std::string());
+		Entity CreateEntity(const std::string &name = std::string());
 
 		/// @brief Creates a new entity with a given name a UID.
 		/// @param uid UID to use with the entity.
 		/// @param name Name of the entity.
 		/// @return The created entity instance.
-		Entity CreateEntityWithUID(UID uid, const std::string& name);
+		Entity CreateEntityWithUID(UID uid, const std::string &name);
 
 		/// @brief Draws the scene from the POV of a given camera.
 		/// @param camera Camera instance.
-		void drawScene(Camera camera);
+		// void drawScene(Camera camera);
 
 		/// @brief Sets the selection to a single entity.
 		/// @param entity Entity instance.
-		void selectEntity(Entity entity);
+		// void SelectEntity(Entity entity);
 
 		/// @brief Adds an entity to the selection.
 		/// @param entity Entity instance.
-		void addEntityToSelection(Entity entity);
+		// void AddEntityToSelection(Entity entity);
 
 		/// @brief Removes an entity from the selection.
 		/// @param entity Entity instance.
-		void removeEntityFromSelection(Entity entity);
+		// void RemoveEntityFromSelection(Entity entity);
 
 		/// @brief Checks if an entity is selected.
 		/// @param entity Entity instance.
 		/// @return True if selected, false if not.
-		bool isEntitySelected(Entity entity);
+		// bool IsEntitySelected(Entity entity);
 
 		/// @brief Clears the selection list.
-		void clearSelection();
+		// void ClearSelection();
 	private:
 		/// @brief Name of the opened scene.
-		const char* sceneName;
+		std::string m_Name;
+
+		std::filesystem::path m_Path;
+
+		Ref<entt::registry> m_Registry;
+
+		SceneSettings m_Settings;
+
+		/// @brief The root entity in the scene graph.
+		Ref<Entity> m_RootEntity;
+
+		/// @brief Entities that have been selected by the user.
+		std::vector<Entity> m_SelectedEntities;
 
 		/// @brief Because of dependency cycle
 		friend class Entity;
+
+		/// @brief Creates the root entity.
+		/// @return The created entity instance.
+		void CreateRootEntity();
 
 		/// @brief Returns the tree index of a given entity. Used for sorting based on their graph positions.
 		/// @param entity Entity instance.

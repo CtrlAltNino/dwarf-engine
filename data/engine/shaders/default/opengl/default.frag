@@ -51,26 +51,25 @@ void main(){
 		normal = normal * 2.0f - 1.0f;
 		normal = normalize(tbn * normal);
 	}
-	
+
 	vec3 cameraPos = (inverse(viewMatrix) * vec4(0,0,0,1)).xyz;
 	vec3 viewDir = normalize(cameraPos.xyz - worldPos);
 	vec3 halfwayDir = normalize(-lightDir + viewDir);
-	
+
 	float spec = pow(max(dot(normal, halfwayDir), 0.0), shininess);
 	float diff = max(0, dot(normal, -lightDir));
-	
+
 	vec3 ambientColor = ambientStrength * lightColor;
 	vec3 diffuseColor = diff * lightColor * lightIntensity;
 	vec3 specularColor = spec * lightColor * lightIntensity;
 	if(useSpecularMap > 0){
 		specularColor = specularColor * texture(specularMap, texCoord).rgb;
 	}
-	
+
 	if(useAlbedoMap > 0){
 		objectColor = objectColor * texture(albedoMap, texCoord);
 	}
-	
+
 	FragColor = vec4((ambientColor + diffuseColor + specularColor) * objectColor.rgb, objectColor.a);
-	APPLY_FOG(FragColor)
-	//FragColor = vec4(normal, 1);
+	//APPLY_FOG(FragColor)
 }

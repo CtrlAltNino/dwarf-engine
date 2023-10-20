@@ -1,42 +1,61 @@
-#define STB_IMAGE_STATIC
-#define STB_IMAGE_IMPLEMENTATION
+#include "dpch.h"
 
-#include <stb_image.h>
+#include "Core/Rendering/Renderer.h"
 
-#include "Core/Rendering/Texture.h"
+#ifdef WIN32
+// #include "Platform/Direct3D12/D3D12Texture.h"
+#include "Platform/OpenGL/OpenGLTexture.h"
+// #include "Platform/Vulkan/VulkanTexture.h"
+#elif __linux__
+#include "Platform/OpenGL/OpenGLTexture.h"
+// #include "Platform/Vulkan/VulkanTexture.h"
+#elif __APPLE__
+// #include "Platform/Metal/MetalTexture.h"
+#endif
 
-namespace Dwarf {
+#include <nlohmann/json.hpp>
 
-	Texture::Texture(const char* filePath) : Texture(filePath, GL_LINEAR, GL_REPEAT, GL_RGB, GL_UNSIGNED_BYTE) {
-
-	}
-
-	Texture::Texture(const char* filePath, GLint filter, GLint wrap, GLint colorFormat, GLint dataFormat) {
-		int numColCh;
-		unsigned char* bytes = stbi_load(filePath, &this->size.x, &this->size.y, &numColCh, 0);
-
-		glGenTextures(1, &this->ID);
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, this->ID);
-
-		// TODO FIX
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, filter);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, wrap);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, wrap);
-
-		glTexImage2D(GL_TEXTURE_2D, 0, colorFormat, this->size.x, this->size.y, 0, colorFormat, dataFormat, bytes);
-		glGenerateMipmap(GL_TEXTURE_2D);
-		
-		glBindTexture(GL_TEXTURE_2D, 0);
-		stbi_image_free(bytes);
-	}
-
-	glm::ivec2 Texture::GetTextureSize(){
-		return this->size;
-	}
-
-	void Texture::Delete() {
-		glDeleteTextures(1, &ID);
-	}
+namespace Dwarf
+{
+    Ref<Texture> Texture::Create(std::filesystem::path path)
+    {
+        switch (Renderer::GetAPI())
+        {
+#ifdef WIN32
+        case GraphicsApi::D3D12:
+            // return CreateRef<D3D12Texture>(D3D12Texture(path));
+            break;
+        case GraphicsApi::Metal:
+            break;
+        case GraphicsApi::OpenGL:
+            return CreateRef<OpenGLTexture>(OpenGLTexture(path));
+            break;
+        case GraphicsApi::Vulkan:
+            // return CreateRef<VulkanTexture>(VulkanTexture(path));
+            break;
+#elif __linux__
+        case GraphicsApi::D3D12:
+            break;
+        case GraphicsApi::Metal:
+            break;
+        case GraphicsApi::OpenGL:
+            return CreateRef<OpenGLTexture>(OpenGLTexture(path));
+            break;
+        case GraphicsApi::Vulkan:
+            // return CreateRef<VulkanTexture>(VulkanTexture(path));
+            break;
+#elif __APPLE__
+        case GraphicsApi::D3D12:
+            break;
+        case GraphicsApi::Metal:
+            // return CreateRef<MetalTexture>(MetalTexture(path));
+            break;
+        case GraphicsApi::OpenGL:
+            break;
+        case GraphicsApi::Vulkan:
+            break;
+#endif
+        }
+        return nullptr;
+    }
 }

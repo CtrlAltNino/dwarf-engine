@@ -3,30 +3,39 @@
   "version-string": "0.0.1",
   "supports": "(windows & x64 & static) | (linux & x64) | (osx & x64)",
   "dependencies": [
-    "glad",
-    "glfw3",
+    {
+      "name": "glad",
+      "platform": "(windows & x64 & static) | (linux & x64)"
+    },
     "glm",
     {
       "name": "imgui",
       "default-features": false,
       "features": [
+        "docking-experimental",
         "sdl2-binding",
-        "sdl2-renderer-binding",
+        "dx12-binding",
         "opengl3-binding",
-        "docking-experimental"
+        "vulkan-binding"
       ],
-      "platform": "!osx"
+      "platform": "windows & x64 & static"
     },
     {
       "name": "imgui",
       "default-features": false,
       "features": [
-        "sdl2-binding",
-        "sdl2-renderer-binding",
         "docking-experimental",
-        "metal-binding"
+        "sdl2-binding",
+        "opengl3-binding",
+        "vulkan-binding"
       ],
-      "platform": "osx"
+      "platform": "linux & x64"
+    },
+    {
+      "name": "imgui",
+      "default-features": false,
+      "features": ["docking-experimental", "sdl2-binding", "metal-binding"],
+      "platform": "osx & x64"
     },
     "assimp",
     "stb",

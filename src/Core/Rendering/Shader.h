@@ -1,39 +1,38 @@
 #pragma once
 
 #include <string>
-#include <glad/glad.h>
 
-// TODO: REDO SHADERS
+#include "Core/Base.h"
+#include "Core/Asset/AssetReference.h"
 
-namespace Dwarf {
+namespace Dwarf
+{
+	class Shader
+	{
+	protected:
+		bool m_SuccessfullyCompiled;
 
-	std::string get_file_contents(const char* filename);
-	struct vertexShaderName {
-		const char* value;
-		constexpr operator const char* () const { return value; }
-	};
-
-	struct fragmentShaderName {
-		const char* value;
-		constexpr operator const char* () const { return value; }
-	};
-
-	class Shader {
-	private:
-		std::string vertexShaderSource;
-		std::string fragmentShaderSource;
-		std::string geometryShaderSource;
 	public:
-		// ID of the shader program
-		GLuint ID = -1;
+		Shader();
+		~Shader();
 
-		void AddVertexShader(std::string filePath);
-		void AddFragmentShader(std::string filePath);
-		void AddGeometryShader(std::string filePath);
+		virtual void Compile() = 0;
 
-		void CreateShaderProgram();
+		bool IsCompiled()
+		{
+			return m_SuccessfullyCompiled;
+		}
 
-		void Activate();
-		void Delete();
+		static Ref<Shader> Create();
+
+		static void Init();
+
+		static Ref<Shader> s_DefaultShader;
+		static Ref<Shader> s_ErrorShader;
+		static Ref<Shader> s_GridShader;
+
+		static std::filesystem::path GetDefaultShaderPath();
+		static std::filesystem::path GetErrorShaderPath();
+		static std::filesystem::path GetGridShaderPath();
 	};
 }

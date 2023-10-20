@@ -1,32 +1,56 @@
 #pragma once
 
-#include "Core/Scene/Entity.h"
-#include "Core/Scene/Scene.h"
-#include "Core/Scene/MeshLoader.h"
-#include "Editor/EditorCommon.h"
-#include "Utilities/Common.h"
+#include "Core/Base.h"
 
-namespace Dwarf {
+#include "Core/Scene/Scene.h"
+
+namespace Dwarf
+{
+
+    enum INSPECTOR_SELECTION_TYPE
+    {
+        NONE,
+        ASSET,
+        ENTITY
+    };
+
+    struct SelectionContainer
+    {
+        std::filesystem::path assetPath;
+        std::vector<Entity> selectedEntities;
+        INSPECTOR_SELECTION_TYPE selectionType = INSPECTOR_SELECTION_TYPE::NONE;
+    };
 
     /// @brief Model of the Editor's MVC structure.
-    class EditorModel{
-        private:
-            /// @brief The currently opened scene instance.
-            Scene scene;
+    class EditorModel
+    {
+    private:
+        /// @brief The currently opened scene instance.
+        Ref<Scene> m_Scene;
 
-            GraphicsApi activeApi;
+        double m_DeltaTime;
 
-            /// @brief Interfaced controller instance to communicate to the controller.
-            IModelListener* modelListener;
-        public:
-            EditorModel(IModelListener* listener);
+        std::filesystem::path m_ProjectPath;
 
-            /// @brief DEBUG initializes the scene.
-            /// @param projectPath Path to the currently opened project.
-            void InitScene(std::string projectPath);
+        std::string m_ProjectName;
 
-            /// @brief Returns the currently opened scene.
-            /// @return A pointer to the scene.
-            Scene* GetScene();
+    public:
+        EditorModel(std::string name, std::filesystem::path projectPath);
+
+        /// @brief Returns the currently opened scene.
+        /// @return A pointer to the scene.
+        Ref<Scene> GetScene();
+
+        void SetScene(Ref<Scene> scene);
+
+        std::string GetName();
+
+        std::filesystem::path GetProjectPath();
+
+        void SetDeltaTime(double deltaTime);
+
+        double GetDeltaTime();
+
+        SelectionContainer m_Selection;
     };
 }

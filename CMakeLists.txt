@@ -10,8 +10,8 @@ include(${CMAKE_SOURCE_DIR}/helper.cmake)
 add_compile_definitions(NOMINMAX)
 set(CMAKE_CXX_STANDARD 20)
 set(targetName dwarf-engine)
-set(VCPKG_FEATURE_FLAGS manifest)
 
+set(CMAKE_PCH_INSTANTIATE_TEMPLATES ON)
 # Need to find a way to make the path to the vcpkg.cmake file dynamic, maybe I can even store it in the repo
 
 # Declaring a variable that can contain various settings for the executable
@@ -27,14 +27,7 @@ IF (WIN32)
     set(EXECUTABLE_ADDITIONAL_SETTINGS ${APP_ICON_RESOURCE_WINDOWS})
     # Hiding the console window in release mode
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
-    
-    add_executable(${targetName} "")
-ELSEIF (APPLE)
-    file(READ "$ENV{HOME}/.vcpkg/vcpkg.path.txt" VCPKG_PATH)
-    set(CMAKE_TOOLCHAIN_FILE "${VCPKG_PATH}/scripts/buildsystems/vcpkg.cmake")
-    set(VCPKG_LIBRARY_LINKAGE static)
-    set(VCPKG_TARGET_TRIPLET "x64-osx")
-    set(VCPKG_HOST_TRIPLET "x64-osx")
+
     add_executable(${targetName} "")
 ELSEIF (UNIX AND NOT APPLE)
     # ~/.vcpkg/vcpkg.path.txt
@@ -42,24 +35,30 @@ ELSEIF (UNIX AND NOT APPLE)
     set(CMAKE_TOOLCHAIN_FILE "${VCPKG_PATH}/scripts/buildsystems/vcpkg.cmake")
     set(VCPKG_TARGET_TRIPLET "x64-linux")
     add_executable(${targetName} "")
+ELSEIF (APPLE)
+    # ~/.vcpkg/vcpkg.path.txt
+    file(READ "$ENV{HOME}/.vcpkg/vcpkg.path.txt" VCPKG_PATH)
+    set(CMAKE_TOOLCHAIN_FILE "${VCPKG_PATH}/scripts/buildsystems/vcpkg.cmake")
+    set(VCPKG_TARGET_TRIPLET "x64-osx")
+    add_executable(${targetName} "")
 ENDIF()
 
-set(CMAKE_PCH_INSTANTIATE_TEMPLATES ON)
 
 include_directories(src)
 
 target_sources(${targetName} PRIVATE ${EXECUTABLE_ADDITIONAL_SETTINGS})
 
 # Project declaration
-project(Dwarf\ Engine VERSION 0.0.1 LANGUAGES C CXX OBJC OBJCXX)
+project(Dwarf\ Engine VERSION 0.0.1 LANGUAGES C CXX)
 
 # Add the CMakeLists.txt files of the subdirectories
 smtg_add_subdirectories()
 
 # Linking dependencies
-
-find_package(glad CONFIG REQUIRED)
-target_link_libraries(${targetName} PRIVATE glad::glad)
+IF (WIN32 OR (UNIX AND NOT APPLE))
+    find_package(glad CONFIG REQUIRED)
+    target_link_libraries(${targetName} PRIVATE glad::glad)
+ENDIF()
 
 find_path(STB_INCLUDE_DIRS "stb_c_lexer.h")
 target_include_directories(${targetName} PRIVATE ${STB_INCLUDE_DIRS})
@@ -120,7 +119,7 @@ IF (APPLE)
 ENDIF()
 
 # Copy files to build folder
-add_custom_command(TARGET 
-${targetName} 
-    POST_BUILD COMMAND ${CMAKE_COMMAND} 
+add_custom_command(TARGET
+${targetName}
+    POST_BUILD COMMAND ${CMAKE_COMMAND}
     -E copy_directory ${CMAKE_SOURCE_DIR}/data $<TARGET_FILE_DIR:${targetName}>/data)
