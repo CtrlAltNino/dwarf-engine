@@ -21,6 +21,7 @@
 
 #define COMPONENT_PANEL_PADDING (8.0f)
 #define ADD_BUTTON_WIDTH (40.0f)
+#define UNIFORM_DELETE_BUTTON_WIDTH (80.0f)
 
 namespace Dwarf
 {
@@ -350,6 +351,7 @@ namespace Dwarf
             ImGui::SameLine();
 
             ImGui::TextWrapped(mat->m_Shader->IsCompiled() ? "Successfully Compiled" : "Couldn't compile");
+            ImGui::Unindent(8.0f);
         }
 
         if (ImGui::CollapsingHeader("Textures"))
@@ -360,9 +362,14 @@ namespace Dwarf
             {
                 ImGui::TextWrapped(i->first.c_str());
                 ImGui::SameLine();
-                ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
+                ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - UNIFORM_DELETE_BUTTON_WIDTH);
                 DwarfUI::AssetInput<TextureAsset>(i->second, (std::string("##textureAsset") + std::to_string(n++)).c_str());
                 ImGui::PopItemWidth();
+                ImGui::SameLine();
+                if (ImGui::Button("Delete", ImVec2(UNIFORM_DELETE_BUTTON_WIDTH, 0)))
+                {
+                    mat->RemoveShaderInput<Texture>(i->first);
+                }
             }
 
             static char newTextureName[128] = "";
@@ -390,6 +397,12 @@ namespace Dwarf
                     ImGui::TextWrapped(i->first.c_str());
                     ImGui::SameLine();
                     ImGui::Checkbox((std::string("##boolean") + std::to_string(n++)).c_str(), &i->second);
+                    ImGui::SameLine();
+                    ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - UNIFORM_DELETE_BUTTON_WIDTH);
+                    if (ImGui::Button("Delete", ImVec2(UNIFORM_DELETE_BUTTON_WIDTH, 0)))
+                    {
+                        mat->RemoveShaderInput<bool>(i->first);
+                    }
                 }
 
                 static char newBooleanName[128] = "";
@@ -412,7 +425,14 @@ namespace Dwarf
                 {
                     ImGui::TextWrapped(i->first.c_str());
                     ImGui::SameLine();
+                    ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - UNIFORM_DELETE_BUTTON_WIDTH);
                     ImGui::InputInt((std::string("##integer") + std::to_string(n++)).c_str(), &i->second);
+                    ImGui::PopItemWidth();
+                    ImGui::SameLine();
+                    if (ImGui::Button("Delete", ImVec2(UNIFORM_DELETE_BUTTON_WIDTH, 0)))
+                    {
+                        mat->RemoveShaderInput<int>(i->first);
+                    }
                 }
 
                 static char newIntegerName[128] = "";
@@ -435,9 +455,14 @@ namespace Dwarf
                 {
                     ImGui::TextWrapped(i->first.c_str());
                     ImGui::SameLine();
-                    ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
+                    ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - UNIFORM_DELETE_BUTTON_WIDTH);
                     ImGui::InputFloat((std::string("##float") + std::to_string(n++)).c_str(), &i->second);
                     ImGui::PopItemWidth();
+                    ImGui::SameLine();
+                    if (ImGui::Button("Delete", ImVec2(UNIFORM_DELETE_BUTTON_WIDTH, 0)))
+                    {
+                        mat->RemoveShaderInput<float>(i->first);
+                    }
                 }
 
                 static char newFloatName[128] = "";
@@ -460,9 +485,14 @@ namespace Dwarf
                 {
                     ImGui::TextWrapped(i->first.c_str());
                     ImGui::SameLine();
-                    ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
+                    ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - UNIFORM_DELETE_BUTTON_WIDTH);
                     ImGui::InputFloat2((std::string("##vec2") + std::to_string(n++)).c_str(), &i->second.x);
                     ImGui::PopItemWidth();
+                    ImGui::SameLine();
+                    if (ImGui::Button("Delete", ImVec2(UNIFORM_DELETE_BUTTON_WIDTH, 0)))
+                    {
+                        mat->RemoveShaderInput<glm::vec2>(i->first);
+                    }
                 }
 
                 static char newVec2Name[128] = "";
@@ -485,9 +515,14 @@ namespace Dwarf
                 {
                     ImGui::TextWrapped(i->first.c_str());
                     ImGui::SameLine();
-                    ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
+                    ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - UNIFORM_DELETE_BUTTON_WIDTH);
                     ImGui::InputFloat3((std::string("##vec3") + std::to_string(n++)).c_str(), &i->second.x);
                     ImGui::PopItemWidth();
+                    ImGui::SameLine();
+                    if (ImGui::Button("Delete", ImVec2(UNIFORM_DELETE_BUTTON_WIDTH, 0)))
+                    {
+                        mat->RemoveShaderInput<glm::vec3>(i->first);
+                    }
                 }
 
                 static char newVec3Name[128] = "";
@@ -510,9 +545,14 @@ namespace Dwarf
                 {
                     ImGui::TextWrapped(i->first.c_str());
                     ImGui::SameLine();
-                    ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
+                    ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - UNIFORM_DELETE_BUTTON_WIDTH);
                     ImGui::ColorEdit4((std::string("##vec4") + std::to_string(n++)).c_str(), &i->second.x, ImGuiColorEditFlags_None);
                     ImGui::PopItemWidth();
+                    ImGui::SameLine();
+                    if (ImGui::Button("Delete", ImVec2(UNIFORM_DELETE_BUTTON_WIDTH, 0)))
+                    {
+                        mat->RemoveShaderInput<glm::vec4>(i->first);
+                    }
                 }
 
                 static char newVec4Name[128] = "";
