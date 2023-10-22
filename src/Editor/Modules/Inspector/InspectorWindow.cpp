@@ -234,6 +234,8 @@ namespace Dwarf
         {
             // TODO Fix
             AssetDatabase::Reimport(asset);
+            ImGui::EndChild();
+            return;
         }
 
         ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
