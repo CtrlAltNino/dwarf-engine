@@ -205,6 +205,7 @@ namespace Dwarf
         if (!m_Settings.CameraMovement && ImGui::IsMouseHoveringRect(hoverRectMin, hoverRectMax) && InputManager::GetMouse(MOUSE_BUTTON::RIGHT))
         {
             m_Settings.CameraMovement = true;
+            ImGui::FocusWindow(ImGui::GetCurrentWindow());
         }
         else if (m_Settings.CameraMovement && !InputManager::GetMouse(MOUSE_BUTTON::RIGHT))
         {
