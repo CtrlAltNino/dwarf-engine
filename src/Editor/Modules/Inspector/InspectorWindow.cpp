@@ -358,7 +358,7 @@ namespace Dwarf
         {
             ImGui::Indent(8.0f);
             int n = 0;
-            for (auto i = mat->m_Textures.begin(); i != mat->m_Textures.end(); i++)
+            for (auto i = mat->m_Textures.begin(); i != mat->m_Textures.end();)
             {
                 ImGui::TextWrapped(i->first.c_str());
                 ImGui::SameLine();
@@ -366,21 +366,27 @@ namespace Dwarf
                 DwarfUI::AssetInput<TextureAsset>(i->second, (std::string("##textureAsset") + std::to_string(n++)).c_str());
                 ImGui::PopItemWidth();
                 ImGui::SameLine();
-                if (ImGui::Button("Delete", ImVec2(UNIFORM_DELETE_BUTTON_WIDTH, 0)))
+                if (ImGui::Button((std::string("Delete##texture_") + std::to_string(n)).c_str(), ImVec2(UNIFORM_DELETE_BUTTON_WIDTH, 0)))
                 {
-                    mat->RemoveShaderInput<Texture>(i->first);
+                    i = mat->m_Textures.erase(i);
+                }
+                else
+                {
+                    ++i;
+                    n++;
                 }
             }
 
             static char newTextureName[128] = "";
 
             ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ADD_BUTTON_WIDTH);
-            ImGui::InputTextWithHint("##textureName", "New Texture", newTextureName, IM_ARRAYSIZE(newTextureName));
+            ImGui::InputTextWithHint("##textureName", "New Texture", newTextureName, IM_ARRAYSIZE(newTextureName), ImGuiInputTextFlags_CharsNoBlank);
             ImGui::PopItemWidth();
             ImGui::SameLine();
-            if (ImGui::Button("Add"))
+            if (ImGui::Button("Add##texture") && std::strlen(newTextureName) > 0)
             {
                 mat->SetTexture(newTextureName, nullptr);
+                std::strcpy(newTextureName, "");
             }
             ImGui::Unindent(8.0f);
         }
@@ -392,27 +398,33 @@ namespace Dwarf
             {
                 ImGui::Indent(8.0f);
                 int n = 0;
-                for (auto i = mat->m_BoolUniforms.begin(); i != mat->m_BoolUniforms.end(); i++)
+                for (auto i = mat->m_BoolUniforms.begin(); i != mat->m_BoolUniforms.end();)
                 {
                     ImGui::TextWrapped(i->first.c_str());
                     ImGui::SameLine();
                     ImGui::Checkbox((std::string("##boolean") + std::to_string(n++)).c_str(), &i->second);
                     ImGui::SameLine();
                     ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - UNIFORM_DELETE_BUTTON_WIDTH);
-                    if (ImGui::Button("Delete", ImVec2(UNIFORM_DELETE_BUTTON_WIDTH, 0)))
+                    if (ImGui::Button((std::string("Delete##boolean_") + std::to_string(n)).c_str(), ImVec2(UNIFORM_DELETE_BUTTON_WIDTH, 0)))
                     {
-                        mat->RemoveShaderInput<bool>(i->first);
+                        i = mat->m_BoolUniforms.erase(i);
+                    }
+                    else
+                    {
+                        ++i;
+                        n++;
                     }
                 }
 
                 static char newBooleanName[128] = "";
                 ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ADD_BUTTON_WIDTH);
-                ImGui::InputTextWithHint("##boolName", "New boolean", newBooleanName, IM_ARRAYSIZE(newBooleanName));
+                ImGui::InputTextWithHint("##boolName", "New boolean", newBooleanName, IM_ARRAYSIZE(newBooleanName), ImGuiInputTextFlags_CharsNoBlank);
                 ImGui::PopItemWidth();
                 ImGui::SameLine();
-                if (ImGui::Button("Add"))
+                if (ImGui::Button("Add##boolean") && std::strlen(newBooleanName) > 0)
                 {
                     mat->SetUniform(newBooleanName, false);
+                    std::strcpy(newBooleanName, "");
                 }
                 ImGui::Unindent(8.0f);
             }
@@ -421,7 +433,7 @@ namespace Dwarf
             {
                 ImGui::Indent(8.0f);
                 int n = 0;
-                for (auto i = mat->m_IntegerUniforms.begin(); i != mat->m_IntegerUniforms.end(); i++)
+                for (auto i = mat->m_IntegerUniforms.begin(); i != mat->m_IntegerUniforms.end();)
                 {
                     ImGui::TextWrapped(i->first.c_str());
                     ImGui::SameLine();
@@ -429,20 +441,26 @@ namespace Dwarf
                     ImGui::InputInt((std::string("##integer") + std::to_string(n++)).c_str(), &i->second);
                     ImGui::PopItemWidth();
                     ImGui::SameLine();
-                    if (ImGui::Button("Delete", ImVec2(UNIFORM_DELETE_BUTTON_WIDTH, 0)))
+                    if (ImGui::Button((std::string("Delete##integer_") + std::to_string(n)).c_str(), ImVec2(UNIFORM_DELETE_BUTTON_WIDTH, 0)))
                     {
-                        mat->RemoveShaderInput<int>(i->first);
+                        i = mat->m_IntegerUniforms.erase(i);
+                    }
+                    else
+                    {
+                        ++i;
+                        n++;
                     }
                 }
 
                 static char newIntegerName[128] = "";
                 ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ADD_BUTTON_WIDTH);
-                ImGui::InputTextWithHint("##integerName", "New integer", newIntegerName, IM_ARRAYSIZE(newIntegerName));
+                ImGui::InputTextWithHint("##integerName", "New integer", newIntegerName, IM_ARRAYSIZE(newIntegerName), ImGuiInputTextFlags_CharsNoBlank);
                 ImGui::PopItemWidth();
                 ImGui::SameLine();
-                if (ImGui::Button("Add"))
+                if (ImGui::Button("Add##integer") && std::strlen(newIntegerName) > 0)
                 {
                     mat->SetUniform(newIntegerName, 0);
+                    std::strcpy(newIntegerName, "");
                 }
                 ImGui::Unindent(8.0f);
             }
@@ -451,7 +469,7 @@ namespace Dwarf
             {
                 ImGui::Indent(8.0f);
                 int n = 0;
-                for (auto i = mat->m_FloatUniforms.begin(); i != mat->m_FloatUniforms.end(); i++)
+                for (auto i = mat->m_FloatUniforms.begin(); i != mat->m_FloatUniforms.end();)
                 {
                     ImGui::TextWrapped(i->first.c_str());
                     ImGui::SameLine();
@@ -459,20 +477,26 @@ namespace Dwarf
                     ImGui::InputFloat((std::string("##float") + std::to_string(n++)).c_str(), &i->second);
                     ImGui::PopItemWidth();
                     ImGui::SameLine();
-                    if (ImGui::Button("Delete", ImVec2(UNIFORM_DELETE_BUTTON_WIDTH, 0)))
+                    if (ImGui::Button((std::string("Delete##float_") + std::to_string(n)).c_str(), ImVec2(UNIFORM_DELETE_BUTTON_WIDTH, 0)))
                     {
-                        mat->RemoveShaderInput<float>(i->first);
+                        i = mat->m_FloatUniforms.erase(i);
+                    }
+                    else
+                    {
+                        ++i;
+                        n++;
                     }
                 }
 
                 static char newFloatName[128] = "";
                 ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ADD_BUTTON_WIDTH);
-                ImGui::InputTextWithHint("##floatName", "New float", newFloatName, IM_ARRAYSIZE(newFloatName));
+                ImGui::InputTextWithHint("##floatName", "New float", newFloatName, IM_ARRAYSIZE(newFloatName), ImGuiInputTextFlags_CharsNoBlank);
                 ImGui::PopItemWidth();
                 ImGui::SameLine();
-                if (ImGui::Button("Add"))
+                if (ImGui::Button("Add##float") && std::strlen(newFloatName) > 0)
                 {
                     mat->SetUniform(newFloatName, 0.0f);
+                    std::strcpy(newFloatName, "");
                 }
                 ImGui::Unindent(8.0f);
             }
@@ -481,7 +505,7 @@ namespace Dwarf
             {
                 ImGui::Indent(8.0f);
                 int n = 0;
-                for (auto i = mat->m_Vector2Uniforms.begin(); i != mat->m_Vector2Uniforms.end(); i++)
+                for (auto i = mat->m_Vector2Uniforms.begin(); i != mat->m_Vector2Uniforms.end();)
                 {
                     ImGui::TextWrapped(i->first.c_str());
                     ImGui::SameLine();
@@ -489,20 +513,26 @@ namespace Dwarf
                     ImGui::InputFloat2((std::string("##vec2") + std::to_string(n++)).c_str(), &i->second.x);
                     ImGui::PopItemWidth();
                     ImGui::SameLine();
-                    if (ImGui::Button("Delete", ImVec2(UNIFORM_DELETE_BUTTON_WIDTH, 0)))
+                    if (ImGui::Button((std::string("Delete##vec2_") + std::to_string(n)).c_str(), ImVec2(UNIFORM_DELETE_BUTTON_WIDTH, 0)))
                     {
-                        mat->RemoveShaderInput<glm::vec2>(i->first);
+                        i = mat->m_Vector2Uniforms.erase(i);
+                    }
+                    else
+                    {
+                        ++i;
+                        n++;
                     }
                 }
 
                 static char newVec2Name[128] = "";
                 ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ADD_BUTTON_WIDTH);
-                ImGui::InputTextWithHint("##vec2Name", "New 2D variable", newVec2Name, IM_ARRAYSIZE(newVec2Name));
+                ImGui::InputTextWithHint("##vec2Name", "New 2D variable", newVec2Name, IM_ARRAYSIZE(newVec2Name), ImGuiInputTextFlags_CharsNoBlank);
                 ImGui::PopItemWidth();
                 ImGui::SameLine();
-                if (ImGui::Button("Add"))
+                if (ImGui::Button("Add##vec2") && std::strlen(newVec2Name) > 0)
                 {
                     mat->SetUniform(newVec2Name, {0, 0});
+                    std::strcpy(newVec2Name, "");
                 }
                 ImGui::Unindent(8.0f);
             }
@@ -511,7 +541,7 @@ namespace Dwarf
             {
                 ImGui::Indent(8.0f);
                 int n = 0;
-                for (auto i = mat->m_Vector3Uniforms.begin(); i != mat->m_Vector3Uniforms.end(); i++)
+                for (auto i = mat->m_Vector3Uniforms.begin(); i != mat->m_Vector3Uniforms.end();)
                 {
                     ImGui::TextWrapped(i->first.c_str());
                     ImGui::SameLine();
@@ -519,20 +549,26 @@ namespace Dwarf
                     ImGui::InputFloat3((std::string("##vec3") + std::to_string(n++)).c_str(), &i->second.x);
                     ImGui::PopItemWidth();
                     ImGui::SameLine();
-                    if (ImGui::Button("Delete", ImVec2(UNIFORM_DELETE_BUTTON_WIDTH, 0)))
+                    if (ImGui::Button((std::string("Delete##vec3_") + std::to_string(n)).c_str(), ImVec2(UNIFORM_DELETE_BUTTON_WIDTH, 0)))
                     {
-                        mat->RemoveShaderInput<glm::vec3>(i->first);
+                        i = mat->m_Vector3Uniforms.erase(i);
+                    }
+                    else
+                    {
+                        ++i;
+                        n++;
                     }
                 }
 
                 static char newVec3Name[128] = "";
                 ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ADD_BUTTON_WIDTH);
-                ImGui::InputTextWithHint("##vec3Name", "New 3D variable", newVec3Name, IM_ARRAYSIZE(newVec3Name));
+                ImGui::InputTextWithHint("##vec3Name", "New 3D variable", newVec3Name, IM_ARRAYSIZE(newVec3Name), ImGuiInputTextFlags_CharsNoBlank);
                 ImGui::PopItemWidth();
                 ImGui::SameLine();
-                if (ImGui::Button("Add"))
+                if (ImGui::Button("Add##vec3") && std::strlen(newVec3Name) > 0)
                 {
                     mat->SetUniform(newVec3Name, {0, 0, 0});
+                    std::strcpy(newVec3Name, "");
                 }
                 ImGui::Unindent(8.0f);
             }
@@ -541,7 +577,7 @@ namespace Dwarf
             {
                 ImGui::Indent(8.0f);
                 int n = 0;
-                for (auto i = mat->m_Vector4Uniforms.begin(); i != mat->m_Vector4Uniforms.end(); i++)
+                for (auto i = mat->m_Vector4Uniforms.begin(); i != mat->m_Vector4Uniforms.end();)
                 {
                     ImGui::TextWrapped(i->first.c_str());
                     ImGui::SameLine();
@@ -549,20 +585,26 @@ namespace Dwarf
                     ImGui::ColorEdit4((std::string("##vec4") + std::to_string(n++)).c_str(), &i->second.x, ImGuiColorEditFlags_None);
                     ImGui::PopItemWidth();
                     ImGui::SameLine();
-                    if (ImGui::Button("Delete", ImVec2(UNIFORM_DELETE_BUTTON_WIDTH, 0)))
+                    if (ImGui::Button((std::string("Delete##vec4_") + std::to_string(n)).c_str(), ImVec2(UNIFORM_DELETE_BUTTON_WIDTH, 0)))
                     {
-                        mat->RemoveShaderInput<glm::vec4>(i->first);
+                        i = mat->m_Vector4Uniforms.erase(i);
+                    }
+                    else
+                    {
+                        ++i;
+                        n++;
                     }
                 }
 
                 static char newVec4Name[128] = "";
                 ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ADD_BUTTON_WIDTH);
-                ImGui::InputTextWithHint("##vec4Name", "New color", newVec4Name, IM_ARRAYSIZE(newVec4Name));
+                ImGui::InputTextWithHint("##vec4Name", "New color", newVec4Name, IM_ARRAYSIZE(newVec4Name), ImGuiInputTextFlags_CharsNoBlank);
                 ImGui::PopItemWidth();
                 ImGui::SameLine();
-                if (ImGui::Button("Add"))
+                if (ImGui::Button("Add##vec4") && std::strlen(newVec4Name) > 0)
                 {
                     mat->SetUniform(newVec4Name, {1, 1, 1, 1});
+                    std::strcpy(newVec4Name, "");
                 }
                 ImGui::Unindent(8.0f);
             }

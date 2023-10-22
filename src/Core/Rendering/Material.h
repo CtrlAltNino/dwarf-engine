@@ -135,8 +135,8 @@ namespace Dwarf
 		/// @brief Removes an uniform.
 		/// @tparam T Type of the uniform to remove.
 		/// @param uniformName Name of the uniform to remove.
-		template <typename T>
-		void RemoveShaderInput(std::string uniformName);
+		// template <typename T>
+		// std::map<std::string, T>::iterator RemoveShaderInput(std::string uniformName);
 
 		void GenerateShaderInputs();
 

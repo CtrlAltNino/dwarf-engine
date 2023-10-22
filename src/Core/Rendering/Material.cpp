@@ -144,59 +144,47 @@ namespace Dwarf
 		m_Vector4Uniforms[uniformName] = val;
 	}
 
-	template <typename T>
-	void Material::RemoveShaderInput(std::string uniformName)
-	{
-		m_Textures.erase(uniformName);
-		m_BoolUniforms.erase(uniformName);
-		m_IntegerUniforms.erase(uniformName);
-		m_FloatUniforms.erase(uniformName);
-		m_Vector2Uniforms.erase(uniformName);
-		m_Vector3Uniforms.erase(uniformName);
-		m_Vector4Uniforms.erase(uniformName);
-	}
+	// template <>
+	// std::map<std::string, Ref<UID>>::iterator Material::RemoveShaderInput<Ref<UID>>(std::string uniformName)
+	// {
+	// 	return m_Textures.erase(uniformName);
+	// }
 
-	template <>
-	void Material::RemoveShaderInput<Texture>(std::string uniformName)
-	{
-		m_Textures.erase(uniformName);
-	}
+	// template <>
+	// void Material::RemoveShaderInput<bool>(std::string uniformName)
+	// {
+	// 	m_BoolUniforms.erase(uniformName);
+	// }
 
-	template <>
-	void Material::RemoveShaderInput<bool>(std::string uniformName)
-	{
-		m_BoolUniforms.erase(uniformName);
-	}
+	// template <>
+	// void Material::RemoveShaderInput<int>(std::string uniformName)
+	// {
+	// 	m_IntegerUniforms.erase(uniformName);
+	// }
 
-	template <>
-	void Material::RemoveShaderInput<int>(std::string uniformName)
-	{
-		m_IntegerUniforms.erase(uniformName);
-	}
+	// template <>
+	// void Material::RemoveShaderInput<float>(std::string uniformName)
+	// {
+	// 	m_FloatUniforms.erase(uniformName);
+	// }
 
-	template <>
-	void Material::RemoveShaderInput<float>(std::string uniformName)
-	{
-		m_FloatUniforms.erase(uniformName);
-	}
+	// template <>
+	// void Material::RemoveShaderInput<glm::vec2>(std::string uniformName)
+	// {
+	// 	m_Vector2Uniforms.erase(uniformName);
+	// }
 
-	template <>
-	void Material::RemoveShaderInput<glm::vec2>(std::string uniformName)
-	{
-		m_Vector2Uniforms.erase(uniformName);
-	}
+	// template <>
+	// void Material::RemoveShaderInput<glm::vec3>(std::string uniformName)
+	// {
+	// 	m_Vector3Uniforms.erase(uniformName);
+	// }
 
-	template <>
-	void Material::RemoveShaderInput<glm::vec3>(std::string uniformName)
-	{
-		m_Vector3Uniforms.erase(uniformName);
-	}
-
-	template <>
-	void Material::RemoveShaderInput<glm::vec4>(std::string uniformName)
-	{
-		m_Vector4Uniforms.erase(uniformName);
-	}
+	// template <>
+	// void Material::RemoveShaderInput<glm::vec4>(std::string uniformName)
+	// {
+	// 	m_Vector4Uniforms.erase(uniformName);
+	// }
 
 	void Material::SetTransparency(bool transparent)
 	{
