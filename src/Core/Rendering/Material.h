@@ -34,26 +34,7 @@ namespace Dwarf
 		/// @brief Flag indicating if this is a transparent object.
 		bool m_Transparent;
 
-		/// @brief Textures used in this material.
-		std::map<std::string, Ref<UID>> m_Textures;
-
-		/// @brief Boolean uniforms.
-		std::map<std::string, bool> m_BoolUniforms;
-
-		/// @brief Integer uniforms.
-		std::map<std::string, int> m_IntegerUniforms;
-
-		/// @brief Float uniforms.
-		std::map<std::string, float> m_FloatUniforms;
-
-		/// @brief 2D vector uniforms.
-		std::map<std::string, glm::vec2> m_Vector2Uniforms;
-
-		/// @brief 3D vector uniforms.
-		std::map<std::string, glm::vec3> m_Vector3Uniforms;
-
-		/// @brief 4D vector uniforms.
-		std::map<std::string, glm::vec4> m_Vector4Uniforms;
+		UniformCollection m_Uniforms;
 
 		std::string GetName();
 
@@ -112,33 +93,13 @@ namespace Dwarf
 
 		bool IsTransparent();
 
-		std::map<std::string, Ref<UID>> GetTextures();
-
-		/// @brief Boolean uniforms.
-		std::map<std::string, bool> GetBoolUniforms();
-
-		/// @brief Integer uniforms.
-		std::map<std::string, int> GetIntegerUniforms();
-
-		/// @brief Float uniforms.
-		std::map<std::string, float> GetFloatUniforms();
-
-		/// @brief 2D vector uniforms.
-		std::map<std::string, glm::vec2> Get2DUniforms();
-
-		/// @brief 3D vector uniforms.
-		std::map<std::string, glm::vec3> Get3DUniforms();
-
-		/// @brief 4D vector uniforms.
-		std::map<std::string, glm::vec4> Get4DUniforms();
-
 		/// @brief Removes an uniform.
 		/// @tparam T Type of the uniform to remove.
 		/// @param uniformName Name of the uniform to remove.
 		// template <typename T>
 		// std::map<std::string, T>::iterator RemoveShaderInput(std::string uniformName);
 
-		void GenerateShaderInputs();
+		void GenerateUniforms();
 
 		/*static Material CreateBasicMaterial(){
 			Material mat(new Shader("data/engine/shaders/default/opengl/default"));

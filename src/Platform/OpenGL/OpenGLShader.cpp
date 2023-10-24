@@ -240,4 +240,33 @@ namespace Dwarf
 		gridShader->Compile();
 		return gridShader;
 	}
+
+	UniformCollection OpenGLShader::GetUniforms()
+	{
+		GLint i;
+		GLint count;
+
+		GLint size;	 // size of the variable
+		GLenum type; // type of the variable (float, vec3 or mat4, etc)
+
+		const GLsizei bufSize = 64; // maximum name length
+		GLchar name[bufSize];		// variable name in GLSL
+		GLsizei length;				// name length
+
+		glGetProgramiv(m_ID, GL_ACTIVE_UNIFORMS, &count);
+		printf("Active Uniforms: %d\n", count);
+
+		for (i = 0; i < count; i++)
+		{
+			glGetActiveUniform(m_ID, (GLuint)i, bufSize, &length, &size, &type, name);
+
+			printf("Uniform #%d Type: %u Name: %s\n", i, type, name);
+
+			switch (type)
+			{
+			}
+		}
+
+		return UniformCollection();
+	}
 }

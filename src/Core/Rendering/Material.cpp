@@ -111,37 +111,37 @@ namespace Dwarf
 
 	void Material::SetTexture(std::string uniformName, Ref<UID> val)
 	{
-		m_Textures[uniformName] = val;
+		m_Uniforms.Textures[uniformName] = val;
 	}
 
 	void Material::SetUniform(std::string uniformName, bool val)
 	{
-		m_BoolUniforms[uniformName] = val;
+		m_Uniforms.Booleans[uniformName] = val;
 	}
 
 	void Material::SetUniform(std::string uniformName, int val)
 	{
-		m_IntegerUniforms[uniformName] = val;
+		m_Uniforms.Integers[uniformName] = val;
 	}
 
 	void Material::SetUniform(std::string uniformName, float val)
 	{
-		m_FloatUniforms[uniformName] = val;
+		m_Uniforms.Floats[uniformName] = val;
 	}
 
 	void Material::SetUniform(std::string uniformName, glm::vec2 val)
 	{
-		m_Vector2Uniforms[uniformName] = val;
+		m_Uniforms.Floats2D[uniformName] = val;
 	}
 
 	void Material::SetUniform(std::string uniformName, glm::vec3 val)
 	{
-		m_Vector3Uniforms[uniformName] = val;
+		m_Uniforms.Floats3D[uniformName] = val;
 	}
 
 	void Material::SetUniform(std::string uniformName, glm::vec4 val)
 	{
-		m_Vector4Uniforms[uniformName] = val;
+		m_Uniforms.Floats4D[uniformName] = val;
 	}
 
 	// template <>
@@ -196,49 +196,9 @@ namespace Dwarf
 		return m_Transparent;
 	}
 
-	std::map<std::string, Ref<UID>> Material::GetTextures()
-	{
-		return m_Textures;
-	}
-
-	/// @brief Boolean uniforms.
-	std::map<std::string, bool> Material::GetBoolUniforms()
-	{
-		return m_BoolUniforms;
-	}
-
-	/// @brief Integer uniforms.
-	std::map<std::string, int> Material::GetIntegerUniforms()
-	{
-		return m_IntegerUniforms;
-	}
-
-	/// @brief Float uniforms.
-	std::map<std::string, float> Material::GetFloatUniforms()
-	{
-		return m_FloatUniforms;
-	}
-
-	/// @brief 2D vector uniforms.
-	std::map<std::string, glm::vec2> Material::Get2DUniforms()
-	{
-		return m_Vector2Uniforms;
-	}
-
-	/// @brief 3D vector uniforms.
-	std::map<std::string, glm::vec3> Material::Get3DUniforms()
-	{
-		return m_Vector3Uniforms;
-	}
-
-	/// @brief 4D vector uniforms.
-	std::map<std::string, glm::vec4> Material::Get4DUniforms()
-	{
-		return m_Vector4Uniforms;
-	}
-
-	void Material::GenerateShaderInputs()
+	void Material::GenerateUniforms()
 	{
 		// Get all shader inputs from abstract Shader function and put them in the maps
+		m_Uniforms = m_Shader->GetUniforms();
 	}
 }

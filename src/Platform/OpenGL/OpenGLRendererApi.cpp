@@ -51,7 +51,7 @@ namespace Dwarf
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK);
 
-		for (auto const &[key, val] : material->GetTextures())
+		for (auto const &[key, val] : material->m_Uniforms.Textures)
 		{
 			if (val)
 			{
@@ -67,42 +67,42 @@ namespace Dwarf
 
 		GLuint uniformID;
 		// Bind booleans
-		for (auto const &[key, val] : material->GetBoolUniforms())
+		for (auto const &[key, val] : material->m_Uniforms.Booleans)
 		{
 			uniformID = glGetUniformLocation(shader->GetID(), key.c_str());
 			glUniform1f(uniformID, (float)val);
 		}
 
 		// Bind integers
-		for (auto const &[key, val] : material->GetIntegerUniforms())
+		for (auto const &[key, val] : material->m_Uniforms.Integers)
 		{
 			uniformID = glGetUniformLocation(shader->GetID(), key.c_str());
 			glUniform1i(uniformID, val);
 		}
 
 		// Bind floats
-		for (auto const &[key, val] : material->GetFloatUniforms())
+		for (auto const &[key, val] : material->m_Uniforms.Floats)
 		{
 			uniformID = glGetUniformLocation(shader->GetID(), key.c_str());
 			glUniform1f(uniformID, val);
 		}
 
 		// Bind vector2
-		for (auto const &[key, val] : material->Get2DUniforms())
+		for (auto const &[key, val] : material->m_Uniforms.Floats2D)
 		{
 			uniformID = glGetUniformLocation(shader->GetID(), key.c_str());
 			glUniform2f(uniformID, val.x, val.y);
 		}
 
 		// Bind vector3
-		for (auto const &[key, val] : material->Get3DUniforms())
+		for (auto const &[key, val] : material->m_Uniforms.Floats3D)
 		{
 			uniformID = glGetUniformLocation(shader->GetID(), key.c_str());
 			glUniform3f(uniformID, val.x, val.y, val.z);
 		}
 
 		// Bind vector4
-		for (auto const &[key, val] : material->Get4DUniforms())
+		for (auto const &[key, val] : material->m_Uniforms.Floats4D)
 		{
 			uniformID = glGetUniformLocation(shader->GetID(), key.c_str());
 			// glUniform4fv(uniformID, 4, &val.x);

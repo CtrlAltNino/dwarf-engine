@@ -360,7 +360,7 @@ namespace Dwarf
         {
             ImGui::Indent(8.0f);
             int n = 0;
-            for (auto i = mat->m_Textures.begin(); i != mat->m_Textures.end();)
+            for (auto i = mat->m_Uniforms.Textures.begin(); i != mat->m_Uniforms.Textures.end();)
             {
                 ImGui::TextWrapped(i->first.c_str());
                 ImGui::SameLine();
@@ -370,7 +370,7 @@ namespace Dwarf
                 ImGui::SameLine();
                 if (ImGui::Button((std::string("Delete##texture_") + std::to_string(n)).c_str(), ImVec2(UNIFORM_DELETE_BUTTON_WIDTH, 0)))
                 {
-                    i = mat->m_Textures.erase(i);
+                    i = mat->m_Uniforms.Textures.erase(i);
                 }
                 else
                 {
@@ -400,7 +400,7 @@ namespace Dwarf
             {
                 ImGui::Indent(8.0f);
                 int n = 0;
-                for (auto i = mat->m_BoolUniforms.begin(); i != mat->m_BoolUniforms.end();)
+                for (auto i = mat->m_Uniforms.Booleans.begin(); i != mat->m_Uniforms.Booleans.end();)
                 {
                     ImGui::TextWrapped(i->first.c_str());
                     ImGui::SameLine();
@@ -409,7 +409,7 @@ namespace Dwarf
                     ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - UNIFORM_DELETE_BUTTON_WIDTH);
                     if (ImGui::Button((std::string("Delete##boolean_") + std::to_string(n)).c_str(), ImVec2(UNIFORM_DELETE_BUTTON_WIDTH, 0)))
                     {
-                        i = mat->m_BoolUniforms.erase(i);
+                        i = mat->m_Uniforms.Booleans.erase(i);
                     }
                     else
                     {
@@ -435,7 +435,7 @@ namespace Dwarf
             {
                 ImGui::Indent(8.0f);
                 int n = 0;
-                for (auto i = mat->m_IntegerUniforms.begin(); i != mat->m_IntegerUniforms.end();)
+                for (auto i = mat->m_Uniforms.Integers.begin(); i != mat->m_Uniforms.Integers.end();)
                 {
                     ImGui::TextWrapped(i->first.c_str());
                     ImGui::SameLine();
@@ -445,7 +445,7 @@ namespace Dwarf
                     ImGui::SameLine();
                     if (ImGui::Button((std::string("Delete##integer_") + std::to_string(n)).c_str(), ImVec2(UNIFORM_DELETE_BUTTON_WIDTH, 0)))
                     {
-                        i = mat->m_IntegerUniforms.erase(i);
+                        i = mat->m_Uniforms.Integers.erase(i);
                     }
                     else
                     {
@@ -471,7 +471,7 @@ namespace Dwarf
             {
                 ImGui::Indent(8.0f);
                 int n = 0;
-                for (auto i = mat->m_FloatUniforms.begin(); i != mat->m_FloatUniforms.end();)
+                for (auto i = mat->m_Uniforms.Floats.begin(); i != mat->m_Uniforms.Floats.end();)
                 {
                     ImGui::TextWrapped(i->first.c_str());
                     ImGui::SameLine();
@@ -481,7 +481,7 @@ namespace Dwarf
                     ImGui::SameLine();
                     if (ImGui::Button((std::string("Delete##float_") + std::to_string(n)).c_str(), ImVec2(UNIFORM_DELETE_BUTTON_WIDTH, 0)))
                     {
-                        i = mat->m_FloatUniforms.erase(i);
+                        i = mat->m_Uniforms.Floats.erase(i);
                     }
                     else
                     {
@@ -507,7 +507,7 @@ namespace Dwarf
             {
                 ImGui::Indent(8.0f);
                 int n = 0;
-                for (auto i = mat->m_Vector2Uniforms.begin(); i != mat->m_Vector2Uniforms.end();)
+                for (auto i = mat->m_Uniforms.Floats2D.begin(); i != mat->m_Uniforms.Floats2D.end();)
                 {
                     ImGui::TextWrapped(i->first.c_str());
                     ImGui::SameLine();
@@ -517,7 +517,7 @@ namespace Dwarf
                     ImGui::SameLine();
                     if (ImGui::Button((std::string("Delete##vec2_") + std::to_string(n)).c_str(), ImVec2(UNIFORM_DELETE_BUTTON_WIDTH, 0)))
                     {
-                        i = mat->m_Vector2Uniforms.erase(i);
+                        i = mat->m_Uniforms.Floats2D.erase(i);
                     }
                     else
                     {
@@ -543,7 +543,7 @@ namespace Dwarf
             {
                 ImGui::Indent(8.0f);
                 int n = 0;
-                for (auto i = mat->m_Vector3Uniforms.begin(); i != mat->m_Vector3Uniforms.end();)
+                for (auto i = mat->m_Uniforms.Floats3D.begin(); i != mat->m_Uniforms.Floats3D.end();)
                 {
                     ImGui::TextWrapped(i->first.c_str());
                     ImGui::SameLine();
@@ -553,7 +553,7 @@ namespace Dwarf
                     ImGui::SameLine();
                     if (ImGui::Button((std::string("Delete##vec3_") + std::to_string(n)).c_str(), ImVec2(UNIFORM_DELETE_BUTTON_WIDTH, 0)))
                     {
-                        i = mat->m_Vector3Uniforms.erase(i);
+                        i = mat->m_Uniforms.Floats3D.erase(i);
                     }
                     else
                     {
@@ -579,7 +579,7 @@ namespace Dwarf
             {
                 ImGui::Indent(8.0f);
                 int n = 0;
-                for (auto i = mat->m_Vector4Uniforms.begin(); i != mat->m_Vector4Uniforms.end();)
+                for (auto i = mat->m_Uniforms.Floats4D.begin(); i != mat->m_Uniforms.Floats4D.end();)
                 {
                     ImGui::TextWrapped(i->first.c_str());
                     ImGui::SameLine();
@@ -589,7 +589,7 @@ namespace Dwarf
                     ImGui::SameLine();
                     if (ImGui::Button((std::string("Delete##vec4_") + std::to_string(n)).c_str(), ImVec2(UNIFORM_DELETE_BUTTON_WIDTH, 0)))
                     {
-                        i = mat->m_Vector4Uniforms.erase(i);
+                        i = mat->m_Uniforms.Floats4D.erase(i);
                     }
                     else
                     {
@@ -624,7 +624,7 @@ namespace Dwarf
 
         if (ImGui::Button("Generate Inputs", ImVec2(100, 50)))
         {
-            mat->GenerateShaderInputs();
+            mat->GenerateUniforms();
         }
 
         draw_list->ChannelsSetCurrent(0);

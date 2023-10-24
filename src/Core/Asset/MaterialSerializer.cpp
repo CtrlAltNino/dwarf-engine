@@ -239,7 +239,7 @@ namespace Dwarf
 #endif
         }
 
-        for (auto const &[key, val] : material.GetTextures())
+        for (auto const &[key, val] : material.m_Uniforms.Textures)
         {
             if (val)
             {
@@ -251,35 +251,35 @@ namespace Dwarf
             }
         }
 
-        for (auto const &[key, val] : material.GetBoolUniforms())
+        for (auto const &[key, val] : material.m_Uniforms.Booleans)
         {
             serializedMat["boolUniforms"][key] = val;
         }
 
-        for (auto const &[key, val] : material.GetIntegerUniforms())
+        for (auto const &[key, val] : material.m_Uniforms.Integers)
         {
             serializedMat["integerUniforms"][key] = val;
         }
 
-        for (auto const &[key, val] : material.GetFloatUniforms())
+        for (auto const &[key, val] : material.m_Uniforms.Floats)
         {
             serializedMat["floatUniforms"][key] = val;
         }
 
-        for (auto const &[key, val] : material.Get2DUniforms())
+        for (auto const &[key, val] : material.m_Uniforms.Floats2D)
         {
             serializedMat["vec2Uniforms"][key]["x"] = val.x;
             serializedMat["vec2Uniforms"][key]["y"] = val.y;
         }
 
-        for (auto const &[key, val] : material.Get3DUniforms())
+        for (auto const &[key, val] : material.m_Uniforms.Floats3D)
         {
             serializedMat["vec3Uniforms"][key]["x"] = val.x;
             serializedMat["vec3Uniforms"][key]["y"] = val.y;
             serializedMat["vec3Uniforms"][key]["z"] = val.z;
         }
 
-        for (auto const &[key, val] : material.Get4DUniforms())
+        for (auto const &[key, val] : material.m_Uniforms.Floats4D)
         {
             serializedMat["vec4Uniforms"][key]["x"] = val.x;
             serializedMat["vec4Uniforms"][key]["y"] = val.y;
