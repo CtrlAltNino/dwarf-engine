@@ -68,7 +68,7 @@ namespace Dwarf
 
         virtual void Compile() override;
 
-        virtual UniformCollection GetUniforms() override;
+        virtual ShaderParameters GetParameters() override;
 
         static Ref<OpenGLShader> CreateDefaultShader();
         static Ref<OpenGLShader> CreateErrorShader();

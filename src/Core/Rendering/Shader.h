@@ -6,6 +6,7 @@
 
 #include "Core/Base.h"
 #include "Core/Asset/AssetReference.h"
+#include "Core/Rendering/ShaderParameter.h"
 
 namespace Dwarf
 {
@@ -49,7 +50,7 @@ namespace Dwarf
 			return m_SuccessfullyCompiled;
 		}
 
-		virtual UniformCollection GetUniforms() = 0;
+		virtual std::vector<ShaderParameter> GetParameters() = 0;
 
 		static Ref<Shader> Create();
 

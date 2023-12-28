@@ -109,7 +109,7 @@ namespace Dwarf
 		glUniformMatrix4fv(pmID, 1, GL_FALSE, &projectionMatrix[0][0]);
 	}*/
 
-	void Material::SetTexture(std::string uniformName, Ref<UID> val)
+	/*void Material::SetTexture(std::string uniformName, Ref<UID> val)
 	{
 		m_Uniforms.Textures[uniformName] = val;
 	}
@@ -142,7 +142,7 @@ namespace Dwarf
 	void Material::SetUniform(std::string uniformName, glm::vec4 val)
 	{
 		m_Uniforms.Floats4D[uniformName] = val;
-	}
+	}*/
 
 	// template <>
 	// std::map<std::string, Ref<UID>>::iterator Material::RemoveShaderInput<Ref<UID>>(std::string uniformName)
@@ -199,6 +199,6 @@ namespace Dwarf
 	void Material::GenerateUniforms()
 	{
 		// Get all shader inputs from abstract Shader function and put them in the maps
-		m_Uniforms = m_Shader->GetUniforms();
+		m_Parameters = m_Shader->GetParameters();
 	}
 }

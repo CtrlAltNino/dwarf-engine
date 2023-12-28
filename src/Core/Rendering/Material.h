@@ -6,6 +6,7 @@
 #include "Core/Base.h"
 #include "Core/Rendering/Shader.h"
 #include "Core/Rendering/Texture.h"
+#include "Core/Rendering/Shader Parameter/IShaderParameter.h"
 // #include "Core/Asset/AssetReference.h"
 #include "Core/UID.h"
 
@@ -34,7 +35,7 @@ namespace Dwarf
 		/// @brief Flag indicating if this is a transparent object.
 		bool m_Transparent;
 
-		UniformCollection m_Uniforms;
+		std::vector<IShaderParameter *> m_Parameters;
 
 		std::string GetName();
 
@@ -57,7 +58,7 @@ namespace Dwarf
 		/// @brief Creates a new texture uniform.
 		/// @param uniformName Name of the uniform.
 		/// @param val Value of the uniform.
-		void SetTexture(std::string uniformName, Ref<UID> val);
+		/*void SetTexture(std::string uniformName, Ref<UID> val);
 
 		/// @brief Creates a new boolean uniform.
 		/// @param uniformName Name of the uniform.
@@ -87,7 +88,7 @@ namespace Dwarf
 		/// @brief Creates a new 4D vector uniform.
 		/// @param uniformName Name of the uniform.
 		/// @param val Value of the uniform.
-		void SetUniform(std::string uniformName, glm::vec4 val);
+		void SetUniform(std::string uniformName, glm::vec4 val);*/
 
 		void SetTransparency(bool transparent);
 

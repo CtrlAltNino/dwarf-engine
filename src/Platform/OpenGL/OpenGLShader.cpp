@@ -241,7 +241,7 @@ namespace Dwarf
 		return gridShader;
 	}
 
-	UniformCollection OpenGLShader::GetUniforms()
+	ShaderParameters OpenGLShader::GetParameters()
 	{
 		GLint i;
 		GLint count;
@@ -267,6 +267,6 @@ namespace Dwarf
 			}
 		}
 
-		return UniformCollection();
+		return ShaderParameters();
 	}
 }
