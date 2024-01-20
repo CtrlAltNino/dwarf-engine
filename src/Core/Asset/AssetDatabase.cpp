@@ -223,10 +223,10 @@ namespace Dwarf
     void AssetDatabase::CreateNewMaterialAsset(std::filesystem::path path)
     {
         Material newMat = Material("New Material");
-        newMat.SetUniform("color", {1, 1, 1, 1});
-        newMat.SetUniform("useNormalMap", 1.0f);
-        newMat.SetUniform("shininess", 32.0f);
-        newMat.SetTexture("albedoMap", nullptr);
+        newMat.SetParameter("color", glm::vec4(1, 1, 1, 1));
+        newMat.SetParameter("useNormalMap", 1.0f);
+        newMat.SetParameter("shininess", 32.0f);
+        newMat.SetParameter("albedoMap", nullptr, ShaderParameterType::TEX2D);
         std::filesystem::path newMatPath = path / "New Material.dmat";
         MaterialSerializer::Serialize(newMat, newMatPath);
     }

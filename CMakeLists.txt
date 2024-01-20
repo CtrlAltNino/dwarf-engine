@@ -4,6 +4,7 @@ cmake_minimum_required(VERSION 3.22)
 # Maybe move to windows only, need to test
 ADD_DEFINITIONS(-DUNICODE)
 ADD_DEFINITIONS(-D_UNICODE)
+
 # Helper functions
 include(${CMAKE_SOURCE_DIR}/helper.cmake)
 
@@ -12,37 +13,38 @@ set(CMAKE_CXX_STANDARD 20)
 set(targetName dwarf-engine)
 
 set(CMAKE_PCH_INSTANTIATE_TEMPLATES ON)
+
 # Need to find a way to make the path to the vcpkg.cmake file dynamic, maybe I can even store it in the repo
 
 # Declaring a variable that can contain various settings for the executable
 set(EXECUTABLE_ADDITIONAL_SETTINGS "")
 
 # Platform dependant settings
-IF (WIN32)
+IF(WIN32)
     file(READ "$ENV{LOCALAPPDATA}/vcpkg/vcpkg.path.txt" VCPKG_PATH)
     set(CMAKE_TOOLCHAIN_FILE "${VCPKG_PATH}/scripts/buildsystems/vcpkg.cmake")
     set(VCPKG_TARGET_TRIPLET "x64-windows-static")
     set(APP_ICON_RESOURCE_WINDOWS "${CMAKE_CURRENT_SOURCE_DIR}/app_icon_windows.rc")
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
     set(EXECUTABLE_ADDITIONAL_SETTINGS ${APP_ICON_RESOURCE_WINDOWS})
+
     # Hiding the console window in release mode
     set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
 
     add_executable(${targetName} "")
-ELSEIF (UNIX AND NOT APPLE)
+ELSEIF(UNIX AND NOT APPLE)
     # ~/.vcpkg/vcpkg.path.txt
     file(READ "$ENV{HOME}/.vcpkg/vcpkg.path.txt" VCPKG_PATH)
     set(CMAKE_TOOLCHAIN_FILE "${VCPKG_PATH}/scripts/buildsystems/vcpkg.cmake")
     set(VCPKG_TARGET_TRIPLET "x64-linux")
     add_executable(${targetName} "")
-ELSEIF (APPLE)
+ELSEIF(APPLE)
     # ~/.vcpkg/vcpkg.path.txt
     file(READ "$ENV{HOME}/.vcpkg/vcpkg.path.txt" VCPKG_PATH)
     set(CMAKE_TOOLCHAIN_FILE "${VCPKG_PATH}/scripts/buildsystems/vcpkg.cmake")
     set(VCPKG_TARGET_TRIPLET "x64-osx")
     add_executable(${targetName} "")
 ENDIF()
-
 
 include_directories(src)
 
@@ -55,7 +57,7 @@ project(Dwarf\ Engine VERSION 0.0.1 LANGUAGES C CXX)
 smtg_add_subdirectories()
 
 # Linking dependencies
-IF (WIN32 OR (UNIX AND NOT APPLE))
+IF(WIN32 OR(UNIX AND NOT APPLE))
     find_package(glad CONFIG REQUIRED)
     target_link_libraries(${targetName} PRIVATE glad::glad)
 ENDIF()
@@ -72,9 +74,8 @@ target_include_directories(${targetName} PRIVATE ${BEXT_DI_INCLUDE_DIRS})
 find_package(SDL2 CONFIG REQUIRED)
 target_link_libraries(${targetName} PRIVATE SDL2::SDL2 SDL2::SDL2main SDL2::SDL2-static)
 
-#find_package(glfw3 CONFIG REQUIRED)
-#target_link_libraries(${targetName} PRIVATE glfw)
-
+# find_package(glfw3 CONFIG REQUIRED)
+# target_link_libraries(${targetName} PRIVATE glfw)
 find_package(glm CONFIG REQUIRED)
 target_link_libraries(${targetName} PRIVATE glm)
 
@@ -105,7 +106,7 @@ target_link_libraries(${targetName} PRIVATE xxHash::xxhash)
 find_package(platform_folders CONFIG REQUIRED)
 target_link_libraries(${targetName} PRIVATE sago::platform_folders)
 
-IF (APPLE)
+IF(APPLE)
     find_library(METAL Metal)
     find_library(FOUNDATION Foundation)
     find_library(QUARTZCORE QuartzCore)
@@ -114,12 +115,12 @@ IF (APPLE)
     target_link_libraries(${targetName} PRIVATE ${FOUNDATION})
     target_link_libraries(${targetName} PRIVATE ${QUARTZCORE})
 
-    #target_include_directories(${targetName} PRIVATE "lib/metal-cpp/")
+    # target_include_directories(${targetName} PRIVATE "lib/metal-cpp/")
     target_include_directories(${targetName} PRIVATE ${CMAKE_SOURCE_DIR}/include/metal-cpp)
 ENDIF()
 
 # Copy files to build folder
 add_custom_command(TARGET
-${targetName}
+    ${targetName}
     POST_BUILD COMMAND ${CMAKE_COMMAND}
     -E copy_directory ${CMAKE_SOURCE_DIR}/data $<TARGET_FILE_DIR:${targetName}>/data)

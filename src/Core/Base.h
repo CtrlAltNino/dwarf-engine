@@ -33,6 +33,19 @@ namespace Dwarf
 	/// @brief Array containing the API names.
 	static const char *graphicsApiNames[4] = {"Direct3D 12", "Metal", "OpenGL", "Vulkan"};
 
+	enum ShaderParameterType
+	{
+		BOOLEAN,
+		INTEGER,
+		FLOAT,
+		TEX2D,
+		VEC2,
+		VEC3,
+		VEC4
+	};
+
+	static const char *parameterNames[7] = {"Boolean", "Integer", "Float", "2D Texture", "Vector2", "Vector3", "Vector4"};
+
 #ifdef WIN32
 	static bool apiAvailability[4] = {
 		true,

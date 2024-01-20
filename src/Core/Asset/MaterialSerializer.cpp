@@ -11,6 +11,13 @@
 #elif __APPLE__
 // #include "Platform/Metal/MetalShader.h"
 #endif
+#include <Core/Rendering/Shader Parameters/BooleanShaderParameter.h>
+#include <Core/Rendering/Shader Parameters/IntegerShaderParameter.h>
+#include <Core/Rendering/Shader Parameters/FloatShaderParameter.h>
+#include <Core/Rendering/Shader Parameters/Tex2DShaderParameter.h>
+#include <Core/Rendering/Shader Parameters/Vec2ShaderParameter.h>
+#include <Core/Rendering/Shader Parameters/Vec3ShaderParameter.h>
+#include <Core/Rendering/Shader Parameters/Vec4ShaderParameter.h>
 
 namespace Dwarf
 {
@@ -22,7 +29,64 @@ namespace Dwarf
 
         deserializedMat.SetTransparency((bool)serializedMat["transparent"]);
 
-        if (serializedMat.contains("textures"))
+        if (serializedMat.contains("parameters"))
+        {
+            for (auto parameter : serializedMat["parameters"].items())
+            {
+                // if (texture.value() != -1)
+                // {
+                //     deserializedMat.SetTexture(texture.key(), CreateRef<UID>(UID(texture.value())));
+                // }
+                // else
+                // {
+                //     deserializedMat.SetTexture(texture.key(), nullptr);
+                // }
+
+                if (serializedMat["parameters"][parameter.key()]["type"] == "boolean")
+                {
+                    deserializedMat.SetParameter(parameter.key(), bool(parameter.value()["value"]));
+                }
+                else if (serializedMat["parameters"][parameter.key()]["type"] == "integer")
+                {
+                    deserializedMat.SetParameter(parameter.key(), int(parameter.value()["value"]));
+                }
+                else if (serializedMat["parameters"][parameter.key()]["type"] == "float")
+                {
+                    deserializedMat.SetParameter(parameter.key(), float(parameter.value()["value"]));
+                }
+                else if (serializedMat["parameters"][parameter.key()]["type"] == "tex2d")
+                {
+                    if (int(parameter.value()["value"]) != -1)
+                    {
+                        deserializedMat.SetParameter(parameter.key(), CreateRef<UID>(UID(parameter.value()["value"])), TEX2D);
+                    }
+                    else
+                    {
+                        deserializedMat.SetParameter(parameter.key(), nullptr, TEX2D);
+                    }
+                }
+                else if (serializedMat["parameters"][parameter.key()]["type"] == "vec2")
+                {
+                    deserializedMat.SetParameter(parameter.key(), glm::vec2((float)parameter.value()["value"]["x"],
+                                                                            (float)parameter.value()["value"]["y"]));
+                }
+                else if (serializedMat["parameters"][parameter.key()]["type"] == "vec3")
+                {
+                    deserializedMat.SetParameter(parameter.key(), glm::vec3((float)parameter.value()["value"]["x"],
+                                                                            (float)parameter.value()["value"]["y"],
+                                                                            (float)parameter.value()["value"]["z"]));
+                }
+                else if (serializedMat["parameters"][parameter.key()]["type"] == "vec4")
+                {
+                    deserializedMat.SetParameter(parameter.key(), glm::vec4((float)parameter.value()["value"]["x"],
+                                                                            (float)parameter.value()["value"]["y"],
+                                                                            (float)parameter.value()["value"]["z"],
+                                                                            (float)parameter.value()["value"]["w"]));
+                }
+            }
+        }
+
+        /*if (serializedMat.contains("textures"))
         {
             for (auto texture : serializedMat["textures"].items())
             {
@@ -89,7 +153,7 @@ namespace Dwarf
                                                                (float)vec4Uniform.value()["z"],
                                                                (float)vec4Uniform.value()["w"]});
             }
-        }
+        }*/
 
         if (serializedMat.contains("shader") && serializedMat["shader"] != "default")
         {
@@ -239,7 +303,48 @@ namespace Dwarf
 #endif
         }
 
-        for (auto const &[key, val] : material.m_Uniforms.Textures)
+        for (auto const &[key, val] : material.m_Parameters)
+        {
+            switch ((*val).GetType())
+            {
+            case BOOLEAN:
+                serializedMat["parameters"][key]["type"] = "boolean";
+                serializedMat["parameters"][key]["value"] = (*std::dynamic_pointer_cast<BooleanShaderParameter>(val)).m_Value;
+                break;
+            case INTEGER:
+                serializedMat["parameters"][key]["type"] = "integer";
+                serializedMat["parameters"][key]["value"] = (*std::dynamic_pointer_cast<IntegerShaderParameter>(val)).m_Value;
+                break;
+            case FLOAT:
+                serializedMat["parameters"][key]["type"] = "float";
+                serializedMat["parameters"][key]["value"] = (*std::dynamic_pointer_cast<FloatShaderParameter>(val)).m_Value;
+                break;
+            case TEX2D:
+                serializedMat["parameters"][key]["type"] = "tex2D";
+                serializedMat["parameters"][key]["value"] = (uint64_t) * (*std::dynamic_pointer_cast<Tex2DShaderParameter>(val)).m_Value;
+                break;
+            case VEC2:
+                serializedMat["parameters"][key]["type"] = "vec2";
+                serializedMat["parameters"][key]["value"]["x"] = (*std::dynamic_pointer_cast<Vec2ShaderParameter>(val)).m_Value.x;
+                serializedMat["parameters"][key]["value"]["y"] = (*std::dynamic_pointer_cast<Vec2ShaderParameter>(val)).m_Value.y;
+                break;
+            case VEC3:
+                serializedMat["parameters"][key]["type"] = "vec3";
+                serializedMat["parameters"][key]["value"]["x"] = (*std::dynamic_pointer_cast<Vec3ShaderParameter>(val)).m_Value.x;
+                serializedMat["parameters"][key]["value"]["y"] = (*std::dynamic_pointer_cast<Vec3ShaderParameter>(val)).m_Value.y;
+                serializedMat["parameters"][key]["value"]["z"] = (*std::dynamic_pointer_cast<Vec3ShaderParameter>(val)).m_Value.z;
+                break;
+            case VEC4:
+                serializedMat["parameters"][key]["type"] = "vec4";
+                serializedMat["parameters"][key]["value"]["x"] = (*std::dynamic_pointer_cast<Vec4ShaderParameter>(val)).m_Value.x;
+                serializedMat["parameters"][key]["value"]["y"] = (*std::dynamic_pointer_cast<Vec4ShaderParameter>(val)).m_Value.y;
+                serializedMat["parameters"][key]["value"]["z"] = (*std::dynamic_pointer_cast<Vec4ShaderParameter>(val)).m_Value.z;
+                serializedMat["parameters"][key]["value"]["w"] = (*std::dynamic_pointer_cast<Vec4ShaderParameter>(val)).m_Value.w;
+                break;
+            }
+        }
+
+        /*for (auto const &[key, val] : material.m_Uniforms.Textures)
         {
             if (val)
             {
@@ -285,7 +390,7 @@ namespace Dwarf
             serializedMat["vec4Uniforms"][key]["y"] = val.y;
             serializedMat["vec4Uniforms"][key]["z"] = val.z;
             serializedMat["vec4Uniforms"][key]["w"] = val.w;
-        }
+        }*/
 
         FileHandler::WriteToFile(path, serializedMat.dump(4));
     }

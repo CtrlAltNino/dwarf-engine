@@ -6,7 +6,7 @@
 #include "Core/Base.h"
 #include "Core/Rendering/Shader.h"
 #include "Core/Rendering/Texture.h"
-#include "Core/Rendering/Shader Parameter/IShaderParameter.h"
+#include "Core/Rendering/IShaderParameter.h"
 // #include "Core/Asset/AssetReference.h"
 #include "Core/UID.h"
 
@@ -35,13 +35,18 @@ namespace Dwarf
 		/// @brief Flag indicating if this is a transparent object.
 		bool m_Transparent;
 
-		std::vector<IShaderParameter *> m_Parameters;
+		std::map<std::string, Ref<IShaderParameter>> m_Parameters;
 
 		std::string GetName();
 
 		Ref<Shader> GetShader();
 
 		void SetShader(Ref<Shader> shader);
+
+		template <typename T>
+		void SetParameter(std::string identifier, T parameter);
+
+		void SetParameter(std::string identifier, Ref<UID> value, ShaderParameterType type);
 
 		/// @brief Binds the material and its settings.
 		// void Bind();

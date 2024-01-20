@@ -15,6 +15,13 @@
 #elif __APPLE__
 // #include "Platform/Metal/MetalShader.h"
 #endif
+#include <Core/Rendering/Shader Parameters/BooleanShaderParameter.h>
+#include <Core/Rendering/Shader Parameters/IntegerShaderParameter.h>
+#include <Core/Rendering/Shader Parameters/FloatShaderParameter.h>
+#include <Core/Rendering/Shader Parameters/Tex2DShaderParameter.h>
+#include <Core/Rendering/Shader Parameters/Vec2ShaderParameter.h>
+#include <Core/Rendering/Shader Parameters/Vec3ShaderParameter.h>
+#include <Core/Rendering/Shader Parameters/Vec4ShaderParameter.h>
 
 #define COMPONENT_PANEL_PADDING (8.0f)
 #define ADD_BUTTON_WIDTH (40.0f)
@@ -23,6 +30,11 @@
 namespace Dwarf
 {
     Ref<EditorModel> AssetInspectorRenderer::s_Model = nullptr;
+
+    void AssetInspectorRenderer::Init(Ref<EditorModel> model)
+    {
+        AssetInspectorRenderer::s_Model = model;
+    }
     template <>
     void AssetInspectorRenderer::RenderAssetInspector<AssetReference<UnknownAsset>>(Ref<AssetReference<UnknownAsset>> asset)
     {
@@ -196,6 +208,163 @@ namespace Dwarf
             ImGui::SameLine();
 
             ImGui::TextWrapped(mat->m_Shader->IsCompiled() ? "Successfully Compiled" : "Couldn't compile");
+            ImGui::Unindent(8.0f);
+        }
+
+        if (ImGui::CollapsingHeader("Parameters"))
+        {
+            ImGui::Indent(8.0f);
+
+            // Listing all current parameters
+            int n = 0;
+            for (auto i = mat->m_Parameters.begin(); i != mat->m_Parameters.end();)
+            {
+                ImGui::Indent(8.0f);
+
+                // Parameter UI specific to parameter type
+                switch (i->second->GetType())
+                {
+                case BOOLEAN:
+                {
+                    Ref<BooleanShaderParameter> parameter = std::dynamic_pointer_cast<BooleanShaderParameter>(i->second);
+                    ImGui::TextWrapped(i->first.c_str());
+                    ImGui::SameLine();
+                    ImGui::Checkbox((std::string("##boolean") + std::to_string(n++)).c_str(), &(parameter->m_Value));
+                }
+                break;
+                case INTEGER:
+                {
+                    Ref<IntegerShaderParameter> parameter = std::dynamic_pointer_cast<IntegerShaderParameter>(i->second);
+                    ImGui::TextWrapped(i->first.c_str());
+                    ImGui::SameLine();
+                    ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - UNIFORM_DELETE_BUTTON_WIDTH);
+                    ImGui::InputInt((std::string("##integer") + std::to_string(n++)).c_str(), &(parameter->m_Value));
+                    ImGui::PopItemWidth();
+                }
+                break;
+                case FLOAT:
+                {
+                    Ref<FloatShaderParameter> parameter = std::dynamic_pointer_cast<FloatShaderParameter>(i->second);
+                    ImGui::TextWrapped(i->first.c_str());
+                    ImGui::SameLine();
+                    ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - UNIFORM_DELETE_BUTTON_WIDTH);
+                    ImGui::InputFloat((std::string("##float") + std::to_string(n++)).c_str(), &(parameter->m_Value));
+                    ImGui::PopItemWidth();
+                }
+                break;
+                case TEX2D:
+                {
+                    Ref<Tex2DShaderParameter> parameter = std::dynamic_pointer_cast<Tex2DShaderParameter>(i->second);
+                    ImGui::TextWrapped(i->first.c_str());
+                    ImGui::SameLine();
+                    ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - UNIFORM_DELETE_BUTTON_WIDTH);
+                    DwarfUI::AssetInput<TextureAsset>(parameter->m_Value, (std::string("##textureAsset") + std::to_string(n++)).c_str());
+                    ImGui::PopItemWidth();
+                }
+                break;
+                case VEC2:
+                {
+                    Ref<Vec2ShaderParameter> parameter = std::dynamic_pointer_cast<Vec2ShaderParameter>(i->second);
+                    ImGui::TextWrapped(i->first.c_str());
+                    ImGui::SameLine();
+                    ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - UNIFORM_DELETE_BUTTON_WIDTH);
+                    ImGui::InputFloat2((std::string("##vec2") + std::to_string(n++)).c_str(), &(parameter->m_Value.x));
+                    ImGui::PopItemWidth();
+                }
+                break;
+                case VEC3:
+                {
+                    Ref<Vec3ShaderParameter> parameter = std::dynamic_pointer_cast<Vec3ShaderParameter>(i->second);
+                    ImGui::TextWrapped(i->first.c_str());
+                    ImGui::SameLine();
+                    ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - UNIFORM_DELETE_BUTTON_WIDTH);
+                    ImGui::InputFloat3((std::string("##vec3") + std::to_string(n++)).c_str(), &(parameter->m_Value.x));
+                    ImGui::PopItemWidth();
+                }
+                break;
+                case VEC4:
+                {
+                    Ref<Vec4ShaderParameter> parameter = std::dynamic_pointer_cast<Vec4ShaderParameter>(i->second);
+                    ImGui::TextWrapped(i->first.c_str());
+                    ImGui::SameLine();
+                    ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - UNIFORM_DELETE_BUTTON_WIDTH);
+                    ImGui::ColorEdit4((std::string("##vec4") + std::to_string(n++)).c_str(), &(parameter->m_Value.x), ImGuiColorEditFlags_None);
+                    ImGui::PopItemWidth();
+                }
+                break;
+                }
+
+                // Delete button for parameter
+                ImGui::SameLine();
+                ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - UNIFORM_DELETE_BUTTON_WIDTH);
+                if (ImGui::Button((std::string("Delete##") + std::to_string(n)).c_str(), ImVec2(UNIFORM_DELETE_BUTTON_WIDTH, 0)))
+                {
+                    i = mat->m_Parameters.erase(i);
+                }
+                else
+                {
+                    ++i;
+                    n++;
+                }
+                ImGui::Unindent(8.0f);
+            }
+
+            // Adding new parameter
+            static char paramName[128] = "";
+            ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ADD_BUTTON_WIDTH * 5 - 8.0f);
+            ImGui::InputTextWithHint("##paramName", "Name", paramName, IM_ARRAYSIZE(paramName), ImGuiInputTextFlags_CharsNoBlank);
+            ImGui::PopItemWidth();
+            ImGui::SameLine();
+            static int selectedParameterType = 0;
+            // static std::vector<std::string> parameterTypes = {"Boolean", "Integer", "Float", "2D Texture", "Vector2", "Vector3", "Vector4"};
+            //  static std::string parameterTypePreview = parameterTypes[selectedParameterType];
+
+            ImGui::PushItemWidth(ADD_BUTTON_WIDTH * 4);
+            if (ImGui::BeginCombo("##paramType", parameterNames[selectedParameterType]))
+            {
+                for (int i = 0; i < 7; i++)
+                {
+                    if (ImGui::Selectable(parameterNames[i], i == selectedParameterType))
+                    {
+                        selectedParameterType = i;
+                    }
+                }
+                ImGui::EndCombo();
+            }
+            ImGui::PopItemWidth();
+
+            ImGui::SameLine();
+            ImGui::PushItemWidth(ADD_BUTTON_WIDTH);
+            if (ImGui::Button("Add##addParam") && std::strlen(paramName) > 0)
+            {
+                switch (selectedParameterType)
+                {
+                case ShaderParameterType::BOOLEAN:
+                    mat->SetParameter(paramName, false);
+                    break;
+                case ShaderParameterType::INTEGER:
+                    mat->SetParameter(paramName, 0);
+                    break;
+                case ShaderParameterType::FLOAT:
+                    mat->SetParameter(paramName, 0.0f);
+                    break;
+                case ShaderParameterType::TEX2D:
+                    mat->SetParameter(paramName, nullptr, ShaderParameterType::TEX2D);
+                    break;
+                case ShaderParameterType::VEC2:
+                    mat->SetParameter(paramName, glm::vec2(0.0f, 0.0f));
+                    break;
+                case ShaderParameterType::VEC3:
+                    mat->SetParameter(paramName, glm::vec3(0.0f, 0.0f, 0.0f));
+                    break;
+                case ShaderParameterType::VEC4:
+                    mat->SetParameter(paramName, glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
+                    break;
+                }
+                std::strcpy(paramName, "");
+            }
+            ImGui::PopItemWidth();
+
             ImGui::Unindent(8.0f);
         }
 

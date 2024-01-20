@@ -4,6 +4,7 @@
 #include "Core/Base.h"
 
 #include <glad/glad.h>
+#include <Core/Rendering/IShaderParameter.h>
 
 namespace Dwarf
 {
@@ -68,7 +69,7 @@ namespace Dwarf
 
         virtual void Compile() override;
 
-        virtual ShaderParameters GetParameters() override;
+        virtual std::map<std::string, Ref<IShaderParameter>> GetParameters() override;
 
         static Ref<OpenGLShader> CreateDefaultShader();
         static Ref<OpenGLShader> CreateErrorShader();

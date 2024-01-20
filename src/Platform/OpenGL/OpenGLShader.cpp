@@ -10,6 +10,16 @@ namespace Dwarf
 	OpenGLShader::OpenGLShader() {}
 	OpenGLShader::~OpenGLShader() {}
 
+	std::map<GLenum, ShaderParameterType> glTypeToDwarfShaderType =
+		{
+			{GL_BOOL, BOOLEAN},
+			{GL_INT, INTEGER},
+			{GL_FLOAT, FLOAT},
+			{GL_FLOAT_VEC2, VEC2},
+			{GL_FLOAT_VEC3, VEC3},
+			{GL_FLOAT_VEC4, VEC4},
+			{GL_SAMPLER_2D, TEX2D}};
+
 	void OpenGLShader::Compile()
 	{
 		m_SuccessfullyCompiled = false;
@@ -241,8 +251,9 @@ namespace Dwarf
 		return gridShader;
 	}
 
-	ShaderParameters OpenGLShader::GetParameters()
+	std::map<std::string, Ref<IShaderParameter>> OpenGLShader::GetParameters()
 	{
+		std::map<std::string, Ref<IShaderParameter>> parameters = std::map<std::string, Ref<IShaderParameter>>();
 		GLint i;
 		GLint count;
 
@@ -261,12 +272,9 @@ namespace Dwarf
 			glGetActiveUniform(m_ID, (GLuint)i, bufSize, &length, &size, &type, name);
 
 			printf("Uniform #%d Type: %u Name: %s\n", i, type, name);
-
-			switch (type)
-			{
-			}
+			parameters[std::string(name)] = Shader::CreateShaderParameter(glTypeToDwarfShaderType[type]);
 		}
 
-		return ShaderParameters();
+		return parameters;
 	}
 }

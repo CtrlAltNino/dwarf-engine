@@ -14,6 +14,13 @@
 #elif __APPLE__
 // #include "Platform/Metal/MetalShader.h"
 #endif
+#include "Shader Parameters/BooleanShaderParameter.h"
+#include "Shader Parameters/IntegerShaderParameter.h"
+#include "Shader Parameters/FloatShaderParameter.h"
+#include "Shader Parameters/Vec2ShaderParameter.h"
+#include "Shader Parameters/Vec3ShaderParameter.h"
+#include "Shader Parameters/Vec4ShaderParameter.h"
+#include "Shader Parameters/Tex2DShaderParameter.h"
 
 namespace Dwarf
 {
@@ -244,4 +251,34 @@ namespace Dwarf
 	void Shader::Delete() {
 		glDeleteProgram(ID);
 	}*/
+
+	Ref<IShaderParameter> Shader::CreateShaderParameter(ShaderParameterType type)
+	{
+		switch (type)
+		{
+		case BOOLEAN:
+			return CreateRef<BooleanShaderParameter>(BooleanShaderParameter());
+			break;
+		case INTEGER:
+			return CreateRef<IntegerShaderParameter>(IntegerShaderParameter());
+			break;
+		case FLOAT:
+			return CreateRef<FloatShaderParameter>(FloatShaderParameter());
+			break;
+		case VEC2:
+			return CreateRef<Vec2ShaderParameter>(Vec2ShaderParameter());
+			break;
+		case VEC3:
+			return CreateRef<Vec3ShaderParameter>(Vec3ShaderParameter());
+			break;
+		case VEC4:
+			return CreateRef<Vec4ShaderParameter>(Vec4ShaderParameter());
+			break;
+		case TEX2D:
+			return CreateRef<Tex2DShaderParameter>(Tex2DShaderParameter());
+			break;
+		default:
+			return nullptr;
+		}
+	}
 }
