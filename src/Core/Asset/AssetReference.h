@@ -82,38 +82,6 @@ namespace Dwarf
         Ref<T> GetAsset()
         {
             return CreateRef<T>(m_Registry->get<T>(m_AssetHandle));
-            /*switch(m_Type){
-                case AssetType::Mesh:
-                    return (void*)&m_Registry->get<ModelAsset>(m_AssetHandle);
-                    break;
-                case AssetType::Material:
-                    return (void*)&m_Registry->get<MaterialAsset>(m_AssetHandle);
-                    break;
-                case AssetType::Texture:
-                    return (void*)&m_Registry->get<TextureAsset>(m_AssetHandle);
-                    break;
-                case AssetType::VertexShader:
-                    return (void*)&m_Registry->get<VertexShaderAsset>(m_AssetHandle);
-                    break;
-                case AssetType::TesselationControlShader:
-                    return (void*)&m_Registry->get<TesselationControlShaderAsset>(m_AssetHandle);
-                    break;
-                case AssetType::TesselationEvaluationShader:
-                    return (void*)&m_Registry->get<TesselationEvaluationShaderAsset>(m_AssetHandle);
-                    break;
-                case AssetType::GeometryShader:
-                    return (void*)&m_Registry->get<GeometryShaderAsset>(m_AssetHandle);
-                    break;
-                case AssetType::FragmentShader:
-                    return (void*)&m_Registry->get<FragmentShaderAsset>(m_AssetHandle);
-                    break;
-                case AssetType::ComputeShader:
-                    return (void*)&m_Registry->get<ComputeShaderAsset>(m_AssetHandle);
-                    break;
-                case AssetType::Unknown:
-                    return nullptr;
-                    break;
-            }*/
         }
     };
 }

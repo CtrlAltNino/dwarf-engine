@@ -59,19 +59,7 @@ namespace Dwarf
         draw_list->ChannelsSetCurrent(1);
 
         ImGui::BeginChild("##inspector_child", ImGui::GetContentRegionAvail(), false, ImGuiWindowFlags_AlwaysUseWindowPadding);
-        // ImVec2 vec2 = ImGui::CalcTextSize(asset->GetPath().filename().string().c_str());
-        // ImGui::SetCursorPos(ImVec2(
-        //     ImGui::GetContentRegionAvail().x / 2.0 - (vec2.x / 2.0),
-        //     ImGui::GetCursorPosY() + COMPONENT_PANEL_PADDING));
 
-        // ImGui::Text("Material");
-        // ImVec2 separatorMin = ImVec2(ImGui::GetWindowPos().x + ImGui::GetCursorPos().x + COMPONENT_PANEL_PADDING,
-        //                              ImGui::GetWindowPos().y + ImGui::GetCursorPos().y + COMPONENT_PANEL_PADDING / 2.0);
-        // ImVec2 separatorMax = ImVec2(ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMax().x - COMPONENT_PANEL_PADDING, separatorMin.y + 2);
-        // ImGui::GetWindowDrawList()->AddRectFilled(separatorMin,
-        //                                           separatorMax, COL_BG_DIM);
-
-        // ImGui::SetCursorPosY(ImGui::GetCursorPosY() + COMPONENT_PANEL_PADDING * 2);
         ImGui::TextWrapped("File name: ");
         ImGui::SameLine(0, 5.0f);
         ImGui::TextWrapped(asset->GetPath().filename().string().c_str());
@@ -219,7 +207,6 @@ namespace Dwarf
             int n = 0;
             for (auto i = mat->m_Parameters.begin(); i != mat->m_Parameters.end();)
             {
-                ImGui::Indent(8.0f);
 
                 // Parameter UI specific to parameter type
                 switch (i->second->GetType())
@@ -306,8 +293,9 @@ namespace Dwarf
                     ++i;
                     n++;
                 }
-                ImGui::Unindent(8.0f);
             }
+
+            ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 20);
 
             // Adding new parameter
             static char paramName[128] = "";
@@ -316,8 +304,6 @@ namespace Dwarf
             ImGui::PopItemWidth();
             ImGui::SameLine();
             static int selectedParameterType = 0;
-            // static std::vector<std::string> parameterTypes = {"Boolean", "Integer", "Float", "2D Texture", "Vector2", "Vector3", "Vector4"};
-            //  static std::string parameterTypePreview = parameterTypes[selectedParameterType];
 
             ImGui::PushItemWidth(ADD_BUTTON_WIDTH * 4);
             if (ImGui::BeginCombo("##paramType", parameterNames[selectedParameterType]))
@@ -367,263 +353,6 @@ namespace Dwarf
 
             ImGui::Unindent(8.0f);
         }
-
-        /*if (ImGui::CollapsingHeader("Textures"))
-        {
-            ImGui::Indent(8.0f);
-            int n = 0;
-            for (auto i = mat->m_Uniforms.Textures.begin(); i != mat->m_Uniforms.Textures.end();)
-            {
-                ImGui::TextWrapped(i->first.c_str());
-                ImGui::SameLine();
-                ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - UNIFORM_DELETE_BUTTON_WIDTH);
-                DwarfUI::AssetInput<TextureAsset>(i->second, (std::string("##textureAsset") + std::to_string(n++)).c_str());
-                ImGui::PopItemWidth();
-                ImGui::SameLine();
-                if (ImGui::Button((std::string("Delete##texture_") + std::to_string(n)).c_str(), ImVec2(UNIFORM_DELETE_BUTTON_WIDTH, 0)))
-                {
-                    i = mat->m_Uniforms.Textures.erase(i);
-                }
-                else
-                {
-                    ++i;
-                    n++;
-                }
-            }
-
-            static char newTextureName[128] = "";
-
-            ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ADD_BUTTON_WIDTH);
-            ImGui::InputTextWithHint("##textureName", "New Texture", newTextureName, IM_ARRAYSIZE(newTextureName), ImGuiInputTextFlags_CharsNoBlank);
-            ImGui::PopItemWidth();
-            ImGui::SameLine();
-            if (ImGui::Button("Add##texture") && std::strlen(newTextureName) > 0)
-            {
-                mat->SetTexture(newTextureName, nullptr);
-                std::strcpy(newTextureName, "");
-            }
-            ImGui::Unindent(8.0f);
-        }
-
-        if (ImGui::CollapsingHeader("Shader uniforms"))
-        {
-            ImGui::Indent(8.0f);
-            if (ImGui::CollapsingHeader("Booleans"))
-            {
-                ImGui::Indent(8.0f);
-                int n = 0;
-                for (auto i = mat->m_Uniforms.Booleans.begin(); i != mat->m_Uniforms.Booleans.end();)
-                {
-                    ImGui::TextWrapped(i->first.c_str());
-                    ImGui::SameLine();
-                    ImGui::Checkbox((std::string("##boolean") + std::to_string(n++)).c_str(), &i->second);
-                    ImGui::SameLine();
-                    ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - UNIFORM_DELETE_BUTTON_WIDTH);
-                    if (ImGui::Button((std::string("Delete##boolean_") + std::to_string(n)).c_str(), ImVec2(UNIFORM_DELETE_BUTTON_WIDTH, 0)))
-                    {
-                        i = mat->m_Uniforms.Booleans.erase(i);
-                    }
-                    else
-                    {
-                        ++i;
-                        n++;
-                    }
-                }
-
-                static char newBooleanName[128] = "";
-                ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ADD_BUTTON_WIDTH);
-                ImGui::InputTextWithHint("##boolName", "New boolean", newBooleanName, IM_ARRAYSIZE(newBooleanName), ImGuiInputTextFlags_CharsNoBlank);
-                ImGui::PopItemWidth();
-                ImGui::SameLine();
-                if (ImGui::Button("Add##boolean") && std::strlen(newBooleanName) > 0)
-                {
-                    mat->SetUniform(newBooleanName, false);
-                    std::strcpy(newBooleanName, "");
-                }
-                ImGui::Unindent(8.0f);
-            }
-
-            if (ImGui::CollapsingHeader("Integers"))
-            {
-                ImGui::Indent(8.0f);
-                int n = 0;
-                for (auto i = mat->m_Uniforms.Integers.begin(); i != mat->m_Uniforms.Integers.end();)
-                {
-                    ImGui::TextWrapped(i->first.c_str());
-                    ImGui::SameLine();
-                    ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - UNIFORM_DELETE_BUTTON_WIDTH);
-                    ImGui::InputInt((std::string("##integer") + std::to_string(n++)).c_str(), &i->second);
-                    ImGui::PopItemWidth();
-                    ImGui::SameLine();
-                    if (ImGui::Button((std::string("Delete##integer_") + std::to_string(n)).c_str(), ImVec2(UNIFORM_DELETE_BUTTON_WIDTH, 0)))
-                    {
-                        i = mat->m_Uniforms.Integers.erase(i);
-                    }
-                    else
-                    {
-                        ++i;
-                        n++;
-                    }
-                }
-
-                static char newIntegerName[128] = "";
-                ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ADD_BUTTON_WIDTH);
-                ImGui::InputTextWithHint("##integerName", "New integer", newIntegerName, IM_ARRAYSIZE(newIntegerName), ImGuiInputTextFlags_CharsNoBlank);
-                ImGui::PopItemWidth();
-                ImGui::SameLine();
-                if (ImGui::Button("Add##integer") && std::strlen(newIntegerName) > 0)
-                {
-                    mat->SetUniform(newIntegerName, 0);
-                    std::strcpy(newIntegerName, "");
-                }
-                ImGui::Unindent(8.0f);
-            }
-
-            if (ImGui::CollapsingHeader("Floats"))
-            {
-                ImGui::Indent(8.0f);
-                int n = 0;
-                for (auto i = mat->m_Uniforms.Floats.begin(); i != mat->m_Uniforms.Floats.end();)
-                {
-                    ImGui::TextWrapped(i->first.c_str());
-                    ImGui::SameLine();
-                    ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - UNIFORM_DELETE_BUTTON_WIDTH);
-                    ImGui::InputFloat((std::string("##float") + std::to_string(n++)).c_str(), &i->second);
-                    ImGui::PopItemWidth();
-                    ImGui::SameLine();
-                    if (ImGui::Button((std::string("Delete##float_") + std::to_string(n)).c_str(), ImVec2(UNIFORM_DELETE_BUTTON_WIDTH, 0)))
-                    {
-                        i = mat->m_Uniforms.Floats.erase(i);
-                    }
-                    else
-                    {
-                        ++i;
-                        n++;
-                    }
-                }
-
-                static char newFloatName[128] = "";
-                ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ADD_BUTTON_WIDTH);
-                ImGui::InputTextWithHint("##floatName", "New float", newFloatName, IM_ARRAYSIZE(newFloatName), ImGuiInputTextFlags_CharsNoBlank);
-                ImGui::PopItemWidth();
-                ImGui::SameLine();
-                if (ImGui::Button("Add##float") && std::strlen(newFloatName) > 0)
-                {
-                    mat->SetUniform(newFloatName, 0.0f);
-                    std::strcpy(newFloatName, "");
-                }
-                ImGui::Unindent(8.0f);
-            }
-
-            if (ImGui::CollapsingHeader("2D Uniforms"))
-            {
-                ImGui::Indent(8.0f);
-                int n = 0;
-                for (auto i = mat->m_Uniforms.Floats2D.begin(); i != mat->m_Uniforms.Floats2D.end();)
-                {
-                    ImGui::TextWrapped(i->first.c_str());
-                    ImGui::SameLine();
-                    ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - UNIFORM_DELETE_BUTTON_WIDTH);
-                    ImGui::InputFloat2((std::string("##vec2") + std::to_string(n++)).c_str(), &i->second.x);
-                    ImGui::PopItemWidth();
-                    ImGui::SameLine();
-                    if (ImGui::Button((std::string("Delete##vec2_") + std::to_string(n)).c_str(), ImVec2(UNIFORM_DELETE_BUTTON_WIDTH, 0)))
-                    {
-                        i = mat->m_Uniforms.Floats2D.erase(i);
-                    }
-                    else
-                    {
-                        ++i;
-                        n++;
-                    }
-                }
-
-                static char newVec2Name[128] = "";
-                ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ADD_BUTTON_WIDTH);
-                ImGui::InputTextWithHint("##vec2Name", "New 2D variable", newVec2Name, IM_ARRAYSIZE(newVec2Name), ImGuiInputTextFlags_CharsNoBlank);
-                ImGui::PopItemWidth();
-                ImGui::SameLine();
-                if (ImGui::Button("Add##vec2") && std::strlen(newVec2Name) > 0)
-                {
-                    mat->SetUniform(newVec2Name, {0, 0});
-                    std::strcpy(newVec2Name, "");
-                }
-                ImGui::Unindent(8.0f);
-            }
-
-            if (ImGui::CollapsingHeader("3D Uniforms"))
-            {
-                ImGui::Indent(8.0f);
-                int n = 0;
-                for (auto i = mat->m_Uniforms.Floats3D.begin(); i != mat->m_Uniforms.Floats3D.end();)
-                {
-                    ImGui::TextWrapped(i->first.c_str());
-                    ImGui::SameLine();
-                    ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - UNIFORM_DELETE_BUTTON_WIDTH);
-                    ImGui::InputFloat3((std::string("##vec3") + std::to_string(n++)).c_str(), &i->second.x);
-                    ImGui::PopItemWidth();
-                    ImGui::SameLine();
-                    if (ImGui::Button((std::string("Delete##vec3_") + std::to_string(n)).c_str(), ImVec2(UNIFORM_DELETE_BUTTON_WIDTH, 0)))
-                    {
-                        i = mat->m_Uniforms.Floats3D.erase(i);
-                    }
-                    else
-                    {
-                        ++i;
-                        n++;
-                    }
-                }
-
-                static char newVec3Name[128] = "";
-                ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ADD_BUTTON_WIDTH);
-                ImGui::InputTextWithHint("##vec3Name", "New 3D variable", newVec3Name, IM_ARRAYSIZE(newVec3Name), ImGuiInputTextFlags_CharsNoBlank);
-                ImGui::PopItemWidth();
-                ImGui::SameLine();
-                if (ImGui::Button("Add##vec3") && std::strlen(newVec3Name) > 0)
-                {
-                    mat->SetUniform(newVec3Name, {0, 0, 0});
-                    std::strcpy(newVec3Name, "");
-                }
-                ImGui::Unindent(8.0f);
-            }
-
-            if (ImGui::CollapsingHeader("4D Uniforms"))
-            {
-                ImGui::Indent(8.0f);
-                int n = 0;
-                for (auto i = mat->m_Uniforms.Floats4D.begin(); i != mat->m_Uniforms.Floats4D.end();)
-                {
-                    ImGui::TextWrapped(i->first.c_str());
-                    ImGui::SameLine();
-                    ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - UNIFORM_DELETE_BUTTON_WIDTH);
-                    ImGui::ColorEdit4((std::string("##vec4") + std::to_string(n++)).c_str(), &i->second.x, ImGuiColorEditFlags_None);
-                    ImGui::PopItemWidth();
-                    ImGui::SameLine();
-                    if (ImGui::Button((std::string("Delete##vec4_") + std::to_string(n)).c_str(), ImVec2(UNIFORM_DELETE_BUTTON_WIDTH, 0)))
-                    {
-                        i = mat->m_Uniforms.Floats4D.erase(i);
-                    }
-                    else
-                    {
-                        ++i;
-                        n++;
-                    }
-                }
-
-                static char newVec4Name[128] = "";
-                ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - ADD_BUTTON_WIDTH);
-                ImGui::InputTextWithHint("##vec4Name", "New color", newVec4Name, IM_ARRAYSIZE(newVec4Name), ImGuiInputTextFlags_CharsNoBlank);
-                ImGui::PopItemWidth();
-                ImGui::SameLine();
-                if (ImGui::Button("Add##vec4") && std::strlen(newVec4Name) > 0)
-                {
-                    mat->SetUniform(newVec4Name, {1, 1, 1, 1});
-                    std::strcpy(newVec4Name, "");
-                }
-                ImGui::Unindent(8.0f);
-            }
-            ImGui::Unindent(8.0f);
-        }*/
 
         ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
         if (ImGui::Button("Save changes", ImVec2(100, 50)))

@@ -68,29 +68,6 @@ namespace Dwarf
 		/// @return The created entity instance.
 		Entity CreateEntityWithUID(UID uid, const std::string &name);
 
-		/// @brief Draws the scene from the POV of a given camera.
-		/// @param camera Camera instance.
-		// void drawScene(Camera camera);
-
-		/// @brief Sets the selection to a single entity.
-		/// @param entity Entity instance.
-		// void SelectEntity(Entity entity);
-
-		/// @brief Adds an entity to the selection.
-		/// @param entity Entity instance.
-		// void AddEntityToSelection(Entity entity);
-
-		/// @brief Removes an entity from the selection.
-		/// @param entity Entity instance.
-		// void RemoveEntityFromSelection(Entity entity);
-
-		/// @brief Checks if an entity is selected.
-		/// @param entity Entity instance.
-		/// @return True if selected, false if not.
-		// bool IsEntitySelected(Entity entity);
-
-		/// @brief Clears the selection list.
-		// void ClearSelection();
 	private:
 		/// @brief Name of the opened scene.
 		std::string m_Name;

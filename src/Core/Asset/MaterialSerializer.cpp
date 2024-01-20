@@ -33,14 +33,6 @@ namespace Dwarf
         {
             for (auto parameter : serializedMat["parameters"].items())
             {
-                // if (texture.value() != -1)
-                // {
-                //     deserializedMat.SetTexture(texture.key(), CreateRef<UID>(UID(texture.value())));
-                // }
-                // else
-                // {
-                //     deserializedMat.SetTexture(texture.key(), nullptr);
-                // }
 
                 if (serializedMat["parameters"][parameter.key()]["type"] == "boolean")
                 {
@@ -85,75 +77,6 @@ namespace Dwarf
                 }
             }
         }
-
-        /*if (serializedMat.contains("textures"))
-        {
-            for (auto texture : serializedMat["textures"].items())
-            {
-                if (texture.value() != -1)
-                {
-                    deserializedMat.SetTexture(texture.key(), CreateRef<UID>(UID(texture.value())));
-                }
-                else
-                {
-                    deserializedMat.SetTexture(texture.key(), nullptr);
-                }
-            }
-        }
-
-        if (serializedMat.contains("boolUniforms"))
-        {
-            for (auto boolUniform : serializedMat["boolUniforms"].items())
-            {
-                deserializedMat.SetUniform(boolUniform.key(), (bool)boolUniform.value());
-            }
-        }
-
-        if (serializedMat.contains("integerUniforms"))
-        {
-            for (auto integerUniform : serializedMat["integerUniforms"].items())
-            {
-                deserializedMat.SetUniform(integerUniform.key(), (int)integerUniform.value());
-            }
-        }
-
-        if (serializedMat.contains("floatUniforms"))
-        {
-            for (auto floatUniform : serializedMat["floatUniforms"].items())
-            {
-                deserializedMat.SetUniform(floatUniform.key(), (float)floatUniform.value());
-            }
-        }
-
-        if (serializedMat.contains("vec2Uniforms"))
-        {
-            for (auto vec2Uniform : serializedMat["vec2Uniforms"].items())
-            {
-                deserializedMat.SetUniform(vec2Uniform.key(), {(float)vec2Uniform.value()["x"],
-                                                               (float)vec2Uniform.value()["y"]});
-            }
-        }
-
-        if (serializedMat.contains("vec3Uniforms"))
-        {
-            for (auto vec3Uniform : serializedMat["vec3Uniforms"].items())
-            {
-                deserializedMat.SetUniform(vec3Uniform.key(), {(float)vec3Uniform.value()["x"],
-                                                               (float)vec3Uniform.value()["y"],
-                                                               (float)vec3Uniform.value()["z"]});
-            }
-        }
-
-        if (serializedMat.contains("vec4Uniforms"))
-        {
-            for (auto vec4Uniform : serializedMat["vec4Uniforms"].items())
-            {
-                deserializedMat.SetUniform(vec4Uniform.key(), {(float)vec4Uniform.value()["x"],
-                                                               (float)vec4Uniform.value()["y"],
-                                                               (float)vec4Uniform.value()["z"],
-                                                               (float)vec4Uniform.value()["w"]});
-            }
-        }*/
 
         if (serializedMat.contains("shader") && serializedMat["shader"] != "default")
         {
@@ -343,54 +266,6 @@ namespace Dwarf
                 break;
             }
         }
-
-        /*for (auto const &[key, val] : material.m_Uniforms.Textures)
-        {
-            if (val)
-            {
-                serializedMat["textures"][key] = (uint64_t)*val;
-            }
-            else
-            {
-                serializedMat["textures"][key] = -1;
-            }
-        }
-
-        for (auto const &[key, val] : material.m_Uniforms.Booleans)
-        {
-            serializedMat["boolUniforms"][key] = val;
-        }
-
-        for (auto const &[key, val] : material.m_Uniforms.Integers)
-        {
-            serializedMat["integerUniforms"][key] = val;
-        }
-
-        for (auto const &[key, val] : material.m_Uniforms.Floats)
-        {
-            serializedMat["floatUniforms"][key] = val;
-        }
-
-        for (auto const &[key, val] : material.m_Uniforms.Floats2D)
-        {
-            serializedMat["vec2Uniforms"][key]["x"] = val.x;
-            serializedMat["vec2Uniforms"][key]["y"] = val.y;
-        }
-
-        for (auto const &[key, val] : material.m_Uniforms.Floats3D)
-        {
-            serializedMat["vec3Uniforms"][key]["x"] = val.x;
-            serializedMat["vec3Uniforms"][key]["y"] = val.y;
-            serializedMat["vec3Uniforms"][key]["z"] = val.z;
-        }
-
-        for (auto const &[key, val] : material.m_Uniforms.Floats4D)
-        {
-            serializedMat["vec4Uniforms"][key]["x"] = val.x;
-            serializedMat["vec4Uniforms"][key]["y"] = val.y;
-            serializedMat["vec4Uniforms"][key]["z"] = val.z;
-            serializedMat["vec4Uniforms"][key]["w"] = val.w;
-        }*/
 
         FileHandler::WriteToFile(path, serializedMat.dump(4));
     }

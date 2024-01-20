@@ -110,64 +110,6 @@ namespace Dwarf
 			}
 		}
 
-		// for (auto const &[key, val] : material->m_Uniforms.Textures)
-		// {
-		// 	if (val)
-		// 	{
-		// 		glActiveTexture(GL_TEXTURE0 + textureInputCounter);
-		// 		glBindTexture(GL_TEXTURE_2D, AssetDatabase::Retrieve<TextureAsset>(val)->GetAsset()->m_Texture->GetTextureID());
-
-		// 		GLuint uniformID = glGetUniformLocation(shader->GetID(), key.c_str());
-		// 		glUniform1i(uniformID, textureInputCounter);
-		// 	}
-
-		// 	textureInputCounter++;
-		// }
-
-		// GLuint uniformID;
-		// // Bind booleans
-		// for (auto const &[key, val] : material->m_Uniforms.Booleans)
-		// {
-		// 	uniformID = glGetUniformLocation(shader->GetID(), key.c_str());
-		// 	glUniform1f(uniformID, (float)val);
-		// }
-
-		// // Bind integers
-		// for (auto const &[key, val] : material->m_Uniforms.Integers)
-		// {
-		// 	uniformID = glGetUniformLocation(shader->GetID(), key.c_str());
-		// 	glUniform1i(uniformID, val);
-		// }
-
-		// // Bind floats
-		// for (auto const &[key, val] : material->m_Uniforms.Floats)
-		// {
-		// 	uniformID = glGetUniformLocation(shader->GetID(), key.c_str());
-		// 	glUniform1f(uniformID, val);
-		// }
-
-		// // Bind vector2
-		// for (auto const &[key, val] : material->m_Uniforms.Floats2D)
-		// {
-		// 	uniformID = glGetUniformLocation(shader->GetID(), key.c_str());
-		// 	glUniform2f(uniformID, val.x, val.y);
-		// }
-
-		// // Bind vector3
-		// for (auto const &[key, val] : material->m_Uniforms.Floats3D)
-		// {
-		// 	uniformID = glGetUniformLocation(shader->GetID(), key.c_str());
-		// 	glUniform3f(uniformID, val.x, val.y, val.z);
-		// }
-
-		// // Bind vector4
-		// for (auto const &[key, val] : material->m_Uniforms.Floats4D)
-		// {
-		// 	uniformID = glGetUniformLocation(shader->GetID(), key.c_str());
-		// 	// glUniform4fv(uniformID, 4, &val.x);
-		// 	glUniform4f(uniformID, val.x, val.y, val.z, val.w);
-		// }
-
 		GLuint mmID = glGetUniformLocation(shader->GetID(), "modelMatrix");
 		GLuint vmID = glGetUniformLocation(shader->GetID(), "viewMatrix");
 		GLuint pmID = glGetUniformLocation(shader->GetID(), "projectionMatrix");

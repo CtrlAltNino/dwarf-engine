@@ -35,19 +35,6 @@ namespace Dwarf
         }
     }
 
-    /*template<typename T>
-    AssetReference<T> AssetDatabase::CreateAssetReference(std::filesystem::path assetPath){
-        std::string fileName = assetPath.filename().string();
-        std::filesystem::path metaDataPath = assetPath.concat(".meta");
-
-        if(FileHandler::CheckIfFileExists(metaDataPath.string().c_str())){
-            nlohmann::json metaData = AssetMetaData::GetMetaData(assetPath);
-            return AssetReference<T>(s_Registry->create(), fileName, s_Registry, UID(metaData["guid"]), assetPath);
-        }else {
-            return AssetReference<T>(s_Registry->create(), fileName, s_Registry, UID(), assetPath);
-        }
-    }*/
-
     void AssetDatabase::ReimportAssets()
     {
         s_Registry->clear();
