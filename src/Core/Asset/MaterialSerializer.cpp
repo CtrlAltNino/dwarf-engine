@@ -243,7 +243,7 @@ namespace Dwarf
                 serializedMat["parameters"][key]["value"] = std::dynamic_pointer_cast<FloatShaderParameter>(val)->m_Value;
                 break;
             case TEX2D:
-                serializedMat["parameters"][key]["type"] = "tex2D";
+                serializedMat["parameters"][key]["type"] = "tex2d";
                 if (std::dynamic_pointer_cast<Tex2DShaderParameter>(val)->m_Value != nullptr)
                 {
                     serializedMat["parameters"][key]["value"] = (uint64_t)*std::dynamic_pointer_cast<Tex2DShaderParameter>(val)->m_Value;
