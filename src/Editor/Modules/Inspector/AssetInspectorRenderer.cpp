@@ -251,7 +251,7 @@ namespace Dwarf
                         Ref<IntegerShaderParameter> parameter = std::dynamic_pointer_cast<IntegerShaderParameter>(i->second);
                         ImGui::TextWrapped(i->first.c_str());
                         ImGui::SameLine();
-                        ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - UNIFORM_DELETE_BUTTON_WIDTH);
+                        ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - UNIFORM_DELETE_BUTTON_WIDTH - 8.0f);
                         ImGui::InputInt((std::string("##integer") + std::to_string(n++)).c_str(), &(parameter->m_Value));
                         ImGui::PopItemWidth();
                     }
@@ -261,7 +261,7 @@ namespace Dwarf
                         Ref<FloatShaderParameter> parameter = std::dynamic_pointer_cast<FloatShaderParameter>(i->second);
                         ImGui::TextWrapped(i->first.c_str());
                         ImGui::SameLine();
-                        ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - UNIFORM_DELETE_BUTTON_WIDTH);
+                        ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - UNIFORM_DELETE_BUTTON_WIDTH - 8.0f);
                         ImGui::InputFloat((std::string("##float") + std::to_string(n++)).c_str(), &(parameter->m_Value));
                         ImGui::PopItemWidth();
                     }
@@ -271,7 +271,7 @@ namespace Dwarf
                         Ref<Tex2DShaderParameter> parameter = std::dynamic_pointer_cast<Tex2DShaderParameter>(i->second);
                         ImGui::TextWrapped(i->first.c_str());
                         ImGui::SameLine();
-                        ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - UNIFORM_DELETE_BUTTON_WIDTH);
+                        ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - UNIFORM_DELETE_BUTTON_WIDTH - 8.0f);
                         DwarfUI::AssetInput<TextureAsset>(parameter->m_Value, (std::string("##textureAsset") + std::to_string(n++)).c_str());
                         ImGui::PopItemWidth();
                     }
@@ -281,7 +281,7 @@ namespace Dwarf
                         Ref<Vec2ShaderParameter> parameter = std::dynamic_pointer_cast<Vec2ShaderParameter>(i->second);
                         ImGui::TextWrapped(i->first.c_str());
                         ImGui::SameLine();
-                        ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - UNIFORM_DELETE_BUTTON_WIDTH);
+                        ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - UNIFORM_DELETE_BUTTON_WIDTH - 8.0f);
                         ImGui::InputFloat2((std::string("##vec2") + std::to_string(n++)).c_str(), &(parameter->m_Value.x));
                         ImGui::PopItemWidth();
                     }
@@ -291,7 +291,7 @@ namespace Dwarf
                         Ref<Vec3ShaderParameter> parameter = std::dynamic_pointer_cast<Vec3ShaderParameter>(i->second);
                         ImGui::TextWrapped(i->first.c_str());
                         ImGui::SameLine();
-                        ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - UNIFORM_DELETE_BUTTON_WIDTH);
+                        ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - UNIFORM_DELETE_BUTTON_WIDTH - 8.0f);
                         ImGui::InputFloat3((std::string("##vec3") + std::to_string(n++)).c_str(), &(parameter->m_Value.x));
                         ImGui::PopItemWidth();
                     }
@@ -301,7 +301,7 @@ namespace Dwarf
                         Ref<Vec4ShaderParameter> parameter = std::dynamic_pointer_cast<Vec4ShaderParameter>(i->second);
                         ImGui::TextWrapped(i->first.c_str());
                         ImGui::SameLine();
-                        ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - UNIFORM_DELETE_BUTTON_WIDTH);
+                        ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - UNIFORM_DELETE_BUTTON_WIDTH - 8.0f);
                         ImGui::ColorEdit4((std::string("##vec4") + std::to_string(n++)).c_str(), &(parameter->m_Value.x), ImGuiColorEditFlags_None);
                         ImGui::PopItemWidth();
                     }
@@ -348,7 +348,7 @@ namespace Dwarf
             ImGui::PopItemWidth();
 
             ImGui::SameLine();
-            if (ImGui::Button("Add##addParam", ImVec2(UNIFORM_DELETE_BUTTON_WIDTH - 15.0f, 0)) && std::strlen(paramName) > 0)
+            if (ImGui::Button("Add##addParam", ImVec2(UNIFORM_DELETE_BUTTON_WIDTH - 15.0f, 0)) && (std::strlen(paramName) > 0) && (mat->m_Parameters.count(paramName) == 0))
             {
                 switch (selectedParameterType)
                 {
