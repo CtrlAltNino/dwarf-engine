@@ -17,11 +17,11 @@ uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
 
 uniform sampler2D albedoMap;
-uniform float useAlbedoMap;
+uniform bool useAlbedoMap;
 uniform sampler2D specularMap;
-uniform float useSpecularMap;
+uniform bool useSpecularMap;
 uniform sampler2D normalMap;
-uniform float useNormalMap;
+uniform bool useNormalMap;
 uniform vec4 color;
 uniform float shininess;
 uniform float fogStart;
@@ -46,7 +46,7 @@ void main(){
 	vec4 objectColor = color;
 	vec3 normal = normalize(normalWorld);
 
-	if(useNormalMap > 0){
+	if(useNormalMap){
 		normal = texture(normalMap, texCoord).rgb;
 		normal = normal * 2.0f - 1.0f;
 		normal = normalize(tbn * normal);
@@ -62,11 +62,11 @@ void main(){
 	vec3 ambientColor = ambientStrength * lightColor;
 	vec3 diffuseColor = diff * lightColor * lightIntensity;
 	vec3 specularColor = spec * lightColor * lightIntensity;
-	if(useSpecularMap > 0){
+	if(useSpecularMap){
 		specularColor = specularColor * texture(specularMap, texCoord).rgb;
 	}
 
-	if(useAlbedoMap > 0){
+	if(useAlbedoMap){
 		objectColor = objectColor * texture(albedoMap, texCoord);
 	}
 

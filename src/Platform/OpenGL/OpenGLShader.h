@@ -26,19 +26,19 @@ namespace Dwarf
         std::string m_GeometryShaderSource;
         std::string m_FragmentShaderSource;
 
-        GLsizei vert_log_length;
+        GLsizei vert_log_length = 0;
         GLchar vert_message[1024] = "";
 
-        GLsizei tesc_log_length;
+        GLsizei tesc_log_length = 0;
         GLchar tesc_message[1024] = "";
 
-        GLsizei tese_log_length;
+        GLsizei tese_log_length = 0;
         GLchar tese_message[1024] = "";
 
-        GLsizei geom_log_length;
+        GLsizei geom_log_length = 0;
         GLchar geom_message[1024] = "";
 
-        GLsizei frag_log_length;
+        GLsizei frag_log_length = 0;
         GLchar frag_message[1024] = "";
 
         OpenGLShader();

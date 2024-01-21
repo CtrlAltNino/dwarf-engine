@@ -108,6 +108,7 @@ namespace Dwarf
 
 			if (geometryShaderSource.length() > 0)
 			{
+				std::cout << "WTF???" << std::endl;
 				const char *geometrySource = geometryShaderSource.c_str();
 
 				GLuint geometryShader = glCreateShader(GL_GEOMETRY_SHADER);
@@ -265,13 +266,11 @@ namespace Dwarf
 		GLsizei length;				// name length
 
 		glGetProgramiv(m_ID, GL_ACTIVE_UNIFORMS, &count);
-		printf("Active Uniforms: %d\n", count);
 
 		for (i = 0; i < count; i++)
 		{
 			glGetActiveUniform(m_ID, (GLuint)i, bufSize, &length, &size, &type, name);
 
-			printf("Uniform #%d Type: %u Name: %s\n", i, type, name);
 			parameters[std::string(name)] = Shader::CreateShaderParameter(glTypeToDwarfShaderType[type]);
 		}
 

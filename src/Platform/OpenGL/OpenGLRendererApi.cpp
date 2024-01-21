@@ -65,17 +65,17 @@ namespace Dwarf
 				switch ((*val).GetType())
 				{
 				case BOOLEAN:
-					glUniform1f(glGetUniformLocation(shader->GetID(), key.c_str()), (float)(*std::dynamic_pointer_cast<BooleanShaderParameter>(val)).m_Value);
+					glUniform1f(glGetUniformLocation(shader->GetID(), key.c_str()), (float)std::dynamic_pointer_cast<BooleanShaderParameter>(val)->m_Value);
 					break;
 				case INTEGER:
-					glUniform1i(glGetUniformLocation(shader->GetID(), key.c_str()), (float)(*std::dynamic_pointer_cast<IntegerShaderParameter>(val)).m_Value);
+					glUniform1i(glGetUniformLocation(shader->GetID(), key.c_str()), (float)std::dynamic_pointer_cast<IntegerShaderParameter>(val)->m_Value);
 					break;
 				case FLOAT:
-					glUniform1f(glGetUniformLocation(shader->GetID(), key.c_str()), (float)(*std::dynamic_pointer_cast<FloatShaderParameter>(val)).m_Value);
+					glUniform1f(glGetUniformLocation(shader->GetID(), key.c_str()), (float)std::dynamic_pointer_cast<FloatShaderParameter>(val)->m_Value);
 					break;
 				case TEX2D:
 				{
-					Ref<UID> parameter = (*std::dynamic_pointer_cast<Tex2DShaderParameter>(val)).m_Value;
+					Ref<UID> parameter = std::dynamic_pointer_cast<Tex2DShaderParameter>(val)->m_Value;
 					if (parameter)
 					{
 						glActiveTexture(GL_TEXTURE0 + textureInputCounter);
@@ -90,19 +90,19 @@ namespace Dwarf
 				break;
 				case VEC2:
 				{
-					glm::vec2 parameter = (*std::dynamic_pointer_cast<Vec2ShaderParameter>(val)).m_Value;
+					glm::vec2 parameter = std::dynamic_pointer_cast<Vec2ShaderParameter>(val)->m_Value;
 					glUniform2f(glGetUniformLocation(shader->GetID(), key.c_str()), parameter.x, parameter.y);
 				}
 				break;
 				case VEC3:
 				{
-					glm::vec3 parameter = (*std::dynamic_pointer_cast<Vec3ShaderParameter>(val)).m_Value;
+					glm::vec3 parameter = std::dynamic_pointer_cast<Vec3ShaderParameter>(val)->m_Value;
 					glUniform3f(glGetUniformLocation(shader->GetID(), key.c_str()), parameter.x, parameter.y, parameter.z);
 				}
 				break;
 				case VEC4:
 				{
-					glm::vec4 parameter = (*std::dynamic_pointer_cast<Vec4ShaderParameter>(val)).m_Value;
+					glm::vec4 parameter = std::dynamic_pointer_cast<Vec4ShaderParameter>(val)->m_Value;
 					glUniform4f(glGetUniformLocation(shader->GetID(), key.c_str()), parameter.x, parameter.y, parameter.z, parameter.w);
 				}
 				break;

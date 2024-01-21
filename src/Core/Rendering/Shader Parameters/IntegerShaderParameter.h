@@ -9,7 +9,7 @@ namespace Dwarf
     public:
         int m_Value;
 
-        IntegerShaderParameter()
+        IntegerShaderParameter() : m_Value(0)
         {
         }
 

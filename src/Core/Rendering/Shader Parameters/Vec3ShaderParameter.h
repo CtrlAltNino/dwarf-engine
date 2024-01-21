@@ -9,7 +9,7 @@ namespace Dwarf
     public:
         glm::vec3 m_Value;
 
-        Vec3ShaderParameter()
+        Vec3ShaderParameter() : m_Value({0.0f, 0.0f, 0.0f})
         {
         }
 

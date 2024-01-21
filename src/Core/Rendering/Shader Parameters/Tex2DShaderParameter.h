@@ -9,7 +9,7 @@ namespace Dwarf
     public:
         Ref<UID> m_Value;
 
-        Tex2DShaderParameter()
+        Tex2DShaderParameter() : m_Value(nullptr)
         {
         }
 

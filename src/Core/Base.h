@@ -44,7 +44,9 @@ namespace Dwarf
 		VEC4
 	};
 
-	static const char *parameterNames[7] = {"Boolean", "Integer", "Float", "2D Texture", "Vector2", "Vector3", "Vector4"};
+	static const char *parameterTypeNames[7] = {"Boolean", "Integer", "Float", "2D Texture", "Vector2", "Vector3", "Vector4"};
+
+	static const char *reservedParameterNames[7] = {"_Time", "modelMatrix", "viewMatrix", "projectionMatrix", "fogStart", "fogEnd", "fogColor"};
 
 #ifdef WIN32
 	static bool apiAvailability[4] = {

@@ -9,7 +9,7 @@ namespace Dwarf
     public:
         float m_Value;
 
-        FloatShaderParameter()
+        FloatShaderParameter() : m_Value(0.0f)
         {
         }
 

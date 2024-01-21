@@ -232,37 +232,44 @@ namespace Dwarf
             {
             case BOOLEAN:
                 serializedMat["parameters"][key]["type"] = "boolean";
-                serializedMat["parameters"][key]["value"] = (*std::dynamic_pointer_cast<BooleanShaderParameter>(val)).m_Value;
+                serializedMat["parameters"][key]["value"] = std::dynamic_pointer_cast<BooleanShaderParameter>(val)->m_Value;
                 break;
             case INTEGER:
                 serializedMat["parameters"][key]["type"] = "integer";
-                serializedMat["parameters"][key]["value"] = (*std::dynamic_pointer_cast<IntegerShaderParameter>(val)).m_Value;
+                serializedMat["parameters"][key]["value"] = std::dynamic_pointer_cast<IntegerShaderParameter>(val)->m_Value;
                 break;
             case FLOAT:
                 serializedMat["parameters"][key]["type"] = "float";
-                serializedMat["parameters"][key]["value"] = (*std::dynamic_pointer_cast<FloatShaderParameter>(val)).m_Value;
+                serializedMat["parameters"][key]["value"] = std::dynamic_pointer_cast<FloatShaderParameter>(val)->m_Value;
                 break;
             case TEX2D:
                 serializedMat["parameters"][key]["type"] = "tex2D";
-                serializedMat["parameters"][key]["value"] = (uint64_t) * (*std::dynamic_pointer_cast<Tex2DShaderParameter>(val)).m_Value;
+                if (std::dynamic_pointer_cast<Tex2DShaderParameter>(val)->m_Value != nullptr)
+                {
+                    serializedMat["parameters"][key]["value"] = (uint64_t)*std::dynamic_pointer_cast<Tex2DShaderParameter>(val)->m_Value;
+                }
+                else
+                {
+                    serializedMat["parameters"][key]["value"] = -1;
+                }
                 break;
             case VEC2:
                 serializedMat["parameters"][key]["type"] = "vec2";
-                serializedMat["parameters"][key]["value"]["x"] = (*std::dynamic_pointer_cast<Vec2ShaderParameter>(val)).m_Value.x;
-                serializedMat["parameters"][key]["value"]["y"] = (*std::dynamic_pointer_cast<Vec2ShaderParameter>(val)).m_Value.y;
+                serializedMat["parameters"][key]["value"]["x"] = std::dynamic_pointer_cast<Vec2ShaderParameter>(val)->m_Value.x;
+                serializedMat["parameters"][key]["value"]["y"] = std::dynamic_pointer_cast<Vec2ShaderParameter>(val)->m_Value.y;
                 break;
             case VEC3:
                 serializedMat["parameters"][key]["type"] = "vec3";
-                serializedMat["parameters"][key]["value"]["x"] = (*std::dynamic_pointer_cast<Vec3ShaderParameter>(val)).m_Value.x;
-                serializedMat["parameters"][key]["value"]["y"] = (*std::dynamic_pointer_cast<Vec3ShaderParameter>(val)).m_Value.y;
-                serializedMat["parameters"][key]["value"]["z"] = (*std::dynamic_pointer_cast<Vec3ShaderParameter>(val)).m_Value.z;
+                serializedMat["parameters"][key]["value"]["x"] = std::dynamic_pointer_cast<Vec3ShaderParameter>(val)->m_Value.x;
+                serializedMat["parameters"][key]["value"]["y"] = std::dynamic_pointer_cast<Vec3ShaderParameter>(val)->m_Value.y;
+                serializedMat["parameters"][key]["value"]["z"] = std::dynamic_pointer_cast<Vec3ShaderParameter>(val)->m_Value.z;
                 break;
             case VEC4:
                 serializedMat["parameters"][key]["type"] = "vec4";
-                serializedMat["parameters"][key]["value"]["x"] = (*std::dynamic_pointer_cast<Vec4ShaderParameter>(val)).m_Value.x;
-                serializedMat["parameters"][key]["value"]["y"] = (*std::dynamic_pointer_cast<Vec4ShaderParameter>(val)).m_Value.y;
-                serializedMat["parameters"][key]["value"]["z"] = (*std::dynamic_pointer_cast<Vec4ShaderParameter>(val)).m_Value.z;
-                serializedMat["parameters"][key]["value"]["w"] = (*std::dynamic_pointer_cast<Vec4ShaderParameter>(val)).m_Value.w;
+                serializedMat["parameters"][key]["value"]["x"] = std::dynamic_pointer_cast<Vec4ShaderParameter>(val)->m_Value.x;
+                serializedMat["parameters"][key]["value"]["y"] = std::dynamic_pointer_cast<Vec4ShaderParameter>(val)->m_Value.y;
+                serializedMat["parameters"][key]["value"]["z"] = std::dynamic_pointer_cast<Vec4ShaderParameter>(val)->m_Value.z;
+                serializedMat["parameters"][key]["value"]["w"] = std::dynamic_pointer_cast<Vec4ShaderParameter>(val)->m_Value.w;
                 break;
             }
         }

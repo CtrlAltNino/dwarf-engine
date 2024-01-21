@@ -9,7 +9,7 @@ namespace Dwarf
     public:
         glm::vec2 m_Value;
 
-        Vec2ShaderParameter()
+        Vec2ShaderParameter() : m_Value({0.0f, 0.0f})
         {
         }
 

@@ -9,7 +9,7 @@ namespace Dwarf
     public:
         bool m_Value;
 
-        BooleanShaderParameter()
+        BooleanShaderParameter() : m_Value(false)
         {
         }
 
