@@ -129,7 +129,7 @@ namespace Dwarf
         {
             return CreateAssetReference<MaterialAsset>(assetPath).GetUID();
         }
-        else if (fileExtension == ".jpg" || fileExtension == ".png")
+        else if (fileExtension == ".jpg" || fileExtension == ".png" || fileExtension == ".tga")
         {
             return CreateAssetReference<TextureAsset>(assetPath).GetUID();
         }

@@ -179,11 +179,7 @@ namespace Dwarf
             {
                 return ASSET_TYPE::MODEL;
             }
-            else if (assetPath.extension() == ".jpg")
-            {
-                return ASSET_TYPE::TEXTURE;
-            }
-            else if (assetPath.extension() == ".png")
+            else if (assetPath.extension() == ".jpg" || assetPath.extension() == ".png" || assetPath.extension() == ".tga")
             {
                 return ASSET_TYPE::TEXTURE;
             }
