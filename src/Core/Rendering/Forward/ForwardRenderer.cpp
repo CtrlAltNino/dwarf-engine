@@ -14,7 +14,7 @@ namespace Dwarf
     }
     ForwardRenderer::~ForwardRenderer() {}
 
-    void ForwardRenderer::RenderScene(Ref<Scene> scene, Ref<Camera> camera, glm::ivec2 viewportSize, boolean renderGrid)
+    void ForwardRenderer::RenderScene(Ref<Scene> scene, Ref<Camera> camera, glm::ivec2 viewportSize, bool renderGrid)
     {
         m_RendererApi->Clear();
         m_RendererApi->SetViewport(0, 0, viewportSize.x, viewportSize.y);

@@ -50,8 +50,32 @@ namespace Dwarf
 					}
 					case ASSET_TYPE::MATERIAL:
 					{
+						std::cout << "A material asset has been updated!" << std::endl;
 						Ref<AssetReference<MaterialAsset>> mat = AssetDatabase::Retrieve<MaterialAsset>(path);
 						AssetDatabase::AddShaderToRecompilationQueue(mat->GetAsset()->m_Material->GetShader().get());
+					}
+					case ASSET_TYPE::MODEL:
+					{
+						// TODO: REIMPORT MODEL FILE
+						std::cout << "A model asset has been updated!" << std::endl;
+						break;
+					}
+					case ASSET_TYPE::TEXTURE:
+					{
+						// TODO: REIMPORT TEXTURE
+						std::cout << "A texture asset has been updated!" << std::endl;
+						break;
+					}
+					case ASSET_TYPE::SCENE:
+					{
+						// TODO: IF ITS THE CURRENTLY OPEN SCENE, MODAL TO ASK IF IT SHOULD BE RELOADED
+						std::cout << "A scene asset has been updated!" << std::endl;
+						break;
+					}
+					case ASSET_TYPE::UNKNOWN:
+					{
+						std::cout << "An unsupported asset has been updated!" << std::endl;
+						break;
 					}
 					}
 				}

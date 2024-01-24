@@ -37,7 +37,7 @@ namespace Dwarf
 
         void SetWindowTitle(std::string windowTitle) override;
 
-        virtual void *GetNativeWindow() const { return m_Window; }
+        virtual void *GetNativeWindow() const override { return m_Window; }
 
         virtual GraphicsApi GetApi() override;
 
