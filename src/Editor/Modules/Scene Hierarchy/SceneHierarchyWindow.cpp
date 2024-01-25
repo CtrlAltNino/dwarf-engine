@@ -159,7 +159,6 @@ namespace Dwarf
                 else
                 {
                     // Set to selected object
-                    // if(model->GetInput()->GetKey(KEYCODE::LEFT_CONTROL)){
                     if (InputManager::GetKey(KEYCODE::LEFT_CONTROL))
                     {
                         AddEntityToSelection(ent);

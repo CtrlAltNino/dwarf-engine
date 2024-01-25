@@ -199,6 +199,42 @@ namespace Dwarf
 
         ImGui::Begin("FolderContent", nullptr, window_flags);
 
+        ImGui::Dummy(ImGui::GetContentRegionAvail());
+        if (ImGui::BeginPopupContextItem()) // <-- use last item id as popup id
+        {
+            if (ImGui::BeginMenu("New"))
+            {
+                if (ImGui::BeginMenu("Material"))
+                {
+                    if (ImGui::MenuItem("Default"))
+                    {
+                        AssetDatabase::CreateNewMaterialAsset(m_CurrentDirectory);
+                    }
+
+                    ImGui::MenuItem("Subsurface Scattering");
+                    ImGui::MenuItem("Skybox");
+                    ImGui::EndMenu();
+                }
+
+                ImGui::MenuItem("Scene");
+                ImGui::EndMenu();
+            }
+
+            if (ImGui::MenuItem("Create Folder"))
+            {
+                FileHandler::CreateDirectoryW(m_CurrentDirectory / "New Folder");
+            }
+
+            if (ImGui::MenuItem("Paste"))
+            {
+                if (std::filesystem::exists(m_CopyPathBuffer))
+                {
+                    FileHandler::Copy(m_CopyPathBuffer, m_CurrentDirectory);
+                }
+            }
+            ImGui::EndPopup();
+        }
+
         float column = 0;
         float rowOffset = 0;
         float tallestCell = 0;
@@ -227,7 +263,6 @@ namespace Dwarf
         combinedEntries.insert(combinedEntries.end(), directories.begin(), directories.end());
         combinedEntries.insert(combinedEntries.end(), files.begin(), files.end());
 
-        // for(auto& directoryEntry : std::filesystem::directory_iterator(m_CurrentDirectory)){
         for (auto &directoryEntry : combinedEntries)
         {
             const auto &path = directoryEntry.path();
@@ -270,23 +305,10 @@ namespace Dwarf
                     ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
                     if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
                     {
-                        if (directoryEntry.is_directory())
-                        {
-                            EnterDirectory(path.filename());
-                        }
-                        else if (directoryEntry.path().extension() == ".dscene")
-                        {
-                            m_Model->SetScene(SceneUtilities::LoadScene(directoryEntry.path()));
-                        }
-                        else
-                        {
-                            // TODO Open file
-                            FileHandler::LaunchFile(directoryEntry.path());
-                        }
+                        OpenPath(directoryEntry);
                     }
-                    else if (ImGui::IsItemClicked())
+                    else if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
                     {
-                        // TODO Select asset
                         SelectAsset(path);
                     }
 
@@ -294,10 +316,42 @@ namespace Dwarf
                 }
                 else
                 {
-                    if (m_SelectedAsset == directoryEntry.path() && ImGui::IsWindowHovered() && (ImGui::IsMouseClicked(ImGuiMouseButton_Left)))
+                    if (m_SelectedAsset == directoryEntry.path() && ImGui::IsWindowHovered() && ImGui::IsMouseClicked(ImGuiMouseButton_Left))
                     {
                         ClearSelection();
                     }
+                }
+
+                if (ImGui::BeginPopupContextItem(directoryEntry.path().string().c_str())) // <-- use last item id as popup id
+                {
+                    if (ImGui::Selectable("Open"))
+                    {
+                        // TODO: Open file or directory
+                        OpenPath(directoryEntry);
+                    }
+                    else if (ImGui::Selectable("Copy"))
+                    {
+                        m_CopyPathBuffer = path;
+                    }
+                    else if (ImGui::Selectable("Duplicate"))
+                    {
+                        FileHandler::Duplicate(path);
+                    }
+                    else if (ImGui::Selectable("Rename"))
+                    {
+                        // TODO: Rename modal
+                    }
+                    else if (ImGui::Selectable("Delete"))
+                    {
+                        // TODO: Confirmation modal
+                        if (AssetDatabase::Exists(path))
+                        {
+                            AssetDatabase::Remove(path);
+                            AssetMetaData::RemoveMetaData(path);
+                        }
+                        FileHandler::Delete(path);
+                    }
+                    ImGui::EndPopup();
                 }
 
                 ImGui::SetCursorPos(ImVec2(cellMin.x + halfPadding, cellMin.y + halfPadding));
@@ -414,6 +468,23 @@ namespace Dwarf
         }
     }
 
+    void AssetBrowserWindow::OpenPath(std::filesystem::directory_entry directoryEntry)
+    {
+        if (directoryEntry.is_directory())
+        {
+            EnterDirectory(directoryEntry.path().filename());
+        }
+        else if (directoryEntry.path().extension() == ".dscene")
+        {
+            m_Model->SetScene(SceneUtilities::LoadScene(directoryEntry.path()));
+        }
+        else
+        {
+            // TODO Open file
+            FileHandler::LaunchFile(directoryEntry.path());
+        }
+    }
+
     void AssetBrowserWindow::EnterDirectory(std::filesystem::path path)
     {
         m_CurrentDirectory /= path.filename();
@@ -434,6 +505,11 @@ namespace Dwarf
         m_Model->m_Selection.assetPath = m_SelectedAsset;
         m_Model->m_Selection.selectionType = INSPECTOR_SELECTION_TYPE::ASSET;
         // TODO command to inspector
+    }
+
+    void AssetBrowserWindow::HandleShortcuts()
+    {
+        // TODO: Implement shortcut handling
     }
 
     void AssetBrowserWindow::ClearSelection()

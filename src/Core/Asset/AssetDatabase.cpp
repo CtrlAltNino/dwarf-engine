@@ -210,11 +210,43 @@ namespace Dwarf
     void AssetDatabase::CreateNewMaterialAsset(std::filesystem::path path)
     {
         Material newMat = Material("New Material");
-        newMat.SetParameter("color", glm::vec4(1, 1, 1, 1));
-        newMat.SetParameter("useNormalMap", 1.0f);
-        newMat.SetParameter("shininess", 32.0f);
-        newMat.SetParameter("albedoMap", nullptr, ShaderParameterType::TEX2D);
+        newMat.GenerateShaderParameters();
         std::filesystem::path newMatPath = path / "New Material.dmat";
+
+        while (FileHandler::CheckIfFileExists(newMatPath))
+        {
+            std::filesystem::path fileNameWithoutExtension = newMatPath.filename().replace_extension("");
+            std::string lastPart = fileNameWithoutExtension.string();
+
+            size_t pos = 0;
+            std::string token;
+            while ((pos = lastPart.find(" ")) != std::string::npos)
+            {
+                lastPart.erase(0, pos + 1);
+            }
+
+            bool isNumber = true;
+
+            for (char c : lastPart)
+            {
+                if (!std::isdigit(c))
+                {
+                    isNumber = false;
+                }
+            }
+
+            if (isNumber)
+            {
+                int val = stoi(lastPart);
+                val++;
+
+                newMatPath.replace_filename(fileNameWithoutExtension.string().substr(0, fileNameWithoutExtension.string().length() - lastPart.length()) + std::to_string(val) + std::string(".dmat"));
+            }
+            else
+            {
+                newMatPath.replace_filename(fileNameWithoutExtension.string() + std::string(" 2") + std::string(".dmat"));
+            }
+        }
         MaterialSerializer::Serialize(newMat, newMatPath);
     }
 

@@ -13,12 +13,20 @@ namespace Dwarf
     {
     public:
         static constexpr const char *META_DATA_EXTENSION = ".dmeta";
-        /// @brief Retrieves the meta data from an asset path.
-        /// @param path Path to an asset.
-        /// @return Metadata in JSON.
-        static nlohmann::json GetMetaData(std::filesystem::path path)
+
+    private:
+        static std::filesystem::path GetMetaDataPath(std::filesystem::path assetPath)
         {
-            std::string fileContent = FileHandler::ReadFile(path.concat(META_DATA_EXTENSION));
+            return assetPath.concat(META_DATA_EXTENSION);
+        }
+
+    public:
+        /// @brief Retrieves the meta data from an asset path.
+        /// @param assetPath Path to an asset.
+        /// @return Metadata in JSON.
+        static nlohmann::json GetMetaData(std::filesystem::path assetPath)
+        {
+            std::string fileContent = FileHandler::ReadFile(GetMetaDataPath(assetPath));
             nlohmann::json jsonObject;
 
             if (!fileContent.empty())
@@ -30,18 +38,25 @@ namespace Dwarf
         }
 
         /// @brief Writes the given metadata to a path.
-        /// @param path Path to write the metadata to.
+        /// @param assetPath Path to write the metadata to.
         /// @param metaData The metadata in JSON.
-        static void SetMetaData(std::filesystem::path path, nlohmann::json metaData)
+        static void SetMetaData(std::filesystem::path assetPath, nlohmann::json metaData)
         {
             std::string fileContent = metaData.dump(4);
 
-            if (!FileHandler::CheckIfDirectoyExists(path))
+            if (!FileHandler::CheckIfDirectoyExists(assetPath))
             {
-                FileHandler::CreateDirectory(path);
+                FileHandler::CreateDirectory(assetPath);
             }
 
-            FileHandler::WriteToFile(path.concat(META_DATA_EXTENSION), fileContent);
+            FileHandler::WriteToFile(GetMetaDataPath(assetPath), fileContent);
+        }
+
+        /// @brief Removes the metadata file of an asset.
+        /// @param assetPath Path to an asset.
+        static void RemoveMetaData(std::filesystem::path assetPath)
+        {
+            FileHandler::Delete(GetMetaDataPath(assetPath));
         }
     };
 }

@@ -61,5 +61,11 @@ namespace Dwarf
 		static void OpenPathInFileBrowser(std::filesystem::path path);
 
 		static void LaunchFile(std::filesystem::path path);
+
+		static void Copy(std::filesystem::path from, std::filesystem::path to);
+
+		static void Duplicate(std::filesystem::path path);
+
+		static void Delete(std::filesystem::path path);
 	};
 }

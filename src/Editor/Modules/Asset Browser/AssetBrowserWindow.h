@@ -20,15 +20,21 @@ namespace Dwarf
         /// @brief Path of the currently navigated directory.
         std::filesystem::path m_CurrentDirectory;
 
+        std::filesystem::path m_CopyPathBuffer;
+
         std::vector<std::filesystem::path> m_DirectoryHistory;
 
         std::filesystem::path m_SelectedAsset;
         int m_HistoryPos = 0;
-        // IWindowManager* windowManager;
+        void OpenPath(std::filesystem::directory_entry directoryEntry);
+
         void EnterDirectory(std::filesystem::path path);
+
         void GoBack();
 
         void GoForward();
+
+        void HandleShortcuts();
 
         void LoadIcons();
 

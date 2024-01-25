@@ -186,4 +186,28 @@ namespace Dwarf
         // system(path.string().c_str());
 #endif
     }
+
+    void FileHandler::Copy(std::filesystem::path from, std::filesystem::path to)
+    {
+#if _WIN32
+        std::filesystem::copy(from, to);
+#endif
+    }
+
+    void FileHandler::Duplicate(std::filesystem::path path)
+    {
+#if _WIN32
+        std::filesystem::path from = path;
+        std::filesystem::path to = path.replace_filename(path.replace_extension("").filename().concat(" copy").concat(from.extension().string()));
+
+        std::filesystem::copy(from, to);
+#endif
+    }
+
+    void FileHandler::Delete(std::filesystem::path path)
+    {
+#if _WIN32
+        std::filesystem::remove(path);
+#endif
+    }
 }
