@@ -202,6 +202,21 @@ namespace Dwarf
         return false;
     }
 
+    void AssetDatabase::Rename(std::filesystem::path from, std::filesystem::path to)
+    {
+        AssetMetaData::Rename(from, to);
+        auto view = s_Registry->view<PathComponent>();
+        for (auto entity : view)
+        {
+            if (view.get<PathComponent>(entity).Path == from)
+            {
+                s_Registry->remove<PathComponent>(entity);
+                s_Registry->emplace<PathComponent>(entity, to);
+                break;
+            }
+        }
+    }
+
     void AssetDatabase::CreateNewMaterialAsset()
     {
         CreateNewMaterialAsset(s_AssetFolderPath);

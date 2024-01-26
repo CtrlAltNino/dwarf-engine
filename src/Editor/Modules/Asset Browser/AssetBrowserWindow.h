@@ -22,6 +22,14 @@ namespace Dwarf
 
         std::filesystem::path m_CopyPathBuffer;
 
+        std::filesystem::path m_RenamePathBuffer;
+
+        char m_RenameBuffer[128] = "";
+
+        bool m_OpenRename;
+
+        void SetRenameBuffer(std::filesystem::path path);
+
         std::vector<std::filesystem::path> m_DirectoryHistory;
 
         std::filesystem::path m_SelectedAsset;

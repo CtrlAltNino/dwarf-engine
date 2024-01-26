@@ -64,6 +64,8 @@ namespace Dwarf
 
 		static void Copy(std::filesystem::path from, std::filesystem::path to);
 
+		static void Rename(std::filesystem::path oldPath, std::filesystem::path newPath);
+
 		static void Duplicate(std::filesystem::path path);
 
 		static void Delete(std::filesystem::path path);

@@ -194,6 +194,13 @@ namespace Dwarf
 #endif
     }
 
+    void FileHandler::Rename(std::filesystem::path oldPath, std::filesystem::path newPath)
+    {
+#if _WIN32
+        std::filesystem::rename(oldPath, newPath);
+#endif
+    }
+
     void FileHandler::Duplicate(std::filesystem::path path)
     {
 #if _WIN32

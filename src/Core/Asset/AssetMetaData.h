@@ -58,5 +58,10 @@ namespace Dwarf
         {
             FileHandler::Delete(GetMetaDataPath(assetPath));
         }
+
+        static void Rename(std::filesystem::path from, std::filesystem::path to)
+        {
+            FileHandler::Rename(GetMetaDataPath(from), GetMetaDataPath(to));
+        }
     };
 }

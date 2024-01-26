@@ -95,6 +95,8 @@ namespace Dwarf
         static bool Exists(Ref<UID> uid);
         static bool Exists(std::filesystem::path path);
 
+        static void Rename(std::filesystem::path from, std::filesystem::path to);
+
         static void CreateNewMaterialAsset();
         static void CreateNewMaterialAsset(std::filesystem::path path);
 

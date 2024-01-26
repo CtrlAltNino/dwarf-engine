@@ -324,24 +324,26 @@ namespace Dwarf
 
                 if (ImGui::BeginPopupContextItem(directoryEntry.path().string().c_str())) // <-- use last item id as popup id
                 {
-                    if (ImGui::Selectable("Open"))
+                    if (ImGui::MenuItem("Open"))
                     {
                         // TODO: Open file or directory
                         OpenPath(directoryEntry);
                     }
-                    else if (ImGui::Selectable("Copy"))
+                    else if (ImGui::MenuItem("Copy"))
                     {
                         m_CopyPathBuffer = path;
                     }
-                    else if (ImGui::Selectable("Duplicate"))
+                    else if (ImGui::MenuItem("Duplicate"))
                     {
                         FileHandler::Duplicate(path);
                     }
-                    else if (ImGui::Selectable("Rename"))
+                    else if (ImGui::MenuItem("Rename"))
                     {
-                        // TODO: Rename modal
+                        m_RenamePathBuffer = path;
+                        SetRenameBuffer(path);
+                        m_OpenRename = true;
                     }
-                    else if (ImGui::Selectable("Delete"))
+                    else if (ImGui::MenuItem("Delete"))
                     {
                         // TODO: Confirmation modal
                         if (AssetDatabase::Exists(path))
@@ -447,6 +449,37 @@ namespace Dwarf
             }
         }
 
+        if (m_OpenRename)
+        {
+            ImGui::OpenPopup("rename_popup");
+            m_OpenRename = false;
+        }
+
+        if (ImGui::BeginPopup("rename_popup"))
+        {
+            std::filesystem::path old = m_RenamePathBuffer;
+
+            ImGui::InputText("##RenameInput", m_RenameBuffer, 128);
+            if (ImGui::Button("Rename##RenameButton") && (std::strlen(m_RenameBuffer) > 0))
+            {
+                std::filesystem::path newPath = m_RenamePathBuffer.remove_filename().concat(m_RenameBuffer);
+                if (AssetDatabase::Exists(old))
+                {
+                    AssetDatabase::Rename(old, newPath);
+                }
+                FileHandler::Rename(old, newPath);
+                ImGui::CloseCurrentPopup();
+            }
+
+            ImGui::SameLine();
+
+            if (ImGui::Button("Cancel"))
+            {
+                ImGui::CloseCurrentPopup();
+            }
+            ImGui::EndPopup();
+        }
+
         ImGui::End();
     }
 
@@ -526,5 +559,17 @@ namespace Dwarf
         state["openedPath"] = m_CurrentDirectory;
 
         return state.dump(4);
+    }
+
+    void AssetBrowserWindow::SetRenameBuffer(std::filesystem::path path)
+    {
+        if (FileHandler::CheckIfFileExists(path))
+        {
+            std::strcpy(m_RenameBuffer, std::filesystem::path(m_RenamePathBuffer).filename().string().c_str());
+        }
+        else if (FileHandler::CheckIfDirectoyExists(path))
+        {
+            std::strcpy(m_RenameBuffer, std::filesystem::path(m_RenamePathBuffer).stem().string().c_str());
+        }
     }
 }
