@@ -200,12 +200,14 @@ namespace Dwarf
         ImGui::Begin("FolderContent", nullptr, window_flags);
 
         ImGui::Dummy(ImGui::GetContentRegionAvail());
+
         if (ImGui::BeginPopupContextItem()) // <-- use last item id as popup id
         {
             if (ImGui::BeginMenu("New"))
             {
                 if (ImGui::BeginMenu("Material"))
                 {
+                    // TODO: Make this moddable
                     if (ImGui::MenuItem("Default"))
                     {
                         AssetDatabase::CreateNewMaterialAsset(m_CurrentDirectory);
