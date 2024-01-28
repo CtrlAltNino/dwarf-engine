@@ -97,6 +97,8 @@ namespace Dwarf
 
         static void Rename(std::filesystem::path from, std::filesystem::path to);
 
+        static void RenameDirectory(std::filesystem::path from, std::filesystem::path to);
+
         static void CreateNewMaterialAsset();
         static void CreateNewMaterialAsset(std::filesystem::path path);
 

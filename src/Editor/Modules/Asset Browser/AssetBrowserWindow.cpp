@@ -201,7 +201,7 @@ namespace Dwarf
 
         ImGui::Dummy(ImGui::GetContentRegionAvail());
 
-        if (ImGui::BeginPopupContextItem()) // <-- use last item id as popup id
+        if (ImGui::BeginPopupContextItem("Backdrop")) // <-- use last item id as popup id
         {
             if (ImGui::BeginMenu("New"))
             {
@@ -468,6 +468,10 @@ namespace Dwarf
                 if (AssetDatabase::Exists(old))
                 {
                     AssetDatabase::Rename(old, newPath);
+                }
+                else
+                {
+                    AssetDatabase::RenameDirectory(old, newPath);
                 }
                 FileHandler::Rename(old, newPath);
                 ImGui::CloseCurrentPopup();
