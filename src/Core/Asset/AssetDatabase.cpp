@@ -210,13 +210,21 @@ namespace Dwarf
     void AssetDatabase::Rename(std::filesystem::path from, std::filesystem::path to)
     {
         AssetMetaData::Rename(from, to);
-        auto view = s_Registry->view<PathComponent>();
+        auto view = s_Registry->view<PathComponent, NameComponent>();
+        auto matView = s_Registry->view<MaterialAsset>();
         for (auto entity : view)
         {
             if (view.get<PathComponent>(entity).Path == from)
             {
                 s_Registry->remove<PathComponent>(entity);
+                s_Registry->remove<NameComponent>(entity);
                 s_Registry->emplace<PathComponent>(entity, to);
+                s_Registry->emplace<NameComponent>(entity, to.stem().string());
+
+                if (matView.contains(entity))
+                {
+                    matView.get<MaterialAsset>(entity).m_Material->m_Name = to.stem().string();
+                }
                 break;
             }
         }
