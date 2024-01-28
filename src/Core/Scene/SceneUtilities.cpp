@@ -150,7 +150,14 @@ namespace Dwarf
 
                 for (Ref<UID> materialID : meshRendererComponent.materialAssets)
                 {
-                    serializedArray[entityCount]["meshRendererComponent"]["materials"][materialCount++] = (uint64_t)(*materialID);
+                    if (materialID)
+                    {
+                        serializedArray[entityCount]["meshRendererComponent"]["materials"][materialCount++] = (uint64_t)(*materialID);
+                    }
+                    else
+                    {
+                        serializedArray[entityCount]["meshRendererComponent"]["materials"][materialCount++] = -1;
+                    }
                 }
 
                 serializedArray[entityCount]["meshRendererComponent"]["canCastShadows"] = meshRendererComponent.canCastShadow;
@@ -213,7 +220,14 @@ namespace Dwarf
             {
                 for (auto &element : serializedEntity["meshRendererComponent"]["materials"])
                 {
-                    meshRendererComponent.materialAssets.push_back(CreateRef<UID>(UID((uint64_t)element)));
+                    if ((uint64_t)element == -1)
+                    {
+                        meshRendererComponent.materialAssets.push_back(nullptr);
+                    }
+                    else
+                    {
+                        meshRendererComponent.materialAssets.push_back(CreateRef<UID>(UID((uint64_t)element)));
+                    }
                 }
             }
         }
