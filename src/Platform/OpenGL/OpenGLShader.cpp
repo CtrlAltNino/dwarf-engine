@@ -56,7 +56,7 @@ namespace Dwarf
 			geometryShaderSource = FileHandler::ReadFile(AssetDatabase::Retrieve<GeometryShaderAsset>(m_GeometryShaderAsset)->GetAsset()->m_Path);
 		}
 
-		if (m_FragmentShaderAsset != nullptr && AssetDatabase::Exists(m_VertexShaderAsset))
+		if (m_FragmentShaderAsset != nullptr && AssetDatabase::Exists(m_FragmentShaderAsset))
 		{
 			std::filesystem::path fragmentShaderPath = AssetDatabase::Retrieve<FragmentShaderAsset>(m_FragmentShaderAsset)->GetAsset()->m_Path;
 			fragmentShaderSource = FileHandler::ReadFile(AssetDatabase::Retrieve<FragmentShaderAsset>(m_FragmentShaderAsset)->GetAsset()->m_Path);
@@ -148,7 +148,7 @@ namespace Dwarf
 	void OpenGLShader::SetVertexShader(Ref<UID> vertexShader)
 	{
 		m_VertexShaderAsset = vertexShader;
-		m_VertexShaderSource = nullptr;
+		m_VertexShaderSource = "";
 	}
 
 	void OpenGLShader::SetVertexShader(std::string vertexShader)
@@ -160,7 +160,7 @@ namespace Dwarf
 	void OpenGLShader::SetFragmentShader(Ref<UID> fragmentShader)
 	{
 		m_FragmentShaderAsset = fragmentShader;
-		m_FragmentShaderSource = nullptr;
+		m_FragmentShaderSource = "";
 	}
 
 	void OpenGLShader::SetFragmentShader(std::string fragmentShader)

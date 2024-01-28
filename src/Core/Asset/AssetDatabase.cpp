@@ -104,8 +104,7 @@ namespace Dwarf
 
         for (auto entity : materialView)
         {
-            auto &mat = s_Registry->get<MaterialAsset>(entity);
-            mat.m_Material->GetShader()->Compile();
+            s_Registry->get<MaterialAsset>(entity).m_Material->GetShader()->Compile();
         }
     }
 

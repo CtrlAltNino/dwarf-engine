@@ -52,7 +52,7 @@ namespace Dwarf
 		std::filesystem::path projectSettingsPath = projectPath;
 		projectSettingsPath.append("projectSettings.dproj");
 		std::cout << "[EDITOR INIT] Loading .dproj project file at [" << projectSettingsPath << "]" << std::endl;
-		nlohmann::json projectSettings = nlohmann::json::parse(FileHandler::ReadFile(projectSettingsPath.string().c_str()))["projectInformation"];
+		nlohmann::json projectSettings = nlohmann::json::parse(FileHandler::ReadFile(projectSettingsPath))["projectInformation"];
 
 		WindowProps props("Dwarf Engine Editor", 1280, 720);
 

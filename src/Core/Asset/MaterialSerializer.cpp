@@ -89,8 +89,7 @@ namespace Dwarf
                 break;
             case GraphicsApi::OpenGL:
             {
-                Ref<Shader> shaderRef = Shader::Create();
-                OpenGLShader *shader = (OpenGLShader *)shaderRef.get();
+                Ref<OpenGLShader> shader = std::dynamic_pointer_cast<OpenGLShader>(Shader::Create());
 
                 if (serializedMat["shader"].contains("vertexShader") && serializedMat["shader"]["vertexShader"] != "default")
                 {
@@ -114,7 +113,7 @@ namespace Dwarf
                 {
                     shader->SetGeometryShader(CreateRef<UID>(UID(serializedMat["shader"]["geometryShader"])));
                 }
-                deserializedMat.SetShader(shaderRef);
+                deserializedMat.SetShader(shader);
                 break;
             }
             case GraphicsApi::Vulkan:
