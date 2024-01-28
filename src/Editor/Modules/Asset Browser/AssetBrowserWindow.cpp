@@ -212,9 +212,21 @@ namespace Dwarf
                     {
                         AssetDatabase::CreateNewMaterialAsset(m_CurrentDirectory);
                     }
+                    ImGui::EndMenu();
+                }
 
-                    ImGui::MenuItem("Subsurface Scattering");
-                    ImGui::MenuItem("Skybox");
+                if (ImGui::BeginMenu("Shader"))
+                {
+                    if (ImGui::MenuItem("Vertex"))
+                    {
+                        FileHandler::Copy(Shader::GetDefaultShaderPath() / "default.vert", m_CurrentDirectory / "New vertex shader.vert");
+                    }
+
+                    if (ImGui::MenuItem("Fragment"))
+                    {
+                        FileHandler::Copy(Shader::GetDefaultShaderPath() / "default.frag", m_CurrentDirectory / "New fragment shader.frag");
+                    }
+
                     ImGui::EndMenu();
                 }
 
