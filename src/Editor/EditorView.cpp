@@ -81,17 +81,21 @@ namespace Dwarf
                 ImGui::MenuItem("Create new scene");
                 if (ImGui::MenuItem("Save scene"))
                 {
-                    SceneUtilities::SaveScene(m_Model->GetScene());
-                    AssetDatabase::Import(m_Model->GetScene()->GetPath());
-                    SceneUtilities::SetLastOpenedScene(m_Model->GetScene()->GetPath());
-                    Editor::Get().UpdateWindowTitle();
+                    if (SceneUtilities::SaveScene(m_Model->GetScene()))
+                    {
+                        AssetDatabase::Import(m_Model->GetScene()->GetPath());
+                        SceneUtilities::SetLastOpenedScene(m_Model->GetScene()->GetPath());
+                        Editor::Get().UpdateWindowTitle();
+                    }
                 }
                 if (ImGui::MenuItem("Save scene as"))
                 {
-                    SceneUtilities::SaveSceneDialog(m_Model->GetScene());
-                    AssetDatabase::Import(m_Model->GetScene()->GetPath());
-                    SceneUtilities::SetLastOpenedScene(m_Model->GetScene()->GetPath());
-                    Editor::Get().UpdateWindowTitle();
+                    if (SceneUtilities::SaveSceneDialog(m_Model->GetScene()))
+                    {
+                        AssetDatabase::Import(m_Model->GetScene()->GetPath());
+                        SceneUtilities::SetLastOpenedScene(m_Model->GetScene()->GetPath());
+                        Editor::Get().UpdateWindowTitle();
+                    }
                 }
                 if (ImGui::MenuItem("Load scene"))
                 {

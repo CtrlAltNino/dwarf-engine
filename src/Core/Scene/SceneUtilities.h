@@ -26,9 +26,9 @@ namespace Dwarf
         static Entity DeserializeEntity(nlohmann::json serializedEntity, Ref<Scene> scene);
 
     public:
-        static void SaveScene(Ref<Scene> scene);
+        static bool SaveScene(Ref<Scene> scene);
 
-        static void SaveSceneDialog(Ref<Scene> scene);
+        static bool SaveSceneDialog(Ref<Scene> scene);
 
         static Ref<Scene> LoadScene(std::filesystem::path path);
 

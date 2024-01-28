@@ -234,6 +234,11 @@ namespace Dwarf
                     FileHandler::Copy(m_CopyPathBuffer, m_CurrentDirectory);
                 }
             }
+
+            if (ImGui::MenuItem("Open in file browser"))
+            {
+                FileHandler::OpenPathInFileBrowser(m_CurrentDirectory);
+            }
             ImGui::EndPopup();
         }
 
@@ -344,6 +349,17 @@ namespace Dwarf
                         m_RenamePathBuffer = path;
                         SetRenameBuffer(path);
                         m_OpenRename = true;
+                    }
+                    if (ImGui::MenuItem("Open in file browser"))
+                    {
+                        if (directoryEntry.is_directory())
+                        {
+                            FileHandler::OpenPathInFileBrowser(directoryEntry.path());
+                        }
+                        else
+                        {
+                            FileHandler::OpenPathInFileBrowser(m_CurrentDirectory);
+                        }
                     }
                     else if (ImGui::MenuItem("Delete"))
                     {

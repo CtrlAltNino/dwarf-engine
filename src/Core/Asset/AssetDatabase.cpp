@@ -70,6 +70,11 @@ namespace Dwarf
     void AssetDatabase::Init(std::filesystem::path projectPath)
     {
         s_AssetFolderPath = projectPath / "Assets";
+
+        if (!FileHandler::CheckIfDirectoyExists(s_AssetFolderPath))
+        {
+            FileHandler::CreateDirectoryW(s_AssetFolderPath);
+        }
         s_Registry = CreateRef<entt::registry>(entt::registry());
 
         // Create the file system watcher instance

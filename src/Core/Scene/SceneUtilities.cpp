@@ -227,19 +227,20 @@ namespace Dwarf
         return newEntity;
     }
 
-    void SceneUtilities::SaveScene(Ref<Scene> scene)
+    bool SceneUtilities::SaveScene(Ref<Scene> scene)
     {
         if (!scene->GetPath().empty())
         {
             Serialize(scene);
+            return true;
         }
         else
         {
-            SaveSceneDialog(scene);
+            return SaveSceneDialog(scene);
         }
     }
 
-    void SceneUtilities::SaveSceneDialog(Ref<Scene> scene)
+    bool SceneUtilities::SaveSceneDialog(Ref<Scene> scene)
     {
         nfdchar_t *savePath = NULL;
         nfdresult_t result = NFD_SaveDialog("dscene", AssetDatabase::GetAssetDirectoryPath().string().c_str(), &savePath);
@@ -257,10 +258,12 @@ namespace Dwarf
             scene->SetPath(path);
             Serialize(scene);
             free(savePath);
+            return true;
         }
         else if (result == NFD_CANCEL)
         {
             // puts("User pressed cancel.");
+            return false;
         }
         else
         {
