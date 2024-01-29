@@ -15,14 +15,6 @@
 
 namespace Dwarf
 {
-
-    enum class RENDER_MODE
-    {
-        FREE,
-        RESOLUTION,
-        ASPECT_RATIO
-    };
-
     SceneViewerWindow::SceneViewerWindow(Ref<EditorModel> model, int index)
         : GuiModule(model, "Scene Viewer", MODULE_TYPE::SCENE_VIEWER, index)
     {
@@ -39,7 +31,7 @@ namespace Dwarf
 
         // Render scene to the framebuffer with the camera
         m_Framebuffer->Bind();
-        Renderer::Get()->RenderScene(m_Model->GetScene(), m_Camera, m_Settings.ViewportSize, m_Settings.RenderGrid);
+        Renderer::Get()->RenderScene(m_Model->GetScene(), m_Camera, {m_Framebuffer->GetSpecification().Width, m_Framebuffer->GetSpecification().Height}, m_Settings.RenderGrid);
         m_Framebuffer->Unbind();
     }
 
@@ -148,8 +140,7 @@ namespace Dwarf
 
         ImGui::SameLine(0, 5);
 
-        if (ImGui::Checkbox("Render Grid", &m_Settings.RenderGrid))
-            ;
+        ImGui::Checkbox("Render Grid", &m_Settings.RenderGrid);
 
         ImGui::PopStyleVar();
         ImGui::PopItemWidth();
@@ -159,15 +150,9 @@ namespace Dwarf
         ImVec2 maxRect(ImGui::GetCursorScreenPos().x + ImGui::GetContentRegionAvail().x,
                        ImGui::GetCursorScreenPos().y + ImGui::GetContentRegionAvail().y);
 
-        // UpdateRenderTexture();
-        if ((m_Framebuffer->GetSpecification().Width != ImGui::GetContentRegionAvail().x) || (m_Framebuffer->GetSpecification().Height != ImGui::GetContentRegionAvail().y))
-        {
-            m_Framebuffer->Resize(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y);
-            m_Settings.ViewportSize = glm::ivec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y);
-            m_Camera->SetAspectRatio((float)ImGui::GetContentRegionAvail().x / (float)ImGui::GetContentRegionAvail().y);
-        }
+        UpdateFramebuffer();
 
-        if ((RENDER_MODE)m_Settings.RenderingConstraint != RENDER_MODE::FREE)
+        if (m_Settings.RenderingConstraint != RENDERING_CONSTRAINT::FREE)
         {
             if (((double)m_Settings.ViewportSize.x / (double)m_Settings.ViewportSize.y) < m_Settings.targetAspectRatio)
             {
@@ -183,15 +168,16 @@ namespace Dwarf
             }
         }
 
+        m_Settings.ViewportSize = glm::ivec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y);
+
         // Rendering the framebuffer
         ImDrawList *drawList = ImGui::GetWindowDrawList();
-        // uint64_t textureID = m_Framebuffer->GetColorAttachmentRendererID();
         drawList->AddImage(reinterpret_cast<void *>(GetFrameBufferForImGui()),
                            minRect,
                            maxRect,
                            ImVec2(0, 1),
                            ImVec2(1, 0));
-        // ImVec2 imageSize = ImVec2(renderTexture->GetResolution().x, renderTexture->GetResolution().y);
+
         drawList->ChannelsMerge();
 
         ImVec2 hoverRectMin = ImVec2(ImGui::GetWindowPos().x + ImGui::GetCursorPos().x,
@@ -301,6 +287,50 @@ namespace Dwarf
         }
 
         return center / (float)m_Model->m_Selection.selectedEntities.size();
+    }
+
+    void SceneViewerWindow::UpdateFramebuffer()
+    {
+        glm::ivec2 desiredResolution;
+
+        switch (m_Settings.RenderingConstraint)
+        {
+        case RENDERING_CONSTRAINT::FREE:
+        {
+            desiredResolution = m_Settings.ViewportSize;
+            m_Settings.targetAspectRatio = (double)desiredResolution.x / (double)desiredResolution.y;
+        }
+        break;
+        case RENDERING_CONSTRAINT::FIXED_RESOLUTION:
+        {
+            desiredResolution = glm::ivec2(m_Settings.Resolution[0], m_Settings.Resolution[1]);
+            m_Settings.targetAspectRatio = (double)m_Settings.Resolution[0] / (double)m_Settings.Resolution[1];
+        }
+        break;
+        case RENDERING_CONSTRAINT::ASPECT_RATIO:
+        {
+            desiredResolution = CalculateDesiredResolution(m_Settings.ViewportSize, (double)m_Settings.AspectRatio[0] / (double)m_Settings.AspectRatio[1]);
+            m_Settings.targetAspectRatio = (double)desiredResolution.x / (double)desiredResolution.y;
+        }
+        break;
+        }
+
+        std::cout << "desired resolution: x=" << desiredResolution.x << " | y=" << desiredResolution.y << std::endl;
+
+        if ((m_Framebuffer->GetSpecification().Width != desiredResolution.x) || (m_Framebuffer->GetSpecification().Height != desiredResolution.y))
+        {
+            // m_Framebuffer->Resize((maxRect.x - minRect.x), (maxRect.y - minRect.y));
+            m_Framebuffer->Resize(desiredResolution.x, desiredResolution.y);
+            m_Camera->SetAspectRatio((float)desiredResolution.x / (float)desiredResolution.y);
+        }
+
+        // if (renderTexture->GetResolution() != desiredResolution)
+        // {
+        //     renderTexture->SetRenderMode((RENDER_MODE)selectedRenderingMode);
+        //     renderTexture->SetResolution(desiredResolution.x, desiredResolution.y);
+        //     renderTexture->SetAspectRatio(desiredResolution.x / desiredResolution.y);
+        //     renderTexture->UpdateTextureResolution();
+        // }
     }
 
     std::string SceneViewerWindow::Serialize()

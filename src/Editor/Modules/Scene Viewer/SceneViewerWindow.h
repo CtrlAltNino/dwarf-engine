@@ -77,7 +77,7 @@ namespace Dwarf
         glm::vec3 CalculateSelectionCenter();
 
         /// @brief Updates the render texture.
-        // void UpdateFramebuffer();
+        void UpdateFramebuffer();
 
         /// @brief Renders the ImGuizmo gizmos.
         void RenderGizmos(ImVec2 minRect, ImVec2 maxRect);
