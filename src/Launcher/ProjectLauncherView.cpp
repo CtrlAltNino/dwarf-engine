@@ -1046,7 +1046,7 @@ namespace Dwarf
 				ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - 150);
 
 				// Setting up combo
-				const char *templates[] = {"Blank", "Demo1"};
+				const char *templates[] = {"Blank", "Sponza"};
 				const char *template_preview_value = templates[currentTemplateIndex];
 
 				ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
@@ -1152,7 +1152,7 @@ namespace Dwarf
 			ImGui::Separator();
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
 
-			static int currentApiIndex = 0;
+			static int currentApiIndex = 2;
 			// ==================== Graphics API Selection Dropdown ====================
 			{
 				// Graphics Title

@@ -1,0 +1,58 @@
+{
+    "parameters": {
+        "albedoMap": {
+            "type": "tex2d",
+            "value": 17562409945687588153
+        },
+        "color": {
+            "type": "vec4",
+            "value": {
+                "w": 1.0,
+                "x": 1.0,
+                "y": 1.0,
+                "z": 1.0
+            }
+        },
+        "modelMatrix": {
+            "type": "boolean",
+            "value": false
+        },
+        "normalMap": {
+            "type": "tex2d",
+            "value": -1
+        },
+        "projectionMatrix": {
+            "type": "boolean",
+            "value": false
+        },
+        "shininess": {
+            "type": "float",
+            "value": 0.0
+        },
+        "specularMap": {
+            "type": "tex2d",
+            "value": -1
+        },
+        "useAlbedoMap": {
+            "type": "boolean",
+            "value": true
+        },
+        "useNormalMap": {
+            "type": "boolean",
+            "value": false
+        },
+        "useSpecularMap": {
+            "type": "boolean",
+            "value": false
+        },
+        "viewMatrix": {
+            "type": "boolean",
+            "value": false
+        }
+    },
+    "shader": {
+        "fragmentShader": "default",
+        "vertexShader": "default"
+    },
+    "transparent": false
+}

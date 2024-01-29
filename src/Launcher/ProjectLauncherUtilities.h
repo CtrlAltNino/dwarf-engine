@@ -18,7 +18,7 @@ namespace Dwarf
 	enum class ProjectTemplate
 	{
 		Blank,
-		Demo1
+		Sponza
 	};
 #define GITHUB_PNG_ICON_PATH "data/engine/img/icons/github.png"
 #define PATREON_PNG_ICON_PATH "data/engine/img/icons/patreon.png"

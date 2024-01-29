@@ -66,8 +66,8 @@ namespace Dwarf
 
                         switch (projectTemplate)
                         {
-                        case ProjectTemplate::Demo1:
-                            templateProjectDirectory = "demo1";
+                        case ProjectTemplate::Sponza:
+                            templateProjectDirectory = "sponza";
                             break;
                         case ProjectTemplate::Blank:
                             break;
