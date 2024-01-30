@@ -315,22 +315,11 @@ namespace Dwarf
         break;
         }
 
-        std::cout << "desired resolution: x=" << desiredResolution.x << " | y=" << desiredResolution.y << std::endl;
-
         if ((m_Framebuffer->GetSpecification().Width != desiredResolution.x) || (m_Framebuffer->GetSpecification().Height != desiredResolution.y))
         {
-            // m_Framebuffer->Resize((maxRect.x - minRect.x), (maxRect.y - minRect.y));
             m_Framebuffer->Resize(desiredResolution.x, desiredResolution.y);
             m_Camera->SetAspectRatio((float)desiredResolution.x / (float)desiredResolution.y);
         }
-
-        // if (renderTexture->GetResolution() != desiredResolution)
-        // {
-        //     renderTexture->SetRenderMode((RENDER_MODE)selectedRenderingMode);
-        //     renderTexture->SetResolution(desiredResolution.x, desiredResolution.y);
-        //     renderTexture->SetAspectRatio(desiredResolution.x / desiredResolution.y);
-        //     renderTexture->UpdateTextureResolution();
-        // }
     }
 
     std::string SceneViewerWindow::Serialize()
