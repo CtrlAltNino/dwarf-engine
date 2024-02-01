@@ -326,8 +326,8 @@ namespace Dwarf
     {
         nlohmann::json state;
 
-        // TODO Serialize scene viewer settings
-        // TODO Serialize camera settings
+        // TODO: Serialize scene viewer settings
+        // TODO: Serialize camera settings
         // state["openedPath"] = m_CurrentDirectory;
 
         // return state.dump(4);

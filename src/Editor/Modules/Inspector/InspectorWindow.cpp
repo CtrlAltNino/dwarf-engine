@@ -203,7 +203,7 @@ namespace Dwarf
         {
         case INSPECTOR_SELECTION_TYPE::ASSET:
         {
-            // TODO Render Asset data
+            // TODO: Render Asset data
             // ImGui::TextWrapped(m_Model->m_Selection.assetPath.stem().string().c_str());
             // AssetDatabase::Retrieve(m_Model->m_Selection.assetPath);
             // if(!m_Model->m_Selection.assetPath FileHandler::)

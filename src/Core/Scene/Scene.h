@@ -81,9 +81,6 @@ namespace Dwarf
 		/// @brief The root entity in the scene graph.
 		Ref<Entity> m_RootEntity;
 
-		/// @brief Entities that have been selected by the user.
-		std::vector<Entity> m_SelectedEntities;
-
 		/// @brief Because of dependency cycle
 		friend class Entity;
 

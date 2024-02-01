@@ -22,7 +22,7 @@ namespace Dwarf
         /// @brief List of GUI modules.
         std::vector<Ref<GuiModule>> m_GuiModules;
 
-        /// @brief TODO IMGUI example function to render the base docking layout.
+        /// @brief TODO: IMGUI example function to render the base docking layout.
         void RenderDockSpace();
 
         /// @brief Adds a new IMGUI window for a GUI module.

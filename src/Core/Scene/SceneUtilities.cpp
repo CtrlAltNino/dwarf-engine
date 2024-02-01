@@ -321,7 +321,7 @@ namespace Dwarf
     {
         Ref<Scene> scene = CreateRef<Scene>(Scene(std::filesystem::path(""), SceneSettings()));
 
-        // TODO Add default stuff
+        // TODO: Add default stuff
 
         return scene;
     }

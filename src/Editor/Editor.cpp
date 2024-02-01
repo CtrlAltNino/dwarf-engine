@@ -130,7 +130,7 @@ namespace Dwarf
 		TimeStamp currentFrameStamp = TimeUtilities::GetCurrent();
 		TimeStamp lastFrameStamp = TimeUtilities::GetCurrent();
 
-		// TODO abstract the close condition
+		// TODO: abstract the close condition
 		while (!m_Window->ShouldClose())
 		{
 			// ===== Time related stuff

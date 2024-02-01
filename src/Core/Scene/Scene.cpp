@@ -139,7 +139,7 @@ namespace Dwarf
 		m_Path = path;
 		m_Name = path.stem().string();
 
-		// TODO UPDATE WINDOW TITLE BAR
+		// TODO: UPDATE WINDOW TITLE BAR
 	}
 
 	glm::mat4 Scene::GetFullModelMatrix(TransformComponent transform)

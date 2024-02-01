@@ -141,7 +141,7 @@ namespace Dwarf
 		}
 		else
 		{
-			// TODO log missing shader error
+			// TODO: log missing shader error
 		}
 	}
 

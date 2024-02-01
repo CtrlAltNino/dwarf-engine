@@ -75,7 +75,7 @@ namespace Dwarf
         ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
         if (ImGui::Button("Reimport"))
         {
-            // TODO Fix
+            // TODO: Fix
             AssetDatabase::Reimport(asset);
             ImGui::EndChild();
             return;

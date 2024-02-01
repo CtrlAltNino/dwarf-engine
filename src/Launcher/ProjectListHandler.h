@@ -173,9 +173,9 @@ namespace Dwarf
             nfdchar_t *outPath = NULL;
             const nfdchar_t *filter = "dproj";
 
-            // TODO implement file dialog in another thread to not interrupt
-            // TODO rename "open" button to "add project" or something
-            // TODO focus on the opened dialog when trying to return to the project launcher window
+            // TODO: implement file dialog in another thread to not interrupt
+            // TODO: rename "open" button to "add project" or something
+            // TODO: focus on the opened dialog when trying to return to the project launcher window
             //(if that is not the default behaviour, finding out when implementing the dialog in another thread)
             // nfdresult_t result = NFD_OpenDialog(filter, NULL, &outPath);
             nfdresult_t result = NFD_PickFolder(NULL, &outPath);

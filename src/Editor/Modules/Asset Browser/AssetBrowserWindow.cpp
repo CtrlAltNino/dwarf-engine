@@ -331,7 +331,7 @@ namespace Dwarf
                         SelectAsset(path);
                     }
 
-                    // TODO Drag Asset
+                    // TODO: Drag Asset
                 }
                 else
                 {
@@ -547,7 +547,7 @@ namespace Dwarf
         }
         else
         {
-            // TODO Open file
+            // TODO:s Open file
             FileHandler::LaunchFile(directoryEntry.path());
         }
     }
@@ -571,7 +571,7 @@ namespace Dwarf
         m_SelectedAsset = path;
         m_Model->m_Selection.assetPath = m_SelectedAsset;
         m_Model->m_Selection.selectionType = INSPECTOR_SELECTION_TYPE::ASSET;
-        // TODO command to inspector
+        // TODO: command to inspector
     }
 
     void AssetBrowserWindow::HandleShortcuts()
