@@ -345,7 +345,6 @@ namespace Dwarf
                 {
                     if (ImGui::MenuItem("Open"))
                     {
-                        // TODO: Open file or directory
                         OpenPath(directoryEntry);
                     }
                     else if (ImGui::MenuItem("Copy"))

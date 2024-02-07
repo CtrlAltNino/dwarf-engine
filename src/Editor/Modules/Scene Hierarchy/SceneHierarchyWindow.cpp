@@ -5,6 +5,7 @@
 #include "Core/Scene/Scene.h"
 #include "Editor/Modules/Scene Hierarchy/NewParentInstruction.h"
 #include "Editor/Modules/Scene Hierarchy/ChildIndexInstruction.h"
+#include "Editor/Modules/Scene Hierarchy/DeleteEntityInstruction.h"
 #include "Input/InputManager.h"
 
 namespace Dwarf
@@ -37,9 +38,125 @@ namespace Dwarf
         }
         else
         {
-            // ImGui::Indent();
-            ImGui::Selectable(("       " + objectLabel).c_str());
+            ImGui::Selectable(("       " + objectLabel + "##" + std::to_string((uint64_t)(uint32_t)ent.GetHandle())).c_str());
         }
+
+        if (ImGui::IsItemClicked(ImGuiMouseButton_Left) || ImGui::IsItemClicked(ImGuiMouseButton_Right))
+        {
+            if (IsEntitySelected(ent))
+            {
+                // Set to selected object
+                if (InputManager::GetKey(KEYCODE::LEFT_CONTROL) && ImGui::IsItemClicked(ImGuiMouseButton_Left))
+                {
+                    RemoveEntityFromSelection(ent);
+                }
+            }
+            else
+            {
+                // Set to selected object
+                if (InputManager::GetKey(KEYCODE::LEFT_CONTROL))
+                {
+                    AddEntityToSelection(ent);
+                }
+                else if (ImGui::IsItemClicked(ImGuiMouseButton_Left) || m_Model->m_Selection.selectedEntities.size() < 2)
+                {
+                    SelectEntity(ent);
+                }
+            }
+        }
+
+        if (ImGui::BeginPopupContextItem())
+        {
+            if (ImGui::BeginMenu("New"))
+            {
+                if (ImGui::MenuItem("Mesh"))
+                {
+                    Entity newMesh = m_Model->GetScene()->CreateEntity("New Mesh");
+                    newMesh.AddComponent<MeshRendererComponent>();
+                    ent.AddChild(newMesh.GetHandle());
+                    SelectEntity(newMesh);
+                }
+
+                if (ImGui::MenuItem("Light"))
+                {
+                    Entity newLight = m_Model->GetScene()->CreateEntity("New Light");
+                    newLight.AddComponent<LightComponent>();
+                    ent.AddChild(newLight.GetHandle());
+                    SelectEntity(newLight);
+                }
+
+                if (ImGui::MenuItem("Group"))
+                {
+                    Entity newGroup = m_Model->GetScene()->CreateEntity("New Group");
+                    ent.AddChild(newGroup.GetHandle());
+                    SelectEntity(newGroup);
+                }
+
+                ImGui::EndMenu();
+            }
+
+            if (ImGui::MenuItem("Duplicate"))
+            {
+                // TODO: instant copy mit richtigen child index
+
+                if ((m_Model->m_Selection.selectionType == INSPECTOR_SELECTION_TYPE::ENTITY) && (m_Model->m_Selection.selectedEntities.size() > 0))
+                {
+                    int index = m_Model->m_Selection.selectedEntities[m_Model->m_Selection.selectedEntities.size() - 1].GetChildIndex() + 1;
+                    for (Entity selectedEntity : m_Model->m_Selection.selectedEntities)
+                    {
+                        Entity copy = m_Model->GetScene()->CreateEntity(selectedEntity.GetComponent<NameComponent>().Name + " Copy");
+                        copy.SetParent(selectedEntity.GetParent());
+                        copy.SetChildIndex(index++);
+
+                        if (selectedEntity.HasComponent<LightComponent>())
+                        {
+                            copy.AddComponent<LightComponent>(selectedEntity.GetComponent<LightComponent>());
+                        }
+
+                        if (selectedEntity.HasComponent<MeshRendererComponent>())
+                        {
+                            copy.AddComponent<MeshRendererComponent>(selectedEntity.GetComponent<MeshRendererComponent>());
+                        }
+                    }
+                }
+            }
+
+            if (ImGui::MenuItem("Copy"))
+            {
+                m_CopyBuffer = m_Model->m_Selection.selectedEntities;
+            }
+
+            if (ImGui::MenuItem("Paste"))
+            {
+                // TODO: Implement pasting of deleted entities
+                for (Entity selectedEntity : m_CopyBuffer)
+                {
+                    Entity copy = m_Model->GetScene()->CreateEntity(selectedEntity.GetComponent<NameComponent>().Name + " Copy");
+                    copy.SetParent(entity);
+
+                    if (selectedEntity.HasComponent<LightComponent>())
+                    {
+                        copy.AddComponent<LightComponent>(selectedEntity.GetComponent<LightComponent>());
+                    }
+
+                    if (selectedEntity.HasComponent<MeshRendererComponent>())
+                    {
+                        copy.AddComponent<MeshRendererComponent>(selectedEntity.GetComponent<MeshRendererComponent>());
+                    }
+                }
+            }
+
+            if (ImGui::MenuItem("Delete"))
+            {
+                std::cout << "Deleting" << std::endl;
+                m_Instructions.push_back(CreateRef<DeleteEntityInstruction>(m_Model->GetScene(), m_Model->m_Selection.selectedEntities));
+                m_Model->m_Selection.selectionType = INSPECTOR_SELECTION_TYPE::NONE;
+                m_Model->m_Selection.selectedEntities.clear();
+            }
+
+            ImGui::EndPopup();
+        }
+
         ImGui::PopStyleColor(2);
         // If this node is being dragged
         if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_AcceptBeforeDelivery))
@@ -141,35 +258,6 @@ namespace Dwarf
 
         if (ImGui::IsItemHovered())
         {
-            if (ImGui::IsMouseReleased(ImGuiMouseButton_Left))
-            {
-                if (IsEntitySelected(ent))
-                {
-                    // Set to selected object
-                    // if(model->GetInput()->GetKey(KEYCODE::LEFT_CONTROL)){
-                    if (InputManager::GetKey(KEYCODE::LEFT_CONTROL))
-                    {
-                        RemoveEntityFromSelection(ent);
-                    }
-                    else
-                    {
-                        SelectEntity(ent);
-                    }
-                }
-                else
-                {
-                    // Set to selected object
-                    if (InputManager::GetKey(KEYCODE::LEFT_CONTROL))
-                    {
-                        AddEntityToSelection(ent);
-                    }
-                    else
-                    {
-                        SelectEntity(ent);
-                    }
-                }
-            }
-
             draw_list->ChannelsSetCurrent(0);
             ImU32 rectCol = IM_COL32(76, 86, 106, 255);
             if (ImGui::IsMouseDown(0))
@@ -239,9 +327,62 @@ namespace Dwarf
 
         ImGui::Dummy(ImGui::GetContentRegionAvail());
 
-        if (ImGui::IsItemClicked())
+        if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
         {
             ClearSelection();
+        }
+        else if (ImGui::IsItemClicked(ImGuiMouseButton_Right))
+        {
+            ImGui::OpenPopupContextItem("RightClickMenuEmpty");
+        }
+
+        if (ImGui::BeginPopupContextItem("RightClickMenuEmpty"))
+        {
+            if (ImGui::BeginMenu("New"))
+            {
+                if (ImGui::MenuItem("Mesh"))
+                {
+                    Entity newMesh = m_Model->GetScene()->CreateEntity("New Mesh");
+                    newMesh.AddComponent<MeshRendererComponent>();
+                    SelectEntity(newMesh);
+                }
+
+                if (ImGui::MenuItem("Light"))
+                {
+                    Entity newLight = m_Model->GetScene()->CreateEntity("New Light");
+                    newLight.AddComponent<LightComponent>();
+                    SelectEntity(newLight);
+                }
+
+                if (ImGui::MenuItem("Group"))
+                {
+                    Entity newGroup = m_Model->GetScene()->CreateEntity("New Group");
+                    SelectEntity(newGroup);
+                }
+                ImGui::EndPopup();
+            }
+
+            if (ImGui::MenuItem("Paste"))
+            {
+                // TODO: Implement pasting deleted entities
+                Ref<Entity> rootEntity = m_Model->GetScene()->GetRootEntity();
+                for (Entity selectedEntity : m_CopyBuffer)
+                {
+                    Entity copy = m_Model->GetScene()->CreateEntity(selectedEntity.GetComponent<NameComponent>().Name + " Copy");
+
+                    if (selectedEntity.HasComponent<LightComponent>())
+                    {
+                        copy.AddComponent<LightComponent>(selectedEntity.GetComponent<LightComponent>());
+                    }
+
+                    if (selectedEntity.HasComponent<MeshRendererComponent>())
+                    {
+                        copy.AddComponent<MeshRendererComponent>(selectedEntity.GetComponent<MeshRendererComponent>());
+                    }
+                }
+            }
+
+            ImGui::EndPopup();
         }
 
         // If something is dropped on this node

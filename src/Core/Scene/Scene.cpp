@@ -166,4 +166,21 @@ namespace Dwarf
 
 		return parentMat;
 	}
+
+	void Scene::DeleteEntity(Entity entity)
+	{
+		if (m_Registry->valid(entity.GetHandle()))
+		{
+			if (entity.GetChildren()->size() > 0)
+			{
+				for (entt::entity child : *(entity.GetChildren()))
+				{
+					DeleteEntity(Entity(child, m_Registry));
+				}
+			}
+
+			Entity(entity.GetParent(), m_Registry).RemoveChild(entity.GetHandle());
+			m_Registry->destroy(entity.GetHandle());
+		}
+	}
 }

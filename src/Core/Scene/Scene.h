@@ -68,6 +68,8 @@ namespace Dwarf
 		/// @return The created entity instance.
 		Entity CreateEntityWithUID(UID uid, const std::string &name);
 
+		void DeleteEntity(Entity entity);
+
 	private:
 		/// @brief Name of the opened scene.
 		std::string m_Name;

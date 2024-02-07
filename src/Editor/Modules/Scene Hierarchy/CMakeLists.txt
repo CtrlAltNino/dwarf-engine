@@ -3,4 +3,5 @@ target_sources(${targetName}
     SceneHierarchyWindow.cpp
     NewParentInstruction.cpp
     ChildIndexInstruction.cpp
+    DeleteEntityInstruction.cpp
 )

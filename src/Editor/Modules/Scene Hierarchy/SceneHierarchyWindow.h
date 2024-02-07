@@ -15,6 +15,8 @@ namespace Dwarf
         /// @brief List of graph instruction. Used as a buffer, executed at the end of a frame.
         std::vector<Ref<GraphInstruction>> m_Instructions;
 
+        std::vector<Entity> m_CopyBuffer;
+
         /// @brief Draws a graph node for an entity.
         /// @param entity The entity to draw the node of.
         void DrawNode(entt::entity entity);
