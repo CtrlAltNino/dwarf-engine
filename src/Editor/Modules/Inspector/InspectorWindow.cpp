@@ -195,7 +195,7 @@ namespace Dwarf
         {
             // Early out if the window is collapsed, as an optimization.
             ImGui::End();
-            ImGui::PopStyleVar();
+            ImGui::PopStyleVar(2);
             return;
         }
 
