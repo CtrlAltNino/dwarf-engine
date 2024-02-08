@@ -148,7 +148,6 @@ namespace Dwarf
 
             if (ImGui::MenuItem("Delete"))
             {
-                std::cout << "Deleting" << std::endl;
                 m_Instructions.push_back(CreateRef<DeleteEntityInstruction>(m_Model->GetScene(), m_Model->m_Selection.selectedEntities));
                 m_Model->m_Selection.selectionType = INSPECTOR_SELECTION_TYPE::NONE;
                 m_Model->m_Selection.selectedEntities.clear();
