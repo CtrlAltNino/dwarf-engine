@@ -73,7 +73,7 @@ namespace Dwarf
 
         if (!FileHandler::CheckIfDirectoyExists(s_AssetFolderPath))
         {
-            FileHandler::CreateDirectoryW(s_AssetFolderPath);
+            FileHandler::CreateDirectory(s_AssetFolderPath);
         }
         s_Registry = CreateRef<entt::registry>(entt::registry());
 
