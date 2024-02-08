@@ -28,8 +28,7 @@ namespace Dwarf
 		headerFont = io.Fonts->AddFontFromFileTTF(FONT_ROBOTO_LIGHT_PATH, 26);
 		textFont = io.Fonts->AddFontFromFileTTF(FONT_ROBOTO_REGULAR_PATH, 15);*/
 
-		ImGuiIO &io = ImGui::GetIO();
-		(void)io;
+		ImGuiIO io = ImGui::GetIO();
 		io.Fonts->AddFontDefault();
 		m_HeaderFont = io.Fonts->AddFontFromFileTTF(FONT_ROBOTO_LIGHT_PATH, 26);
 		m_TextFont = io.Fonts->AddFontFromFileTTF(FONT_ROBOTO_REGULAR_PATH, 15);

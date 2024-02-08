@@ -333,7 +333,7 @@ namespace Dwarf
         }
         else if (ImGui::IsItemClicked(ImGuiMouseButton_Right))
         {
-            ImGui::OpenPopupContextItem("RightClickMenuEmpty");
+            ImGui::OpenPopup("RightClickMenuEmpty");
         }
 
         if (ImGui::BeginPopupContextItem("RightClickMenuEmpty"))
