@@ -2,6 +2,7 @@
 
 #include <imgui.h>
 #include <imgui_internal.h>
+#include <nlohmann/json.hpp>
 
 #include "Editor/EditorModel.h"
 
@@ -81,6 +82,8 @@ namespace Dwarf
         /// @brief Renders the module window.
         virtual void OnImGuiRender() = 0;
 
-        virtual std::string Serialize() = 0;
+        virtual std::string Serialize();
+
+        virtual void Deserialize(nlohmann::json moduleData);
     };
 }

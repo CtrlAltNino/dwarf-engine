@@ -97,5 +97,7 @@ namespace Dwarf
         ImTextureID GetFrameBufferForImGui();
 
         virtual std::string Serialize() override;
+
+        virtual void Deserialize(nlohmann::json moduleData) override;
     };
 }

@@ -35,7 +35,7 @@ namespace Dwarf
 
 		// ImGui::PushFont(IWindowManager::fonts["smallHeaderFont"]);
 		ImGui::Text("Renderer information");
-		ImGui::PopFont();
+		// ImGui::PopFont();
 
 		// ImGui::Text((std::string("Vendor name: ") + IWindowManager::vendorName).c_str());
 		// ImGui::Text((std::string("Renderer name: ") + IWindowManager::rendererName).c_str());
@@ -45,7 +45,7 @@ namespace Dwarf
 
 		// ImGui::PushFont(IWindowManager::fonts["smallHeaderFont"]);
 		ImGui::Text("Statistics");
-		ImGui::PopFont();
+		// ImGui::PopFont();
 
 		ImGui::Text(std::string("Frames per second: " + std::to_string(1.0 / *m_Frametime)).c_str());
 		ImGui::Text(std::string("Frametime: " + std::to_string(*m_Frametime * 1000.0) + " ms").c_str());
