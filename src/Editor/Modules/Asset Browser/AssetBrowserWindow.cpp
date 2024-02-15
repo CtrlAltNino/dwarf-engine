@@ -587,7 +587,7 @@ namespace Dwarf
 
     void AssetBrowserWindow::Deserialize(nlohmann::json moduleData)
     {
-        m_CurrentDirectory = (std::filesystem::path)moduleData["openedPath"];
+        m_CurrentDirectory = (std::filesystem::path)moduleData["openedPath"].get<std::string>();
     }
 
     std::string AssetBrowserWindow::Serialize()

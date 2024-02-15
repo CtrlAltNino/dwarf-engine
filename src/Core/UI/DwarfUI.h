@@ -85,4 +85,10 @@ namespace Dwarf
             }
         }
     };
+
+    template <>
+    void DwarfUI::AssetInput<VertexShaderAsset>(Ref<UID> &assetID, const char *imguiID);
+
+    template <>
+    void DwarfUI::AssetInput<FragmentShaderAsset>(Ref<UID> &assetID, const char *imguiID);
 }
