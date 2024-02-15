@@ -1,6 +1,6 @@
 #include "dpch.h"
 
-#include "Platform/OpenGL/OpenGLImguiLayer.h"
+#include "Platform/OpenGL/OpenGLImGuiLayer.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
 #include <imgui.h>

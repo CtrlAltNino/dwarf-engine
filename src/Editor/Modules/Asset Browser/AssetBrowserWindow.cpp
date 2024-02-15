@@ -585,13 +585,18 @@ namespace Dwarf
         m_Model->m_Selection.selectionType = INSPECTOR_SELECTION_TYPE::NONE;
     }
 
+    void AssetBrowserWindow::Deserialize(nlohmann::json moduleData)
+    {
+        m_CurrentDirectory = (std::filesystem::path)moduleData["openedPath"];
+    }
+
     std::string AssetBrowserWindow::Serialize()
     {
-        nlohmann::json state;
+        nlohmann::json moduleData;
 
-        state["openedPath"] = m_CurrentDirectory;
+        moduleData["openedPath"] = m_CurrentDirectory;
 
-        return state.dump(4);
+        return moduleData.dump(4);
     }
 
     void AssetBrowserWindow::SetRenameBuffer(std::filesystem::path path)

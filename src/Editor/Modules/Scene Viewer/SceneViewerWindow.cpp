@@ -150,6 +150,8 @@ namespace Dwarf
         ImVec2 maxRect(ImGui::GetCursorScreenPos().x + ImGui::GetContentRegionAvail().x,
                        ImGui::GetCursorScreenPos().y + ImGui::GetContentRegionAvail().y);
 
+        m_Settings.ViewportSize = glm::ivec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y);
+
         UpdateFramebuffer();
 
         if (m_Settings.RenderingConstraint != RENDERING_CONSTRAINT::FREE)
@@ -167,8 +169,6 @@ namespace Dwarf
                 maxRect.x -= diff;
             }
         }
-
-        m_Settings.ViewportSize = glm::ivec2(ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().y);
 
         // Rendering the framebuffer
         ImDrawList *drawList = ImGui::GetWindowDrawList();

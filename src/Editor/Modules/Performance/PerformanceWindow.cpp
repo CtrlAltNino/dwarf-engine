@@ -54,6 +54,10 @@ namespace Dwarf
 		ImGui::End();
 	}
 
+	void PerformanceWindow::Deserialize(nlohmann::json moduleData)
+	{
+	}
+
 	std::string PerformanceWindow::Serialize()
 	{
 		return "";

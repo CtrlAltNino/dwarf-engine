@@ -467,6 +467,10 @@ namespace Dwarf
     {
     }
 
+    void SceneHierarchyWindow::Deserialize(nlohmann::json moduleData)
+    {
+    }
+
     std::string SceneHierarchyWindow::Serialize()
     {
         return "";

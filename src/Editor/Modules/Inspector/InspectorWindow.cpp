@@ -355,6 +355,10 @@ namespace Dwarf
         draw_list->ChannelsMerge();
     }
 
+    void InspectorWindow::Deserialize(nlohmann::json moduleData)
+    {
+    }
+
     std::string InspectorWindow::Serialize()
     {
         return "";

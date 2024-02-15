@@ -102,5 +102,7 @@ namespace Dwarf
         virtual void OnUpdate(double deltaTime) override;
 
         virtual std::string Serialize() override;
+
+        virtual void Deserialize(nlohmann::json moduleData) override;
     };
 }

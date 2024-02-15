@@ -225,6 +225,10 @@ namespace Dwarf
         ImGui::PopStyleVar();
     }
 
+    void DebugWindow::Deserialize(nlohmann::json moduleData)
+    {
+    }
+
     std::string DebugWindow::Serialize()
     {
         return "";

@@ -45,7 +45,7 @@ namespace Dwarf
 
 #if __linux__
         std::string homeFolder = getenv("HOME");
-        std::string userDirMap = readFile((homeFolder + "/.config/user-dirs.dirs").c_str());
+        std::string userDirMap = ReadFile((homeFolder + "/.config/user-dirs.dirs").c_str());
 
         std::regex patternLine("XDG_DOCUMENTS.*");
         std::regex patternPath("\/.*(?=\")");

@@ -119,7 +119,7 @@ namespace Dwarf
 
 		// ========== Show window ==========
 		std::cout << "[EDITOR INIT] Making window visible" << std::endl;
-		// m_Window->ShowWindow();
+		m_Window->ShowWindow();
 		std::cout << "[EDITOR INIT] Editor initialization done" << std::endl;
 	}
 

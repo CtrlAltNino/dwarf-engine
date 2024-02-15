@@ -40,9 +40,11 @@ namespace Dwarf
             break;
         case GraphicsApi::OpenGL:
             return CreateScope<OpenGLContext>(static_cast<SDL_Window *>(window));
+            break;
         case GraphicsApi::Vulkan:
-            return CreateScope<VulkanContext>(static_cast<SDL_Window *>(window));
-            -NOT SUPPORTED YET break;
+            // return CreateScope<VulkanContext>(static_cast<SDL_Window *>(window));
+            // -NOT SUPPORTED YET
+            break;
 #elif __APPLE__
         case GraphicsApi::D3D12:
             break;

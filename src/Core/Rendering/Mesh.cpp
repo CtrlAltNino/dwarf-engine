@@ -39,7 +39,7 @@ namespace Dwarf
 		case GraphicsApi::Metal:
 			break;
 		case GraphicsApi::OpenGL:
-			return CreateRef<OpenGLFramebuffer>(spec);
+			return CreateRef<OpenGLMesh>(vertices, indices, materialIndex);
 			break;
 		case GraphicsApi::Vulkan:
 			// return CreateRef<VulkanFramebuffer>(spec);

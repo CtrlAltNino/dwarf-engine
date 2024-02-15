@@ -124,16 +124,34 @@ namespace Dwarf
             case GraphicsApi::Metal:
                 break;
             case GraphicsApi::OpenGL:
-                Ref<Shader> shaderRef = Shader::Create();
-                OpenGLShader *shader = (OpenGLShader *)shaderRef.get();
-                shader->SetVertexShader(CreateRef<UID>(UID(serializedMat["shader"]["vertexShader"])));
-                shader->SetFragmentShader(CreateRef<UID>(UID(serializedMat["shader"]["fragmentShader"])));
+            {
+                Ref<OpenGLShader> shader = std::dynamic_pointer_cast<OpenGLShader>(Shader::Create());
+
+                if (serializedMat["shader"].contains("vertexShader") && serializedMat["shader"]["vertexShader"] != "default")
+                {
+                    shader->SetVertexShader(CreateRef<UID>(UID(serializedMat["shader"]["vertexShader"])));
+                }
+                else
+                {
+                    shader->SetVertexShader(FileHandler::ReadFile(Shader::GetDefaultShaderPath() / "default.vert").c_str());
+                }
+
+                if (serializedMat["shader"].contains("fragmentShader") && serializedMat["shader"]["fragmentShader"] != "default")
+                {
+                    shader->SetFragmentShader(CreateRef<UID>(UID(serializedMat["shader"]["fragmentShader"])));
+                }
+                else
+                {
+                    shader->SetFragmentShader(FileHandler::ReadFile(Shader::GetDefaultShaderPath() / "default.frag").c_str());
+                }
+
                 if (serializedMat["shader"].contains("geometryShader"))
                 {
                     shader->SetGeometryShader(CreateRef<UID>(UID(serializedMat["shader"]["geometryShader"])));
                 }
-                deserializedMat.SetShader(shaderRef);
+                deserializedMat.SetShader(shader);
                 break;
+            }
             case GraphicsApi::Vulkan:
                 break;
 #elif __APPLE__
@@ -148,6 +166,7 @@ namespace Dwarf
 #endif
             }
         }
+        std::cout << "Deserializing End" << std::endl;
         return CreateRef<Material>(deserializedMat);
     }
 
