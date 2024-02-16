@@ -166,7 +166,6 @@ namespace Dwarf
 #endif
             }
         }
-        std::cout << "Deserializing End" << std::endl;
         return CreateRef<Material>(deserializedMat);
     }
 
