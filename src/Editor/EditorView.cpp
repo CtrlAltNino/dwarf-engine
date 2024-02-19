@@ -78,7 +78,11 @@ namespace Dwarf
         {
             if (ImGui::BeginMenu("File"))
             {
-                ImGui::MenuItem("Create new scene");
+                if (ImGui::MenuItem("Create new scene"))
+                {
+                    // TODO: check for unsaved changes in scene
+                    m_Model->SetScene(SceneUtilities::LoadDefaultScene());
+                }
                 if (ImGui::MenuItem("Save scene"))
                 {
                     if (SceneUtilities::SaveScene(m_Model->GetScene()))
