@@ -111,8 +111,16 @@ namespace Dwarf
                         Editor::Get().UpdateWindowTitle();
                     }
                 }
-                ImGui::MenuItem("Return to project launcher");
-                ImGui::MenuItem("Quit");
+
+                if (ImGui::MenuItem("Return to project launcher"))
+                {
+                    m_Model->CloseEditor(true);
+                }
+
+                if (ImGui::MenuItem("Quit"))
+                {
+                    m_Model->CloseEditor(false);
+                }
                 ImGui::EndMenu();
             }
             if (ImGui::BeginMenu("Assets"))

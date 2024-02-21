@@ -35,4 +35,10 @@ namespace Dwarf
 	{
 		return this->m_DeltaTime;
 	}
+
+	void EditorModel::CloseEditor(bool returnToLauncher)
+	{
+		m_CloseSignal = true;
+		m_ReturnToLauncher = returnToLauncher;
+	}
 }

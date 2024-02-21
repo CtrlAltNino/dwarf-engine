@@ -92,6 +92,7 @@ namespace Dwarf
         /// @return True if successful, false if not.
         static bool LoadProjectList()
         {
+            s_ProjectList.clear();
             bool success = true;
             std::filesystem::path savedProjectsPath = FileHandler::GetProjectSettingsPath() / "savedProjects.json";
             std::string fileContent = FileHandler::ReadFile(savedProjectsPath);

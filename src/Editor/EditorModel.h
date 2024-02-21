@@ -35,6 +35,9 @@ namespace Dwarf
         std::string m_ProjectName;
 
     public:
+        bool m_ReturnToLauncher = false;
+
+        bool m_CloseSignal = false;
         EditorModel(std::string name, std::filesystem::path projectPath);
 
         /// @brief Returns the currently opened scene.
@@ -52,5 +55,7 @@ namespace Dwarf
         double GetDeltaTime();
 
         SelectionContainer m_Selection;
+
+        void CloseEditor(bool returnToLauncher);
     };
 }

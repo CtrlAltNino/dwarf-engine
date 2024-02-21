@@ -19,22 +19,27 @@ namespace Dwarf
 
 	void DwarfEngine::Run()
 	{
-		auto launcher = Dwarf::CreateLauncher();
-		std::filesystem::path projectPath = launcher->Run();
-		delete (launcher);
-
-		if (!projectPath.empty())
+		bool shouldClose = false;
+		while (!shouldClose)
 		{
-			std::cout << "Opening project at: <" << projectPath.string() << ">" << std::endl;
+			auto launcher = Dwarf::CreateLauncher();
+			std::filesystem::path projectPath = launcher->Run();
+			delete (launcher);
 
-			auto editor = Dwarf::CreateEditor();
-			editor->Run(projectPath);
+			if (!projectPath.empty())
+			{
+				std::cout << "Opening project at: <" << projectPath.string() << ">" << std::endl;
 
-			// delete(editor);
-		}
-		else
-		{
-			std::cout << "Not opening any project" << std::endl;
+				auto editor = Dwarf::CreateEditor();
+				shouldClose = !editor->Run(projectPath);
+
+				delete (editor);
+			}
+			else
+			{
+				std::cout << "Not opening any project" << std::endl;
+				shouldClose = true;
+			}
 		}
 	}
 

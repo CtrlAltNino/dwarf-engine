@@ -6,7 +6,6 @@
 #include "Editor/EditorModel.h"
 #include "Editor/EditorView.h"
 #include "Core/UI/ImGuiLayer.h"
-// #include "Core/Rendering/Framebuffer.h"
 
 namespace Dwarf
 {
@@ -26,8 +25,6 @@ namespace Dwarf
 
         Ref<ImGuiLayer> m_ImguiLayer;
 
-        // Ref<Framebuffer> framebuffer;
-
         void Init(std::filesystem::path projectPath);
 
     public:
@@ -42,7 +39,7 @@ namespace Dwarf
         }
 
         /// @brief Starts the render loop
-        void Run(std::filesystem::path projectPath);
+        bool Run(std::filesystem::path projectPath);
 
         void UpdateWindowTitle();
     };

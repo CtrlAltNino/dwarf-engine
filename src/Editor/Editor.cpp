@@ -123,7 +123,7 @@ namespace Dwarf
 		std::cout << "[EDITOR INIT] Editor initialization done" << std::endl;
 	}
 
-	void Editor::Run(std::filesystem::path projectPath)
+	bool Editor::Run(std::filesystem::path projectPath)
 	{
 		Init(projectPath);
 
@@ -131,7 +131,7 @@ namespace Dwarf
 		TimeStamp lastFrameStamp = TimeUtilities::GetCurrent();
 
 		// TODO: abstract the close condition
-		while (!m_Window->ShouldClose())
+		while (!m_Window->ShouldClose() && !m_Model->m_CloseSignal)
 		{
 			// ===== Time related stuff
 			lastFrameStamp = currentFrameStamp;
@@ -162,5 +162,7 @@ namespace Dwarf
 				// TODO: Update this when implementing multi threading
 			}
 		}
+
+		return m_Model->m_ReturnToLauncher;
 	}
 }
