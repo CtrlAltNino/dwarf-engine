@@ -9,7 +9,9 @@ ADD_DEFINITIONS(-D_UNICODE)
 include(${CMAKE_SOURCE_DIR}/helper.cmake)
 
 add_compile_definitions(NOMINMAX)
+
 set(CMAKE_CXX_STANDARD 20)
+
 set(targetName dwarf-engine)
 
 set(CMAKE_PCH_INSTANTIATE_TEMPLATES ON)
@@ -44,6 +46,7 @@ ELSEIF(APPLE)
     set(CMAKE_TOOLCHAIN_FILE "${VCPKG_PATH}/scripts/buildsystems/vcpkg.cmake")
     set(VCPKG_TARGET_TRIPLET "x64-osx")
     add_executable(${targetName} "")
+    enable_language(OBJC OBJCXX)
 ENDIF()
 
 include_directories(src)

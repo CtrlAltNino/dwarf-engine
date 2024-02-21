@@ -4,3 +4,10 @@ target_sources(${targetName}
     stb.cpp
     FileHandler.cpp
 )
+
+if(APPLE)
+    target_sources(${targetName}
+        PRIVATE
+        metal.cpp
+    )
+endif()
