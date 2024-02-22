@@ -16,8 +16,9 @@ namespace Dwarf
 	{
 	}
 
-	void OpenGLImGuiLayer::OnAttach(void *window)
+	void OpenGLImGuiLayer::OnAttach(SDL_Window *window)
 	{
+		m_Window = window;
 		IMGUI_CHECKVERSION();
 		ImGui::CreateContext();
 		ImGuiIO &io = ImGui::GetIO();
@@ -55,13 +56,13 @@ namespace Dwarf
 
 		// Application& app = Application::Get();
 		// SDL_Window* window = static_cast<SDL_Window*>(app.GetWindow().GetNativeWindow());
-		SDL_Window *sdlWindow = (SDL_Window *)window;
+		// SDL_Window *sdlWindow = (SDL_Window *)window;
 
 		// context = SDL_GL_CreateContext(window);
 
 		// Setup Platform/Renderer bindings
 		// ImGui_ImplGlfw_InitForOpenGL(window, true);
-		ImGui_ImplSDL2_InitForOpenGL(sdlWindow, SDL_GL_CreateContext(sdlWindow));
+		ImGui_ImplSDL2_InitForOpenGL(m_Window, SDL_GL_CreateContext(m_Window));
 		ImGui_ImplOpenGL3_Init("#version 410");
 
 		// ImGui::CreateContext();

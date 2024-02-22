@@ -4,11 +4,14 @@
 
 namespace Dwarf
 {
-    class OpenGLImGuiLayer : public ImGuiLayer
+    class MetalImGuiLayer : public ImGuiLayer
     {
+    private:
+        MTLRenderPassDescriptor *m_RenderPassDescriptor;
+
     public:
-        OpenGLImGuiLayer();
-        ~OpenGLImGuiLayer();
+        MetalImGuiLayer();
+        ~MetalImGuiLayer();
 
         virtual void OnAttach(SDL_Window *window) override;
         virtual void OnDetach() override;

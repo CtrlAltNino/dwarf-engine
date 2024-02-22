@@ -7,10 +7,13 @@ namespace Dwarf
 {
     class ImGuiLayer
     {
+    protected:
+        SDL_Window *m_Window;
+
     public:
         virtual ~ImGuiLayer() = default;
 
-        virtual void OnAttach(void *window) = 0;
+        virtual void OnAttach(SDL_Window *window) = 0;
 
         virtual void OnDetach() = 0;
 
