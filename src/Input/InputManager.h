@@ -29,6 +29,7 @@ namespace Dwarf
         static glm::ivec2 s_CurrentMousePos;
         static glm::ivec2 s_LastMousePos;
         static glm::ivec2 s_DeltaMousePos;
+        static glm::ivec2 s_DeltaScroll;
 
         /**
          * State of the mouse buttons
@@ -89,6 +90,8 @@ namespace Dwarf
 
         static glm::vec2 GetDeltaMousePos();
 
+        static glm::vec2 GetDeltaScroll();
+
         /**
          * Updates the states of the input states.
          * Call this every frame
@@ -99,5 +102,7 @@ namespace Dwarf
         static void ProcessKeyDown(SDL_Scancode key);
 
         static void ProcessKeyUp(SDL_Scancode key);
+
+        static void ProcessScroll(SDL_Event &event);
     };
 }

@@ -462,7 +462,7 @@ namespace Dwarf
 
                 ImGui::SetCursorPos(ImVec2(cellMin.x + halfPadding, cellMin.y + cellWidth));
                 ImGui::PushTextWrapPos(ImGui::GetCursorPosX() + textWidth);
-                ImGui::TextWrapped(relativePath.stem().string().c_str());
+                ImGui::TextWrapped("%s", relativePath.stem().string().c_str());
                 ImGui::PopTextWrapPos();
 
                 if ((ImGui::GetContentRegionAvail().x - cellMin.x - cellWidth) >= cellWidth)
@@ -603,11 +603,11 @@ namespace Dwarf
     {
         if (FileHandler::CheckIfFileExists(path))
         {
-            std::strcpy(m_RenameBuffer, std::filesystem::path(m_RenamePathBuffer).filename().string().c_str());
+            std::strncpy(m_RenameBuffer, std::filesystem::path(m_RenamePathBuffer).filename().string().c_str(), RENAME_BUFFER_SIZE);
         }
         else if (FileHandler::CheckIfDirectoyExists(path))
         {
-            std::strcpy(m_RenameBuffer, std::filesystem::path(m_RenamePathBuffer).stem().string().c_str());
+            std::strncpy(m_RenameBuffer, std::filesystem::path(m_RenamePathBuffer).stem().string().c_str(), RENAME_BUFFER_SIZE);
         }
     }
 }

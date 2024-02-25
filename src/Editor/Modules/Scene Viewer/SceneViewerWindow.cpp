@@ -207,7 +207,7 @@ namespace Dwarf
 
     ImTextureID SceneViewerWindow::GetFrameBufferForImGui()
     {
-        return (ImTextureID)m_Framebuffer->GetColorAttachmentRendererID();
+        return (ImTextureID)*m_Framebuffer->GetColorAttachmentRendererID();
     }
 
     glm::ivec2 SceneViewerWindow::CalculateDesiredResolution(glm::ivec2 availableResolution, float targetAspectRatio)

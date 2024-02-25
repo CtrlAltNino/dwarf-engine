@@ -156,7 +156,7 @@ namespace Dwarf
 			Entity cur = Entity(cursor, m_Registry);
 			matriceStack.push_back(cur.GetComponent<TransformComponent>().getModelMatrix());
 
-			cursor = cur.GetParent();
+			// cursor = cur.GetParent();
 		}
 
 		for (auto it = matriceStack.rbegin(); it < matriceStack.rend(); it++)

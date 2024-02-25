@@ -13,8 +13,6 @@ namespace Dwarf
         m_MaterialIndex = materialIndex;
         m_VertexCount = vertices.size();
         m_IndexCount = indices.size();
-
-        SetupMesh();
     }
 
     OpenGLMesh::~OpenGLMesh()

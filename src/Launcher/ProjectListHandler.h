@@ -172,7 +172,7 @@ namespace Dwarf
             // Im Pfad nach einer projectSettings.dproj suchen
             // Projectinformation (Name, Pfad, letzte Modifikationszeit)
             nfdchar_t *outPath = NULL;
-            const nfdchar_t *filter = "dproj";
+            // const nfdchar_t *filter = "dproj";
 
             // TODO: implement file dialog in another thread to not interrupt
             // TODO: rename "open" button to "add project" or something

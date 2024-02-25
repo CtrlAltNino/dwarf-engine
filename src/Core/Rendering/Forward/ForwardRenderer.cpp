@@ -16,6 +16,7 @@ namespace Dwarf
 
     void ForwardRenderer::RenderScene(Ref<Scene> scene, Ref<Camera> camera, glm::ivec2 viewportSize, bool renderGrid)
     {
+        m_RendererApi->SetClearColor(glm::vec4(0.065f, 0.07f, 0.085, 1.0f));
         m_RendererApi->Clear();
         m_RendererApi->SetViewport(0, 0, viewportSize.x, viewportSize.y);
 
@@ -56,6 +57,22 @@ namespace Dwarf
         {
             m_RendererApi->RenderIndexed(Mesh::s_GridMesh, Material::s_GridMaterial, glm::mat4(1.0f), camera->GetViewMatrix(), camera->GetProjectionMatrix());
         }
+    }
+
+    void ForwardRenderer::RenderModelPreview(Ref<AssetReference<ModelAsset>> modelAsset, Ref<Camera> camera, glm::ivec2 viewportSize, glm::quat rotation)
+    {
+        m_RendererApi->SetClearColor({59 / 255.0f, 66 / 255.0f, 82 / 255.0f, 1});
+        m_RendererApi->Clear();
+        m_RendererApi->SetViewport(0, 0, viewportSize.x, viewportSize.y);
+
+        for (int i = 0; i < modelAsset->GetAsset()->m_Meshes.size(); i++)
+        {
+            m_RendererApi->RenderIndexed(modelAsset->GetAsset()->m_Meshes.at(i), Material::s_PreviewMaterial, glm::toMat4(rotation), camera->GetViewMatrix(), camera->GetProjectionMatrix());
+        }
+    }
+
+    void ForwardRenderer::RenderMaterialPreview(Ref<AssetReference<MaterialAsset>> materialAsset, Ref<Camera> camera, glm::ivec2 viewportSize, glm::quat rotation)
+    {
     }
 
     Ref<Framebuffer> ForwardRenderer::CreateFramebuffer(glm::ivec2 resolution)

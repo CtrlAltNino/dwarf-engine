@@ -7,7 +7,7 @@ namespace Dwarf
 {
 
 	PerformanceWindow::PerformanceWindow(Ref<EditorModel> model, int id)
-		: GuiModule(model, "Performance", MODULE_TYPE::PERFORMANCE, id), m_Frametime(m_Frametime), m_RenderTime(m_RenderTime) {}
+		: GuiModule(model, "Performance", MODULE_TYPE::PERFORMANCE, id), m_Frametime(nullptr), m_RenderTime(nullptr) {}
 
 	void PerformanceWindow::OnUpdate(double deltaTimte)
 	{
@@ -47,9 +47,9 @@ namespace Dwarf
 		ImGui::Text("Statistics");
 		// ImGui::PopFont();
 
-		ImGui::Text(std::string("Frames per second: " + std::to_string(1.0 / *m_Frametime)).c_str());
-		ImGui::Text(std::string("Frametime: " + std::to_string(*m_Frametime * 1000.0) + " ms").c_str());
-		ImGui::Text(std::string("Render time: " + std::to_string(*m_RenderTime * 1000.0) + " ms").c_str());
+		ImGui::Text("%s", std::string("Frames per second: " + std::to_string(1.0 / *m_Frametime)).c_str());
+		ImGui::Text("%s", std::string("Frametime: " + std::to_string(*m_Frametime * 1000.0) + " ms").c_str());
+		ImGui::Text("%s", std::string("Render time: " + std::to_string(*m_RenderTime * 1000.0) + " ms").c_str());
 
 		ImGui::End();
 	}

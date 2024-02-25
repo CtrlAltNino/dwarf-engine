@@ -28,6 +28,7 @@ namespace Dwarf
 	Ref<Shader> Shader::s_DefaultShader = nullptr;
 	Ref<Shader> Shader::s_ErrorShader = nullptr;
 	Ref<Shader> Shader::s_GridShader = nullptr;
+	Ref<Shader> Shader::s_PreviewShader = nullptr;
 
 	Ref<Shader> Shader::Create()
 	{
@@ -137,6 +138,27 @@ namespace Dwarf
 		return "";
 	}
 
+	std::filesystem::path Shader::GetPreviewShaderPath()
+	{
+		switch (Renderer::GetAPI())
+		{
+		case GraphicsApi::D3D12:
+			return "data/engine/shaders/preview/d3d12/";
+			break;
+		case GraphicsApi::Metal:
+			return "data/engine/shaders/preview/metal/";
+			break;
+		case GraphicsApi::OpenGL:
+			return "data/engine/shaders/preview/opengl/";
+			break;
+		case GraphicsApi::Vulkan:
+			return "data/engine/shaders/preview/vulkan/";
+			break;
+		}
+
+		return "";
+	}
+
 	Shader::Shader() {}
 	Shader::~Shader() {}
 
@@ -156,6 +178,7 @@ namespace Dwarf
 			s_DefaultShader = OpenGLShader::CreateDefaultShader();
 			s_ErrorShader = OpenGLShader::CreateErrorShader();
 			s_GridShader = OpenGLShader::CreateGridShader();
+			s_PreviewShader = OpenGLShader::CreatePreviewShader();
 			break;
 		case GraphicsApi::Vulkan:
 			// s_DefaultShader = VulkanShader::CreateDefaultShader();

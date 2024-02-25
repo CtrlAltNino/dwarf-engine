@@ -20,6 +20,13 @@ namespace Dwarf
         std::vector<Ref<Mesh>> m_Meshes;
 
         ModelAsset(std::filesystem::path path) : m_Meshes(ModelImporter::Import(path)) {}
+        void Load()
+        {
+            for (const auto &mesh : m_Meshes)
+            {
+                mesh->SetupMesh();
+            }
+        }
     };
 
     /// @brief Component containing a material asset.

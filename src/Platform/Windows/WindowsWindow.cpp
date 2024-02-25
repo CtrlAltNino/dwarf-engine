@@ -51,6 +51,9 @@ namespace Dwarf
         case GraphicsApi::Vulkan:
             WindowFlags |= SDL_WINDOW_VULKAN;
             break;
+        case GraphicsApi::Metal:
+            // NOT SUPPORTED
+            break;
         }
 
         m_Window = SDL_CreateWindow(m_Data.Title.c_str(), 0, 0, (int)m_Data.Width, (int)m_Data.Height, WindowFlags);
@@ -62,7 +65,7 @@ namespace Dwarf
         }
 
         SDL_DisplayMode mode;
-        int dmCode = SDL_GetDesktopDisplayMode(SDL_GetWindowDisplayIndex(m_Window), &mode);
+        SDL_GetDesktopDisplayMode(SDL_GetWindowDisplayIndex(m_Window), &mode);
 
         SDL_SetWindowMinimumSize(m_Window, props.Width, props.Height);
         // SDL_SetWindowSize(window, windowSize.x, windowSize.y);
@@ -242,6 +245,11 @@ namespace Dwarf
                 break;
             case SDL_KEYUP:
                 InputManager::ProcessKeyUp(event.key.keysym.scancode);
+                break;
+            case SDL_MOUSEWHEEL:
+                InputManager::ProcessScroll(event);
+                break;
+            default:
                 break;
             }
         }

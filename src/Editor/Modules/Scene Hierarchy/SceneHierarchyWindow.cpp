@@ -34,7 +34,7 @@ namespace Dwarf
         // Drawing the node, depending on if it has children or not
         if (ent.GetComponent<TransformComponent>().children.size() != 0)
         {
-            opened = ImGui::TreeNodeEx((void *)(uint64_t)(uint32_t)ent.GetHandle(), flags, objectLabel.c_str());
+            opened = ImGui::TreeNodeEx((void *)(uint64_t)(uint32_t)ent.GetHandle(), flags, "%s", objectLabel.c_str());
         }
         else
         {
@@ -174,7 +174,7 @@ namespace Dwarf
             }
             // Set payload to carry the index of our item (could be anything)
             ImGui::SetDragDropPayload("SceneGraphEntity", &m_Model->m_Selection.selectedEntities, sizeof(m_Model->m_Selection.selectedEntities.at(0)) * m_Model->m_Selection.selectedEntities.size());
-            ImGui::Text(objectLabel.c_str());
+            ImGui::Text("%s", objectLabel.c_str());
             ImGui::EndDragDropSource();
         }
 
@@ -314,7 +314,7 @@ namespace Dwarf
         }
         ImGui::PushStyleColor(ImGuiCol_DragDropTarget, ImVec4(0, 0, 0, 0));
 
-        auto view = m_Model->GetScene()->GetRegistry()->view<TransformComponent, NameComponent, IDComponent>();
+        // auto view = m_Model->GetScene()->GetRegistry()->view<TransformComponent, NameComponent, IDComponent>();
         std::vector<entt::entity> *container = &(m_Model->GetScene()->GetRootEntity()->GetComponent<TransformComponent>().children);
 
         int it = 0;

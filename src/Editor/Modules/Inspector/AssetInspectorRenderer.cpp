@@ -4,6 +4,8 @@
 #include "Core/Scene/SceneUtilities.h"
 #include <imgui_internal.h>
 #include <math.h>
+#include "Editor/Modules/Inspector/PreviewRenderer.h"
+#include "Input/InputManager.h"
 
 #ifdef _WIN32
 // #include "Platform/Direct3D12/D3D12Shader.h"
@@ -34,17 +36,18 @@ namespace Dwarf
     void AssetInspectorRenderer::Init(Ref<EditorModel> model)
     {
         AssetInspectorRenderer::s_Model = model;
+        PreviewRenderer::Init(model);
     }
     template <>
     void AssetInspectorRenderer::RenderAssetInspector<AssetReference<UnknownAsset>>(Ref<AssetReference<UnknownAsset>> asset)
     {
         ImGui::TextWrapped("File name: ");
         ImGui::SameLine(0, 5.0f);
-        ImGui::TextWrapped(asset->GetPath().filename().string().c_str());
+        ImGui::TextWrapped("%s", asset->GetPath().filename().string().c_str());
 
         ImGui::TextWrapped("Path: ");
         ImGui::SameLine(0, 5.0f);
-        ImGui::TextWrapped(asset->GetPath().string().c_str());
+        ImGui::TextWrapped("%s", asset->GetPath().string().c_str());
 
         ImGui::TextWrapped("Type: ");
         ImGui::SameLine(0, 5.0f);
@@ -62,11 +65,11 @@ namespace Dwarf
 
         ImGui::TextWrapped("File name: ");
         ImGui::SameLine(0, 5.0f);
-        ImGui::TextWrapped(asset->GetPath().filename().string().c_str());
+        ImGui::TextWrapped("%s", asset->GetPath().filename().string().c_str());
 
         ImGui::TextWrapped("Path: ");
         ImGui::SameLine(0, 5.0f);
-        ImGui::TextWrapped(asset->GetPath().string().c_str());
+        ImGui::TextWrapped("%s", asset->GetPath().string().c_str());
 
         ImGui::TextWrapped("Type: ");
         ImGui::SameLine(0, 5.0f);
@@ -120,7 +123,7 @@ namespace Dwarf
                     ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
                     if (ImGui::CollapsingHeader("Vertex Shader Error Log##vert"))
                     {
-                        ImGui::TextWrapped(shader->vert_message);
+                        ImGui::TextWrapped("%s", shader->vert_message);
                     }
                     ImGui::PopItemWidth();
                 }
@@ -136,7 +139,7 @@ namespace Dwarf
                     ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
                     if (ImGui::CollapsingHeader("Tessellation Control Shader Error Log##tesc"))
                     {
-                        ImGui::TextWrapped(shader->tesc_message);
+                        ImGui::TextWrapped("%s", shader->tesc_message);
                     }
                     ImGui::PopItemWidth();
                 }
@@ -152,7 +155,7 @@ namespace Dwarf
                     ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
                     if (ImGui::CollapsingHeader("Tessellation Evaluation Shader Error Log##tese"))
                     {
-                        ImGui::TextWrapped(shader->tese_message);
+                        ImGui::TextWrapped("%s", shader->tese_message);
                     }
                     ImGui::PopItemWidth();
                 }
@@ -168,7 +171,7 @@ namespace Dwarf
                     ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
                     if (ImGui::CollapsingHeader("Geometry Shader Error Log##geom"))
                     {
-                        ImGui::TextWrapped(shader->geom_message);
+                        ImGui::TextWrapped("%s", shader->geom_message);
                     }
                     ImGui::PopItemWidth();
                 }
@@ -184,7 +187,7 @@ namespace Dwarf
                     ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
                     if (ImGui::CollapsingHeader("Fragment Shader Error Log##frag"))
                     {
-                        ImGui::TextWrapped(shader->frag_message);
+                        ImGui::TextWrapped("%s", shader->frag_message);
                     }
                     ImGui::PopItemWidth();
                 }
@@ -241,7 +244,7 @@ namespace Dwarf
                     case BOOLEAN:
                     {
                         Ref<BooleanShaderParameter> parameter = std::dynamic_pointer_cast<BooleanShaderParameter>(i->second);
-                        ImGui::TextWrapped(i->first.c_str());
+                        ImGui::TextWrapped("%s", i->first.c_str());
                         ImGui::SameLine();
                         ImGui::Checkbox((std::string("##boolean") + std::to_string(n++)).c_str(), &(parameter->m_Value));
                     }
@@ -249,7 +252,7 @@ namespace Dwarf
                     case INTEGER:
                     {
                         Ref<IntegerShaderParameter> parameter = std::dynamic_pointer_cast<IntegerShaderParameter>(i->second);
-                        ImGui::TextWrapped(i->first.c_str());
+                        ImGui::TextWrapped("%s", i->first.c_str());
                         ImGui::SameLine();
                         ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - UNIFORM_DELETE_BUTTON_WIDTH - 8.0f);
                         ImGui::InputInt((std::string("##integer") + std::to_string(n++)).c_str(), &(parameter->m_Value));
@@ -259,7 +262,7 @@ namespace Dwarf
                     case FLOAT:
                     {
                         Ref<FloatShaderParameter> parameter = std::dynamic_pointer_cast<FloatShaderParameter>(i->second);
-                        ImGui::TextWrapped(i->first.c_str());
+                        ImGui::TextWrapped("%s", i->first.c_str());
                         ImGui::SameLine();
                         ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - UNIFORM_DELETE_BUTTON_WIDTH - 8.0f);
                         ImGui::InputFloat((std::string("##float") + std::to_string(n++)).c_str(), &(parameter->m_Value));
@@ -269,7 +272,7 @@ namespace Dwarf
                     case TEX2D:
                     {
                         Ref<Tex2DShaderParameter> parameter = std::dynamic_pointer_cast<Tex2DShaderParameter>(i->second);
-                        ImGui::TextWrapped(i->first.c_str());
+                        ImGui::TextWrapped("%s", i->first.c_str());
                         ImGui::SameLine();
                         ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - UNIFORM_DELETE_BUTTON_WIDTH - 8.0f);
                         DwarfUI::AssetInput<TextureAsset>(parameter->m_Value, (std::string("##textureAsset") + std::to_string(n++)).c_str());
@@ -279,7 +282,7 @@ namespace Dwarf
                     case VEC2:
                     {
                         Ref<Vec2ShaderParameter> parameter = std::dynamic_pointer_cast<Vec2ShaderParameter>(i->second);
-                        ImGui::TextWrapped(i->first.c_str());
+                        ImGui::TextWrapped("%s", i->first.c_str());
                         ImGui::SameLine();
                         ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - UNIFORM_DELETE_BUTTON_WIDTH - 8.0f);
                         ImGui::InputFloat2((std::string("##vec2") + std::to_string(n++)).c_str(), &(parameter->m_Value.x));
@@ -289,7 +292,7 @@ namespace Dwarf
                     case VEC3:
                     {
                         Ref<Vec3ShaderParameter> parameter = std::dynamic_pointer_cast<Vec3ShaderParameter>(i->second);
-                        ImGui::TextWrapped(i->first.c_str());
+                        ImGui::TextWrapped("%s", i->first.c_str());
                         ImGui::SameLine();
                         ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - UNIFORM_DELETE_BUTTON_WIDTH - 8.0f);
                         ImGui::InputFloat3((std::string("##vec3") + std::to_string(n++)).c_str(), &(parameter->m_Value.x));
@@ -299,7 +302,7 @@ namespace Dwarf
                     case VEC4:
                     {
                         Ref<Vec4ShaderParameter> parameter = std::dynamic_pointer_cast<Vec4ShaderParameter>(i->second);
-                        ImGui::TextWrapped(i->first.c_str());
+                        ImGui::TextWrapped("%s", i->first.c_str());
                         ImGui::SameLine();
                         ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - UNIFORM_DELETE_BUTTON_WIDTH - 8.0f);
                         ImGui::ColorEdit4((std::string("##vec4") + std::to_string(n++)).c_str(), &(parameter->m_Value.x), ImGuiColorEditFlags_None);
@@ -416,11 +419,11 @@ namespace Dwarf
 
         ImGui::TextWrapped("File name: ");
         ImGui::SameLine(0, 5.0f);
-        ImGui::TextWrapped(asset->GetPath().filename().string().c_str());
+        ImGui::TextWrapped("%s", asset->GetPath().filename().string().c_str());
 
         ImGui::TextWrapped("Path: ");
         ImGui::SameLine(0, 5.0f);
-        ImGui::TextWrapped(asset->GetPath().string().c_str());
+        ImGui::TextWrapped("%s", asset->GetPath().string().c_str());
 
         ImGui::TextWrapped("Type: ");
         ImGui::SameLine(0, 5.0f);
@@ -469,11 +472,11 @@ namespace Dwarf
 
         ImGui::TextWrapped("File name: ");
         ImGui::SameLine(0, 5.0f);
-        ImGui::TextWrapped(asset->GetPath().filename().string().c_str());
+        ImGui::TextWrapped("%s", asset->GetPath().filename().string().c_str());
 
         ImGui::TextWrapped("Path: ");
         ImGui::SameLine(0, 5.0f);
-        ImGui::TextWrapped(asset->GetPath().string().c_str());
+        ImGui::TextWrapped("%s", asset->GetPath().string().c_str());
 
         ImGui::TextWrapped("Type: ");
         ImGui::SameLine(0, 5.0f);
@@ -500,9 +503,40 @@ namespace Dwarf
 
         ImGui::Text("Preview:");
 
+        PreviewRenderer::Resize({ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().x});
+        PreviewRenderer::RenderModelPreview(asset);
+
+        ImVec2 minRect = ImGui::GetCursorScreenPos();
+        ImVec2 maxRect(ImGui::GetCursorScreenPos().x + ImGui::GetContentRegionAvail().x,
+                       ImGui::GetCursorScreenPos().y + ImGui::GetContentRegionAvail().x);
+
+        static bool isRotating = false;
+        if (InputManager::GetMouseDown(Dwarf::MOUSE_BUTTON::LEFT) &&
+            ImGui::IsMouseHoveringRect({ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y},
+                                       {ImGui::GetCursorScreenPos().x + ImGui::GetContentRegionAvail().x, ImGui::GetCursorScreenPos().y + ImGui::GetContentRegionAvail().x}))
+        {
+            isRotating = true;
+        }
+
+        if (isRotating && InputManager::GetMouseUp(Dwarf::MOUSE_BUTTON::LEFT))
+        {
+            isRotating = false;
+        }
+
+        if (isRotating)
+        {
+            PreviewRenderer::UpdateRotation(InputManager::GetDeltaMousePos());
+        }
+
+        draw_list->AddImage(reinterpret_cast<void *>(PreviewRenderer::GetTextureId()),
+                            minRect,
+                            maxRect,
+                            ImVec2(0, 1),
+                            ImVec2(1, 0));
+
         draw_list->ChannelsSetCurrent(0);
 
-        float endY = ImGui::GetItemRectMax().y;
+        float endY = maxRect.y;
         ImGui::EndChild();
         ImGui::GetWindowDrawList()->AddRectFilled(ImGui::GetItemRectMin(),
                                                   ImVec2(ImGui::GetItemRectMin().x + ImGui::GetContentRegionAvail().x, endY + 2 * COMPONENT_PANEL_PADDING),
@@ -522,11 +556,11 @@ namespace Dwarf
 
         ImGui::TextWrapped("File name: ");
         ImGui::SameLine(0, 5.0f);
-        ImGui::TextWrapped(asset->GetPath().filename().string().c_str());
+        ImGui::TextWrapped("%s", asset->GetPath().filename().string().c_str());
 
         ImGui::TextWrapped("Path: ");
         ImGui::SameLine(0, 5.0f);
-        ImGui::TextWrapped(asset->GetPath().string().c_str());
+        ImGui::TextWrapped("%s", asset->GetPath().string().c_str());
 
         ImGui::TextWrapped("Type: ");
         ImGui::SameLine(0, 5.0f);
@@ -569,11 +603,11 @@ namespace Dwarf
     {
         ImGui::TextWrapped("File name: ");
         ImGui::SameLine(0, 5.0f);
-        ImGui::TextWrapped(asset->GetPath().filename().string().c_str());
+        ImGui::TextWrapped("%s", asset->GetPath().filename().string().c_str());
 
         ImGui::TextWrapped("Path: ");
         ImGui::SameLine(0, 5.0f);
-        ImGui::TextWrapped(asset->GetPath().string().c_str());
+        ImGui::TextWrapped("%s", asset->GetPath().string().c_str());
 
         ImGui::TextWrapped("Type: ");
         ImGui::SameLine(0, 5.0f);
@@ -585,11 +619,11 @@ namespace Dwarf
     {
         ImGui::TextWrapped("File name: ");
         ImGui::SameLine(0, 5.0f);
-        ImGui::TextWrapped(asset->GetPath().filename().string().c_str());
+        ImGui::TextWrapped("%s", asset->GetPath().filename().string().c_str());
 
         ImGui::TextWrapped("Path: ");
         ImGui::SameLine(0, 5.0f);
-        ImGui::TextWrapped(asset->GetPath().string().c_str());
+        ImGui::TextWrapped("%s", asset->GetPath().string().c_str());
 
         ImGui::TextWrapped("Type: ");
         ImGui::SameLine(0, 5.0f);
@@ -601,11 +635,11 @@ namespace Dwarf
     {
         ImGui::TextWrapped("File name: ");
         ImGui::SameLine(0, 5.0f);
-        ImGui::TextWrapped(asset->GetPath().filename().string().c_str());
+        ImGui::TextWrapped("%s", asset->GetPath().filename().string().c_str());
 
         ImGui::TextWrapped("Path: ");
         ImGui::SameLine(0, 5.0f);
-        ImGui::TextWrapped(asset->GetPath().string().c_str());
+        ImGui::TextWrapped("%s", asset->GetPath().string().c_str());
 
         ImGui::TextWrapped("Type: ");
         ImGui::SameLine(0, 5.0f);
@@ -617,11 +651,11 @@ namespace Dwarf
     {
         ImGui::TextWrapped("File name: ");
         ImGui::SameLine(0, 5.0f);
-        ImGui::TextWrapped(asset->GetPath().filename().string().c_str());
+        ImGui::TextWrapped("%s", asset->GetPath().filename().string().c_str());
 
         ImGui::TextWrapped("Path: ");
         ImGui::SameLine(0, 5.0f);
-        ImGui::TextWrapped(asset->GetPath().string().c_str());
+        ImGui::TextWrapped("%s", asset->GetPath().string().c_str());
 
         ImGui::TextWrapped("Type: ");
         ImGui::SameLine(0, 5.0f);
@@ -633,11 +667,11 @@ namespace Dwarf
     {
         ImGui::TextWrapped("File name: ");
         ImGui::SameLine(0, 5.0f);
-        ImGui::TextWrapped(asset->GetPath().filename().string().c_str());
+        ImGui::TextWrapped("%s", asset->GetPath().filename().string().c_str());
 
         ImGui::TextWrapped("Path: ");
         ImGui::SameLine(0, 5.0f);
-        ImGui::TextWrapped(asset->GetPath().string().c_str());
+        ImGui::TextWrapped("%s", asset->GetPath().string().c_str());
 
         ImGui::TextWrapped("Type: ");
         ImGui::SameLine(0, 5.0f);
@@ -649,11 +683,11 @@ namespace Dwarf
     {
         ImGui::TextWrapped("File name: ");
         ImGui::SameLine(0, 5.0f);
-        ImGui::TextWrapped(asset->GetPath().filename().string().c_str());
+        ImGui::TextWrapped("%s", asset->GetPath().filename().string().c_str());
 
         ImGui::TextWrapped("Path: ");
         ImGui::SameLine(0, 5.0f);
-        ImGui::TextWrapped(asset->GetPath().string().c_str());
+        ImGui::TextWrapped("%s", asset->GetPath().string().c_str());
 
         ImGui::TextWrapped("Type: ");
         ImGui::SameLine(0, 5.0f);
@@ -665,11 +699,11 @@ namespace Dwarf
     {
         ImGui::TextWrapped("File name: ");
         ImGui::SameLine(0, 5.0f);
-        ImGui::TextWrapped(asset->GetPath().filename().string().c_str());
+        ImGui::TextWrapped("%s", asset->GetPath().filename().string().c_str());
 
         ImGui::TextWrapped("Path: ");
         ImGui::SameLine(0, 5.0f);
-        ImGui::TextWrapped(asset->GetPath().string().c_str());
+        ImGui::TextWrapped("%s", asset->GetPath().string().c_str());
 
         ImGui::TextWrapped("Type: ");
         ImGui::SameLine(0, 5.0f);

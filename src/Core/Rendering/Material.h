@@ -23,6 +23,7 @@ namespace Dwarf
 		static Ref<Material> s_DefaultMaterial;
 		static Ref<Material> s_ErrorMaterial;
 		static Ref<Material> s_GridMaterial;
+		static Ref<Material> s_PreviewMaterial;
 		static void Init();
 
 		/// @brief Name of the material.

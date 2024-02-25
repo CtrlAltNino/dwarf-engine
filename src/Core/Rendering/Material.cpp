@@ -15,12 +15,14 @@ namespace Dwarf
 	Ref<Material> Material::s_DefaultMaterial = nullptr;
 	Ref<Material> Material::s_ErrorMaterial = nullptr;
 	Ref<Material> Material::s_GridMaterial = nullptr;
+	Ref<Material> Material::s_PreviewMaterial = nullptr;
 
 	void Material::Init()
 	{
 		s_DefaultMaterial = CreateRef<Material>("Default Material", Shader::s_DefaultShader);
 		s_ErrorMaterial = CreateRef<Material>("Error Material", Shader::s_ErrorShader);
 		s_GridMaterial = CreateRef<Material>("grid material", Shader::s_GridShader);
+		s_PreviewMaterial = CreateRef<Material>("preview material", Shader::s_PreviewShader);
 		s_GridMaterial->SetTransparency(true);
 	}
 
@@ -151,6 +153,18 @@ namespace Dwarf
 			case TEX2D:
 				std::dynamic_pointer_cast<Tex2DShaderParameter>(m_Parameters[identifier])->m_Value = value;
 				break;
+			case BOOLEAN:
+				break;
+			case INTEGER:
+				break;
+			case FLOAT:
+				break;
+			case VEC2:
+				break;
+			case VEC3:
+				break;
+			case VEC4:
+				break;
 			}
 		}
 		else
@@ -159,6 +173,18 @@ namespace Dwarf
 			{
 			case TEX2D:
 				m_Parameters[identifier] = CreateRef<Tex2DShaderParameter>(Tex2DShaderParameter(value));
+				break;
+			case BOOLEAN:
+				break;
+			case INTEGER:
+				break;
+			case FLOAT:
+				break;
+			case VEC2:
+				break;
+			case VEC3:
+				break;
+			case VEC4:
 				break;
 			}
 		}

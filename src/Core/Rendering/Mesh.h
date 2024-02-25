@@ -24,6 +24,11 @@ namespace Dwarf
             return m_MaterialIndex;
         }
 
+        std::vector<Vertex> *GetVertices()
+        {
+            return &m_Vertices;
+        }
+
         int m_VertexCount;
         int m_IndexCount;
         static Ref<Mesh> s_GridMesh;

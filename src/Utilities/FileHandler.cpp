@@ -170,6 +170,8 @@ namespace Dwarf
         MultiByteToWideChar(CP_ACP, 0, path.string().c_str(), -1, argStr, 4096);
 
         ShellExecute(NULL, commandStr, argStr, NULL, NULL, SW_SHOWNORMAL);
+        delete[] (commandStr);
+        delete[] (argStr);
 #endif
     }
 
@@ -183,6 +185,8 @@ namespace Dwarf
         MultiByteToWideChar(CP_ACP, 0, path.make_preferred().string().c_str(), -1, argStr, 4096);
 
         ShellExecute(NULL, NULL, argStr, NULL, NULL, SW_SHOWNORMAL);
+        delete[] (commandStr);
+        delete[] (argStr);
         // system(path.string().c_str());
 #endif
     }

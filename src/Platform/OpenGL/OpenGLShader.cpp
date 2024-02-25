@@ -252,6 +252,15 @@ namespace Dwarf
 		return gridShader;
 	}
 
+	Ref<OpenGLShader> OpenGLShader::CreatePreviewShader()
+	{
+		Ref<OpenGLShader> previewShader = CreateRef<OpenGLShader>(OpenGLShader());
+		previewShader->SetVertexShader(FileHandler::ReadFile(Shader::GetPreviewShaderPath() / "preview.vert"));
+		previewShader->SetFragmentShader(FileHandler::ReadFile(Shader::GetPreviewShaderPath() / "preview.frag"));
+		previewShader->Compile();
+		return previewShader;
+	}
+
 	std::map<std::string, Ref<IShaderParameter>> OpenGLShader::GetParameters()
 	{
 		std::map<std::string, Ref<IShaderParameter>> parameters = std::map<std::string, Ref<IShaderParameter>>();

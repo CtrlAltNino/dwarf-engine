@@ -37,7 +37,7 @@ namespace Dwarf
     void InspectorWindow::RenderComponent<IDComponent>(IDComponent *component)
     {
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
-        ImGui::TextWrapped(std::to_string(*component->ID).c_str());
+        ImGui::TextWrapped("%s", std::to_string(*component->ID).c_str());
     }
 
     template <>
@@ -175,7 +175,7 @@ namespace Dwarf
             for (int i = 0; i < numMaterials; i++)
             {
                 ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
-                ImGui::TextWrapped(std::to_string(i).c_str());
+                ImGui::TextWrapped("%s", std::to_string(i).c_str());
                 ImGui::SameLine();
                 ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - COMPONENT_PANEL_PADDING);
                 DwarfUI::AssetInput<MaterialAsset>(component->materialAssets.at(i), (std::string("##materialAsset") + std::to_string(i)).c_str());
@@ -281,7 +281,7 @@ namespace Dwarf
         ImGui::SetCursorPos(ImVec2(
             ImGui::GetContentRegionAvail().x / 2.0 - (vec2.x / 2.0),
             ImGui::GetCursorPosY() + COMPONENT_PANEL_PADDING));
-        ImGui::TextWrapped(componentHeader);
+        ImGui::TextWrapped("%s", componentHeader);
         ImVec2 separatorMin = ImVec2(ImGui::GetWindowPos().x + ImGui::GetCursorPos().x + COMPONENT_PANEL_PADDING,
                                      ImGui::GetWindowPos().y + ImGui::GetCursorPos().y + COMPONENT_PANEL_PADDING / 2.0);
         ImVec2 separatorMax = ImVec2(ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMax().x - COMPONENT_PANEL_PADDING, separatorMin.y + 2);

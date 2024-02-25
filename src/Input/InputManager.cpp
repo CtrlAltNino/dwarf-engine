@@ -7,6 +7,7 @@ namespace Dwarf
     glm::ivec2 InputManager::s_CurrentMousePos = glm::ivec2(0);
     glm::ivec2 InputManager::s_LastMousePos = glm::ivec2(0);
     glm::ivec2 InputManager::s_DeltaMousePos = glm::ivec2(0);
+    glm::ivec2 InputManager::s_DeltaScroll = glm::ivec2(0);
 
     std::map<MOUSE_BUTTON, int> InputManager::s_MouseButtonStates = std::map<MOUSE_BUTTON, int>();
 
@@ -135,5 +136,27 @@ namespace Dwarf
         }
 
         s_KeysUp.emplace(keycode);
+    }
+
+    glm::vec2 InputManager::GetDeltaScroll()
+    {
+        return s_DeltaScroll;
+    }
+
+    void InputManager::ProcessScroll(SDL_Event &event)
+    {
+
+        switch (event.wheel.type)
+        {
+        case SDL_MOUSEWHEEL:
+            // pMouseWheelScrolled = true;
+            // pMouseWheel.x = event.wheel.x;
+            // pMouseWheel.y = event.wheel.y;
+            s_DeltaScroll = {event.wheel.x, event.wheel.y};
+            break;
+
+        default:
+            break;
+        }
     }
 }

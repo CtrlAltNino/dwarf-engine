@@ -74,6 +74,10 @@ namespace Dwarf
 			{
 			case FramebufferTextureFormat::DEPTH24STENCIL8:
 				return true;
+			case FramebufferTextureFormat::None:
+			case FramebufferTextureFormat::RGBA8:
+			case FramebufferTextureFormat::RED_INTEGER:
+				return false;
 			}
 
 			return false;
@@ -87,9 +91,11 @@ namespace Dwarf
 				return GL_RGBA8;
 			case FramebufferTextureFormat::RED_INTEGER:
 				return GL_RED_INTEGER;
+			case FramebufferTextureFormat::None:
+			case FramebufferTextureFormat::DEPTH24STENCIL8:
+				return 0;
 			}
 
-			// HZ_CORE_ASSERT(false);
 			return 0;
 		}
 
@@ -150,6 +156,9 @@ namespace Dwarf
 				case FramebufferTextureFormat::RED_INTEGER:
 					Utils::AttachColorTexture(m_ColorAttachments[i], m_Specification.Samples, GL_R32I, GL_RED_INTEGER, m_Specification.Width, m_Specification.Height, i);
 					break;
+				case FramebufferTextureFormat::None:
+				case FramebufferTextureFormat::DEPTH24STENCIL8:
+					break;
 				}
 			}
 		}
@@ -162,6 +171,10 @@ namespace Dwarf
 			{
 			case FramebufferTextureFormat::DEPTH24STENCIL8:
 				Utils::AttachDepthTexture(m_DepthAttachment, m_Specification.Samples, GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL_ATTACHMENT, m_Specification.Width, m_Specification.Height);
+				break;
+			case FramebufferTextureFormat::None:
+			case FramebufferTextureFormat::RGBA8:
+			case FramebufferTextureFormat::RED_INTEGER:
 				break;
 			}
 		}

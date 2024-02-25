@@ -127,7 +127,9 @@ namespace Dwarf
 
         if (fileExtension == ".obj" || fileExtension == ".fbx")
         {
-            return CreateAssetReference<ModelAsset>(assetPath).GetUID();
+            AssetReference<Dwarf::ModelAsset> model = CreateAssetReference<ModelAsset>(assetPath);
+            model.GetAsset()->Load();
+            return model.GetUID();
         }
         else if (fileExtension == ".dmat")
         {

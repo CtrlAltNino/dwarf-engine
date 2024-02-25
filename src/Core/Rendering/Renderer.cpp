@@ -1,7 +1,7 @@
 #include "dpch.h"
 #include "Core/Rendering/Renderer.h"
 #include "Core/Rendering/Forward/ForwardRenderer.h"
-#include "Core/Rendering/Deferred/DeferredRenderer.h"
+// #include "Core/Rendering/Deferred/DeferredRenderer.h"
 
 namespace Dwarf
 {
@@ -25,7 +25,7 @@ namespace Dwarf
 			s_Renderer = CreateRef<ForwardRenderer>();
 			break;
 		case Renderer::RendererType::Deferred:
-			s_Renderer = CreateRef<DeferredRenderer>();
+			// s_Renderer = CreateRef<DeferredRenderer>();
 			break;
 		}
 	}

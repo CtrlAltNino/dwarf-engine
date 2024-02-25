@@ -282,6 +282,7 @@ namespace Dwarf
         else
         {
             printf("Error: %s\n", NFD_GetError());
+            return false;
         }
     }
 

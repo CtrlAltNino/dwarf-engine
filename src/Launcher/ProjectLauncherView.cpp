@@ -312,12 +312,12 @@ namespace Dwarf
 							cellText.resize(availableCharacters + 3, '.');
 						}
 
-						ImGui::Text(cellText.c_str());
+						ImGui::Text("%s", cellText.c_str());
 					}
 					else
 					{
 						ImGui::SetCursorPosY(ImGui::GetCursorPosY() + (ROW_HEIGHT / 2) - ImGui::GetFontSize() / 2);
-						ImGui::Text(cellText.c_str());
+						ImGui::Text("%s", cellText.c_str());
 					}
 				}
 			}
@@ -475,7 +475,7 @@ namespace Dwarf
 		ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(5, 0));
 		static ImVec2 iconSize = ImVec2(18, 18);
 		static float verticalIconOffset = 2;
-		GraphicsApi activeApi = ProjectLauncher::Get()->GetWindow()->GetApi();
+		// GraphicsApi activeApi = ProjectLauncher::Get()->GetWindow()->GetApi();
 
 		{
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() - verticalIconOffset);
@@ -570,7 +570,7 @@ namespace Dwarf
 
 		ImGui::SameLine();
 		ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - textWidth);
-		ImGui::Text(versionText);
+		ImGui::Text("%s", versionText);
 
 		ImGui::End();
 		ImGui::PopStyleColor(2);
@@ -823,7 +823,7 @@ namespace Dwarf
 
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
 			ImGui::SetCursorPosX(ImGui::GetCursorPosX() + (ImGui::GetContentRegionAvail().x / 2 - textWidth / 2));
-			ImGui::Text(projectList[m_Model->GetSelectedProjectID()].path.string().c_str());
+			ImGui::Text("%s", projectList[m_Model->GetSelectedProjectID()].path.string().c_str());
 
 			ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 20);
 			ImGui::Text("Do you want to remove it from the list?");
@@ -968,7 +968,7 @@ namespace Dwarf
 					renderText.resize(availableCharacters);
 					renderText.resize(availableCharacters + 3, '.');
 				}
-				ImGui::Text(renderText.c_str());
+				ImGui::Text("%s", renderText.c_str());
 
 				draw_list->ChannelsSetCurrent(0);
 				ImVec2 p_min = ImVec2(ImGui::GetItemRectMin().x - 5, ImGui::GetItemRectMin().y - 5);
@@ -995,7 +995,7 @@ namespace Dwarf
 					// Im Pfad nach einer projectSettings.dproj suchen
 					// Projectinformation (Name, Pfad, letzte Modifikationszeit)
 					nfdchar_t *outPath = NULL;
-					const nfdchar_t *filter = "dproj";
+					// const nfdchar_t *filter = "dproj";
 
 					// TODO: implement file dialog in another thread to not interrupt
 					// TODO: rename "open" button to "add project" or something

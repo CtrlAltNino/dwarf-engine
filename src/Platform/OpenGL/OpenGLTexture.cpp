@@ -14,7 +14,7 @@ namespace Dwarf
 	// Constructor without meta data
 	OpenGLTexture::OpenGLTexture(std::filesystem::path path)
 	{
-		int numColCh;
+		int numColCh = 0;
 		unsigned char *bytes = stbi_load(path.string().c_str(), &this->size.x, &this->size.y, &numColCh, 0);
 
 		glGenTextures(1, &this->ID);

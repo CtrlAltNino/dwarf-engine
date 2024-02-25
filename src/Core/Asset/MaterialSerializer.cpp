@@ -1,5 +1,6 @@
 #include "dpch.h"
 #include "Core/Asset/MaterialSerializer.h"
+#include "Core/Rendering/Renderer.h"
 
 #ifdef _WIN32
 // #include "Platform/Direct3D12/D3D12Shader.h"

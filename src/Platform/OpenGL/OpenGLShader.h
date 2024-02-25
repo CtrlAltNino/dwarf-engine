@@ -74,5 +74,6 @@ namespace Dwarf
         static Ref<OpenGLShader> CreateDefaultShader();
         static Ref<OpenGLShader> CreateErrorShader();
         static Ref<OpenGLShader> CreateGridShader();
+        static Ref<OpenGLShader> CreatePreviewShader();
     };
 }

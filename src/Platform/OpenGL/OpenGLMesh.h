@@ -12,7 +12,7 @@ namespace Dwarf
     public:
         OpenGLMesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, unsigned int materialIndex);
         ~OpenGLMesh();
-        virtual void SetupMesh() override;
+        void SetupMesh() override;
         void Bind();
         void Unbind();
 

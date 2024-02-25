@@ -2,7 +2,6 @@
 
 #include "Core/Rendering/Material.h"
 #include "Core/Asset/AssetMetaData.h"
-#include "Core/Rendering/Renderer.h"
 
 namespace Dwarf
 {

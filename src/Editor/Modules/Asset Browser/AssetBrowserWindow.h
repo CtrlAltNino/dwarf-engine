@@ -7,6 +7,8 @@
 #include "Editor/Modules/GuiModule.h"
 #include "Core/Rendering/Texture.h"
 
+#define RENAME_BUFFER_SIZE (128)
+
 namespace Dwarf
 {
 
@@ -24,7 +26,7 @@ namespace Dwarf
 
         std::filesystem::path m_RenamePathBuffer;
 
-        char m_RenameBuffer[128] = "";
+        char m_RenameBuffer[RENAME_BUFFER_SIZE] = "";
 
         bool m_OpenRename;
 

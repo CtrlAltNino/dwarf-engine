@@ -61,11 +61,11 @@ namespace Dwarf
                 {
                     auto [path, name, id] = materialView.get<PathComponent, NameComponent, IDComponent>(entity);
                     ImGui::Text("Name");
-                    ImGui::Text(name.Name.c_str());
+                    ImGui::Text("%s", name.Name.c_str());
                     ImGui::Text("Path");
-                    ImGui::Text(path.Path.string().c_str());
+                    ImGui::Text("%s", path.Path.string().c_str());
                     ImGui::Text("ID");
-                    ImGui::Text(std::to_string((uint64_t) * (id.ID)).c_str());
+                    ImGui::Text("%s", std::to_string((uint64_t) * (id.ID)).c_str());
                     ImGui::Separator();
                     ImGui::Separator();
                 }
@@ -78,11 +78,11 @@ namespace Dwarf
                 {
                     auto [path, name, id] = modelView.get<PathComponent, NameComponent, IDComponent>(entity);
                     ImGui::Text("Name");
-                    ImGui::Text(name.Name.c_str());
+                    ImGui::Text("%s", name.Name.c_str());
                     ImGui::Text("Path");
-                    ImGui::Text(path.Path.string().c_str());
+                    ImGui::Text("%s", path.Path.string().c_str());
                     ImGui::Text("ID");
-                    ImGui::Text(std::to_string((uint64_t) * (id.ID)).c_str());
+                    ImGui::Text("%s", std::to_string((uint64_t) * (id.ID)).c_str());
                     ImGui::Separator();
                 }
                 ImGui::TreePop();
@@ -94,11 +94,11 @@ namespace Dwarf
                 {
                     auto [path, name, id] = sceneView.get<PathComponent, NameComponent, IDComponent>(entity);
                     ImGui::Text("Name");
-                    ImGui::Text(name.Name.c_str());
+                    ImGui::Text("%s", name.Name.c_str());
                     ImGui::Text("Path");
-                    ImGui::Text(path.Path.string().c_str());
+                    ImGui::Text("%s", path.Path.string().c_str());
                     ImGui::Text("ID");
-                    ImGui::Text(std::to_string((uint64_t) * (id.ID)).c_str());
+                    ImGui::Text("%s", std::to_string((uint64_t) * (id.ID)).c_str());
                     ImGui::Separator();
                 }
                 ImGui::TreePop();
@@ -112,11 +112,11 @@ namespace Dwarf
                     {
                         auto [path, name, id] = vertexShaderView.get<PathComponent, NameComponent, IDComponent>(entity);
                         ImGui::Text("Name");
-                        ImGui::Text(name.Name.c_str());
+                        ImGui::Text("%s", name.Name.c_str());
                         ImGui::Text("Path");
-                        ImGui::Text(path.Path.string().c_str());
+                        ImGui::Text("%s", path.Path.string().c_str());
                         ImGui::Text("ID");
-                        ImGui::Text(std::to_string((uint64_t) * (id.ID)).c_str());
+                        ImGui::Text("%s", std::to_string((uint64_t) * (id.ID)).c_str());
                         ImGui::Separator();
                     }
                     ImGui::TreePop();
@@ -128,11 +128,11 @@ namespace Dwarf
                     {
                         auto [path, name, id] = fragmentShaderView.get<PathComponent, NameComponent, IDComponent>(entity);
                         ImGui::Text("Name");
-                        ImGui::Text(name.Name.c_str());
+                        ImGui::Text("%s", name.Name.c_str());
                         ImGui::Text("Path");
-                        ImGui::Text(path.Path.string().c_str());
+                        ImGui::Text("%s", path.Path.string().c_str());
                         ImGui::Text("ID");
-                        ImGui::Text(std::to_string((uint64_t) * (id.ID)).c_str());
+                        ImGui::Text("%s", std::to_string((uint64_t) * (id.ID)).c_str());
                         ImGui::Separator();
                     }
                     ImGui::TreePop();
@@ -144,11 +144,11 @@ namespace Dwarf
                     {
                         auto [path, name, id] = geometryShaderView.get<PathComponent, NameComponent, IDComponent>(entity);
                         ImGui::Text("Name");
-                        ImGui::Text(name.Name.c_str());
+                        ImGui::Text("%s", name.Name.c_str());
                         ImGui::Text("Path");
-                        ImGui::Text(path.Path.string().c_str());
+                        ImGui::Text("%s", path.Path.string().c_str());
                         ImGui::Text("ID");
-                        ImGui::Text(std::to_string((uint64_t) * (id.ID)).c_str());
+                        ImGui::Text("%s", std::to_string((uint64_t) * (id.ID)).c_str());
                         ImGui::Separator();
                     }
                     ImGui::TreePop();
@@ -160,11 +160,11 @@ namespace Dwarf
                     {
                         auto [path, name, id] = computeShaderView.get<PathComponent, NameComponent, IDComponent>(entity);
                         ImGui::Text("Name");
-                        ImGui::Text(name.Name.c_str());
+                        ImGui::Text("%s", name.Name.c_str());
                         ImGui::Text("Path");
-                        ImGui::Text(path.Path.string().c_str());
+                        ImGui::Text("%s", path.Path.string().c_str());
                         ImGui::Text("ID");
-                        ImGui::Text(std::to_string((uint64_t) * (id.ID)).c_str());
+                        ImGui::Text("%s", std::to_string((uint64_t) * (id.ID)).c_str());
                         ImGui::Separator();
                     }
                     ImGui::TreePop();
@@ -176,11 +176,11 @@ namespace Dwarf
                     {
                         auto [path, name, id] = tesselationControlShaderView.get<PathComponent, NameComponent, IDComponent>(entity);
                         ImGui::Text("Name");
-                        ImGui::Text(name.Name.c_str());
+                        ImGui::Text("%s", name.Name.c_str());
                         ImGui::Text("Path");
-                        ImGui::Text(path.Path.string().c_str());
+                        ImGui::Text("%s", path.Path.string().c_str());
                         ImGui::Text("ID");
-                        ImGui::Text(std::to_string((uint64_t) * (id.ID)).c_str());
+                        ImGui::Text("%s", std::to_string((uint64_t) * (id.ID)).c_str());
                         ImGui::Separator();
                     }
                     ImGui::TreePop();
@@ -192,11 +192,11 @@ namespace Dwarf
                     {
                         auto [path, name, id] = tesselationEvaluationShaderView.get<PathComponent, NameComponent, IDComponent>(entity);
                         ImGui::Text("Name");
-                        ImGui::Text(name.Name.c_str());
+                        ImGui::Text("%s", name.Name.c_str());
                         ImGui::Text("Path");
-                        ImGui::Text(path.Path.string().c_str());
+                        ImGui::Text("%s", path.Path.string().c_str());
                         ImGui::Text("ID");
-                        ImGui::Text(std::to_string((uint64_t) * (id.ID)).c_str());
+                        ImGui::Text("%s", std::to_string((uint64_t) * (id.ID)).c_str());
                         ImGui::Separator();
                     }
                     ImGui::TreePop();
@@ -210,11 +210,11 @@ namespace Dwarf
                 {
                     auto [path, name, id] = textureView.get<PathComponent, NameComponent, IDComponent>(entity);
                     ImGui::Text("Name");
-                    ImGui::Text(name.Name.c_str());
+                    ImGui::Text("%s", name.Name.c_str());
                     ImGui::Text("Path");
-                    ImGui::Text(path.Path.string().c_str());
+                    ImGui::Text("%s", path.Path.string().c_str());
                     ImGui::Text("ID");
-                    ImGui::Text(std::to_string((uint64_t) * (id.ID)).c_str());
+                    ImGui::Text("%s", std::to_string((uint64_t) * (id.ID)).c_str());
                     ImGui::Separator();
                 }
                 ImGui::TreePop();

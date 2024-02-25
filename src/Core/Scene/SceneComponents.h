@@ -57,7 +57,14 @@ namespace Dwarf
         /// @return The rotations as a 4x4 matrix.
         glm::mat4 getRotationMatrix()
         {
-            return glm::toMat4(glm::quat(DEG_2_RAD * rotation));
+            glm::mat4 rotationMatrix(1.0f); // Identity matrix
+
+            // Apply pitch, yaw, and roll in the specified order
+            rotationMatrix = glm::rotate(rotationMatrix, glm::radians(rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
+            rotationMatrix = glm::rotate(rotationMatrix, glm::radians(rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
+            rotationMatrix = glm::rotate(rotationMatrix, glm::radians(rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
+
+            return glm::toMat4(glm::quat(rotation));
         }
 
         /// @brief Returns the scale of the entity.
@@ -66,7 +73,13 @@ namespace Dwarf
 
         /// @brief Returns the vector that points into the entity's forward direction.
         /// @return The forward vector as a 3D vector.
-        glm::vec3 getForward() { return getRotationMatrix() * glm::vec4(0, 0, -1, 1); }
+        glm::vec3 getForward()
+        {
+            // return glm::inverse(getRotationMatrix()) * glm::vec4(0, 0, -1, 1);
+            glm::mat4 rotationMatrix = getRotationMatrix();
+            glm::vec3 forwardVector(rotationMatrix[2][0], rotationMatrix[2][1], rotationMatrix[2][2]);
+            return glm::normalize(forwardVector);
+        }
 
         /// @brief Returns the vector that points into the entity's upwards direction.
         /// @return The up vector as a 3D vector.
