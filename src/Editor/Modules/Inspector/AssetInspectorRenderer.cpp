@@ -397,9 +397,42 @@ namespace Dwarf
             mat->GenerateShaderParameters();
         }
 
+        ImGui::Text("Preview:");
+
+        PreviewRenderer::Resize({ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().x});
+        PreviewRenderer::RenderMaterialPreview(asset);
+
+        ImVec2 minRect = ImGui::GetCursorScreenPos();
+        ImVec2 maxRect(ImGui::GetCursorScreenPos().x + ImGui::GetContentRegionAvail().x,
+                       ImGui::GetCursorScreenPos().y + ImGui::GetContentRegionAvail().x);
+
+        static bool isRotating = false;
+        if (InputManager::GetMouseDown(Dwarf::MOUSE_BUTTON::LEFT) &&
+            ImGui::IsMouseHoveringRect({ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y},
+                                       {ImGui::GetCursorScreenPos().x + ImGui::GetContentRegionAvail().x, ImGui::GetCursorScreenPos().y + ImGui::GetContentRegionAvail().x}))
+        {
+            isRotating = true;
+        }
+
+        if (isRotating && InputManager::GetMouseUp(Dwarf::MOUSE_BUTTON::LEFT))
+        {
+            isRotating = false;
+        }
+
+        if (isRotating)
+        {
+            PreviewRenderer::UpdateRotation(InputManager::GetDeltaMousePos());
+        }
+
+        draw_list->AddImage(reinterpret_cast<void *>(PreviewRenderer::GetTextureId()),
+                            minRect,
+                            maxRect,
+                            ImVec2(0, 1),
+                            ImVec2(1, 0));
+
         draw_list->ChannelsSetCurrent(0);
 
-        float endY = ImGui::GetItemRectMax().y;
+        float endY = maxRect.y;
         ImGui::EndChild();
         ImGui::GetWindowDrawList()->AddRectFilled(ImGui::GetItemRectMin(),
                                                   ImVec2(ImGui::GetItemRectMin().x + ImGui::GetContentRegionAvail().x, endY + 2 * COMPONENT_PANEL_PADDING),

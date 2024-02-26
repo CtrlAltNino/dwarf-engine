@@ -15,6 +15,7 @@ namespace Dwarf
 
     public:
         static Ref<Mesh> Create(std::vector<Vertex> vertices, std::vector<unsigned int> indices, unsigned int materialIndex);
+        static Ref<Mesh> GenerateUnitSphere(int stacks, int slices);
         static void Init();
 
         virtual void SetupMesh() = 0;
@@ -32,5 +33,6 @@ namespace Dwarf
         int m_VertexCount;
         int m_IndexCount;
         static Ref<Mesh> s_GridMesh;
+        static Ref<Mesh> s_UnitSphere;
     };
 }

@@ -73,9 +73,13 @@ namespace Dwarf
 
     void PreviewRenderer::RenderMaterialPreview(Ref<AssetReference<MaterialAsset>> materialAsset)
     {
-        // s_Framebuffer->Bind();
-        // Renderer::Get()->RenderMaterialPreview(materialAsset, s_Camera, {s_Framebuffer->GetSpecification().Width, s_Framebuffer->GetSpecification().Height});
-        // s_Framebuffer->Unbind();
+        s_Camera->m_Transform->position = {0, 0, 3};
+        s_Camera->m_Transform->rotation = {0, 0, 0};
+        s_Camera->SetRenderPlaneParameters({0.1f, 4});
+
+        s_Framebuffer->Bind();
+        Renderer::Get()->RenderMaterialPreview(materialAsset, s_Camera, {s_Framebuffer->GetSpecification().Width, s_Framebuffer->GetSpecification().Height}, s_ModelRotation);
+        s_Framebuffer->Unbind();
     }
 
     ImTextureID PreviewRenderer::GetTextureId()

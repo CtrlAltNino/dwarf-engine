@@ -73,6 +73,11 @@ namespace Dwarf
 
     void ForwardRenderer::RenderMaterialPreview(Ref<AssetReference<MaterialAsset>> materialAsset, Ref<Camera> camera, glm::ivec2 viewportSize, glm::quat rotation)
     {
+        m_RendererApi->SetClearColor({59 / 255.0f, 66 / 255.0f, 82 / 255.0f, 1});
+        m_RendererApi->Clear();
+        m_RendererApi->SetViewport(0, 0, viewportSize.x, viewportSize.y);
+
+        m_RendererApi->RenderIndexed(Mesh::s_UnitSphere, materialAsset->GetAsset()->m_Material, glm::toMat4(rotation), camera->GetViewMatrix(), camera->GetProjectionMatrix());
     }
 
     Ref<Framebuffer> ForwardRenderer::CreateFramebuffer(glm::ivec2 resolution)
