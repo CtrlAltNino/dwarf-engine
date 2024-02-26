@@ -80,7 +80,7 @@ target_link_libraries(${targetName} PRIVATE SDL2::SDL2 SDL2::SDL2main SDL2::SDL2
 # find_package(glfw3 CONFIG REQUIRED)
 # target_link_libraries(${targetName} PRIVATE glfw)
 find_package(glm CONFIG REQUIRED)
-target_link_libraries(${targetName} PRIVATE glm)
+target_link_libraries(${targetName} PRIVATE glm::glm)
 
 find_package(imgui CONFIG REQUIRED)
 target_link_libraries(${targetName} PRIVATE imgui::imgui)
