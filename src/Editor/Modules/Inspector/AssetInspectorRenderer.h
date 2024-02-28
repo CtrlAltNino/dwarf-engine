@@ -13,9 +13,6 @@ namespace Dwarf
     public:
         static void Init(Ref<EditorModel> model);
         template <typename T>
-        static void RenderAssetInspector(T *asset);
-
-        template <typename T>
-        static void RenderAssetInspector(Ref<T> component);
+        static void RenderAssetInspector(Ref<T> asset);
     };
 }

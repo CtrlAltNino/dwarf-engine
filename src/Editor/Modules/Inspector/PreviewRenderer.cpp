@@ -47,7 +47,7 @@ namespace Dwarf
 
         s_MaxDistance = longestDist / (tanf(0.5f * s_Camera->GetFov() * DEG_2_RAD));
 
-        s_Camera->m_Transform->position = {0, 0, 1.3 * s_MaxDistance * s_Distance};
+        s_Camera->GetTransform()->position = {0, 0, 1.3 * s_MaxDistance * s_Distance};
         s_Camera->SetRenderPlaneParameters({0.1f, 1.3 * s_MaxDistance + longestDist});
     }
 
@@ -64,7 +64,7 @@ namespace Dwarf
         }
 
         s_Distance = std::max(0.0f, std::min(1.0f, s_Distance + InputManager::GetDeltaScroll().y * (float)s_Model->GetDeltaTime()));
-        s_Camera->m_Transform->position = {0, 0, 1.3 * s_MaxDistance * s_Distance};
+        s_Camera->GetTransform()->position = {0, 0, 1.3 * s_MaxDistance * s_Distance};
 
         s_Framebuffer->Bind();
         Renderer::Get()->RenderModelPreview(modelAsset, s_Camera, {s_Framebuffer->GetSpecification().Width, s_Framebuffer->GetSpecification().Height}, s_ModelRotation);
@@ -73,8 +73,8 @@ namespace Dwarf
 
     void PreviewRenderer::RenderMaterialPreview(Ref<AssetReference<MaterialAsset>> materialAsset)
     {
-        s_Camera->m_Transform->position = {0, 0, 3};
-        s_Camera->m_Transform->rotation = {0, 0, 0};
+        s_Camera->GetTransform()->position = {0, 0, 3};
+        s_Camera->GetTransform()->rotation = {0, 0, 0};
         s_Camera->SetRenderPlaneParameters({0.1f, 4});
 
         s_Framebuffer->Bind();

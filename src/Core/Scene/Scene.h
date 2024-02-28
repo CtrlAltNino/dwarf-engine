@@ -8,7 +8,7 @@
 
 namespace Dwarf
 {
-	enum FogType
+	enum class FogType
 	{
 		LINEAR,
 		EXPONENTIAL
@@ -16,7 +16,7 @@ namespace Dwarf
 
 	struct FogSettings
 	{
-		glm::vec3 fogColor = {0.3, 0.3, 0.3};
+		glm::vec3 fogColor = {0.3f, 0.3f, 0.3f};
 		float fogStart = 20.0f;
 		float fogEnd = 50.0f;
 		FogType type = FogType::LINEAR;
@@ -24,8 +24,8 @@ namespace Dwarf
 
 	struct GlobalLightSettings
 	{
-		glm::vec3 color = {0.8, 0.6, 0.6};
-		float intensity = 0.2;
+		glm::vec3 color = {0.8f, 0.6f, 0.6f};
+		float intensity = 0.2f;
 	};
 
 	struct SceneSettings
@@ -40,33 +40,32 @@ namespace Dwarf
 	{
 	public:
 		// ========== Constructors ==========
-		Scene(std::filesystem::path path, SceneSettings settings);
+		Scene(std::filesystem::path const &path, SceneSettings const &settings);
 		~Scene();
 
 		// ========== Getters ==========
 
-		std::string GetName();
-		std::filesystem::path GetPath();
-		// std::vector<Entity>* GetSelectedEntities();
-		Ref<entt::registry> GetRegistry();
-		Ref<Entity> GetRootEntity();
-		SceneSettings GetSettings();
+		std::string GetName() const;
+		std::filesystem::path GetPath() const;
+		Ref<entt::registry> GetRegistry() const;
+		Ref<Entity> GetRootEntity() const;
+		SceneSettings GetSettings() const;
 
 		// ========== Setters ==========
-		void SetPath(std::filesystem::path path);
+		void SetPath(std::filesystem::path const &path);
 
 		// ========== Scene Functions ==========
 
 		/// @brief Creates a new entity with a given name.
 		/// @param name Name of the entity.
 		/// @return The created entity instance.
-		Entity CreateEntity(const std::string &name = std::string());
+		Entity CreateEntity(const std::string &name = std::string()) const;
 
 		/// @brief Creates a new entity with a given name a UID.
 		/// @param uid UID to use with the entity.
 		/// @param name Name of the entity.
 		/// @return The created entity instance.
-		Entity CreateEntityWithUID(UID uid, const std::string &name);
+		Entity CreateEntityWithUID(UID uid, const std::string &name) const;
 
 		void DeleteEntity(Entity entity);
 
@@ -76,7 +75,7 @@ namespace Dwarf
 
 		std::filesystem::path m_Path;
 
-		Ref<entt::registry> m_Registry;
+		Ref<entt::registry> m_Registry = CreateRef<entt::registry>(entt::registry());
 
 		SceneSettings m_Settings;
 
@@ -93,11 +92,11 @@ namespace Dwarf
 		/// @brief Returns the tree index of a given entity. Used for sorting based on their graph positions.
 		/// @param entity Entity instance.
 		/// @return The full tree index.
-		std::string GetTreeIndex(Entity entity);
+		std::string GetTreeIndex(Entity entity) const;
 
 		/// @brief Returns the recursive model matrix of a transform.
 		/// @param transform A transform component instance.
 		/// @return 4x4 model matrix composition of a transform and its full parent chain.
-		glm::mat4 GetFullModelMatrix(TransformComponent transform);
+		glm::mat4 GetFullModelMatrix(TransformComponent transform) const;
 	};
 }

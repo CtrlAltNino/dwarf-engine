@@ -44,7 +44,7 @@ namespace Dwarf
         static void Text();
 
         template <typename T>
-        static void AssetInput(Ref<UID> &assetID, const char *imguiID)
+        static void AssetInput(Ref<UID> assetID, const char *imguiID)
         {
             std::vector<entt::entity> availableAssets;
             int selectedAsset = -1;
@@ -87,8 +87,8 @@ namespace Dwarf
     };
 
     template <>
-    void DwarfUI::AssetInput<VertexShaderAsset>(Ref<UID> &assetID, const char *imguiID);
+    void DwarfUI::AssetInput<VertexShaderAsset>(Ref<UID> assetID, const char *imguiID);
 
     template <>
-    void DwarfUI::AssetInput<FragmentShaderAsset>(Ref<UID> &assetID, const char *imguiID);
+    void DwarfUI::AssetInput<FragmentShaderAsset>(Ref<UID> assetID, const char *imguiID);
 }

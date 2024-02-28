@@ -13,10 +13,11 @@
 #include "Core/Asset/AssetComponents.h"
 #include "Core/Scene/SceneComponents.h"
 #include "Utilities/FileHandler.h"
+#include "Core/Asset/AssetDirectoryListener.h"
 
 namespace Dwarf
 {
-    enum ASSET_TYPE
+    enum class ASSET_TYPE
     {
         UNKNOWN,
         MODEL,
@@ -39,16 +40,18 @@ namespace Dwarf
         static std::filesystem::path s_AssetFolderPath;
 
         /// @brief Recursive file watcher for the "/Asset" directory.
-        static efsw::FileWatcher *s_FileWatcher;
+        static Ref<efsw::FileWatcher> s_FileWatcher;
 
         /// @brief Watch ID for the EFSW file watcher.
         static efsw::WatchID s_WatchID;
 
-        static std::vector<Shader *> s_ShaderRecompilationStack;
+        static std::vector<Ref<Shader>> s_ShaderRecompilationStack;
+
+        static Ref<AssetDirectoryListener> s_AssetDirectoryListener;
 
         /// @brief Recursively imports all found assets in a given directory.
         /// @param directory Absolute path to a directory.
-        static void RecursiveImport(std::filesystem::path directory);
+        static void RecursiveImport(std::filesystem::path const &directory);
 
         static void CompileShaders();
 
@@ -56,12 +59,12 @@ namespace Dwarf
         /// @param assetPath Path to the asset.
         /// @return The created asset reference instance.
         template <typename T>
-        static AssetReference<T> CreateAssetReference(std::filesystem::path assetPath)
+        static AssetReference<T> CreateAssetReference(std::filesystem::path const &assetPath)
         {
             std::string fileName = assetPath.stem().string();
             std::filesystem::path metaDataPath = assetPath.string() + AssetMetaData::META_DATA_EXTENSION;
 
-            UID id = UID();
+            auto id = UID();
             if (FileHandler::CheckIfFileExists(metaDataPath.string().c_str()))
             {
                 nlohmann::json metaData = AssetMetaData::GetMetaData(assetPath);
@@ -80,51 +83,51 @@ namespace Dwarf
     public:
         static Ref<entt::registry> s_Registry;
 
-        static std::map<std::filesystem::path, Shader *> s_ShaderAssetMap;
+        static std::map<std::filesystem::path, Ref<Shader>> s_ShaderAssetMap;
 
         /// @brief Initializes the asset database.
-        static void Init(std::filesystem::path projectPath);
+        static void Init(std::filesystem::path const &projectPath);
 
         /// @brief Clears the asset database.
         static void Clear();
 
         /// @brief Imports an asset into the asset database.
         /// @param assetPath Path to the asset.
-        static Ref<UID> Import(std::filesystem::path assetPath);
+        static Ref<UID> Import(std::filesystem::path const &assetPath);
 
         static bool Exists(Ref<UID> uid);
-        static bool Exists(std::filesystem::path path);
+        static bool Exists(std::filesystem::path const &path);
 
-        static void Rename(std::filesystem::path from, std::filesystem::path to);
+        static void Rename(std::filesystem::path const &from, std::filesystem::path const &to);
 
-        static void RenameDirectory(std::filesystem::path from, std::filesystem::path to);
+        static void RenameDirectory(std::filesystem::path const &from, std::filesystem::path const &to);
 
         static void CreateNewMaterialAsset();
-        static void CreateNewMaterialAsset(std::filesystem::path path);
+        static void CreateNewMaterialAsset(std::filesystem::path const &path);
 
         static std::filesystem::path GetAssetDirectoryPath();
 
         static void Remove(Ref<UID> uid);
-        static void Remove(std::filesystem::path path);
+        static void Remove(std::filesystem::path const &path);
 
         static void RecompileShaders();
 
-        static void AddShaderWatch(std::filesystem::path shaderAssetPath, Shader *shader)
+        static void AddShaderWatch(std::filesystem::path const &shaderAssetPath, Ref<Shader> shader)
         {
             s_ShaderAssetMap[shaderAssetPath] = shader;
         }
 
-        static void RemoveShaderWatch(std::filesystem::path shaderAssetPath)
+        static void RemoveShaderWatch(std::filesystem::path const &shaderAssetPath)
         {
             s_ShaderAssetMap.erase(shaderAssetPath);
         }
 
-        static void AddShaderToRecompilationQueue(std::filesystem::path path)
+        static void AddShaderToRecompilationQueue(std::filesystem::path const &path)
         {
             s_ShaderRecompilationStack.push_back(s_ShaderAssetMap[path]);
         }
 
-        static void AddShaderToRecompilationQueue(Shader *shader)
+        static void AddShaderToRecompilationQueue(Ref<Shader> shader)
         {
             s_ShaderRecompilationStack.push_back(shader);
         }
@@ -135,9 +138,8 @@ namespace Dwarf
             Reimport(asset->GetPath());
         }
 
-        static Ref<UID> Reimport(std::filesystem::path assetPath)
+        static Ref<UID> Reimport(std::filesystem::path const &assetPath)
         {
-            AssetDatabase::Remove(assetPath);
             return AssetDatabase::Import(assetPath);
         }
 
@@ -147,8 +149,7 @@ namespace Dwarf
         static Ref<AssetReference<T>> Retrieve(Ref<UID> uid)
         {
             // Retrieve entt::entity with UID component
-            auto view = s_Registry->view<IDComponent>();
-            for (auto entity : view)
+            for (auto view = s_Registry->view<IDComponent>(); auto entity : view)
             {
                 if (*view.get<IDComponent>(entity).ID == *uid)
                 {
@@ -159,11 +160,10 @@ namespace Dwarf
         }
 
         template <typename T>
-        static Ref<AssetReference<T>> Retrieve(std::filesystem::path path)
+        static Ref<AssetReference<T>> Retrieve(std::filesystem::path const &path)
         {
             // Retrieve entt::entity with UID component
-            auto view = s_Registry->view<PathComponent>();
-            for (auto entity : view)
+            for (auto view = s_Registry->view<PathComponent>(); auto entity : view)
             {
                 if (view.get<PathComponent>(entity).Path == path)
                 {
@@ -173,59 +173,60 @@ namespace Dwarf
             return nullptr;
         }
 
-        static ASSET_TYPE GetType(std::filesystem::path assetPath)
+        static ASSET_TYPE GetType(std::filesystem::path const &assetPath)
         {
+            using enum ASSET_TYPE;
             if (assetPath.extension() == ".fbx")
             {
-                return ASSET_TYPE::MODEL;
+                return MODEL;
             }
             else if (assetPath.extension() == ".obj")
             {
-                return ASSET_TYPE::MODEL;
+                return MODEL;
             }
             else if (assetPath.extension() == ".jpg" || assetPath.extension() == ".png" || assetPath.extension() == ".tga")
             {
-                return ASSET_TYPE::TEXTURE;
+                return TEXTURE;
             }
             else if (assetPath.extension() == ".vert")
             {
-                return ASSET_TYPE::VERTEX_SHADER;
+                return VERTEX_SHADER;
             }
             else if (assetPath.extension() == ".tesc")
             {
-                return ASSET_TYPE::TESC_SHADER;
+                return TESC_SHADER;
             }
             else if (assetPath.extension() == ".tese")
             {
-                return ASSET_TYPE::TESE_SHADER;
+                return TESE_SHADER;
             }
             else if (assetPath.extension() == ".geom")
             {
-                return ASSET_TYPE::GEOMETRY_SHADER;
+                return GEOMETRY_SHADER;
             }
             else if (assetPath.extension() == ".frag")
             {
-                return ASSET_TYPE::FRAGMENT_SHADER;
+                return FRAGMENT_SHADER;
             }
             else if (assetPath.extension() == ".comp")
             {
-                return ASSET_TYPE::COMPUTE_SHADER;
+                return COMPUTE_SHADER;
             }
             else if (assetPath.extension() == ".hlsl")
             {
-                return ASSET_TYPE::HLSL_SHADER;
+                return HLSL_SHADER;
             }
             else if (assetPath.extension() == ".dscene")
             {
-                return ASSET_TYPE::SCENE;
+                return SCENE;
             }
             else if (assetPath.extension() == ".dmat")
             {
-                return ASSET_TYPE::MATERIAL;
+                return MATERIAL;
             }
             else
             {
-                return ASSET_TYPE::UNKNOWN;
+                return UNKNOWN;
             }
         }
     };

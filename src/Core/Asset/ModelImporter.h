@@ -19,16 +19,16 @@ namespace Dwarf
         // @brief Imports a model.
         /// @param path Path to the model.
         /// @return List of the imported meshes of a model.
-        static std::vector<Ref<Mesh>> Import(std::filesystem::path path)
+        static std::vector<Ref<Mesh>> Import(std::filesystem::path const &path)
         {
             nlohmann::json metaData = AssetMetaData::GetMetaData(path);
 
-            Assimp::Importer import;
-            const aiScene *scene = import.ReadFile(path.string(), aiProcess_Triangulate | aiProcess_FlipUVs);
+            Assimp::Importer importer;
+            const aiScene *scene = importer.ReadFile(path.string(), aiProcess_Triangulate | aiProcess_FlipUVs);
 
             if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
             {
-                std::cout << "ERROR::ASSIMP::" << import.GetErrorString() << std::endl;
+                std::cout << "ERROR::ASSIMP::" << importer.GetErrorString() << std::endl;
                 return std::vector<Ref<Mesh>>();
             }
 

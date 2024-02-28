@@ -70,8 +70,6 @@ namespace Dwarf
         ImGui::TextWrapped("Rotation");
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
 
-        static const float rad_2_deg = 180.0f / M_PI;
-        static const float deg_2_rad = M_PI / 180.0f;
         glm::vec3 rot = component->getEulerAngles();
         ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - COMPONENT_PANEL_PADDING);
         ImGui::DragFloat3("##transform_rotation", &rot.x, 0.05f);
@@ -97,7 +95,7 @@ namespace Dwarf
         ImGui::TextWrapped("Light type");
         ImGui::SameLine();
         ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - COMPONENT_PANEL_PADDING);
-        ImGui::Combo("##light_type", &item_current, LightComponent::LIGHT_TYPE_NAMES, IM_ARRAYSIZE(LightComponent::LIGHT_TYPE_NAMES));
+        ImGui::Combo("##light_type", &item_current, LightComponent::LIGHT_TYPE_NAMES.data(), LightComponent::LIGHT_TYPE_NAMES.size());
         ImGui::PopItemWidth();
         component->type = (LightComponent::LIGHT_TYPE)item_current;
 
@@ -106,7 +104,7 @@ namespace Dwarf
         ImGui::TextWrapped("Color");
         ImGui::SameLine();
         ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - COMPONENT_PANEL_PADDING);
-        ImGui::ColorEdit3("##light_color", (float *)&component->lightColor.r, ImGuiColorEditFlags_None);
+        ImGui::ColorEdit3("##light_color", &component->lightColor.r, ImGuiColorEditFlags_None);
         ImGui::PopItemWidth();
 
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
@@ -143,8 +141,6 @@ namespace Dwarf
     {
         // TODO: Slot for a mesh asset
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
-        // char* meshAssetName = (char*)"Yeet";
-        // ImGui::InputText("Mesh", meshAssetName, sizeof(meshAssetName), ImGuiInputTextFlags_ReadOnly);
         ImGui::TextWrapped("Model Asset");
         ImGui::SameLine();
         ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - COMPONENT_PANEL_PADDING);
@@ -204,14 +200,11 @@ namespace Dwarf
         case INSPECTOR_SELECTION_TYPE::ASSET:
         {
             // TODO: Render Asset data
-            // ImGui::TextWrapped(m_Model->m_Selection.assetPath.stem().string().c_str());
-            // AssetDatabase::Retrieve(m_Model->m_Selection.assetPath);
-            // if(!m_Model->m_Selection.assetPath FileHandler::)
-            std::filesystem::path assetPath = m_Model->m_Selection.assetPath;
-            if (std::filesystem::is_regular_file(assetPath))
+            if (std::filesystem::path assetPath = m_Model->m_Selection.assetPath; std::filesystem::is_regular_file(assetPath))
             {
                 switch (AssetDatabase::GetType(assetPath))
                 {
+                    using enum ASSET_TYPE;
                 case MODEL:
                     AssetInspectorRenderer::RenderAssetInspector(AssetDatabase::Retrieve<ModelAsset>(assetPath));
                     break;
@@ -272,25 +265,26 @@ namespace Dwarf
 
     void InspectorWindow::OnUpdate(double deltaTime)
     {
+        // Place Update code here (Before rendering)
     }
 
-    void InspectorWindow::BeginComponent(const char *componentHeader)
+    void InspectorWindow::BeginComponent(const char *componentHeader) const
     {
         ImGui::BeginGroup();
         ImVec2 vec2 = ImGui::CalcTextSize(componentHeader);
         ImGui::SetCursorPos(ImVec2(
-            ImGui::GetContentRegionAvail().x / 2.0 - (vec2.x / 2.0),
+            ImGui::GetContentRegionAvail().x / 2.0f - (vec2.x / 2.0f),
             ImGui::GetCursorPosY() + COMPONENT_PANEL_PADDING));
         ImGui::TextWrapped("%s", componentHeader);
-        ImVec2 separatorMin = ImVec2(ImGui::GetWindowPos().x + ImGui::GetCursorPos().x + COMPONENT_PANEL_PADDING,
-                                     ImGui::GetWindowPos().y + ImGui::GetCursorPos().y + COMPONENT_PANEL_PADDING / 2.0);
-        ImVec2 separatorMax = ImVec2(ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMax().x - COMPONENT_PANEL_PADDING, separatorMin.y + 2);
+        auto separatorMin = ImVec2(ImGui::GetWindowPos().x + ImGui::GetCursorPos().x + COMPONENT_PANEL_PADDING,
+                                   ImGui::GetWindowPos().y + ImGui::GetCursorPos().y + COMPONENT_PANEL_PADDING / 2.0f);
+        auto separatorMax = ImVec2(ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMax().x - COMPONENT_PANEL_PADDING, separatorMin.y + 2);
         ImGui::GetWindowDrawList()->AddRectFilled(separatorMin,
                                                   separatorMax, COL_BG_DIM);
         ImGui::SetCursorPosY(ImGui::GetCursorPosY() + COMPONENT_PANEL_PADDING * 2);
     }
 
-    void InspectorWindow::EndComponent()
+    void InspectorWindow::EndComponent() const
     {
         ImGui::EndGroup();
         ImGui::GetWindowDrawList()->AddRectFilled(ImVec2(ImGui::GetItemRectMin().x, ImGui::GetItemRectMin().y),
@@ -304,19 +298,9 @@ namespace Dwarf
         ImDrawList *draw_list = ImGui::GetWindowDrawList();
         draw_list->ChannelsSplit(2);
 
-        /*if (entity.HasComponent<IDComponent>())
-        {
-            draw_list->ChannelsSetCurrent(1);
-            BeginComponent("ID Component");
-            RenderComponent(&entity.GetComponent<IDComponent>());
-            draw_list->ChannelsSetCurrent(0);
-            EndComponent();
-        }*/
-
         if (entity.HasComponent<NameComponent>())
         {
             draw_list->ChannelsSetCurrent(1);
-            ImDrawList *draw_list = ImGui::GetWindowDrawList();
             BeginComponent("Name");
             RenderComponent(&entity.GetComponent<NameComponent>());
             draw_list->ChannelsSetCurrent(0);
@@ -326,7 +310,6 @@ namespace Dwarf
         if (entity.HasComponent<TransformComponent>())
         {
             draw_list->ChannelsSetCurrent(1);
-            ImDrawList *draw_list = ImGui::GetWindowDrawList();
             BeginComponent("Transform");
             RenderComponent(&entity.GetComponent<TransformComponent>());
             draw_list->ChannelsSetCurrent(0);
@@ -336,7 +319,6 @@ namespace Dwarf
         if (entity.HasComponent<LightComponent>())
         {
             draw_list->ChannelsSetCurrent(1);
-            ImDrawList *draw_list = ImGui::GetWindowDrawList();
             BeginComponent("Light");
             RenderComponent(&entity.GetComponent<LightComponent>());
             draw_list->ChannelsSetCurrent(0);
@@ -346,7 +328,6 @@ namespace Dwarf
         if (entity.HasComponent<MeshRendererComponent>())
         {
             draw_list->ChannelsSetCurrent(1);
-            ImDrawList *draw_list = ImGui::GetWindowDrawList();
             BeginComponent("Mesh Renderer");
             RenderComponent(&entity.GetComponent<MeshRendererComponent>());
             draw_list->ChannelsSetCurrent(0);
@@ -357,6 +338,7 @@ namespace Dwarf
 
     void InspectorWindow::Deserialize(nlohmann::json moduleData)
     {
+        // Deserialize the saved data
     }
 
     std::string InspectorWindow::Serialize()

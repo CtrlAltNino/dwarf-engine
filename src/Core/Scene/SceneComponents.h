@@ -47,15 +47,15 @@ namespace Dwarf
 
         /// @brief Returns the position of the entity.
         /// @return The position as a 3D vector.
-        glm::vec3 getPosition() { return position; }
+        glm::vec3 getPosition() const { return position; }
 
         /// @brief Returns the rotation of the entity as euler angles.
         /// @return The euler angles as a 3D vector.
-        glm::vec3 getEulerAngles() { return rotation; }
+        glm::vec3 getEulerAngles() const { return rotation; }
 
         /// @brief Returns the rotation of the entity as a matrix.
         /// @return The rotations as a 4x4 matrix.
-        glm::mat4 getRotationMatrix()
+        glm::mat4 getRotationMatrix() const
         {
             glm::mat4 rotationMatrix(1.0f); // Identity matrix
 
@@ -69,11 +69,11 @@ namespace Dwarf
 
         /// @brief Returns the scale of the entity.
         /// @return The scale as a 3D vector.
-        glm::vec3 getScale() { return scale; }
+        glm::vec3 getScale() const { return scale; }
 
         /// @brief Returns the vector that points into the entity's forward direction.
         /// @return The forward vector as a 3D vector.
-        glm::vec3 getForward()
+        glm::vec3 getForward() const
         {
             // return glm::inverse(getRotationMatrix()) * glm::vec4(0, 0, -1, 1);
             glm::mat4 rotationMatrix = getRotationMatrix();
@@ -83,15 +83,15 @@ namespace Dwarf
 
         /// @brief Returns the vector that points into the entity's upwards direction.
         /// @return The up vector as a 3D vector.
-        glm::vec3 getUp() { return getRotationMatrix() * glm::vec4(0, 1, 0, 1); }
+        glm::vec3 getUp() const { return getRotationMatrix() * glm::vec4(0, 1, 0, 1); }
 
         /// @brief Returns the vector that points into the entity's right side direction.
         /// @return The right vector as a 3D vector.
-        glm::vec3 getRight() { return getRotationMatrix() * glm::vec4(1, 0, 0, 1); }
+        glm::vec3 getRight() const { return getRotationMatrix() * glm::vec4(1, 0, 0, 1); }
 
         /// @brief Returns the model matrix of the entity. A composite matrix of the translation, scale and rotation matrices.
         /// @return The model matrix as a 4x4 matrix.
-        glm::mat4x4 getModelMatrix()
+        glm::mat4x4 getModelMatrix() const
         {
             glm::mat4 translationMatrix = glm::translate(glm::mat4(1.0f), position);
             glm::mat4 scaleMatrix = glm::scale(glm::mat4(1.0f), scale);
@@ -105,7 +105,7 @@ namespace Dwarf
     struct LightComponent
     {
         /// @brief Enum representing light types.
-        enum LIGHT_TYPE
+        enum class LIGHT_TYPE
         {
             DIRECTIONAL,
             POINT_LIGHT,
@@ -113,10 +113,10 @@ namespace Dwarf
         };
 
         /// @brief Names of the light types.
-        static inline const char *LIGHT_TYPE_NAMES[3] = {"Directional", "Point", "Spot"};
+        static inline std::array<const char *, 3> LIGHT_TYPE_NAMES = {"Directional", "Point", "Spot"};
 
         /// @brief The type of light this component represents.
-        LIGHT_TYPE type = DIRECTIONAL;
+        LIGHT_TYPE type = LIGHT_TYPE::DIRECTIONAL;
 
         /// @brief The color of the light as a 3D vector (R,G,B).
         glm::vec3 lightColor = glm::vec3(1.0f);
@@ -147,7 +147,7 @@ namespace Dwarf
 
         MeshRendererComponent() = default;
         MeshRendererComponent(const MeshRendererComponent &) = default;
-        MeshRendererComponent(Ref<UID> mesh, std::vector<Ref<UID>> materials)
+        MeshRendererComponent(Ref<UID> mesh, std::vector<Ref<UID>> const &materials)
             : meshAsset(mesh), materialAssets(materials) {}
     };
 }

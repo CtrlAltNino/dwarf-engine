@@ -24,7 +24,7 @@ namespace Dwarf
         /// @brief Retrieves the meta data from an asset path.
         /// @param assetPath Path to an asset.
         /// @return Metadata in JSON.
-        static nlohmann::json GetMetaData(std::filesystem::path assetPath)
+        static nlohmann::json GetMetaData(const std::filesystem::path &assetPath)
         {
             std::string fileContent = FileHandler::ReadFile(GetMetaDataPath(assetPath));
             nlohmann::json jsonObject;
@@ -40,7 +40,7 @@ namespace Dwarf
         /// @brief Writes the given metadata to a path.
         /// @param assetPath Path to write the metadata to.
         /// @param metaData The metadata in JSON.
-        static void SetMetaData(std::filesystem::path assetPath, nlohmann::json metaData)
+        static void SetMetaData(const std::filesystem::path &assetPath, nlohmann::json metaData)
         {
             std::string fileContent = metaData.dump(4);
 
@@ -54,12 +54,12 @@ namespace Dwarf
 
         /// @brief Removes the metadata file of an asset.
         /// @param assetPath Path to an asset.
-        static void RemoveMetaData(std::filesystem::path assetPath)
+        static void RemoveMetaData(const std::filesystem::path &assetPath)
         {
             FileHandler::Delete(GetMetaDataPath(assetPath));
         }
 
-        static void Rename(std::filesystem::path from, std::filesystem::path to)
+        static void Rename(const std::filesystem::path &from, const std::filesystem::path &to)
         {
             FileHandler::Rename(GetMetaDataPath(from), GetMetaDataPath(to));
         }

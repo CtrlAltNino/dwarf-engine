@@ -5,16 +5,10 @@
 #include "Core/Base.h"
 #include "Core/UID.h"
 #include "Core/GenericComponents.h"
-// #include "Core/Asset/AssetComponents.h"
-// #include "Core/Scene/Components.h"
 
 namespace Dwarf
 {
-
-    /// @brief Enum representing the types of assets.
-    // enum class AssetType {Unknown, Mesh, Material, Texture, VertexShader, FragmentShader, TesselationControlShader, TesselationEvaluationShader, GeometryShader, ComputeShader};
-
-    /// @brief Wrapper of an entity. It handles the access of the components.
+    /// @brief Wrapper of an asset reference. It handles the access of the components.
     template <typename T>
     class AssetReference
     {
@@ -35,47 +29,25 @@ namespace Dwarf
             m_Registry->emplace<NameComponent>(assetHandle, assetName);
             m_Registry->emplace<PathComponent>(assetHandle, assetPath);
         }
-        // AssetReference(const AssetReference& other) = default;
 
         operator bool() const { return (std::uint32_t)m_AssetHandle != 0; }
         bool operator==(const AssetReference &b) { return m_AssetHandle == b.m_AssetHandle; }
 
-        /*template<typename T, typename... Args>
-        T& AddComponent(Args&&... args){
-            // TODO: Check component requirements
-            return m_Registry->emplace<T>(m_AssetHandle, std::forward<Args>(args)...);
-        }*/
-
-        /// @brief Returns the component of a given type.
-        /// @tparam T Type of component.
-        /// @return The found component.
-        /*template<typename T>
-        T& GetComponent(){
-            // TODO: Check if component present
-            return m_Registry->get<T>(m_AssetHandle);
-        }*/
-
         /// @brief Retrieves the handle of the asset entity.
         /// @return The handle.
-        entt::entity GetHandle() { return m_AssetHandle; }
+        entt::entity GetHandle() const { return m_AssetHandle; }
 
         /// @brief Returns the UID of the asset.
         /// @return The UID.
-        Ref<UID> GetUID()
+        Ref<UID> GetUID() const
         {
             return m_Registry->get<IDComponent>(m_AssetHandle).ID;
         }
 
-        std::filesystem::path GetPath()
+        std::filesystem::path GetPath() const
         {
             return m_Registry->get<PathComponent>(m_AssetHandle).Path;
         }
-
-        /// @brief Retrieves the type of the asset.
-        /// @return Asset type.
-        /*AssetType GetType() {
-            return m_Type;
-        }*/
 
         /// @brief Retrieves the asset component of the asset, containing the actual payload.
         /// @return The asset component.

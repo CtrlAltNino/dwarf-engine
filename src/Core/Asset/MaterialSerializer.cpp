@@ -22,7 +22,7 @@
 
 namespace Dwarf
 {
-    Ref<Material> MaterialSerializer::Deserialize(std::filesystem::path path)
+    Ref<Material> MaterialSerializer::Deserialize(std::filesystem::path const &path)
     {
         Material deserializedMat(path.stem().string());
 
@@ -32,7 +32,7 @@ namespace Dwarf
 
         if (serializedMat.contains("parameters"))
         {
-            for (auto parameter : serializedMat["parameters"].items())
+            for (auto const &parameter : serializedMat["parameters"].items())
             {
 
                 if (serializedMat["parameters"][parameter.key()]["type"] == "boolean")
@@ -170,7 +170,7 @@ namespace Dwarf
         return CreateRef<Material>(deserializedMat);
     }
 
-    void MaterialSerializer::Serialize(Material material, std::filesystem::path path)
+    void MaterialSerializer::Serialize(Material const &material, std::filesystem::path const &path)
     {
         nlohmann::json serializedMat;
 
@@ -178,15 +178,49 @@ namespace Dwarf
 
         switch (Renderer::GetAPI())
         {
+            using enum GraphicsApi;
 #ifdef _WIN32
-        case GraphicsApi::D3D12:
+        case D3D12:
             break;
-        case GraphicsApi::Metal:
+        case Metal:
             break;
-        case GraphicsApi::OpenGL:
+        case OpenGL:
         {
-            Ref<Shader> shaderRef = material.GetShader();
-            OpenGLShader *shader = (OpenGLShader *)shaderRef.get();
+            Ref<OpenGLShader> shader = std::dynamic_pointer_cast<OpenGLShader>(material.GetShader());
+
+            if (shader->GetVertexShader() != nullptr)
+            {
+                serializedMat["shader"]["vertexShader"] = (uint64_t)*shader->GetVertexShader();
+            }
+            else
+            {
+                serializedMat["shader"]["vertexShader"] = "default";
+            }
+
+            if (shader->GetFragmentShader() != nullptr)
+            {
+                serializedMat["shader"]["fragmentShader"] = (uint64_t)*shader->GetFragmentShader();
+            }
+            else
+            {
+                serializedMat["shader"]["fragmentShader"] = "default";
+            }
+            if (serializedMat["shader"].contains("geometryShader"))
+            {
+                serializedMat["shader"]["geometryShader"] = (uint64_t)*shader->GetGeometryShader();
+            }
+            break;
+        }
+        case Vulkan:
+            break;
+#elif __linux__
+        case D3D12:
+            break;
+        case Metal:
+            break;
+        case OpenGL:
+        {
+            Ref<OpenGLShader> shader = std::dynamic_pointer_cast<OpenGLShader>(material.GetShader());
 
             if (shader->GetVertexShader() != nullptr)
             {
@@ -213,25 +247,6 @@ namespace Dwarf
         }
         case GraphicsApi::Vulkan:
             break;
-#elif __linux__
-        case GraphicsApi::D3D12:
-            break;
-        case GraphicsApi::Metal:
-            break;
-        case GraphicsApi::OpenGL:
-        {
-            Ref<Shader> shaderRef = material.GetShader();
-            OpenGLShader *shader = (OpenGLShader *)shaderRef.get();
-            serializedMat["shader"]["vertexShader"] = (uint64_t)*shader->GetVertexShader();
-            serializedMat["shader"]["fragmentShader"] = (uint64_t)*shader->GetFragmentShader();
-            if (serializedMat["shader"].contains("geometryShader"))
-            {
-                serializedMat["shader"]["geometryShader"] = (uint64_t)*shader->GetGeometryShader();
-            }
-            break;
-        }
-        case GraphicsApi::Vulkan:
-            break;
 #elif __APPLE__
         case GraphicsApi::D3D12:
             break;
@@ -246,7 +261,7 @@ namespace Dwarf
 
         for (auto const &[key, val] : material.m_Parameters)
         {
-            switch ((*val).GetType())
+            switch (val->GetType())
             {
             case BOOLEAN:
                 serializedMat["parameters"][key]["type"] = "boolean";

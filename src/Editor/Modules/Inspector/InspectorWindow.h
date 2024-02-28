@@ -22,9 +22,9 @@ namespace Dwarf
         /// @param entity Entity to render in the inspector.
         void RenderComponents(Entity entity);
 
-        void BeginComponent(const char *componentHeader);
+        void BeginComponent(const char *componentHeader) const;
 
-        void EndComponent();
+        void EndComponent() const;
 
         /*void RenderTagComponent(TagComponent component);
         void RenderTransformComponent(TransformComponent component);

@@ -17,25 +17,26 @@ namespace Dwarf
 	class Camera
 	{
 	private:
+		/// @brief The transform of the camera, representing its position and rotation.
+		Ref<TransformComponent> m_Transform;
+
 		/// @brief The camera's field of view expressed in degrees.
-		float m_Fov;
+		float m_Fov = 90.0f;
 
 		/// @brief The near plane distance.
-		float m_NearPlane;
+		float m_NearPlane = 0.1f;
 
 		/// @brief The far plane distance.
-		float m_FarPlane;
+		float m_FarPlane = 1000.0f;
 
 		/// @brief The aspect ratio of the camera.
-		float m_AspectRatio;
+		float m_AspectRatio = 16.0f / 9.0f;
 
 		float m_sensitivity = 0.15f;
 
 		float m_MovementSpeed = 4.0f;
 
 	public:
-		/// @brief The transform of the camera, representing its position and rotation.
-		Ref<TransformComponent> m_Transform;
 		// ========== Constructors ==========
 
 		Camera();
@@ -46,23 +47,25 @@ namespace Dwarf
 
 		/// @brief Returns the field of view.
 		/// @return Fov of the camera.
-		float GetFov();
+		float GetFov() const;
 
 		/// @brief Returns the near and far plane distances.
 		/// @return The near and far plane distances as a 2D vector.
-		glm::vec2 GetRenderPlaneParameters();
+		glm::vec2 GetRenderPlaneParameters() const;
 
 		/// @brief Returns the aspect ratio of the camera.
 		/// @return Aspect ratio.
-		float GetAspectRatio();
+		float GetAspectRatio() const;
 
 		/// @brief Returns the view matrix of the camera.
 		/// @return 4x4 view matrix.
-		glm::mat4x4 GetViewMatrix();
+		glm::mat4x4 GetViewMatrix() const;
 
 		/// @brief Returns the projection matrix of the camera.
 		/// @return 4x4 projection matrix.
-		glm::mat4x4 GetProjectionMatrix();
+		glm::mat4x4 GetProjectionMatrix() const;
+
+		Ref<TransformComponent> GetTransform() const;
 
 		// ========== Setters ==========
 
@@ -83,6 +86,6 @@ namespace Dwarf
 		void SetAspectRatio(float aspectRatio);
 
 		// ========== Camera Functions ==========
-		void OnUpdate(double deltaTime);
+		void OnUpdate(double deltaTime) const;
 	};
 }

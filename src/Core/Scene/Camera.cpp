@@ -9,25 +9,13 @@ namespace Dwarf
 
 #define DEFAULT_CAMERA_POSITION glm::vec3(0, 2, 15)
 #define DEFAULT_CAMERA_ROTATION glm::vec3(30, 0, 0)
-#define DEFAULT_CAMERA_FOV 90.0f
-#define DEFAULT_CAMERA_NEARPLANE 0.1f
-#define DEFAULT_CAMERA_FARPLANE 1000.0f
-#define DEFAULT_CAMERA_ASPECT_RATIO (16.0f / 9.0f)
 
 	// ========== Constructors ==========
 	Camera::Camera()
-		: m_Transform(CreateRef<TransformComponent>(DEFAULT_CAMERA_POSITION, DEFAULT_CAMERA_ROTATION)),
-		  m_Fov(DEFAULT_CAMERA_FOV),
-		  m_NearPlane(DEFAULT_CAMERA_NEARPLANE),
-		  m_FarPlane(DEFAULT_CAMERA_FARPLANE),
-		  m_AspectRatio(DEFAULT_CAMERA_ASPECT_RATIO) {}
+		: m_Transform(CreateRef<TransformComponent>(DEFAULT_CAMERA_POSITION, DEFAULT_CAMERA_ROTATION)) {}
 
 	Camera::Camera(glm::vec3 position, glm::vec3 rotation)
-		: m_Transform(CreateRef<TransformComponent>(position, rotation)),
-		  m_Fov(DEFAULT_CAMERA_FOV),
-		  m_NearPlane(DEFAULT_CAMERA_NEARPLANE),
-		  m_FarPlane(DEFAULT_CAMERA_FARPLANE),
-		  m_AspectRatio(DEFAULT_CAMERA_ASPECT_RATIO) {}
+		: m_Transform(CreateRef<TransformComponent>(position, rotation)) {}
 
 	Camera::Camera(glm::vec3 position, glm::vec3 rotation, float fov, float nearPlane, float farPlane, float aspectRatio)
 		: m_Transform(CreateRef<TransformComponent>(position, rotation)),
@@ -38,31 +26,36 @@ namespace Dwarf
 
 	// ========== Getters ==========
 
-	float Camera::GetFov()
+	float Camera::GetFov() const
 	{
 		return m_Fov;
 	}
 
-	glm::vec2 Camera::GetRenderPlaneParameters()
+	glm::vec2 Camera::GetRenderPlaneParameters() const
 	{
 		return glm::vec2(m_NearPlane, m_FarPlane);
 	}
 
-	float Camera::GetAspectRatio()
+	float Camera::GetAspectRatio() const
 	{
 		return m_AspectRatio;
 	}
 
-	glm::mat4x4 Camera::GetViewMatrix()
+	glm::mat4x4 Camera::GetViewMatrix() const
 	{
 		glm::mat4 rot = glm::rotate(glm::mat4(1.0f), m_Transform->rotation.x * DEG_2_RAD, glm::vec3(1.0f, 0.0f, 0.0f)) * glm::rotate(glm::mat4(1.0f), m_Transform->rotation.y * DEG_2_RAD, glm::vec3(0.0f, 1.0f, 0.0f));
 
 		return rot * glm::translate(glm::mat4(1.0f), -m_Transform->getPosition());
 	}
 
-	glm::mat4x4 Camera::GetProjectionMatrix()
+	glm::mat4x4 Camera::GetProjectionMatrix() const
 	{
 		return glm::perspective(glm::radians(m_Fov), m_AspectRatio, m_NearPlane, m_FarPlane);
+	}
+
+	Ref<TransformComponent> Camera::GetTransform() const
+	{
+		return m_Transform;
 	}
 
 	// ========== Setters ==========
@@ -89,14 +82,14 @@ namespace Dwarf
 	}
 
 	// ========== Camera Functions ==========
-	void Camera::OnUpdate(double deltaTime)
+	void Camera::OnUpdate(double deltaTime) const
 	{
 		glm::ivec2 deltaMousePos = InputManager::GetDeltaMousePos();
 
 		if (deltaMousePos.length() > 0)
 		{
-			float yAngle = deltaMousePos.x * m_sensitivity;
-			float xAngle = deltaMousePos.y * m_sensitivity;
+			float yAngle = (float)deltaMousePos.x * m_sensitivity;
+			float xAngle = (float)deltaMousePos.y * m_sensitivity;
 
 			// TODO: Clamp rotation between -90 and 90 degrees
 			// renderTexture->GetCamera()->transform.rotation.rotate(renderTexture->GetCamera()->transform.rotation.getQuaternion() * glm::vec3(0,1,0), yAngle);

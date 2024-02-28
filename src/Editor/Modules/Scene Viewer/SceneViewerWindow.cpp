@@ -324,9 +324,9 @@ namespace Dwarf
 
     void SceneViewerWindow::Deserialize(nlohmann::json moduleData)
     {
-        m_Camera->m_Transform->position = {moduleData["camera"]["position"]["x"], moduleData["camera"]["position"]["y"], moduleData["camera"]["position"]["z"]};
+        m_Camera->GetTransform()->position = {moduleData["camera"]["position"]["x"], moduleData["camera"]["position"]["y"], moduleData["camera"]["position"]["z"]};
 
-        m_Camera->m_Transform->rotation = {moduleData["camera"]["rotation"]["x"], moduleData["camera"]["rotation"]["y"], moduleData["camera"]["rotation"]["z"]};
+        m_Camera->GetTransform()->rotation = {moduleData["camera"]["rotation"]["x"], moduleData["camera"]["rotation"]["y"], moduleData["camera"]["rotation"]["z"]};
 
         m_Camera->SetFov(moduleData["camera"]["fov"]);
 
@@ -347,13 +347,13 @@ namespace Dwarf
     {
         nlohmann::json state;
 
-        state["camera"]["position"]["x"] = m_Camera->m_Transform->position.x;
-        state["camera"]["position"]["y"] = m_Camera->m_Transform->position.y;
-        state["camera"]["position"]["z"] = m_Camera->m_Transform->position.z;
+        state["camera"]["position"]["x"] = m_Camera->GetTransform()->position.x;
+        state["camera"]["position"]["y"] = m_Camera->GetTransform()->position.y;
+        state["camera"]["position"]["z"] = m_Camera->GetTransform()->position.z;
 
-        state["camera"]["rotation"]["x"] = m_Camera->m_Transform->rotation.x;
-        state["camera"]["rotation"]["y"] = m_Camera->m_Transform->rotation.y;
-        state["camera"]["rotation"]["z"] = m_Camera->m_Transform->rotation.z;
+        state["camera"]["rotation"]["x"] = m_Camera->GetTransform()->rotation.x;
+        state["camera"]["rotation"]["y"] = m_Camera->GetTransform()->rotation.y;
+        state["camera"]["rotation"]["z"] = m_Camera->GetTransform()->rotation.z;
 
         state["camera"]["fov"] = m_Camera->GetFov();
         state["camera"]["near"] = m_Camera->GetRenderPlaneParameters().x;

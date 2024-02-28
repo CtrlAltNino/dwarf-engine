@@ -13,9 +13,7 @@ namespace Dwarf
 		s_Instance = this;
 	}
 
-	DwarfEngine::~DwarfEngine()
-	{
-	}
+	DwarfEngine::~DwarfEngine() = default;
 
 	void DwarfEngine::Run()
 	{
@@ -24,7 +22,7 @@ namespace Dwarf
 		{
 			auto launcher = Dwarf::CreateLauncher();
 			std::filesystem::path projectPath = launcher->Run();
-			delete (launcher);
+			delete launcher;
 
 			if (!projectPath.empty())
 			{
@@ -33,7 +31,7 @@ namespace Dwarf
 				auto editor = Dwarf::CreateEditor();
 				shouldClose = !editor->Run(projectPath);
 
-				delete (editor);
+				delete editor;
 			}
 			else
 			{

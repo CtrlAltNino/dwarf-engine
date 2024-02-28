@@ -8,72 +8,78 @@
 
 namespace Dwarf
 {
-    class OpenGLShader : public Shader
+    struct ShaderLogs
     {
-    private:
-        GLuint m_ID = -1;
+        std::string m_VertexShaderLog;
+        std::string m_TessellationControlShaderLog;
+        std::string m_TessellationEvaluationShaderLog;
+        std::string m_GeometryShaderLog;
+        std::string m_FragmentShaderLog;
+    };
 
-    public:
-        Ref<UID> m_VertexShaderAsset;
-        Ref<UID> m_TessellationControlShaderAsset;
-        Ref<UID> m_TessellationEvaluationShaderAsset;
-        Ref<UID> m_GeometryShaderAsset;
-        Ref<UID> m_FragmentShaderAsset;
-
+    struct ShaderSources
+    {
         std::string m_VertexShaderSource;
         std::string m_TessellationControlShaderSource;
         std::string m_TessellationEvaluationShaderSource;
         std::string m_GeometryShaderSource;
         std::string m_FragmentShaderSource;
+    };
 
-        GLsizei vert_log_length = 0;
-        GLchar vert_message[1024] = "";
+    struct ShaderAssets
+    {
+        Ref<UID> m_VertexShaderAsset;
+        Ref<UID> m_TessellationControlShaderAsset;
+        Ref<UID> m_TessellationEvaluationShaderAsset;
+        Ref<UID> m_GeometryShaderAsset;
+        Ref<UID> m_FragmentShaderAsset;
+    };
 
-        GLsizei tesc_log_length = 0;
-        GLchar tesc_message[1024] = "";
+    class OpenGLShader : public Shader
+    {
+    private:
+        GLuint m_ID = -1;
+        ShaderSources m_ShaderSources;
+        ShaderAssets m_ShaderAssets;
+        ShaderLogs m_ShaderLogs;
 
-        GLsizei tese_log_length = 0;
-        GLchar tese_message[1024] = "";
-
-        GLsizei geom_log_length = 0;
-        GLchar geom_message[1024] = "";
-
-        GLsizei frag_log_length = 0;
-        GLchar frag_message[1024] = "";
-
+    public:
         OpenGLShader();
-        ~OpenGLShader();
+        ~OpenGLShader() override;
 
         void SetVertexShader(Ref<UID> vertexShader);
-        void SetVertexShader(std::string vertexShader);
+        void SetVertexShader(std::string const &vertexShader);
 
         void SetTesselaltionControlShader(Ref<UID> tessellationControlShader);
-        void SetTesselaltionControlShader(std::string tessellationControlShader);
+        void SetTesselaltionControlShader(std::string const &tessellationControlShader);
 
         void SetTesselaltionEvaluationShader(Ref<UID> tessellationEvaluationShader);
-        void SetTesselaltionEvaluationShader(std::string tessellationEvaluationShader);
+        void SetTesselaltionEvaluationShader(std::string const &tessellationEvaluationShader);
 
         void SetGeometryShader(Ref<UID> geometryShader);
-        void SetGeometryShader(std::string geometryShader);
+        void SetGeometryShader(std::string const &geometryShader);
 
         void SetFragmentShader(Ref<UID> fragmentShader);
-        void SetFragmentShader(std::string fragmentShader);
+        void SetFragmentShader(std::string const &fragmentShader);
 
-        Ref<UID> GetVertexShader();
-        Ref<UID> GetFragmentShader();
-        Ref<UID> GetTesselaltionControlShader();
-        Ref<UID> GetTesselaltionEvaluationShader();
-        Ref<UID> GetGeometryShader();
+        Ref<UID> GetVertexShader() const;
+        Ref<UID> GetFragmentShader() const;
+        Ref<UID> GetTesselaltionControlShader() const;
+        Ref<UID> GetTesselaltionEvaluationShader() const;
+        Ref<UID> GetGeometryShader() const;
 
-        GLuint GetID();
+        GLuint GetID() const;
 
-        virtual void Compile() override;
+        void Compile() override;
 
-        virtual std::map<std::string, Ref<IShaderParameter>> GetParameters() override;
+        std::map<std::string, Ref<IShaderParameter>> GetParameters() override;
 
         static Ref<OpenGLShader> CreateDefaultShader();
         static Ref<OpenGLShader> CreateErrorShader();
         static Ref<OpenGLShader> CreateGridShader();
         static Ref<OpenGLShader> CreatePreviewShader();
+
+        const ShaderLogs &GetShaderLogs() const;
+        const ShaderAssets &GetShaderAssets() const;
     };
 }

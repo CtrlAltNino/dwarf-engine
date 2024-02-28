@@ -13,11 +13,11 @@ namespace Dwarf
         /// @brief Deserializes a material file at a given path and creates a Material instance with meta data.
         /// @param path Path to the material.
         /// @return Imported material instance.
-        static Ref<Material> Deserialize(std::filesystem::path path);
+        static Ref<Material> Deserialize(std::filesystem::path const &path);
 
         /// @brief Exports a material.
         /// @param material Material instance to export.
         /// @param path Path where the material should be saved to.
-        static void Serialize(Material material, std::filesystem::path path);
+        static void Serialize(Material const &material, std::filesystem::path const &path);
     };
 }

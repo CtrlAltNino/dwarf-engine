@@ -45,7 +45,7 @@ namespace Dwarf
 		m_Shader = shader;
 	}
 
-	Ref<Shader> Material::GetShader()
+	Ref<Shader> const &Material::GetShader() const
 	{
 		return m_Shader;
 	}
@@ -55,7 +55,7 @@ namespace Dwarf
 		m_Transparent = transparent;
 	}
 
-	bool Material::IsTransparent()
+	bool Material::IsTransparent() const
 	{
 		return m_Transparent;
 	}

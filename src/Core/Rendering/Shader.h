@@ -12,18 +12,23 @@ namespace Dwarf
 {
 	class Shader
 	{
-	protected:
+	private:
 		bool m_SuccessfullyCompiled;
 
 	public:
 		Shader();
-		~Shader();
+		virtual ~Shader();
 
 		virtual void Compile() = 0;
 
-		virtual bool IsCompiled()
+		bool IsCompiled()
 		{
 			return m_SuccessfullyCompiled;
+		}
+
+		void SetIsCompiled(bool isCompiled)
+		{
+			m_SuccessfullyCompiled = isCompiled;
 		}
 
 		virtual std::map<std::string, Ref<IShaderParameter>> GetParameters() = 0;

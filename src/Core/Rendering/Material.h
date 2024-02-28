@@ -39,7 +39,7 @@ namespace Dwarf
 
 		std::string GetName();
 
-		Ref<Shader> GetShader();
+		Ref<Shader> const &GetShader() const;
 
 		void SetShader(Ref<Shader> shader);
 
@@ -50,7 +50,7 @@ namespace Dwarf
 
 		void SetTransparency(bool transparent);
 
-		bool IsTransparent();
+		bool IsTransparent() const;
 
 		void GenerateShaderParameters();
 	};

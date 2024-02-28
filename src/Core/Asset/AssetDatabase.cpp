@@ -6,7 +6,6 @@
 
 #include "Utilities/FileHandler.h"
 #include "Core/Asset/AssetComponents.h"
-#include "Core/Asset/AssetDirectoryListener.h"
 #include "Core/Asset/AssetMetaData.h"
 #include "Core/Rendering/Renderer.h"
 #include "Core/Asset/MaterialSerializer.h"
@@ -14,13 +13,14 @@
 namespace Dwarf
 {
     std::filesystem::path AssetDatabase::s_AssetFolderPath = "";
-    efsw::FileWatcher *AssetDatabase::s_FileWatcher;
+    Ref<efsw::FileWatcher> AssetDatabase::s_FileWatcher;
+    Ref<AssetDirectoryListener> AssetDatabase::s_AssetDirectoryListener = nullptr;
     efsw::WatchID AssetDatabase::s_WatchID;
     Ref<entt::registry> AssetDatabase::s_Registry;
-    std::map<std::filesystem::path, Shader *> AssetDatabase::s_ShaderAssetMap;
-    std::vector<Shader *> AssetDatabase::s_ShaderRecompilationStack;
+    std::map<std::filesystem::path, Ref<Shader>> AssetDatabase::s_ShaderAssetMap;
+    std::vector<Ref<Shader>> AssetDatabase::s_ShaderRecompilationStack;
 
-    void AssetDatabase::RecursiveImport(std::filesystem::path directory)
+    void AssetDatabase::RecursiveImport(std::filesystem::path const &directory)
     {
         for (auto &directoryEntry : std::filesystem::directory_iterator(directory))
         {
@@ -55,19 +55,19 @@ namespace Dwarf
             }
         }
     }
-    void AssetDatabase::Remove(std::filesystem::path path)
+    void AssetDatabase::Remove(std::filesystem::path const &path)
     {
         auto view = s_Registry->view<PathComponent>();
         for (auto entity : view)
         {
-            if (view.get<PathComponent>(entity).Path == path)
+            if (view.get<PathComponent>(entity).Path == path && s_Registry->valid(entity))
             {
                 s_Registry->destroy(entity);
             }
         }
     }
 
-    void AssetDatabase::Init(std::filesystem::path projectPath)
+    void AssetDatabase::Init(std::filesystem::path const &projectPath)
     {
         s_AssetFolderPath = projectPath / "Assets";
 
@@ -79,16 +79,16 @@ namespace Dwarf
 
         // Create the file system watcher instance
         // efsw::FileWatcher allow a first boolean parameter that indicates if it should start with the generic file watcher instead of the platform specific backend
-        s_FileWatcher = new efsw::FileWatcher();
+        s_FileWatcher = CreateRef<efsw::FileWatcher>();
 
         // Create the instance of your efsw::FileWatcherListener implementation
-        AssetDirectoryListener *listener = new AssetDirectoryListener();
+        s_AssetDirectoryListener = CreateRef<AssetDirectoryListener>();
 
         // Add a folder to watch, and get the efsw::WatchID
         // It will watch the /tmp folder recursively ( the third parameter indicates that is recursive )
         // Reporting the files and directories changes to the instance of the listener
-        s_WatchID = s_FileWatcher->addWatch(s_AssetFolderPath.string(), listener, true);
-        s_WatchID = s_FileWatcher->addWatch(Shader::GetDefaultShaderPath().string(), listener, true);
+        s_WatchID = s_FileWatcher->addWatch(s_AssetFolderPath.string(), s_AssetDirectoryListener.get(), true);
+        s_WatchID = s_FileWatcher->addWatch(Shader::GetDefaultShaderPath().string(), s_AssetDirectoryListener.get(), true);
 
         // Start watching asynchronously the directories
         s_FileWatcher->watch();
@@ -113,7 +113,7 @@ namespace Dwarf
         s_FileWatcher->removeWatch(s_WatchID);
     }
 
-    Ref<UID> AssetDatabase::Import(std::filesystem::path assetPath)
+    Ref<UID> AssetDatabase::Import(std::filesystem::path const &assetPath)
     {
         std::string fileExtension = assetPath.extension().string();
         std::string fileName = assetPath.filename().string();
@@ -194,7 +194,7 @@ namespace Dwarf
         return false;
     }
 
-    bool AssetDatabase::Exists(std::filesystem::path path)
+    bool AssetDatabase::Exists(std::filesystem::path const &path)
     {
         // Retrieve entt::entity with UID component
         auto view = s_Registry->view<PathComponent>();
@@ -208,7 +208,7 @@ namespace Dwarf
         return false;
     }
 
-    void AssetDatabase::Rename(std::filesystem::path from, std::filesystem::path to)
+    void AssetDatabase::Rename(std::filesystem::path const &from, std::filesystem::path const &to)
     {
         AssetMetaData::Rename(from, to);
         auto view = s_Registry->view<PathComponent, NameComponent>();
@@ -231,7 +231,7 @@ namespace Dwarf
         }
     }
 
-    void AssetDatabase::RenameDirectory(std::filesystem::path from, std::filesystem::path to)
+    void AssetDatabase::RenameDirectory(std::filesystem::path const &from, std::filesystem::path const &to)
     {
         auto view = s_Registry->view<PathComponent>();
         for (auto entity : view)
@@ -251,9 +251,9 @@ namespace Dwarf
         CreateNewMaterialAsset(s_AssetFolderPath);
     }
 
-    void AssetDatabase::CreateNewMaterialAsset(std::filesystem::path path)
+    void AssetDatabase::CreateNewMaterialAsset(std::filesystem::path const &path)
     {
-        Material newMat = Material("New Material");
+        auto newMat = Material("New Material");
         newMat.GenerateShaderParameters();
         std::filesystem::path newMatPath = path / "New Material.dmat";
 
@@ -301,7 +301,7 @@ namespace Dwarf
 
     void AssetDatabase::RecompileShaders()
     {
-        for (Shader *shader : s_ShaderRecompilationStack)
+        for (Ref<Shader> shader : s_ShaderRecompilationStack)
         {
             shader->Compile();
         }
