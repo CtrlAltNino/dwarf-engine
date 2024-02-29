@@ -126,7 +126,7 @@ namespace Dwarf
 
     void PreviewRenderer::UpdateRotation(glm::vec2 deltaMousePos)
     {
-        s_ModelRotationTarget = {std::max(-90.0f, std::min(90.0f, s_ModelRotationTarget.x + deltaMousePos.y)), std::fmodf(s_ModelRotationTarget.y + deltaMousePos.x, 360.0f), 0};
+        s_ModelRotationTarget = {std::max(-90.0f, std::min(90.0f, s_ModelRotationTarget.x + deltaMousePos.y)), fmodf(s_ModelRotationTarget.y + deltaMousePos.x, 360.0f), 0};
         s_ModelRotation = InterpolateVectors(s_ModelRotation, s_ModelRotationTarget, s_RotationSpeed);
         s_ModelRotationQuat = glm::rotate(glm::rotate(glm::quat({0, 0, 0}), s_ModelRotation.x * DEG_2_RAD, {1, 0, 0}), s_ModelRotation.y * DEG_2_RAD, {0, 1, 0});
     }
