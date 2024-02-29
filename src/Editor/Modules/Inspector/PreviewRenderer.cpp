@@ -8,7 +8,8 @@ namespace Dwarf
     Ref<EditorModel> PreviewRenderer::s_Model = nullptr;
     Ref<Framebuffer> PreviewRenderer::s_Framebuffer = nullptr;
     Ref<Camera> PreviewRenderer::s_Camera = nullptr;
-    glm::quat PreviewRenderer::s_ModelRotation = glm::quat({45, 45, 0});
+    glm::vec3 PreviewRenderer::s_ModelRotation = {0, 0, 0};
+    glm::quat PreviewRenderer::s_ModelRotationQuat = glm::quat({0, 0, 0});
     float PreviewRenderer::s_Distance = 1.0f;
     float PreviewRenderer::s_MaxDistance = 0.0f;
 
@@ -59,7 +60,8 @@ namespace Dwarf
         {
             FocusModel(modelAsset);
             memory = modelAsset->GetHandle();
-            s_ModelRotation = glm::quat({30 * DEG_2_RAD, 0, 0});
+            s_ModelRotation = {30, 0, 0};
+            UpdateRotation({0, 0});
             s_Distance = 1.0f;
         }
 
@@ -67,18 +69,19 @@ namespace Dwarf
         s_Camera->GetTransform()->position = {0, 0, 1.3 * s_MaxDistance * s_Distance};
 
         s_Framebuffer->Bind();
-        Renderer::Get()->RenderModelPreview(modelAsset, s_Camera, {s_Framebuffer->GetSpecification().Width, s_Framebuffer->GetSpecification().Height}, s_ModelRotation);
+        Renderer::Get()->RenderModelPreview(modelAsset, s_Camera, {s_Framebuffer->GetSpecification().Width, s_Framebuffer->GetSpecification().Height}, s_ModelRotationQuat);
         s_Framebuffer->Unbind();
     }
 
     void PreviewRenderer::RenderMaterialPreview(Ref<AssetReference<MaterialAsset>> materialAsset)
     {
+        // TODO: Reset sphere rotation when rendering a different material
         s_Camera->GetTransform()->position = {0, 0, 3};
         s_Camera->GetTransform()->rotation = {0, 0, 0};
         s_Camera->SetRenderPlaneParameters({0.1f, 4});
 
         s_Framebuffer->Bind();
-        Renderer::Get()->RenderMaterialPreview(materialAsset, s_Camera, {s_Framebuffer->GetSpecification().Width, s_Framebuffer->GetSpecification().Height}, s_ModelRotation);
+        Renderer::Get()->RenderMaterialPreview(materialAsset, s_Camera, {s_Framebuffer->GetSpecification().Width, s_Framebuffer->GetSpecification().Height}, s_ModelRotationQuat);
         s_Framebuffer->Unbind();
     }
 
@@ -89,6 +92,8 @@ namespace Dwarf
 
     void PreviewRenderer::UpdateRotation(glm::vec2 deltaMousePos)
     {
-        s_ModelRotation = glm::quat({deltaMousePos.y * s_Model->GetDeltaTime(), deltaMousePos.x * s_Model->GetDeltaTime(), 0}) * s_ModelRotation;
+        // s_ModelRotation = glm::quat({deltaMousePos.y * s_Model->GetDeltaTime(), deltaMousePos.x * s_Model->GetDeltaTime(), 0}) * s_ModelRotation;
+        s_ModelRotation = {std::max(-90.0f, std::min(90.0f, s_ModelRotation.x + deltaMousePos.y)), std::fmodf(s_ModelRotation.y + deltaMousePos.x, 360.0f), 0};
+        s_ModelRotationQuat = glm::rotate(glm::rotate(glm::quat({0, 0, 0}), s_ModelRotation.x * DEG_2_RAD, {1, 0, 0}), s_ModelRotation.y * DEG_2_RAD, {0, 1, 0});
     }
 }

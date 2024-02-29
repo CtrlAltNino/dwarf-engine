@@ -18,7 +18,8 @@ namespace Dwarf
 
         static Ref<Camera> s_Camera;
 
-        static glm::quat s_ModelRotation;
+        static glm::vec3 s_ModelRotation;
+        static glm::quat s_ModelRotationQuat;
         static float s_MaxDistance;
         static float s_Distance;
         static float s_DeltaTime;
