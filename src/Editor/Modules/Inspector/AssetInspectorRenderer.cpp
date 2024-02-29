@@ -520,7 +520,7 @@ namespace Dwarf
         ImGui::GetWindowDrawList()->AddRectFilled(ImGui::GetItemRectMin(),
                                                   ImVec2(ImGui::GetItemRectMin().x + ImGui::GetContentRegionAvail().x, endY + 2 * COMPONENT_PANEL_PADDING),
                                                   IM_COL32(59, 66, 82, 255), 5.0f);
-        ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3 * COMPONENT_PANEL_PADDING);
+        // ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3 * COMPONENT_PANEL_PADDING);
         draw_list->ChannelsMerge();
     }
 
@@ -627,11 +627,15 @@ namespace Dwarf
                        ImGui::GetCursorScreenPos().y + ImGui::GetContentRegionAvail().x);
 
         static bool isRotating = false;
-        if (InputManager::GetMouseDown(Dwarf::MOUSE_BUTTON::LEFT) &&
-            ImGui::IsMouseHoveringRect({ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y},
+        if (ImGui::IsMouseHoveringRect({ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y},
                                        {ImGui::GetCursorScreenPos().x + ImGui::GetContentRegionAvail().x, ImGui::GetCursorScreenPos().y + ImGui::GetContentRegionAvail().x}))
         {
-            isRotating = true;
+            if (InputManager::GetMouseDown(Dwarf::MOUSE_BUTTON::LEFT))
+            {
+                isRotating = true;
+            }
+
+            PreviewRenderer::SetScrollDistance(std::max(0.0f, std::min(1.0f, PreviewRenderer::GetScrollDistance() + InputManager::GetDeltaScroll().y * (float)s_Model->GetDeltaTime() * 1.7f)));
         }
 
         if (isRotating && InputManager::GetMouseUp(Dwarf::MOUSE_BUTTON::LEFT))
@@ -657,7 +661,7 @@ namespace Dwarf
         ImGui::GetWindowDrawList()->AddRectFilled(ImGui::GetItemRectMin(),
                                                   ImVec2(ImGui::GetItemRectMin().x + ImGui::GetContentRegionAvail().x, endY + 2 * COMPONENT_PANEL_PADDING),
                                                   IM_COL32(59, 66, 82, 255), 5.0f);
-        ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3 * COMPONENT_PANEL_PADDING);
+        // ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3 * COMPONENT_PANEL_PADDING);
         draw_list->ChannelsMerge();
     }
 
