@@ -41,7 +41,6 @@ namespace Dwarf
 			return CreateRef<OpenGLFramebuffer>(spec);
 			break;
 		case GraphicsApi::Vulkan:
-			// return CreateRef<VulkanFramebuffer>(spec);
 			break;
 #elif __APPLE__
 		case GraphicsApi::D3D12:

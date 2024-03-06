@@ -633,13 +633,10 @@ namespace Dwarf
 				ImGui::Text("Graphics API");
 				ImGui::PopFont();
 
-				// ImGui::Separator();
 				ImGui::SameLine();
 				ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - 150);
 
 				// Setting up combo
-				const char *combo_preview_value = graphicsApiNames[currentApiIndex];
-
 				ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
 				ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 4);
 				ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 4);
@@ -659,7 +656,7 @@ namespace Dwarf
 				// Coloring the combo popup background
 				ImGui::PushStyleColor(ImGuiCol_PopupBg, IM_COL32(46, 52, 64, 255));
 
-				if (ImGui::BeginCombo("##graphicsApi", combo_preview_value))
+				if (ImGui::BeginCombo("##graphicsApi", graphicsApiNames[currentApiIndex].c_str()))
 				{
 					ImDrawList *draw_list = ImGui::GetWindowDrawList();
 
@@ -687,7 +684,7 @@ namespace Dwarf
 							}
 
 							// ==================== Graphics Selectable ====================
-							if (ImGui::Selectable(graphicsApiNames[n], is_selected, 0, ImVec2(0, 16 + 10)))
+							if (ImGui::Selectable(graphicsApiNames[n].c_str(), is_selected, 0, ImVec2(0, 16 + 10)))
 							{
 								currentApiIndex = n;
 							}
@@ -1164,8 +1161,6 @@ namespace Dwarf
 				ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - 150);
 
 				// Setting up combo
-				const char *combo_preview_value = graphicsApiNames[currentApiIndex];
-
 				ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
 				ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 4);
 				ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 4);
@@ -1185,7 +1180,7 @@ namespace Dwarf
 				// Coloring the combo popup background
 				ImGui::PushStyleColor(ImGuiCol_PopupBg, IM_COL32(46, 52, 64, 255));
 
-				if (ImGui::BeginCombo("##graphicsApi", combo_preview_value))
+				if (ImGui::BeginCombo("##graphicsApi", graphicsApiNames[currentApiIndex].c_str()))
 				{
 					ImDrawList *draw_list = ImGui::GetWindowDrawList();
 
@@ -1213,7 +1208,7 @@ namespace Dwarf
 							}
 
 							// ==================== Rendering Selectable ====================
-							if (ImGui::Selectable(graphicsApiNames[n], is_selected, 0, ImVec2(0, 16 + 10)))
+							if (ImGui::Selectable(graphicsApiNames[n].c_str(), is_selected, 0, ImVec2(0, 16 + 10)))
 							{
 								currentApiIndex = n;
 							}

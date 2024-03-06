@@ -8,7 +8,7 @@ namespace Dwarf
     {
     public:
         UID();
-        UID(uint64_t uuid);
+        explicit UID(uint64_t uuid);
         UID(const UID &) = default;
 
         operator uint64_t() const { return m_Uuid; }

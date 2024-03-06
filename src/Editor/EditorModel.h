@@ -2,12 +2,14 @@
 
 #include "Core/Base.h"
 
+#include <string_view>
+
 #include "Core/Scene/Scene.h"
 
 namespace Dwarf
 {
 
-    enum INSPECTOR_SELECTION_TYPE
+    enum class INSPECTOR_SELECTION_TYPE
     {
         NONE,
         ASSET,
@@ -27,34 +29,35 @@ namespace Dwarf
     private:
         /// @brief The currently opened scene instance.
         Ref<Scene> m_Scene;
-
         double m_DeltaTime;
-
-        std::filesystem::path m_ProjectPath;
-
         std::string m_ProjectName;
+        std::filesystem::path m_ProjectPath;
+        bool m_ReturnToLauncher = false;
+        bool m_CloseSignal = false;
+        SelectionContainer m_Selection;
 
     public:
-        bool m_ReturnToLauncher = false;
-
-        bool m_CloseSignal = false;
-        EditorModel(std::string name, std::filesystem::path projectPath);
+        EditorModel(std::string_view name, std::filesystem::path const &projectPath);
 
         /// @brief Returns the currently opened scene.
         /// @return A pointer to the scene.
-        Ref<Scene> GetScene();
+        Ref<Scene> GetScene() const;
 
         void SetScene(Ref<Scene> scene);
 
-        std::string GetName();
+        std::string GetName() const;
 
-        std::filesystem::path GetProjectPath();
+        std::filesystem::path GetProjectPath() const;
 
         void SetDeltaTime(double deltaTime);
 
-        double GetDeltaTime();
+        double GetDeltaTime() const;
 
-        SelectionContainer m_Selection;
+        bool GetCloseSignal() const;
+
+        bool GetReturnToLauncher() const;
+
+        SelectionContainer &GetSelection();
 
         void CloseEditor(bool returnToLauncher);
     };

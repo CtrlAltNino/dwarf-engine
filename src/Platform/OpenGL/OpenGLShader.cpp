@@ -14,13 +14,13 @@ namespace Dwarf
 
 	const std::map<GLenum, ShaderParameterType> glTypeToDwarfShaderType =
 		{
-			{GL_BOOL, BOOLEAN},
-			{GL_INT, INTEGER},
-			{GL_FLOAT, FLOAT},
-			{GL_FLOAT_VEC2, VEC2},
-			{GL_FLOAT_VEC3, VEC3},
-			{GL_FLOAT_VEC4, VEC4},
-			{GL_SAMPLER_2D, TEX2D}};
+			{GL_BOOL, ShaderParameterType::BOOLEAN},
+			{GL_INT, ShaderParameterType::INTEGER},
+			{GL_FLOAT, ShaderParameterType::FLOAT},
+			{GL_FLOAT_VEC2, ShaderParameterType::VEC2},
+			{GL_FLOAT_VEC3, ShaderParameterType::VEC3},
+			{GL_FLOAT_VEC4, ShaderParameterType::VEC4},
+			{GL_SAMPLER_2D, ShaderParameterType::TEX2D}};
 
 	void OpenGLShader::Compile()
 	{
@@ -179,7 +179,7 @@ namespace Dwarf
 		m_ShaderSources.m_VertexShaderSource = "";
 	}
 
-	void OpenGLShader::SetVertexShader(std::string const &vertexShader)
+	void OpenGLShader::SetVertexShader(std::string_view vertexShader)
 	{
 		m_ShaderAssets.m_VertexShaderAsset = nullptr;
 		m_ShaderSources.m_VertexShaderSource = vertexShader;
@@ -191,7 +191,7 @@ namespace Dwarf
 		m_ShaderSources.m_FragmentShaderSource = "";
 	}
 
-	void OpenGLShader::SetFragmentShader(std::string const &fragmentShader)
+	void OpenGLShader::SetFragmentShader(std::string_view fragmentShader)
 	{
 		m_ShaderAssets.m_FragmentShaderAsset = nullptr;
 		m_ShaderSources.m_FragmentShaderSource = fragmentShader;
@@ -203,7 +203,7 @@ namespace Dwarf
 		m_ShaderSources.m_TessellationControlShaderSource = nullptr;
 	}
 
-	void OpenGLShader::SetTesselaltionControlShader(std::string const &tessellationControlShader)
+	void OpenGLShader::SetTesselaltionControlShader(std::string_view tessellationControlShader)
 	{
 		m_ShaderAssets.m_TessellationControlShaderAsset = nullptr;
 		m_ShaderSources.m_TessellationControlShaderSource = tessellationControlShader;
@@ -215,7 +215,7 @@ namespace Dwarf
 		m_ShaderSources.m_TessellationEvaluationShaderSource = nullptr;
 	}
 
-	void OpenGLShader::SetTesselaltionEvaluationShader(std::string const &tessellationEvaluationShader)
+	void OpenGLShader::SetTesselaltionEvaluationShader(std::string_view tessellationEvaluationShader)
 	{
 		m_ShaderAssets.m_TessellationEvaluationShaderAsset = nullptr;
 		m_ShaderSources.m_TessellationEvaluationShaderSource = tessellationEvaluationShader;
@@ -227,7 +227,7 @@ namespace Dwarf
 		m_ShaderSources.m_GeometryShaderSource = nullptr;
 	}
 
-	void OpenGLShader::SetGeometryShader(std::string const &geometryShader)
+	void OpenGLShader::SetGeometryShader(std::string_view geometryShader)
 	{
 		m_ShaderAssets.m_GeometryShaderAsset = nullptr;
 		m_ShaderSources.m_GeometryShaderSource = geometryShader;
@@ -289,9 +289,9 @@ namespace Dwarf
 		return previewShader;
 	}
 
-	std::map<std::string, Ref<IShaderParameter>> OpenGLShader::GetParameters()
+	std::map<std::string, Ref<IShaderParameter>, std::less<>> OpenGLShader::GetParameters()
 	{
-		auto parameters = std::map<std::string, Ref<IShaderParameter>>();
+		auto parameters = std::map<std::string, Ref<IShaderParameter>, std::less<>>();
 		GLint i;
 		GLint count;
 

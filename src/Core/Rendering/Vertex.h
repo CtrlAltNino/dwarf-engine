@@ -4,7 +4,6 @@
 
 namespace Dwarf
 {
-
 	/// @brief Structure that stores information of a vertex.
 	struct Vertex
 	{

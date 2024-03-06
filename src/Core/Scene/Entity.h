@@ -104,7 +104,6 @@ namespace Dwarf
         /// @param entity Entity handle of the entity to remove.
         void RemoveChild(entt::entity entity)
         {
-            // TransformComponent transform = GetComponent<TransformComponent>();
             auto it = std::ranges::find(GetComponent<TransformComponent>().children.begin(), GetComponent<TransformComponent>().children.end(), entity);
             if (it != GetComponent<TransformComponent>().children.end())
             {

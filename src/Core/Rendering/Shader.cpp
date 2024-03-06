@@ -37,7 +37,6 @@ namespace Dwarf
 			using enum GraphicsApi;
 #ifdef _WIN32
 		case D3D12:
-			// return CreateRef<D3D12Shader>(D3D12Shader());
 			break;
 		case Metal:
 			break;
@@ -45,7 +44,6 @@ namespace Dwarf
 			return CreateRef<OpenGLShader>(OpenGLShader());
 			break;
 		case Vulkan:
-			// return CreateRef<VulkanShader>(VulkanShader());
 			break;
 #elif __linux__
 		case D3D12:
@@ -56,7 +54,6 @@ namespace Dwarf
 			return CreateRef<OpenGLShader>(OpenGLShader());
 			break;
 		case Vulkan:
-			// return CreateRef<VulkanShader>(VulkanShader());
 			break;
 #elif __APPLE__
 		case D3D12:
@@ -202,9 +199,6 @@ namespace Dwarf
 			s_PreviewShader = OpenGLShader::CreatePreviewShader();
 			break;
 		case GraphicsApi::Vulkan:
-			// s_DefaultShader = VulkanShader::CreateDefaultShader();
-			// s_ErrorShader = VulkanShader::CreateErrorShader();
-			// s_GridShader = VulkanShader::CreateGridShader();
 			break;
 #elif __APPLE__
 		case GraphicsApi::D3D12:
@@ -230,6 +224,7 @@ namespace Dwarf
 	{
 		switch (type)
 		{
+			using enum ShaderParameterType;
 		case BOOLEAN:
 			return CreateRef<BooleanShaderParameter>(BooleanShaderParameter());
 			break;

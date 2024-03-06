@@ -1,5 +1,4 @@
 #include "Editor/Modules/Asset Browser/AssetBrowserWindow.h"
-#include "Core/Asset/AssetDatabase.h"
 #include "Input/InputManager.h"
 #include "Core/Rendering/Renderer.h"
 #include "Core/Scene/SceneUtilities.h"
@@ -10,7 +9,6 @@ namespace Dwarf
 
     AssetBrowserWindow::AssetBrowserWindow(Ref<EditorModel> model, int id)
         : GuiModule(model, "Asset Browser", MODULE_TYPE::PERFORMANCE, id),
-          m_AssetDirectoryPath(AssetDatabase::GetAssetDirectoryPath()),
           m_CurrentDirectory(m_AssetDirectoryPath)
     {
         m_DirectoryHistory.push_back(m_CurrentDirectory);
@@ -19,10 +17,8 @@ namespace Dwarf
 
     void AssetBrowserWindow::SetupDockspace(ImGuiID id)
     {
-        // dockID = ImGui::GetID("AssetBrowserDockspace"); // The string chosen here is arbitrary (it just gives us something to work with)
         ImGui::DockBuilderRemoveNode(id); // Clear any preexisting layouts associated with the ID we just chose
         ImGui::DockBuilderAddNode(id, ImGuiDockNodeFlags_HiddenTabBar);
-        // ImGui::DockBuilderSetNodeSize(dockID, ImVec2(300,300));
 
         footerID = ImGui::DockBuilderSplitNode(id, ImGuiDir_Down, 0.07f, nullptr, &id);
         ImGuiID folderStructureID = ImGui::DockBuilderSplitNode(id, ImGuiDir_Left, 0.3f, nullptr, &id);
@@ -39,11 +35,11 @@ namespace Dwarf
 
     void AssetBrowserWindow::OnUpdate(double deltaTime)
     {
-        if (InputManager::GetMouseDown(MOUSE_BUTTON_4))
+        if (InputManager::GetMouseDown(MOUSE_BUTTON::MOUSE_BUTTON_4))
         {
             GoBack();
         }
-        else if (InputManager::GetMouseDown(MOUSE_BUTTON_5))
+        else if (InputManager::GetMouseDown(MOUSE_BUTTON::MOUSE_BUTTON_5))
         {
             GoForward();
         }
@@ -76,7 +72,7 @@ namespace Dwarf
         m_UnknownFileIcon = Texture::Create(iconPath / "unknownFileIcon.png");
     }
 
-    bool CompareDirectoryEntries(std::filesystem::directory_entry d1, std::filesystem::directory_entry d2)
+    bool CompareDirectoryEntries(std::filesystem::directory_entry const &d1, std::filesystem::directory_entry const &d2)
     {
         return d1.path().stem() < d2.path().stem();
     }
@@ -112,7 +108,7 @@ namespace Dwarf
         ImGui::End();
     }
 
-    void AssetBrowserWindow::RenderDirectoryLevel(std::filesystem::path directory)
+    void AssetBrowserWindow::RenderDirectoryLevel(std::filesystem::path const &directory)
     {
         for (auto &directoryEntry : std::filesystem::directory_iterator(directory))
         {
@@ -161,11 +157,8 @@ namespace Dwarf
         window_flags |= ImGuiWindowFlags_NoTitleBar;
         window_flags |= ImGuiWindowFlags_NoMove;
         window_flags |= ImGuiWindowFlags_NoResize;
-        // ImGui::SetCursorPos(ImGui::Window)
         ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(500, 500));
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(5.0f, 5.0f));
-        // ImGui::PushStyleVar(ImGuiStyleVar_Window, ImVec2(150,0));
-        // ImGui::SetNextWindowSize(ImVec2(0, 100));
         ImGui::Begin("Footer", nullptr, window_flags);
         if (ImGui::Button("<", ImVec2(20, 20)))
         {
@@ -187,15 +180,6 @@ namespace Dwarf
         ImGuiWindowFlags window_flags = 0;
         window_flags |= ImGuiWindowFlags_NoTitleBar;
         window_flags |= ImGuiWindowFlags_NoMove;
-        // ImGuiWindowFlags window_flags = 0;
-
-        // window_flags |= ImGuiWindowFlags_NoMove;
-        // window_flags |= ImGuiWindowFlags_NoResize;
-        // window_flags |= ImGuiWindowFlags_NoCollapse;
-        // window_flags |= ImGuiWindowFlags_NoTitleBar;
-        // window_flags |= ImGuiWindowFlags_MenuBar;
-
-        // static bool b_open = true;
 
         ImGui::Begin("FolderContent", nullptr, window_flags);
 
@@ -274,15 +258,15 @@ namespace Dwarf
             }
         }
 
-        std::sort(directories.begin(), directories.end(), CompareDirectoryEntries);
-        std::sort(files.begin(), files.end(), CompareDirectoryEntries);
+        std::ranges::sort(directories.begin(), directories.end(), CompareDirectoryEntries);
+        std::ranges::sort(files.begin(), files.end(), CompareDirectoryEntries);
 
         std::vector<std::filesystem::directory_entry> combinedEntries;
         combinedEntries.reserve(directories.size() + files.size());
         combinedEntries.insert(combinedEntries.end(), directories.begin(), directories.end());
         combinedEntries.insert(combinedEntries.end(), files.begin(), files.end());
 
-        for (auto &directoryEntry : combinedEntries)
+        for (auto const &directoryEntry : combinedEntries)
         {
             const auto &path = directoryEntry.path();
             auto relativePath = std::filesystem::relative(path, m_AssetDirectoryPath);
@@ -293,7 +277,7 @@ namespace Dwarf
                 float halfPadding = padding / 2.0f;
                 float cellWidth = 64.0f * m_IconScale;
                 float textWidth = cellWidth - padding;
-                float textHeight = ImGui::CalcTextSize(relativePath.stem().string().c_str(), (const char *)0, false, textWidth).y;
+                float textHeight = ImGui::CalcTextSize(relativePath.stem().string().c_str(), nullptr, false, textWidth).y;
                 float cellHeight = cellWidth + textHeight + halfPadding;
 
                 if (cellHeight > tallestCell)
@@ -307,14 +291,14 @@ namespace Dwarf
                 ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.0f);
                 if (m_SelectedAsset == path)
                 {
-                    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0, 1.0, 1.0, 0.2));
+                    ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(1.0f, 1.0f, 1.0f, 0.2f));
                 }
                 else
                 {
                     ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
                 }
-                ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1.0, 1.0, 1.0, 0.2));
-                ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(1.0, 1.0, 1.0, 0.4));
+                ImGui::PushStyleColor(ImGuiCol_ButtonHovered, ImVec4(1.0f, 1.0f, 1.0f, 0.2f));
+                ImGui::PushStyleColor(ImGuiCol_ButtonActive, ImVec4(1.0f, 1.0f, 1.0f, 0.4f));
                 ImGui::Button("##entry", ImVec2(cellWidth, cellHeight));
                 ImGui::PopStyleColor(3);
                 ImGui::PopStyleVar();
@@ -534,7 +518,7 @@ namespace Dwarf
         }
     }
 
-    void AssetBrowserWindow::OpenPath(std::filesystem::directory_entry directoryEntry)
+    void AssetBrowserWindow::OpenPath(std::filesystem::directory_entry const &directoryEntry)
     {
         if (directoryEntry.is_directory())
         {
@@ -551,7 +535,7 @@ namespace Dwarf
         }
     }
 
-    void AssetBrowserWindow::EnterDirectory(std::filesystem::path path)
+    void AssetBrowserWindow::EnterDirectory(std::filesystem::path const &path)
     {
         m_CurrentDirectory /= path.filename();
         if (m_HistoryPos < (m_DirectoryHistory.size() - 1))
@@ -562,18 +546,18 @@ namespace Dwarf
             }
         }
         m_DirectoryHistory.push_back(m_CurrentDirectory);
-        m_HistoryPos = m_DirectoryHistory.size() - 1;
+        m_HistoryPos = (int)m_DirectoryHistory.size() - 1;
     }
 
-    void AssetBrowserWindow::SelectAsset(std::filesystem::path path)
+    void AssetBrowserWindow::SelectAsset(std::filesystem::path const &path)
     {
         m_SelectedAsset = path;
-        m_Model->m_Selection.assetPath = m_SelectedAsset;
-        m_Model->m_Selection.selectionType = INSPECTOR_SELECTION_TYPE::ASSET;
+        m_Model->GetSelection().assetPath = m_SelectedAsset;
+        m_Model->GetSelection().selectionType = INSPECTOR_SELECTION_TYPE::ASSET;
         // TODO: command to inspector
     }
 
-    void AssetBrowserWindow::HandleShortcuts()
+    void AssetBrowserWindow::HandleShortcuts() const
     {
         // TODO: Implement shortcut handling
     }
@@ -581,8 +565,8 @@ namespace Dwarf
     void AssetBrowserWindow::ClearSelection()
     {
         m_SelectedAsset = "";
-        m_Model->m_Selection.assetPath = "";
-        m_Model->m_Selection.selectionType = INSPECTOR_SELECTION_TYPE::NONE;
+        m_Model->GetSelection().assetPath = "";
+        m_Model->GetSelection().selectionType = INSPECTOR_SELECTION_TYPE::NONE;
     }
 
     void AssetBrowserWindow::Deserialize(nlohmann::json moduleData)
@@ -599,7 +583,7 @@ namespace Dwarf
         return moduleData.dump(4);
     }
 
-    void AssetBrowserWindow::SetRenameBuffer(std::filesystem::path path)
+    void AssetBrowserWindow::SetRenameBuffer(std::filesystem::path const &path)
     {
         if (FileHandler::CheckIfFileExists(path))
         {

@@ -36,14 +36,14 @@ namespace Dwarf
         }
 
     private:
-        static std::vector<Ref<Mesh>> ProcessNode(aiNode *node, const aiScene *scene)
+        static std::vector<Ref<Mesh>> ProcessNode(const aiNode *node, const aiScene *scene)
         {
             std::vector<Ref<Mesh>> meshes;
 
             // process all the node's meshes (if any)
             for (unsigned int i = 0; i < node->mNumMeshes; i++)
             {
-                aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
+                const aiMesh *mesh = scene->mMeshes[node->mMeshes[i]];
                 meshes.push_back(ModelImporter::ProcessMesh(mesh, scene));
             }
             // then do the same for each of its children
@@ -60,7 +60,7 @@ namespace Dwarf
             return meshes;
         }
 
-        static Ref<Mesh> ProcessMesh(aiMesh *mesh, const aiScene *scene)
+        static Ref<Mesh> ProcessMesh(const aiMesh *mesh, const aiScene *scene)
         {
             std::vector<Vertex> vertices;
             std::vector<unsigned int> indices;

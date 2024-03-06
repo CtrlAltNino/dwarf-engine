@@ -2,12 +2,12 @@
 
 #include <imgui_internal.h>
 #include <glm/vec4.hpp>
+#include <SDL2/SDL.h>
 
 #include "Core/Base.h"
 
 namespace Dwarf
 {
-
     struct WindowProps
     {
         std::string Title;
@@ -28,6 +28,8 @@ namespace Dwarf
     public:
         virtual ~Window() = default;
 
+        virtual void Init(const WindowProps &props) = 0;
+
         virtual void NewFrame() = 0;
         virtual void EndFrame() = 0;
 
@@ -37,7 +39,7 @@ namespace Dwarf
         virtual void SetVSync(bool enabled) = 0;
         virtual bool IsVSync() = 0;
 
-        virtual void *GetNativeWindow() const = 0;
+        virtual SDL_Window *GetNativeWindow() const = 0;
 
         virtual GraphicsApi GetApi() = 0;
 
@@ -48,8 +50,8 @@ namespace Dwarf
 
         virtual void MaximizeWindow() = 0;
 
-        virtual void SetWindowTitle(std::string windowTitle) = 0;
+        virtual void SetWindowTitle(std::string_view windowTitle) = 0;
 
-        static Scope<Window> Create(const WindowProps &props = WindowProps());
+        static Ref<Window> Create(const WindowProps &props = WindowProps());
     };
 }

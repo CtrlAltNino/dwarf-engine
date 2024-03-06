@@ -1,6 +1,7 @@
 #pragma once
 
 #include <SDL2/SDL.h>
+#include <format>
 
 namespace Dwarf
 {
@@ -27,13 +28,13 @@ namespace Dwarf
 
         static double GetDifferenceInSeconds(TimeStamp t1, TimeStamp t2)
         {
-            return (double)((t1.counter - t2.counter) / (double)SDL_GetPerformanceFrequency());
+            return (double)(t1.counter - t2.counter) / (double)SDL_GetPerformanceFrequency();
         }
 
         /// @brief Gets the local time.
         /// @param time Pointer to a time stamp.
         /// @param buf Pointer to a date struct.
-        static void GetLocalTime(time_t *time, struct tm *buf)
+        static void GetLocalTime(time_t const *time, struct tm *buf)
         {
 #if _WIN32
             localtime_s(buf, time);
@@ -61,7 +62,7 @@ namespace Dwarf
             }
             else if (timeDifference < SECONDS_IN_HOUR)
             {
-                timePassed = std::to_string((long long)floor(timeDifference / SECONDS_IN_MINUTE)) + " minutes ago";
+                timePassed = std::format("{} minutes ago", (long long)floor(timeDifference / SECONDS_IN_MINUTE));
             }
             else if (timeDifference < SECONDS_IN_HOUR * 2)
             {
@@ -69,7 +70,7 @@ namespace Dwarf
             }
             else if (timeDifference < SECONDS_IN_DAY)
             {
-                timePassed = std::to_string((long long)floor(timeDifference / (SECONDS_IN_HOUR))) + " hours ago";
+                timePassed = std::format("{} hours ago", (long long)floor(timeDifference / SECONDS_IN_HOUR));
             }
             else if (timeDifference < SECONDS_IN_DAY * 2)
             {
@@ -77,7 +78,7 @@ namespace Dwarf
             }
             else if (timeDifference < SECONDS_IN_WEEK)
             {
-                timePassed = std::to_string((long long)floor(timeDifference / (SECONDS_IN_DAY))) + " days ago";
+                timePassed = std::format("{} days ago", (long long)floor(timeDifference / SECONDS_IN_DAY));
             }
             else if (timeDifference < SECONDS_IN_WEEK * 2)
             {
@@ -85,7 +86,7 @@ namespace Dwarf
             }
             else if (timeDifference < SECONDS_IN_MONTH)
             {
-                timePassed = std::to_string((long long)floor(timeDifference / (SECONDS_IN_WEEK))) + " weeks ago";
+                timePassed = std::format("{} weeks ago", (long long)floor(timeDifference / SECONDS_IN_WEEK));
             }
             else if (timeDifference < SECONDS_IN_MONTH * 2)
             {
@@ -93,7 +94,7 @@ namespace Dwarf
             }
             else if (timeDifference < SECONDS_IN_YEAR)
             {
-                timePassed = std::to_string((long long)floor(timeDifference / (SECONDS_IN_MONTH))) + " months ago";
+                timePassed = std::format("{} months ago", (long long)floor(timeDifference / SECONDS_IN_MONTH));
             }
             else if (timeDifference < SECONDS_IN_YEAR * 2)
             {
@@ -101,7 +102,7 @@ namespace Dwarf
             }
             else
             {
-                timePassed = std::to_string((long long)floor(timeDifference / (SECONDS_IN_YEAR))) + " years ago";
+                timePassed = std::format("{} years ago", (long long)floor(timeDifference / SECONDS_IN_YEAR));
             }
 
             return timePassed;

@@ -1,6 +1,7 @@
 #pragma once
 
 #include <memory>
+#include <array>
 
 namespace Dwarf
 {
@@ -31,9 +32,9 @@ namespace Dwarf
 	};
 
 	/// @brief Array containing the API names.
-	static const char *graphicsApiNames[4] = {"Direct3D 12", "Metal", "OpenGL", "Vulkan"};
+	inline constexpr std::array<std::string, 4> graphicsApiNames = {"Direct3D 12", "Metal", "OpenGL", "Vulkan"};
 
-	enum ShaderParameterType
+	enum class ShaderParameterType
 	{
 		BOOLEAN,
 		INTEGER,
@@ -44,26 +45,26 @@ namespace Dwarf
 		VEC4
 	};
 
-	static const char *parameterTypeNames[7] = {"Boolean", "Integer", "Float", "2D Texture", "Vector2", "Vector3", "Vector4"};
+	inline const std::array<std::string, 7> parameterTypeNames = {"Boolean", "Integer", "Float", "2D Texture", "Vector2", "Vector3", "Vector4"};
 
-	static const char *reservedParameterNames[7] = {"_Time", "modelMatrix", "viewMatrix", "projectionMatrix", "fogStart", "fogEnd", "fogColor"};
+	inline const std::array<std::string, 7> reservedParameterNames = {"_Time", "modelMatrix", "viewMatrix", "projectionMatrix", "fogStart", "fogEnd", "fogColor"};
 
 #ifdef WIN32
-	static bool apiAvailability[4] = {
+	constexpr std::array<bool, 4> apiAvailability = {
 		true,
 		false,
 		true,
 		true,
 	};
 #elif __linux__
-	static bool apiAvailability[4] = {
+	constexpr std::array<bool, 4> apiAvailability = {
 		false,
 		false,
 		true,
 		true,
 	};
 #elif __APPLE__
-	static bool apiAvailability[4] = {
+	constexpr std::array<bool, 4> apiAvailability = {
 		false,
 		true,
 		false,

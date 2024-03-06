@@ -8,11 +8,11 @@ namespace Dwarf
     class OpenGLContext : public GraphicsContext
     {
     public:
-        OpenGLContext(SDL_Window *windowHandle);
-        ~OpenGLContext();
+        explicit OpenGLContext(SDL_Window *windowHandle);
+        ~OpenGLContext() override;
 
-        virtual void Init() override;
-        virtual void SwapBuffers() override;
+        void Init() override;
+        void SwapBuffers() override;
 
     private:
         SDL_Window *m_WindowHandle;

@@ -4,7 +4,7 @@ namespace Dwarf
 {
 
     DeleteEntityInstruction::DeleteEntityInstruction(Ref<Scene> scene, std::vector<Entity> sourceEntities)
-        : GraphInstruction(scene), m_SourceEntities(sourceEntities) {}
+        : m_Scene(scene), m_SourceEntities(sourceEntities) {}
 
     void DeleteEntityInstruction::PerformInstruction()
     {

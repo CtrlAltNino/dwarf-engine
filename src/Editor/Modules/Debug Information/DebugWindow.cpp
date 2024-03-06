@@ -15,22 +15,13 @@ namespace Dwarf
 
     void DebugWindow::OnUpdate(double deltaTime)
     {
+        // Add Update code that needs to be run before rendering
     }
 
     void DebugWindow::OnImGuiRender()
     {
         ImGuiWindowFlags window_flags = 0;
-
-        // window_flags |= ImGuiWindowFlags_NoMove;
-        // window_flags |= ImGuiWindowFlags_NoResize;
-        // window_flags |= ImGuiWindowFlags_NoCollapse;
-        // window_flags |= ImGuiWindowFlags_NoTitleBar;
-        // window_flags |= ImGuiWindowFlags_MenuBar;
-
-        // static bool b_open = true;
-
         ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(500, 500));
-        // if (!ImGui::Begin((moduleLabel + "##" + std::to_string(index)).c_str(), NULL, window_flags))
         if (!ImGui::Begin(GetIdentifier().c_str(), &m_WindowOpened, window_flags))
         {
             // Early out if the window is collapsed, as an optimization.
@@ -39,7 +30,6 @@ namespace Dwarf
             return;
         }
 
-        // ImGui::ShowDemoWindow();
         if (ImGui::CollapsingHeader("Asset Database"))
         {
             ImGui::Text("Listing all imported assets and their UID's");
@@ -227,6 +217,7 @@ namespace Dwarf
 
     void DebugWindow::Deserialize(nlohmann::json moduleData)
     {
+        // Add Deserialization for data
     }
 
     std::string DebugWindow::Serialize()

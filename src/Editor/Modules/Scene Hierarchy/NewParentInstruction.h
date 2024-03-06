@@ -11,6 +11,9 @@ namespace Dwarf
     class NewParentInstruction : public GraphInstruction
     {
     private:
+        /// @brief Pointer to the currently opened scene.
+        Ref<Scene> m_Scene;
+
         /// @brief The entities to process the instruction on.
         std::vector<Entity> m_SourceEntities;
 
@@ -19,7 +22,7 @@ namespace Dwarf
 
     public:
         /// @brief Executes the instruction.
-        virtual void PerformInstruction();
-        NewParentInstruction(Ref<Scene> scene, std::vector<Entity> sourceEntities, entt::entity newParent);
+        void PerformInstruction() override;
+        NewParentInstruction(Ref<Scene> scene, std::vector<Entity> const &sourceEntities, entt::entity newParent);
     };
 }

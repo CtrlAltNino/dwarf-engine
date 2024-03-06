@@ -27,7 +27,7 @@ namespace Dwarf
     {
         if ((s_Framebuffer->GetSpecification().Width != size.x) && (s_Framebuffer->GetSpecification().Height != size.y))
         {
-            s_Camera->SetAspectRatio(size.y / size.x);
+            s_Camera->SetAspectRatio((float)size.y / (float)size.x);
             s_Framebuffer->Resize(size.x, size.y);
         }
     }
@@ -39,7 +39,7 @@ namespace Dwarf
 
         for (const auto &subMesh : vec)
         {
-            for (Vertex vert : *(subMesh->GetVertices()))
+            for (Vertex vert : subMesh->GetVertices())
             {
                 float dist = glm::length(vert.Position);
                 if (dist > longestDist)
@@ -57,9 +57,7 @@ namespace Dwarf
 
     void PreviewRenderer::RenderModelPreview(Ref<AssetReference<ModelAsset>> modelAsset)
     {
-        static entt::entity memory = entt::null;
-
-        if (memory != modelAsset->GetHandle())
+        if (static entt::entity memory = entt::null; memory != modelAsset->GetHandle())
         {
             FocusModel(modelAsset);
             memory = modelAsset->GetHandle();

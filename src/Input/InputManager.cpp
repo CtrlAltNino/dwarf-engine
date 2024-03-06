@@ -1,5 +1,6 @@
 #include "dpch.h"
 #include "Input/InputManager.h"
+#include <array>
 
 namespace Dwarf
 {
@@ -83,7 +84,8 @@ namespace Dwarf
 
     void InputManager::OnUpdate()
     {
-        MOUSE_BUTTON mArr[] MOUSE_BUTTON_INITIALIZER;
+        using enum MOUSE_BUTTON;
+        std::array<MOUSE_BUTTON, 5> mArr = MOUSE_BUTTON_INITIALIZER;
         s_LastMousePos = s_CurrentMousePos;
         Uint32 mouseButtonMask = SDL_GetMouseState(&s_CurrentMousePos.x, &s_CurrentMousePos.y);
 
@@ -143,15 +145,12 @@ namespace Dwarf
         return s_DeltaScroll;
     }
 
-    void InputManager::ProcessScroll(SDL_Event &event)
+    void InputManager::ProcessScroll(SDL_Event const &event)
     {
 
         switch (event.wheel.type)
         {
         case SDL_MOUSEWHEEL:
-            // pMouseWheelScrolled = true;
-            // pMouseWheel.x = event.wheel.x;
-            // pMouseWheel.y = event.wheel.y;
             s_DeltaScroll = {event.wheel.x, event.wheel.y};
             break;
 

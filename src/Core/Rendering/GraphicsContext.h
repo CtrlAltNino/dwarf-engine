@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Base.h"
+#include "SDL2/SDL.h"
 
 namespace Dwarf
 {
@@ -13,6 +14,6 @@ namespace Dwarf
         virtual void Init() = 0;
         virtual void SwapBuffers() = 0;
 
-        static Scope<GraphicsContext> Create(void *window);
+        static Scope<GraphicsContext> Create(SDL_Window *window);
     };
 }

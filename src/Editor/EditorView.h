@@ -22,7 +22,7 @@ namespace Dwarf
         /// @brief List of GUI modules.
         std::vector<Ref<GuiModule>> m_GuiModules;
 
-        /// @brief TODO: IMGUI example function to render the base docking layout.
+        /// @brief IMGUI example function to render the base docking layout.
         void RenderDockSpace();
 
         /// @brief Adds a new IMGUI window for a GUI module.
@@ -34,7 +34,7 @@ namespace Dwarf
         void RemoveWindow(int index);
 
     public:
-        EditorView(Ref<EditorModel> model);
+        explicit EditorView(Ref<EditorModel> model);
 
         /// @brief Initializes the view.
         void Init();
@@ -45,6 +45,6 @@ namespace Dwarf
         /// @brief Renders the GUI of the editor.
         void OnImGuiRender();
 
-        void DockWindowToFocused(std::string windowName);
+        void DockWindowToFocused();
     };
 }

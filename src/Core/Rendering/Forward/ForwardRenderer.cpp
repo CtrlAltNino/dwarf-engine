@@ -5,14 +5,13 @@
 
 namespace Dwarf
 {
-
     ForwardRenderer::ForwardRenderer()
     {
         m_RendererApi = RendererApi::Create();
         m_RendererApi->Init();
         m_RendererApi->SetClearColor(glm::vec4(0.065f, 0.07f, 0.085, 1.0f));
     }
-    ForwardRenderer::~ForwardRenderer() {}
+    ForwardRenderer::~ForwardRenderer() = default;
 
     void ForwardRenderer::RenderScene(Ref<Scene> scene, Ref<Camera> camera, glm::ivec2 viewportSize, bool renderGrid)
     {
@@ -22,9 +21,7 @@ namespace Dwarf
 
         // Rendering skybox first???
 
-        auto view = scene->GetRegistry()->view<TransformComponent, MeshRendererComponent>();
-
-        for (auto [entity, transform, meshRenderer] : view.each())
+        for (auto view = scene->GetRegistry()->view<TransformComponent, MeshRendererComponent>(); auto [entity, transform, meshRenderer] : view.each())
         {
             if (meshRenderer.meshAsset != nullptr)
             {
@@ -83,7 +80,7 @@ namespace Dwarf
     Ref<Framebuffer> ForwardRenderer::CreateFramebuffer(glm::ivec2 resolution)
     {
         FramebufferSpecification fbSpec;
-        fbSpec.Attachments = {FramebufferTextureFormat::RGBA8, FramebufferTextureFormat::Depth};
+        fbSpec.Attachments = FramebufferAttachmentSpecification{FramebufferTextureSpecification{FramebufferTextureFormat::RGBA8}, FramebufferTextureSpecification{FramebufferTextureFormat::Depth}};
         fbSpec.Width = resolution.x;
         fbSpec.Height = resolution.y;
         return Framebuffer::Create(fbSpec);

@@ -9,9 +9,9 @@
 
 namespace Dwarf
 {
-    void SceneUtilities::SetLastOpenedScene(std::filesystem::path path)
+    void SceneUtilities::SetLastOpenedScene(std::filesystem::path const &path)
     {
-        std::filesystem::path projectSettingsPath = Editor::Get().GetModel()->GetProjectPath() / "projectSettings.dproj";
+        std::filesystem::path projectSettingsPath = Editor::Get()->GetModel()->GetProjectPath() / "projectSettings.dproj";
         nlohmann::json projectSettings = nlohmann::json::parse(FileHandler::ReadFile(projectSettingsPath));
 
         projectSettings["projectInformation"]["lastOpenedScene"] = (uint64_t)(*AssetDatabase::Retrieve<SceneAsset>(path)->GetUID());
@@ -19,7 +19,7 @@ namespace Dwarf
         FileHandler::WriteToFile(projectSettingsPath, projectSettings.dump(4));
     }
 
-    Ref<Scene> SceneUtilities::Deserialize(std::filesystem::path path)
+    Ref<Scene> SceneUtilities::Deserialize(std::filesystem::path const &path)
     {
         nlohmann::json serializedScene = nlohmann::json::parse(FileHandler::ReadFile(path));
 
@@ -46,7 +46,7 @@ namespace Dwarf
 
         Ref<Scene> deserializedScene = CreateRef<Scene>(Scene(path, settings));
 
-        for (auto &element : serializedScene["hierarchy"])
+        for (auto const &element : serializedScene["hierarchy"])
         {
             Entity newEntity = DeserializeEntity(element, deserializedScene);
             newEntity.SetParent(deserializedScene->GetRootEntity()->GetHandle());
@@ -94,7 +94,7 @@ namespace Dwarf
         FileHandler::WriteToFile(scene->GetPath(), serializedScene.dump(4));
     }
 
-    nlohmann::json SceneUtilities::SerializeEntities(std::vector<entt::entity> entities, Ref<Scene> scene)
+    nlohmann::json SceneUtilities::SerializeEntities(std::vector<entt::entity> const &entities, Ref<Scene> scene)
     {
         int entityCount = 0;
         nlohmann::json serializedArray;
@@ -150,14 +150,8 @@ namespace Dwarf
 
                 for (Ref<UID> materialID : meshRendererComponent.materialAssets)
                 {
-                    if (materialID)
-                    {
-                        serializedArray[entityCount]["meshRendererComponent"]["materials"][materialCount++] = (uint64_t)(*materialID);
-                    }
-                    else
-                    {
-                        serializedArray[entityCount]["meshRendererComponent"]["materials"][materialCount++] = -1;
-                    }
+                    serializedArray[entityCount]["meshRendererComponent"]["materials"][materialCount] = materialID ? (uint64_t)(*materialID) : -1;
+                    materialCount++;
                 }
 
                 serializedArray[entityCount]["meshRendererComponent"]["canCastShadows"] = meshRendererComponent.canCastShadow;
@@ -218,21 +212,14 @@ namespace Dwarf
 
             if (serializedEntity["meshRendererComponent"].contains("materials"))
             {
-                for (auto &element : serializedEntity["meshRendererComponent"]["materials"])
+                for (auto const &element : serializedEntity["meshRendererComponent"]["materials"])
                 {
-                    if ((uint64_t)element == -1)
-                    {
-                        meshRendererComponent.materialAssets.push_back(nullptr);
-                    }
-                    else
-                    {
-                        meshRendererComponent.materialAssets.push_back(CreateRef<UID>(UID((uint64_t)element)));
-                    }
+                    meshRendererComponent.materialAssets.push_back((uint64_t)element == -1 ? nullptr : CreateRef<UID>(UID((uint64_t)element)));
                 }
             }
         }
 
-        for (auto &element : serializedEntity["children"])
+        for (auto const &element : serializedEntity["children"])
         {
             Entity childEntity = DeserializeEntity(element, scene);
             childEntity.SetParent(newEntity.GetHandle());
@@ -256,12 +243,10 @@ namespace Dwarf
 
     bool SceneUtilities::SaveSceneDialog(Ref<Scene> scene)
     {
-        nfdchar_t *savePath = NULL;
+        nfdchar_t *savePath = nullptr;
         nfdresult_t result = NFD_SaveDialog("dscene", AssetDatabase::GetAssetDirectoryPath().string().c_str(), &savePath);
         if (result == NFD_OKAY)
         {
-            // puts("Success!");
-            // puts(savePath);
             std::filesystem::path path(savePath);
 
             if (!path.has_extension())
@@ -271,12 +256,11 @@ namespace Dwarf
 
             scene->SetPath(path);
             Serialize(scene);
-            free(savePath);
+            delete savePath;
             return true;
         }
         else if (result == NFD_CANCEL)
         {
-            // puts("User pressed cancel.");
             return false;
         }
         else
@@ -286,7 +270,7 @@ namespace Dwarf
         }
     }
 
-    Ref<Scene> SceneUtilities::LoadScene(std::filesystem::path path)
+    Ref<Scene> SceneUtilities::LoadScene(std::filesystem::path const &path)
     {
         Ref<Scene> scene = Deserialize(path);
 
@@ -296,19 +280,17 @@ namespace Dwarf
     Ref<Scene> SceneUtilities::LoadSceneDialog()
     {
         Ref<Scene> scene;
-        nfdchar_t *outPath = NULL;
-        nfdresult_t result = NFD_OpenDialog("dscene", AssetDatabase::GetAssetDirectoryPath().string().c_str(), &outPath);
-        if (result == NFD_OKAY)
+        nfdchar_t *outPath = nullptr;
+
+        if (nfdresult_t result = NFD_OpenDialog("dscene", AssetDatabase::GetAssetDirectoryPath().string().c_str(), &outPath); result == NFD_OKAY)
         {
-            // puts("Success!");
-            // puts(outPath);
             std::filesystem::path path(outPath);
             scene = LoadScene(path);
-            free(outPath);
+            delete outPath;
         }
         else if (result == NFD_CANCEL)
         {
-            // puts("User pressed cancel.");
+            // TODO: Cancel stuff?
         }
         else
         {

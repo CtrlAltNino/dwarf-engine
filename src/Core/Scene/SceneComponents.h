@@ -38,7 +38,7 @@ namespace Dwarf
 
         TransformComponent() = default;
         TransformComponent(const TransformComponent &) = default;
-        TransformComponent(glm::vec3 pos)
+        explicit TransformComponent(glm::vec3 pos)
             : position(pos) {}
         TransformComponent(glm::vec3 pos, glm::vec3 rot)
             : position(pos), rotation(rot) {}
@@ -75,7 +75,6 @@ namespace Dwarf
         /// @return The forward vector as a 3D vector.
         glm::vec3 getForward() const
         {
-            // return glm::inverse(getRotationMatrix()) * glm::vec4(0, 0, -1, 1);
             glm::mat4 rotationMatrix = getRotationMatrix();
             glm::vec3 forwardVector(rotationMatrix[2][0], rotationMatrix[2][1], rotationMatrix[2][2]);
             return glm::normalize(forwardVector);

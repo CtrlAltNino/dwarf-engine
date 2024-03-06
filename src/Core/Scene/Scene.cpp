@@ -80,7 +80,7 @@ namespace Dwarf
 		// TODO: UPDATE WINDOW TITLE BAR
 	}
 
-	glm::mat4 Scene::GetFullModelMatrix(TransformComponent transform) const
+	glm::mat4 Scene::GetFullModelMatrix(TransformComponent const &transform) const
 	{
 		auto parentMat = glm::mat4(1.0f);
 		std::vector<glm::mat4> matriceStack;

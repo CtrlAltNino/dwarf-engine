@@ -97,6 +97,6 @@ namespace Dwarf
 		/// @brief Returns the recursive model matrix of a transform.
 		/// @param transform A transform component instance.
 		/// @return 4x4 model matrix composition of a transform and its full parent chain.
-		glm::mat4 GetFullModelMatrix(TransformComponent transform) const;
+		glm::mat4 GetFullModelMatrix(TransformComponent const &transform) const;
 	};
 }

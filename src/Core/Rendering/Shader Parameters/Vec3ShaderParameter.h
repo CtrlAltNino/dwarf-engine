@@ -19,7 +19,7 @@ namespace Dwarf
 
         virtual ShaderParameterType GetType() override
         {
-            return VEC3;
+            return ShaderParameterType::VEC3;
         }
     };
 }

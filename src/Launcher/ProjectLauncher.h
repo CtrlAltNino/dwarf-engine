@@ -14,7 +14,7 @@ namespace Dwarf
     private:
         Ref<ProjectLauncherModel> m_Model;
         Ref<ProjectLauncherView> m_View;
-        Scope<Window> m_Window;
+        Ref<Window> m_Window;
 
         static ProjectLauncher *s_Instance;
 

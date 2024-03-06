@@ -17,11 +17,7 @@
 
 namespace Dwarf
 {
-
-    EditorView::EditorView(Ref<EditorModel> model) : m_Model(model)
-    {
-        // ImGui::SetFont
-    }
+    EditorView::EditorView(Ref<EditorModel> model) : m_Model(model) {}
 
     void EditorView::RenderDockSpace()
     {
@@ -64,13 +60,12 @@ namespace Dwarf
         // any change of dockspace/settings would lead to windows being stuck in limbo and never being visible.
         ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
 
-        ImGui::PushStyleColor(ImGuiCol_MenuBarBg, ImVec4(23 / 255.0, 26 / 255.0, 32 / 255.0, 1));
+        ImGui::PushStyleColor(ImGuiCol_MenuBarBg, ImVec4(23 / 255.0f, 26 / 255.0f, 32 / 255.0f, 1));
         ImGui::Begin("DockSpace", &p_open, window_flags);
         ImGui::PopStyleVar(3);
         ImGui::PopStyleColor();
 
         // Submit the DockSpace
-        ImGuiIO &io = ImGui::GetIO();
         ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
         ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 
@@ -89,7 +84,7 @@ namespace Dwarf
                     {
                         AssetDatabase::Import(m_Model->GetScene()->GetPath());
                         SceneUtilities::SetLastOpenedScene(m_Model->GetScene()->GetPath());
-                        Editor::Get().UpdateWindowTitle();
+                        Editor::Get()->UpdateWindowTitle();
                     }
                 }
                 if (ImGui::MenuItem("Save scene as"))
@@ -98,7 +93,7 @@ namespace Dwarf
                     {
                         AssetDatabase::Import(m_Model->GetScene()->GetPath());
                         SceneUtilities::SetLastOpenedScene(m_Model->GetScene()->GetPath());
-                        Editor::Get().UpdateWindowTitle();
+                        Editor::Get()->UpdateWindowTitle();
                     }
                 }
                 if (ImGui::MenuItem("Load scene"))
@@ -108,7 +103,7 @@ namespace Dwarf
                     {
                         m_Model->SetScene(loadedScene);
                         SceneUtilities::SetLastOpenedScene(m_Model->GetScene()->GetPath());
-                        Editor::Get().UpdateWindowTitle();
+                        Editor::Get()->UpdateWindowTitle();
                     }
                 }
 
@@ -152,29 +147,30 @@ namespace Dwarf
             }
             if (ImGui::BeginMenu("Window"))
             {
+                using enum MODULE_TYPE;
                 if (ImGui::MenuItem("Scene Viewer"))
                 {
-                    AddWindow(MODULE_TYPE::SCENE_VIEWER);
+                    AddWindow(SCENE_VIEWER);
                 }
                 if (ImGui::MenuItem("Scene Hierarchy"))
                 {
-                    AddWindow(MODULE_TYPE::SCENE_GRAPH);
+                    AddWindow(SCENE_GRAPH);
                 }
                 if (ImGui::MenuItem("Performance"))
                 {
-                    AddWindow(MODULE_TYPE::PERFORMANCE);
+                    AddWindow(PERFORMANCE);
                 }
                 if (ImGui::MenuItem("Asset Browser"))
                 {
-                    AddWindow(MODULE_TYPE::ASSET_BROWSER);
+                    AddWindow(ASSET_BROWSER);
                 }
                 if (ImGui::MenuItem("Inspector"))
                 {
-                    AddWindow(MODULE_TYPE::INSPECTOR);
+                    AddWindow(INSPECTOR);
                 }
                 if (ImGui::MenuItem("Debug"))
                 {
-                    AddWindow(MODULE_TYPE::DEBUG);
+                    AddWindow(DEBUG);
                 }
                 ImGui::MenuItem("Console");
                 ImGui::EndMenu();
@@ -187,11 +183,11 @@ namespace Dwarf
 
     void EditorView::Init()
     {
-        AddWindow(MODULE_TYPE::SCENE_GRAPH);
-        AddWindow(MODULE_TYPE::INSPECTOR);
-        AddWindow(MODULE_TYPE::ASSET_BROWSER);
-        AddWindow(MODULE_TYPE::SCENE_VIEWER);
-        // AddWindow(MODULE_TYPE::PERFORMANCE);
+        using enum MODULE_TYPE;
+        AddWindow(SCENE_GRAPH);
+        AddWindow(INSPECTOR);
+        AddWindow(ASSET_BROWSER);
+        AddWindow(SCENE_VIEWER);
     }
 
     void EditorView::OnUpdate(double deltaTime)
@@ -229,7 +225,6 @@ namespace Dwarf
         ImGui::PushStyleColor(ImGuiCol_Header, COL_BUTTON);
         ImGui::PushStyleColor(ImGuiCol_HeaderActive, COL_BUTTON_ACTIVE);
         ImGui::PushStyleColor(ImGuiCol_HeaderHovered, COL_BUTTON_HOVERED);
-        // ImGuiCol_FrameBg
 
         ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 5.0f);
         ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.0f);
@@ -259,41 +254,14 @@ namespace Dwarf
         ImGui::PopStyleVar(4);
     }
 
-    void EditorView::DockWindowToFocused(std::string windowName)
+    void EditorView::DockWindowToFocused()
     {
-        // ImGuiViewport* viewport = ImGui::GetMainViewport();
-
         ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
-        // ImGuiID dockspace_id = ImGui::GetID("DockSpace");
 
         static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_PassthruCentralNode;
 
         ImGui::DockBuilderRemoveNode(dockspace_id); // clear any previous layout
         ImGui::DockBuilderAddNode(dockspace_id, dockspace_flags | ImGuiDockNodeFlags_DockSpace);
-        // ImGui::DockBuilderSetNodeSize(dockspace_id, viewport->Size);
-
-        // split the dockspace into 2 nodes --
-        // DockBuilderSplitNode takes in the following args in the following order
-        //   window ID to split, direction, fraction (between 0 and 1),
-        // the final two setting let's us choose which id we want (which ever one we DON'T set as NULL,
-        // will be returned by the function)
-        // out_id_at_dir is the id of the node in the direction we specified earlier,
-        // out_id_at_opposite_dir is in the opposite direction
-        // auto dock_id_top = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Up, 0.2f, nullptr, &dockspace_id);
-        // auto dock_id_down = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Down, 0.25f, nullptr, &dockspace_id);
-        // auto dock_id_left = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Left, 0.2f, nullptr, &dockspace_id);
-        // auto dock_id_right = ImGui::DockBuilderSplitNode(dockspace_id, ImGuiDir_Right, 0.15f, nullptr, &dockspace_id);
-        // auto dock_id_left2 = ImGui::DockBuilderSplitNode(dock_id_left, ImGuiDir_Down, 0.2f, nullptr, &dock_id_left);
-        // auto dock_id_down2 = ImGui::DockBuilderSplitNode(dock_id_down, ImGuiDir_Right, 0.15f, nullptr, &dock_id_down);
-
-        // we now dock our windows into the docking node we made above
-
-        // ImGui::DockBuilderDockWindow("Performance statistics", dock_id_right);
-        // ImGui::DockBuilderDockWindow("Window 2", dock_id_right);
-        // ImGui::DockBuilderDockWindow("Window 3", dock_id_left);
-        // ImGui::DockBuilderDockWindow("Window 4", dock_id_down);
-        // ImGui::DockBuilderDockWindow("Window 0", dock_id_top);
-
         ImGui::DockBuilderFinish(dockspace_id);
     }
 
@@ -302,25 +270,26 @@ namespace Dwarf
         Ref<GuiModule> guiModule;
         switch (moduleType)
         {
-        case MODULE_TYPE::PERFORMANCE:
+            using enum MODULE_TYPE;
+        case PERFORMANCE:
             guiModule = CreateRef<PerformanceWindow>(PerformanceWindow(this->m_Model, m_GuiModuleIDCount++));
             break;
-        case MODULE_TYPE::SCENE_GRAPH:
+        case SCENE_GRAPH:
             guiModule = CreateRef<SceneHierarchyWindow>(SceneHierarchyWindow(this->m_Model, m_GuiModuleIDCount++));
             break;
-        case MODULE_TYPE::SCENE_VIEWER:
+        case SCENE_VIEWER:
             guiModule = CreateRef<SceneViewerWindow>(SceneViewerWindow(this->m_Model, m_GuiModuleIDCount++));
             break;
-        case MODULE_TYPE::ASSET_BROWSER:
+        case ASSET_BROWSER:
             guiModule = CreateRef<AssetBrowserWindow>(AssetBrowserWindow(this->m_Model, m_GuiModuleIDCount++));
             break;
-        case MODULE_TYPE::INSPECTOR:
+        case INSPECTOR:
             guiModule = CreateRef<InspectorWindow>(InspectorWindow(this->m_Model, m_GuiModuleIDCount++));
             break;
-        case MODULE_TYPE::DEBUG:
+        case DEBUG:
             guiModule = CreateRef<DebugWindow>(DebugWindow(this->m_Model, m_GuiModuleIDCount++));
             break;
-        case MODULE_TYPE::CONSOLE:
+        case CONSOLE:
             break;
         }
 

@@ -17,5 +17,5 @@ namespace Dwarf
         static DwarfEngine *s_Instance;
     };
 
-    DwarfEngine *Create();
+    Ref<DwarfEngine> Create();
 }

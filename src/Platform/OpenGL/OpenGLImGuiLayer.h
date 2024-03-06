@@ -7,15 +7,15 @@ namespace Dwarf
     class OpenGLImGuiLayer : public ImGuiLayer
     {
     public:
-        OpenGLImGuiLayer();
-        ~OpenGLImGuiLayer();
+        OpenGLImGuiLayer() = default;
+        ~OpenGLImGuiLayer() override = default;
 
-        virtual void OnAttach(SDL_Window *window) override;
-        virtual void OnDetach() override;
+        void OnAttach(SDL_Window *window) override;
+        void OnDetach() override;
 
-        virtual void Begin() override;
-        virtual void End() override;
+        void Begin() override;
+        void End() override;
 
-        virtual void HandleSDLEvent(SDL_Event *event) override;
+        void HandleSDLEvent(SDL_Event *event) override;
     };
 }

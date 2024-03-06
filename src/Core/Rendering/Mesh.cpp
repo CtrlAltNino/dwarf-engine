@@ -18,7 +18,12 @@ namespace Dwarf
 {
 	Ref<Mesh> Mesh::s_GridMesh = nullptr;
 	Ref<Mesh> Mesh::s_UnitSphere = nullptr;
-	Ref<Mesh> Mesh::Create(std::vector<Vertex> vertices, std::vector<unsigned int> indices, unsigned int materialIndex)
+
+	Mesh::Mesh(std::vector<Vertex> const &vertices, std::vector<unsigned int> const &indices, unsigned int materialIndex) : m_Vertices(vertices), m_Indices(indices), m_MaterialIndex(materialIndex)
+	{
+	}
+
+	Ref<Mesh> Mesh::Create(std::vector<Vertex> const &vertices, std::vector<unsigned int> const &indices, unsigned int materialIndex)
 	{
 		switch (Renderer::GetAPI())
 		{
@@ -62,8 +67,8 @@ namespace Dwarf
 
 	Ref<Mesh> Mesh::GenerateUnitSphere(int stacks, int slices)
 	{
-		std::vector<Vertex> vertices = std::vector<Vertex>();
-		std::vector<unsigned int> indices = std::vector<unsigned int>();
+		auto vertices = std::vector<Vertex>();
+		auto indices = std::vector<unsigned int>();
 		for (int i = 0; i <= stacks; ++i)
 		{
 			float phi = glm::pi<float>() * static_cast<float>(i) / static_cast<float>(stacks);
@@ -121,5 +126,20 @@ namespace Dwarf
 		s_GridMesh->SetupMesh();
 		s_UnitSphere = Mesh::GenerateUnitSphere(20, 20);
 		s_UnitSphere->SetupMesh();
+	}
+
+	int Mesh::GetMaterialIndex() const
+	{
+		return m_MaterialIndex;
+	}
+
+	const std::vector<Vertex> &Mesh::GetVertices() const
+	{
+		return m_Vertices;
+	}
+
+	const std::vector<unsigned int> &Mesh::GetIndices() const
+	{
+		return m_Indices;
 	}
 }

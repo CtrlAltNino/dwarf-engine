@@ -51,11 +51,11 @@ namespace Dwarf
                 {
                     if (int(parameter.value()["value"]) != -1)
                     {
-                        deserializedMat.SetParameter(parameter.key(), CreateRef<UID>(UID(parameter.value()["value"])), TEX2D);
+                        deserializedMat.SetParameter(parameter.key(), CreateRef<UID>(UID(parameter.value()["value"])), ShaderParameterType::TEX2D);
                     }
                     else
                     {
-                        deserializedMat.SetParameter(parameter.key(), nullptr, TEX2D);
+                        deserializedMat.SetParameter(parameter.key(), nullptr, ShaderParameterType::TEX2D);
                     }
                 }
                 else if (serializedMat["parameters"][parameter.key()]["type"] == "vec2")
@@ -263,6 +263,7 @@ namespace Dwarf
         {
             switch (val->GetType())
             {
+                using enum ShaderParameterType;
             case BOOLEAN:
                 serializedMat["parameters"][key]["type"] = "boolean";
                 serializedMat["parameters"][key]["value"] = std::dynamic_pointer_cast<BooleanShaderParameter>(val)->m_Value;

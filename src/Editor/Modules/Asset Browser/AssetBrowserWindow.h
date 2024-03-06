@@ -3,6 +3,7 @@
 #include <imgui_internal.h>
 
 #include "Core/Base.h"
+#include "Core/Asset/AssetDatabase.h"
 #include "Editor/EditorModel.h"
 #include "Editor/Modules/GuiModule.h"
 #include "Core/Rendering/Texture.h"
@@ -17,7 +18,7 @@ namespace Dwarf
     {
     private:
         /// @brief Path to the asset directory of the currently opened project.
-        std::filesystem::path m_AssetDirectoryPath;
+        std::filesystem::path m_AssetDirectoryPath = AssetDatabase::GetAssetDirectoryPath();
 
         /// @brief Path of the currently navigated directory.
         std::filesystem::path m_CurrentDirectory;
@@ -30,25 +31,25 @@ namespace Dwarf
 
         bool m_OpenRename;
 
-        void SetRenameBuffer(std::filesystem::path path);
+        void SetRenameBuffer(std::filesystem::path const &path);
 
         std::vector<std::filesystem::path> m_DirectoryHistory;
 
         std::filesystem::path m_SelectedAsset;
         int m_HistoryPos = 0;
-        void OpenPath(std::filesystem::directory_entry directoryEntry);
+        void OpenPath(std::filesystem::directory_entry const &directoryEntry);
 
-        void EnterDirectory(std::filesystem::path path);
+        void EnterDirectory(std::filesystem::path const &path);
 
         void GoBack();
 
         void GoForward();
 
-        void HandleShortcuts();
+        void HandleShortcuts() const;
 
         void LoadIcons();
 
-        void RenderDirectory(std::filesystem::path path);
+        void RenderDirectory(std::filesystem::path const &path);
 
         float m_IconScale = 1.0f;
 
@@ -80,11 +81,11 @@ namespace Dwarf
 
         ImGuiID footerID;
 
-        void RenderDirectoryLevel(std::filesystem::path directory);
+        void RenderDirectoryLevel(std::filesystem::path const &directory);
 
         void SetupDockspace(ImGuiID id);
 
-        void SelectAsset(std::filesystem::path path);
+        void SelectAsset(std::filesystem::path const &path);
 
         void ClearSelection();
 
@@ -101,10 +102,10 @@ namespace Dwarf
         void OnImGuiRender() override;
 
         /// @brief Executes all pre frame tasks.
-        virtual void OnUpdate(double deltaTime) override;
+        void OnUpdate(double deltaTime) override;
 
-        virtual std::string Serialize() override;
+        std::string Serialize() override;
 
-        virtual void Deserialize(nlohmann::json moduleData) override;
+        void Deserialize(nlohmann::json moduleData) override;
     };
 }

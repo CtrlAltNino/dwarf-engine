@@ -174,7 +174,7 @@ namespace Dwarf
                 ImGui::TextWrapped("%s", std::to_string(i).c_str());
                 ImGui::SameLine();
                 ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - COMPONENT_PANEL_PADDING);
-                DwarfUI::AssetInput<MaterialAsset>(component->materialAssets.at(i), (std::string("##materialAsset") + std::to_string(i)).c_str());
+                DwarfUI::AssetInput<MaterialAsset>(component->materialAssets.at(i), std::format("##materialAsset{}", std::to_string(i)).c_str());
                 ImGui::PopItemWidth();
             }
         }
@@ -195,12 +195,12 @@ namespace Dwarf
             return;
         }
 
-        switch (m_Model->m_Selection.selectionType)
+        switch (m_Model->GetSelection().selectionType)
         {
         case INSPECTOR_SELECTION_TYPE::ASSET:
         {
             // TODO: Render Asset data
-            if (std::filesystem::path assetPath = m_Model->m_Selection.assetPath; std::filesystem::is_regular_file(assetPath))
+            if (std::filesystem::path assetPath = m_Model->GetSelection().assetPath; std::filesystem::is_regular_file(assetPath))
             {
                 switch (AssetDatabase::GetType(assetPath))
                 {
@@ -248,7 +248,7 @@ namespace Dwarf
             break;
         }
         case INSPECTOR_SELECTION_TYPE::ENTITY:
-            static std::vector<Entity> *selectedEntities = &m_Model->m_Selection.selectedEntities;
+            static std::vector<Entity> *selectedEntities = &m_Model->GetSelection().selectedEntities;
             if (selectedEntities->size() == 1)
             {
                 RenderComponents(selectedEntities->at(0));

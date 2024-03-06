@@ -12,23 +12,21 @@
 namespace Dwarf
 {
 
-	Editor *Editor::s_Instance = nullptr;
+	Ref<Editor> Editor::s_Instance = nullptr;
 
-	Editor *CreateEditor()
+	Ref<Editor> CreateEditor()
 	{
-		return new Editor();
+		return CreateRef<Editor>(Editor());
 	}
 
 	Editor::Editor()
 	{
-		s_Instance = this;
+		s_Instance = CreateRef<Editor>(*this);
 	}
 
-	Editor::~Editor()
-	{
-	}
+	Editor::~Editor() = default;
 
-	void Editor::UpdateWindowTitle()
+	void Editor::UpdateWindowTitle() const
 	{
 		std::string windowTitle = "Dwarf Engine Editor - ";
 		windowTitle.append(m_Model->GetName());
@@ -43,9 +41,9 @@ namespace Dwarf
 		m_Window->SetWindowTitle(windowTitle);
 	}
 
-	void Editor::Init(std::filesystem::path projectPath)
+	void Editor::Init(std::filesystem::path const &projectPath)
 	{
-		s_Instance = this;
+		// s_Instance = this;
 
 		// ========== Load .dproj file ==========
 		std::cout << "[EDITOR INIT] Initializing dwarf engine editor for project at [" << projectPath << "]" << std::endl;
@@ -74,7 +72,7 @@ namespace Dwarf
 		// ========== Initialize Editor model
 		std::cout << "[EDITOR INIT] Initializing editor model" << std::endl;
 
-		this->m_Model = CreateRef<EditorModel>(EditorModel(projectSettings["projectName"], projectPath));
+		this->m_Model = CreateRef<EditorModel>(EditorModel(projectSettings["projectName"].get<std::string_view>(), projectPath));
 
 		if (projectSettings.contains("lastOpenedScene"))
 		{
@@ -123,7 +121,7 @@ namespace Dwarf
 		std::cout << "[EDITOR INIT] Editor initialization done" << std::endl;
 	}
 
-	bool Editor::Run(std::filesystem::path projectPath)
+	bool Editor::Run(std::filesystem::path const &projectPath)
 	{
 		Init(projectPath);
 
@@ -131,7 +129,7 @@ namespace Dwarf
 		TimeStamp lastFrameStamp = TimeUtilities::GetCurrent();
 
 		// TODO: abstract the close condition
-		while (!m_Window->ShouldClose() && !m_Model->m_CloseSignal)
+		while (!m_Window->ShouldClose() && !m_Model->GetCloseSignal())
 		{
 			// ===== Time related stuff
 			lastFrameStamp = currentFrameStamp;
@@ -143,18 +141,6 @@ namespace Dwarf
 			AssetDatabase::RecompileShaders();
 			m_View->OnUpdate(m_Model->GetDeltaTime());
 			m_View->OnImGuiRender();
-
-			// ===== Animation stuff =====
-			// scene->sceneObjects.at(2).transform.rotate(glm::vec3(0, deltaTime * 88, 0));
-			// scene.sceneObjects.at(3).transform.rotate(glm::vec3(0, delta * 180, 0));
-
-			// ===== Post processing =====
-			// TODO: Implement
-
-			// ===== Gizmo rendering =====
-			// TODO: Implement
-
-			// view->EndFrame();
 			m_Window->EndFrame();
 
 			while (TimeUtilities::GetDifferenceInSeconds(TimeUtilities::GetCurrent(), currentFrameStamp) < (1.0 / 60.0))
@@ -163,6 +149,6 @@ namespace Dwarf
 			}
 		}
 
-		return m_Model->m_ReturnToLauncher;
+		return m_Model->GetReturnToLauncher();
 	}
 }

@@ -9,12 +9,15 @@ namespace Dwarf
     class DeleteEntityInstruction : public GraphInstruction
     {
     private:
+        /// @brief Pointer to the currently opened scene.
+        Ref<Scene> m_Scene;
+
         /// @brief The entities to delete.
         std::vector<Entity> m_SourceEntities;
 
     public:
         /// @brief Executes the instruction.
-        virtual void PerformInstruction();
+        void PerformInstruction() override;
         DeleteEntityInstruction(Ref<Scene> scene, std::vector<Entity> sourceEntities);
     };
 }

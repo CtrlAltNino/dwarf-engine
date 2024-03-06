@@ -2,7 +2,6 @@
 
 #include "Core/Rendering/GraphicsContext.h"
 #include "Core/Rendering/Renderer.h"
-#include "SDL2/SDL.h"
 
 #ifdef _WIN32
 // #include "Platform/OpenGL/D3D12Context.h" - NOT SUPPORTED YET
@@ -17,7 +16,7 @@
 
 namespace Dwarf
 {
-    Scope<GraphicsContext> GraphicsContext::Create(void *window)
+    Scope<GraphicsContext> GraphicsContext::Create(SDL_Window *window)
     {
         switch (Renderer::GetAPI())
         {
@@ -28,7 +27,7 @@ namespace Dwarf
         case GraphicsApi::Metal:
             break;
         case GraphicsApi::OpenGL:
-            return CreateScope<OpenGLContext>(static_cast<SDL_Window *>(window));
+            return CreateScope<OpenGLContext>(window);
             break;
         case GraphicsApi::Vulkan:
             // return CreateScope<VulkanContext>(static_cast<SDL_Window*>(window)); - NOT SUPPORTED YET
@@ -39,7 +38,7 @@ namespace Dwarf
         case GraphicsApi::Metal:
             break;
         case GraphicsApi::OpenGL:
-            return CreateScope<OpenGLContext>(static_cast<SDL_Window *>(window));
+            return CreateScope<OpenGLContext>(window);
             break;
         case GraphicsApi::Vulkan:
             // return CreateScope<VulkanContext>(static_cast<SDL_Window *>(window));

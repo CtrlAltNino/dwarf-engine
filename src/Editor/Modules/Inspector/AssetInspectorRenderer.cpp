@@ -4,6 +4,7 @@
 #include "Core/Scene/SceneUtilities.h"
 #include <imgui_internal.h>
 #include <math.h>
+#include <format>
 #include "Editor/Modules/Inspector/PreviewRenderer.h"
 #include "Input/InputManager.h"
 
@@ -86,9 +87,9 @@ namespace Dwarf
 
         ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
 
-        ImVec2 separatorMin = ImVec2(ImGui::GetWindowPos().x + ImGui::GetCursorPos().x + COMPONENT_PANEL_PADDING,
-                                     ImGui::GetWindowPos().y + ImGui::GetCursorPos().y + COMPONENT_PANEL_PADDING / 2.0);
-        ImVec2 separatorMax = ImVec2(ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMax().x - COMPONENT_PANEL_PADDING, separatorMin.y + 2);
+        auto separatorMin = ImVec2(ImGui::GetWindowPos().x + ImGui::GetCursorPos().x + COMPONENT_PANEL_PADDING,
+                                   ImGui::GetWindowPos().y + ImGui::GetCursorPos().y + COMPONENT_PANEL_PADDING / 2.0f);
+        auto separatorMax = ImVec2(ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMax().x - COMPONENT_PANEL_PADDING, separatorMin.y + 2);
         ImGui::GetWindowDrawList()->AddRectFilled(separatorMin,
                                                   separatorMax, COL_BG_DIM);
         ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 20);
@@ -318,17 +319,19 @@ namespace Dwarf
             int n = 0;
             for (auto i = mat->m_Parameters.begin(); i != mat->m_Parameters.end();)
             {
-                if (std::find(std::begin(reservedParameterNames), std::end(reservedParameterNames), i->first) == std::end(reservedParameterNames))
+                if (std::ranges::find(std::begin(reservedParameterNames), std::end(reservedParameterNames), i->first) == std::end(reservedParameterNames))
                 {
                     // Parameter UI specific to parameter type
                     switch (i->second->GetType())
                     {
+                        using enum ShaderParameterType;
                     case BOOLEAN:
                     {
                         Ref<BooleanShaderParameter> parameter = std::dynamic_pointer_cast<BooleanShaderParameter>(i->second);
                         ImGui::TextWrapped("%s", i->first.c_str());
                         ImGui::SameLine();
-                        ImGui::Checkbox((std::string("##boolean") + std::to_string(n++)).c_str(), &(parameter->m_Value));
+                        ImGui::Checkbox(std::format("##boolean{}", std::to_string(n)).c_str(), &(parameter->m_Value));
+                        n++;
                     }
                     break;
                     case INTEGER:
@@ -337,7 +340,8 @@ namespace Dwarf
                         ImGui::TextWrapped("%s", i->first.c_str());
                         ImGui::SameLine();
                         ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - UNIFORM_DELETE_BUTTON_WIDTH - 8.0f);
-                        ImGui::InputInt((std::string("##integer") + std::to_string(n++)).c_str(), &(parameter->m_Value));
+                        ImGui::InputInt(std::format("##integer{}", std::to_string(n)).c_str(), &(parameter->m_Value));
+                        n++;
                         ImGui::PopItemWidth();
                     }
                     break;
@@ -347,7 +351,8 @@ namespace Dwarf
                         ImGui::TextWrapped("%s", i->first.c_str());
                         ImGui::SameLine();
                         ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - UNIFORM_DELETE_BUTTON_WIDTH - 8.0f);
-                        ImGui::InputFloat((std::string("##float") + std::to_string(n++)).c_str(), &(parameter->m_Value));
+                        ImGui::InputFloat(std::format("##float{}", std::to_string(n)).c_str(), &(parameter->m_Value));
+                        n++;
                         ImGui::PopItemWidth();
                     }
                     break;
@@ -357,7 +362,8 @@ namespace Dwarf
                         ImGui::TextWrapped("%s", i->first.c_str());
                         ImGui::SameLine();
                         ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - UNIFORM_DELETE_BUTTON_WIDTH - 8.0f);
-                        DwarfUI::AssetInput<TextureAsset>(parameter->m_Value, (std::string("##textureAsset") + std::to_string(n++)).c_str());
+                        DwarfUI::AssetInput<TextureAsset>(parameter->m_Value, std::format("##textureAsset{}", std::to_string(n)).c_str());
+                        n++;
                         ImGui::PopItemWidth();
                     }
                     break;
@@ -367,7 +373,8 @@ namespace Dwarf
                         ImGui::TextWrapped("%s", i->first.c_str());
                         ImGui::SameLine();
                         ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - UNIFORM_DELETE_BUTTON_WIDTH - 8.0f);
-                        ImGui::InputFloat2((std::string("##vec2") + std::to_string(n++)).c_str(), &(parameter->m_Value.x));
+                        ImGui::InputFloat2(std::format("##vec2{}", std::to_string(n)).c_str(), &(parameter->m_Value.x));
+                        n++;
                         ImGui::PopItemWidth();
                     }
                     break;
@@ -377,7 +384,8 @@ namespace Dwarf
                         ImGui::TextWrapped("%s", i->first.c_str());
                         ImGui::SameLine();
                         ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - UNIFORM_DELETE_BUTTON_WIDTH - 8.0f);
-                        ImGui::InputFloat3((std::string("##vec3") + std::to_string(n++)).c_str(), &(parameter->m_Value.x));
+                        ImGui::InputFloat3(std::format("##vec3{}", std::to_string(n)).c_str(), &(parameter->m_Value.x));
+                        n++;
                         ImGui::PopItemWidth();
                     }
                     break;
@@ -387,7 +395,8 @@ namespace Dwarf
                         ImGui::TextWrapped("%s", i->first.c_str());
                         ImGui::SameLine();
                         ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - UNIFORM_DELETE_BUTTON_WIDTH - 8.0f);
-                        ImGui::ColorEdit4((std::string("##vec4") + std::to_string(n++)).c_str(), &(parameter->m_Value.x), ImGuiColorEditFlags_None);
+                        ImGui::ColorEdit4(std::format("##vec4{}", std::to_string(n)).c_str(), &(parameter->m_Value.x), ImGuiColorEditFlags_None);
+                        n++;
                         ImGui::PopItemWidth();
                     }
                     break;
@@ -396,7 +405,7 @@ namespace Dwarf
                     // Delete button for parameter
                     ImGui::SameLine();
                     ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetContentRegionAvail().x - UNIFORM_DELETE_BUTTON_WIDTH);
-                    if (ImGui::Button((std::string("Delete##") + std::to_string(n)).c_str(), ImVec2(UNIFORM_DELETE_BUTTON_WIDTH - 15.0f, 0)))
+                    if (ImGui::Button(std::format("Delete##{}", std::to_string(n)).c_str(), ImVec2(UNIFORM_DELETE_BUTTON_WIDTH - 15.0f, 0)))
                     {
                         i = mat->m_Parameters.erase(i)--;
                     }
@@ -419,11 +428,11 @@ namespace Dwarf
             static int selectedParameterType = 0;
 
             ImGui::PushItemWidth(100.0f);
-            if (ImGui::BeginCombo("##paramType", parameterTypeNames[selectedParameterType]))
+            if (ImGui::BeginCombo("##paramType", parameterTypeNames[selectedParameterType].c_str()))
             {
                 for (int i = 0; i < 7; i++)
                 {
-                    if (ImGui::Selectable(parameterTypeNames[i], i == selectedParameterType))
+                    if (ImGui::Selectable(parameterTypeNames[i].c_str(), i == selectedParameterType))
                     {
                         selectedParameterType = i;
                     }
@@ -433,29 +442,30 @@ namespace Dwarf
             ImGui::PopItemWidth();
 
             ImGui::SameLine();
-            if (ImGui::Button("Add##addParam", ImVec2(UNIFORM_DELETE_BUTTON_WIDTH - 15.0f, 0)) && (std::strlen(paramName) > 0) && (mat->m_Parameters.count(paramName) == 0))
+            if (ImGui::Button("Add##addParam", ImVec2(UNIFORM_DELETE_BUTTON_WIDTH - 15.0f, 0)) && (std::strlen(paramName) > 0) && !mat->m_Parameters.contains(paramName))
             {
-                switch (selectedParameterType)
+                switch ((ShaderParameterType)selectedParameterType)
                 {
-                case ShaderParameterType::BOOLEAN:
+                    using enum ShaderParameterType;
+                case BOOLEAN:
                     mat->SetParameter(paramName, false);
                     break;
-                case ShaderParameterType::INTEGER:
+                case INTEGER:
                     mat->SetParameter(paramName, 0);
                     break;
-                case ShaderParameterType::FLOAT:
+                case FLOAT:
                     mat->SetParameter(paramName, 0.0f);
                     break;
-                case ShaderParameterType::TEX2D:
-                    mat->SetParameter(paramName, nullptr, ShaderParameterType::TEX2D);
+                case TEX2D:
+                    mat->SetParameter(paramName, nullptr, TEX2D);
                     break;
-                case ShaderParameterType::VEC2:
+                case VEC2:
                     mat->SetParameter(paramName, glm::vec2(0.0f, 0.0f));
                     break;
-                case ShaderParameterType::VEC3:
+                case VEC3:
                     mat->SetParameter(paramName, glm::vec3(0.0f, 0.0f, 0.0f));
                     break;
-                case ShaderParameterType::VEC4:
+                case VEC4:
                     mat->SetParameter(paramName, glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
                     break;
                 }
@@ -507,7 +517,7 @@ namespace Dwarf
             PreviewRenderer::UpdateRotation(InputManager::GetDeltaMousePos());
         }
 
-        draw_list->AddImage(reinterpret_cast<void *>(PreviewRenderer::GetTextureId()),
+        draw_list->AddImage(PreviewRenderer::GetTextureId(),
                             minRect,
                             maxRect,
                             ImVec2(0, 1),
@@ -553,9 +563,9 @@ namespace Dwarf
 
         ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
 
-        ImVec2 separatorMin = ImVec2(ImGui::GetWindowPos().x + ImGui::GetCursorPos().x + COMPONENT_PANEL_PADDING,
-                                     ImGui::GetWindowPos().y + ImGui::GetCursorPos().y + COMPONENT_PANEL_PADDING / 2.0);
-        ImVec2 separatorMax = ImVec2(ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMax().x - COMPONENT_PANEL_PADDING, separatorMin.y + 2);
+        auto separatorMin = ImVec2(ImGui::GetWindowPos().x + ImGui::GetCursorPos().x + COMPONENT_PANEL_PADDING,
+                                   ImGui::GetWindowPos().y + ImGui::GetCursorPos().y + COMPONENT_PANEL_PADDING / 2.0f);
+        auto separatorMax = ImVec2(ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMax().x - COMPONENT_PANEL_PADDING, separatorMin.y + 2);
         ImGui::GetWindowDrawList()->AddRectFilled(separatorMin,
                                                   separatorMax, COL_BG_DIM);
 
@@ -606,9 +616,9 @@ namespace Dwarf
 
         ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
 
-        ImVec2 separatorMin = ImVec2(ImGui::GetWindowPos().x + ImGui::GetCursorPos().x + COMPONENT_PANEL_PADDING,
-                                     ImGui::GetWindowPos().y + ImGui::GetCursorPos().y + COMPONENT_PANEL_PADDING / 2.0);
-        ImVec2 separatorMax = ImVec2(ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMax().x - COMPONENT_PANEL_PADDING, separatorMin.y + 2);
+        auto separatorMin = ImVec2(ImGui::GetWindowPos().x + ImGui::GetCursorPos().x + COMPONENT_PANEL_PADDING,
+                                   ImGui::GetWindowPos().y + ImGui::GetCursorPos().y + COMPONENT_PANEL_PADDING / 2.0f);
+        auto separatorMax = ImVec2(ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMax().x - COMPONENT_PANEL_PADDING, separatorMin.y + 2);
         ImGui::GetWindowDrawList()->AddRectFilled(separatorMin,
                                                   separatorMax, COL_BG_DIM);
         ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 20);
@@ -648,7 +658,7 @@ namespace Dwarf
             PreviewRenderer::UpdateRotation(InputManager::GetDeltaMousePos());
         }
 
-        draw_list->AddImage(reinterpret_cast<void *>(PreviewRenderer::GetTextureId()),
+        draw_list->AddImage(PreviewRenderer::GetTextureId(),
                             minRect,
                             maxRect,
                             ImVec2(0, 1),
@@ -694,9 +704,9 @@ namespace Dwarf
 
         ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
 
-        ImVec2 separatorMin = ImVec2(ImGui::GetWindowPos().x + ImGui::GetCursorPos().x + COMPONENT_PANEL_PADDING,
-                                     ImGui::GetWindowPos().y + ImGui::GetCursorPos().y + COMPONENT_PANEL_PADDING / 2.0);
-        ImVec2 separatorMax = ImVec2(ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMax().x - COMPONENT_PANEL_PADDING, separatorMin.y + 2);
+        auto separatorMin = ImVec2(ImGui::GetWindowPos().x + ImGui::GetCursorPos().x + COMPONENT_PANEL_PADDING,
+                                   ImGui::GetWindowPos().y + ImGui::GetCursorPos().y + COMPONENT_PANEL_PADDING / 2.0f);
+        auto separatorMax = ImVec2(ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMax().x - COMPONENT_PANEL_PADDING, separatorMin.y + 2);
         ImGui::GetWindowDrawList()->AddRectFilled(separatorMin,
                                                   separatorMax, COL_BG_DIM);
         ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 20);
@@ -704,7 +714,7 @@ namespace Dwarf
         float width = ImGui::GetContentRegionAvail().x;
         ImGui::TextWrapped("Preview:");
 
-        ImTextureID texID = (ImTextureID)asset->GetAsset()->m_Texture->GetTextureID();
+        auto texID = (ImTextureID)asset->GetAsset()->m_Texture->GetTextureID();
         ImGui::Image(texID, ImVec2(width, width));
 
         draw_list->ChannelsSetCurrent(0);

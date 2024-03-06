@@ -3,6 +3,8 @@
 #include "Core/Rendering/Shader.h"
 #include "Core/Base.h"
 
+#include <string_view>
+
 #include <glad/glad.h>
 #include <Core/Rendering/IShaderParameter.h>
 
@@ -48,19 +50,19 @@ namespace Dwarf
         ~OpenGLShader() override;
 
         void SetVertexShader(Ref<UID> vertexShader);
-        void SetVertexShader(std::string const &vertexShader);
+        void SetVertexShader(std::string_view vertexShader);
 
         void SetTesselaltionControlShader(Ref<UID> tessellationControlShader);
-        void SetTesselaltionControlShader(std::string const &tessellationControlShader);
+        void SetTesselaltionControlShader(std::string_view tessellationControlShader);
 
         void SetTesselaltionEvaluationShader(Ref<UID> tessellationEvaluationShader);
-        void SetTesselaltionEvaluationShader(std::string const &tessellationEvaluationShader);
+        void SetTesselaltionEvaluationShader(std::string_view tessellationEvaluationShader);
 
         void SetGeometryShader(Ref<UID> geometryShader);
-        void SetGeometryShader(std::string const &geometryShader);
+        void SetGeometryShader(std::string_view geometryShader);
 
         void SetFragmentShader(Ref<UID> fragmentShader);
-        void SetFragmentShader(std::string const &fragmentShader);
+        void SetFragmentShader(std::string_view fragmentShader);
 
         Ref<UID> GetVertexShader() const;
         Ref<UID> GetFragmentShader() const;
@@ -72,7 +74,7 @@ namespace Dwarf
 
         void Compile() override;
 
-        std::map<std::string, Ref<IShaderParameter>> GetParameters() override;
+        std::map<std::string, Ref<IShaderParameter>, std::less<>> GetParameters() override;
 
         static Ref<OpenGLShader> CreateDefaultShader();
         static Ref<OpenGLShader> CreateErrorShader();

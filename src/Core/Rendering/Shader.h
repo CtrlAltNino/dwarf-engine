@@ -21,7 +21,7 @@ namespace Dwarf
 
 		virtual void Compile() = 0;
 
-		bool IsCompiled()
+		bool IsCompiled() const
 		{
 			return m_SuccessfullyCompiled;
 		}
@@ -31,7 +31,7 @@ namespace Dwarf
 			m_SuccessfullyCompiled = isCompiled;
 		}
 
-		virtual std::map<std::string, Ref<IShaderParameter>> GetParameters() = 0;
+		virtual std::map<std::string, Ref<IShaderParameter>, std::less<>> GetParameters() = 0;
 
 		static Ref<Shader> Create();
 

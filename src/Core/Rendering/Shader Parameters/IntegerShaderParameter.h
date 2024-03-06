@@ -19,7 +19,7 @@ namespace Dwarf
 
         virtual ShaderParameterType GetType() override
         {
-            return INTEGER;
+            return ShaderParameterType::INTEGER;
         }
     };
 }

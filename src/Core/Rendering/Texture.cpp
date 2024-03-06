@@ -17,7 +17,7 @@
 
 namespace Dwarf
 {
-    Ref<Texture> Texture::Create(std::filesystem::path path)
+    Ref<Texture> Texture::Create(std::filesystem::path const &path)
     {
         switch (Renderer::GetAPI())
         {

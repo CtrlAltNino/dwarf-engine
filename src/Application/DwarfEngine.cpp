@@ -30,8 +30,6 @@ namespace Dwarf
 
 				auto editor = Dwarf::CreateEditor();
 				shouldClose = !editor->Run(projectPath);
-
-				delete editor;
 			}
 			else
 			{
@@ -41,8 +39,8 @@ namespace Dwarf
 		}
 	}
 
-	DwarfEngine *Create()
+	Ref<DwarfEngine> Create()
 	{
-		return new DwarfEngine();
+		return CreateRef<DwarfEngine>();
 	}
 }

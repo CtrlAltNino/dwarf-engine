@@ -8,30 +8,25 @@ namespace Dwarf
 {
     class Mesh
     {
-    protected:
+    private:
         std::vector<Vertex> m_Vertices;
         std::vector<unsigned int> m_Indices;
         unsigned int m_MaterialIndex;
 
     public:
-        static Ref<Mesh> Create(std::vector<Vertex> vertices, std::vector<unsigned int> indices, unsigned int materialIndex);
+        Mesh(std::vector<Vertex> const &vertices, std::vector<unsigned int> const &indices, unsigned int materialIndex);
+        virtual ~Mesh() = default;
+
+        static Ref<Mesh> Create(std::vector<Vertex> const &vertices, std::vector<unsigned int> const &indices, unsigned int materialIndex);
         static Ref<Mesh> GenerateUnitSphere(int stacks, int slices);
         static void Init();
 
         virtual void SetupMesh() = 0;
 
-        int GetMaterialIndex()
-        {
-            return m_MaterialIndex;
-        }
+        int GetMaterialIndex() const;
+        const std::vector<Vertex> &GetVertices() const;
+        const std::vector<unsigned int> &GetIndices() const;
 
-        std::vector<Vertex> *GetVertices()
-        {
-            return &m_Vertices;
-        }
-
-        int m_VertexCount;
-        int m_IndexCount;
         static Ref<Mesh> s_GridMesh;
         static Ref<Mesh> s_UnitSphere;
     };

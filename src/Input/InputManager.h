@@ -17,8 +17,8 @@ namespace Dwarf
     {                                                       \
         LEFT, RIGHT, MIDDLE, MOUSE_BUTTON_4, MOUSE_BUTTON_5 \
     }
-    enum KEYCODE KEYCODE_INITIALIZER;
-    enum MOUSE_BUTTON MOUSE_BUTTON_INITIALIZER;
+    enum class KEYCODE KEYCODE_INITIALIZER;
+    enum class MOUSE_BUTTON MOUSE_BUTTON_INITIALIZER;
 
     class InputManager
     {
@@ -103,6 +103,6 @@ namespace Dwarf
 
         static void ProcessKeyUp(SDL_Scancode key);
 
-        static void ProcessScroll(SDL_Event &event);
+        static void ProcessScroll(SDL_Event const &event);
     };
 }

@@ -12,7 +12,7 @@ namespace Dwarf
 
         PathComponent() = default;
         PathComponent(const PathComponent &) = default;
-        PathComponent(const std::filesystem::path &path)
+        explicit PathComponent(const std::filesystem::path &path)
             : Path(path) {}
     };
 
@@ -23,7 +23,7 @@ namespace Dwarf
         Ref<UID> ID;
         IDComponent() = default;
         IDComponent(const IDComponent &) = default;
-        IDComponent(const UID &other) : ID(CreateRef<UID>(other)) {}
+        explicit IDComponent(const UID &other) : ID(CreateRef<UID>(other)) {}
     };
 
     /// @brief Entity component holding a name (Used for object names).
@@ -34,7 +34,7 @@ namespace Dwarf
 
         NameComponent() = default;
         NameComponent(const NameComponent &) = default;
-        NameComponent(const std::string &name)
+        explicit NameComponent(const std::string &name)
             : Name(name) {}
     };
 }

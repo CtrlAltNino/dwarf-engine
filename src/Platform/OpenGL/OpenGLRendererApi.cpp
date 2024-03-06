@@ -13,8 +13,8 @@
 
 namespace Dwarf
 {
-	OpenGLRendererApi::OpenGLRendererApi() {}
-	OpenGLRendererApi::~OpenGLRendererApi() {}
+	OpenGLRendererApi::OpenGLRendererApi() = default;
+	OpenGLRendererApi::~OpenGLRendererApi() = default;
 
 	void OpenGLRendererApi::Init()
 	{
@@ -64,6 +64,7 @@ namespace Dwarf
 			{
 				switch ((*val).GetType())
 				{
+					using enum ShaderParameterType;
 				case BOOLEAN:
 					glUniform1f(glGetUniformLocation(shader->GetID(), key.c_str()), (float)std::dynamic_pointer_cast<BooleanShaderParameter>(val)->m_Value);
 					break;
@@ -71,7 +72,7 @@ namespace Dwarf
 					glUniform1i(glGetUniformLocation(shader->GetID(), key.c_str()), (float)std::dynamic_pointer_cast<IntegerShaderParameter>(val)->m_Value);
 					break;
 				case FLOAT:
-					glUniform1f(glGetUniformLocation(shader->GetID(), key.c_str()), (float)std::dynamic_pointer_cast<FloatShaderParameter>(val)->m_Value);
+					glUniform1f(glGetUniformLocation(shader->GetID(), key.c_str()), std::dynamic_pointer_cast<FloatShaderParameter>(val)->m_Value);
 					break;
 				case TEX2D:
 				{
@@ -119,7 +120,7 @@ namespace Dwarf
 		glUniformMatrix4fv(pmID, 1, GL_FALSE, &projectionMatrix[0][0]);
 		oglMesh->Bind();
 
-		glDrawElements(GL_TRIANGLES, oglMesh->m_IndexCount, GL_UNSIGNED_INT, 0);
+		glDrawElements(GL_TRIANGLES, oglMesh->GetIndices().size(), GL_UNSIGNED_INT, nullptr);
 
 		oglMesh->Unbind();
 

@@ -9,6 +9,9 @@ namespace Dwarf
     class ChildIndexInstruction : public GraphInstruction
     {
     private:
+        /// @brief Pointer to the currently opened scene.
+        Ref<Scene> m_Scene;
+
         /// @brief The entities to process.
         std::vector<Entity> m_SourceEntities;
 
@@ -17,7 +20,7 @@ namespace Dwarf
 
     public:
         /// @brief Executes the instruction.
-        virtual void PerformInstruction();
-        ChildIndexInstruction(Ref<Scene> scene, std::vector<Entity> sourceEntities, int index);
+        void PerformInstruction() override;
+        ChildIndexInstruction(Ref<Scene> scene, std::vector<Entity> const &sourceEntities, int index);
     };
 }

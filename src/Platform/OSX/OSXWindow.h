@@ -16,8 +16,8 @@ namespace Dwarf
     class OSXWindow : public Window
     {
     public:
-        OSXWindow(const WindowProps &props);
-        virtual ~OSXWindow();
+        explicit OSXWindow(const WindowProps &props);
+        ~OSXWindow() override;
 
         void NewFrame() override;
         void EndFrame() override;
@@ -25,11 +25,9 @@ namespace Dwarf
         unsigned int GetWidth() const override { return m_Data.Width; }
         unsigned int GetHeight() const override { return m_Data.Height; }
 
-        virtual void ShowWindow() override;
-        virtual void HideWindow() override;
+        void ShowWindow() override;
+        void HideWindow() override;
 
-        // Window attributes
-        // void SetEventCallback(const EventCallbackFn& callback) override { m_Data.EventCallback = callback; }
         void SetVSync(bool enabled) override;
         bool IsVSync() override;
 
@@ -37,11 +35,11 @@ namespace Dwarf
 
         void SetWindowTitle(std::string windowTitle) override;
 
-        virtual void *GetNativeWindow() const override { return m_Window; }
+        void *GetNativeWindow() const override { return m_Window; }
 
-        virtual GraphicsApi GetApi() override;
+        GraphicsApi GetApi() override;
 
-        virtual void MaximizeWindow() override;
+        void MaximizeWindow() override;
 
     private:
         virtual void Init(const WindowProps &props);
@@ -56,11 +54,10 @@ namespace Dwarf
         struct WindowData
         {
             std::string Title;
-            unsigned int Width, Height;
+            unsigned int Width;
+            unsigned int Height;
             bool VSync;
             bool ShouldClose;
-
-            // EventCallbackFn EventCallback;
         };
 
         WindowData m_Data;

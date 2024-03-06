@@ -5,7 +5,6 @@
 
 namespace Dwarf
 {
-
 	static const uint32_t s_MaxFramebufferSize = 8192;
 
 	namespace Utils
@@ -72,6 +71,7 @@ namespace Dwarf
 		{
 			switch (format)
 			{
+				using enum FramebufferTextureFormat;
 			case FramebufferTextureFormat::DEPTH24STENCIL8:
 				return true;
 			case FramebufferTextureFormat::None:
@@ -87,6 +87,7 @@ namespace Dwarf
 		{
 			switch (format)
 			{
+				using enum FramebufferTextureFormat;
 			case FramebufferTextureFormat::RGBA8:
 				return GL_RGBA8;
 			case FramebufferTextureFormat::RED_INTEGER:
@@ -104,12 +105,12 @@ namespace Dwarf
 	OpenGLFramebuffer::OpenGLFramebuffer(const FramebufferSpecification &spec)
 		: m_Specification(spec)
 	{
-		for (auto spec : m_Specification.Attachments.Attachments)
+		for (auto attachments : m_Specification.Attachments.Attachments)
 		{
-			if (!Utils::IsDepthFormat(spec.TextureFormat))
-				m_ColorAttachmentSpecifications.emplace_back(spec);
+			if (!Utils::IsDepthFormat(attachments.TextureFormat))
+				m_ColorAttachmentSpecifications.emplace_back(attachments);
 			else
-				m_DepthAttachmentSpecification = spec;
+				m_DepthAttachmentSpecification = attachments;
 		}
 
 		Invalidate();
@@ -143,18 +144,19 @@ namespace Dwarf
 		if (m_ColorAttachmentSpecifications.size())
 		{
 			m_ColorAttachments.resize(m_ColorAttachmentSpecifications.size());
-			Utils::CreateTextures(multisample, m_ColorAttachments.data(), m_ColorAttachments.size());
+			Utils::CreateTextures(multisample, m_ColorAttachments.data(), (uint32_t)m_ColorAttachments.size());
 
 			for (size_t i = 0; i < m_ColorAttachments.size(); i++)
 			{
 				Utils::BindTexture(multisample, m_ColorAttachments[i]);
 				switch (m_ColorAttachmentSpecifications[i].TextureFormat)
 				{
+					using enum FramebufferTextureFormat;
 				case FramebufferTextureFormat::RGBA8:
-					Utils::AttachColorTexture(m_ColorAttachments[i], m_Specification.Samples, GL_RGBA8, GL_RGBA, m_Specification.Width, m_Specification.Height, i);
+					Utils::AttachColorTexture(m_ColorAttachments[i], m_Specification.Samples, GL_RGBA8, GL_RGBA, m_Specification.Width, m_Specification.Height, (int)i);
 					break;
 				case FramebufferTextureFormat::RED_INTEGER:
-					Utils::AttachColorTexture(m_ColorAttachments[i], m_Specification.Samples, GL_R32I, GL_RED_INTEGER, m_Specification.Width, m_Specification.Height, i);
+					Utils::AttachColorTexture(m_ColorAttachments[i], m_Specification.Samples, GL_R32I, GL_RED_INTEGER, m_Specification.Width, m_Specification.Height, (int)i);
 					break;
 				case FramebufferTextureFormat::None:
 				case FramebufferTextureFormat::DEPTH24STENCIL8:
@@ -169,6 +171,7 @@ namespace Dwarf
 			Utils::BindTexture(multisample, m_DepthAttachment);
 			switch (m_DepthAttachmentSpecification.TextureFormat)
 			{
+				using enum FramebufferTextureFormat;
 			case FramebufferTextureFormat::DEPTH24STENCIL8:
 				Utils::AttachDepthTexture(m_DepthAttachment, m_Specification.Samples, GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL_ATTACHMENT, m_Specification.Width, m_Specification.Height);
 				break;
@@ -181,17 +184,14 @@ namespace Dwarf
 
 		if (m_ColorAttachments.size() > 1)
 		{
-			// HZ_CORE_ASSERT(m_ColorAttachments.size() <= 4);
-			GLenum buffers[4] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3};
-			glDrawBuffers(m_ColorAttachments.size(), buffers);
+			std::array<GLenum, 4> buffers = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3};
+			glDrawBuffers(m_ColorAttachments.size(), buffers.data());
 		}
 		else if (m_ColorAttachments.empty())
 		{
 			// Only depth-pass
 			glDrawBuffer(GL_NONE);
 		}
-
-		// HZ_CORE_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "Framebuffer is incomplete!");
 
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
@@ -211,7 +211,6 @@ namespace Dwarf
 	{
 		if (width == 0 || height == 0 || width > s_MaxFramebufferSize || height > s_MaxFramebufferSize)
 		{
-			// HZ_CORE_WARN("Attempted to rezize framebuffer to {0}, {1}", width, height);
 			return;
 		}
 		m_Specification.Width = width;
@@ -222,8 +221,6 @@ namespace Dwarf
 
 	int OpenGLFramebuffer::ReadPixel(uint32_t attachmentIndex, int x, int y)
 	{
-		// HZ_CORE_ASSERT(attachmentIndex < m_ColorAttachments.size());
-
 		glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentIndex);
 		int pixelData;
 		glReadPixels(x, y, 1, 1, GL_RED_INTEGER, GL_INT, &pixelData);
@@ -232,9 +229,7 @@ namespace Dwarf
 
 	void OpenGLFramebuffer::ClearAttachment(uint32_t attachmentIndex, int value)
 	{
-		// HZ_CORE_ASSERT(attachmentIndex < m_ColorAttachments.size());
-
-		auto &spec = m_ColorAttachmentSpecifications[attachmentIndex];
+		const auto &spec = m_ColorAttachmentSpecifications[attachmentIndex];
 		glClearTexImage(m_ColorAttachments[attachmentIndex], 0,
 						Utils::HazelFBTextureFormatToGL(spec.TextureFormat), GL_INT, &value);
 	}

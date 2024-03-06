@@ -12,15 +12,18 @@
 
 namespace Dwarf
 {
-	Scope<Window> Window::Create(const WindowProps &props)
+	Ref<Window> Window::Create(const WindowProps &props)
 	{
+		Ref<Window> window = nullptr;
 #ifdef _WIN32
-		return CreateScope<WindowsWindow>(props);
+		window = CreateRef<WindowsWindow>(props.Api);
 #elif __linux__
-		return CreateScope<LinuxWindow>(props);
+		window = CreateRef<LinuxWindow>(props.Api);
 #elif __APPLE__
-		return CreateScope<OSXWindow>(props); // - NOT SUPPORTED YET
-											  // return nullptr;
+		window = CreateRef<OSXWindow>(props.Api); // - NOT SUPPORTED YET
+												  // return nullptr;
 #endif
+		window->Init(props);
+		return window;
 	}
 }

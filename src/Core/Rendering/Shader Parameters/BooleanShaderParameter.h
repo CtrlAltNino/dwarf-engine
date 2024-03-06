@@ -19,7 +19,7 @@ namespace Dwarf
 
         virtual ShaderParameterType GetType() override
         {
-            return BOOLEAN;
+            return ShaderParameterType::BOOLEAN;
         }
     };
 }

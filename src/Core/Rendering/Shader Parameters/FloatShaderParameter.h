@@ -19,7 +19,7 @@ namespace Dwarf
 
         virtual ShaderParameterType GetType() override
         {
-            return FLOAT;
+            return ShaderParameterType::FLOAT;
         }
     };
 }

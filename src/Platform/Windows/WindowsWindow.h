@@ -3,21 +3,17 @@
 // system
 #include <iostream>
 
-// SDL
-#include <SDL2/SDL.h>
-
 #include "Window/Window.h"
 #include "Core/Rendering/GraphicsContext.h"
 #include "Core/UI/ImGuiLayer.h"
 
 namespace Dwarf
 {
-
     class WindowsWindow : public Window
     {
     public:
-        WindowsWindow(const WindowProps &props);
-        ~WindowsWindow();
+        explicit WindowsWindow(const WindowProps &props);
+        ~WindowsWindow() override;
 
         void NewFrame() override;
         void EndFrame() override;
@@ -28,8 +24,6 @@ namespace Dwarf
         void ShowWindow() override;
         void HideWindow() override;
 
-        // Window attributes
-        // void SetEventCallback(const EventCallbackFn& callback) override { m_Data.EventCallback = callback; }
         void SetVSync(bool enabled) override;
         bool IsVSync() override;
 
@@ -37,17 +31,15 @@ namespace Dwarf
 
         void SetWindowTitle(std::string windowTitle) override;
 
-        void *GetNativeWindow() const override { return m_Window; }
+        SDL_Window *GetNativeWindow() const override { return m_Window; }
 
         GraphicsApi GetApi() override;
 
         void MaximizeWindow() override;
 
     private:
-        void Init(const WindowProps &props);
-        void Shutdown();
+        void Init(const WindowProps &props) override;
 
-    private:
         SDL_Window *m_Window;
         Scope<GraphicsContext> m_Context;
         GraphicsApi m_Api;
@@ -56,11 +48,10 @@ namespace Dwarf
         struct WindowData
         {
             std::string Title;
-            unsigned int Width, Height;
+            unsigned int Width;
+            unsigned int Height;
             bool VSync;
             bool ShouldClose;
-
-            // EventCallbackFn EventCallback;
         };
 
         WindowData m_Data;

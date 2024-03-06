@@ -4,6 +4,7 @@
 #include <glm/vec3.hpp>
 #include <imgui_internal.h>
 #include <ImGuizmo.h>
+#include <array>
 
 #include "Core/Base.h"
 #include "Editor/EditorModel.h"
@@ -14,13 +15,7 @@
 
 namespace Dwarf
 {
-
-#define MIN_RESOLUTION_WIDTH 10
-#define MIN_RESOLUTION_HEIGHT 10
-#define MAX_RESOLUTION_WIDTH 5120
-#define MAX_RESOLUTION_HEIGHT 2160
-
-    enum RENDERING_CONSTRAINT
+    enum class RENDERING_CONSTRAINT
     {
         FREE,
         ASPECT_RATIO,
@@ -40,10 +35,10 @@ namespace Dwarf
         RENDERING_CONSTRAINT RenderingConstraint = RENDERING_CONSTRAINT::FREE;
 
         /// @brief Stored aspect ratio constraint.
-        int AspectRatio[2] = {16, 9};
+        std::array<int, 2> AspectRatio = {16, 9};
 
         /// @brief Stored resolution constraint.
-        int Resolution[2] = {1024, 1024};
+        std::array<int, 2> Resolution = {1024, 1024};
 
         /// @brief Aspect ratio to use for the target.
         float targetAspectRatio;
@@ -72,9 +67,9 @@ namespace Dwarf
         /// @param availableResolution Base resolution given.
         /// @param targetAspectRatio Desired aspect ratio.
         /// @return Resolution at the given aspect ratio.
-        glm::ivec2 CalculateDesiredResolution(glm::ivec2 availableResolution, float targetAspectRatio);
+        glm::ivec2 CalculateDesiredResolution(glm::ivec2 availableResolution, float targetAspectRatio) const;
 
-        glm::vec3 CalculateSelectionCenter();
+        glm::vec3 CalculateSelectionCenter() const;
 
         /// @brief Updates the render texture.
         void UpdateFramebuffer();
@@ -96,8 +91,8 @@ namespace Dwarf
         /// @return The texture ID of the frame buffer.
         ImTextureID GetFrameBufferForImGui();
 
-        virtual std::string Serialize() override;
+        std::string Serialize() override;
 
-        virtual void Deserialize(nlohmann::json moduleData) override;
+        void Deserialize(nlohmann::json moduleData) override;
     };
 }

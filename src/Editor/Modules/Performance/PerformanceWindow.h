@@ -12,10 +12,10 @@ namespace Dwarf
     {
     private:
         /// @brief Pointer to the frame time.
-        Ref<double> m_Frametime;
+        Ref<double> m_Frametime = nullptr;
 
         /// @brief Pointer to the render time.
-        Ref<double> m_RenderTime;
+        Ref<double> m_RenderTime = nullptr;
 
     public:
         PerformanceWindow(Ref<EditorModel> model, int id);
@@ -25,8 +25,8 @@ namespace Dwarf
 
         void OnUpdate(double deltaTime) override;
 
-        virtual std::string Serialize() override;
+        std::string Serialize() override;
 
-        virtual void Deserialize(nlohmann::json moduleData) override;
+        void Deserialize(nlohmann::json moduleData) override;
     };
 }

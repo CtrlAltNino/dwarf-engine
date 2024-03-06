@@ -8,16 +8,22 @@ namespace Dwarf
 {
     class Texture
     {
-    protected:
-        glm::ivec2 size;
+    private:
+        glm::ivec2 m_Size;
 
     public:
-        glm::ivec2 GetSize()
+        virtual ~Texture() = default;
+        glm::ivec2 GetSize() const
         {
-            return size;
+            return m_Size;
         }
 
-        static Ref<Texture> Create(std::filesystem::path path);
+        void SetSize(glm::ivec2 size)
+        {
+            m_Size = size;
+        }
+
+        static Ref<Texture> Create(std::filesystem::path const &path);
 
         virtual uintptr_t GetTextureID() = 0;
     };

@@ -3,6 +3,7 @@
 #include <imgui.h>
 #include <imgui_internal.h>
 #include <nlohmann/json.hpp>
+#include <format>
 
 #include "Editor/EditorModel.h"
 
@@ -25,6 +26,9 @@ namespace Dwarf
     class GuiModule
     {
     protected:
+        /// @brief Interfaced editor controller to communicate with the controller.
+        Ref<EditorModel> m_Model;
+
         /// @brief Name to use for the module.
         std::string m_Label;
 
@@ -34,14 +38,11 @@ namespace Dwarf
         /// @brief Incremented global GUI module ID.
         int m_Index;
 
-        /// @brief Interfaced editor controller to communicate with the controller.
-        Ref<EditorModel> m_Model;
-
         /// @brief Flag to check if the window is collapsed or not.
         bool m_WindowOpened = true;
 
     public:
-        GuiModule(Ref<EditorModel> model, std::string name, MODULE_TYPE type, int index)
+        GuiModule(Ref<EditorModel> model, std::string_view name, MODULE_TYPE type, int index)
             : m_Model(model),
               m_Label(name),
               m_ModuleType(type),
@@ -49,23 +50,25 @@ namespace Dwarf
         {
         }
 
+        virtual ~GuiModule() = default;
+
         /// @brief Returns the name of the module.
         /// @return Name of the module.
-        std::string GetModuleName() { return m_Label; }
+        std::string GetModuleName() const { return m_Label; }
 
         /// @brief Returns thhe type of the module.
         /// @return Type of the module.
-        MODULE_TYPE GetModuleType() { return m_ModuleType; }
+        MODULE_TYPE GetModuleType() const { return m_ModuleType; }
 
         /// @brief Returns the global module index.
         /// @return The module index.
-        int GetIndex() { return m_Index; }
+        int GetIndex() const { return m_Index; }
 
         /// @brief Generates the ImGui window identifier for a module window..
         /// @return The window identifier.
-        std::string GetIdentifier()
+        std::string GetIdentifier() const
         {
-            return (m_Label + "##" + std::to_string(m_Index));
+            return std::format("{}##{}", m_Label, std::to_string(m_Index));
         }
 
         /// @brief Generates a ImGui ID for the module.

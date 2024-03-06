@@ -16,8 +16,8 @@ namespace Dwarf
     class LinuxWindow : public Window
     {
     public:
-        LinuxWindow(const WindowProps &props);
-        virtual ~LinuxWindow();
+        explicit LinuxWindow(GraphicsApi api);
+        ~LinuxWindow() override;
 
         void NewFrame() override;
         void EndFrame() override;
@@ -25,29 +25,25 @@ namespace Dwarf
         unsigned int GetWidth() const override { return m_Data.Width; }
         unsigned int GetHeight() const override { return m_Data.Height; }
 
-        virtual void ShowWindow() override;
-        virtual void HideWindow() override;
+        void ShowWindow() override;
+        void HideWindow() override;
 
         // Window attributes
-        // void SetEventCallback(const EventCallbackFn& callback) override { m_Data.EventCallback = callback; }
         void SetVSync(bool enabled) override;
         bool IsVSync() override;
 
         bool ShouldClose() override;
 
-        void SetWindowTitle(std::string windowTitle) override;
+        void SetWindowTitle(std::string_view windowTitle) override;
 
-        virtual void *GetNativeWindow() const { return m_Window; }
+        SDL_Window *GetNativeWindow() const override { return m_Window; }
 
-        virtual GraphicsApi GetApi() override;
+        GraphicsApi GetApi() override;
 
-        virtual void MaximizeWindow() override;
-
-    private:
-        virtual void Init(const WindowProps &props);
-        virtual void Shutdown();
+        void MaximizeWindow() override;
 
     private:
+        void Init(const WindowProps &props) override;
         SDL_Window *m_Window;
         Scope<GraphicsContext> m_Context;
         GraphicsApi m_Api;
@@ -56,11 +52,10 @@ namespace Dwarf
         struct WindowData
         {
             std::string Title;
-            unsigned int Width, Height;
+            unsigned int Width;
+            unsigned int Height;
             bool VSync;
             bool ShouldClose;
-
-            // EventCallbackFn EventCallback;
         };
 
         WindowData m_Data;

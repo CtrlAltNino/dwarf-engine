@@ -35,39 +35,39 @@ namespace Dwarf
 		/// @brief Checks if a file is present at a given path.
 		/// @param filePath Absolute path to a file.
 		/// @return True if file exists, false if not.
-		static bool CheckIfFileExists(std::filesystem::path filePath);
+		static bool CheckIfFileExists(std::filesystem::path const &filePath);
 
 		/// @brief Reads a file and returns the content.
 		/// @param filePath Absolute path to a file.
 		/// @return The content of the file.
-		static std::string ReadFile(std::filesystem::path filePath);
+		static std::string ReadFile(std::filesystem::path const &filePath);
 
 		/// @brief Writes a string to a file at a given path.
 		/// @param filePath Path where to write the string to.
 		/// @param content Content to write.
-		static void WriteToFile(std::filesystem::path filePath, std::string content);
+		static void WriteToFile(std::filesystem::path const &filePath, std::string_view content);
 
 		/// @brief Checks if a directory is present on the users disk.
 		/// @param path Path to a directory.
 		/// @return True if directory is present, false if not.
-		static bool CheckIfDirectoyExists(std::filesystem::path path);
+		static bool CheckIfDirectoyExists(std::filesystem::path const &path);
 
 		/// @brief Creates a directory at a given path.
 		/// @param path Path to a directory.
-		static void CreateDirectory(std::filesystem::path path);
+		static void CreateDirectory(std::filesystem::path const &path);
 
 		/// @brief Opens a path into a file browser.
 		/// @param path Path to open.
-		static void OpenPathInFileBrowser(std::filesystem::path path);
+		static void OpenPathInFileBrowser(std::filesystem::path const &path);
 
-		static void LaunchFile(std::filesystem::path path);
+		static void LaunchFile(std::filesystem::path const &path);
 
-		static void Copy(std::filesystem::path from, std::filesystem::path to);
+		static void Copy(std::filesystem::path const &from, std::filesystem::path const &to);
 
-		static void Rename(std::filesystem::path oldPath, std::filesystem::path newPath);
+		static void Rename(std::filesystem::path const &oldPath, std::filesystem::path const &newPath);
 
-		static void Duplicate(std::filesystem::path path);
+		static void Duplicate(std::filesystem::path const &path);
 
-		static void Delete(std::filesystem::path path);
+		static void Delete(std::filesystem::path const &path);
 	};
 }

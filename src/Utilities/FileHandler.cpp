@@ -93,16 +93,17 @@ namespace Dwarf
     /// @brief Checks if a file is present at a given path.
     /// @param filePath Absolute path to a file.
     /// @return True if file exists, false if not.
-    bool FileHandler::CheckIfFileExists(std::filesystem::path filePath)
+    bool FileHandler::CheckIfFileExists(std::filesystem::path const &filePath)
     {
-        std::ifstream fileStream(filePath.make_preferred(), std::ios::in);
+        std::filesystem::path copy = filePath;
+        std::ifstream fileStream(copy.make_preferred(), std::ios::in);
         return fileStream.is_open();
     }
 
     /// @brief Reads a file and returns the content.
     /// @param filePath Absolute path to a file.
     /// @return The content of the file.
-    std::string FileHandler::ReadFile(std::filesystem::path filePath)
+    std::string FileHandler::ReadFile(std::filesystem::path const &filePath)
     {
         std::string content;
         std::ifstream fileStream(filePath, std::ios::in);
@@ -127,7 +128,7 @@ namespace Dwarf
     /// @brief Writes a string to a file at a given path.
     /// @param filePath Path where to write the string to.
     /// @param content Content to write.
-    void FileHandler::WriteToFile(std::filesystem::path filePath, std::string content)
+    void FileHandler::WriteToFile(std::filesystem::path const &filePath, std::string_view content)
     {
         // opening a file in writing mode which is default.
         std::ofstream file;
@@ -147,21 +148,21 @@ namespace Dwarf
     /// @brief Checks if a directory is present on the users disk.
     /// @param path Path to a directory.
     /// @return True if directory is present, false if not.
-    bool FileHandler::CheckIfDirectoyExists(std::filesystem::path path)
+    bool FileHandler::CheckIfDirectoyExists(std::filesystem::path const &path)
     {
         return std::filesystem::exists(path);
     }
 
     /// @brief Creates a directory at a given path.
     /// @param path Path to a directory.
-    void FileHandler::CreateDirectory(std::filesystem::path path)
+    void FileHandler::CreateDirectory(std::filesystem::path const &path)
     {
         std::filesystem::create_directories(path);
     }
 
     /// @brief Opens a path into a file browser.
     /// @param path Path to open.
-    void FileHandler::OpenPathInFileBrowser(std::filesystem::path path)
+    void FileHandler::OpenPathInFileBrowser(std::filesystem::path const &path)
     {
 #if _WIN32
         wchar_t *commandStr = new wchar_t[4096];
@@ -175,7 +176,7 @@ namespace Dwarf
 #endif
     }
 
-    void FileHandler::LaunchFile(std::filesystem::path path)
+    void FileHandler::LaunchFile(std::filesystem::path const &path)
     {
         // Start-Process -FilePath "custom.frag"
 #if _WIN32
@@ -191,34 +192,27 @@ namespace Dwarf
 #endif
     }
 
-    void FileHandler::Copy(std::filesystem::path from, std::filesystem::path to)
+    void FileHandler::Copy(std::filesystem::path const &from, std::filesystem::path const &to)
     {
-#if _WIN32
         std::filesystem::copy(from, to);
-#endif
     }
 
-    void FileHandler::Rename(std::filesystem::path oldPath, std::filesystem::path newPath)
+    void FileHandler::Rename(std::filesystem::path const &oldPath, std::filesystem::path const &newPath)
     {
-#if _WIN32
         std::filesystem::rename(oldPath, newPath);
-#endif
     }
 
-    void FileHandler::Duplicate(std::filesystem::path path)
+    void FileHandler::Duplicate(std::filesystem::path const &path)
     {
-#if _WIN32
         std::filesystem::path from = path;
-        std::filesystem::path to = path.replace_filename(path.replace_extension("").filename().concat(" copy").concat(from.extension().string()));
+        std::filesystem::path to = path;
+        to = to.replace_filename(to.replace_extension("").filename().concat(" copy").concat(from.extension().string()));
 
         std::filesystem::copy(from, to);
-#endif
     }
 
-    void FileHandler::Delete(std::filesystem::path path)
+    void FileHandler::Delete(std::filesystem::path const &path)
     {
-#if _WIN32
         std::filesystem::remove(path);
-#endif
     }
 }

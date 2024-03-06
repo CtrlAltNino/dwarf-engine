@@ -19,11 +19,12 @@ namespace Dwarf
 	class Renderer
 	{
 	public:
-		enum RendererType
+		enum class RendererType
 		{
 			Forward,
 			Deferred
 		};
+		virtual ~Renderer() = default;
 		static GraphicsApi GetAPI();
 		static RendererType GetType();
 		static void Create(GraphicsApi api, Renderer::RendererType type);

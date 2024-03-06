@@ -14,14 +14,14 @@ namespace Dwarf
     {
     public:
         OpenGLRendererApi();
-        ~OpenGLRendererApi();
+        ~OpenGLRendererApi() override;
 
-        virtual void Init() override;
-        virtual void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) override;
+        void Init() override;
+        void SetViewport(uint32_t x, uint32_t y, uint32_t width, uint32_t height) override;
 
-        virtual void SetClearColor(const glm::vec4 &color) override;
-        virtual void Clear() override;
+        void SetClearColor(const glm::vec4 &color) override;
+        void Clear() override;
 
-        virtual void RenderIndexed(Ref<Mesh> mesh, Ref<Material> material, glm::mat4 modelMatrix, glm::mat4 viewMatrix, glm::mat4 projectionMatrix) override;
+        void RenderIndexed(Ref<Mesh> mesh, Ref<Material> material, glm::mat4 modelMatrix, glm::mat4 viewMatrix, glm::mat4 projectionMatrix) override;
     };
 }

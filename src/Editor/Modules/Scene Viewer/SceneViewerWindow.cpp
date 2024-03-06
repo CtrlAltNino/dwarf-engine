@@ -13,6 +13,11 @@
 #include <glm/vec2.hpp>
 #include "Editor/Editor.h"
 
+#define MIN_RESOLUTION_WIDTH 10
+#define MIN_RESOLUTION_HEIGHT 10
+#define MAX_RESOLUTION_WIDTH 5120
+#define MAX_RESOLUTION_HEIGHT 2160
+
 namespace Dwarf
 {
     SceneViewerWindow::SceneViewerWindow(Ref<EditorModel> model, int index)
@@ -45,20 +50,20 @@ namespace Dwarf
         ImGui::Begin(GetIdentifier().c_str(), &m_WindowOpened, window_flags);
 
         ImGui::PopStyleVar(2);
-        static const char *renderingModes[] = {"Free", "Aspect Ratio", "Fixed Resolution"};
+        static std::array<std::string, 3> renderingModes = {"Free", "Aspect Ratio", "Fixed Resolution"};
 
         ImGui::PushItemWidth(150);
         ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
 
         // Rendering mode combo
-        if (ImGui::BeginCombo("##renderingMode", renderingModes[m_Settings.RenderingConstraint]))
+        if (ImGui::BeginCombo("##renderingMode", renderingModes[(int)m_Settings.RenderingConstraint].c_str()))
         {
             for (int n = 0; n < 3; n++)
             {
-                const bool is_selected = (m_Settings.RenderingConstraint == n);
+                const bool is_selected = ((int)m_Settings.RenderingConstraint == n);
 
                 // ==================== Graphics Selectable ====================
-                if (ImGui::Selectable(renderingModes[n], is_selected, 0, ImVec2(0, 16 + 10)))
+                if (ImGui::Selectable(renderingModes[n].c_str(), is_selected, 0, ImVec2(0, 16 + 10)))
                 {
                     m_Settings.RenderingConstraint = (RENDERING_CONSTRAINT)n;
                 }
@@ -133,7 +138,7 @@ namespace Dwarf
             ImGui::SameLine(0, 10);
             ImGui::Text("Resolution");
             ImGui::SameLine(0, 10);
-            ImGui::InputInt2("", m_Settings.Resolution);
+            ImGui::InputInt2("", m_Settings.Resolution.data());
             m_Settings.Resolution[0] = std::max(MIN_RESOLUTION_WIDTH, std::min(MAX_RESOLUTION_WIDTH, m_Settings.Resolution[0]));
             m_Settings.Resolution[1] = std::max(MIN_RESOLUTION_WIDTH, std::min(MAX_RESOLUTION_WIDTH, m_Settings.Resolution[1]));
         }
@@ -156,15 +161,15 @@ namespace Dwarf
 
         if (m_Settings.RenderingConstraint != RENDERING_CONSTRAINT::FREE)
         {
-            if (((double)m_Settings.ViewportSize.x / (double)m_Settings.ViewportSize.y) < m_Settings.targetAspectRatio)
+            if (((float)m_Settings.ViewportSize.x / (float)m_Settings.ViewportSize.y) < m_Settings.targetAspectRatio)
             {
-                double diff = std::ceil(std::fabs((double)m_Settings.ViewportSize.y - (double)m_Settings.ViewportSize.x / m_Settings.targetAspectRatio) / 2.0);
+                float diff = std::ceil(std::fabs((float)m_Settings.ViewportSize.y - (float)m_Settings.ViewportSize.x / m_Settings.targetAspectRatio) / 2.0f);
                 minRect.y += diff;
                 maxRect.y -= diff;
             }
             else if (((double)m_Settings.ViewportSize.x / (double)m_Settings.ViewportSize.y) > m_Settings.targetAspectRatio)
             {
-                double diff = std::ceil(std::fabs((double)m_Settings.ViewportSize.x - (double)m_Settings.ViewportSize.y * m_Settings.targetAspectRatio) / 2.0);
+                float diff = std::ceil(std::fabs((float)m_Settings.ViewportSize.x - (float)m_Settings.ViewportSize.y * m_Settings.targetAspectRatio) / 2.0f);
                 minRect.x += diff;
                 maxRect.x -= diff;
             }
@@ -172,7 +177,7 @@ namespace Dwarf
 
         // Rendering the framebuffer
         ImDrawList *drawList = ImGui::GetWindowDrawList();
-        drawList->AddImage(reinterpret_cast<void *>(GetFrameBufferForImGui()),
+        drawList->AddImage(GetFrameBufferForImGui(),
                            minRect,
                            maxRect,
                            ImVec2(0, 1),
@@ -180,11 +185,11 @@ namespace Dwarf
 
         drawList->ChannelsMerge();
 
-        ImVec2 hoverRectMin = ImVec2(ImGui::GetWindowPos().x + ImGui::GetCursorPos().x,
-                                     ImGui::GetWindowPos().y + ImGui::GetCursorPos().y);
+        auto hoverRectMin = ImVec2(ImGui::GetWindowPos().x + ImGui::GetCursorPos().x,
+                                   ImGui::GetWindowPos().y + ImGui::GetCursorPos().y);
 
-        ImVec2 hoverRectMax = ImVec2(ImGui::GetWindowPos().x + ImGui::GetCursorPos().x + ImGui::GetContentRegionAvail().x,
-                                     ImGui::GetWindowPos().y + ImGui::GetCursorPos().y + ImGui::GetContentRegionAvail().y);
+        auto hoverRectMax = ImVec2(ImGui::GetWindowPos().x + ImGui::GetCursorPos().x + ImGui::GetContentRegionAvail().x,
+                                   ImGui::GetWindowPos().y + ImGui::GetCursorPos().y + ImGui::GetContentRegionAvail().y);
 
         // TODO: Add cursor collision with other windows that may block
 
@@ -198,7 +203,7 @@ namespace Dwarf
             m_Settings.CameraMovement = false;
         }
 
-        if (m_Model->m_Selection.selectedEntities.size() == 1)
+        if (m_Model->GetSelection().selectedEntities.size() == 1)
         {
             RenderGizmos(minRect, maxRect);
         }
@@ -210,17 +215,17 @@ namespace Dwarf
         return (ImTextureID)*m_Framebuffer->GetColorAttachmentRendererID();
     }
 
-    glm::ivec2 SceneViewerWindow::CalculateDesiredResolution(glm::ivec2 availableResolution, float targetAspectRatio)
+    glm::ivec2 SceneViewerWindow::CalculateDesiredResolution(glm::ivec2 availableResolution, float targetAspectRatio) const
     {
         glm::ivec2 desiredResolution = availableResolution;
 
         if (((double)availableResolution.x / (double)availableResolution.y) < targetAspectRatio)
         {
-            desiredResolution.y = std::ceil((double)availableResolution.x / targetAspectRatio);
+            desiredResolution.y = (int)std::ceil((float)availableResolution.x / targetAspectRatio);
         }
         else if (((double)availableResolution.x / (double)availableResolution.y) > targetAspectRatio)
         {
-            desiredResolution.x = std::ceil((double)availableResolution.y * targetAspectRatio);
+            desiredResolution.x = (int)std::ceil((float)availableResolution.y * targetAspectRatio);
         }
 
         return desiredResolution;
@@ -234,18 +239,17 @@ namespace Dwarf
 
         ImGuizmo::SetRect(minRect.x, minRect.y, maxRect.x - minRect.x, maxRect.y - minRect.y);
 
-        TransformComponent &tc = m_Model->m_Selection.selectedEntities.at(0).GetComponent<TransformComponent>();
+        TransformComponent &tc = m_Model->GetSelection().selectedEntities.at(0).GetComponent<TransformComponent>();
         glm::mat4 transform = tc.getModelMatrix();
 
         ImGuizmo::Manipulate(glm::value_ptr(m_Camera->GetViewMatrix()),
                              glm::value_ptr(m_Camera->GetProjectionMatrix()),
-                             m_Settings.GizmoOperation, m_Settings.GizmoMode, (float *)glm::value_ptr(transform));
+                             m_Settings.GizmoOperation, m_Settings.GizmoMode, glm::value_ptr(transform));
 
         if (ImGuizmo::IsUsing())
         {
             tc.position = glm::vec3(transform[3]);
             glm::vec3 rotation;
-            glm::vec3 originalRotation = tc.rotation;
 
             ImGuizmo::DecomposeMatrixToComponents(glm::value_ptr(transform),
                                                   glm::value_ptr(tc.position),
@@ -262,31 +266,32 @@ namespace Dwarf
     {
         if (ImGui::IsWindowFocused() && !InputManager::GetMouse(MOUSE_BUTTON::RIGHT))
         {
-            if (InputManager::GetKeyDown(KEYCODE::W))
+            using enum KEYCODE;
+            if (InputManager::GetKeyDown(W))
             {
                 m_Settings.GizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
             }
-            else if (InputManager::GetKeyDown(KEYCODE::E))
+            else if (InputManager::GetKeyDown(E))
             {
                 m_Settings.GizmoOperation = ImGuizmo::OPERATION::ROTATE;
             }
-            else if (InputManager::GetKeyDown(KEYCODE::R))
+            else if (InputManager::GetKeyDown(R))
             {
                 m_Settings.GizmoOperation = ImGuizmo::OPERATION::SCALE;
             }
         }
     }
 
-    glm::vec3 SceneViewerWindow::CalculateSelectionCenter()
+    glm::vec3 SceneViewerWindow::CalculateSelectionCenter() const
     {
-        glm::vec3 center = glm::vec3(0);
+        auto center = glm::vec3(0);
 
-        for (auto entity : m_Model->m_Selection.selectedEntities)
+        for (auto entity : m_Model->GetSelection().selectedEntities)
         {
             center += entity.GetComponent<TransformComponent>().position;
         }
 
-        return center / (float)m_Model->m_Selection.selectedEntities.size();
+        return center / (float)m_Model->GetSelection().selectedEntities.size();
     }
 
     void SceneViewerWindow::UpdateFramebuffer()
@@ -298,19 +303,19 @@ namespace Dwarf
         case RENDERING_CONSTRAINT::FREE:
         {
             desiredResolution = m_Settings.ViewportSize;
-            m_Settings.targetAspectRatio = (double)desiredResolution.x / (double)desiredResolution.y;
+            m_Settings.targetAspectRatio = (float)desiredResolution.x / (float)desiredResolution.y;
         }
         break;
         case RENDERING_CONSTRAINT::FIXED_RESOLUTION:
         {
             desiredResolution = glm::ivec2(m_Settings.Resolution[0], m_Settings.Resolution[1]);
-            m_Settings.targetAspectRatio = (double)m_Settings.Resolution[0] / (double)m_Settings.Resolution[1];
+            m_Settings.targetAspectRatio = (float)m_Settings.Resolution[0] / (float)m_Settings.Resolution[1];
         }
         break;
         case RENDERING_CONSTRAINT::ASPECT_RATIO:
         {
-            desiredResolution = CalculateDesiredResolution(m_Settings.ViewportSize, (double)m_Settings.AspectRatio[0] / (double)m_Settings.AspectRatio[1]);
-            m_Settings.targetAspectRatio = (double)desiredResolution.x / (double)desiredResolution.y;
+            desiredResolution = CalculateDesiredResolution(m_Settings.ViewportSize, (float)m_Settings.AspectRatio[0] / (float)m_Settings.AspectRatio[1]);
+            m_Settings.targetAspectRatio = (float)desiredResolution.x / (float)desiredResolution.y;
         }
         break;
         }

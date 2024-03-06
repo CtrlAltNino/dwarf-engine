@@ -12,10 +12,11 @@ namespace Dwarf
     {
     private:
         /// @brief The OpenGL texture handle.
-        GLuint ID;
+        GLuint m_Id;
 
     public:
-        OpenGLTexture(std::filesystem::path path);
-        virtual uintptr_t GetTextureID() override;
+        explicit OpenGLTexture(std::filesystem::path const &path);
+        ~OpenGLTexture() override;
+        uintptr_t GetTextureID() override;
     };
 }

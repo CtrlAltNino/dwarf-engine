@@ -14,35 +14,35 @@ namespace Dwarf
     class Editor
     {
     private:
-        static Editor *s_Instance;
+        static Ref<Editor> s_Instance;
         /// @brief The MVC model instance of this editor instance.
         Ref<EditorModel> m_Model;
 
         /// @brief The MVC view instance of this editor instance.
         Ref<EditorView> m_View;
 
-        Scope<Window> m_Window;
+        Ref<Window> m_Window;
 
         Ref<ImGuiLayer> m_ImguiLayer;
 
-        void Init(std::filesystem::path projectPath);
+        void Init(std::filesystem::path const &projectPath);
 
     public:
         Editor();
         ~Editor();
 
-        static Editor &Get() { return *s_Instance; }
+        static Ref<Editor> Get() { return s_Instance; }
 
-        Ref<EditorModel> GetModel()
+        Ref<EditorModel> GetModel() const
         {
             return m_Model;
         }
 
         /// @brief Starts the render loop
-        bool Run(std::filesystem::path projectPath);
+        bool Run(std::filesystem::path const &projectPath);
 
-        void UpdateWindowTitle();
+        void UpdateWindowTitle() const;
     };
 
-    Editor *CreateEditor();
+    Ref<Editor> CreateEditor();
 }

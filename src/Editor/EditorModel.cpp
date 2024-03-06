@@ -4,36 +4,51 @@
 
 namespace Dwarf
 {
-	EditorModel::EditorModel(std::string name, std::filesystem::path projectPath) : m_ProjectName(name), m_ProjectPath(projectPath) {}
+	EditorModel::EditorModel(std::string_view name, std::filesystem::path const &projectPath) : m_ProjectName(name), m_ProjectPath(projectPath) {}
 
-	Ref<Scene> EditorModel::GetScene()
+	Ref<Scene> EditorModel::GetScene() const
 	{
-		return this->m_Scene;
+		return m_Scene;
 	}
 
 	void EditorModel::SetScene(Ref<Scene> scene)
 	{
-		this->m_Scene = scene;
+		m_Scene = scene;
 	}
 
-	std::string EditorModel::GetName()
+	std::string EditorModel::GetName() const
 	{
 		return m_ProjectName;
 	}
 
-	std::filesystem::path EditorModel::GetProjectPath()
+	std::filesystem::path EditorModel::GetProjectPath() const
 	{
-		return this->m_ProjectPath;
+		return m_ProjectPath;
 	}
 
 	void EditorModel::SetDeltaTime(double deltaTime)
 	{
-		this->m_DeltaTime = deltaTime;
+		m_DeltaTime = deltaTime;
 	}
 
-	double EditorModel::GetDeltaTime()
+	double EditorModel::GetDeltaTime() const
 	{
-		return this->m_DeltaTime;
+		return m_DeltaTime;
+	}
+
+	bool EditorModel::GetCloseSignal() const
+	{
+		return m_CloseSignal;
+	}
+
+	bool EditorModel::GetReturnToLauncher() const
+	{
+		return m_ReturnToLauncher;
+	}
+
+	SelectionContainer &EditorModel::GetSelection()
+	{
+		return m_Selection;
 	}
 
 	void EditorModel::CloseEditor(bool returnToLauncher)

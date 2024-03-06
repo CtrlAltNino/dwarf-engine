@@ -10,11 +10,11 @@ namespace Dwarf
 		None = 0,
 
 		// Color
-		RGBA8,
-		RED_INTEGER,
+		RGBA8 = 1,
+		RED_INTEGER = 2,
 
 		// Depth/stencil
-		DEPTH24STENCIL8,
+		DEPTH24STENCIL8 = 3,
 
 		// Defaults
 		Depth = DEPTH24STENCIL8
@@ -23,7 +23,7 @@ namespace Dwarf
 	struct FramebufferTextureSpecification
 	{
 		FramebufferTextureSpecification() = default;
-		FramebufferTextureSpecification(FramebufferTextureFormat format)
+		explicit FramebufferTextureSpecification(FramebufferTextureFormat format)
 			: TextureFormat(format) {}
 
 		FramebufferTextureFormat TextureFormat = FramebufferTextureFormat::None;
@@ -33,7 +33,7 @@ namespace Dwarf
 	struct FramebufferAttachmentSpecification
 	{
 		FramebufferAttachmentSpecification() = default;
-		FramebufferAttachmentSpecification(std::initializer_list<FramebufferTextureSpecification> attachments)
+		explicit FramebufferAttachmentSpecification(std::initializer_list<FramebufferTextureSpecification> attachments)
 			: Attachments(attachments) {}
 
 		std::vector<FramebufferTextureSpecification> Attachments;
@@ -41,7 +41,8 @@ namespace Dwarf
 
 	struct FramebufferSpecification
 	{
-		uint32_t Width = 0, Height = 0;
+		uint32_t Width = 0;
+		uint32_t Height = 0;
 		FramebufferAttachmentSpecification Attachments;
 		uint32_t Samples = 1;
 

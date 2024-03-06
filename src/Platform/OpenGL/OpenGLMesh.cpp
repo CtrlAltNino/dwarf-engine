@@ -6,15 +6,6 @@
 
 namespace Dwarf
 {
-    OpenGLMesh::OpenGLMesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, unsigned int materialIndex)
-    {
-        m_Vertices = vertices;
-        m_Indices = indices;
-        m_MaterialIndex = materialIndex;
-        m_VertexCount = vertices.size();
-        m_IndexCount = indices.size();
-    }
-
     OpenGLMesh::~OpenGLMesh()
     {
         Unbind();
@@ -23,12 +14,12 @@ namespace Dwarf
         glDeleteBuffers(1, &EBO);
     }
 
-    void OpenGLMesh::Bind()
+    void OpenGLMesh::Bind() const
     {
         glBindVertexArray(VAO);
     }
 
-    void OpenGLMesh::Unbind()
+    void OpenGLMesh::Unbind() const
     {
         glBindVertexArray(0);
         glBindBuffer(GL_ARRAY_BUFFER, 0);
@@ -43,14 +34,14 @@ namespace Dwarf
         glBindVertexArray(VAO);
 
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
-        glBufferData(GL_ARRAY_BUFFER, m_Vertices.size() * sizeof(Vertex), &m_Vertices[0], GL_STATIC_DRAW);
+        glBufferData(GL_ARRAY_BUFFER, GetVertices().size() * sizeof(Vertex), &(GetVertices()[0]), GL_STATIC_DRAW);
 
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
-        glBufferData(GL_ELEMENT_ARRAY_BUFFER, m_Indices.size() * sizeof(unsigned int), &m_Indices[0], GL_STATIC_DRAW);
+        glBufferData(GL_ELEMENT_ARRAY_BUFFER, GetIndices().size() * sizeof(unsigned int), &(GetIndices()[0]), GL_STATIC_DRAW);
 
         // vertex positions
         glEnableVertexAttribArray(0);
-        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)0);
+        glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), nullptr);
         // vertex normals
         glEnableVertexAttribArray(1);
         glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void *)offsetof(Vertex, Normal));

@@ -7,10 +7,11 @@ namespace Dwarf
 {
 
 	PerformanceWindow::PerformanceWindow(Ref<EditorModel> model, int id)
-		: GuiModule(model, "Performance", MODULE_TYPE::PERFORMANCE, id), m_Frametime(nullptr), m_RenderTime(nullptr) {}
+		: GuiModule(model, "Performance", MODULE_TYPE::PERFORMANCE, id) {}
 
 	void PerformanceWindow::OnUpdate(double deltaTimte)
 	{
+		// Code that needs to be run before render
 	}
 
 	void PerformanceWindow::OnImGuiRender()
@@ -18,14 +19,7 @@ namespace Dwarf
 		ImGuiWindowFlags window_flags = 0;
 
 		window_flags |= ImGuiWindowFlags_AlwaysAutoResize;
-		// window_flags |= ImGuiWindowFlags_NoResize;
 		window_flags |= ImGuiWindowFlags_NoCollapse;
-		// window_flags |= ImGuiWindowFlags_NoTitleBar;
-		// window_flags |= ImGuiWindowFlags_MenuBar;
-
-		// static bool b_open = true;
-
-		// if (!ImGui::Begin((moduleLabel + "##" + std::to_string(index)).c_str(), NULL, window_flags))
 		if (!ImGui::Begin(GetIdentifier().c_str(), &m_WindowOpened, window_flags))
 		{
 			// Early out if the window is collapsed, as an optimization.
@@ -47,15 +41,16 @@ namespace Dwarf
 		ImGui::Text("Statistics");
 		// ImGui::PopFont();
 
-		ImGui::Text("%s", std::string("Frames per second: " + std::to_string(1.0 / *m_Frametime)).c_str());
-		ImGui::Text("%s", std::string("Frametime: " + std::to_string(*m_Frametime * 1000.0) + " ms").c_str());
-		ImGui::Text("%s", std::string("Render time: " + std::to_string(*m_RenderTime * 1000.0) + " ms").c_str());
+		ImGui::Text("%s", std::format("Frames per second: {}", std::to_string(1.0 / *m_Frametime)).c_str());
+		ImGui::Text("%s", std::format("Frametime: {}{}", std::to_string(*m_Frametime * 1000.0), " ms").c_str());
+		ImGui::Text("%s", std::format("Render time: {}{}", std::to_string(*m_RenderTime * 1000.0), " ms").c_str());
 
 		ImGui::End();
 	}
 
 	void PerformanceWindow::Deserialize(nlohmann::json moduleData)
 	{
+		// Deserialization of saved data
 	}
 
 	std::string PerformanceWindow::Serialize()

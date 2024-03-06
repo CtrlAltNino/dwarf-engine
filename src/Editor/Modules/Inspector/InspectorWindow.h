@@ -26,12 +26,6 @@ namespace Dwarf
 
         void EndComponent() const;
 
-        /*void RenderTagComponent(TagComponent component);
-        void RenderTransformComponent(TransformComponent component);
-        void RenderPathComponent(PathComponent component);
-        void RenderLightComponent(LightComponent component);
-        void RenderMeshRendererComponent(MeshRendererComponent component);*/
-
         template <typename T>
         void RenderComponent(T *component);
 
@@ -46,8 +40,8 @@ namespace Dwarf
 
         void OnUpdate(double deltaTime) override;
 
-        virtual std::string Serialize() override;
+        std::string Serialize() override;
 
-        virtual void Deserialize(nlohmann::json moduleData) override;
+        void Deserialize(nlohmann::json moduleData) override;
     };
 }
