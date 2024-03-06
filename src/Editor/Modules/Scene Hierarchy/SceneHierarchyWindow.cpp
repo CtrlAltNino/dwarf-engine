@@ -1,5 +1,7 @@
 #include "dpch.h"
 
+#include <ranges>
+
 #include "Editor/Modules/Scene Hierarchy/SceneHierarchyWindow.h"
 
 #include "Core/Scene/Scene.h"
@@ -432,12 +434,12 @@ namespace Dwarf
 
     void SceneHierarchyWindow::RemoveEntityFromSelection(Entity entity)
     {
-        m_Model->GetSelection().selectedEntities.erase(std::ranges::find(m_Model->GetSelection().selectedEntities.begin(), m_Model->GetSelection().selectedEntities.end(), entity));
+        m_Model->GetSelection().selectedEntities.erase(std::find(m_Model->GetSelection().selectedEntities.begin(), m_Model->GetSelection().selectedEntities.end(), entity));
     }
 
     bool SceneHierarchyWindow::IsEntitySelected(Entity entity)
     {
-        return std::ranges::find(m_Model->GetSelection().selectedEntities.begin(), m_Model->GetSelection().selectedEntities.end(), entity) != m_Model->GetSelection().selectedEntities.end();
+        return std::find(m_Model->GetSelection().selectedEntities.begin(), m_Model->GetSelection().selectedEntities.end(), entity) != m_Model->GetSelection().selectedEntities.end();
     }
 
     std::string SceneHierarchyWindow::GetTreeIndex(Entity entity)

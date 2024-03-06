@@ -4,7 +4,7 @@
 
 namespace Dwarf
 {
-    WindowsWindow::WindowsWindow(const WindowProps &props) : m_Api(props.Api)
+    WindowsWindow::WindowsWindow(GraphicsApi api) : m_Api(api)
     {
     }
 
@@ -74,78 +74,79 @@ namespace Dwarf
 
         m_ImguiLayer = ImGuiLayer::Create(m_Api);
         m_ImguiLayer->OnAttach(m_Window);
-
-        void WindowsWindow::ShowWindow()
-        {
-            SDL_ShowWindow(m_Window);
-        }
-
-        void WindowsWindow::HideWindow()
-        {
-            SDL_HideWindow(m_Window);
-        }
-
-        void WindowsWindow::NewFrame()
-        {
-            SDL_Event event;
-            while (SDL_PollEvent(&event))
-            {
-                m_ImguiLayer->HandleSDLEvent(&event);
-
-                switch (event.type)
-                {
-                case SDL_QUIT:
-                    m_Data.ShouldClose = true;
-                    break;
-                case SDL_KEYDOWN:
-                    InputManager::ProcessKeyDown(event.key.keysym.scancode);
-                    break;
-                case SDL_KEYUP:
-                    InputManager::ProcessKeyUp(event.key.keysym.scancode);
-                    break;
-                case SDL_MOUSEWHEEL:
-                    InputManager::ProcessScroll(event);
-                    break;
-                default:
-                    break;
-                }
-            }
-            m_ImguiLayer->Begin();
-        }
-
-        void WindowsWindow::EndFrame()
-        {
-            m_ImguiLayer->End();
-            m_Context->SwapBuffers();
-        }
-
-        void WindowsWindow::SetVSync(bool enabled)
-        {
-            if (enabled)
-                SDL_GL_SetSwapInterval(1);
-            else
-                SDL_GL_SetSwapInterval(0);
-
-            m_Data.VSync = enabled;
-        }
-
-        bool WindowsWindow::IsVSync()
-        {
-            return m_Data.VSync;
-        }
-
-        bool WindowsWindow::ShouldClose()
-        {
-            return m_Data.ShouldClose;
-        }
-
-        void WindowsWindow::SetWindowTitle(std::string windowName)
-        {
-            SDL_SetWindowTitle(m_Window, windowName.c_str());
-        }
-
-        void WindowsWindow::MaximizeWindow()
-        {
-            SDL_MaximizeWindow(m_Window);
-        }
     }
+
+    void WindowsWindow::ShowWindow()
+    {
+        SDL_ShowWindow(m_Window);
+    }
+
+    void WindowsWindow::HideWindow()
+    {
+        SDL_HideWindow(m_Window);
+    }
+
+    void WindowsWindow::NewFrame()
+    {
+        SDL_Event event;
+        while (SDL_PollEvent(&event))
+        {
+            m_ImguiLayer->HandleSDLEvent(&event);
+
+            switch (event.type)
+            {
+            case SDL_QUIT:
+                m_Data.ShouldClose = true;
+                break;
+            case SDL_KEYDOWN:
+                InputManager::ProcessKeyDown(event.key.keysym.scancode);
+                break;
+            case SDL_KEYUP:
+                InputManager::ProcessKeyUp(event.key.keysym.scancode);
+                break;
+            case SDL_MOUSEWHEEL:
+                InputManager::ProcessScroll(event);
+                break;
+            default:
+                break;
+            }
+        }
+        m_ImguiLayer->Begin();
+    }
+
+    void WindowsWindow::EndFrame()
+    {
+        m_ImguiLayer->End();
+        m_Context->SwapBuffers();
+    }
+
+    void WindowsWindow::SetVSync(bool enabled)
+    {
+        if (enabled)
+            SDL_GL_SetSwapInterval(1);
+        else
+            SDL_GL_SetSwapInterval(0);
+
+        m_Data.VSync = enabled;
+    }
+
+    bool WindowsWindow::IsVSync()
+    {
+        return m_Data.VSync;
+    }
+
+    bool WindowsWindow::ShouldClose()
+    {
+        return m_Data.ShouldClose;
+    }
+
+    void WindowsWindow::SetWindowTitle(std::string_view windowName)
+    {
+        SDL_SetWindowTitle(m_Window, windowName.data());
+    }
+
+    void WindowsWindow::MaximizeWindow()
+    {
+        SDL_MaximizeWindow(m_Window);
+    }
+}

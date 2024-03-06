@@ -176,7 +176,7 @@ namespace Dwarf
 #endif
     }
 
-    void FileHandler::LaunchFile(std::filesystem::path const &path)
+    void FileHandler::LaunchFile(std::filesystem::path path)
     {
         // Start-Process -FilePath "custom.frag"
 #if _WIN32

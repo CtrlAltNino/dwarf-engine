@@ -2,6 +2,7 @@
 
 #include <memory>
 #include <array>
+#include <string>
 
 namespace Dwarf
 {
@@ -32,7 +33,25 @@ namespace Dwarf
 	};
 
 	/// @brief Array containing the API names.
-	inline constexpr std::array<std::string, 4> graphicsApiNames = {"Direct3D 12", "Metal", "OpenGL", "Vulkan"};
+	// inline constexpr std::array<std::string, 4> graphicsApiNames = {"Direct3D 12", "Metal", "OpenGL", "Vulkan"};
+
+	// A helper function to create a constexpr string
+	constexpr std::string_view make_constexpr_string(const char *str)
+	{
+		return std::string_view(str);
+	}
+
+	// A helper function to create the graphicsApiNames array
+	constexpr auto make_graphics_api_names()
+	{
+		return std::array<std::string_view, 4>{
+			make_constexpr_string("Direct3D 12"),
+			make_constexpr_string("Metal"),
+			make_constexpr_string("OpenGL"),
+			make_constexpr_string("Vulkan")};
+	}
+
+	inline constexpr auto graphicsApiNames = make_graphics_api_names();
 
 	enum class ShaderParameterType
 	{

@@ -12,7 +12,7 @@ namespace Dwarf
     class WindowsWindow : public Window
     {
     public:
-        explicit WindowsWindow(const WindowProps &props);
+        explicit WindowsWindow(GraphicsApi api);
         ~WindowsWindow() override;
 
         void NewFrame() override;
@@ -29,7 +29,7 @@ namespace Dwarf
 
         bool ShouldClose() override;
 
-        void SetWindowTitle(std::string windowTitle) override;
+        void SetWindowTitle(std::string_view windowTitle) override;
 
         SDL_Window *GetNativeWindow() const override { return m_Window; }
 

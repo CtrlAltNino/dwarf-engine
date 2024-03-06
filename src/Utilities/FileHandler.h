@@ -60,7 +60,7 @@ namespace Dwarf
 		/// @param path Path to open.
 		static void OpenPathInFileBrowser(std::filesystem::path const &path);
 
-		static void LaunchFile(std::filesystem::path const &path);
+		static void LaunchFile(std::filesystem::path path);
 
 		static void Copy(std::filesystem::path const &from, std::filesystem::path const &to);
 
