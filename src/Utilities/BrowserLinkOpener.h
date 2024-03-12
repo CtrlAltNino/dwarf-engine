@@ -25,6 +25,10 @@ namespace Dwarf
             ShellExecute(0, 0, wc, 0, 0, SW_SHOW);
             delete[] (wc);
 #endif
+#if __linux__
+            std::string command = "xdg-open \"" + std::string(link) + "\"";
+            system(command.c_str());
+#endif
         }
     };
 }

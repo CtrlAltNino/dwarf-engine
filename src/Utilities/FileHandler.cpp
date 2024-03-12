@@ -48,7 +48,7 @@ namespace Dwarf
         std::string userDirMap = ReadFile((homeFolder + "/.config/user-dirs.dirs").c_str());
 
         std::regex patternLine("XDG_DOCUMENTS.*");
-        std::regex patternPath("\/.*(?=\")");
+        std::regex patternPath("/.*(?=\")");
         std::smatch match;
         std::cout << std::regex_search(userDirMap, match, patternLine) << std::endl;
         std::string line = match[0];
@@ -174,6 +174,10 @@ namespace Dwarf
         delete[] (commandStr);
         delete[] (argStr);
 #endif
+#if __linux__
+        std::string command = "xdg-open \"" + path.parent_path().string() + "\"";
+        system(command.c_str());
+#endif
     }
 
     void FileHandler::LaunchFile(std::filesystem::path path)
@@ -189,6 +193,10 @@ namespace Dwarf
         delete[] (commandStr);
         delete[] (argStr);
         // system(path.string().c_str());
+#endif
+#if __linux__
+        std::string command = "xdg-open \"" + path.string() + "\"";
+        system(command.c_str());
 #endif
     }
 
