@@ -185,7 +185,6 @@ namespace Dwarf
             {
                 // check if a project with the same path already exists
                 bool alreadyPresent = false;
-                // outPath = PathUtilities::ConvertBackSlashesToForwardSlashes(outPath);
 
                 for (int i = 0; (i < s_ProjectList.size()) && !alreadyPresent; i++)
                 {
