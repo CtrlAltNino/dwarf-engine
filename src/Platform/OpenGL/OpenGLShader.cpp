@@ -1,5 +1,7 @@
 #include "dpch.h"
 
+#include <utility>
+
 #include "OpenGLShader.h"
 #include "Utilities/FileHandler.h"
 #include "Core/Asset/AssetDatabase.h"
@@ -200,7 +202,7 @@ namespace Dwarf
 	void OpenGLShader::SetTesselaltionControlShader(Ref<UID> tessellationControlShader)
 	{
 		m_ShaderAssets.m_TessellationControlShaderAsset = tessellationControlShader;
-		m_ShaderSources.m_TessellationControlShaderSource = nullptr;
+		m_ShaderSources.m_TessellationControlShaderSource = "";
 	}
 
 	void OpenGLShader::SetTesselaltionControlShader(std::string_view tessellationControlShader)
@@ -212,7 +214,7 @@ namespace Dwarf
 	void OpenGLShader::SetTesselaltionEvaluationShader(Ref<UID> tessellationEvaluationShader)
 	{
 		m_ShaderAssets.m_TessellationEvaluationShaderAsset = tessellationEvaluationShader;
-		m_ShaderSources.m_TessellationEvaluationShaderSource = nullptr;
+		m_ShaderSources.m_TessellationEvaluationShaderSource = "";
 	}
 
 	void OpenGLShader::SetTesselaltionEvaluationShader(std::string_view tessellationEvaluationShader)
@@ -224,7 +226,7 @@ namespace Dwarf
 	void OpenGLShader::SetGeometryShader(Ref<UID> geometryShader)
 	{
 		m_ShaderAssets.m_GeometryShaderAsset = geometryShader;
-		m_ShaderSources.m_GeometryShaderSource = nullptr;
+		m_ShaderSources.m_GeometryShaderSource = "";
 	}
 
 	void OpenGLShader::SetGeometryShader(std::string_view geometryShader)
