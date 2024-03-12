@@ -38,6 +38,24 @@ namespace Dwarf
         m_Framebuffer->Bind();
         Renderer::Get()->RenderScene(m_Model->GetScene(), m_Camera, {m_Framebuffer->GetSpecification().Width, m_Framebuffer->GetSpecification().Height}, m_Settings.RenderGrid);
         m_Framebuffer->Unbind();
+
+        // Check if a mesh is clicked
+        if (InputManager::GetMouse(MOUSE_BUTTON::LEFT) && !ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow))
+        {
+            auto [x, y] = InputManager::GetMousePosition();
+            auto width = ImGui::GetContentRegionAvail().x;
+            auto height = ImGui::GetContentRegionAvail().y;
+
+            x -= ImGui::GetCursorScreenPos().x;
+            y -= ImGui::GetCursorScreenPos().y;
+
+            if (x >= 0 && x <= width && y >= 0 && y <= height)
+            {
+                y = height - y;
+                m_Model->GetSelection().selectedEntities.clear();
+                m_Model->GetScene()->OnMeshClicked(x, y, m_Camera, m_Settings.ViewportSize, m_Model->GetSelection().selectedEntities);
+            }
+        }
     }
 
     void SceneViewerWindow::OnImGuiRender()
