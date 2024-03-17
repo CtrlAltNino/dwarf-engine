@@ -80,6 +80,12 @@ namespace Dwarf
         /// @brief Handles the shortcut inputs for changing the gizmo type.
         void UpdateGizmoType();
 
+        void ProcessSceneClick(glm::vec2 const &mousePosition, Camera const &camera, glm::vec2 const &viewportSize);
+
+        glm::vec3 GetRayDirection(float mouseX, float mouseY, int screenWidth, int screenHeight, const glm::mat4 &viewMatrix, const glm::mat4 &projectionMatrix);
+
+        bool RayIntersectsMesh(const glm::vec3 &rayOrigin, const glm::vec3 &rayDirection, const glm::mat4 &modelMatrix, Ref<Mesh> mesh, float &intersectionDistance);
+
     public:
         SceneViewerWindow(Ref<EditorModel> model, int index);
 

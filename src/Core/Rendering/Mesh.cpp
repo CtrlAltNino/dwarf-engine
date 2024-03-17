@@ -19,7 +19,7 @@ namespace Dwarf
 	Ref<Mesh> Mesh::s_GridMesh = nullptr;
 	Ref<Mesh> Mesh::s_UnitSphere = nullptr;
 
-	Mesh::Mesh(std::vector<Vertex> const &vertices, std::vector<unsigned int> const &indices, unsigned int materialIndex) : m_Vertices(vertices), m_Indices(indices), m_MaterialIndex(materialIndex)
+	Mesh::Mesh(std::vector<Vertex> vertices, std::vector<unsigned int> indices, unsigned int materialIndex) : m_Vertices(vertices), m_Indices(indices), m_MaterialIndex(materialIndex)
 	{
 	}
 
@@ -133,12 +133,12 @@ namespace Dwarf
 		return m_MaterialIndex;
 	}
 
-	const std::vector<Vertex> &Mesh::GetVertices() const
+	std::vector<Vertex> Mesh::GetVertices() const
 	{
 		return m_Vertices;
 	}
 
-	const std::vector<unsigned int> &Mesh::GetIndices() const
+	std::vector<unsigned int> Mesh::GetIndices() const
 	{
 		return m_Indices;
 	}

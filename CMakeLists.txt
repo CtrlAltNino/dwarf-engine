@@ -10,7 +10,7 @@ include(${CMAKE_SOURCE_DIR}/helper.cmake)
 
 add_compile_definitions(NOMINMAX)
 
-set(CMAKE_CXX_STANDARD 23)
+set(CMAKE_CXX_STANDARD 20)
 
 set(targetName dwarf-engine)
 

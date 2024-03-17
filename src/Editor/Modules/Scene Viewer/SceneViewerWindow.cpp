@@ -38,24 +38,6 @@ namespace Dwarf
         m_Framebuffer->Bind();
         Renderer::Get()->RenderScene(m_Model->GetScene(), m_Camera, {m_Framebuffer->GetSpecification().Width, m_Framebuffer->GetSpecification().Height}, m_Settings.RenderGrid);
         m_Framebuffer->Unbind();
-
-        // Check if a mesh is clicked
-        if (InputManager::GetMouse(MOUSE_BUTTON::LEFT) && !ImGui::IsWindowHovered(ImGuiHoveredFlags_AnyWindow))
-        {
-            auto [x, y] = InputManager::GetMousePosition();
-            auto width = ImGui::GetContentRegionAvail().x;
-            auto height = ImGui::GetContentRegionAvail().y;
-
-            x -= ImGui::GetCursorScreenPos().x;
-            y -= ImGui::GetCursorScreenPos().y;
-
-            if (x >= 0 && x <= width && y >= 0 && y <= height)
-            {
-                y = height - y;
-                m_Model->GetSelection().selectedEntities.clear();
-                m_Model->GetScene()->OnMeshClicked(x, y, m_Camera, m_Settings.ViewportSize, m_Model->GetSelection().selectedEntities);
-            }
-        }
     }
 
     void SceneViewerWindow::OnImGuiRender()
@@ -201,6 +183,17 @@ namespace Dwarf
                            ImVec2(0, 1),
                            ImVec2(1, 0));
 
+        // Check if a mesh is clicked
+        glm::vec2 mousePos = {ImGui::GetMousePos().x, ImGui::GetMousePos().y};
+        glm::vec2 minRectGlm = {minRect.x, minRect.y};
+        glm::vec2 maxRectGlm = {maxRect.x, maxRect.y};
+
+        if (InputManager::GetMouseDown(MOUSE_BUTTON::LEFT) && mousePos.x > minRectGlm.x && mousePos.x < maxRectGlm.x && mousePos.y > minRectGlm.y && mousePos.y < maxRectGlm.y)
+        {
+            glm::vec2 relativeMouseClick = (mousePos - minRectGlm) / glm::vec2(maxRectGlm - minRectGlm);
+            ProcessSceneClick(mousePos - minRectGlm, *m_Camera, {maxRectGlm - minRectGlm});
+        }
+
         drawList->ChannelsMerge();
 
         auto hoverRectMin = ImVec2(ImGui::GetWindowPos().x + ImGui::GetCursorPos().x,
@@ -221,7 +214,7 @@ namespace Dwarf
             m_Settings.CameraMovement = false;
         }
 
-        if (m_Model->GetSelection().selectedEntities.size() == 1)
+        if (m_Model->GetSelection().GetSelectedEntities().size() == 1)
         {
             RenderGizmos(minRect, maxRect);
         }
@@ -257,7 +250,7 @@ namespace Dwarf
 
         ImGuizmo::SetRect(minRect.x, minRect.y, maxRect.x - minRect.x, maxRect.y - minRect.y);
 
-        TransformComponent &tc = m_Model->GetSelection().selectedEntities.at(0).GetComponent<TransformComponent>();
+        TransformComponent &tc = m_Model->GetSelection().GetSelectedEntities().at(0).GetComponent<TransformComponent>();
         glm::mat4 transform = tc.getModelMatrix();
 
         ImGuizmo::Manipulate(glm::value_ptr(m_Camera->GetViewMatrix()),
@@ -304,12 +297,12 @@ namespace Dwarf
     {
         auto center = glm::vec3(0);
 
-        for (auto entity : m_Model->GetSelection().selectedEntities)
+        for (auto entity : m_Model->GetSelection().GetSelectedEntities())
         {
             center += entity.GetComponent<TransformComponent>().position;
         }
 
-        return center / (float)m_Model->GetSelection().selectedEntities.size();
+        return center / (float)m_Model->GetSelection().GetSelectedEntities().size();
     }
 
     void SceneViewerWindow::UpdateFramebuffer()
@@ -393,5 +386,135 @@ namespace Dwarf
         state["settings"]["renderGrid"] = m_Settings.RenderGrid;
 
         return state.dump(4);
+    }
+
+    glm::vec3 SceneViewerWindow::GetRayDirection(float mouseX, float mouseY, int screenWidth, int screenHeight, const glm::mat4 &viewMatrix, const glm::mat4 &projectionMatrix)
+    {
+        // Normalize mouse coordinates
+        float x = (2.0f * mouseX) / screenWidth - 1.0f;
+        float y = 1.0f - (2.0f * mouseY) / screenHeight;
+
+        // Adjust for aspect ratio
+        glm::vec4 rayClip = glm::vec4(x, y, -1.0, 1.0);
+
+        // Inverse projection matrix
+        glm::mat4 invProjection = glm::inverse(projectionMatrix);
+
+        // Inverse view matrix
+        glm::mat4 invView = glm::inverse(viewMatrix);
+
+        // Homogeneous coordinates
+        glm::vec4 rayEye = invProjection * rayClip;
+        rayEye = glm::vec4(rayEye.x, rayEye.y, -1.0, 0.0);
+
+        // World space coordinates
+        glm::vec4 rayWorld = invView * rayEye;
+
+        // Normalize the direction
+        glm::vec3 rayDir = glm::normalize(glm::vec3(rayWorld));
+
+        return rayDir;
+    }
+
+    bool SceneViewerWindow::RayIntersectsMesh(const glm::vec3 &rayOrigin, const glm::vec3 &rayDirection, const glm::mat4 &modelMatrix, Ref<Mesh> mesh, float &intersectionDistance)
+    {
+        bool intersectionFound = false;
+        float closestDistance = std::numeric_limits<float>::max();
+
+        for (size_t i = 0; i < mesh->GetIndices().size(); i += 3)
+        {
+            // Get vertices of the current triangle
+            glm::vec3 v0 = glm::vec3(modelMatrix * glm::vec4(mesh->GetVertices()[mesh->GetIndices()[i]].Position, 1.0f));
+            glm::vec3 v1 = glm::vec3(modelMatrix * glm::vec4(mesh->GetVertices()[mesh->GetIndices()[i + 1]].Position, 1.0f));
+            glm::vec3 v2 = glm::vec3(modelMatrix * glm::vec4(mesh->GetVertices()[mesh->GetIndices()[i + 2]].Position, 1.0f));
+
+            // Calculate normal of the triangle
+            glm::vec3 triangleNormal = glm::normalize(glm::cross(v1 - v0, v2 - v0));
+
+            // Calculate the plane of the triangle (Ax + By + Cz + D = 0)
+            float A = triangleNormal.x;
+            float B = triangleNormal.y;
+            float C = triangleNormal.z;
+            float D = -glm::dot(triangleNormal, v0);
+
+            // Calculate distance from the ray origin to the plane
+            float distanceToPlane = -(A * rayOrigin.x + B * rayOrigin.y + C * rayOrigin.z + D) / glm::dot(triangleNormal, rayDirection);
+
+            // Check if the intersection point is inside the triangle
+            if (distanceToPlane > 0)
+            {
+                glm::vec3 intersectionPoint = rayOrigin + distanceToPlane * rayDirection;
+
+                // Barycentric coordinates
+                float u, v, w;
+                glm::vec3 edge1 = v1 - v0;
+                glm::vec3 edge2 = v2 - v0;
+                glm::vec3 p = intersectionPoint - v0;
+                float det = glm::dot(glm::cross(rayDirection, edge2), edge1);
+                u = glm::dot(glm::cross(rayDirection, edge2), p) / det;
+                v = glm::dot(glm::cross(edge1, rayDirection), p) / det;
+                w = 1.0f - u - v;
+
+                // Check if the intersection point is inside the triangle
+                if (u >= 0.0f && v >= 0.0f && w >= 0.0f)
+                {
+                    float distance = glm::length(intersectionPoint - rayOrigin);
+                    if (distance < closestDistance)
+                    {
+                        closestDistance = distance;
+                        intersectionFound = true;
+                        intersectionDistance = closestDistance;
+                    }
+                }
+            }
+        }
+
+        return intersectionFound;
+    }
+
+    void SceneViewerWindow::ProcessSceneClick(glm::vec2 const &mousePosition, Camera const &camera, glm::vec2 const &viewportSize)
+    {
+        glm::vec3 ray = GetRayDirection(mousePosition.x, mousePosition.y, viewportSize.x, viewportSize.y, camera.GetViewMatrix(), camera.GetProjectionMatrix());
+        float closestDistance = std::numeric_limits<float>::max();
+        entt::entity closestEntity = entt::null;
+
+        // Loop through all entities and check for intersection
+        // auto view = m_Registry->view<NameComponent, MeshRendererComponent>();
+        for (auto view = m_Model->GetScene()->GetRegistry()->view<NameComponent, TransformComponent, MeshRendererComponent>(); auto [entity, nameComp, transform, meshRenderer] : view.each())
+        {
+            // auto &transform = view.get<TransformComponent>(entity);
+            auto model = AssetDatabase::Retrieve<ModelAsset>(meshRenderer.meshAsset)->GetAsset();
+            auto name = nameComp.Name;
+
+            for (auto mesh : model->m_Meshes)
+            {
+                float distance;
+                if (RayIntersectsMesh(camera.GetTransform()->position, ray, transform.getModelMatrix(), mesh, distance))
+                {
+                    if (distance < closestDistance)
+                    {
+                        closestDistance = distance;
+                        closestEntity = entity;
+                    }
+                }
+            }
+        }
+
+        if (closestEntity == entt::null)
+        {
+            m_Model->GetSelection().ClearEntitySelection();
+        }
+        else
+        {
+            std::cout << "Intersection found with entity: " << m_Model->GetScene()->GetRegistry()->get<IDComponent>(closestEntity).ID << std::endl;
+            if (InputManager::GetKey(KEYCODE::LEFT_CONTROL))
+            {
+                m_Model->GetSelection().AddEntityToSelection(Entity(closestEntity, m_Model->GetScene()->GetRegistry()));
+            }
+            else if (ImGui::IsItemClicked(ImGuiMouseButton_Left) || m_Model->GetSelection().GetSelectedEntities().size() < 2)
+            {
+                m_Model->GetSelection().SelectEntity(Entity(closestEntity, m_Model->GetScene()->GetRegistry()));
+            }
+        }
     }
 }

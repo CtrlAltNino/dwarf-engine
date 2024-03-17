@@ -124,4 +124,18 @@ namespace Dwarf
 
 		deltaMousePos = glm::vec2(0);
 	}
+
+	glm::vec3 Camera::ScreenToWorld(glm::vec2 const &screenPos, glm::vec2 const &viewport) const
+	{
+		float x = (2.0f * screenPos.x) / viewport.x - 1.0f;
+		float y = 1.0f - (2.0f * screenPos.y) / viewport.y;
+		float z = 1.0f;
+		glm::vec3 ray_nds = glm::vec3(x, y, z);
+		glm::vec4 ray_clip = glm::vec4(ray_nds.x, ray_nds.y, -1.0, 1.0);
+		glm::vec4 ray_eye = glm::inverse(GetProjectionMatrix()) * ray_clip;
+		ray_eye = glm::vec4(ray_eye.x, ray_eye.y, -1.0, 0.0);
+		glm::vec3 ray_wor = glm::vec3(glm::inverse(GetViewMatrix()) * ray_eye);
+		ray_wor = glm::normalize(ray_wor);
+		return ray_wor;
+	}
 }

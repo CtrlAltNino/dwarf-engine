@@ -552,8 +552,7 @@ namespace Dwarf
     void AssetBrowserWindow::SelectAsset(std::filesystem::path const &path)
     {
         m_SelectedAsset = path;
-        m_Model->GetSelection().assetPath = m_SelectedAsset;
-        m_Model->GetSelection().selectionType = INSPECTOR_SELECTION_TYPE::ASSET;
+        m_Model->GetSelection().SelectAsset(m_SelectedAsset);
         // TODO: command to inspector
     }
 
@@ -565,8 +564,7 @@ namespace Dwarf
     void AssetBrowserWindow::ClearSelection()
     {
         m_SelectedAsset = "";
-        m_Model->GetSelection().assetPath = "";
-        m_Model->GetSelection().selectionType = INSPECTOR_SELECTION_TYPE::NONE;
+        m_Model->GetSelection().ClearAssetSelection();
     }
 
     void AssetBrowserWindow::Deserialize(nlohmann::json moduleData)

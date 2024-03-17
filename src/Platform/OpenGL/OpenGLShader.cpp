@@ -321,7 +321,7 @@ namespace Dwarf
 		return m_ShaderLogs;
 	}
 
-	const ShaderAssets &OpenGLShader::GetShaderAssets() const
+	ShaderAssets &OpenGLShader::GetShaderAssets()
 	{
 		return m_ShaderAssets;
 	}

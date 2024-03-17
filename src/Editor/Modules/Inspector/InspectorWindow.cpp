@@ -34,27 +34,27 @@ namespace Dwarf
     }
 
     template <>
-    void InspectorWindow::RenderComponent<IDComponent>(IDComponent *component)
+    void InspectorWindow::RenderComponent<IDComponent>(IDComponent &component)
     {
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
-        ImGui::TextWrapped("%s", std::to_string(*component->ID).c_str());
+        ImGui::TextWrapped("%s", std::to_string(*component.ID).c_str());
     }
 
     template <>
-    void InspectorWindow::RenderComponent<NameComponent>(NameComponent *component)
+    void InspectorWindow::RenderComponent<NameComponent>(NameComponent &component)
     {
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
         ImGui::TextWrapped("Name");
         ImGui::SameLine();
-        char *str0 = {(char *)component->Name.c_str()};
+        char *str0 = {(char *)component.Name.c_str()};
         ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - COMPONENT_PANEL_PADDING);
         ImGui::InputText("##name_input", str0, sizeof(char) * 64);
-        component->Name = std::string(str0);
+        component.Name = std::string(str0);
         ImGui::PopItemWidth();
     }
 
     template <>
-    void InspectorWindow::RenderComponent<TransformComponent>(TransformComponent *component)
+    void InspectorWindow::RenderComponent<TransformComponent>(TransformComponent &component)
     {
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
 
@@ -62,7 +62,7 @@ namespace Dwarf
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
 
         ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - COMPONENT_PANEL_PADDING);
-        ImGui::DragFloat3("##transform_position", &component->position.x, 0.015f);
+        ImGui::DragFloat3("##transform_position", &component.position.x, 0.015f);
         ImGui::PopItemWidth();
 
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
@@ -70,10 +70,10 @@ namespace Dwarf
         ImGui::TextWrapped("Rotation");
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
 
-        glm::vec3 rot = component->getEulerAngles();
+        glm::vec3 rot = component.getEulerAngles();
         ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - COMPONENT_PANEL_PADDING);
         ImGui::DragFloat3("##transform_rotation", &rot.x, 0.05f);
-        component->rotation = rot;
+        component.rotation = rot;
         ImGui::PopItemWidth();
 
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
@@ -82,12 +82,12 @@ namespace Dwarf
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
 
         ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - COMPONENT_PANEL_PADDING);
-        ImGui::DragFloat3("##transform_scale", &component->scale.x, 0.015f);
+        ImGui::DragFloat3("##transform_scale", &component.scale.x, 0.015f);
         ImGui::PopItemWidth();
     }
 
     template <>
-    void InspectorWindow::RenderComponent<LightComponent>(LightComponent *component)
+    void InspectorWindow::RenderComponent<LightComponent>(LightComponent &component)
     {
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
 
@@ -97,14 +97,14 @@ namespace Dwarf
         ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - COMPONENT_PANEL_PADDING);
         ImGui::Combo("##light_type", &item_current, LightComponent::LIGHT_TYPE_NAMES.data(), LightComponent::LIGHT_TYPE_NAMES.size());
         ImGui::PopItemWidth();
-        component->type = (LightComponent::LIGHT_TYPE)item_current;
+        component.type = (LightComponent::LIGHT_TYPE)item_current;
 
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
 
         ImGui::TextWrapped("Color");
         ImGui::SameLine();
         ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - COMPONENT_PANEL_PADDING);
-        ImGui::ColorEdit3("##light_color", &component->lightColor.r, ImGuiColorEditFlags_None);
+        ImGui::ColorEdit3("##light_color", &component.lightColor.r, ImGuiColorEditFlags_None);
         ImGui::PopItemWidth();
 
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
@@ -112,45 +112,45 @@ namespace Dwarf
         ImGui::TextWrapped("Attenuation");
         ImGui::SameLine();
         ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - COMPONENT_PANEL_PADDING);
-        ImGui::DragFloat("##light_attenuation", &component->attenuation, 0.015f);
+        ImGui::DragFloat("##light_attenuation", &component.attenuation, 0.015f);
         ImGui::PopItemWidth();
 
-        if (component->type == LightComponent::LIGHT_TYPE::POINT_LIGHT)
+        if (component.type == LightComponent::LIGHT_TYPE::POINT_LIGHT)
         {
             ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
             ImGui::TextWrapped("Radius");
             ImGui::SameLine();
             ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - COMPONENT_PANEL_PADDING);
-            ImGui::DragFloat("##light_point_radius", &component->radius, 0.015f);
+            ImGui::DragFloat("##light_point_radius", &component.radius, 0.015f);
             ImGui::PopItemWidth();
         }
 
-        if (component->type == LightComponent::LIGHT_TYPE::SPOT_LIGHT)
+        if (component.type == LightComponent::LIGHT_TYPE::SPOT_LIGHT)
         {
             ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
             ImGui::TextWrapped("Opening Angle");
             ImGui::SameLine();
             ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - COMPONENT_PANEL_PADDING);
-            ImGui::SliderFloat("##light_spot_angle", &component->openingAngle, 0.0f, 180.0f);
+            ImGui::SliderFloat("##light_spot_angle", &component.openingAngle, 0.0f, 180.0f);
             ImGui::PopItemWidth();
         }
     }
 
     template <>
-    void InspectorWindow::RenderComponent<MeshRendererComponent>(MeshRendererComponent *component)
+    void InspectorWindow::RenderComponent<MeshRendererComponent>(MeshRendererComponent &component)
     {
         // TODO: Slot for a mesh asset
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
         ImGui::TextWrapped("Model Asset");
         ImGui::SameLine();
         ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - COMPONENT_PANEL_PADDING);
-        DwarfUI::AssetInput<ModelAsset>(component->meshAsset, "##modelAsset");
+        DwarfUI::AssetInput<ModelAsset>(component.meshAsset, "##modelAsset");
         ImGui::PopItemWidth();
 
-        if (component->meshAsset)
+        if (component.meshAsset)
         {
             int numMaterials = 0;
-            std::vector<Ref<Mesh>> meshes = AssetDatabase::Retrieve<ModelAsset>(component->meshAsset)->GetAsset()->m_Meshes;
+            std::vector<Ref<Mesh>> meshes = AssetDatabase::Retrieve<ModelAsset>(component.meshAsset)->GetAsset()->m_Meshes;
 
             for (int i = 0; i < meshes.size(); i++)
             {
@@ -162,9 +162,9 @@ namespace Dwarf
             ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
             ImGui::TextWrapped("Materials");
 
-            if (component->materialAssets.size() != numMaterials)
+            if (component.materialAssets.size() != numMaterials)
             {
-                component->materialAssets.resize(numMaterials);
+                component.materialAssets.resize(numMaterials);
             }
 
             ImGui::Indent(16.0f);
@@ -174,7 +174,7 @@ namespace Dwarf
                 ImGui::TextWrapped("%s", std::to_string(i).c_str());
                 ImGui::SameLine();
                 ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - COMPONENT_PANEL_PADDING);
-                DwarfUI::AssetInput<MaterialAsset>(component->materialAssets.at(i), std::format("##materialAsset{}", std::to_string(i)).c_str());
+                DwarfUI::AssetInput<MaterialAsset>(component.materialAssets.at(i), std::format("##materialAsset{}", std::to_string(i)).c_str());
                 ImGui::PopItemWidth();
             }
         }
@@ -195,12 +195,12 @@ namespace Dwarf
             return;
         }
 
-        switch (m_Model->GetSelection().selectionType)
+        switch (m_Model->GetSelection().GetSelectionType())
         {
-        case INSPECTOR_SELECTION_TYPE::ASSET:
+        case CURRENT_SELECTION_TYPE::ASSET:
         {
             // TODO: Render Asset data
-            if (std::filesystem::path assetPath = m_Model->GetSelection().assetPath; std::filesystem::is_regular_file(assetPath))
+            if (std::filesystem::path assetPath = m_Model->GetSelection().GetAssetPath(); std::filesystem::is_regular_file(assetPath))
             {
                 switch (AssetDatabase::GetType(assetPath))
                 {
@@ -247,14 +247,14 @@ namespace Dwarf
             }
             break;
         }
-        case INSPECTOR_SELECTION_TYPE::ENTITY:
-            static std::vector<Entity> *selectedEntities = &m_Model->GetSelection().selectedEntities;
+        case CURRENT_SELECTION_TYPE::ENTITY:
+            static std::vector<Entity> *selectedEntities = &m_Model->GetSelection().GetSelectedEntities();
             if (selectedEntities->size() == 1)
             {
                 RenderComponents(selectedEntities->at(0));
             }
             break;
-        case INSPECTOR_SELECTION_TYPE::NONE:
+        case CURRENT_SELECTION_TYPE::NONE:
             break;
         }
 
@@ -302,7 +302,7 @@ namespace Dwarf
         {
             draw_list->ChannelsSetCurrent(1);
             BeginComponent("Name");
-            RenderComponent(&entity.GetComponent<NameComponent>());
+            RenderComponent(entity.GetComponent<NameComponent>());
             draw_list->ChannelsSetCurrent(0);
             EndComponent();
         }
@@ -311,7 +311,7 @@ namespace Dwarf
         {
             draw_list->ChannelsSetCurrent(1);
             BeginComponent("Transform");
-            RenderComponent(&entity.GetComponent<TransformComponent>());
+            RenderComponent(entity.GetComponent<TransformComponent>());
             draw_list->ChannelsSetCurrent(0);
             EndComponent();
         }
@@ -320,7 +320,7 @@ namespace Dwarf
         {
             draw_list->ChannelsSetCurrent(1);
             BeginComponent("Light");
-            RenderComponent(&entity.GetComponent<LightComponent>());
+            RenderComponent(entity.GetComponent<LightComponent>());
             draw_list->ChannelsSetCurrent(0);
             EndComponent();
         }
@@ -329,7 +329,7 @@ namespace Dwarf
         {
             draw_list->ChannelsSetCurrent(1);
             BeginComponent("Mesh Renderer");
-            RenderComponent(&entity.GetComponent<MeshRendererComponent>());
+            RenderComponent(entity.GetComponent<MeshRendererComponent>());
             draw_list->ChannelsSetCurrent(0);
             EndComponent();
         }

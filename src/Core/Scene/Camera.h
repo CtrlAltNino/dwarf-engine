@@ -87,5 +87,7 @@ namespace Dwarf
 
 		// ========== Camera Functions ==========
 		void OnUpdate(double deltaTime) const;
+
+		glm::vec3 ScreenToWorld(glm::vec2 const &screenPosition, glm::vec2 const &viewport) const;
 	};
 }

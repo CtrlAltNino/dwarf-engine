@@ -1,6 +1,8 @@
 #include "dpch.h"
 #include "Core/Scene/SceneComponents.h"
 #include "Core/Scene/Scene.h"
+#include <Core/Asset/AssetDatabase.h>
+#include <Platform/OpenGL/OpenGLMesh.h>
 
 namespace Dwarf
 {

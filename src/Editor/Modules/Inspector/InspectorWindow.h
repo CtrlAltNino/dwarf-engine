@@ -27,10 +27,7 @@ namespace Dwarf
         void EndComponent() const;
 
         template <typename T>
-        void RenderComponent(T *component);
-
-        template <typename T>
-        void RenderComponent(Ref<T> component);
+        void RenderComponent(T &component);
 
     public:
         InspectorWindow(Ref<EditorModel> listener, int id);

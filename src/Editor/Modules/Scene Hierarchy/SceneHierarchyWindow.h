@@ -24,24 +24,6 @@ namespace Dwarf
         /// @brief Executes all buffered instructions.
         void ProcessInstructions();
 
-        void SelectEntity(Entity entity);
-
-        void AddEntityToSelection(Entity entity);
-
-        /// @brief Removes an entity from the selection.
-        /// @param entity Entity instance.
-        void RemoveEntityFromSelection(Entity entity);
-
-        /// @brief Checks if an entity is selected.
-        /// @param entity Entity instance.
-        /// @return True if selected, false if not.
-        bool IsEntitySelected(Entity entity);
-
-        /// @brief Clears the selection list.
-        void ClearSelection();
-
-        std::string GetTreeIndex(Entity entity);
-
     public:
         SceneHierarchyWindow(Ref<EditorModel> model, int index);
 

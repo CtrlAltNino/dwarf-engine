@@ -89,11 +89,6 @@ namespace Dwarf
 		/// @return The created entity instance.
 		void CreateRootEntity();
 
-		/// @brief Returns the tree index of a given entity. Used for sorting based on their graph positions.
-		/// @param entity Entity instance.
-		/// @return The full tree index.
-		std::string GetTreeIndex(Entity entity) const;
-
 		/// @brief Returns the recursive model matrix of a transform.
 		/// @param transform A transform component instance.
 		/// @return 4x4 model matrix composition of a transform and its full parent chain.
