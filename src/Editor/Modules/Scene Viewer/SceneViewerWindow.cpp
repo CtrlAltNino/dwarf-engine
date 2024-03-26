@@ -24,6 +24,7 @@ namespace Dwarf
         : GuiModule(model, "Scene Viewer", MODULE_TYPE::SCENE_VIEWER, index)
     {
         m_Framebuffer = Renderer::Get()->CreateFramebuffer({512, 512});
+        m_IdBuffer = Renderer::Get()->CreateIDFramebuffer({512, 512});
         m_Camera = CreateRef<Camera>();
     }
 
@@ -38,6 +39,10 @@ namespace Dwarf
         m_Framebuffer->Bind();
         Renderer::Get()->RenderScene(m_Model->GetScene(), m_Camera, {m_Framebuffer->GetSpecification().Width, m_Framebuffer->GetSpecification().Height}, m_Settings.RenderGrid);
         m_Framebuffer->Unbind();
+
+        m_IdBuffer->Bind();
+        Renderer::Get()->RenderIds(m_Model->GetScene(), m_Camera, {m_IdBuffer->GetSpecification().Width, m_IdBuffer->GetSpecification().Height});
+        m_IdBuffer->Unbind();
     }
 
     void SceneViewerWindow::OnImGuiRender()
@@ -190,8 +195,7 @@ namespace Dwarf
 
         if (InputManager::GetMouseDown(MOUSE_BUTTON::LEFT) && mousePos.x > minRectGlm.x && mousePos.x < maxRectGlm.x && mousePos.y > minRectGlm.y && mousePos.y < maxRectGlm.y)
         {
-            glm::vec2 relativeMouseClick = (mousePos - minRectGlm) / glm::vec2(maxRectGlm - minRectGlm);
-            ProcessSceneClick(mousePos - minRectGlm, *m_Camera, {maxRectGlm - minRectGlm});
+            ProcessSceneClick(mousePos - minRectGlm, {maxRectGlm - minRectGlm});
         }
 
         drawList->ChannelsMerge();
@@ -334,6 +338,7 @@ namespace Dwarf
         if ((m_Framebuffer->GetSpecification().Width != desiredResolution.x) || (m_Framebuffer->GetSpecification().Height != desiredResolution.y))
         {
             m_Framebuffer->Resize(desiredResolution.x, desiredResolution.y);
+            m_IdBuffer->Resize(desiredResolution.x, desiredResolution.y);
             m_Camera->SetAspectRatio((float)desiredResolution.x / (float)desiredResolution.y);
         }
     }
@@ -472,49 +477,18 @@ namespace Dwarf
         return intersectionFound;
     }
 
-    void SceneViewerWindow::ProcessSceneClick(glm::vec2 const &mousePosition, Camera const &camera, glm::vec2 const &viewportSize)
+    void SceneViewerWindow::ProcessSceneClick(glm::vec2 const &mousePosition, glm::vec2 const &viewportSize)
     {
-        glm::vec3 ray = GetRayDirection(mousePosition.x, mousePosition.y, viewportSize.x, viewportSize.y, camera.GetViewMatrix(), camera.GetProjectionMatrix());
-        float closestDistance = std::numeric_limits<float>::max();
-        entt::entity closestEntity = entt::null;
+        unsigned int handle = m_IdBuffer->ReadPixel(0, mousePosition.x, mousePosition.y);
 
-        // Loop through all entities and check for intersection
-        // auto view = m_Registry->view<NameComponent, MeshRendererComponent>();
-        for (auto view = m_Model->GetScene()->GetRegistry()->view<NameComponent, TransformComponent, MeshRendererComponent>(); auto [entity, nameComp, transform, meshRenderer] : view.each())
+        if (handle > 0)
         {
-            // auto &transform = view.get<TransformComponent>(entity);
-            auto model = AssetDatabase::Retrieve<ModelAsset>(meshRenderer.meshAsset)->GetAsset();
-            auto name = nameComp.Name;
-
-            for (auto mesh : model->m_Meshes)
-            {
-                float distance;
-                if (RayIntersectsMesh(camera.GetTransform()->position, ray, transform.getModelMatrix(), mesh, distance))
-                {
-                    if (distance < closestDistance)
-                    {
-                        closestDistance = distance;
-                        closestEntity = entity;
-                    }
-                }
-            }
-        }
-
-        if (closestEntity == entt::null)
-        {
-            m_Model->GetSelection().ClearEntitySelection();
+            entt::entity entity = static_cast<entt::entity>(handle);
+            m_Model->GetSelection().SelectEntity(Entity(entity, m_Model->GetScene()->GetRegistry()));
         }
         else
         {
-            std::cout << "Intersection found with entity: " << m_Model->GetScene()->GetRegistry()->get<IDComponent>(closestEntity).ID << std::endl;
-            if (InputManager::GetKey(KEYCODE::LEFT_CONTROL))
-            {
-                m_Model->GetSelection().AddEntityToSelection(Entity(closestEntity, m_Model->GetScene()->GetRegistry()));
-            }
-            else if (ImGui::IsItemClicked(ImGuiMouseButton_Left) || m_Model->GetSelection().GetSelectedEntities().size() < 2)
-            {
-                m_Model->GetSelection().SelectEntity(Entity(closestEntity, m_Model->GetScene()->GetRegistry()));
-            }
+            m_Model->GetSelection().ClearEntitySelection();
         }
     }
 }

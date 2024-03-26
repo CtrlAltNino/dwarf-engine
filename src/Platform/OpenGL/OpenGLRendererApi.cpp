@@ -6,6 +6,7 @@
 #include <Core/Rendering/Shader Parameters/Tex2DShaderParameter.h>
 #include <Core/Rendering/Shader Parameters/BooleanShaderParameter.h>
 #include <Core/Rendering/Shader Parameters/IntegerShaderParameter.h>
+#include <Core/Rendering/Shader Parameters/UnsignedIntegerShaderParameter.h>
 #include <Core/Rendering/Shader Parameters/FloatShaderParameter.h>
 #include <Core/Rendering/Shader Parameters/Vec4ShaderParameter.h>
 #include <Core/Rendering/Shader Parameters/Vec2ShaderParameter.h>
@@ -41,6 +42,12 @@ namespace Dwarf
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 	}
 
+	void OpenGLRendererApi::Clear(unsigned int value)
+	{
+		glClearBufferuiv(GL_COLOR, 0, &value); // Use glClearBufferuiv for integer types
+		glClear(GL_DEPTH_BUFFER_BIT);
+	}
+
 	void OpenGLRendererApi::RenderIndexed(Ref<Mesh> mesh, Ref<Material> material, glm::mat4 modelMatrix, glm::mat4 viewMatrix, glm::mat4 projectionMatrix)
 	{
 		Ref<OpenGLMesh> oglMesh = std::dynamic_pointer_cast<OpenGLMesh>(mesh);
@@ -69,7 +76,10 @@ namespace Dwarf
 					glUniform1f(glGetUniformLocation(shader->GetID(), key.c_str()), (float)std::dynamic_pointer_cast<BooleanShaderParameter>(val)->m_Value);
 					break;
 				case INTEGER:
-					glUniform1i(glGetUniformLocation(shader->GetID(), key.c_str()), (float)std::dynamic_pointer_cast<IntegerShaderParameter>(val)->m_Value);
+					glUniform1i(glGetUniformLocation(shader->GetID(), key.c_str()), std::dynamic_pointer_cast<IntegerShaderParameter>(val)->m_Value);
+					break;
+				case UNSIGNED_INTEGER:
+					glUniform1ui(glGetUniformLocation(shader->GetID(), key.c_str()), std::dynamic_pointer_cast<UnsignedIntegerShaderParameter>(val)->m_Value);
 					break;
 				case FLOAT:
 					glUniform1f(glGetUniformLocation(shader->GetID(), key.c_str()), std::dynamic_pointer_cast<FloatShaderParameter>(val)->m_Value);

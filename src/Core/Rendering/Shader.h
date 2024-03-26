@@ -41,11 +41,13 @@ namespace Dwarf
 		static Ref<Shader> s_ErrorShader;
 		static Ref<Shader> s_GridShader;
 		static Ref<Shader> s_PreviewShader;
+		static Ref<Shader> s_IdShader;
 
 		static std::filesystem::path GetDefaultShaderPath();
 		static std::filesystem::path GetErrorShaderPath();
 		static std::filesystem::path GetGridShaderPath();
 		static std::filesystem::path GetPreviewShaderPath();
+		static std::filesystem::path GetIdShaderPath();
 
 		static Ref<IShaderParameter> CreateShaderParameter(ShaderParameterType type);
 	};

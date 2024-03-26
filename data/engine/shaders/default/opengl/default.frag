@@ -1,4 +1,4 @@
-#version 330 core
+#version 450 core
 #define APPLY_FOG(color) { \
 	float distance = length(cameraPos - worldPos); \
 	color = mix(color, fogColor, clamp(remap(distance, fogStart, fogEnd, 0, 1), 0, 1)); \

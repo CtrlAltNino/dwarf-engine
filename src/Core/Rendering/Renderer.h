@@ -31,9 +31,11 @@ namespace Dwarf
 		static Ref<Renderer> Get() { return s_Renderer; }
 		// TODO: Maybe pass framebuffer?
 		virtual void RenderScene(Ref<Scene> scene, Ref<Camera> camera, glm::ivec2 viewportSize, bool renderGrid) = 0;
+		virtual void RenderIds(Ref<Scene> scene, Ref<Camera> camera, glm::ivec2 viewportSize) = 0;
 		virtual void RenderModelPreview(Ref<AssetReference<ModelAsset>> modelAsset, Ref<Camera> camera, glm::ivec2 viewportSize, glm::quat rotation) = 0;
 		virtual void RenderMaterialPreview(Ref<AssetReference<MaterialAsset>> materialAsset, Ref<Camera> camera, glm::ivec2 viewportSize, glm::quat rotation) = 0;
 		virtual Ref<Framebuffer> CreateFramebuffer(glm::ivec2 resolution) = 0;
+		virtual Ref<Framebuffer> CreateIDFramebuffer(glm::ivec2 resolution) = 0;
 
 	private:
 		static GraphicsApi s_Api;

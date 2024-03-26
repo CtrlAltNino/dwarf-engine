@@ -2,6 +2,7 @@
 #include "Platform/OpenGL/OpenGLFramebuffer.h"
 
 #include <glad/glad.h>
+#include <glm/glm.hpp>
 
 namespace Dwarf
 {
@@ -9,23 +10,34 @@ namespace Dwarf
 
 	namespace Utils
 	{
+		static glm::ivec2 ConvertToOpenGLCoords(const glm::ivec2 &originalCoords, int textureHeight)
+		{
+			glm::ivec2 openGLCoords;
+			openGLCoords.x = originalCoords.x;
+			openGLCoords.y = textureHeight - originalCoords.y;
+			return openGLCoords;
+		}
 
+		// @brief: Returns the OpenGL texture target for the given multisampled state
 		static GLenum TextureTarget(bool multisampled)
 		{
 			return multisampled ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
 		}
 
+		// @brief: Creates textures with the given multisampled state
 		static void CreateTextures(bool multisampled, uint32_t *outID, uint32_t count)
 		{
 			glCreateTextures(TextureTarget(multisampled), count, outID);
 		}
 
+		// @brief: Binds the texture with the given multisampled state
 		static void BindTexture(bool multisampled, uint32_t id)
 		{
 			glBindTexture(TextureTarget(multisampled), id);
 		}
 
-		static void AttachColorTexture(uint32_t id, int samples, GLenum internalFormat, GLenum format, uint32_t width, uint32_t height, int index)
+		// @brief: Attaches a color texture to the framebuffer with the given multisampled state
+		static void AttachColorTexture(uint32_t id, int samples, GLenum internalFormat, GLenum format, GLenum type, uint32_t width, uint32_t height, int index)
 		{
 			bool multisampled = samples > 1;
 			if (multisampled)
@@ -34,7 +46,7 @@ namespace Dwarf
 			}
 			else
 			{
-				glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_UNSIGNED_BYTE, nullptr);
+				glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, type, NULL);
 
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
 				glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
@@ -46,6 +58,7 @@ namespace Dwarf
 			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + index, TextureTarget(multisampled), id, 0);
 		}
 
+		// @brief: Attaches a depth texture to the framebuffer with the given multisampled state
 		static void AttachDepthTexture(uint32_t id, int samples, GLenum format, GLenum attachmentType, uint32_t width, uint32_t height)
 		{
 			bool multisampled = samples > 1;
@@ -67,6 +80,7 @@ namespace Dwarf
 			glFramebufferTexture2D(GL_FRAMEBUFFER, attachmentType, TextureTarget(multisampled), id, 0);
 		}
 
+		// @brief: Checks if the given framebuffer texture format is a depth format
 		static bool IsDepthFormat(FramebufferTextureFormat format)
 		{
 			switch (format)
@@ -83,7 +97,8 @@ namespace Dwarf
 			return false;
 		}
 
-		static GLenum HazelFBTextureFormatToGL(FramebufferTextureFormat format)
+		// @brief: Converts a Dwarf framebuffer texture format to an OpenGL texture format
+		static GLenum DwarfFBTextureFormatToGL(FramebufferTextureFormat format)
 		{
 			switch (format)
 			{
@@ -99,9 +114,9 @@ namespace Dwarf
 
 			return 0;
 		}
-
 	}
 
+	// @brief: Constructs an OpenGL framebuffer with the given specification
 	OpenGLFramebuffer::OpenGLFramebuffer(const FramebufferSpecification &spec)
 		: m_Specification(spec)
 	{
@@ -116,6 +131,7 @@ namespace Dwarf
 		Invalidate();
 	}
 
+	// @brief: Destroys the OpenGL framebuffer
 	OpenGLFramebuffer::~OpenGLFramebuffer()
 	{
 		glDeleteFramebuffers(1, &m_RendererID);
@@ -123,8 +139,10 @@ namespace Dwarf
 		glDeleteTextures(1, &m_DepthAttachment);
 	}
 
+	// @brief: Invalidates the framebuffer
 	void OpenGLFramebuffer::Invalidate()
 	{
+		// If the renderer ID is not 0, delete the framebuffer and its attachments
 		if (m_RendererID)
 		{
 			glDeleteFramebuffers(1, &m_RendererID);
@@ -135,44 +153,64 @@ namespace Dwarf
 			m_DepthAttachment = 0;
 		}
 
+		// Create the framebuffer
 		glCreateFramebuffers(1, &m_RendererID);
+
+		// Bind the framebuffer
 		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
 
+		// Determine if the framebuffer is multisampled
 		bool multisample = m_Specification.Samples > 1;
 
-		// Attachments
+		// Create the color attachments
 		if (m_ColorAttachmentSpecifications.size())
 		{
+			// Resize the color attachments vector to the size of the color attachment specifications
 			m_ColorAttachments.resize(m_ColorAttachmentSpecifications.size());
+
+			// Create the textures
 			Utils::CreateTextures(multisample, m_ColorAttachments.data(), (uint32_t)m_ColorAttachments.size());
 
+			// Iterate through the color attachments
 			for (size_t i = 0; i < m_ColorAttachments.size(); i++)
 			{
+				// Bind the texture
 				Utils::BindTexture(multisample, m_ColorAttachments[i]);
+
+				// Switch on the texture format
 				switch (m_ColorAttachmentSpecifications[i].TextureFormat)
 				{
 					using enum FramebufferTextureFormat;
-				case FramebufferTextureFormat::RGBA8:
-					Utils::AttachColorTexture(m_ColorAttachments[i], m_Specification.Samples, GL_RGBA8, GL_RGBA, m_Specification.Width, m_Specification.Height, (int)i);
+				case RGBA8:
+					// Attach the color texture
+					Utils::AttachColorTexture(m_ColorAttachments[i], m_Specification.Samples, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE, m_Specification.Width, m_Specification.Height, (int)i);
 					break;
-				case FramebufferTextureFormat::RED_INTEGER:
-					Utils::AttachColorTexture(m_ColorAttachments[i], m_Specification.Samples, GL_R32I, GL_RED_INTEGER, m_Specification.Width, m_Specification.Height, (int)i);
+				case RED_INTEGER:
+					// Attach the color texture
+					Utils::AttachColorTexture(m_ColorAttachments[i], m_Specification.Samples, GL_R32UI, GL_RED_INTEGER, GL_UNSIGNED_INT, m_Specification.Width, m_Specification.Height, (int)i);
 					break;
-				case FramebufferTextureFormat::None:
-				case FramebufferTextureFormat::DEPTH24STENCIL8:
+				case None:
+				case DEPTH24STENCIL8:
 					break;
 				}
 			}
 		}
 
+		// Create the depth attachment
 		if (m_DepthAttachmentSpecification.TextureFormat != FramebufferTextureFormat::None)
 		{
+			// Create the textures
 			Utils::CreateTextures(multisample, &m_DepthAttachment, 1);
+
+			// Bind the texture
 			Utils::BindTexture(multisample, m_DepthAttachment);
+
+			// Switch on the texture format
 			switch (m_DepthAttachmentSpecification.TextureFormat)
 			{
 				using enum FramebufferTextureFormat;
 			case FramebufferTextureFormat::DEPTH24STENCIL8:
+				// Attach the depth texture
 				Utils::AttachDepthTexture(m_DepthAttachment, m_Specification.Samples, GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL_ATTACHMENT, m_Specification.Width, m_Specification.Height);
 				break;
 			case FramebufferTextureFormat::None:
@@ -182,10 +220,12 @@ namespace Dwarf
 			}
 		}
 
+		// Check if the framebuffer is complete
 		if (m_ColorAttachments.size() > 1)
 		{
+			// Multiple color-passes
 			std::array<GLenum, 4> buffers = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2, GL_COLOR_ATTACHMENT3};
-			glDrawBuffers(m_ColorAttachments.size(), buffers.data());
+			glDrawBuffers(buffers.size(), buffers.data());
 		}
 		else if (m_ColorAttachments.empty())
 		{
@@ -193,20 +233,28 @@ namespace Dwarf
 			glDrawBuffer(GL_NONE);
 		}
 
+		// Check if framebuffer is complete
+		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+			std::cerr << "Framebuffer is not complete!" << std::endl;
+
+		// Unbind the framebuffer
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
+	// @brief: Binds the framebuffer
 	void OpenGLFramebuffer::Bind()
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
 		glViewport(0, 0, m_Specification.Width, m_Specification.Height);
 	}
 
+	// @brief: Unbinds the framebuffer
 	void OpenGLFramebuffer::Unbind()
 	{
 		glBindFramebuffer(GL_FRAMEBUFFER, 0);
 	}
 
+	// @brief: Resizes the framebuffer
 	void OpenGLFramebuffer::Resize(uint32_t width, uint32_t height)
 	{
 		if (width == 0 || height == 0 || width > s_MaxFramebufferSize || height > s_MaxFramebufferSize)
@@ -219,19 +267,25 @@ namespace Dwarf
 		Invalidate();
 	}
 
-	int OpenGLFramebuffer::ReadPixel(uint32_t attachmentIndex, int x, int y)
+	// @brief: Reads a pixel from the framebuffer
+	unsigned int OpenGLFramebuffer::ReadPixel(uint32_t attachmentIndex, int x, int y)
 	{
-		glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentIndex);
-		int pixelData;
-		glReadPixels(x, y, 1, 1, GL_RED_INTEGER, GL_INT, &pixelData);
-		return pixelData;
+		Bind();
+		glm::ivec2 convertedCoords = Utils::ConvertToOpenGLCoords({x, y}, m_Specification.Height);
+		glReadBuffer(GL_COLOR_ATTACHMENT0);
+
+		GLuint pixel;
+		glReadPixels(convertedCoords.x, convertedCoords.y, 1, 1, GL_RED_INTEGER, GL_UNSIGNED_INT, &pixel);
+
+		Unbind();
+		return pixel;
 	}
 
+	// @brief: Clears an attachment of the framebuffer
 	void OpenGLFramebuffer::ClearAttachment(uint32_t attachmentIndex, int value)
 	{
 		const auto &spec = m_ColorAttachmentSpecifications[attachmentIndex];
 		glClearTexImage(m_ColorAttachments[attachmentIndex], 0,
-						Utils::HazelFBTextureFormatToGL(spec.TextureFormat), GL_INT, &value);
+						Utils::DwarfFBTextureFormatToGL(spec.TextureFormat), GL_INT, &value);
 	}
-
 }

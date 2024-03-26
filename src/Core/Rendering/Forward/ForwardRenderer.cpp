@@ -56,6 +56,30 @@ namespace Dwarf
         }
     }
 
+    void ForwardRenderer::RenderIds(Ref<Scene> scene, Ref<Camera> camera, glm::ivec2 viewportSize)
+    {
+        // m_RendererApi->SetClearColorInt(0);
+        m_RendererApi->Clear(0);
+
+        m_RendererApi->SetViewport(0, 0, viewportSize.x, viewportSize.y);
+
+        for (auto view = scene->GetRegistry()->view<TransformComponent, MeshRendererComponent>(); auto [entity, transform, meshRenderer] : view.each())
+        {
+            if (meshRenderer.meshAsset != nullptr)
+            {
+                Ref<ModelAsset> model = AssetDatabase::Retrieve<ModelAsset>(meshRenderer.meshAsset)->GetAsset();
+                glm::mat4 modelMatrix = transform.getModelMatrix();
+                uint id = (uint)entity;
+                Material::s_IdMaterial->SetParameter("objectId", id);
+
+                for (int i = 0; i < model->m_Meshes.size(); i++)
+                {
+                    m_RendererApi->RenderIndexed(model->m_Meshes.at(i), Material::s_IdMaterial, modelMatrix, camera->GetViewMatrix(), camera->GetProjectionMatrix());
+                }
+            }
+        }
+    }
+
     void ForwardRenderer::RenderModelPreview(Ref<AssetReference<ModelAsset>> modelAsset, Ref<Camera> camera, glm::ivec2 viewportSize, glm::quat rotation)
     {
         m_RendererApi->SetClearColor({59 / 255.0f, 66 / 255.0f, 82 / 255.0f, 1});
@@ -81,6 +105,15 @@ namespace Dwarf
     {
         FramebufferSpecification fbSpec;
         fbSpec.Attachments = FramebufferAttachmentSpecification{FramebufferTextureSpecification{FramebufferTextureFormat::RGBA8}, FramebufferTextureSpecification{FramebufferTextureFormat::Depth}};
+        fbSpec.Width = resolution.x;
+        fbSpec.Height = resolution.y;
+        return Framebuffer::Create(fbSpec);
+    }
+
+    Ref<Framebuffer> ForwardRenderer::CreateIDFramebuffer(glm::ivec2 resolution)
+    {
+        FramebufferSpecification fbSpec;
+        fbSpec.Attachments = FramebufferAttachmentSpecification{FramebufferTextureSpecification{FramebufferTextureFormat::RED_INTEGER}, FramebufferTextureSpecification{FramebufferTextureFormat::Depth}};
         fbSpec.Width = resolution.x;
         fbSpec.Height = resolution.y;
         return Framebuffer::Create(fbSpec);

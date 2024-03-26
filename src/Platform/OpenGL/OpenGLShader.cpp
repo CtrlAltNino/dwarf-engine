@@ -291,6 +291,15 @@ namespace Dwarf
 		return previewShader;
 	}
 
+	Ref<OpenGLShader> OpenGLShader::CreateIdShader()
+	{
+		Ref<OpenGLShader> idShader = CreateRef<OpenGLShader>(OpenGLShader());
+		idShader->SetVertexShader(FileHandler::ReadFile(Shader::GetIdShaderPath() / "id.vert"));
+		idShader->SetFragmentShader(FileHandler::ReadFile(Shader::GetIdShaderPath() / "id.frag"));
+		idShader->Compile();
+		return idShader;
+	}
+
 	std::map<std::string, Ref<IShaderParameter>, std::less<>> OpenGLShader::GetParameters()
 	{
 		auto parameters = std::map<std::string, Ref<IShaderParameter>, std::less<>>();

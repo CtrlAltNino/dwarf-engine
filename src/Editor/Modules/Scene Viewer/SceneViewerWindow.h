@@ -61,6 +61,8 @@ namespace Dwarf
         /// @brief The render texture for this scene viewer.
         Ref<Framebuffer> m_Framebuffer;
 
+        Ref<Framebuffer> m_IdBuffer;
+
         Ref<Camera> m_Camera;
 
         /// @brief Calculates the cutout of the available resolution based on the given aspect ratio.
@@ -80,7 +82,7 @@ namespace Dwarf
         /// @brief Handles the shortcut inputs for changing the gizmo type.
         void UpdateGizmoType();
 
-        void ProcessSceneClick(glm::vec2 const &mousePosition, Camera const &camera, glm::vec2 const &viewportSize);
+        void ProcessSceneClick(glm::vec2 const &mousePosition, glm::vec2 const &viewportSize);
 
         glm::vec3 GetRayDirection(float mouseX, float mouseY, int screenWidth, int screenHeight, const glm::mat4 &viewMatrix, const glm::mat4 &projectionMatrix);
 

@@ -4,6 +4,7 @@
 #include "Core/Rendering/Shader Parameters/BooleanShaderParameter.h"
 #include "Core/Rendering/Shader Parameters/FloatShaderParameter.h"
 #include "Core/Rendering/Shader Parameters/IntegerShaderParameter.h"
+#include "Core/Rendering/Shader Parameters/UnsignedIntegerShaderParameter.h"
 #include "Core/Rendering/Shader Parameters/Tex2DShaderParameter.h"
 #include "Core/Rendering/Shader Parameters/Vec2ShaderParameter.h"
 #include "Core/Rendering/Shader Parameters/Vec3ShaderParameter.h"
@@ -16,6 +17,7 @@ namespace Dwarf
 	Ref<Material> Material::s_ErrorMaterial = nullptr;
 	Ref<Material> Material::s_GridMaterial = nullptr;
 	Ref<Material> Material::s_PreviewMaterial = nullptr;
+	Ref<Material> Material::s_IdMaterial = nullptr;
 
 	void Material::Init()
 	{
@@ -23,6 +25,8 @@ namespace Dwarf
 		s_ErrorMaterial = CreateRef<Material>("Error Material", Shader::s_ErrorShader);
 		s_GridMaterial = CreateRef<Material>("grid material", Shader::s_GridShader);
 		s_PreviewMaterial = CreateRef<Material>("preview material", Shader::s_PreviewShader);
+		s_IdMaterial = CreateRef<Material>("id material", Shader::s_IdShader);
+		s_IdMaterial->GenerateShaderParameters();
 		s_GridMaterial->SetTransparency(true);
 	}
 
@@ -89,6 +93,19 @@ namespace Dwarf
 		else
 		{
 			m_Parameters[std::string(identifier)] = CreateRef<IntegerShaderParameter>(IntegerShaderParameter(value));
+		}
+	}
+
+	template <>
+	void Material::SetParameter<uint>(std::string_view identifier, uint value)
+	{
+		if (m_Parameters.contains(identifier) && (m_Parameters[std::string(identifier)]->GetType() == ShaderParameterType::UNSIGNED_INTEGER))
+		{
+			std::dynamic_pointer_cast<UnsignedIntegerShaderParameter>(m_Parameters[std::string(identifier)])->m_Value = value;
+		}
+		else
+		{
+			m_Parameters[std::string(identifier)] = CreateRef<UnsignedIntegerShaderParameter>(UnsignedIntegerShaderParameter(value));
 		}
 	}
 
@@ -179,6 +196,8 @@ namespace Dwarf
 			case BOOLEAN:
 				break;
 			case INTEGER:
+				break;
+			case UNSIGNED_INTEGER:
 				break;
 			case FLOAT:
 				break;

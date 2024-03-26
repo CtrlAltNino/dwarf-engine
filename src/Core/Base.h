@@ -57,6 +57,7 @@ namespace Dwarf
 	{
 		BOOLEAN,
 		INTEGER,
+		UNSIGNED_INTEGER,
 		FLOAT,
 		TEX2D,
 		VEC2,
