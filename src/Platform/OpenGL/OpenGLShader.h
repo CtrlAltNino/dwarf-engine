@@ -81,6 +81,7 @@ namespace Dwarf
         static Ref<OpenGLShader> CreateGridShader();
         static Ref<OpenGLShader> CreatePreviewShader();
         static Ref<OpenGLShader> CreateIdShader();
+        static Ref<OpenGLShader> CreateWhiteShader();
 
         const ShaderLogs &GetShaderLogs() const;
         ShaderAssets &GetShaderAssets();

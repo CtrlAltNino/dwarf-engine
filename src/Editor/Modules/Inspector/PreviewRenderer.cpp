@@ -88,7 +88,7 @@ namespace Dwarf
 
     ImTextureID PreviewRenderer::GetTextureId()
     {
-        return (ImTextureID)*s_Framebuffer->GetColorAttachmentRendererID();
+        return (ImTextureID)s_Framebuffer->GetColorAttachment()->GetTextureID();
     }
 
     float PreviewRenderer::GetScrollDistance()

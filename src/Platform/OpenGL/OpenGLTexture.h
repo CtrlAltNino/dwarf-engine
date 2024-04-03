@@ -15,7 +15,7 @@ namespace Dwarf
         GLuint m_Id;
 
     public:
-        explicit OpenGLTexture(std::filesystem::path const &path);
+        explicit OpenGLTexture(TextureParameters const &parameters, glm::ivec3 size, void *data);
         ~OpenGLTexture() override;
         uintptr_t GetTextureID() override;
     };

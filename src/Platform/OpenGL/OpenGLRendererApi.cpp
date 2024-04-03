@@ -1,6 +1,7 @@
 #include "dpch.h"
 #include "Platform/OpenGL/OpenGLRendererApi.h"
 #include "Core/Asset/AssetDatabase.h"
+#include "Platform/OpenGL/OpenGLComputeShader.h"
 
 #include <glad/glad.h>
 #include <Core/Rendering/Shader Parameters/Tex2DShaderParameter.h>
@@ -65,6 +66,7 @@ namespace Dwarf
 		glEnable(GL_CULL_FACE);
 		glCullFace(GL_BACK);
 
+		// TODO: Move this to OpenGLShader.cpp
 		for (auto const &[key, val] : material->m_Parameters)
 		{
 			if (val)
@@ -136,6 +138,18 @@ namespace Dwarf
 
 		glDisable(GL_BLEND);
 		glDisable(GL_CULL_FACE);
+		glUseProgram(0);
+	}
+
+	void OpenGLRendererApi::ApplyComputeShader(Ref<ComputeShader> computeShader, Ref<Framebuffer> fb, uint32_t sourceAttachment, uint32_t destinationAttachment)
+	{
+		Ref<OpenGLComputeShader> shader = std::dynamic_pointer_cast<OpenGLComputeShader>(computeShader);
+		glUseProgram(shader->GetID());
+		glBindImageTexture(0, fb->GetColorAttachment(sourceAttachment)->GetTextureID(), 0, GL_FALSE, 0, GL_READ_ONLY, GL_RGBA8);
+		glBindImageTexture(1, fb->GetColorAttachment(destinationAttachment)->GetTextureID(), 0, GL_FALSE, 0, GL_WRITE_ONLY, GL_RGBA8);
+
+		glDispatchCompute(fb->GetSpecification().Width / 16, fb->GetSpecification().Height / 16, 1);
+		glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
 		glUseProgram(0);
 	}
 }

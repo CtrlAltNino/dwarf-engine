@@ -25,7 +25,16 @@ namespace Dwarf
     {
         m_Framebuffer = Renderer::Get()->CreateFramebuffer({512, 512});
         m_IdBuffer = Renderer::Get()->CreateIDFramebuffer({512, 512});
+        // m_OutlineBuffer = Renderer::Get()->CreateFramebuffer({512, 512});
         m_Camera = CreateRef<Camera>();
+
+        FramebufferSpecification fbSpec;
+        fbSpec.Attachments = FramebufferAttachmentSpecification{FramebufferTextureSpecification{FramebufferTextureFormat::RGBA8},
+                                                                FramebufferTextureSpecification{FramebufferTextureFormat::RGBA8},
+                                                                FramebufferTextureSpecification{FramebufferTextureFormat::Depth}};
+        fbSpec.Width = 512;
+        fbSpec.Height = 512;
+        m_OutlineBuffer = Framebuffer::Create(fbSpec);
     }
 
     void SceneViewerWindow::OnUpdate(double deltaTime)
@@ -43,6 +52,24 @@ namespace Dwarf
         m_IdBuffer->Bind();
         Renderer::Get()->RenderIds(m_Model->GetScene(), m_Camera, {m_IdBuffer->GetSpecification().Width, m_IdBuffer->GetSpecification().Height});
         m_IdBuffer->Unbind();
+
+        // Renderer::Get()->RenderOutlines(m_Model->GetScene(), m_Camera, {m_OutlineBuffer->GetSpecification().Width, m_OutlineBuffer->GetSpecification().Height});
+        // Render selected objects
+        if (m_Model->GetSelection().GetSelectedEntities().size() > 0)
+        {
+            m_OutlineBuffer->Clear(glm::vec4(0));
+            m_OutlineBuffer->Bind();
+            for (auto entity : m_Model->GetSelection().GetSelectedEntities())
+            {
+                Renderer::Get()->RenderEntity(entity, m_Camera->GetViewMatrix(), m_Camera->GetProjectionMatrix(), Material::s_WhiteMaterial);
+            }
+
+            // Apply propagation shader
+            // ComputeShader::s_PropagationShader->SetParameter("inputTexture", m_OutlineBuffer->GetColorAttachmentRendererID(), ShaderParameterType::TEXTURE);
+            Renderer::Get()->GetRendererApi()->ApplyComputeShader(ComputeShader::s_PropagationShader, m_OutlineBuffer, 0, 1);
+
+            m_OutlineBuffer->Unbind();
+        }
     }
 
     void SceneViewerWindow::OnImGuiRender()
@@ -227,7 +254,7 @@ namespace Dwarf
 
     ImTextureID SceneViewerWindow::GetFrameBufferForImGui()
     {
-        return (ImTextureID)*m_Framebuffer->GetColorAttachmentRendererID();
+        return (ImTextureID)m_Framebuffer->GetColorAttachment()->GetTextureID();
     }
 
     glm::ivec2 SceneViewerWindow::CalculateDesiredResolution(glm::ivec2 availableResolution, float targetAspectRatio) const
@@ -339,6 +366,7 @@ namespace Dwarf
         {
             m_Framebuffer->Resize(desiredResolution.x, desiredResolution.y);
             m_IdBuffer->Resize(desiredResolution.x, desiredResolution.y);
+            m_OutlineBuffer->Resize(desiredResolution.x, desiredResolution.y);
             m_Camera->SetAspectRatio((float)desiredResolution.x / (float)desiredResolution.y);
         }
     }

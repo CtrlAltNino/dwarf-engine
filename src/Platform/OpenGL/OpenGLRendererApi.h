@@ -24,5 +24,6 @@ namespace Dwarf
         void Clear() override;
 
         void RenderIndexed(Ref<Mesh> mesh, Ref<Material> material, glm::mat4 modelMatrix, glm::mat4 viewMatrix, glm::mat4 projectionMatrix) override;
+        void ApplyComputeShader(Ref<ComputeShader> computeShader, Ref<Framebuffer> fb, uint32_t sourceAttachment, uint32_t destinationAttachment) override;
     };
 }

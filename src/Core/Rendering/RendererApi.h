@@ -5,6 +5,8 @@
 #include "Core/Base.h"
 #include "Core/Rendering/Mesh.h"
 #include "Core/Rendering/Material.h"
+#include "Core/Rendering/Framebuffer.h"
+#include "ComputeShader.h"
 
 namespace Dwarf
 {
@@ -20,5 +22,6 @@ namespace Dwarf
         virtual void Clear() = 0;
         virtual void Clear(unsigned int value) = 0;
         virtual void RenderIndexed(Ref<Mesh> mesh, Ref<Material> material, glm::mat4 modelMatrix, glm::mat4 viewMatrix, glm::mat4 projectionMatrix) = 0;
+        virtual void ApplyComputeShader(Ref<ComputeShader> computeShader, Ref<Framebuffer> fb, uint32_t sourceAttachment, uint32_t destinationAttachment) = 0;
     };
 }

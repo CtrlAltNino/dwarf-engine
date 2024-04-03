@@ -30,6 +30,7 @@ namespace Dwarf
 	Ref<Shader> Shader::s_GridShader = nullptr;
 	Ref<Shader> Shader::s_PreviewShader = nullptr;
 	Ref<Shader> Shader::s_IdShader = nullptr;
+	Ref<Shader> Shader::s_WhiteShader = nullptr;
 
 	Ref<Shader> Shader::Create()
 	{
@@ -184,6 +185,28 @@ namespace Dwarf
 		return "";
 	}
 
+	std::filesystem::path Shader::GetOutlineShaderPath()
+	{
+		switch (Renderer::GetAPI())
+		{
+			using enum GraphicsApi;
+		case D3D12:
+			return "data/engine/shaders/outline/d3d12/";
+			break;
+		case Metal:
+			return "data/engine/shaders/outline/metal/";
+			break;
+		case OpenGL:
+			return "data/engine/shaders/outline/opengl/";
+			break;
+		case Vulkan:
+			return "data/engine/shaders/outline/vulkan/";
+			break;
+		}
+
+		return "";
+	}
+
 	Shader::Shader() = default;
 	Shader::~Shader() = default;
 
@@ -204,6 +227,8 @@ namespace Dwarf
 			s_ErrorShader = OpenGLShader::CreateErrorShader();
 			s_GridShader = OpenGLShader::CreateGridShader();
 			s_PreviewShader = OpenGLShader::CreatePreviewShader();
+			s_IdShader = OpenGLShader::CreateIdShader();
+			s_OutlineShader = OpenGLShader::CreateWhiteShader();
 			break;
 		case GraphicsApi::Vulkan:
 			// s_DefaultShader = VulkanShader::CreateDefaultShader();
@@ -221,6 +246,7 @@ namespace Dwarf
 			s_GridShader = OpenGLShader::CreateGridShader();
 			s_PreviewShader = OpenGLShader::CreatePreviewShader();
 			s_IdShader = OpenGLShader::CreateIdShader();
+			s_WhiteShader = OpenGLShader::CreateWhiteShader();
 			break;
 		case GraphicsApi::Vulkan:
 			break;

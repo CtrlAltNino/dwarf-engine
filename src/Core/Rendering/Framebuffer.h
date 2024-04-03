@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Core/Base.h"
+#include "Core/Rendering/Texture.h"
+#include <glm/glm.hpp>
 
 namespace Dwarf
 {
@@ -62,7 +64,10 @@ namespace Dwarf
 
 		virtual void ClearAttachment(uint32_t attachmentIndex, int value) = 0;
 
-		virtual const uint32_t *GetColorAttachmentRendererID(uint32_t index = 0) const = 0;
+		virtual void Clear() = 0;
+		virtual void Clear(glm::vec4 clearColor) = 0;
+
+		virtual const Ref<Texture> GetColorAttachment(uint32_t index = 0) const = 0;
 
 		virtual const FramebufferSpecification &GetSpecification() const = 0;
 

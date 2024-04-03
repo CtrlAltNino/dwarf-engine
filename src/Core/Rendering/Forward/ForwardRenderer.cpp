@@ -13,11 +13,40 @@ namespace Dwarf
     }
     ForwardRenderer::~ForwardRenderer() = default;
 
+    void ForwardRenderer::RenderEntity(Entity &entity, glm::mat4 viewMatrix, glm::mat4 projectionMatrix, Ref<Material> overrideMaterial = nullptr)
+    {
+        auto &transform = entity.GetComponent<TransformComponent>();
+        auto &meshRenderer = entity.GetComponent<MeshRendererComponent>();
+        Ref<ModelAsset> model = AssetDatabase::Retrieve<ModelAsset>(meshRenderer.meshAsset)->GetAsset();
+        glm::mat4 modelMatrix = transform.getModelMatrix();
+
+        for (int i = 0; i < model->m_Meshes.size(); i++)
+        {
+            if (model->m_Meshes.at(i)->GetMaterialIndex() - 1 < meshRenderer.materialAssets.size())
+            {
+                if (meshRenderer.materialAssets.at(model->m_Meshes.at(i)->GetMaterialIndex() - 1) != nullptr && AssetDatabase::Exists(meshRenderer.materialAssets.at(model->m_Meshes.at(i)->GetMaterialIndex() - 1)))
+                {
+                    Ref<Material> material = overrideMaterial != nullptr ? overrideMaterial : AssetDatabase::Retrieve<MaterialAsset>(meshRenderer.materialAssets.at(model->m_Meshes.at(i)->GetMaterialIndex() - 1))->GetAsset()->m_Material;
+                    if (material->GetShader() != nullptr && material->GetShader()->IsCompiled())
+                    {
+                        m_RendererApi->RenderIndexed(model->m_Meshes.at(i), material, modelMatrix, viewMatrix, projectionMatrix);
+                    }
+                    else
+                    {
+                        m_RendererApi->RenderIndexed(model->m_Meshes.at(i), Material::s_ErrorMaterial, modelMatrix, viewMatrix, projectionMatrix);
+                    }
+                }
+            }
+        }
+    }
+
     void ForwardRenderer::RenderScene(Ref<Scene> scene, Ref<Camera> camera, glm::ivec2 viewportSize, bool renderGrid)
     {
         m_RendererApi->SetClearColor(glm::vec4(0.065f, 0.07f, 0.085, 1.0f));
         m_RendererApi->Clear();
         m_RendererApi->SetViewport(0, 0, viewportSize.x, viewportSize.y);
+        glm::mat4 viewMatrix = camera->GetViewMatrix();
+        glm::mat4 projectionMatrix = camera->GetProjectionMatrix();
 
         // Rendering skybox first???
 
@@ -25,27 +54,8 @@ namespace Dwarf
         {
             if (meshRenderer.meshAsset != nullptr)
             {
-                Ref<ModelAsset> model = AssetDatabase::Retrieve<ModelAsset>(meshRenderer.meshAsset)->GetAsset();
-                glm::mat4 modelMatrix = transform.getModelMatrix();
-
-                for (int i = 0; i < model->m_Meshes.size(); i++)
-                {
-                    if (model->m_Meshes.at(i)->GetMaterialIndex() - 1 < meshRenderer.materialAssets.size())
-                    {
-                        if (meshRenderer.materialAssets.at(model->m_Meshes.at(i)->GetMaterialIndex() - 1) != nullptr && AssetDatabase::Exists(meshRenderer.materialAssets.at(model->m_Meshes.at(i)->GetMaterialIndex() - 1)))
-                        {
-                            Ref<MaterialAsset> material = AssetDatabase::Retrieve<MaterialAsset>(meshRenderer.materialAssets.at(model->m_Meshes.at(i)->GetMaterialIndex() - 1))->GetAsset();
-                            if (material->m_Material->GetShader() != nullptr && material->m_Material->GetShader()->IsCompiled())
-                            {
-                                m_RendererApi->RenderIndexed(model->m_Meshes.at(i), material->m_Material, modelMatrix, camera->GetViewMatrix(), camera->GetProjectionMatrix());
-                            }
-                            else
-                            {
-                                m_RendererApi->RenderIndexed(model->m_Meshes.at(i), Material::s_ErrorMaterial, modelMatrix, camera->GetViewMatrix(), camera->GetProjectionMatrix());
-                            }
-                        }
-                    }
-                }
+                Entity e(entity, scene->GetRegistry());
+                RenderEntity(e, viewMatrix, projectionMatrix);
             }
         }
 
@@ -58,7 +68,6 @@ namespace Dwarf
 
     void ForwardRenderer::RenderIds(Ref<Scene> scene, Ref<Camera> camera, glm::ivec2 viewportSize)
     {
-        // m_RendererApi->SetClearColorInt(0);
         m_RendererApi->Clear(0);
 
         m_RendererApi->SetViewport(0, 0, viewportSize.x, viewportSize.y);

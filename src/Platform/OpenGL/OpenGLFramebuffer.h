@@ -14,8 +14,8 @@ namespace Dwarf
 		std::vector<FramebufferTextureSpecification> m_ColorAttachmentSpecifications;
 		FramebufferTextureSpecification m_DepthAttachmentSpecification{FramebufferTextureFormat::None};
 
-		std::vector<uint32_t> m_ColorAttachments;
-		uint32_t m_DepthAttachment = 0;
+		std::vector<Ref<Texture>> m_ColorAttachments;
+		Ref<Texture> m_DepthAttachment = 0;
 
 	public:
 		explicit OpenGLFramebuffer(const FramebufferSpecification &spec);
@@ -31,12 +31,12 @@ namespace Dwarf
 
 		void ClearAttachment(uint32_t attachmentIndex, int value) override;
 
-		const uint32_t *GetColorAttachmentRendererID(uint32_t index = 0) const override
+		const Ref<Texture> GetColorAttachment(uint32_t index = 0) const override
 		{
 			if (index < m_ColorAttachments.size())
 			{
 				// Return the address of the value at the specified index
-				return &m_ColorAttachments[index];
+				return m_ColorAttachments[index];
 			}
 			else
 			{
@@ -44,6 +44,10 @@ namespace Dwarf
 				return nullptr;
 			}
 		}
+
+		void Clear() override;
+
+		void Clear(glm::vec4 clearColor) override;
 
 		const FramebufferSpecification &GetSpecification() const override { return m_Specification; }
 	};

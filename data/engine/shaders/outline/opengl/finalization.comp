@@ -1,0 +1,29 @@
+#version 450
+
+layout(local_size_x = 16, local_size_y = 16) in;
+
+uniform sampler2D inputTexture;
+uniform ivec2 textureSize;
+
+void main() {
+    ivec2 texCoord = ivec2(gl_GlobalInvocationID.xy);
+    
+    // Initialize distance to a large value
+    float distance = float(textureSize.x * textureSize.x + textureSize.y * textureSize.y);
+    
+    // Iterate over neighbors
+    for (int dx = -1; dx <= 1; ++dx) {
+        for (int dy = -1; dy <= 1; ++dy) {
+            ivec2 neighbor = texCoord + ivec2(dx, dy);
+            if (all(lessThanEqual(neighbor, textureSize - 1)) && all(greaterThanEqual(neighbor, ivec2(0)))) {
+                // Compute distance to neighbor
+                float neighborDist = texelFetch(inputTexture, neighbor, 0).r + length(vec2(dx, dy));
+                // Update distance if closer
+                distance = min(distance, neighborDist);
+            }
+        }
+    }
+    
+    // Write distance to output texture
+    imageStore(outputTexture, texCoord, vec4(distance));
+}

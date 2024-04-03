@@ -18,6 +18,7 @@ namespace Dwarf
 	Ref<Material> Material::s_GridMaterial = nullptr;
 	Ref<Material> Material::s_PreviewMaterial = nullptr;
 	Ref<Material> Material::s_IdMaterial = nullptr;
+	Ref<Material> Material::s_WhiteMaterial = nullptr;
 
 	void Material::Init()
 	{
@@ -27,6 +28,7 @@ namespace Dwarf
 		s_PreviewMaterial = CreateRef<Material>("preview material", Shader::s_PreviewShader);
 		s_IdMaterial = CreateRef<Material>("id material", Shader::s_IdShader);
 		s_IdMaterial->GenerateShaderParameters();
+		s_WhiteMaterial = CreateRef<Material>("outline material", Shader::s_WhiteShader);
 		s_GridMaterial->SetTransparency(true);
 	}
 

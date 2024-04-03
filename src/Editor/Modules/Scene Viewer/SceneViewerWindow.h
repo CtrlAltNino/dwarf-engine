@@ -12,6 +12,7 @@
 #include "Core/Scene/Camera.h"
 #include "Core/Rendering/Framebuffer.h"
 #include "Core/Rendering/Forward/ForwardRenderer.h"
+#include "Core/Rendering/ComputeShader.h"
 
 namespace Dwarf
 {
@@ -62,6 +63,8 @@ namespace Dwarf
         Ref<Framebuffer> m_Framebuffer;
 
         Ref<Framebuffer> m_IdBuffer;
+
+        Ref<Framebuffer> m_OutlineBuffer;
 
         Ref<Camera> m_Camera;
 

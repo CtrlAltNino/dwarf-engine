@@ -135,8 +135,8 @@ namespace Dwarf
 	OpenGLFramebuffer::~OpenGLFramebuffer()
 	{
 		glDeleteFramebuffers(1, &m_RendererID);
-		glDeleteTextures(m_ColorAttachments.size(), m_ColorAttachments.data());
-		glDeleteTextures(1, &m_DepthAttachment);
+		// glDeleteTextures(m_ColorAttachments.size(), m_ColorAttachments.data());
+		// glDeleteTextures(1, &m_DepthAttachment);
 	}
 
 	// @brief: Invalidates the framebuffer
@@ -146,11 +146,11 @@ namespace Dwarf
 		if (m_RendererID)
 		{
 			glDeleteFramebuffers(1, &m_RendererID);
-			glDeleteTextures(m_ColorAttachments.size(), m_ColorAttachments.data());
-			glDeleteTextures(1, &m_DepthAttachment);
+			// glDeleteTextures(m_ColorAttachments.size(), m_ColorAttachments.data());
+			// glDeleteTextures(1, &m_DepthAttachment);
 
 			m_ColorAttachments.clear();
-			m_DepthAttachment = 0;
+			m_DepthAttachment = nullptr;
 		}
 
 		// Create the framebuffer
@@ -163,13 +163,13 @@ namespace Dwarf
 		bool multisample = m_Specification.Samples > 1;
 
 		// Create the color attachments
-		if (m_ColorAttachmentSpecifications.size())
+		/* if (m_ColorAttachmentSpecifications.size())
 		{
 			// Resize the color attachments vector to the size of the color attachment specifications
-			m_ColorAttachments.resize(m_ColorAttachmentSpecifications.size());
+			// m_ColorAttachments.resize(m_ColorAttachmentSpecifications.size());
 
 			// Create the textures
-			Utils::CreateTextures(multisample, m_ColorAttachments.data(), (uint32_t)m_ColorAttachments.size());
+			// Utils::CreateTextures(multisample, m_ColorAttachments.data(), (uint32_t)m_ColorAttachments.size());
 
 			// Iterate through the color attachments
 			for (size_t i = 0; i < m_ColorAttachments.size(); i++)
@@ -218,7 +218,7 @@ namespace Dwarf
 			case FramebufferTextureFormat::RED_INTEGER:
 				break;
 			}
-		}
+		} */
 
 		// Check if the framebuffer is complete
 		if (m_ColorAttachments.size() > 1)
@@ -285,7 +285,24 @@ namespace Dwarf
 	void OpenGLFramebuffer::ClearAttachment(uint32_t attachmentIndex, int value)
 	{
 		const auto &spec = m_ColorAttachmentSpecifications[attachmentIndex];
-		glClearTexImage(m_ColorAttachments[attachmentIndex], 0,
-						Utils::DwarfFBTextureFormatToGL(spec.TextureFormat), GL_INT, &value);
+		/* glClearTexImage(m_ColorAttachments[attachmentIndex], 0,
+						Utils::DwarfFBTextureFormatToGL(spec.TextureFormat), GL_INT, &value); */
+	}
+
+	// @brief: Clears the framebuffer
+	void OpenGLFramebuffer::Clear()
+	{
+		Bind();
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		Unbind();
+	}
+
+	// @brief: Clears the framebuffer with the given color
+	void OpenGLFramebuffer::Clear(glm::vec4 clearColor)
+	{
+		Bind();
+		glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		Unbind();
 	}
 }

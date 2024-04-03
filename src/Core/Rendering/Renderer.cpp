@@ -5,7 +5,6 @@
 
 namespace Dwarf
 {
-
 	GraphicsApi Renderer::s_Api = GraphicsApi::OpenGL;
 
 	Renderer::RendererType Renderer::s_RendererType = Renderer::RendererType::Forward;

@@ -39,6 +39,7 @@ namespace Dwarf
     {
         s_Registry->clear();
         Shader::Init();
+        ComputeShader::Init();
         Material::Init();
         Mesh::Init();
         RecursiveImport(s_AssetFolderPath);
