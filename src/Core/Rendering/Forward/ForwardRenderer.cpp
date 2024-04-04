@@ -78,7 +78,7 @@ namespace Dwarf
             {
                 Ref<ModelAsset> model = AssetDatabase::Retrieve<ModelAsset>(meshRenderer.meshAsset)->GetAsset();
                 glm::mat4 modelMatrix = transform.getModelMatrix();
-                uint id = (uint)entity;
+                unsigned int id = (unsigned int)entity;
                 Material::s_IdMaterial->SetParameter("objectId", id);
 
                 for (int i = 0; i < model->m_Meshes.size(); i++)

@@ -228,7 +228,7 @@ namespace Dwarf
 			s_GridShader = OpenGLShader::CreateGridShader();
 			s_PreviewShader = OpenGLShader::CreatePreviewShader();
 			s_IdShader = OpenGLShader::CreateIdShader();
-			s_OutlineShader = OpenGLShader::CreateWhiteShader();
+			s_WhiteShader = OpenGLShader::CreateWhiteShader();
 			break;
 		case GraphicsApi::Vulkan:
 			// s_DefaultShader = VulkanShader::CreateDefaultShader();
