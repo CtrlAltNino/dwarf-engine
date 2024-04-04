@@ -53,8 +53,7 @@
     "xxhash",
     "platform-folders",
     "tiff",
-    "libspng",
-    "ijg-libjpeg"
+    "libspng"
   ],
   "overrides": [
     {

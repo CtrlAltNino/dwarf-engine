@@ -1,3 +1,4 @@
+#include "Core/Rendering/Texture.h"
 #include "dpch.h"
 
 #include "Platform/OpenGL/OpenGLTexture.h"
@@ -7,21 +8,21 @@
 namespace Dwarf
 {
 	// A Map that maps TextureFormat to OpenGL format
-	static std::map<TextureFormat, GLenum> s_TextureFormatMap = {
+	static const std::map<TextureFormat, GLenum> s_TextureFormatMap = {
 		{TextureFormat::RED, GL_RED},
 		{TextureFormat::RG, GL_RG},
 		{TextureFormat::RGB, GL_RGB},
 		{TextureFormat::RGBA, GL_RGBA}};
 
 	// A Map that maps TextureWrap to OpenGL wrap
-	static std::map<TextureWrap, GLenum> s_TextureWrapMap = {
+	static const std::map<TextureWrap, GLenum> s_TextureWrapMap = {
 		{TextureWrap::REPEAT, GL_REPEAT},
 		{TextureWrap::MIRRORED_REPEAT, GL_MIRRORED_REPEAT},
 		{TextureWrap::CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE},
 		{TextureWrap::CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER}};
 
 	// A Map that maps TextureMinFilter to OpenGL min filter
-	static std::map<TextureMinFilter, GLenum> s_TextureMinFilterMap = {
+	static const std::map<TextureMinFilter, GLenum> s_TextureMinFilterMap = {
 		{TextureMinFilter::NEAREST, GL_NEAREST},
 		{TextureMinFilter::LINEAR, GL_LINEAR},
 		{TextureMinFilter::NEAREST_MIPMAP_NEAREST, GL_NEAREST_MIPMAP_NEAREST},
@@ -30,20 +31,19 @@ namespace Dwarf
 		{TextureMinFilter::LINEAR_MIPMAP_LINEAR, GL_LINEAR_MIPMAP_LINEAR}};
 
 	// A Map that maps TextureMagFilter to OpenGL mag filter
-
-	static std::map<TextureMagFilter, GLenum> s_TextureMagFilterMap = {
+	static const std::map<TextureMagFilter, GLenum> s_TextureMagFilterMap = {
 		{TextureMagFilter::NEAREST, GL_NEAREST},
 		{TextureMagFilter::LINEAR, GL_LINEAR}};
 
 	// A Map that maps TextureType to OpenGL type
-	static std::map<TextureType, GLenum> s_TextureTypeMap = {
+	static const std::map<TextureType, GLenum> s_TextureTypeMap = {
 		{TextureType::TEXTURE_1D, GL_TEXTURE_1D},
 		{TextureType::TEXTURE_2D, GL_TEXTURE_2D},
 		{TextureType::TEXTURE_3D, GL_TEXTURE_3D},
 		{TextureType::TEXTURE_CUBE_MAP, GL_TEXTURE_CUBE_MAP}};
 
 	// A Map that maps TextureDataType to OpenGL data type
-	static std::map<TextureDataType, GLenum> s_TextureDataTypeMap = {
+	static const std::map<TextureDataType, GLenum> s_TextureDataTypeMap = {
 		{TextureDataType::UNSIGNED_BYTE, GL_UNSIGNED_BYTE},
 		{TextureDataType::FLOAT, GL_FLOAT},
 		{TextureDataType::UNSIGNED_INT, GL_UNSIGNED_INT},
@@ -53,14 +53,14 @@ namespace Dwarf
 	// Constructor without meta data
 	OpenGLTexture::OpenGLTexture(TextureParameters const &parameters, glm::ivec3 size, void *data)
 	{
-		GLuint textureFormat = s_TextureFormatMap[parameters.Format];
-		GLuint textureType = s_TextureTypeMap[parameters.Type];
-		GLuint textureDataType = s_TextureDataTypeMap[parameters.DataType];
-		GLuint textureWrapS = s_TextureWrapMap[parameters.WrapS];
-		GLuint textureWrapT = s_TextureWrapMap[parameters.WrapT];
-		GLuint textureWrapR = s_TextureWrapMap[parameters.WrapR];
-		GLuint textureMinFilter = s_TextureMinFilterMap[parameters.MinFilter];
-		GLuint textureMagFilter = s_TextureMagFilterMap[parameters.MagFilter];
+		GLuint textureFormat = s_TextureFormatMap.at(parameters.Format);
+		GLuint textureType = s_TextureTypeMap.at(parameters.Type);
+		GLuint textureDataType = s_TextureDataTypeMap.at(parameters.DataType);
+		GLuint textureWrapS = s_TextureWrapMap.at(parameters.WrapS);
+		GLuint textureWrapT = s_TextureWrapMap.at(parameters.WrapT);
+		GLuint textureWrapR = s_TextureWrapMap.at(parameters.WrapR);
+		GLuint textureMinFilter = s_TextureMinFilterMap.at(parameters.MinFilter);
+		GLuint textureMagFilter = s_TextureMagFilterMap.at(parameters.MagFilter);
 
 		SetSize(glm::ivec3(size.x, size.y, size.z));
 
@@ -68,19 +68,20 @@ namespace Dwarf
 
 		switch (parameters.Type)
 		{
-		case TextureType::TEXTURE_1D:
+			using enum TextureType;
+		case TEXTURE_1D:
 			glTextureStorage1D(m_Id, 1, textureFormat, GetSize().x);
 			glTextureSubImage1D(m_Id, 0, 0, GetSize().x, textureFormat, textureDataType, data);
 			break;
-		case TextureType::TEXTURE_2D:
+		case TEXTURE_2D:
 			glTextureStorage2D(m_Id, 1, textureFormat, GetSize().x, GetSize().y);
 			glTextureSubImage2D(m_Id, 0, 0, 0, GetSize().x, GetSize().y, textureFormat, textureDataType, data);
 			break;
-		case TextureType::TEXTURE_3D:
+		case TEXTURE_3D:
 			glTextureStorage3D(m_Id, 1, textureFormat, GetSize().x, GetSize().y, GetSize().z);
 			glTextureSubImage3D(m_Id, 0, 0, 0, 0, GetSize().x, GetSize().y, GetSize().z, textureFormat, textureDataType, data);
 			break;
-		case TextureType::TEXTURE_CUBE_MAP:
+		case TEXTURE_CUBE_MAP:
 			glTextureStorage2D(m_Id, 1, textureFormat, GetSize().x, GetSize().y);
 			glTextureSubImage3D(m_Id, 0, 0, 0, 0, GetSize().x, GetSize().y, 6, textureFormat, textureDataType, data);
 			break;
