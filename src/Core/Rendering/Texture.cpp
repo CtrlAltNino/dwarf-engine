@@ -1,11 +1,16 @@
 #include "dpch.h"
+
+// Image loading libraries
 #define STB_IMAGE_STATIC
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
 #include <tiffio.h>
 #include <spng.h>
+#include <turbojpeg.h>
 
 #include "Core/Rendering/Renderer.h"
+#include "Utilities/TextureUtilities/JpegUtils.h"
+#include "Utilities/TextureUtilities/PngUtils.h"
 
 #ifdef WIN32
 // #include "Platform/Direct3D12/D3D12Texture.h"
@@ -22,36 +27,36 @@
 
 namespace Dwarf
 {
-    Ref<Texture> Texture::LoadFromJpg(const std::filesystem::path &path)
-    {
-        int width;
-        int height;
-        int channels;
-        stbi_uc *data = stbi_load(path.string().c_str(), &width, &height, &channels, 0);
-        if (!data)
-        {
-            // DWARF_CORE_ERROR("Failed to load texture from file: {0}", path.string());
-            return nullptr;
-        }
+    // Ref<Texture> Texture::LoadFromJpg(const std::filesystem::path &path)
+    // {
+    //     int width;
+    //     int height;
+    //     int channels;
+    //     stbi_uc *data = stbi_load(path.string().c_str(), &width, &height, &channels, 0);
+    //     if (!data)
+    //     {
+    //         // DWARF_CORE_ERROR("Failed to load texture from file: {0}", path.string());
+    //         return nullptr;
+    //     }
 
-        // TODO: Handle metadata
+    //     // TODO: Handle metadata
 
-        TextureParameters parameters{
-            TextureType::TEXTURE_2D,
-            TextureFormat::RGB,
-            TextureDataType::UNSIGNED_BYTE,
-            TextureWrap::REPEAT,
-            TextureWrap::REPEAT,
-            TextureWrap::REPEAT,
-            TextureMinFilter::LINEAR,
-            TextureMagFilter::LINEAR,
-        };
+    //     TextureParameters parameters{
+    //         TextureType::TEXTURE_2D,
+    //         TextureFormat::RGB,
+    //         TextureDataType::UNSIGNED_BYTE,
+    //         TextureWrap::REPEAT,
+    //         TextureWrap::REPEAT,
+    //         TextureWrap::REPEAT,
+    //         TextureMinFilter::LINEAR,
+    //         TextureMagFilter::LINEAR,
+    //     };
 
-        Ref<Texture> texture = CreateRef<OpenGLTexture>(parameters, glm::ivec3(width, height, 0), (void *)data);
-        stbi_image_free(data);
+    //     Ref<Texture> texture = CreateRef<OpenGLTexture>(parameters, glm::ivec3(width, height, 0), (void *)data);
+    //     stbi_image_free(data);
 
-        return texture;
-    }
+    //     return texture;
+    // }
 
     Ref<Texture> Texture::LoadFromPng(std::filesystem::path const &path)
     {
@@ -132,65 +137,65 @@ namespace Dwarf
         return nullptr;
     }
 
-    Ref<Texture> Texture::LoadFromBmp(std::filesystem::path const &path)
-    {
-        int width;
-        int height;
-        int channels;
-        stbi_uc *data = stbi_load(path.string().c_str(), &width, &height, &channels, 0);
-        if (!data)
-        {
-            // DWARF_CORE_ERROR("Failed to load texture from file: {0}", path.string());
-            return nullptr;
-        }
+    // Ref<Texture> Texture::LoadFromBmp(std::filesystem::path const &path)
+    // {
+    //     int width;
+    //     int height;
+    //     int channels;
+    //     stbi_uc *data = stbi_load(path.string().c_str(), &width, &height, &channels, 0);
+    //     if (!data)
+    //     {
+    //         // DWARF_CORE_ERROR("Failed to load texture from file: {0}", path.string());
+    //         return nullptr;
+    //     }
 
-        return nullptr;
-    }
+    //     return nullptr;
+    // }
 
-    Ref<Texture> Texture::LoadFromTga(std::filesystem::path const &path)
-    {
-        int width;
-        int height;
-        int channels;
-        stbi_uc *data = stbi_load(path.string().c_str(), &width, &height, &channels, 0);
-        if (!data)
-        {
-            // DWARF_CORE_ERROR("Failed to load texture from file: {0}", path.string());
-            return nullptr;
-        }
+    // Ref<Texture> Texture::LoadFromTga(std::filesystem::path const &path)
+    // {
+    //     int width;
+    //     int height;
+    //     int channels;
+    //     stbi_uc *data = stbi_load(path.string().c_str(), &width, &height, &channels, 0);
+    //     if (!data)
+    //     {
+    //         // DWARF_CORE_ERROR("Failed to load texture from file: {0}", path.string());
+    //         return nullptr;
+    //     }
 
-        return nullptr;
-    }
+    //     return nullptr;
+    // }
 
-    Ref<Texture> Texture::LoadFromHdr(std::filesystem::path const &path)
-    {
-        int width;
-        int height;
-        int channels;
-        stbi_uc *data = stbi_load(path.string().c_str(), &width, &height, &channels, 0);
-        if (!data)
-        {
-            // DWARF_CORE_ERROR("Failed to load texture from file: {0}", path.string());
-            return nullptr;
-        }
+    // Ref<Texture> Texture::LoadFromHdr(std::filesystem::path const &path)
+    // {
+    //     int width;
+    //     int height;
+    //     int channels;
+    //     stbi_uc *data = stbi_load(path.string().c_str(), &width, &height, &channels, 0);
+    //     if (!data)
+    //     {
+    //         // DWARF_CORE_ERROR("Failed to load texture from file: {0}", path.string());
+    //         return nullptr;
+    //     }
 
-        return nullptr;
-    }
+    //     return nullptr;
+    // }
 
-    Ref<Texture> Texture::LoadFromTiff(std::filesystem::path const &path)
-    {
-        int width;
-        int height;
-        int channels;
-        stbi_uc *data = stbi_load(path.string().c_str(), &width, &height, &channels, 0);
-        if (!data)
-        {
-            // DWARF_CORE_ERROR("Failed to load texture from file: {0}", path.string());
-            return nullptr;
-        }
+    // Ref<Texture> Texture::LoadFromTiff(std::filesystem::path const &path)
+    // {
+    //     int width;
+    //     int height;
+    //     int channels;
+    //     stbi_uc *data = stbi_load(path.string().c_str(), &width, &height, &channels, 0);
+    //     if (!data)
+    //     {
+    //         // DWARF_CORE_ERROR("Failed to load texture from file: {0}", path.string());
+    //         return nullptr;
+    //     }
 
-        return nullptr;
-    }
+    //     return nullptr;
+    // }
 
     // @brief Load a texture data from a file.
     // @param path The path to the texture file.
@@ -200,7 +205,8 @@ namespace Dwarf
         std::string ext = path.extension().string();
 
         if (ext == ".jpg" || ext == ".jpeg")
-            return Texture::LoadFromJpg(path);
+            // return Texture::LoadFromJpg(path);
+            return nullptr;
         else if (ext == ".png")
             return Texture::LoadFromPng(path);
         else if (ext == ".bmp")

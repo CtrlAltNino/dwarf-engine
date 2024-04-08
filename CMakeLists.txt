@@ -109,6 +109,9 @@ target_link_libraries(${targetName} PRIVATE xxHash::xxhash)
 find_package(platform_folders CONFIG REQUIRED)
 target_link_libraries(${targetName} PRIVATE sago::platform_folders)
 
+find_package(libjpeg-turbo CONFIG REQUIRED)
+target_link_libraries(${targetName} PRIVATE $<IF:$<TARGET_EXISTS:libjpeg-turbo::turbojpeg>,libjpeg-turbo::turbojpeg,libjpeg-turbo::turbojpeg-static>)
+
 find_package(SPNG CONFIG REQUIRED)
 target_link_libraries(${targetName} PRIVATE $<IF:$<TARGET_EXISTS:spng::spng>,spng::spng,spng::spng_static>)
 
