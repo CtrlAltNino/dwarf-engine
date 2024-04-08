@@ -11,7 +11,7 @@ namespace Dwarf
     class PngUtils
     {
     public:
-        static Ref<TextureData> LoadPng(std::filesystem::path const &path)
+        static Ref<TextureData> LoadFromPath(std::filesystem::path const &path)
         {
             spng_ctx *png = spng_ctx_new(0);
             if (!png)
@@ -51,7 +51,7 @@ namespace Dwarf
             textureData->Width = ihdr.width;
             textureData->Height = ihdr.height;
             textureData->Channels = 4;
-            textureData->Data = imageData;
+            textureData->ImageData = imageData;
 
             return textureData;
         }

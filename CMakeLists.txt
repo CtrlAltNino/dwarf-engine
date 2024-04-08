@@ -1,20 +1,19 @@
 # Set the minimum required CMake Version
 cmake_minimum_required(VERSION 3.22)
 
-# Maybe move to windows only, need to test
-ADD_DEFINITIONS(-DUNICODE)
-ADD_DEFINITIONS(-D_UNICODE)
-
 # Helper functions
 include(${CMAKE_SOURCE_DIR}/helper.cmake)
 
-add_compile_definitions(NOMINMAX)
-
+# add_compile_definitions(NOMINMAX)
 set(CMAKE_CXX_STANDARD 20)
 
 set(targetName dwarf-engine)
 
 set(CMAKE_PCH_INSTANTIATE_TEMPLATES ON)
+
+# Maybe move to windows only, need to test
+ADD_DEFINITIONS(-DUNICODE)
+ADD_DEFINITIONS(-D_UNICODE)
 
 # Need to find a way to make the path to the vcpkg.cmake file dynamic, maybe I can even store it in the repo
 

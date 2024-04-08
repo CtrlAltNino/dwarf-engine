@@ -57,8 +57,9 @@ namespace Dwarf
     {
         int Width;
         int Height;
+        int Depth;
         int Channels;
-        void *Data;
+        void *ImageData;
     };
 
     struct TextureParameters

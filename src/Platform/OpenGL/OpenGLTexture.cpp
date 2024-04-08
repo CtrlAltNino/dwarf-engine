@@ -51,7 +51,7 @@ namespace Dwarf
 
 	// A map that maps
 	// Constructor without meta data
-	OpenGLTexture::OpenGLTexture(TextureParameters const &parameters, glm::ivec3 size, void *data)
+	OpenGLTexture::OpenGLTexture(TextureParameters const &parameters, TextureData const &data)
 	{
 		GLuint textureFormat = s_TextureFormatMap.at(parameters.Format);
 		GLuint textureType = s_TextureTypeMap.at(parameters.Type);
@@ -62,7 +62,7 @@ namespace Dwarf
 		GLuint textureMinFilter = s_TextureMinFilterMap.at(parameters.MinFilter);
 		GLuint textureMagFilter = s_TextureMagFilterMap.at(parameters.MagFilter);
 
-		SetSize(glm::ivec3(size.x, size.y, size.z));
+		SetSize(glm::ivec3(data.Width, data.Height, data.Depth));
 
 		glCreateTextures(textureType, 1, &m_Id);
 
@@ -71,19 +71,19 @@ namespace Dwarf
 			using enum TextureType;
 		case TEXTURE_1D:
 			glTextureStorage1D(m_Id, 1, textureFormat, GetSize().x);
-			glTextureSubImage1D(m_Id, 0, 0, GetSize().x, textureFormat, textureDataType, data);
+			glTextureSubImage1D(m_Id, 0, 0, GetSize().x, textureFormat, textureDataType, data.ImageData);
 			break;
 		case TEXTURE_2D:
 			glTextureStorage2D(m_Id, 1, textureFormat, GetSize().x, GetSize().y);
-			glTextureSubImage2D(m_Id, 0, 0, 0, GetSize().x, GetSize().y, textureFormat, textureDataType, data);
+			glTextureSubImage2D(m_Id, 0, 0, 0, GetSize().x, GetSize().y, textureFormat, textureDataType, data.ImageData);
 			break;
 		case TEXTURE_3D:
 			glTextureStorage3D(m_Id, 1, textureFormat, GetSize().x, GetSize().y, GetSize().z);
-			glTextureSubImage3D(m_Id, 0, 0, 0, 0, GetSize().x, GetSize().y, GetSize().z, textureFormat, textureDataType, data);
+			glTextureSubImage3D(m_Id, 0, 0, 0, 0, GetSize().x, GetSize().y, GetSize().z, textureFormat, textureDataType, data.ImageData);
 			break;
 		case TEXTURE_CUBE_MAP:
 			glTextureStorage2D(m_Id, 1, textureFormat, GetSize().x, GetSize().y);
-			glTextureSubImage3D(m_Id, 0, 0, 0, 0, GetSize().x, GetSize().y, 6, textureFormat, textureDataType, data);
+			glTextureSubImage3D(m_Id, 0, 0, 0, 0, GetSize().x, GetSize().y, 6, textureFormat, textureDataType, data.ImageData);
 			break;
 		}
 

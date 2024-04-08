@@ -13,9 +13,9 @@ namespace Dwarf
     private:
         glm::ivec3 m_Size;
         static Ref<Texture> CreateGpuTexture(TextureParameters const &parameters, TextureData const &data);
+        static const &TextureParameters GetParameters()
 
-    public:
-        virtual ~Texture() = default;
+            public : virtual ~Texture() = default;
         glm::ivec3 GetSize() const
         {
             return m_Size;

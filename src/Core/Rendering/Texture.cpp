@@ -58,7 +58,7 @@ namespace Dwarf
     //     return texture;
     // }
 
-    Ref<Texture> Texture::LoadFromPng(std::filesystem::path const &path)
+    /*Ref<Texture> Texture::LoadFromPng(std::filesystem::path const &path)
     {
         int width;
         int height;
@@ -104,20 +104,6 @@ namespace Dwarf
             std::cerr << "Unable to open file" << std::endl;
         }
 
-        // stbi_uc *data = stbi_load(path.string().c_str(), &width, &height, &channels, 0);
-        /*if (!data)
-        {
-            // DWARF_CORE_ERROR("Failed to load texture from file: {0}", path.string());
-            return nullptr;
-        }*/
-
-        /*if (channels == 3)
-            format = TextureFormat::RGB;
-        else if (channels == 4)
-            format = TextureFormat::RGBA;
-        else
-            format = TextureFormat::RGB;*/
-
         // TODO: Handle metadata
 
         TextureParameters parameters{
@@ -135,7 +121,7 @@ namespace Dwarf
         // stbi_image_free(data);
 
         return nullptr;
-    }
+    }*/
 
     // Ref<Texture> Texture::LoadFromBmp(std::filesystem::path const &path)
     // {
@@ -208,15 +194,20 @@ namespace Dwarf
             // return Texture::LoadFromJpg(path);
             return nullptr;
         else if (ext == ".png")
-            return Texture::LoadFromPng(path);
+            // return Texture::LoadFromPng(path);
+            return nullptr;
         else if (ext == ".bmp")
-            return Texture::LoadFromBmp(path);
+            // return Texture::LoadFromBmp(path);
+            return nullptr;
         else if (ext == ".tga")
-            return Texture::LoadFromTga(path);
+            // return Texture::LoadFromTga(path);
+            return nullptr;
         else if (ext == ".hdr" || ext == ".exr")
-            return Texture::LoadFromHdr(path);
+            // return Texture::LoadFromHdr(path);
+            return nullptr;
         else if (ext == ".tiff" || ext == ".tif")
-            return Texture::LoadFromTiff(path);
+            // return Texture::LoadFromTiff(path);
+            return nullptr;
         else
         {
             // DWARF_CORE_ERROR("Failed to load texture from file: {0}", path.string());
@@ -224,7 +215,7 @@ namespace Dwarf
         }
     }
 
-    Ref<Texture> Texture::CreateGpuTexture(TextureParameters const &parameters, glm::ivec3 size, void *data)
+    Ref<Texture> Texture::CreateGpuTexture(TextureParameters const &parameters, TextureData const &data)
     {
         switch (Renderer::GetAPI())
         {
@@ -242,8 +233,7 @@ namespace Dwarf
         case OpenGL:
 #if defined(__linux__) || defined(WIN32)
         {
-            Ref<Texture> texture = CreateRef<OpenGLTexture>(OpenGLTexture(parameters, size, data));
-            return texture;
+            // Ref<Texture> texture = CreateRef<OpenGLTexture>(OpenGLTexture(parameters, size, data));
         }
 #endif
         break;
