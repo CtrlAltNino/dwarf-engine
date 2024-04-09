@@ -51,63 +51,63 @@ namespace Dwarf
 
 	// A map that maps
 	// Constructor without meta data
-	OpenGLTexture::OpenGLTexture(TextureParameters const &parameters, TextureData const &data)
+	OpenGLTexture::OpenGLTexture(Ref<TextureParameters> parameters, Ref<TextureData> data)
 	{
-		GLuint textureFormat = s_TextureFormatMap.at(parameters.Format);
-		GLuint textureType = s_TextureTypeMap.at(parameters.Type);
-		GLuint textureDataType = s_TextureDataTypeMap.at(parameters.DataType);
-		GLuint textureWrapS = s_TextureWrapMap.at(parameters.WrapS);
-		GLuint textureWrapT = s_TextureWrapMap.at(parameters.WrapT);
-		GLuint textureWrapR = s_TextureWrapMap.at(parameters.WrapR);
-		GLuint textureMinFilter = s_TextureMinFilterMap.at(parameters.MinFilter);
-		GLuint textureMagFilter = s_TextureMagFilterMap.at(parameters.MagFilter);
+		GLuint textureFormat = s_TextureFormatMap.at(data->Format);
+		GLuint textureType = s_TextureTypeMap.at(data->Type);
+		GLuint textureDataType = s_TextureDataTypeMap.at(data->DataType);
+		GLuint textureWrapS = s_TextureWrapMap.at(parameters->WrapS);
+		GLuint textureWrapT = s_TextureWrapMap.at(parameters->WrapT);
+		GLuint textureWrapR = s_TextureWrapMap.at(parameters->WrapR);
+		GLuint textureMinFilter = s_TextureMinFilterMap.at(parameters->MinFilter);
+		GLuint textureMagFilter = s_TextureMagFilterMap.at(parameters->MagFilter);
 
-		SetSize(glm::ivec3(data.Width, data.Height, data.Depth));
+		SetSize(glm::ivec3(data->Width, data->Height, data->Depth));
 
 		glCreateTextures(textureType, 1, &m_Id);
 
-		switch (parameters.Type)
+		switch (data->Type)
 		{
 			using enum TextureType;
 		case TEXTURE_1D:
 			glTextureStorage1D(m_Id, 1, textureFormat, GetSize().x);
-			glTextureSubImage1D(m_Id, 0, 0, GetSize().x, textureFormat, textureDataType, data.ImageData);
+			glTextureSubImage1D(m_Id, 0, 0, GetSize().x, textureFormat, textureDataType, data->ImageData);
 			break;
 		case TEXTURE_2D:
 			glTextureStorage2D(m_Id, 1, textureFormat, GetSize().x, GetSize().y);
-			glTextureSubImage2D(m_Id, 0, 0, 0, GetSize().x, GetSize().y, textureFormat, textureDataType, data.ImageData);
+			glTextureSubImage2D(m_Id, 0, 0, 0, GetSize().x, GetSize().y, textureFormat, textureDataType, data->ImageData);
 			break;
 		case TEXTURE_3D:
 			glTextureStorage3D(m_Id, 1, textureFormat, GetSize().x, GetSize().y, GetSize().z);
-			glTextureSubImage3D(m_Id, 0, 0, 0, 0, GetSize().x, GetSize().y, GetSize().z, textureFormat, textureDataType, data.ImageData);
+			glTextureSubImage3D(m_Id, 0, 0, 0, 0, GetSize().x, GetSize().y, GetSize().z, textureFormat, textureDataType, data->ImageData);
 			break;
 		case TEXTURE_CUBE_MAP:
 			glTextureStorage2D(m_Id, 1, textureFormat, GetSize().x, GetSize().y);
-			glTextureSubImage3D(m_Id, 0, 0, 0, 0, GetSize().x, GetSize().y, 6, textureFormat, textureDataType, data.ImageData);
+			glTextureSubImage3D(m_Id, 0, 0, 0, 0, GetSize().x, GetSize().y, 6, textureFormat, textureDataType, data->ImageData);
 			break;
 		}
 
-		if (parameters.MinFilter != TextureMinFilter::UNSET)
+		if (parameters->MinFilter != TextureMinFilter::UNSET)
 		{
 			glTextureParameteri(m_Id, GL_TEXTURE_MIN_FILTER, textureMinFilter);
 		}
 
-		if (parameters.MagFilter != TextureMagFilter::UNSET)
+		if (parameters->MagFilter != TextureMagFilter::UNSET)
 		{
 			glTextureParameteri(m_Id, GL_TEXTURE_MAG_FILTER, textureMagFilter);
 		}
 
-		if (parameters.WrapS != TextureWrap::UNSET)
+		if (parameters->WrapS != TextureWrap::UNSET)
 		{
 			glTextureParameteri(m_Id, GL_TEXTURE_WRAP_S, textureWrapS);
 		}
 
-		if (parameters.WrapT != TextureWrap::UNSET)
+		if (parameters->WrapT != TextureWrap::UNSET)
 		{
 			glTextureParameteri(m_Id, GL_TEXTURE_WRAP_T, textureWrapT);
 		}
 
-		if (parameters.WrapR != TextureWrap::UNSET)
+		if (parameters->WrapR != TextureWrap::UNSET)
 		{
 			glTextureParameteri(m_Id, GL_TEXTURE_WRAP_R, textureWrapR);
 		}

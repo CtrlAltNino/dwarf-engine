@@ -14,10 +14,17 @@ namespace Dwarf
 	OpenGLShader::OpenGLShader() = default;
 	OpenGLShader::~OpenGLShader() = default;
 
+	const std::array<std::string, 3> OpenGLShader::ReservedUniformNames = {
+		"modelMatrix",
+		"viewMatrix",
+		"projectionMatrix",
+	};
+
 	const std::map<GLenum, ShaderParameterType> glTypeToDwarfShaderType =
 		{
 			{GL_BOOL, ShaderParameterType::BOOLEAN},
 			{GL_INT, ShaderParameterType::INTEGER},
+			{GL_UNSIGNED_INT, ShaderParameterType::UNSIGNED_INTEGER},
 			{GL_FLOAT, ShaderParameterType::FLOAT},
 			{GL_FLOAT_VEC2, ShaderParameterType::VEC2},
 			{GL_FLOAT_VEC3, ShaderParameterType::VEC3},
@@ -328,7 +335,10 @@ namespace Dwarf
 		{
 			glGetActiveUniform(m_ID, (GLuint)i, bufSize, &length, &size, &type, name);
 
-			parameters[std::string(name)] = Shader::CreateShaderParameter(glTypeToDwarfShaderType.find(type)->second);
+			if (std::find(ReservedUniformNames.begin(), ReservedUniformNames.end(), name) == ReservedUniformNames.end())
+			{
+				parameters[std::string(name)] = Shader::CreateShaderParameter(glTypeToDwarfShaderType.find(type)->second);
+			}
 		}
 
 		return parameters;

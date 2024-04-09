@@ -85,5 +85,7 @@ namespace Dwarf
 
         const ShaderLogs &GetShaderLogs() const;
         ShaderAssets &GetShaderAssets();
+
+        static const std::array<std::string, 3> ReservedUniformNames;
     };
 }

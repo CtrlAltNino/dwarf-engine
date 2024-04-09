@@ -43,7 +43,9 @@ namespace Dwarf
         Ref<TextureData> textureData = CreateRef<TextureData>();
         textureData->Width = ihdr.width;
         textureData->Height = ihdr.height;
-        textureData->Channels = 4;
+        textureData->Format = TextureFormat::RGBA;
+        textureData->Type = TextureType::TEXTURE_2D;
+        textureData->DataType = ihdr.bit_depth == 8 ? TextureDataType::UNSIGNED_BYTE : TextureDataType::UNSIGNED_SHORT;
         textureData->ImageData = imageData;
 
         return textureData;

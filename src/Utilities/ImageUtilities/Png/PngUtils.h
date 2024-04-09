@@ -1,14 +1,14 @@
 #pragma once
 
 #include "Core/Base.h"
-#include "TextureCommon.h"
-#include <turbojpeg.h>
+#include "Utilities/ImageUtilities/TextureCommon.h"
+#include <spng.h>
 #include <filesystem>
 
 namespace Dwarf
 {
 
-    class JpegUtils
+    class PngUtils
     {
     public:
         static Ref<TextureData> LoadFromPath(std::filesystem::path const &path);

@@ -92,4 +92,9 @@ namespace Dwarf
 	};
 #endif
 
+	template<typename T>
+	struct TypeIdentity
+	{
+		using type = T;
+	};
 }

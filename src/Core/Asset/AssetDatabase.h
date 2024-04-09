@@ -85,6 +85,8 @@ namespace Dwarf
 
         static std::map<std::filesystem::path, Ref<Shader>> s_ShaderAssetMap;
 
+        static const std::map<std::string, ASSET_TYPE> s_FileAssetAssociation;
+
         /// @brief Initializes the asset database.
         static void Init(std::filesystem::path const &projectPath);
 
@@ -175,59 +177,9 @@ namespace Dwarf
 
         static ASSET_TYPE GetType(std::filesystem::path const &assetPath)
         {
-            using enum ASSET_TYPE;
-            if (assetPath.extension() == ".fbx")
-            {
-                return MODEL;
-            }
-            else if (assetPath.extension() == ".obj")
-            {
-                return MODEL;
-            }
-            else if (assetPath.extension() == ".jpg" || assetPath.extension() == ".png" || assetPath.extension() == ".tga")
-            {
-                return TEXTURE;
-            }
-            else if (assetPath.extension() == ".vert")
-            {
-                return VERTEX_SHADER;
-            }
-            else if (assetPath.extension() == ".tesc")
-            {
-                return TESC_SHADER;
-            }
-            else if (assetPath.extension() == ".tese")
-            {
-                return TESE_SHADER;
-            }
-            else if (assetPath.extension() == ".geom")
-            {
-                return GEOMETRY_SHADER;
-            }
-            else if (assetPath.extension() == ".frag")
-            {
-                return FRAGMENT_SHADER;
-            }
-            else if (assetPath.extension() == ".comp")
-            {
-                return COMPUTE_SHADER;
-            }
-            else if (assetPath.extension() == ".hlsl")
-            {
-                return HLSL_SHADER;
-            }
-            else if (assetPath.extension() == ".dscene")
-            {
-                return SCENE;
-            }
-            else if (assetPath.extension() == ".dmat")
-            {
-                return MATERIAL;
-            }
-            else
-            {
-                return UNKNOWN;
-            }
+            std::string fileExtension = assetPath.extension().string();
+
+            return s_FileAssetAssociation.at(fileExtension);
         }
     };
 }

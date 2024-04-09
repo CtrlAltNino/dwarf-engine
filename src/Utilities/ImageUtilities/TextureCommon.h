@@ -50,23 +50,23 @@ namespace Dwarf
         UNSIGNED_BYTE,
         FLOAT,
         UNSIGNED_INT,
-        INT
+        INT,
+        UNSIGNED_SHORT
     };
 
     struct TextureData
     {
+        TextureType Type = TextureType::TEXTURE_2D;
+        TextureFormat Format = TextureFormat::RGBA;
+        TextureDataType DataType = TextureDataType::UNSIGNED_BYTE;
         int Width;
         int Height;
         int Depth;
-        int Channels;
         void *ImageData;
     };
 
     struct TextureParameters
     {
-        TextureType Type = TextureType::TEXTURE_2D;
-        TextureFormat Format = TextureFormat::RGBA;
-        TextureDataType DataType = TextureDataType::UNSIGNED_BYTE;
         TextureWrap WrapS = TextureWrap::UNSET;
         TextureWrap WrapT = TextureWrap::UNSET;
         TextureWrap WrapR = TextureWrap::UNSET;

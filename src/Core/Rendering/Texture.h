@@ -4,7 +4,7 @@
 #include <glm/vec3.hpp>
 #include <filesystem>
 #include "Core/Base.h"
-#include "Utilities/TextureUtilities/TextureCommon.h"
+#include "Utilities/ImageUtilities/TextureCommon.h"
 
 namespace Dwarf
 {
@@ -12,10 +12,11 @@ namespace Dwarf
     {
     private:
         glm::ivec3 m_Size;
-        static Ref<Texture> CreateGpuTexture(TextureParameters const &parameters, TextureData const &data);
-        static const &TextureParameters GetParameters()
+        static Ref<Texture> CreateGpuTexture(Ref<TextureParameters> parameters, Ref<TextureData> data);
+        static Ref<TextureParameters> GetParameters(std::filesystem::path const &path);
 
-            public : virtual ~Texture() = default;
+    public:
+        virtual ~Texture() = default;
         glm::ivec3 GetSize() const
         {
             return m_Size;

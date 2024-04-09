@@ -19,6 +19,33 @@ namespace Dwarf
     Ref<entt::registry> AssetDatabase::s_Registry;
     std::map<std::filesystem::path, Ref<Shader>> AssetDatabase::s_ShaderAssetMap;
     std::vector<Ref<Shader>> AssetDatabase::s_ShaderRecompilationStack;
+    const std::map<std::string, ASSET_TYPE> AssetDatabase::s_FileAssetAssociation =
+        {
+            {".jpg", ASSET_TYPE::TEXTURE},
+            {".jpeg", ASSET_TYPE::TEXTURE},
+            {".png", ASSET_TYPE::TEXTURE},
+            {".bmp", ASSET_TYPE::TEXTURE},
+            {".tga", ASSET_TYPE::TEXTURE},
+            {".hdr", ASSET_TYPE::TEXTURE},
+            {".exr", ASSET_TYPE::TEXTURE},
+            {".tiff", ASSET_TYPE::TEXTURE},
+            {".tif", ASSET_TYPE::TEXTURE},
+
+            {".obj", ASSET_TYPE::MODEL},
+            {".fbx", ASSET_TYPE::MODEL},
+            {".gltf", ASSET_TYPE::MODEL},
+            {".glb", ASSET_TYPE::MODEL},
+
+            {".dmat", ASSET_TYPE::MATERIAL},
+            {".dscene", ASSET_TYPE::SCENE},
+
+            {".vert", ASSET_TYPE::VERTEX_SHADER},
+            {".tesc", ASSET_TYPE::TESC_SHADER},
+            {".tese", ASSET_TYPE::TESE_SHADER},
+            {".geom", ASSET_TYPE::GEOMETRY_SHADER},
+            {".frag", ASSET_TYPE::FRAGMENT_SHADER},
+            {".comp", ASSET_TYPE::COMPUTE_SHADER},
+            {".hlsl", ASSET_TYPE::HLSL_SHADER}};
 
     void AssetDatabase::RecursiveImport(std::filesystem::path const &directory)
     {
@@ -116,65 +143,68 @@ namespace Dwarf
 
     Ref<UID> AssetDatabase::Import(std::filesystem::path const &assetPath)
     {
-        std::string fileExtension = assetPath.extension().string();
         std::string fileName = assetPath.filename().string();
+        ASSET_TYPE assetType = GetType(assetPath);
 
         // Remove asset if already present
-
         if (AssetDatabase::Exists(assetPath))
         {
             AssetDatabase::Remove(assetPath);
         }
 
-        if (fileExtension == ".obj" || fileExtension == ".fbx")
+        switch (assetType)
+        {
+            using enum ASSET_TYPE;
+        case MODEL:
         {
             AssetReference<Dwarf::ModelAsset> model = CreateAssetReference<ModelAsset>(assetPath);
             model.GetAsset()->Load();
             return model.GetUID();
         }
-        else if (fileExtension == ".dmat")
+        case MATERIAL:
         {
             return CreateAssetReference<MaterialAsset>(assetPath).GetUID();
         }
-        else if (fileExtension == ".jpg" || fileExtension == ".png" || fileExtension == ".tga")
+        case TEXTURE:
         {
             return CreateAssetReference<TextureAsset>(assetPath).GetUID();
         }
-        else if (fileExtension == ".dscene")
+        case SCENE:
         {
             return CreateAssetReference<SceneAsset>(assetPath).GetUID();
         }
-        else if (fileExtension == ".vert")
+        case VERTEX_SHADER:
         {
             return CreateAssetReference<VertexShaderAsset>(assetPath).GetUID();
         }
-        else if (fileExtension == ".tesc")
+        case TESC_SHADER:
         {
             return CreateAssetReference<TesselationControlShaderAsset>(assetPath).GetUID();
         }
-        else if (fileExtension == ".tese")
+        case TESE_SHADER:
         {
             return CreateAssetReference<TesselationEvaluationShaderAsset>(assetPath).GetUID();
         }
-        else if (fileExtension == ".geom")
+        case GEOMETRY_SHADER:
         {
             return CreateAssetReference<GeometryShaderAsset>(assetPath).GetUID();
         }
-        else if (fileExtension == ".frag")
+        case FRAGMENT_SHADER:
         {
             return CreateAssetReference<FragmentShaderAsset>(assetPath).GetUID();
         }
-        else if (fileExtension == ".comp")
+        case COMPUTE_SHADER:
         {
             return CreateAssetReference<ComputeShaderAsset>(assetPath).GetUID();
         }
-        else if (fileExtension == ".hlsl")
+        case HLSL_SHADER:
         {
             return CreateAssetReference<HlslShaderAsset>(assetPath).GetUID();
         }
-        else
+        default:
         {
             return CreateAssetReference<UnknownAsset>(assetPath).GetUID();
+        }
         }
     }
 

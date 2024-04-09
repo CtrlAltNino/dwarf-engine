@@ -40,7 +40,9 @@ namespace Dwarf
         Ref<TextureData> textureData = CreateRef<TextureData>();
         textureData->Width = width;
         textureData->Height = height;
-        textureData->Channels = 3;
+        textureData->Format = TextureFormat::RGB;
+        textureData->Type = TextureType::TEXTURE_2D;
+        textureData->DataType = TextureDataType::UNSIGNED_BYTE;
         textureData->ImageData = imageData;
 
         return textureData;
