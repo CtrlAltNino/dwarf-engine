@@ -62,6 +62,136 @@ namespace Dwarf
 		GLuint textureMinFilter = s_TextureMinFilterMap.at(parameters->MinFilter);
 		GLuint textureMagFilter = s_TextureMagFilterMap.at(parameters->MagFilter);
 
+		// Print Debug data for parameters
+		switch (textureFormat)
+		{
+		case GL_RED:
+			std::cout << "Texture Format: GL_RED" << std::endl;
+			break;
+		case GL_RG:
+			std::cout << "Texture Format: GL_RG" << std::endl;
+			break;
+		case GL_RGB:
+			std::cout << "Texture Format: GL_RGB" << std::endl;
+			break;
+		case GL_RGBA:
+			std::cout << "Texture Format: GL_RGBA" << std::endl;
+			break;
+		}
+
+		switch (textureType)
+		{
+		case GL_TEXTURE_1D:
+			std::cout << "Texture Type: GL_TEXTURE_1D" << std::endl;
+			break;
+		case GL_TEXTURE_2D:
+			std::cout << "Texture Type: GL_TEXTURE_2D" << std::endl;
+			break;
+		case GL_TEXTURE_3D:
+			std::cout << "Texture Type: GL_TEXTURE_3D" << std::endl;
+			break;
+		case GL_TEXTURE_CUBE_MAP:
+			std::cout << "Texture Type: GL_TEXTURE_CUBE_MAP" << std::endl;
+			break;
+		}
+
+		switch (textureDataType)
+		{
+		case GL_UNSIGNED_BYTE:
+			std::cout << "Texture Data Type: GL_UNSIGNED_BYTE" << std::endl;
+			break;
+		case GL_FLOAT:
+			std::cout << "Texture Data Type: GL_FLOAT" << std::endl;
+			break;
+		case GL_UNSIGNED_INT:
+			std::cout << "Texture Data Type: GL_UNSIGNED_INT" << std::endl;
+			break;
+		case GL_INT:
+			std::cout << "Texture Data Type: GL_INT" << std::endl;
+			break;
+		}
+
+		switch (textureWrapS)
+		{
+		case GL_REPEAT:
+			std::cout << "Texture Wrap S: GL_REPEAT" << std::endl;
+			break;
+		case GL_MIRRORED_REPEAT:
+			std::cout << "Texture Wrap S: GL_MIRRORED_REPEAT" << std::endl;
+			break;
+		case GL_CLAMP_TO_EDGE:
+			std::cout << "Texture Wrap S: GL_CLAMP_TO_EDGE" << std::endl;
+			break;
+		case GL_CLAMP_TO_BORDER:
+			std::cout << "Texture Wrap S: GL_CLAMP_TO_BORDER" << std::endl;
+			break;
+		}
+
+		switch (textureWrapT)
+		{
+		case GL_REPEAT:
+			std::cout << "Texture Wrap T: GL_REPEAT" << std::endl;
+			break;
+		case GL_MIRRORED_REPEAT:
+			std::cout << "Texture Wrap T: GL_MIRRORED_REPEAT" << std::endl;
+			break;
+		case GL_CLAMP_TO_EDGE:
+			std::cout << "Texture Wrap T: GL_CLAMP_TO_EDGE" << std::endl;
+			break;
+		case GL_CLAMP_TO_BORDER:
+			std::cout << "Texture Wrap T: GL_CLAMP_TO_BORDER" << std::endl;
+			break;
+		}
+
+		switch (textureWrapR)
+		{
+		case GL_REPEAT:
+			std::cout << "Texture Wrap R: GL_REPEAT" << std::endl;
+			break;
+		case GL_MIRRORED_REPEAT:
+			std::cout << "Texture Wrap R: GL_MIRRORED_REPEAT" << std::endl;
+			break;
+		case GL_CLAMP_TO_EDGE:
+			std::cout << "Texture Wrap R: GL_CLAMP_TO_EDGE" << std::endl;
+			break;
+		case GL_CLAMP_TO_BORDER:
+			std::cout << "Texture Wrap R: GL_CLAMP_TO_BORDER" << std::endl;
+			break;
+		}
+
+		switch (textureMinFilter)
+		{
+		case GL_NEAREST:
+			std::cout << "Texture Min Filter: GL_NEAREST" << std::endl;
+			break;
+		case GL_LINEAR:
+			std::cout << "Texture Min Filter: GL_LINEAR" << std::endl;
+			break;
+		case GL_NEAREST_MIPMAP_NEAREST:
+			std::cout << "Texture Min Filter: GL_NEAREST_MIPMAP_NEAREST" << std::endl;
+			break;
+		case GL_LINEAR_MIPMAP_NEAREST:
+			std::cout << "Texture Min Filter: GL_LINEAR_MIPMAP_NEAREST" << std::endl;
+			break;
+		case GL_NEAREST_MIPMAP_LINEAR:
+			std::cout << "Texture Min Filter: GL_NEAREST_MIPMAP_LINEAR" << std::endl;
+			break;
+		case GL_LINEAR_MIPMAP_LINEAR:
+			std::cout << "Texture Min Filter: GL_LINEAR_MIPMAP_LINEAR" << std::endl;
+			break;
+		}
+
+		switch (textureMagFilter)
+		{
+		case GL_NEAREST:
+			std::cout << "Texture Mag Filter: GL_NEAREST" << std::endl;
+			break;
+		case GL_LINEAR:
+			std::cout << "Texture Mag Filter: GL_LINEAR" << std::endl;
+			break;
+		}
+
+		// Set Size
 		SetSize(glm::ivec3(data->Width, data->Height, data->Depth));
 
 		glCreateTextures(textureType, 1, &m_Id);

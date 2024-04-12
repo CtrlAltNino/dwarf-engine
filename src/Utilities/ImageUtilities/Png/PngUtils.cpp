@@ -1,6 +1,7 @@
 #include "dpch.h"
 
 #include "PngUtils.h"
+#include <stb_image.h>
 
 namespace Dwarf
 {
@@ -40,13 +41,19 @@ namespace Dwarf
 
         spng_ctx_free(png);
 
+        int width;
+        int height;
+        int channels;
+        stbi_uc *data = stbi_load(path.string().c_str(), &width, &height, &channels, 0);
+
         Ref<TextureData> textureData = CreateRef<TextureData>();
-        textureData->Width = ihdr.width;
-        textureData->Height = ihdr.height;
+        textureData->Width = width;
+        textureData->Height = height;
         textureData->Format = TextureFormat::RGBA;
         textureData->Type = TextureType::TEXTURE_2D;
-        textureData->DataType = ihdr.bit_depth == 8 ? TextureDataType::UNSIGNED_BYTE : TextureDataType::UNSIGNED_SHORT;
-        textureData->ImageData = imageData;
+        // textureData->DataType = ihdr.bit_depth == 8 ? TextureDataType::UNSIGNED_BYTE : TextureDataType::UNSIGNED_SHORT;
+        textureData->DataType = TextureDataType::UNSIGNED_BYTE;
+        textureData->ImageData = data;
 
         return textureData;
     }
