@@ -14,48 +14,49 @@
 // #include "Platform/Metal/MetalContext.h" - NOT SUPPORTED YET
 #endif
 
-namespace Dwarf
-{
-    Scope<GraphicsContext> GraphicsContext::Create(SDL_Window *window)
-    {
-        switch (Renderer::GetAPI())
-        {
+namespace Dwarf {
+  Scope<GraphicsContext> GraphicsContext::Create(SDL_Window* window)
+  {
+    switch (Renderer::GetAPI()) {
 #ifdef _WIN32
-        case GraphicsApi::D3D12:
-            // return CreateScope<D3D12Context>(static_cast<SDL_Window*>(window)); - NOT SUPPORTED YET
-            break;
-        case GraphicsApi::Metal:
-            break;
-        case GraphicsApi::OpenGL:
-            return CreateScope<OpenGLContext>(window);
-            break;
-        case GraphicsApi::Vulkan:
-            // return CreateScope<VulkanContext>(static_cast<SDL_Window*>(window)); - NOT SUPPORTED YET
-            break;
+      case GraphicsApi::D3D12:
+        // return CreateScope<D3D12Context>(static_cast<SDL_Window*>(window)); -
+        // NOT SUPPORTED YET
+        break;
+      case GraphicsApi::Metal:
+        break;
+      case GraphicsApi::OpenGL:
+        return CreateScope<OpenGLContext>(window);
+        break;
+      case GraphicsApi::Vulkan:
+        // return CreateScope<VulkanContext>(static_cast<SDL_Window*>(window));
+        // - NOT SUPPORTED YET
+        break;
 #elif __linux__
-        case GraphicsApi::D3D12:
-            break;
-        case GraphicsApi::Metal:
-            break;
-        case GraphicsApi::OpenGL:
-            return CreateScope<OpenGLContext>(window);
-            break;
-        case GraphicsApi::Vulkan:
-            // return CreateScope<VulkanContext>(static_cast<SDL_Window *>(window));
-            // -NOT SUPPORTED YET
-            break;
+      case GraphicsApi::D3D12:
+        break;
+      case GraphicsApi::Metal:
+        break;
+      case GraphicsApi::OpenGL:
+        return CreateScope<OpenGLContext>(window);
+        break;
+      case GraphicsApi::Vulkan:
+        // return CreateScope<VulkanContext>(static_cast<SDL_Window *>(window));
+        // -NOT SUPPORTED YET
+        break;
 #elif __APPLE__
-        case GraphicsApi::D3D12:
-            break;
-        case GraphicsApi::Metal:
-            // return CreateScope<MetalContext>(static_cast<SDL_Window*>(window)); - NOT SUPPORTED YET
-            break;
-        case GraphicsApi::OpenGL:
-            break;
-        case GraphicsApi::Vulkan:
-            break;
+      case GraphicsApi::D3D12:
+        break;
+      case GraphicsApi::Metal:
+        // return CreateScope<MetalContext>(static_cast<SDL_Window*>(window)); -
+        // NOT SUPPORTED YET
+        break;
+      case GraphicsApi::OpenGL:
+        break;
+      case GraphicsApi::Vulkan:
+        break;
 #endif
-        }
-        return nullptr;
     }
+    return nullptr;
+  }
 }

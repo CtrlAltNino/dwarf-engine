@@ -7,8 +7,10 @@
 
 namespace Dwarf {
 
-class JpegUtils {
-public:
-  static Ref<TextureContainer> LoadFromPath(std::filesystem::path const &path);
-};
+  class JpegUtils
+  {
+  public:
+    static Ref<TextureContainer> LoadFromPath(
+      std::filesystem::path const& path);
+  };
 } // namespace Dwarf

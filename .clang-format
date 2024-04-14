@@ -2,4 +2,5 @@
 ---
 BasedOnStyle: Mozilla
 NamespaceIndentation: All
+SortIncludes: false
 ...

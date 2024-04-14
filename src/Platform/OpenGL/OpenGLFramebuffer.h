@@ -2,54 +2,57 @@
 
 #include "Core/Rendering/Framebuffer.h"
 
-namespace Dwarf
-{
+namespace Dwarf {
 
-	class OpenGLFramebuffer : public Framebuffer
-	{
-	private:
-		uint32_t m_RendererID = 0;
-		FramebufferSpecification m_Specification;
+  class OpenGLFramebuffer : public Framebuffer
+  {
+  private:
+    uint32_t m_RendererID = 0;
+    FramebufferSpecification m_Specification;
 
-		std::vector<FramebufferTextureSpecification> m_ColorAttachmentSpecifications;
-		FramebufferTextureSpecification m_DepthAttachmentSpecification{FramebufferTextureFormat::None};
+    std::vector<FramebufferTextureSpecification>
+      m_ColorAttachmentSpecifications;
+    FramebufferTextureSpecification m_DepthAttachmentSpecification{
+      FramebufferTextureFormat::None
+    };
 
-		std::vector<Ref<Texture>> m_ColorAttachments;
-		Ref<Texture> m_DepthAttachment = 0;
+    std::vector<Ref<Texture>> m_ColorAttachments;
+    Ref<Texture> m_DepthAttachment = 0;
 
-	public:
-		explicit OpenGLFramebuffer(const FramebufferSpecification &spec);
-		~OpenGLFramebuffer() override;
+  public:
+    explicit OpenGLFramebuffer(const FramebufferSpecification& spec);
+    ~OpenGLFramebuffer() override;
 
-		void Invalidate();
+    void Invalidate();
 
-		void Bind() override;
-		void Unbind() override;
+    void Bind() override;
+    void Unbind() override;
 
-		void Resize(uint32_t width, uint32_t height) override;
-		unsigned int ReadPixel(uint32_t attachmentIndex, int x, int y) override;
+    void Resize(uint32_t width, uint32_t height) override;
+    unsigned int ReadPixel(uint32_t attachmentIndex, int x, int y) override;
 
-		void ClearAttachment(uint32_t attachmentIndex, int value) override;
+    void ClearAttachment(uint32_t attachmentIndex, int value) override;
 
-		const Ref<Texture> GetColorAttachment(uint32_t index = 0) const override
-		{
-			if (index < m_ColorAttachments.size())
-			{
-				// Return the address of the value at the specified index
-				return m_ColorAttachments[index];
-			}
-			else
-			{
-				// If the index is out of bounds, return nullptr or handle the error accordingly
-				return nullptr;
-			}
-		}
+    const Ref<Texture> GetColorAttachment(uint32_t index = 0) const override
+    {
+      if (index < m_ColorAttachments.size()) {
+        // Return the address of the value at the specified index
+        return m_ColorAttachments[index];
+      } else {
+        // If the index is out of bounds, return nullptr or handle the error
+        // accordingly
+        return nullptr;
+      }
+    }
 
-		void Clear() override;
+    void Clear() override;
 
-		void Clear(glm::vec4 clearColor) override;
+    void Clear(glm::vec4 clearColor) override;
 
-		const FramebufferSpecification &GetSpecification() const override { return m_Specification; }
-	};
+    const FramebufferSpecification& GetSpecification() const override
+    {
+      return m_Specification;
+    }
+  };
 
 }

@@ -6,8 +6,10 @@
 
 namespace Dwarf {
 
-class TgaUtils {
-public:
-  static Ref<TextureContainer> LoadFromPath(std::filesystem::path const &path);
-};
+  class TgaUtils
+  {
+  public:
+    static Ref<TextureContainer> LoadFromPath(
+      std::filesystem::path const& path);
+  };
 } // namespace Dwarf

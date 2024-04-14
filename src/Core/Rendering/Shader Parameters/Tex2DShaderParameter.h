@@ -2,24 +2,25 @@
 
 #include "Core/Rendering/IShaderParameter.h"
 
-namespace Dwarf
-{
-    class Tex2DShaderParameter : public IShaderParameter
+namespace Dwarf {
+  class Tex2DShaderParameter : public IShaderParameter
+  {
+  public:
+    Ref<UID> m_Value;
+
+    Tex2DShaderParameter()
+      : m_Value(nullptr)
     {
-    public:
-        Ref<UID> m_Value;
+    }
 
-        Tex2DShaderParameter() : m_Value(nullptr)
-        {
-        }
+    Tex2DShaderParameter(Ref<UID> value)
+      : m_Value(value)
+    {
+    }
 
-        Tex2DShaderParameter(Ref<UID> value) : m_Value(value)
-        {
-        }
-
-        virtual ShaderParameterType GetType() override
-        {
-            return ShaderParameterType::TEX2D;
-        }
-    };
+    virtual ShaderParameterType GetType() override
+    {
+      return ShaderParameterType::TEX2D;
+    }
+  };
 }

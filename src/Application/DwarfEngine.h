@@ -2,20 +2,19 @@
 #define SDL_MAIN_HANDLED
 #include "Core/Base.h"
 
-namespace Dwarf
-{
+namespace Dwarf {
 
-    class DwarfEngine
-    {
-    public:
-        DwarfEngine();
-        ~DwarfEngine();
+  class DwarfEngine
+  {
+  public:
+    DwarfEngine();
+    ~DwarfEngine();
 
-        void Run();
+    void Run();
 
-    private:
-        static DwarfEngine *s_Instance;
-    };
+  private:
+    static DwarfEngine* s_Instance;
+  };
 
-    Ref<DwarfEngine> Create();
+  Ref<DwarfEngine> Create();
 }

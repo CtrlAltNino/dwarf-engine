@@ -7,305 +7,330 @@
 #include "Editor/Editor.h"
 #include "Core/Asset/AssetDatabase.h"
 
-namespace Dwarf
-{
-    void SceneUtilities::SetLastOpenedScene(std::filesystem::path const &path)
-    {
-        std::filesystem::path projectSettingsPath = Editor::Get()->GetModel()->GetProjectPath() / "projectSettings.dproj";
-        nlohmann::json projectSettings = nlohmann::json::parse(FileHandler::ReadFile(projectSettingsPath));
+namespace Dwarf {
+  void SceneUtilities::SetLastOpenedScene(std::filesystem::path const& path)
+  {
+    std::filesystem::path projectSettingsPath =
+      Editor::Get()->GetModel()->GetProjectPath() / "projectSettings.dproj";
+    nlohmann::json projectSettings =
+      nlohmann::json::parse(FileHandler::ReadFile(projectSettingsPath));
 
-        projectSettings["projectInformation"]["lastOpenedScene"] = (uint64_t)(*AssetDatabase::Retrieve<SceneAsset>(path)->GetUID());
+    projectSettings["projectInformation"]["lastOpenedScene"] =
+      (uint64_t)(*AssetDatabase::Retrieve<SceneAsset>(path)->GetUID());
 
-        FileHandler::WriteToFile(projectSettingsPath, projectSettings.dump(4));
+    FileHandler::WriteToFile(projectSettingsPath, projectSettings.dump(4));
+  }
+
+  Ref<Scene> SceneUtilities::Deserialize(std::filesystem::path const& path)
+  {
+    nlohmann::json serializedScene =
+      nlohmann::json::parse(FileHandler::ReadFile(path));
+
+    SceneSettings settings;
+
+    settings.fogSettings.fogColor = { serializedScene["fog"]["color"]["r"],
+                                      serializedScene["fog"]["color"]["g"],
+                                      serializedScene["fog"]["color"]["b"] };
+    settings.fogSettings.fogStart = serializedScene["fog"]["fogStart"];
+    settings.fogSettings.fogEnd = serializedScene["fog"]["fogEnd"];
+    settings.fogSettings.type = (FogType)serializedScene["fog"]["type"];
+
+    settings.globalLightSettings.color = {
+      serializedScene["globalLight"]["color"]["r"],
+      serializedScene["globalLight"]["color"]["g"],
+      serializedScene["globalLight"]["color"]["b"]
+    };
+    settings.globalLightSettings.intensity =
+      serializedScene["globalLight"]["intensity"];
+
+    if (serializedScene.contains("skyboxMaterial") &&
+        serializedScene["skyboxMaterial"] != "null") {
+      settings.skyboxMaterial =
+        CreateRef<UID>(UID((uint64_t)serializedScene["skyboxMaterial"]));
     }
 
-    Ref<Scene> SceneUtilities::Deserialize(std::filesystem::path const &path)
-    {
-        nlohmann::json serializedScene = nlohmann::json::parse(FileHandler::ReadFile(path));
+    Ref<Scene> deserializedScene = CreateRef<Scene>(Scene(path, settings));
 
-        SceneSettings settings;
-
-        settings.fogSettings.fogColor = {
-            serializedScene["fog"]["color"]["r"],
-            serializedScene["fog"]["color"]["g"],
-            serializedScene["fog"]["color"]["b"]};
-        settings.fogSettings.fogStart = serializedScene["fog"]["fogStart"];
-        settings.fogSettings.fogEnd = serializedScene["fog"]["fogEnd"];
-        settings.fogSettings.type = (FogType)serializedScene["fog"]["type"];
-
-        settings.globalLightSettings.color = {
-            serializedScene["globalLight"]["color"]["r"],
-            serializedScene["globalLight"]["color"]["g"],
-            serializedScene["globalLight"]["color"]["b"]};
-        settings.globalLightSettings.intensity = serializedScene["globalLight"]["intensity"];
-
-        if (serializedScene.contains("skyboxMaterial") && serializedScene["skyboxMaterial"] != "null")
-        {
-            settings.skyboxMaterial = CreateRef<UID>(UID((uint64_t)serializedScene["skyboxMaterial"]));
-        }
-
-        Ref<Scene> deserializedScene = CreateRef<Scene>(Scene(path, settings));
-
-        for (auto const &element : serializedScene["hierarchy"])
-        {
-            Entity newEntity = DeserializeEntity(element, deserializedScene);
-            newEntity.SetParent(deserializedScene->GetRootEntity()->GetHandle());
-        }
-
-        return deserializedScene;
+    for (auto const& element : serializedScene["hierarchy"]) {
+      Entity newEntity = DeserializeEntity(element, deserializedScene);
+      newEntity.SetParent(deserializedScene->GetRootEntity()->GetHandle());
     }
 
-    void SceneUtilities::Serialize(Ref<Scene> scene)
-    {
-        nlohmann::json serializedScene;
+    return deserializedScene;
+  }
 
-        // Serializing Hierarchy
-        serializedScene["hierarchy"] = SerializeEntities(scene->GetRootEntity()->GetComponent<TransformComponent>().children, scene);
+  void SceneUtilities::Serialize(Ref<Scene> scene)
+  {
+    nlohmann::json serializedScene;
 
-        SceneSettings settings = scene->GetSettings();
+    // Serializing Hierarchy
+    serializedScene["hierarchy"] = SerializeEntities(
+      scene->GetRootEntity()->GetComponent<TransformComponent>().children,
+      scene);
 
-        // Serializing Fog settings
-        serializedScene["fog"]["color"]["r"] = settings.fogSettings.fogColor.r;
-        serializedScene["fog"]["color"]["g"] = settings.fogSettings.fogColor.g;
-        serializedScene["fog"]["color"]["b"] = settings.fogSettings.fogColor.b;
+    SceneSettings settings = scene->GetSettings();
 
-        serializedScene["fog"]["fogStart"] = settings.fogSettings.fogStart;
-        serializedScene["fog"]["fogEnd"] = settings.fogSettings.fogEnd;
+    // Serializing Fog settings
+    serializedScene["fog"]["color"]["r"] = settings.fogSettings.fogColor.r;
+    serializedScene["fog"]["color"]["g"] = settings.fogSettings.fogColor.g;
+    serializedScene["fog"]["color"]["b"] = settings.fogSettings.fogColor.b;
 
-        serializedScene["fog"]["type"] = (int)settings.fogSettings.type;
+    serializedScene["fog"]["fogStart"] = settings.fogSettings.fogStart;
+    serializedScene["fog"]["fogEnd"] = settings.fogSettings.fogEnd;
 
-        // Serializing Global lighting settings
-        serializedScene["globalLight"]["color"]["r"] = settings.globalLightSettings.color.r;
-        serializedScene["globalLight"]["color"]["g"] = settings.globalLightSettings.color.g;
-        serializedScene["globalLight"]["color"]["b"] = settings.globalLightSettings.color.b;
+    serializedScene["fog"]["type"] = (int)settings.fogSettings.type;
 
-        serializedScene["globalLight"]["intensity"] = settings.globalLightSettings.intensity;
+    // Serializing Global lighting settings
+    serializedScene["globalLight"]["color"]["r"] =
+      settings.globalLightSettings.color.r;
+    serializedScene["globalLight"]["color"]["g"] =
+      settings.globalLightSettings.color.g;
+    serializedScene["globalLight"]["color"]["b"] =
+      settings.globalLightSettings.color.b;
 
-        // Serializing Skybox settings
-        if (settings.skyboxMaterial)
-        {
-            serializedScene["skyboxMaterial"] = (uint64_t)(*settings.skyboxMaterial);
-        }
-        else
-        {
-            serializedScene["skyboxMaterial"] = "null";
-        }
+    serializedScene["globalLight"]["intensity"] =
+      settings.globalLightSettings.intensity;
 
-        FileHandler::WriteToFile(scene->GetPath(), serializedScene.dump(4));
+    // Serializing Skybox settings
+    if (settings.skyboxMaterial) {
+      serializedScene["skyboxMaterial"] = (uint64_t)(*settings.skyboxMaterial);
+    } else {
+      serializedScene["skyboxMaterial"] = "null";
     }
 
-    nlohmann::json SceneUtilities::SerializeEntities(std::vector<entt::entity> const &entities, Ref<Scene> scene)
-    {
-        int entityCount = 0;
-        nlohmann::json serializedArray;
-        for (auto entityHandle : entities)
-        {
-            Entity entity(entityHandle, scene->GetRegistry());
+    FileHandler::WriteToFile(scene->GetPath(), serializedScene.dump(4));
+  }
 
-            serializedArray[entityCount]["guid"] = (uint64_t)(*entity.GetComponent<IDComponent>().ID);
-            serializedArray[entityCount]["name"] = entity.GetComponent<NameComponent>().Name;
+  nlohmann::json SceneUtilities::SerializeEntities(
+    std::vector<entt::entity> const& entities,
+    Ref<Scene> scene)
+  {
+    int entityCount = 0;
+    nlohmann::json serializedArray;
+    for (auto entityHandle : entities) {
+      Entity entity(entityHandle, scene->GetRegistry());
 
-            TransformComponent tc = entity.GetComponent<TransformComponent>();
-            serializedArray[entityCount]["transformComponent"]["position"]["x"] = tc.getPosition().x;
-            serializedArray[entityCount]["transformComponent"]["position"]["y"] = tc.getPosition().y;
-            serializedArray[entityCount]["transformComponent"]["position"]["z"] = tc.getPosition().z;
+      serializedArray[entityCount]["guid"] =
+        (uint64_t)(*entity.GetComponent<IDComponent>().ID);
+      serializedArray[entityCount]["name"] =
+        entity.GetComponent<NameComponent>().Name;
 
-            serializedArray[entityCount]["transformComponent"]["rotation"]["x"] = tc.getEulerAngles().x;
-            serializedArray[entityCount]["transformComponent"]["rotation"]["y"] = tc.getEulerAngles().y;
-            serializedArray[entityCount]["transformComponent"]["rotation"]["z"] = tc.getEulerAngles().z;
+      TransformComponent tc = entity.GetComponent<TransformComponent>();
+      serializedArray[entityCount]["transformComponent"]["position"]["x"] =
+        tc.getPosition().x;
+      serializedArray[entityCount]["transformComponent"]["position"]["y"] =
+        tc.getPosition().y;
+      serializedArray[entityCount]["transformComponent"]["position"]["z"] =
+        tc.getPosition().z;
 
-            serializedArray[entityCount]["transformComponent"]["scale"]["x"] = tc.getScale().x;
-            serializedArray[entityCount]["transformComponent"]["scale"]["y"] = tc.getScale().y;
-            serializedArray[entityCount]["transformComponent"]["scale"]["z"] = tc.getScale().z;
+      serializedArray[entityCount]["transformComponent"]["rotation"]["x"] =
+        tc.getEulerAngles().x;
+      serializedArray[entityCount]["transformComponent"]["rotation"]["y"] =
+        tc.getEulerAngles().y;
+      serializedArray[entityCount]["transformComponent"]["rotation"]["z"] =
+        tc.getEulerAngles().z;
 
-            if (entity.HasComponent<LightComponent>())
-            {
-                LightComponent lightComponent = entity.GetComponent<LightComponent>();
-                serializedArray[entityCount]["lightComponent"]["type"] = (int)lightComponent.type;
+      serializedArray[entityCount]["transformComponent"]["scale"]["x"] =
+        tc.getScale().x;
+      serializedArray[entityCount]["transformComponent"]["scale"]["y"] =
+        tc.getScale().y;
+      serializedArray[entityCount]["transformComponent"]["scale"]["z"] =
+        tc.getScale().z;
 
-                serializedArray[entityCount]["lightComponent"]["lightColor"]["r"] = (int)lightComponent.lightColor.r;
-                serializedArray[entityCount]["lightComponent"]["lightColor"]["g"] = (int)lightComponent.lightColor.g;
-                serializedArray[entityCount]["lightComponent"]["lightColor"]["b"] = (int)lightComponent.lightColor.b;
+      if (entity.HasComponent<LightComponent>()) {
+        LightComponent lightComponent = entity.GetComponent<LightComponent>();
+        serializedArray[entityCount]["lightComponent"]["type"] =
+          (int)lightComponent.type;
 
-                serializedArray[entityCount]["lightComponent"]["attenuation"] = (int)lightComponent.attenuation;
+        serializedArray[entityCount]["lightComponent"]["lightColor"]["r"] =
+          (int)lightComponent.lightColor.r;
+        serializedArray[entityCount]["lightComponent"]["lightColor"]["g"] =
+          (int)lightComponent.lightColor.g;
+        serializedArray[entityCount]["lightComponent"]["lightColor"]["b"] =
+          (int)lightComponent.lightColor.b;
 
-                serializedArray[entityCount]["lightComponent"]["radius"] = (int)lightComponent.radius;
+        serializedArray[entityCount]["lightComponent"]["attenuation"] =
+          (int)lightComponent.attenuation;
 
-                serializedArray[entityCount]["lightComponent"]["openingAngle"] = (int)lightComponent.openingAngle;
-            }
+        serializedArray[entityCount]["lightComponent"]["radius"] =
+          (int)lightComponent.radius;
 
-            if (entity.HasComponent<MeshRendererComponent>())
-            {
-                MeshRendererComponent meshRendererComponent = entity.GetComponent<MeshRendererComponent>();
-                if (meshRendererComponent.meshAsset)
-                {
-                    serializedArray[entityCount]["meshRendererComponent"]["mesh"] = (uint64_t)(*meshRendererComponent.meshAsset);
-                }
-                else
-                {
-                    serializedArray[entityCount]["meshRendererComponent"]["mesh"] = "null";
-                }
+        serializedArray[entityCount]["lightComponent"]["openingAngle"] =
+          (int)lightComponent.openingAngle;
+      }
 
-                int materialCount = 0;
-
-                for (Ref<UID> materialID : meshRendererComponent.materialAssets)
-                {
-                    serializedArray[entityCount]["meshRendererComponent"]["materials"][materialCount] = materialID ? (uint64_t)(*materialID) : -1;
-                    materialCount++;
-                }
-
-                serializedArray[entityCount]["meshRendererComponent"]["canCastShadows"] = meshRendererComponent.canCastShadow;
-            }
-
-            serializedArray[entityCount]["children"] = SerializeEntities(tc.children, scene);
-
-            entityCount++;
+      if (entity.HasComponent<MeshRendererComponent>()) {
+        MeshRendererComponent meshRendererComponent =
+          entity.GetComponent<MeshRendererComponent>();
+        if (meshRendererComponent.meshAsset) {
+          serializedArray[entityCount]["meshRendererComponent"]["mesh"] =
+            (uint64_t)(*meshRendererComponent.meshAsset);
+        } else {
+          serializedArray[entityCount]["meshRendererComponent"]["mesh"] =
+            "null";
         }
 
-        return serializedArray;
+        int materialCount = 0;
+
+        for (Ref<UID> materialID : meshRendererComponent.materialAssets) {
+          serializedArray[entityCount]["meshRendererComponent"]["materials"]
+                         [materialCount] =
+                           materialID ? (uint64_t)(*materialID) : -1;
+          materialCount++;
+        }
+
+        serializedArray[entityCount]["meshRendererComponent"]
+                       ["canCastShadows"] = meshRendererComponent.canCastShadow;
+      }
+
+      serializedArray[entityCount]["children"] =
+        SerializeEntities(tc.children, scene);
+
+      entityCount++;
     }
 
-    Entity SceneUtilities::DeserializeEntity(nlohmann::json serializedEntity, Ref<Scene> scene)
-    {
-        Entity newEntity = scene->CreateEntityWithUID(UID((uint64_t)serializedEntity["guid"]), serializedEntity["name"]);
+    return serializedArray;
+  }
 
-        TransformComponent &tc = newEntity.GetComponent<TransformComponent>();
-        tc.position = {
-            serializedEntity["transformComponent"]["position"]["x"],
-            serializedEntity["transformComponent"]["position"]["y"],
-            serializedEntity["transformComponent"]["position"]["z"]};
-        tc.rotation = {
-            serializedEntity["transformComponent"]["rotation"]["x"],
-            serializedEntity["transformComponent"]["rotation"]["y"],
-            serializedEntity["transformComponent"]["rotation"]["z"]};
-        tc.scale = {
-            serializedEntity["transformComponent"]["scale"]["x"],
-            serializedEntity["transformComponent"]["scale"]["y"],
-            serializedEntity["transformComponent"]["scale"]["z"]};
+  Entity SceneUtilities::DeserializeEntity(nlohmann::json serializedEntity,
+                                           Ref<Scene> scene)
+  {
+    Entity newEntity = scene->CreateEntityWithUID(
+      UID((uint64_t)serializedEntity["guid"]), serializedEntity["name"]);
 
-        if (serializedEntity.contains("lightComponent"))
-        {
-            LightComponent &lightComponent = newEntity.AddComponent<LightComponent>();
-            lightComponent.type = (LightComponent::LIGHT_TYPE)serializedEntity["lightComponent"]["type"];
-            lightComponent.lightColor = {
-                serializedEntity["lightComponent"]["lightColor"]["r"],
-                serializedEntity["lightComponent"]["lightColor"]["g"],
-                serializedEntity["lightComponent"]["lightColor"]["b"]};
+    TransformComponent& tc = newEntity.GetComponent<TransformComponent>();
+    tc.position = { serializedEntity["transformComponent"]["position"]["x"],
+                    serializedEntity["transformComponent"]["position"]["y"],
+                    serializedEntity["transformComponent"]["position"]["z"] };
+    tc.rotation = { serializedEntity["transformComponent"]["rotation"]["x"],
+                    serializedEntity["transformComponent"]["rotation"]["y"],
+                    serializedEntity["transformComponent"]["rotation"]["z"] };
+    tc.scale = { serializedEntity["transformComponent"]["scale"]["x"],
+                 serializedEntity["transformComponent"]["scale"]["y"],
+                 serializedEntity["transformComponent"]["scale"]["z"] };
 
-            lightComponent.attenuation = serializedEntity["lightComponent"]["attenuation"];
+    if (serializedEntity.contains("lightComponent")) {
+      LightComponent& lightComponent = newEntity.AddComponent<LightComponent>();
+      lightComponent.type =
+        (LightComponent::LIGHT_TYPE)serializedEntity["lightComponent"]["type"];
+      lightComponent.lightColor = {
+        serializedEntity["lightComponent"]["lightColor"]["r"],
+        serializedEntity["lightComponent"]["lightColor"]["g"],
+        serializedEntity["lightComponent"]["lightColor"]["b"]
+      };
 
-            lightComponent.radius = serializedEntity["lightComponent"]["radius"];
+      lightComponent.attenuation =
+        serializedEntity["lightComponent"]["attenuation"];
 
-            lightComponent.openingAngle = serializedEntity["lightComponent"]["openingAngle"];
-        }
+      lightComponent.radius = serializedEntity["lightComponent"]["radius"];
 
-        if (serializedEntity.contains("meshRendererComponent"))
-        {
-            MeshRendererComponent &meshRendererComponent = newEntity.AddComponent<MeshRendererComponent>();
-
-            meshRendererComponent.canCastShadow = (bool)serializedEntity["meshRendererComponent"]["canCastShadows"];
-
-            if (serializedEntity["meshRendererComponent"].contains("mesh") && serializedEntity["meshRendererComponent"]["mesh"] != "null")
-            {
-                meshRendererComponent.meshAsset = CreateRef<UID>(UID((uint64_t)serializedEntity["meshRendererComponent"]["mesh"]));
-            }
-
-            if (serializedEntity["meshRendererComponent"].contains("materials"))
-            {
-                for (auto const &element : serializedEntity["meshRendererComponent"]["materials"])
-                {
-                    meshRendererComponent.materialAssets.push_back((uint64_t)element == -1 ? nullptr : CreateRef<UID>(UID((uint64_t)element)));
-                }
-            }
-        }
-
-        for (auto const &element : serializedEntity["children"])
-        {
-            Entity childEntity = DeserializeEntity(element, scene);
-            childEntity.SetParent(newEntity.GetHandle());
-        }
-
-        return newEntity;
+      lightComponent.openingAngle =
+        serializedEntity["lightComponent"]["openingAngle"];
     }
 
-    bool SceneUtilities::SaveScene(Ref<Scene> scene)
-    {
-        if (!scene->GetPath().empty())
-        {
-            Serialize(scene);
-            return true;
+    if (serializedEntity.contains("meshRendererComponent")) {
+      MeshRendererComponent& meshRendererComponent =
+        newEntity.AddComponent<MeshRendererComponent>();
+
+      meshRendererComponent.canCastShadow =
+        (bool)serializedEntity["meshRendererComponent"]["canCastShadows"];
+
+      if (serializedEntity["meshRendererComponent"].contains("mesh") &&
+          serializedEntity["meshRendererComponent"]["mesh"] != "null") {
+        meshRendererComponent.meshAsset = CreateRef<UID>(
+          UID((uint64_t)serializedEntity["meshRendererComponent"]["mesh"]));
+      }
+
+      if (serializedEntity["meshRendererComponent"].contains("materials")) {
+        for (auto const& element :
+             serializedEntity["meshRendererComponent"]["materials"]) {
+          meshRendererComponent.materialAssets.push_back(
+            (uint64_t)element == -1 ? nullptr
+                                    : CreateRef<UID>(UID((uint64_t)element)));
         }
-        else
-        {
-            return SaveSceneDialog(scene);
-        }
+      }
     }
 
-    bool SceneUtilities::SaveSceneDialog(Ref<Scene> scene)
-    {
-        nfdchar_t *savePath = nullptr;
-        nfdresult_t result = NFD_SaveDialog("dscene", AssetDatabase::GetAssetDirectoryPath().string().c_str(), &savePath);
-        if (result == NFD_OKAY)
-        {
-            std::filesystem::path path(savePath);
-
-            if (!path.has_extension())
-            {
-                path.concat(".dscene");
-            }
-
-            scene->SetPath(path);
-            Serialize(scene);
-            delete savePath;
-            return true;
-        }
-        else if (result == NFD_CANCEL)
-        {
-            return false;
-        }
-        else
-        {
-            printf("Error: %s\n", NFD_GetError());
-            return false;
-        }
+    for (auto const& element : serializedEntity["children"]) {
+      Entity childEntity = DeserializeEntity(element, scene);
+      childEntity.SetParent(newEntity.GetHandle());
     }
 
-    Ref<Scene> SceneUtilities::LoadScene(std::filesystem::path const &path)
-    {
-        Ref<Scene> scene = Deserialize(path);
+    return newEntity;
+  }
 
-        return scene;
+  bool SceneUtilities::SaveScene(Ref<Scene> scene)
+  {
+    if (!scene->GetPath().empty()) {
+      Serialize(scene);
+      return true;
+    } else {
+      return SaveSceneDialog(scene);
+    }
+  }
+
+  bool SceneUtilities::SaveSceneDialog(Ref<Scene> scene)
+  {
+    nfdchar_t* savePath = nullptr;
+    nfdresult_t result =
+      NFD_SaveDialog("dscene",
+                     AssetDatabase::GetAssetDirectoryPath().string().c_str(),
+                     &savePath);
+    if (result == NFD_OKAY) {
+      std::filesystem::path path(savePath);
+
+      if (!path.has_extension()) {
+        path.concat(".dscene");
+      }
+
+      scene->SetPath(path);
+      Serialize(scene);
+      delete savePath;
+      return true;
+    } else if (result == NFD_CANCEL) {
+      return false;
+    } else {
+      printf("Error: %s\n", NFD_GetError());
+      return false;
+    }
+  }
+
+  Ref<Scene> SceneUtilities::LoadScene(std::filesystem::path const& path)
+  {
+    Ref<Scene> scene = Deserialize(path);
+
+    return scene;
+  }
+
+  Ref<Scene> SceneUtilities::LoadSceneDialog()
+  {
+    Ref<Scene> scene;
+    nfdchar_t* outPath = nullptr;
+
+    if (nfdresult_t result = NFD_OpenDialog(
+          "dscene",
+          AssetDatabase::GetAssetDirectoryPath().string().c_str(),
+          &outPath);
+        result == NFD_OKAY) {
+      std::filesystem::path path(outPath);
+      scene = LoadScene(path);
+      delete outPath;
+    } else if (result == NFD_CANCEL) {
+      // TODO: Cancel stuff?
+    } else {
+      printf("Error: %s\n", NFD_GetError());
     }
 
-    Ref<Scene> SceneUtilities::LoadSceneDialog()
-    {
-        Ref<Scene> scene;
-        nfdchar_t *outPath = nullptr;
+    return scene;
+  }
 
-        if (nfdresult_t result = NFD_OpenDialog("dscene", AssetDatabase::GetAssetDirectoryPath().string().c_str(), &outPath); result == NFD_OKAY)
-        {
-            std::filesystem::path path(outPath);
-            scene = LoadScene(path);
-            delete outPath;
-        }
-        else if (result == NFD_CANCEL)
-        {
-            // TODO: Cancel stuff?
-        }
-        else
-        {
-            printf("Error: %s\n", NFD_GetError());
-        }
+  Ref<Scene> SceneUtilities::LoadDefaultScene()
+  {
+    Ref<Scene> scene =
+      CreateRef<Scene>(Scene(std::filesystem::path(""), SceneSettings()));
 
-        return scene;
-    }
+    // TODO: Add default stuff
 
-    Ref<Scene> SceneUtilities::LoadDefaultScene()
-    {
-        Ref<Scene> scene = CreateRef<Scene>(Scene(std::filesystem::path(""), SceneSettings()));
-
-        // TODO: Add default stuff
-
-        return scene;
-    }
+    return scene;
+  }
 }

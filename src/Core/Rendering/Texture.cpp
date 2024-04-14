@@ -30,64 +30,67 @@
 #include <nlohmann/json.hpp>
 
 namespace Dwarf {
-Ref<Texture> Texture::Create(std::filesystem::path const &path) {
-  std::string ext = path.extension().string();
-  Ref<TextureContainer> data = nullptr;
-  Ref<TextureParameters> parameters = GetParameters(path);
+  Ref<Texture> Texture::Create(std::filesystem::path const& path)
+  {
+    std::string ext = path.extension().string();
+    Ref<TextureContainer> data = nullptr;
+    Ref<TextureParameters> parameters = GetParameters(path);
 
-  if (ext == ".jpg" || ext == ".jpeg")
-    data = JpegUtils::LoadFromPath(path);
-  else if (ext == ".png")
-    data = PngUtils::LoadFromPath(path);
-  else if (ext == ".bmp")
-    data = BmpUtils::LoadFromPath(path);
-  else if (ext == ".tga")
-    data = TgaUtils::LoadFromPath(path);
-  else if (ext == ".hdr" || ext == ".exr")
-    data = HdrUtils::LoadFromPath(path);
-  else if (ext == ".tiff" || ext == ".tif")
-    data = TiffUtils::LoadFromPath(path);
+    if (ext == ".jpg" || ext == ".jpeg")
+      data = JpegUtils::LoadFromPath(path);
+    else if (ext == ".png")
+      data = PngUtils::LoadFromPath(path);
+    else if (ext == ".bmp")
+      data = BmpUtils::LoadFromPath(path);
+    else if (ext == ".tga")
+      data = TgaUtils::LoadFromPath(path);
+    else if (ext == ".hdr" || ext == ".exr")
+      data = HdrUtils::LoadFromPath(path);
+    else if (ext == ".tiff" || ext == ".tif")
+      data = TiffUtils::LoadFromPath(path);
 
-  return CreateGpuTexture(parameters, data);
-}
-
-Ref<Texture> Texture::CreateGpuTexture(Ref<TextureParameters> parameters,
-                                       Ref<TextureContainer> data) {
-  switch (Renderer::GetAPI()) {
-    using enum GraphicsApi;
-  case D3D12:
-#ifdef WIN32
-    // return CreateRef<D3D12Texture>(D3D12Texture(parameters, data));
-#endif
-    break;
-  case Metal:
-#ifdef __APPLE__
-    // return CreateRef<MetalTexture>(MetalTexture(parameters, data));
-#endif
-    break;
-  case OpenGL:
-#if defined(__linux__) || defined(WIN32)
-    return CreateRef<OpenGLTexture>(OpenGLTexture(parameters, data));
-#endif
-    break;
-  case Vulkan:
-#if defined(__linux__) || defined(WIN32)
-    // return CreateRef<VulkanTexture>(VulkanTexture(parameters, data));
-#endif
-    break;
+    return CreateGpuTexture(parameters, data);
   }
 
-  return nullptr;
-}
+  Ref<Texture> Texture::CreateGpuTexture(Ref<TextureParameters> parameters,
+                                         Ref<TextureContainer> data)
+  {
+    switch (Renderer::GetAPI()) {
+      using enum GraphicsApi;
+      case D3D12:
+#ifdef WIN32
+        // return CreateRef<D3D12Texture>(D3D12Texture(parameters, data));
+#endif
+        break;
+      case Metal:
+#ifdef __APPLE__
+        // return CreateRef<MetalTexture>(MetalTexture(parameters, data));
+#endif
+        break;
+      case OpenGL:
+#if defined(__linux__) || defined(WIN32)
+        return CreateRef<OpenGLTexture>(OpenGLTexture(parameters, data));
+#endif
+        break;
+      case Vulkan:
+#if defined(__linux__) || defined(WIN32)
+        // return CreateRef<VulkanTexture>(VulkanTexture(parameters, data));
+#endif
+        break;
+    }
 
-Ref<TextureParameters>
-Texture::GetParameters(std::filesystem::path const &path) {
-  Ref<TextureParameters> parameters = CreateRef<TextureParameters>();
-  parameters->WrapR = TextureWrap::REPEAT;
-  parameters->WrapS = TextureWrap::REPEAT;
-  parameters->WrapT = TextureWrap::REPEAT;
-  parameters->MinFilter = TextureMinFilter::LINEAR;
-  parameters->MagFilter = TextureMagFilter::LINEAR;
-  return parameters;
-}
+    return nullptr;
+  }
+
+  Ref<TextureParameters> Texture::GetParameters(
+    std::filesystem::path const& path)
+  {
+    Ref<TextureParameters> parameters = CreateRef<TextureParameters>();
+    parameters->WrapR = TextureWrap::REPEAT;
+    parameters->WrapS = TextureWrap::REPEAT;
+    parameters->WrapT = TextureWrap::REPEAT;
+    parameters->MinFilter = TextureMinFilter::LINEAR;
+    parameters->MagFilter = TextureMagFilter::LINEAR;
+    return parameters;
+  }
 } // namespace Dwarf

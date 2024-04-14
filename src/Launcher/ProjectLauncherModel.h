@@ -3,27 +3,26 @@
 #include "Core/Base.h"
 #include "Launcher/ProjectLauncherUtilities.h"
 
-namespace Dwarf
-{
+namespace Dwarf {
 
-    class ProjectLauncherModel
-    {
-    private:
-        /// @brief Current state of the project launcher
-        ProjectChooserState m_State = ProjectChooserState::Choosing;
-        int m_SelectedProjectId = -1;
+  class ProjectLauncherModel
+  {
+  private:
+    /// @brief Current state of the project launcher
+    ProjectChooserState m_State = ProjectChooserState::Choosing;
+    int m_SelectedProjectId = -1;
 
-    public:
-        ProjectLauncherModel();
+  public:
+    ProjectLauncherModel();
 
-        void Init();
+    void Init();
 
-        ProjectChooserState GetState();
+    ProjectChooserState GetState();
 
-        void SetState(ProjectChooserState state);
+    void SetState(ProjectChooserState state);
 
-        int GetSelectedProjectID();
+    int GetSelectedProjectID();
 
-        void SetSelectedProjectID(int id);
-    };
+    void SetSelectedProjectID(int id);
+  };
 }

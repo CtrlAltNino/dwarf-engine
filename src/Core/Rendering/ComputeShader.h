@@ -8,51 +8,49 @@
 #include "Core/Asset/AssetReference.h"
 #include "Core/Rendering/IShaderParameter.h"
 
-namespace Dwarf
-{
-    class ComputeShader
+namespace Dwarf {
+  class ComputeShader
+  {
+  private:
+    bool m_SuccessfullyCompiled;
+    std::map<std::string, Ref<IShaderParameter>, std::less<>> m_Parameters;
+
+  public:
+    ComputeShader();
+    virtual ~ComputeShader();
+
+    virtual void Compile() = 0;
+
+    bool IsCompiled() const { return m_SuccessfullyCompiled; }
+
+    void SetIsCompiled(bool isCompiled) { m_SuccessfullyCompiled = isCompiled; }
+    virtual std::map<std::string, Ref<IShaderParameter>, std::less<>>
+    GetParameters() = 0;
+    virtual void SetParameters(
+      std::map<std::string, Ref<IShaderParameter>, std::less<>> parameters)
     {
-    private:
-        bool m_SuccessfullyCompiled;
-        std::map<std::string, Ref<IShaderParameter>, std::less<>> m_Parameters;
+      m_Parameters = parameters;
+    }
 
-    public:
-        ComputeShader();
-        virtual ~ComputeShader();
+    virtual void UpdateParameters() = 0;
 
-        virtual void Compile() = 0;
+    template<typename T>
+    void SetParameter(std::string_view identifier, T parameter);
 
-        bool IsCompiled() const
-        {
-            return m_SuccessfullyCompiled;
-        }
+    void SetParameter(std::string_view identifier,
+                      Ref<UID> value,
+                      ShaderParameterType type);
 
-        void SetIsCompiled(bool isCompiled)
-        {
-            m_SuccessfullyCompiled = isCompiled;
-        }
-        virtual std::map<std::string, Ref<IShaderParameter>, std::less<>> GetParameters() = 0;
-        virtual void SetParameters(std::map<std::string, Ref<IShaderParameter>, std::less<>> parameters)
-        {
-            m_Parameters = parameters;
-        }
+    static Ref<ComputeShader> Create();
 
-        virtual void UpdateParameters() = 0;
+    static void Init();
 
-        template <typename T>
-        void SetParameter(std::string_view identifier, T parameter);
+    static Ref<ComputeShader> s_PropagationShader;
+    static Ref<ComputeShader> s_FinalizationShader;
 
-        void SetParameter(std::string_view identifier, Ref<UID> value, ShaderParameterType type);
+    static std::filesystem::path GetOutlineShaderPath();
 
-        static Ref<ComputeShader> Create();
-
-        static void Init();
-
-        static Ref<ComputeShader> s_PropagationShader;
-        static Ref<ComputeShader> s_FinalizationShader;
-
-        static std::filesystem::path GetOutlineShaderPath();
-
-        static Ref<IShaderParameter> CreateComputeShaderParameter(ShaderParameterType type);
-    };
+    static Ref<IShaderParameter> CreateComputeShaderParameter(
+      ShaderParameterType type);
+  };
 }

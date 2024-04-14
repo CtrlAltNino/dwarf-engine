@@ -7,42 +7,38 @@
 #include "Editor/EditorView.h"
 #include "Core/UI/ImGuiLayer.h"
 
-namespace Dwarf
-{
+namespace Dwarf {
 
-    /// @brief The controller part of the editors MVC structure.
-    class Editor
-    {
-    private:
-        static Ref<Editor> s_Instance;
-        /// @brief The MVC model instance of this editor instance.
-        Ref<EditorModel> m_Model;
+  /// @brief The controller part of the editors MVC structure.
+  class Editor
+  {
+  private:
+    static Ref<Editor> s_Instance;
+    /// @brief The MVC model instance of this editor instance.
+    Ref<EditorModel> m_Model;
 
-        /// @brief The MVC view instance of this editor instance.
-        Ref<EditorView> m_View;
+    /// @brief The MVC view instance of this editor instance.
+    Ref<EditorView> m_View;
 
-        Ref<Window> m_Window;
+    Ref<Window> m_Window;
 
-        Ref<ImGuiLayer> m_ImguiLayer;
+    Ref<ImGuiLayer> m_ImguiLayer;
 
-        void Init(std::filesystem::path const &projectPath);
+    void Init(std::filesystem::path const& projectPath);
 
-    public:
-        Editor();
-        ~Editor();
+  public:
+    Editor();
+    ~Editor();
 
-        static Ref<Editor> Get() { return s_Instance; }
+    static Ref<Editor> Get() { return s_Instance; }
 
-        Ref<EditorModel> GetModel() const
-        {
-            return m_Model;
-        }
+    Ref<EditorModel> GetModel() const { return m_Model; }
 
-        /// @brief Starts the render loop
-        bool Run(std::filesystem::path const &projectPath);
+    /// @brief Starts the render loop
+    bool Run(std::filesystem::path const& projectPath);
 
-        void UpdateWindowTitle() const;
-    };
+    void UpdateWindowTitle() const;
+  };
 
-    Ref<Editor> CreateEditor();
+  Ref<Editor> CreateEditor();
 }

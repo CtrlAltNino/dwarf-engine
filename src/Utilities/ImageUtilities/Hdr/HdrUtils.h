@@ -6,8 +6,10 @@
 
 namespace Dwarf {
 
-class HdrUtils {
-public:
-  static Ref<TextureContainer> LoadFromPath(std::filesystem::path const &path);
-};
+  class HdrUtils
+  {
+  public:
+    static Ref<TextureContainer> LoadFromPath(
+      std::filesystem::path const& path);
+  };
 } // namespace Dwarf

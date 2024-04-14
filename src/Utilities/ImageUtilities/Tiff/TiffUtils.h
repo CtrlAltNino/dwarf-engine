@@ -6,8 +6,10 @@
 
 namespace Dwarf {
 
-class TiffUtils {
-public:
-  static Ref<TextureContainer> LoadFromPath(std::filesystem::path const &path);
-};
+  class TiffUtils
+  {
+  public:
+    static Ref<TextureContainer> LoadFromPath(
+      std::filesystem::path const& path);
+  };
 } // namespace Dwarf
