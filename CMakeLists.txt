@@ -21,17 +21,31 @@ set(CMAKE_PCH_INSTANTIATE_TEMPLATES ON)
 # Declaring a variable that can contain various settings for the executable
 set(EXECUTABLE_ADDITIONAL_SETTINGS "")
 
+if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
+# using Clang
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+# using GCC
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
+# using Intel C++
+elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+    # using Visual Studio C++
+endif()
+
 # Platform dependant settings
 IF(WIN32)
     file(READ "$ENV{LOCALAPPDATA}/vcpkg/vcpkg.path.txt" VCPKG_PATH)
     set(CMAKE_TOOLCHAIN_FILE "${VCPKG_PATH}/scripts/buildsystems/vcpkg.cmake")
     set(VCPKG_TARGET_TRIPLET "x64-windows-static")
     set(APP_ICON_RESOURCE_WINDOWS "${CMAKE_CURRENT_SOURCE_DIR}/app_icon_windows.rc")
-    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
     set(EXECUTABLE_ADDITIONAL_SETTINGS ${APP_ICON_RESOURCE_WINDOWS})
 
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
+
     # Hiding the console window in release mode
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+        # using Visual Studio C++
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
+    endif()
 
     add_executable(${targetName} "")
 ELSEIF(UNIX AND NOT APPLE)
