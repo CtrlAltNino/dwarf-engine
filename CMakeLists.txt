@@ -11,10 +11,6 @@ set(targetName dwarf-engine)
 
 set(CMAKE_PCH_INSTANTIATE_TEMPLATES ON)
 
-# Maybe move to windows only, need to test
-ADD_DEFINITIONS(-DUNICODE)
-ADD_DEFINITIONS(-D_UNICODE)
-
 # Need to find a way to make the path to the vcpkg.cmake file dynamic, maybe I can even store it in the repo
 
 # Declaring a variable that can contain various settings for the executable
@@ -26,11 +22,18 @@ IF(WIN32)
     set(CMAKE_TOOLCHAIN_FILE "${VCPKG_PATH}/scripts/buildsystems/vcpkg.cmake")
     set(VCPKG_TARGET_TRIPLET "x64-windows-static")
     set(APP_ICON_RESOURCE_WINDOWS "${CMAKE_CURRENT_SOURCE_DIR}/app_icon_windows.rc")
-    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
     set(EXECUTABLE_ADDITIONAL_SETTINGS ${APP_ICON_RESOURCE_WINDOWS})
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
     # Hiding the console window in release mode
-    set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
+    if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
+        # using Visual Studio C++
+        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
+    endif()
+
+    # Maybe move to windows only, need to test
+    ADD_DEFINITIONS(-DUNICODE)
+    ADD_DEFINITIONS(-D_UNICODE)
 
     add_executable(${targetName} "")
 ELSEIF(UNIX AND NOT APPLE)
