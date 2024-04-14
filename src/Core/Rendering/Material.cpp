@@ -97,7 +97,7 @@ namespace Dwarf
 	}
 
 	template <>
-	void Material::SetParameter<uint>(std::string_view identifier, uint value)
+	void Material::SetParameter<unsigned int>(std::string_view identifier, unsigned int value)
 	{
 		if (m_Parameters.contains(identifier) && (m_Parameters[std::string(identifier)]->GetType() == ShaderParameterType::UNSIGNED_INTEGER))
 		{
