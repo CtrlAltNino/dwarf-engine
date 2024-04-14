@@ -285,4 +285,4 @@ namespace Dwarf {
   {
     return m_Id;
   }
-} // namespace Dwarf
+}
