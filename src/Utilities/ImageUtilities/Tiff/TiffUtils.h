@@ -4,12 +4,10 @@
 #include "Utilities/ImageUtilities/TextureCommon.h"
 #include <filesystem>
 
-namespace Dwarf
-{
+namespace Dwarf {
 
-    class TiffUtils
-    {
-    public:
-        static Ref<TextureData> LoadFromPath(std::filesystem::path const &path);
-    };
-}
+class TiffUtils {
+public:
+  static Ref<TextureContainer> LoadFromPath(std::filesystem::path const &path);
+};
+} // namespace Dwarf

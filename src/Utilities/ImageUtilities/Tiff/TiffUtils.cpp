@@ -2,10 +2,9 @@
 
 #include "TiffUtils.h"
 
-namespace Dwarf
-{
-    Ref<TextureData> TiffUtils::LoadFromPath(std::filesystem::path const &path)
-    {
-        return nullptr;
-    }
+namespace Dwarf {
+Ref<TextureContainer>
+TiffUtils::LoadFromPath(std::filesystem::path const &path) {
+  return nullptr;
 }
+} // namespace Dwarf

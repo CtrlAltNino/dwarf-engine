@@ -2,15 +2,13 @@
 
 #include "Core/Base.h"
 #include "Utilities/ImageUtilities/TextureCommon.h"
-#include <spng.h>
 #include <filesystem>
+#include <spng.h>
 
-namespace Dwarf
-{
+namespace Dwarf {
 
-    class PngUtils
-    {
-    public:
-        static Ref<TextureData> LoadFromPath(std::filesystem::path const &path);
-    };
-}
+class PngUtils {
+public:
+  static Ref<TextureContainer> LoadFromPath(std::filesystem::path const &path);
+};
+} // namespace Dwarf

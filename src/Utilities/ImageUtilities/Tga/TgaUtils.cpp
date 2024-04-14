@@ -2,10 +2,9 @@
 
 #include "TgaUtils.h"
 
-namespace Dwarf
-{
-    Ref<TextureData> TgaUtils::LoadFromPath(std::filesystem::path const &path)
-    {
-        return nullptr;
-    }
+namespace Dwarf {
+Ref<TextureContainer>
+TgaUtils::LoadFromPath(std::filesystem::path const &path) {
+  return nullptr;
 }
+} // namespace Dwarf
