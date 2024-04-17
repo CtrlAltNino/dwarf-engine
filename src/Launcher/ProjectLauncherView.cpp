@@ -4,15 +4,18 @@
 #include "Launcher/ProjectListHandler.h"
 #include "Launcher/ProjectSorter.h"
 #include "Launcher/ProjectCreator.h"
+#include "Core/Rendering/TextureCreator.h"
 
-namespace Dwarf {
+namespace Dwarf
+{
 
 #define PROJECT_BUTTON_WINDOW_WIDTH (200)
 #define PROJECT_INFORMATION_HEIGHT (30)
 
   ProjectLauncherView::ProjectLauncherView() {}
 
-  void ProjectLauncherView::Init(Ref<ProjectLauncherModel> model)
+  void
+  ProjectLauncherView::Init(Ref<ProjectLauncherModel> model)
   {
     // this->windowManager = windowManager;
     this->m_Model = model;
@@ -32,17 +35,19 @@ namespace Dwarf {
     m_HeaderFont = io.Fonts->AddFontFromFileTTF(FONT_ROBOTO_LIGHT_PATH, 26);
     m_TextFont = io.Fonts->AddFontFromFileTTF(FONT_ROBOTO_REGULAR_PATH, 15);
 
-    m_GithubIcon = Texture::Create(std::filesystem::path(GITHUB_PNG_ICON_PATH));
+    m_GithubIcon =
+      TextureCreator::FromPath(std::filesystem::path(GITHUB_PNG_ICON_PATH));
     m_PatreonIcon =
-      Texture::Create(std::filesystem::path(PATREON_PNG_ICON_PATH));
+      TextureCreator::FromPath(std::filesystem::path(PATREON_PNG_ICON_PATH));
     m_TwitterIcon =
-      Texture::Create(std::filesystem::path(TWITTER_PNG_ICON_PATH));
+      TextureCreator::FromPath(std::filesystem::path(TWITTER_PNG_ICON_PATH));
   }
 
-  void ProjectLauncherView::Render()
+  void
+  ProjectLauncherView::Render()
   {
     // glm::ivec2 windowSize = windowManager->GetWindowSize();
-    Window* window = ProjectLauncher::Get()->GetWindow();
+    Window*    window = ProjectLauncher::Get()->GetWindow();
     glm::ivec2 windowSize = { window->GetWidth(), window->GetHeight() };
 
     RenderProjectList(windowSize.x, windowSize.y);
@@ -50,13 +55,18 @@ namespace Dwarf {
     RenderFooter(windowSize.x, windowSize.y);
     ProjectChooserState state = m_Model->GetState();
 
-    if (state == ProjectChooserState::ProjectNotFound) {
+    if (state == ProjectChooserState::ProjectNotFound)
+    {
       m_Model->SetState(ProjectChooserState::Choosing);
       ImGui::OpenPopup("Project not found!");
-    } else if (state == ProjectChooserState::CreateNewProject) {
+    }
+    else if (state == ProjectChooserState::CreateNewProject)
+    {
       m_Model->SetState(ProjectChooserState::Choosing);
       ImGui::OpenPopup("Create new project");
-    } else if (state == ProjectChooserState::ChangeGraphicsApi) {
+    }
+    else if (state == ProjectChooserState::ChangeGraphicsApi)
+    {
       m_Model->SetState(ProjectChooserState::Choosing);
       ImGui::OpenPopup("Change Graphics API");
     }
@@ -66,11 +76,12 @@ namespace Dwarf {
     RenderChangeGraphicsApiModal();
   }
 
-  void ProjectLauncherView::RenderProjectList(int fWidth, int fHeight)
+  void
+  ProjectLauncherView::RenderProjectList(int fWidth, int fHeight)
   {
     std::vector<ProjectInformation>* projectList =
       ProjectListHandler::GetProjectList();
-    static bool* rowSelected = new bool[projectList->size()];
+    static bool*     rowSelected = new bool[projectList->size()];
     ImGuiWindowFlags window_flags = 0;
     window_flags |= ImGuiWindowFlags_NoMove;
     window_flags |= ImGuiWindowFlags_NoResize;
@@ -87,7 +98,8 @@ namespace Dwarf {
     ImGui::PushStyleColor(ImGuiCol_Border, IM_COL32(0, 0, 0, 0));
     ImGui::PushStyleColor(ImGuiCol_WindowBg, IM_COL32(46, 52, 64, 255));
 
-    if (!ImGui::Begin("Project List", NULL, window_flags)) {
+    if (!ImGui::Begin("Project List", NULL, window_flags))
+    {
       // Early out if the window is collapsed, as an optimization.
       ImGui::End();
       return;
@@ -100,10 +112,10 @@ namespace Dwarf {
     ImGui::Separator();
     ImGui::PopStyleVar(1);
 
-    const int COLUMNS_COUNT = 4;
+    const int   COLUMNS_COUNT = 4;
     const float ROW_HEIGHT = 50;
     const float HEADER_ROW_HEIGHT = 40;
-    ImVec2 cellPadding = ImVec2(10.0f, 10.0f);
+    ImVec2      cellPadding = ImVec2(10.0f, 10.0f);
     ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, cellPadding);
     // ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 10);
     ImGui::PushStyleColor(ImGuiCol_TableBorderLight, ImVec4(0, 0, 0, 0));
@@ -116,7 +128,8 @@ namespace Dwarf {
                           COLUMNS_COUNT,
                           ImGuiTableFlags_Borders |
                             ImGuiTableFlags_SizingFixedFit |
-                            ImGuiTableFlags_PreciseWidths)) {
+                            ImGuiTableFlags_PreciseWidths))
+    {
       float initialWidth = ImGui::GetContentRegionAvail().x - 80;
       ImGui::TableSetupColumn("Name",
                               ImGuiTableColumnFlags_NoResize |
@@ -160,7 +173,8 @@ namespace Dwarf {
       ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 10);
       ImGui::PushStyleVar(ImGuiStyleVar_GrabRounding, 10);
       ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 10);*/
-      for (int column = 0; column < COLUMNS_COUNT; column++) {
+      for (int column = 0; column < COLUMNS_COUNT; column++)
+      {
         ImGui::TableSetColumnIndex(column);
         const char* column_name = ImGui::TableGetColumnName(
           column); // Retrieve name passed to TableSetupColumn()
@@ -170,11 +184,13 @@ namespace Dwarf {
                              ImGui::GetFontSize() / 2);
         ImGui::TableHeader(column_name);
 
-        if (ImGui::IsItemHovered()) {
+        if (ImGui::IsItemHovered())
+        {
           ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
         }
 
-        if (ImGui::IsItemClicked()) {
+        if (ImGui::IsItemClicked())
+        {
           ProjectSorter::UpdateSortOrder(column);
           ProjectSorter::SortProjectList(ProjectListHandler::GetProjectList());
         }
@@ -188,42 +204,45 @@ namespace Dwarf {
       // ImGui::Separator();
       ImGui::PushFont(m_TextFont);
       // for (int row = 0; row < projectList.size(); row += (deleted ? 0 : 1))
-      for (int row = 0; row < projectList->size(); row++) {
+      for (int row = 0; row < projectList->size(); row++)
+      {
         ImGui::TableNextRow(ImGuiTableRowFlags_None, ROW_HEIGHT);
         for (int column = 0;
              (column < COLUMNS_COUNT) && (row < projectList->size());
-             column++) {
+             column++)
+        {
           ImGui::TableSetColumnIndex(column);
           std::string cellText = "";
-          switch (column) {
-            case 0:
-              cellText = projectList->at(row).name;
-              break;
-            case 1:
-              cellText = projectList->at(row).path.string();
-              break;
-            case 2: {
-              time_t lastOpenedTime = projectList->at(row).lastOpened;
-              cellText = lastOpenedTime == -1
-                           ? "never"
-                           : Dwarf::TimeUtilities::CalculateTimePassedSinceNow(
-                               projectList->at(row).lastOpened);
-              break;
-            }
+          switch (column)
+          {
+            case 0: cellText = projectList->at(row).name; break;
+            case 1: cellText = projectList->at(row).path.string(); break;
+            case 2:
+              {
+                time_t lastOpenedTime = projectList->at(row).lastOpened;
+                cellText =
+                  lastOpenedTime == -1
+                    ? "never"
+                    : Dwarf::TimeUtilities::CalculateTimePassedSinceNow(
+                        projectList->at(row).lastOpened);
+                break;
+              }
             case 3:
               cellText =
                 graphicsApiNames[(int)projectList->at(row).graphicsApi];
               break;
           }
 
-          if (column == 0) {
+          if (column == 0)
+          {
             float textWidth =
               ImGui::CalcTextSize(cellText.c_str(), (const char*)0, false).x;
             float columnWidth = ImGui::GetContentRegionAvail().x - 8;
-            int availableCharacters =
+            int   availableCharacters =
               (int)(columnWidth / (textWidth / cellText.length()));
 
-            if (textWidth > columnWidth) {
+            if (textWidth > columnWidth)
+            {
               cellText.resize(availableCharacters);
               cellText.resize(availableCharacters + 3, '.');
             }
@@ -242,7 +261,8 @@ namespace Dwarf {
             ImGui::PopStyleVar(1);
             ImGui::PopStyleColor(2);
 
-            if (ImGui::IsItemClicked(1)) {
+            if (ImGui::IsItemClicked(1))
+            {
               m_Model->SetSelectedProjectID(row);
             }
 
@@ -263,9 +283,9 @@ namespace Dwarf {
                   ImGui::BeginPopupContextItem(
                     "Project options")) // <-- use last item id as popup id
               {
-                if (ImGui::Button(
-                      "Open in file browser",
-                      ImVec2(ImGui::GetContentRegionAvail().x, 0))) {
+                if (ImGui::Button("Open in file browser",
+                                  ImVec2(ImGui::GetContentRegionAvail().x, 0)))
+                {
                   FileHandler::OpenPathInFileBrowser(projectList->at(row).path);
                   ImGui::CloseCurrentPopup();
                 }
@@ -273,9 +293,9 @@ namespace Dwarf {
                 if (ImGui::IsItemHovered())
                   ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
 
-                if (ImGui::Button(
-                      "Change Graphics API",
-                      ImVec2(ImGui::GetContentRegionAvail().x, 0))) {
+                if (ImGui::Button("Change Graphics API",
+                                  ImVec2(ImGui::GetContentRegionAvail().x, 0)))
+                {
                   m_Model->SetState(ProjectChooserState::ChangeGraphicsApi);
                   m_Model->SetSelectedProjectID(row);
 
@@ -285,9 +305,9 @@ namespace Dwarf {
                 if (ImGui::IsItemHovered())
                   ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
 
-                if (ImGui::Button(
-                      "Remove project from list",
-                      ImVec2(ImGui::GetContentRegionAvail().x, 0))) {
+                if (ImGui::Button("Remove project from list",
+                                  ImVec2(ImGui::GetContentRegionAvail().x, 0)))
+                {
                   ProjectListHandler::RemoveProjectFromList(row);
                   ImGui::CloseCurrentPopup();
                 }
@@ -308,48 +328,58 @@ namespace Dwarf {
               ImGui::PopStyleColor(4);
             }
 
-            if (ImGui::IsItemClicked()) {
+            if (ImGui::IsItemClicked())
+            {
               m_Model->SetSelectedProjectID(row);
               if (FileHandler::CheckIfFileExists(projectList->at(row).path /
-                                                 "projectSettings.dproj")) {
+                                                 "projectSettings.dproj"))
+              {
                 m_Model->SetState(ProjectChooserState::Done);
-              } else {
+              }
+              else
+              {
                 // Error dialog that the project doesn't exist anymore with the
                 // option to remove the entry
                 m_Model->SetState(ProjectChooserState::ProjectNotFound);
               }
             }
 
-            if (ImGui::IsItemHovered()) {
+            if (ImGui::IsItemHovered())
+            {
               ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
               draw_list->ChannelsSetCurrent(0);
               ImVec2 p_min = ImGui::GetItemRectMin();
               ImVec2 p_max = ImGui::GetItemRectMax();
-              ImU32 rectCol = ImGui::IsMouseDown(ImGuiMouseButton_Left)
-                                ? IM_COL32(76, 86, 106, 255)
-                                : IM_COL32(67, 76, 94, 255);
+              ImU32  rectCol = ImGui::IsMouseDown(ImGuiMouseButton_Left)
+                                 ? IM_COL32(76, 86, 106, 255)
+                                 : IM_COL32(67, 76, 94, 255);
 
               ImGui::GetWindowDrawList()->AddRectFilled(
                 p_min, p_max, rectCol, 10);
             }
 
             draw_list->ChannelsMerge();
-          } else if (column == 1) {
+          }
+          else if (column == 1)
+          {
             ImGui::SetCursorPosY(ImGui::GetCursorPosY() + (ROW_HEIGHT / 2) -
                                  ImGui::GetFontSize() / 2);
             float textWidth =
               ImGui::CalcTextSize(cellText.c_str(), (const char*)0, false).x;
             float columnWidth = ImGui::GetContentRegionAvail().x - 8;
-            int availableCharacters =
+            int   availableCharacters =
               (int)(columnWidth / (textWidth / cellText.length()));
 
-            if (textWidth > columnWidth) {
+            if (textWidth > columnWidth)
+            {
               cellText.resize(availableCharacters);
               cellText.resize(availableCharacters + 3, '.');
             }
 
             ImGui::Text("%s", cellText.c_str());
-          } else {
+          }
+          else
+          {
             ImGui::SetCursorPosY(ImGui::GetCursorPosY() + (ROW_HEIGHT / 2) -
                                  ImGui::GetFontSize() / 2);
             ImGui::Text("%s", cellText.c_str());
@@ -367,7 +397,8 @@ namespace Dwarf {
     ImGui::PopStyleColor(2);
   }
 
-  void ProjectLauncherView::RenderButtons(int fWidth, int fHeight)
+  void
+  ProjectLauncherView::RenderButtons(int fWidth, int fHeight)
   {
     ImGuiWindowFlags window_flags = 0;
     window_flags |= ImGuiWindowFlags_NoMove;
@@ -386,7 +417,8 @@ namespace Dwarf {
     ImGui::PushStyleColor(ImGuiCol_Border,
                           ImVec4(59 / 255.0, 66 / 255.0, 82 / 255.0, 0));
 
-    if (!ImGui::Begin("Project Buttons", NULL, window_flags)) {
+    if (!ImGui::Begin("Project Buttons", NULL, window_flags))
+    {
       // Early out if the window is collapsed, as an optimization.
       ImGui::End();
       return;
@@ -412,12 +444,14 @@ namespace Dwarf {
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 
     if (ImGui::Button("Create new project",
-                      ImVec2(ImGui::GetContentRegionAvail().x, 75))) {
+                      ImVec2(ImGui::GetContentRegionAvail().x, 75)))
+    {
       // TODO: Open modal for creating a new project
       m_Model->SetState(ProjectChooserState::CreateNewProject);
     }
 
-    if (ImGui::IsItemHovered()) {
+    if (ImGui::IsItemHovered())
+    {
       ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
     }
 
@@ -430,11 +464,13 @@ namespace Dwarf {
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 
     if (ImGui::Button("Add existing project",
-                      ImVec2(ImGui::GetContentRegionAvail().x, 75))) {
+                      ImVec2(ImGui::GetContentRegionAvail().x, 75)))
+    {
       ProjectListHandler::OpenAddProjectWindow();
     }
 
-    if (ImGui::IsItemHovered()) {
+    if (ImGui::IsItemHovered())
+    {
       ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
     }
 
@@ -448,26 +484,29 @@ namespace Dwarf {
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 
     if (ImGui::Button("Manage plugins",
-                      ImVec2(ImGui::GetContentRegionAvail().x, 75))) {
+                      ImVec2(ImGui::GetContentRegionAvail().x, 75)))
+    {
       // Open plugin manager modal
       // Contains list of plugins that are present and their state (working, not
       // working, warnings) Add plugin button Button to open up the plugin
       // folder Activating and deactivating plugins happens on a project level
     }
 
-    if (ImGui::IsItemHovered()) {
+    if (ImGui::IsItemHovered())
+    {
       ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
     }
 
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 
-    if (ImGui::Button("Settings",
-                      ImVec2(ImGui::GetContentRegionAvail().x, 75))) {
+    if (ImGui::Button("Settings", ImVec2(ImGui::GetContentRegionAvail().x, 75)))
+    {
       // Open settings modal
       // Manage settings for the launcher and general engine settings?
     }
 
-    if (ImGui::IsItemHovered()) {
+    if (ImGui::IsItemHovered())
+    {
       ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
     }
 
@@ -477,7 +516,8 @@ namespace Dwarf {
     ImGui::End();
   }
 
-  void ProjectLauncherView::RenderFooter(int fWidth, int fHeight)
+  void
+  ProjectLauncherView::RenderFooter(int fWidth, int fHeight)
   {
     ImGuiWindowFlags window_flags = 0;
     window_flags |= ImGuiWindowFlags_NoMove;
@@ -497,7 +537,8 @@ namespace Dwarf {
                           ImVec4(59 / 255.0, 66 / 255.0, 82 / 255.0, 0));
     ImGui::PushFont(m_TextFont);
 
-    if (!ImGui::Begin("Information", NULL, window_flags)) {
+    if (!ImGui::Begin("Information", NULL, window_flags))
+    {
       // Early out if the window is collapsed, as an optimization.
       ImGui::End();
       return;
@@ -512,17 +553,19 @@ namespace Dwarf {
     ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(229, 233, 240, 255));
     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(5, 0));
     static ImVec2 iconSize = ImVec2(18, 18);
-    static float verticalIconOffset = 2;
+    static float  verticalIconOffset = 2;
     // GraphicsApi activeApi = ProjectLauncher::Get()->GetWindow()->GetApi();
 
     {
       ImGui::SetCursorPosY(ImGui::GetCursorPosY() - verticalIconOffset);
       ImTextureID texID = (ImTextureID)m_GithubIcon->GetTextureID();
       ImGui::Image(texID, iconSize);
-      if (ImGui::IsItemHovered()) {
+      if (ImGui::IsItemHovered())
+      {
         ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
       }
-      if (ImGui::IsItemClicked()) {
+      if (ImGui::IsItemClicked())
+      {
         BrowserLinkOpener::OpenLink(GITHUB_LINK);
       }
 
@@ -530,10 +573,12 @@ namespace Dwarf {
 
       ImGui::SetCursorPosY(ImGui::GetCursorPosY() + verticalIconOffset);
       ImGui::Text("GitHub");
-      if (ImGui::IsItemHovered()) {
+      if (ImGui::IsItemHovered())
+      {
         ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
       }
-      if (ImGui::IsItemClicked()) {
+      if (ImGui::IsItemClicked())
+      {
         BrowserLinkOpener::OpenLink(GITHUB_LINK);
       }
     }
@@ -545,10 +590,12 @@ namespace Dwarf {
       ImGui::SetCursorPosY(ImGui::GetCursorPosY() - verticalIconOffset);
       ImTextureID texID = (ImTextureID)m_PatreonIcon->GetTextureID();
       ImGui::Image(texID, iconSize);
-      if (ImGui::IsItemHovered()) {
+      if (ImGui::IsItemHovered())
+      {
         ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
       }
-      if (ImGui::IsItemClicked()) {
+      if (ImGui::IsItemClicked())
+      {
         BrowserLinkOpener::OpenLink(PATREON_LINK);
       }
 
@@ -556,10 +603,12 @@ namespace Dwarf {
 
       ImGui::SetCursorPosY(ImGui::GetCursorPosY() + verticalIconOffset);
       ImGui::Text("Patreon");
-      if (ImGui::IsItemHovered()) {
+      if (ImGui::IsItemHovered())
+      {
         ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
       }
-      if (ImGui::IsItemClicked()) {
+      if (ImGui::IsItemClicked())
+      {
         BrowserLinkOpener::OpenLink(PATREON_LINK);
       }
     }
@@ -572,10 +621,12 @@ namespace Dwarf {
       // reinterpret_cast
       ImTextureID texID = (ImTextureID)m_TwitterIcon->GetTextureID();
       ImGui::Image(texID, iconSize);
-      if (ImGui::IsItemHovered()) {
+      if (ImGui::IsItemHovered())
+      {
         ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
       }
-      if (ImGui::IsItemClicked()) {
+      if (ImGui::IsItemClicked())
+      {
         BrowserLinkOpener::OpenLink(TWITTER_LINK);
       }
 
@@ -583,10 +634,12 @@ namespace Dwarf {
 
       ImGui::SetCursorPosY(ImGui::GetCursorPosY() + verticalIconOffset);
       ImGui::Text("Twitter");
-      if (ImGui::IsItemHovered()) {
+      if (ImGui::IsItemHovered())
+      {
         ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
       }
-      if (ImGui::IsItemClicked()) {
+      if (ImGui::IsItemClicked())
+      {
         BrowserLinkOpener::OpenLink(TWITTER_LINK);
       }
     }
@@ -604,7 +657,8 @@ namespace Dwarf {
     ImGui::PopFont();
   }
 
-  void ProjectLauncherView::RenderChangeGraphicsApiModal()
+  void
+  ProjectLauncherView::RenderChangeGraphicsApiModal()
   {
     std::vector<ProjectInformation> projectList =
       *ProjectListHandler::GetProjectList();
@@ -634,7 +688,8 @@ namespace Dwarf {
     if (ImGui::BeginPopupModal("Change Graphics API",
                                NULL,
                                ImGuiWindowFlags_AlwaysAutoResize |
-                                 ImGuiWindowFlags_NoMove)) {
+                                 ImGuiWindowFlags_NoMove))
+    {
       ImGui::PushFont(m_TextFont);
       // ==================== Information Text ====================
       ImGui::Text(
@@ -695,14 +750,17 @@ namespace Dwarf {
         ImGui::PushStyleColor(ImGuiCol_PopupBg, IM_COL32(46, 52, 64, 255));
 
         if (ImGui::BeginCombo("##graphicsApi",
-                              graphicsApiNames[currentApiIndex].data())) {
+                              graphicsApiNames[currentApiIndex].data()))
+        {
           ImDrawList* draw_list = ImGui::GetWindowDrawList();
 
           // Looping through all the combo entries
           for (int n = 0;
                n < sizeof(graphicsApiNames) / sizeof(graphicsApiNames[0]);
-               n++) {
-            if (apiAvailability[n]) {
+               n++)
+          {
+            if (apiAvailability[n])
+            {
               const bool is_selected = (currentApiIndex == n);
 
               // Selectable settings
@@ -718,7 +776,8 @@ namespace Dwarf {
               draw_list->ChannelsSplit(2);
               draw_list->ChannelsSetCurrent(1);
 
-              if (n > 0) {
+              if (n > 0)
+              {
                 ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
               }
 
@@ -726,7 +785,8 @@ namespace Dwarf {
               if (ImGui::Selectable(graphicsApiNames[n].data(),
                                     is_selected,
                                     0,
-                                    ImVec2(0, 16 + 10))) {
+                                    ImVec2(0, 16 + 10)))
+              {
                 currentApiIndex = n;
               }
 
@@ -735,22 +795,25 @@ namespace Dwarf {
               ImGui::PopStyleColor(3);
 
               // Drawing the background rectangle
-              if (ImGui::IsItemHovered()) {
+              if (ImGui::IsItemHovered())
+              {
                 ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
                 draw_list->ChannelsSetCurrent(0);
                 ImVec2 p_min = ImGui::GetItemRectMin();
                 ImVec2 p_max = ImGui::GetItemRectMax();
-                ImU32 rectCol = ImGui::IsMouseDown(ImGuiMouseButton_Left)
-                                  ? IM_COL32(76, 86, 106, 255)
-                                  : IM_COL32(67, 76, 94, 255);
+                ImU32  rectCol = ImGui::IsMouseDown(ImGuiMouseButton_Left)
+                                   ? IM_COL32(76, 86, 106, 255)
+                                   : IM_COL32(67, 76, 94, 255);
 
                 ImGui::GetWindowDrawList()->AddRectFilled(
                   p_min, p_max, rectCol, 5);
-              } else if (is_selected) {
+              }
+              else if (is_selected)
+              {
                 draw_list->ChannelsSetCurrent(0);
                 ImVec2 p_min = ImGui::GetItemRectMin();
                 ImVec2 p_max = ImGui::GetItemRectMax();
-                ImU32 rectCol = IM_COL32(59, 66, 82, 255);
+                ImU32  rectCol = IM_COL32(59, 66, 82, 255);
 
                 ImGui::GetWindowDrawList()->AddRectFilled(
                   p_min, p_max, rectCol, 5);
@@ -760,8 +823,7 @@ namespace Dwarf {
 
               // Set the initial focus when opening the combo (scrolling +
               // keyboard navigation focus)
-              if (is_selected)
-                ImGui::SetItemDefaultFocus();
+              if (is_selected) ImGui::SetItemDefaultFocus();
             }
           }
 
@@ -770,7 +832,8 @@ namespace Dwarf {
         ImGui::PopFont();
 
         // Use Hand cursor when hovering over the combo
-        if (ImGui::IsItemHovered()) {
+        if (ImGui::IsItemHovered())
+        {
           ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
         }
 
@@ -790,13 +853,15 @@ namespace Dwarf {
 
       // ==================== Apply Button ====================
       if (ImGui::Button("Apply",
-                        ImVec2(ImGui::GetContentRegionAvail().x / 2 - 10, 0))) {
+                        ImVec2(ImGui::GetContentRegionAvail().x / 2 - 10, 0)))
+      {
         ProjectListHandler::ChangeGraphicsApi(m_Model->GetSelectedProjectID(),
                                               (GraphicsApi)currentApiIndex);
         ImGui::CloseCurrentPopup();
       }
 
-      if (ImGui::IsItemHovered()) {
+      if (ImGui::IsItemHovered())
+      {
         ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
       }
 
@@ -805,12 +870,13 @@ namespace Dwarf {
       // ==================== Cancel Button ====================
       ImGui::SetItemDefaultFocus();
       ImGui::SameLine();
-      if (ImGui::Button("Cancel",
-                        ImVec2(ImGui::GetContentRegionAvail().x, 0))) {
+      if (ImGui::Button("Cancel", ImVec2(ImGui::GetContentRegionAvail().x, 0)))
+      {
         ImGui::CloseCurrentPopup();
       }
 
-      if (ImGui::IsItemHovered()) {
+      if (ImGui::IsItemHovered())
+      {
         ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
       }
 
@@ -826,7 +892,8 @@ namespace Dwarf {
     ImGui::PopStyleColor(2);
   }
 
-  void ProjectLauncherView::RenderProjectNotFoundModal()
+  void
+  ProjectLauncherView::RenderProjectNotFoundModal()
   {
     std::vector<ProjectInformation> projectList =
       *ProjectListHandler::GetProjectList();
@@ -856,7 +923,8 @@ namespace Dwarf {
     if (ImGui::BeginPopupModal("Project not found!",
                                NULL,
                                ImGuiWindowFlags_AlwaysAutoResize |
-                                 ImGuiWindowFlags_NoMove)) {
+                                 ImGuiWindowFlags_NoMove))
+    {
       ImGui::PushFont(m_TextFont);
       // ==================== Information Text ====================
       float textWidth =
@@ -894,13 +962,15 @@ namespace Dwarf {
 
       // ==================== Remove Button ====================
       if (ImGui::Button("Remove",
-                        ImVec2(ImGui::GetContentRegionAvail().x / 2 - 10, 0))) {
+                        ImVec2(ImGui::GetContentRegionAvail().x / 2 - 10, 0)))
+      {
         ProjectListHandler::RemoveProjectFromList(
           m_Model->GetSelectedProjectID());
         ImGui::CloseCurrentPopup();
       }
 
-      if (ImGui::IsItemHovered()) {
+      if (ImGui::IsItemHovered())
+      {
         ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
       }
 
@@ -913,12 +983,13 @@ namespace Dwarf {
       // ==================== Cancel Button ====================
       ImGui::SetItemDefaultFocus();
       ImGui::SameLine();
-      if (ImGui::Button("Cancel",
-                        ImVec2(ImGui::GetContentRegionAvail().x, 0))) {
+      if (ImGui::Button("Cancel", ImVec2(ImGui::GetContentRegionAvail().x, 0)))
+      {
         ImGui::CloseCurrentPopup();
       }
 
-      if (ImGui::IsItemHovered()) {
+      if (ImGui::IsItemHovered())
+      {
         ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
       }
 
@@ -934,7 +1005,8 @@ namespace Dwarf {
     ImGui::PopStyleColor(2);
   }
 
-  void ProjectLauncherView::RenderCreateNewProjectModal()
+  void
+  ProjectLauncherView::RenderCreateNewProjectModal()
   {
     // Centering Modal ====================
     ImVec2 center = ImGui::GetMainViewport()->GetCenter();
@@ -960,7 +1032,8 @@ namespace Dwarf {
     if (ImGui::BeginPopupModal("Create new project",
                                NULL,
                                ImGuiWindowFlags_NoMove |
-                                 ImGuiWindowFlags_NoResize)) {
+                                 ImGuiWindowFlags_NoResize))
+    {
       ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(4, 8));
 
       static char newProjectName[128] = "";
@@ -1023,10 +1096,11 @@ namespace Dwarf {
         float textWidth =
           ImGui::CalcTextSize(renderText.c_str(), (const char*)0, false).x;
         float columnWidth = ImGui::GetContentRegionAvail().x - 40;
-        int availableCharacters =
+        int   availableCharacters =
           (int)(columnWidth / (textWidth / renderText.length())) - 3;
 
-        if ((textWidth > columnWidth)) {
+        if ((textWidth > columnWidth))
+        {
           renderText.resize(availableCharacters);
           renderText.resize(availableCharacters + 3, '.');
         }
@@ -1054,7 +1128,8 @@ namespace Dwarf {
         ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5);
         // ImGui::SetCursorPosY(ImGui::GetCursorPosY());
         ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
-        if (ImGui::Button("...", ImVec2(width, 25))) {
+        if (ImGui::Button("...", ImVec2(width, 25)))
+        {
           // Directory Dialog
           // File Dialog um einen Pfad zu kriegen
           // Im Pfad nach einer projectSettings.dproj suchen
@@ -1072,18 +1147,24 @@ namespace Dwarf {
           nfdresult_t result =
             NFD_PickFolder((const nfdchar_t*)newProjectPath.c_str(), &outPath);
 
-          if (result == NFD_OKAY) {
+          if (result == NFD_OKAY)
+          {
             newProjectPath = std::string(outPath);
             free(outPath);
-          } else if (result == NFD_CANCEL) {
+          }
+          else if (result == NFD_CANCEL)
+          {
             // puts("User pressed cancel.");
-          } else {
+          }
+          else
+          {
             // printf("Error: %s\n", NFD_GetError());
           }
         }
         ImGui::PopStyleVar(2);
 
-        if (ImGui::IsItemHovered()) {
+        if (ImGui::IsItemHovered())
+        {
           ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
         }
 
@@ -1134,11 +1215,13 @@ namespace Dwarf {
         // Coloring the combo popup background
         ImGui::PushStyleColor(ImGuiCol_PopupBg, IM_COL32(46, 52, 64, 255));
 
-        if (ImGui::BeginCombo("##template", template_preview_value)) {
+        if (ImGui::BeginCombo("##template", template_preview_value))
+        {
           ImDrawList* draw_list = ImGui::GetWindowDrawList();
 
           // Looping through all the combo entries
-          for (int n = 0; n < 2; n++) {
+          for (int n = 0; n < 2; n++)
+          {
             const bool is_selected = (currentTemplateIndex == n);
 
             // Selectable settings
@@ -1153,7 +1236,8 @@ namespace Dwarf {
             // rounded rectangle in the background
             draw_list->ChannelsSplit(2);
             draw_list->ChannelsSetCurrent(1);
-            if (n > 0) {
+            if (n > 0)
+            {
               ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
             }
 
@@ -1161,7 +1245,8 @@ namespace Dwarf {
             // 8));
             //  ==================== Rendering Selectable ====================
             if (ImGui::Selectable(
-                  templates[n], is_selected, 0, ImVec2(0, 16 + 10))) {
+                  templates[n], is_selected, 0, ImVec2(0, 16 + 10)))
+            {
               currentTemplateIndex = n;
             }
             // ImGui::PopStyleVar();
@@ -1171,22 +1256,25 @@ namespace Dwarf {
             ImGui::PopStyleColor(3);
 
             // Drawing the background rectangle
-            if (ImGui::IsItemHovered()) {
+            if (ImGui::IsItemHovered())
+            {
               ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
               draw_list->ChannelsSetCurrent(0);
               ImVec2 p_min = ImGui::GetItemRectMin();
               ImVec2 p_max = ImGui::GetItemRectMax();
-              ImU32 rectCol = ImGui::IsMouseDown(ImGuiMouseButton_Left)
-                                ? IM_COL32(76, 86, 106, 255)
-                                : IM_COL32(67, 76, 94, 255);
+              ImU32  rectCol = ImGui::IsMouseDown(ImGuiMouseButton_Left)
+                                 ? IM_COL32(76, 86, 106, 255)
+                                 : IM_COL32(67, 76, 94, 255);
 
               ImGui::GetWindowDrawList()->AddRectFilled(
                 p_min, p_max, rectCol, 5);
-            } else if (is_selected) {
+            }
+            else if (is_selected)
+            {
               draw_list->ChannelsSetCurrent(0);
               ImVec2 p_min = ImGui::GetItemRectMin();
               ImVec2 p_max = ImGui::GetItemRectMax();
-              ImU32 rectCol = IM_COL32(59, 66, 82, 255);
+              ImU32  rectCol = IM_COL32(59, 66, 82, 255);
 
               ImGui::GetWindowDrawList()->AddRectFilled(
                 p_min, p_max, rectCol, 5);
@@ -1196,8 +1284,7 @@ namespace Dwarf {
 
             // Set the initial focus when opening the combo (scrolling +
             // keyboard navigation focus)
-            if (is_selected)
-              ImGui::SetItemDefaultFocus();
+            if (is_selected) ImGui::SetItemDefaultFocus();
           }
 
           ImGui::EndCombo();
@@ -1205,7 +1292,8 @@ namespace Dwarf {
         ImGui::PopFont();
 
         // Use Hand cursor when hovering over the combo
-        if (ImGui::IsItemHovered()) {
+        if (ImGui::IsItemHovered())
+        {
           ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
         }
 
@@ -1256,14 +1344,17 @@ namespace Dwarf {
         ImGui::PushStyleColor(ImGuiCol_PopupBg, IM_COL32(46, 52, 64, 255));
 
         if (ImGui::BeginCombo("##graphicsApi",
-                              graphicsApiNames[currentApiIndex].data())) {
+                              graphicsApiNames[currentApiIndex].data()))
+        {
           ImDrawList* draw_list = ImGui::GetWindowDrawList();
 
           // Looping through all the combo entries
           for (int n = 0;
                n < sizeof(graphicsApiNames) / sizeof(graphicsApiNames[0]);
-               n++) {
-            if (apiAvailability[n]) {
+               n++)
+          {
+            if (apiAvailability[n])
+            {
               const bool is_selected = (currentApiIndex == n);
 
               // Selectable settings
@@ -1279,7 +1370,8 @@ namespace Dwarf {
               draw_list->ChannelsSplit(2);
               draw_list->ChannelsSetCurrent(1);
 
-              if (n > 0) {
+              if (n > 0)
+              {
                 ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
               }
 
@@ -1287,7 +1379,8 @@ namespace Dwarf {
               if (ImGui::Selectable(graphicsApiNames[n].data(),
                                     is_selected,
                                     0,
-                                    ImVec2(0, 16 + 10))) {
+                                    ImVec2(0, 16 + 10)))
+              {
                 currentApiIndex = n;
               }
 
@@ -1296,22 +1389,25 @@ namespace Dwarf {
               ImGui::PopStyleColor(3);
 
               // Drawing the background rectangle
-              if (ImGui::IsItemHovered()) {
+              if (ImGui::IsItemHovered())
+              {
                 ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
                 draw_list->ChannelsSetCurrent(0);
                 ImVec2 p_min = ImGui::GetItemRectMin();
                 ImVec2 p_max = ImGui::GetItemRectMax();
-                ImU32 rectCol = ImGui::IsMouseDown(ImGuiMouseButton_Left)
-                                  ? IM_COL32(76, 86, 106, 255)
-                                  : IM_COL32(67, 76, 94, 255);
+                ImU32  rectCol = ImGui::IsMouseDown(ImGuiMouseButton_Left)
+                                   ? IM_COL32(76, 86, 106, 255)
+                                   : IM_COL32(67, 76, 94, 255);
 
                 ImGui::GetWindowDrawList()->AddRectFilled(
                   p_min, p_max, rectCol, 5);
-              } else if (is_selected) {
+              }
+              else if (is_selected)
+              {
                 draw_list->ChannelsSetCurrent(0);
                 ImVec2 p_min = ImGui::GetItemRectMin();
                 ImVec2 p_max = ImGui::GetItemRectMax();
-                ImU32 rectCol = IM_COL32(59, 66, 82, 255);
+                ImU32  rectCol = IM_COL32(59, 66, 82, 255);
 
                 ImGui::GetWindowDrawList()->AddRectFilled(
                   p_min, p_max, rectCol, 5);
@@ -1321,8 +1417,7 @@ namespace Dwarf {
 
               // Set the initial focus when opening the combo (scrolling +
               // keyboard navigation focus)
-              if (is_selected)
-                ImGui::SetItemDefaultFocus();
+              if (is_selected) ImGui::SetItemDefaultFocus();
             }
           }
 
@@ -1331,7 +1426,8 @@ namespace Dwarf {
         ImGui::PopFont();
 
         // Use Hand cursor when hovering over the combo
-        if (ImGui::IsItemHovered()) {
+        if (ImGui::IsItemHovered())
+        {
           ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
         }
 
@@ -1355,8 +1451,9 @@ namespace Dwarf {
       // ==================== Create Button ====================
       {
         ImGui::PushFont(m_TextFont);
-        if (ImGui::Button(
-              "Create", ImVec2(ImGui::GetContentRegionAvail().x / 2 - 8, 40))) {
+        if (ImGui::Button("Create",
+                          ImVec2(ImGui::GetContentRegionAvail().x / 2 - 8, 40)))
+        {
           // Create folder at the path with the project name
           // Create and fill projectSettings.dproj appropriately
           // If using a template, copy the corresponding files
@@ -1378,7 +1475,8 @@ namespace Dwarf {
         }
         ImGui::PopFont();
 
-        if (ImGui::IsItemHovered()) {
+        if (ImGui::IsItemHovered())
+        {
           ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
         }
       }
@@ -1389,7 +1487,8 @@ namespace Dwarf {
         ImGui::SameLine();
         ImGui::PushFont(m_TextFont);
         if (ImGui::Button("Cancel",
-                          ImVec2(ImGui::GetContentRegionAvail().x, 40))) {
+                          ImVec2(ImGui::GetContentRegionAvail().x, 40)))
+        {
           strcpy(newProjectName, "");
           // newProjectPath = FileHandler::defaultProjectPath;
           currentTemplateIndex = 0;
@@ -1398,7 +1497,8 @@ namespace Dwarf {
         }
         ImGui::PopFont();
 
-        if (ImGui::IsItemHovered()) {
+        if (ImGui::IsItemHovered())
+        {
           ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
         }
       }

@@ -1,6 +1,7 @@
 #pragma once
 
-namespace Dwarf {
+namespace Dwarf
+{
   enum class TextureFormat
   {
     RED,
@@ -55,20 +56,20 @@ namespace Dwarf {
 
   struct TextureContainer
   {
-    TextureType Type = TextureType::TEXTURE_2D;
-    TextureFormat Format = TextureFormat::RGBA;
+    TextureType     Type = TextureType::TEXTURE_2D;
+    TextureFormat   Format = TextureFormat::RGBA;
     TextureDataType DataType = TextureDataType::UNSIGNED_BYTE;
-    int Width = 0;
-    int Height = 0;
-    int Depth = 0;
-    void* ImageData = nullptr;
+    int             Width = 0;
+    int             Height = 0;
+    int             Depth = 0;
+    void*           ImageData = nullptr;
   };
 
   struct TextureParameters
   {
-    TextureWrap WrapS = TextureWrap::UNSET;
-    TextureWrap WrapT = TextureWrap::UNSET;
-    TextureWrap WrapR = TextureWrap::UNSET;
+    TextureWrap      WrapS = TextureWrap::UNSET;
+    TextureWrap      WrapT = TextureWrap::UNSET;
+    TextureWrap      WrapR = TextureWrap::UNSET;
     TextureMinFilter MinFilter = TextureMinFilter::UNSET;
     TextureMagFilter MagFilter = TextureMagFilter::UNSET;
   };

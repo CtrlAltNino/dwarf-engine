@@ -5,13 +5,14 @@
 #include "Utilities/FileHandler.h"
 #include "Core/Base.h"
 #include "Core/Rendering/Mesh.h"
-#include "Core/Rendering/Texture.h"
+#include "Core/Rendering/TextureCreator.h"
 #include "Core/Rendering/Material.h"
 #include "Core/Asset/ModelImporter.h"
 #include "Core/Asset/MaterialSerializer.h"
 #include "Core/Asset/AssetMetaData.h"
 
-namespace Dwarf {
+namespace Dwarf
+{
   /// @brief Component containing a model asset.
   struct ModelAsset
   {
@@ -22,9 +23,11 @@ namespace Dwarf {
       : m_Meshes(ModelImporter::Import(path))
     {
     }
-    void Load() const
+    void
+    Load() const
     {
-      for (const auto& mesh : m_Meshes) {
+      for (const auto& mesh : m_Meshes)
+      {
         mesh->SetupMesh();
       }
     }
@@ -49,7 +52,7 @@ namespace Dwarf {
   {
     /// @brief Path to the asset.
     std::filesystem::path m_Path;
-    std::string m_FileContent;
+    std::string           m_FileContent;
 
     explicit VertexShaderAsset(std::filesystem::path const& path)
       : m_Path(path)
@@ -63,7 +66,7 @@ namespace Dwarf {
   {
     /// @brief Path to the asset.
     std::filesystem::path m_Path;
-    std::string m_FileContent;
+    std::string           m_FileContent;
 
     explicit FragmentShaderAsset(std::filesystem::path const& path)
       : m_Path(path)
@@ -77,7 +80,7 @@ namespace Dwarf {
   {
     /// @brief Path to the asset.
     std::filesystem::path m_Path;
-    std::string m_FileContent;
+    std::string           m_FileContent;
 
     explicit GeometryShaderAsset(std::filesystem::path const& path)
       : m_Path(path)
@@ -91,7 +94,7 @@ namespace Dwarf {
   {
     /// @brief Path to the asset.
     std::filesystem::path m_Path;
-    std::string m_FileContent;
+    std::string           m_FileContent;
 
     explicit TesselationControlShaderAsset(std::filesystem::path const& path)
       : m_Path(path)
@@ -105,7 +108,7 @@ namespace Dwarf {
   {
     /// @brief Path to the asset.
     std::filesystem::path m_Path;
-    std::string m_FileContent;
+    std::string           m_FileContent;
 
     explicit TesselationEvaluationShaderAsset(std::filesystem::path const& path)
       : m_Path(path)
@@ -119,7 +122,7 @@ namespace Dwarf {
   {
     /// @brief Path to the asset.
     std::filesystem::path m_Path;
-    std::string m_FileContent;
+    std::string           m_FileContent;
 
     explicit ComputeShaderAsset(std::filesystem::path const& path)
       : m_Path(path)
@@ -133,7 +136,7 @@ namespace Dwarf {
   {
     /// @brief Path to the asset.
     std::filesystem::path m_Path;
-    std::string m_FileContent;
+    std::string           m_FileContent;
 
     explicit HlslShaderAsset(std::filesystem::path const& path)
       : m_Path(path)
@@ -149,13 +152,17 @@ namespace Dwarf {
     Ref<Texture> m_Texture;
 
     explicit TextureAsset(std::filesystem::path const& path)
-      : m_Texture(Texture::Create(path))
+      : m_Texture(TextureCreator::FromPath(path))
     {
     }
 
     /// @brief Retrieves the texture.
     /// @return The imported texture instance.
-    Ref<Texture> Get() const { return m_Texture; }
+    Ref<Texture>
+    Get() const
+    {
+      return m_Texture;
+    }
   };
 
   /// @brief Asset containing a Dwarf Engine scene.
@@ -173,7 +180,7 @@ namespace Dwarf {
   struct UnknownAsset
   {
     std::filesystem::path m_Path;
-    std::string m_FileContent;
+    std::string           m_FileContent;
     explicit UnknownAsset(std::filesystem::path const& path)
       : m_Path(path)
       , m_FileContent(FileHandler::ReadFile(m_Path))

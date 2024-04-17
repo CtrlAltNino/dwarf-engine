@@ -1,11 +1,14 @@
 #include "Core/Rendering/Texture.h"
+#include "OpenGLTexture.h"
+#include "Utilities/ImageUtilities/TextureCommon.h"
 #include "dpch.h"
 
 #include "Core/Asset/AssetMetaData.h"
 #include "Platform/OpenGL/OpenGLTexture.h"
 #include "Utilities/FileHandler.h"
 
-namespace Dwarf {
+namespace Dwarf
+{
   // A Map that maps TextureFormat to OpenGL format
   static const std::map<TextureFormat, GLenum> s_TextureFormatMap = {
     { TextureFormat::RED, GL_RED },
@@ -54,10 +57,50 @@ namespace Dwarf {
     { TextureDataType::INT, GL_INT }
   };
 
+  GLenum
+  GetInternalFormat(TextureFormat format, TextureDataType dataType)
+  {
+    switch (format)
+    {
+      case TextureFormat::RED:
+        switch (dataType)
+        {
+          case TextureDataType::UNSIGNED_BYTE: return GL_R8;
+          case TextureDataType::FLOAT: return GL_R32F;
+          case TextureDataType::UNSIGNED_INT: return GL_R32UI;
+          case TextureDataType::INT: return GL_R32I;
+        }
+      case TextureFormat::RG:
+        switch (dataType)
+        {
+          case TextureDataType::UNSIGNED_BYTE: return GL_RG8;
+          case TextureDataType::FLOAT: return GL_RG32F;
+          case TextureDataType::UNSIGNED_INT: return GL_RG32UI;
+          case TextureDataType::INT: return GL_RG32I;
+        }
+      case TextureFormat::RGB:
+        switch (dataType)
+        {
+          case TextureDataType::UNSIGNED_BYTE: return GL_RGB8;
+          case TextureDataType::FLOAT: return GL_RGB32F;
+          case TextureDataType::UNSIGNED_INT: return GL_RGB32UI;
+          case TextureDataType::INT: return GL_RGB32I;
+        }
+      case TextureFormat::RGBA:
+        switch (dataType)
+        {
+          case TextureDataType::UNSIGNED_BYTE: return GL_RGBA8;
+          case TextureDataType::FLOAT: return GL_RGBA32F;
+          case TextureDataType::UNSIGNED_INT: return GL_RGBA32UI;
+          case TextureDataType::INT: return GL_RGBA32I;
+        }
+    }
+  }
+
   // A map that maps
   // Constructor without meta data
   OpenGLTexture::OpenGLTexture(Ref<TextureParameters> parameters,
-                               Ref<TextureContainer> data)
+                               Ref<TextureContainer>  data)
   {
     GLuint textureFormat = s_TextureFormatMap.at(data->Format);
     GLuint textureType = s_TextureTypeMap.at(data->Type);
@@ -67,209 +110,67 @@ namespace Dwarf {
     GLuint textureWrapR = s_TextureWrapMap.at(parameters->WrapR);
     GLuint textureMinFilter = s_TextureMinFilterMap.at(parameters->MinFilter);
     GLuint textureMagFilter = s_TextureMagFilterMap.at(parameters->MagFilter);
+    GLuint internalFormat = GetInternalFormat(data->Format, data->DataType);
 
-    // Print Debug data for parameters
-    switch (textureFormat) {
-      case GL_RED:
-        std::cout << "Texture Format: GL_RED" << std::endl;
-        break;
-      case GL_RG:
-        std::cout << "Texture Format: GL_RG" << std::endl;
-        break;
-      case GL_RGB:
-        std::cout << "Texture Format: GL_RGB" << std::endl;
-        break;
-      case GL_RGBA:
-        std::cout << "Texture Format: GL_RGBA" << std::endl;
-        break;
-    }
-
-    switch (textureType) {
-      case GL_TEXTURE_1D:
-        std::cout << "Texture Type: GL_TEXTURE_1D" << std::endl;
-        break;
-      case GL_TEXTURE_2D:
-        std::cout << "Texture Type: GL_TEXTURE_2D" << std::endl;
-        break;
-      case GL_TEXTURE_3D:
-        std::cout << "Texture Type: GL_TEXTURE_3D" << std::endl;
-        break;
-      case GL_TEXTURE_CUBE_MAP:
-        std::cout << "Texture Type: GL_TEXTURE_CUBE_MAP" << std::endl;
-        break;
-    }
-
-    switch (textureDataType) {
-      case GL_UNSIGNED_BYTE:
-        std::cout << "Texture Data Type: GL_UNSIGNED_BYTE" << std::endl;
-        break;
-      case GL_FLOAT:
-        std::cout << "Texture Data Type: GL_FLOAT" << std::endl;
-        break;
-      case GL_UNSIGNED_INT:
-        std::cout << "Texture Data Type: GL_UNSIGNED_INT" << std::endl;
-        break;
-      case GL_INT:
-        std::cout << "Texture Data Type: GL_INT" << std::endl;
-        break;
-    }
-
-    switch (textureWrapS) {
-      case GL_REPEAT:
-        std::cout << "Texture Wrap S: GL_REPEAT" << std::endl;
-        break;
-      case GL_MIRRORED_REPEAT:
-        std::cout << "Texture Wrap S: GL_MIRRORED_REPEAT" << std::endl;
-        break;
-      case GL_CLAMP_TO_EDGE:
-        std::cout << "Texture Wrap S: GL_CLAMP_TO_EDGE" << std::endl;
-        break;
-      case GL_CLAMP_TO_BORDER:
-        std::cout << "Texture Wrap S: GL_CLAMP_TO_BORDER" << std::endl;
-        break;
-    }
-
-    switch (textureWrapT) {
-      case GL_REPEAT:
-        std::cout << "Texture Wrap T: GL_REPEAT" << std::endl;
-        break;
-      case GL_MIRRORED_REPEAT:
-        std::cout << "Texture Wrap T: GL_MIRRORED_REPEAT" << std::endl;
-        break;
-      case GL_CLAMP_TO_EDGE:
-        std::cout << "Texture Wrap T: GL_CLAMP_TO_EDGE" << std::endl;
-        break;
-      case GL_CLAMP_TO_BORDER:
-        std::cout << "Texture Wrap T: GL_CLAMP_TO_BORDER" << std::endl;
-        break;
-    }
-
-    switch (textureWrapR) {
-      case GL_REPEAT:
-        std::cout << "Texture Wrap R: GL_REPEAT" << std::endl;
-        break;
-      case GL_MIRRORED_REPEAT:
-        std::cout << "Texture Wrap R: GL_MIRRORED_REPEAT" << std::endl;
-        break;
-      case GL_CLAMP_TO_EDGE:
-        std::cout << "Texture Wrap R: GL_CLAMP_TO_EDGE" << std::endl;
-        break;
-      case GL_CLAMP_TO_BORDER:
-        std::cout << "Texture Wrap R: GL_CLAMP_TO_BORDER" << std::endl;
-        break;
-    }
-
-    switch (textureMinFilter) {
-      case GL_NEAREST:
-        std::cout << "Texture Min Filter: GL_NEAREST" << std::endl;
-        break;
-      case GL_LINEAR:
-        std::cout << "Texture Min Filter: GL_LINEAR" << std::endl;
-        break;
-      case GL_NEAREST_MIPMAP_NEAREST:
-        std::cout << "Texture Min Filter: GL_NEAREST_MIPMAP_NEAREST"
-                  << std::endl;
-        break;
-      case GL_LINEAR_MIPMAP_NEAREST:
-        std::cout << "Texture Min Filter: GL_LINEAR_MIPMAP_NEAREST"
-                  << std::endl;
-        break;
-      case GL_NEAREST_MIPMAP_LINEAR:
-        std::cout << "Texture Min Filter: GL_NEAREST_MIPMAP_LINEAR"
-                  << std::endl;
-        break;
-      case GL_LINEAR_MIPMAP_LINEAR:
-        std::cout << "Texture Min Filter: GL_LINEAR_MIPMAP_LINEAR" << std::endl;
-        break;
-    }
-
-    switch (textureMagFilter) {
-      case GL_NEAREST:
-        std::cout << "Texture Mag Filter: GL_NEAREST" << std::endl;
-        break;
-      case GL_LINEAR:
-        std::cout << "Texture Mag Filter: GL_LINEAR" << std::endl;
-        break;
-    }
-
-    // Set Size
-    SetSize(glm::ivec3(data->Width, data->Height, data->Depth));
-
+    SetSize(glm::ivec3(data->Width, data->Height, 0));
     glCreateTextures(textureType, 1, &m_Id);
 
-    switch (data->Type) {
-      using enum TextureType;
-      case TEXTURE_1D:
-        glTextureStorage1D(m_Id, 1, textureFormat, GetSize().x);
-        glTextureSubImage1D(m_Id,
-                            0,
-                            0,
-                            GetSize().x,
-                            textureFormat,
-                            textureDataType,
-                            data->ImageData.GetData());
+    if (parameters->MinFilter != TextureMinFilter::UNSET)
+    {
+      glTextureParameteri(m_Id, GL_TEXTURE_MIN_FILTER, textureMinFilter);
+    }
+
+    if (parameters->MagFilter != TextureMagFilter::UNSET)
+    {
+      glTextureParameteri(m_Id, GL_TEXTURE_MAG_FILTER, textureMagFilter);
+    }
+
+    if (parameters->WrapS != TextureWrap::UNSET)
+    {
+      glTextureParameteri(m_Id, GL_TEXTURE_WRAP_S, textureWrapS);
+    }
+
+    if (parameters->WrapT != TextureWrap::UNSET)
+    {
+      glTextureParameteri(m_Id, GL_TEXTURE_WRAP_T, textureWrapT);
+    }
+
+    if (parameters->WrapR != TextureWrap::UNSET)
+    {
+      glTextureParameteri(m_Id, GL_TEXTURE_WRAP_R, textureWrapR);
+    }
+
+    switch (textureType)
+    {
+      case GL_TEXTURE_1D:
+        glTextureParameteri(m_Id, GL_TEXTURE_WRAP_S, textureWrapS);
         break;
-      case TEXTURE_2D:
-        glTextureStorage2D(m_Id, 1, textureFormat, GetSize().x, GetSize().y);
+      case GL_TEXTURE_2D:
+        glTextureParameteri(m_Id, GL_TEXTURE_WRAP_S, textureWrapS);
+        glTextureParameteri(m_Id, GL_TEXTURE_WRAP_T, textureWrapT);
+
+        glTextureStorage2D(m_Id, 1, internalFormat, data->Width, data->Height);
+
         glTextureSubImage2D(m_Id,
                             0,
                             0,
                             0,
-                            GetSize().x,
-                            GetSize().y,
+                            data->Width,
+                            data->Height,
                             textureFormat,
-                            textureDataType,
-                            data->ImageData.GetData());
+                            GL_UNSIGNED_BYTE,
+                            data->ImageData);
         break;
-      case TEXTURE_3D:
-        glTextureStorage3D(
-          m_Id, 1, textureFormat, GetSize().x, GetSize().y, GetSize().z);
-        glTextureSubImage3D(m_Id,
-                            0,
-                            0,
-                            0,
-                            0,
-                            GetSize().x,
-                            GetSize().y,
-                            GetSize().z,
-                            textureFormat,
-                            textureDataType,
-                            data->ImageData.GetData());
+      case GL_TEXTURE_3D:
+        glTextureParameteri(m_Id, GL_TEXTURE_WRAP_S, textureWrapS);
+        glTextureParameteri(m_Id, GL_TEXTURE_WRAP_T, textureWrapT);
+        glTextureParameteri(m_Id, GL_TEXTURE_WRAP_R, textureWrapR);
         break;
-      case TEXTURE_CUBE_MAP:
-        glTextureStorage2D(m_Id, 1, textureFormat, GetSize().x, GetSize().y);
-        glTextureSubImage3D(m_Id,
-                            0,
-                            0,
-                            0,
-                            0,
-                            GetSize().x,
-                            GetSize().y,
-                            6,
-                            textureFormat,
-                            textureDataType,
-                            data->ImageData.GetData());
+      case GL_TEXTURE_CUBE_MAP:
+        glTextureParameteri(m_Id, GL_TEXTURE_WRAP_S, textureWrapS);
+        glTextureParameteri(m_Id, GL_TEXTURE_WRAP_T, textureWrapT);
+        glTextureParameteri(m_Id, GL_TEXTURE_WRAP_R, textureWrapR);
         break;
-    }
-
-    if (parameters->MinFilter != TextureMinFilter::UNSET) {
-      glTextureParameteri(m_Id, GL_TEXTURE_MIN_FILTER, textureMinFilter);
-    }
-
-    if (parameters->MagFilter != TextureMagFilter::UNSET) {
-      glTextureParameteri(m_Id, GL_TEXTURE_MAG_FILTER, textureMagFilter);
-    }
-
-    if (parameters->WrapS != TextureWrap::UNSET) {
-      glTextureParameteri(m_Id, GL_TEXTURE_WRAP_S, textureWrapS);
-    }
-
-    if (parameters->WrapT != TextureWrap::UNSET) {
-      glTextureParameteri(m_Id, GL_TEXTURE_WRAP_T, textureWrapT);
-    }
-
-    if (parameters->WrapR != TextureWrap::UNSET) {
-      glTextureParameteri(m_Id, GL_TEXTURE_WRAP_R, textureWrapR);
     }
 
     glGenerateTextureMipmap(m_Id);
@@ -278,10 +179,11 @@ namespace Dwarf {
   OpenGLTexture::~OpenGLTexture()
   {
     // Delete Texture
-    glDeleteTextures(1, &m_Id);
+    // glDeleteTextures(1, &m_Id);
   }
 
-  uintptr_t OpenGLTexture::GetTextureID()
+  uintptr_t
+  OpenGLTexture::GetTextureID()
   {
     return m_Id;
   }
