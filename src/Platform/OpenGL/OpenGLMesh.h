@@ -4,16 +4,20 @@
 
 #include <glad/glad.h>
 
-namespace Dwarf {
+namespace Dwarf
+{
 
   class OpenGLMesh : public Mesh
   {
   public:
     using Mesh::Mesh;
     ~OpenGLMesh() override;
-    void SetupMesh() override;
-    void Bind() const;
-    void Unbind() const;
+    void
+    SetupMesh() override;
+    void
+    Bind() const;
+    void
+    Unbind() const;
 
   private:
     GLuint VAO;

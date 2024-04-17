@@ -5,7 +5,8 @@
 #include "Editor/Modules/GuiModule.h"
 #include "Editor/Modules/Scene Hierarchy/GraphInstruction.h"
 
-namespace Dwarf {
+namespace Dwarf
+{
 
   /// @brief Module to display and manipulate the scene graph.
   class SceneHierarchyWindow : public GuiModule
@@ -19,21 +20,27 @@ namespace Dwarf {
 
     /// @brief Draws a graph node for an entity.
     /// @param entity The entity to draw the node of.
-    void DrawNode(entt::entity entity);
+    void
+    DrawNode(entt::entity entity);
 
     /// @brief Executes all buffered instructions.
-    void ProcessInstructions();
+    void
+    ProcessInstructions();
 
   public:
     SceneHierarchyWindow(Ref<EditorModel> model, int index);
 
     /// @brief Renders the module window.
-    void OnImGuiRender() override;
+    void
+    OnImGuiRender() override;
 
-    void OnUpdate(double deltaTime) override;
+    void
+    OnUpdate(double deltaTime) override;
 
-    std::string Serialize() override;
+    std::string
+    Serialize() override;
 
-    void Deserialize(nlohmann::json moduleData) override;
+    void
+    Deserialize(nlohmann::json moduleData) override;
   };
 }

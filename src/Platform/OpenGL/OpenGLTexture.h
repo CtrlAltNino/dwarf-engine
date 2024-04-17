@@ -6,7 +6,8 @@
 
 #include "Core/Rendering/Texture.h"
 
-namespace Dwarf {
+namespace Dwarf
+{
   class OpenGLTexture : public Texture
   {
   private:
@@ -15,8 +16,9 @@ namespace Dwarf {
 
   public:
     explicit OpenGLTexture(Ref<TextureParameters> parameters,
-                           Ref<TextureContainer> data);
+                           Ref<TextureContainer>  data);
     ~OpenGLTexture() override;
-    uintptr_t GetTextureID() override;
+    uintptr_t
+    GetTextureID() override;
   };
 } // namespace Dwarf

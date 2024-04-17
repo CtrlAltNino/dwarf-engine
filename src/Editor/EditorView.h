@@ -7,7 +7,8 @@
 #include "Editor/EditorModel.h"
 #include "Core/UI/DwarfUI.h"
 
-namespace Dwarf {
+namespace Dwarf
+{
 
   /// @brief View part of the editor's MVC structure.
   class EditorView
@@ -22,28 +23,35 @@ namespace Dwarf {
     std::vector<Ref<GuiModule>> m_GuiModules;
 
     /// @brief IMGUI example function to render the base docking layout.
-    void RenderDockSpace();
+    void
+    RenderDockSpace();
 
     /// @brief Adds a new IMGUI window for a GUI module.
     /// @param moduleType Type of module to add a window for.
-    void AddWindow(MODULE_TYPE moduleType);
+    void
+    AddWindow(MODULE_TYPE moduleType);
 
     /// @brief Removes a IMGUI window that corresponds to a given index.
     /// @param index Index of the window to remove.
-    void RemoveWindow(int index);
+    void
+    RemoveWindow(int index);
 
   public:
     explicit EditorView(Ref<EditorModel> model);
 
     /// @brief Initializes the view.
-    void Init();
+    void
+    Init();
 
     /// @brief Executes all pre frame tasks.
-    void OnUpdate(double deltaTime);
+    void
+    OnUpdate(double deltaTime);
 
     /// @brief Renders the GUI of the editor.
-    void OnImGuiRender();
+    void
+    OnImGuiRender();
 
-    void DockWindowToFocused();
+    void
+    DockWindowToFocused();
   };
 }

@@ -5,7 +5,8 @@
 #include "Core/Scene/Scene.h"
 #include "Core/Scene/Camera.h"
 
-namespace Dwarf {
+namespace Dwarf
+{
   class DeferredRenderer : public Renderer
   {
   private:
@@ -14,10 +15,12 @@ namespace Dwarf {
   public:
     DeferredRenderer();
     ~DeferredRenderer();
-    virtual void RenderScene(Ref<Scene> scene,
-                             Ref<Camera> camera,
-                             glm::ivec2 viewportSize,
-                             bool renderGrid) override;
-    virtual Ref<Framebuffer> CreateFramebuffer(glm::ivec2 resolution) override;
+    virtual void
+    RenderScene(Ref<Scene>  scene,
+                Ref<Camera> camera,
+                glm::ivec2  viewportSize,
+                bool        renderGrid) override;
+    virtual Ref<Framebuffer>
+    CreateFramebuffer(glm::ivec2 resolution) override;
   };
 }

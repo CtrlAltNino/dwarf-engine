@@ -2,7 +2,8 @@
 
 #include "Platform/Vulkan/VulkanRendererApi.h"
 
-namespace Dwarf {
+namespace Dwarf
+{
   VulkanRendererApi::VulkanRendererApi() {}
   VulkanRendererApi::~VulkanRendererApi() {}
 }

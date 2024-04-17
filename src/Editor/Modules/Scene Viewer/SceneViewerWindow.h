@@ -14,7 +14,8 @@
 #include "Core/Rendering/Forward/ForwardRenderer.h"
 #include "Core/Rendering/ComputeShader.h"
 
-namespace Dwarf {
+namespace Dwarf
+{
   enum class RENDERING_CONSTRAINT
   {
     FREE,
@@ -76,50 +77,63 @@ namespace Dwarf {
     /// @param availableResolution Base resolution given.
     /// @param targetAspectRatio Desired aspect ratio.
     /// @return Resolution at the given aspect ratio.
-    glm::ivec2 CalculateDesiredResolution(glm::ivec2 availableResolution,
-                                          float targetAspectRatio) const;
+    glm::ivec2
+    CalculateDesiredResolution(glm::ivec2 availableResolution,
+                               float      targetAspectRatio) const;
 
-    glm::vec3 CalculateSelectionCenter() const;
+    glm::vec3
+    CalculateSelectionCenter() const;
 
     /// @brief Updates the render texture.
-    void UpdateFramebuffer();
+    void
+    UpdateFramebuffer();
 
     /// @brief Renders the ImGuizmo gizmos.
-    void RenderGizmos(ImVec2 minRect, ImVec2 maxRect);
+    void
+    RenderGizmos(ImVec2 minRect, ImVec2 maxRect);
 
     /// @brief Handles the shortcut inputs for changing the gizmo type.
-    void UpdateGizmoType();
+    void
+    UpdateGizmoType();
 
-    void ProcessSceneClick(glm::vec2 const& mousePosition,
-                           glm::vec2 const& viewportSize);
+    void
+    ProcessSceneClick(glm::vec2 const& mousePosition,
+                      glm::vec2 const& viewportSize);
 
-    glm::vec3 GetRayDirection(float mouseX,
-                              float mouseY,
-                              int screenWidth,
-                              int screenHeight,
-                              const glm::mat4& viewMatrix,
-                              const glm::mat4& projectionMatrix);
+    glm::vec3
+    GetRayDirection(float            mouseX,
+                    float            mouseY,
+                    int              screenWidth,
+                    int              screenHeight,
+                    const glm::mat4& viewMatrix,
+                    const glm::mat4& projectionMatrix);
 
-    bool RayIntersectsMesh(const glm::vec3& rayOrigin,
-                           const glm::vec3& rayDirection,
-                           const glm::mat4& modelMatrix,
-                           Ref<Mesh> mesh,
-                           float& intersectionDistance);
+    bool
+    RayIntersectsMesh(const glm::vec3& rayOrigin,
+                      const glm::vec3& rayDirection,
+                      const glm::mat4& modelMatrix,
+                      Ref<Mesh>        mesh,
+                      float&           intersectionDistance);
 
   public:
     SceneViewerWindow(Ref<EditorModel> model, int index);
 
-    void OnUpdate(double deltaTime) override;
+    void
+    OnUpdate(double deltaTime) override;
     /// @brief Renders the module window.
-    void OnImGuiRender() override;
+    void
+    OnImGuiRender() override;
 
     /// @brief Returns the frame buffer of the scene viewer as an IMGUI texture
     /// ID:
     /// @return The texture ID of the frame buffer.
-    ImTextureID GetFrameBufferForImGui();
+    ImTextureID
+    GetFrameBufferForImGui();
 
-    std::string Serialize() override;
+    std::string
+    Serialize() override;
 
-    void Deserialize(nlohmann::json moduleData) override;
+    void
+    Deserialize(nlohmann::json moduleData) override;
   };
 }

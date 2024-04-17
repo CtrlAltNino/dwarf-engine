@@ -13,7 +13,8 @@
 #include "Core/Rendering/Mesh.h"
 #include "Core/Rendering/Material.h"
 
-namespace Dwarf {
+namespace Dwarf
+{
   /// @brief A component holding a transform.
   struct TransformComponent
   {
@@ -51,15 +52,24 @@ namespace Dwarf {
 
     /// @brief Returns the position of the entity.
     /// @return The position as a 3D vector.
-    glm::vec3 getPosition() const { return position; }
+    glm::vec3
+    getPosition() const
+    {
+      return position;
+    }
 
     /// @brief Returns the rotation of the entity as euler angles.
     /// @return The euler angles as a 3D vector.
-    glm::vec3 getEulerAngles() const { return rotation; }
+    glm::vec3
+    getEulerAngles() const
+    {
+      return rotation;
+    }
 
     /// @brief Returns the rotation of the entity as a matrix.
     /// @return The rotations as a 4x4 matrix.
-    glm::mat4 getRotationMatrix() const
+    glm::mat4
+    getRotationMatrix() const
     {
       glm::mat4 rotationMatrix(1.0f); // Identity matrix
 
@@ -76,12 +86,17 @@ namespace Dwarf {
 
     /// @brief Returns the scale of the entity.
     /// @return The scale as a 3D vector.
-    glm::vec3 getScale() const { return scale; }
+    glm::vec3
+    getScale() const
+    {
+      return scale;
+    }
 
     /// @brief Returns the vector that points into the entity's forward
     /// direction.
     /// @return The forward vector as a 3D vector.
-    glm::vec3 getForward() const
+    glm::vec3
+    getForward() const
     {
       glm::mat4 rotationMatrix = getRotationMatrix();
       glm::vec3 forwardVector(
@@ -92,7 +107,8 @@ namespace Dwarf {
     /// @brief Returns the vector that points into the entity's upwards
     /// direction.
     /// @return The up vector as a 3D vector.
-    glm::vec3 getUp() const
+    glm::vec3
+    getUp() const
     {
       return getRotationMatrix() * glm::vec4(0, 1, 0, 1);
     }
@@ -100,7 +116,8 @@ namespace Dwarf {
     /// @brief Returns the vector that points into the entity's right side
     /// direction.
     /// @return The right vector as a 3D vector.
-    glm::vec3 getRight() const
+    glm::vec3
+    getRight() const
     {
       return getRotationMatrix() * glm::vec4(1, 0, 0, 1);
     }
@@ -108,7 +125,8 @@ namespace Dwarf {
     /// @brief Returns the model matrix of the entity. A composite matrix of the
     /// translation, scale and rotation matrices.
     /// @return The model matrix as a 4x4 matrix.
-    glm::mat4x4 getModelMatrix() const
+    glm::mat4x4
+    getModelMatrix() const
     {
       glm::mat4 translationMatrix = glm::translate(glm::mat4(1.0f), position);
       glm::mat4 scaleMatrix = glm::scale(glm::mat4(1.0f), scale);

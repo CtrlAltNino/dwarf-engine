@@ -30,10 +30,12 @@
 #define ADD_BUTTON_WIDTH (40.0f)
 #define UNIFORM_DELETE_BUTTON_WIDTH (80.0f)
 
-namespace Dwarf {
+namespace Dwarf
+{
   Ref<EditorModel> AssetInspectorRenderer::s_Model = nullptr;
 
-  void AssetInspectorRenderer::Init(Ref<EditorModel> model)
+  void
+  AssetInspectorRenderer::Init(Ref<EditorModel> model)
   {
     AssetInspectorRenderer::s_Model = model;
     PreviewRenderer::Init(model);
@@ -83,7 +85,8 @@ namespace Dwarf {
     ImGui::TextWrapped("Dwarf Engine Material");
 
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
-    if (ImGui::Button("Reimport")) {
+    if (ImGui::Button("Reimport"))
+    {
       // TODO: Fix: Crashes when not returned here
       AssetDatabase::Reimport(asset);
       ImGui::EndChild();
@@ -111,222 +114,239 @@ namespace Dwarf {
 
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + COMPONENT_PANEL_PADDING);
 
-    if (ImGui::CollapsingHeader("Shader")) {
+    if (ImGui::CollapsingHeader("Shader"))
+    {
       ImGui::Indent(15.0f);
-      switch (Renderer::GetAPI()) {
+      switch (Renderer::GetAPI())
+      {
 #ifdef _WIN32
-        case GraphicsApi::D3D12:
-          break;
-        case GraphicsApi::Metal:
-          break;
-        case GraphicsApi::OpenGL: {
-          auto shader = (OpenGLShader*)mat->m_Shader.get();
-          ImGui::TextWrapped("Vertex Shader");
-          ImGui::SameLine();
-          ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
-          DwarfUI::AssetInput<VertexShaderAsset>(
-            shader->GetShaderAssets().m_VertexShaderAsset, "##vertexShader");
-          ImGui::PopItemWidth();
-
-          if (!shader->GetShaderLogs().m_VertexShaderLog.empty()) {
-            ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
-            if (ImGui::CollapsingHeader("Vertex Shader Error Log##vert")) {
-              ImGui::TextWrapped(
-                "%s", shader->GetShaderLogs().m_VertexShaderLog.c_str());
-            }
-            ImGui::PopItemWidth();
-          }
-
-          ImGui::TextWrapped("Tessellation Control Shader");
-          ImGui::SameLine();
-          ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
-          DwarfUI::AssetInput<TesselationControlShaderAsset>(
-            shader->GetShaderAssets().m_TessellationControlShaderAsset,
-            "##tessellationControlShader");
-          ImGui::PopItemWidth();
-
-          if (!shader->GetShaderLogs().m_TessellationControlShaderLog.empty()) {
-            ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
-            if (ImGui::CollapsingHeader(
-                  "Tessellation Control Shader Error Log##tesc")) {
-              ImGui::TextWrapped(
-                "%s",
-                shader->GetShaderLogs().m_TessellationControlShaderLog.c_str());
-            }
-            ImGui::PopItemWidth();
-          }
-
-          ImGui::TextWrapped("Tessellation Evaluation Shader");
-          ImGui::SameLine();
-          ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
-          DwarfUI::AssetInput<TesselationEvaluationShaderAsset>(
-            shader->GetShaderAssets().m_TessellationEvaluationShaderAsset,
-            "##tessellationEvaluationShader");
-          ImGui::PopItemWidth();
-
-          if (!shader->GetShaderLogs()
-                 .m_TessellationEvaluationShaderLog.empty()) {
-            ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
-            if (ImGui::CollapsingHeader(
-                  "Tessellation Evaluation Shader Error Log##tese")) {
-              ImGui::TextWrapped("%s",
-                                 shader->GetShaderLogs()
-                                   .m_TessellationEvaluationShaderLog.c_str());
-            }
-            ImGui::PopItemWidth();
-          }
-
-          ImGui::TextWrapped("Geometry Shader");
-          ImGui::SameLine();
-          ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
-          DwarfUI::AssetInput<GeometryShaderAsset>(
-            shader->GetShaderAssets().m_GeometryShaderAsset,
-            "##geometryShader");
-          ImGui::PopItemWidth();
-
-          if (!shader->GetShaderLogs().m_GeometryShaderLog.empty()) {
-            ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
-            if (ImGui::CollapsingHeader("Geometry Shader Error Log##geom")) {
-              ImGui::TextWrapped(
-                "%s", shader->GetShaderLogs().m_GeometryShaderLog.c_str());
-            }
-            ImGui::PopItemWidth();
-          }
-
-          ImGui::TextWrapped("Fragment Shader");
-          ImGui::SameLine();
-          ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
-          DwarfUI::AssetInput<FragmentShaderAsset>(
-            shader->GetShaderAssets().m_FragmentShaderAsset,
-            "##fragmentShader");
-          ImGui::PopItemWidth();
-
-          if (!shader->GetShaderLogs().m_FragmentShaderLog.empty()) {
-            ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
-            if (ImGui::CollapsingHeader("Fragment Shader Error Log##frag")) {
-              ImGui::TextWrapped(
-                "%s", shader->GetShaderLogs().m_FragmentShaderLog.c_str());
-            }
-            ImGui::PopItemWidth();
-          }
-          break;
-        }
-        case GraphicsApi::Vulkan:
-          break;
-#elif __linux__
-        case GraphicsApi::D3D12:
-          break;
-        case GraphicsApi::Metal:
-          break;
-        case GraphicsApi::OpenGL: {
-          auto shader = (OpenGLShader*)mat->m_Shader.get();
-          ImGui::TextWrapped("Vertex Shader");
-          ImGui::SameLine();
-          ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
-          DwarfUI::AssetInput<VertexShaderAsset>(
-            shader->GetShaderAssets().m_VertexShaderAsset, "##vertexShader");
-          ImGui::PopItemWidth();
-
-          if (!shader->GetShaderLogs().m_VertexShaderLog.empty()) {
-            ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
-            if (ImGui::CollapsingHeader("Vertex Shader Error Log##vert")) {
-              ImGui::TextWrapped(
-                "%s", shader->GetShaderLogs().m_VertexShaderLog.c_str());
-            }
-            ImGui::PopItemWidth();
-          }
-
-          ImGui::TextWrapped("Tessellation Control Shader");
-          ImGui::SameLine();
-          ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
-          DwarfUI::AssetInput<TesselationControlShaderAsset>(
-            shader->GetShaderAssets().m_TessellationControlShaderAsset,
-            "##tessellationControlShader");
-          ImGui::PopItemWidth();
-
-          if (!shader->GetShaderLogs().m_TessellationControlShaderLog.empty()) {
-            ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
-            if (ImGui::CollapsingHeader(
-                  "Tessellation Control Shader Error Log##tesc")) {
-              ImGui::TextWrapped(
-                "%s",
-                shader->GetShaderLogs().m_TessellationControlShaderLog.c_str());
-            }
-            ImGui::PopItemWidth();
-          }
-
-          ImGui::TextWrapped("Tessellation Evaluation Shader");
-          ImGui::SameLine();
-          ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
-          DwarfUI::AssetInput<TesselationEvaluationShaderAsset>(
-            shader->GetShaderAssets().m_TessellationEvaluationShaderAsset,
-            "##tessellationEvaluationShader");
-          ImGui::PopItemWidth();
-
-          if (!shader->GetShaderLogs()
-                 .m_TessellationEvaluationShaderLog.empty()) {
-            ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
-            if (ImGui::CollapsingHeader(
-                  "Tessellation Evaluation Shader Error Log##tese")) {
-              ImGui::TextWrapped("%s",
-                                 shader->GetShaderLogs()
-                                   .m_TessellationEvaluationShaderLog.c_str());
-            }
-            ImGui::PopItemWidth();
-          }
-
-          ImGui::TextWrapped("Geometry Shader");
-          ImGui::SameLine();
-          ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
-          DwarfUI::AssetInput<GeometryShaderAsset>(
-            shader->GetShaderAssets().m_GeometryShaderAsset,
-            "##geometryShader");
-          ImGui::PopItemWidth();
-
-          if (!shader->GetShaderLogs().m_GeometryShaderLog.empty()) {
-            ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
-            if (ImGui::CollapsingHeader("Geometry Shader Error Log##geom")) {
-              ImGui::TextWrapped(
-                "%s", shader->GetShaderLogs().m_GeometryShaderLog.c_str());
-            }
-            ImGui::PopItemWidth();
-          }
-
-          ImGui::TextWrapped("Fragment Shader");
-          ImGui::SameLine();
-          ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
-          DwarfUI::AssetInput<FragmentShaderAsset>(
-            shader->GetShaderAssets().m_FragmentShaderAsset,
-            "##fragmentShader");
-          ImGui::PopItemWidth();
-
-          if (!shader->GetShaderLogs().m_FragmentShaderLog.empty()) {
-            ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
-            if (ImGui::CollapsingHeader("Fragment Shader Error Log##frag")) {
-              ImGui::TextWrapped(
-                "%s", shader->GetShaderLogs().m_FragmentShaderLog.c_str());
-            }
-            ImGui::PopItemWidth();
-          }
-          break;
-        }
-        case GraphicsApi::Vulkan:
-          break;
-#elif __APPLE__
-        case GraphicsApi::D3D12:
-          break;
-        case GraphicsApi::Metal:
-          break;
+        case GraphicsApi::D3D12: break;
+        case GraphicsApi::Metal: break;
         case GraphicsApi::OpenGL:
-          break;
-        case GraphicsApi::Vulkan:
-          break;
+          {
+            auto shader = (OpenGLShader*)mat->m_Shader.get();
+            ImGui::TextWrapped("Vertex Shader");
+            ImGui::SameLine();
+            ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
+            DwarfUI::AssetInput<VertexShaderAsset>(
+              shader->GetShaderAssets().m_VertexShaderAsset, "##vertexShader");
+            ImGui::PopItemWidth();
+
+            if (!shader->GetShaderLogs().m_VertexShaderLog.empty())
+            {
+              ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
+              if (ImGui::CollapsingHeader("Vertex Shader Error Log##vert"))
+              {
+                ImGui::TextWrapped(
+                  "%s", shader->GetShaderLogs().m_VertexShaderLog.c_str());
+              }
+              ImGui::PopItemWidth();
+            }
+
+            ImGui::TextWrapped("Tessellation Control Shader");
+            ImGui::SameLine();
+            ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
+            DwarfUI::AssetInput<TesselationControlShaderAsset>(
+              shader->GetShaderAssets().m_TessellationControlShaderAsset,
+              "##tessellationControlShader");
+            ImGui::PopItemWidth();
+
+            if (!shader->GetShaderLogs().m_TessellationControlShaderLog.empty())
+            {
+              ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
+              if (ImGui::CollapsingHeader(
+                    "Tessellation Control Shader Error Log##tesc"))
+              {
+                ImGui::TextWrapped("%s",
+                                   shader->GetShaderLogs()
+                                     .m_TessellationControlShaderLog.c_str());
+              }
+              ImGui::PopItemWidth();
+            }
+
+            ImGui::TextWrapped("Tessellation Evaluation Shader");
+            ImGui::SameLine();
+            ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
+            DwarfUI::AssetInput<TesselationEvaluationShaderAsset>(
+              shader->GetShaderAssets().m_TessellationEvaluationShaderAsset,
+              "##tessellationEvaluationShader");
+            ImGui::PopItemWidth();
+
+            if (!shader->GetShaderLogs()
+                   .m_TessellationEvaluationShaderLog.empty())
+            {
+              ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
+              if (ImGui::CollapsingHeader(
+                    "Tessellation Evaluation Shader Error Log##tese"))
+              {
+                ImGui::TextWrapped(
+                  "%s",
+                  shader->GetShaderLogs()
+                    .m_TessellationEvaluationShaderLog.c_str());
+              }
+              ImGui::PopItemWidth();
+            }
+
+            ImGui::TextWrapped("Geometry Shader");
+            ImGui::SameLine();
+            ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
+            DwarfUI::AssetInput<GeometryShaderAsset>(
+              shader->GetShaderAssets().m_GeometryShaderAsset,
+              "##geometryShader");
+            ImGui::PopItemWidth();
+
+            if (!shader->GetShaderLogs().m_GeometryShaderLog.empty())
+            {
+              ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
+              if (ImGui::CollapsingHeader("Geometry Shader Error Log##geom"))
+              {
+                ImGui::TextWrapped(
+                  "%s", shader->GetShaderLogs().m_GeometryShaderLog.c_str());
+              }
+              ImGui::PopItemWidth();
+            }
+
+            ImGui::TextWrapped("Fragment Shader");
+            ImGui::SameLine();
+            ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
+            DwarfUI::AssetInput<FragmentShaderAsset>(
+              shader->GetShaderAssets().m_FragmentShaderAsset,
+              "##fragmentShader");
+            ImGui::PopItemWidth();
+
+            if (!shader->GetShaderLogs().m_FragmentShaderLog.empty())
+            {
+              ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
+              if (ImGui::CollapsingHeader("Fragment Shader Error Log##frag"))
+              {
+                ImGui::TextWrapped(
+                  "%s", shader->GetShaderLogs().m_FragmentShaderLog.c_str());
+              }
+              ImGui::PopItemWidth();
+            }
+            break;
+          }
+        case GraphicsApi::Vulkan: break;
+#elif __linux__
+        case GraphicsApi::D3D12: break;
+        case GraphicsApi::Metal: break;
+        case GraphicsApi::OpenGL:
+          {
+            auto shader = (OpenGLShader*)mat->m_Shader.get();
+            ImGui::TextWrapped("Vertex Shader");
+            ImGui::SameLine();
+            ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
+            DwarfUI::AssetInput<VertexShaderAsset>(
+              shader->GetShaderAssets().m_VertexShaderAsset, "##vertexShader");
+            ImGui::PopItemWidth();
+
+            if (!shader->GetShaderLogs().m_VertexShaderLog.empty())
+            {
+              ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
+              if (ImGui::CollapsingHeader("Vertex Shader Error Log##vert"))
+              {
+                ImGui::TextWrapped(
+                  "%s", shader->GetShaderLogs().m_VertexShaderLog.c_str());
+              }
+              ImGui::PopItemWidth();
+            }
+
+            ImGui::TextWrapped("Tessellation Control Shader");
+            ImGui::SameLine();
+            ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
+            DwarfUI::AssetInput<TesselationControlShaderAsset>(
+              shader->GetShaderAssets().m_TessellationControlShaderAsset,
+              "##tessellationControlShader");
+            ImGui::PopItemWidth();
+
+            if (!shader->GetShaderLogs().m_TessellationControlShaderLog.empty())
+            {
+              ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
+              if (ImGui::CollapsingHeader(
+                    "Tessellation Control Shader Error Log##tesc"))
+              {
+                ImGui::TextWrapped("%s",
+                                   shader->GetShaderLogs()
+                                     .m_TessellationControlShaderLog.c_str());
+              }
+              ImGui::PopItemWidth();
+            }
+
+            ImGui::TextWrapped("Tessellation Evaluation Shader");
+            ImGui::SameLine();
+            ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
+            DwarfUI::AssetInput<TesselationEvaluationShaderAsset>(
+              shader->GetShaderAssets().m_TessellationEvaluationShaderAsset,
+              "##tessellationEvaluationShader");
+            ImGui::PopItemWidth();
+
+            if (!shader->GetShaderLogs()
+                   .m_TessellationEvaluationShaderLog.empty())
+            {
+              ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
+              if (ImGui::CollapsingHeader(
+                    "Tessellation Evaluation Shader Error Log##tese"))
+              {
+                ImGui::TextWrapped(
+                  "%s",
+                  shader->GetShaderLogs()
+                    .m_TessellationEvaluationShaderLog.c_str());
+              }
+              ImGui::PopItemWidth();
+            }
+
+            ImGui::TextWrapped("Geometry Shader");
+            ImGui::SameLine();
+            ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
+            DwarfUI::AssetInput<GeometryShaderAsset>(
+              shader->GetShaderAssets().m_GeometryShaderAsset,
+              "##geometryShader");
+            ImGui::PopItemWidth();
+
+            if (!shader->GetShaderLogs().m_GeometryShaderLog.empty())
+            {
+              ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
+              if (ImGui::CollapsingHeader("Geometry Shader Error Log##geom"))
+              {
+                ImGui::TextWrapped(
+                  "%s", shader->GetShaderLogs().m_GeometryShaderLog.c_str());
+              }
+              ImGui::PopItemWidth();
+            }
+
+            ImGui::TextWrapped("Fragment Shader");
+            ImGui::SameLine();
+            ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
+            DwarfUI::AssetInput<FragmentShaderAsset>(
+              shader->GetShaderAssets().m_FragmentShaderAsset,
+              "##fragmentShader");
+            ImGui::PopItemWidth();
+
+            if (!shader->GetShaderLogs().m_FragmentShaderLog.empty())
+            {
+              ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
+              if (ImGui::CollapsingHeader("Fragment Shader Error Log##frag"))
+              {
+                ImGui::TextWrapped(
+                  "%s", shader->GetShaderLogs().m_FragmentShaderLog.c_str());
+              }
+              ImGui::PopItemWidth();
+            }
+            break;
+          }
+        case GraphicsApi::Vulkan: break;
+#elif __APPLE__
+        case GraphicsApi::D3D12: break;
+        case GraphicsApi::Metal: break;
+        case GraphicsApi::OpenGL: break;
+        case GraphicsApi::Vulkan: break;
 #endif
       }
 
       ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 20);
 
-      if (ImGui::Button("Compile", ImVec2(60, 25))) {
+      if (ImGui::Button("Compile", ImVec2(60, 25)))
+      {
         mat->m_Shader->Compile();
       }
 
@@ -337,107 +357,125 @@ namespace Dwarf {
       ImGui::Unindent(15.0f);
     }
 
-    if (ImGui::CollapsingHeader("Parameters")) {
+    if (ImGui::CollapsingHeader("Parameters"))
+    {
       ImGui::Indent(15.0f);
       // Listing all current parameters (Excluding reserved uniform names by the
       // engine)
       int n = 0;
-      for (auto i = mat->m_Parameters.begin(); i != mat->m_Parameters.end();) {
+      for (auto i = mat->m_Parameters.begin(); i != mat->m_Parameters.end();)
+      {
         if (std::ranges::find(std::begin(reservedParameterNames),
                               std::end(reservedParameterNames),
-                              i->first) == std::end(reservedParameterNames)) {
+                              i->first) == std::end(reservedParameterNames))
+        {
           // Parameter UI specific to parameter type
-          switch (i->second->GetType()) {
+          switch (i->second->GetType())
+          {
             using enum ShaderParameterType;
-            case BOOLEAN: {
-              Ref<BooleanShaderParameter> parameter =
-                std::dynamic_pointer_cast<BooleanShaderParameter>(i->second);
-              ImGui::TextWrapped("%s", i->first.c_str());
-              ImGui::SameLine();
-              ImGui::Checkbox(
-                std::format("##boolean{}", std::to_string(n)).c_str(),
-                &(parameter->m_Value));
-              n++;
-            } break;
-            case INTEGER: {
-              Ref<IntegerShaderParameter> parameter =
-                std::dynamic_pointer_cast<IntegerShaderParameter>(i->second);
-              ImGui::TextWrapped("%s", i->first.c_str());
-              ImGui::SameLine();
-              ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
-                                   UNIFORM_DELETE_BUTTON_WIDTH - 8.0f);
-              ImGui::InputInt(
-                std::format("##integer{}", std::to_string(n)).c_str(),
-                &(parameter->m_Value));
-              n++;
-              ImGui::PopItemWidth();
-            } break;
-            case FLOAT: {
-              Ref<FloatShaderParameter> parameter =
-                std::dynamic_pointer_cast<FloatShaderParameter>(i->second);
-              ImGui::TextWrapped("%s", i->first.c_str());
-              ImGui::SameLine();
-              ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
-                                   UNIFORM_DELETE_BUTTON_WIDTH - 8.0f);
-              ImGui::InputFloat(
-                std::format("##float{}", std::to_string(n)).c_str(),
-                &(parameter->m_Value));
-              n++;
-              ImGui::PopItemWidth();
-            } break;
-            case TEX2D: {
-              Ref<Tex2DShaderParameter> parameter =
-                std::dynamic_pointer_cast<Tex2DShaderParameter>(i->second);
-              ImGui::TextWrapped("%s", i->first.c_str());
-              ImGui::SameLine();
-              ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
-                                   UNIFORM_DELETE_BUTTON_WIDTH - 8.0f);
-              DwarfUI::AssetInput<TextureAsset>(
-                parameter->m_Value,
-                std::format("##textureAsset{}", std::to_string(n)).c_str());
-              n++;
-              ImGui::PopItemWidth();
-            } break;
-            case VEC2: {
-              Ref<Vec2ShaderParameter> parameter =
-                std::dynamic_pointer_cast<Vec2ShaderParameter>(i->second);
-              ImGui::TextWrapped("%s", i->first.c_str());
-              ImGui::SameLine();
-              ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
-                                   UNIFORM_DELETE_BUTTON_WIDTH - 8.0f);
-              ImGui::InputFloat2(
-                std::format("##vec2{}", std::to_string(n)).c_str(),
-                &(parameter->m_Value.x));
-              n++;
-              ImGui::PopItemWidth();
-            } break;
-            case VEC3: {
-              Ref<Vec3ShaderParameter> parameter =
-                std::dynamic_pointer_cast<Vec3ShaderParameter>(i->second);
-              ImGui::TextWrapped("%s", i->first.c_str());
-              ImGui::SameLine();
-              ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
-                                   UNIFORM_DELETE_BUTTON_WIDTH - 8.0f);
-              ImGui::InputFloat3(
-                std::format("##vec3{}", std::to_string(n)).c_str(),
-                &(parameter->m_Value.x));
-              n++;
-              ImGui::PopItemWidth();
-            } break;
-            case VEC4: {
-              Ref<Vec4ShaderParameter> parameter =
-                std::dynamic_pointer_cast<Vec4ShaderParameter>(i->second);
-              ImGui::TextWrapped("%s", i->first.c_str());
-              ImGui::SameLine();
-              ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
-                                   UNIFORM_DELETE_BUTTON_WIDTH - 8.0f);
-              ImGui::ColorEdit4(
-                std::format("##vec4{}", std::to_string(n)).c_str(),
-                &(parameter->m_Value.x),
-                ImGuiColorEditFlags_None);
-              n++;
-              ImGui::PopItemWidth();
-            } break;
+            case BOOLEAN:
+              {
+                Ref<BooleanShaderParameter> parameter =
+                  std::dynamic_pointer_cast<BooleanShaderParameter>(i->second);
+                ImGui::TextWrapped("%s", i->first.c_str());
+                ImGui::SameLine();
+                ImGui::Checkbox(
+                  std::format("##boolean{}", std::to_string(n)).c_str(),
+                  &(parameter->m_Value));
+                n++;
+              }
+              break;
+            case INTEGER:
+              {
+                Ref<IntegerShaderParameter> parameter =
+                  std::dynamic_pointer_cast<IntegerShaderParameter>(i->second);
+                ImGui::TextWrapped("%s", i->first.c_str());
+                ImGui::SameLine();
+                ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
+                                     UNIFORM_DELETE_BUTTON_WIDTH - 8.0f);
+                ImGui::InputInt(
+                  std::format("##integer{}", std::to_string(n)).c_str(),
+                  &(parameter->m_Value));
+                n++;
+                ImGui::PopItemWidth();
+              }
+              break;
+            case FLOAT:
+              {
+                Ref<FloatShaderParameter> parameter =
+                  std::dynamic_pointer_cast<FloatShaderParameter>(i->second);
+                ImGui::TextWrapped("%s", i->first.c_str());
+                ImGui::SameLine();
+                ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
+                                     UNIFORM_DELETE_BUTTON_WIDTH - 8.0f);
+                ImGui::InputFloat(
+                  std::format("##float{}", std::to_string(n)).c_str(),
+                  &(parameter->m_Value));
+                n++;
+                ImGui::PopItemWidth();
+              }
+              break;
+            case TEX2D:
+              {
+                Ref<Tex2DShaderParameter> parameter =
+                  std::dynamic_pointer_cast<Tex2DShaderParameter>(i->second);
+                ImGui::TextWrapped("%s", i->first.c_str());
+                ImGui::SameLine();
+                ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
+                                     UNIFORM_DELETE_BUTTON_WIDTH - 8.0f);
+                DwarfUI::AssetInput<TextureAsset>(
+                  parameter->m_Value,
+                  std::format("##textureAsset{}", std::to_string(n)).c_str());
+                n++;
+                ImGui::PopItemWidth();
+              }
+              break;
+            case VEC2:
+              {
+                Ref<Vec2ShaderParameter> parameter =
+                  std::dynamic_pointer_cast<Vec2ShaderParameter>(i->second);
+                ImGui::TextWrapped("%s", i->first.c_str());
+                ImGui::SameLine();
+                ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
+                                     UNIFORM_DELETE_BUTTON_WIDTH - 8.0f);
+                ImGui::InputFloat2(
+                  std::format("##vec2{}", std::to_string(n)).c_str(),
+                  &(parameter->m_Value.x));
+                n++;
+                ImGui::PopItemWidth();
+              }
+              break;
+            case VEC3:
+              {
+                Ref<Vec3ShaderParameter> parameter =
+                  std::dynamic_pointer_cast<Vec3ShaderParameter>(i->second);
+                ImGui::TextWrapped("%s", i->first.c_str());
+                ImGui::SameLine();
+                ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
+                                     UNIFORM_DELETE_BUTTON_WIDTH - 8.0f);
+                ImGui::InputFloat3(
+                  std::format("##vec3{}", std::to_string(n)).c_str(),
+                  &(parameter->m_Value.x));
+                n++;
+                ImGui::PopItemWidth();
+              }
+              break;
+            case VEC4:
+              {
+                Ref<Vec4ShaderParameter> parameter =
+                  std::dynamic_pointer_cast<Vec4ShaderParameter>(i->second);
+                ImGui::TextWrapped("%s", i->first.c_str());
+                ImGui::SameLine();
+                ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
+                                     UNIFORM_DELETE_BUTTON_WIDTH - 8.0f);
+                ImGui::ColorEdit4(
+                  std::format("##vec4{}", std::to_string(n)).c_str(),
+                  &(parameter->m_Value.x),
+                  ImGuiColorEditFlags_None);
+                n++;
+                ImGui::PopItemWidth();
+              }
+              break;
           }
 
           // Delete button for parameter
@@ -447,9 +485,12 @@ namespace Dwarf {
                                UNIFORM_DELETE_BUTTON_WIDTH);
           if (ImGui::Button(
                 std::format("Delete##{}", std::to_string(n)).c_str(),
-                ImVec2(UNIFORM_DELETE_BUTTON_WIDTH - 15.0f, 0))) {
+                ImVec2(UNIFORM_DELETE_BUTTON_WIDTH - 15.0f, 0)))
+          {
             i = mat->m_Parameters.erase(i)--;
-          } else {
+          }
+          else
+          {
             n++;
           }
         }
@@ -472,11 +513,14 @@ namespace Dwarf {
       static int selectedParameterType = 0;
 
       ImGui::PushItemWidth(100.0f);
-      if (ImGui::BeginCombo(
-            "##paramType", parameterTypeNames[selectedParameterType].c_str())) {
-        for (int i = 0; i < 7; i++) {
+      if (ImGui::BeginCombo("##paramType",
+                            parameterTypeNames[selectedParameterType].c_str()))
+      {
+        for (int i = 0; i < 7; i++)
+        {
           if (ImGui::Selectable(parameterTypeNames[i].c_str(),
-                                i == selectedParameterType)) {
+                                i == selectedParameterType))
+          {
             selectedParameterType = i;
           }
         }
@@ -488,24 +532,16 @@ namespace Dwarf {
       if (ImGui::Button("Add##addParam",
                         ImVec2(UNIFORM_DELETE_BUTTON_WIDTH - 15.0f, 0)) &&
           (std::strlen(paramName) > 0) &&
-          !mat->m_Parameters.contains(paramName)) {
-        switch ((ShaderParameterType)selectedParameterType) {
+          !mat->m_Parameters.contains(paramName))
+      {
+        switch ((ShaderParameterType)selectedParameterType)
+        {
           using enum ShaderParameterType;
-          case BOOLEAN:
-            mat->SetParameter(paramName, false);
-            break;
-          case INTEGER:
-            mat->SetParameter(paramName, 0);
-            break;
-          case FLOAT:
-            mat->SetParameter(paramName, 0.0f);
-            break;
-          case TEX2D:
-            mat->SetParameter(paramName, nullptr, TEX2D);
-            break;
-          case VEC2:
-            mat->SetParameter(paramName, glm::vec2(0.0f, 0.0f));
-            break;
+          case BOOLEAN: mat->SetParameter(paramName, false); break;
+          case INTEGER: mat->SetParameter(paramName, 0); break;
+          case FLOAT: mat->SetParameter(paramName, 0.0f); break;
+          case TEX2D: mat->SetParameter(paramName, nullptr, TEX2D); break;
+          case VEC2: mat->SetParameter(paramName, glm::vec2(0.0f, 0.0f)); break;
           case VEC3:
             mat->SetParameter(paramName, glm::vec3(0.0f, 0.0f, 0.0f));
             break;
@@ -521,7 +557,8 @@ namespace Dwarf {
 
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
     if (ImGui::Button("Save changes",
-                      ImVec2(ImGui::GetContentRegionAvail().x / 2.0f, 50))) {
+                      ImVec2(ImGui::GetContentRegionAvail().x / 2.0f, 50)))
+    {
       MaterialSerializer::Serialize(*mat, asset->GetPath());
       ImGui::EndChild();
       return;
@@ -530,7 +567,8 @@ namespace Dwarf {
     ImGui::SameLine();
 
     if (ImGui::Button("Generate parameters",
-                      ImVec2(ImGui::GetContentRegionAvail().x, 50))) {
+                      ImVec2(ImGui::GetContentRegionAvail().x, 50)))
+    {
       mat->GenerateShaderParameters();
     }
 
@@ -550,16 +588,18 @@ namespace Dwarf {
         ImGui::IsMouseHoveringRect(
           { ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y },
           { ImGui::GetCursorScreenPos().x + ImGui::GetContentRegionAvail().x,
-            ImGui::GetCursorScreenPos().y +
-              ImGui::GetContentRegionAvail().x })) {
+            ImGui::GetCursorScreenPos().y + ImGui::GetContentRegionAvail().x }))
+    {
       isRotating = true;
     }
 
-    if (isRotating && InputManager::GetMouseUp(Dwarf::MOUSE_BUTTON::LEFT)) {
+    if (isRotating && InputManager::GetMouseUp(Dwarf::MOUSE_BUTTON::LEFT))
+    {
       isRotating = false;
     }
 
-    if (isRotating) {
+    if (isRotating)
+    {
       PreviewRenderer::UpdateRotation(InputManager::GetDeltaMousePos());
     }
 
@@ -585,7 +625,8 @@ namespace Dwarf {
   }
 
   template<>
-  void AssetInspectorRenderer::RenderAssetInspector<AssetReference<SceneAsset>>(
+  void
+  AssetInspectorRenderer::RenderAssetInspector<AssetReference<SceneAsset>>(
     Ref<AssetReference<SceneAsset>> asset)
   {
     ImDrawList* draw_list = ImGui::GetWindowDrawList();
@@ -610,7 +651,8 @@ namespace Dwarf {
     ImGui::TextWrapped("Dwarf Engine Scene");
 
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
-    if (ImGui::Button("Reimport")) {
+    if (ImGui::Button("Reimport"))
+    {
       AssetDatabase::Reimport(asset);
     }
 
@@ -631,7 +673,8 @@ namespace Dwarf {
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 20);
 
     if (ImGui::Button("Load scene") &&
-        FileHandler::CheckIfFileExists(asset->GetPath())) {
+        FileHandler::CheckIfFileExists(asset->GetPath()))
+    {
       AssetInspectorRenderer::s_Model->SetScene(
         SceneUtilities::LoadScene(asset->GetPath()));
     }
@@ -651,7 +694,8 @@ namespace Dwarf {
   }
 
   template<>
-  void AssetInspectorRenderer::RenderAssetInspector<AssetReference<ModelAsset>>(
+  void
+  AssetInspectorRenderer::RenderAssetInspector<AssetReference<ModelAsset>>(
     Ref<AssetReference<ModelAsset>> asset)
   {
     ImDrawList* draw_list = ImGui::GetWindowDrawList();
@@ -676,7 +720,8 @@ namespace Dwarf {
     ImGui::TextWrapped("Model");
 
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
-    if (ImGui::Button("Reimport")) {
+    if (ImGui::Button("Reimport"))
+    {
       AssetDatabase::Reimport(asset);
     }
 
@@ -714,9 +759,10 @@ namespace Dwarf {
     if (ImGui::IsMouseHoveringRect(
           { ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y },
           { ImGui::GetCursorScreenPos().x + ImGui::GetContentRegionAvail().x,
-            ImGui::GetCursorScreenPos().y +
-              ImGui::GetContentRegionAvail().x })) {
-      if (InputManager::GetMouseDown(Dwarf::MOUSE_BUTTON::LEFT)) {
+            ImGui::GetCursorScreenPos().y + ImGui::GetContentRegionAvail().x }))
+    {
+      if (InputManager::GetMouseDown(Dwarf::MOUSE_BUTTON::LEFT))
+      {
         isRotating = true;
       }
 
@@ -728,11 +774,13 @@ namespace Dwarf {
                               (float)s_Model->GetDeltaTime() * 1.7f)));
     }
 
-    if (isRotating && InputManager::GetMouseUp(Dwarf::MOUSE_BUTTON::LEFT)) {
+    if (isRotating && InputManager::GetMouseUp(Dwarf::MOUSE_BUTTON::LEFT))
+    {
       isRotating = false;
     }
 
-    if (isRotating) {
+    if (isRotating)
+    {
       PreviewRenderer::UpdateRotation(InputManager::GetDeltaMousePos());
     }
 
@@ -784,7 +832,8 @@ namespace Dwarf {
     ImGui::TextWrapped("Texture");
 
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
-    if (ImGui::Button("Reimport")) {
+    if (ImGui::Button("Reimport"))
+    {
       AssetDatabase::Reimport(asset);
     }
 
@@ -824,7 +873,8 @@ namespace Dwarf {
   }
 
   template<>
-  void AssetInspectorRenderer::RenderAssetInspector<
+  void
+  AssetInspectorRenderer::RenderAssetInspector<
     AssetReference<VertexShaderAsset>>(
     Ref<AssetReference<VertexShaderAsset>> asset)
   {
@@ -842,7 +892,8 @@ namespace Dwarf {
   }
 
   template<>
-  void AssetInspectorRenderer::RenderAssetInspector<
+  void
+  AssetInspectorRenderer::RenderAssetInspector<
     AssetReference<TesselationControlShaderAsset>>(
     Ref<AssetReference<TesselationControlShaderAsset>> asset)
   {
@@ -860,7 +911,8 @@ namespace Dwarf {
   }
 
   template<>
-  void AssetInspectorRenderer::RenderAssetInspector<
+  void
+  AssetInspectorRenderer::RenderAssetInspector<
     AssetReference<TesselationEvaluationShaderAsset>>(
     Ref<AssetReference<TesselationEvaluationShaderAsset>> asset)
   {
@@ -878,7 +930,8 @@ namespace Dwarf {
   }
 
   template<>
-  void AssetInspectorRenderer::RenderAssetInspector<
+  void
+  AssetInspectorRenderer::RenderAssetInspector<
     AssetReference<GeometryShaderAsset>>(
     Ref<AssetReference<GeometryShaderAsset>> asset)
   {
@@ -896,7 +949,8 @@ namespace Dwarf {
   }
 
   template<>
-  void AssetInspectorRenderer::RenderAssetInspector<
+  void
+  AssetInspectorRenderer::RenderAssetInspector<
     AssetReference<FragmentShaderAsset>>(
     Ref<AssetReference<FragmentShaderAsset>> asset)
   {
@@ -914,7 +968,8 @@ namespace Dwarf {
   }
 
   template<>
-  void AssetInspectorRenderer::RenderAssetInspector<
+  void
+  AssetInspectorRenderer::RenderAssetInspector<
     AssetReference<ComputeShaderAsset>>(
     Ref<AssetReference<ComputeShaderAsset>> asset)
   {

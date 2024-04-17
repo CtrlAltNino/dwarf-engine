@@ -4,7 +4,8 @@
 #include "Editor/EditorModel.h"
 #include "Editor/Modules/GuiModule.h"
 
-namespace Dwarf {
+namespace Dwarf
+{
 
   /// @brief GUI Module to display a window for the asset directory structure.
   class DebugWindow : public GuiModule
@@ -13,13 +14,17 @@ namespace Dwarf {
     DebugWindow(Ref<EditorModel> model, int id);
 
     /// @brief Renders the module window.
-    void OnImGuiRender() override;
+    void
+    OnImGuiRender() override;
 
     /// @brief Executes all pre frame tasks.
-    void OnUpdate(double deltaTime) override;
+    void
+    OnUpdate(double deltaTime) override;
 
-    std::string Serialize() override;
+    std::string
+    Serialize() override;
 
-    void Deserialize(nlohmann::json moduleData) override;
+    void
+    Deserialize(nlohmann::json moduleData) override;
   };
 }

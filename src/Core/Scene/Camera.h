@@ -10,7 +10,8 @@
 #include "Core/Base.h"
 #include "Core/Scene/SceneComponents.h"
 
-namespace Dwarf {
+namespace Dwarf
+{
 
   /// @brief Class representing a camera.
   class Camera
@@ -43,58 +44,70 @@ namespace Dwarf {
     Camera(glm::vec3 position, glm::vec3 rotation);
     Camera(glm::vec3 position,
            glm::vec3 rotation,
-           float fov,
-           float nearPlane,
-           float farPlane,
-           float aspectRatio);
+           float     fov,
+           float     nearPlane,
+           float     farPlane,
+           float     aspectRatio);
 
     // ========== Getters ==========
 
     /// @brief Returns the field of view.
     /// @return Fov of the camera.
-    float GetFov() const;
+    float
+    GetFov() const;
 
     /// @brief Returns the near and far plane distances.
     /// @return The near and far plane distances as a 2D vector.
-    glm::vec2 GetRenderPlaneParameters() const;
+    glm::vec2
+    GetRenderPlaneParameters() const;
 
     /// @brief Returns the aspect ratio of the camera.
     /// @return Aspect ratio.
-    float GetAspectRatio() const;
+    float
+    GetAspectRatio() const;
 
     /// @brief Returns the view matrix of the camera.
     /// @return 4x4 view matrix.
-    glm::mat4x4 GetViewMatrix() const;
+    glm::mat4x4
+    GetViewMatrix() const;
 
     /// @brief Returns the projection matrix of the camera.
     /// @return 4x4 projection matrix.
-    glm::mat4x4 GetProjectionMatrix() const;
+    glm::mat4x4
+    GetProjectionMatrix() const;
 
-    Ref<TransformComponent> GetTransform() const;
+    Ref<TransformComponent>
+    GetTransform() const;
 
     // ========== Setters ==========
 
     /// @brief Sets the transform of the camera.
     /// @param transform Pointer to a transform.
-    void SetTransform(Ref<TransformComponent> transform);
+    void
+    SetTransform(Ref<TransformComponent> transform);
 
     /// @brief Sets the field of view of the camera.
     /// @param fov Field of view expressed in degrees.
-    void SetFov(float fov);
+    void
+    SetFov(float fov);
 
     /// @brief Sets the near and far planes parameters.
     /// @param planeParameters 2D vector containing the near plane information
     /// in the x, and the far plane information in the y component.
-    void SetRenderPlaneParameters(glm::vec2 planeParameters);
+    void
+    SetRenderPlaneParameters(glm::vec2 planeParameters);
 
     /// @brief Sets the aspect ratio of the camera.
     /// @param aspectRatio Aspect ratio value.
-    void SetAspectRatio(float aspectRatio);
+    void
+    SetAspectRatio(float aspectRatio);
 
     // ========== Camera Functions ==========
-    void OnUpdate(double deltaTime) const;
+    void
+    OnUpdate(double deltaTime) const;
 
-    glm::vec3 ScreenToWorld(glm::vec2 const& screenPosition,
-                            glm::vec2 const& viewport) const;
+    glm::vec3
+    ScreenToWorld(glm::vec2 const& screenPosition,
+                  glm::vec2 const& viewport) const;
   };
 }

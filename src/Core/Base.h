@@ -4,12 +4,14 @@
 #include <array>
 #include <string>
 
-namespace Dwarf {
+namespace Dwarf
+{
 
   template<typename T>
   using Scope = std::unique_ptr<T>;
   template<typename T, typename... Args>
-  constexpr Scope<T> CreateScope(Args&&... args)
+  constexpr Scope<T>
+  CreateScope(Args&&... args)
   {
     return std::make_unique<T>(std::forward<Args>(args)...);
   }
@@ -17,7 +19,8 @@ namespace Dwarf {
   template<typename T>
   using Ref = std::shared_ptr<T>;
   template<typename T, typename... Args>
-  constexpr Ref<T> CreateRef(Args&&... args)
+  constexpr Ref<T>
+  CreateRef(Args&&... args)
   {
     return std::make_shared<T>(std::forward<Args>(args)...);
   }
@@ -36,13 +39,15 @@ namespace Dwarf {
   // 12", "Metal", "OpenGL", "Vulkan"};
 
   // A helper function to create a constexpr string
-  constexpr std::string_view make_constexpr_string(const char* str)
+  constexpr std::string_view
+  make_constexpr_string(const char* str)
   {
     return std::string_view(str);
   }
 
   // A helper function to create the graphicsApiNames array
-  constexpr auto make_graphics_api_names()
+  constexpr auto
+  make_graphics_api_names()
   {
     return std::array<std::string_view, 4>{ make_constexpr_string(
                                               "Direct3D 12"),

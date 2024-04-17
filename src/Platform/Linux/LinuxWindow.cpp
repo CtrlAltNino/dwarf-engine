@@ -2,7 +2,8 @@
 #include "Platform/Linux/LinuxWindow.h"
 #include "Input/InputManager.h"
 
-namespace Dwarf {
+namespace Dwarf
+{
 
   LinuxWindow::LinuxWindow(GraphicsApi api)
     : m_Api(api)
@@ -16,12 +17,14 @@ namespace Dwarf {
     SDL_Quit();
   }
 
-  GraphicsApi LinuxWindow::GetApi()
+  GraphicsApi
+  LinuxWindow::GetApi()
   {
     return m_Api;
   }
 
-  void LinuxWindow::Init(const WindowProps& props)
+  void
+  LinuxWindow::Init(const WindowProps& props)
   {
     // SDL Setup
     SDL_Init(SDL_INIT_VIDEO);
@@ -36,12 +39,11 @@ namespace Dwarf {
     WindowFlags |= SDL_WINDOW_MOUSE_CAPTURE;
     WindowFlags |= SDL_WINDOW_RESIZABLE;
 
-    switch (props.Api) {
+    switch (props.Api)
+    {
       using enum GraphicsApi;
-      case D3D12:
-        break;
-      case Metal:
-        break;
+      case D3D12: break;
+      case Metal: break;
       case OpenGL:
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
@@ -50,9 +52,7 @@ namespace Dwarf {
                             SDL_GL_CONTEXT_PROFILE_CORE);
         WindowFlags |= SDL_WINDOW_OPENGL;
         break;
-      case Vulkan:
-        WindowFlags |= SDL_WINDOW_VULKAN;
-        break;
+      case Vulkan: WindowFlags |= SDL_WINDOW_VULKAN; break;
     }
 
     m_Window = SDL_CreateWindow(m_Data.Title.c_str(),
@@ -62,7 +62,8 @@ namespace Dwarf {
                                 (int)m_Data.Height,
                                 WindowFlags);
 
-    if (m_Window == nullptr) {
+    if (m_Window == nullptr)
+    {
       std::cout << "[WINDOW CREATION] Error: Failed to create window"
                 << std::endl;
       SDL_Quit();
@@ -83,46 +84,50 @@ namespace Dwarf {
     m_ImguiLayer->OnAttach(m_Window);
   }
 
-  void LinuxWindow::ShowWindow()
+  void
+  LinuxWindow::ShowWindow()
   {
     SDL_ShowWindow(m_Window);
   }
 
-  void LinuxWindow::HideWindow()
+  void
+  LinuxWindow::HideWindow()
   {
     SDL_HideWindow(m_Window);
   }
 
-  void LinuxWindow::NewFrame()
+  void
+  LinuxWindow::NewFrame()
   {
     SDL_Event event;
-    while (SDL_PollEvent(&event)) {
+    while (SDL_PollEvent(&event))
+    {
       m_ImguiLayer->HandleSDLEvent(&event);
 
-      switch (event.type) {
-        case SDL_QUIT:
-          m_Data.ShouldClose = true;
-          break;
+      switch (event.type)
+      {
+        case SDL_QUIT: m_Data.ShouldClose = true; break;
         case SDL_KEYDOWN:
           InputManager::ProcessKeyDown(event.key.keysym.scancode);
           break;
         case SDL_KEYUP:
           InputManager::ProcessKeyUp(event.key.keysym.scancode);
           break;
-        default:
-          break;
+        default: break;
       }
     }
     m_ImguiLayer->Begin();
   }
 
-  void LinuxWindow::EndFrame()
+  void
+  LinuxWindow::EndFrame()
   {
     m_ImguiLayer->End();
     m_Context->SwapBuffers();
   }
 
-  void LinuxWindow::SetVSync(bool enabled)
+  void
+  LinuxWindow::SetVSync(bool enabled)
   {
     if (enabled)
       SDL_GL_SetSwapInterval(1);
@@ -132,22 +137,26 @@ namespace Dwarf {
     m_Data.VSync = enabled;
   }
 
-  bool LinuxWindow::IsVSync()
+  bool
+  LinuxWindow::IsVSync()
   {
     return m_Data.VSync;
   }
 
-  bool LinuxWindow::ShouldClose()
+  bool
+  LinuxWindow::ShouldClose()
   {
     return m_Data.ShouldClose;
   }
 
-  void LinuxWindow::SetWindowTitle(std::string_view windowName)
+  void
+  LinuxWindow::SetWindowTitle(std::string_view windowName)
   {
     SDL_SetWindowTitle(m_Window, windowName.data());
   }
 
-  void LinuxWindow::MaximizeWindow()
+  void
+  LinuxWindow::MaximizeWindow()
   {
     SDL_MaximizeWindow(m_Window);
   }

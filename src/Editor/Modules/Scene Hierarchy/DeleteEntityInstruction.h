@@ -2,7 +2,8 @@
 
 #include "Editor/Modules/Scene Hierarchy/GraphInstruction.h"
 
-namespace Dwarf {
+namespace Dwarf
+{
 
   /// @brief Buffered instruction for changing the child index of entities.
   class DeleteEntityInstruction : public GraphInstruction
@@ -16,8 +17,9 @@ namespace Dwarf {
 
   public:
     /// @brief Executes the instruction.
-    void PerformInstruction() override;
-    DeleteEntityInstruction(Ref<Scene> scene,
+    void
+    PerformInstruction() override;
+    DeleteEntityInstruction(Ref<Scene>          scene,
                             std::vector<Entity> sourceEntities);
   };
 }

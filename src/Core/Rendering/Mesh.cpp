@@ -14,30 +14,32 @@
 // #include "Platform/Metal/MetalMesh.h"
 #endif
 
-namespace Dwarf {
+namespace Dwarf
+{
   Ref<Mesh> Mesh::s_GridMesh = nullptr;
   Ref<Mesh> Mesh::s_UnitSphere = nullptr;
 
-  Mesh::Mesh(std::vector<Vertex> vertices,
+  Mesh::Mesh(std::vector<Vertex>       vertices,
              std::vector<unsigned int> indices,
-             unsigned int materialIndex)
+             unsigned int              materialIndex)
     : m_Vertices(vertices)
     , m_Indices(indices)
     , m_MaterialIndex(materialIndex)
   {
   }
 
-  Ref<Mesh> Mesh::Create(std::vector<Vertex> const& vertices,
-                         std::vector<unsigned int> const& indices,
-                         unsigned int materialIndex)
+  Ref<Mesh>
+  Mesh::Create(std::vector<Vertex> const&       vertices,
+               std::vector<unsigned int> const& indices,
+               unsigned int                     materialIndex)
   {
-    switch (Renderer::GetAPI()) {
+    switch (Renderer::GetAPI())
+    {
 #ifdef _WIN32
       case GraphicsApi::D3D12:
         // return CreateRef<D3D12Mesh>(spec);
         break;
-      case GraphicsApi::Metal:
-        break;
+      case GraphicsApi::Metal: break;
       case GraphicsApi::OpenGL:
         return CreateRef<OpenGLMesh>(vertices, indices, materialIndex);
         break;
@@ -45,10 +47,8 @@ namespace Dwarf {
         // return CreateRef<VulkanFramebuffer>(spec);
         break;
 #elif __linux__
-      case GraphicsApi::D3D12:
-        break;
-      case GraphicsApi::Metal:
-        break;
+      case GraphicsApi::D3D12: break;
+      case GraphicsApi::Metal: break;
       case GraphicsApi::OpenGL:
         return CreateRef<OpenGLMesh>(vertices, indices, materialIndex);
         break;
@@ -56,28 +56,28 @@ namespace Dwarf {
         // return CreateRef<VulkanFramebuffer>(spec);
         break;
 #elif __APPLE__
-      case GraphicsApi::D3D12:
-        break;
+      case GraphicsApi::D3D12: break;
       case GraphicsApi::Metal:
         // return CreateRef<MetalFramebuffer>(spec);
         break;
-      case GraphicsApi::OpenGL:
-        break;
-      case GraphicsApi::Vulkan:
-        break;
+      case GraphicsApi::OpenGL: break;
+      case GraphicsApi::Vulkan: break;
 #endif
     }
     return nullptr;
   }
 
-  Ref<Mesh> Mesh::GenerateUnitSphere(int stacks, int slices)
+  Ref<Mesh>
+  Mesh::GenerateUnitSphere(int stacks, int slices)
   {
     auto vertices = std::vector<Vertex>();
     auto indices = std::vector<unsigned int>();
-    for (int i = 0; i <= stacks; ++i) {
+    for (int i = 0; i <= stacks; ++i)
+    {
       float phi =
         glm::pi<float>() * static_cast<float>(i) / static_cast<float>(stacks);
-      for (int j = 0; j <= slices; ++j) {
+      for (int j = 0; j <= slices; ++j)
+      {
         float theta = 2.0f * glm::pi<float>() * static_cast<float>(j) /
                       static_cast<float>(slices);
 
@@ -98,8 +98,10 @@ namespace Dwarf {
       }
     }
 
-    for (int i = 0; i < stacks; ++i) {
-      for (int j = 0; j < slices; ++j) {
+    for (int i = 0; i < stacks; ++i)
+    {
+      for (int j = 0; j < slices; ++j)
+      {
         int index0 = i * (slices + 1) + j;
         int index1 = index0 + 1;
         int index2 = (i + 1) * (slices + 1) + j;
@@ -118,7 +120,8 @@ namespace Dwarf {
     return Mesh::Create(vertices, indices, 0);
   }
 
-  void Mesh::Init()
+  void
+  Mesh::Init()
   {
     s_GridMesh = Mesh::Create({ { { -50, 0, 50 }, { 0, 1, 0 } },
                                 { { 50, 0, 50 }, { 0, 1, 0 } },
@@ -131,17 +134,20 @@ namespace Dwarf {
     s_UnitSphere->SetupMesh();
   }
 
-  int Mesh::GetMaterialIndex() const
+  int
+  Mesh::GetMaterialIndex() const
   {
     return m_MaterialIndex;
   }
 
-  std::vector<Vertex> Mesh::GetVertices() const
+  std::vector<Vertex>
+  Mesh::GetVertices() const
   {
     return m_Vertices;
   }
 
-  std::vector<unsigned int> Mesh::GetIndices() const
+  std::vector<unsigned int>
+  Mesh::GetIndices() const
   {
     return m_Indices;
   }

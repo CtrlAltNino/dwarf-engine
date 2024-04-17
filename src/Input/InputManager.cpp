@@ -2,7 +2,8 @@
 #include "Input/InputManager.h"
 #include <array>
 
-namespace Dwarf {
+namespace Dwarf
+{
 
   glm::ivec2 InputManager::s_CurrentMousePos = glm::ivec2(0);
   glm::ivec2 InputManager::s_LastMousePos = glm::ivec2(0);
@@ -36,58 +37,69 @@ namespace Dwarf {
     { MOUSE_BUTTON::MOUSE_BUTTON_5, 5 }
   };
 
-  bool InputManager::GetKey(KEYCODE key)
+  bool
+  InputManager::GetKey(KEYCODE key)
   {
     return s_KeysDown.contains(key) || s_KeysRepeat.contains(key);
   }
 
-  bool InputManager::GetKeyDown(KEYCODE key)
+  bool
+  InputManager::GetKeyDown(KEYCODE key)
   {
     return s_KeysDown.contains(key);
   }
 
-  bool InputManager::GetKeyUp(KEYCODE key)
+  bool
+  InputManager::GetKeyUp(KEYCODE key)
   {
     return s_KeysUp.contains(key);
   }
 
-  bool InputManager::GetMouse(MOUSE_BUTTON mButton)
+  bool
+  InputManager::GetMouse(MOUSE_BUTTON mButton)
   {
     return s_MouseButtonStates[mButton] > 0;
   }
 
-  bool InputManager::GetMouseDown(MOUSE_BUTTON mButton)
+  bool
+  InputManager::GetMouseDown(MOUSE_BUTTON mButton)
   {
     return s_MouseButtonStates[mButton] == 1;
   }
 
-  bool InputManager::GetMouseUp(MOUSE_BUTTON mButton)
+  bool
+  InputManager::GetMouseUp(MOUSE_BUTTON mButton)
   {
     return s_MouseButtonStates[mButton] == 0;
   }
 
-  void InputManager::SetMouseVisibility(bool visibilityState)
+  void
+  InputManager::SetMouseVisibility(bool visibilityState)
   {
     ImGui::SetMouseCursor(visibilityState ? ImGuiMouseCursor_Arrow
                                           : ImGuiMouseCursor_None);
   }
 
-  glm::vec2 InputManager::GetMousePos()
+  glm::vec2
+  InputManager::GetMousePos()
   {
     return s_CurrentMousePos;
   }
 
-  void InputManager::SetDeltaMousePos(float x, float y)
+  void
+  InputManager::SetDeltaMousePos(float x, float y)
   {
     s_DeltaMousePos = { x, y };
   }
 
-  glm::vec2 InputManager::GetDeltaMousePos()
+  glm::vec2
+  InputManager::GetDeltaMousePos()
   {
     return s_DeltaMousePos;
   }
 
-  void InputManager::OnUpdate()
+  void
+  InputManager::OnUpdate()
   {
     using enum MOUSE_BUTTON;
     std::array<MOUSE_BUTTON, 5> mArr = MOUSE_BUTTON_INITIALIZER;
@@ -95,13 +107,18 @@ namespace Dwarf {
     Uint32 mouseButtonMask =
       SDL_GetMouseState(&s_CurrentMousePos.x, &s_CurrentMousePos.y);
 
-    for (const MOUSE_BUTTON& mCode : mArr) {
-      if (mouseButtonMask & SDL_BUTTON(s_MouseCodeMap[mCode])) {
+    for (const MOUSE_BUTTON& mCode : mArr)
+    {
+      if (mouseButtonMask & SDL_BUTTON(s_MouseCodeMap[mCode]))
+      {
         // mousePressSet.insert(mCode);
-        if (s_MouseButtonStates[mCode] < 2) {
+        if (s_MouseButtonStates[mCode] < 2)
+        {
           s_MouseButtonStates[mCode]++;
         }
-      } else {
+      }
+      else
+      {
         s_MouseButtonStates[mCode] = 0;
       }
     }
@@ -109,48 +126,57 @@ namespace Dwarf {
     SDL_GetRelativeMouseState(&s_DeltaMousePos.x, &s_DeltaMousePos.y);
   }
 
-  void InputManager::ProcessKeyDown(SDL_Scancode key)
+  void
+  InputManager::ProcessKeyDown(SDL_Scancode key)
   {
     KEYCODE keycode = s_KeyCodeMap[key];
 
-    if (s_KeysDown.contains(keycode)) {
+    if (s_KeysDown.contains(keycode))
+    {
       s_KeysDown.erase(keycode);
       s_KeysRepeat.emplace(keycode);
-    } else {
+    }
+    else
+    {
       s_KeysDown.emplace(keycode);
     }
   }
 
-  void InputManager::ProcessKeyUp(SDL_Scancode key)
+  void
+  InputManager::ProcessKeyUp(SDL_Scancode key)
   {
     KEYCODE keycode = s_KeyCodeMap[key];
 
-    if (s_KeysDown.contains(keycode)) {
+    if (s_KeysDown.contains(keycode))
+    {
       s_KeysDown.erase(keycode);
     }
 
-    if (s_KeysRepeat.contains(keycode)) {
+    if (s_KeysRepeat.contains(keycode))
+    {
       s_KeysRepeat.erase(keycode);
     }
 
     s_KeysUp.emplace(keycode);
   }
 
-  glm::vec2 InputManager::GetDeltaScroll()
+  glm::vec2
+  InputManager::GetDeltaScroll()
   {
     return s_DeltaScroll;
   }
 
-  void InputManager::ProcessScroll(SDL_Event const& event)
+  void
+  InputManager::ProcessScroll(SDL_Event const& event)
   {
 
-    switch (event.wheel.type) {
+    switch (event.wheel.type)
+    {
       case SDL_MOUSEWHEEL:
         s_DeltaScroll = { event.wheel.x, event.wheel.y };
         break;
 
-      default:
-        break;
+      default: break;
     }
   }
 }

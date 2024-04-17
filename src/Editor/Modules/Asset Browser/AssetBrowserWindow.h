@@ -10,7 +10,8 @@
 
 #define RENAME_BUFFER_SIZE (128)
 
-namespace Dwarf {
+namespace Dwarf
+{
 
   /// @brief GUI Module to display a window for the asset directory structure.
   class AssetBrowserWindow : public GuiModule
@@ -31,25 +32,33 @@ namespace Dwarf {
 
     bool m_OpenRename;
 
-    void SetRenameBuffer(std::filesystem::path const& path);
+    void
+    SetRenameBuffer(std::filesystem::path const& path);
 
     std::vector<std::filesystem::path> m_DirectoryHistory;
 
     std::filesystem::path m_SelectedAsset;
-    int m_HistoryPos = 0;
-    void OpenPath(std::filesystem::directory_entry const& directoryEntry);
+    int                   m_HistoryPos = 0;
+    void
+    OpenPath(std::filesystem::directory_entry const& directoryEntry);
 
-    void EnterDirectory(std::filesystem::path const& path);
+    void
+    EnterDirectory(std::filesystem::path const& path);
 
-    void GoBack();
+    void
+    GoBack();
 
-    void GoForward();
+    void
+    GoForward();
 
-    void HandleShortcuts() const;
+    void
+    HandleShortcuts() const;
 
-    void LoadIcons();
+    void
+    LoadIcons();
 
-    void RenderDirectory(std::filesystem::path const& path);
+    void
+    RenderDirectory(std::filesystem::path const& path);
 
     float m_IconScale = 1.0f;
 
@@ -81,31 +90,42 @@ namespace Dwarf {
 
     ImGuiID footerID;
 
-    void RenderDirectoryLevel(std::filesystem::path const& directory);
+    void
+    RenderDirectoryLevel(std::filesystem::path const& directory);
 
-    void SetupDockspace(ImGuiID id);
+    void
+    SetupDockspace(ImGuiID id);
 
-    void SelectAsset(std::filesystem::path const& path);
+    void
+    SelectAsset(std::filesystem::path const& path);
 
-    void ClearSelection();
+    void
+    ClearSelection();
 
-    void RenderFooter();
+    void
+    RenderFooter();
 
-    void RenderFolderStructure();
+    void
+    RenderFolderStructure();
 
-    void RenderFolderContent();
+    void
+    RenderFolderContent();
 
   public:
     AssetBrowserWindow(Ref<EditorModel> model, int id);
 
     /// @brief Renders the module window.
-    void OnImGuiRender() override;
+    void
+    OnImGuiRender() override;
 
     /// @brief Executes all pre frame tasks.
-    void OnUpdate(double deltaTime) override;
+    void
+    OnUpdate(double deltaTime) override;
 
-    std::string Serialize() override;
+    std::string
+    Serialize() override;
 
-    void Deserialize(nlohmann::json moduleData) override;
+    void
+    Deserialize(nlohmann::json moduleData) override;
   };
 }

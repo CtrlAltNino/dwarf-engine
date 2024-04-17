@@ -6,7 +6,8 @@
 #include "Launcher/ProjectListHandler.h"
 #include "Utilities/FileHandler.h"
 
-namespace Dwarf {
+namespace Dwarf
+{
 
   /// @brief Class that provides project creation functionality.
   class ProjectCreator
@@ -17,14 +18,16 @@ namespace Dwarf {
 
   public:
     /// @brief Initialized the project creator.
-    static void InitProjectCreator()
+    static void
+    InitProjectCreator()
     {
       s_DefaultProjectPath = FileHandler::GetDocumentsPath();
     }
 
     /// @brief Returns the default project path.
     /// @return Path to default directory to create projects in.
-    static std::filesystem::path GetDefaultProjectPath()
+    static std::filesystem::path
+    GetDefaultProjectPath()
     {
       return s_DefaultProjectPath;
     }
@@ -36,23 +39,27 @@ namespace Dwarf {
     /// @param projectTemplate Which template should be used for creating the
     /// project.
     /// @return Error code.
-    static int CreateProject(const char* projectName,
-                             std::filesystem::path projectPath,
-                             GraphicsApi graphicsApi,
-                             ProjectTemplate projectTemplate)
+    static int
+    CreateProject(const char*           projectName,
+                  std::filesystem::path projectPath,
+                  GraphicsApi           graphicsApi,
+                  ProjectTemplate       projectTemplate)
     {
       std::cout << "Yeet1" << std::endl;
       // Create Project blabla
       std::filesystem::path projectDirectory = projectPath / projectName;
-      if (!FileHandler::CheckIfDirectoyExists(projectDirectory)) {
+      if (!FileHandler::CheckIfDirectoyExists(projectDirectory))
+      {
         std::cout << "Yeet2" << std::endl;
         std::filesystem::path projectSettingsPath =
           projectPath / projectName / "projectSettings.dproj";
-        if (!FileHandler::CheckIfFileExists(projectSettingsPath)) {
+        if (!FileHandler::CheckIfFileExists(projectSettingsPath))
+        {
           std::cout << "Yeet3" << std::endl;
           FileHandler::CreateDirectory(projectDirectory);
 
-          if (projectTemplate == ProjectTemplate::Blank) {
+          if (projectTemplate == ProjectTemplate::Blank)
+          {
             nlohmann::json jsonObject;
             jsonObject["projectInformation"]["projectName"] = projectName;
             jsonObject["projectInformation"]["graphicsApi"] = (int)graphicsApi;
@@ -60,32 +67,27 @@ namespace Dwarf {
             std::string fileContent = jsonObject.dump(4);
             FileHandler::WriteToFile(
               projectPath / projectName / "projectSettings.dproj", fileContent);
-          } else {
+          }
+          else
+          {
             std::cout << "Yeet4" << std::endl;
             std::filesystem::path templateProjectDirectory = "";
             std::filesystem::path templateApiDirectory = "";
 
-            switch (projectTemplate) {
+            switch (projectTemplate)
+            {
               case ProjectTemplate::Sponza:
                 templateProjectDirectory = "sponza";
                 break;
-              case ProjectTemplate::Blank:
-                break;
+              case ProjectTemplate::Blank: break;
             }
 
-            switch (graphicsApi) {
-              case GraphicsApi::D3D12:
-                templateApiDirectory = "dx12";
-                break;
-              case GraphicsApi::Metal:
-                templateApiDirectory = "metal";
-                break;
-              case GraphicsApi::OpenGL:
-                templateApiDirectory = "opengl";
-                break;
-              case GraphicsApi::Vulkan:
-                templateApiDirectory = "vulkan";
-                break;
+            switch (graphicsApi)
+            {
+              case GraphicsApi::D3D12: templateApiDirectory = "dx12"; break;
+              case GraphicsApi::Metal: templateApiDirectory = "metal"; break;
+              case GraphicsApi::OpenGL: templateApiDirectory = "opengl"; break;
+              case GraphicsApi::Vulkan: templateApiDirectory = "vulkan"; break;
             }
 
             templateProjectDirectory =
@@ -113,14 +115,17 @@ namespace Dwarf {
               templateProjectDirectory / "projectSettings.dproj";
             std::string fileContent =
               FileHandler::ReadFile(templateProjectSettingsDirectory);
-            if (!fileContent.empty()) {
+            if (!fileContent.empty())
+            {
               nlohmann::json jsonObject = nlohmann::json::parse(fileContent);
               jsonObject["projectInformation"]["projectName"] = projectName;
 
               std::string newFileContent = jsonObject.dump(4);
               FileHandler::WriteToFile(projectSettingsPath.c_str(),
                                        newFileContent);
-            } else {
+            }
+            else
+            {
               std::cout << "[PROJECT CREATOR] Could not read project settings"
                         << std::endl;
             }
@@ -129,14 +134,18 @@ namespace Dwarf {
           ProjectListHandler::AddProjectByPath(projectDirectory.c_str());
 
           return 0;
-        } else {
+        }
+        else
+        {
           // wtf
           std::cout << "[PROJECT CREATOR] projectSettings.dproj already exists "
                        "at project directory!"
                     << std::endl;
           return 1;
         }
-      } else {
+      }
+      else
+      {
         // Project folder already exists
         std::cout << "[PROJECT CREATOR] Project folder already exists at: "
                   << (projectPath / projectName) << std::endl;

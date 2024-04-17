@@ -20,9 +20,10 @@
 #include <Core/Rendering/Shader Parameters/Vec3ShaderParameter.h>
 #include <Core/Rendering/Shader Parameters/Vec4ShaderParameter.h>
 
-namespace Dwarf {
-  Ref<Material> MaterialSerializer::Deserialize(
-    std::filesystem::path const& path)
+namespace Dwarf
+{
+  Ref<Material>
+  MaterialSerializer::Deserialize(std::filesystem::path const& path)
   {
     Material deserializedMat(path.stem().string());
 
@@ -31,46 +32,61 @@ namespace Dwarf {
 
     deserializedMat.SetTransparency((bool)serializedMat["transparent"]);
 
-    if (serializedMat.contains("parameters")) {
-      for (auto const& parameter : serializedMat["parameters"].items()) {
+    if (serializedMat.contains("parameters"))
+    {
+      for (auto const& parameter : serializedMat["parameters"].items())
+      {
 
-        if (serializedMat["parameters"][parameter.key()]["type"] == "boolean") {
+        if (serializedMat["parameters"][parameter.key()]["type"] == "boolean")
+        {
           deserializedMat.SetParameter(parameter.key(),
                                        bool(parameter.value()["value"]));
-        } else if (serializedMat["parameters"][parameter.key()]["type"] ==
-                   "integer") {
+        }
+        else if (serializedMat["parameters"][parameter.key()]["type"] ==
+                 "integer")
+        {
           deserializedMat.SetParameter(parameter.key(),
                                        int(parameter.value()["value"]));
-        } else if (serializedMat["parameters"][parameter.key()]["type"] ==
-                   "float") {
+        }
+        else if (serializedMat["parameters"][parameter.key()]["type"] ==
+                 "float")
+        {
           deserializedMat.SetParameter(parameter.key(),
                                        float(parameter.value()["value"]));
-        } else if (serializedMat["parameters"][parameter.key()]["type"] ==
-                   "tex2d") {
-          if (int(parameter.value()["value"]) != -1) {
+        }
+        else if (serializedMat["parameters"][parameter.key()]["type"] ==
+                 "tex2d")
+        {
+          if (int(parameter.value()["value"]) != -1)
+          {
             deserializedMat.SetParameter(
               parameter.key(),
               CreateRef<UID>(UID(parameter.value()["value"])),
               ShaderParameterType::TEX2D);
-          } else {
+          }
+          else
+          {
             deserializedMat.SetParameter(
               parameter.key(), nullptr, ShaderParameterType::TEX2D);
           }
-        } else if (serializedMat["parameters"][parameter.key()]["type"] ==
-                   "vec2") {
+        }
+        else if (serializedMat["parameters"][parameter.key()]["type"] == "vec2")
+        {
           deserializedMat.SetParameter(
             parameter.key(),
             glm::vec2((float)parameter.value()["value"]["x"],
                       (float)parameter.value()["value"]["y"]));
-        } else if (serializedMat["parameters"][parameter.key()]["type"] ==
-                   "vec3") {
+        }
+        else if (serializedMat["parameters"][parameter.key()]["type"] == "vec3")
+        {
           deserializedMat.SetParameter(
             parameter.key(),
             glm::vec3((float)parameter.value()["value"]["x"],
                       (float)parameter.value()["value"]["y"],
                       (float)parameter.value()["value"]["z"]));
-        } else if (serializedMat["parameters"][parameter.key()]["type"] ==
-                   "vec4") {
+        }
+        else if (serializedMat["parameters"][parameter.key()]["type"] == "vec4")
+        {
           deserializedMat.SetParameter(
             parameter.key(),
             glm::vec4((float)parameter.value()["value"]["x"],
@@ -82,186 +98,204 @@ namespace Dwarf {
     }
 
     if (serializedMat.contains("shader") &&
-        serializedMat["shader"] != "default") {
-      switch (Renderer::GetAPI()) {
+        serializedMat["shader"] != "default")
+    {
+      switch (Renderer::GetAPI())
+      {
 #ifdef _WIN32
-        case GraphicsApi::D3D12:
-          break;
-        case GraphicsApi::Metal:
-          break;
-        case GraphicsApi::OpenGL: {
-          Ref<OpenGLShader> shader =
-            std::dynamic_pointer_cast<OpenGLShader>(Shader::Create());
-
-          if (serializedMat["shader"].contains("vertexShader") &&
-              serializedMat["shader"]["vertexShader"] != "default") {
-            shader->SetVertexShader(
-              CreateRef<UID>(UID(serializedMat["shader"]["vertexShader"])));
-          } else {
-            shader->SetVertexShader(
-              FileHandler::ReadFile(Shader::GetDefaultShaderPath() /
-                                    "default.vert")
-                .c_str());
-          }
-
-          if (serializedMat["shader"].contains("fragmentShader") &&
-              serializedMat["shader"]["fragmentShader"] != "default") {
-            shader->SetFragmentShader(
-              CreateRef<UID>(UID(serializedMat["shader"]["fragmentShader"])));
-          } else {
-            shader->SetFragmentShader(
-              FileHandler::ReadFile(Shader::GetDefaultShaderPath() /
-                                    "default.frag")
-                .c_str());
-          }
-
-          if (serializedMat["shader"].contains("geometryShader")) {
-            shader->SetGeometryShader(
-              CreateRef<UID>(UID(serializedMat["shader"]["geometryShader"])));
-          }
-          deserializedMat.SetShader(shader);
-          break;
-        }
-        case GraphicsApi::Vulkan:
-          break;
-#elif __linux__
-        case GraphicsApi::D3D12:
-          break;
-        case GraphicsApi::Metal:
-          break;
-        case GraphicsApi::OpenGL: {
-          Ref<OpenGLShader> shader =
-            std::dynamic_pointer_cast<OpenGLShader>(Shader::Create());
-
-          if (serializedMat["shader"].contains("vertexShader") &&
-              serializedMat["shader"]["vertexShader"] != "default") {
-            shader->SetVertexShader(
-              CreateRef<UID>(UID(serializedMat["shader"]["vertexShader"])));
-          } else {
-            shader->SetVertexShader(
-              FileHandler::ReadFile(Shader::GetDefaultShaderPath() /
-                                    "default.vert")
-                .c_str());
-          }
-
-          if (serializedMat["shader"].contains("fragmentShader") &&
-              serializedMat["shader"]["fragmentShader"] != "default") {
-            shader->SetFragmentShader(
-              CreateRef<UID>(UID(serializedMat["shader"]["fragmentShader"])));
-          } else {
-            shader->SetFragmentShader(
-              FileHandler::ReadFile(Shader::GetDefaultShaderPath() /
-                                    "default.frag")
-                .c_str());
-          }
-
-          if (serializedMat["shader"].contains("geometryShader")) {
-            shader->SetGeometryShader(
-              CreateRef<UID>(UID(serializedMat["shader"]["geometryShader"])));
-          }
-          deserializedMat.SetShader(shader);
-          break;
-        }
-        case GraphicsApi::Vulkan:
-          break;
-#elif __APPLE__
-        case GraphicsApi::D3D12:
-          break;
-        case GraphicsApi::Metal:
-          break;
+        case GraphicsApi::D3D12: break;
+        case GraphicsApi::Metal: break;
         case GraphicsApi::OpenGL:
-          break;
-        case GraphicsApi::Vulkan:
-          break;
+          {
+            Ref<OpenGLShader> shader =
+              std::dynamic_pointer_cast<OpenGLShader>(Shader::Create());
+
+            if (serializedMat["shader"].contains("vertexShader") &&
+                serializedMat["shader"]["vertexShader"] != "default")
+            {
+              shader->SetVertexShader(
+                CreateRef<UID>(UID(serializedMat["shader"]["vertexShader"])));
+            }
+            else
+            {
+              shader->SetVertexShader(
+                FileHandler::ReadFile(Shader::GetDefaultShaderPath() /
+                                      "default.vert")
+                  .c_str());
+            }
+
+            if (serializedMat["shader"].contains("fragmentShader") &&
+                serializedMat["shader"]["fragmentShader"] != "default")
+            {
+              shader->SetFragmentShader(
+                CreateRef<UID>(UID(serializedMat["shader"]["fragmentShader"])));
+            }
+            else
+            {
+              shader->SetFragmentShader(
+                FileHandler::ReadFile(Shader::GetDefaultShaderPath() /
+                                      "default.frag")
+                  .c_str());
+            }
+
+            if (serializedMat["shader"].contains("geometryShader"))
+            {
+              shader->SetGeometryShader(
+                CreateRef<UID>(UID(serializedMat["shader"]["geometryShader"])));
+            }
+            deserializedMat.SetShader(shader);
+            break;
+          }
+        case GraphicsApi::Vulkan: break;
+#elif __linux__
+        case GraphicsApi::D3D12: break;
+        case GraphicsApi::Metal: break;
+        case GraphicsApi::OpenGL:
+          {
+            Ref<OpenGLShader> shader =
+              std::dynamic_pointer_cast<OpenGLShader>(Shader::Create());
+
+            if (serializedMat["shader"].contains("vertexShader") &&
+                serializedMat["shader"]["vertexShader"] != "default")
+            {
+              shader->SetVertexShader(
+                CreateRef<UID>(UID(serializedMat["shader"]["vertexShader"])));
+            }
+            else
+            {
+              shader->SetVertexShader(
+                FileHandler::ReadFile(Shader::GetDefaultShaderPath() /
+                                      "default.vert")
+                  .c_str());
+            }
+
+            if (serializedMat["shader"].contains("fragmentShader") &&
+                serializedMat["shader"]["fragmentShader"] != "default")
+            {
+              shader->SetFragmentShader(
+                CreateRef<UID>(UID(serializedMat["shader"]["fragmentShader"])));
+            }
+            else
+            {
+              shader->SetFragmentShader(
+                FileHandler::ReadFile(Shader::GetDefaultShaderPath() /
+                                      "default.frag")
+                  .c_str());
+            }
+
+            if (serializedMat["shader"].contains("geometryShader"))
+            {
+              shader->SetGeometryShader(
+                CreateRef<UID>(UID(serializedMat["shader"]["geometryShader"])));
+            }
+            deserializedMat.SetShader(shader);
+            break;
+          }
+        case GraphicsApi::Vulkan: break;
+#elif __APPLE__
+        case GraphicsApi::D3D12: break;
+        case GraphicsApi::Metal: break;
+        case GraphicsApi::OpenGL: break;
+        case GraphicsApi::Vulkan: break;
 #endif
       }
     }
     return CreateRef<Material>(deserializedMat);
   }
 
-  void MaterialSerializer::Serialize(Material const& material,
-                                     std::filesystem::path const& path)
+  void
+  MaterialSerializer::Serialize(Material const&              material,
+                                std::filesystem::path const& path)
   {
     nlohmann::json serializedMat;
 
     serializedMat["transparent"] = material.IsTransparent();
 
-    switch (Renderer::GetAPI()) {
+    switch (Renderer::GetAPI())
+    {
       using enum GraphicsApi;
 #ifdef _WIN32
-      case D3D12:
-        break;
-      case Metal:
-        break;
-      case OpenGL: {
-        Ref<OpenGLShader> shader =
-          std::dynamic_pointer_cast<OpenGLShader>(material.GetShader());
+      case D3D12: break;
+      case Metal: break;
+      case OpenGL:
+        {
+          Ref<OpenGLShader> shader =
+            std::dynamic_pointer_cast<OpenGLShader>(material.GetShader());
 
-        if (shader->GetVertexShader() != nullptr) {
-          serializedMat["shader"]["vertexShader"] =
-            (uint64_t)*shader->GetVertexShader();
-        } else {
-          serializedMat["shader"]["vertexShader"] = "default";
-        }
+          if (shader->GetVertexShader() != nullptr)
+          {
+            serializedMat["shader"]["vertexShader"] =
+              (uint64_t)*shader->GetVertexShader();
+          }
+          else
+          {
+            serializedMat["shader"]["vertexShader"] = "default";
+          }
 
-        if (shader->GetFragmentShader() != nullptr) {
-          serializedMat["shader"]["fragmentShader"] =
-            (uint64_t)*shader->GetFragmentShader();
-        } else {
-          serializedMat["shader"]["fragmentShader"] = "default";
+          if (shader->GetFragmentShader() != nullptr)
+          {
+            serializedMat["shader"]["fragmentShader"] =
+              (uint64_t)*shader->GetFragmentShader();
+          }
+          else
+          {
+            serializedMat["shader"]["fragmentShader"] = "default";
+          }
+          if (serializedMat["shader"].contains("geometryShader"))
+          {
+            serializedMat["shader"]["geometryShader"] =
+              (uint64_t)*shader->GetGeometryShader();
+          }
+          break;
         }
-        if (serializedMat["shader"].contains("geometryShader")) {
-          serializedMat["shader"]["geometryShader"] =
-            (uint64_t)*shader->GetGeometryShader();
-        }
-        break;
-      }
-      case Vulkan:
-        break;
+      case Vulkan: break;
 #elif __linux__
-      case D3D12:
-        break;
-      case Metal:
-        break;
-      case OpenGL: {
-        Ref<OpenGLShader> shader =
-          std::dynamic_pointer_cast<OpenGLShader>(material.GetShader());
+      case D3D12: break;
+      case Metal: break;
+      case OpenGL:
+        {
+          Ref<OpenGLShader> shader =
+            std::dynamic_pointer_cast<OpenGLShader>(material.GetShader());
 
-        if (shader->GetVertexShader() != nullptr) {
-          serializedMat["shader"]["vertexShader"] =
-            (uint64_t)*shader->GetVertexShader();
-        } else {
-          serializedMat["shader"]["vertexShader"] = "default";
-        }
+          if (shader->GetVertexShader() != nullptr)
+          {
+            serializedMat["shader"]["vertexShader"] =
+              (uint64_t)*shader->GetVertexShader();
+          }
+          else
+          {
+            serializedMat["shader"]["vertexShader"] = "default";
+          }
 
-        if (shader->GetFragmentShader() != nullptr) {
-          serializedMat["shader"]["fragmentShader"] =
-            (uint64_t)*shader->GetFragmentShader();
-        } else {
-          serializedMat["shader"]["fragmentShader"] = "default";
+          if (shader->GetFragmentShader() != nullptr)
+          {
+            serializedMat["shader"]["fragmentShader"] =
+              (uint64_t)*shader->GetFragmentShader();
+          }
+          else
+          {
+            serializedMat["shader"]["fragmentShader"] = "default";
+          }
+          if (serializedMat["shader"].contains("geometryShader"))
+          {
+            serializedMat["shader"]["geometryShader"] =
+              (uint64_t)*shader->GetGeometryShader();
+          }
+          break;
         }
-        if (serializedMat["shader"].contains("geometryShader")) {
-          serializedMat["shader"]["geometryShader"] =
-            (uint64_t)*shader->GetGeometryShader();
-        }
-        break;
-      }
-      case GraphicsApi::Vulkan:
-        break;
+      case GraphicsApi::Vulkan: break;
 #elif __APPLE__
-      case GraphicsApi::D3D12:
-        break;
-      case GraphicsApi::Metal:
-        break;
-      case GraphicsApi::OpenGL:
-        break;
-      case GraphicsApi::Vulkan:
-        break;
+      case GraphicsApi::D3D12: break;
+      case GraphicsApi::Metal: break;
+      case GraphicsApi::OpenGL: break;
+      case GraphicsApi::Vulkan: break;
 #endif
     }
 
-    for (auto const& [key, val] : material.m_Parameters) {
-      switch (val->GetType()) {
+    for (auto const& [key, val] : material.m_Parameters)
+    {
+      switch (val->GetType())
+      {
         using enum ShaderParameterType;
         case BOOLEAN:
           serializedMat["parameters"][key]["type"] = "boolean";
@@ -281,11 +315,14 @@ namespace Dwarf {
         case TEX2D:
           serializedMat["parameters"][key]["type"] = "tex2d";
           if (std::dynamic_pointer_cast<Tex2DShaderParameter>(val)->m_Value !=
-              nullptr) {
+              nullptr)
+          {
             serializedMat["parameters"][key]["value"] =
               (uint64_t)*std::dynamic_pointer_cast<Tex2DShaderParameter>(val)
                 ->m_Value;
-          } else {
+          }
+          else
+          {
             serializedMat["parameters"][key]["value"] = -1;
           }
           break;

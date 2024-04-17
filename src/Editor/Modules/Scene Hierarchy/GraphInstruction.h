@@ -2,7 +2,8 @@
 
 #include "Core/Scene/Scene.h"
 
-namespace Dwarf {
+namespace Dwarf
+{
 
   /// @brief Base graph instruction class.
   class GraphInstruction
@@ -12,6 +13,7 @@ namespace Dwarf {
     virtual ~GraphInstruction() = default;
 
     /// @brief Executes the instruction.
-    virtual void PerformInstruction() = 0;
+    virtual void
+    PerformInstruction() = 0;
   };
 }

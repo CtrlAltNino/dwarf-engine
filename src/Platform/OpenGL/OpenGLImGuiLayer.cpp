@@ -8,8 +8,10 @@
 #include <imgui_impl_opengl3.h>
 #include <imgui_impl_sdl2.h>
 
-namespace Dwarf {
-  void OpenGLImGuiLayer::OnAttach(SDL_Window* window)
+namespace Dwarf
+{
+  void
+  OpenGLImGuiLayer::OnAttach(SDL_Window* window)
   {
     m_Window = window;
     IMGUI_CHECKVERSION();
@@ -34,7 +36,8 @@ namespace Dwarf {
     // When viewports are enabled we tweak WindowRounding/WindowBg so platform
     // windows can look identical to regular ones.
     ImGuiStyle& style = ImGui::GetStyle();
-    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+    {
       style.WindowRounding = 0.0f;
       style.Colors[ImGuiCol_WindowBg].w = 1.0f;
     }
@@ -45,32 +48,37 @@ namespace Dwarf {
     ImGui_ImplOpenGL3_Init("#version 410");
   }
 
-  void OpenGLImGuiLayer::OnDetach()
+  void
+  OpenGLImGuiLayer::OnDetach()
   {
     ImGui_ImplOpenGL3_Shutdown();
     ImGui_ImplSDL2_Shutdown();
     ImGui::DestroyContext();
   }
 
-  void OpenGLImGuiLayer::Begin()
+  void
+  OpenGLImGuiLayer::Begin()
   {
     ImGui_ImplOpenGL3_NewFrame();
     ImGui_ImplSDL2_NewFrame();
     ImGui::NewFrame();
   }
 
-  void OpenGLImGuiLayer::End()
+  void
+  OpenGLImGuiLayer::End()
   {
     const ImGuiIO* io = &ImGui::GetIO();
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-    if (io->ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+    if (io->ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+    {
       ImGui::UpdatePlatformWindows();
       ImGui::RenderPlatformWindowsDefault();
     }
   }
 
-  void OpenGLImGuiLayer::HandleSDLEvent(SDL_Event* event)
+  void
+  OpenGLImGuiLayer::HandleSDLEvent(SDL_Event* event)
   {
     ImGui_ImplSDL2_ProcessEvent(event);
   }

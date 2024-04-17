@@ -2,7 +2,8 @@
 
 #include "Launcher/ProjectLauncherUtilities.h"
 
-namespace Dwarf {
+namespace Dwarf
+{
 
 #define NAME_COLUMN_INDEX (0)
 #define PATH_COLUMN_INDEX (1)
@@ -30,11 +31,13 @@ namespace Dwarf {
     /// @brief Converts a string to lower case.
     /// @param s The source string.
     /// @return The converted output.
-    static std::string ToLowerCase(std::string s)
+    static std::string
+    ToLowerCase(std::string s)
     {
-      transform(s.begin(), s.end(), s.begin(), [](auto c) {
-        return std::tolower(c, std::locale());
-      });
+      transform(s.begin(),
+                s.end(),
+                s.begin(),
+                [](auto c) { return std::tolower(c, std::locale()); });
       return s;
     }
 
@@ -42,8 +45,8 @@ namespace Dwarf {
     /// @param p1 Left project.
     /// @param p2 Right project.
     /// @return Comparison result.
-    static bool ProjectNameComparator(ProjectInformation p1,
-                                      ProjectInformation p2)
+    static bool
+    ProjectNameComparator(ProjectInformation p1, ProjectInformation p2)
     {
       return ToLowerCase(p1.name) < ToLowerCase(p2.name);
     }
@@ -52,8 +55,8 @@ namespace Dwarf {
     /// @param p1 Left project.
     /// @param p2 Right project.
     /// @return Comparison result.
-    static bool ProjectNameReverseComparator(ProjectInformation p1,
-                                             ProjectInformation p2)
+    static bool
+    ProjectNameReverseComparator(ProjectInformation p1, ProjectInformation p2)
     {
       return ToLowerCase(p1.name) > ToLowerCase(p2.name);
     }
@@ -62,8 +65,8 @@ namespace Dwarf {
     /// @param p1 Left project.
     /// @param p2 Right project.
     /// @return Comparison result.
-    static bool ProjectDateComparator(ProjectInformation p1,
-                                      ProjectInformation p2)
+    static bool
+    ProjectDateComparator(ProjectInformation p1, ProjectInformation p2)
     {
       // Accomodating for never opened projects having "-1" as a value
       int a = p1.lastOpened == -1 ? INT_MAX : p1.lastOpened;
@@ -77,8 +80,8 @@ namespace Dwarf {
     /// @param p1 Left project.
     /// @param p2 Right project.
     /// @return Comparison result.
-    static bool ProjectDateReverseComparator(ProjectInformation p1,
-                                             ProjectInformation p2)
+    static bool
+    ProjectDateReverseComparator(ProjectInformation p1, ProjectInformation p2)
     {
       // Accomodating for never opened projects having "-1" as a value
       int a = p1.lastOpened == -1 ? INT_MAX : p1.lastOpened;
@@ -92,8 +95,8 @@ namespace Dwarf {
     /// @param p1 Left project.
     /// @param p2 Right project.
     /// @return Comparison result.
-    static bool ProjectApiComparator(ProjectInformation p1,
-                                     ProjectInformation p2)
+    static bool
+    ProjectApiComparator(ProjectInformation p1, ProjectInformation p2)
     {
       return p1.graphicsApi > p2.graphicsApi;
     }
@@ -102,8 +105,8 @@ namespace Dwarf {
     /// @param p1
     /// @param p2
     /// @return
-    static bool ProjectApiReverseComparator(ProjectInformation p1,
-                                            ProjectInformation p2)
+    static bool
+    ProjectApiReverseComparator(ProjectInformation p1, ProjectInformation p2)
     {
       return p1.graphicsApi < p2.graphicsApi;
     }
@@ -112,31 +115,41 @@ namespace Dwarf {
     /// @brief Updates the sort order, depending on which column title has been
     /// clicked.
     /// @param columnId
-    static void UpdateSortOrder(int columnId)
+    static void
+    UpdateSortOrder(int columnId)
     {
-      switch (columnId) {
+      switch (columnId)
+      {
         case NAME_COLUMN_INDEX:
-          if (s_SortOrder == ProjectSortOrder::Name) {
+          if (s_SortOrder == ProjectSortOrder::Name)
+          {
             s_SortOrder = ProjectSortOrder::NameReverse;
-          } else {
+          }
+          else
+          {
             s_SortOrder = ProjectSortOrder::Name;
           }
           // SortProjectList();
           break;
-        case PATH_COLUMN_INDEX:
-          break;
+        case PATH_COLUMN_INDEX: break;
         case DATE_COLUMN_INDEX:
-          if (s_SortOrder == ProjectSortOrder::Date) {
+          if (s_SortOrder == ProjectSortOrder::Date)
+          {
             s_SortOrder = ProjectSortOrder::DateReverse;
-          } else {
+          }
+          else
+          {
             s_SortOrder = ProjectSortOrder::Date;
           }
           // SortProjectList();
           break;
         case API_COLUMN_INDEX:
-          if (s_SortOrder == ProjectSortOrder::Api) {
+          if (s_SortOrder == ProjectSortOrder::Api)
+          {
             s_SortOrder = ProjectSortOrder::ApiReverse;
-          } else {
+          }
+          else
+          {
             s_SortOrder = ProjectSortOrder::Api;
           }
           break;
@@ -146,9 +159,11 @@ namespace Dwarf {
     /// @brief Sorts a given project list according to the currently selected
     /// sort order.
     /// @param projectList Pointer to a project list.
-    static void SortProjectList(std::vector<ProjectInformation>* projectList)
+    static void
+    SortProjectList(std::vector<ProjectInformation>* projectList)
     {
-      switch (s_SortOrder) {
+      switch (s_SortOrder)
+      {
         case ProjectSortOrder::Name:
           std::sort(
             projectList->begin(), projectList->end(), ProjectNameComparator);

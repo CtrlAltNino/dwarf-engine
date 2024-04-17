@@ -8,7 +8,8 @@
 #define _USE_MATH_DEFINES
 #include <cmath>
 
-namespace Dwarf {
+namespace Dwarf
+{
 
   /// @brief Module that renders a window, containing information of selected
   /// objects or assets.
@@ -20,25 +21,33 @@ namespace Dwarf {
 
     /// @brief Renders the components of an entity.
     /// @param entity Entity to render in the inspector.
-    void RenderComponents(Entity entity);
+    void
+    RenderComponents(Entity entity);
 
-    void BeginComponent(const char* componentHeader) const;
+    void
+    BeginComponent(const char* componentHeader) const;
 
-    void EndComponent() const;
+    void
+    EndComponent() const;
 
     template<typename T>
-    void RenderComponent(T& component);
+    void
+    RenderComponent(T& component);
 
   public:
     InspectorWindow(Ref<EditorModel> listener, int id);
 
     /// @brief Renders the module window.
-    void OnImGuiRender() override;
+    void
+    OnImGuiRender() override;
 
-    void OnUpdate(double deltaTime) override;
+    void
+    OnUpdate(double deltaTime) override;
 
-    std::string Serialize() override;
+    std::string
+    Serialize() override;
 
-    void Deserialize(nlohmann::json moduleData) override;
+    void
+    Deserialize(nlohmann::json moduleData) override;
   };
 }

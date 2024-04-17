@@ -7,7 +7,8 @@
 
 #include "Editor/EditorModel.h"
 
-namespace Dwarf {
+namespace Dwarf
+{
 
   /// @brief Enum defining the types of GUI modules.
   enum class MODULE_TYPE
@@ -43,8 +44,8 @@ namespace Dwarf {
   public:
     GuiModule(Ref<EditorModel> model,
               std::string_view name,
-              MODULE_TYPE type,
-              int index)
+              MODULE_TYPE      type,
+              int              index)
       : m_Model(model)
       , m_Label(name)
       , m_ModuleType(type)
@@ -56,36 +57,58 @@ namespace Dwarf {
 
     /// @brief Returns the name of the module.
     /// @return Name of the module.
-    std::string GetModuleName() const { return m_Label; }
+    std::string
+    GetModuleName() const
+    {
+      return m_Label;
+    }
 
     /// @brief Returns thhe type of the module.
     /// @return Type of the module.
-    MODULE_TYPE GetModuleType() const { return m_ModuleType; }
+    MODULE_TYPE
+    GetModuleType() const { return m_ModuleType; }
 
     /// @brief Returns the global module index.
     /// @return The module index.
-    int GetIndex() const { return m_Index; }
+    int
+    GetIndex() const
+    {
+      return m_Index;
+    }
 
     /// @brief Generates the ImGui window identifier for a module window..
     /// @return The window identifier.
-    std::string GetIdentifier() const
+    std::string
+    GetIdentifier() const
     {
       return std::format("{}##{}", m_Label, std::to_string(m_Index));
     }
 
     /// @brief Generates a ImGui ID for the module.
     /// @return The ImGui ID.
-    ImGuiID GetImGuiID() { return ImGui::GetID(GetIdentifier().c_str()); }
+    ImGuiID
+    GetImGuiID()
+    {
+      return ImGui::GetID(GetIdentifier().c_str());
+    }
 
-    bool GetWindowClose() { return !m_WindowOpened; }
+    bool
+    GetWindowClose()
+    {
+      return !m_WindowOpened;
+    }
 
-    virtual void OnUpdate(double deltaTime) = 0;
+    virtual void
+    OnUpdate(double deltaTime) = 0;
 
     /// @brief Renders the module window.
-    virtual void OnImGuiRender() = 0;
+    virtual void
+    OnImGuiRender() = 0;
 
-    virtual std::string Serialize() = 0;
+    virtual std::string
+    Serialize() = 0;
 
-    virtual void Deserialize(nlohmann::json moduleData) = 0;
+    virtual void
+    Deserialize(nlohmann::json moduleData) = 0;
   };
 }

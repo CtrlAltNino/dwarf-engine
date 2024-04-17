@@ -4,76 +4,90 @@
 
 #include <format>
 
-namespace Dwarf {
-  EditorModel::EditorModel(std::string_view name,
+namespace Dwarf
+{
+  EditorModel::EditorModel(std::string_view      name,
                            std::filesystem::path projectPath)
     : m_ProjectName(name)
     , m_ProjectPath(projectPath)
   {
   }
 
-  Ref<Scene> EditorModel::GetScene() const
+  Ref<Scene>
+  EditorModel::GetScene() const
   {
     return m_Scene;
   }
 
-  void EditorModel::SetScene(Ref<Scene> scene)
+  void
+  EditorModel::SetScene(Ref<Scene> scene)
   {
     m_Scene = scene;
     m_Selection = EditorSelection(scene);
   }
 
-  std::string EditorModel::GetName() const
+  std::string
+  EditorModel::GetName() const
   {
     return m_ProjectName;
   }
 
-  std::filesystem::path EditorModel::GetProjectPath() const
+  std::filesystem::path
+  EditorModel::GetProjectPath() const
   {
     return m_ProjectPath;
   }
 
-  void EditorModel::SetDeltaTime(double deltaTime)
+  void
+  EditorModel::SetDeltaTime(double deltaTime)
   {
     m_DeltaTime = deltaTime;
   }
 
-  double EditorModel::GetDeltaTime() const
+  double
+  EditorModel::GetDeltaTime() const
   {
     return m_DeltaTime;
   }
 
-  bool EditorModel::GetCloseSignal() const
+  bool
+  EditorModel::GetCloseSignal() const
   {
     return m_CloseSignal;
   }
 
-  bool EditorModel::GetReturnToLauncher() const
+  bool
+  EditorModel::GetReturnToLauncher() const
   {
     return m_ReturnToLauncher;
   }
 
-  EditorSelection& EditorModel::GetSelection()
+  EditorSelection&
+  EditorModel::GetSelection()
   {
     return m_Selection;
   }
 
-  std::vector<Entity>& EditorSelection::GetSelectedEntities()
+  std::vector<Entity>&
+  EditorSelection::GetSelectedEntities()
   {
     return m_SelectedEntities;
   }
 
-  const std::filesystem::path& EditorSelection::GetAssetPath() const
+  const std::filesystem::path&
+  EditorSelection::GetAssetPath() const
   {
     return m_SelectedAsset;
   }
 
-  CURRENT_SELECTION_TYPE EditorSelection::GetSelectionType() const
+  CURRENT_SELECTION_TYPE
+  EditorSelection::GetSelectionType() const
   {
     return m_SelectionType;
   }
 
-  void EditorModel::CloseEditor(bool returnToLauncher)
+  void
+  EditorModel::CloseEditor(bool returnToLauncher)
   {
     m_CloseSignal = true;
     m_ReturnToLauncher = returnToLauncher;
@@ -84,48 +98,57 @@ namespace Dwarf {
   {
   }
 
-  void EditorSelection::SelectEntity(Entity entity)
+  void
+  EditorSelection::SelectEntity(Entity entity)
   {
     ClearEntitySelection();
     AddEntityToSelection(entity);
     m_SelectionType = CURRENT_SELECTION_TYPE::ENTITY;
   }
 
-  void EditorSelection::SelectAsset(std::filesystem::path assetPath)
+  void
+  EditorSelection::SelectAsset(std::filesystem::path assetPath)
   {
     m_SelectedAsset = assetPath;
     m_SelectionType = CURRENT_SELECTION_TYPE::ASSET;
   }
 
-  void EditorSelection::AddEntityToSelection(Entity entity)
+  void
+  EditorSelection::AddEntityToSelection(Entity entity)
   {
     std::string index = GetTreeIndex(entity);
 
-    auto cursor = m_SelectedEntities.begin();
+    auto        cursor = m_SelectedEntities.begin();
     std::string cursorIndex;
 
     while ((cursor != m_SelectedEntities.end()) &&
-           ((cursorIndex = GetTreeIndex(*cursor)) < index)) {
+           ((cursorIndex = GetTreeIndex(*cursor)) < index))
+    {
       cursor++;
     }
 
-    if (cursor == m_SelectedEntities.end()) {
+    if (cursor == m_SelectedEntities.end())
+    {
       m_SelectedEntities.push_back(entity);
-    } else {
+    }
+    else
+    {
       m_SelectedEntities.insert(cursor, entity);
     }
 
     m_SelectionType = CURRENT_SELECTION_TYPE::ENTITY;
   }
 
-  void EditorSelection::ClearEntitySelection()
+  void
+  EditorSelection::ClearEntitySelection()
   {
     m_SelectedEntities.clear();
     m_SelectionType = m_SelectedAsset.empty() ? CURRENT_SELECTION_TYPE::NONE
                                               : CURRENT_SELECTION_TYPE::ASSET;
   }
 
-  void EditorSelection::ClearAssetSelection()
+  void
+  EditorSelection::ClearAssetSelection()
   {
     m_SelectedAsset.clear();
     m_SelectionType = m_SelectedEntities.empty()
@@ -133,34 +156,40 @@ namespace Dwarf {
                         : CURRENT_SELECTION_TYPE::ENTITY;
   }
 
-  void EditorSelection::RemoveEntityFromSelection(Entity entity)
+  void
+  EditorSelection::RemoveEntityFromSelection(Entity entity)
   {
     m_SelectedEntities.erase(
       std::find(m_SelectedEntities.begin(), m_SelectedEntities.end(), entity));
-    if (m_SelectedEntities.empty()) {
+    if (m_SelectedEntities.empty())
+    {
       m_SelectionType = m_SelectedAsset.empty() ? CURRENT_SELECTION_TYPE::NONE
                                                 : CURRENT_SELECTION_TYPE::ASSET;
     }
   }
 
-  bool EditorSelection::IsEntitySelected(Entity entity)
+  bool
+  EditorSelection::IsEntitySelected(Entity entity)
   {
     return std::find(m_SelectedEntities.begin(),
                      m_SelectedEntities.end(),
                      entity) != m_SelectedEntities.end();
   }
 
-  bool EditorSelection::IsAssetSelected(std::filesystem::path assetPath)
+  bool
+  EditorSelection::IsAssetSelected(std::filesystem::path assetPath)
   {
     return m_SelectedAsset == assetPath;
   }
 
-  std::string EditorSelection::GetTreeIndex(Entity entity) const
+  std::string
+  EditorSelection::GetTreeIndex(Entity entity) const
   {
     std::string index = "";
-    Entity cursor = entity;
+    Entity      cursor = entity;
 
-    while (cursor.GetHandle() != m_Scene->GetRootEntity()->GetHandle()) {
+    while (cursor.GetHandle() != m_Scene->GetRootEntity()->GetHandle())
+    {
       index =
         std::format("{}{}", std::to_string(cursor.GetChildIndex()), index);
       cursor = Entity(cursor.GetParent(), m_Scene->GetRegistry());

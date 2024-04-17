@@ -1,6 +1,7 @@
 #pragma once
 
-namespace Dwarf {
+namespace Dwarf
+{
 
   /// @brief Class for 64 bit UIDs.
   class UID
@@ -17,11 +18,13 @@ namespace Dwarf {
   };
 }
 
-namespace std {
+namespace std
+{
   template<>
   struct hash<Dwarf::UID>
   {
-    std::size_t operator()(const Dwarf::UID& uuid) const
+    std::size_t
+    operator()(const Dwarf::UID& uuid) const
     {
       return hash<uint64_t>()((uint64_t)uuid);
     }

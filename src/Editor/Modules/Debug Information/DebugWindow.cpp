@@ -7,30 +7,35 @@
 #include "Core/Asset/AssetComponents.h"
 #include "Core/GenericComponents.h"
 
-namespace Dwarf {
+namespace Dwarf
+{
 
   DebugWindow::DebugWindow(Ref<EditorModel> model, int id)
     : GuiModule(model, "Debug", MODULE_TYPE::DEBUG, id)
   {
   }
 
-  void DebugWindow::OnUpdate(double deltaTime)
+  void
+  DebugWindow::OnUpdate(double deltaTime)
   {
     // Add Update code that needs to be run before rendering
   }
 
-  void DebugWindow::OnImGuiRender()
+  void
+  DebugWindow::OnImGuiRender()
   {
     ImGuiWindowFlags window_flags = 0;
     ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(500, 500));
-    if (!ImGui::Begin(GetIdentifier().c_str(), &m_WindowOpened, window_flags)) {
+    if (!ImGui::Begin(GetIdentifier().c_str(), &m_WindowOpened, window_flags))
+    {
       // Early out if the window is collapsed, as an optimization.
       ImGui::End();
       ImGui::PopStyleVar();
       return;
     }
 
-    if (ImGui::CollapsingHeader("Asset Database")) {
+    if (ImGui::CollapsingHeader("Asset Database"))
+    {
       ImGui::Text("Listing all imported assets and their UID's");
 
       auto materialView =
@@ -75,8 +80,10 @@ namespace Dwarf {
         AssetDatabase::s_Registry
           ->view<TextureAsset, PathComponent, NameComponent, IDComponent>();
 
-      if (ImGui::TreeNode("Materials##1")) {
-        for (auto entity : materialView) {
+      if (ImGui::TreeNode("Materials##1"))
+      {
+        for (auto entity : materialView)
+        {
           auto [path, name, id] =
             materialView.get<PathComponent, NameComponent, IDComponent>(entity);
           ImGui::Text("Name");
@@ -91,8 +98,10 @@ namespace Dwarf {
         ImGui::TreePop();
       }
 
-      if (ImGui::TreeNode("Models##1")) {
-        for (auto entity : modelView) {
+      if (ImGui::TreeNode("Models##1"))
+      {
+        for (auto entity : modelView)
+        {
           auto [path, name, id] =
             modelView.get<PathComponent, NameComponent, IDComponent>(entity);
           ImGui::Text("Name");
@@ -106,8 +115,10 @@ namespace Dwarf {
         ImGui::TreePop();
       }
 
-      if (ImGui::TreeNode("Scenes##1")) {
-        for (auto entity : sceneView) {
+      if (ImGui::TreeNode("Scenes##1"))
+      {
+        for (auto entity : sceneView)
+        {
           auto [path, name, id] =
             sceneView.get<PathComponent, NameComponent, IDComponent>(entity);
           ImGui::Text("Name");
@@ -121,9 +132,12 @@ namespace Dwarf {
         ImGui::TreePop();
       }
 
-      if (ImGui::TreeNode("Shaders##1")) {
-        if (ImGui::TreeNode("Vertex Shaders##1")) {
-          for (auto entity : vertexShaderView) {
+      if (ImGui::TreeNode("Shaders##1"))
+      {
+        if (ImGui::TreeNode("Vertex Shaders##1"))
+        {
+          for (auto entity : vertexShaderView)
+          {
             auto [path, name, id] =
               vertexShaderView.get<PathComponent, NameComponent, IDComponent>(
                 entity);
@@ -138,8 +152,10 @@ namespace Dwarf {
           ImGui::TreePop();
         }
 
-        if (ImGui::TreeNode("Fragment Shaders##1")) {
-          for (auto entity : fragmentShaderView) {
+        if (ImGui::TreeNode("Fragment Shaders##1"))
+        {
+          for (auto entity : fragmentShaderView)
+          {
             auto [path, name, id] =
               fragmentShaderView.get<PathComponent, NameComponent, IDComponent>(
                 entity);
@@ -154,8 +170,10 @@ namespace Dwarf {
           ImGui::TreePop();
         }
 
-        if (ImGui::TreeNode("Geometry Shaders##1")) {
-          for (auto entity : geometryShaderView) {
+        if (ImGui::TreeNode("Geometry Shaders##1"))
+        {
+          for (auto entity : geometryShaderView)
+          {
             auto [path, name, id] =
               geometryShaderView.get<PathComponent, NameComponent, IDComponent>(
                 entity);
@@ -170,8 +188,10 @@ namespace Dwarf {
           ImGui::TreePop();
         }
 
-        if (ImGui::TreeNode("Compute Shaders##1")) {
-          for (auto entity : computeShaderView) {
+        if (ImGui::TreeNode("Compute Shaders##1"))
+        {
+          for (auto entity : computeShaderView)
+          {
             auto [path, name, id] =
               computeShaderView.get<PathComponent, NameComponent, IDComponent>(
                 entity);
@@ -186,8 +206,10 @@ namespace Dwarf {
           ImGui::TreePop();
         }
 
-        if (ImGui::TreeNode("Tesselation Control Shaders##1")) {
-          for (auto entity : tesselationControlShaderView) {
+        if (ImGui::TreeNode("Tesselation Control Shaders##1"))
+        {
+          for (auto entity : tesselationControlShaderView)
+          {
             auto [path, name, id] =
               tesselationControlShaderView
                 .get<PathComponent, NameComponent, IDComponent>(entity);
@@ -202,8 +224,10 @@ namespace Dwarf {
           ImGui::TreePop();
         }
 
-        if (ImGui::TreeNode("Tesselation Evaluation Shaders##1")) {
-          for (auto entity : tesselationEvaluationShaderView) {
+        if (ImGui::TreeNode("Tesselation Evaluation Shaders##1"))
+        {
+          for (auto entity : tesselationEvaluationShaderView)
+          {
             auto [path, name, id] =
               tesselationEvaluationShaderView
                 .get<PathComponent, NameComponent, IDComponent>(entity);
@@ -220,8 +244,10 @@ namespace Dwarf {
         ImGui::TreePop();
       }
 
-      if (ImGui::TreeNode("Textures##1")) {
-        for (auto entity : textureView) {
+      if (ImGui::TreeNode("Textures##1"))
+      {
+        for (auto entity : textureView)
+        {
           auto [path, name, id] =
             textureView.get<PathComponent, NameComponent, IDComponent>(entity);
           ImGui::Text("Name");
@@ -240,12 +266,14 @@ namespace Dwarf {
     ImGui::PopStyleVar();
   }
 
-  void DebugWindow::Deserialize(nlohmann::json moduleData)
+  void
+  DebugWindow::Deserialize(nlohmann::json moduleData)
   {
     // Add Deserialization for data
   }
 
-  std::string DebugWindow::Serialize()
+  std::string
+  DebugWindow::Serialize()
   {
     return "";
   }

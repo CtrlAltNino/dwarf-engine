@@ -10,8 +10,10 @@
 #include "Platform/OSX/OSXWindow.h" // - NOT SUPPORTED YET
 #endif
 
-namespace Dwarf {
-  Ref<Window> Window::Create(const WindowProps& props)
+namespace Dwarf
+{
+  Ref<Window>
+  Window::Create(const WindowProps& props)
   {
     Ref<Window> window = nullptr;
 #ifdef _WIN32

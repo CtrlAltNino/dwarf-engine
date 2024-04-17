@@ -4,7 +4,8 @@
 #include "Editor/Modules/Scene Hierarchy/GraphInstruction.h"
 #include "Core/Scene/Entity.h"
 
-namespace Dwarf {
+namespace Dwarf
+{
 
   /// @brief A buffered instruction to change the parent of entities.
   class NewParentInstruction : public GraphInstruction
@@ -21,9 +22,10 @@ namespace Dwarf {
 
   public:
     /// @brief Executes the instruction.
-    void PerformInstruction() override;
-    NewParentInstruction(Ref<Scene> scene,
+    void
+    PerformInstruction() override;
+    NewParentInstruction(Ref<Scene>                 scene,
                          std::vector<Entity> const& sourceEntities,
-                         entt::entity newParent);
+                         entt::entity               newParent);
   };
 }

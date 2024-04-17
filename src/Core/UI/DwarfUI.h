@@ -34,30 +34,35 @@
 #define COL_TAB_UNFOCUSED IM_COL32(59, 66, 82, 255)
 #define COL_TAB_UNFOCUSED_ACTIVE IM_COL32(76, 86, 106, 255)
 
-namespace Dwarf {
+namespace Dwarf
+{
   class DwarfUI
   {
   public:
-    static void TextButton(const char* text, ImVec2 buttonSize);
-    static void ImageButton(ImTextureID texID,
-                            ImVec2 buttonSize,
-                            ImVec2 imageSize);
-    static void InputField();
-    static void Text();
+    static void
+    TextButton(const char* text, ImVec2 buttonSize);
+    static void
+    ImageButton(ImTextureID texID, ImVec2 buttonSize, ImVec2 imageSize);
+    static void
+    InputField();
+    static void
+    Text();
 
     template<typename T>
-    static void AssetInput(Ref<UID>& assetID, const char* imguiID)
+    static void
+    AssetInput(Ref<UID>& assetID, const char* imguiID)
     {
       std::vector<entt::entity> availableAssets;
-      int selectedAsset = -1;
-      auto view = AssetDatabase::AssetDatabase::s_Registry
+      int                       selectedAsset = -1;
+      auto                      view = AssetDatabase::AssetDatabase::s_Registry
                     ->view<IDComponent, NameComponent, T>();
 
       int count = 0;
-      for (auto entity : view) {
+      for (auto entity : view)
+      {
         availableAssets.push_back(entity);
-        if (assetID &&
-            (*view.template get<IDComponent>(entity).ID == *assetID)) {
+        if (assetID && (*view.template get<IDComponent>(entity).ID == *assetID))
+        {
           selectedAsset = count;
         }
         count++;
@@ -69,21 +74,25 @@ namespace Dwarf {
           : view.template get<NameComponent>(availableAssets[selectedAsset])
               .Name.c_str();
 
-      if (ImGui::BeginCombo(imguiID, preview)) {
+      if (ImGui::BeginCombo(imguiID, preview))
+      {
         if (ImGui::Selectable(
-              "None", selectedAsset == -1, 0, ImVec2(0, 16 + 10))) {
+              "None", selectedAsset == -1, 0, ImVec2(0, 16 + 10)))
+        {
           selectedAsset = -1;
           assetID = nullptr;
         }
 
-        for (int i = 0; i < availableAssets.size(); i++) {
+        for (int i = 0; i < availableAssets.size(); i++)
+        {
           const bool is_selected = (selectedAsset == i);
           if (ImGui::Selectable(
                 view.template get<NameComponent>(availableAssets[i])
                   .Name.c_str(),
                 is_selected,
                 0,
-                ImVec2(0, 16 + 10))) {
+                ImVec2(0, 16 + 10)))
+          {
             selectedAsset = i;
             assetID = view.template get<IDComponent>(availableAssets[i]).ID;
           }
@@ -95,10 +104,12 @@ namespace Dwarf {
   };
 
   template<>
-  void DwarfUI::AssetInput<VertexShaderAsset>(Ref<UID>& assetID,
-                                              const char* imguiID);
+  void
+  DwarfUI::AssetInput<VertexShaderAsset>(Ref<UID>&   assetID,
+                                         const char* imguiID);
 
   template<>
-  void DwarfUI::AssetInput<FragmentShaderAsset>(Ref<UID>& assetID,
-                                                const char* imguiID);
+  void
+  DwarfUI::AssetInput<FragmentShaderAsset>(Ref<UID>&   assetID,
+                                           const char* imguiID);
 }

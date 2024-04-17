@@ -4,7 +4,8 @@
 #include "Editor/EditorModel.h"
 #include "Editor/Modules/GuiModule.h"
 
-namespace Dwarf {
+namespace Dwarf
+{
 
   /// @brief Module to render a window that displays performance statistics.
   class PerformanceWindow : public GuiModule
@@ -20,12 +21,16 @@ namespace Dwarf {
     PerformanceWindow(Ref<EditorModel> model, int id);
 
     /// @brief Renders the module window.
-    void OnImGuiRender() override;
+    void
+    OnImGuiRender() override;
 
-    void OnUpdate(double deltaTime) override;
+    void
+    OnUpdate(double deltaTime) override;
 
-    std::string Serialize() override;
+    std::string
+    Serialize() override;
 
-    void Deserialize(nlohmann::json moduleData) override;
+    void
+    Deserialize(nlohmann::json moduleData) override;
   };
 }

@@ -10,7 +10,8 @@
 
 #include "imgui.h"
 
-namespace Dwarf {
+namespace Dwarf
+{
 
   class ProjectLauncherView
   {
@@ -42,21 +43,29 @@ namespace Dwarf {
 
     /// @brief Loaded image for the twitter icon
     Ref<Texture> m_TwitterIcon;
-    void RenderProjectList(int fWidth, int fHeight);
+    void
+    RenderProjectList(int fWidth, int fHeight);
 
-    void RenderButtons(int fWidth, int fHeight);
+    void
+    RenderButtons(int fWidth, int fHeight);
 
-    void RenderFooter(int fWidth, int fHeight);
+    void
+    RenderFooter(int fWidth, int fHeight);
 
-    void RenderChangeGraphicsApiModal();
+    void
+    RenderChangeGraphicsApiModal();
 
-    void RenderProjectNotFoundModal();
+    void
+    RenderProjectNotFoundModal();
 
-    void RenderCreateNewProjectModal();
+    void
+    RenderCreateNewProjectModal();
 
   public:
     ProjectLauncherView();
-    void Init(Ref<ProjectLauncherModel> model);
-    void Render();
+    void
+    Init(Ref<ProjectLauncherModel> model);
+    void
+    Render();
   };
 }

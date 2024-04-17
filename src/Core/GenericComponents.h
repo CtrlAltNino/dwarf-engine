@@ -3,7 +3,8 @@
 #include "Core/Base.h"
 #include "Core/UID.h"
 
-namespace Dwarf {
+namespace Dwarf
+{
   struct PathComponent
   {
     /// @brief Path to the asset.

@@ -22,7 +22,8 @@
 #include "Shader Parameters/Vec4ShaderParameter.h"
 #include "Shader Parameters/Tex2DShaderParameter.h"
 
-namespace Dwarf {
+namespace Dwarf
+{
 
   Ref<Shader> Shader::s_DefaultShader = nullptr;
   Ref<Shader> Shader::s_ErrorShader = nullptr;
@@ -31,169 +32,121 @@ namespace Dwarf {
   Ref<Shader> Shader::s_IdShader = nullptr;
   Ref<Shader> Shader::s_WhiteShader = nullptr;
 
-  Ref<Shader> Shader::Create()
+  Ref<Shader>
+  Shader::Create()
   {
-    switch (Renderer::GetAPI()) {
+    switch (Renderer::GetAPI())
+    {
       using enum GraphicsApi;
 #ifdef _WIN32
-      case D3D12:
-        break;
-      case Metal:
-        break;
-      case OpenGL:
-        return CreateRef<OpenGLShader>(OpenGLShader());
-        break;
-      case Vulkan:
-        break;
+      case D3D12: break;
+      case Metal: break;
+      case OpenGL: return CreateRef<OpenGLShader>(OpenGLShader()); break;
+      case Vulkan: break;
 #elif __linux__
-      case D3D12:
-        break;
-      case Metal:
-        break;
-      case OpenGL:
-        return CreateRef<OpenGLShader>(OpenGLShader());
-        break;
-      case Vulkan:
-        break;
+      case D3D12: break;
+      case Metal: break;
+      case OpenGL: return CreateRef<OpenGLShader>(OpenGLShader()); break;
+      case Vulkan: break;
 #elif __APPLE__
-      case D3D12:
-        break;
+      case D3D12: break;
       case Metal:
         // return CreateRef<MetalShader>(MetalShader());
         break;
-      case OpenGL:
-        break;
-      case Vulkan:
-        break;
+      case OpenGL: break;
+      case Vulkan: break;
 #endif
-      default:
-        return nullptr;
+      default: return nullptr;
     }
 
     return nullptr;
   }
 
-  std::filesystem::path Shader::GetDefaultShaderPath()
+  std::filesystem::path
+  Shader::GetDefaultShaderPath()
   {
-    switch (Renderer::GetAPI()) {
+    switch (Renderer::GetAPI())
+    {
       using enum GraphicsApi;
-      case D3D12:
-        return "data/engine/shaders/default/d3d12/";
-        break;
-      case Metal:
-        return "data/engine/shaders/default/metal/";
-        break;
-      case OpenGL:
-        return "data/engine/shaders/default/opengl/";
-        break;
-      case Vulkan:
-        return "data/engine/shaders/default/vulkan/";
-        break;
+      case D3D12: return "data/engine/shaders/default/d3d12/"; break;
+      case Metal: return "data/engine/shaders/default/metal/"; break;
+      case OpenGL: return "data/engine/shaders/default/opengl/"; break;
+      case Vulkan: return "data/engine/shaders/default/vulkan/"; break;
     }
 
     return "";
   }
 
-  std::filesystem::path Shader::GetErrorShaderPath()
+  std::filesystem::path
+  Shader::GetErrorShaderPath()
   {
-    switch (Renderer::GetAPI()) {
+    switch (Renderer::GetAPI())
+    {
       using enum GraphicsApi;
-      case D3D12:
-        return "data/engine/shaders/error/d3d12/";
-        break;
-      case Metal:
-        return "data/engine/shaders/error/metal/";
-        break;
-      case OpenGL:
-        return "data/engine/shaders/error/opengl/";
-        break;
-      case Vulkan:
-        return "data/engine/shaders/error/vulkan/";
-        break;
+      case D3D12: return "data/engine/shaders/error/d3d12/"; break;
+      case Metal: return "data/engine/shaders/error/metal/"; break;
+      case OpenGL: return "data/engine/shaders/error/opengl/"; break;
+      case Vulkan: return "data/engine/shaders/error/vulkan/"; break;
     }
 
     return "";
   }
 
-  std::filesystem::path Shader::GetGridShaderPath()
+  std::filesystem::path
+  Shader::GetGridShaderPath()
   {
-    switch (Renderer::GetAPI()) {
+    switch (Renderer::GetAPI())
+    {
       using enum GraphicsApi;
-      case D3D12:
-        return "data/engine/shaders/grid/d3d12/";
-        break;
-      case Metal:
-        return "data/engine/shaders/grid/metal/";
-        break;
-      case OpenGL:
-        return "data/engine/shaders/grid/opengl/";
-        break;
-      case Vulkan:
-        return "data/engine/shaders/grid/vulkan/";
-        break;
+      case D3D12: return "data/engine/shaders/grid/d3d12/"; break;
+      case Metal: return "data/engine/shaders/grid/metal/"; break;
+      case OpenGL: return "data/engine/shaders/grid/opengl/"; break;
+      case Vulkan: return "data/engine/shaders/grid/vulkan/"; break;
     }
 
     return "";
   }
 
-  std::filesystem::path Shader::GetPreviewShaderPath()
+  std::filesystem::path
+  Shader::GetPreviewShaderPath()
   {
-    switch (Renderer::GetAPI()) {
+    switch (Renderer::GetAPI())
+    {
       using enum GraphicsApi;
-      case D3D12:
-        return "data/engine/shaders/preview/d3d12/";
-        break;
-      case Metal:
-        return "data/engine/shaders/preview/metal/";
-        break;
-      case OpenGL:
-        return "data/engine/shaders/preview/opengl/";
-        break;
-      case Vulkan:
-        return "data/engine/shaders/preview/vulkan/";
-        break;
+      case D3D12: return "data/engine/shaders/preview/d3d12/"; break;
+      case Metal: return "data/engine/shaders/preview/metal/"; break;
+      case OpenGL: return "data/engine/shaders/preview/opengl/"; break;
+      case Vulkan: return "data/engine/shaders/preview/vulkan/"; break;
     }
 
     return "";
   }
 
-  std::filesystem::path Shader::GetIdShaderPath()
+  std::filesystem::path
+  Shader::GetIdShaderPath()
   {
-    switch (Renderer::GetAPI()) {
+    switch (Renderer::GetAPI())
+    {
       using enum GraphicsApi;
-      case D3D12:
-        return "data/engine/shaders/id/d3d12/";
-        break;
-      case Metal:
-        return "data/engine/shaders/id/metal/";
-        break;
-      case OpenGL:
-        return "data/engine/shaders/id/opengl/";
-        break;
-      case Vulkan:
-        return "data/engine/shaders/id/vulkan/";
-        break;
+      case D3D12: return "data/engine/shaders/id/d3d12/"; break;
+      case Metal: return "data/engine/shaders/id/metal/"; break;
+      case OpenGL: return "data/engine/shaders/id/opengl/"; break;
+      case Vulkan: return "data/engine/shaders/id/vulkan/"; break;
     }
 
     return "";
   }
 
-  std::filesystem::path Shader::GetOutlineShaderPath()
+  std::filesystem::path
+  Shader::GetOutlineShaderPath()
   {
-    switch (Renderer::GetAPI()) {
+    switch (Renderer::GetAPI())
+    {
       using enum GraphicsApi;
-      case D3D12:
-        return "data/engine/shaders/outline/d3d12/";
-        break;
-      case Metal:
-        return "data/engine/shaders/outline/metal/";
-        break;
-      case OpenGL:
-        return "data/engine/shaders/outline/opengl/";
-        break;
-      case Vulkan:
-        return "data/engine/shaders/outline/vulkan/";
-        break;
+      case D3D12: return "data/engine/shaders/outline/d3d12/"; break;
+      case Metal: return "data/engine/shaders/outline/metal/"; break;
+      case OpenGL: return "data/engine/shaders/outline/opengl/"; break;
+      case Vulkan: return "data/engine/shaders/outline/vulkan/"; break;
     }
 
     return "";
@@ -202,17 +155,18 @@ namespace Dwarf {
   Shader::Shader() = default;
   Shader::~Shader() = default;
 
-  void Shader::Init()
+  void
+  Shader::Init()
   {
-    switch (Renderer::GetAPI()) {
+    switch (Renderer::GetAPI())
+    {
 #ifdef _WIN32
       case GraphicsApi::D3D12:
         // s_DefaultShader = D3D12Shader::CreateDefaultShader();
         // s_ErrorShader = D3D12Shader::CreateErrorShader();
         // s_GridShader = D3D12Shader::CreateGridShader();
         break;
-      case GraphicsApi::Metal:
-        break;
+      case GraphicsApi::Metal: break;
       case GraphicsApi::OpenGL:
         s_DefaultShader = OpenGLShader::CreateDefaultShader();
         s_ErrorShader = OpenGLShader::CreateErrorShader();
@@ -227,10 +181,8 @@ namespace Dwarf {
         // s_GridShader = VulkanShader::CreateGridShader();
         break;
 #elif __linux__
-      case GraphicsApi::D3D12:
-        break;
-      case GraphicsApi::Metal:
-        break;
+      case GraphicsApi::D3D12: break;
+      case GraphicsApi::Metal: break;
       case GraphicsApi::OpenGL:
         s_DefaultShader = OpenGLShader::CreateDefaultShader();
         s_ErrorShader = OpenGLShader::CreateErrorShader();
@@ -239,20 +191,16 @@ namespace Dwarf {
         s_IdShader = OpenGLShader::CreateIdShader();
         s_WhiteShader = OpenGLShader::CreateWhiteShader();
         break;
-      case GraphicsApi::Vulkan:
-        break;
+      case GraphicsApi::Vulkan: break;
 #elif __APPLE__
-      case GraphicsApi::D3D12:
-        break;
+      case GraphicsApi::D3D12: break;
       case GraphicsApi::Metal:
         // s_DefaultShader = MetalShader::CreateDefaultShader();
         // s_ErrorShader = MetalShader::CreateErrorShader();
         // s_GridShader = MetalShader::CreateGridShader();
         break;
-      case GraphicsApi::OpenGL:
-        break;
-      case GraphicsApi::Vulkan:
-        break;
+      case GraphicsApi::OpenGL: break;
+      case GraphicsApi::Vulkan: break;
 #endif
     }
 
@@ -261,9 +209,11 @@ namespace Dwarf {
     s_GridShader->Compile();
   }
 
-  Ref<IShaderParameter> Shader::CreateShaderParameter(ShaderParameterType type)
+  Ref<IShaderParameter>
+  Shader::CreateShaderParameter(ShaderParameterType type)
   {
-    switch (type) {
+    switch (type)
+    {
       using enum ShaderParameterType;
       case BOOLEAN:
         return CreateRef<BooleanShaderParameter>(BooleanShaderParameter());
@@ -286,8 +236,7 @@ namespace Dwarf {
       case TEX2D:
         return CreateRef<Tex2DShaderParameter>(Tex2DShaderParameter());
         break;
-      default:
-        return nullptr;
+      default: return nullptr;
     }
   }
 }

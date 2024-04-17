@@ -2,7 +2,8 @@
 #include "Platform/OSX/OSXWindow.h"
 #include "Input/InputManager.h"
 
-namespace Dwarf {
+namespace Dwarf
+{
 
   OSXWindow::OSXWindow(const WindowProps& props)
     : m_Api(props.Api)
@@ -17,12 +18,14 @@ namespace Dwarf {
     SDL_Quit();
   }
 
-  GraphicsApi OSXWindow::GetApi()
+  GraphicsApi
+  OSXWindow::GetApi()
   {
     return m_Api;
   }
 
-  void OSXWindow::Init(const WindowProps& props)
+  void
+  OSXWindow::Init(const WindowProps& props)
   {
     // SDL Setup
     SDL_Init(SDL_INIT_VIDEO);
@@ -37,12 +40,11 @@ namespace Dwarf {
     WindowFlags |= SDL_WINDOW_MOUSE_CAPTURE;
     WindowFlags |= SDL_WINDOW_RESIZABLE;
 
-    switch (props.Api) {
+    switch (props.Api)
+    {
       using enum GraphicsApi;
-      case D3D12:
-        break;
-      case Metal:
-        break;
+      case D3D12: break;
+      case Metal: break;
       case OpenGL:
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
@@ -51,9 +53,7 @@ namespace Dwarf {
                             SDL_GL_CONTEXT_PROFILE_CORE);
         WindowFlags |= SDL_WINDOW_OPENGL;
         break;
-      case Vulkan:
-        WindowFlags |= SDL_WINDOW_VULKAN;
-        break;
+      case Vulkan: WindowFlags |= SDL_WINDOW_VULKAN; break;
     }
 
     m_Window = SDL_CreateWindow(m_Data.Title.c_str(),
@@ -63,14 +63,15 @@ namespace Dwarf {
                                 (int)m_Data.Height,
                                 WindowFlags);
 
-    if (m_Window == nullptr) {
+    if (m_Window == nullptr)
+    {
       std::cout << "[WINDOW CREATION] Error: Failed to create window"
                 << std::endl;
       SDL_Quit();
     }
 
     SDL_DisplayMode mode;
-    int dmCode =
+    int             dmCode =
       SDL_GetDesktopDisplayMode(SDL_GetWindowDisplayIndex(m_Window), &mode);
 
     SDL_SetWindowMinimumSize(m_Window, props.Width, props.Height);
@@ -85,52 +86,57 @@ namespace Dwarf {
     m_ImguiLayer->OnAttach(m_Window);
   }
 
-  void OSXWindow::ShowWindow()
+  void
+  OSXWindow::ShowWindow()
   {
     SDL_ShowWindow(m_Window);
   }
 
-  void OSXWindow::HideWindow()
+  void
+  OSXWindow::HideWindow()
   {
     SDL_HideWindow(m_Window);
   }
 
-  void OSXWindow::Shutdown()
+  void
+  OSXWindow::Shutdown()
   {
     SDL_DestroyWindow(m_Window);
     SDL_Quit();
   }
 
-  void OSXWindow::NewFrame()
+  void
+  OSXWindow::NewFrame()
   {
     SDL_Event event;
-    while (SDL_PollEvent(&event)) {
+    while (SDL_PollEvent(&event))
+    {
       m_ImguiLayer->HandleSDLEvent(&event);
 
-      switch (event.type) {
-        case SDL_QUIT:
-          m_Data.ShouldClose = true;
-          break;
+      switch (event.type)
+      {
+        case SDL_QUIT: m_Data.ShouldClose = true; break;
         case SDL_KEYDOWN:
           InputManager::ProcessKeyDown(event.key.keysym.scancode);
           break;
         case SDL_KEYUP:
           InputManager::ProcessKeyUp(event.key.keysym.scancode);
           break;
-        default:
-          break;
+        default: break;
       }
     }
     m_ImguiLayer->Begin();
   }
 
-  void OSXWindow::EndFrame()
+  void
+  OSXWindow::EndFrame()
   {
     m_ImguiLayer->End();
     m_Context->SwapBuffers();
   }
 
-  void OSXWindow::SetVSync(bool enabled)
+  void
+  OSXWindow::SetVSync(bool enabled)
   {
     if (enabled)
       SDL_GL_SetSwapInterval(1);
@@ -140,22 +146,26 @@ namespace Dwarf {
     m_Data.VSync = enabled;
   }
 
-  bool OSXWindow::IsVSync()
+  bool
+  OSXWindow::IsVSync()
   {
     return m_Data.VSync;
   }
 
-  bool OSXWindow::ShouldClose()
+  bool
+  OSXWindow::ShouldClose()
   {
     return m_Data.ShouldClose;
   }
 
-  void OSXWindow::SetWindowTitle(std::string windowName)
+  void
+  OSXWindow::SetWindowTitle(std::string windowName)
   {
     SDL_SetWindowTitle(m_Window, windowName.c_str());
   }
 
-  void OSXWindow::MaximizeWindow()
+  void
+  OSXWindow::MaximizeWindow()
   {
     SDL_MaximizeWindow(m_Window);
   }

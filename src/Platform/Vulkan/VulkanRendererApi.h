@@ -2,7 +2,8 @@
 
 #include "Core/Rendering/RendererApi.h"
 
-namespace Dwarf {
+namespace Dwarf
+{
   class VulkanRendererApi : public RendererApi
   {
   public:

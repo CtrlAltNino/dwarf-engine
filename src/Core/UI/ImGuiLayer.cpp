@@ -10,47 +10,42 @@
 // #include "Platform/Metal/MetalImGuiLayer.h"
 #endif
 
-namespace Dwarf {
-  Ref<ImGuiLayer> ImGuiLayer::Create(GraphicsApi api)
+namespace Dwarf
+{
+  Ref<ImGuiLayer>
+  ImGuiLayer::Create(GraphicsApi api)
   {
 #ifdef _WIN32
-    switch (api) {
+    switch (api)
+    {
       case GraphicsApi::D3D12:
         // return CreateRef<D3D12ImGuiLayer>();
         break;
-      case GraphicsApi::Metal:
-        break;
-      case GraphicsApi::OpenGL:
-        return CreateRef<OpenGLImGuiLayer>();
-        break;
+      case GraphicsApi::Metal: break;
+      case GraphicsApi::OpenGL: return CreateRef<OpenGLImGuiLayer>(); break;
       case GraphicsApi::Vulkan:
         // return CreateRef<VulkanImGuiLayer>();
         break;
     }
 #elif __linux__
-    switch (api) {
-      case GraphicsApi::D3D12:
-        break;
-      case GraphicsApi::Metal:
-        break;
-      case GraphicsApi::OpenGL:
-        return CreateRef<OpenGLImGuiLayer>();
-        break;
+    switch (api)
+    {
+      case GraphicsApi::D3D12: break;
+      case GraphicsApi::Metal: break;
+      case GraphicsApi::OpenGL: return CreateRef<OpenGLImGuiLayer>(); break;
       case GraphicsApi::Vulkan:
         // return CreateRef<VulkanImGuiLayer>();
         break;
     }
 #elif __APPLE__
-    switch (api) {
-      case GraphicsApi::D3D12:
-        break;
+    switch (api)
+    {
+      case GraphicsApi::D3D12: break;
       case GraphicsApi::Metal:
         // return CreateRef<MetalImGuiLayer>();
         break;
-      case GraphicsApi::OpenGL:
-        break;
-      case GraphicsApi::Vulkan:
-        break;
+      case GraphicsApi::OpenGL: break;
+      case GraphicsApi::Vulkan: break;
     }
 #endif
 

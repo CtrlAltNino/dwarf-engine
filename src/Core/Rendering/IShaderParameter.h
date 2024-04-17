@@ -2,11 +2,13 @@
 
 #include "Core/Base.h"
 
-namespace Dwarf {
+namespace Dwarf
+{
   class IShaderParameter
   {
   public:
     virtual ~IShaderParameter() = default;
-    virtual ShaderParameterType GetType() = 0;
+    virtual ShaderParameterType
+    GetType() = 0;
   };
 }

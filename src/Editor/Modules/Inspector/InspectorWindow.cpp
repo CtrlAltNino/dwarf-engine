@@ -24,7 +24,8 @@
 #define ADD_BUTTON_WIDTH (40.0f)
 #define UNIFORM_DELETE_BUTTON_WIDTH (80.0f)
 
-namespace Dwarf {
+namespace Dwarf
+{
 
   InspectorWindow::InspectorWindow(Ref<EditorModel> model, int id)
     : GuiModule(model, "Inspector", MODULE_TYPE::INSPECTOR, id)
@@ -34,14 +35,16 @@ namespace Dwarf {
   }
 
   template<>
-  void InspectorWindow::RenderComponent<IDComponent>(IDComponent& component)
+  void
+  InspectorWindow::RenderComponent<IDComponent>(IDComponent& component)
   {
     ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
     ImGui::TextWrapped("%s", std::to_string(*component.ID).c_str());
   }
 
   template<>
-  void InspectorWindow::RenderComponent<NameComponent>(NameComponent& component)
+  void
+  InspectorWindow::RenderComponent<NameComponent>(NameComponent& component)
   {
     ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
     ImGui::TextWrapped("Name");
@@ -55,7 +58,8 @@ namespace Dwarf {
   }
 
   template<>
-  void InspectorWindow::RenderComponent<TransformComponent>(
+  void
+  InspectorWindow::RenderComponent<TransformComponent>(
     TransformComponent& component)
   {
     ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
@@ -92,8 +96,8 @@ namespace Dwarf {
   }
 
   template<>
-  void InspectorWindow::RenderComponent<LightComponent>(
-    LightComponent& component)
+  void
+  InspectorWindow::RenderComponent<LightComponent>(LightComponent& component)
   {
     ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
 
@@ -128,7 +132,8 @@ namespace Dwarf {
     ImGui::DragFloat("##light_attenuation", &component.attenuation, 0.015f);
     ImGui::PopItemWidth();
 
-    if (component.type == LightComponent::LIGHT_TYPE::POINT_LIGHT) {
+    if (component.type == LightComponent::LIGHT_TYPE::POINT_LIGHT)
+    {
       ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
       ImGui::TextWrapped("Radius");
       ImGui::SameLine();
@@ -138,7 +143,8 @@ namespace Dwarf {
       ImGui::PopItemWidth();
     }
 
-    if (component.type == LightComponent::LIGHT_TYPE::SPOT_LIGHT) {
+    if (component.type == LightComponent::LIGHT_TYPE::SPOT_LIGHT)
+    {
       ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
       ImGui::TextWrapped("Opening Angle");
       ImGui::SameLine();
@@ -151,7 +157,8 @@ namespace Dwarf {
   }
 
   template<>
-  void InspectorWindow::RenderComponent<MeshRendererComponent>(
+  void
+  InspectorWindow::RenderComponent<MeshRendererComponent>(
     MeshRendererComponent& component)
   {
     // TODO: Slot for a mesh asset
@@ -163,27 +170,32 @@ namespace Dwarf {
     DwarfUI::AssetInput<ModelAsset>(component.meshAsset, "##modelAsset");
     ImGui::PopItemWidth();
 
-    if (component.meshAsset) {
-      int numMaterials = 0;
+    if (component.meshAsset)
+    {
+      int                    numMaterials = 0;
       std::vector<Ref<Mesh>> meshes =
         AssetDatabase::Retrieve<ModelAsset>(component.meshAsset)
           ->GetAsset()
           ->m_Meshes;
 
-      for (int i = 0; i < meshes.size(); i++) {
-        if (meshes[i]->GetMaterialIndex() > numMaterials) {
+      for (int i = 0; i < meshes.size(); i++)
+      {
+        if (meshes[i]->GetMaterialIndex() > numMaterials)
+        {
           numMaterials = meshes[i]->GetMaterialIndex();
         }
       }
       ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
       ImGui::TextWrapped("Materials");
 
-      if (component.materialAssets.size() != numMaterials) {
+      if (component.materialAssets.size() != numMaterials)
+      {
         component.materialAssets.resize(numMaterials);
       }
 
       ImGui::Indent(16.0f);
-      for (int i = 0; i < numMaterials; i++) {
+      for (int i = 0; i < numMaterials; i++)
+      {
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
         ImGui::TextWrapped("%s", std::to_string(i).c_str());
         ImGui::SameLine();
@@ -197,93 +209,98 @@ namespace Dwarf {
     }
   }
 
-  void InspectorWindow::OnImGuiRender()
+  void
+  InspectorWindow::OnImGuiRender()
   {
     ImGuiWindowFlags window_flags = 0;
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(14.0f, 14.0f));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(200.0f, 0));
 
-    if (!ImGui::Begin(GetIdentifier().c_str(), &m_WindowOpened, window_flags)) {
+    if (!ImGui::Begin(GetIdentifier().c_str(), &m_WindowOpened, window_flags))
+    {
       // Early out if the window is collapsed, as an optimization.
       ImGui::End();
       ImGui::PopStyleVar(2);
       return;
     }
 
-    switch (m_Model->GetSelection().GetSelectionType()) {
-      case CURRENT_SELECTION_TYPE::ASSET: {
-        // TODO: Render Asset data
-        if (std::filesystem::path assetPath =
-              m_Model->GetSelection().GetAssetPath();
-            std::filesystem::is_regular_file(assetPath)) {
-          switch (AssetDatabase::GetType(assetPath)) {
-            using enum ASSET_TYPE;
-            case MODEL:
-              AssetInspectorRenderer::RenderAssetInspector(
-                AssetDatabase::Retrieve<ModelAsset>(assetPath));
-              break;
-            case TEXTURE:
-              AssetInspectorRenderer::RenderAssetInspector(
-                AssetDatabase::Retrieve<TextureAsset>(assetPath));
-              break;
-            case SCENE:
-              AssetInspectorRenderer::RenderAssetInspector(
-                AssetDatabase::Retrieve<SceneAsset>(assetPath));
-              break;
-            case MATERIAL:
-              AssetInspectorRenderer::RenderAssetInspector(
-                AssetDatabase::Retrieve<MaterialAsset>(assetPath));
-              break;
-            case VERTEX_SHADER:
-              AssetInspectorRenderer::RenderAssetInspector(
-                AssetDatabase::Retrieve<VertexShaderAsset>(assetPath));
-              break;
-            case TESC_SHADER:
-              AssetInspectorRenderer::RenderAssetInspector(
-                AssetDatabase::Retrieve<TesselationControlShaderAsset>(
-                  assetPath));
-              break;
-            case TESE_SHADER:
-              AssetInspectorRenderer::RenderAssetInspector(
-                AssetDatabase::Retrieve<TesselationEvaluationShaderAsset>(
-                  assetPath));
-              break;
-            case GEOMETRY_SHADER:
-              AssetInspectorRenderer::RenderAssetInspector(
-                AssetDatabase::Retrieve<GeometryShaderAsset>(assetPath));
-              break;
-            case FRAGMENT_SHADER:
-              AssetInspectorRenderer::RenderAssetInspector(
-                AssetDatabase::Retrieve<FragmentShaderAsset>(assetPath));
-              break;
-            case HLSL_SHADER:
-              AssetInspectorRenderer::RenderAssetInspector(
-                AssetDatabase::Retrieve<HlslShaderAsset>(assetPath));
-              break;
-            case COMPUTE_SHADER:
-              AssetInspectorRenderer::RenderAssetInspector(
-                AssetDatabase::Retrieve<ComputeShaderAsset>(assetPath));
-              break;
-            case UNKNOWN:
-              AssetInspectorRenderer::RenderAssetInspector(
-                AssetDatabase::Retrieve<UnknownAsset>(assetPath));
-              break;
-            default:
-              break;
+    switch (m_Model->GetSelection().GetSelectionType())
+    {
+      case CURRENT_SELECTION_TYPE::ASSET:
+        {
+          // TODO: Render Asset data
+          if (std::filesystem::path assetPath =
+                m_Model->GetSelection().GetAssetPath();
+              std::filesystem::is_regular_file(assetPath))
+          {
+            switch (AssetDatabase::GetType(assetPath))
+            {
+              using enum ASSET_TYPE;
+              case MODEL:
+                AssetInspectorRenderer::RenderAssetInspector(
+                  AssetDatabase::Retrieve<ModelAsset>(assetPath));
+                break;
+              case TEXTURE:
+                AssetInspectorRenderer::RenderAssetInspector(
+                  AssetDatabase::Retrieve<TextureAsset>(assetPath));
+                break;
+              case SCENE:
+                AssetInspectorRenderer::RenderAssetInspector(
+                  AssetDatabase::Retrieve<SceneAsset>(assetPath));
+                break;
+              case MATERIAL:
+                AssetInspectorRenderer::RenderAssetInspector(
+                  AssetDatabase::Retrieve<MaterialAsset>(assetPath));
+                break;
+              case VERTEX_SHADER:
+                AssetInspectorRenderer::RenderAssetInspector(
+                  AssetDatabase::Retrieve<VertexShaderAsset>(assetPath));
+                break;
+              case TESC_SHADER:
+                AssetInspectorRenderer::RenderAssetInspector(
+                  AssetDatabase::Retrieve<TesselationControlShaderAsset>(
+                    assetPath));
+                break;
+              case TESE_SHADER:
+                AssetInspectorRenderer::RenderAssetInspector(
+                  AssetDatabase::Retrieve<TesselationEvaluationShaderAsset>(
+                    assetPath));
+                break;
+              case GEOMETRY_SHADER:
+                AssetInspectorRenderer::RenderAssetInspector(
+                  AssetDatabase::Retrieve<GeometryShaderAsset>(assetPath));
+                break;
+              case FRAGMENT_SHADER:
+                AssetInspectorRenderer::RenderAssetInspector(
+                  AssetDatabase::Retrieve<FragmentShaderAsset>(assetPath));
+                break;
+              case HLSL_SHADER:
+                AssetInspectorRenderer::RenderAssetInspector(
+                  AssetDatabase::Retrieve<HlslShaderAsset>(assetPath));
+                break;
+              case COMPUTE_SHADER:
+                AssetInspectorRenderer::RenderAssetInspector(
+                  AssetDatabase::Retrieve<ComputeShaderAsset>(assetPath));
+                break;
+              case UNKNOWN:
+                AssetInspectorRenderer::RenderAssetInspector(
+                  AssetDatabase::Retrieve<UnknownAsset>(assetPath));
+                break;
+              default: break;
+            }
           }
+          break;
         }
-        break;
-      }
       case CURRENT_SELECTION_TYPE::ENTITY:
         static std::vector<Entity>* selectedEntities =
           &m_Model->GetSelection().GetSelectedEntities();
-        if (selectedEntities->size() == 1) {
+        if (selectedEntities->size() == 1)
+        {
           RenderComponents(selectedEntities->at(0));
         }
         break;
-      case CURRENT_SELECTION_TYPE::NONE:
-        break;
+      case CURRENT_SELECTION_TYPE::NONE: break;
     }
 
     ImGui::End();
@@ -291,12 +308,14 @@ namespace Dwarf {
     ImGui::PopStyleVar(2);
   }
 
-  void InspectorWindow::OnUpdate(double deltaTime)
+  void
+  InspectorWindow::OnUpdate(double deltaTime)
   {
     // Place Update code here (Before rendering)
   }
 
-  void InspectorWindow::BeginComponent(const char* componentHeader) const
+  void
+  InspectorWindow::BeginComponent(const char* componentHeader) const
   {
     ImGui::BeginGroup();
     ImVec2 vec2 = ImGui::CalcTextSize(componentHeader);
@@ -318,7 +337,8 @@ namespace Dwarf {
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + COMPONENT_PANEL_PADDING * 2);
   }
 
-  void InspectorWindow::EndComponent() const
+  void
+  InspectorWindow::EndComponent() const
   {
     ImGui::EndGroup();
     ImGui::GetWindowDrawList()->AddRectFilled(
@@ -330,12 +350,14 @@ namespace Dwarf {
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3 * COMPONENT_PANEL_PADDING);
   }
 
-  void InspectorWindow::RenderComponents(Entity entity)
+  void
+  InspectorWindow::RenderComponents(Entity entity)
   {
     ImDrawList* draw_list = ImGui::GetWindowDrawList();
     draw_list->ChannelsSplit(2);
 
-    if (entity.HasComponent<NameComponent>()) {
+    if (entity.HasComponent<NameComponent>())
+    {
       draw_list->ChannelsSetCurrent(1);
       BeginComponent("Name");
       RenderComponent(entity.GetComponent<NameComponent>());
@@ -343,7 +365,8 @@ namespace Dwarf {
       EndComponent();
     }
 
-    if (entity.HasComponent<TransformComponent>()) {
+    if (entity.HasComponent<TransformComponent>())
+    {
       draw_list->ChannelsSetCurrent(1);
       BeginComponent("Transform");
       RenderComponent(entity.GetComponent<TransformComponent>());
@@ -351,7 +374,8 @@ namespace Dwarf {
       EndComponent();
     }
 
-    if (entity.HasComponent<LightComponent>()) {
+    if (entity.HasComponent<LightComponent>())
+    {
       draw_list->ChannelsSetCurrent(1);
       BeginComponent("Light");
       RenderComponent(entity.GetComponent<LightComponent>());
@@ -359,7 +383,8 @@ namespace Dwarf {
       EndComponent();
     }
 
-    if (entity.HasComponent<MeshRendererComponent>()) {
+    if (entity.HasComponent<MeshRendererComponent>())
+    {
       draw_list->ChannelsSetCurrent(1);
       BeginComponent("Mesh Renderer");
       RenderComponent(entity.GetComponent<MeshRendererComponent>());
@@ -369,12 +394,14 @@ namespace Dwarf {
     draw_list->ChannelsMerge();
   }
 
-  void InspectorWindow::Deserialize(nlohmann::json moduleData)
+  void
+  InspectorWindow::Deserialize(nlohmann::json moduleData)
   {
     // Deserialize the saved data
   }
 
-  std::string InspectorWindow::Serialize()
+  std::string
+  InspectorWindow::Serialize()
   {
     return "";
   }

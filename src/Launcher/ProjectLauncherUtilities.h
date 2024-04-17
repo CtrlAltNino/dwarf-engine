@@ -1,6 +1,7 @@
 #pragma once
 
-namespace Dwarf {
+namespace Dwarf
+{
 
   /// @brief Enum defining the states of the project launcher.
   enum class ProjectChooserState
@@ -34,9 +35,9 @@ namespace Dwarf {
   /// @brief Structure holding information about a project.
   struct ProjectInformation
   {
-    std::string name;
+    std::string           name;
     std::filesystem::path path;
-    int lastOpened;
-    GraphicsApi graphicsApi;
+    int                   lastOpened;
+    GraphicsApi           graphicsApi;
   };
 }

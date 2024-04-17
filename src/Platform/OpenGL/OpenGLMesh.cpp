@@ -4,7 +4,8 @@
 
 #include <glad/glad.h>
 
-namespace Dwarf {
+namespace Dwarf
+{
   OpenGLMesh::~OpenGLMesh()
   {
     Unbind();
@@ -13,19 +14,22 @@ namespace Dwarf {
     glDeleteBuffers(1, &EBO);
   }
 
-  void OpenGLMesh::Bind() const
+  void
+  OpenGLMesh::Bind() const
   {
     glBindVertexArray(VAO);
   }
 
-  void OpenGLMesh::Unbind() const
+  void
+  OpenGLMesh::Unbind() const
   {
     glBindVertexArray(0);
     glBindBuffer(GL_ARRAY_BUFFER, 0);
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
   }
 
-  void OpenGLMesh::SetupMesh()
+  void
+  OpenGLMesh::SetupMesh()
   {
     glGenVertexArrays(1, &VAO);
     glGenBuffers(1, &VBO);

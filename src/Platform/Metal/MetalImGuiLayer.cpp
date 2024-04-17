@@ -8,12 +8,14 @@
 #include <imgui_impl_metal.h>
 #include <imgui_impl_sdl2.h>
 
-namespace Dwarf {
+namespace Dwarf
+{
   MetalImGuiLayer::MetalImGuiLayer() {}
 
   MetalImGuiLayer::~MetalImGuiLayer() {}
 
-  void MetalImGuiLayer::OnAttach(SDL_Window* window)
+  void
+  MetalImGuiLayer::OnAttach(SDL_Window* window)
   {
     m_Window = window;
     IMGUI_CHECKVERSION();
@@ -52,7 +54,8 @@ namespace Dwarf {
     // When viewports are enabled we tweak WindowRounding/WindowBg so platform
     // windows can look identical to regular ones.
     ImGuiStyle& style = ImGui::GetStyle();
-    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+    {
       style.WindowRounding = 0.0f;
       style.Colors[ImGuiCol_WindowBg].w = 1.0f;
     }
@@ -61,7 +64,8 @@ namespace Dwarf {
 
     SDL_Renderer* renderer = SDL_CreateRenderer(
       m_Window, -1, SDL_RENDERER_ACCELERATED | SDL_RENDERER_PRESENTVSYNC);
-    if (renderer == nullptr) {
+    if (renderer == nullptr)
+    {
       printf("Error creating renderer: %s\n", SDL_GetError());
       return -3;
     }
@@ -77,14 +81,16 @@ namespace Dwarf {
     // new];
   }
 
-  void MetalImGuiLayer::OnDetach()
+  void
+  MetalImGuiLayer::OnDetach()
   {
     ImGui_ImplMetal_Shutdown();
     ImGui_ImplSDL2_Shutdown();
     ImGui::DestroyContext();
   }
 
-  void MetalImGuiLayer::Begin()
+  void
+  MetalImGuiLayer::Begin()
   {
     ImGui_ImplMetal_NewFrame();
     // ImGui_ImplSDL2_NewFrame(window); ?????
@@ -92,13 +98,15 @@ namespace Dwarf {
     ImGui::NewFrame();
   }
 
-  void MetalImGuiLayer::End()
+  void
+  MetalImGuiLayer::End()
   {
     ImGuiIO* io = &ImGui::GetIO();
     ImGui::Render();
     ImGui_ImplMetal_RenderDrawData(ImGui::GetDrawData());
     // ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-    if (io->ConfigFlags & ImGuiConfigFlags_ViewportsEnable) {
+    if (io->ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+    {
       ImGui::UpdatePlatformWindows();
       ImGui::RenderPlatformWindowsDefault();
     }
@@ -107,7 +115,8 @@ namespace Dwarf {
     // SDL_GL_SwapWindow(window);
   }
 
-  void MetalImGuiLayer::HandleSDLEvent(SDL_Event* event)
+  void
+  MetalImGuiLayer::HandleSDLEvent(SDL_Event* event)
   {
     ImGui_ImplSDL2_ProcessEvent(event);
   }

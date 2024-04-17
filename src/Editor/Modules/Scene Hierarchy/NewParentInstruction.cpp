@@ -1,23 +1,27 @@
 #include "Editor/Modules/Scene Hierarchy/NewParentInstruction.h"
 
-namespace Dwarf {
+namespace Dwarf
+{
 
   NewParentInstruction::NewParentInstruction(
-    Ref<Scene> scene,
+    Ref<Scene>                 scene,
     std::vector<Entity> const& sourceEntities,
-    entt::entity newParent)
+    entt::entity               newParent)
     : m_Scene(scene)
     , m_SourceEntities(sourceEntities)
     , m_NewParent(newParent)
   {
   }
 
-  void NewParentInstruction::PerformInstruction()
+  void
+  NewParentInstruction::PerformInstruction()
   {
     auto p = Entity(m_NewParent, m_Scene->GetRegistry());
-    for (Entity ent : m_SourceEntities) {
+    for (Entity ent : m_SourceEntities)
+    {
       if ((p.GetComponent<TransformComponent>().parent != ent.GetHandle()) &&
-          (ent.GetHandle() != m_NewParent)) {
+          (ent.GetHandle() != m_NewParent))
+      {
         ent.SetParent(m_NewParent);
       }
     }

@@ -9,11 +9,13 @@
 #include "Utilities/TimeUtilities.h"
 #include "Core/Rendering/Renderer.h"
 
-namespace Dwarf {
+namespace Dwarf
+{
 
   Ref<Editor> Editor::s_Instance = nullptr;
 
-  Ref<Editor> CreateEditor()
+  Ref<Editor>
+  CreateEditor()
   {
     return CreateRef<Editor>(Editor());
   }
@@ -25,7 +27,8 @@ namespace Dwarf {
 
   Editor::~Editor() = default;
 
-  void Editor::UpdateWindowTitle() const
+  void
+  Editor::UpdateWindowTitle() const
   {
     std::string windowTitle = "Dwarf Engine Editor - ";
     windowTitle.append(s_Instance->m_Model->GetName());
@@ -40,7 +43,8 @@ namespace Dwarf {
     s_Instance->m_Window->SetWindowTitle(windowTitle);
   }
 
-  void Editor::Init(std::filesystem::path const& projectPath)
+  void
+  Editor::Init(std::filesystem::path const& projectPath)
   {
     // s_Instance = this;
 
@@ -78,21 +82,27 @@ namespace Dwarf {
     s_Instance->m_Model = CreateRef<EditorModel>(EditorModel(
       projectSettings["projectName"].get<std::string_view>(), projectPath));
 
-    if (projectSettings.contains("lastOpenedScene")) {
+    if (projectSettings.contains("lastOpenedScene"))
+    {
       Ref<AssetReference<SceneAsset>> lastOpenedSceneAsset =
         AssetDatabase::Retrieve<SceneAsset>(
           CreateRef<UID>(UID(projectSettings["lastOpenedScene"])));
-      if (lastOpenedSceneAsset) {
+      if (lastOpenedSceneAsset)
+      {
         std::cout << "[EDITOR INIT] Loading last opened scene" << std::endl;
         s_Instance->m_Model->SetScene(
           SceneUtilities::LoadScene(lastOpenedSceneAsset->GetAsset()->m_Path));
-      } else {
+      }
+      else
+      {
         std::cout
           << "[EDITOR INIT] No last opened scene found. Loading default scene"
           << std::endl;
         s_Instance->m_Model->SetScene(SceneUtilities::LoadDefaultScene());
       }
-    } else {
+    }
+    else
+    {
       std::cout
         << "[EDITOR INIT] No last opened scene found. Loading default scene"
         << std::endl;
@@ -126,7 +136,8 @@ namespace Dwarf {
     std::cout << "[EDITOR INIT] Editor initialization done" << std::endl;
   }
 
-  bool Editor::Run(std::filesystem::path const& projectPath)
+  bool
+  Editor::Run(std::filesystem::path const& projectPath)
   {
     Init(projectPath);
 
@@ -135,7 +146,8 @@ namespace Dwarf {
 
     // TODO: abstract the close condition
     while (!s_Instance->m_Window->ShouldClose() &&
-           !s_Instance->m_Model->GetCloseSignal()) {
+           !s_Instance->m_Model->GetCloseSignal())
+    {
       // ===== Time related stuff
       lastFrameStamp = currentFrameStamp;
       currentFrameStamp = TimeUtilities::GetCurrent();
@@ -150,7 +162,8 @@ namespace Dwarf {
       s_Instance->m_Window->EndFrame();
 
       while (TimeUtilities::GetDifferenceInSeconds(
-               TimeUtilities::GetCurrent(), currentFrameStamp) < (1.0 / 60.0)) {
+               TimeUtilities::GetCurrent(), currentFrameStamp) < (1.0 / 60.0))
+      {
         // TODO: Update this when implementing multi threading
       }
     }

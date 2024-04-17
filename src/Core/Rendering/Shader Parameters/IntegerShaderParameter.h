@@ -2,7 +2,8 @@
 
 #include "Core/Rendering/IShaderParameter.h"
 
-namespace Dwarf {
+namespace Dwarf
+{
   class IntegerShaderParameter : public IShaderParameter
   {
   public:
@@ -18,7 +19,8 @@ namespace Dwarf {
     {
     }
 
-    virtual ShaderParameterType GetType() override
+    virtual ShaderParameterType
+    GetType() override
     {
       return ShaderParameterType::INTEGER;
     }

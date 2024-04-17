@@ -3,25 +3,29 @@
 
 #include "Editor/Modules/Performance/PerformanceWindow.h"
 
-namespace Dwarf {
+namespace Dwarf
+{
 
   PerformanceWindow::PerformanceWindow(Ref<EditorModel> model, int id)
     : GuiModule(model, "Performance", MODULE_TYPE::PERFORMANCE, id)
   {
   }
 
-  void PerformanceWindow::OnUpdate(double deltaTimte)
+  void
+  PerformanceWindow::OnUpdate(double deltaTimte)
   {
     // Code that needs to be run before render
   }
 
-  void PerformanceWindow::OnImGuiRender()
+  void
+  PerformanceWindow::OnImGuiRender()
   {
     ImGuiWindowFlags window_flags = 0;
 
     window_flags |= ImGuiWindowFlags_AlwaysAutoResize;
     window_flags |= ImGuiWindowFlags_NoCollapse;
-    if (!ImGui::Begin(GetIdentifier().c_str(), &m_WindowOpened, window_flags)) {
+    if (!ImGui::Begin(GetIdentifier().c_str(), &m_WindowOpened, window_flags))
+    {
       // Early out if the window is collapsed, as an optimization.
       ImGui::End();
       return;
@@ -61,12 +65,14 @@ namespace Dwarf {
     ImGui::End();
   }
 
-  void PerformanceWindow::Deserialize(nlohmann::json moduleData)
+  void
+  PerformanceWindow::Deserialize(nlohmann::json moduleData)
   {
     // Deserialization of saved data
   }
 
-  std::string PerformanceWindow::Serialize()
+  std::string
+  PerformanceWindow::Serialize()
   {
     return "";
   }

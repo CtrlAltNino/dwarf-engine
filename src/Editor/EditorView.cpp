@@ -15,13 +15,15 @@
 
 #include "Core/Scene/SceneUtilities.h"
 
-namespace Dwarf {
+namespace Dwarf
+{
   EditorView::EditorView(Ref<EditorModel> model)
     : m_Model(model)
   {
   }
 
-  void EditorView::RenderDockSpace()
+  void
+  EditorView::RenderDockSpace()
   {
     // If you strip some features of, this demo is pretty much equivalent to
     // calling DockSpaceOverViewport()! In most cases you should be able to just
@@ -38,7 +40,7 @@ namespace Dwarf {
     //     {
     //         ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
     //     }
-    static bool p_open = true;
+    static bool               p_open = true;
     static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
 
     // We are using the ImGuiWindowFlags_NoDocking flag to make the parent
@@ -82,83 +84,107 @@ namespace Dwarf {
     ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
     ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
 
-    if (ImGui::BeginMenuBar()) {
-      if (ImGui::BeginMenu("File")) {
-        if (ImGui::MenuItem("Create new scene")) {
+    if (ImGui::BeginMenuBar())
+    {
+      if (ImGui::BeginMenu("File"))
+      {
+        if (ImGui::MenuItem("Create new scene"))
+        {
           // TODO: check for unsaved changes in scene
           m_Model->SetScene(SceneUtilities::LoadDefaultScene());
         }
-        if (ImGui::MenuItem("Save scene")) {
-          if (SceneUtilities::SaveScene(m_Model->GetScene())) {
+        if (ImGui::MenuItem("Save scene"))
+        {
+          if (SceneUtilities::SaveScene(m_Model->GetScene()))
+          {
             AssetDatabase::Import(m_Model->GetScene()->GetPath());
             SceneUtilities::SetLastOpenedScene(m_Model->GetScene()->GetPath());
             Editor::Get()->UpdateWindowTitle();
           }
         }
-        if (ImGui::MenuItem("Save scene as")) {
-          if (SceneUtilities::SaveSceneDialog(m_Model->GetScene())) {
+        if (ImGui::MenuItem("Save scene as"))
+        {
+          if (SceneUtilities::SaveSceneDialog(m_Model->GetScene()))
+          {
             AssetDatabase::Import(m_Model->GetScene()->GetPath());
             SceneUtilities::SetLastOpenedScene(m_Model->GetScene()->GetPath());
             Editor::Get()->UpdateWindowTitle();
           }
         }
-        if (ImGui::MenuItem("Load scene")) {
+        if (ImGui::MenuItem("Load scene"))
+        {
           Ref<Scene> loadedScene = SceneUtilities::LoadSceneDialog();
-          if (loadedScene) {
+          if (loadedScene)
+          {
             m_Model->SetScene(loadedScene);
             SceneUtilities::SetLastOpenedScene(m_Model->GetScene()->GetPath());
             Editor::Get()->UpdateWindowTitle();
           }
         }
 
-        if (ImGui::MenuItem("Return to project launcher")) {
+        if (ImGui::MenuItem("Return to project launcher"))
+        {
           m_Model->CloseEditor(true);
         }
 
-        if (ImGui::MenuItem("Quit")) {
+        if (ImGui::MenuItem("Quit"))
+        {
           m_Model->CloseEditor(false);
         }
         ImGui::EndMenu();
       }
-      if (ImGui::BeginMenu("Assets")) {
-        if (ImGui::MenuItem("Create new material")) {
+      if (ImGui::BeginMenu("Assets"))
+      {
+        if (ImGui::MenuItem("Create new material"))
+        {
           AssetDatabase::CreateNewMaterialAsset();
         }
         ImGui::MenuItem("Import Assets");
-        if (ImGui::MenuItem("Reimport Assets")) {
+        if (ImGui::MenuItem("Reimport Assets"))
+        {
           AssetDatabase::ReimportAssets();
         }
         ImGui::EndMenu();
       }
-      if (ImGui::BeginMenu("Scene")) {
-        if (ImGui::MenuItem("Create empty object")) {
+      if (ImGui::BeginMenu("Scene"))
+      {
+        if (ImGui::MenuItem("Create empty object"))
+        {
           Entity newEntity = m_Model->GetScene()->CreateEntity("New object");
           newEntity.AddComponent<MeshRendererComponent>();
         }
-        if (ImGui::MenuItem("Create light")) {
+        if (ImGui::MenuItem("Create light"))
+        {
           Entity newEntity = m_Model->GetScene()->CreateEntity("New Light");
           newEntity.AddComponent<LightComponent>();
         }
         ImGui::EndMenu();
       }
-      if (ImGui::BeginMenu("Window")) {
+      if (ImGui::BeginMenu("Window"))
+      {
         using enum MODULE_TYPE;
-        if (ImGui::MenuItem("Scene Viewer")) {
+        if (ImGui::MenuItem("Scene Viewer"))
+        {
           AddWindow(SCENE_VIEWER);
         }
-        if (ImGui::MenuItem("Scene Hierarchy")) {
+        if (ImGui::MenuItem("Scene Hierarchy"))
+        {
           AddWindow(SCENE_GRAPH);
         }
-        if (ImGui::MenuItem("Performance")) {
+        if (ImGui::MenuItem("Performance"))
+        {
           AddWindow(PERFORMANCE);
         }
-        if (ImGui::MenuItem("Asset Browser")) {
+        if (ImGui::MenuItem("Asset Browser"))
+        {
           AddWindow(ASSET_BROWSER);
         }
-        if (ImGui::MenuItem("Inspector")) {
+        if (ImGui::MenuItem("Inspector"))
+        {
           AddWindow(INSPECTOR);
         }
-        if (ImGui::MenuItem("Debug")) {
+        if (ImGui::MenuItem("Debug"))
+        {
           AddWindow(DEBUG);
         }
         ImGui::MenuItem("Console");
@@ -170,7 +196,8 @@ namespace Dwarf {
     ImGui::End();
   }
 
-  void EditorView::Init()
+  void
+  EditorView::Init()
   {
     using enum MODULE_TYPE;
     AddWindow(SCENE_GRAPH);
@@ -179,14 +206,17 @@ namespace Dwarf {
     AddWindow(SCENE_VIEWER);
   }
 
-  void EditorView::OnUpdate(double deltaTime)
+  void
+  EditorView::OnUpdate(double deltaTime)
   {
-    for (int i = 0; i < m_GuiModules.size(); i++) {
+    for (int i = 0; i < m_GuiModules.size(); i++)
+    {
       m_GuiModules.at(i)->OnUpdate(deltaTime);
     }
   }
 
-  void EditorView::OnImGuiRender()
+  void
+  EditorView::OnImGuiRender()
   {
 
     ImGui::PushStyleColor(ImGuiCol_Text, COL_TEXT);
@@ -227,10 +257,14 @@ namespace Dwarf {
     // ImGui::ShowDemoWindow();
 
     // Render modules
-    for (int i = 0; i < m_GuiModules.size(); i++) {
-      if (m_GuiModules.at(i)->GetWindowClose()) {
+    for (int i = 0; i < m_GuiModules.size(); i++)
+    {
+      if (m_GuiModules.at(i)->GetWindowClose())
+      {
         RemoveWindow(m_GuiModules.at(i)->GetIndex());
-      } else {
+      }
+      else
+      {
         m_GuiModules.at(i)->OnImGuiRender();
       }
     }
@@ -239,7 +273,8 @@ namespace Dwarf {
     ImGui::PopStyleVar(4);
   }
 
-  void EditorView::DockWindowToFocused()
+  void
+  EditorView::DockWindowToFocused()
   {
     ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
 
@@ -252,10 +287,12 @@ namespace Dwarf {
     ImGui::DockBuilderFinish(dockspace_id);
   }
 
-  void EditorView::AddWindow(MODULE_TYPE moduleType)
+  void
+  EditorView::AddWindow(MODULE_TYPE moduleType)
   {
     Ref<GuiModule> guiModule;
-    switch (moduleType) {
+    switch (moduleType)
+    {
       using enum MODULE_TYPE;
       case PERFORMANCE:
         guiModule = CreateRef<PerformanceWindow>(
@@ -281,19 +318,22 @@ namespace Dwarf {
         guiModule = CreateRef<DebugWindow>(
           DebugWindow(this->m_Model, m_GuiModuleIDCount++));
         break;
-      case CONSOLE:
-        break;
+      case CONSOLE: break;
     }
 
-    if (guiModule) {
+    if (guiModule)
+    {
       m_GuiModules.push_back(guiModule);
     }
   }
 
-  void EditorView::RemoveWindow(int index)
+  void
+  EditorView::RemoveWindow(int index)
   {
-    for (int i = 0; i < m_GuiModules.size(); i++) {
-      if (m_GuiModules[i]->GetIndex() == index) {
+    for (int i = 0; i < m_GuiModules.size(); i++)
+    {
+      if (m_GuiModules[i]->GetIndex() == index)
+      {
         m_GuiModules.erase(m_GuiModules.begin() + i);
       }
     }

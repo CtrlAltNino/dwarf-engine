@@ -2,7 +2,8 @@
 
 #include "Editor/Modules/Scene Hierarchy/GraphInstruction.h"
 
-namespace Dwarf {
+namespace Dwarf
+{
 
   /// @brief Buffered instruction for changing the child index of entities.
   class ChildIndexInstruction : public GraphInstruction
@@ -19,9 +20,10 @@ namespace Dwarf {
 
   public:
     /// @brief Executes the instruction.
-    void PerformInstruction() override;
-    ChildIndexInstruction(Ref<Scene> scene,
+    void
+    PerformInstruction() override;
+    ChildIndexInstruction(Ref<Scene>                 scene,
                           std::vector<Entity> const& sourceEntities,
-                          int index);
+                          int                        index);
   };
 }

@@ -7,7 +7,8 @@
 #include "Editor/EditorView.h"
 #include "Core/UI/ImGuiLayer.h"
 
-namespace Dwarf {
+namespace Dwarf
+{
 
   /// @brief The controller part of the editors MVC structure.
   class Editor
@@ -24,21 +25,33 @@ namespace Dwarf {
 
     Ref<ImGuiLayer> m_ImguiLayer;
 
-    void Init(std::filesystem::path const& projectPath);
+    void
+    Init(std::filesystem::path const& projectPath);
 
   public:
     Editor();
     ~Editor();
 
-    static Ref<Editor> Get() { return s_Instance; }
+    static Ref<Editor>
+    Get()
+    {
+      return s_Instance;
+    }
 
-    Ref<EditorModel> GetModel() const { return m_Model; }
+    Ref<EditorModel>
+    GetModel() const
+    {
+      return m_Model;
+    }
 
     /// @brief Starts the render loop
-    bool Run(std::filesystem::path const& projectPath);
+    bool
+    Run(std::filesystem::path const& projectPath);
 
-    void UpdateWindowTitle() const;
+    void
+    UpdateWindowTitle() const;
   };
 
-  Ref<Editor> CreateEditor();
+  Ref<Editor>
+  CreateEditor();
 }

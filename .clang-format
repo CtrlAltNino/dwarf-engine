@@ -1,6 +1,18 @@
 # Format Style Options - Created with Clang Power Tools
 ---
+AlignConsecutiveDeclarations: Consecutive
+AllowShortCaseLabelsOnASingleLine: true
+AllowShortLambdasOnASingleLine: All
+AllowShortEnumsOnASingleLine: true
+AllowShortIfStatementsOnASingleLine: WithoutElse
+AllowShortLoopsOnASingleLine: true
+AlwaysBreakAfterReturnType: All
 BasedOnStyle: Mozilla
+BreakBeforeBraces: Allman
+IndentCaseBlocks: true
+IndentWidth: 2
 NamespaceIndentation: All
+ObjCBlockIndentWidth: 4
 SortIncludes: false
+Standard: c++20
 ...

@@ -10,7 +10,8 @@
 #include "Core/Rendering/IShaderParameter.h"
 #include "Core/UID.h"
 
-namespace Dwarf {
+namespace Dwarf
+{
 
   /// @brief Class representing a modular Material.
   class Material
@@ -26,7 +27,8 @@ namespace Dwarf {
     static Ref<Material> s_PreviewMaterial;
     static Ref<Material> s_IdMaterial;
     static Ref<Material> s_WhiteMaterial;
-    static void Init();
+    static void
+    Init();
 
     /// @brief Name of the material.
     std::string m_Name;
@@ -39,23 +41,31 @@ namespace Dwarf {
 
     std::map<std::string, Ref<IShaderParameter>, std::less<>> m_Parameters;
 
-    std::string GetName() const;
+    std::string
+    GetName() const;
 
-    Ref<Shader> const& GetShader() const;
+    Ref<Shader> const&
+    GetShader() const;
 
-    void SetShader(Ref<Shader> shader);
+    void
+    SetShader(Ref<Shader> shader);
 
     template<typename T>
-    void SetParameter(std::string_view identifier, T parameter);
+    void
+    SetParameter(std::string_view identifier, T parameter);
 
-    void SetParameter(std::string_view identifier,
-                      Ref<UID> value,
-                      ShaderParameterType type);
+    void
+    SetParameter(std::string_view    identifier,
+                 Ref<UID>            value,
+                 ShaderParameterType type);
 
-    void SetTransparency(bool transparent);
+    void
+    SetTransparency(bool transparent);
 
-    bool IsTransparent() const;
+    bool
+    IsTransparent() const;
 
-    void GenerateShaderParameters();
+    void
+    GenerateShaderParameters();
   };
 }

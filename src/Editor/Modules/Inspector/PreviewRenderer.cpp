@@ -3,19 +3,21 @@
 #include "Editor/Modules/Inspector/PreviewRenderer.h"
 #include "Input/InputManager.h"
 
-namespace Dwarf {
+namespace Dwarf
+{
   Ref<EditorModel> PreviewRenderer::s_Model = nullptr;
   Ref<Framebuffer> PreviewRenderer::s_Framebuffer = nullptr;
-  Ref<Camera> PreviewRenderer::s_Camera = nullptr;
-  glm::vec3 PreviewRenderer::s_ModelRotation = { 0, 0, 0 };
-  glm::vec3 PreviewRenderer::s_ModelRotationTarget = { 0, 0, 0 };
+  Ref<Camera>      PreviewRenderer::s_Camera = nullptr;
+  glm::vec3        PreviewRenderer::s_ModelRotation = { 0, 0, 0 };
+  glm::vec3        PreviewRenderer::s_ModelRotationTarget = { 0, 0, 0 };
   glm::quat PreviewRenderer::s_ModelRotationQuat = glm::quat({ 0, 0, 0 });
-  float PreviewRenderer::s_RotationSpeed = 0.2f;
-  float PreviewRenderer::s_ScrollSpeed = 0.3f;
-  float PreviewRenderer::s_Distance = 1.0f;
-  float PreviewRenderer::s_MaxDistance = 0.0f;
+  float     PreviewRenderer::s_RotationSpeed = 0.2f;
+  float     PreviewRenderer::s_ScrollSpeed = 0.3f;
+  float     PreviewRenderer::s_Distance = 1.0f;
+  float     PreviewRenderer::s_MaxDistance = 0.0f;
 
-  void PreviewRenderer::Init(Ref<EditorModel> model)
+  void
+  PreviewRenderer::Init(Ref<EditorModel> model)
   {
     s_Model = model;
     s_Framebuffer = Renderer::Get()->CreateFramebuffer({ 512, 512 });
@@ -23,24 +25,30 @@ namespace Dwarf {
       Camera({ 0.0f, 0.0f, 0.0f }, { 0, 0, 0 }, 50.0f, 0.1f, 25000.0f, 1.0f));
   }
 
-  void PreviewRenderer::Resize(glm::ivec2 size)
+  void
+  PreviewRenderer::Resize(glm::ivec2 size)
   {
     if ((s_Framebuffer->GetSpecification().Width != size.x) &&
-        (s_Framebuffer->GetSpecification().Height != size.y)) {
+        (s_Framebuffer->GetSpecification().Height != size.y))
+    {
       s_Camera->SetAspectRatio((float)size.y / (float)size.x);
       s_Framebuffer->Resize(size.x, size.y);
     }
   }
 
-  void PreviewRenderer::FocusModel(Ref<AssetReference<ModelAsset>> modelAsset)
+  void
+  PreviewRenderer::FocusModel(Ref<AssetReference<ModelAsset>> modelAsset)
   {
     std::vector<Dwarf::Ref<Dwarf::Mesh>> vec = modelAsset->GetAsset()->m_Meshes;
-    float longestDist = 0;
+    float                                longestDist = 0;
 
-    for (const auto& subMesh : vec) {
-      for (Vertex vert : subMesh->GetVertices()) {
+    for (const auto& subMesh : vec)
+    {
+      for (Vertex vert : subMesh->GetVertices())
+      {
         float dist = glm::length(vert.Position);
-        if (dist > longestDist) {
+        if (dist > longestDist)
+        {
           longestDist = dist;
         }
       }
@@ -55,11 +63,13 @@ namespace Dwarf {
       { 0.1f, 1.3 * s_MaxDistance + longestDist });
   }
 
-  void PreviewRenderer::RenderModelPreview(
+  void
+  PreviewRenderer::RenderModelPreview(
     Ref<AssetReference<ModelAsset>> modelAsset)
   {
     if (static entt::entity memory = entt::null;
-        memory != modelAsset->GetHandle()) {
+        memory != modelAsset->GetHandle())
+    {
       FocusModel(modelAsset);
       memory = modelAsset->GetHandle();
       s_ModelRotation = { 15, 20, 0 };
@@ -83,7 +93,8 @@ namespace Dwarf {
     s_Framebuffer->Unbind();
   }
 
-  void PreviewRenderer::RenderMaterialPreview(
+  void
+  PreviewRenderer::RenderMaterialPreview(
     Ref<AssetReference<MaterialAsset>> materialAsset)
   {
     // TODO: Reset sphere rotation when rendering a different material
@@ -101,29 +112,34 @@ namespace Dwarf {
     s_Framebuffer->Unbind();
   }
 
-  ImTextureID PreviewRenderer::GetTextureId()
+  ImTextureID
+  PreviewRenderer::GetTextureId()
   {
     return (ImTextureID)s_Framebuffer->GetColorAttachment()->GetTextureID();
   }
 
-  float PreviewRenderer::GetScrollDistance()
+  float
+  PreviewRenderer::GetScrollDistance()
   {
     return s_Distance;
   }
 
-  void PreviewRenderer::SetScrollDistance(float distance)
+  void
+  PreviewRenderer::SetScrollDistance(float distance)
   {
     s_Distance = std::min(std::max(distance, 0.0f), 1.0f);
   }
 
-  float PreviewRenderer::EaseInOutQuad(float t)
+  float
+  PreviewRenderer::EaseInOutQuad(float t)
   {
     return t * t * (3 - 2 * t);
   }
 
-  glm::vec3 PreviewRenderer::InterpolateVectors(const glm::vec3& currentVector,
-                                                const glm::vec3& targetVector,
-                                                float speed)
+  glm::vec3
+  PreviewRenderer::InterpolateVectors(const glm::vec3& currentVector,
+                                      const glm::vec3& targetVector,
+                                      float            speed)
   {
     // Ensure speed is in the range (0, 1] for proper interpolation
     speed = std::max(0.001f, std::min(speed, 1.0f));
@@ -139,7 +155,8 @@ namespace Dwarf {
     return { x, y, z };
   }
 
-  void PreviewRenderer::UpdateRotation(glm::vec2 deltaMousePos)
+  void
+  PreviewRenderer::UpdateRotation(glm::vec2 deltaMousePos)
   {
     s_ModelRotationTarget = {
       std::max(-90.0f,

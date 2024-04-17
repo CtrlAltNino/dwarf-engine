@@ -6,7 +6,8 @@
 #include "Core/Scene/Camera.h"
 #include "Core/Rendering/Framebuffer.h"
 
-namespace Dwarf {
+namespace Dwarf
+{
   enum class FogType
   {
     LINEAR,
@@ -16,21 +17,21 @@ namespace Dwarf {
   struct FogSettings
   {
     glm::vec3 fogColor = { 0.3f, 0.3f, 0.3f };
-    float fogStart = 20.0f;
-    float fogEnd = 50.0f;
-    FogType type = FogType::LINEAR;
+    float     fogStart = 20.0f;
+    float     fogEnd = 50.0f;
+    FogType   type = FogType::LINEAR;
   };
 
   struct GlobalLightSettings
   {
     glm::vec3 color = { 0.8f, 0.6f, 0.6f };
-    float intensity = 0.2f;
+    float     intensity = 0.2f;
   };
 
   struct SceneSettings
   {
-    Ref<UID> skyboxMaterial;
-    FogSettings fogSettings;
+    Ref<UID>            skyboxMaterial;
+    FogSettings         fogSettings;
     GlobalLightSettings globalLightSettings;
   };
 
@@ -44,29 +45,38 @@ namespace Dwarf {
 
     // ========== Getters ==========
 
-    std::string GetName() const;
-    std::filesystem::path GetPath() const;
-    Ref<entt::registry> GetRegistry() const;
-    Ref<Entity> GetRootEntity() const;
-    SceneSettings GetSettings() const;
+    std::string
+    GetName() const;
+    std::filesystem::path
+    GetPath() const;
+    Ref<entt::registry>
+    GetRegistry() const;
+    Ref<Entity>
+    GetRootEntity() const;
+    SceneSettings
+    GetSettings() const;
 
     // ========== Setters ==========
-    void SetPath(std::filesystem::path const& path);
+    void
+    SetPath(std::filesystem::path const& path);
 
     // ========== Scene Functions ==========
 
     /// @brief Creates a new entity with a given name.
     /// @param name Name of the entity.
     /// @return The created entity instance.
-    Entity CreateEntity(const std::string& name = std::string()) const;
+    Entity
+    CreateEntity(const std::string& name = std::string()) const;
 
     /// @brief Creates a new entity with a given name a UID.
     /// @param uid UID to use with the entity.
     /// @param name Name of the entity.
     /// @return The created entity instance.
-    Entity CreateEntityWithUID(UID uid, const std::string& name) const;
+    Entity
+    CreateEntityWithUID(UID uid, const std::string& name) const;
 
-    void DeleteEntity(Entity entity);
+    void
+    DeleteEntity(Entity entity);
 
   private:
     /// @brief Name of the opened scene.
@@ -87,12 +97,14 @@ namespace Dwarf {
 
     /// @brief Creates the root entity.
     /// @return The created entity instance.
-    void CreateRootEntity();
+    void
+    CreateRootEntity();
 
     /// @brief Returns the recursive model matrix of a transform.
     /// @param transform A transform component instance.
     /// @return 4x4 model matrix composition of a transform and its full parent
     /// chain.
-    glm::mat4 GetFullModelMatrix(TransformComponent const& transform) const;
+    glm::mat4
+    GetFullModelMatrix(TransformComponent const& transform) const;
   };
 }
