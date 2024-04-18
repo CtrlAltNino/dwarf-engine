@@ -184,7 +184,6 @@ namespace Dwarf
 
   OpenGLTexture::~OpenGLTexture()
   {
-    std::cout << "Deleting texture with id: " << m_Id << std::endl;
     glDeleteTextures(1, &m_Id);
   }
 

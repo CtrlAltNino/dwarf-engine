@@ -100,7 +100,6 @@ namespace Dwarf
     Ref<Texture> texture = Texture::Create(parameters, textureData);
 
     spng_ctx_free(png);
-    std::cout << "PNG loaded" << std::endl;
 
     return texture;
   }
