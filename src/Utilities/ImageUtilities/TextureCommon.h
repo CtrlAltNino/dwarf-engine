@@ -48,10 +48,10 @@ namespace Dwarf
   enum class TextureDataType
   {
     UNSIGNED_BYTE,
-    FLOAT,
-    UNSIGNED_INT,
+    UNSIGNED_SHORT,
     INT,
-    UNSIGNED_SHORT
+    UNSIGNED_INT,
+    FLOAT
   };
 
   struct TextureContainer

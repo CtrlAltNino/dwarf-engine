@@ -1,5 +1,6 @@
 #include "AssetInspectorRenderer.h"
 #include "Core/Asset/AssetDatabase.h"
+#include "Core/Base.h"
 #include "Core/UI/DwarfUI.h"
 #include "Core/Scene/SceneUtilities.h"
 #include <imgui_internal.h>
@@ -20,6 +21,7 @@
 #endif
 #include <Core/Rendering/Shader Parameters/BooleanShaderParameter.h>
 #include <Core/Rendering/Shader Parameters/IntegerShaderParameter.h>
+#include <Core/Rendering/Shader Parameters/UnsignedIntegerShaderParameter.h>
 #include <Core/Rendering/Shader Parameters/FloatShaderParameter.h>
 #include <Core/Rendering/Shader Parameters/Tex2DShaderParameter.h>
 #include <Core/Rendering/Shader Parameters/Vec2ShaderParameter.h>
@@ -400,6 +402,23 @@ namespace Dwarf
                 ImGui::PopItemWidth();
               }
               break;
+            case UNSIGNED_INTEGER:
+              {
+                Ref<UnsignedIntegerShaderParameter> parameter =
+                  std::dynamic_pointer_cast<UnsignedIntegerShaderParameter>(
+                    i->second);
+                ImGui::TextWrapped("%s", i->first.c_str());
+                ImGui::SameLine();
+                ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
+                                     UNIFORM_DELETE_BUTTON_WIDTH - 8.0f);
+                ImGui::InputScalar(
+                  std::format("##unsignedInteger{}", std::to_string(n)).c_str(),
+                  ImGuiDataType_U32,
+                  &(parameter->m_Value));
+                n++;
+                ImGui::PopItemWidth();
+              }
+              break;
             case FLOAT:
               {
                 Ref<FloatShaderParameter> parameter =
@@ -539,6 +558,7 @@ namespace Dwarf
           using enum ShaderParameterType;
           case BOOLEAN: mat->SetParameter(paramName, false); break;
           case INTEGER: mat->SetParameter(paramName, 0); break;
+          case UNSIGNED_INTEGER: mat->SetParameter(paramName, 0u); break;
           case FLOAT: mat->SetParameter(paramName, 0.0f); break;
           case TEX2D: mat->SetParameter(paramName, nullptr, TEX2D); break;
           case VEC2: mat->SetParameter(paramName, glm::vec2(0.0f, 0.0f)); break;

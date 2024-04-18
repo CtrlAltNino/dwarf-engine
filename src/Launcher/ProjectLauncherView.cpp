@@ -12,23 +12,9 @@ namespace Dwarf
 #define PROJECT_BUTTON_WINDOW_WIDTH (200)
 #define PROJECT_INFORMATION_HEIGHT (30)
 
-  ProjectLauncherView::ProjectLauncherView() {}
-
-  void
-  ProjectLauncherView::Init(Ref<ProjectLauncherModel> model)
+  ProjectLauncherView::ProjectLauncherView(Ref<ProjectLauncherModel> model)
   {
-    // this->windowManager = windowManager;
     this->m_Model = model;
-    /*ImGuiIO& io = ImGui::GetIO(); (void)io;
-    githubIcon = new Texture(GITHUB_PNG_ICON_PATH, GL_LINEAR, GL_REPEAT,
-    GL_RGBA, GL_UNSIGNED_BYTE); patreonIcon = new Texture(PATREON_PNG_ICON_PATH,
-    GL_LINEAR, GL_REPEAT, GL_RGBA, GL_UNSIGNED_BYTE); twitterIcon = new
-    Texture(TWITTER_PNG_ICON_PATH, GL_LINEAR, GL_REPEAT, GL_RGBA,
-    GL_UNSIGNED_BYTE);
-
-    io.Fonts->AddFontDefault();
-    headerFont = io.Fonts->AddFontFromFileTTF(FONT_ROBOTO_LIGHT_PATH, 26);
-    textFont = io.Fonts->AddFontFromFileTTF(FONT_ROBOTO_REGULAR_PATH, 15);*/
 
     ImGuiIO io = ImGui::GetIO();
     io.Fonts->AddFontDefault();
@@ -46,7 +32,6 @@ namespace Dwarf
   void
   ProjectLauncherView::Render()
   {
-    // glm::ivec2 windowSize = windowManager->GetWindowSize();
     Window*    window = ProjectLauncher::Get()->GetWindow();
     glm::ivec2 windowSize = { window->GetWidth(), window->GetHeight() };
 
@@ -87,14 +72,11 @@ namespace Dwarf
     window_flags |= ImGuiWindowFlags_NoResize;
     window_flags |= ImGuiWindowFlags_NoCollapse;
     window_flags |= ImGuiWindowFlags_NoTitleBar;
-    // window_flags |= ImGuiWindowFlags_MenuBar;
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(60, 8));
     ImGui::SetNextWindowPos(ImVec2(0, 0));
     ImGui::SetNextWindowSize(ImVec2(fWidth - PROJECT_BUTTON_WINDOW_WIDTH,
                                     fHeight - PROJECT_INFORMATION_HEIGHT));
-    // ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(59 / 255.0, 66 / 255.0, 82
-    // / 255.0, 1.0));
     ImGui::PushStyleColor(ImGuiCol_Border, IM_COL32(0, 0, 0, 0));
     ImGui::PushStyleColor(ImGuiCol_WindowBg, IM_COL32(46, 52, 64, 255));
 
@@ -117,13 +99,9 @@ namespace Dwarf
     const float HEADER_ROW_HEIGHT = 40;
     ImVec2      cellPadding = ImVec2(10.0f, 10.0f);
     ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, cellPadding);
-    // ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 10);
     ImGui::PushStyleColor(ImGuiCol_TableBorderLight, ImVec4(0, 0, 0, 0));
     ImGui::PushStyleColor(ImGuiCol_TableBorderStrong, ImVec4(0, 0, 0, 0));
     ImGui::PushStyleColor(ImGuiCol_TableHeaderBg, IM_COL32(59, 66, 82, 255));
-    // /*ImGuiTableFlags_Borders | ImGuiTableFlags_Reorderable |
-    // ImGuiTableFlags_Hideable |*/ ImGuiTableFlags_SizingStretchProp |
-    // ImGuiTableFlags_RowBg
     if (ImGui::BeginTable("Project entries",
                           COLUMNS_COUNT,
                           ImGuiTableFlags_Borders |
@@ -167,12 +145,6 @@ namespace Dwarf
       ImGui::PushStyleColor(ImGuiCol_HeaderHovered, IM_COL32(76, 86, 106, 255));
       ImGui::PushStyleColor(ImGuiCol_HeaderActive,
                             IM_COL32(129, 161, 193, 255));
-      /*ImGui::PushStyleVar(ImGuiStyleVar_TabRounding, 10);
-      ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 10);
-      ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 10);
-      ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 10);
-      ImGui::PushStyleVar(ImGuiStyleVar_GrabRounding, 10);
-      ImGui::PushStyleVar(ImGuiStyleVar_ChildRounding, 10);*/
       for (int column = 0; column < COLUMNS_COUNT; column++)
       {
         ImGui::TableSetColumnIndex(column);
@@ -198,12 +170,9 @@ namespace Dwarf
         ImGui::PopID();
       }
       ImGui::PopStyleColor(2);
-      // ImGui::PopStyleVar(6);
       ImGui::PopFont();
 
-      // ImGui::Separator();
       ImGui::PushFont(m_TextFont);
-      // for (int row = 0; row < projectList.size(); row += (deleted ? 0 : 1))
       for (int row = 0; row < projectList->size(); row++)
       {
         ImGui::TableNextRow(ImGuiTableRowFlags_None, ROW_HEIGHT);
@@ -315,13 +284,6 @@ namespace Dwarf
                 if (ImGui::IsItemHovered())
                   ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
 
-                /*if (ImGui::Button("Close",
-                ImVec2(ImGui::GetContentRegionAvail().x, 0)))
-                        ImGui::CloseCurrentPopup();
-
-                if (ImGui::IsItemHovered())
-                        ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);*/
-
                 ImGui::EndPopup();
               }
               ImGui::PopStyleVar(4);
@@ -393,7 +355,6 @@ namespace Dwarf
     }
 
     ImGui::End();
-    // ImGui::PopStyleVar(1);
     ImGui::PopStyleColor(2);
   }
 
@@ -405,21 +366,17 @@ namespace Dwarf
     window_flags |= ImGuiWindowFlags_NoResize;
     window_flags |= ImGuiWindowFlags_NoCollapse;
     window_flags |= ImGuiWindowFlags_NoTitleBar;
-    // window_flags |= ImGuiWindowFlags_MenuBar;
 
     ImGui::SetNextWindowPos(ImVec2(fWidth - PROJECT_BUTTON_WINDOW_WIDTH, 0));
     ImGui::SetNextWindowSize(ImVec2(PROJECT_BUTTON_WINDOW_WIDTH,
                                     fHeight - PROJECT_INFORMATION_HEIGHT));
     ImGui::PushStyleColor(ImGuiCol_WindowBg,
                           ImVec4(67 / 255.0, 76 / 255.0, 94 / 255.0, 1.0));
-    // ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(46 / 255.0, 52 / 255.0, 64
-    // / 255.0, 1.0));
     ImGui::PushStyleColor(ImGuiCol_Border,
                           ImVec4(59 / 255.0, 66 / 255.0, 82 / 255.0, 0));
 
     if (!ImGui::Begin("Project Buttons", NULL, window_flags))
     {
-      // Early out if the window is collapsed, as an optimization.
       ImGui::End();
       return;
     }
@@ -430,9 +387,6 @@ namespace Dwarf
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 6);
     ImGui::Separator();
     ImGui::PushFont(m_TextFont);
-    /*if (ImGui::Button("Open project", ImVec2(ImGui::GetContentRegionAvail().x,
-    75)) && (selectedProjectId != -1)) { state = ProjectChooserState::Done;
-    }*/
     ImGui::PushStyleColor(ImGuiCol_Button,
                           ImVec4(76 / 255.0, 86 / 255.0, 106 / 255.0, 1));
     ImGui::PushStyleColor(ImGuiCol_ButtonHovered,
@@ -456,11 +410,6 @@ namespace Dwarf
     }
 
     // Put into context menu
-
-    /*if (ImGui::Button("Delete Project from List") && (selectedProjectId !=
-    -1)) { DeleteProjectFromList(selectedProjectId);
-    }*/
-
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 
     if (ImGui::Button("Add existing project",
@@ -525,14 +474,11 @@ namespace Dwarf
     window_flags |= ImGuiWindowFlags_NoCollapse;
     window_flags |= ImGuiWindowFlags_NoTitleBar;
     window_flags |= ImGuiWindowFlags_NoScrollbar;
-    // window_flags |= ImGuiWindowFlags_MenuBar;
 
     ImGui::SetNextWindowPos(ImVec2(0, fHeight - PROJECT_INFORMATION_HEIGHT));
     ImGui::SetNextWindowSize(ImVec2(fWidth, PROJECT_INFORMATION_HEIGHT));
     ImGui::PushStyleColor(ImGuiCol_WindowBg,
                           ImVec4(59 / 255.0, 66 / 255.0, 82 / 255.0, 1.0));
-    // ImGui::PushStyleColor(ImGuiCol_Border, ImVec4(46 / 255.0, 52 / 255.0, 64
-    // / 255.0, 1.0));
     ImGui::PushStyleColor(ImGuiCol_Border,
                           ImVec4(59 / 255.0, 66 / 255.0, 82 / 255.0, 0));
     ImGui::PushFont(m_TextFont);
@@ -554,7 +500,6 @@ namespace Dwarf
     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(5, 0));
     static ImVec2 iconSize = ImVec2(18, 18);
     static float  verticalIconOffset = 2;
-    // GraphicsApi activeApi = ProjectLauncher::Get()->GetWindow()->GetApi();
 
     {
       ImGui::SetCursorPosY(ImGui::GetCursorPosY() - verticalIconOffset);
@@ -665,8 +610,6 @@ namespace Dwarf
     // Centering Modal
     ImVec2 center = ImGui::GetMainViewport()->GetCenter();
     ImGui::SetNextWindowPos(center, ImGuiCond_Always, ImVec2(0.5f, 0.5f));
-    // Setting the dimming background color
-    // ImGui::PushStyleColor(ImGuiCol_ModalWindowDimBg, ImVec4(0, 0, 0, 0.7));
     ImGuiStyle* style = &ImGui::GetStyle();
     (void)style;
     style->Colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0, 0, 0, 0.7);
@@ -704,10 +647,6 @@ namespace Dwarf
 
       ImGui::Separator();
 
-      /*ImGui::PushStyleColor(ImGuiCol_Button, IM_COL32(191, 97, 106, 255));
-      ImGui::PushStyleColor(ImGuiCol_ButtonHovered, IM_COL32(198, 111, 120,
-      255)); ImGui::PushStyleColor(ImGuiCol_ButtonActive, IM_COL32(216, 134,
-      142, 255));*/
       ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5);
 
       ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
@@ -865,8 +804,6 @@ namespace Dwarf
         ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
       }
 
-      // ImGui::PopStyleColor(3);
-
       // ==================== Cancel Button ====================
       ImGui::SetItemDefaultFocus();
       ImGui::SameLine();
@@ -901,7 +838,6 @@ namespace Dwarf
     ImVec2 center = ImGui::GetMainViewport()->GetCenter();
     ImGui::SetNextWindowPos(center, ImGuiCond_Always, ImVec2(0.5f, 0.5f));
     // Setting the dimming background color
-    // ImGui::PushStyleColor(ImGuiCol_ModalWindowDimBg, ImVec4(0, 0, 0, 0.7));
     ImGuiStyle* style = &ImGui::GetStyle();
     (void)style;
     style->Colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0, 0, 0, 0.7);
@@ -1020,8 +956,6 @@ namespace Dwarf
     ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0);
     ImGui::PushStyleColor(ImGuiCol_PopupBg, IM_COL32(46, 52, 64, 255));
     ImGui::PushStyleColor(ImGuiCol_TitleBgActive, IM_COL32(94, 129, 172, 255));
-    // Setting the dimming background color
-    // ImGui::PushStyleColor(ImGuiCol_ModalWindowDimBg, ImVec4(0, 0, 0, 0.7));
     ImGuiStyle* style = &ImGui::GetStyle();
     (void)style;
     style->Colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0, 0, 0, 0.7);
@@ -1126,7 +1060,6 @@ namespace Dwarf
 
         // Browse path button
         ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5);
-        // ImGui::SetCursorPosY(ImGui::GetCursorPosY());
         ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
         if (ImGui::Button("...", ImVec2(width, 25)))
         {
@@ -1134,16 +1067,7 @@ namespace Dwarf
           // File Dialog um einen Pfad zu kriegen
           // Im Pfad nach einer projectSettings.dproj suchen
           // Projectinformation (Name, Pfad, letzte Modifikationszeit)
-          nfdchar_t* outPath = NULL;
-          // const nfdchar_t *filter = "dproj";
-
-          // TODO: implement file dialog in another thread to not interrupt
-          // TODO: rename "open" button to "add project" or something
-          // TODO: focus on the opened dialog when trying to return to the
-          // project launcher window
-          //(if that is not the default behaviour, finding out when implementing
-          // the dialog in another thread)
-          // nfdresult_t result = NFD_OpenDialog(filter, NULL, &outPath);
+          nfdchar_t*  outPath = NULL;
           nfdresult_t result =
             NFD_PickFolder((const nfdchar_t*)newProjectPath.c_str(), &outPath);
 
@@ -1183,7 +1107,6 @@ namespace Dwarf
         ImGui::Text("Template");
         ImGui::PopFont();
 
-        // ImGui::Separator();
         ImGui::SameLine();
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() +
                              ImGui::GetContentRegionAvail().x - 150);
@@ -1196,7 +1119,6 @@ namespace Dwarf
         ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 4);
         ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 4);
         ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 8));
-        // ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
         ImGui::PushStyleVar(ImGuiStyleVar_SelectableTextAlign,
                             ImVec2(0.5f, 0.5f));
         ImGui::PushFont(m_TextFont);
@@ -1241,15 +1163,12 @@ namespace Dwarf
               ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
             }
 
-            // ImGui::PushStyleVar(ImGuiStyleVar_ItemInnerSpacing, ImVec2(8,
-            // 8));
             //  ==================== Rendering Selectable ====================
             if (ImGui::Selectable(
                   templates[n], is_selected, 0, ImVec2(0, 16 + 10)))
             {
               currentTemplateIndex = n;
             }
-            // ImGui::PopStyleVar();
 
             // Reset Style
             ImGui::PopStyleVar(1);
@@ -1315,7 +1234,6 @@ namespace Dwarf
         ImGui::Text("Graphics API");
         ImGui::PopFont();
 
-        // ImGui::Separator();
         ImGui::SameLine();
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() +
                              ImGui::GetContentRegionAvail().x - 150);
@@ -1467,7 +1385,6 @@ namespace Dwarf
                                         (GraphicsApi)currentApiIndex,
                                         (ProjectTemplate)currentTemplateIndex);
           strcpy(newProjectName, "");
-          // newProjectPath = FileHandler::defaultProjectPath;
           currentTemplateIndex = 0;
           currentApiIndex = 0;
 
@@ -1490,7 +1407,6 @@ namespace Dwarf
                           ImVec2(ImGui::GetContentRegionAvail().x, 40)))
         {
           strcpy(newProjectName, "");
-          // newProjectPath = FileHandler::defaultProjectPath;
           currentTemplateIndex = 0;
           currentApiIndex = 0;
           ImGui::CloseCurrentPopup();

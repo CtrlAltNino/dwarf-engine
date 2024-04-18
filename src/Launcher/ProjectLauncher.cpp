@@ -35,8 +35,7 @@ namespace Dwarf
     m_Model->Init();
 
     // Initializing the view
-    m_View = CreateScope<ProjectLauncherView>(ProjectLauncherView());
-    m_View->Init(m_Model);
+    m_View = CreateScope<ProjectLauncherView>(ProjectLauncherView(m_Model));
 
     m_Window->ShowWindow();
 

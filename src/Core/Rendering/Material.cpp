@@ -245,6 +245,7 @@ namespace Dwarf
           break;
         case BOOLEAN: break;
         case INTEGER: break;
+        case UNSIGNED_INTEGER: break;
         case FLOAT: break;
         case VEC2: break;
         case VEC3: break;

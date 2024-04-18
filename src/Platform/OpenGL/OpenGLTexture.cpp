@@ -6,6 +6,7 @@
 #include "Core/Asset/AssetMetaData.h"
 #include "Platform/OpenGL/OpenGLTexture.h"
 #include "Utilities/FileHandler.h"
+#include <iostream>
 
 namespace Dwarf
 {
@@ -52,9 +53,10 @@ namespace Dwarf
   // A Map that maps TextureDataType to OpenGL data type
   static const std::map<TextureDataType, GLenum> s_TextureDataTypeMap = {
     { TextureDataType::UNSIGNED_BYTE, GL_UNSIGNED_BYTE },
-    { TextureDataType::FLOAT, GL_FLOAT },
+    { TextureDataType::UNSIGNED_SHORT, GL_UNSIGNED_SHORT },
+    { TextureDataType::INT, GL_INT },
     { TextureDataType::UNSIGNED_INT, GL_UNSIGNED_INT },
-    { TextureDataType::INT, GL_INT }
+    { TextureDataType::FLOAT, GL_FLOAT }
   };
 
   GLenum
@@ -66,33 +68,37 @@ namespace Dwarf
         switch (dataType)
         {
           case TextureDataType::UNSIGNED_BYTE: return GL_R8;
-          case TextureDataType::FLOAT: return GL_R32F;
-          case TextureDataType::UNSIGNED_INT: return GL_R32UI;
+          case TextureDataType::UNSIGNED_SHORT: return GL_R16UI;
           case TextureDataType::INT: return GL_R32I;
+          case TextureDataType::UNSIGNED_INT: return GL_R32UI;
+          case TextureDataType::FLOAT: return GL_R32F;
         }
       case TextureFormat::RG:
         switch (dataType)
         {
           case TextureDataType::UNSIGNED_BYTE: return GL_RG8;
-          case TextureDataType::FLOAT: return GL_RG32F;
-          case TextureDataType::UNSIGNED_INT: return GL_RG32UI;
+          case TextureDataType::UNSIGNED_SHORT: return GL_RG16UI;
           case TextureDataType::INT: return GL_RG32I;
+          case TextureDataType::UNSIGNED_INT: return GL_RG32UI;
+          case TextureDataType::FLOAT: return GL_RG32F;
         }
       case TextureFormat::RGB:
         switch (dataType)
         {
           case TextureDataType::UNSIGNED_BYTE: return GL_RGB8;
-          case TextureDataType::FLOAT: return GL_RGB32F;
-          case TextureDataType::UNSIGNED_INT: return GL_RGB32UI;
+          case TextureDataType::UNSIGNED_SHORT: return GL_RGB16UI;
           case TextureDataType::INT: return GL_RGB32I;
+          case TextureDataType::UNSIGNED_INT: return GL_RGB32UI;
+          case TextureDataType::FLOAT: return GL_RGB32F;
         }
       case TextureFormat::RGBA:
         switch (dataType)
         {
           case TextureDataType::UNSIGNED_BYTE: return GL_RGBA8;
-          case TextureDataType::FLOAT: return GL_RGBA32F;
-          case TextureDataType::UNSIGNED_INT: return GL_RGBA32UI;
+          case TextureDataType::UNSIGNED_SHORT: return GL_RGBA16UI;
           case TextureDataType::INT: return GL_RGBA32I;
+          case TextureDataType::UNSIGNED_INT: return GL_RGBA32UI;
+          case TextureDataType::FLOAT: return GL_RGBA32F;
         }
     }
   }
@@ -158,7 +164,7 @@ namespace Dwarf
                             data->Width,
                             data->Height,
                             textureFormat,
-                            GL_UNSIGNED_BYTE,
+                            textureDataType,
                             data->ImageData);
         break;
       case GL_TEXTURE_3D:
@@ -178,8 +184,8 @@ namespace Dwarf
 
   OpenGLTexture::~OpenGLTexture()
   {
-    // Delete Texture
-    // glDeleteTextures(1, &m_Id);
+    std::cout << "Deleting texture with id: " << m_Id << std::endl;
+    glDeleteTextures(1, &m_Id);
   }
 
   uintptr_t
