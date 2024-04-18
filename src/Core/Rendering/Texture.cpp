@@ -37,7 +37,7 @@ namespace Dwarf
         break;
       case OpenGL:
 #if defined(__linux__) || defined(WIN32)
-        return CreateRef<OpenGLTexture>(OpenGLTexture(parameters, data));
+        return CreateRef<OpenGLTexture>(parameters, data);
 #endif
         break;
       case Vulkan:

@@ -41,17 +41,17 @@ namespace Dwarf
 #ifdef _WIN32
       case D3D12: break;
       case Metal: break;
-      case OpenGL: return CreateRef<OpenGLShader>(OpenGLShader()); break;
+      case OpenGL: return CreateRef<OpenGLShader>(); break;
       case Vulkan: break;
 #elif __linux__
       case D3D12: break;
       case Metal: break;
-      case OpenGL: return CreateRef<OpenGLShader>(OpenGLShader()); break;
+      case OpenGL: return CreateRef<OpenGLShader>(); break;
       case Vulkan: break;
 #elif __APPLE__
       case D3D12: break;
       case Metal:
-        // return CreateRef<MetalShader>(MetalShader());
+        // return CreateRef<MetalShader>();
         break;
       case OpenGL: break;
       case Vulkan: break;
@@ -215,27 +215,13 @@ namespace Dwarf
     switch (type)
     {
       using enum ShaderParameterType;
-      case BOOLEAN:
-        return CreateRef<BooleanShaderParameter>(BooleanShaderParameter());
-        break;
-      case INTEGER:
-        return CreateRef<IntegerShaderParameter>(IntegerShaderParameter());
-        break;
-      case FLOAT:
-        return CreateRef<FloatShaderParameter>(FloatShaderParameter());
-        break;
-      case VEC2:
-        return CreateRef<Vec2ShaderParameter>(Vec2ShaderParameter());
-        break;
-      case VEC3:
-        return CreateRef<Vec3ShaderParameter>(Vec3ShaderParameter());
-        break;
-      case VEC4:
-        return CreateRef<Vec4ShaderParameter>(Vec4ShaderParameter());
-        break;
-      case TEX2D:
-        return CreateRef<Tex2DShaderParameter>(Tex2DShaderParameter());
-        break;
+      case BOOLEAN: return CreateRef<BooleanShaderParameter>(); break;
+      case INTEGER: return CreateRef<IntegerShaderParameter>(); break;
+      case FLOAT: return CreateRef<FloatShaderParameter>(); break;
+      case VEC2: return CreateRef<Vec2ShaderParameter>(); break;
+      case VEC3: return CreateRef<Vec3ShaderParameter>(); break;
+      case VEC4: return CreateRef<Vec4ShaderParameter>(); break;
+      case TEX2D: return CreateRef<Tex2DShaderParameter>(); break;
       default: return nullptr;
     }
   }

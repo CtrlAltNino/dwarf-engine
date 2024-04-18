@@ -123,8 +123,7 @@ namespace Dwarf
   Ref<OpenGLComputeShader>
   OpenGLComputeShader::CreatePropagationShader()
   {
-    Ref<OpenGLComputeShader> compShader =
-      CreateRef<OpenGLComputeShader>(OpenGLComputeShader());
+    Ref<OpenGLComputeShader> compShader = CreateRef<OpenGLComputeShader>();
     compShader->SetComputeShader(FileHandler::ReadFile(
       ComputeShader::GetOutlineShaderPath() / "propagation.comp"));
     compShader->Compile();
@@ -134,8 +133,7 @@ namespace Dwarf
   Ref<OpenGLComputeShader>
   OpenGLComputeShader::CreateFinalizationShader()
   {
-    Ref<OpenGLComputeShader> compShader =
-      CreateRef<OpenGLComputeShader>(OpenGLComputeShader());
+    Ref<OpenGLComputeShader> compShader = CreateRef<OpenGLComputeShader>();
     compShader->SetComputeShader(FileHandler::ReadFile(
       ComputeShader::GetOutlineShaderPath() / "finalization.comp"));
     compShader->Compile();

@@ -113,7 +113,7 @@ namespace Dwarf
     {
       FileHandler::CreateDirectory(s_AssetFolderPath);
     }
-    s_Registry = CreateRef<entt::registry>(entt::registry());
+    s_Registry = CreateRef<entt::registry>();
 
     // Create the file system watcher instance
     // efsw::FileWatcher allow a first boolean parameter that indicates if it

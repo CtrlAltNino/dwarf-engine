@@ -21,8 +21,12 @@ namespace Dwarf
   {
     s_Model = model;
     s_Framebuffer = Renderer::Get()->CreateFramebuffer({ 512, 512 });
-    s_Camera = CreateRef<Camera>(
-      Camera({ 0.0f, 0.0f, 0.0f }, { 0, 0, 0 }, 50.0f, 0.1f, 25000.0f, 1.0f));
+    s_Camera = CreateRef<Camera>(glm::vec3(0.0f, 0.0f, 0.0f),
+                                 glm::vec3(0, 0, 0),
+                                 50.0f,
+                                 0.1f,
+                                 25000.0f,
+                                 1.0f);
   }
 
   void

@@ -104,7 +104,7 @@ namespace Dwarf
     else
     {
       m_Parameters[std::string(identifier)] =
-        CreateRef<BooleanShaderParameter>(BooleanShaderParameter(value));
+        CreateRef<BooleanShaderParameter>(value);
     }
   }
 
@@ -123,7 +123,7 @@ namespace Dwarf
     else
     {
       m_Parameters[std::string(identifier)] =
-        CreateRef<IntegerShaderParameter>(IntegerShaderParameter(value));
+        CreateRef<IntegerShaderParameter>(value);
     }
   }
 
@@ -143,8 +143,7 @@ namespace Dwarf
     else
     {
       m_Parameters[std::string(identifier)] =
-        CreateRef<UnsignedIntegerShaderParameter>(
-          UnsignedIntegerShaderParameter(value));
+        CreateRef<UnsignedIntegerShaderParameter>(value);
     }
   }
 
@@ -163,7 +162,7 @@ namespace Dwarf
     else
     {
       m_Parameters[std::string(identifier)] =
-        CreateRef<FloatShaderParameter>(FloatShaderParameter(value));
+        CreateRef<FloatShaderParameter>(value);
     }
   }
 
@@ -183,7 +182,7 @@ namespace Dwarf
     else
     {
       m_Parameters[std::string(identifier)] =
-        CreateRef<Vec2ShaderParameter>(Vec2ShaderParameter(value));
+        CreateRef<Vec2ShaderParameter>(value);
     }
   }
 
@@ -203,7 +202,7 @@ namespace Dwarf
     else
     {
       m_Parameters[std::string(identifier)] =
-        CreateRef<Vec3ShaderParameter>(Vec3ShaderParameter(value));
+        CreateRef<Vec3ShaderParameter>(value);
     }
   }
 
@@ -223,7 +222,7 @@ namespace Dwarf
     else
     {
       m_Parameters[std::string(identifier)] =
-        CreateRef<Vec4ShaderParameter>(Vec4ShaderParameter(value));
+        CreateRef<Vec4ShaderParameter>(value);
     }
   }
 
@@ -259,7 +258,7 @@ namespace Dwarf
         using enum ShaderParameterType;
         case TEX2D:
           m_Parameters[std::string(identifier)] =
-            CreateRef<Tex2DShaderParameter>(Tex2DShaderParameter(value));
+            CreateRef<Tex2DShaderParameter>(value);
           break;
         case BOOLEAN: break;
         case INTEGER: break;

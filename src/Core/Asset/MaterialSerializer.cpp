@@ -63,7 +63,7 @@ namespace Dwarf
           {
             deserializedMat.SetParameter(
               parameter.key(),
-              CreateRef<UID>(UID(parameter.value()["value"])),
+              CreateRef<UID>(parameter.value()["value"]),
               ShaderParameterType::TEX2D);
           }
           else
@@ -116,7 +116,7 @@ namespace Dwarf
                 serializedMat["shader"]["vertexShader"] != "default")
             {
               shader->SetVertexShader(
-                CreateRef<UID>(UID(serializedMat["shader"]["vertexShader"])));
+                CreateRef<UID>(serializedMat["shader"]["vertexShader"]));
             }
             else
             {
@@ -130,7 +130,7 @@ namespace Dwarf
                 serializedMat["shader"]["fragmentShader"] != "default")
             {
               shader->SetFragmentShader(
-                CreateRef<UID>(UID(serializedMat["shader"]["fragmentShader"])));
+                CreateRef<UID>(serializedMat["shader"]["fragmentShader"]));
             }
             else
             {
@@ -143,7 +143,7 @@ namespace Dwarf
             if (serializedMat["shader"].contains("geometryShader"))
             {
               shader->SetGeometryShader(
-                CreateRef<UID>(UID(serializedMat["shader"]["geometryShader"])));
+                CreateRef<UID>(serializedMat["shader"]["geometryShader"]));
             }
             deserializedMat.SetShader(shader);
             break;
@@ -161,7 +161,7 @@ namespace Dwarf
                 serializedMat["shader"]["vertexShader"] != "default")
             {
               shader->SetVertexShader(
-                CreateRef<UID>(UID(serializedMat["shader"]["vertexShader"])));
+                CreateRef<UID>(serializedMat["shader"]["vertexShader"]));
             }
             else
             {
@@ -175,7 +175,7 @@ namespace Dwarf
                 serializedMat["shader"]["fragmentShader"] != "default")
             {
               shader->SetFragmentShader(
-                CreateRef<UID>(UID(serializedMat["shader"]["fragmentShader"])));
+                CreateRef<UID>(serializedMat["shader"]["fragmentShader"]));
             }
             else
             {
@@ -188,7 +188,7 @@ namespace Dwarf
             if (serializedMat["shader"].contains("geometryShader"))
             {
               shader->SetGeometryShader(
-                CreateRef<UID>(UID(serializedMat["shader"]["geometryShader"])));
+                CreateRef<UID>(serializedMat["shader"]["geometryShader"]));
             }
             deserializedMat.SetShader(shader);
             break;

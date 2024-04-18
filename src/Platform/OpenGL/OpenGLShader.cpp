@@ -316,7 +316,7 @@ namespace Dwarf
   Ref<OpenGLShader>
   OpenGLShader::CreateDefaultShader()
   {
-    Ref<OpenGLShader> defaultShader = CreateRef<OpenGLShader>(OpenGLShader());
+    Ref<OpenGLShader> defaultShader = CreateRef<OpenGLShader>();
     defaultShader->SetVertexShader(
       FileHandler::ReadFile(Shader::GetDefaultShaderPath() / "default.vert"));
     defaultShader->SetFragmentShader(
@@ -328,7 +328,7 @@ namespace Dwarf
   Ref<OpenGLShader>
   OpenGLShader::CreateErrorShader()
   {
-    Ref<OpenGLShader> errorShader = CreateRef<OpenGLShader>(OpenGLShader());
+    Ref<OpenGLShader> errorShader = CreateRef<OpenGLShader>();
     errorShader->SetVertexShader(
       FileHandler::ReadFile(Shader::GetErrorShaderPath() / "error.vert"));
     errorShader->SetFragmentShader(
@@ -340,7 +340,7 @@ namespace Dwarf
   Ref<OpenGLShader>
   OpenGLShader::CreateGridShader()
   {
-    Ref<OpenGLShader> gridShader = CreateRef<OpenGLShader>(OpenGLShader());
+    Ref<OpenGLShader> gridShader = CreateRef<OpenGLShader>();
     gridShader->SetVertexShader(
       FileHandler::ReadFile(Shader::GetGridShaderPath() / "grid.vert"));
     gridShader->SetFragmentShader(
@@ -352,7 +352,7 @@ namespace Dwarf
   Ref<OpenGLShader>
   OpenGLShader::CreatePreviewShader()
   {
-    Ref<OpenGLShader> previewShader = CreateRef<OpenGLShader>(OpenGLShader());
+    Ref<OpenGLShader> previewShader = CreateRef<OpenGLShader>();
     previewShader->SetVertexShader(
       FileHandler::ReadFile(Shader::GetPreviewShaderPath() / "preview.vert"));
     previewShader->SetFragmentShader(
@@ -364,7 +364,7 @@ namespace Dwarf
   Ref<OpenGLShader>
   OpenGLShader::CreateIdShader()
   {
-    Ref<OpenGLShader> idShader = CreateRef<OpenGLShader>(OpenGLShader());
+    Ref<OpenGLShader> idShader = CreateRef<OpenGLShader>();
     idShader->SetVertexShader(
       FileHandler::ReadFile(Shader::GetIdShaderPath() / "id.vert"));
     idShader->SetFragmentShader(
@@ -376,7 +376,7 @@ namespace Dwarf
   Ref<OpenGLShader>
   OpenGLShader::CreateWhiteShader()
   {
-    Ref<OpenGLShader> whiteShader = CreateRef<OpenGLShader>(OpenGLShader());
+    Ref<OpenGLShader> whiteShader = CreateRef<OpenGLShader>();
     whiteShader->SetVertexShader(
       FileHandler::ReadFile(Shader::GetOutlineShaderPath() / "white.vert"));
     whiteShader->SetFragmentShader(

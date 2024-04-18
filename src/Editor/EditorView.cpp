@@ -295,28 +295,27 @@ namespace Dwarf
     {
       using enum MODULE_TYPE;
       case PERFORMANCE:
-        guiModule = CreateRef<PerformanceWindow>(
-          PerformanceWindow(this->m_Model, m_GuiModuleIDCount++));
+        guiModule =
+          CreateRef<PerformanceWindow>(this->m_Model, m_GuiModuleIDCount++);
         break;
       case SCENE_GRAPH:
-        guiModule = CreateRef<SceneHierarchyWindow>(
-          SceneHierarchyWindow(this->m_Model, m_GuiModuleIDCount++));
+        guiModule =
+          CreateRef<SceneHierarchyWindow>(this->m_Model, m_GuiModuleIDCount++);
         break;
       case SCENE_VIEWER:
-        guiModule = CreateRef<SceneViewerWindow>(
-          SceneViewerWindow(this->m_Model, m_GuiModuleIDCount++));
+        guiModule =
+          CreateRef<SceneViewerWindow>(this->m_Model, m_GuiModuleIDCount++);
         break;
       case ASSET_BROWSER:
-        guiModule = CreateRef<AssetBrowserWindow>(
-          AssetBrowserWindow(this->m_Model, m_GuiModuleIDCount++));
+        guiModule =
+          CreateRef<AssetBrowserWindow>(this->m_Model, m_GuiModuleIDCount++);
         break;
       case INSPECTOR:
-        guiModule = CreateRef<InspectorWindow>(
-          InspectorWindow(this->m_Model, m_GuiModuleIDCount++));
+        guiModule =
+          CreateRef<InspectorWindow>(this->m_Model, m_GuiModuleIDCount++);
         break;
       case DEBUG:
-        guiModule = CreateRef<DebugWindow>(
-          DebugWindow(this->m_Model, m_GuiModuleIDCount++));
+        guiModule = CreateRef<DebugWindow>(this->m_Model, m_GuiModuleIDCount++);
         break;
       case CONSOLE: break;
     }

@@ -278,30 +278,26 @@ namespace Dwarf
 
         if (heightFrac < 0.33f)
         {
-          m_Instructions.push_back(
-            CreateRef<NewParentInstruction>(NewParentInstruction(
-              m_Model->GetScene(),
-              payload_e,
-              ent.GetComponent<TransformComponent>().parent)));
-          m_Instructions.push_back(
-            CreateRef<ChildIndexInstruction>(ChildIndexInstruction(
-              m_Model->GetScene(), payload_e, ent.GetChildIndex())));
+          m_Instructions.push_back(CreateRef<NewParentInstruction>(
+            m_Model->GetScene(),
+            payload_e,
+            ent.GetComponent<TransformComponent>().parent));
+          m_Instructions.push_back(CreateRef<ChildIndexInstruction>(
+            m_Model->GetScene(), payload_e, ent.GetChildIndex()));
         }
         else if (heightFrac > 0.66f)
         {
-          m_Instructions.push_back(
-            CreateRef<NewParentInstruction>(NewParentInstruction(
-              m_Model->GetScene(),
-              payload_e,
-              ent.GetComponent<TransformComponent>().parent)));
-          m_Instructions.push_back(
-            CreateRef<ChildIndexInstruction>(ChildIndexInstruction(
-              m_Model->GetScene(), payload_e, ent.GetChildIndex() + 1)));
+          m_Instructions.push_back(CreateRef<NewParentInstruction>(
+            m_Model->GetScene(),
+            payload_e,
+            ent.GetComponent<TransformComponent>().parent));
+          m_Instructions.push_back(CreateRef<ChildIndexInstruction>(
+            m_Model->GetScene(), payload_e, ent.GetChildIndex() + 1));
         }
         else
         {
           m_Instructions.push_back(CreateRef<NewParentInstruction>(
-            NewParentInstruction(m_Model->GetScene(), payload_e, entity)));
+            m_Model->GetScene(), payload_e, entity));
         }
       }
       ImGui::EndDragDropTarget();
@@ -459,11 +455,10 @@ namespace Dwarf
 
         std::vector<Entity> payload_e =
           *(const std::vector<Entity>*)payload->Data;
-        m_Instructions.push_back(
-          CreateRef<NewParentInstruction>(NewParentInstruction(
-            m_Model->GetScene(),
-            payload_e,
-            m_Model->GetScene()->GetRootEntity()->GetHandle())));
+        m_Instructions.push_back(CreateRef<NewParentInstruction>(
+          m_Model->GetScene(),
+          payload_e,
+          m_Model->GetScene()->GetRootEntity()->GetHandle()));
       }
       ImGui::EndDragDropTarget();
     }

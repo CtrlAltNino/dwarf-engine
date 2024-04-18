@@ -84,8 +84,7 @@ namespace Dwarf
 
     std::filesystem::path m_Path;
 
-    Ref<entt::registry> m_Registry =
-      CreateRef<entt::registry>(entt::registry());
+    Ref<entt::registry> m_Registry = CreateRef<entt::registry>();
 
     SceneSettings m_Settings;
 

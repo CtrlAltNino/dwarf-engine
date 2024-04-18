@@ -50,10 +50,10 @@ namespace Dwarf
         serializedScene["skyboxMaterial"] != "null")
     {
       settings.skyboxMaterial =
-        CreateRef<UID>(UID((uint64_t)serializedScene["skyboxMaterial"]));
+        CreateRef<UID>((uint64_t)serializedScene["skyboxMaterial"]);
     }
 
-    Ref<Scene> deserializedScene = CreateRef<Scene>(Scene(path, settings));
+    Ref<Scene> deserializedScene = CreateRef<Scene>(path, settings);
 
     for (auto const& element : serializedScene["hierarchy"])
     {
@@ -258,7 +258,7 @@ namespace Dwarf
           serializedEntity["meshRendererComponent"]["mesh"] != "null")
       {
         meshRendererComponent.meshAsset = CreateRef<UID>(
-          UID((uint64_t)serializedEntity["meshRendererComponent"]["mesh"]));
+          (uint64_t)serializedEntity["meshRendererComponent"]["mesh"]);
       }
 
       if (serializedEntity["meshRendererComponent"].contains("materials"))
@@ -268,7 +268,7 @@ namespace Dwarf
         {
           meshRendererComponent.materialAssets.push_back(
             (uint64_t)element == -1 ? nullptr
-                                    : CreateRef<UID>(UID((uint64_t)element)));
+                                    : CreateRef<UID>((uint64_t)element));
         }
       }
     }
@@ -369,7 +369,7 @@ namespace Dwarf
   SceneUtilities::LoadDefaultScene()
   {
     Ref<Scene> scene =
-      CreateRef<Scene>(Scene(std::filesystem::path(""), SceneSettings()));
+      CreateRef<Scene>(std::filesystem::path(""), SceneSettings());
 
     // TODO: Add default stuff
 

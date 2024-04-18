@@ -17,7 +17,7 @@ namespace Dwarf
   Ref<Editor>
   CreateEditor()
   {
-    return CreateRef<Editor>(Editor());
+    return CreateRef<Editor>();
   }
 
   Editor::Editor()
@@ -79,14 +79,14 @@ namespace Dwarf
     // ========== Initialize Editor model
     std::cout << "[EDITOR INIT] Initializing editor model" << std::endl;
 
-    s_Instance->m_Model = CreateRef<EditorModel>(EditorModel(
-      projectSettings["projectName"].get<std::string_view>(), projectPath));
+    s_Instance->m_Model = CreateRef<EditorModel>(
+      projectSettings["projectName"].get<std::string_view>(), projectPath);
 
     if (projectSettings.contains("lastOpenedScene"))
     {
       Ref<AssetReference<SceneAsset>> lastOpenedSceneAsset =
         AssetDatabase::Retrieve<SceneAsset>(
-          CreateRef<UID>(UID(projectSettings["lastOpenedScene"])));
+          CreateRef<UID>(projectSettings["lastOpenedScene"]));
       if (lastOpenedSceneAsset)
       {
         std::cout << "[EDITOR INIT] Loading last opened scene" << std::endl;
@@ -110,7 +110,7 @@ namespace Dwarf
     }
 
     // ========== Initialize Editor view ==========
-    s_Instance->m_View = CreateRef<EditorView>(EditorView(s_Instance->m_Model));
+    s_Instance->m_View = CreateRef<EditorView>(s_Instance->m_Model);
 
     // Get monitor variables
 

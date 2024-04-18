@@ -200,8 +200,7 @@ namespace Dwarf
       {
         if (view.get<PathComponent>(entity).Path == path)
         {
-          return CreateRef<AssetReference<T>>(
-            AssetReference<T>(entity, s_Registry));
+          return CreateRef<AssetReference<T>>(entity, s_Registry);
         }
       }
       return nullptr;
