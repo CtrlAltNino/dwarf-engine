@@ -7,12 +7,14 @@ namespace Dwarf
     RED,
     RG,
     RGB,
-    RGBA
+    RGBA,
+    DEPTH,
+    STENCIL,
+    DEPTH_STENCIL
   };
 
   enum class TextureWrap
   {
-    UNSET,
     REPEAT,
     MIRRORED_REPEAT,
     CLAMP_TO_EDGE,
@@ -21,7 +23,6 @@ namespace Dwarf
 
   enum class TextureMinFilter
   {
-    UNSET,
     NEAREST,
     LINEAR,
     NEAREST_MIPMAP_NEAREST,
@@ -32,7 +33,6 @@ namespace Dwarf
 
   enum class TextureMagFilter
   {
-    UNSET,
     NEAREST,
     LINEAR
   };
@@ -67,10 +67,10 @@ namespace Dwarf
 
   struct TextureParameters
   {
-    TextureWrap      WrapS = TextureWrap::UNSET;
-    TextureWrap      WrapT = TextureWrap::UNSET;
-    TextureWrap      WrapR = TextureWrap::UNSET;
-    TextureMinFilter MinFilter = TextureMinFilter::UNSET;
-    TextureMagFilter MagFilter = TextureMagFilter::UNSET;
+    TextureWrap      WrapS = TextureWrap::REPEAT;
+    TextureWrap      WrapT = TextureWrap::REPEAT;
+    TextureWrap      WrapR = TextureWrap::REPEAT;
+    TextureMinFilter MinFilter = TextureMinFilter::LINEAR;
+    TextureMagFilter MagFilter = TextureMagFilter::LINEAR;
   };
 } // namespace Dwarf

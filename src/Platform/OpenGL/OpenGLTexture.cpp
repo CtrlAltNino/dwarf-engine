@@ -15,7 +15,10 @@ namespace Dwarf
     { TextureFormat::RED, GL_RED },
     { TextureFormat::RG, GL_RG },
     { TextureFormat::RGB, GL_RGB },
-    { TextureFormat::RGBA, GL_RGBA }
+    { TextureFormat::RGBA, GL_RGBA },
+    { TextureFormat::DEPTH, GL_DEPTH_COMPONENT },
+    { TextureFormat::STENCIL, GL_STENCIL_INDEX },
+    { TextureFormat::DEPTH_STENCIL, GL_DEPTH_STENCIL }
   };
 
   // A Map that maps TextureWrap to OpenGL wrap
@@ -100,13 +103,40 @@ namespace Dwarf
           case TextureDataType::UNSIGNED_INT: return GL_RGBA32UI;
           case TextureDataType::FLOAT: return GL_RGBA32F;
         }
+      case TextureFormat::DEPTH:
+        switch (dataType)
+        {
+          case TextureDataType::UNSIGNED_BYTE: return GL_DEPTH_COMPONENT;
+          case TextureDataType::UNSIGNED_SHORT: return GL_DEPTH_COMPONENT16;
+          case TextureDataType::INT: return GL_DEPTH_COMPONENT24;
+          case TextureDataType::UNSIGNED_INT: return GL_DEPTH_COMPONENT32;
+          case TextureDataType::FLOAT: return GL_DEPTH_COMPONENT32F;
+        }
+      case TextureFormat::STENCIL:
+        switch (dataType)
+        {
+          case TextureDataType::UNSIGNED_BYTE: return GL_STENCIL_INDEX;
+          case TextureDataType::UNSIGNED_SHORT: return GL_STENCIL_INDEX;
+          case TextureDataType::INT: return GL_STENCIL_INDEX;
+          case TextureDataType::UNSIGNED_INT: return GL_STENCIL_INDEX;
+          case TextureDataType::FLOAT: return GL_STENCIL_INDEX;
+        }
+      case TextureFormat::DEPTH_STENCIL:
+        switch (dataType)
+        {
+          case TextureDataType::UNSIGNED_BYTE: return GL_DEPTH24_STENCIL8;
+          case TextureDataType::UNSIGNED_SHORT: return GL_DEPTH24_STENCIL8;
+          case TextureDataType::INT: return GL_DEPTH24_STENCIL8;
+          case TextureDataType::UNSIGNED_INT: return GL_DEPTH24_STENCIL8;
+          case TextureDataType::FLOAT: return GL_DEPTH24_STENCIL8;
+        }
     }
   }
 
   // A map that maps
   // Constructor without meta data
-  OpenGLTexture::OpenGLTexture(Ref<TextureParameters> parameters,
-                               Ref<TextureContainer>  data)
+  OpenGLTexture::OpenGLTexture(Ref<TextureContainer>  data,
+                               Ref<TextureParameters> parameters)
   {
     GLuint textureFormat = s_TextureFormatMap.at(data->Format);
     GLuint textureType = s_TextureTypeMap.at(data->Type);
@@ -121,35 +151,24 @@ namespace Dwarf
     SetSize(glm::ivec3(data->Width, data->Height, 0));
     glCreateTextures(textureType, 1, &m_Id);
 
-    if (parameters->MinFilter != TextureMinFilter::UNSET)
-    {
-      glTextureParameteri(m_Id, GL_TEXTURE_MIN_FILTER, textureMinFilter);
-    }
-
-    if (parameters->MagFilter != TextureMagFilter::UNSET)
-    {
-      glTextureParameteri(m_Id, GL_TEXTURE_MAG_FILTER, textureMagFilter);
-    }
-
-    if (parameters->WrapS != TextureWrap::UNSET)
-    {
-      glTextureParameteri(m_Id, GL_TEXTURE_WRAP_S, textureWrapS);
-    }
-
-    if (parameters->WrapT != TextureWrap::UNSET)
-    {
-      glTextureParameteri(m_Id, GL_TEXTURE_WRAP_T, textureWrapT);
-    }
-
-    if (parameters->WrapR != TextureWrap::UNSET)
-    {
-      glTextureParameteri(m_Id, GL_TEXTURE_WRAP_R, textureWrapR);
-    }
+    glTextureParameteri(m_Id, GL_TEXTURE_MIN_FILTER, textureMinFilter);
+    glTextureParameteri(m_Id, GL_TEXTURE_MAG_FILTER, textureMagFilter);
 
     switch (textureType)
     {
       case GL_TEXTURE_1D:
         glTextureParameteri(m_Id, GL_TEXTURE_WRAP_S, textureWrapS);
+        glTextureStorage1D(m_Id, 1, internalFormat, data->Width);
+        if (data->ImageData)
+        {
+          glTextureSubImage1D(m_Id,
+                              0,
+                              0,
+                              data->Width,
+                              textureFormat,
+                              textureDataType,
+                              data->ImageData);
+        }
         break;
       case GL_TEXTURE_2D:
         glTextureParameteri(m_Id, GL_TEXTURE_WRAP_S, textureWrapS);
@@ -157,25 +176,48 @@ namespace Dwarf
 
         glTextureStorage2D(m_Id, 1, internalFormat, data->Width, data->Height);
 
-        glTextureSubImage2D(m_Id,
-                            0,
-                            0,
-                            0,
-                            data->Width,
-                            data->Height,
-                            textureFormat,
-                            textureDataType,
-                            data->ImageData);
+        if (data->ImageData)
+        {
+          glTextureSubImage2D(m_Id,
+                              0,
+                              0,
+                              0,
+                              data->Width,
+                              data->Height,
+                              textureFormat,
+                              textureDataType,
+                              data->ImageData);
+        }
         break;
       case GL_TEXTURE_3D:
         glTextureParameteri(m_Id, GL_TEXTURE_WRAP_S, textureWrapS);
         glTextureParameteri(m_Id, GL_TEXTURE_WRAP_T, textureWrapT);
         glTextureParameteri(m_Id, GL_TEXTURE_WRAP_R, textureWrapR);
+
+        glTextureStorage3D(
+          m_Id, 1, internalFormat, data->Width, data->Height, data->Depth);
+
+        if (data->ImageData)
+        {
+          glTextureSubImage3D(m_Id,
+                              0,
+                              0,
+                              0,
+                              0,
+                              data->Width,
+                              data->Height,
+                              data->Depth,
+                              textureFormat,
+                              textureDataType,
+                              data->ImageData);
+        }
         break;
       case GL_TEXTURE_CUBE_MAP:
         glTextureParameteri(m_Id, GL_TEXTURE_WRAP_S, textureWrapS);
         glTextureParameteri(m_Id, GL_TEXTURE_WRAP_T, textureWrapT);
         glTextureParameteri(m_Id, GL_TEXTURE_WRAP_R, textureWrapR);
+
+        // TODO: Implement cube map texture
         break;
     }
 

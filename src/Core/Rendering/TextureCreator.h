@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Base.h"
+#include "Core/Rendering/Framebuffer.h"
 #include "Core/Rendering/Texture.h"
 #include "Utilities/ImageUtilities/TextureCommon.h"
 #include <filesystem>
@@ -35,7 +36,9 @@ namespace Dwarf
     static Ref<Texture>
     FromData(TextureParameters const& parameters, glm::ivec2 size, void* data);
     static Ref<Texture>
-    Empty(TextureParameters const& parameters, glm::ivec2 size);
+    Empty(glm::ivec2 size);
+    static Ref<Texture>
+    Empty(FramebufferTextureSpecification const& parameters, glm::ivec2 size);
     static Ref<Texture>
     FromPath(std::filesystem::path const& path);
   };

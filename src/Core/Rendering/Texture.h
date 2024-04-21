@@ -28,7 +28,8 @@ namespace Dwarf
     }
 
     static Ref<Texture>
-    Create(Ref<TextureParameters> parameters, Ref<TextureContainer> data);
+    Create(Ref<TextureContainer>  data,
+           Ref<TextureParameters> parameters = CreateRef<TextureParameters>());
     virtual uintptr_t
     GetTextureID() = 0;
   };

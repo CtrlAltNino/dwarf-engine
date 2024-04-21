@@ -20,7 +20,7 @@
 namespace Dwarf
 {
   Ref<Texture>
-  Texture::Create(Ref<TextureParameters> parameters, Ref<TextureContainer> data)
+  Texture::Create(Ref<TextureContainer> data, Ref<TextureParameters> parameters)
   {
     switch (Renderer::GetAPI())
     {
@@ -37,7 +37,7 @@ namespace Dwarf
         break;
       case OpenGL:
 #if defined(__linux__) || defined(WIN32)
-        return CreateRef<OpenGLTexture>(parameters, data);
+        return CreateRef<OpenGLTexture>(data, parameters);
 #endif
         break;
       case Vulkan:

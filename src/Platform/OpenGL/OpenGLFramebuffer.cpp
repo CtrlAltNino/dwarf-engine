@@ -1,8 +1,10 @@
+#include "Core/Rendering/TextureCreator.h"
 #include "dpch.h"
 #include "Platform/OpenGL/OpenGLFramebuffer.h"
 
 #include <glad/glad.h>
 #include <glm/glm.hpp>
+#include <iostream>
 
 namespace Dwarf
 {
@@ -21,7 +23,7 @@ namespace Dwarf
 
     // @brief: Returns the OpenGL texture target for the given multisampled
     // state
-    static GLenum
+    /*static GLenum
     TextureTarget(bool multisampled)
     {
       return multisampled ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
@@ -39,86 +41,87 @@ namespace Dwarf
     BindTexture(bool multisampled, uint32_t id)
     {
       glBindTexture(TextureTarget(multisampled), id);
-    }
+    }*/
 
     // @brief: Attaches a color texture to the framebuffer with the given
     // multisampled state
-    static void
-    AttachColorTexture(uint32_t id,
-                       int      samples,
-                       GLenum   internalFormat,
-                       GLenum   format,
-                       GLenum   type,
-                       uint32_t width,
-                       uint32_t height,
-                       int      index)
-    {
-      bool multisampled = samples > 1;
-      if (multisampled)
-      {
-        glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE,
-                                samples,
-                                internalFormat,
-                                width,
-                                height,
-                                GL_FALSE);
-      }
-      else
-      {
-        glTexImage2D(GL_TEXTURE_2D,
-                     0,
-                     internalFormat,
-                     width,
-                     height,
-                     0,
-                     format,
-                     type,
-                     nullptr);
+    // static void
+    // AttachColorTexture(uint32_t id,
+    //                    int      samples,
+    //                    GLenum   internalFormat,
+    //                    GLenum   format,
+    //                    GLenum   type,
+    //                    uint32_t width,
+    //                    uint32_t height,
+    //                    int      index)
+    // {
+    //   bool multisampled = samples > 1;
+    //   if (multisampled)
+    //   {
+    //     glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE,
+    //                             samples,
+    //                             internalFormat,
+    //                             width,
+    //                             height,
+    //                             GL_FALSE);
+    //   }
+    //   else
+    //   {
+    //     glTexImage2D(GL_TEXTURE_2D,
+    //                  0,
+    //                  internalFormat,
+    //                  width,
+    //                  height,
+    //                  0,
+    //                  format,
+    //                  type,
+    //                  nullptr);
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-      }
+    //     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    //     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    //     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    //     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    //     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    //   }
 
-      glFramebufferTexture2D(GL_FRAMEBUFFER,
-                             GL_COLOR_ATTACHMENT0 + index,
-                             TextureTarget(multisampled),
-                             id,
-                             0);
-    }
+    //   glFramebufferTexture2D(GL_FRAMEBUFFER,
+    //                          GL_COLOR_ATTACHMENT0 + index,
+    //                          TextureTarget(multisampled),
+    //                          id,
+    //                          0);
+    // }
 
-    // @brief: Attaches a depth texture to the framebuffer with the given
-    // multisampled state
-    static void
-    AttachDepthTexture(uint32_t id,
-                       int      samples,
-                       GLenum   format,
-                       GLenum   attachmentType,
-                       uint32_t width,
-                       uint32_t height)
-    {
-      bool multisampled = samples > 1;
-      if (multisampled)
-      {
-        glTexImage2DMultisample(
-          GL_TEXTURE_2D_MULTISAMPLE, samples, format, width, height, GL_FALSE);
-      }
-      else
-      {
-        glTexStorage2D(GL_TEXTURE_2D, 1, format, width, height);
+    // // @brief: Attaches a depth texture to the framebuffer with the given
+    // // multisampled state
+    // static void
+    // AttachDepthTexture(uint32_t id,
+    //                    int      samples,
+    //                    GLenum   format,
+    //                    GLenum   attachmentType,
+    //                    uint32_t width,
+    //                    uint32_t height)
+    // {
+    //   bool multisampled = samples > 1;
+    //   if (multisampled)
+    //   {
+    //     glTexImage2DMultisample(
+    //       GL_TEXTURE_2D_MULTISAMPLE, samples, format, width, height,
+    //       GL_FALSE);
+    //   }
+    //   else
+    //   {
+    //     glTexStorage2D(GL_TEXTURE_2D, 1, format, width, height);
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-      }
+    //     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    //     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    //     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    //     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    //     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    //   }
 
-      glFramebufferTexture2D(
-        GL_FRAMEBUFFER, attachmentType, TextureTarget(multisampled), id, 0);
-    }
+    //   glFramebufferTexture2D(
+    //     GL_FRAMEBUFFER, attachmentType, TextureTarget(multisampled), id, 0);
+    // }
 
     // @brief: Checks if the given framebuffer texture format is a depth format
     static bool
@@ -138,7 +141,7 @@ namespace Dwarf
 
     // @brief: Converts a Dwarf framebuffer texture format to an OpenGL texture
     // format
-    static GLenum
+    /*static GLenum
     DwarfFBTextureFormatToGL(FramebufferTextureFormat format)
     {
       switch (format)
@@ -151,7 +154,7 @@ namespace Dwarf
       }
 
       return 0;
-    }
+    }*/
   }
 
   // @brief: Constructs an OpenGL framebuffer with the given specification
@@ -166,15 +169,16 @@ namespace Dwarf
         m_DepthAttachmentSpecification = attachments;
     }
 
+    std::cout << "Color attachment size: "
+              << m_ColorAttachmentSpecifications.size() << std::endl;
+
     Invalidate();
   }
 
   // @brief: Destroys the OpenGL framebuffer
   OpenGLFramebuffer::~OpenGLFramebuffer()
   {
-    glDeleteFramebuffers(1, &m_RendererID);
-    // glDeleteTextures(m_ColorAttachments.size(), m_ColorAttachments.data());
-    // glDeleteTextures(1, &m_DepthAttachment);
+    DeleteFramebuffer();
   }
 
   // @brief: Invalidates the framebuffer
@@ -184,13 +188,10 @@ namespace Dwarf
     // If the renderer ID is not 0, delete the framebuffer and its attachments
     if (m_RendererID)
     {
-      glDeleteFramebuffers(1, &m_RendererID);
-      // glDeleteTextures(m_ColorAttachments.size(), m_ColorAttachments.data());
-      // glDeleteTextures(1, &m_DepthAttachment);
-
-      m_ColorAttachments.clear();
-      m_DepthAttachment = nullptr;
+      DeleteFramebuffer();
     }
+
+    std::cout << "Invalidate" << std::endl;
 
     // Create the framebuffer
     glCreateFramebuffers(1, &m_RendererID);
@@ -201,67 +202,41 @@ namespace Dwarf
     // Determine if the framebuffer is multisampled
     bool multisample = m_Specification.Samples > 1;
 
+    std::cout << "Color attachment specification size: "
+              << m_ColorAttachmentSpecifications.size() << std::endl;
+
     // Create the color attachments
-    /* if (m_ColorAttachmentSpecifications.size())
+    if (m_ColorAttachmentSpecifications.size())
     {
-            // Resize the color attachments vector to the size of the color
-    attachment specifications
-            //
-    m_ColorAttachments.resize(m_ColorAttachmentSpecifications.size());
+      // Iterate through the color attachments
+      for (size_t i = 0; i < m_ColorAttachmentSpecifications.size(); i++)
+      {
+        m_ColorAttachments.push_back(TextureCreator::Empty(
+          m_ColorAttachmentSpecifications[i],
+          { m_Specification.Width, m_Specification.Height }));
 
-            // Create the textures
-            // Utils::CreateTextures(multisample, m_ColorAttachments.data(),
-    (uint32_t)m_ColorAttachments.size());
-
-            // Iterate through the color attachments
-            for (size_t i = 0; i < m_ColorAttachments.size(); i++)
-            {
-                    // Bind the texture
-                    Utils::BindTexture(multisample, m_ColorAttachments[i]);
-
-                    // Switch on the texture format
-                    switch (m_ColorAttachmentSpecifications[i].TextureFormat)
-                    {
-                            using enum FramebufferTextureFormat;
-                    case RGBA8:
-                            // Attach the color texture
-                            Utils::AttachColorTexture(m_ColorAttachments[i],
-    m_Specification.Samples, GL_RGBA, GL_RGBA, GL_UNSIGNED_BYTE,
-    m_Specification.Width, m_Specification.Height, (int)i); break; case
-    RED_INTEGER:
-                            // Attach the color texture
-                            Utils::AttachColorTexture(m_ColorAttachments[i],
-    m_Specification.Samples, GL_R32UI, GL_RED_INTEGER, GL_UNSIGNED_INT,
-    m_Specification.Width, m_Specification.Height, (int)i); break; case None:
-                    case DEPTH24STENCIL8:
-                            break;
-                    }
-            }
+        glFramebufferTexture2D(GL_FRAMEBUFFER,
+                               GL_COLOR_ATTACHMENT0 + i,
+                               GL_TEXTURE_2D,
+                               m_ColorAttachments[i]->GetTextureID(),
+                               0);
+      }
     }
 
     // Create the depth attachment
     if (m_DepthAttachmentSpecification.TextureFormat !=
-    FramebufferTextureFormat::None)
+        FramebufferTextureFormat::None)
     {
-            // Create the textures
-            Utils::CreateTextures(multisample, &m_DepthAttachment, 1);
+      m_DepthAttachment = TextureCreator::Empty(
+        m_DepthAttachmentSpecification,
+        { m_Specification.Width, m_Specification.Height });
 
-            // Bind the texture
-            Utils::BindTexture(multisample, m_DepthAttachment);
-
-            // Switch on the texture format
-            switch (m_DepthAttachmentSpecification.TextureFormat)
-            {
-                    using enum FramebufferTextureFormat;
-            case FramebufferTextureFormat::DEPTH24STENCIL8:
-                    // Attach the depth texture
-                    Utils::AttachDepthTexture(m_DepthAttachment,
-    m_Specification.Samples, GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL_ATTACHMENT,
-    m_Specification.Width, m_Specification.Height); break; case
-    FramebufferTextureFormat::None: case FramebufferTextureFormat::RGBA8: case
-    FramebufferTextureFormat::RED_INTEGER: break;
-            }
-    } */
+      glFramebufferTexture2D(GL_FRAMEBUFFER,
+                             GL_DEPTH_STENCIL_ATTACHMENT,
+                             GL_TEXTURE_2D,
+                             m_DepthAttachment->GetTextureID(),
+                             0);
+    }
 
     // Check if the framebuffer is complete
     if (m_ColorAttachments.size() > 1)
@@ -349,6 +324,24 @@ namespace Dwarf
        GL_INT, &value); */
   }
 
+  const Ref<Texture>
+  OpenGLFramebuffer::GetColorAttachment(uint32_t index = 0) const
+  {
+    std::cout << "Index: " << index << std::endl;
+    std::cout << "Size: " << m_ColorAttachments.size() << std::endl;
+    if (index < m_ColorAttachments.size())
+    {
+      // Return the address of the value at the specified index
+      return m_ColorAttachments[index];
+    }
+    else
+    {
+      // If the index is out of bounds, return nullptr or handle the error
+      // accordingly
+      return nullptr;
+    }
+  }
+
   // @brief: Clears the framebuffer
   void
   OpenGLFramebuffer::Clear()
@@ -366,5 +359,14 @@ namespace Dwarf
     glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     Unbind();
+  }
+
+  void
+  OpenGLFramebuffer::DeleteFramebuffer()
+  {
+    std::cout << "DeleteFramebuffer" << std::endl;
+    glDeleteFramebuffers(1, &m_RendererID);
+    m_ColorAttachments.clear();
+    m_DepthAttachment = nullptr;
   }
 }

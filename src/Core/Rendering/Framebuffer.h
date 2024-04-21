@@ -6,7 +6,7 @@
 
 namespace Dwarf
 {
-
+  // TODO: Align with TextureCommon.h
   enum class FramebufferTextureFormat
   {
     None = 0,
@@ -52,8 +52,7 @@ namespace Dwarf
     uint32_t                           Height = 0;
     FramebufferAttachmentSpecification Attachments;
     uint32_t                           Samples = 1;
-
-    bool SwapChainTarget = false;
+    bool                               SwapChainTarget = false;
   };
 
   class Framebuffer

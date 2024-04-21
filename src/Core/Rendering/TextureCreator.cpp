@@ -1,3 +1,4 @@
+#include "Core/Rendering/Framebuffer.h"
 #include "Utilities/FileHandler.h"
 #include "Utilities/ImageUtilities/TextureCommon.h"
 #include "dpch.h"
@@ -97,7 +98,7 @@ namespace Dwarf
     // copy content from data into textureData->ImageData
     textureData->ImageData = imageData;
 
-    Ref<Texture> texture = Texture::Create(parameters, textureData);
+    Ref<Texture> texture = Texture::Create(textureData, parameters);
 
     spng_ctx_free(png);
 
@@ -156,7 +157,7 @@ namespace Dwarf
     data->DataType = TextureDataType::UNSIGNED_BYTE;
     data->ImageData = imageData;
 
-    return Texture::Create(parameters, data);
+    return Texture::Create(data, parameters);
   }
 
   Ref<Texture>
@@ -316,7 +317,49 @@ namespace Dwarf
     textureData->DataType = TextureDataType::UNSIGNED_BYTE;
     textureData->ImageData = (unsigned char*)data;
 
-    return Texture::Create(CreateRef<TextureParameters>(parameters),
-                           textureData);
+    return Texture::Create(textureData,
+                           CreateRef<TextureParameters>(parameters));
+  }
+
+  Ref<Texture>
+  TextureCreator::Empty(glm::ivec2 size)
+  {
+    Ref<TextureContainer> textureData = CreateRef<TextureContainer>();
+    textureData->Width = size.x;
+    textureData->Height = size.y;
+    textureData->Format = TextureFormat::RGBA;
+    textureData->Type = TextureType::TEXTURE_2D;
+    textureData->DataType = TextureDataType::UNSIGNED_BYTE;
+    textureData->ImageData = nullptr;
+
+    return Texture::Create(textureData);
+  }
+
+  Ref<Texture>
+  TextureCreator::Empty(FramebufferTextureSpecification const& parameters,
+                        glm::ivec2                             size)
+  {
+    Ref<TextureContainer> textureData = CreateRef<TextureContainer>();
+    textureData->Width = size.x;
+    textureData->Height = size.y;
+    textureData->Format = TextureFormat::RGBA;
+    textureData->Type = TextureType::TEXTURE_2D;
+    textureData->DataType = TextureDataType::UNSIGNED_BYTE;
+    textureData->ImageData = nullptr;
+
+    switch (parameters.TextureFormat)
+    {
+      case FramebufferTextureFormat::RGBA8:
+        textureData->Format = TextureFormat::RGBA;
+        break;
+      case FramebufferTextureFormat::RED_INTEGER:
+        textureData->Format = TextureFormat::RED;
+        break;
+      case FramebufferTextureFormat::DEPTH24STENCIL8:
+        textureData->Format = TextureFormat::DEPTH_STENCIL;
+        break;
+    }
+
+    return Texture::Create(textureData);
   }
 }
