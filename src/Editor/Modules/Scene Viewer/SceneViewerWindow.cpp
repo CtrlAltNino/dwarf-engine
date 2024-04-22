@@ -24,9 +24,7 @@ namespace Dwarf
     : GuiModule(model, "Scene Viewer", MODULE_TYPE::SCENE_VIEWER, index)
   {
     m_Framebuffer = Renderer::Get()->CreateFramebuffer({ 512, 512 });
-    std::cout << "Is null: " << (m_Framebuffer == nullptr) << "\n";
     m_IdBuffer = Renderer::Get()->CreateIDFramebuffer({ 512, 512 });
-    // m_OutlineBuffer = Renderer::Get()->CreateFramebuffer({512, 512});
     m_Camera = CreateRef<Camera>();
 
     FramebufferSpecification fbSpec;
@@ -37,7 +35,7 @@ namespace Dwarf
     };
     fbSpec.Width = 512;
     fbSpec.Height = 512;
-    m_OutlineBuffer = Framebuffer::Create(fbSpec);
+    // m_OutlineBuffer = Framebuffer::Create(fbSpec);
   }
 
   void
@@ -58,37 +56,31 @@ namespace Dwarf
                                  m_Settings.RenderGrid);
     m_Framebuffer->Unbind();
 
-    m_IdBuffer->Bind();
-    Renderer::Get()->RenderIds(m_Model->GetScene(),
-                               m_Camera,
-                               { m_IdBuffer->GetSpecification().Width,
-                                 m_IdBuffer->GetSpecification().Height });
-    m_IdBuffer->Unbind();
+    // m_IdBuffer->Bind();
+    // Renderer::Get()->RenderIds(m_Model->GetScene(), m_Camera, { 22, 22 });
+    // m_IdBuffer->Unbind();
 
-    // Renderer::Get()->RenderOutlines(m_Model->GetScene(), m_Camera,
-    // {m_OutlineBuffer->GetSpecification().Width,
-    // m_OutlineBuffer->GetSpecification().Height}); Render selected objects
-    if (m_Model->GetSelection().GetSelectedEntities().size() > 0)
-    {
-      // m_OutlineBuffer->Clear(glm::vec4(0));
-      // m_OutlineBuffer->Bind();
-      for (auto entity : m_Model->GetSelection().GetSelectedEntities())
-      {
-        // Renderer::Get()->RenderEntity(entity,
-        //                               m_Camera->GetViewMatrix(),
-        //                               m_Camera->GetProjectionMatrix(),
-        //                               Material::s_WhiteMaterial);
-      }
+    // if (m_Model->GetSelection().GetSelectedEntities().size() > 0)
+    // {
+    //   m_OutlineBuffer->Clear(glm::vec4(0));
+    //   m_OutlineBuffer->Bind();
+    //   for (auto entity : m_Model->GetSelection().GetSelectedEntities())
+    //   {
+    //     Renderer::Get()->RenderEntity(entity,
+    //                                   m_Camera->GetViewMatrix(),
+    //                                   m_Camera->GetProjectionMatrix(),
+    //                                   Material::s_WhiteMaterial);
+    //   }
 
-      // Apply propagation shader
-      // ComputeShader::s_PropagationShader->SetParameter("inputTexture",
-      // m_OutlineBuffer->GetColorAttachmentRendererID(),
-      // ShaderParameterType::TEXTURE);
-      // Renderer::Get()->GetRendererApi()->ApplyComputeShader(
-      //  ComputeShader::s_PropagationShader, m_OutlineBuffer, 0, 1);
+    //   // Apply propagation shader
+    //   // ComputeShader::s_PropagationShader->SetParameter("inputTexture",
+    //   // m_OutlineBuffer->GetColorAttachmentRendererID(),
+    //   // ShaderParameterType::TEXTURE);
+    //   // Renderer::Get()->GetRendererApi()->ApplyComputeShader(
+    //   //  ComputeShader::s_PropagationShader, m_OutlineBuffer, 0, 1);
 
-      // m_OutlineBuffer->Unbind();
-    }
+    //   m_OutlineBuffer->Unbind();
+    // }
   }
 
   void

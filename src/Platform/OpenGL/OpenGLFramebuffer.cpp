@@ -169,9 +169,6 @@ namespace Dwarf
         m_DepthAttachmentSpecification = attachments;
     }
 
-    std::cout << "Color attachment size: "
-              << m_ColorAttachmentSpecifications.size() << std::endl;
-
     Invalidate();
   }
 
@@ -191,8 +188,6 @@ namespace Dwarf
       DeleteFramebuffer();
     }
 
-    std::cout << "Invalidate" << std::endl;
-
     // Create the framebuffer
     glCreateFramebuffers(1, &m_RendererID);
 
@@ -201,9 +196,6 @@ namespace Dwarf
 
     // Determine if the framebuffer is multisampled
     bool multisample = m_Specification.Samples > 1;
-
-    std::cout << "Color attachment specification size: "
-              << m_ColorAttachmentSpecifications.size() << std::endl;
 
     // Create the color attachments
     if (m_ColorAttachmentSpecifications.size())
@@ -364,7 +356,6 @@ namespace Dwarf
   void
   OpenGLFramebuffer::DeleteFramebuffer()
   {
-    std::cout << "DeleteFramebuffer" << std::endl;
     glDeleteFramebuffers(1, &m_RendererID);
     m_ColorAttachments.clear();
     m_DepthAttachment = nullptr;
