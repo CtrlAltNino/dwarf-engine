@@ -70,24 +70,24 @@ namespace Dwarf
     // m_OutlineBuffer->GetSpecification().Height}); Render selected objects
     if (m_Model->GetSelection().GetSelectedEntities().size() > 0)
     {
-      m_OutlineBuffer->Clear(glm::vec4(0));
-      m_OutlineBuffer->Bind();
+      // m_OutlineBuffer->Clear(glm::vec4(0));
+      // m_OutlineBuffer->Bind();
       for (auto entity : m_Model->GetSelection().GetSelectedEntities())
       {
-        Renderer::Get()->RenderEntity(entity,
-                                      m_Camera->GetViewMatrix(),
-                                      m_Camera->GetProjectionMatrix(),
-                                      Material::s_WhiteMaterial);
+        // Renderer::Get()->RenderEntity(entity,
+        //                               m_Camera->GetViewMatrix(),
+        //                               m_Camera->GetProjectionMatrix(),
+        //                               Material::s_WhiteMaterial);
       }
 
       // Apply propagation shader
       // ComputeShader::s_PropagationShader->SetParameter("inputTexture",
       // m_OutlineBuffer->GetColorAttachmentRendererID(),
       // ShaderParameterType::TEXTURE);
-      Renderer::Get()->GetRendererApi()->ApplyComputeShader(
-        ComputeShader::s_PropagationShader, m_OutlineBuffer, 0, 1);
+      // Renderer::Get()->GetRendererApi()->ApplyComputeShader(
+      //  ComputeShader::s_PropagationShader, m_OutlineBuffer, 0, 1);
 
-      m_OutlineBuffer->Unbind();
+      // m_OutlineBuffer->Unbind();
     }
   }
 

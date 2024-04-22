@@ -164,28 +164,25 @@ namespace Dwarf
   TextureCreator::FromTga(std::filesystem::path const& path,
                           Ref<TextureParameters>       parameters)
   {
-    // int      width;
-    // int      height;
-    // int      channels;
-    // stbi_uc* data =
-    //   stbi_load(path.string().c_str(), &width, &height, &channels, 0);
-    // // ImageData<unsigned char> imageData;
-    // // imageData.Data =
-    // //     std::vector<unsigned char>(data, data + width * height *
-    // channels);
+    // TODO: Remove stbi
+    int      width;
+    int      height;
+    int      channels;
+    stbi_uc* data =
+      stbi_load(path.string().c_str(), &width, &height, &channels, 0);
 
-    // Ref<TextureContainer> textureData = CreateRef<TextureContainer>();
-    // textureData->Width = width;
-    // textureData->Height = height;
-    // textureData->Format = TextureFormat::RGBA;
-    // textureData->Type = TextureType::TEXTURE_2D;
-    // textureData->DataType = TextureDataType::UNSIGNED_BYTE;
+    Ref<TextureContainer> textureData = CreateRef<TextureContainer>();
+    textureData->Width = width;
+    textureData->Height = height;
+    textureData->Format =
+      channels == 4 ? TextureFormat::RGBA : TextureFormat::RGB;
+    textureData->Type = TextureType::TEXTURE_2D;
+    textureData->DataType = TextureDataType::UNSIGNED_BYTE;
 
-    // // copy content from data into textureData->ImageData
-    // textureData->ImageData = data;
+    // copy content from data into textureData->ImageData
+    textureData->ImageData = data;
 
-    // return Texture::Create(parameters, textureData);
-    return nullptr;
+    return Texture::Create(textureData, parameters);
   }
 
   Ref<Texture>
@@ -220,88 +217,50 @@ namespace Dwarf
   TextureCreator::FromTiff(std::filesystem::path const& path,
                            Ref<TextureParameters>       parameters)
   {
-    // TIFF* tiff = TIFFOpen(path.string().c_str(), "r");
-    // if (!tiff)
-    // {
-    //   // DWARF_CORE_ERROR("Failed to open TIFF file: {0}", path.string());
-    //   return nullptr;
-    // }
+    // TODO: Remove stbi
+    int      width;
+    int      height;
+    int      channels;
+    stbi_uc* data =
+      stbi_load(path.string().c_str(), &width, &height, &channels, 0);
 
-    // uint32_t  width;
-    // uint32_t  height;
-    // uint16_t  bitsPerSample;
-    // uint16_t  samplesPerPixel;
-    // uint16_t  sampleFormat;
-    // uint16_t  compression;
-    // uint16_t  photometric;
-    // uint16_t  planarConfig;
-    // uint16_t  orientation;
-    // uint16_t  rowsPerStrip;
-    // uint16_t* red;
-    // uint16_t* green;
-    // uint16_t* blue;
-    // uint16_t* alpha;
+    Ref<TextureContainer> textureData = CreateRef<TextureContainer>();
+    textureData->Width = width;
+    textureData->Height = height;
+    textureData->Format =
+      channels == 4 ? TextureFormat::RGBA : TextureFormat::RGB;
+    textureData->Type = TextureType::TEXTURE_2D;
+    textureData->DataType = TextureDataType::UNSIGNED_BYTE;
 
-    // TIFFGetField(tiff, TIFFTAG_IMAGEWIDTH, &width);
-    // TIFFGetField(tiff, TIFFTAG_IMAGELENGTH, &height);
-    // TIFFGetField(tiff, TIFFTAG_BITSPERSAMPLE, &bitsPerSample);
-    // TIFFGetField(tiff, TIFFTAG_SAMPLESPERPIXEL, &samplesPerPixel);
-    // TIFFGetField(tiff, TIFFTAG_SAMPLEFORMAT, &sampleFormat);
-    // TIFFGetField(tiff, TIFFTAG_COMPRESSION, &compression);
-    // TIFFGetField(tiff, TIFFTAG_PHOTOMETRIC, &photometric);
-    // TIFFGetField(tiff, TIFFTAG_PLANARCONFIG, &planarConfig);
-    // TIFFGetField(tiff, TIFFTAG_ORIENTATION, &orientation);
-    // TIFFGetField(tiff, TIFFTAG_ROWSPERSTRIP, &rowsPerStrip);
+    // copy content from data into textureData->ImageData
+    textureData->ImageData = data;
 
-    // uint32_t* raster =
-    //   (uint32_t*)_TIFFmalloc(width * height * sizeof(uint32_t));
-    // if (!raster)
-    // {
-    //   // DWARF_CORE_ERROR("Failed to allocate memory for TIFF image");
-    //   TIFFClose(tiff);
-    //   return nullptr;
-    // }
-
-    // if (!TIFFReadRGBAImage(tiff, width, height, raster, 0))
-    // {
-    //   // DWARF_CORE_ERROR("Failed to read TIFF image");
-    //   _TIFFfree(raster);
-    //   TIFFClose(tiff);
-    //   return nullptr;
-    // }
-
-    // _TIFFfree(raster);
-    // TIFFClose(tiff);
-
-    return nullptr;
+    return Texture::Create(textureData, parameters);
   }
 
   Ref<Texture>
   TextureCreator::FromBmp(std::filesystem::path const& path,
                           Ref<TextureParameters>       parameters)
   {
-    // int      width;
-    // int      height;
-    // int      channels;
-    // stbi_uc* data =
-    //   stbi_load(path.string().c_str(), &width, &height, &channels, 0);
-    // // ImageData<unsigned char> imageData;
-    // // imageData.Data =
-    // //     std::vector<unsigned char>(data, data + width * height *
-    // channels);
+    // TODO: Remove stbi
+    int      width;
+    int      height;
+    int      channels;
+    stbi_uc* data =
+      stbi_load(path.string().c_str(), &width, &height, &channels, 0);
 
-    // Ref<TextureContainer> textureData = CreateRef<TextureContainer>();
-    // textureData->Width = width;
-    // textureData->Height = height;
-    // textureData->Format = TextureFormat::RGBA;
-    // textureData->Type = TextureType::TEXTURE_2D;
-    // textureData->DataType = TextureDataType::UNSIGNED_BYTE;
+    Ref<TextureContainer> textureData = CreateRef<TextureContainer>();
+    textureData->Width = width;
+    textureData->Height = height;
+    textureData->Format =
+      channels == 4 ? TextureFormat::RGBA : TextureFormat::RGB;
+    textureData->Type = TextureType::TEXTURE_2D;
+    textureData->DataType = TextureDataType::UNSIGNED_BYTE;
 
-    // // copy content from data into textureData->ImageData
-    // textureData->ImageData = data;
+    // copy content from data into textureData->ImageData
+    textureData->ImageData = data;
 
-    // return Texture::Create(parameters, textureData);
-    return nullptr;
+    return Texture::Create(textureData, parameters);
   }
 
   Ref<Texture>
@@ -354,6 +313,7 @@ namespace Dwarf
         break;
       case FramebufferTextureFormat::RED_INTEGER:
         textureData->Format = TextureFormat::RED;
+        textureData->DataType = TextureDataType::UNSIGNED_INT;
         break;
       case FramebufferTextureFormat::DEPTH24STENCIL8:
         textureData->Format = TextureFormat::DEPTH_STENCIL;

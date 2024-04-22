@@ -10,57 +10,145 @@
 
 namespace Dwarf
 {
-  // A Map that maps TextureFormat to OpenGL format
-  static const std::map<TextureFormat, GLenum> s_TextureFormatMap = {
-    { TextureFormat::RED, GL_RED },
-    { TextureFormat::RG, GL_RG },
-    { TextureFormat::RGB, GL_RGB },
-    { TextureFormat::RGBA, GL_RGBA },
-    { TextureFormat::DEPTH, GL_DEPTH_COMPONENT },
-    { TextureFormat::STENCIL, GL_STENCIL_INDEX },
-    { TextureFormat::DEPTH_STENCIL, GL_DEPTH_STENCIL }
-  };
+  // A mapping function that maps TextureFormat to OpenGL format
+  GLenum
+  GetTextureFormat(TextureFormat format, TextureDataType dataType)
+  {
+    switch (format)
+    {
+      case TextureFormat::RED:
+        switch (dataType)
+        {
+          case TextureDataType::UNSIGNED_BYTE: return GL_RED;
+          case TextureDataType::UNSIGNED_SHORT: return GL_RED_INTEGER;
+          case TextureDataType::INT: return GL_RED_INTEGER;
+          case TextureDataType::UNSIGNED_INT: return GL_RED_INTEGER;
+          case TextureDataType::FLOAT: return GL_RED;
+        }
+      case TextureFormat::RG:
+        switch (dataType)
+        {
+          case TextureDataType::UNSIGNED_BYTE: return GL_RG;
+          case TextureDataType::UNSIGNED_SHORT: return GL_RG_INTEGER;
+          case TextureDataType::INT: return GL_RG_INTEGER;
+          case TextureDataType::UNSIGNED_INT: return GL_RG_INTEGER;
+          case TextureDataType::FLOAT: return GL_RG;
+        }
+      case TextureFormat::RGB:
+        switch (dataType)
+        {
+          case TextureDataType::UNSIGNED_BYTE: return GL_RGB;
+          case TextureDataType::UNSIGNED_SHORT: return GL_RGB_INTEGER;
+          case TextureDataType::INT: return GL_RGB_INTEGER;
+          case TextureDataType::UNSIGNED_INT: return GL_RGB_INTEGER;
+          case TextureDataType::FLOAT: return GL_RGB;
+        }
+      case TextureFormat::RGBA:
+        switch (dataType)
+        {
+          case TextureDataType::UNSIGNED_BYTE: return GL_RGBA;
+          case TextureDataType::UNSIGNED_SHORT: return GL_RGBA_INTEGER;
+          case TextureDataType::INT: return GL_RGBA_INTEGER;
+          case TextureDataType::UNSIGNED_INT: return GL_RGBA_INTEGER;
+          case TextureDataType::FLOAT: return GL_RGBA;
+        }
+      case TextureFormat::DEPTH:
+        switch (dataType)
+        {
+          case TextureDataType::UNSIGNED_BYTE: return GL_DEPTH_COMPONENT;
+          case TextureDataType::UNSIGNED_SHORT: return GL_DEPTH_COMPONENT;
+          case TextureDataType::INT: return GL_DEPTH_COMPONENT;
+          case TextureDataType::UNSIGNED_INT: return GL_DEPTH_COMPONENT;
+          case TextureDataType::FLOAT: return GL_DEPTH_COMPONENT;
+        }
+      case TextureFormat::STENCIL:
+        switch (dataType)
+        {
+          case TextureDataType::UNSIGNED_BYTE: return GL_STENCIL_INDEX;
+          case TextureDataType::UNSIGNED_SHORT: return GL_STENCIL_INDEX;
+          case TextureDataType::INT: return GL_STENCIL_INDEX;
+          case TextureDataType::UNSIGNED_INT: return GL_STENCIL_INDEX;
+          case TextureDataType::FLOAT: return GL_STENCIL_INDEX;
+        }
+      case TextureFormat::DEPTH_STENCIL:
+        switch (dataType)
+        {
+          case TextureDataType::UNSIGNED_BYTE: return GL_DEPTH_STENCIL;
+          case TextureDataType::UNSIGNED_SHORT: return GL_DEPTH_STENCIL;
+          case TextureDataType::INT: return GL_DEPTH_STENCIL;
+          case TextureDataType::UNSIGNED_INT: return GL_DEPTH_STENCIL;
+          case TextureDataType::FLOAT: return GL_DEPTH_STENCIL;
+        }
+    }
+  }
 
-  // A Map that maps TextureWrap to OpenGL wrap
-  static const std::map<TextureWrap, GLenum> s_TextureWrapMap = {
-    { TextureWrap::REPEAT, GL_REPEAT },
-    { TextureWrap::MIRRORED_REPEAT, GL_MIRRORED_REPEAT },
-    { TextureWrap::CLAMP_TO_EDGE, GL_CLAMP_TO_EDGE },
-    { TextureWrap::CLAMP_TO_BORDER, GL_CLAMP_TO_BORDER }
-  };
+  // A mapping function that maps TextureWrap to OpenGL wrap
+  GLenum
+  GetTextureWrap(TextureWrap wrap)
+  {
+    switch (wrap)
+    {
+      case TextureWrap::REPEAT: return GL_REPEAT;
+      case TextureWrap::MIRRORED_REPEAT: return GL_MIRRORED_REPEAT;
+      case TextureWrap::CLAMP_TO_EDGE: return GL_CLAMP_TO_EDGE;
+      case TextureWrap::CLAMP_TO_BORDER: return GL_CLAMP_TO_BORDER;
+    }
+  }
 
-  // A Map that maps TextureMinFilter to OpenGL min filter
-  static const std::map<TextureMinFilter, GLenum> s_TextureMinFilterMap = {
-    { TextureMinFilter::NEAREST, GL_NEAREST },
-    { TextureMinFilter::LINEAR, GL_LINEAR },
-    { TextureMinFilter::NEAREST_MIPMAP_NEAREST, GL_NEAREST_MIPMAP_NEAREST },
-    { TextureMinFilter::LINEAR_MIPMAP_NEAREST, GL_LINEAR_MIPMAP_NEAREST },
-    { TextureMinFilter::NEAREST_MIPMAP_LINEAR, GL_NEAREST_MIPMAP_LINEAR },
-    { TextureMinFilter::LINEAR_MIPMAP_LINEAR, GL_LINEAR_MIPMAP_LINEAR }
-  };
+  GLenum
+  GetTextureMinFilter(TextureMinFilter filter)
+  {
+    switch (filter)
+    {
+      case TextureMinFilter::NEAREST: return GL_NEAREST;
+      case TextureMinFilter::LINEAR: return GL_LINEAR;
+      case TextureMinFilter::NEAREST_MIPMAP_NEAREST:
+        return GL_NEAREST_MIPMAP_NEAREST;
+      case TextureMinFilter::LINEAR_MIPMAP_NEAREST:
+        return GL_LINEAR_MIPMAP_NEAREST;
+      case TextureMinFilter::NEAREST_MIPMAP_LINEAR:
+        return GL_NEAREST_MIPMAP_LINEAR;
+      case TextureMinFilter::LINEAR_MIPMAP_LINEAR:
+        return GL_LINEAR_MIPMAP_LINEAR;
+    }
+  }
 
-  // A Map that maps TextureMagFilter to OpenGL mag filter
-  static const std::map<TextureMagFilter, GLenum> s_TextureMagFilterMap = {
-    { TextureMagFilter::NEAREST, GL_NEAREST },
-    { TextureMagFilter::LINEAR, GL_LINEAR }
-  };
+  // A mapping function that maps TextureMagFilter to OpenGL mag filter
+  GLenum
+  GetTextureMagFilter(TextureMagFilter filter)
+  {
+    switch (filter)
+    {
+      case TextureMagFilter::NEAREST: return GL_NEAREST;
+      case TextureMagFilter::LINEAR: return GL_LINEAR;
+    }
+  }
 
   // A Map that maps TextureType to OpenGL type
-  static const std::map<TextureType, GLenum> s_TextureTypeMap = {
-    { TextureType::TEXTURE_1D, GL_TEXTURE_1D },
-    { TextureType::TEXTURE_2D, GL_TEXTURE_2D },
-    { TextureType::TEXTURE_3D, GL_TEXTURE_3D },
-    { TextureType::TEXTURE_CUBE_MAP, GL_TEXTURE_CUBE_MAP }
-  };
+  GLenum
+  GetTextureType(TextureType type)
+  {
+    switch (type)
+    {
+      case TextureType::TEXTURE_1D: return GL_TEXTURE_1D;
+      case TextureType::TEXTURE_2D: return GL_TEXTURE_2D;
+      case TextureType::TEXTURE_3D: return GL_TEXTURE_3D;
+      case TextureType::TEXTURE_CUBE_MAP: return GL_TEXTURE_CUBE_MAP;
+    }
+  }
 
-  // A Map that maps TextureDataType to OpenGL data type
-  static const std::map<TextureDataType, GLenum> s_TextureDataTypeMap = {
-    { TextureDataType::UNSIGNED_BYTE, GL_UNSIGNED_BYTE },
-    { TextureDataType::UNSIGNED_SHORT, GL_UNSIGNED_SHORT },
-    { TextureDataType::INT, GL_INT },
-    { TextureDataType::UNSIGNED_INT, GL_UNSIGNED_INT },
-    { TextureDataType::FLOAT, GL_FLOAT }
-  };
+  GLenum
+  GetTextureDataType(TextureDataType type)
+  {
+    switch (type)
+    {
+      case TextureDataType::UNSIGNED_BYTE: return GL_UNSIGNED_BYTE;
+      case TextureDataType::UNSIGNED_SHORT: return GL_UNSIGNED_SHORT;
+      case TextureDataType::INT: return GL_INT;
+      case TextureDataType::UNSIGNED_INT: return GL_UNSIGNED_INT;
+      case TextureDataType::FLOAT: return GL_FLOAT;
+    }
+  }
 
   GLenum
   GetInternalFormat(TextureFormat format, TextureDataType dataType)
@@ -138,14 +226,14 @@ namespace Dwarf
   OpenGLTexture::OpenGLTexture(Ref<TextureContainer>  data,
                                Ref<TextureParameters> parameters)
   {
-    GLuint textureFormat = s_TextureFormatMap.at(data->Format);
-    GLuint textureType = s_TextureTypeMap.at(data->Type);
-    GLuint textureDataType = s_TextureDataTypeMap.at(data->DataType);
-    GLuint textureWrapS = s_TextureWrapMap.at(parameters->WrapS);
-    GLuint textureWrapT = s_TextureWrapMap.at(parameters->WrapT);
-    GLuint textureWrapR = s_TextureWrapMap.at(parameters->WrapR);
-    GLuint textureMinFilter = s_TextureMinFilterMap.at(parameters->MinFilter);
-    GLuint textureMagFilter = s_TextureMagFilterMap.at(parameters->MagFilter);
+    GLuint textureType = GetTextureType(data->Type);
+    GLuint textureDataType = GetTextureDataType(data->DataType);
+    GLuint textureFormat = GetTextureFormat(data->Format, data->DataType);
+    GLuint textureWrapS = GetTextureWrap(parameters->WrapS);
+    GLuint textureWrapT = GetTextureWrap(parameters->WrapT);
+    GLuint textureWrapR = GetTextureWrap(parameters->WrapR);
+    GLuint textureMinFilter = GetTextureMinFilter(parameters->MinFilter);
+    GLuint textureMagFilter = GetTextureMagFilter(parameters->MagFilter);
     GLuint internalFormat = GetInternalFormat(data->Format, data->DataType);
 
     SetSize(glm::ivec3(data->Width, data->Height, 0));
