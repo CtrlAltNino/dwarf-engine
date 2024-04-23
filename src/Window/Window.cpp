@@ -12,18 +12,19 @@
 
 namespace Dwarf
 {
-	Ref<Window> Window::Create(const WindowProps &props)
-	{
-		Ref<Window> window = nullptr;
+  Ref<Window>
+  Window::Create(const WindowProps& props)
+  {
+    Ref<Window> window = nullptr;
 #ifdef _WIN32
-		window = CreateRef<WindowsWindow>(props.Api);
+    window = CreateRef<WindowsWindow>(props.Api);
 #elif __linux__
-		window = CreateRef<LinuxWindow>(props.Api);
+    window = CreateRef<LinuxWindow>(props.Api);
 #elif __APPLE__
-		window = CreateRef<OSXWindow>(props.Api); // - NOT SUPPORTED YET
-												  // return nullptr;
+    window = CreateRef<OSXWindow>(props.Api); // - NOT SUPPORTED YET
+                                              // return nullptr;
 #endif
-		window->Init(props);
-		return window;
-	}
+    window->Init(props);
+    return window;
+  }
 }

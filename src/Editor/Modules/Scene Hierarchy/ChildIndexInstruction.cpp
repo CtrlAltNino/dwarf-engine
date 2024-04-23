@@ -3,16 +3,24 @@
 namespace Dwarf
 {
 
-    ChildIndexInstruction::ChildIndexInstruction(Ref<Scene> scene, std::vector<Entity> const &sourceEntities, int index)
-        : m_Scene(scene), m_SourceEntities(sourceEntities), m_Index(index) {}
+  ChildIndexInstruction::ChildIndexInstruction(
+    Ref<Scene>                 scene,
+    std::vector<Entity> const& sourceEntities,
+    int                        index)
+    : m_Scene(scene)
+    , m_SourceEntities(sourceEntities)
+    , m_Index(index)
+  {
+  }
 
-    void ChildIndexInstruction::PerformInstruction()
+  void
+  ChildIndexInstruction::PerformInstruction()
+  {
+    int startIndex = m_Index;
+    for (Entity ent : m_SourceEntities)
     {
-        int startIndex = m_Index;
-        for (Entity ent : m_SourceEntities)
-        {
-            ent.SetChildIndex(startIndex);
-            startIndex++;
-        }
+      ent.SetChildIndex(startIndex);
+      startIndex++;
     }
+  }
 }

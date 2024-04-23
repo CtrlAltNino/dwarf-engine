@@ -13,53 +13,77 @@
 namespace Dwarf
 {
 
-    class OSXWindow : public Window
+  class OSXWindow : public Window
+  {
+  public:
+    explicit OSXWindow(const WindowProps& props);
+    ~OSXWindow() override;
+
+    void
+    NewFrame() override;
+    void
+    EndFrame() override;
+
+    unsigned int
+    GetWidth() const override
     {
-    public:
-        explicit OSXWindow(const WindowProps &props);
-        ~OSXWindow() override;
+      return m_Data.Width;
+    }
+    unsigned int
+    GetHeight() const override
+    {
+      return m_Data.Height;
+    }
 
-        void NewFrame() override;
-        void EndFrame() override;
+    void
+    ShowWindow() override;
+    void
+    HideWindow() override;
 
-        unsigned int GetWidth() const override { return m_Data.Width; }
-        unsigned int GetHeight() const override { return m_Data.Height; }
+    void
+    SetVSync(bool enabled) override;
+    bool
+    IsVSync() override;
 
-        void ShowWindow() override;
-        void HideWindow() override;
+    bool
+    ShouldClose() override;
 
-        void SetVSync(bool enabled) override;
-        bool IsVSync() override;
+    void
+    SetWindowTitle(std::string windowTitle) override;
 
-        bool ShouldClose() override;
+    void*
+    GetNativeWindow() const override
+    {
+      return m_Window;
+    }
 
-        void SetWindowTitle(std::string windowTitle) override;
+    GraphicsApi
+    GetApi() override;
 
-        void *GetNativeWindow() const override { return m_Window; }
+    void
+    MaximizeWindow() override;
 
-        GraphicsApi GetApi() override;
+  private:
+    virtual void
+    Init(const WindowProps& props);
+    virtual void
+    Shutdown();
 
-        void MaximizeWindow() override;
+  private:
+    SDL_Window*            m_Window;
+    Scope<GraphicsContext> m_Context;
+    GraphicsApi            m_Api;
+    Ref<ImGuiLayer>        m_ImguiLayer;
 
-    private:
-        virtual void Init(const WindowProps &props);
-        virtual void Shutdown();
-
-    private:
-        SDL_Window *m_Window;
-        Scope<GraphicsContext> m_Context;
-        GraphicsApi m_Api;
-        Ref<ImGuiLayer> m_ImguiLayer;
-
-        struct WindowData
-        {
-            std::string Title;
-            unsigned int Width;
-            unsigned int Height;
-            bool VSync;
-            bool ShouldClose;
-        };
-
-        WindowData m_Data;
+    struct WindowData
+    {
+      std::string  Title;
+      unsigned int Width;
+      unsigned int Height;
+      bool         VSync;
+      bool         ShouldClose;
     };
+
+    WindowData m_Data;
+  };
 }

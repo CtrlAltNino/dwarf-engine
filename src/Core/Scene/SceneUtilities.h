@@ -10,32 +10,43 @@
 namespace Dwarf
 {
 
-    /// @brief This class provides functionality to load and save scenes.
-    class SceneUtilities
-    {
-    private:
-        /// @brief Loads a scene from a path.
-        /// @param path Path to the scene asset.
-        /// @return The loaded scene.
-        static Ref<Scene> Deserialize(std::filesystem::path const &path);
+  /// @brief This class provides functionality to load and save scenes.
+  class SceneUtilities
+  {
+  private:
+    /// @brief Loads a scene from a path.
+    /// @param path Path to the scene asset.
+    /// @return The loaded scene.
+    static Ref<Scene>
+    Deserialize(std::filesystem::path const& path);
 
-        static void Serialize(Ref<Scene> scene);
+    static void
+    Serialize(Ref<Scene> scene);
 
-        static nlohmann::json SerializeEntities(std::vector<entt::entity> const &entities, Ref<Scene> scene);
+    static nlohmann::json
+    SerializeEntities(std::vector<entt::entity> const& entities,
+                      Ref<Scene>                       scene);
 
-        static Entity DeserializeEntity(nlohmann::json serializedEntity, Ref<Scene> scene);
+    static Entity
+    DeserializeEntity(nlohmann::json serializedEntity, Ref<Scene> scene);
 
-    public:
-        static bool SaveScene(Ref<Scene> scene);
+  public:
+    static bool
+    SaveScene(Ref<Scene> scene);
 
-        static bool SaveSceneDialog(Ref<Scene> scene);
+    static bool
+    SaveSceneDialog(Ref<Scene> scene);
 
-        static Ref<Scene> LoadScene(std::filesystem::path const &path);
+    static Ref<Scene>
+    LoadScene(std::filesystem::path const& path);
 
-        static Ref<Scene> LoadSceneDialog();
+    static Ref<Scene>
+    LoadSceneDialog();
 
-        static Ref<Scene> LoadDefaultScene();
+    static Ref<Scene>
+    LoadDefaultScene();
 
-        static void SetLastOpenedScene(std::filesystem::path const &path);
-    };
+    static void
+    SetLastOpenedScene(std::filesystem::path const& path);
+  };
 }

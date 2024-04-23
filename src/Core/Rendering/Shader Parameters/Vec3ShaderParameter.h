@@ -4,22 +4,25 @@
 
 namespace Dwarf
 {
-    class Vec3ShaderParameter : public IShaderParameter
+  class Vec3ShaderParameter : public IShaderParameter
+  {
+  public:
+    glm::vec3 m_Value;
+
+    Vec3ShaderParameter()
+      : m_Value({ 0.0f, 0.0f, 0.0f })
     {
-    public:
-        glm::vec3 m_Value;
+    }
 
-        Vec3ShaderParameter() : m_Value({0.0f, 0.0f, 0.0f})
-        {
-        }
+    Vec3ShaderParameter(glm::vec3 value)
+      : m_Value(value)
+    {
+    }
 
-        Vec3ShaderParameter(glm::vec3 value) : m_Value(value)
-        {
-        }
-
-        virtual ShaderParameterType GetType() override
-        {
-            return ShaderParameterType::VEC3;
-        }
-    };
+    virtual ShaderParameterType
+    GetType() override
+    {
+      return ShaderParameterType::VEC3;
+    }
+  };
 }

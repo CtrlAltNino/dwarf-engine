@@ -5,36 +5,43 @@
 
 namespace Dwarf
 {
-    struct PathComponent
+  struct PathComponent
+  {
+    /// @brief Path to the asset.
+    std::filesystem::path Path;
+
+    PathComponent() = default;
+    PathComponent(const PathComponent&) = default;
+    explicit PathComponent(const std::filesystem::path& path)
+      : Path(path)
     {
-        /// @brief Path to the asset.
-        std::filesystem::path Path;
+    }
+  };
 
-        PathComponent() = default;
-        PathComponent(const PathComponent &) = default;
-        explicit PathComponent(const std::filesystem::path &path)
-            : Path(path) {}
-    };
-
-    /// @brief Entity component holding a unique identifier (UID / GUID).
-    struct IDComponent
+  /// @brief Entity component holding a unique identifier (UID / GUID).
+  struct IDComponent
+  {
+    /// @brief The UID of an entity.
+    Ref<UID> ID;
+    IDComponent() = default;
+    IDComponent(const IDComponent&) = default;
+    explicit IDComponent(const UID& other)
+      : ID(CreateRef<UID>(other))
     {
-        /// @brief The UID of an entity.
-        Ref<UID> ID;
-        IDComponent() = default;
-        IDComponent(const IDComponent &) = default;
-        explicit IDComponent(const UID &other) : ID(CreateRef<UID>(other)) {}
-    };
+    }
+  };
 
-    /// @brief Entity component holding a name (Used for object names).
-    struct NameComponent
+  /// @brief Entity component holding a name (Used for object names).
+  struct NameComponent
+  {
+    /// @brief The entitie's name.
+    std::string Name;
+
+    NameComponent() = default;
+    NameComponent(const NameComponent&) = default;
+    explicit NameComponent(const std::string& name)
+      : Name(name)
     {
-        /// @brief The entitie's name.
-        std::string Name;
-
-        NameComponent() = default;
-        NameComponent(const NameComponent &) = default;
-        explicit NameComponent(const std::string &name)
-            : Name(name) {}
-    };
+    }
+  };
 }

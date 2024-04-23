@@ -9,51 +9,74 @@
 
 namespace Dwarf
 {
-    class WindowsWindow : public Window
+  class WindowsWindow : public Window
+  {
+  public:
+    explicit WindowsWindow(GraphicsApi api);
+    ~WindowsWindow() override;
+
+    void
+    NewFrame() override;
+    void
+    EndFrame() override;
+
+    unsigned int
+    GetWidth() const override
     {
-    public:
-        explicit WindowsWindow(GraphicsApi api);
-        ~WindowsWindow() override;
+      return m_Data.Width;
+    }
+    unsigned int
+    GetHeight() const override
+    {
+      return m_Data.Height;
+    }
 
-        void NewFrame() override;
-        void EndFrame() override;
+    void
+    ShowWindow() override;
+    void
+    HideWindow() override;
 
-        unsigned int GetWidth() const override { return m_Data.Width; }
-        unsigned int GetHeight() const override { return m_Data.Height; }
+    void
+    SetVSync(bool enabled) override;
+    bool
+    IsVSync() override;
 
-        void ShowWindow() override;
-        void HideWindow() override;
+    bool
+    ShouldClose() override;
 
-        void SetVSync(bool enabled) override;
-        bool IsVSync() override;
+    void
+    SetWindowTitle(std::string_view windowTitle) override;
 
-        bool ShouldClose() override;
+    SDL_Window*
+    GetNativeWindow() const override
+    {
+      return m_Window;
+    }
 
-        void SetWindowTitle(std::string_view windowTitle) override;
+    GraphicsApi
+    GetApi() override;
 
-        SDL_Window *GetNativeWindow() const override { return m_Window; }
+    void
+    MaximizeWindow() override;
 
-        GraphicsApi GetApi() override;
+  private:
+    void
+    Init(const WindowProps& props) override;
 
-        void MaximizeWindow() override;
+    SDL_Window*            m_Window;
+    Scope<GraphicsContext> m_Context;
+    GraphicsApi            m_Api;
+    Ref<ImGuiLayer>        m_ImguiLayer;
 
-    private:
-        void Init(const WindowProps &props) override;
-
-        SDL_Window *m_Window;
-        Scope<GraphicsContext> m_Context;
-        GraphicsApi m_Api;
-        Ref<ImGuiLayer> m_ImguiLayer;
-
-        struct WindowData
-        {
-            std::string Title;
-            unsigned int Width;
-            unsigned int Height;
-            bool VSync;
-            bool ShouldClose;
-        };
-
-        WindowData m_Data;
+    struct WindowData
+    {
+      std::string  Title;
+      unsigned int Width;
+      unsigned int Height;
+      bool         VSync;
+      bool         ShouldClose;
     };
+
+    WindowData m_Data;
+  };
 }

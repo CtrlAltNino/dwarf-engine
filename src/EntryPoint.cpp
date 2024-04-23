@@ -1,10 +1,11 @@
 #include "dpch.h"
 #include "Application/DwarfEngine.h"
 
-int main()
+int
+main()
 {
-    auto engine = Dwarf::Create();
-    engine->Run();
+  auto engine = Dwarf::Create();
+  engine->Run();
 
-    return 0;
+  return 0;
 }

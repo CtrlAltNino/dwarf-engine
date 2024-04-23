@@ -1,30 +1,36 @@
 #pragma once
 
-#include <glm/vec2.hpp>
-#include <filesystem>
 #include "Core/Base.h"
+#include "Utilities/ImageUtilities/TextureCommon.h"
+#include <filesystem>
+#include <glm/vec2.hpp>
+#include <glm/vec3.hpp>
 
 namespace Dwarf
 {
-    class Texture
+  class Texture
+  {
+  private:
+    glm::ivec3 m_Size;
+
+  public:
+    virtual ~Texture() = default;
+    // glm::ivec3
+    // GetSize() const
+    // {
+    //   return m_Size;
+    // }
+
+    void
+    SetSize(glm::ivec3 size)
     {
-    private:
-        glm::ivec2 m_Size;
+      m_Size = size;
+    }
 
-    public:
-        virtual ~Texture() = default;
-        glm::ivec2 GetSize() const
-        {
-            return m_Size;
-        }
-
-        void SetSize(glm::ivec2 size)
-        {
-            m_Size = size;
-        }
-
-        static Ref<Texture> Create(std::filesystem::path const &path);
-
-        virtual uintptr_t GetTextureID() = 0;
-    };
-}
+    static Ref<Texture>
+    Create(Ref<TextureContainer>  data,
+           Ref<TextureParameters> parameters = CreateRef<TextureParameters>());
+    virtual uintptr_t
+    GetTextureID() = 0;
+  };
+} // namespace Dwarf

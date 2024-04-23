@@ -4,21 +4,26 @@
 
 namespace Dwarf
 {
-    class MetalImGuiLayer : public ImGuiLayer
-    {
-    private:
-        MTLRenderPassDescriptor *m_RenderPassDescriptor;
+  class MetalImGuiLayer : public ImGuiLayer
+  {
+  private:
+    MTLRenderPassDescriptor* m_RenderPassDescriptor;
 
-    public:
-        MetalImGuiLayer();
-        ~MetalImGuiLayer();
+  public:
+    MetalImGuiLayer();
+    ~MetalImGuiLayer();
 
-        virtual void OnAttach(SDL_Window *window) override;
-        virtual void OnDetach() override;
+    virtual void
+    OnAttach(SDL_Window* window) override;
+    virtual void
+    OnDetach() override;
 
-        virtual void Begin() override;
-        virtual void End() override;
+    virtual void
+    Begin() override;
+    virtual void
+    End() override;
 
-        virtual void HandleSDLEvent(SDL_Event *event) override;
-    };
+    virtual void
+    HandleSDLEvent(SDL_Event* event) override;
+  };
 }

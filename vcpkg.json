@@ -51,7 +51,10 @@
     "entt",
     "sdl2",
     "xxhash",
-    "platform-folders"
+    "platform-folders",
+    "tiff",
+    "libspng",
+    "libjpeg-turbo"
   ],
   "overrides": [
     {
@@ -101,7 +104,15 @@
     {
       "name": "sdl2",
       "version": "2.30.0"
+    },
+    {
+      "name": "tiff",
+      "version": "4.6.0"
+    },
+    {
+      "name": "libspng",
+      "version": "0.7.4"
     }
   ],
-  "builtin-baseline": "66b4b34d99ab272fcf21f2bd12b616e371c6bb31"
+  "builtin-baseline": "3f806e04fdcf30df33c7b445590c9ac13afef946"
 }

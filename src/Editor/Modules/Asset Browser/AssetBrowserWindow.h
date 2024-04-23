@@ -13,99 +13,119 @@
 namespace Dwarf
 {
 
-    /// @brief GUI Module to display a window for the asset directory structure.
-    class AssetBrowserWindow : public GuiModule
-    {
-    private:
-        /// @brief Path to the asset directory of the currently opened project.
-        std::filesystem::path m_AssetDirectoryPath = AssetDatabase::GetAssetDirectoryPath();
+  /// @brief GUI Module to display a window for the asset directory structure.
+  class AssetBrowserWindow : public GuiModule
+  {
+  private:
+    /// @brief Path to the asset directory of the currently opened project.
+    std::filesystem::path m_AssetDirectoryPath =
+      AssetDatabase::GetAssetDirectoryPath();
 
-        /// @brief Path of the currently navigated directory.
-        std::filesystem::path m_CurrentDirectory;
+    /// @brief Path of the currently navigated directory.
+    std::filesystem::path m_CurrentDirectory;
 
-        std::filesystem::path m_CopyPathBuffer;
+    std::filesystem::path m_CopyPathBuffer;
 
-        std::filesystem::path m_RenamePathBuffer;
+    std::filesystem::path m_RenamePathBuffer;
 
-        char m_RenameBuffer[RENAME_BUFFER_SIZE] = "";
+    char m_RenameBuffer[RENAME_BUFFER_SIZE] = "";
 
-        bool m_OpenRename;
+    bool m_OpenRename;
 
-        void SetRenameBuffer(std::filesystem::path const &path);
+    void
+    SetRenameBuffer(std::filesystem::path const& path);
 
-        std::vector<std::filesystem::path> m_DirectoryHistory;
+    std::vector<std::filesystem::path> m_DirectoryHistory;
 
-        std::filesystem::path m_SelectedAsset;
-        int m_HistoryPos = 0;
-        void OpenPath(std::filesystem::directory_entry const &directoryEntry);
+    std::filesystem::path m_SelectedAsset;
+    int                   m_HistoryPos = 0;
+    void
+    OpenPath(std::filesystem::directory_entry const& directoryEntry);
 
-        void EnterDirectory(std::filesystem::path const &path);
+    void
+    EnterDirectory(std::filesystem::path const& path);
 
-        void GoBack();
+    void
+    GoBack();
 
-        void GoForward();
+    void
+    GoForward();
 
-        void HandleShortcuts() const;
+    void
+    HandleShortcuts() const;
 
-        void LoadIcons();
+    void
+    LoadIcons();
 
-        void RenderDirectory(std::filesystem::path const &path);
+    void
+    RenderDirectory(std::filesystem::path const& path);
 
-        float m_IconScale = 1.0f;
+    float m_IconScale = 1.0f;
 
-        Ref<Texture> m_DirectoryIcon;
+    Ref<Texture> m_DirectoryIcon;
 
-        Ref<Texture> m_FBXIcon;
-        Ref<Texture> m_OBJIcon;
+    Ref<Texture> m_FBXIcon;
+    Ref<Texture> m_OBJIcon;
 
-        Ref<Texture> m_JPGIcon;
-        Ref<Texture> m_PNGIcon;
+    Ref<Texture> m_JPGIcon;
+    Ref<Texture> m_PNGIcon;
 
-        Ref<Texture> m_VertexShaderIcon;
-        Ref<Texture> m_TessellationControlShaderIcon;
-        Ref<Texture> m_TessellationEvaluationShaderIcon;
-        Ref<Texture> m_GeometryShaderIcon;
-        Ref<Texture> m_FragmentShaderIcon;
-        Ref<Texture> m_ComputeShaderIcon;
-        Ref<Texture> m_HLSLShaderIcon;
+    Ref<Texture> m_VertexShaderIcon;
+    Ref<Texture> m_TessellationControlShaderIcon;
+    Ref<Texture> m_TessellationEvaluationShaderIcon;
+    Ref<Texture> m_GeometryShaderIcon;
+    Ref<Texture> m_FragmentShaderIcon;
+    Ref<Texture> m_ComputeShaderIcon;
+    Ref<Texture> m_HLSLShaderIcon;
 
-        Ref<Texture> m_SceneIcon;
+    Ref<Texture> m_SceneIcon;
 
-        Ref<Texture> m_MaterialIcon;
+    Ref<Texture> m_MaterialIcon;
 
-        Ref<Texture> m_UnknownFileIcon;
+    Ref<Texture> m_UnknownFileIcon;
 
-        bool firstFrame = true;
+    bool firstFrame = true;
 
-        ImGuiID dockID;
+    ImGuiID dockID;
 
-        ImGuiID footerID;
+    ImGuiID footerID;
 
-        void RenderDirectoryLevel(std::filesystem::path const &directory);
+    void
+    RenderDirectoryLevel(std::filesystem::path const& directory);
 
-        void SetupDockspace(ImGuiID id);
+    void
+    SetupDockspace(ImGuiID id);
 
-        void SelectAsset(std::filesystem::path const &path);
+    void
+    SelectAsset(std::filesystem::path const& path);
 
-        void ClearSelection();
+    void
+    ClearSelection();
 
-        void RenderFooter();
+    void
+    RenderFooter();
 
-        void RenderFolderStructure();
+    void
+    RenderFolderStructure();
 
-        void RenderFolderContent();
+    void
+    RenderFolderContent();
 
-    public:
-        AssetBrowserWindow(Ref<EditorModel> model, int id);
+  public:
+    AssetBrowserWindow(Ref<EditorModel> model, int id);
 
-        /// @brief Renders the module window.
-        void OnImGuiRender() override;
+    /// @brief Renders the module window.
+    void
+    OnImGuiRender() override;
 
-        /// @brief Executes all pre frame tasks.
-        void OnUpdate(double deltaTime) override;
+    /// @brief Executes all pre frame tasks.
+    void
+    OnUpdate(double deltaTime) override;
 
-        std::string Serialize() override;
+    std::string
+    Serialize() override;
 
-        void Deserialize(nlohmann::json moduleData) override;
-    };
+    void
+    Deserialize(nlohmann::json moduleData) override;
+  };
 }

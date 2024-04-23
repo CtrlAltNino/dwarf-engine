@@ -4,10 +4,11 @@
 
 namespace Dwarf
 {
-    class IShaderParameter
-    {
-    public:
-        virtual ~IShaderParameter() = default;
-        virtual ShaderParameterType GetType() = 0;
-    };
+  class IShaderParameter
+  {
+  public:
+    virtual ~IShaderParameter() = default;
+    virtual ShaderParameterType
+    GetType() = 0;
+  };
 }

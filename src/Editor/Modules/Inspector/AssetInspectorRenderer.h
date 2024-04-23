@@ -5,14 +5,16 @@
 
 namespace Dwarf
 {
-    class AssetInspectorRenderer
-    {
-    private:
-        static Ref<EditorModel> s_Model;
+  class AssetInspectorRenderer
+  {
+  private:
+    static Ref<EditorModel> s_Model;
 
-    public:
-        static void Init(Ref<EditorModel> model);
-        template <typename T>
-        static void RenderAssetInspector(Ref<T> asset);
-    };
+  public:
+    static void
+    Init(Ref<EditorModel> model);
+    template<typename T>
+    static void
+    RenderAssetInspector(Ref<T> asset);
+  };
 }

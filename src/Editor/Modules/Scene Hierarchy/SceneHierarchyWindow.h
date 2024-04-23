@@ -8,32 +8,39 @@
 namespace Dwarf
 {
 
-    /// @brief Module to display and manipulate the scene graph.
-    class SceneHierarchyWindow : public GuiModule
-    {
-    private:
-        /// @brief List of graph instruction. Used as a buffer, executed at the end of a frame.
-        std::vector<Ref<GraphInstruction>> m_Instructions;
+  /// @brief Module to display and manipulate the scene graph.
+  class SceneHierarchyWindow : public GuiModule
+  {
+  private:
+    /// @brief List of graph instruction. Used as a buffer, executed at the end
+    /// of a frame.
+    std::vector<Ref<GraphInstruction>> m_Instructions;
 
-        std::vector<Entity> m_CopyBuffer;
+    std::vector<Entity> m_CopyBuffer;
 
-        /// @brief Draws a graph node for an entity.
-        /// @param entity The entity to draw the node of.
-        void DrawNode(entt::entity entity);
+    /// @brief Draws a graph node for an entity.
+    /// @param entity The entity to draw the node of.
+    void
+    DrawNode(entt::entity entity);
 
-        /// @brief Executes all buffered instructions.
-        void ProcessInstructions();
+    /// @brief Executes all buffered instructions.
+    void
+    ProcessInstructions();
 
-    public:
-        SceneHierarchyWindow(Ref<EditorModel> model, int index);
+  public:
+    SceneHierarchyWindow(Ref<EditorModel> model, int index);
 
-        /// @brief Renders the module window.
-        void OnImGuiRender() override;
+    /// @brief Renders the module window.
+    void
+    OnImGuiRender() override;
 
-        void OnUpdate(double deltaTime) override;
+    void
+    OnUpdate(double deltaTime) override;
 
-        std::string Serialize() override;
+    std::string
+    Serialize() override;
 
-        void Deserialize(nlohmann::json moduleData) override;
-    };
+    void
+    Deserialize(nlohmann::json moduleData) override;
+  };
 }

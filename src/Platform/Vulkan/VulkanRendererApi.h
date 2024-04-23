@@ -4,10 +4,10 @@
 
 namespace Dwarf
 {
-    class VulkanRendererApi : public RendererApi
-    {
-    public:
-        VulkanRendererApi();
-        ~VulkanRendererApi();
-    };
+  class VulkanRendererApi : public RendererApi
+  {
+  public:
+    VulkanRendererApi();
+    ~VulkanRendererApi();
+  };
 }

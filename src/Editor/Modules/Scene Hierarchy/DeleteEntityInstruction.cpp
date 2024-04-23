@@ -3,14 +3,20 @@
 namespace Dwarf
 {
 
-    DeleteEntityInstruction::DeleteEntityInstruction(Ref<Scene> scene, std::vector<Entity> sourceEntities)
-        : m_Scene(scene), m_SourceEntities(sourceEntities) {}
+  DeleteEntityInstruction::DeleteEntityInstruction(
+    Ref<Scene>          scene,
+    std::vector<Entity> sourceEntities)
+    : m_Scene(scene)
+    , m_SourceEntities(sourceEntities)
+  {
+  }
 
-    void DeleteEntityInstruction::PerformInstruction()
+  void
+  DeleteEntityInstruction::PerformInstruction()
+  {
+    for (Entity ent : m_SourceEntities)
     {
-        for (Entity ent : m_SourceEntities)
-        {
-            m_Scene->DeleteEntity(ent);
-        }
+      m_Scene->DeleteEntity(ent);
     }
+  }
 }

@@ -5,7 +5,7 @@
 #include "Utilities/FileHandler.h"
 #include "Core/Base.h"
 #include "Core/Rendering/Mesh.h"
-#include "Core/Rendering/Texture.h"
+#include "Core/Rendering/TextureCreator.h"
 #include "Core/Rendering/Material.h"
 #include "Core/Asset/ModelImporter.h"
 #include "Core/Asset/MaterialSerializer.h"
@@ -13,135 +13,178 @@
 
 namespace Dwarf
 {
-    /// @brief Component containing a model asset.
-    struct ModelAsset
+  /// @brief Component containing a model asset.
+  struct ModelAsset
+  {
+    /// @brief Vector of submeshes.
+    std::vector<Ref<Mesh>> m_Meshes;
+
+    explicit ModelAsset(std::filesystem::path const& path)
+      : m_Meshes(ModelImporter::Import(path))
     {
-        /// @brief Vector of submeshes.
-        std::vector<Ref<Mesh>> m_Meshes;
-
-        explicit ModelAsset(std::filesystem::path const &path) : m_Meshes(ModelImporter::Import(path)) {}
-        void Load() const
-        {
-            for (const auto &mesh : m_Meshes)
-            {
-                mesh->SetupMesh();
-            }
-        }
-    };
-
-    /// @brief Component containing a material asset.
-    struct MaterialAsset
+    }
+    void
+    Load() const
     {
-        /// @brief Imported material.
-        Ref<Material> m_Material;
+      for (const auto& mesh : m_Meshes)
+      {
+        mesh->SetupMesh();
+      }
+    }
+  };
 
-        explicit MaterialAsset(std::filesystem::path const &path)
-        {
-            // Use Mesh Importer with meta data to import mesh
-            m_Material = MaterialSerializer::Deserialize(path);
-            m_Material->GetShader()->Compile();
-        }
-    };
+  /// @brief Component containing a material asset.
+  struct MaterialAsset
+  {
+    /// @brief Imported material.
+    Ref<Material> m_Material;
 
-    /// @brief Component containing a vertex shader asset.
-    struct VertexShaderAsset
+    explicit MaterialAsset(std::filesystem::path const& path)
     {
-        /// @brief Path to the asset.
-        std::filesystem::path m_Path;
-        std::string m_FileContent;
+      // Use Mesh Importer with meta data to import mesh
+      m_Material = MaterialSerializer::Deserialize(path);
+      m_Material->GetShader()->Compile();
+    }
+  };
 
-        explicit VertexShaderAsset(std::filesystem::path const &path) : m_Path(path), m_FileContent(FileHandler::ReadFile(m_Path)) {}
-    };
+  /// @brief Component containing a vertex shader asset.
+  struct VertexShaderAsset
+  {
+    /// @brief Path to the asset.
+    std::filesystem::path m_Path;
+    std::string           m_FileContent;
 
-    /// @brief Component containing a fragment shader asset.
-    struct FragmentShaderAsset
+    explicit VertexShaderAsset(std::filesystem::path const& path)
+      : m_Path(path)
+      , m_FileContent(FileHandler::ReadFile(m_Path))
     {
-        /// @brief Path to the asset.
-        std::filesystem::path m_Path;
-        std::string m_FileContent;
+    }
+  };
 
-        explicit FragmentShaderAsset(std::filesystem::path const &path) : m_Path(path), m_FileContent(FileHandler::ReadFile(m_Path)) {}
-    };
+  /// @brief Component containing a fragment shader asset.
+  struct FragmentShaderAsset
+  {
+    /// @brief Path to the asset.
+    std::filesystem::path m_Path;
+    std::string           m_FileContent;
 
-    /// @brief Component containing a geometry shader asset.
-    struct GeometryShaderAsset
+    explicit FragmentShaderAsset(std::filesystem::path const& path)
+      : m_Path(path)
+      , m_FileContent(FileHandler::ReadFile(m_Path))
     {
-        /// @brief Path to the asset.
-        std::filesystem::path m_Path;
-        std::string m_FileContent;
+    }
+  };
 
-        explicit GeometryShaderAsset(std::filesystem::path const &path) : m_Path(path), m_FileContent(FileHandler::ReadFile(m_Path)) {}
-    };
+  /// @brief Component containing a geometry shader asset.
+  struct GeometryShaderAsset
+  {
+    /// @brief Path to the asset.
+    std::filesystem::path m_Path;
+    std::string           m_FileContent;
 
-    /// @brief Component containing a tesselation control shader asset.
-    struct TesselationControlShaderAsset
+    explicit GeometryShaderAsset(std::filesystem::path const& path)
+      : m_Path(path)
+      , m_FileContent(FileHandler::ReadFile(m_Path))
     {
-        /// @brief Path to the asset.
-        std::filesystem::path m_Path;
-        std::string m_FileContent;
+    }
+  };
 
-        explicit TesselationControlShaderAsset(std::filesystem::path const &path) : m_Path(path), m_FileContent(FileHandler::ReadFile(m_Path)) {}
-    };
+  /// @brief Component containing a tesselation control shader asset.
+  struct TesselationControlShaderAsset
+  {
+    /// @brief Path to the asset.
+    std::filesystem::path m_Path;
+    std::string           m_FileContent;
 
-    /// @brief Component containing a tesselation evaluation shader asset.
-    struct TesselationEvaluationShaderAsset
+    explicit TesselationControlShaderAsset(std::filesystem::path const& path)
+      : m_Path(path)
+      , m_FileContent(FileHandler::ReadFile(m_Path))
     {
-        /// @brief Path to the asset.
-        std::filesystem::path m_Path;
-        std::string m_FileContent;
+    }
+  };
 
-        explicit TesselationEvaluationShaderAsset(std::filesystem::path const &path) : m_Path(path), m_FileContent(FileHandler::ReadFile(m_Path)) {}
-    };
+  /// @brief Component containing a tesselation evaluation shader asset.
+  struct TesselationEvaluationShaderAsset
+  {
+    /// @brief Path to the asset.
+    std::filesystem::path m_Path;
+    std::string           m_FileContent;
 
-    /// @brief Component containing a compute shader asset.
-    struct ComputeShaderAsset
+    explicit TesselationEvaluationShaderAsset(std::filesystem::path const& path)
+      : m_Path(path)
+      , m_FileContent(FileHandler::ReadFile(m_Path))
     {
-        /// @brief Path to the asset.
-        std::filesystem::path m_Path;
-        std::string m_FileContent;
+    }
+  };
 
-        explicit ComputeShaderAsset(std::filesystem::path const &path) : m_Path(path), m_FileContent(FileHandler::ReadFile(m_Path)) {}
-    };
+  /// @brief Component containing a compute shader asset.
+  struct ComputeShaderAsset
+  {
+    /// @brief Path to the asset.
+    std::filesystem::path m_Path;
+    std::string           m_FileContent;
 
-    /// @brief Component containing a compute shader asset.
-    struct HlslShaderAsset
+    explicit ComputeShaderAsset(std::filesystem::path const& path)
+      : m_Path(path)
+      , m_FileContent(FileHandler::ReadFile(m_Path))
     {
-        /// @brief Path to the asset.
-        std::filesystem::path m_Path;
-        std::string m_FileContent;
+    }
+  };
 
-        explicit HlslShaderAsset(std::filesystem::path const &path) : m_Path(path), m_FileContent(FileHandler::ReadFile(m_Path)) {}
-    };
+  /// @brief Component containing a compute shader asset.
+  struct HlslShaderAsset
+  {
+    /// @brief Path to the asset.
+    std::filesystem::path m_Path;
+    std::string           m_FileContent;
 
-    /// @brief Component containing a texture asset.
-    struct TextureAsset
+    explicit HlslShaderAsset(std::filesystem::path const& path)
+      : m_Path(path)
+      , m_FileContent(FileHandler::ReadFile(m_Path))
     {
-        /// @brief Imported texture.
-        Ref<Texture> m_Texture;
+    }
+  };
 
-        explicit TextureAsset(std::filesystem::path const &path) : m_Texture(Texture::Create(path)) {}
+  /// @brief Component containing a texture asset.
+  struct TextureAsset
+  {
+    /// @brief Imported texture.
+    Ref<Texture> m_Texture;
 
-        /// @brief Retrieves the texture.
-        /// @return The imported texture instance.
-        Ref<Texture> Get() const
-        {
-            return m_Texture;
-        }
-    };
-
-    /// @brief Asset containing a Dwarf Engine scene.
-    struct SceneAsset
+    explicit TextureAsset(std::filesystem::path const& path)
+      : m_Texture(TextureCreator::FromPath(path))
     {
-        /// @brief Path to the asset.
-        std::filesystem::path m_Path;
+    }
 
-        explicit SceneAsset(std::filesystem::path const &path) : m_Path(path) {}
-    };
-
-    struct UnknownAsset
+    /// @brief Retrieves the texture.
+    /// @return The imported texture instance.
+    Ref<Texture>
+    Get() const
     {
-        std::filesystem::path m_Path;
-        std::string m_FileContent;
-        explicit UnknownAsset(std::filesystem::path const &path) : m_Path(path), m_FileContent(FileHandler::ReadFile(m_Path)) {}
-    };
+      return m_Texture;
+    }
+  };
+
+  /// @brief Asset containing a Dwarf Engine scene.
+  struct SceneAsset
+  {
+    /// @brief Path to the asset.
+    std::filesystem::path m_Path;
+
+    explicit SceneAsset(std::filesystem::path const& path)
+      : m_Path(path)
+    {
+    }
+  };
+
+  struct UnknownAsset
+  {
+    std::filesystem::path m_Path;
+    std::string           m_FileContent;
+    explicit UnknownAsset(std::filesystem::path const& path)
+      : m_Path(path)
+      , m_FileContent(FileHandler::ReadFile(m_Path))
+    {
+    }
+  };
 }

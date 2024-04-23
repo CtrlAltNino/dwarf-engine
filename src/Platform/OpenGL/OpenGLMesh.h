@@ -7,18 +7,21 @@
 namespace Dwarf
 {
 
-    class OpenGLMesh : public Mesh
-    {
-    public:
-        using Mesh::Mesh;
-        ~OpenGLMesh() override;
-        void SetupMesh() override;
-        void Bind() const;
-        void Unbind() const;
+  class OpenGLMesh : public Mesh
+  {
+  public:
+    using Mesh::Mesh;
+    ~OpenGLMesh() override;
+    void
+    SetupMesh() override;
+    void
+    Bind() const;
+    void
+    Unbind() const;
 
-    private:
-        GLuint VAO;
-        GLuint VBO;
-        GLuint EBO;
-    };
+  private:
+    GLuint VAO;
+    GLuint VBO;
+    GLuint EBO;
+  };
 }

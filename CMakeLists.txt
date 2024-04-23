@@ -1,15 +1,10 @@
 # Set the minimum required CMake Version
 cmake_minimum_required(VERSION 3.22)
 
-# Maybe move to windows only, need to test
-ADD_DEFINITIONS(-DUNICODE)
-ADD_DEFINITIONS(-D_UNICODE)
-
 # Helper functions
 include(${CMAKE_SOURCE_DIR}/helper.cmake)
 
-add_compile_definitions(NOMINMAX)
-
+# add_compile_definitions(NOMINMAX)
 set(CMAKE_CXX_STANDARD 20)
 
 set(targetName dwarf-engine)
@@ -38,6 +33,7 @@ IF(WIN32)
     set(VCPKG_TARGET_TRIPLET "x64-windows-static")
     set(APP_ICON_RESOURCE_WINDOWS "${CMAKE_CURRENT_SOURCE_DIR}/app_icon_windows.rc")
     set(EXECUTABLE_ADDITIONAL_SETTINGS ${APP_ICON_RESOURCE_WINDOWS})
+    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
@@ -46,6 +42,9 @@ IF(WIN32)
         # using Visual Studio C++
         set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
     endif()
+    # Maybe move to windows only, need to test
+    ADD_DEFINITIONS(-DUNICODE)
+    ADD_DEFINITIONS(-D_UNICODE)
 
     add_executable(${targetName} "")
 ELSEIF(UNIX AND NOT APPLE)
@@ -122,6 +121,12 @@ target_link_libraries(${targetName} PRIVATE xxHash::xxhash)
 
 find_package(platform_folders CONFIG REQUIRED)
 target_link_libraries(${targetName} PRIVATE sago::platform_folders)
+
+find_package(libjpeg-turbo CONFIG REQUIRED)
+target_link_libraries(${targetName} PRIVATE $<IF:$<TARGET_EXISTS:libjpeg-turbo::turbojpeg>,libjpeg-turbo::turbojpeg,libjpeg-turbo::turbojpeg-static>)
+
+find_package(SPNG CONFIG REQUIRED)
+target_link_libraries(${targetName} PRIVATE $<IF:$<TARGET_EXISTS:spng::spng>,spng::spng,spng::spng_static>)
 
 IF(APPLE)
     find_library(METAL Metal)

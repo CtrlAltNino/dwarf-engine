@@ -4,6 +4,6 @@
 
 namespace Dwarf
 {
-    VulkanRendererApi::VulkanRendererApi() {}
-    VulkanRendererApi::~VulkanRendererApi() {}
+  VulkanRendererApi::VulkanRendererApi() {}
+  VulkanRendererApi::~VulkanRendererApi() {}
 }

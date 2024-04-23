@@ -1,5 +1,7 @@
 #include "dpch.h"
 
+// Image loading libraries
+
 #include "Core/Rendering/Renderer.h"
 
 #ifdef WIN32
@@ -17,45 +19,34 @@
 
 namespace Dwarf
 {
-    Ref<Texture> Texture::Create(std::filesystem::path const &path)
+  Ref<Texture>
+  Texture::Create(Ref<TextureContainer> data, Ref<TextureParameters> parameters)
+  {
+    switch (Renderer::GetAPI())
     {
-        switch (Renderer::GetAPI())
-        {
+      using enum GraphicsApi;
+      case D3D12:
 #ifdef WIN32
-        case GraphicsApi::D3D12:
-            // return CreateRef<D3D12Texture>(D3D12Texture(path));
-            break;
-        case GraphicsApi::Metal:
-            break;
-        case GraphicsApi::OpenGL:
-            return CreateRef<OpenGLTexture>(OpenGLTexture(path));
-            break;
-        case GraphicsApi::Vulkan:
-            // return CreateRef<VulkanTexture>(VulkanTexture(path));
-            break;
-#elif __linux__
-        case GraphicsApi::D3D12:
-            break;
-        case GraphicsApi::Metal:
-            break;
-        case GraphicsApi::OpenGL:
-            return CreateRef<OpenGLTexture>(OpenGLTexture(path));
-            break;
-        case GraphicsApi::Vulkan:
-            // return CreateRef<VulkanTexture>(VulkanTexture(path));
-            break;
-#elif __APPLE__
-        case GraphicsApi::D3D12:
-            break;
-        case GraphicsApi::Metal:
-            // return CreateRef<MetalTexture>(MetalTexture(path));
-            break;
-        case GraphicsApi::OpenGL:
-            break;
-        case GraphicsApi::Vulkan:
-            break;
+        // return CreateRef<D3D12Texture>(D3D12Texture(parameters, data));
 #endif
-        }
-        return nullptr;
+        break;
+      case Metal:
+#ifdef __APPLE__
+        // return CreateRef<MetalTexture>(MetalTexture(parameters, data));
+#endif
+        break;
+      case OpenGL:
+#if defined(__linux__) || defined(WIN32)
+        return CreateRef<OpenGLTexture>(data, parameters);
+#endif
+        break;
+      case Vulkan:
+#if defined(__linux__) || defined(WIN32)
+        // return CreateRef<VulkanTexture>(VulkanTexture(parameters, data));
+#endif
+        break;
     }
-}
+
+    return nullptr;
+  }
+} // namespace Dwarf

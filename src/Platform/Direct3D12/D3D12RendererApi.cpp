@@ -4,6 +4,6 @@
 
 namespace Dwarf
 {
-    D3D12RendererApi::D3D12RendererApi() {}
-    D3D12RendererApi::~D3D12RendererApi() {}
+  D3D12RendererApi::D3D12RendererApi() {}
+  D3D12RendererApi::~D3D12RendererApi() {}
 }

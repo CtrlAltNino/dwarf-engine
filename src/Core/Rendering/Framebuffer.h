@@ -1,71 +1,87 @@
 #pragma once
 
 #include "Core/Base.h"
+#include "Core/Rendering/Texture.h"
+#include <glm/glm.hpp>
 
 namespace Dwarf
 {
+  // TODO: Align with TextureCommon.h
+  enum class FramebufferTextureFormat
+  {
+    None = 0,
+    // Color
+    RGBA8 = 1,
+    RED_INTEGER = 2,
+    // Depth/stencil
+    DEPTH24STENCIL8 = 3,
+    DEPTH = 4,
+    STENCIL = 5
+  };
 
-	enum class FramebufferTextureFormat
-	{
-		None = 0,
+  struct FramebufferTextureSpecification
+  {
+    FramebufferTextureSpecification() = default;
+    explicit FramebufferTextureSpecification(FramebufferTextureFormat format)
+      : TextureFormat(format)
+    {
+    }
 
-		// Color
-		RGBA8 = 1,
-		RED_INTEGER = 2,
+    FramebufferTextureFormat TextureFormat = FramebufferTextureFormat::None;
+    // TODO: filtering/wrap
+  };
 
-		// Depth/stencil
-		DEPTH24STENCIL8 = 3,
+  struct FramebufferAttachmentSpecification
+  {
+    FramebufferAttachmentSpecification() = default;
+    explicit FramebufferAttachmentSpecification(
+      std::initializer_list<FramebufferTextureSpecification> attachments)
+      : Attachments(attachments)
+    {
+    }
 
-		// Defaults
-		Depth = DEPTH24STENCIL8
-	};
+    std::vector<FramebufferTextureSpecification> Attachments;
+  };
 
-	struct FramebufferTextureSpecification
-	{
-		FramebufferTextureSpecification() = default;
-		explicit FramebufferTextureSpecification(FramebufferTextureFormat format)
-			: TextureFormat(format) {}
+  struct FramebufferSpecification
+  {
+    uint32_t                           Width = 512;
+    uint32_t                           Height = 512;
+    FramebufferAttachmentSpecification Attachments;
+    uint32_t                           Samples = 1;
+    bool                               SwapChainTarget = false;
+  };
 
-		FramebufferTextureFormat TextureFormat = FramebufferTextureFormat::None;
-		// TODO: filtering/wrap
-	};
+  class Framebuffer
+  {
+  public:
+    virtual ~Framebuffer() = default;
 
-	struct FramebufferAttachmentSpecification
-	{
-		FramebufferAttachmentSpecification() = default;
-		explicit FramebufferAttachmentSpecification(std::initializer_list<FramebufferTextureSpecification> attachments)
-			: Attachments(attachments) {}
+    virtual void
+    Bind() = 0;
+    virtual void
+    Unbind() = 0;
 
-		std::vector<FramebufferTextureSpecification> Attachments;
-	};
+    virtual void
+    Resize(uint32_t width, uint32_t height) = 0;
+    virtual unsigned int
+    ReadPixel(uint32_t attachmentIndex, int x, int y) = 0;
 
-	struct FramebufferSpecification
-	{
-		uint32_t Width = 0;
-		uint32_t Height = 0;
-		FramebufferAttachmentSpecification Attachments;
-		uint32_t Samples = 1;
+    virtual void
+    ClearAttachment(uint32_t attachmentIndex, int value) = 0;
 
-		bool SwapChainTarget = false;
-	};
+    virtual void
+    Clear() = 0;
+    virtual void
+    Clear(glm::vec4 clearColor) = 0;
 
-	class Framebuffer
-	{
-	public:
-		virtual ~Framebuffer() = default;
+    virtual const Ref<Texture>
+    GetColorAttachment(uint32_t index = 0) const = 0;
 
-		virtual void Bind() = 0;
-		virtual void Unbind() = 0;
+    virtual const FramebufferSpecification&
+    GetSpecification() const = 0;
 
-		virtual void Resize(uint32_t width, uint32_t height) = 0;
-		virtual unsigned int ReadPixel(uint32_t attachmentIndex, int x, int y) = 0;
-
-		virtual void ClearAttachment(uint32_t attachmentIndex, int value) = 0;
-
-		virtual const uint32_t *GetColorAttachmentRendererID(uint32_t index = 0) const = 0;
-
-		virtual const FramebufferSpecification &GetSpecification() const = 0;
-
-		static Ref<Framebuffer> Create(const FramebufferSpecification &spec);
-	};
+    static Ref<Framebuffer>
+    Create(const FramebufferSpecification& spec);
+  };
 }
