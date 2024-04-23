@@ -35,7 +35,7 @@ namespace Dwarf
     };
     fbSpec.Width = 512;
     fbSpec.Height = 512;
-    // m_OutlineBuffer = Framebuffer::Create(fbSpec);
+    m_OutlineBuffer = Framebuffer::Create(fbSpec);
   }
 
   void
@@ -63,27 +63,27 @@ namespace Dwarf
                                  m_IdBuffer->GetSpecification().Height });
     m_IdBuffer->Unbind();
 
-    // if (m_Model->GetSelection().GetSelectedEntities().size() > 0)
-    // {
-    //   m_OutlineBuffer->Clear(glm::vec4(0));
-    //   m_OutlineBuffer->Bind();
-    //   for (auto entity : m_Model->GetSelection().GetSelectedEntities())
-    //   {
-    //     Renderer::Get()->RenderEntity(entity,
-    //                                   m_Camera->GetViewMatrix(),
-    //                                   m_Camera->GetProjectionMatrix(),
-    //                                   Material::s_WhiteMaterial);
-    //   }
+    if (m_Model->GetSelection().GetSelectedEntities().size() > 0)
+    {
+      m_OutlineBuffer->Clear(glm::vec4(0));
+      m_OutlineBuffer->Bind();
+      for (auto entity : m_Model->GetSelection().GetSelectedEntities())
+      {
+        Renderer::Get()->RenderEntity(entity,
+                                      m_Camera->GetViewMatrix(),
+                                      m_Camera->GetProjectionMatrix(),
+                                      Material::s_WhiteMaterial);
+      }
 
-    //   // Apply propagation shader
-    //   // ComputeShader::s_PropagationShader->SetParameter("inputTexture",
-    //   // m_OutlineBuffer->GetColorAttachmentRendererID(),
-    //   // ShaderParameterType::TEXTURE);
-    //   // Renderer::Get()->GetRendererApi()->ApplyComputeShader(
-    //   //  ComputeShader::s_PropagationShader, m_OutlineBuffer, 0, 1);
+      // Apply propagation shader
+      // ComputeShader::s_PropagationShader->SetParameter("inputTexture",
+      // m_OutlineBuffer->GetColorAttachmentRendererID(),
+      // ShaderParameterType::TEXTURE);
+      // Renderer::Get()->GetRendererApi()->ApplyComputeShader(
+      //  ComputeShader::s_PropagationShader, m_OutlineBuffer, 0, 1);
 
-    //   m_OutlineBuffer->Unbind();
-    // }
+      m_OutlineBuffer->Unbind();
+    }
   }
 
   void
@@ -436,7 +436,7 @@ namespace Dwarf
     {
       m_Framebuffer->Resize(desiredResolution.x, desiredResolution.y);
       m_IdBuffer->Resize(desiredResolution.x, desiredResolution.y);
-      // m_OutlineBuffer->Resize(desiredResolution.x, desiredResolution.y);
+      m_OutlineBuffer->Resize(desiredResolution.x, desiredResolution.y);
       m_Camera->SetAspectRatio((float)desiredResolution.x /
                                (float)desiredResolution.y);
     }
@@ -506,112 +506,6 @@ namespace Dwarf
     state["settings"]["renderGrid"] = m_Settings.RenderGrid;
 
     return state.dump(4);
-  }
-
-  glm::vec3
-  SceneViewerWindow::GetRayDirection(float            mouseX,
-                                     float            mouseY,
-                                     int              screenWidth,
-                                     int              screenHeight,
-                                     const glm::mat4& viewMatrix,
-                                     const glm::mat4& projectionMatrix)
-  {
-    // Normalize mouse coordinates
-    float x = (2.0f * mouseX) / screenWidth - 1.0f;
-    float y = 1.0f - (2.0f * mouseY) / screenHeight;
-
-    // Adjust for aspect ratio
-    glm::vec4 rayClip = glm::vec4(x, y, -1.0, 1.0);
-
-    // Inverse projection matrix
-    glm::mat4 invProjection = glm::inverse(projectionMatrix);
-
-    // Inverse view matrix
-    glm::mat4 invView = glm::inverse(viewMatrix);
-
-    // Homogeneous coordinates
-    glm::vec4 rayEye = invProjection * rayClip;
-    rayEye = glm::vec4(rayEye.x, rayEye.y, -1.0, 0.0);
-
-    // World space coordinates
-    glm::vec4 rayWorld = invView * rayEye;
-
-    // Normalize the direction
-    glm::vec3 rayDir = glm::normalize(glm::vec3(rayWorld));
-
-    return rayDir;
-  }
-
-  bool
-  SceneViewerWindow::RayIntersectsMesh(const glm::vec3& rayOrigin,
-                                       const glm::vec3& rayDirection,
-                                       const glm::mat4& modelMatrix,
-                                       Ref<Mesh>        mesh,
-                                       float&           intersectionDistance)
-  {
-    bool  intersectionFound = false;
-    float closestDistance = std::numeric_limits<float>::max();
-
-    for (size_t i = 0; i < mesh->GetIndices().size(); i += 3)
-    {
-      // Get vertices of the current triangle
-      glm::vec3 v0 = glm::vec3(
-        modelMatrix *
-        glm::vec4(mesh->GetVertices()[mesh->GetIndices()[i]].Position, 1.0f));
-      glm::vec3 v1 = glm::vec3(
-        modelMatrix *
-        glm::vec4(mesh->GetVertices()[mesh->GetIndices()[i + 1]].Position,
-                  1.0f));
-      glm::vec3 v2 = glm::vec3(
-        modelMatrix *
-        glm::vec4(mesh->GetVertices()[mesh->GetIndices()[i + 2]].Position,
-                  1.0f));
-
-      // Calculate normal of the triangle
-      glm::vec3 triangleNormal = glm::normalize(glm::cross(v1 - v0, v2 - v0));
-
-      // Calculate the plane of the triangle (Ax + By + Cz + D = 0)
-      float A = triangleNormal.x;
-      float B = triangleNormal.y;
-      float C = triangleNormal.z;
-      float D = -glm::dot(triangleNormal, v0);
-
-      // Calculate distance from the ray origin to the plane
-      float distanceToPlane =
-        -(A * rayOrigin.x + B * rayOrigin.y + C * rayOrigin.z + D) /
-        glm::dot(triangleNormal, rayDirection);
-
-      // Check if the intersection point is inside the triangle
-      if (distanceToPlane > 0)
-      {
-        glm::vec3 intersectionPoint =
-          rayOrigin + distanceToPlane * rayDirection;
-
-        // Barycentric coordinates
-        float     u, v, w;
-        glm::vec3 edge1 = v1 - v0;
-        glm::vec3 edge2 = v2 - v0;
-        glm::vec3 p = intersectionPoint - v0;
-        float     det = glm::dot(glm::cross(rayDirection, edge2), edge1);
-        u = glm::dot(glm::cross(rayDirection, edge2), p) / det;
-        v = glm::dot(glm::cross(edge1, rayDirection), p) / det;
-        w = 1.0f - u - v;
-
-        // Check if the intersection point is inside the triangle
-        if (u >= 0.0f && v >= 0.0f && w >= 0.0f)
-        {
-          float distance = glm::length(intersectionPoint - rayOrigin);
-          if (distance < closestDistance)
-          {
-            closestDistance = distance;
-            intersectionFound = true;
-            intersectionDistance = closestDistance;
-          }
-        }
-      }
-    }
-
-    return intersectionFound;
   }
 
   void

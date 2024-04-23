@@ -63,6 +63,7 @@ namespace Dwarf
     int             Height = 0;
     int             Depth = 0;
     void*           ImageData = nullptr;
+    int             Samples = 1;
   };
 
   struct TextureParameters

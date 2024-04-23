@@ -184,6 +184,7 @@ namespace Dwarf
     };
     fbSpec.Width = resolution.x;
     fbSpec.Height = resolution.y;
+    fbSpec.Samples = 4;
     return Framebuffer::Create(fbSpec);
   }
 

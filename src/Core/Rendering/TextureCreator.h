@@ -38,7 +38,9 @@ namespace Dwarf
     static Ref<Texture>
     Empty(glm::ivec2 size);
     static Ref<Texture>
-    Empty(FramebufferTextureSpecification const& parameters, glm::ivec2 size);
+    Empty(FramebufferTextureSpecification const& parameters,
+          glm::ivec2                             size,
+          int                                    samples = 1);
     static Ref<Texture>
     FromPath(std::filesystem::path const& path);
   };

@@ -126,12 +126,17 @@ namespace Dwarf
 
   // A Map that maps TextureType to OpenGL type
   GLenum
-  GetTextureType(TextureType type)
+  GetTextureType(TextureType type, int samples)
   {
     switch (type)
     {
       case TextureType::TEXTURE_1D: return GL_TEXTURE_1D;
-      case TextureType::TEXTURE_2D: return GL_TEXTURE_2D;
+      case TextureType::TEXTURE_2D:
+        if (samples > 1)
+        {
+          return GL_TEXTURE_2D_MULTISAMPLE;
+        }
+        return GL_TEXTURE_2D;
       case TextureType::TEXTURE_3D: return GL_TEXTURE_3D;
       case TextureType::TEXTURE_CUBE_MAP: return GL_TEXTURE_CUBE_MAP;
     }
@@ -226,7 +231,7 @@ namespace Dwarf
   OpenGLTexture::OpenGLTexture(Ref<TextureContainer>  data,
                                Ref<TextureParameters> parameters)
   {
-    GLuint textureType = GetTextureType(data->Type);
+    GLuint textureType = GetTextureType(data->Type, data->Samples);
     GLuint textureDataType = GetTextureDataType(data->DataType);
     GLuint textureFormat = GetTextureFormat(data->Format, data->DataType);
     GLuint textureWrapS = GetTextureWrap(parameters->WrapS);
@@ -237,14 +242,23 @@ namespace Dwarf
     GLuint internalFormat = GetInternalFormat(data->Format, data->DataType);
 
     SetSize(glm::ivec3(data->Width, data->Height, 0));
+    // Check for OpenGL errors
+    GLenum error = glGetError();
+    if (error != GL_NO_ERROR)
+    {
+      // Handle OpenGL error
+      std::cerr << "OpenGL error code: " << error << std::endl;
+      // Clean up and delete resources
+      // glDeleteTextures(1, &multisampleTextureID);
+    }
     glCreateTextures(textureType, 1, &m_Id);
 
     glTextureParameteri(m_Id, GL_TEXTURE_MIN_FILTER, textureMinFilter);
     glTextureParameteri(m_Id, GL_TEXTURE_MAG_FILTER, textureMagFilter);
 
-    switch (textureType)
+    switch (data->Type)
     {
-      case GL_TEXTURE_1D:
+      case TextureType::TEXTURE_1D:
         glTextureParameteri(m_Id, GL_TEXTURE_WRAP_S, textureWrapS);
         glTextureStorage1D(m_Id, 1, internalFormat, data->Width);
         if (data->ImageData)
@@ -258,11 +272,24 @@ namespace Dwarf
                               data->ImageData);
         }
         break;
-      case GL_TEXTURE_2D:
+      case TextureType::TEXTURE_2D:
         glTextureParameteri(m_Id, GL_TEXTURE_WRAP_S, textureWrapS);
         glTextureParameteri(m_Id, GL_TEXTURE_WRAP_T, textureWrapT);
 
-        glTextureStorage2D(m_Id, 1, internalFormat, data->Width, data->Height);
+        if (data->Samples > 1)
+        {
+          glTextureStorage2DMultisample(m_Id,
+                                        data->Samples,
+                                        internalFormat,
+                                        data->Width,
+                                        data->Height,
+                                        GL_FALSE);
+        }
+        else
+        {
+          glTextureStorage2D(
+            m_Id, 1, internalFormat, data->Width, data->Height);
+        }
 
         if (data->ImageData)
         {
@@ -277,7 +304,7 @@ namespace Dwarf
                               data->ImageData);
         }
         break;
-      case GL_TEXTURE_3D:
+      case TextureType::TEXTURE_3D:
         glTextureParameteri(m_Id, GL_TEXTURE_WRAP_S, textureWrapS);
         glTextureParameteri(m_Id, GL_TEXTURE_WRAP_T, textureWrapT);
         glTextureParameteri(m_Id, GL_TEXTURE_WRAP_R, textureWrapR);
@@ -300,7 +327,7 @@ namespace Dwarf
                               data->ImageData);
         }
         break;
-      case GL_TEXTURE_CUBE_MAP:
+      case TextureType::TEXTURE_CUBE_MAP:
         glTextureParameteri(m_Id, GL_TEXTURE_WRAP_S, textureWrapS);
         glTextureParameteri(m_Id, GL_TEXTURE_WRAP_T, textureWrapT);
         glTextureParameteri(m_Id, GL_TEXTURE_WRAP_R, textureWrapR);

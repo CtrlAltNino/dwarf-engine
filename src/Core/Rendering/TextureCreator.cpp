@@ -296,7 +296,8 @@ namespace Dwarf
 
   Ref<Texture>
   TextureCreator::Empty(FramebufferTextureSpecification const& parameters,
-                        glm::ivec2                             size)
+                        glm::ivec2                             size,
+                        int                                    samples)
   {
     Ref<TextureContainer> textureData = CreateRef<TextureContainer>();
     textureData->Width = size.x;
@@ -305,6 +306,7 @@ namespace Dwarf
     textureData->Type = TextureType::TEXTURE_2D;
     textureData->DataType = TextureDataType::UNSIGNED_BYTE;
     textureData->ImageData = nullptr;
+    textureData->Samples = samples;
 
     switch (parameters.TextureFormat)
     {
