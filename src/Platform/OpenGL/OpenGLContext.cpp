@@ -45,6 +45,12 @@ namespace Dwarf
     glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
     glDebugMessageCallback(debugCallback, nullptr);
     glEnable(GL_MULTISAMPLE);
+
+    GLint maxColorSamples, maxDepthSamples;
+    glGetIntegerv(GL_MAX_SAMPLES, &maxColorSamples);
+    glGetIntegerv(GL_MAX_DEPTH_TEXTURE_SAMPLES, &maxDepthSamples);
+    std::cout << "Max Color Samples: " << maxColorSamples << std::endl;
+    std::cout << "Max Depth Samples: " << maxDepthSamples << std::endl;
   }
 
   void
