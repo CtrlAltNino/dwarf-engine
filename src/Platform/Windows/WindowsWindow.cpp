@@ -48,6 +48,7 @@ namespace Dwarf
         SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK,
                             SDL_GL_CONTEXT_PROFILE_CORE);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
         WindowFlags |= SDL_WINDOW_OPENGL;
         break;
       case Vulkan: WindowFlags |= SDL_WINDOW_VULKAN; break;

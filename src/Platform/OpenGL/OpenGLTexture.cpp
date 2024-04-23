@@ -242,15 +242,6 @@ namespace Dwarf
     GLuint internalFormat = GetInternalFormat(data->Format, data->DataType);
 
     SetSize(glm::ivec3(data->Width, data->Height, 0));
-    // Check for OpenGL errors
-    GLenum error = glGetError();
-    if (error != GL_NO_ERROR)
-    {
-      // Handle OpenGL error
-      std::cerr << "OpenGL error code: " << error << std::endl;
-      // Clean up and delete resources
-      // glDeleteTextures(1, &multisampleTextureID);
-    }
     glCreateTextures(textureType, 1, &m_Id);
 
     glTextureParameteri(m_Id, GL_TEXTURE_MIN_FILTER, textureMinFilter);
