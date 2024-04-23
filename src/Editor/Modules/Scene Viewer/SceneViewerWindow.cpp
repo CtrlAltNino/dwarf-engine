@@ -56,9 +56,12 @@ namespace Dwarf
                                  m_Settings.RenderGrid);
     m_Framebuffer->Unbind();
 
-    // m_IdBuffer->Bind();
-    // Renderer::Get()->RenderIds(m_Model->GetScene(), m_Camera, { 22, 22 });
-    // m_IdBuffer->Unbind();
+    m_IdBuffer->Bind();
+    Renderer::Get()->RenderIds(m_Model->GetScene(),
+                               m_Camera,
+                               { m_IdBuffer->GetSpecification().Width,
+                                 m_IdBuffer->GetSpecification().Height });
+    m_IdBuffer->Unbind();
 
     // if (m_Model->GetSelection().GetSelectedEntities().size() > 0)
     // {
@@ -433,7 +436,7 @@ namespace Dwarf
     {
       m_Framebuffer->Resize(desiredResolution.x, desiredResolution.y);
       m_IdBuffer->Resize(desiredResolution.x, desiredResolution.y);
-      m_OutlineBuffer->Resize(desiredResolution.x, desiredResolution.y);
+      // m_OutlineBuffer->Resize(desiredResolution.x, desiredResolution.y);
       m_Camera->SetAspectRatio((float)desiredResolution.x /
                                (float)desiredResolution.y);
     }

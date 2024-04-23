@@ -1,3 +1,4 @@
+#include "Core/Rendering/Shader Parameters/UnsignedIntegerShaderParameter.h"
 #include "dpch.h"
 #include <string>
 
@@ -217,6 +218,9 @@ namespace Dwarf
       using enum ShaderParameterType;
       case BOOLEAN: return CreateRef<BooleanShaderParameter>(); break;
       case INTEGER: return CreateRef<IntegerShaderParameter>(); break;
+      case UNSIGNED_INTEGER:
+        return CreateRef<UnsignedIntegerShaderParameter>();
+        break;
       case FLOAT: return CreateRef<FloatShaderParameter>(); break;
       case VEC2: return CreateRef<Vec2ShaderParameter>(); break;
       case VEC3: return CreateRef<Vec3ShaderParameter>(); break;

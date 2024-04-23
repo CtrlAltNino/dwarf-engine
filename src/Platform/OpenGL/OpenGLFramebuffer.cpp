@@ -319,8 +319,6 @@ namespace Dwarf
   const Ref<Texture>
   OpenGLFramebuffer::GetColorAttachment(uint32_t index = 0) const
   {
-    std::cout << "Index: " << index << std::endl;
-    std::cout << "Size: " << m_ColorAttachments.size() << std::endl;
     if (index < m_ColorAttachments.size())
     {
       // Return the address of the value at the specified index

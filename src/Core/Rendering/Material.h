@@ -39,7 +39,7 @@ namespace Dwarf
     /// @brief Flag indicating if this is a transparent object.
     bool m_Transparent;
 
-    std::map<std::string, Ref<IShaderParameter>, std::less<>> m_Parameters;
+    std::map<std::string, Ref<IShaderParameter>, std::less<>> m_Parameters = {};
 
     std::string
     GetName() const;
