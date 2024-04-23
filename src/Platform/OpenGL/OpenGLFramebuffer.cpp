@@ -21,107 +21,22 @@ namespace Dwarf
       return openGLCoords;
     }
 
-    // @brief: Returns the OpenGL texture target for the given multisampled
-    // state
-    /*static GLenum
-    TextureTarget(bool multisampled)
+    static std::string
+    FramebufferTextureFormatToString(FramebufferTextureFormat format)
     {
-      return multisampled ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
+      switch (format)
+      {
+        using enum FramebufferTextureFormat;
+        case RGBA8: return "RGBA8";
+        case RED_INTEGER: return "RED_INTEGER";
+        case DEPTH24STENCIL8: return "DEPTH24STENCIL8";
+        case DEPTH: return "DEPTH";
+        case STENCIL: return "STENCIL";
+        case None: return "None";
+      }
+
+      return "None";
     }
-
-    // @brief: Creates textures with the given multisampled state
-    static void
-    CreateTextures(bool multisampled, uint32_t* outID, uint32_t count)
-    {
-      glCreateTextures(TextureTarget(multisampled), count, outID);
-    }
-
-    // @brief: Binds the texture with the given multisampled state
-    static void
-    BindTexture(bool multisampled, uint32_t id)
-    {
-      glBindTexture(TextureTarget(multisampled), id);
-    }*/
-
-    // @brief: Attaches a color texture to the framebuffer with the given
-    // multisampled state
-    // static void
-    // AttachColorTexture(uint32_t id,
-    //                    int      samples,
-    //                    GLenum   internalFormat,
-    //                    GLenum   format,
-    //                    GLenum   type,
-    //                    uint32_t width,
-    //                    uint32_t height,
-    //                    int      index)
-    // {
-    //   bool multisampled = samples > 1;
-    //   if (multisampled)
-    //   {
-    //     glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE,
-    //                             samples,
-    //                             internalFormat,
-    //                             width,
-    //                             height,
-    //                             GL_FALSE);
-    //   }
-    //   else
-    //   {
-    //     glTexImage2D(GL_TEXTURE_2D,
-    //                  0,
-    //                  internalFormat,
-    //                  width,
-    //                  height,
-    //                  0,
-    //                  format,
-    //                  type,
-    //                  nullptr);
-
-    //     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    //     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    //     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-    //     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    //     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    //   }
-
-    //   glFramebufferTexture2D(GL_FRAMEBUFFER,
-    //                          GL_COLOR_ATTACHMENT0 + index,
-    //                          TextureTarget(multisampled),
-    //                          id,
-    //                          0);
-    // }
-
-    // // @brief: Attaches a depth texture to the framebuffer with the given
-    // // multisampled state
-    // static void
-    // AttachDepthTexture(uint32_t id,
-    //                    int      samples,
-    //                    GLenum   format,
-    //                    GLenum   attachmentType,
-    //                    uint32_t width,
-    //                    uint32_t height)
-    // {
-    //   bool multisampled = samples > 1;
-    //   if (multisampled)
-    //   {
-    //     glTexImage2DMultisample(
-    //       GL_TEXTURE_2D_MULTISAMPLE, samples, format, width, height,
-    //       GL_FALSE);
-    //   }
-    //   else
-    //   {
-    //     glTexStorage2D(GL_TEXTURE_2D, 1, format, width, height);
-
-    //     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    //     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-    //     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-    //     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-    //     glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-    //   }
-
-    //   glFramebufferTexture2D(
-    //     GL_FRAMEBUFFER, attachmentType, TextureTarget(multisampled), id, 0);
-    // }
 
     // @brief: Checks if the given framebuffer texture format is a depth format
     static bool
@@ -186,28 +101,12 @@ namespace Dwarf
   {
     for (auto attachments : m_Specification.Attachments.Attachments)
     {
-      std::cout << "Creating attachment" << std::endl;
-      // Printing enum attachments.TextureFormat as string
-      std::cout
-        << "Attachment format: "
-        << static_cast<std::underlying_type_t<FramebufferTextureFormat>>(
-             attachments.TextureFormat)
-        << std::endl;
-
       if (!Utils::IsDepthFormat(attachments.TextureFormat))
       {
-        if (m_Specification.Samples > 1)
-        {
-          std::cout << "Creating multi sampled color attachment" << std::endl;
-        }
         m_ColorAttachmentSpecifications.emplace_back(attachments);
       }
       else
       {
-        if (m_Specification.Samples > 1)
-        {
-          std::cout << "Creating multi sampled depth attachment" << std::endl;
-        }
         m_DepthAttachmentSpecification = attachments;
       }
     }
@@ -266,10 +165,10 @@ namespace Dwarf
     if (m_DepthAttachmentSpecification.TextureFormat !=
         FramebufferTextureFormat::None)
     {
-      std::cout << "Creating depth attachment" << std::endl;
-      m_DepthAttachment = TextureCreator::Empty(
-        m_DepthAttachmentSpecification,
-        { m_Specification.Width, m_Specification.Height });
+      m_DepthAttachment =
+        TextureCreator::Empty(m_DepthAttachmentSpecification,
+                              { m_Specification.Width, m_Specification.Height },
+                              m_Specification.Samples);
 
       glFramebufferTexture2D(GL_FRAMEBUFFER,
                              Utils::GetFramebufferAttachment(

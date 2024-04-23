@@ -311,28 +311,24 @@ namespace Dwarf
     GLuint textureMagFilter = GetTextureMagFilter(parameters->MagFilter);
     GLuint internalFormat = GetInternalFormat(data->Format, data->DataType);
 
-    // Print the texture information
-    if (data->Samples > 1)
-    {
-      std::cout << "Creating texture with the following parameters:\n";
-      std::cout << "\tWidth: " << data->Width << "\n";
-      std::cout << "\tHeight: " << data->Height << "\n";
-      std::cout << "\tDepth: " << data->Depth << "\n";
-      std::cout << "\tSamples: " << data->Samples << "\n";
-      std::cout << "\tType: " << GLenumToString(textureType) << "\n";
-      std::cout << "\tTextureDataType: " << GLenumToString(textureDataType)
-                << "\n";
-      std::cout << "\tInternalFormat: " << GLenumToString(internalFormat)
-                << "\n";
-      std::cout << "\tTextureFormat: " << GLenumToString(textureFormat) << "\n";
-      std::cout << "\tTextureWrapS: " << GLenumToString(textureWrapS) << "\n";
-      std::cout << "\tTextureWrapT: " << GLenumToString(textureWrapT) << "\n";
-      std::cout << "\tTextureWrapR: " << GLenumToString(textureWrapR) << "\n";
-      std::cout << "\tTextureMinFilter: " << GLenumToString(textureMinFilter)
-                << "\n";
-      std::cout << "\tTextureMagFilter: " << GLenumToString(textureMagFilter)
-                << "\n";
-    }
+    // std::cout << "Creating texture with the following parameters:\n";
+    // std::cout << "\tWidth: " << data->Width << "\n";
+    // std::cout << "\tHeight: " << data->Height << "\n";
+    // std::cout << "\tDepth: " << data->Depth << "\n";
+    // std::cout << "\tSamples: " << data->Samples << "\n";
+    // std::cout << "\tType: " << GLenumToString(textureType) << "\n";
+    // std::cout << "\tTextureDataType: " << GLenumToString(textureDataType)
+    //           << "\n";
+    // std::cout << "\tInternalFormat: " << GLenumToString(internalFormat) <<
+    // "\n"; std::cout << "\tTextureFormat: " << GLenumToString(textureFormat)
+    // << "\n"; std::cout << "\tTextureWrapS: " << GLenumToString(textureWrapS)
+    // << "\n"; std::cout << "\tTextureWrapT: " << GLenumToString(textureWrapT)
+    // << "\n"; std::cout << "\tTextureWrapR: " << GLenumToString(textureWrapR)
+    // << "\n"; std::cout << "\tTextureMinFilter: " <<
+    // GLenumToString(textureMinFilter)
+    //           << "\n";
+    // std::cout << "\tTextureMagFilter: " << GLenumToString(textureMagFilter)
+    //           << "\n";
 
     SetSize(glm::ivec3(data->Width, data->Height, 0));
     glCreateTextures(textureType, 1, &m_Id);
@@ -362,10 +358,6 @@ namespace Dwarf
 
         if (data->Samples > 1)
         {
-          if (data->Format == TextureFormat::DEPTH)
-          {
-            std::cout << "Creating multisample depth texture\n";
-          }
           glTextureStorage2DMultisample(m_Id,
                                         data->Samples,
                                         internalFormat,
