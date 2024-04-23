@@ -54,7 +54,8 @@
     "platform-folders",
     "tiff",
     "libspng",
-    "libjpeg-turbo"
+    "libjpeg-turbo",
+    "gtest"
   ],
   "overrides": [
     {

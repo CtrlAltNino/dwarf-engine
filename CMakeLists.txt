@@ -8,6 +8,7 @@ include(${CMAKE_SOURCE_DIR}/helper.cmake)
 set(CMAKE_CXX_STANDARD 20)
 
 set(targetName dwarf-engine)
+set(testTarget dwarf-test)
 
 set(CMAKE_PCH_INSTANTIATE_TEMPLATES ON)
 
@@ -42,6 +43,7 @@ IF(WIN32)
         # using Visual Studio C++
         set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
     endif()
+
     # Maybe move to windows only, need to test
     ADD_DEFINITIONS(-DUNICODE)
     ADD_DEFINITIONS(-D_UNICODE)
