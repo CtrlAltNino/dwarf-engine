@@ -12,7 +12,6 @@
 
 namespace Dwarf
 {
-
   Ref<Material> Material::s_DefaultMaterial = nullptr;
   Ref<Material> Material::s_ErrorMaterial = nullptr;
   Ref<Material> Material::s_GridMaterial = nullptr;
