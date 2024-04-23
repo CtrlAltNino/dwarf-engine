@@ -180,11 +180,12 @@ namespace Dwarf
     FramebufferSpecification fbSpec;
     fbSpec.Attachments = FramebufferAttachmentSpecification{
       FramebufferTextureSpecification{ FramebufferTextureFormat::RGBA8 },
-      FramebufferTextureSpecification{ FramebufferTextureFormat::Depth }
+      FramebufferTextureSpecification{
+        FramebufferTextureFormat::DEPTH24STENCIL8 }
     };
     fbSpec.Width = resolution.x;
     fbSpec.Height = resolution.y;
-    fbSpec.Samples = 4;
+    fbSpec.Samples = 16;
     return Framebuffer::Create(fbSpec);
   }
 
@@ -194,7 +195,7 @@ namespace Dwarf
     FramebufferSpecification fbSpec;
     fbSpec.Attachments = FramebufferAttachmentSpecification{
       FramebufferTextureSpecification{ FramebufferTextureFormat::RED_INTEGER },
-      FramebufferTextureSpecification{ FramebufferTextureFormat::Depth }
+      FramebufferTextureSpecification{ FramebufferTextureFormat::DEPTH }
     };
     fbSpec.Width = resolution.x;
     fbSpec.Height = resolution.y;

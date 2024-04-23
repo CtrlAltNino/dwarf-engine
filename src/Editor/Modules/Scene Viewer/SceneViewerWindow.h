@@ -70,6 +70,8 @@ namespace Dwarf
 
     Ref<Framebuffer> m_OutlineBuffer;
 
+    Ref<Framebuffer> m_PresentationBuffer;
+
     Ref<Camera> m_Camera;
 
     /// @brief Calculates the cutout of the available resolution based on the

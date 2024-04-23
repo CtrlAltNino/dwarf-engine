@@ -10,16 +10,13 @@ namespace Dwarf
   enum class FramebufferTextureFormat
   {
     None = 0,
-
     // Color
     RGBA8 = 1,
     RED_INTEGER = 2,
-
     // Depth/stencil
     DEPTH24STENCIL8 = 3,
-
-    // Defaults
-    Depth = DEPTH24STENCIL8
+    DEPTH = 4,
+    STENCIL = 5
   };
 
   struct FramebufferTextureSpecification
@@ -48,8 +45,8 @@ namespace Dwarf
 
   struct FramebufferSpecification
   {
-    uint32_t                           Width = 0;
-    uint32_t                           Height = 0;
+    uint32_t                           Width = 512;
+    uint32_t                           Height = 512;
     FramebufferAttachmentSpecification Attachments;
     uint32_t                           Samples = 1;
     bool                               SwapChainTarget = false;

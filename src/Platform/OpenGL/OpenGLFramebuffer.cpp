@@ -130,13 +130,33 @@ namespace Dwarf
       switch (format)
       {
         using enum FramebufferTextureFormat;
-        case FramebufferTextureFormat::DEPTH24STENCIL8: return true;
-        case FramebufferTextureFormat::None:
-        case FramebufferTextureFormat::RGBA8:
-        case FramebufferTextureFormat::RED_INTEGER: return false;
+        case DEPTH: return true;
+        case DEPTH24STENCIL8: return true;
+        case RGBA8: return false;
+        case RED_INTEGER: return false;
+        case STENCIL: return false;
+        case None: return false;
       }
 
       return false;
+    }
+
+    static GLenum
+    GetFramebufferAttachment(FramebufferTextureFormat format)
+    {
+      switch (format)
+      {
+        using enum FramebufferTextureFormat;
+        case FramebufferTextureFormat::RED_INTEGER: return GL_COLOR_ATTACHMENT0;
+        case FramebufferTextureFormat::RGBA8: return GL_COLOR_ATTACHMENT0;
+        case FramebufferTextureFormat::DEPTH24STENCIL8:
+          return GL_DEPTH_STENCIL_ATTACHMENT;
+        case FramebufferTextureFormat::DEPTH: return GL_DEPTH_ATTACHMENT;
+        case FramebufferTextureFormat::STENCIL: return GL_STENCIL_ATTACHMENT;
+        case FramebufferTextureFormat::None: break;
+      }
+
+      return 0;
     }
 
     // @brief: Converts a Dwarf framebuffer texture format to an OpenGL texture
@@ -149,8 +169,11 @@ namespace Dwarf
         using enum FramebufferTextureFormat;
         case FramebufferTextureFormat::RGBA8: return GL_RGBA8;
         case FramebufferTextureFormat::RED_INTEGER: return GL_RED_INTEGER;
-        case FramebufferTextureFormat::None:
-        case FramebufferTextureFormat::DEPTH24STENCIL8: return 0;
+        case FramebufferTextureFormat::DEPTH24STENCIL8:
+          return GL_DEPTH24_STENCIL8;
+        case FramebufferTextureFormat::DEPTH: return GL_DEPTH_COMPONENT32;
+        case FramebufferTextureFormat::STENCIL: return GL_STENCIL_INDEX8;
+        case FramebufferTextureFormat::None: break;
       }
 
       return 0;
@@ -163,10 +186,30 @@ namespace Dwarf
   {
     for (auto attachments : m_Specification.Attachments.Attachments)
     {
+      std::cout << "Creating attachment" << std::endl;
+      // Printing enum attachments.TextureFormat as string
+      std::cout
+        << "Attachment format: "
+        << static_cast<std::underlying_type_t<FramebufferTextureFormat>>(
+             attachments.TextureFormat)
+        << std::endl;
+
       if (!Utils::IsDepthFormat(attachments.TextureFormat))
+      {
+        if (m_Specification.Samples > 1)
+        {
+          std::cout << "Creating multi sampled color attachment" << std::endl;
+        }
         m_ColorAttachmentSpecifications.emplace_back(attachments);
+      }
       else
+      {
+        if (m_Specification.Samples > 1)
+        {
+          std::cout << "Creating multi sampled depth attachment" << std::endl;
+        }
         m_DepthAttachmentSpecification = attachments;
+      }
     }
 
     Invalidate();
@@ -188,6 +231,9 @@ namespace Dwarf
       DeleteFramebuffer();
     }
 
+    GLenum textarget =
+      m_Specification.Samples > 1 ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
+
     // Create the framebuffer
     glCreateFramebuffers(1, &m_RendererID);
 
@@ -205,13 +251,14 @@ namespace Dwarf
           { m_Specification.Width, m_Specification.Height },
           m_Specification.Samples));
 
-        glFramebufferTexture2D(GL_FRAMEBUFFER,
-                               GL_COLOR_ATTACHMENT0 + i,
-                               m_Specification.Samples > 1
-                                 ? GL_TEXTURE_2D_MULTISAMPLE
-                                 : GL_TEXTURE_2D,
-                               m_ColorAttachments[i]->GetTextureID(),
-                               0);
+        glFramebufferTexture2D(
+          GL_FRAMEBUFFER,
+          Utils::GetFramebufferAttachment(
+            m_ColorAttachmentSpecifications[i].TextureFormat) +
+            i,
+          textarget,
+          m_ColorAttachments[i]->GetTextureID(),
+          0);
       }
     }
 
@@ -219,16 +266,17 @@ namespace Dwarf
     if (m_DepthAttachmentSpecification.TextureFormat !=
         FramebufferTextureFormat::None)
     {
+      std::cout << "Creating depth attachment" << std::endl;
       m_DepthAttachment = TextureCreator::Empty(
         m_DepthAttachmentSpecification,
         { m_Specification.Width, m_Specification.Height });
 
-      glFramebufferTexture2D(
-        GL_FRAMEBUFFER,
-        GL_DEPTH_STENCIL_ATTACHMENT,
-        m_Specification.Samples > 1 ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D,
-        m_DepthAttachment->GetTextureID(),
-        0);
+      glFramebufferTexture2D(GL_FRAMEBUFFER,
+                             Utils::GetFramebufferAttachment(
+                               m_DepthAttachmentSpecification.TextureFormat),
+                             textarget,
+                             m_DepthAttachment->GetTextureID(),
+                             0);
     }
 
     // Check if the framebuffer is complete

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Rendering/Framebuffer.h"
+#include <cstdint>
 
 namespace Dwarf
 {
@@ -20,6 +21,12 @@ namespace Dwarf
   public:
     explicit OpenGLFramebuffer(const FramebufferSpecification& spec);
     ~OpenGLFramebuffer() override;
+
+    uint32_t
+    GetFramebufferRendererID() const
+    {
+      return m_RendererID;
+    }
 
     void
     Invalidate();

@@ -38,5 +38,12 @@ namespace Dwarf
                        Ref<Framebuffer>   fb,
                        uint32_t           sourceAttachment,
                        uint32_t           destinationAttachment) = 0;
+    virtual void
+    Blit(Ref<Framebuffer> source,
+         Ref<Framebuffer> destination,
+         uint32_t         sourceAttachment,
+         uint32_t         destinationAttachment,
+         uint32_t         width,
+         uint32_t         height) = 0;
   };
 }

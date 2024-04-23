@@ -27,15 +27,19 @@ namespace Dwarf
     m_IdBuffer = Renderer::Get()->CreateIDFramebuffer({ 512, 512 });
     m_Camera = CreateRef<Camera>();
 
-    FramebufferSpecification fbSpec;
-    fbSpec.Attachments = FramebufferAttachmentSpecification{
+    FramebufferSpecification outlineSpec;
+    outlineSpec.Attachments = FramebufferAttachmentSpecification{
       FramebufferTextureSpecification{ FramebufferTextureFormat::RGBA8 },
       FramebufferTextureSpecification{ FramebufferTextureFormat::RGBA8 },
-      FramebufferTextureSpecification{ FramebufferTextureFormat::Depth }
+      FramebufferTextureSpecification{ FramebufferTextureFormat::DEPTH }
     };
-    fbSpec.Width = 512;
-    fbSpec.Height = 512;
-    m_OutlineBuffer = Framebuffer::Create(fbSpec);
+    m_OutlineBuffer = Framebuffer::Create(outlineSpec);
+
+    FramebufferSpecification presentationSpec;
+    presentationSpec.Attachments = FramebufferAttachmentSpecification{
+      FramebufferTextureSpecification{ FramebufferTextureFormat::RGBA8 }
+    };
+    m_PresentationBuffer = Framebuffer::Create(presentationSpec);
   }
 
   void
@@ -84,6 +88,14 @@ namespace Dwarf
 
       m_OutlineBuffer->Unbind();
     }
+
+    Renderer::Get()->GetRendererApi()->Blit(
+      m_Framebuffer,
+      m_PresentationBuffer,
+      0,
+      0,
+      m_Framebuffer->GetSpecification().Width,
+      m_Framebuffer->GetSpecification().Height);
   }
 
   void
@@ -299,7 +311,8 @@ namespace Dwarf
   ImTextureID
   SceneViewerWindow::GetFrameBufferForImGui()
   {
-    return (ImTextureID)m_Framebuffer->GetColorAttachment()->GetTextureID();
+    return (ImTextureID)m_PresentationBuffer->GetColorAttachment()
+      ->GetTextureID();
   }
 
   glm::ivec2
@@ -437,6 +450,7 @@ namespace Dwarf
       m_Framebuffer->Resize(desiredResolution.x, desiredResolution.y);
       m_IdBuffer->Resize(desiredResolution.x, desiredResolution.y);
       m_OutlineBuffer->Resize(desiredResolution.x, desiredResolution.y);
+      m_PresentationBuffer->Resize(desiredResolution.x, desiredResolution.y);
       m_Camera->SetAspectRatio((float)desiredResolution.x /
                                (float)desiredResolution.y);
     }

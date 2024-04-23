@@ -320,6 +320,13 @@ namespace Dwarf
       case FramebufferTextureFormat::DEPTH24STENCIL8:
         textureData->Format = TextureFormat::DEPTH_STENCIL;
         break;
+      case FramebufferTextureFormat::DEPTH:
+        textureData->Format = TextureFormat::DEPTH;
+        textureData->DataType = TextureDataType::FLOAT;
+        break;
+      case FramebufferTextureFormat::STENCIL:
+        textureData->Format = TextureFormat::STENCIL;
+        break;
     }
 
     return Texture::Create(textureData);

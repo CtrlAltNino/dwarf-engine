@@ -1,3 +1,4 @@
+#include "OpenGLFramebuffer.h"
 #include "dpch.h"
 #include "Platform/OpenGL/OpenGLRendererApi.h"
 #include "Core/Asset/AssetDatabase.h"
@@ -12,6 +13,7 @@
 #include <Core/Rendering/Shader Parameters/Vec4ShaderParameter.h>
 #include <Core/Rendering/Shader Parameters/Vec2ShaderParameter.h>
 #include <Core/Rendering/Shader Parameters/Vec3ShaderParameter.h>
+#include <memory>
 
 namespace Dwarf
 {
@@ -213,5 +215,32 @@ namespace Dwarf
       fb->GetSpecification().Width / 16, fb->GetSpecification().Height / 16, 1);
     glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
     glUseProgram(0);
+  }
+
+  void
+  OpenGLRendererApi::Blit(Ref<Framebuffer> source,
+                          Ref<Framebuffer> destination,
+                          uint32_t         sourceAttachment,
+                          uint32_t         destinationAttachment,
+                          uint32_t         width,
+                          uint32_t         height)
+  {
+    glBindFramebuffer(GL_READ_FRAMEBUFFER,
+                      std::dynamic_pointer_cast<OpenGLFramebuffer>(source)
+                        ->GetFramebufferRendererID());
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER,
+                      std::dynamic_pointer_cast<OpenGLFramebuffer>(destination)
+                        ->GetFramebufferRendererID());
+    glBlitFramebuffer(0,
+                      0,
+                      width,
+                      height,
+                      0,
+                      0,
+                      width,
+                      height,
+                      GL_COLOR_BUFFER_BIT,
+                      GL_NEAREST);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
   }
 }
