@@ -311,25 +311,6 @@ namespace Dwarf
     GLuint textureMagFilter = GetTextureMagFilter(parameters->MagFilter);
     GLuint internalFormat = GetInternalFormat(data->Format, data->DataType);
 
-    // std::cout << "Creating texture with the following parameters:\n";
-    // std::cout << "\tWidth: " << data->Width << "\n";
-    // std::cout << "\tHeight: " << data->Height << "\n";
-    // std::cout << "\tDepth: " << data->Depth << "\n";
-    // std::cout << "\tSamples: " << data->Samples << "\n";
-    // std::cout << "\tType: " << GLenumToString(textureType) << "\n";
-    // std::cout << "\tTextureDataType: " << GLenumToString(textureDataType)
-    //           << "\n";
-    // std::cout << "\tInternalFormat: " << GLenumToString(internalFormat) <<
-    // "\n"; std::cout << "\tTextureFormat: " << GLenumToString(textureFormat)
-    // << "\n"; std::cout << "\tTextureWrapS: " << GLenumToString(textureWrapS)
-    // << "\n"; std::cout << "\tTextureWrapT: " << GLenumToString(textureWrapT)
-    // << "\n"; std::cout << "\tTextureWrapR: " << GLenumToString(textureWrapR)
-    // << "\n"; std::cout << "\tTextureMinFilter: " <<
-    // GLenumToString(textureMinFilter)
-    //           << "\n";
-    // std::cout << "\tTextureMagFilter: " << GLenumToString(textureMagFilter)
-    //           << "\n";
-
     SetSize(glm::ivec3(data->Width, data->Height, 0));
     glCreateTextures(textureType, 1, &m_Id);
 

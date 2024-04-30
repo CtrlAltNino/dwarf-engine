@@ -45,17 +45,14 @@ namespace Dwarf
                   GraphicsApi           graphicsApi,
                   ProjectTemplate       projectTemplate)
     {
-      std::cout << "Yeet1" << std::endl;
       // Create Project blabla
       std::filesystem::path projectDirectory = projectPath / projectName;
       if (!FileHandler::CheckIfDirectoyExists(projectDirectory))
       {
-        std::cout << "Yeet2" << std::endl;
         std::filesystem::path projectSettingsPath =
           projectPath / projectName / "projectSettings.dproj";
         if (!FileHandler::CheckIfFileExists(projectSettingsPath))
         {
-          std::cout << "Yeet3" << std::endl;
           FileHandler::CreateDirectory(projectDirectory);
 
           if (projectTemplate == ProjectTemplate::Blank)
@@ -70,7 +67,6 @@ namespace Dwarf
           }
           else
           {
-            std::cout << "Yeet4" << std::endl;
             std::filesystem::path templateProjectDirectory = "";
             std::filesystem::path templateApiDirectory = "";
 
@@ -107,7 +103,6 @@ namespace Dwarf
               "cp -a \"" + templateProjectDirectory.string() + "/.\" \"" +
               (projectPath / projectName).string() + "\"");
 #endif
-            std::cout << "project create: " << copyCommand.c_str() << std::endl;
             system(copyCommand.c_str());
 
             // Update the projectSettings.dproj "projectName" entry

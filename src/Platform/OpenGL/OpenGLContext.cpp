@@ -49,8 +49,6 @@ namespace Dwarf
     GLint maxColorSamples, maxDepthSamples;
     glGetIntegerv(GL_MAX_SAMPLES, &maxColorSamples);
     glGetIntegerv(GL_MAX_DEPTH_TEXTURE_SAMPLES, &maxDepthSamples);
-    std::cout << "Max Color Samples: " << maxColorSamples << std::endl;
-    std::cout << "Max Depth Samples: " << maxDepthSamples << std::endl;
   }
 
   void
