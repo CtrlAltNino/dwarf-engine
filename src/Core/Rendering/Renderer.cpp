@@ -22,7 +22,7 @@ namespace Dwarf
     return s_RendererType;
   }
 
-  Ref<Renderer> Renderer::s_Renderer = nullptr;
+  std::shared_ptr<Renderer> Renderer::s_Renderer = nullptr;
 
   void
   Renderer::Create(GraphicsApi api, Renderer::RendererType type)
@@ -31,10 +31,10 @@ namespace Dwarf
     switch (type)
     {
       case Renderer::RendererType::Forward:
-        s_Renderer = CreateRef<ForwardRenderer>();
+        s_Renderer = std::make_shared<ForwardRenderer>();
         break;
       case Renderer::RendererType::Deferred:
-        // s_Renderer = CreateRef<DeferredRenderer>();
+        // s_Renderer = std::make_shared<DeferredRenderer>();
         break;
     }
   }

@@ -16,7 +16,7 @@ namespace Dwarf
   class Entity
   {
   public:
-    Entity(entt::entity handle, Ref<entt::registry> registry);
+    Entity(entt::entity handle, std::shared_ptr<entt::registry> registry);
     Entity(const Entity& other) = default;
 
     /// @brief Adds a component to the entity.
@@ -69,7 +69,7 @@ namespace Dwarf
 
     /// @brief Retrieves the UID of the entity.
     /// @return The UID.
-    Ref<UID>
+    std::shared_ptr<UID>
     GetUID()
     {
       return GetComponent<IDComponent>().ID;
@@ -210,6 +210,6 @@ namespace Dwarf
     entt::entity m_EntityHandle{ entt::null };
 
     /// @brief Pointer to a holder of an ECS registry.
-    Ref<entt::registry> m_Registry;
+    std::shared_ptr<entt::registry> m_Registry;
   };
 }

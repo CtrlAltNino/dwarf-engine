@@ -22,11 +22,11 @@ namespace Dwarf
   struct IDComponent
   {
     /// @brief The UID of an entity.
-    Ref<UID> ID;
+    std::shared_ptr<UID> ID;
     IDComponent() = default;
     IDComponent(const IDComponent&) = default;
     explicit IDComponent(const UID& other)
-      : ID(CreateRef<UID>(other))
+      : ID(std::make_shared<UID>(other))
     {
     }
   };

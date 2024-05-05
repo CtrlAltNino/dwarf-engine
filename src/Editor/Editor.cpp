@@ -12,17 +12,17 @@
 namespace Dwarf
 {
 
-  Ref<Editor> Editor::s_Instance = nullptr;
+  std::shared_ptr<Editor> Editor::s_Instance = nullptr;
 
-  Ref<Editor>
+  std::shared_ptr<Editor>
   CreateEditor()
   {
-    return CreateRef<Editor>();
+    return std::make_shared<Editor>();
   }
 
   Editor::Editor()
   {
-    s_Instance = CreateRef<Editor>(*this);
+    s_Instance = std::make_shared<Editor>(*this);
   }
 
   Editor::~Editor() = default;
@@ -79,14 +79,14 @@ namespace Dwarf
     // ========== Initialize Editor model
     std::cout << "[EDITOR INIT] Initializing editor model" << std::endl;
 
-    s_Instance->m_Model = CreateRef<EditorModel>(
+    s_Instance->m_Model = std::make_shared<EditorModel>(
       projectSettings["projectName"].get<std::string_view>(), projectPath);
 
     if (projectSettings.contains("lastOpenedScene"))
     {
-      Ref<AssetReference<SceneAsset>> lastOpenedSceneAsset =
+      std::shared_ptr<AssetReference<SceneAsset>> lastOpenedSceneAsset =
         AssetDatabase::Retrieve<SceneAsset>(
-          CreateRef<UID>(projectSettings["lastOpenedScene"]));
+          std::make_shared<UID>(projectSettings["lastOpenedScene"]));
       if (lastOpenedSceneAsset)
       {
         std::cout << "[EDITOR INIT] Loading last opened scene" << std::endl;
@@ -110,7 +110,7 @@ namespace Dwarf
     }
 
     // ========== Initialize Editor view ==========
-    s_Instance->m_View = CreateRef<EditorView>(s_Instance->m_Model);
+    s_Instance->m_View = std::make_shared<EditorView>(s_Instance->m_Model);
 
     // Get monitor variables
 

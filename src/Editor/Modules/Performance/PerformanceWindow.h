@@ -12,13 +12,13 @@ namespace Dwarf
   {
   private:
     /// @brief Pointer to the frame time.
-    Ref<double> m_Frametime = nullptr;
+    std::shared_ptr<double> m_Frametime = nullptr;
 
     /// @brief Pointer to the render time.
-    Ref<double> m_RenderTime = nullptr;
+    std::shared_ptr<double> m_RenderTime = nullptr;
 
   public:
-    PerformanceWindow(Ref<EditorModel> model, int id);
+    PerformanceWindow(std::shared_ptr<EditorModel> model, int id);
 
     /// @brief Renders the module window.
     void

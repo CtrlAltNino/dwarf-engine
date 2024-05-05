@@ -32,23 +32,23 @@ namespace Dwarf
     Clear() override;
 
     void
-    RenderIndexed(Ref<Mesh>     mesh,
-                  Ref<Material> material,
-                  glm::mat4     modelMatrix,
-                  glm::mat4     viewMatrix,
-                  glm::mat4     projectionMatrix) override;
+    RenderIndexed(std::shared_ptr<Mesh>     mesh,
+                  std::shared_ptr<Material> material,
+                  glm::mat4                 modelMatrix,
+                  glm::mat4                 viewMatrix,
+                  glm::mat4                 projectionMatrix) override;
     void
-    ApplyComputeShader(Ref<ComputeShader> computeShader,
-                       Ref<Framebuffer>   fb,
-                       uint32_t           sourceAttachment,
-                       uint32_t           destinationAttachment) override;
+    ApplyComputeShader(std::shared_ptr<ComputeShader> computeShader,
+                       std::shared_ptr<Framebuffer>   fb,
+                       uint32_t                       sourceAttachment,
+                       uint32_t destinationAttachment) override;
 
     void
-    Blit(Ref<Framebuffer> source,
-         Ref<Framebuffer> destination,
-         uint32_t         sourceAttachment,
-         uint32_t         destinationAttachment,
-         uint32_t         width,
-         uint32_t         height) override;
+    Blit(std::shared_ptr<Framebuffer> source,
+         std::shared_ptr<Framebuffer> destination,
+         uint32_t                     sourceAttachment,
+         uint32_t                     destinationAttachment,
+         uint32_t                     width,
+         uint32_t                     height) override;
   };
 }

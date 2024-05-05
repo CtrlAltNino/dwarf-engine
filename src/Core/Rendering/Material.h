@@ -18,15 +18,15 @@ namespace Dwarf
   {
   public:
     explicit Material(std::string_view name);
-    Material(std::string_view name, Ref<Shader> shader);
+    Material(std::string_view name, std::shared_ptr<Shader> shader);
     ~Material();
 
-    static Ref<Material> s_DefaultMaterial;
-    static Ref<Material> s_ErrorMaterial;
-    static Ref<Material> s_GridMaterial;
-    static Ref<Material> s_PreviewMaterial;
-    static Ref<Material> s_IdMaterial;
-    static Ref<Material> s_WhiteMaterial;
+    static std::shared_ptr<Material> s_DefaultMaterial;
+    static std::shared_ptr<Material> s_ErrorMaterial;
+    static std::shared_ptr<Material> s_GridMaterial;
+    static std::shared_ptr<Material> s_PreviewMaterial;
+    static std::shared_ptr<Material> s_IdMaterial;
+    static std::shared_ptr<Material> s_WhiteMaterial;
     static void
     Init();
 
@@ -34,30 +34,31 @@ namespace Dwarf
     std::string m_Name;
 
     /// @brief Shader program for this material.
-    Ref<Shader> m_Shader;
+    std::shared_ptr<Shader> m_Shader;
 
     /// @brief Flag indicating if this is a transparent object.
     bool m_Transparent;
 
-    std::map<std::string, Ref<IShaderParameter>, std::less<>> m_Parameters = {};
+    std::map<std::string, std::shared_ptr<IShaderParameter>, std::less<>>
+      m_Parameters = {};
 
     std::string
     GetName() const;
 
-    Ref<Shader> const&
+    std::shared_ptr<Shader> const&
     GetShader() const;
 
     void
-    SetShader(Ref<Shader> shader);
+    SetShader(std::shared_ptr<Shader> shader);
 
     template<typename T>
     void
     SetParameter(std::string_view identifier, T parameter);
 
     void
-    SetParameter(std::string_view    identifier,
-                 Ref<UID>            value,
-                 ShaderParameterType type);
+    SetParameter(std::string_view     identifier,
+                 std::shared_ptr<UID> value,
+                 ShaderParameterType  type);
 
     void
     SetTransparency(bool transparent);

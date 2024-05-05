@@ -298,8 +298,8 @@ namespace Dwarf
 
   // A map that maps
   // Constructor without meta data
-  OpenGLTexture::OpenGLTexture(Ref<TextureContainer>  data,
-                               Ref<TextureParameters> parameters)
+  OpenGLTexture::OpenGLTexture(std::shared_ptr<TextureContainer>  data,
+                               std::shared_ptr<TextureParameters> parameters)
   {
     GLuint textureType = GetTextureType(data->Type, data->Samples);
     GLuint textureDataType = GetTextureDataType(data->DataType);

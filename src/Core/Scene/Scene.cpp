@@ -38,7 +38,7 @@ namespace Dwarf
   void
   Scene::CreateRootEntity()
   {
-    m_RootEntity = CreateRef<Entity>(m_Registry->create(), m_Registry);
+    m_RootEntity = std::make_shared<Entity>(m_Registry->create(), m_Registry);
     m_RootEntity->AddComponent<IDComponent>(UID());
     m_RootEntity->AddComponent<TransformComponent>();
     m_RootEntity->AddComponent<NameComponent>("Root");
@@ -64,13 +64,13 @@ namespace Dwarf
     return entity;
   }
 
-  Ref<entt::registry>
+  std::shared_ptr<entt::registry>
   Scene::GetRegistry() const
   {
     return m_Registry;
   }
 
-  Ref<Entity>
+  std::shared_ptr<Entity>
   Scene::GetRootEntity() const
   {
     return m_RootEntity;

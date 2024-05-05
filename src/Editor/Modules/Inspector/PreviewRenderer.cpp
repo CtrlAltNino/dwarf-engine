@@ -5,11 +5,11 @@
 
 namespace Dwarf
 {
-  Ref<EditorModel> PreviewRenderer::s_Model = nullptr;
-  Ref<Framebuffer> PreviewRenderer::s_Framebuffer = nullptr;
-  Ref<Camera>      PreviewRenderer::s_Camera = nullptr;
-  glm::vec3        PreviewRenderer::s_ModelRotation = { 0, 0, 0 };
-  glm::vec3        PreviewRenderer::s_ModelRotationTarget = { 0, 0, 0 };
+  std::shared_ptr<EditorModel> PreviewRenderer::s_Model = nullptr;
+  std::shared_ptr<Framebuffer> PreviewRenderer::s_Framebuffer = nullptr;
+  std::shared_ptr<Camera>      PreviewRenderer::s_Camera = nullptr;
+  glm::vec3                    PreviewRenderer::s_ModelRotation = { 0, 0, 0 };
+  glm::vec3 PreviewRenderer::s_ModelRotationTarget = { 0, 0, 0 };
   glm::quat PreviewRenderer::s_ModelRotationQuat = glm::quat({ 0, 0, 0 });
   float     PreviewRenderer::s_RotationSpeed = 0.2f;
   float     PreviewRenderer::s_ScrollSpeed = 0.3f;
@@ -17,16 +17,16 @@ namespace Dwarf
   float     PreviewRenderer::s_MaxDistance = 0.0f;
 
   void
-  PreviewRenderer::Init(Ref<EditorModel> model)
+  PreviewRenderer::Init(std::shared_ptr<EditorModel> model)
   {
     s_Model = model;
     s_Framebuffer = Renderer::Get()->CreateFramebuffer({ 512, 512 });
-    s_Camera = CreateRef<Camera>(glm::vec3(0.0f, 0.0f, 0.0f),
-                                 glm::vec3(0, 0, 0),
-                                 50.0f,
-                                 0.1f,
-                                 25000.0f,
-                                 1.0f);
+    s_Camera = std::make_shared<Camera>(glm::vec3(0.0f, 0.0f, 0.0f),
+                                        glm::vec3(0, 0, 0),
+                                        50.0f,
+                                        0.1f,
+                                        25000.0f,
+                                        1.0f);
   }
 
   void
@@ -41,10 +41,12 @@ namespace Dwarf
   }
 
   void
-  PreviewRenderer::FocusModel(Ref<AssetReference<ModelAsset>> modelAsset)
+  PreviewRenderer::FocusModel(
+    std::shared_ptr<AssetReference<ModelAsset>> modelAsset)
   {
-    std::vector<Dwarf::Ref<Dwarf::Mesh>> vec = modelAsset->GetAsset()->m_Meshes;
-    float                                longestDist = 0;
+    std::vector<std::shared_ptr<Dwarf::Mesh>> vec =
+      modelAsset->GetAsset()->m_Meshes;
+    float longestDist = 0;
 
     for (const auto& subMesh : vec)
     {
@@ -69,7 +71,7 @@ namespace Dwarf
 
   void
   PreviewRenderer::RenderModelPreview(
-    Ref<AssetReference<ModelAsset>> modelAsset)
+    std::shared_ptr<AssetReference<ModelAsset>> modelAsset)
   {
     if (static entt::entity memory = entt::null;
         memory != modelAsset->GetHandle())
@@ -99,7 +101,7 @@ namespace Dwarf
 
   void
   PreviewRenderer::RenderMaterialPreview(
-    Ref<AssetReference<MaterialAsset>> materialAsset)
+    std::shared_ptr<AssetReference<MaterialAsset>> materialAsset)
   {
     // TODO: Reset sphere rotation when rendering a different material
     s_Camera->GetTransform()->position = { 0, 0, 3 };

@@ -19,11 +19,11 @@ namespace Dwarf
          unsigned int              materialIndex);
     virtual ~Mesh() = default;
 
-    static Ref<Mesh>
+    static std::shared_ptr<Mesh>
     Create(std::vector<Vertex> const&       vertices,
            std::vector<unsigned int> const& indices,
            unsigned int                     materialIndex);
-    static Ref<Mesh>
+    static std::shared_ptr<Mesh>
     GenerateUnitSphere(int stacks, int slices);
     static void
     Init();
@@ -38,7 +38,7 @@ namespace Dwarf
     std::vector<unsigned int>
     GetIndices() const;
 
-    static Ref<Mesh> s_GridMesh;
-    static Ref<Mesh> s_UnitSphere;
+    static std::shared_ptr<Mesh> s_GridMesh;
+    static std::shared_ptr<Mesh> s_UnitSphere;
   };
 }

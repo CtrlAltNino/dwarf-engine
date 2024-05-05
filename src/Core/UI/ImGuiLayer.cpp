@@ -12,19 +12,21 @@
 
 namespace Dwarf
 {
-  Ref<ImGuiLayer>
+  std::shared_ptr<ImGuiLayer>
   ImGuiLayer::Create(GraphicsApi api)
   {
 #ifdef _WIN32
     switch (api)
     {
       case GraphicsApi::D3D12:
-        // return CreateRef<D3D12ImGuiLayer>();
+        // return std::make_shared<D3D12ImGuiLayer>();
         break;
       case GraphicsApi::Metal: break;
-      case GraphicsApi::OpenGL: return CreateRef<OpenGLImGuiLayer>(); break;
+      case GraphicsApi::OpenGL:
+        return std::make_shared<OpenGLImGuiLayer>();
+        break;
       case GraphicsApi::Vulkan:
-        // return CreateRef<VulkanImGuiLayer>();
+        // return std::make_shared<VulkanImGuiLayer>();
         break;
     }
 #elif __linux__
@@ -32,9 +34,11 @@ namespace Dwarf
     {
       case GraphicsApi::D3D12: break;
       case GraphicsApi::Metal: break;
-      case GraphicsApi::OpenGL: return CreateRef<OpenGLImGuiLayer>(); break;
+      case GraphicsApi::OpenGL:
+        return std::make_shared<OpenGLImGuiLayer>();
+        break;
       case GraphicsApi::Vulkan:
-        // return CreateRef<VulkanImGuiLayer>();
+        // return std::make_shared<VulkanImGuiLayer>();
         break;
     }
 #elif __APPLE__
@@ -42,7 +46,7 @@ namespace Dwarf
     {
       case GraphicsApi::D3D12: break;
       case GraphicsApi::Metal:
-        // return CreateRef<MetalImGuiLayer>();
+        // return std::make_shared<MetalImGuiLayer>();
         break;
       case GraphicsApi::OpenGL: break;
       case GraphicsApi::Vulkan: break;

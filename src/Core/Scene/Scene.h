@@ -30,9 +30,9 @@ namespace Dwarf
 
   struct SceneSettings
   {
-    Ref<UID>            skyboxMaterial;
-    FogSettings         fogSettings;
-    GlobalLightSettings globalLightSettings;
+    std::shared_ptr<UID> skyboxMaterial;
+    FogSettings          fogSettings;
+    GlobalLightSettings  globalLightSettings;
   };
 
   /// @brief Class that represents a Dwarf Engine scene.
@@ -49,9 +49,9 @@ namespace Dwarf
     GetName() const;
     std::filesystem::path
     GetPath() const;
-    Ref<entt::registry>
+    std::shared_ptr<entt::registry>
     GetRegistry() const;
-    Ref<Entity>
+    std::shared_ptr<Entity>
     GetRootEntity() const;
     SceneSettings
     GetSettings() const;
@@ -84,12 +84,13 @@ namespace Dwarf
 
     std::filesystem::path m_Path;
 
-    Ref<entt::registry> m_Registry = CreateRef<entt::registry>();
+    std::shared_ptr<entt::registry> m_Registry =
+      std::make_shared<entt::registry>();
 
     SceneSettings m_Settings;
 
     /// @brief The root entity in the scene graph.
-    Ref<Entity> m_RootEntity;
+    std::shared_ptr<Entity> m_RootEntity;
 
     /// @brief Because of dependency cycle
     friend class Entity;

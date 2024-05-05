@@ -34,21 +34,22 @@ namespace Dwarf
       m_SuccessfullyCompiled = isCompiled;
     }
 
-    virtual std::map<std::string, Ref<IShaderParameter>, std::less<>>
-    GetParameters() = 0;
+    virtual std::
+      map<std::string, std::shared_ptr<IShaderParameter>, std::less<>>
+      GetParameters() = 0;
 
-    static Ref<Shader>
+    static std::shared_ptr<Shader>
     Create();
 
     static void
     Init();
 
-    static Ref<Shader> s_DefaultShader;
-    static Ref<Shader> s_ErrorShader;
-    static Ref<Shader> s_GridShader;
-    static Ref<Shader> s_PreviewShader;
-    static Ref<Shader> s_IdShader;
-    static Ref<Shader> s_WhiteShader;
+    static std::shared_ptr<Shader> s_DefaultShader;
+    static std::shared_ptr<Shader> s_ErrorShader;
+    static std::shared_ptr<Shader> s_GridShader;
+    static std::shared_ptr<Shader> s_PreviewShader;
+    static std::shared_ptr<Shader> s_IdShader;
+    static std::shared_ptr<Shader> s_WhiteShader;
 
     static std::filesystem::path
     GetDefaultShaderPath();
@@ -63,7 +64,7 @@ namespace Dwarf
     static std::filesystem::path
     GetOutlineShaderPath();
 
-    static Ref<IShaderParameter>
+    static std::shared_ptr<IShaderParameter>
     CreateShaderParameter(ShaderParameterType type);
   };
 }

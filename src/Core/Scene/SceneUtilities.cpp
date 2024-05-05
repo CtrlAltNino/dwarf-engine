@@ -23,7 +23,7 @@ namespace Dwarf
     FileHandler::WriteToFile(projectSettingsPath, projectSettings.dump(4));
   }
 
-  Ref<Scene>
+  std::shared_ptr<Scene>
   SceneUtilities::Deserialize(std::filesystem::path const& path)
   {
     nlohmann::json serializedScene =
@@ -50,10 +50,11 @@ namespace Dwarf
         serializedScene["skyboxMaterial"] != "null")
     {
       settings.skyboxMaterial =
-        CreateRef<UID>((uint64_t)serializedScene["skyboxMaterial"]);
+        std::make_shared<UID>((uint64_t)serializedScene["skyboxMaterial"]);
     }
 
-    Ref<Scene> deserializedScene = CreateRef<Scene>(path, settings);
+    std::shared_ptr<Scene> deserializedScene =
+      std::make_shared<Scene>(path, settings);
 
     for (auto const& element : serializedScene["hierarchy"])
     {
@@ -65,7 +66,7 @@ namespace Dwarf
   }
 
   void
-  SceneUtilities::Serialize(Ref<Scene> scene)
+  SceneUtilities::Serialize(std::shared_ptr<Scene> scene)
   {
     nlohmann::json serializedScene;
 
@@ -112,7 +113,7 @@ namespace Dwarf
 
   nlohmann::json
   SceneUtilities::SerializeEntities(std::vector<entt::entity> const& entities,
-                                    Ref<Scene>                       scene)
+                                    std::shared_ptr<Scene>           scene)
   {
     int            entityCount = 0;
     nlohmann::json serializedArray;
@@ -187,7 +188,8 @@ namespace Dwarf
 
         int materialCount = 0;
 
-        for (Ref<UID> materialID : meshRendererComponent.materialAssets)
+        for (std::shared_ptr<UID> materialID :
+             meshRendererComponent.materialAssets)
         {
           serializedArray[entityCount]["meshRendererComponent"]["materials"]
                          [materialCount] =
@@ -209,8 +211,8 @@ namespace Dwarf
   }
 
   Entity
-  SceneUtilities::DeserializeEntity(nlohmann::json serializedEntity,
-                                    Ref<Scene>     scene)
+  SceneUtilities::DeserializeEntity(nlohmann::json         serializedEntity,
+                                    std::shared_ptr<Scene> scene)
   {
     Entity newEntity = scene->CreateEntityWithUID(
       UID((uint64_t)serializedEntity["guid"]), serializedEntity["name"]);
@@ -257,7 +259,7 @@ namespace Dwarf
       if (serializedEntity["meshRendererComponent"].contains("mesh") &&
           serializedEntity["meshRendererComponent"]["mesh"] != "null")
       {
-        meshRendererComponent.meshAsset = CreateRef<UID>(
+        meshRendererComponent.meshAsset = std::make_shared<UID>(
           (uint64_t)serializedEntity["meshRendererComponent"]["mesh"]);
       }
 
@@ -268,7 +270,7 @@ namespace Dwarf
         {
           meshRendererComponent.materialAssets.push_back(
             (uint64_t)element == -1 ? nullptr
-                                    : CreateRef<UID>((uint64_t)element));
+                                    : std::make_shared<UID>((uint64_t)element));
         }
       }
     }
@@ -283,7 +285,7 @@ namespace Dwarf
   }
 
   bool
-  SceneUtilities::SaveScene(Ref<Scene> scene)
+  SceneUtilities::SaveScene(std::shared_ptr<Scene> scene)
   {
     if (!scene->GetPath().empty())
     {
@@ -297,7 +299,7 @@ namespace Dwarf
   }
 
   bool
-  SceneUtilities::SaveSceneDialog(Ref<Scene> scene)
+  SceneUtilities::SaveSceneDialog(std::shared_ptr<Scene> scene)
   {
     nfdchar_t*  savePath = nullptr;
     nfdresult_t result =
@@ -329,19 +331,19 @@ namespace Dwarf
     }
   }
 
-  Ref<Scene>
+  std::shared_ptr<Scene>
   SceneUtilities::LoadScene(std::filesystem::path const& path)
   {
-    Ref<Scene> scene = Deserialize(path);
+    std::shared_ptr<Scene> scene = Deserialize(path);
 
     return scene;
   }
 
-  Ref<Scene>
+  std::shared_ptr<Scene>
   SceneUtilities::LoadSceneDialog()
   {
-    Ref<Scene> scene;
-    nfdchar_t* outPath = nullptr;
+    std::shared_ptr<Scene> scene;
+    nfdchar_t*             outPath = nullptr;
 
     if (nfdresult_t result = NFD_OpenDialog(
           "dscene",
@@ -365,11 +367,11 @@ namespace Dwarf
     return scene;
   }
 
-  Ref<Scene>
+  std::shared_ptr<Scene>
   SceneUtilities::LoadDefaultScene()
   {
-    Ref<Scene> scene =
-      CreateRef<Scene>(std::filesystem::path(""), SceneSettings());
+    std::shared_ptr<Scene> scene =
+      std::make_shared<Scene>(std::filesystem::path(""), SceneSettings());
 
     // TODO: Add default stuff
 

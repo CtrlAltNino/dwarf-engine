@@ -14,13 +14,13 @@ namespace Dwarf
   class EditorView
   {
   private:
-    Ref<EditorModel> m_Model;
+    std::shared_ptr<EditorModel> m_Model;
 
     /// @brief ID counter for GUI modules.
     int m_GuiModuleIDCount = 0;
 
     /// @brief List of GUI modules.
-    std::vector<Ref<GuiModule>> m_GuiModules;
+    std::vector<std::shared_ptr<GuiModule>> m_GuiModules;
 
     /// @brief IMGUI example function to render the base docking layout.
     void
@@ -37,7 +37,7 @@ namespace Dwarf
     RemoveWindow(int index);
 
   public:
-    explicit EditorView(Ref<EditorModel> model);
+    explicit EditorView(std::shared_ptr<EditorModel> model);
 
     /// @brief Initializes the view.
     void

@@ -14,7 +14,8 @@ namespace Dwarf
   {
   private:
     bool m_SuccessfullyCompiled;
-    std::map<std::string, Ref<IShaderParameter>, std::less<>> m_Parameters;
+    std::map<std::string, std::shared_ptr<IShaderParameter>, std::less<>>
+      m_Parameters;
 
   public:
     ComputeShader();
@@ -34,11 +35,13 @@ namespace Dwarf
     {
       m_SuccessfullyCompiled = isCompiled;
     }
-    virtual std::map<std::string, Ref<IShaderParameter>, std::less<>>
-    GetParameters() = 0;
+    virtual std::
+      map<std::string, std::shared_ptr<IShaderParameter>, std::less<>>
+      GetParameters() = 0;
     virtual void
     SetParameters(
-      std::map<std::string, Ref<IShaderParameter>, std::less<>> parameters)
+      std::map<std::string, std::shared_ptr<IShaderParameter>, std::less<>>
+        parameters)
     {
       m_Parameters = parameters;
     }
@@ -51,23 +54,23 @@ namespace Dwarf
     SetParameter(std::string_view identifier, T parameter);
 
     void
-    SetParameter(std::string_view    identifier,
-                 Ref<UID>            value,
-                 ShaderParameterType type);
+    SetParameter(std::string_view     identifier,
+                 std::shared_ptr<UID> value,
+                 ShaderParameterType  type);
 
-    static Ref<ComputeShader>
+    static std::shared_ptr<ComputeShader>
     Create();
 
     static void
     Init();
 
-    static Ref<ComputeShader> s_PropagationShader;
-    static Ref<ComputeShader> s_FinalizationShader;
+    static std::shared_ptr<ComputeShader> s_PropagationShader;
+    static std::shared_ptr<ComputeShader> s_FinalizationShader;
 
     static std::filesystem::path
     GetOutlineShaderPath();
 
-    static Ref<IShaderParameter>
+    static std::shared_ptr<IShaderParameter>
     CreateComputeShaderParameter(ShaderParameterType type);
   };
 }

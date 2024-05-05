@@ -61,7 +61,7 @@ namespace Dwarf
             case ASSET_TYPE::MATERIAL:
               {
                 std::cout << "A material asset has been updated!" << std::endl;
-                Ref<AssetReference<MaterialAsset>> mat =
+                std::shared_ptr<AssetReference<MaterialAsset>> mat =
                   AssetDatabase::Retrieve<MaterialAsset>(path);
                 AssetDatabase::AddShaderToRecompilationQueue(
                   mat->GetAsset()->m_Material->GetShader());

@@ -27,7 +27,7 @@
 namespace Dwarf
 {
 
-  InspectorWindow::InspectorWindow(Ref<EditorModel> model, int id)
+  InspectorWindow::InspectorWindow(std::shared_ptr<EditorModel> model, int id)
     : GuiModule(model, "Inspector", MODULE_TYPE::INSPECTOR, id)
     , m_Scene(model->GetScene())
   {
@@ -172,8 +172,8 @@ namespace Dwarf
 
     if (component.meshAsset)
     {
-      int                    numMaterials = 0;
-      std::vector<Ref<Mesh>> meshes =
+      int                                numMaterials = 0;
+      std::vector<std::shared_ptr<Mesh>> meshes =
         AssetDatabase::Retrieve<ModelAsset>(component.meshAsset)
           ->GetAsset()
           ->m_Meshes;

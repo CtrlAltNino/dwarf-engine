@@ -8,14 +8,14 @@ namespace Dwarf
   DeferredRenderer::~DeferredRenderer() {}
 
   void
-  DeferredRenderer::RenderScene(Ref<Scene>  scene,
-                                Ref<Camera> camera,
-                                glm::ivec2  viewportSize,
-                                bool        renderGrid)
+  DeferredRenderer::RenderScene(std::shared_ptr<Scene>  scene,
+                                std::shared_ptr<Camera> camera,
+                                glm::ivec2              viewportSize,
+                                bool                    renderGrid)
   {
   }
 
-  Ref<Framebuffer>
+  std::shared_ptr<Framebuffer>
   DeferredRenderer::CreateFramebuffer(glm::ivec2 resolution)
   {
     return nullptr;

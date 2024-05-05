@@ -8,13 +8,13 @@ namespace Dwarf
   class AssetInspectorRenderer
   {
   private:
-    static Ref<EditorModel> s_Model;
+    static std::shared_ptr<EditorModel> s_Model;
 
   public:
     static void
-    Init(Ref<EditorModel> model);
+    Init(std::shared_ptr<EditorModel> model);
     template<typename T>
     static void
-    RenderAssetInspector(Ref<T> asset);
+    RenderAssetInspector(std::shared_ptr<T> asset);
   };
 }

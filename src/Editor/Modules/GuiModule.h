@@ -27,7 +27,7 @@ namespace Dwarf
   {
   protected:
     /// @brief Interfaced editor controller to communicate with the controller.
-    Ref<EditorModel> m_Model;
+    std::shared_ptr<EditorModel> m_Model;
 
     /// @brief Name to use for the module.
     std::string m_Label;
@@ -42,10 +42,10 @@ namespace Dwarf
     bool m_WindowOpened = true;
 
   public:
-    GuiModule(Ref<EditorModel> model,
-              std::string_view name,
-              MODULE_TYPE      type,
-              int              index)
+    GuiModule(std::shared_ptr<EditorModel> model,
+              std::string_view             name,
+              MODULE_TYPE                  type,
+              int                          index)
       : m_Model(model)
       , m_Label(name)
       , m_ModuleType(type)

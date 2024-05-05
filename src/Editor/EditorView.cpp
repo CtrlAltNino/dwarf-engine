@@ -17,7 +17,7 @@
 
 namespace Dwarf
 {
-  EditorView::EditorView(Ref<EditorModel> model)
+  EditorView::EditorView(std::shared_ptr<EditorModel> model)
     : m_Model(model)
   {
   }
@@ -113,7 +113,8 @@ namespace Dwarf
         }
         if (ImGui::MenuItem("Load scene"))
         {
-          Ref<Scene> loadedScene = SceneUtilities::LoadSceneDialog();
+          std::shared_ptr<Scene> loadedScene =
+            SceneUtilities::LoadSceneDialog();
           if (loadedScene)
           {
             m_Model->SetScene(loadedScene);
@@ -290,32 +291,33 @@ namespace Dwarf
   void
   EditorView::AddWindow(MODULE_TYPE moduleType)
   {
-    Ref<GuiModule> guiModule;
+    std::shared_ptr<GuiModule> guiModule;
     switch (moduleType)
     {
       using enum MODULE_TYPE;
       case PERFORMANCE:
-        guiModule =
-          CreateRef<PerformanceWindow>(this->m_Model, m_GuiModuleIDCount++);
+        guiModule = std::make_shared<PerformanceWindow>(this->m_Model,
+                                                        m_GuiModuleIDCount++);
         break;
       case SCENE_GRAPH:
-        guiModule =
-          CreateRef<SceneHierarchyWindow>(this->m_Model, m_GuiModuleIDCount++);
+        guiModule = std::make_shared<SceneHierarchyWindow>(
+          this->m_Model, m_GuiModuleIDCount++);
         break;
       case SCENE_VIEWER:
-        guiModule =
-          CreateRef<SceneViewerWindow>(this->m_Model, m_GuiModuleIDCount++);
+        guiModule = std::make_shared<SceneViewerWindow>(this->m_Model,
+                                                        m_GuiModuleIDCount++);
         break;
       case ASSET_BROWSER:
-        guiModule =
-          CreateRef<AssetBrowserWindow>(this->m_Model, m_GuiModuleIDCount++);
+        guiModule = std::make_shared<AssetBrowserWindow>(this->m_Model,
+                                                         m_GuiModuleIDCount++);
         break;
       case INSPECTOR:
-        guiModule =
-          CreateRef<InspectorWindow>(this->m_Model, m_GuiModuleIDCount++);
+        guiModule = std::make_shared<InspectorWindow>(this->m_Model,
+                                                      m_GuiModuleIDCount++);
         break;
       case DEBUG:
-        guiModule = CreateRef<DebugWindow>(this->m_Model, m_GuiModuleIDCount++);
+        guiModule =
+          std::make_shared<DebugWindow>(this->m_Model, m_GuiModuleIDCount++);
         break;
       case CONSOLE: break;
     }

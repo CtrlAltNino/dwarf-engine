@@ -66,11 +66,11 @@ namespace Dwarf
 
   private:
     void
-                           Init(const WindowProps& props) override;
-    SDL_Window*            m_Window;
-    Scope<GraphicsContext> m_Context;
-    GraphicsApi            m_Api;
-    Ref<ImGuiLayer>        m_ImguiLayer;
+                                     Init(const WindowProps& props) override;
+    SDL_Window*                      m_Window;
+    std::unique_ptr<GraphicsContext> m_Context;
+    GraphicsApi                      m_Api;
+    std::shared_ptr<ImGuiLayer>      m_ImguiLayer;
 
     struct WindowData
     {

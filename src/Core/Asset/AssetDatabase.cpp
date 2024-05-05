@@ -12,13 +12,16 @@
 
 namespace Dwarf
 {
-  std::filesystem::path       AssetDatabase::s_AssetFolderPath = "";
-  Ref<efsw::FileWatcher>      AssetDatabase::s_FileWatcher;
-  Ref<AssetDirectoryListener> AssetDatabase::s_AssetDirectoryListener = nullptr;
-  efsw::WatchID               AssetDatabase::s_WatchID;
-  Ref<entt::registry>         AssetDatabase::s_Registry;
-  std::map<std::filesystem::path, Ref<Shader>> AssetDatabase::s_ShaderAssetMap;
-  std::vector<Ref<Shader>> AssetDatabase::s_ShaderRecompilationStack;
+  std::filesystem::path              AssetDatabase::s_AssetFolderPath = "";
+  std::shared_ptr<efsw::FileWatcher> AssetDatabase::s_FileWatcher;
+  std::shared_ptr<AssetDirectoryListener>
+                AssetDatabase::s_AssetDirectoryListener = nullptr;
+  efsw::WatchID AssetDatabase::s_WatchID;
+  std::shared_ptr<entt::registry> AssetDatabase::s_Registry;
+  std::map<std::filesystem::path, std::shared_ptr<Shader>>
+    AssetDatabase::s_ShaderAssetMap;
+  std::vector<std::shared_ptr<Shader>>
+    AssetDatabase::s_ShaderRecompilationStack;
   const std::map<std::string, ASSET_TYPE>
     AssetDatabase::s_FileAssetAssociation = {
       { ".jpg", ASSET_TYPE::TEXTURE },
@@ -79,7 +82,7 @@ namespace Dwarf
   }
 
   void
-  AssetDatabase::Remove(Ref<UID> uid)
+  AssetDatabase::Remove(std::shared_ptr<UID> uid)
   {
     auto view = s_Registry->view<IDComponent>();
     for (auto entity : view)
@@ -113,16 +116,16 @@ namespace Dwarf
     {
       FileHandler::CreateDirectory(s_AssetFolderPath);
     }
-    s_Registry = CreateRef<entt::registry>();
+    s_Registry = std::make_shared<entt::registry>();
 
     // Create the file system watcher instance
     // efsw::FileWatcher allow a first boolean parameter that indicates if it
     // should start with the generic file watcher instead of the platform
     // specific backend
-    s_FileWatcher = CreateRef<efsw::FileWatcher>();
+    s_FileWatcher = std::make_shared<efsw::FileWatcher>();
 
     // Create the instance of your efsw::FileWatcherListener implementation
-    s_AssetDirectoryListener = CreateRef<AssetDirectoryListener>();
+    s_AssetDirectoryListener = std::make_shared<AssetDirectoryListener>();
 
     // Add a folder to watch, and get the efsw::WatchID
     // It will watch the /tmp folder recursively ( the third parameter indicates
@@ -159,7 +162,7 @@ namespace Dwarf
     s_FileWatcher->removeWatch(s_WatchID);
   }
 
-  Ref<UID>
+  std::shared_ptr<UID>
   AssetDatabase::Import(std::filesystem::path const& assetPath)
   {
     std::string fileName = assetPath.filename().string();
@@ -232,7 +235,7 @@ namespace Dwarf
   }
 
   bool
-  AssetDatabase::Exists(Ref<UID> uid)
+  AssetDatabase::Exists(std::shared_ptr<UID> uid)
   {
     if (uid)
     {
@@ -373,7 +376,7 @@ namespace Dwarf
   void
   AssetDatabase::RecompileShaders()
   {
-    for (Ref<Shader> shader : s_ShaderRecompilationStack)
+    for (std::shared_ptr<Shader> shader : s_ShaderRecompilationStack)
     {
       shader->Compile();
     }

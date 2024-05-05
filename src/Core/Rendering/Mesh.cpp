@@ -16,8 +16,8 @@
 
 namespace Dwarf
 {
-  Ref<Mesh> Mesh::s_GridMesh = nullptr;
-  Ref<Mesh> Mesh::s_UnitSphere = nullptr;
+  std::shared_ptr<Mesh> Mesh::s_GridMesh = nullptr;
+  std::shared_ptr<Mesh> Mesh::s_UnitSphere = nullptr;
 
   Mesh::Mesh(std::vector<Vertex>       vertices,
              std::vector<unsigned int> indices,
@@ -28,7 +28,7 @@ namespace Dwarf
   {
   }
 
-  Ref<Mesh>
+  std::shared_ptr<Mesh>
   Mesh::Create(std::vector<Vertex> const&       vertices,
                std::vector<unsigned int> const& indices,
                unsigned int                     materialIndex)
@@ -37,28 +37,28 @@ namespace Dwarf
     {
 #ifdef _WIN32
       case GraphicsApi::D3D12:
-        // return CreateRef<D3D12Mesh>(spec);
+        // return std::make_shared<D3D12Mesh>(spec);
         break;
       case GraphicsApi::Metal: break;
       case GraphicsApi::OpenGL:
-        return CreateRef<OpenGLMesh>(vertices, indices, materialIndex);
+        return std::make_shared<OpenGLMesh>(vertices, indices, materialIndex);
         break;
       case GraphicsApi::Vulkan:
-        // return CreateRef<VulkanFramebuffer>(spec);
+        // return std::make_shared<VulkanFramebuffer>(spec);
         break;
 #elif __linux__
       case GraphicsApi::D3D12: break;
       case GraphicsApi::Metal: break;
       case GraphicsApi::OpenGL:
-        return CreateRef<OpenGLMesh>(vertices, indices, materialIndex);
+        return std::make_shared<OpenGLMesh>(vertices, indices, materialIndex);
         break;
       case GraphicsApi::Vulkan:
-        // return CreateRef<VulkanFramebuffer>(spec);
+        // return std::make_shared<VulkanFramebuffer>(spec);
         break;
 #elif __APPLE__
       case GraphicsApi::D3D12: break;
       case GraphicsApi::Metal:
-        // return CreateRef<MetalFramebuffer>(spec);
+        // return std::make_shared<MetalFramebuffer>(spec);
         break;
       case GraphicsApi::OpenGL: break;
       case GraphicsApi::Vulkan: break;
@@ -67,7 +67,7 @@ namespace Dwarf
     return nullptr;
   }
 
-  Ref<Mesh>
+  std::shared_ptr<Mesh>
   Mesh::GenerateUnitSphere(int stacks, int slices)
   {
     auto vertices = std::vector<Vertex>();

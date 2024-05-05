@@ -14,7 +14,8 @@
 namespace Dwarf
 {
 
-  SceneHierarchyWindow::SceneHierarchyWindow(Ref<EditorModel> model, int index)
+  SceneHierarchyWindow::SceneHierarchyWindow(std::shared_ptr<EditorModel> model,
+                                             int                          index)
     : GuiModule(model, "Scene Hierarchy", MODULE_TYPE::SCENE_GRAPH, index)
   {
   }
@@ -23,11 +24,11 @@ namespace Dwarf
   SceneHierarchyWindow::DrawNode(entt::entity entity)
   {
     // Building the Entity
-    Entity             ent(entity, m_Model->GetScene()->GetRegistry());
-    ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow;
-    std::string        objectLabel = ent.GetComponent<NameComponent>().Name;
-    ImDrawList*        draw_list = ImGui::GetWindowDrawList();
-    Ref<Scene>         scene = m_Model->GetScene();
+    Entity                 ent(entity, m_Model->GetScene()->GetRegistry());
+    ImGuiTreeNodeFlags     flags = ImGuiTreeNodeFlags_OpenOnArrow;
+    std::string            objectLabel = ent.GetComponent<NameComponent>().Name;
+    ImDrawList*            draw_list = ImGui::GetWindowDrawList();
+    std::shared_ptr<Scene> scene = m_Model->GetScene();
 
     // Splitting the channel to draw an extra rect when selected
     draw_list->ChannelsSplit(2);
@@ -179,7 +180,7 @@ namespace Dwarf
 
       if (ImGui::MenuItem("Delete"))
       {
-        m_Instructions.push_back(CreateRef<DeleteEntityInstruction>(
+        m_Instructions.push_back(std::make_shared<DeleteEntityInstruction>(
           m_Model->GetScene(), m_Model->GetSelection().GetSelectedEntities()));
         m_Model->GetSelection().ClearEntitySelection();
       }
@@ -278,25 +279,25 @@ namespace Dwarf
 
         if (heightFrac < 0.33f)
         {
-          m_Instructions.push_back(CreateRef<NewParentInstruction>(
+          m_Instructions.push_back(std::make_shared<NewParentInstruction>(
             m_Model->GetScene(),
             payload_e,
             ent.GetComponent<TransformComponent>().parent));
-          m_Instructions.push_back(CreateRef<ChildIndexInstruction>(
+          m_Instructions.push_back(std::make_shared<ChildIndexInstruction>(
             m_Model->GetScene(), payload_e, ent.GetChildIndex()));
         }
         else if (heightFrac > 0.66f)
         {
-          m_Instructions.push_back(CreateRef<NewParentInstruction>(
+          m_Instructions.push_back(std::make_shared<NewParentInstruction>(
             m_Model->GetScene(),
             payload_e,
             ent.GetComponent<TransformComponent>().parent));
-          m_Instructions.push_back(CreateRef<ChildIndexInstruction>(
+          m_Instructions.push_back(std::make_shared<ChildIndexInstruction>(
             m_Model->GetScene(), payload_e, ent.GetChildIndex() + 1));
         }
         else
         {
-          m_Instructions.push_back(CreateRef<NewParentInstruction>(
+          m_Instructions.push_back(std::make_shared<NewParentInstruction>(
             m_Model->GetScene(), payload_e, entity));
         }
       }
@@ -341,7 +342,7 @@ namespace Dwarf
   void
   SceneHierarchyWindow::ProcessInstructions()
   {
-    for (Ref<GraphInstruction> instruction : m_Instructions)
+    for (std::shared_ptr<GraphInstruction> instruction : m_Instructions)
     {
       instruction->PerformInstruction();
     }
@@ -366,7 +367,7 @@ namespace Dwarf
 
     // auto view = m_Model->GetScene()->GetRegistry()->view<TransformComponent,
     // NameComponent, IDComponent>();
-    Ref<Scene>                 scene = m_Model->GetScene();
+    std::shared_ptr<Scene>     scene = m_Model->GetScene();
     std::vector<entt::entity>* container =
       &(m_Model->GetScene()
           ->GetRootEntity()
@@ -420,7 +421,8 @@ namespace Dwarf
       if (ImGui::MenuItem("Paste"))
       {
         // TODO: Implement pasting deleted entities
-        Ref<Entity> rootEntity = m_Model->GetScene()->GetRootEntity();
+        std::shared_ptr<Entity> rootEntity =
+          m_Model->GetScene()->GetRootEntity();
         for (Entity selectedEntity : m_CopyBuffer)
         {
           Entity copy = m_Model->GetScene()->CreateEntity(
@@ -455,7 +457,7 @@ namespace Dwarf
 
         std::vector<Entity> payload_e =
           *(const std::vector<Entity>*)payload->Data;
-        m_Instructions.push_back(CreateRef<NewParentInstruction>(
+        m_Instructions.push_back(std::make_shared<NewParentInstruction>(
           m_Model->GetScene(),
           payload_e,
           m_Model->GetScene()->GetRootEntity()->GetHandle()));

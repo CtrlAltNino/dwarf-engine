@@ -13,10 +13,10 @@ namespace Dwarf
   class PreviewRenderer
   {
   private:
-    static Ref<EditorModel> s_Model;
-    static Ref<Framebuffer> s_Framebuffer;
+    static std::shared_ptr<EditorModel> s_Model;
+    static std::shared_ptr<Framebuffer> s_Framebuffer;
 
-    static Ref<Camera> s_Camera;
+    static std::shared_ptr<Camera> s_Camera;
 
     static glm::vec3 s_ModelRotation;
     static glm::vec3 s_ModelRotationTarget;
@@ -29,15 +29,16 @@ namespace Dwarf
 
   public:
     static void
-    Init(Ref<EditorModel> model);
+    Init(std::shared_ptr<EditorModel> model);
     static void
     Resize(glm::ivec2 size);
     static void
-    RenderModelPreview(Ref<AssetReference<ModelAsset>> modelAsset);
+    RenderModelPreview(std::shared_ptr<AssetReference<ModelAsset>> modelAsset);
     static void
-    RenderMaterialPreview(Ref<AssetReference<MaterialAsset>> materialAsset);
+    RenderMaterialPreview(
+      std::shared_ptr<AssetReference<MaterialAsset>> materialAsset);
     static void
-    FocusModel(Ref<AssetReference<ModelAsset>> modelAsset);
+    FocusModel(std::shared_ptr<AssetReference<ModelAsset>> modelAsset);
     static void
     UpdateRotation(glm::vec2 deltaMousePos);
     static float

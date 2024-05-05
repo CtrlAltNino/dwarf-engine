@@ -12,9 +12,9 @@ namespace Dwarf
   class ProjectLauncher
   {
   private:
-    Ref<ProjectLauncherModel> m_Model;
-    Ref<ProjectLauncherView>  m_View;
-    Ref<Window>               m_Window;
+    std::shared_ptr<ProjectLauncherModel> m_Model;
+    std::shared_ptr<ProjectLauncherView>  m_View;
+    std::shared_ptr<Window>               m_Window;
 
     static ProjectLauncher* s_Instance;
 

@@ -61,14 +61,15 @@ namespace Dwarf
   }
 
   void
-  OpenGLRendererApi::RenderIndexed(Ref<Mesh>     mesh,
-                                   Ref<Material> material,
-                                   glm::mat4     modelMatrix,
-                                   glm::mat4     viewMatrix,
-                                   glm::mat4     projectionMatrix)
+  OpenGLRendererApi::RenderIndexed(std::shared_ptr<Mesh>     mesh,
+                                   std::shared_ptr<Material> material,
+                                   glm::mat4                 modelMatrix,
+                                   glm::mat4                 viewMatrix,
+                                   glm::mat4                 projectionMatrix)
   {
-    Ref<OpenGLMesh>   oglMesh = std::dynamic_pointer_cast<OpenGLMesh>(mesh);
-    Ref<OpenGLShader> shader =
+    std::shared_ptr<OpenGLMesh> oglMesh =
+      std::dynamic_pointer_cast<OpenGLMesh>(mesh);
+    std::shared_ptr<OpenGLShader> shader =
       std::dynamic_pointer_cast<OpenGLShader>(material->GetShader());
     char textureInputCounter = 0;
 
@@ -115,7 +116,7 @@ namespace Dwarf
             break;
           case TEX2D:
             {
-              Ref<UID> parameter =
+              std::shared_ptr<UID> parameter =
                 std::dynamic_pointer_cast<Tex2DShaderParameter>(val)->m_Value;
               if (parameter)
               {
@@ -187,12 +188,13 @@ namespace Dwarf
   }
 
   void
-  OpenGLRendererApi::ApplyComputeShader(Ref<ComputeShader> computeShader,
-                                        Ref<Framebuffer>   fb,
-                                        uint32_t           sourceAttachment,
-                                        uint32_t destinationAttachment)
+  OpenGLRendererApi::ApplyComputeShader(
+    std::shared_ptr<ComputeShader> computeShader,
+    std::shared_ptr<Framebuffer>   fb,
+    uint32_t                       sourceAttachment,
+    uint32_t                       destinationAttachment)
   {
-    Ref<OpenGLComputeShader> shader =
+    std::shared_ptr<OpenGLComputeShader> shader =
       std::dynamic_pointer_cast<OpenGLComputeShader>(computeShader);
     glUseProgram(shader->GetID());
     glBindImageTexture(0,
@@ -218,12 +220,12 @@ namespace Dwarf
   }
 
   void
-  OpenGLRendererApi::Blit(Ref<Framebuffer> source,
-                          Ref<Framebuffer> destination,
-                          uint32_t         sourceAttachment,
-                          uint32_t         destinationAttachment,
-                          uint32_t         width,
-                          uint32_t         height)
+  OpenGLRendererApi::Blit(std::shared_ptr<Framebuffer> source,
+                          std::shared_ptr<Framebuffer> destination,
+                          uint32_t                     sourceAttachment,
+                          uint32_t                     destinationAttachment,
+                          uint32_t                     width,
+                          uint32_t                     height)
   {
     glBindFramebuffer(GL_READ_FRAMEBUFFER,
                       std::dynamic_pointer_cast<OpenGLFramebuffer>(source)

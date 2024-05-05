@@ -13,25 +13,25 @@ namespace Dwarf
   class OpenGLComputeShader : public ComputeShader
   {
   private:
-    GLuint      m_ID = -1;
-    std::string m_ComputeShaderLog;
-    std::string m_ComputeShaderSource;
-    Ref<UID>    m_ComputeShaderAsset;
+    GLuint               m_ID = -1;
+    std::string          m_ComputeShaderLog;
+    std::string          m_ComputeShaderSource;
+    std::shared_ptr<UID> m_ComputeShaderAsset;
 
   public:
     OpenGLComputeShader();
     ~OpenGLComputeShader() override;
 
     void
-    SetComputeShader(Ref<UID> computeShader);
+    SetComputeShader(std::shared_ptr<UID> computeShader);
     void
     SetComputeShader(std::string_view computeShader);
-    std::map<std::string, Ref<IShaderParameter>, std::less<>>
+    std::map<std::string, std::shared_ptr<IShaderParameter>, std::less<>>
     GetParameters() override;
     void
     UpdateParameters() override;
 
-    Ref<UID>
+    std::shared_ptr<UID>
     GetComputeShader() const;
 
     GLuint
@@ -40,14 +40,14 @@ namespace Dwarf
     void
     Compile() override;
 
-    static Ref<OpenGLComputeShader>
+    static std::shared_ptr<OpenGLComputeShader>
     CreatePropagationShader();
-    static Ref<OpenGLComputeShader>
+    static std::shared_ptr<OpenGLComputeShader>
     CreateFinalizationShader();
 
     const std::string&
     GetLog() const;
-    Ref<UID>&
+    std::shared_ptr<UID>&
     GetAsset();
   };
 }

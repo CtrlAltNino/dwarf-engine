@@ -17,33 +17,34 @@ namespace Dwarf
     /// @brief Loads a scene from a path.
     /// @param path Path to the scene asset.
     /// @return The loaded scene.
-    static Ref<Scene>
+    static std::shared_ptr<Scene>
     Deserialize(std::filesystem::path const& path);
 
     static void
-    Serialize(Ref<Scene> scene);
+    Serialize(std::shared_ptr<Scene> scene);
 
     static nlohmann::json
     SerializeEntities(std::vector<entt::entity> const& entities,
-                      Ref<Scene>                       scene);
+                      std::shared_ptr<Scene>           scene);
 
     static Entity
-    DeserializeEntity(nlohmann::json serializedEntity, Ref<Scene> scene);
+    DeserializeEntity(nlohmann::json         serializedEntity,
+                      std::shared_ptr<Scene> scene);
 
   public:
     static bool
-    SaveScene(Ref<Scene> scene);
+    SaveScene(std::shared_ptr<Scene> scene);
 
     static bool
-    SaveSceneDialog(Ref<Scene> scene);
+    SaveSceneDialog(std::shared_ptr<Scene> scene);
 
-    static Ref<Scene>
+    static std::shared_ptr<Scene>
     LoadScene(std::filesystem::path const& path);
 
-    static Ref<Scene>
+    static std::shared_ptr<Scene>
     LoadSceneDialog();
 
-    static Ref<Scene>
+    static std::shared_ptr<Scene>
     LoadDefaultScene();
 
     static void

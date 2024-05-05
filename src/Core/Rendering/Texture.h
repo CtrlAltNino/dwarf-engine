@@ -27,9 +27,10 @@ namespace Dwarf
       m_Size = size;
     }
 
-    static Ref<Texture>
-    Create(Ref<TextureContainer>  data,
-           Ref<TextureParameters> parameters = CreateRef<TextureParameters>());
+    static std::shared_ptr<Texture>
+    Create(std::shared_ptr<TextureContainer>  data,
+           std::shared_ptr<TextureParameters> parameters =
+             std::make_shared<TextureParameters>());
     virtual uintptr_t
     GetTextureID() = 0;
   };

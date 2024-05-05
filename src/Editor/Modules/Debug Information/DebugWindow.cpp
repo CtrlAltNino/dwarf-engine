@@ -10,7 +10,7 @@
 namespace Dwarf
 {
 
-  DebugWindow::DebugWindow(Ref<EditorModel> model, int id)
+  DebugWindow::DebugWindow(std::shared_ptr<EditorModel> model, int id)
     : GuiModule(model, "Debug", MODULE_TYPE::DEBUG, id)
   {
   }

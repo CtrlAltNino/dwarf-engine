@@ -7,7 +7,8 @@
 namespace Dwarf
 {
 
-  AssetBrowserWindow::AssetBrowserWindow(Ref<EditorModel> model, int id)
+  AssetBrowserWindow::AssetBrowserWindow(std::shared_ptr<EditorModel> model,
+                                         int                          id)
     : GuiModule(model, "Asset Browser", MODULE_TYPE::PERFORMANCE, id)
     , m_CurrentDirectory(m_AssetDirectoryPath)
   {

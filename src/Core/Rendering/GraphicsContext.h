@@ -16,7 +16,7 @@ namespace Dwarf
     virtual void
     SwapBuffers() = 0;
 
-    static Scope<GraphicsContext>
+    static std::unique_ptr<GraphicsContext>
     Create(SDL_Window* window);
   };
 }

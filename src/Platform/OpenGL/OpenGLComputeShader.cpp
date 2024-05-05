@@ -49,7 +49,7 @@ namespace Dwarf
       shaderSource = FileHandler::ReadFile(shaderPath);
       // TODO: This needs to move somewhere else
       // AssetDatabase::AddShaderWatch(shaderPath,
-      // CreateRef<ComputeShader>(*this));
+      // std::make_shared<ComputeShader>(*this));
     }
     else
     {
@@ -101,7 +101,7 @@ namespace Dwarf
   }
 
   void
-  OpenGLComputeShader::SetComputeShader(Ref<UID> computeShader)
+  OpenGLComputeShader::SetComputeShader(std::shared_ptr<UID> computeShader)
   {
     m_ComputeShaderAsset = computeShader;
     m_ComputeShaderSource = "";
@@ -120,31 +120,33 @@ namespace Dwarf
     return m_ID;
   }
 
-  Ref<OpenGLComputeShader>
+  std::shared_ptr<OpenGLComputeShader>
   OpenGLComputeShader::CreatePropagationShader()
   {
-    Ref<OpenGLComputeShader> compShader = CreateRef<OpenGLComputeShader>();
+    std::shared_ptr<OpenGLComputeShader> compShader =
+      std::make_shared<OpenGLComputeShader>();
     compShader->SetComputeShader(FileHandler::ReadFile(
       ComputeShader::GetOutlineShaderPath() / "propagation.comp"));
     compShader->Compile();
     return compShader;
   }
 
-  Ref<OpenGLComputeShader>
+  std::shared_ptr<OpenGLComputeShader>
   OpenGLComputeShader::CreateFinalizationShader()
   {
-    Ref<OpenGLComputeShader> compShader = CreateRef<OpenGLComputeShader>();
+    std::shared_ptr<OpenGLComputeShader> compShader =
+      std::make_shared<OpenGLComputeShader>();
     compShader->SetComputeShader(FileHandler::ReadFile(
       ComputeShader::GetOutlineShaderPath() / "finalization.comp"));
     compShader->Compile();
     return compShader;
   }
 
-  std::map<std::string, Ref<IShaderParameter>, std::less<>>
+  std::map<std::string, std::shared_ptr<IShaderParameter>, std::less<>>
   OpenGLComputeShader::GetParameters()
   {
     auto parameters =
-      std::map<std::string, Ref<IShaderParameter>, std::less<>>();
+      std::map<std::string, std::shared_ptr<IShaderParameter>, std::less<>>();
     GLint i;
     GLint count;
 
@@ -236,7 +238,7 @@ namespace Dwarf
           break;
         case ShaderParameterType::TEX2D:
           {
-            Ref<UID> parameter =
+            std::shared_ptr<UID> parameter =
               std::dynamic_pointer_cast<Tex2DShaderParameter>(val)->m_Value;
             if (parameter)
             {
@@ -261,7 +263,7 @@ namespace Dwarf
     return m_ComputeShaderLog;
   }
 
-  Ref<UID>&
+  std::shared_ptr<UID>&
   OpenGLComputeShader::GetAsset()
   {
     return m_ComputeShaderAsset;

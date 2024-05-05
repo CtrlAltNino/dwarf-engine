@@ -7,14 +7,14 @@ namespace Dwarf
   class Tex2DShaderParameter : public IShaderParameter
   {
   public:
-    Ref<UID> m_Value;
+    std::shared_ptr<UID> m_Value;
 
     Tex2DShaderParameter()
       : m_Value(nullptr)
     {
     }
 
-    Tex2DShaderParameter(Ref<UID> value)
+    Tex2DShaderParameter(std::shared_ptr<UID> value)
       : m_Value(value)
     {
     }

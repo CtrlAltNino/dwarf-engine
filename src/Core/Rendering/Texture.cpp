@@ -19,30 +19,34 @@
 
 namespace Dwarf
 {
-  Ref<Texture>
-  Texture::Create(Ref<TextureContainer> data, Ref<TextureParameters> parameters)
+  std::shared_ptr<Texture>
+  Texture::Create(std::shared_ptr<TextureContainer>  data,
+                  std::shared_ptr<TextureParameters> parameters)
   {
     switch (Renderer::GetAPI())
     {
       using enum GraphicsApi;
       case D3D12:
 #ifdef WIN32
-        // return CreateRef<D3D12Texture>(D3D12Texture(parameters, data));
+        // return std::make_shared<D3D12Texture>(D3D12Texture(parameters,
+        // data));
 #endif
         break;
       case Metal:
 #ifdef __APPLE__
-        // return CreateRef<MetalTexture>(MetalTexture(parameters, data));
+        // return std::make_shared<MetalTexture>(MetalTexture(parameters,
+        // data));
 #endif
         break;
       case OpenGL:
 #if defined(__linux__) || defined(WIN32)
-        return CreateRef<OpenGLTexture>(data, parameters);
+        return std::make_shared<OpenGLTexture>(data, parameters);
 #endif
         break;
       case Vulkan:
 #if defined(__linux__) || defined(WIN32)
-        // return CreateRef<VulkanTexture>(VulkanTexture(parameters, data));
+        // return std::make_shared<VulkanTexture>(VulkanTexture(parameters,
+        // data));
 #endif
         break;
     }

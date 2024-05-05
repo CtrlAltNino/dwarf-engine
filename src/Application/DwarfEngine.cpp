@@ -41,9 +41,9 @@ namespace Dwarf
     }
   }
 
-  Ref<DwarfEngine>
+  std::shared_ptr<DwarfEngine>
   Create()
   {
-    return CreateRef<DwarfEngine>();
+    return std::make_shared<DwarfEngine>();
   }
 }

@@ -266,7 +266,7 @@ namespace Dwarf
                     &value);
   }
 
-  const Ref<Texture>
+  const std::shared_ptr<Texture>
   OpenGLFramebuffer::GetColorAttachment(uint32_t index = 0) const
   {
     if (index < m_ColorAttachments.size())

@@ -15,9 +15,9 @@ namespace Dwarf
     GLuint m_Id;
 
   public:
-    explicit OpenGLTexture(
-      Ref<TextureContainer>  data,
-      Ref<TextureParameters> parameters = CreateRef<TextureParameters>());
+    explicit OpenGLTexture(std::shared_ptr<TextureContainer>  data,
+                           std::shared_ptr<TextureParameters> parameters =
+                             std::make_shared<TextureParameters>());
     ~OpenGLTexture() override;
     uintptr_t
     GetTextureID() override;

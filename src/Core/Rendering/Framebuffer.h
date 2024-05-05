@@ -75,13 +75,13 @@ namespace Dwarf
     virtual void
     Clear(glm::vec4 clearColor) = 0;
 
-    virtual const Ref<Texture>
+    virtual const std::shared_ptr<Texture>
     GetColorAttachment(uint32_t index = 0) const = 0;
 
     virtual const FramebufferSpecification&
     GetSpecification() const = 0;
 
-    static Ref<Framebuffer>
+    static std::shared_ptr<Framebuffer>
     Create(const FramebufferSpecification& spec);
   };
 }

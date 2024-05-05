@@ -13,7 +13,7 @@ namespace Dwarf
   class RendererApi
   {
   public:
-    static Ref<RendererApi>
+    static std::shared_ptr<RendererApi>
     Create();
 
     virtual ~RendererApi() = default;
@@ -28,22 +28,22 @@ namespace Dwarf
     virtual void
     Clear(unsigned int value) = 0;
     virtual void
-    RenderIndexed(Ref<Mesh>     mesh,
-                  Ref<Material> material,
-                  glm::mat4     modelMatrix,
-                  glm::mat4     viewMatrix,
-                  glm::mat4     projectionMatrix) = 0;
+    RenderIndexed(std::shared_ptr<Mesh>     mesh,
+                  std::shared_ptr<Material> material,
+                  glm::mat4                 modelMatrix,
+                  glm::mat4                 viewMatrix,
+                  glm::mat4                 projectionMatrix) = 0;
     virtual void
-    ApplyComputeShader(Ref<ComputeShader> computeShader,
-                       Ref<Framebuffer>   fb,
-                       uint32_t           sourceAttachment,
-                       uint32_t           destinationAttachment) = 0;
+    ApplyComputeShader(std::shared_ptr<ComputeShader> computeShader,
+                       std::shared_ptr<Framebuffer>   fb,
+                       uint32_t                       sourceAttachment,
+                       uint32_t destinationAttachment) = 0;
     virtual void
-    Blit(Ref<Framebuffer> source,
-         Ref<Framebuffer> destination,
-         uint32_t         sourceAttachment,
-         uint32_t         destinationAttachment,
-         uint32_t         width,
-         uint32_t         height) = 0;
+    Blit(std::shared_ptr<Framebuffer> source,
+         std::shared_ptr<Framebuffer> destination,
+         uint32_t                     sourceAttachment,
+         uint32_t                     destinationAttachment,
+         uint32_t                     width,
+         uint32_t                     height) = 0;
   };
 }

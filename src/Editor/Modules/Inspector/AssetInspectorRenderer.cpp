@@ -34,10 +34,10 @@
 
 namespace Dwarf
 {
-  Ref<EditorModel> AssetInspectorRenderer::s_Model = nullptr;
+  std::shared_ptr<EditorModel> AssetInspectorRenderer::s_Model = nullptr;
 
   void
-  AssetInspectorRenderer::Init(Ref<EditorModel> model)
+  AssetInspectorRenderer::Init(std::shared_ptr<EditorModel> model)
   {
     AssetInspectorRenderer::s_Model = model;
     PreviewRenderer::Init(model);
@@ -45,7 +45,7 @@ namespace Dwarf
   template<>
   void
   AssetInspectorRenderer::RenderAssetInspector<AssetReference<UnknownAsset>>(
-    Ref<AssetReference<UnknownAsset>> asset)
+    std::shared_ptr<AssetReference<UnknownAsset>> asset)
   {
     ImGui::TextWrapped("File name: ");
     ImGui::SameLine(0, 5.0f);
@@ -63,7 +63,7 @@ namespace Dwarf
   template<>
   void
   AssetInspectorRenderer::RenderAssetInspector<AssetReference<MaterialAsset>>(
-    Ref<AssetReference<MaterialAsset>> asset)
+    std::shared_ptr<AssetReference<MaterialAsset>> asset)
   {
     ImDrawList* draw_list = ImGui::GetWindowDrawList();
     draw_list->ChannelsSplit(2);
@@ -110,7 +110,7 @@ namespace Dwarf
       separatorMin, separatorMax, COL_BG_DIM);
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 20);
 
-    Ref<Material> mat = asset->GetAsset()->m_Material;
+    std::shared_ptr<Material> mat = asset->GetAsset()->m_Material;
 
     ImGui::Checkbox("Transparent", &mat->m_Transparent);
 
@@ -377,7 +377,7 @@ namespace Dwarf
             using enum ShaderParameterType;
             case BOOLEAN:
               {
-                Ref<BooleanShaderParameter> parameter =
+                std::shared_ptr<BooleanShaderParameter> parameter =
                   std::dynamic_pointer_cast<BooleanShaderParameter>(i->second);
                 ImGui::TextWrapped("%s", i->first.c_str());
                 ImGui::SameLine();
@@ -389,7 +389,7 @@ namespace Dwarf
               break;
             case INTEGER:
               {
-                Ref<IntegerShaderParameter> parameter =
+                std::shared_ptr<IntegerShaderParameter> parameter =
                   std::dynamic_pointer_cast<IntegerShaderParameter>(i->second);
                 ImGui::TextWrapped("%s", i->first.c_str());
                 ImGui::SameLine();
@@ -404,7 +404,7 @@ namespace Dwarf
               break;
             case UNSIGNED_INTEGER:
               {
-                Ref<UnsignedIntegerShaderParameter> parameter =
+                std::shared_ptr<UnsignedIntegerShaderParameter> parameter =
                   std::dynamic_pointer_cast<UnsignedIntegerShaderParameter>(
                     i->second);
                 ImGui::TextWrapped("%s", i->first.c_str());
@@ -421,7 +421,7 @@ namespace Dwarf
               break;
             case FLOAT:
               {
-                Ref<FloatShaderParameter> parameter =
+                std::shared_ptr<FloatShaderParameter> parameter =
                   std::dynamic_pointer_cast<FloatShaderParameter>(i->second);
                 ImGui::TextWrapped("%s", i->first.c_str());
                 ImGui::SameLine();
@@ -436,7 +436,7 @@ namespace Dwarf
               break;
             case TEX2D:
               {
-                Ref<Tex2DShaderParameter> parameter =
+                std::shared_ptr<Tex2DShaderParameter> parameter =
                   std::dynamic_pointer_cast<Tex2DShaderParameter>(i->second);
                 ImGui::TextWrapped("%s", i->first.c_str());
                 ImGui::SameLine();
@@ -451,7 +451,7 @@ namespace Dwarf
               break;
             case VEC2:
               {
-                Ref<Vec2ShaderParameter> parameter =
+                std::shared_ptr<Vec2ShaderParameter> parameter =
                   std::dynamic_pointer_cast<Vec2ShaderParameter>(i->second);
                 ImGui::TextWrapped("%s", i->first.c_str());
                 ImGui::SameLine();
@@ -466,7 +466,7 @@ namespace Dwarf
               break;
             case VEC3:
               {
-                Ref<Vec3ShaderParameter> parameter =
+                std::shared_ptr<Vec3ShaderParameter> parameter =
                   std::dynamic_pointer_cast<Vec3ShaderParameter>(i->second);
                 ImGui::TextWrapped("%s", i->first.c_str());
                 ImGui::SameLine();
@@ -481,7 +481,7 @@ namespace Dwarf
               break;
             case VEC4:
               {
-                Ref<Vec4ShaderParameter> parameter =
+                std::shared_ptr<Vec4ShaderParameter> parameter =
                   std::dynamic_pointer_cast<Vec4ShaderParameter>(i->second);
                 ImGui::TextWrapped("%s", i->first.c_str());
                 ImGui::SameLine();
@@ -647,7 +647,7 @@ namespace Dwarf
   template<>
   void
   AssetInspectorRenderer::RenderAssetInspector<AssetReference<SceneAsset>>(
-    Ref<AssetReference<SceneAsset>> asset)
+    std::shared_ptr<AssetReference<SceneAsset>> asset)
   {
     ImDrawList* draw_list = ImGui::GetWindowDrawList();
     draw_list->ChannelsSplit(2);
@@ -716,7 +716,7 @@ namespace Dwarf
   template<>
   void
   AssetInspectorRenderer::RenderAssetInspector<AssetReference<ModelAsset>>(
-    Ref<AssetReference<ModelAsset>> asset)
+    std::shared_ptr<AssetReference<ModelAsset>> asset)
   {
     ImDrawList* draw_list = ImGui::GetWindowDrawList();
     draw_list->ChannelsSplit(2);
@@ -828,7 +828,7 @@ namespace Dwarf
   template<>
   void
   AssetInspectorRenderer::RenderAssetInspector<AssetReference<TextureAsset>>(
-    Ref<AssetReference<TextureAsset>> asset)
+    std::shared_ptr<AssetReference<TextureAsset>> asset)
   {
     ImDrawList* draw_list = ImGui::GetWindowDrawList();
     draw_list->ChannelsSplit(2);
@@ -896,7 +896,7 @@ namespace Dwarf
   void
   AssetInspectorRenderer::RenderAssetInspector<
     AssetReference<VertexShaderAsset>>(
-    Ref<AssetReference<VertexShaderAsset>> asset)
+    std::shared_ptr<AssetReference<VertexShaderAsset>> asset)
   {
     ImGui::TextWrapped("File name: ");
     ImGui::SameLine(0, 5.0f);
@@ -915,7 +915,7 @@ namespace Dwarf
   void
   AssetInspectorRenderer::RenderAssetInspector<
     AssetReference<TesselationControlShaderAsset>>(
-    Ref<AssetReference<TesselationControlShaderAsset>> asset)
+    std::shared_ptr<AssetReference<TesselationControlShaderAsset>> asset)
   {
     ImGui::TextWrapped("File name: ");
     ImGui::SameLine(0, 5.0f);
@@ -934,7 +934,7 @@ namespace Dwarf
   void
   AssetInspectorRenderer::RenderAssetInspector<
     AssetReference<TesselationEvaluationShaderAsset>>(
-    Ref<AssetReference<TesselationEvaluationShaderAsset>> asset)
+    std::shared_ptr<AssetReference<TesselationEvaluationShaderAsset>> asset)
   {
     ImGui::TextWrapped("File name: ");
     ImGui::SameLine(0, 5.0f);
@@ -953,7 +953,7 @@ namespace Dwarf
   void
   AssetInspectorRenderer::RenderAssetInspector<
     AssetReference<GeometryShaderAsset>>(
-    Ref<AssetReference<GeometryShaderAsset>> asset)
+    std::shared_ptr<AssetReference<GeometryShaderAsset>> asset)
   {
     ImGui::TextWrapped("File name: ");
     ImGui::SameLine(0, 5.0f);
@@ -972,7 +972,7 @@ namespace Dwarf
   void
   AssetInspectorRenderer::RenderAssetInspector<
     AssetReference<FragmentShaderAsset>>(
-    Ref<AssetReference<FragmentShaderAsset>> asset)
+    std::shared_ptr<AssetReference<FragmentShaderAsset>> asset)
   {
     ImGui::TextWrapped("File name: ");
     ImGui::SameLine(0, 5.0f);
@@ -991,7 +991,7 @@ namespace Dwarf
   void
   AssetInspectorRenderer::RenderAssetInspector<
     AssetReference<ComputeShaderAsset>>(
-    Ref<AssetReference<ComputeShaderAsset>> asset)
+    std::shared_ptr<AssetReference<ComputeShaderAsset>> asset)
   {
     ImGui::TextWrapped("File name: ");
     ImGui::SameLine(0, 5.0f);
@@ -1009,7 +1009,7 @@ namespace Dwarf
   template<>
   void
   AssetInspectorRenderer::RenderAssetInspector<AssetReference<HlslShaderAsset>>(
-    Ref<AssetReference<HlslShaderAsset>> asset)
+    std::shared_ptr<AssetReference<HlslShaderAsset>> asset)
   {
     ImGui::TextWrapped("File name: ");
     ImGui::SameLine(0, 5.0f);

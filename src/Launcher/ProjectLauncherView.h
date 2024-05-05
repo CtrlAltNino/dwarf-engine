@@ -16,7 +16,7 @@ namespace Dwarf
   class ProjectLauncherView
   {
   private:
-    Ref<ProjectLauncherModel> m_Model;
+    std::shared_ptr<ProjectLauncherModel> m_Model;
 
     /// @brief Font loaded into IMGUI for header text
     ImFont* m_HeaderFont;
@@ -25,13 +25,13 @@ namespace Dwarf
     ImFont* m_TextFont;
 
     /// @brief Loaded image for the github icon
-    Ref<Texture> m_GithubIcon;
+    std::shared_ptr<Texture> m_GithubIcon;
 
     /// @brief Loaded image for the patreon icon
-    Ref<Texture> m_PatreonIcon;
+    std::shared_ptr<Texture> m_PatreonIcon;
 
     /// @brief Loaded image for the twitter icon
-    Ref<Texture> m_TwitterIcon;
+    std::shared_ptr<Texture> m_TwitterIcon;
     void
     RenderProjectList(int fWidth, int fHeight);
 
@@ -51,7 +51,7 @@ namespace Dwarf
     RenderCreateNewProjectModal();
 
   public:
-    ProjectLauncherView(Ref<ProjectLauncherModel> model);
+    ProjectLauncherView(std::shared_ptr<ProjectLauncherModel> model);
     void
     Render();
   };

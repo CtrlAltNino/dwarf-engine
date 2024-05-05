@@ -4,8 +4,8 @@ namespace Dwarf
 {
 
   DeleteEntityInstruction::DeleteEntityInstruction(
-    Ref<Scene>          scene,
-    std::vector<Entity> sourceEntities)
+    std::shared_ptr<Scene> scene,
+    std::vector<Entity>    sourceEntities)
     : m_Scene(scene)
     , m_SourceEntities(sourceEntities)
   {

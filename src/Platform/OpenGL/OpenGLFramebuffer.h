@@ -15,8 +15,8 @@ namespace Dwarf
     FramebufferTextureSpecification m_DepthAttachmentSpecification{
       FramebufferTextureFormat::None
     };
-    std::vector<Ref<Texture>> m_ColorAttachments;
-    Ref<Texture>              m_DepthAttachment = 0;
+    std::vector<std::shared_ptr<Texture>> m_ColorAttachments;
+    std::shared_ptr<Texture>              m_DepthAttachment = 0;
 
   public:
     explicit OpenGLFramebuffer(const FramebufferSpecification& spec);
@@ -46,7 +46,7 @@ namespace Dwarf
     void
     ClearAttachment(uint32_t attachmentIndex, int value) override;
 
-    const Ref<Texture>
+    const std::shared_ptr<Texture>
     GetColorAttachment(uint32_t index) const override;
 
     void

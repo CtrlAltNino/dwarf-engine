@@ -14,7 +14,7 @@ namespace Dwarf
   private:
     /// @brief List of graph instruction. Used as a buffer, executed at the end
     /// of a frame.
-    std::vector<Ref<GraphInstruction>> m_Instructions;
+    std::vector<std::shared_ptr<GraphInstruction>> m_Instructions;
 
     std::vector<Entity> m_CopyBuffer;
 
@@ -28,7 +28,7 @@ namespace Dwarf
     ProcessInstructions();
 
   public:
-    SceneHierarchyWindow(Ref<EditorModel> model, int index);
+    SceneHierarchyWindow(std::shared_ptr<EditorModel> model, int index);
 
     /// @brief Renders the module window.
     void

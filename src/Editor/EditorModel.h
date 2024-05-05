@@ -18,7 +18,7 @@ namespace Dwarf
   class EditorSelection
   {
   private:
-    Ref<Scene>             m_Scene;
+    std::shared_ptr<Scene> m_Scene;
     CURRENT_SELECTION_TYPE m_SelectionType = CURRENT_SELECTION_TYPE::NONE;
     std::filesystem::path  m_SelectedAsset;
     std::vector<Entity>    m_SelectedEntities;
@@ -32,7 +32,7 @@ namespace Dwarf
 
   public:
     EditorSelection() = default;
-    EditorSelection(Ref<Scene> scene);
+    EditorSelection(std::shared_ptr<Scene> scene);
 
     void
     SelectEntity(Entity entity);
@@ -72,24 +72,24 @@ namespace Dwarf
   {
   private:
     /// @brief The currently opened scene instance.
-    Ref<Scene>            m_Scene;
-    double                m_DeltaTime;
-    std::string           m_ProjectName;
-    std::filesystem::path m_ProjectPath;
-    bool                  m_ReturnToLauncher = false;
-    bool                  m_CloseSignal = false;
-    EditorSelection       m_Selection;
+    std::shared_ptr<Scene> m_Scene;
+    double                 m_DeltaTime;
+    std::string            m_ProjectName;
+    std::filesystem::path  m_ProjectPath;
+    bool                   m_ReturnToLauncher = false;
+    bool                   m_CloseSignal = false;
+    EditorSelection        m_Selection;
 
   public:
     EditorModel(std::string_view name, std::filesystem::path projectPath);
 
     /// @brief Returns the currently opened scene.
     /// @return A pointer to the scene.
-    Ref<Scene>
+    std::shared_ptr<Scene>
     GetScene() const;
 
     void
-    SetScene(Ref<Scene> scene);
+    SetScene(std::shared_ptr<Scene> scene);
 
     std::string
     GetName() const;

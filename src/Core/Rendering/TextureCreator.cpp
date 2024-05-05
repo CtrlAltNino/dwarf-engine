@@ -14,11 +14,11 @@
 
 namespace Dwarf
 {
-  Ref<Texture>
+  std::shared_ptr<Texture>
   TextureCreator::FromPath(std::filesystem::path const& path)
   {
-    std::string            ext = path.extension().string();
-    Ref<TextureParameters> parameters = GetParameters(path);
+    std::string                        ext = path.extension().string();
+    std::shared_ptr<TextureParameters> parameters = GetParameters(path);
 
     if (ext == ".jpg" || ext == ".jpeg")
       return FromJpeg(path, parameters);
@@ -36,10 +36,11 @@ namespace Dwarf
       return nullptr;
   }
 
-  Ref<TextureParameters>
+  std::shared_ptr<TextureParameters>
   TextureCreator::GetParameters(std::filesystem::path const& path)
   {
-    Ref<TextureParameters> parameters = CreateRef<TextureParameters>();
+    std::shared_ptr<TextureParameters> parameters =
+      std::make_shared<TextureParameters>();
     parameters->WrapR = TextureWrap::REPEAT;
     parameters->WrapS = TextureWrap::REPEAT;
     parameters->WrapT = TextureWrap::REPEAT;
@@ -48,9 +49,9 @@ namespace Dwarf
     return parameters;
   }
 
-  Ref<Texture>
-  TextureCreator::FromPng(std::filesystem::path const& path,
-                          Ref<TextureParameters>       parameters)
+  std::shared_ptr<Texture>
+  TextureCreator::FromPng(std::filesystem::path const&       path,
+                          std::shared_ptr<TextureParameters> parameters)
   {
     spng_ctx* png = spng_ctx_new(0);
     if (!png)
@@ -85,7 +86,8 @@ namespace Dwarf
     spng_decode_image(
       png, imageData, ihdr.width * ihdr.height * 4, SPNG_FMT_RGBA8, 0);
 
-    Ref<TextureContainer> textureData = CreateRef<TextureContainer>();
+    std::shared_ptr<TextureContainer> textureData =
+      std::make_shared<TextureContainer>();
     textureData->Width = ihdr.width;
     textureData->Height = ihdr.height;
     // TODO: Add support for different PNG formats
@@ -98,16 +100,16 @@ namespace Dwarf
     // copy content from data into textureData->ImageData
     textureData->ImageData = imageData;
 
-    Ref<Texture> texture = Texture::Create(textureData, parameters);
+    std::shared_ptr<Texture> texture = Texture::Create(textureData, parameters);
 
     spng_ctx_free(png);
 
     return texture;
   }
 
-  Ref<Texture>
-  TextureCreator::FromJpeg(std::filesystem::path const& path,
-                           Ref<TextureParameters>       parameters)
+  std::shared_ptr<Texture>
+  TextureCreator::FromJpeg(std::filesystem::path const&       path,
+                           std::shared_ptr<TextureParameters> parameters)
   {
     tjhandle jpegDecompressor = tjInitDecompress();
     if (!jpegDecompressor)
@@ -149,7 +151,8 @@ namespace Dwarf
 
     tjDestroy(jpegDecompressor);
 
-    Ref<TextureContainer> data = CreateRef<TextureContainer>();
+    std::shared_ptr<TextureContainer> data =
+      std::make_shared<TextureContainer>();
     data->Width = width;
     data->Height = height;
     data->Format = TextureFormat::RGB;
@@ -160,9 +163,9 @@ namespace Dwarf
     return Texture::Create(data, parameters);
   }
 
-  Ref<Texture>
-  TextureCreator::FromTga(std::filesystem::path const& path,
-                          Ref<TextureParameters>       parameters)
+  std::shared_ptr<Texture>
+  TextureCreator::FromTga(std::filesystem::path const&       path,
+                          std::shared_ptr<TextureParameters> parameters)
   {
     // TODO: Remove stbi
     int      width;
@@ -171,7 +174,8 @@ namespace Dwarf
     stbi_uc* data =
       stbi_load(path.string().c_str(), &width, &height, &channels, 0);
 
-    Ref<TextureContainer> textureData = CreateRef<TextureContainer>();
+    std::shared_ptr<TextureContainer> textureData =
+      std::make_shared<TextureContainer>();
     textureData->Width = width;
     textureData->Height = height;
     textureData->Format =
@@ -185,9 +189,9 @@ namespace Dwarf
     return Texture::Create(textureData, parameters);
   }
 
-  Ref<Texture>
-  TextureCreator::FromHdr(std::filesystem::path const& path,
-                          Ref<TextureParameters>       parameters)
+  std::shared_ptr<Texture>
+  TextureCreator::FromHdr(std::filesystem::path const&       path,
+                          std::shared_ptr<TextureParameters> parameters)
   {
     // int      width;
     // int      height;
@@ -199,8 +203,8 @@ namespace Dwarf
     // //     std::vector<unsigned char>(data, data + width * height *
     // channels);
 
-    // Ref<TextureContainer> textureData = CreateRef<TextureContainer>();
-    // textureData->Width = width;
+    // std::shared_ptr<TextureContainer> textureData =
+    // std::make_shared<TextureContainer>(); textureData->Width = width;
     // textureData->Height = height;
     // textureData->Format = TextureFormat::RGBA;
     // textureData->Type = TextureType::TEXTURE_2D;
@@ -213,9 +217,9 @@ namespace Dwarf
     return nullptr;
   }
 
-  Ref<Texture>
-  TextureCreator::FromTiff(std::filesystem::path const& path,
-                           Ref<TextureParameters>       parameters)
+  std::shared_ptr<Texture>
+  TextureCreator::FromTiff(std::filesystem::path const&       path,
+                           std::shared_ptr<TextureParameters> parameters)
   {
     // TODO: Remove stbi
     int      width;
@@ -224,7 +228,8 @@ namespace Dwarf
     stbi_uc* data =
       stbi_load(path.string().c_str(), &width, &height, &channels, 0);
 
-    Ref<TextureContainer> textureData = CreateRef<TextureContainer>();
+    std::shared_ptr<TextureContainer> textureData =
+      std::make_shared<TextureContainer>();
     textureData->Width = width;
     textureData->Height = height;
     textureData->Format =
@@ -238,9 +243,9 @@ namespace Dwarf
     return Texture::Create(textureData, parameters);
   }
 
-  Ref<Texture>
-  TextureCreator::FromBmp(std::filesystem::path const& path,
-                          Ref<TextureParameters>       parameters)
+  std::shared_ptr<Texture>
+  TextureCreator::FromBmp(std::filesystem::path const&       path,
+                          std::shared_ptr<TextureParameters> parameters)
   {
     // TODO: Remove stbi
     int      width;
@@ -249,7 +254,8 @@ namespace Dwarf
     stbi_uc* data =
       stbi_load(path.string().c_str(), &width, &height, &channels, 0);
 
-    Ref<TextureContainer> textureData = CreateRef<TextureContainer>();
+    std::shared_ptr<TextureContainer> textureData =
+      std::make_shared<TextureContainer>();
     textureData->Width = width;
     textureData->Height = height;
     textureData->Format =
@@ -263,12 +269,13 @@ namespace Dwarf
     return Texture::Create(textureData, parameters);
   }
 
-  Ref<Texture>
+  std::shared_ptr<Texture>
   TextureCreator::FromData(TextureParameters const& parameters,
                            glm::ivec2               size,
                            void*                    data)
   {
-    Ref<TextureContainer> textureData = CreateRef<TextureContainer>();
+    std::shared_ptr<TextureContainer> textureData =
+      std::make_shared<TextureContainer>();
     textureData->Width = size.x;
     textureData->Height = size.y;
     textureData->Format = TextureFormat::RGBA;
@@ -277,13 +284,14 @@ namespace Dwarf
     textureData->ImageData = (unsigned char*)data;
 
     return Texture::Create(textureData,
-                           CreateRef<TextureParameters>(parameters));
+                           std::make_shared<TextureParameters>(parameters));
   }
 
-  Ref<Texture>
+  std::shared_ptr<Texture>
   TextureCreator::Empty(glm::ivec2 size)
   {
-    Ref<TextureContainer> textureData = CreateRef<TextureContainer>();
+    std::shared_ptr<TextureContainer> textureData =
+      std::make_shared<TextureContainer>();
     textureData->Width = size.x;
     textureData->Height = size.y;
     textureData->Format = TextureFormat::RGBA;
@@ -294,12 +302,13 @@ namespace Dwarf
     return Texture::Create(textureData);
   }
 
-  Ref<Texture>
+  std::shared_ptr<Texture>
   TextureCreator::Empty(FramebufferTextureSpecification const& parameters,
                         glm::ivec2                             size,
                         int                                    samples)
   {
-    Ref<TextureContainer> textureData = CreateRef<TextureContainer>();
+    std::shared_ptr<TextureContainer> textureData =
+      std::make_shared<TextureContainer>();
     textureData->Width = size.x;
     textureData->Height = size.y;
     textureData->Format = TextureFormat::RGBA;

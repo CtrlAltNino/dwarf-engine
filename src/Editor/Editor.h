@@ -14,16 +14,16 @@ namespace Dwarf
   class Editor
   {
   private:
-    static Ref<Editor> s_Instance;
+    static std::shared_ptr<Editor> s_Instance;
     /// @brief The MVC model instance of this editor instance.
-    Ref<EditorModel> m_Model;
+    std::shared_ptr<EditorModel> m_Model;
 
     /// @brief The MVC view instance of this editor instance.
-    Ref<EditorView> m_View;
+    std::shared_ptr<EditorView> m_View;
 
-    Ref<Window> m_Window;
+    std::shared_ptr<Window> m_Window;
 
-    Ref<ImGuiLayer> m_ImguiLayer;
+    std::shared_ptr<ImGuiLayer> m_ImguiLayer;
 
     void
     Init(std::filesystem::path const& projectPath);
@@ -32,13 +32,13 @@ namespace Dwarf
     Editor();
     ~Editor();
 
-    static Ref<Editor>
+    static std::shared_ptr<Editor>
     Get()
     {
       return s_Instance;
     }
 
-    Ref<EditorModel>
+    std::shared_ptr<EditorModel>
     GetModel() const
     {
       return m_Model;
@@ -52,6 +52,6 @@ namespace Dwarf
     UpdateWindowTitle() const;
   };
 
-  Ref<Editor>
+  std::shared_ptr<Editor>
   CreateEditor();
 }

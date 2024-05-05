@@ -62,27 +62,27 @@ namespace Dwarf
 
     float m_IconScale = 1.0f;
 
-    Ref<Texture> m_DirectoryIcon;
+    std::shared_ptr<Texture> m_DirectoryIcon;
 
-    Ref<Texture> m_FBXIcon;
-    Ref<Texture> m_OBJIcon;
+    std::shared_ptr<Texture> m_FBXIcon;
+    std::shared_ptr<Texture> m_OBJIcon;
 
-    Ref<Texture> m_JPGIcon;
-    Ref<Texture> m_PNGIcon;
+    std::shared_ptr<Texture> m_JPGIcon;
+    std::shared_ptr<Texture> m_PNGIcon;
 
-    Ref<Texture> m_VertexShaderIcon;
-    Ref<Texture> m_TessellationControlShaderIcon;
-    Ref<Texture> m_TessellationEvaluationShaderIcon;
-    Ref<Texture> m_GeometryShaderIcon;
-    Ref<Texture> m_FragmentShaderIcon;
-    Ref<Texture> m_ComputeShaderIcon;
-    Ref<Texture> m_HLSLShaderIcon;
+    std::shared_ptr<Texture> m_VertexShaderIcon;
+    std::shared_ptr<Texture> m_TessellationControlShaderIcon;
+    std::shared_ptr<Texture> m_TessellationEvaluationShaderIcon;
+    std::shared_ptr<Texture> m_GeometryShaderIcon;
+    std::shared_ptr<Texture> m_FragmentShaderIcon;
+    std::shared_ptr<Texture> m_ComputeShaderIcon;
+    std::shared_ptr<Texture> m_HLSLShaderIcon;
 
-    Ref<Texture> m_SceneIcon;
+    std::shared_ptr<Texture> m_SceneIcon;
 
-    Ref<Texture> m_MaterialIcon;
+    std::shared_ptr<Texture> m_MaterialIcon;
 
-    Ref<Texture> m_UnknownFileIcon;
+    std::shared_ptr<Texture> m_UnknownFileIcon;
 
     bool firstFrame = true;
 
@@ -112,7 +112,7 @@ namespace Dwarf
     RenderFolderContent();
 
   public:
-    AssetBrowserWindow(Ref<EditorModel> model, int id);
+    AssetBrowserWindow(std::shared_ptr<EditorModel> model, int id);
 
     /// @brief Renders the module window.
     void

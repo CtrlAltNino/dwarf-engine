@@ -12,27 +12,29 @@
 
 namespace Dwarf
 {
-  Ref<Material> Material::s_DefaultMaterial = nullptr;
-  Ref<Material> Material::s_ErrorMaterial = nullptr;
-  Ref<Material> Material::s_GridMaterial = nullptr;
-  Ref<Material> Material::s_PreviewMaterial = nullptr;
-  Ref<Material> Material::s_IdMaterial = nullptr;
-  Ref<Material> Material::s_WhiteMaterial = nullptr;
+  std::shared_ptr<Material> Material::s_DefaultMaterial = nullptr;
+  std::shared_ptr<Material> Material::s_ErrorMaterial = nullptr;
+  std::shared_ptr<Material> Material::s_GridMaterial = nullptr;
+  std::shared_ptr<Material> Material::s_PreviewMaterial = nullptr;
+  std::shared_ptr<Material> Material::s_IdMaterial = nullptr;
+  std::shared_ptr<Material> Material::s_WhiteMaterial = nullptr;
 
   void
   Material::Init()
   {
     s_DefaultMaterial =
-      CreateRef<Material>("Default Material", Shader::s_DefaultShader);
+      std::make_shared<Material>("Default Material", Shader::s_DefaultShader);
     s_ErrorMaterial =
-      CreateRef<Material>("Error Material", Shader::s_ErrorShader);
-    s_GridMaterial = CreateRef<Material>("grid material", Shader::s_GridShader);
+      std::make_shared<Material>("Error Material", Shader::s_ErrorShader);
+    s_GridMaterial =
+      std::make_shared<Material>("grid material", Shader::s_GridShader);
     s_PreviewMaterial =
-      CreateRef<Material>("preview material", Shader::s_PreviewShader);
-    s_IdMaterial = CreateRef<Material>("id material", Shader::s_IdShader);
+      std::make_shared<Material>("preview material", Shader::s_PreviewShader);
+    s_IdMaterial =
+      std::make_shared<Material>("id material", Shader::s_IdShader);
     s_IdMaterial->GenerateShaderParameters();
     s_WhiteMaterial =
-      CreateRef<Material>("outline material", Shader::s_WhiteShader);
+      std::make_shared<Material>("outline material", Shader::s_WhiteShader);
     s_GridMaterial->SetTransparency(true);
   }
 
@@ -42,7 +44,7 @@ namespace Dwarf
     m_Shader = Shader::s_DefaultShader;
   }
 
-  Material::Material(std::string_view name, Ref<Shader> shader)
+  Material::Material(std::string_view name, std::shared_ptr<Shader> shader)
     : m_Name(name)
     , m_Shader(shader)
   {
@@ -57,12 +59,12 @@ namespace Dwarf
   }
 
   void
-  Material::SetShader(Ref<Shader> shader)
+  Material::SetShader(std::shared_ptr<Shader> shader)
   {
     m_Shader = shader;
   }
 
-  Ref<Shader> const&
+  std::shared_ptr<Shader> const&
   Material::GetShader() const
   {
     return m_Shader;
@@ -103,7 +105,7 @@ namespace Dwarf
     else
     {
       m_Parameters[std::string(identifier)] =
-        CreateRef<BooleanShaderParameter>(value);
+        std::make_shared<BooleanShaderParameter>(value);
     }
   }
 
@@ -122,7 +124,7 @@ namespace Dwarf
     else
     {
       m_Parameters[std::string(identifier)] =
-        CreateRef<IntegerShaderParameter>(value);
+        std::make_shared<IntegerShaderParameter>(value);
     }
   }
 
@@ -142,7 +144,7 @@ namespace Dwarf
     else
     {
       m_Parameters[std::string(identifier)] =
-        CreateRef<UnsignedIntegerShaderParameter>(value);
+        std::make_shared<UnsignedIntegerShaderParameter>(value);
     }
   }
 
@@ -161,7 +163,7 @@ namespace Dwarf
     else
     {
       m_Parameters[std::string(identifier)] =
-        CreateRef<FloatShaderParameter>(value);
+        std::make_shared<FloatShaderParameter>(value);
     }
   }
 
@@ -181,7 +183,7 @@ namespace Dwarf
     else
     {
       m_Parameters[std::string(identifier)] =
-        CreateRef<Vec2ShaderParameter>(value);
+        std::make_shared<Vec2ShaderParameter>(value);
     }
   }
 
@@ -201,7 +203,7 @@ namespace Dwarf
     else
     {
       m_Parameters[std::string(identifier)] =
-        CreateRef<Vec3ShaderParameter>(value);
+        std::make_shared<Vec3ShaderParameter>(value);
     }
   }
 
@@ -221,14 +223,14 @@ namespace Dwarf
     else
     {
       m_Parameters[std::string(identifier)] =
-        CreateRef<Vec4ShaderParameter>(value);
+        std::make_shared<Vec4ShaderParameter>(value);
     }
   }
 
   void
-  Material::SetParameter(std::string_view    identifier,
-                         Ref<UID>            value,
-                         ShaderParameterType type)
+  Material::SetParameter(std::string_view     identifier,
+                         std::shared_ptr<UID> value,
+                         ShaderParameterType  type)
   {
     if (m_Parameters.contains(identifier) &&
         (m_Parameters[std::string(identifier)]->GetType() == type))
@@ -257,7 +259,7 @@ namespace Dwarf
         using enum ShaderParameterType;
         case TEX2D:
           m_Parameters[std::string(identifier)] =
-            CreateRef<Tex2DShaderParameter>(value);
+            std::make_shared<Tex2DShaderParameter>(value);
           break;
         case BOOLEAN: break;
         case INTEGER: break;

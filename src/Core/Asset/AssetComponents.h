@@ -17,7 +17,7 @@ namespace Dwarf
   struct ModelAsset
   {
     /// @brief Vector of submeshes.
-    std::vector<Ref<Mesh>> m_Meshes;
+    std::vector<std::shared_ptr<Mesh>> m_Meshes;
 
     explicit ModelAsset(std::filesystem::path const& path)
       : m_Meshes(ModelImporter::Import(path))
@@ -37,7 +37,7 @@ namespace Dwarf
   struct MaterialAsset
   {
     /// @brief Imported material.
-    Ref<Material> m_Material;
+    std::shared_ptr<Material> m_Material;
 
     explicit MaterialAsset(std::filesystem::path const& path)
     {
@@ -149,7 +149,7 @@ namespace Dwarf
   struct TextureAsset
   {
     /// @brief Imported texture.
-    Ref<Texture> m_Texture;
+    std::shared_ptr<Texture> m_Texture;
 
     explicit TextureAsset(std::filesystem::path const& path)
       : m_Texture(TextureCreator::FromPath(path))
@@ -158,7 +158,7 @@ namespace Dwarf
 
     /// @brief Retrieves the texture.
     /// @return The imported texture instance.
-    Ref<Texture>
+    std::shared_ptr<Texture>
     Get() const
     {
       return m_Texture;

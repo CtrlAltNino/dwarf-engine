@@ -14,14 +14,15 @@ namespace Dwarf
   ForwardRenderer::~ForwardRenderer() = default;
 
   void
-  ForwardRenderer::RenderEntity(Entity&       entity,
-                                glm::mat4     viewMatrix,
-                                glm::mat4     projectionMatrix,
-                                Ref<Material> overrideMaterial = nullptr)
+  ForwardRenderer::RenderEntity(
+    Entity&                   entity,
+    glm::mat4                 viewMatrix,
+    glm::mat4                 projectionMatrix,
+    std::shared_ptr<Material> overrideMaterial = nullptr)
   {
-    auto&           transform = entity.GetComponent<TransformComponent>();
-    auto&           meshRenderer = entity.GetComponent<MeshRendererComponent>();
-    Ref<ModelAsset> model =
+    auto& transform = entity.GetComponent<TransformComponent>();
+    auto& meshRenderer = entity.GetComponent<MeshRendererComponent>();
+    std::shared_ptr<ModelAsset> model =
       AssetDatabase::Retrieve<ModelAsset>(meshRenderer.meshAsset)->GetAsset();
     glm::mat4 modelMatrix = transform.getModelMatrix();
 
@@ -35,7 +36,7 @@ namespace Dwarf
             AssetDatabase::Exists(meshRenderer.materialAssets.at(
               model->m_Meshes.at(i)->GetMaterialIndex() - 1)))
         {
-          Ref<Material> material =
+          std::shared_ptr<Material> material =
             overrideMaterial != nullptr
               ? overrideMaterial
               : AssetDatabase::Retrieve<MaterialAsset>(
@@ -66,10 +67,10 @@ namespace Dwarf
   }
 
   void
-  ForwardRenderer::RenderScene(Ref<Scene>  scene,
-                               Ref<Camera> camera,
-                               glm::ivec2  viewportSize,
-                               bool        renderGrid)
+  ForwardRenderer::RenderScene(std::shared_ptr<Scene>  scene,
+                               std::shared_ptr<Camera> camera,
+                               glm::ivec2              viewportSize,
+                               bool                    renderGrid)
   {
     m_RendererApi->SetClearColor(glm::vec4(0.065f, 0.07f, 0.085, 1.0f));
     m_RendererApi->Clear();
@@ -102,9 +103,9 @@ namespace Dwarf
   }
 
   void
-  ForwardRenderer::RenderIds(Ref<Scene>  scene,
-                             Ref<Camera> camera,
-                             glm::ivec2  viewportSize)
+  ForwardRenderer::RenderIds(std::shared_ptr<Scene>  scene,
+                             std::shared_ptr<Camera> camera,
+                             glm::ivec2              viewportSize)
   {
     m_RendererApi->Clear(0);
 
@@ -116,7 +117,7 @@ namespace Dwarf
     {
       if (meshRenderer.meshAsset != nullptr)
       {
-        Ref<ModelAsset> model =
+        std::shared_ptr<ModelAsset> model =
           AssetDatabase::Retrieve<ModelAsset>(meshRenderer.meshAsset)
             ->GetAsset();
         glm::mat4    modelMatrix = transform.getModelMatrix();
@@ -137,10 +138,10 @@ namespace Dwarf
 
   void
   ForwardRenderer::RenderModelPreview(
-    Ref<AssetReference<ModelAsset>> modelAsset,
-    Ref<Camera>                     camera,
-    glm::ivec2                      viewportSize,
-    glm::quat                       rotation)
+    std::shared_ptr<AssetReference<ModelAsset>> modelAsset,
+    std::shared_ptr<Camera>                     camera,
+    glm::ivec2                                  viewportSize,
+    glm::quat                                   rotation)
   {
     m_RendererApi->SetClearColor({ 59 / 255.0f, 66 / 255.0f, 82 / 255.0f, 1 });
     m_RendererApi->Clear();
@@ -158,10 +159,10 @@ namespace Dwarf
 
   void
   ForwardRenderer::RenderMaterialPreview(
-    Ref<AssetReference<MaterialAsset>> materialAsset,
-    Ref<Camera>                        camera,
-    glm::ivec2                         viewportSize,
-    glm::quat                          rotation)
+    std::shared_ptr<AssetReference<MaterialAsset>> materialAsset,
+    std::shared_ptr<Camera>                        camera,
+    glm::ivec2                                     viewportSize,
+    glm::quat                                      rotation)
   {
     m_RendererApi->SetClearColor({ 59 / 255.0f, 66 / 255.0f, 82 / 255.0f, 1 });
     m_RendererApi->Clear();
@@ -174,7 +175,7 @@ namespace Dwarf
                                  camera->GetProjectionMatrix());
   }
 
-  Ref<Framebuffer>
+  std::shared_ptr<Framebuffer>
   ForwardRenderer::CreateFramebuffer(glm::ivec2 resolution)
   {
     FramebufferSpecification fbSpec;
@@ -188,7 +189,7 @@ namespace Dwarf
     return Framebuffer::Create(fbSpec);
   }
 
-  Ref<Framebuffer>
+  std::shared_ptr<Framebuffer>
   ForwardRenderer::CreateIDFramebuffer(glm::ivec2 resolution)
   {
     FramebufferSpecification fbSpec;

@@ -9,40 +9,41 @@ namespace Dwarf
   class ForwardRenderer : public Renderer
   {
   private:
-    Ref<RendererApi> m_RendererApi;
+    std::shared_ptr<RendererApi> m_RendererApi;
 
   public:
     ForwardRenderer();
     virtual ~ForwardRenderer();
     void
-    RenderEntity(Entity&       entity,
-                 glm::mat4     viewMatrix,
-                 glm::mat4     projectionMatrix,
-                 Ref<Material> overrideMaterial) override;
+    RenderEntity(Entity&                   entity,
+                 glm::mat4                 viewMatrix,
+                 glm::mat4                 projectionMatrix,
+                 std::shared_ptr<Material> overrideMaterial) override;
     void
-    RenderScene(Ref<Scene>  scene,
-                Ref<Camera> camera,
-                glm::ivec2  viewportSize,
-                bool        renderGrid) override;
+    RenderScene(std::shared_ptr<Scene>  scene,
+                std::shared_ptr<Camera> camera,
+                glm::ivec2              viewportSize,
+                bool                    renderGrid) override;
     void
-    RenderIds(Ref<Scene>  scene,
-              Ref<Camera> camera,
-              glm::ivec2  viewportSize) override;
+    RenderIds(std::shared_ptr<Scene>  scene,
+              std::shared_ptr<Camera> camera,
+              glm::ivec2              viewportSize) override;
     void
-    RenderModelPreview(Ref<AssetReference<ModelAsset>> modelAsset,
-                       Ref<Camera>                     camera,
-                       glm::ivec2                      viewportSize,
-                       glm::quat                       rotation) override;
+    RenderModelPreview(std::shared_ptr<AssetReference<ModelAsset>> modelAsset,
+                       std::shared_ptr<Camera>                     camera,
+                       glm::ivec2                                  viewportSize,
+                       glm::quat rotation) override;
     void
-    RenderMaterialPreview(Ref<AssetReference<MaterialAsset>> materialAsset,
-                          Ref<Camera>                        camera,
-                          glm::ivec2                         viewportSize,
-                          glm::quat                          rotation) override;
-    Ref<Framebuffer>
+    RenderMaterialPreview(
+      std::shared_ptr<AssetReference<MaterialAsset>> materialAsset,
+      std::shared_ptr<Camera>                        camera,
+      glm::ivec2                                     viewportSize,
+      glm::quat                                      rotation) override;
+    std::shared_ptr<Framebuffer>
     CreateFramebuffer(glm::ivec2 resolution) override;
-    Ref<Framebuffer>
+    std::shared_ptr<Framebuffer>
     CreateIDFramebuffer(glm::ivec2 resolution) override;
-    Ref<RendererApi>
+    std::shared_ptr<RendererApi>
     GetRendererApi() override
     {
       return m_RendererApi;

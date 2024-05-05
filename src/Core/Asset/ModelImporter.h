@@ -19,7 +19,7 @@ namespace Dwarf
     // @brief Imports a model.
     /// @param path Path to the model.
     /// @return List of the imported meshes of a model.
-    static std::vector<Ref<Mesh>>
+    static std::vector<std::shared_ptr<Mesh>>
     Import(std::filesystem::path const& path)
     {
       nlohmann::json metaData = AssetMetaData::GetMetaData(path);
@@ -33,17 +33,17 @@ namespace Dwarf
       {
         std::cout << "ERROR::ASSIMP::" << importer.GetErrorString()
                   << std::endl;
-        return std::vector<Ref<Mesh>>();
+        return std::vector<std::shared_ptr<Mesh>>();
       }
 
       return ModelImporter::ProcessNode(scene->mRootNode, scene);
     }
 
   private:
-    static std::vector<Ref<Mesh>>
+    static std::vector<std::shared_ptr<Mesh>>
     ProcessNode(const aiNode* node, const aiScene* scene)
     {
-      std::vector<Ref<Mesh>> meshes;
+      std::vector<std::shared_ptr<Mesh>> meshes;
 
       // process all the node's meshes (if any)
       for (unsigned int i = 0; i < node->mNumMeshes; i++)
@@ -54,8 +54,8 @@ namespace Dwarf
       // then do the same for each of its children
       for (unsigned int i = 0; i < node->mNumChildren; i++)
       {
-        std::vector<Ref<Mesh>> joinedMeshes;
-        std::vector<Ref<Mesh>> recursedMeshes =
+        std::vector<std::shared_ptr<Mesh>> joinedMeshes;
+        std::vector<std::shared_ptr<Mesh>> recursedMeshes =
           ModelImporter::ProcessNode(node->mChildren[i], scene);
         joinedMeshes.reserve(meshes.size() +
                              meshes.size()); // preallocate memory
@@ -68,7 +68,7 @@ namespace Dwarf
       return meshes;
     }
 
-    static Ref<Mesh>
+    static std::shared_ptr<Mesh>
     ProcessMesh(const aiMesh* mesh, const aiScene* scene)
     {
       std::vector<Vertex>       vertices;

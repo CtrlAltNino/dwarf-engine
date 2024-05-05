@@ -19,7 +19,7 @@ namespace Dwarf
   private:
     /// @brief The transform of the camera, representing its position and
     /// rotation.
-    Ref<TransformComponent> m_Transform;
+    std::shared_ptr<TransformComponent> m_Transform;
 
     /// @brief The camera's field of view expressed in degrees.
     float m_Fov = 90.0f;
@@ -76,7 +76,7 @@ namespace Dwarf
     glm::mat4x4
     GetProjectionMatrix() const;
 
-    Ref<TransformComponent>
+    std::shared_ptr<TransformComponent>
     GetTransform() const;
 
     // ========== Setters ==========
@@ -84,7 +84,7 @@ namespace Dwarf
     /// @brief Sets the transform of the camera.
     /// @param transform Pointer to a transform.
     void
-    SetTransform(Ref<TransformComponent> transform);
+    SetTransform(std::shared_ptr<TransformComponent> transform);
 
     /// @brief Sets the field of view of the camera.
     /// @param fov Field of view expressed in degrees.

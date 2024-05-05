@@ -26,10 +26,10 @@
 namespace Dwarf
 {
 
-  Ref<ComputeShader> ComputeShader::s_PropagationShader = nullptr;
-  Ref<ComputeShader> ComputeShader::s_FinalizationShader = nullptr;
+  std::shared_ptr<ComputeShader> ComputeShader::s_PropagationShader = nullptr;
+  std::shared_ptr<ComputeShader> ComputeShader::s_FinalizationShader = nullptr;
 
-  Ref<ComputeShader>
+  std::shared_ptr<ComputeShader>
   ComputeShader::Create()
   {
     switch (Renderer::GetAPI())
@@ -38,17 +38,17 @@ namespace Dwarf
 #ifdef _WIN32
       case D3D12: break;
       case Metal: break;
-      case OpenGL: return CreateRef<OpenGLComputeShader>(); break;
+      case OpenGL: return std::make_shared<OpenGLComputeShader>(); break;
       case Vulkan: break;
 #elif __linux__
       case D3D12: break;
       case Metal: break;
-      case OpenGL: return CreateRef<OpenGLComputeShader>(); break;
+      case OpenGL: return std::make_shared<OpenGLComputeShader>(); break;
       case Vulkan: break;
 #elif __APPLE__
       case D3D12: break;
       case Metal:
-        // return CreateRef<MetalShader>();
+        // return std::make_shared<MetalShader>();
         break;
       case OpenGL: break;
       case Vulkan: break;
@@ -122,19 +122,19 @@ namespace Dwarf
     s_FinalizationShader->Compile();
   }
 
-  Ref<IShaderParameter>
+  std::shared_ptr<IShaderParameter>
   ComputeShader::CreateComputeShaderParameter(ShaderParameterType type)
   {
     switch (type)
     {
       using enum ShaderParameterType;
-      case BOOLEAN: return CreateRef<BooleanShaderParameter>(); break;
-      case INTEGER: return CreateRef<IntegerShaderParameter>(); break;
-      case FLOAT: return CreateRef<FloatShaderParameter>(); break;
-      case VEC2: return CreateRef<Vec2ShaderParameter>(); break;
-      case VEC3: return CreateRef<Vec3ShaderParameter>(); break;
-      case VEC4: return CreateRef<Vec4ShaderParameter>(); break;
-      case TEX2D: return CreateRef<Tex2DShaderParameter>(); break;
+      case BOOLEAN: return std::make_shared<BooleanShaderParameter>(); break;
+      case INTEGER: return std::make_shared<IntegerShaderParameter>(); break;
+      case FLOAT: return std::make_shared<FloatShaderParameter>(); break;
+      case VEC2: return std::make_shared<Vec2ShaderParameter>(); break;
+      case VEC3: return std::make_shared<Vec3ShaderParameter>(); break;
+      case VEC4: return std::make_shared<Vec4ShaderParameter>(); break;
+      case TEX2D: return std::make_shared<Tex2DShaderParameter>(); break;
       default: return nullptr;
     }
   }
@@ -154,7 +154,7 @@ namespace Dwarf
     else
     {
       m_Parameters[std::string(identifier)] =
-        CreateRef<BooleanShaderParameter>(value);
+        std::make_shared<BooleanShaderParameter>(value);
     }
   }
 
@@ -173,7 +173,7 @@ namespace Dwarf
     else
     {
       m_Parameters[std::string(identifier)] =
-        CreateRef<IntegerShaderParameter>(value);
+        std::make_shared<IntegerShaderParameter>(value);
     }
   }
 
@@ -193,7 +193,7 @@ namespace Dwarf
     else
     {
       m_Parameters[std::string(identifier)] =
-        CreateRef<UnsignedIntegerShaderParameter>(value);
+        std::make_shared<UnsignedIntegerShaderParameter>(value);
     }
   }
 
@@ -212,7 +212,7 @@ namespace Dwarf
     else
     {
       m_Parameters[std::string(identifier)] =
-        CreateRef<FloatShaderParameter>(value);
+        std::make_shared<FloatShaderParameter>(value);
     }
   }
 
@@ -232,7 +232,7 @@ namespace Dwarf
     else
     {
       m_Parameters[std::string(identifier)] =
-        CreateRef<Vec2ShaderParameter>(value);
+        std::make_shared<Vec2ShaderParameter>(value);
     }
   }
 
@@ -252,7 +252,7 @@ namespace Dwarf
     else
     {
       m_Parameters[std::string(identifier)] =
-        CreateRef<Vec3ShaderParameter>(value);
+        std::make_shared<Vec3ShaderParameter>(value);
     }
   }
 
@@ -272,14 +272,14 @@ namespace Dwarf
     else
     {
       m_Parameters[std::string(identifier)] =
-        CreateRef<Vec4ShaderParameter>(value);
+        std::make_shared<Vec4ShaderParameter>(value);
     }
   }
 
   void
-  ComputeShader::SetParameter(std::string_view    identifier,
-                              Ref<UID>            value,
-                              ShaderParameterType type)
+  ComputeShader::SetParameter(std::string_view     identifier,
+                              std::shared_ptr<UID> value,
+                              ShaderParameterType  type)
   {
     if (m_Parameters.contains(identifier) &&
         (m_Parameters[std::string(identifier)]->GetType() == type))
@@ -308,7 +308,7 @@ namespace Dwarf
         using enum ShaderParameterType;
         case TEX2D:
           m_Parameters[std::string(identifier)] =
-            CreateRef<Tex2DShaderParameter>(value);
+            std::make_shared<Tex2DShaderParameter>(value);
           break;
         case BOOLEAN: break;
         case INTEGER: break;

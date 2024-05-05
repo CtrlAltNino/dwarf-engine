@@ -32,49 +32,50 @@ namespace Dwarf
     GetType();
     static void
     Create(GraphicsApi api, Renderer::RendererType type);
-    static Ref<Renderer>
+    static std::shared_ptr<Renderer>
     Get()
     {
       return s_Renderer;
     }
     // TODO: Maybe pass framebuffer?
     virtual void
-    RenderEntity(Entity&       entity,
-                 glm::mat4     viewMatrix,
-                 glm::mat4     projectionMatrix,
-                 Ref<Material> overrideMaterial = nullptr) = 0;
+    RenderEntity(Entity&                   entity,
+                 glm::mat4                 viewMatrix,
+                 glm::mat4                 projectionMatrix,
+                 std::shared_ptr<Material> overrideMaterial = nullptr) = 0;
     virtual void
-    RenderScene(Ref<Scene>  scene,
-                Ref<Camera> camera,
-                glm::ivec2  viewportSize,
-                bool        renderGrid) = 0;
+    RenderScene(std::shared_ptr<Scene>  scene,
+                std::shared_ptr<Camera> camera,
+                glm::ivec2              viewportSize,
+                bool                    renderGrid) = 0;
     virtual void
-    RenderIds(Ref<Scene>  scene,
-              Ref<Camera> camera,
-              glm::ivec2  viewportSize) = 0;
+    RenderIds(std::shared_ptr<Scene>  scene,
+              std::shared_ptr<Camera> camera,
+              glm::ivec2              viewportSize) = 0;
 
     virtual void
-    RenderModelPreview(Ref<AssetReference<ModelAsset>> modelAsset,
-                       Ref<Camera>                     camera,
-                       glm::ivec2                      viewportSize,
-                       glm::quat                       rotation) = 0;
+    RenderModelPreview(std::shared_ptr<AssetReference<ModelAsset>> modelAsset,
+                       std::shared_ptr<Camera>                     camera,
+                       glm::ivec2                                  viewportSize,
+                       glm::quat rotation) = 0;
     virtual void
-    RenderMaterialPreview(Ref<AssetReference<MaterialAsset>> materialAsset,
-                          Ref<Camera>                        camera,
-                          glm::ivec2                         viewportSize,
-                          glm::quat                          rotation) = 0;
+    RenderMaterialPreview(
+      std::shared_ptr<AssetReference<MaterialAsset>> materialAsset,
+      std::shared_ptr<Camera>                        camera,
+      glm::ivec2                                     viewportSize,
+      glm::quat                                      rotation) = 0;
 
-    virtual Ref<Framebuffer>
+    virtual std::shared_ptr<Framebuffer>
     CreateFramebuffer(glm::ivec2 resolution) = 0;
-    virtual Ref<Framebuffer>
+    virtual std::shared_ptr<Framebuffer>
     CreateIDFramebuffer(glm::ivec2 resolution) = 0;
 
-    virtual Ref<RendererApi>
+    virtual std::shared_ptr<RendererApi>
     GetRendererApi() = 0;
 
   private:
-    static GraphicsApi   s_Api;
-    static RendererType  s_RendererType;
-    static Ref<Renderer> s_Renderer;
+    static GraphicsApi               s_Api;
+    static RendererType              s_RendererType;
+    static std::shared_ptr<Renderer> s_Renderer;
   };
 }

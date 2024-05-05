@@ -17,7 +17,7 @@ namespace Dwarf
   {
   private:
     /// @brief Pointer to the currently opened scene instance.
-    Ref<Scene> m_Scene;
+    std::shared_ptr<Scene> m_Scene;
 
     /// @brief Renders the components of an entity.
     /// @param entity Entity to render in the inspector.
@@ -35,7 +35,7 @@ namespace Dwarf
     RenderComponent(T& component);
 
   public:
-    InspectorWindow(Ref<EditorModel> listener, int id);
+    InspectorWindow(std::shared_ptr<EditorModel> listener, int id);
 
     /// @brief Renders the module window.
     void

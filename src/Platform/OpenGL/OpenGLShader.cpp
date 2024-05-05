@@ -53,7 +53,7 @@ namespace Dwarf
       vertexShaderSource = FileHandler::ReadFile(vertexShaderPath);
       // TODO: This needs to move somewhere else
       AssetDatabase::AddShaderWatch(vertexShaderPath,
-                                    CreateRef<OpenGLShader>(*this));
+                                    std::make_shared<OpenGLShader>(*this));
     }
     else
     {
@@ -102,7 +102,7 @@ namespace Dwarf
                                 ->GetAsset()
                                 ->m_Path);
       AssetDatabase::AddShaderWatch(fragmentShaderPath,
-                                    CreateRef<OpenGLShader>(*this));
+                                    std::make_shared<OpenGLShader>(*this));
     }
     else
     {
@@ -214,7 +214,7 @@ namespace Dwarf
   }
 
   void
-  OpenGLShader::SetVertexShader(Ref<UID> vertexShader)
+  OpenGLShader::SetVertexShader(std::shared_ptr<UID> vertexShader)
   {
     m_ShaderAssets.m_VertexShaderAsset = vertexShader;
     m_ShaderSources.m_VertexShaderSource = "";
@@ -228,7 +228,7 @@ namespace Dwarf
   }
 
   void
-  OpenGLShader::SetFragmentShader(Ref<UID> fragmentShader)
+  OpenGLShader::SetFragmentShader(std::shared_ptr<UID> fragmentShader)
   {
     m_ShaderAssets.m_FragmentShaderAsset = fragmentShader;
     m_ShaderSources.m_FragmentShaderSource = "";
@@ -242,7 +242,8 @@ namespace Dwarf
   }
 
   void
-  OpenGLShader::SetTesselaltionControlShader(Ref<UID> tessellationControlShader)
+  OpenGLShader::SetTesselaltionControlShader(
+    std::shared_ptr<UID> tessellationControlShader)
   {
     m_ShaderAssets.m_TessellationControlShaderAsset = tessellationControlShader;
     m_ShaderSources.m_TessellationControlShaderSource = "";
@@ -259,7 +260,7 @@ namespace Dwarf
 
   void
   OpenGLShader::SetTesselaltionEvaluationShader(
-    Ref<UID> tessellationEvaluationShader)
+    std::shared_ptr<UID> tessellationEvaluationShader)
   {
     m_ShaderAssets.m_TessellationEvaluationShaderAsset =
       tessellationEvaluationShader;
@@ -276,7 +277,7 @@ namespace Dwarf
   }
 
   void
-  OpenGLShader::SetGeometryShader(Ref<UID> geometryShader)
+  OpenGLShader::SetGeometryShader(std::shared_ptr<UID> geometryShader)
   {
     m_ShaderAssets.m_GeometryShaderAsset = geometryShader;
     m_ShaderSources.m_GeometryShaderSource = "";
@@ -289,19 +290,19 @@ namespace Dwarf
     m_ShaderSources.m_GeometryShaderSource = geometryShader;
   }
 
-  Ref<UID>
+  std::shared_ptr<UID>
   OpenGLShader::GetVertexShader() const
   {
     return m_ShaderAssets.m_VertexShaderAsset;
   }
 
-  Ref<UID>
+  std::shared_ptr<UID>
   OpenGLShader::GetFragmentShader() const
   {
     return m_ShaderAssets.m_FragmentShaderAsset;
   }
 
-  Ref<UID>
+  std::shared_ptr<UID>
   OpenGLShader::GetGeometryShader() const
   {
     return m_ShaderAssets.m_GeometryShaderAsset;
@@ -313,10 +314,11 @@ namespace Dwarf
     return m_ID;
   }
 
-  Ref<OpenGLShader>
+  std::shared_ptr<OpenGLShader>
   OpenGLShader::CreateDefaultShader()
   {
-    Ref<OpenGLShader> defaultShader = CreateRef<OpenGLShader>();
+    std::shared_ptr<OpenGLShader> defaultShader =
+      std::make_shared<OpenGLShader>();
     defaultShader->SetVertexShader(
       FileHandler::ReadFile(Shader::GetDefaultShaderPath() / "default.vert"));
     defaultShader->SetFragmentShader(
@@ -325,10 +327,11 @@ namespace Dwarf
     return defaultShader;
   }
 
-  Ref<OpenGLShader>
+  std::shared_ptr<OpenGLShader>
   OpenGLShader::CreateErrorShader()
   {
-    Ref<OpenGLShader> errorShader = CreateRef<OpenGLShader>();
+    std::shared_ptr<OpenGLShader> errorShader =
+      std::make_shared<OpenGLShader>();
     errorShader->SetVertexShader(
       FileHandler::ReadFile(Shader::GetErrorShaderPath() / "error.vert"));
     errorShader->SetFragmentShader(
@@ -337,10 +340,10 @@ namespace Dwarf
     return errorShader;
   }
 
-  Ref<OpenGLShader>
+  std::shared_ptr<OpenGLShader>
   OpenGLShader::CreateGridShader()
   {
-    Ref<OpenGLShader> gridShader = CreateRef<OpenGLShader>();
+    std::shared_ptr<OpenGLShader> gridShader = std::make_shared<OpenGLShader>();
     gridShader->SetVertexShader(
       FileHandler::ReadFile(Shader::GetGridShaderPath() / "grid.vert"));
     gridShader->SetFragmentShader(
@@ -349,10 +352,11 @@ namespace Dwarf
     return gridShader;
   }
 
-  Ref<OpenGLShader>
+  std::shared_ptr<OpenGLShader>
   OpenGLShader::CreatePreviewShader()
   {
-    Ref<OpenGLShader> previewShader = CreateRef<OpenGLShader>();
+    std::shared_ptr<OpenGLShader> previewShader =
+      std::make_shared<OpenGLShader>();
     previewShader->SetVertexShader(
       FileHandler::ReadFile(Shader::GetPreviewShaderPath() / "preview.vert"));
     previewShader->SetFragmentShader(
@@ -361,10 +365,10 @@ namespace Dwarf
     return previewShader;
   }
 
-  Ref<OpenGLShader>
+  std::shared_ptr<OpenGLShader>
   OpenGLShader::CreateIdShader()
   {
-    Ref<OpenGLShader> idShader = CreateRef<OpenGLShader>();
+    std::shared_ptr<OpenGLShader> idShader = std::make_shared<OpenGLShader>();
     idShader->SetVertexShader(
       FileHandler::ReadFile(Shader::GetIdShaderPath() / "id.vert"));
     idShader->SetFragmentShader(
@@ -373,10 +377,11 @@ namespace Dwarf
     return idShader;
   }
 
-  Ref<OpenGLShader>
+  std::shared_ptr<OpenGLShader>
   OpenGLShader::CreateWhiteShader()
   {
-    Ref<OpenGLShader> whiteShader = CreateRef<OpenGLShader>();
+    std::shared_ptr<OpenGLShader> whiteShader =
+      std::make_shared<OpenGLShader>();
     whiteShader->SetVertexShader(
       FileHandler::ReadFile(Shader::GetOutlineShaderPath() / "white.vert"));
     whiteShader->SetFragmentShader(
@@ -385,11 +390,11 @@ namespace Dwarf
     return whiteShader;
   }
 
-  std::map<std::string, Ref<IShaderParameter>, std::less<>>
+  std::map<std::string, std::shared_ptr<IShaderParameter>, std::less<>>
   OpenGLShader::GetParameters()
   {
     auto parameters =
-      std::map<std::string, Ref<IShaderParameter>, std::less<>>();
+      std::map<std::string, std::shared_ptr<IShaderParameter>, std::less<>>();
     GLint i;
     GLint count;
 

@@ -12,7 +12,8 @@ namespace Dwarf
 #define PROJECT_BUTTON_WINDOW_WIDTH (200)
 #define PROJECT_INFORMATION_HEIGHT (30)
 
-  ProjectLauncherView::ProjectLauncherView(Ref<ProjectLauncherModel> model)
+  ProjectLauncherView::ProjectLauncherView(
+    std::shared_ptr<ProjectLauncherModel> model)
   {
     this->m_Model = model;
 

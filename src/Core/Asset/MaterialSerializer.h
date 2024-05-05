@@ -14,7 +14,7 @@ namespace Dwarf
     /// Material instance with meta data.
     /// @param path Path to the material.
     /// @return Imported material instance.
-    static Ref<Material>
+    static std::shared_ptr<Material>
     Deserialize(std::filesystem::path const& path);
 
     /// @brief Exports a material.

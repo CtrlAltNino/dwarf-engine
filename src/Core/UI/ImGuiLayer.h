@@ -28,7 +28,7 @@ namespace Dwarf
     virtual void
     HandleSDLEvent(SDL_Event* event) = 0;
 
-    static Ref<ImGuiLayer>
+    static std::shared_ptr<ImGuiLayer>
     Create(GraphicsApi api);
   };
 }

@@ -18,20 +18,21 @@ namespace Dwarf
     entt::entity m_AssetHandle;
 
     /// @brief Pointer to the holder of the ECS registry.
-    Ref<entt::registry> m_Registry;
+    std::shared_ptr<entt::registry> m_Registry;
 
   public:
-    AssetReference(entt::entity assetHandle, Ref<entt::registry> registry)
+    AssetReference(entt::entity                    assetHandle,
+                   std::shared_ptr<entt::registry> registry)
       : m_AssetHandle(assetHandle)
       , m_Registry(registry)
     {
     }
 
-    AssetReference(entt::entity          assetHandle,
-                   std::string           assetName,
-                   Ref<entt::registry>   registry,
-                   UID                   uid,
-                   std::filesystem::path assetPath)
+    AssetReference(entt::entity                    assetHandle,
+                   std::string                     assetName,
+                   std::shared_ptr<entt::registry> registry,
+                   UID                             uid,
+                   std::filesystem::path           assetPath)
       : m_AssetHandle(assetHandle)
       , m_Registry(registry)
     {
@@ -58,7 +59,7 @@ namespace Dwarf
 
     /// @brief Returns the UID of the asset.
     /// @return The UID.
-    Ref<UID>
+    std::shared_ptr<UID>
     GetUID() const
     {
       return m_Registry->get<IDComponent>(m_AssetHandle).ID;
@@ -73,10 +74,10 @@ namespace Dwarf
     /// @brief Retrieves the asset component of the asset, containing the actual
     /// payload.
     /// @return The asset component.
-    Ref<T>
+    std::shared_ptr<T>
     GetAsset()
     {
-      return CreateRef<T>(m_Registry->get<T>(m_AssetHandle));
+      return std::make_shared<T>(m_Registry->get<T>(m_AssetHandle));
     }
   };
 }

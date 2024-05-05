@@ -12,13 +12,13 @@ namespace Dwarf
 
   // ========== Constructors ==========
   Camera::Camera()
-    : m_Transform(CreateRef<TransformComponent>(DEFAULT_CAMERA_POSITION,
-                                                DEFAULT_CAMERA_ROTATION))
+    : m_Transform(std::make_shared<TransformComponent>(DEFAULT_CAMERA_POSITION,
+                                                       DEFAULT_CAMERA_ROTATION))
   {
   }
 
   Camera::Camera(glm::vec3 position, glm::vec3 rotation)
-    : m_Transform(CreateRef<TransformComponent>(position, rotation))
+    : m_Transform(std::make_shared<TransformComponent>(position, rotation))
   {
   }
 
@@ -28,7 +28,7 @@ namespace Dwarf
                  float     nearPlane,
                  float     farPlane,
                  float     aspectRatio)
-    : m_Transform(CreateRef<TransformComponent>(position, rotation))
+    : m_Transform(std::make_shared<TransformComponent>(position, rotation))
     , m_Fov(fov)
     , m_NearPlane(nearPlane)
     , m_FarPlane(farPlane)
@@ -76,7 +76,7 @@ namespace Dwarf
       glm::radians(m_Fov), m_AspectRatio, m_NearPlane, m_FarPlane);
   }
 
-  Ref<TransformComponent>
+  std::shared_ptr<TransformComponent>
   Camera::GetTransform() const
   {
     return m_Transform;
@@ -85,7 +85,7 @@ namespace Dwarf
   // ========== Setters ==========
 
   void
-  Camera::SetTransform(Ref<TransformComponent> transform)
+  Camera::SetTransform(std::shared_ptr<TransformComponent> transform)
   {
     m_Transform = transform;
   }

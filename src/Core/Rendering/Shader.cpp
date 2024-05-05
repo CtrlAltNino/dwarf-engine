@@ -26,14 +26,14 @@
 namespace Dwarf
 {
 
-  Ref<Shader> Shader::s_DefaultShader = nullptr;
-  Ref<Shader> Shader::s_ErrorShader = nullptr;
-  Ref<Shader> Shader::s_GridShader = nullptr;
-  Ref<Shader> Shader::s_PreviewShader = nullptr;
-  Ref<Shader> Shader::s_IdShader = nullptr;
-  Ref<Shader> Shader::s_WhiteShader = nullptr;
+  std::shared_ptr<Shader> Shader::s_DefaultShader = nullptr;
+  std::shared_ptr<Shader> Shader::s_ErrorShader = nullptr;
+  std::shared_ptr<Shader> Shader::s_GridShader = nullptr;
+  std::shared_ptr<Shader> Shader::s_PreviewShader = nullptr;
+  std::shared_ptr<Shader> Shader::s_IdShader = nullptr;
+  std::shared_ptr<Shader> Shader::s_WhiteShader = nullptr;
 
-  Ref<Shader>
+  std::shared_ptr<Shader>
   Shader::Create()
   {
     switch (Renderer::GetAPI())
@@ -42,17 +42,17 @@ namespace Dwarf
 #ifdef _WIN32
       case D3D12: break;
       case Metal: break;
-      case OpenGL: return CreateRef<OpenGLShader>(); break;
+      case OpenGL: return std::make_shared<OpenGLShader>(); break;
       case Vulkan: break;
 #elif __linux__
       case D3D12: break;
       case Metal: break;
-      case OpenGL: return CreateRef<OpenGLShader>(); break;
+      case OpenGL: return std::make_shared<OpenGLShader>(); break;
       case Vulkan: break;
 #elif __APPLE__
       case D3D12: break;
       case Metal:
-        // return CreateRef<MetalShader>();
+        // return std::make_shared<MetalShader>();
         break;
       case OpenGL: break;
       case Vulkan: break;
@@ -210,22 +210,22 @@ namespace Dwarf
     s_GridShader->Compile();
   }
 
-  Ref<IShaderParameter>
+  std::shared_ptr<IShaderParameter>
   Shader::CreateShaderParameter(ShaderParameterType type)
   {
     switch (type)
     {
       using enum ShaderParameterType;
-      case BOOLEAN: return CreateRef<BooleanShaderParameter>(); break;
-      case INTEGER: return CreateRef<IntegerShaderParameter>(); break;
+      case BOOLEAN: return std::make_shared<BooleanShaderParameter>(); break;
+      case INTEGER: return std::make_shared<IntegerShaderParameter>(); break;
       case UNSIGNED_INTEGER:
-        return CreateRef<UnsignedIntegerShaderParameter>();
+        return std::make_shared<UnsignedIntegerShaderParameter>();
         break;
-      case FLOAT: return CreateRef<FloatShaderParameter>(); break;
-      case VEC2: return CreateRef<Vec2ShaderParameter>(); break;
-      case VEC3: return CreateRef<Vec3ShaderParameter>(); break;
-      case VEC4: return CreateRef<Vec4ShaderParameter>(); break;
-      case TEX2D: return CreateRef<Tex2DShaderParameter>(); break;
+      case FLOAT: return std::make_shared<FloatShaderParameter>(); break;
+      case VEC2: return std::make_shared<Vec2ShaderParameter>(); break;
+      case VEC3: return std::make_shared<Vec3ShaderParameter>(); break;
+      case VEC4: return std::make_shared<Vec4ShaderParameter>(); break;
+      case TEX2D: return std::make_shared<Tex2DShaderParameter>(); break;
       default: return nullptr;
     }
   }

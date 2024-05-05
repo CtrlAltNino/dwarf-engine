@@ -30,11 +30,11 @@ namespace Dwarf
 
   struct ShaderAssets
   {
-    Ref<UID> m_VertexShaderAsset;
-    Ref<UID> m_TessellationControlShaderAsset;
-    Ref<UID> m_TessellationEvaluationShaderAsset;
-    Ref<UID> m_GeometryShaderAsset;
-    Ref<UID> m_FragmentShaderAsset;
+    std::shared_ptr<UID> m_VertexShaderAsset;
+    std::shared_ptr<UID> m_TessellationControlShaderAsset;
+    std::shared_ptr<UID> m_TessellationEvaluationShaderAsset;
+    std::shared_ptr<UID> m_GeometryShaderAsset;
+    std::shared_ptr<UID> m_FragmentShaderAsset;
   };
 
   class OpenGLShader : public Shader
@@ -50,40 +50,42 @@ namespace Dwarf
     ~OpenGLShader() override;
 
     void
-    SetVertexShader(Ref<UID> vertexShader);
+    SetVertexShader(std::shared_ptr<UID> vertexShader);
     void
     SetVertexShader(std::string_view vertexShader);
 
     void
-    SetTesselaltionControlShader(Ref<UID> tessellationControlShader);
+    SetTesselaltionControlShader(
+      std::shared_ptr<UID> tessellationControlShader);
     void
     SetTesselaltionControlShader(std::string_view tessellationControlShader);
 
     void
-    SetTesselaltionEvaluationShader(Ref<UID> tessellationEvaluationShader);
+    SetTesselaltionEvaluationShader(
+      std::shared_ptr<UID> tessellationEvaluationShader);
     void
     SetTesselaltionEvaluationShader(
       std::string_view tessellationEvaluationShader);
 
     void
-    SetGeometryShader(Ref<UID> geometryShader);
+    SetGeometryShader(std::shared_ptr<UID> geometryShader);
     void
     SetGeometryShader(std::string_view geometryShader);
 
     void
-    SetFragmentShader(Ref<UID> fragmentShader);
+    SetFragmentShader(std::shared_ptr<UID> fragmentShader);
     void
     SetFragmentShader(std::string_view fragmentShader);
 
-    Ref<UID>
+    std::shared_ptr<UID>
     GetVertexShader() const;
-    Ref<UID>
+    std::shared_ptr<UID>
     GetFragmentShader() const;
-    Ref<UID>
+    std::shared_ptr<UID>
     GetTesselaltionControlShader() const;
-    Ref<UID>
+    std::shared_ptr<UID>
     GetTesselaltionEvaluationShader() const;
-    Ref<UID>
+    std::shared_ptr<UID>
     GetGeometryShader() const;
 
     GLuint
@@ -92,20 +94,20 @@ namespace Dwarf
     void
     Compile() override;
 
-    std::map<std::string, Ref<IShaderParameter>, std::less<>>
+    std::map<std::string, std::shared_ptr<IShaderParameter>, std::less<>>
     GetParameters() override;
 
-    static Ref<OpenGLShader>
+    static std::shared_ptr<OpenGLShader>
     CreateDefaultShader();
-    static Ref<OpenGLShader>
+    static std::shared_ptr<OpenGLShader>
     CreateErrorShader();
-    static Ref<OpenGLShader>
+    static std::shared_ptr<OpenGLShader>
     CreateGridShader();
-    static Ref<OpenGLShader>
+    static std::shared_ptr<OpenGLShader>
     CreatePreviewShader();
-    static Ref<OpenGLShader>
+    static std::shared_ptr<OpenGLShader>
     CreateIdShader();
-    static Ref<OpenGLShader>
+    static std::shared_ptr<OpenGLShader>
     CreateWhiteShader();
 
     const ShaderLogs&

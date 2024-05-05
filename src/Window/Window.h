@@ -68,7 +68,7 @@ namespace Dwarf
     virtual void
     SetWindowTitle(std::string_view windowTitle) = 0;
 
-    static Ref<Window>
+    static std::shared_ptr<Window>
     Create(const WindowProps& props = WindowProps());
   };
 }

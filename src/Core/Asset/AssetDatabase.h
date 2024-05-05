@@ -41,14 +41,14 @@ namespace Dwarf
     static std::filesystem::path s_AssetFolderPath;
 
     /// @brief Recursive file watcher for the "/Asset" directory.
-    static Ref<efsw::FileWatcher> s_FileWatcher;
+    static std::shared_ptr<efsw::FileWatcher> s_FileWatcher;
 
     /// @brief Watch ID for the EFSW file watcher.
     static efsw::WatchID s_WatchID;
 
-    static std::vector<Ref<Shader>> s_ShaderRecompilationStack;
+    static std::vector<std::shared_ptr<Shader>> s_ShaderRecompilationStack;
 
-    static Ref<AssetDirectoryListener> s_AssetDirectoryListener;
+    static std::shared_ptr<AssetDirectoryListener> s_AssetDirectoryListener;
 
     /// @brief Recursively imports all found assets in a given directory.
     /// @param directory Absolute path to a directory.
@@ -87,9 +87,10 @@ namespace Dwarf
     }
 
   public:
-    static Ref<entt::registry> s_Registry;
+    static std::shared_ptr<entt::registry> s_Registry;
 
-    static std::map<std::filesystem::path, Ref<Shader>> s_ShaderAssetMap;
+    static std::map<std::filesystem::path, std::shared_ptr<Shader>>
+      s_ShaderAssetMap;
 
     static const std::map<std::string, ASSET_TYPE> s_FileAssetAssociation;
 
@@ -103,11 +104,11 @@ namespace Dwarf
 
     /// @brief Imports an asset into the asset database.
     /// @param assetPath Path to the asset.
-    static Ref<UID>
+    static std::shared_ptr<UID>
     Import(std::filesystem::path const& assetPath);
 
     static bool
-    Exists(Ref<UID> uid);
+    Exists(std::shared_ptr<UID> uid);
     static bool
     Exists(std::filesystem::path const& path);
 
@@ -127,7 +128,7 @@ namespace Dwarf
     GetAssetDirectoryPath();
 
     static void
-    Remove(Ref<UID> uid);
+    Remove(std::shared_ptr<UID> uid);
     static void
     Remove(std::filesystem::path const& path);
 
@@ -136,7 +137,7 @@ namespace Dwarf
 
     static void
     AddShaderWatch(std::filesystem::path const& shaderAssetPath,
-                   Ref<Shader>                  shader)
+                   std::shared_ptr<Shader>      shader)
     {
       s_ShaderAssetMap[shaderAssetPath] = shader;
     }
@@ -154,19 +155,19 @@ namespace Dwarf
     }
 
     static void
-    AddShaderToRecompilationQueue(Ref<Shader> shader)
+    AddShaderToRecompilationQueue(std::shared_ptr<Shader> shader)
     {
       s_ShaderRecompilationStack.push_back(shader);
     }
 
     template<typename T>
     static void
-    Reimport(Ref<AssetReference<T>> asset)
+    Reimport(std::shared_ptr<AssetReference<T>> asset)
     {
       Reimport(asset->GetPath());
     }
 
-    static Ref<UID>
+    static std::shared_ptr<UID>
     Reimport(std::filesystem::path const& assetPath)
     {
       return AssetDatabase::Import(assetPath);
@@ -176,15 +177,15 @@ namespace Dwarf
     ReimportAssets();
 
     template<typename T>
-    static Ref<AssetReference<T>>
-    Retrieve(Ref<UID> uid)
+    static std::shared_ptr<AssetReference<T>>
+    Retrieve(std::shared_ptr<UID> uid)
     {
       // Retrieve entt::entity with UID component
       for (auto view = s_Registry->view<IDComponent>(); auto entity : view)
       {
         if (*view.get<IDComponent>(entity).ID == *uid)
         {
-          return CreateRef<AssetReference<T>>(
+          return std::make_shared<AssetReference<T>>(
             AssetReference<T>(entity, s_Registry));
         }
       }
@@ -192,7 +193,7 @@ namespace Dwarf
     }
 
     template<typename T>
-    static Ref<AssetReference<T>>
+    static std::shared_ptr<AssetReference<T>>
     Retrieve(std::filesystem::path const& path)
     {
       // Retrieve entt::entity with UID component
@@ -200,7 +201,7 @@ namespace Dwarf
       {
         if (view.get<PathComponent>(entity).Path == path)
         {
-          return CreateRef<AssetReference<T>>(entity, s_Registry);
+          return std::make_shared<AssetReference<T>>(entity, s_Registry);
         }
       }
       return nullptr;

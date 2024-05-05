@@ -11,7 +11,7 @@ namespace Dwarf
   class DebugWindow : public GuiModule
   {
   public:
-    DebugWindow(Ref<EditorModel> model, int id);
+    DebugWindow(std::shared_ptr<EditorModel> model, int id);
 
     /// @brief Renders the module window.
     void

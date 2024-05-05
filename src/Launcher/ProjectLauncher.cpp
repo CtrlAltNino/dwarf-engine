@@ -31,11 +31,12 @@ namespace Dwarf
 
     m_Window = Window::Create(props);
 
-    m_Model = CreateScope<ProjectLauncherModel>(ProjectLauncherModel());
+    m_Model = std::make_unique<ProjectLauncherModel>(ProjectLauncherModel());
     m_Model->Init();
 
     // Initializing the view
-    m_View = CreateScope<ProjectLauncherView>(ProjectLauncherView(m_Model));
+    m_View =
+      std::make_unique<ProjectLauncherView>(ProjectLauncherView(m_Model));
 
     m_Window->ShowWindow();
 

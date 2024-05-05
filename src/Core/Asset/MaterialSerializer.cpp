@@ -24,7 +24,7 @@
 
 namespace Dwarf
 {
-  Ref<Material>
+  std::shared_ptr<Material>
   MaterialSerializer::Deserialize(std::filesystem::path const& path)
   {
     Material deserializedMat(path.stem().string());
@@ -63,7 +63,7 @@ namespace Dwarf
           {
             deserializedMat.SetParameter(
               parameter.key(),
-              CreateRef<UID>(parameter.value()["value"]),
+              std::make_shared<UID>(parameter.value()["value"]),
               ShaderParameterType::TEX2D);
           }
           else
@@ -109,14 +109,14 @@ namespace Dwarf
         case GraphicsApi::Metal: break;
         case GraphicsApi::OpenGL:
           {
-            Ref<OpenGLShader> shader =
+            std::shared_ptr<OpenGLShader> shader =
               std::dynamic_pointer_cast<OpenGLShader>(Shader::Create());
 
             if (serializedMat["shader"].contains("vertexShader") &&
                 serializedMat["shader"]["vertexShader"] != "default")
             {
               shader->SetVertexShader(
-                CreateRef<UID>(serializedMat["shader"]["vertexShader"]));
+                std::make_shared<UID>(serializedMat["shader"]["vertexShader"]));
             }
             else
             {
@@ -129,8 +129,8 @@ namespace Dwarf
             if (serializedMat["shader"].contains("fragmentShader") &&
                 serializedMat["shader"]["fragmentShader"] != "default")
             {
-              shader->SetFragmentShader(
-                CreateRef<UID>(serializedMat["shader"]["fragmentShader"]));
+              shader->SetFragmentShader(std::make_shared<UID>(
+                serializedMat["shader"]["fragmentShader"]));
             }
             else
             {
@@ -142,8 +142,8 @@ namespace Dwarf
 
             if (serializedMat["shader"].contains("geometryShader"))
             {
-              shader->SetGeometryShader(
-                CreateRef<UID>(serializedMat["shader"]["geometryShader"]));
+              shader->SetGeometryShader(std::make_shared<UID>(
+                serializedMat["shader"]["geometryShader"]));
             }
             deserializedMat.SetShader(shader);
             break;
@@ -154,14 +154,14 @@ namespace Dwarf
         case GraphicsApi::Metal: break;
         case GraphicsApi::OpenGL:
           {
-            Ref<OpenGLShader> shader =
+            std::shared_ptr<OpenGLShader> shader =
               std::dynamic_pointer_cast<OpenGLShader>(Shader::Create());
 
             if (serializedMat["shader"].contains("vertexShader") &&
                 serializedMat["shader"]["vertexShader"] != "default")
             {
               shader->SetVertexShader(
-                CreateRef<UID>(serializedMat["shader"]["vertexShader"]));
+                std::make_shared<UID>(serializedMat["shader"]["vertexShader"]));
             }
             else
             {
@@ -174,8 +174,8 @@ namespace Dwarf
             if (serializedMat["shader"].contains("fragmentShader") &&
                 serializedMat["shader"]["fragmentShader"] != "default")
             {
-              shader->SetFragmentShader(
-                CreateRef<UID>(serializedMat["shader"]["fragmentShader"]));
+              shader->SetFragmentShader(std::make_shared<UID>(
+                serializedMat["shader"]["fragmentShader"]));
             }
             else
             {
@@ -187,8 +187,8 @@ namespace Dwarf
 
             if (serializedMat["shader"].contains("geometryShader"))
             {
-              shader->SetGeometryShader(
-                CreateRef<UID>(serializedMat["shader"]["geometryShader"]));
+              shader->SetGeometryShader(std::make_shared<UID>(
+                serializedMat["shader"]["geometryShader"]));
             }
             deserializedMat.SetShader(shader);
             break;
@@ -202,7 +202,7 @@ namespace Dwarf
 #endif
       }
     }
-    return CreateRef<Material>(deserializedMat);
+    return std::make_shared<Material>(deserializedMat);
   }
 
   void
@@ -221,7 +221,7 @@ namespace Dwarf
       case Metal: break;
       case OpenGL:
         {
-          Ref<OpenGLShader> shader =
+          std::shared_ptr<OpenGLShader> shader =
             std::dynamic_pointer_cast<OpenGLShader>(material.GetShader());
 
           if (shader->GetVertexShader() != nullptr)
@@ -256,7 +256,7 @@ namespace Dwarf
       case Metal: break;
       case OpenGL:
         {
-          Ref<OpenGLShader> shader =
+          std::shared_ptr<OpenGLShader> shader =
             std::dynamic_pointer_cast<OpenGLShader>(material.GetShader());
 
           if (shader->GetVertexShader() != nullptr)

@@ -64,15 +64,15 @@ namespace Dwarf
     // Maintaining important dependencies
 
     /// @brief The render texture for this scene viewer.
-    Ref<Framebuffer> m_Framebuffer;
+    std::shared_ptr<Framebuffer> m_Framebuffer;
 
-    Ref<Framebuffer> m_IdBuffer;
+    std::shared_ptr<Framebuffer> m_IdBuffer;
 
-    Ref<Framebuffer> m_OutlineBuffer;
+    std::shared_ptr<Framebuffer> m_OutlineBuffer;
 
-    Ref<Framebuffer> m_PresentationBuffer;
+    std::shared_ptr<Framebuffer> m_PresentationBuffer;
 
-    Ref<Camera> m_Camera;
+    std::shared_ptr<Camera> m_Camera;
 
     /// @brief Calculates the cutout of the available resolution based on the
     /// given aspect ratio.
@@ -103,7 +103,7 @@ namespace Dwarf
                       glm::vec2 const& viewportSize);
 
   public:
-    SceneViewerWindow(Ref<EditorModel> model, int index);
+    SceneViewerWindow(std::shared_ptr<EditorModel> model, int index);
 
     void
     OnUpdate(double deltaTime) override;

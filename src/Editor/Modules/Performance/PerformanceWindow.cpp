@@ -6,7 +6,8 @@
 namespace Dwarf
 {
 
-  PerformanceWindow::PerformanceWindow(Ref<EditorModel> model, int id)
+  PerformanceWindow::PerformanceWindow(std::shared_ptr<EditorModel> model,
+                                       int                          id)
     : GuiModule(model, "Performance", MODULE_TYPE::PERFORMANCE, id)
   {
   }

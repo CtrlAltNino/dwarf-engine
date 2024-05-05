@@ -18,6 +18,6 @@ namespace Dwarf
     static DwarfEngine* s_Instance;
   };
 
-  Ref<DwarfEngine>
+  std::shared_ptr<DwarfEngine>
   Create();
 }

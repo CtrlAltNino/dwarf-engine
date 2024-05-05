@@ -20,12 +20,13 @@
 
 namespace Dwarf
 {
-  SceneViewerWindow::SceneViewerWindow(Ref<EditorModel> model, int index)
+  SceneViewerWindow::SceneViewerWindow(std::shared_ptr<EditorModel> model,
+                                       int                          index)
     : GuiModule(model, "Scene Viewer", MODULE_TYPE::SCENE_VIEWER, index)
   {
     m_Framebuffer = Renderer::Get()->CreateFramebuffer({ 512, 512 });
     m_IdBuffer = Renderer::Get()->CreateIDFramebuffer({ 512, 512 });
-    m_Camera = CreateRef<Camera>();
+    m_Camera = std::make_shared<Camera>();
 
     FramebufferSpecification outlineSpec;
     outlineSpec.Attachments = FramebufferAttachmentSpecification{

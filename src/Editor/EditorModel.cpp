@@ -13,14 +13,14 @@ namespace Dwarf
   {
   }
 
-  Ref<Scene>
+  std::shared_ptr<Scene>
   EditorModel::GetScene() const
   {
     return m_Scene;
   }
 
   void
-  EditorModel::SetScene(Ref<Scene> scene)
+  EditorModel::SetScene(std::shared_ptr<Scene> scene)
   {
     m_Scene = scene;
     m_Selection = EditorSelection(scene);
@@ -93,7 +93,7 @@ namespace Dwarf
     m_ReturnToLauncher = returnToLauncher;
   }
 
-  EditorSelection::EditorSelection(Ref<Scene> scene)
+  EditorSelection::EditorSelection(std::shared_ptr<Scene> scene)
     : m_Scene(scene)
   {
   }
