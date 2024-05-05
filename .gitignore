@@ -8,6 +8,8 @@ build/
 vcpkg_installed/
 imgui.ini
 .vscode/
+docs/html
+docs/latex
 
 # User-specific files
 *.rsuser
