@@ -29,9 +29,9 @@ namespace Dwarf
 #define FONT_ROBOTO_REGULAR_PATH "data/engine/fonts/Roboto-Regular.ttf"
 #define FONT_ROBOTO_LIGHT_PATH "data/engine/fonts/Roboto-Light.ttf"
 
-#define GITHUB_LINK "https://github.com/flash-miller/dwarf-engine"
-#define PATREON_LINK "https://patreon.com/flash-miller"
-#define TWITTER_LINK "https://twitter.com/flash_miller"
+#define GITHUB_LINK "https://github.com/CtrlAltNino/dwarf-engine"
+#define PATREON_LINK "https://patreon.com/CtrlAltNino"
+#define TWITTER_LINK "https://twitter.com/CtrlAltNino"
 
   /// @brief Structure holding information about a project.
   struct ProjectInformation
