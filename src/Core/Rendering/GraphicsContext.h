@@ -1,5 +1,5 @@
 #pragma once
-
+#include "pch.h"
 #include "Core/Base.h"
 #include "SDL2/SDL.h"
 

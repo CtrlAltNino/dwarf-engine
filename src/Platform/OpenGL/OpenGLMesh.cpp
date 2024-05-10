@@ -1,8 +1,6 @@
-
-
-#include "OpenGLMesh.h"
-
+#include "pch.h"
 #include <glad/glad.h>
+#include "OpenGLMesh.h"
 
 namespace Dwarf
 {

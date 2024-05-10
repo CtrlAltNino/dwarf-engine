@@ -1,4 +1,3 @@
-
 #include "Launcher/ProjectLauncher.h"
 
 #include "Launcher/ProjectLauncherModel.h"
@@ -6,6 +5,7 @@
 
 #include "Launcher/ProjectListHandler.h"
 #include "Utilities/TimeUtilities.h"
+#include "Core/Base.h"
 
 namespace Dwarf
 {

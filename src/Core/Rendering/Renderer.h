@@ -1,13 +1,8 @@
 #pragma once
 
-#include <glm/glm.hpp>
-#include <assimp/cimport.h>
-#include <assimp/scene.h>
-#include <assimp/postprocess.h>
-#include <assimp/material.h>
+#include "pch.h"
 
 #include "Core/Rendering/Material.h"
-#include "Core/Rendering/Mesh.h"
 #include "Core/Scene/Scene.h"
 #include "Core/Scene/Camera.h"
 #include "Core/Rendering/Framebuffer.h"

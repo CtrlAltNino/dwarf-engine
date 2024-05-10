@@ -5,4 +5,5 @@ target_sources(${targetName}
     AssetDirectoryListener.cpp
     AssetDatabase.cpp
     MaterialSerializer.cpp
+    ModelImporter.cpp
 )

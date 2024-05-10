@@ -1,8 +1,7 @@
 #pragma once
-
-#include "Core/Base.h"
-#include "Editor/EditorModel.h"
+#include "pch.h"
 #include "Editor/Modules/GuiModule.h"
+#include "Editor/EditorModel.h"
 
 namespace Dwarf
 {

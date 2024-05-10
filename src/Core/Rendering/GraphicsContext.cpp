@@ -1,5 +1,4 @@
-
-
+#include "pch.h"
 #include "Core/Rendering/GraphicsContext.h"
 #include "Core/Rendering/Renderer.h"
 

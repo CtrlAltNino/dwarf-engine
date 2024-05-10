@@ -1,8 +1,5 @@
 #pragma once
 
-#include <imgui_internal.h>
-
-#include "Core/Base.h"
 #include "Core/Asset/AssetDatabase.h"
 #include "Editor/EditorModel.h"
 #include "Editor/Modules/GuiModule.h"

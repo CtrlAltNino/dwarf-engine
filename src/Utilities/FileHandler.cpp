@@ -1,8 +1,7 @@
+#include "pch.h"
+#include "Utilities/FileHandler.h"
 
-// #include <combaseapi.h>
-// #include <shlobj_core.h>
-// #include <winnt.h>
-// #include <KnownFolders.h>
+#include <sago/platform_folders.h>
 
 #ifdef _WIN32
 #include <Windows.h>
@@ -11,12 +10,6 @@
 #include <shlwapi.h>
 #include <objbase.h>
 #endif
-
-#include "Utilities/FileHandler.h"
-
-#include <iostream>
-#include <sago/platform_folders.h>
-#include <fstream>
 
 namespace Dwarf
 {

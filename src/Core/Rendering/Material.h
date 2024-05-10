@@ -1,12 +1,7 @@
 #pragma once
-
-#include <glm/glm.hpp>
-#include <map>
-#include <string_view>
-
+#include "pch.h"
 #include "Core/Base.h"
 #include "Core/Rendering/Shader.h"
-#include "Core/Rendering/Texture.h"
 #include "Core/Rendering/IShaderParameter.h"
 #include "Core/UID.h"
 

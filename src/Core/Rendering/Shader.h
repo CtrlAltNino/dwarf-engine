@@ -1,8 +1,6 @@
 #pragma once
 
-#include <string>
-#include <glm/glm.hpp>
-#include <map>
+#include "pch.h"
 
 #include "Core/Base.h"
 #include "Core/Asset/AssetReference.h"

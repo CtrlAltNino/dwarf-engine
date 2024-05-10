@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Core/Scene/Scene.h"
-
 namespace Dwarf
 {
 

@@ -1,6 +1,3 @@
-
-#include <string>
-
 #include "Core/Rendering/ComputeShader.h"
 #include "Core/Rendering/Renderer.h"
 

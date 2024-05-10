@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Core/Rendering/Framebuffer.h"
-#include <cstdint>
 
 namespace Dwarf
 {

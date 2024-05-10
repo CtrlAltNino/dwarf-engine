@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Core/Base.h"
 #include "Editor/EditorModel.h"
 #include "Editor/Modules/GuiModule.h"
 #include "Editor/Modules/Scene Hierarchy/GraphInstruction.h"

@@ -1,18 +1,14 @@
 #pragma once
-
+#include "pch.h"
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 #include <imgui_internal.h>
 #include <ImGuizmo.h>
-#include <array>
 
-#include "Core/Base.h"
 #include "Editor/EditorModel.h"
 #include "Editor/Modules/GuiModule.h"
 #include "Core/Scene/Camera.h"
 #include "Core/Rendering/Framebuffer.h"
-#include "Core/Rendering/Forward/ForwardRenderer.h"
-#include "Core/Rendering/ComputeShader.h"
 
 namespace Dwarf
 {

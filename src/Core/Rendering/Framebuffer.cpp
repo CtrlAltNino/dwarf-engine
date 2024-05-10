@@ -1,5 +1,3 @@
-
-
 #include "Core/Rendering/Framebuffer.h"
 #include "Core/Rendering/Renderer.h"
 

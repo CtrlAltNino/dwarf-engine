@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Core/Base.h"
 #include "Editor/Modules/Scene Hierarchy/GraphInstruction.h"
 #include "Core/Scene/Entity.h"
+#include "Core/Scene/Scene.h"
 
 namespace Dwarf
 {

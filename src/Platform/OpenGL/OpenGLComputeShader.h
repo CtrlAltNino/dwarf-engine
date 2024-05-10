@@ -1,11 +1,7 @@
 #pragma once
 
-#include "Core/Rendering/ComputeShader.h"
-#include "Core/Base.h"
-
-#include <string_view>
-
 #include <glad/glad.h>
+#include "Core/Rendering/ComputeShader.h"
 #include <Core/Rendering/IShaderParameter.h>
 
 namespace Dwarf

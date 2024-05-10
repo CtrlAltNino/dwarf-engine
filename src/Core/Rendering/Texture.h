@@ -1,10 +1,6 @@
 #pragma once
-
-#include "Core/Base.h"
+#include "pch.h"
 #include "Utilities/ImageUtilities/TextureCommon.h"
-#include <filesystem>
-#include <glm/vec2.hpp>
-#include <glm/vec3.hpp>
 
 namespace Dwarf
 {

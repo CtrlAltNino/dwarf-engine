@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Core/Base.h"
-
 namespace Dwarf
 {
   /// @brief Interface for logging messages with different log levels.

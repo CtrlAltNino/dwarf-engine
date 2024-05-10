@@ -1,11 +1,7 @@
 #pragma once
 
-#include <imgui_internal.h>
-
-#include "Core/Base.h"
 #include "Editor/Modules/GuiModule.h"
 #include "Editor/EditorModel.h"
-#include "Core/UI/DwarfUI.h"
 
 namespace Dwarf
 {

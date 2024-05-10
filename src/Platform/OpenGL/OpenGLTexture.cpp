@@ -1,12 +1,7 @@
-#include "Core/Rendering/Texture.h"
 #include "OpenGLTexture.h"
 #include "Utilities/ImageUtilities/TextureCommon.h"
-
-#include "Core/Asset/AssetMetaData.h"
 #include "Platform/OpenGL/OpenGLTexture.h"
-#include "Utilities/FileHandler.h"
 #include <SDL_opengl.h>
-#include <iostream>
 
 namespace Dwarf
 {

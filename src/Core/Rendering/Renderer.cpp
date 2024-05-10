@@ -1,4 +1,3 @@
-
 #include "Core/Rendering/Renderer.h"
 #include "Core/Rendering/Forward/ForwardRenderer.h"
 // #include "Core/Rendering/Deferred/DeferredRenderer.h"

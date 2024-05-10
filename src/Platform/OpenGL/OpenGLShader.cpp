@@ -1,11 +1,8 @@
-
-
-#include <utility>
-
 #include "OpenGLShader.h"
 #include "Utilities/FileHandler.h"
 #include "Core/Asset/AssetDatabase.h"
 #include "Core/Asset/AssetComponents.h"
+#include "Core/Base.h"
 
 #define GL_SHADER_LOG_LENGTH (1024)
 

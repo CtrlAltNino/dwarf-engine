@@ -1,12 +1,6 @@
 #pragma once
-
-#include <imgui_impl_sdl2.h>
+#include "pch.h"
 #include <SDL2/SDL.h>
-#include <glm/vec2.hpp>
-#include <map>
-#include <set>
-
-#include "Core/Base.h"
 
 namespace Dwarf
 {

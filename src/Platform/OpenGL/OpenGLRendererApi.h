@@ -1,11 +1,7 @@
 #pragma once
-
-#include <glm/vec4.hpp>
+#include "pch.h"
 
 #include "Core/Rendering/RendererApi.h"
-#include "Platform/OpenGL/OpenGLMesh.h"
-#include "Platform/OpenGL/OpenGLShader.h"
-#include "Platform/OpenGL/OpenGLTexture.h"
 #include "Core/Rendering/Material.h"
 
 namespace Dwarf

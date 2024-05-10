@@ -1,9 +1,9 @@
 #pragma once
 
+#include "pch.h"
+
 #include "Core/Asset/AssetComponents.h"
-#include "Core/Base.h"
 #include "Core/GenericComponents.h"
-#include "Core/Scene/SceneComponents.h"
 #include <imgui.h>
 #include <entt/entt.hpp>
 #include <Core/Asset/AssetDatabase.h>

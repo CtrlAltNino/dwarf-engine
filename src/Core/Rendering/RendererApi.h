@@ -1,6 +1,6 @@
 #pragma once
 
-#include <glm/vec4.hpp>
+#include "pch.h"
 
 #include "Core/Base.h"
 #include "Core/Rendering/Mesh.h"

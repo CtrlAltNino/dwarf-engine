@@ -1,3 +1,4 @@
+#include <glad/glad.h>
 #include "OpenGLFramebuffer.h"
 
 #include "Platform/OpenGL/OpenGLRendererApi.h"
@@ -5,7 +6,6 @@
 #include "Platform/OpenGL/OpenGLComputeShader.h"
 #include "Core/Asset/AssetComponents.h"
 
-#include <glad/glad.h>
 #include <Core/Rendering/Shader Parameters/Tex2DShaderParameter.h>
 #include <Core/Rendering/Shader Parameters/BooleanShaderParameter.h>
 #include <Core/Rendering/Shader Parameters/IntegerShaderParameter.h>
@@ -14,7 +14,8 @@
 #include <Core/Rendering/Shader Parameters/Vec4ShaderParameter.h>
 #include <Core/Rendering/Shader Parameters/Vec2ShaderParameter.h>
 #include <Core/Rendering/Shader Parameters/Vec3ShaderParameter.h>
-#include <memory>
+#include "Platform/OpenGL/OpenGLMesh.h"
+#include "Platform/OpenGL/OpenGLShader.h"
 
 namespace Dwarf
 {

@@ -2,7 +2,6 @@
 
 #include "Core/Base.h"
 #include "Vertex.h"
-#include <filesystem>
 
 namespace Dwarf
 {

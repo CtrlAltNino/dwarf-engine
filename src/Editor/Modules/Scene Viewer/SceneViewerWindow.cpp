@@ -1,17 +1,7 @@
-
-
 #include "Editor/Modules/Scene Viewer/SceneViewerWindow.h"
 #include "Core/Scene/Scene.h"
 #include "Input/InputManager.h"
-
-#include <glm/glm.hpp>
-#include <glm/gtc/matrix_transform.hpp>
-#include <glm/gtc/quaternion.hpp>
-#include <glm/gtc/type_ptr.hpp>
-#define GLM_ENABLE_EXPERIMENTAL
-#include <glm/gtx/quaternion.hpp>
-#include <glm/vec2.hpp>
-#include "Editor/Editor.h"
+#include "Core/Rendering/Renderer.h"
 
 #define MIN_RESOLUTION_WIDTH 10
 #define MIN_RESOLUTION_HEIGHT 10

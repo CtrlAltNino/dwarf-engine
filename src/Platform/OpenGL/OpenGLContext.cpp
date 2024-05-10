@@ -1,9 +1,7 @@
-
-
+#include "pch.h"
 #include "Platform/OpenGL/OpenGLContext.h"
 #include <glad/glad.h>
 #include <SDL2/SDL_opengl.h>
-#include <iostream>
 
 namespace Dwarf
 {

@@ -1,8 +1,5 @@
-
-
 #include "Editor/Modules/Inspector/PreviewRenderer.h"
-#include "Input/InputManager.h"
-#include <algorithm>
+#include "Core/Rendering/Forward/ForwardRenderer.h"
 
 namespace Dwarf
 {

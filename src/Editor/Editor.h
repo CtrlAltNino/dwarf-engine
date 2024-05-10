@@ -1,8 +1,6 @@
 #pragma once
-
+#include "pch.h"
 #include "Window/Window.h"
-
-#include "Core/Base.h"
 #include "Editor/EditorModel.h"
 #include "Editor/EditorView.h"
 #include "Core/UI/ImGuiLayer.h"

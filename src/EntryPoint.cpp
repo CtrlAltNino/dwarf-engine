@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "Logging/DefaultLogger.h"
 #include "Application/DwarfEngine.h"
 #include <spdlog/spdlog.h>

@@ -1,12 +1,8 @@
 #pragma once
-
+#include "pch.h"
 #include "Core/Scene/Scene.h"
 #include "Editor/EditorModel.h"
 #include "Editor/Modules/GuiModule.h"
-#include "Core/UI/DwarfUI.h"
-
-#define _USE_MATH_DEFINES
-#include <cmath>
 
 namespace Dwarf
 {

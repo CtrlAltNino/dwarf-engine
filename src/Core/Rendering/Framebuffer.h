@@ -1,8 +1,7 @@
 #pragma once
-
+#include "pch.h"
 #include "Core/Base.h"
 #include "Core/Rendering/Texture.h"
-#include <glm/glm.hpp>
 
 namespace Dwarf
 {

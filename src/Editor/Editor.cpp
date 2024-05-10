@@ -1,13 +1,11 @@
-
-
 #include "Editor/Editor.h"
 
 #include "Core/Scene/SceneUtilities.h"
 #include "Core/Asset/AssetDatabase.h"
-#include "Editor/Modules/GuiModule.h"
 #include "Input/InputManager.h"
 #include "Utilities/TimeUtilities.h"
 #include "Core/Rendering/Renderer.h"
+#include "Core/Base.h"
 
 namespace Dwarf
 {

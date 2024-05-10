@@ -1,5 +1,4 @@
-
-
+#include "pch.h"
 #include "Core/Rendering/Deferred/DeferredRenderer.h"
 
 namespace Dwarf

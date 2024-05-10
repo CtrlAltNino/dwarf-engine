@@ -1,10 +1,8 @@
-
+#include "pch.h"
 
 #include "Launcher/ProjectLauncherModel.h"
-
 #include "Launcher/ProjectCreator.h"
 #include "Launcher/ProjectListHandler.h"
-#include "Utilities/FileHandler.h"
 
 namespace Dwarf
 {

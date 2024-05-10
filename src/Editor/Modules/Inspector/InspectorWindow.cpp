@@ -1,24 +1,8 @@
-
-
 #include "Editor/Modules/Inspector/InspectorWindow.h"
 
 #include "Core/Asset/AssetDatabase.h"
-#include "Core/Scene/SceneUtilities.h"
 #include "Editor/Modules/Inspector/AssetInspectorRenderer.h"
-
-#include <imgui_internal.h>
-#include <math.h>
-
-#ifdef _WIN32
-// #include "Platform/Direct3D12/D3D12Shader.h"
-#include "Platform/OpenGL/OpenGLShader.h"
-// #include "Platform/Vulkan/VulkanShader.h"
-#elif __linux__
-#include "Platform/OpenGL/OpenGLShader.h"
-// #include "Platform/Vulkan/VulkanShader.h"
-#elif __APPLE__
-// #include "Platform/Metal/MetalShader.h"
-#endif
+#include "Core/UI/DwarfUI.h"
 
 #define COMPONENT_PANEL_PADDING (8.0f)
 #define ADD_BUTTON_WIDTH (40.0f)

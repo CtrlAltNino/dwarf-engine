@@ -1,5 +1,4 @@
-
-
+#include "pch.h"
 #include "Window/Window.h"
 
 #ifdef _WIN32

@@ -1,5 +1,3 @@
-
-
 #include "DwarfUI.h"
 
 namespace Dwarf

@@ -1,8 +1,5 @@
 #pragma once
 
-// system
-#include <iostream>
-
 // SDL
 #include <SDL2/SDL.h>
 

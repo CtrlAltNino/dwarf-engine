@@ -1,11 +1,8 @@
-
-
 #include "Core/Scene/SceneUtilities.h"
-
 #include <nfd.h>
-
 #include "Editor/Editor.h"
 #include "Core/Asset/AssetDatabase.h"
+#include "Core/Asset/AssetComponents.h"
 
 namespace Dwarf
 {

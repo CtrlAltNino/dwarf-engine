@@ -1,7 +1,3 @@
-
-
-#include <imgui_internal.h>
-
 #include "Editor/Modules/Debug Information/DebugWindow.h"
 #include "Core/Asset/AssetDatabase.h"
 #include "Core/Asset/AssetComponents.h"

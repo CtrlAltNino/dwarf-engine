@@ -1,8 +1,4 @@
-
-
 #include "Editor/EditorModel.h"
-
-#include <format>
 
 namespace Dwarf
 {

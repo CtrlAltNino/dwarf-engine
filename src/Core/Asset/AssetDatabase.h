@@ -1,10 +1,7 @@
 #pragma once
-
+#include "pch.h"
 #include <efsw/efsw.hpp>
-#include <filesystem>
-#include <string>
 #include <entt/entt.hpp>
-#include <nlohmann/json.hpp>
 
 #include "Core/UID.h"
 #include "Core/Asset/AssetReference.h"

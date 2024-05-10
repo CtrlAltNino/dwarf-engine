@@ -1,11 +1,10 @@
+#include "pch.h"
 #include "AssetInspectorRenderer.h"
 #include "Core/Asset/AssetDatabase.h"
 #include "Core/Base.h"
+#include "Core/Rendering/Renderer.h"
 #include "Core/UI/DwarfUI.h"
 #include "Core/Scene/SceneUtilities.h"
-#include <imgui_internal.h>
-#include <math.h>
-#include <format>
 #include "Editor/Modules/Inspector/PreviewRenderer.h"
 #include "Input/InputManager.h"
 
@@ -27,8 +26,6 @@
 #include <Core/Rendering/Shader Parameters/Vec2ShaderParameter.h>
 #include <Core/Rendering/Shader Parameters/Vec3ShaderParameter.h>
 #include <Core/Rendering/Shader Parameters/Vec4ShaderParameter.h>
-
-#include <algorithm>
 
 #define COMPONENT_PANEL_PADDING (8.0f)
 #define ADD_BUTTON_WIDTH (40.0f)
@@ -571,7 +568,7 @@ namespace Dwarf
             mat->SetParameter(paramName, glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
             break;
         }
-        std::strcpy(paramName, "");
+        paramName[0] = '\0';
       }
 
       ImGui::Unindent(15.0f);

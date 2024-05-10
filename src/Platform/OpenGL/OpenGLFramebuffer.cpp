@@ -1,10 +1,7 @@
-#include "Core/Rendering/TextureCreator.h"
-
-#include "Platform/OpenGL/OpenGLFramebuffer.h"
-
+#include "pch.h"
 #include <glad/glad.h>
-#include <glm/glm.hpp>
-#include <iostream>
+#include "Core/Rendering/TextureCreator.h"
+#include "Platform/OpenGL/OpenGLFramebuffer.h"
 
 namespace Dwarf
 {

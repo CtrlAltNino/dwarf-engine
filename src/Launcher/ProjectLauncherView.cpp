@@ -1,4 +1,3 @@
-
 #include "Launcher/ProjectLauncherView.h"
 #include "Launcher/ProjectListHandler.h"
 #include "Launcher/ProjectSorter.h"
@@ -6,6 +5,8 @@
 #include "Core/Rendering/TextureCreator.h"
 #include "Utilities/TimeUtilities.h"
 #include "Utilities/BrowserLinkOpener.h"
+#include "Core/Base.h"
+#include <iostream>
 
 namespace Dwarf
 {
@@ -151,13 +152,11 @@ namespace Dwarf
       for (int column = 0; column < COLUMNS_COUNT; column++)
       {
         ImGui::TableSetColumnIndex(column);
-        const char* column_name = ImGui::TableGetColumnName(
-          column); // Retrieve name passed to TableSetupColumn()
         ImGui::PushID(column);
         ImGui::SetCursorPosY(ImGui::GetCursorPosY() +
                              (HEADER_ROW_HEIGHT / 2 - cellPadding.y / 2) -
                              ImGui::GetFontSize() / 2);
-        ImGui::TableHeader(column_name);
+        ImGui::TableHeader(ImGui::TableGetColumnName(column));
 
         if (ImGui::IsItemHovered())
         {
@@ -330,7 +329,7 @@ namespace Dwarf
             ImGui::SetCursorPosY(ImGui::GetCursorPosY() + (ROW_HEIGHT / 2) -
                                  ImGui::GetFontSize() / 2);
             float textWidth =
-              ImGui::CalcTextSize(cellText.c_str(), (const char*)0, false).x;
+              ImGui::CalcTextSize(cellText.c_str(), nullptr, false).x;
             float columnWidth = ImGui::GetContentRegionAvail().x - 8;
             int   availableCharacters =
               (int)(columnWidth / (textWidth / cellText.length()));
@@ -496,8 +495,9 @@ namespace Dwarf
     }
 
     ImGui::Text("An open source project created by flash-miller");
-    const char* versionText = "early development version";
-    float textWidth = ImGui::CalcTextSize(versionText, (const char*)0, false).x;
+    std::string versionText = "early development version";
+    float       textWidth =
+      ImGui::CalcTextSize(versionText.c_str(), nullptr, false).x;
 
     ImGui::SameLine();
     ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 20);
@@ -600,7 +600,7 @@ namespace Dwarf
     ImGui::SameLine();
     ImGui::SetCursorPosX(ImGui::GetCursorPosX() +
                          ImGui::GetContentRegionAvail().x - textWidth);
-    ImGui::Text("%s", versionText);
+    ImGui::Text("%s", versionText.c_str());
 
     ImGui::End();
     ImGui::PopStyleColor(2);
@@ -610,8 +610,8 @@ namespace Dwarf
   void
   ProjectLauncherView::RenderChangeGraphicsApiModal()
   {
-    std::vector<ProjectInformation> projectList =
-      *ProjectListHandler::GetProjectList();
+    std::vector<ProjectInformation>* projectList =
+      ProjectListHandler::GetProjectList();
     // Centering Modal
     ImVec2 center = ImGui::GetMainViewport()->GetCenter();
     ImGui::SetNextWindowPos(center, ImGuiCond_Always, ImVec2(0.5f, 0.5f));
@@ -657,7 +657,7 @@ namespace Dwarf
       ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
 
       static int currentApiIndex =
-        (int)projectList[m_Model->GetSelectedProjectID()].graphicsApi;
+        (int)(*projectList)[m_Model->GetSelectedProjectID()].graphicsApi;
       // ==================== Graphics API Selection Dropdown
       // ====================
       {
@@ -837,8 +837,8 @@ namespace Dwarf
   void
   ProjectLauncherView::RenderProjectNotFoundModal()
   {
-    std::vector<ProjectInformation> projectList =
-      *ProjectListHandler::GetProjectList();
+    std::vector<ProjectInformation>* projectList =
+      ProjectListHandler::GetProjectList();
     // Centering Modal
     ImVec2 center = ImGui::GetMainViewport()->GetCenter();
     ImGui::SetNextWindowPos(center, ImGuiCond_Always, ImVec2(0.5f, 0.5f));
@@ -870,8 +870,8 @@ namespace Dwarf
       // ==================== Information Text ====================
       float textWidth =
         ImGui::CalcTextSize(
-          projectList[m_Model->GetSelectedProjectID()].path.string().c_str(),
-          (const char*)0,
+          (*projectList)[m_Model->GetSelectedProjectID()].path.string().c_str(),
+          nullptr,
           false)
           .x;
 
@@ -883,7 +883,7 @@ namespace Dwarf
         (ImGui::GetContentRegionAvail().x / 2 - textWidth / 2));
       ImGui::Text(
         "%s",
-        projectList[m_Model->GetSelectedProjectID()].path.string().c_str());
+        (*projectList)[m_Model->GetSelectedProjectID()].path.string().c_str());
 
       ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 20);
       ImGui::Text("Do you want to remove it from the list?");
@@ -1033,7 +1033,7 @@ namespace Dwarf
 
         draw_list->ChannelsSetCurrent(1);
         float textWidth =
-          ImGui::CalcTextSize(renderText.c_str(), (const char*)0, false).x;
+          ImGui::CalcTextSize(renderText.c_str(), nullptr, false).x;
         float columnWidth = ImGui::GetContentRegionAvail().x - 40;
         int   availableCharacters =
           (int)(columnWidth / (textWidth / renderText.length())) - 3;
@@ -1117,8 +1117,7 @@ namespace Dwarf
                              ImGui::GetContentRegionAvail().x - 150);
 
         // Setting up combo
-        const char* templates[] = { "Blank", "Sponza" };
-        const char* template_preview_value = templates[currentTemplateIndex];
+        std::vector<std::string> templates = { "Blank", "Sponza" };
 
         ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
         ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 4);
@@ -1142,7 +1141,8 @@ namespace Dwarf
         // Coloring the combo popup background
         ImGui::PushStyleColor(ImGuiCol_PopupBg, IM_COL32(46, 52, 64, 255));
 
-        if (ImGui::BeginCombo("##template", template_preview_value))
+        if (ImGui::BeginCombo("##template",
+                              templates[currentTemplateIndex].c_str()))
         {
           ImDrawList* draw_list = ImGui::GetWindowDrawList();
 
@@ -1170,7 +1170,7 @@ namespace Dwarf
 
             //  ==================== Rendering Selectable ====================
             if (ImGui::Selectable(
-                  templates[n], is_selected, 0, ImVec2(0, 16 + 10)))
+                  templates[n].c_str(), is_selected, 0, ImVec2(0, 16 + 10)))
             {
               currentTemplateIndex = n;
             }
@@ -1389,7 +1389,7 @@ namespace Dwarf
                                         newProjectPath,
                                         (GraphicsApi)currentApiIndex,
                                         (ProjectTemplate)currentTemplateIndex);
-          strcpy(newProjectName, "");
+          newProjectName[0] = '\0';
           currentTemplateIndex = 0;
           currentApiIndex = 0;
 
@@ -1411,7 +1411,7 @@ namespace Dwarf
         if (ImGui::Button("Cancel",
                           ImVec2(ImGui::GetContentRegionAvail().x, 40)))
         {
-          strcpy(newProjectName, "");
+          newProjectName[0] = '\0';
           currentTemplateIndex = 0;
           currentApiIndex = 0;
           ImGui::CloseCurrentPopup();

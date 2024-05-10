@@ -1,10 +1,7 @@
 #pragma once
-
-#include "Core/Base.h"
+#include "pch.h"
 #include "Core/Scene/Entity.h"
 #include "Core/Scene/SceneComponents.h"
-#include "Core/Scene/Camera.h"
-#include "Core/Rendering/Framebuffer.h"
 
 namespace Dwarf
 {

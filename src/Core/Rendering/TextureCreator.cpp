@@ -1,16 +1,11 @@
+#include "Core/Rendering/TextureCreator.h"
 #include "Core/Rendering/Framebuffer.h"
-#include "Utilities/FileHandler.h"
 #include "Utilities/ImageUtilities/TextureCommon.h"
 
 #include <iostream>
 #include <spng.h>
 #include <turbojpeg.h>
-
-#define STB_IMAGE_STATIC
-#define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>
-
-#include "Core/Rendering/TextureCreator.h"
 
 namespace Dwarf
 {
@@ -60,31 +55,32 @@ namespace Dwarf
       return nullptr;
     }
 
-    FILE* file = fopen(path.string().c_str(), "rb");
+    std::ifstream file(path.string().c_str(), std::ios::binary);
     if (!file)
     {
       spng_ctx_free(png);
       return nullptr;
     }
 
-    fseek(file, 0, SEEK_END);
-    long fileSize = ftell(file);
-    fseek(file, 0, SEEK_SET);
+    std::vector<unsigned char> pngData((std::istreambuf_iterator<char>(file)),
+                                       std::istreambuf_iterator<char>());
 
-    unsigned char* pngData = new unsigned char[fileSize];
-    fread(pngData, 1, fileSize, file);
-    fclose(file);
-
-    spng_set_png_buffer(png, pngData, fileSize);
+    int result = spng_set_png_buffer(png, pngData.data(), pngData.size());
+    if (result)
+    {
+      spng_ctx_free(png);
+      return nullptr;
+    }
     spng_set_chunk_limits(png, 1024 * 1024, 1024 * 1024);
 
     spng_ihdr ihdr;
     spng_get_ihdr(png, &ihdr);
 
+    size_t pngSize = ihdr.width * ihdr.height * 4;
+
     // TODO: Add support for different PNG formats
-    unsigned char* imageData = new unsigned char[ihdr.width * ihdr.height * 4];
-    spng_decode_image(
-      png, imageData, ihdr.width * ihdr.height * 4, SPNG_FMT_RGBA8, 0);
+    std::vector<unsigned char> imageData(pngSize);
+    spng_decode_image(png, imageData.data(), pngSize, SPNG_FMT_RGBA8, 0);
 
     std::shared_ptr<TextureContainer> textureData =
       std::make_shared<TextureContainer>();
@@ -98,11 +94,12 @@ namespace Dwarf
                               : TextureDataType::UNSIGNED_SHORT;
 
     // copy content from data into textureData->ImageData
-    textureData->ImageData = imageData;
+    textureData->ImageData = imageData.data();
 
     std::shared_ptr<Texture> texture = Texture::Create(textureData, parameters);
 
     spng_ctx_free(png);
+    file.close();
 
     return texture;
   }
@@ -118,7 +115,7 @@ namespace Dwarf
       return nullptr;
     }
 
-    FILE* file = fopen(path.string().c_str(), "rb");
+    std::ifstream file(path.string().c_str(), std::ios::binary);
     if (!file)
     {
       // DWARF_CORE_ERROR("Failed to open file: {0}", path.string());
@@ -126,22 +123,22 @@ namespace Dwarf
       return nullptr;
     }
 
-    fseek(file, 0, SEEK_END);
-    long fileSize = ftell(file);
-    fseek(file, 0, SEEK_SET);
-
-    unsigned char* jpegData = new unsigned char[fileSize];
-    fread(jpegData, 1, fileSize, file);
-    fclose(file);
+    std::vector<unsigned char> jpegData((std::istreambuf_iterator<char>(file)),
+                                        std::istreambuf_iterator<char>());
+    file.close();
 
     int width, height;
-    tjDecompressHeader2(
-      jpegDecompressor, jpegData, fileSize, &width, &height, nullptr);
+    tjDecompressHeader2(jpegDecompressor,
+                        jpegData.data(),
+                        jpegData.size(),
+                        &width,
+                        &height,
+                        nullptr);
 
     unsigned char* imageData = new unsigned char[width * height * 3];
     tjDecompress2(jpegDecompressor,
-                  jpegData,
-                  fileSize,
+                  jpegData.data(),
+                  jpegData.size(),
                   imageData,
                   width,
                   0,
@@ -319,23 +316,21 @@ namespace Dwarf
 
     switch (parameters.TextureFormat)
     {
-      case FramebufferTextureFormat::RGBA8:
-        textureData->Format = TextureFormat::RGBA;
-        break;
-      case FramebufferTextureFormat::RED_INTEGER:
+      using enum FramebufferTextureFormat;
+      case RGBA8: textureData->Format = TextureFormat::RGBA; break;
+      case RED_INTEGER:
         textureData->Format = TextureFormat::RED;
         textureData->DataType = TextureDataType::UNSIGNED_INT;
         break;
-      case FramebufferTextureFormat::DEPTH24STENCIL8:
+      case DEPTH24STENCIL8:
         textureData->Format = TextureFormat::DEPTH_STENCIL;
         break;
-      case FramebufferTextureFormat::DEPTH:
+      case DEPTH:
         textureData->Format = TextureFormat::DEPTH;
         textureData->DataType = TextureDataType::FLOAT;
         break;
-      case FramebufferTextureFormat::STENCIL:
-        textureData->Format = TextureFormat::STENCIL;
-        break;
+      case STENCIL: textureData->Format = TextureFormat::STENCIL; break;
+      case None: break;
     }
 
     return Texture::Create(textureData);

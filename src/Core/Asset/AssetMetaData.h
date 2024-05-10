@@ -1,8 +1,6 @@
 #pragma once
 
-#include <nlohmann/json.hpp>
-#include <filesystem>
-
+#include "pch.h"
 #include "Utilities/FileHandler.h"
 
 namespace Dwarf
@@ -50,7 +48,7 @@ namespace Dwarf
 
       if (!FileHandler::CheckIfDirectoyExists(assetPath))
       {
-        FileHandler::CreateDirectory(assetPath);
+        FileHandler::CreateDirectoryAt(assetPath);
       }
 
       FileHandler::WriteToFile(GetMetaDataPath(assetPath), fileContent);

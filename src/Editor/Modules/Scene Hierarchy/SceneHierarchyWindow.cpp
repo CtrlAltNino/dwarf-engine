@@ -1,15 +1,11 @@
-
-
-#include <ranges>
+#include "pch.h"
 
 #include "Editor/Modules/Scene Hierarchy/SceneHierarchyWindow.h"
-
 #include "Core/Scene/Scene.h"
 #include "Editor/Modules/Scene Hierarchy/NewParentInstruction.h"
 #include "Editor/Modules/Scene Hierarchy/ChildIndexInstruction.h"
 #include "Editor/Modules/Scene Hierarchy/DeleteEntityInstruction.h"
 #include "Input/InputManager.h"
-#include "Core/Asset/AssetDatabase.h"
 
 namespace Dwarf
 {

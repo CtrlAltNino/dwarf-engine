@@ -1,8 +1,8 @@
+#include "pch.h"
 #include "Editor/Modules/Asset Browser/AssetBrowserWindow.h"
 #include "Input/InputManager.h"
-#include "Core/Rendering/Renderer.h"
 #include "Core/Scene/SceneUtilities.h"
-#include <imgui_internal.h>
+#include "Core/Rendering/TextureCreator.h"
 
 namespace Dwarf
 {
@@ -648,17 +648,33 @@ namespace Dwarf
   {
     if (FileHandler::CheckIfFileExists(path))
     {
-      std::strncpy(
+#ifdef _MSC_VER
+      strncpy_s(
         m_RenameBuffer,
         std::filesystem::path(m_RenamePathBuffer).filename().string().c_str(),
-        RENAME_BUFFER_SIZE);
+        RENAME_BUFFER_SIZE - 1);
+#else
+      std::strncpy_s(
+        m_RenameBuffer,
+        RENAME_BUFFER_SIZE,
+        std::filesystem::path(m_RenamePathBuffer).filename().string().c_str(),
+        RENAME_BUFFER_SIZE - 1);
+#endif
     }
     else if (FileHandler::CheckIfDirectoyExists(path))
     {
-      std::strncpy(
+#ifdef _MSC_VER
+      strncpy_s(
         m_RenameBuffer,
         std::filesystem::path(m_RenamePathBuffer).stem().string().c_str(),
-        RENAME_BUFFER_SIZE);
+        RENAME_BUFFER_SIZE - 1);
+#else
+      std::strncpy_s(
+        m_RenameBuffer,
+        RENAME_BUFFER_SIZE,
+        std::filesystem::path(m_RenamePathBuffer).stem().string().c_str(),
+        RENAME_BUFFER_SIZE - 1);
+#endif
     }
   }
 }

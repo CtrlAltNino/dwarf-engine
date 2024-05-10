@@ -1,7 +1,5 @@
 #pragma once
-
-#include <nlohmann/json.hpp>
-
+#include "pch.h"
 #include "Utilities/FileHandler.h"
 #include "Core/Base.h"
 #include "Core/Rendering/Mesh.h"

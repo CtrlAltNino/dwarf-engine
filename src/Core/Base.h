@@ -1,9 +1,5 @@
 #pragma once
 
-#include <memory>
-#include <array>
-#include <string>
-
 namespace Dwarf
 {
   /// @brief Enum containing the different API's

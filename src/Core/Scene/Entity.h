@@ -1,8 +1,7 @@
 #pragma once
+#include "pch.h"
 
 #include <entt/entt.hpp>
-#include <algorithm>
-
 #include "Core/Base.h"
 #include "Core/UID.h"
 #include "Core/GenericComponents.h"

@@ -1,3 +1,4 @@
+#include "pch.h"
 #include "Core/Base.h"
 #include "Core/Rendering/Shader Parameters/UnsignedIntegerShaderParameter.h"
 

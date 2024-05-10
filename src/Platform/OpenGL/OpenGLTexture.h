@@ -1,9 +1,6 @@
 #pragma once
-
-#include <filesystem>
+#include "pch.h"
 #include <glad/glad.h>
-#include <nlohmann/json.hpp>
-
 #include "Core/Rendering/Texture.h"
 
 namespace Dwarf

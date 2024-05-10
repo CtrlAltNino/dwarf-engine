@@ -71,6 +71,8 @@ target_sources(${targetName} PRIVATE ${EXECUTABLE_ADDITIONAL_SETTINGS})
 # Project declaration
 project(Dwarf\ Engine VERSION 0.0.1 LANGUAGES C CXX)
 
+target_precompile_headers(${targetName} PRIVATE src/pch.h)
+
 # Add the CMakeLists.txt files of the subdirectories
 smtg_add_subdirectories()
 

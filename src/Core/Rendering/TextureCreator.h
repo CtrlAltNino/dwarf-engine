@@ -1,10 +1,9 @@
 #pragma once
-
+#include "pch.h"
 #include "Core/Base.h"
 #include "Core/Rendering/Framebuffer.h"
 #include "Core/Rendering/Texture.h"
 #include "Utilities/ImageUtilities/TextureCommon.h"
-#include <filesystem>
 
 namespace Dwarf
 {

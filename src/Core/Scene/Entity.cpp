@@ -1,4 +1,4 @@
-
+#include "pch.h"
 #include "Core/Scene/Entity.h"
 
 namespace Dwarf

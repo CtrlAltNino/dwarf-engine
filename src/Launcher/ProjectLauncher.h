@@ -1,12 +1,9 @@
 #pragma once
 
-#include "Core/Base.h"
+#include "pch.h"
 #include "Launcher/IProjectLauncherModel.h"
 #include "Launcher/IProjectLauncherView.h"
-
 #include "Window/Window.h"
-
-#include <filesystem>
 
 namespace Dwarf
 {

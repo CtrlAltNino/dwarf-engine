@@ -1,9 +1,5 @@
 #pragma once
-
-#include "Core/Base.h"
-
-#include <string_view>
-
+#include "pch.h"
 #include "Core/Scene/Scene.h"
 
 namespace Dwarf

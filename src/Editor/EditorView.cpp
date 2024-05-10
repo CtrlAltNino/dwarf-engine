@@ -1,5 +1,4 @@
-
-
+#include "pch.h"
 #include <nfd.h>
 
 #include "Editor/Editor.h"
@@ -14,6 +13,8 @@
 #include "Editor/Modules/Scene Viewer/SceneViewerWindow.h"
 
 #include "Core/Scene/SceneUtilities.h"
+#include "Core/Base.h"
+#include "Core/UI/DwarfUI.h"
 
 namespace Dwarf
 {

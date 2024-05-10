@@ -1,11 +1,6 @@
 #pragma once
-
-#include <nlohmann/json.hpp>
-
-#include "Core/Scene/SceneComponents.h"
+#include "pch.h"
 #include "Core/Scene/Scene.h"
-#include "Core/Base.h"
-#include "Utilities/FileHandler.h"
 
 namespace Dwarf
 {

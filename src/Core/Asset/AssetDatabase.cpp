@@ -1,9 +1,4 @@
-
-
 #include "AssetDatabase.h"
-
-#include <nlohmann/json.hpp>
-
 #include "Utilities/FileHandler.h"
 #include "Core/Asset/AssetComponents.h"
 #include "Core/Asset/AssetMetaData.h"

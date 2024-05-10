@@ -1,12 +1,10 @@
 #pragma once
-
-#include "Core/Base.h"
+#include "pch.h"
 #include "IProjectLauncherModel.h"
 #include "Core/Rendering/Texture.h"
 #include "Launcher/IProjectLauncherView.h"
 #include "Window/Window.h"
 #include "imgui.h"
-#include <memory>
 
 namespace Dwarf
 {
