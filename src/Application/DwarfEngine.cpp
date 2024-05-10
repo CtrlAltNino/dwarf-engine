@@ -1,49 +1,43 @@
-#include "dpch.h"
 #include "Application/DwarfEngine.h"
 #include "Launcher/ProjectLauncher.h"
 #include "Editor/Editor.h"
+#include "Logging/DefaultLogger.h"
+#include <filesystem>
 
 namespace Dwarf
 {
-
-  DwarfEngine* DwarfEngine::s_Instance = nullptr;
-
-  DwarfEngine::DwarfEngine()
-  {
-    s_Instance = this;
-  }
-
-  DwarfEngine::~DwarfEngine() = default;
-
   void
   DwarfEngine::Run()
   {
-    bool shouldClose = false;
+    DefaultLogger logger = DefaultLogger();
+    bool          shouldClose = false;
     while (!shouldClose)
     {
-      auto                  launcher = Dwarf::CreateLauncher();
-      std::filesystem::path projectPath = launcher->Run();
-      delete launcher;
+      std::filesystem::path projectPath = "";
+      {
+        logger.LogInfo("Creating project launcher...");
+        auto launcher = Dwarf::ProjectLauncher();
+        logger.LogInfo("Project launcher created.");
+
+        logger.LogInfo("Running project launcher...");
+        launcher.Run(projectPath);
+        logger.LogInfo("Project launcher finished running.");
+      }
 
       if (!projectPath.empty())
       {
-        std::cout << "Opening project at: <" << projectPath.string() << ">"
-                  << std::endl;
-
+        logger.LogInfo("Opening project at: " + projectPath.string());
+        logger.LogInfo("Creating editor...");
         auto editor = Dwarf::CreateEditor();
         shouldClose = !editor->Run(projectPath);
+        logger.LogInfo("Editor finished running.");
+        logger.LogInfo("Should close: " + std::to_string(shouldClose));
       }
       else
       {
-        std::cout << "Not opening any project" << std::endl;
+        logger.LogInfo("No project path provided. Exiting Dwarf Engine...");
         shouldClose = true;
       }
     }
-  }
-
-  std::shared_ptr<DwarfEngine>
-  Create()
-  {
-    return std::make_shared<DwarfEngine>();
   }
 }

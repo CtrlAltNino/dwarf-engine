@@ -1,12 +1,13 @@
-#include "dpch.h"
+
 #include "Platform/Windows/WindowsWindow.h"
 #include "Input/InputManager.h"
 
 namespace Dwarf
 {
-  WindowsWindow::WindowsWindow(GraphicsApi api)
-    : m_Api(api)
+  WindowsWindow::WindowsWindow(const WindowProps& props)
+    : m_Api(props.Api)
   {
+    Init(props);
   }
 
   WindowsWindow::~WindowsWindow()

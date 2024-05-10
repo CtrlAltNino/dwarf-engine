@@ -130,6 +130,9 @@ target_link_libraries(${targetName} PRIVATE $<IF:$<TARGET_EXISTS:libjpeg-turbo::
 find_package(SPNG CONFIG REQUIRED)
 target_link_libraries(${targetName} PRIVATE $<IF:$<TARGET_EXISTS:spng::spng>,spng::spng,spng::spng_static>)
 
+find_package(spdlog CONFIG REQUIRED)
+target_link_libraries(${targetName} PRIVATE spdlog::spdlog)
+
 IF(APPLE)
     find_library(METAL Metal)
     find_library(FOUNDATION Foundation)

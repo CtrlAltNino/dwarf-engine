@@ -1,23 +1,21 @@
 #pragma once
-#define SDL_MAIN_HANDLED
 #include "Core/Base.h"
 
 namespace Dwarf
 {
-
+  /**
+   * @brief Main engine class for the Dwarf Engine
+   */
   class DwarfEngine
   {
   public:
-    DwarfEngine();
-    ~DwarfEngine();
+    DwarfEngine() = default;
+    ~DwarfEngine() = default;
 
+    /**
+     * @brief Run the engine
+     */
     void
     Run();
-
-  private:
-    static DwarfEngine* s_Instance;
   };
-
-  std::shared_ptr<DwarfEngine>
-  Create();
 }

@@ -53,7 +53,7 @@ namespace Dwarf
           projectPath / projectName / "projectSettings.dproj";
         if (!FileHandler::CheckIfFileExists(projectSettingsPath))
         {
-          FileHandler::CreateDirectory(projectDirectory);
+          FileHandler::CreateDirectoryAt(projectDirectory);
 
           if (projectTemplate == ProjectTemplate::Blank)
           {
@@ -89,17 +89,18 @@ namespace Dwarf
             templateProjectDirectory =
               std::filesystem::path("data/demo projects") /
               templateApiDirectory / templateProjectDirectory;
+            std::string copyCommand = "";
 
-#ifdef WIN32
-            std::string copyCommand = std::string(
+#ifdef _WIN32
+            copyCommand = std::string(
               "Xcopy \"" + templateProjectDirectory.string() + "\" \"" +
               (projectPath / projectName).string() + "\" /E/H/C/I/y/D");
 #elif __APPLE__
-            std::string copyCommand = std::string(
+            copyCommand = std::string(
               "cp \"" + templateProjectDirectory.string() + "\" \"" +
               (projectPath / projectName).string() + "\"");
 #elif __linux__
-            std::string copyCommand = std::string(
+            copyCommand = std::string(
               "cp -a \"" + templateProjectDirectory.string() + "/.\" \"" +
               (projectPath / projectName).string() + "\"");
 #endif

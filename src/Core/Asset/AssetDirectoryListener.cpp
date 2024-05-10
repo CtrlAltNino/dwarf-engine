@@ -1,7 +1,9 @@
-#include "dpch.h"
+
 
 #include "Core/Asset/AssetDirectoryListener.h"
+#include "Core/Asset/AssetComponents.h"
 #include "Core/Asset/AssetDatabase.h"
+#include <iostream>
 
 namespace Dwarf
 {

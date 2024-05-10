@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core/Base.h"
+#include <filesystem>
 
 namespace Dwarf
 {
@@ -65,7 +65,7 @@ namespace Dwarf
     /// @brief Creates a directory at a given path.
     /// @param path Path to a directory.
     static void
-    CreateDirectory(std::filesystem::path const& path);
+    CreateDirectoryAt(std::filesystem::path const& path);
 
     /// @brief Opens a path into a file browser.
     /// @param path Path to open.

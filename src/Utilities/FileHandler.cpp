@@ -1,7 +1,8 @@
-#include "dpch.h"
-#include "Utilities/FileHandler.h"
 
-#include <sago/platform_folders.h>
+// #include <combaseapi.h>
+// #include <shlobj_core.h>
+// #include <winnt.h>
+// #include <KnownFolders.h>
 
 #ifdef _WIN32
 #include <Windows.h>
@@ -10,6 +11,12 @@
 #include <shlwapi.h>
 #include <objbase.h>
 #endif
+
+#include "Utilities/FileHandler.h"
+
+#include <iostream>
+#include <sago/platform_folders.h>
+#include <fstream>
 
 namespace Dwarf
 {
@@ -169,7 +176,7 @@ namespace Dwarf
   /// @brief Creates a directory at a given path.
   /// @param path Path to a directory.
   void
-  FileHandler::CreateDirectory(std::filesystem::path const& path)
+  FileHandler::CreateDirectoryAt(std::filesystem::path const& path)
   {
     std::filesystem::create_directories(path);
   }

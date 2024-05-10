@@ -1,4 +1,4 @@
-#include "dpch.h"
+
 
 #include "Launcher/ProjectLauncherModel.h"
 
@@ -9,36 +9,33 @@
 namespace Dwarf
 {
 
-  ProjectLauncherModel::ProjectLauncherModel() {}
-
-  void
-  ProjectLauncherModel::Init()
+  ProjectLauncherModel::ProjectLauncherModel()
   {
     ProjectListHandler::LoadProjectList();
     ProjectCreator::InitProjectCreator();
   }
 
   ProjectChooserState
-  ProjectLauncherModel::GetState()
+  ProjectLauncherModel::GetState() const
   {
-    return this->m_State;
+    return m_State;
   }
 
   void
   ProjectLauncherModel::SetState(ProjectChooserState state)
   {
-    this->m_State = state;
+    m_State = state;
   }
 
   int
-  ProjectLauncherModel::GetSelectedProjectID()
+  ProjectLauncherModel::GetSelectedProjectID() const
   {
-    return this->m_SelectedProjectId;
+    return m_SelectedProjectId;
   }
 
   void
   ProjectLauncherModel::SetSelectedProjectID(int id)
   {
-    this->m_SelectedProjectId = id;
+    m_SelectedProjectId = id;
   }
 }

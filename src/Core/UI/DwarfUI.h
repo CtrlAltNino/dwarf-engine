@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Asset/AssetComponents.h"
 #include "Core/Base.h"
 #include "Core/GenericComponents.h"
 #include "Core/Scene/SceneComponents.h"

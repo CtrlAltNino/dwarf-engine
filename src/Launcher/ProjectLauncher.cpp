@@ -1,26 +1,15 @@
-#include "dpch.h"
+
 #include "Launcher/ProjectLauncher.h"
+
+#include "Launcher/ProjectLauncherModel.h"
+#include "Launcher/ProjectLauncherView.h"
+
 #include "Launcher/ProjectListHandler.h"
 #include "Utilities/TimeUtilities.h"
 
 namespace Dwarf
 {
-
-  ProjectLauncher* ProjectLauncher::s_Instance = nullptr;
-
-  ProjectLauncher*
-  CreateLauncher()
-  {
-    return new ProjectLauncher();
-  }
-
   ProjectLauncher::ProjectLauncher()
-  {
-    s_Instance = this;
-  }
-
-  std::filesystem::path
-  ProjectLauncher::Run()
   {
     // Initializing the project launcher model (e.g. loading the project list)
     WindowProps props("Dwarf Engine", 1100, 600);
@@ -31,13 +20,15 @@ namespace Dwarf
 
     m_Window = Window::Create(props);
 
-    m_Model = std::make_unique<ProjectLauncherModel>(ProjectLauncherModel());
-    m_Model->Init();
+    m_Model = std::make_unique<ProjectLauncherModel>();
 
     // Initializing the view
-    m_View =
-      std::make_unique<ProjectLauncherView>(ProjectLauncherView(m_Model));
+    m_View = std::make_unique<ProjectLauncherView>(m_Model, m_Window);
+  }
 
+  void
+  ProjectLauncher::Run(std::filesystem::path& projectPath)
+  {
     m_Window->ShowWindow();
 
     while (((m_Model->GetState() != ProjectChooserState::Done) &&
@@ -54,14 +45,13 @@ namespace Dwarf
 
       // TODO: Fps lock
       while (TimeUtilities::GetDifferenceInSeconds(
-               TimeUtilities::GetCurrent(), currentFrameStamp) < (1.0 / 144.0))
+               TimeUtilities::GetCurrent(), currentFrameStamp) < (1.0 / 60.0))
       {
         // TODO: Update this when implementing multi threading
       }
     }
 
-    int                   selectedProjectId = m_Model->GetSelectedProjectID();
-    std::filesystem::path projectPath;
+    int selectedProjectId = m_Model->GetSelectedProjectID();
 
     if (m_Model->GetState() == ProjectChooserState::Done)
     {
@@ -73,7 +63,5 @@ namespace Dwarf
         ProjectListHandler::RegisterProjectOpening(selectedProjectId);
       }
     }
-
-    return projectPath;
   }
 }

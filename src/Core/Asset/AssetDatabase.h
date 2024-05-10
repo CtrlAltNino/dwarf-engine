@@ -6,14 +6,12 @@
 #include <entt/entt.hpp>
 #include <nlohmann/json.hpp>
 
-#include "Core/Base.h"
 #include "Core/UID.h"
 #include "Core/Asset/AssetReference.h"
 #include "Core/Asset/AssetMetaData.h"
-#include "Core/Asset/AssetComponents.h"
-#include "Core/Scene/SceneComponents.h"
 #include "Utilities/FileHandler.h"
 #include "Core/Asset/AssetDirectoryListener.h"
+#include "Core/Rendering/Shader.h"
 
 namespace Dwarf
 {

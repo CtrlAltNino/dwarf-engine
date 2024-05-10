@@ -12,7 +12,7 @@ namespace Dwarf
   class WindowsWindow : public Window
   {
   public:
-    explicit WindowsWindow(GraphicsApi api);
+    explicit WindowsWindow(const WindowProps& props);
     ~WindowsWindow() override;
 
     void
@@ -61,7 +61,7 @@ namespace Dwarf
 
   private:
     void
-    Init(const WindowProps& props) override;
+    Init(const WindowProps& props);
 
     SDL_Window*                      m_Window;
     std::unique_ptr<GraphicsContext> m_Context;

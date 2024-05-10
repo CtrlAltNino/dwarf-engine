@@ -1,5 +1,5 @@
 #include "Core/Rendering/TextureCreator.h"
-#include "dpch.h"
+
 #include "Platform/OpenGL/OpenGLFramebuffer.h"
 
 #include <glad/glad.h>

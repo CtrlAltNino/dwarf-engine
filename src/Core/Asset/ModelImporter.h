@@ -8,6 +8,7 @@
 #include "Core/Rendering/Mesh.h"
 #include "Core/Asset/AssetMetaData.h"
 #include "Core/Rendering/Vertex.h"
+#include <iostream>
 
 namespace Dwarf
 {

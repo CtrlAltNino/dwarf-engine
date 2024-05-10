@@ -60,7 +60,7 @@ namespace Dwarf
     "fogStart", "fogEnd",      "fogColor"
   };
 
-#ifdef WIN32
+#ifdef _WIN32
   constexpr std::array<bool, 4> apiAvailability = {
     true,
     false,

@@ -247,7 +247,7 @@ namespace Dwarf
 
       if (ImGui::MenuItem("Create Folder"))
       {
-        FileHandler::CreateDirectory(m_CurrentDirectory / "New Folder");
+        FileHandler::CreateDirectoryAt(m_CurrentDirectory / "New Folder");
       }
 
       if (ImGui::MenuItem("Paste"))

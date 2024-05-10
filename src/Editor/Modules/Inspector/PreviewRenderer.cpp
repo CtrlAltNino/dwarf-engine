@@ -1,7 +1,8 @@
-#include "dpch.h"
+
 
 #include "Editor/Modules/Inspector/PreviewRenderer.h"
 #include "Input/InputManager.h"
+#include <algorithm>
 
 namespace Dwarf
 {

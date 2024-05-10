@@ -1,4 +1,4 @@
-#include "dpch.h"
+
 #include "Core/Rendering/Material.h"
 #include "Core/Rendering/IShaderParameter.h"
 #include "Core/Rendering/Shader Parameters/BooleanShaderParameter.h"

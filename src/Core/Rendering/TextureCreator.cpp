@@ -1,7 +1,7 @@
 #include "Core/Rendering/Framebuffer.h"
 #include "Utilities/FileHandler.h"
 #include "Utilities/ImageUtilities/TextureCommon.h"
-#include "dpch.h"
+
 #include <iostream>
 #include <spng.h>
 #include <turbojpeg.h>

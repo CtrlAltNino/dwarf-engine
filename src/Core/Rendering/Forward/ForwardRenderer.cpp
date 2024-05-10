@@ -1,4 +1,4 @@
-#include "dpch.h"
+
 
 #include "Core/Rendering/Forward/ForwardRenderer.h"
 #include "Core/Asset/AssetDatabase.h"

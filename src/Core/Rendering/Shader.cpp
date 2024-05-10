@@ -1,5 +1,5 @@
 #include "Core/Rendering/Shader Parameters/UnsignedIntegerShaderParameter.h"
-#include "dpch.h"
+
 #include <string>
 
 #include "Core/Rendering/Shader.h"

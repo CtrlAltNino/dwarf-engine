@@ -1,5 +1,6 @@
 #pragma once
 
+#define SDL_MAIN_HANDLED
 #include <imgui_internal.h>
 #include <glm/vec4.hpp>
 #include <SDL2/SDL.h>
@@ -29,9 +30,6 @@ namespace Dwarf
   {
   public:
     virtual ~Window() = default;
-
-    virtual void
-    Init(const WindowProps& props) = 0;
 
     virtual void
     NewFrame() = 0;
@@ -68,7 +66,7 @@ namespace Dwarf
     virtual void
     SetWindowTitle(std::string_view windowTitle) = 0;
 
-    static std::shared_ptr<Window>
+    static std::unique_ptr<Window>
     Create(const WindowProps& props = WindowProps());
   };
 }

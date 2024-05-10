@@ -1,4 +1,4 @@
-#include "dpch.h"
+
 
 #include "Core/Rendering/Deferred/DeferredRenderer.h"
 

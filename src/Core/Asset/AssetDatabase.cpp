@@ -1,4 +1,4 @@
-#include "dpch.h"
+
 
 #include "AssetDatabase.h"
 
@@ -9,6 +9,9 @@
 #include "Core/Asset/AssetMetaData.h"
 #include "Core/Rendering/Renderer.h"
 #include "Core/Asset/MaterialSerializer.h"
+#include "Core/Asset/AssetComponents.h"
+#include "Core/Base.h"
+#include "Core/Scene/SceneComponents.h"
 
 namespace Dwarf
 {
@@ -114,7 +117,7 @@ namespace Dwarf
 
     if (!FileHandler::CheckIfDirectoyExists(s_AssetFolderPath))
     {
-      FileHandler::CreateDirectory(s_AssetFolderPath);
+      FileHandler::CreateDirectoryAt(s_AssetFolderPath);
     }
     s_Registry = std::make_shared<entt::registry>();
 

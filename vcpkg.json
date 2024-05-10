@@ -55,7 +55,8 @@
     "tiff",
     "libspng",
     "libjpeg-turbo",
-    "gtest"
+    "gtest",
+    "spdlog"
   ],
   "overrides": [
     {

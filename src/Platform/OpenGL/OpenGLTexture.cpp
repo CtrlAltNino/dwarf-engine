@@ -1,7 +1,6 @@
 #include "Core/Rendering/Texture.h"
 #include "OpenGLTexture.h"
 #include "Utilities/ImageUtilities/TextureCommon.h"
-#include "dpch.h"
 
 #include "Core/Asset/AssetMetaData.h"
 #include "Platform/OpenGL/OpenGLTexture.h"

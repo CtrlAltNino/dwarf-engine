@@ -28,6 +28,8 @@
 #include <Core/Rendering/Shader Parameters/Vec3ShaderParameter.h>
 #include <Core/Rendering/Shader Parameters/Vec4ShaderParameter.h>
 
+#include <algorithm>
+
 #define COMPONENT_PANEL_PADDING (8.0f)
 #define ADD_BUTTON_WIDTH (40.0f)
 #define UNIFORM_DELETE_BUTTON_WIDTH (80.0f)

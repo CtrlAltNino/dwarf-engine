@@ -1,6 +1,6 @@
 #include "Core/Base.h"
 #include "Core/Rendering/Shader Parameters/UnsignedIntegerShaderParameter.h"
-#include "dpch.h"
+
 #include "Core/Asset/MaterialSerializer.h"
 #include "Core/Rendering/Renderer.h"
 

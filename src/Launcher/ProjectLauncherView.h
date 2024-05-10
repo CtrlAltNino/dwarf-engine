@@ -1,22 +1,25 @@
 #pragma once
 
 #include "Core/Base.h"
-#include "ProjectLauncherUtilities.h"
-#include "ProjectLauncherModel.h"
-#include "Utilities/TimeUtilities.h"
-#include "Utilities/BrowserLinkOpener.h"
+#include "IProjectLauncherModel.h"
 #include "Core/Rendering/Texture.h"
-#include "Core/UI/ImGuiLayer.h"
-
+#include "Launcher/IProjectLauncherView.h"
+#include "Window/Window.h"
 #include "imgui.h"
+#include <memory>
 
 namespace Dwarf
 {
-
-  class ProjectLauncherView
+  /**
+   * @brief View for the project launcher
+   */
+  class ProjectLauncherView : public IProjectLauncherView
   {
   private:
-    std::shared_ptr<ProjectLauncherModel> m_Model;
+    /// @brief Model for the project launcher
+    const std::unique_ptr<IProjectLauncherModel>& m_Model;
+    /// @brief Window to render the project launcher in
+    const std::unique_ptr<Window>& m_Window;
 
     /// @brief Font loaded into IMGUI for header text
     ImFont* m_HeaderFont;
@@ -32,26 +35,53 @@ namespace Dwarf
 
     /// @brief Loaded image for the twitter icon
     std::shared_ptr<Texture> m_TwitterIcon;
-    void
-    RenderProjectList(int fWidth, int fHeight);
 
+    /**
+     * @brief Render the project list
+     * @param windowSize Size of the window
+     */
     void
-    RenderButtons(int fWidth, int fHeight);
+    RenderProjectList(glm::ivec2 windowSize);
 
+    /**
+     * @brief Render a button
+     * @param windowSize Size of the window
+     */
     void
-    RenderFooter(int fWidth, int fHeight);
+    RenderButtons(glm::ivec2 windowSize);
 
+    /**
+     * @brief Render the footer
+     * @param windowSize Size of the window
+     */
+    void
+    RenderFooter(glm::ivec2 windowSize);
+
+    /**
+     * @brief Render the change graphics API modal
+     */
     void
     RenderChangeGraphicsApiModal();
 
+    /**
+     * @brief Render the project not found modal
+     */
     void
     RenderProjectNotFoundModal();
 
+    /**
+     * @brief Render the create new project modal
+     */
     void
     RenderCreateNewProjectModal();
 
   public:
-    ProjectLauncherView(std::shared_ptr<ProjectLauncherModel> model);
+    ProjectLauncherView(const std::unique_ptr<IProjectLauncherModel>& model,
+                        const std::unique_ptr<Window>&                window);
+
+    /**
+     * @brief Render the project launcher view
+     */
     void
     Render();
   };

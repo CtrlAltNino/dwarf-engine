@@ -1,4 +1,4 @@
-#include "dpch.h"
+
 #include "Mesh.h"
 
 #include "Core/Rendering/Renderer.h"

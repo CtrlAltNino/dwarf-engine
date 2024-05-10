@@ -1,4 +1,4 @@
-#include "dpch.h"
+
 #include <imgui_internal.h>
 
 #include "Editor/Modules/Performance/PerformanceWindow.h"

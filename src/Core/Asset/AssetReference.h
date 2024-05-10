@@ -5,6 +5,8 @@
 #include "Core/Base.h"
 #include "Core/UID.h"
 #include "Core/GenericComponents.h"
+#include <filesystem>
+#include <string>
 
 namespace Dwarf
 {

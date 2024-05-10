@@ -1,4 +1,4 @@
-#include "dpch.h"
+
 #include <string>
 
 #include "Core/Rendering/ComputeShader.h"

@@ -1,4 +1,4 @@
-#include "dpch.h"
+
 
 #include "Window/Window.h"
 
@@ -12,19 +12,18 @@
 
 namespace Dwarf
 {
-  std::shared_ptr<Window>
+  std::unique_ptr<Window>
   Window::Create(const WindowProps& props)
   {
-    std::shared_ptr<Window> window = nullptr;
+    std::unique_ptr<Window> window = nullptr;
 #ifdef _WIN32
-    window = std::make_shared<WindowsWindow>(props.Api);
+    window = std::make_unique<WindowsWindow>(props);
 #elif __linux__
-    window = std::make_shared<LinuxWindow>(props.Api);
+    window = std::make_unique<LinuxWindow>(props);
 #elif __APPLE__
-    window = std::make_shared<OSXWindow>(props.Api); // - NOT SUPPORTED YET
-                                                     // return nullptr;
+    window = std::make_unique<OSXWindow>(props); // - NOT SUPPORTED YET
+                                                 // return nullptr;
 #endif
-    window->Init(props);
     return window;
   }
 }

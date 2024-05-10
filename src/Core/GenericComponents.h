@@ -2,6 +2,7 @@
 
 #include "Core/Base.h"
 #include "Core/UID.h"
+#include <filesystem>
 
 namespace Dwarf
 {

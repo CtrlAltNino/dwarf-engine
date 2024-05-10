@@ -1,10 +1,11 @@
-#include "dpch.h"
+
 #include "Launcher/ProjectLauncherView.h"
-#include "Launcher/ProjectLauncher.h"
 #include "Launcher/ProjectListHandler.h"
 #include "Launcher/ProjectSorter.h"
 #include "Launcher/ProjectCreator.h"
 #include "Core/Rendering/TextureCreator.h"
+#include "Utilities/TimeUtilities.h"
+#include "Utilities/BrowserLinkOpener.h"
 
 namespace Dwarf
 {
@@ -13,9 +14,11 @@ namespace Dwarf
 #define PROJECT_INFORMATION_HEIGHT (30)
 
   ProjectLauncherView::ProjectLauncherView(
-    std::shared_ptr<ProjectLauncherModel> model)
+    const std::unique_ptr<IProjectLauncherModel>& model,
+    const std::unique_ptr<Window>&                window)
+    : m_Model(model)
+    , m_Window(window)
   {
-    this->m_Model = model;
 
     ImGuiIO io = ImGui::GetIO();
     io.Fonts->AddFontDefault();
@@ -33,12 +36,11 @@ namespace Dwarf
   void
   ProjectLauncherView::Render()
   {
-    Window*    window = ProjectLauncher::Get()->GetWindow();
-    glm::ivec2 windowSize = { window->GetWidth(), window->GetHeight() };
+    glm::ivec2 windowSize = { m_Window->GetWidth(), m_Window->GetHeight() };
 
-    RenderProjectList(windowSize.x, windowSize.y);
-    RenderButtons(windowSize.x, windowSize.y);
-    RenderFooter(windowSize.x, windowSize.y);
+    RenderProjectList(windowSize);
+    RenderButtons(windowSize);
+    RenderFooter(windowSize);
     ProjectChooserState state = m_Model->GetState();
 
     if (state == ProjectChooserState::ProjectNotFound)
@@ -63,7 +65,7 @@ namespace Dwarf
   }
 
   void
-  ProjectLauncherView::RenderProjectList(int fWidth, int fHeight)
+  ProjectLauncherView::RenderProjectList(glm::ivec2 windowSize)
   {
     std::vector<ProjectInformation>* projectList =
       ProjectListHandler::GetProjectList();
@@ -76,8 +78,8 @@ namespace Dwarf
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(60, 8));
     ImGui::SetNextWindowPos(ImVec2(0, 0));
-    ImGui::SetNextWindowSize(ImVec2(fWidth - PROJECT_BUTTON_WINDOW_WIDTH,
-                                    fHeight - PROJECT_INFORMATION_HEIGHT));
+    ImGui::SetNextWindowSize(ImVec2(windowSize.x - PROJECT_BUTTON_WINDOW_WIDTH,
+                                    windowSize.y - PROJECT_INFORMATION_HEIGHT));
     ImGui::PushStyleColor(ImGuiCol_Border, IM_COL32(0, 0, 0, 0));
     ImGui::PushStyleColor(ImGuiCol_WindowBg, IM_COL32(46, 52, 64, 255));
 
@@ -360,7 +362,7 @@ namespace Dwarf
   }
 
   void
-  ProjectLauncherView::RenderButtons(int fWidth, int fHeight)
+  ProjectLauncherView::RenderButtons(glm::ivec2 windowSize)
   {
     ImGuiWindowFlags window_flags = 0;
     window_flags |= ImGuiWindowFlags_NoMove;
@@ -368,9 +370,10 @@ namespace Dwarf
     window_flags |= ImGuiWindowFlags_NoCollapse;
     window_flags |= ImGuiWindowFlags_NoTitleBar;
 
-    ImGui::SetNextWindowPos(ImVec2(fWidth - PROJECT_BUTTON_WINDOW_WIDTH, 0));
+    ImGui::SetNextWindowPos(
+      ImVec2(windowSize.x - PROJECT_BUTTON_WINDOW_WIDTH, 0));
     ImGui::SetNextWindowSize(ImVec2(PROJECT_BUTTON_WINDOW_WIDTH,
-                                    fHeight - PROJECT_INFORMATION_HEIGHT));
+                                    windowSize.y - PROJECT_INFORMATION_HEIGHT));
     ImGui::PushStyleColor(ImGuiCol_WindowBg,
                           ImVec4(67 / 255.0, 76 / 255.0, 94 / 255.0, 1.0));
     ImGui::PushStyleColor(ImGuiCol_Border,
@@ -467,7 +470,7 @@ namespace Dwarf
   }
 
   void
-  ProjectLauncherView::RenderFooter(int fWidth, int fHeight)
+  ProjectLauncherView::RenderFooter(glm::ivec2 windowSize)
   {
     ImGuiWindowFlags window_flags = 0;
     window_flags |= ImGuiWindowFlags_NoMove;
@@ -476,8 +479,9 @@ namespace Dwarf
     window_flags |= ImGuiWindowFlags_NoTitleBar;
     window_flags |= ImGuiWindowFlags_NoScrollbar;
 
-    ImGui::SetNextWindowPos(ImVec2(0, fHeight - PROJECT_INFORMATION_HEIGHT));
-    ImGui::SetNextWindowSize(ImVec2(fWidth, PROJECT_INFORMATION_HEIGHT));
+    ImGui::SetNextWindowPos(
+      ImVec2(0, windowSize.y - PROJECT_INFORMATION_HEIGHT));
+    ImGui::SetNextWindowSize(ImVec2(windowSize.x, PROJECT_INFORMATION_HEIGHT));
     ImGui::PushStyleColor(ImGuiCol_WindowBg,
                           ImVec4(59 / 255.0, 66 / 255.0, 82 / 255.0, 1.0));
     ImGui::PushStyleColor(ImGuiCol_Border,

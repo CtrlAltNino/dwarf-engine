@@ -1,8 +1,9 @@
 #include "OpenGLFramebuffer.h"
-#include "dpch.h"
+
 #include "Platform/OpenGL/OpenGLRendererApi.h"
 #include "Core/Asset/AssetDatabase.h"
 #include "Platform/OpenGL/OpenGLComputeShader.h"
+#include "Core/Asset/AssetComponents.h"
 
 #include <glad/glad.h>
 #include <Core/Rendering/Shader Parameters/Tex2DShaderParameter.h>

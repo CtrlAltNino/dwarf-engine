@@ -2,6 +2,7 @@
 
 #include <nlohmann/json.hpp>
 #include <nfd.h>
+#include <iostream>
 
 #include "Utilities/FileHandler.h"
 #include "Launcher/ProjectLauncherUtilities.h"
@@ -37,7 +38,7 @@ namespace Dwarf
         FileHandler::GetProjectSettingsPath();
       if (!FileHandler::CheckIfDirectoyExists(settingsPath))
       {
-        FileHandler::CreateDirectory(settingsPath);
+        FileHandler::CreateDirectoryAt(settingsPath);
       }
       std::filesystem::path savedProjectsPath =
         settingsPath / "savedProjects.json";
