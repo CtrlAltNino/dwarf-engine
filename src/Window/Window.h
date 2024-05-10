@@ -1,11 +1,7 @@
 #pragma once
-
-#define SDL_MAIN_HANDLED
-#include <imgui_internal.h>
-#include <glm/vec4.hpp>
-#include <SDL2/SDL.h>
-
+#include "pch.h"
 #include "Core/Base.h"
+#include <SDL2/SDL.h>
 
 namespace Dwarf
 {

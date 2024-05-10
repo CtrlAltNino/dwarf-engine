@@ -1,8 +1,5 @@
 #pragma once
 
-// system
-#include <iostream>
-
 #include "Window/Window.h"
 #include "Core/Rendering/GraphicsContext.h"
 #include "Core/UI/ImGuiLayer.h"

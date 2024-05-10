@@ -1,8 +1,8 @@
 #pragma once
+#include "pch.h"
 
 namespace Dwarf
 {
-
   /// @brief This class handles all file related tasks of the editor and project
   /// launcher.
   class FileHandler

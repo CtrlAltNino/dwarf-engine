@@ -1,10 +1,10 @@
 #pragma once
+#include "pch.h"
 
 #ifdef _WIN32
 #include <Windows.h>
 #include <KnownFolders.h>
 #include <ShlObj.h>
-#include <filesystem>
 #endif
 
 namespace Dwarf

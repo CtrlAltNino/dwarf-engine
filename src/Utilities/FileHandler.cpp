@@ -1,4 +1,3 @@
-#include "pch.h"
 #include "Utilities/FileHandler.h"
 
 #include <sago/platform_folders.h>
