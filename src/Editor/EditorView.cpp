@@ -1,7 +1,7 @@
 #include "pch.h"
+#include <memory>
 #include <nfd.h>
 
-#include "Editor/Editor.h"
 #include "Editor/EditorView.h"
 
 #include "Core/Asset/AssetDatabase.h"
@@ -13,14 +13,20 @@
 #include "Editor/Modules/Scene Viewer/SceneViewerWindow.h"
 
 #include "Core/Scene/SceneUtilities.h"
-#include "Core/Base.h"
 #include "Core/UI/DwarfUI.h"
 
 namespace Dwarf
 {
-  EditorView::EditorView(std::shared_ptr<EditorModel> model)
+  EditorView::EditorView(std::unique_ptr<IEditorModel>& model,
+                         std::unique_ptr<Window>&       window)
     : m_Model(model)
+    , m_Window(window)
   {
+    using enum MODULE_TYPE;
+    AddWindow(SCENE_GRAPH);
+    AddWindow(INSPECTOR);
+    AddWindow(ASSET_BROWSER);
+    AddWindow(SCENE_VIEWER);
   }
 
   void
@@ -100,7 +106,7 @@ namespace Dwarf
           {
             AssetDatabase::Import(m_Model->GetScene()->GetPath());
             SceneUtilities::SetLastOpenedScene(m_Model->GetScene()->GetPath());
-            Editor::Get()->UpdateWindowTitle();
+            UpdateWindowTitle();
           }
         }
         if (ImGui::MenuItem("Save scene as"))
@@ -109,7 +115,7 @@ namespace Dwarf
           {
             AssetDatabase::Import(m_Model->GetScene()->GetPath());
             SceneUtilities::SetLastOpenedScene(m_Model->GetScene()->GetPath());
-            Editor::Get()->UpdateWindowTitle();
+            UpdateWindowTitle();
           }
         }
         if (ImGui::MenuItem("Load scene"))
@@ -120,7 +126,7 @@ namespace Dwarf
           {
             m_Model->SetScene(loadedScene);
             SceneUtilities::SetLastOpenedScene(m_Model->GetScene()->GetPath());
-            Editor::Get()->UpdateWindowTitle();
+            UpdateWindowTitle();
           }
         }
 
@@ -196,16 +202,6 @@ namespace Dwarf
     }
 
     ImGui::End();
-  }
-
-  void
-  EditorView::Init()
-  {
-    using enum MODULE_TYPE;
-    AddWindow(SCENE_GRAPH);
-    AddWindow(INSPECTOR);
-    AddWindow(ASSET_BROWSER);
-    AddWindow(SCENE_VIEWER);
   }
 
   void
@@ -339,5 +335,21 @@ namespace Dwarf
         m_GuiModules.erase(m_GuiModules.begin() + i);
       }
     }
+  }
+
+  void
+  EditorView::UpdateWindowTitle() const
+  {
+    std::string windowTitle = "Dwarf Engine Editor - ";
+    windowTitle.append(m_Model->GetName());
+    windowTitle.append(" - ");
+    windowTitle.append(m_Model->GetScene()->GetName());
+    windowTitle.append(" <");
+    windowTitle.append(graphicsApiNames[(int)m_Window->GetApi()]);
+    windowTitle.append(">");
+
+    std::cout << "[EDITOR] Updating window title" << std::endl;
+
+    m_Window->SetWindowTitle(windowTitle);
   }
 }

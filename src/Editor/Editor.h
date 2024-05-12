@@ -1,55 +1,48 @@
 #pragma once
 #include "pch.h"
 #include "Window/Window.h"
-#include "Editor/EditorModel.h"
-#include "Editor/EditorView.h"
 #include "Core/UI/ImGuiLayer.h"
+#include "Editor/IEditorModel.h"
+#include "Editor/IEditorView.h"
+#include "Editor/IEditor.h"
 
 namespace Dwarf
 {
-
+  struct ProjectPath
+  {
+    std::filesystem::path value;
+    constexpr
+    operator std::filesystem::path() const
+    {
+      return value;
+    }
+  };
   /// @brief The controller part of the editors MVC structure.
-  class Editor
+  class Editor : public IEditor
   {
   private:
-    static std::shared_ptr<Editor> s_Instance;
     /// @brief The MVC model instance of this editor instance.
-    std::shared_ptr<EditorModel> m_Model;
+    std::unique_ptr<IEditorModel> m_Model;
 
     /// @brief The MVC view instance of this editor instance.
-    std::shared_ptr<EditorView> m_View;
+    std::unique_ptr<IEditorView> m_View;
 
-    std::shared_ptr<Window> m_Window;
+    std::unique_ptr<Window> m_Window;
 
-    std::shared_ptr<ImGuiLayer> m_ImguiLayer;
+    std::unique_ptr<ImGuiLayer> m_ImguiLayer;
 
     void
-    Init(std::filesystem::path const& projectPath);
+    Init();
 
   public:
-    Editor();
+    Editor(const ProjectPath& projectPath);
     ~Editor();
-
-    static std::shared_ptr<Editor>
-    Get()
-    {
-      return s_Instance;
-    }
-
-    std::shared_ptr<EditorModel>
-    GetModel() const
-    {
-      return m_Model;
-    }
 
     /// @brief Starts the render loop
     bool
-    Run(std::filesystem::path const& projectPath);
+    Run() override;
 
     void
-    UpdateWindowTitle() const;
+    UpdateWindowTitle() const override;
   };
-
-  std::shared_ptr<Editor>
-  CreateEditor();
 }

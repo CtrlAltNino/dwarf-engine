@@ -4,7 +4,6 @@
 
 namespace Dwarf
 {
-
   /// @brief This class provides functionality to load and save scenes.
   class SceneUtilities
   {

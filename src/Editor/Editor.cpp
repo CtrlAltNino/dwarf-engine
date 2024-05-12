@@ -2,25 +2,23 @@
 
 #include "Core/Scene/SceneUtilities.h"
 #include "Core/Asset/AssetDatabase.h"
+#include "IEditorView.h"
 #include "Input/InputManager.h"
 #include "Utilities/TimeUtilities.h"
 #include "Core/Rendering/Renderer.h"
 #include "Core/Base.h"
+#include "Editor/EditorModel.h"
+#include "Editor/EditorView.h"
 
 namespace Dwarf
 {
 
-  std::shared_ptr<Editor> Editor::s_Instance = nullptr;
-
-  std::shared_ptr<Editor>
-  CreateEditor()
+  Editor::Editor(std::filesystem::path projectPath)
+    : m_Model(std::make_shared<EditorModel>(projectPath)
+    , m_Window(Window::Create(WindowProps("Dwarf Engine Editor", 1280, 720)))
+    , m_View(std::make_unique<EditorView>(m_Model, m_Window))
   {
-    return std::make_shared<Editor>();
-  }
-
-  Editor::Editor()
-  {
-    s_Instance = std::make_shared<Editor>(*this);
+    Init();
   }
 
   Editor::~Editor() = default;
@@ -29,28 +27,26 @@ namespace Dwarf
   Editor::UpdateWindowTitle() const
   {
     std::string windowTitle = "Dwarf Engine Editor - ";
-    windowTitle.append(s_Instance->m_Model->GetName());
+    windowTitle.append(m_Model->GetName());
     windowTitle.append(" - ");
-    windowTitle.append(s_Instance->m_Model->GetScene()->GetName());
+    windowTitle.append(m_Model->GetScene()->GetName());
     windowTitle.append(" <");
-    windowTitle.append(graphicsApiNames[(int)s_Instance->m_Window->GetApi()]);
+    windowTitle.append(graphicsApiNames[(int)m_Window->GetApi()]);
     windowTitle.append(">");
 
     std::cout << "[EDITOR] Updating window title" << std::endl;
 
-    s_Instance->m_Window->SetWindowTitle(windowTitle);
+    m_Window->SetWindowTitle(windowTitle);
   }
 
   void
-  Editor::Init(std::filesystem::path const& projectPath)
+  Editor::Init()
   {
-    // s_Instance = this;
-
     // ========== Load .dproj file ==========
     std::cout
       << "[EDITOR INIT] Initializing dwarf engine editor for project at ["
-      << projectPath << "]" << std::endl;
-    std::filesystem::path projectSettingsPath = projectPath;
+      << m_Model->GetProjectPath() << "]" << std::endl;
+    std::filesystem::path projectSettingsPath = m_Model->GetProjectPath();
     projectSettingsPath.append("projectSettings.dproj");
     std::cout << "[EDITOR INIT] Loading .dproj project file at ["
               << projectSettingsPath << "]" << std::endl;
@@ -65,20 +61,21 @@ namespace Dwarf
 
     // ========== Create window ==========
     std::cout << "[EDITOR INIT] Creating editor window" << std::endl;
-    s_Instance->m_Window = Window::Create(props);
+    m_Window = Window::Create(props);
 
     // ========== Create renderer ==========
     Renderer::Create(props.Api, Renderer::RendererType::Forward);
 
     // ========== Initialize Asset Database ==========
     std::cout << "[EDITOR INIT] Loading asset database" << std::endl;
-    AssetDatabase::Init(projectPath);
+    AssetDatabase::Init(m_Model->GetProjectPath());
 
     // ========== Initialize Editor model
     std::cout << "[EDITOR INIT] Initializing editor model" << std::endl;
 
-    s_Instance->m_Model = std::make_shared<EditorModel>(
-      projectSettings["projectName"].get<std::string_view>(), projectPath);
+    m_Model = std::make_unique<EditorModel>(
+      projectSettings["projectName"].get<std::string_view>(),
+      m_Model->GetProjectPath());
 
     if (projectSettings.contains("lastOpenedScene"))
     {
@@ -88,7 +85,7 @@ namespace Dwarf
       if (lastOpenedSceneAsset)
       {
         std::cout << "[EDITOR INIT] Loading last opened scene" << std::endl;
-        s_Instance->m_Model->SetScene(
+        m_Model->SetScene(
           SceneUtilities::LoadScene(lastOpenedSceneAsset->GetAsset()->m_Path));
       }
       else
@@ -96,7 +93,7 @@ namespace Dwarf
         std::cout
           << "[EDITOR INIT] No last opened scene found. Loading default scene"
           << std::endl;
-        s_Instance->m_Model->SetScene(SceneUtilities::LoadDefaultScene());
+        m_Model->SetScene(SceneUtilities::LoadDefaultScene());
       }
     }
     else
@@ -104,11 +101,11 @@ namespace Dwarf
       std::cout
         << "[EDITOR INIT] No last opened scene found. Loading default scene"
         << std::endl;
-      s_Instance->m_Model->SetScene(SceneUtilities::LoadDefaultScene());
+      m_Model->SetScene(SceneUtilities::LoadDefaultScene());
     }
 
     // ========== Initialize Editor view ==========
-    s_Instance->m_View = std::make_shared<EditorView>(s_Instance->m_Model);
+    m_View = std::make_unique<EditorView>(m_Model);
 
     // Get monitor variables
 
@@ -123,41 +120,38 @@ namespace Dwarf
     // ========== Set window size ==========
 
     // ========== Set window to be maximized ==========
-    s_Instance->m_Window->MaximizeWindow();
-    s_Instance->m_View->Init();
+    m_Window->MaximizeWindow();
+    // m_View->Init();
 
     // ========== Set window size constraints ==========
 
     // ========== Show window ==========
     std::cout << "[EDITOR INIT] Making window visible" << std::endl;
-    s_Instance->m_Window->ShowWindow();
+    m_Window->ShowWindow();
     std::cout << "[EDITOR INIT] Editor initialization done" << std::endl;
   }
 
   bool
-  Editor::Run(std::filesystem::path const& projectPath)
+  Editor::Run()
   {
-    Init(projectPath);
-
     TimeStamp currentFrameStamp = TimeUtilities::GetCurrent();
     TimeStamp lastFrameStamp = TimeUtilities::GetCurrent();
 
     // TODO: abstract the close condition
-    while (!s_Instance->m_Window->ShouldClose() &&
-           !s_Instance->m_Model->GetCloseSignal())
+    while (!m_Window->ShouldClose() && !m_Model->GetCloseSignal())
     {
       // ===== Time related stuff
       lastFrameStamp = currentFrameStamp;
       currentFrameStamp = TimeUtilities::GetCurrent();
-      s_Instance->m_Model->SetDeltaTime(TimeUtilities::GetDifferenceInSeconds(
+      m_Model->SetDeltaTime(TimeUtilities::GetDifferenceInSeconds(
         currentFrameStamp, lastFrameStamp));
 
-      s_Instance->m_Window->NewFrame();
+      m_Window->NewFrame();
       InputManager::OnUpdate();
       AssetDatabase::RecompileShaders();
-      s_Instance->m_View->OnUpdate(s_Instance->m_Model->GetDeltaTime());
-      s_Instance->m_View->OnImGuiRender();
-      s_Instance->m_Window->EndFrame();
+      m_View->OnUpdate(m_Model->GetDeltaTime());
+      m_View->OnImGuiRender();
+      m_Window->EndFrame();
 
       while (TimeUtilities::GetDifferenceInSeconds(
                TimeUtilities::GetCurrent(), currentFrameStamp) < (1.0 / 60.0))
@@ -166,6 +160,6 @@ namespace Dwarf
       }
     }
 
-    return s_Instance->m_Model->GetReturnToLauncher();
+    return m_Model->GetReturnToLauncher();
   }
 }

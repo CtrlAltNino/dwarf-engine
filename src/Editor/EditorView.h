@@ -1,16 +1,18 @@
 #pragma once
-
+#include "pch.h"
+#include "Window/Window.h"
 #include "Editor/Modules/GuiModule.h"
-#include "Editor/EditorModel.h"
+#include "Editor/IEditorView.h"
+#include "Editor/IEditorModel.h"
 
 namespace Dwarf
 {
-
   /// @brief View part of the editor's MVC structure.
-  class EditorView
+  class EditorView : public IEditorView
   {
   private:
-    std::shared_ptr<EditorModel> m_Model;
+    std::unique_ptr<IEditorModel>& m_Model;
+    std::unique_ptr<Window>&       m_Window;
 
     /// @brief ID counter for GUI modules.
     int m_GuiModuleIDCount = 0;
@@ -32,22 +34,26 @@ namespace Dwarf
     void
     RemoveWindow(int index);
 
+    void
+    UpdateWindowTitle() const;
+
   public:
-    explicit EditorView(std::shared_ptr<EditorModel> model);
+    explicit EditorView(std::unique_ptr<IEditorModel>& model,
+                        std::unique_ptr<Window>&       window);
 
     /// @brief Initializes the view.
-    void
-    Init();
+    // void
+    // Init();
 
     /// @brief Executes all pre frame tasks.
     void
-    OnUpdate(double deltaTime);
+    OnUpdate(double deltaTime) override;
 
     /// @brief Renders the GUI of the editor.
     void
-    OnImGuiRender();
+    OnImGuiRender() override;
 
     void
-    DockWindowToFocused();
+    DockWindowToFocused() override;
   };
 }

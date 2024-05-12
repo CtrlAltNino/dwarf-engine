@@ -1,3 +1,5 @@
+#include "Editor/EditorModel.h"
+#include "Editor/EditorView.h"
 #include "pch.h"
 #include "Application/DwarfEngine.h"
 #include "Launcher/ProjectLauncher.h"
@@ -28,8 +30,11 @@ namespace Dwarf
       {
         logger.LogInfo("Opening project at: " + projectPath.string());
         logger.LogInfo("Creating editor...");
-        auto editor = Dwarf::CreateEditor();
-        shouldClose = !editor->Run(projectPath);
+        const auto injector =
+          boost::di::make_injector(boost::di::bind<Dwarf::ProjectPath>().to<>(
+            Dwarf::ProjectPath{ projectPath }));
+        auto editor = injector.create<Dwarf::Editor>();
+        shouldClose = !editor.Run();
         logger.LogInfo("Editor finished running.");
         logger.LogInfo("Should close: " + std::to_string(shouldClose));
       }

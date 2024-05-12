@@ -1,70 +1,12 @@
 #pragma once
 #include "pch.h"
+#include "Editor/IEditorModel.h"
 #include "Core/Scene/Scene.h"
 
 namespace Dwarf
 {
-  enum class CURRENT_SELECTION_TYPE
-  {
-    NONE,
-    ASSET,
-    ENTITY
-  };
-
-  class EditorSelection
-  {
-  private:
-    std::shared_ptr<Scene> m_Scene;
-    CURRENT_SELECTION_TYPE m_SelectionType = CURRENT_SELECTION_TYPE::NONE;
-    std::filesystem::path  m_SelectedAsset;
-    std::vector<Entity>    m_SelectedEntities;
-
-    /// @brief Returns the tree index of a given entity. Used for sorting based
-    /// on their graph positions.
-    /// @param entity Entity instance.
-    /// @return The full tree index.
-    std::string
-    GetTreeIndex(Entity entity) const;
-
-  public:
-    EditorSelection() = default;
-    EditorSelection(std::shared_ptr<Scene> scene);
-
-    void
-    SelectEntity(Entity entity);
-
-    void
-    SelectAsset(std::filesystem::path assetPath);
-
-    void
-    AddEntityToSelection(Entity entity);
-
-    void
-    ClearEntitySelection();
-
-    void
-    ClearAssetSelection();
-
-    void
-    RemoveEntityFromSelection(Entity entity);
-
-    bool
-    IsEntitySelected(Entity entity);
-
-    bool
-    IsAssetSelected(std::filesystem::path assetPath);
-
-    std::vector<Entity>&
-    GetSelectedEntities();
-
-    const std::filesystem::path&
-    GetAssetPath() const;
-
-    CURRENT_SELECTION_TYPE
-    GetSelectionType() const;
-  };
   /// @brief Model of the Editor's MVC structure.
-  class EditorModel
+  class EditorModel : public IEditorModel
   {
   private:
     /// @brief The currently opened scene instance.
@@ -77,38 +19,38 @@ namespace Dwarf
     EditorSelection        m_Selection;
 
   public:
-    EditorModel(std::string_view name, std::filesystem::path projectPath);
+    EditorModel(std::filesystem::path projectPath);
 
     /// @brief Returns the currently opened scene.
     /// @return A pointer to the scene.
     std::shared_ptr<Scene>
-    GetScene() const;
+    GetScene() const override;
 
     void
-    SetScene(std::shared_ptr<Scene> scene);
+    SetScene(std::shared_ptr<Scene> scene) override;
 
     std::string
-    GetName() const;
+    GetName() const override;
 
     std::filesystem::path
-    GetProjectPath() const;
+    GetProjectPath() const override;
 
     void
-    SetDeltaTime(double deltaTime);
+    SetDeltaTime(double deltaTime) override;
 
     double
-    GetDeltaTime() const;
+    GetDeltaTime() const override;
 
     bool
-    GetCloseSignal() const;
+    GetCloseSignal() const override;
 
     bool
-    GetReturnToLauncher() const;
+    GetReturnToLauncher() const override;
 
     void
-    CloseEditor(bool returnToLauncher);
+    CloseEditor(bool returnToLauncher) override;
 
     EditorSelection&
-    GetSelection();
+    GetSelection() override;
   };
 }

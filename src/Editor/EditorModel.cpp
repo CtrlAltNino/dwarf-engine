@@ -2,10 +2,8 @@
 
 namespace Dwarf
 {
-  EditorModel::EditorModel(std::string_view      name,
-                           std::filesystem::path projectPath)
-    : m_ProjectName(name)
-    , m_ProjectPath(projectPath)
+  EditorModel::EditorModel(std::filesystem::path projectPath)
+    : m_ProjectPath(projectPath)
   {
   }
 
