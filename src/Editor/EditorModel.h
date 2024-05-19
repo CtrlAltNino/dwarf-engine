@@ -2,24 +2,27 @@
 #include "pch.h"
 #include "Editor/IEditorModel.h"
 #include "Core/Scene/Scene.h"
+#include <boost/serialization/strong_typedef.hpp>
 
 namespace Dwarf
 {
   /// @brief Model of the Editor's MVC structure.
   class EditorModel : public IEditorModel
   {
+    BOOST_STRONG_TYPEDEF(std::filesystem::path, ProjectPath);
+
   private:
     /// @brief The currently opened scene instance.
     std::shared_ptr<Scene> m_Scene;
-    double                 m_DeltaTime;
     std::string            m_ProjectName;
-    std::filesystem::path  m_ProjectPath;
-    bool                   m_ReturnToLauncher = false;
-    bool                   m_CloseSignal = false;
+    double                 m_DeltaTime;
+    ProjectPath            m_ProjectPath;
     EditorSelection        m_Selection;
+    bool                   m_CloseSignal = false;
+    bool                   m_ReturnToLauncher = false;
 
   public:
-    EditorModel(std::filesystem::path projectPath);
+    EditorModel(ProjectPath projectPath);
 
     /// @brief Returns the currently opened scene.
     /// @return A pointer to the scene.

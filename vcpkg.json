@@ -56,7 +56,8 @@
     "libspng",
     "libjpeg-turbo",
     "gtest",
-    "spdlog"
+    "spdlog",
+    "boost"
   ],
   "overrides": [
     {

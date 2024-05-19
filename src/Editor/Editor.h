@@ -1,4 +1,5 @@
 #pragma once
+#include "Logging/IDwarfLogger.h"
 #include "pch.h"
 #include "Window/Window.h"
 #include "Core/UI/ImGuiLayer.h"
@@ -8,35 +9,26 @@
 
 namespace Dwarf
 {
-  struct ProjectPath
-  {
-    std::filesystem::path value;
-    constexpr
-    operator std::filesystem::path() const
-    {
-      return value;
-    }
-  };
   /// @brief The controller part of the editors MVC structure.
   class Editor : public IEditor
   {
   private:
     /// @brief The MVC model instance of this editor instance.
-    std::unique_ptr<IEditorModel> m_Model;
+    std::shared_ptr<IEditorModel> m_Model;
 
     /// @brief The MVC view instance of this editor instance.
-    std::unique_ptr<IEditorView> m_View;
+    std::shared_ptr<IEditorView> m_View;
 
-    std::unique_ptr<Window> m_Window;
+    std::shared_ptr<Window> m_Window;
 
-    std::unique_ptr<ImGuiLayer> m_ImguiLayer;
+    std::shared_ptr<ImGuiLayer>   m_ImguiLayer;
+    std::shared_ptr<IDwarfLogger> m_Logger;
 
     void
     Init();
 
   public:
-    Editor(const ProjectPath& projectPath);
-    ~Editor();
+    Editor(const std::shared_ptr<IDwarfLogger>& logger);
 
     /// @brief Starts the render loop
     bool

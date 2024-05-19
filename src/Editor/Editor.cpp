@@ -12,16 +12,10 @@
 
 namespace Dwarf
 {
-
-  Editor::Editor(std::filesystem::path projectPath)
-    : m_Model(std::make_shared<EditorModel>(projectPath)
-    , m_Window(Window::Create(WindowProps("Dwarf Engine Editor", 1280, 720)))
-    , m_View(std::make_unique<EditorView>(m_Model, m_Window))
+  Editor::Editor(const std::shared_ptr<IDwarfLogger>& logger)
   {
     Init();
   }
-
-  Editor::~Editor() = default;
 
   void
   Editor::UpdateWindowTitle() const
@@ -34,7 +28,7 @@ namespace Dwarf
     windowTitle.append(graphicsApiNames[(int)m_Window->GetApi()]);
     windowTitle.append(">");
 
-    std::cout << "[EDITOR] Updating window title" << std::endl;
+    m_Logger->LogInfo("[EDITOR] Updating window title");
 
     m_Window->SetWindowTitle(windowTitle);
   }
@@ -42,14 +36,22 @@ namespace Dwarf
   void
   Editor::Init()
   {
+    // : m_Model(std::make_shared<EditorModel>(projectPath))
+    // , m_Window(Window::Create(WindowProps("Dwarf Engine Editor", 1280, 720)))
+    // , m_View(std::make_unique<EditorView>(m_Model, m_Window))
     // ========== Load .dproj file ==========
-    std::cout
-      << "[EDITOR INIT] Initializing dwarf engine editor for project at ["
-      << m_Model->GetProjectPath() << "]" << std::endl;
+    // std::cout
+    //   << "[EDITOR INIT] Initializing dwarf engine editor for project at ["
+    //   << m_Model->GetProjectPath() << "]" << std::endl;
+    m_Logger->LogInfo("Initializing dwarf engine editor for project at [" +
+                      m_Model->GetProjectPath().string() + "]");
     std::filesystem::path projectSettingsPath = m_Model->GetProjectPath();
     projectSettingsPath.append("projectSettings.dproj");
-    std::cout << "[EDITOR INIT] Loading .dproj project file at ["
-              << projectSettingsPath << "]" << std::endl;
+    // std::cout << "[EDITOR INIT] Loading .dproj project file at ["
+    //           << projectSettingsPath << "]" << std::endl;
+
+    m_Logger->LogInfo("Loading .dproj project file at [" +
+                      projectSettingsPath.string() + "]");
     nlohmann::json projectSettings = nlohmann::json::parse(
       FileHandler::ReadFile(projectSettingsPath))["projectInformation"];
 

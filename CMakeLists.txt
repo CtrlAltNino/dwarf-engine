@@ -91,6 +91,9 @@ target_link_libraries(${targetName} PRIVATE assimp::assimp)
 find_path(BEXT_DI_INCLUDE_DIRS "boost/di.hpp")
 target_include_directories(${targetName} PRIVATE ${BEXT_DI_INCLUDE_DIRS})
 
+find_path(BOOST_INCLUDE_DIRS "boost/")
+target_include_directories(${targetName} PRIVATE ${BOOST_INCLUDE_DIRS})
+
 find_package(SDL2 CONFIG REQUIRED)
 target_link_libraries(${targetName} PRIVATE SDL2::SDL2 SDL2::SDL2main SDL2::SDL2-static)
 

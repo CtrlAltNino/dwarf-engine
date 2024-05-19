@@ -30,9 +30,9 @@ namespace Dwarf
       {
         logger.LogInfo("Opening project at: " + projectPath.string());
         logger.LogInfo("Creating editor...");
-        const auto injector =
-          boost::di::make_injector(boost::di::bind<Dwarf::ProjectPath>().to<>(
-            Dwarf::ProjectPath{ projectPath }));
+        // Create injector and bind the project path to the editor.
+        const auto injector = boost::di::make_injector(
+          boost::di::bind<Dwarf::ProjectPath>.to(ProjectPath(projectPath)));
         auto editor = injector.create<Dwarf::Editor>();
         shouldClose = !editor.Run();
         logger.LogInfo("Editor finished running.");
