@@ -7,11 +7,12 @@ namespace Dwarf
   class IEditorView
   {
   public:
-    explicit IEditorView() = default;
+    // explicit IEditorView() = default;
+    virtual ~IEditorView() = default;
 
     /// @brief Executes all pre frame tasks.
     virtual void
-    OnUpdate(double deltaTime) = 0;
+    OnUpdate() = 0;
 
     /// @brief Renders the GUI of the editor.
     virtual void

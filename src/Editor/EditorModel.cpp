@@ -2,7 +2,7 @@
 
 namespace Dwarf
 {
-  EditorModel::EditorModel(std::filesystem::path projectPath)
+  EditorModel::EditorModel(ProjectPath projectPath)
     : m_ProjectPath(projectPath)
   {
   }
@@ -85,110 +85,5 @@ namespace Dwarf
   {
     m_CloseSignal = true;
     m_ReturnToLauncher = returnToLauncher;
-  }
-
-  EditorSelection::EditorSelection(std::shared_ptr<Scene> scene)
-    : m_Scene(scene)
-  {
-  }
-
-  void
-  EditorSelection::SelectEntity(Entity entity)
-  {
-    ClearEntitySelection();
-    AddEntityToSelection(entity);
-    m_SelectionType = CURRENT_SELECTION_TYPE::ENTITY;
-  }
-
-  void
-  EditorSelection::SelectAsset(std::filesystem::path assetPath)
-  {
-    m_SelectedAsset = assetPath;
-    m_SelectionType = CURRENT_SELECTION_TYPE::ASSET;
-  }
-
-  void
-  EditorSelection::AddEntityToSelection(Entity entity)
-  {
-    std::string index = GetTreeIndex(entity);
-
-    auto        cursor = m_SelectedEntities.begin();
-    std::string cursorIndex;
-
-    while ((cursor != m_SelectedEntities.end()) &&
-           ((cursorIndex = GetTreeIndex(*cursor)) < index))
-    {
-      cursor++;
-    }
-
-    if (cursor == m_SelectedEntities.end())
-    {
-      m_SelectedEntities.push_back(entity);
-    }
-    else
-    {
-      m_SelectedEntities.insert(cursor, entity);
-    }
-
-    m_SelectionType = CURRENT_SELECTION_TYPE::ENTITY;
-  }
-
-  void
-  EditorSelection::ClearEntitySelection()
-  {
-    m_SelectedEntities.clear();
-    m_SelectionType = m_SelectedAsset.empty() ? CURRENT_SELECTION_TYPE::NONE
-                                              : CURRENT_SELECTION_TYPE::ASSET;
-  }
-
-  void
-  EditorSelection::ClearAssetSelection()
-  {
-    m_SelectedAsset.clear();
-    m_SelectionType = m_SelectedEntities.empty()
-                        ? CURRENT_SELECTION_TYPE::NONE
-                        : CURRENT_SELECTION_TYPE::ENTITY;
-  }
-
-  void
-  EditorSelection::RemoveEntityFromSelection(Entity entity)
-  {
-    m_SelectedEntities.erase(
-      std::find(m_SelectedEntities.begin(), m_SelectedEntities.end(), entity));
-    if (m_SelectedEntities.empty())
-    {
-      m_SelectionType = m_SelectedAsset.empty() ? CURRENT_SELECTION_TYPE::NONE
-                                                : CURRENT_SELECTION_TYPE::ASSET;
-    }
-  }
-
-  bool
-  EditorSelection::IsEntitySelected(Entity entity)
-  {
-    return std::find(m_SelectedEntities.begin(),
-                     m_SelectedEntities.end(),
-                     entity) != m_SelectedEntities.end();
-  }
-
-  bool
-  EditorSelection::IsAssetSelected(std::filesystem::path assetPath)
-  {
-    return m_SelectedAsset == assetPath;
-  }
-
-  std::string
-  EditorSelection::GetTreeIndex(Entity entity) const
-  {
-    std::string index = "";
-    Entity      cursor = entity;
-
-    while (cursor.GetHandle() != m_Scene->GetRootEntity()->GetHandle())
-    {
-      index =
-        std::format("{}{}", std::to_string(cursor.GetChildIndex()), index);
-      cursor = Entity(cursor.GetParent(), m_Scene->GetRegistry());
-    }
-
-    return index;
   }
 }

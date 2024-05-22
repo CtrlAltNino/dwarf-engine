@@ -1,8 +1,8 @@
 #pragma once
 
-#include "dpch.h"
-#include "Core/Asset/AssetComponents.h"
+#include "pch.h"
 #include "Core/Base.h"
+#include "Core/UID.h"
 
 namespace Dwarf
 {
@@ -33,9 +33,9 @@ namespace Dwarf
     GetGraphicsApi() const = 0;
 
     virtual void
-    SetLastOpenedScene(const AssetReference<SceneAsset>& lastOpenedScene) = 0;
+    SetLastOpenedScene(const std::shared_ptr<UID>& lastOpenedScene) = 0;
 
-    virtual const AssetReference<SceneAsset>&
+    virtual const std::shared_ptr<UID>&
     GetLastOpenedScene() const = 0;
   };
 }

@@ -79,6 +79,12 @@ namespace Dwarf
     RecursiveImport(s_AssetFolderPath);
   }
 
+  std::shared_ptr<UID>
+  AssetDatabase::Reimport(std::filesystem::path const& assetPath)
+  {
+    return AssetDatabase::Import(assetPath);
+  }
+
   void
   AssetDatabase::Remove(std::shared_ptr<UID> uid)
   {

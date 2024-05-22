@@ -2,166 +2,152 @@
 
 #include "Core/Scene/SceneUtilities.h"
 #include "Core/Asset/AssetDatabase.h"
-#include "IEditorView.h"
+#include "Input/IInputManager.h"
 #include "Input/InputManager.h"
 #include "Utilities/TimeUtilities.h"
 #include "Core/Rendering/Renderer.h"
 #include "Core/Base.h"
-#include "Editor/EditorModel.h"
+// #include "Editor/EditorModel.h"
 #include "Editor/EditorView.h"
 
 namespace Dwarf
 {
-  Editor::Editor(const std::shared_ptr<IDwarfLogger>& logger)
+  Editor::Editor(const std::shared_ptr<EditorLogger>&  logger,
+                 const std::shared_ptr<IEditorStats>&  stats,
+                 const std::shared_ptr<IInputManager>& inputManager)
+    : m_Logger(logger)
+    , m_Stats(stats)
+    , m_InputManager(inputManager)
   {
-    Init();
+    // Init();
   }
 
-  void
-  Editor::UpdateWindowTitle() const
-  {
-    std::string windowTitle = "Dwarf Engine Editor - ";
-    windowTitle.append(m_Model->GetName());
-    windowTitle.append(" - ");
-    windowTitle.append(m_Model->GetScene()->GetName());
-    windowTitle.append(" <");
-    windowTitle.append(graphicsApiNames[(int)m_Window->GetApi()]);
-    windowTitle.append(">");
+  // void
+  // Editor::UpdateWindowTitle() const
+  // {
+  //   std::string windowTitle = "Dwarf Engine Editor - ";
+  //   windowTitle.append(m_Model->GetName());
+  //   windowTitle.append(" - ");
+  //   windowTitle.append(m_Model->GetScene()->GetName());
+  //   windowTitle.append(" <");
+  //   windowTitle.append(graphicsApiNames[(int)m_Window->GetApi()]);
+  //   windowTitle.append(">");
 
-    m_Logger->LogInfo("[EDITOR] Updating window title");
+  //   m_Logger->LogInfo("[EDITOR] Updating window title");
 
-    m_Window->SetWindowTitle(windowTitle);
-  }
+  //   m_Window->SetWindowTitle(windowTitle);
+  // }
 
   void
   Editor::Init()
   {
-    // : m_Model(std::make_shared<EditorModel>(projectPath))
-    // , m_Window(Window::Create(WindowProps("Dwarf Engine Editor", 1280, 720)))
-    // , m_View(std::make_unique<EditorView>(m_Model, m_Window))
-    // ========== Load .dproj file ==========
-    // std::cout
-    //   << "[EDITOR INIT] Initializing dwarf engine editor for project at ["
-    //   << m_Model->GetProjectPath() << "]" << std::endl;
-    m_Logger->LogInfo("Initializing dwarf engine editor for project at [" +
-                      m_Model->GetProjectPath().string() + "]");
-    std::filesystem::path projectSettingsPath = m_Model->GetProjectPath();
-    projectSettingsPath.append("projectSettings.dproj");
-    // std::cout << "[EDITOR INIT] Loading .dproj project file at ["
-    //           << projectSettingsPath << "]" << std::endl;
+    // m_Logger->LogInfo("Initializing dwarf engine editor for project at [" +
+    //                   m_Model->GetProjectPath().string() + "]");
 
-    m_Logger->LogInfo("Loading .dproj project file at [" +
-                      projectSettingsPath.string() + "]");
-    nlohmann::json projectSettings = nlohmann::json::parse(
-      FileHandler::ReadFile(projectSettingsPath))["projectInformation"];
+    // WindowProps props("Dwarf Engine Editor", 1280, 720);
 
-    WindowProps props("Dwarf Engine Editor", 1280, 720);
-
-    props.Api = (GraphicsApi)projectSettings["graphicsApi"];
+    // props.Api = (GraphicsApi)projectSettings["graphicsApi"];
 
     // TODO: Create error popup for invalid project
 
     // ========== Create window ==========
-    std::cout << "[EDITOR INIT] Creating editor window" << std::endl;
-    m_Window = Window::Create(props);
+    // std::cout << "[EDITOR INIT] Creating editor window" << std::endl;
+    // m_Window = Window::Create(props);
 
-    // ========== Create renderer ==========
-    Renderer::Create(props.Api, Renderer::RendererType::Forward);
+    // // ========== Create renderer ==========
+    // Renderer::Create(props.Api, Renderer::RendererType::Forward);
 
-    // ========== Initialize Asset Database ==========
-    std::cout << "[EDITOR INIT] Loading asset database" << std::endl;
-    AssetDatabase::Init(m_Model->GetProjectPath());
+    // // ========== Initialize Asset Database ==========
+    // std::cout << "[EDITOR INIT] Loading asset database" << std::endl;
+    // AssetDatabase::Init(m_Model->GetProjectPath());
 
-    // ========== Initialize Editor model
-    std::cout << "[EDITOR INIT] Initializing editor model" << std::endl;
+    // if (projectSettings.contains("lastOpenedScene"))
+    // {
+    //   std::shared_ptr<AssetReference<SceneAsset>> lastOpenedSceneAsset =
+    //     AssetDatabase::Retrieve<SceneAsset>(
+    //       std::make_shared<UID>(projectSettings["lastOpenedScene"]));
+    //   if (lastOpenedSceneAsset)
+    //   {
+    //     std::cout << "[EDITOR INIT] Loading last opened scene" << std::endl;
+    //     m_Model->SetScene(
+    //       SceneUtilities::LoadScene(lastOpenedSceneAsset->GetAsset()->m_Path));
+    //   }
+    //   else
+    //   {
+    //     std::cout
+    //       << "[EDITOR INIT] No last opened scene found. Loading default
+    //       scene"
+    //       << std::endl;
+    //     m_Model->SetScene(SceneUtilities::LoadDefaultScene());
+    //   }
+    // }
+    // else
+    // {
+    //   std::cout
+    //     << "[EDITOR INIT] No last opened scene found. Loading default scene"
+    //     << std::endl;
+    //   m_Model->SetScene(SceneUtilities::LoadDefaultScene());
+    // }
 
-    m_Model = std::make_unique<EditorModel>(
-      projectSettings["projectName"].get<std::string_view>(),
-      m_Model->GetProjectPath());
-
-    if (projectSettings.contains("lastOpenedScene"))
-    {
-      std::shared_ptr<AssetReference<SceneAsset>> lastOpenedSceneAsset =
-        AssetDatabase::Retrieve<SceneAsset>(
-          std::make_shared<UID>(projectSettings["lastOpenedScene"]));
-      if (lastOpenedSceneAsset)
-      {
-        std::cout << "[EDITOR INIT] Loading last opened scene" << std::endl;
-        m_Model->SetScene(
-          SceneUtilities::LoadScene(lastOpenedSceneAsset->GetAsset()->m_Path));
-      }
-      else
-      {
-        std::cout
-          << "[EDITOR INIT] No last opened scene found. Loading default scene"
-          << std::endl;
-        m_Model->SetScene(SceneUtilities::LoadDefaultScene());
-      }
-    }
-    else
-    {
-      std::cout
-        << "[EDITOR INIT] No last opened scene found. Loading default scene"
-        << std::endl;
-      m_Model->SetScene(SceneUtilities::LoadDefaultScene());
-    }
-
-    // ========== Initialize Editor view ==========
-    m_View = std::make_unique<EditorView>(m_Model);
+    // // ========== Initialize Editor view ==========
+    // m_View = std::make_unique<EditorView>(m_Model);
 
     // Get monitor variables
 
     // Initialize view
-    std::cout << "[EDITOR INIT] Setting up view" << std::endl;
+    // std::cout << "[EDITOR INIT] Setting up view" << std::endl;
 
-    // ========== Set window title ======
-    UpdateWindowTitle();
+    // // ========== Set window title ======
+    // UpdateWindowTitle();
 
-    // ========== Set window icon ==========
+    // // ========== Set window icon ==========
 
-    // ========== Set window size ==========
+    // // ========== Set window size ==========
 
-    // ========== Set window to be maximized ==========
-    m_Window->MaximizeWindow();
-    // m_View->Init();
+    // // ========== Set window to be maximized ==========
+    // m_Window->MaximizeWindow();
+    // // m_View->Init();
 
-    // ========== Set window size constraints ==========
+    // // ========== Set window size constraints ==========
 
-    // ========== Show window ==========
-    std::cout << "[EDITOR INIT] Making window visible" << std::endl;
-    m_Window->ShowWindow();
-    std::cout << "[EDITOR INIT] Editor initialization done" << std::endl;
+    // // ========== Show window ==========
+    // std::cout << "[EDITOR INIT] Making window visible" << std::endl;
+    // m_Window->ShowWindow();
+    // std::cout << "[EDITOR INIT] Editor initialization done" << std::endl;
   }
 
   bool
   Editor::Run()
   {
-    TimeStamp currentFrameStamp = TimeUtilities::GetCurrent();
-    TimeStamp lastFrameStamp = TimeUtilities::GetCurrent();
+    m_Stats->SetCurrentTimeStamp(TimeUtilities::GetCurrent());
+    m_Stats->SetLastTimeStamp(TimeUtilities::GetCurrent());
+
+    m_Logger->LogInfo("Starting editor loop");
+
+    m_Window->ShowWindow();
 
     // TODO: abstract the close condition
-    while (!m_Window->ShouldClose() && !m_Model->GetCloseSignal())
+    while (!m_Window->ShouldClose() && !m_Stats->GetCloseSignal())
     {
       // ===== Time related stuff
-      lastFrameStamp = currentFrameStamp;
-      currentFrameStamp = TimeUtilities::GetCurrent();
-      m_Model->SetDeltaTime(TimeUtilities::GetDifferenceInSeconds(
-        currentFrameStamp, lastFrameStamp));
+      m_Stats->SetLastTimeStamp(m_Stats->GetCurrentTimeStamp());
+      m_Stats->SetCurrentTimeStamp(TimeUtilities::GetCurrent());
 
       m_Window->NewFrame();
-      InputManager::OnUpdate();
+      m_InputManager->OnUpdate();
       AssetDatabase::RecompileShaders();
-      m_View->OnUpdate(m_Model->GetDeltaTime());
+      m_View->OnUpdate();
       m_View->OnImGuiRender();
       m_Window->EndFrame();
 
-      while (TimeUtilities::GetDifferenceInSeconds(
-               TimeUtilities::GetCurrent(), currentFrameStamp) < (1.0 / 60.0))
-      {
-        // TODO: Update this when implementing multi threading
-      }
+      // while (TimeUtilities::GetDifferenceInSeconds(
+      //          TimeUtilities::GetCurrent(), m_Stats->GetCurrentTimeStamp()) <
+      //        (1.0 / 60.0))
+      // {
+      //   // TODO: Update this when implementing multi threading
+      // }
     }
 
-    return m_Model->GetReturnToLauncher();
+    return m_Stats->GetReturnToLauncher();
   }
 }

@@ -5,6 +5,7 @@
 #include "Launcher/ProjectLauncher.h"
 #include "Editor/Editor.h"
 #include "Logging/DefaultLogger.h"
+#include "Project/ProjectTypes.h"
 
 namespace Dwarf
 {

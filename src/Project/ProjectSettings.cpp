@@ -1,6 +1,5 @@
 #include "ProjectSettings.h"
-#include "Core/Asset/AssetComponents.h"
-#include "Core/Asset/AssetReference.h"
+#include "Utilities/FileHandler.h"
 
 namespace Dwarf
 {
@@ -13,31 +12,30 @@ namespace Dwarf
                                    const std::shared_ptr<IDwarfLogger>& logger)
     : m_Logger(logger)
   {
-    m_Data.projectPath = path;
+    m_Path = path;
     Load();
   }
 
   void
   ProjectSettings::Load()
   {
-    m_Logger->LogInfo("Loading project settings from [" +
-                      m_Data.projectPath.string() + "]");
+    m_Logger->LogInfo("Loading project settings from [" + m_Path.t.string() +
+                      "]");
 
-    if (!FileHandler::CheckIfFileExists(m_Data.projectPath))
+    if (!FileHandler::CheckIfFileExists(m_Path))
     {
       m_Logger->LogError("Project settings file does not exist at [" +
-                         m_Data.projectPath.string() + "]");
+                         m_Path.t.string() + "]");
       return;
     }
 
     // Loading project settings from file
     nlohmann::json projectSettings =
-      nlohmann::json::parse(FileHandler::ReadFile(m_Data.projectPath));
+      nlohmann::json::parse(FileHandler::ReadFile(m_Path));
 
     if (projectSettings.contains(PROJECT_NAME_KEY))
     {
-      m_Data.projectName =
-        projectSettings.at(PROJECT_NAME_KEY).get<std::string>();
+      m_Name = projectSettings.at(PROJECT_NAME_KEY).get<std::string>();
     }
     else
     {
@@ -47,8 +45,7 @@ namespace Dwarf
 
     if (projectSettings.contains(GRAPHICS_API_KEY))
     {
-      m_Data.graphicsAPI =
-        projectSettings.at(GRAPHICS_API_KEY).get<std::string>();
+      m_GraphicsApi = projectSettings.at(GRAPHICS_API_KEY).get<GraphicsApi>();
     }
     else
     {
@@ -59,26 +56,26 @@ namespace Dwarf
 
     if (projectSettings.contains(LAST_OPENED_SCENE_KEY))
     {
-      m_Data.lastOpenedSceneGUID =
-        projectSettings.at(LAST_OPENED_SCENE_KEY).get<std::string>();
+      m_LastOpenedScene = std::make_shared<UID>(
+        projectSettings.at(LAST_OPENED_SCENE_KEY).get<uint64_t>());
     }
     else
     {
       m_Logger->LogError(
         std::format("Missing required field: %s", LAST_OPENED_SCENE_KEY));
-      m_Data.lastOpenedSceneGUID = ""; // or some default value
+      m_LastOpenedScene = nullptr; // or some default value
     }
 
     if (projectSettings.contains(PROJECT_LAST_OPENED_DATE_KEY))
     {
-      m_Data.lastOpenedTimeStamp =
-        projectSettings.at(PROJECT_LAST_OPENED_DATE_KEY).get<std::string>();
+      m_LastOpenedTimeStamp =
+        projectSettings.at(PROJECT_LAST_OPENED_DATE_KEY).get<time_t>();
     }
     else
     {
       m_Logger->LogError(std::format("Missing required field: %s",
                                      PROJECT_LAST_OPENED_DATE_KEY));
-      m_Data.lastOpenedTimeStamp = ""; // or some default value
+      m_LastOpenedTimeStamp = 0; // or some default value
     }
   }
 
@@ -86,60 +83,60 @@ namespace Dwarf
   ProjectSettings::Save()
   {
     nlohmann::json projectSettings;
-    projectSettings[PROJECT_NAME_KEY] = m_Data.projectName;
-    projectSettings[GRAPHICS_API_KEY] = m_Data.graphicsAPI;
-    projectSettings[LAST_OPENED_SCENE_KEY] = m_Data.lastOpenedSceneGUID;
-    projectSettings[PROJECT_LAST_OPENED_DATE_KEY] = m_Data.lastOpenedTimeStamp;
+    projectSettings[PROJECT_NAME_KEY] = m_Name;
+    projectSettings[GRAPHICS_API_KEY] = m_GraphicsApi;
+    projectSettings[LAST_OPENED_SCENE_KEY] =
+      m_LastOpenedScene == nullptr ? -1 : (uint64_t)*m_LastOpenedScene;
+    projectSettings[PROJECT_LAST_OPENED_DATE_KEY] = m_LastOpenedTimeStamp;
 
-    FileHandler::WriteToFile(m_Data.projectPath, projectSettings.dump(2));
+    FileHandler::WriteToFile(m_Path, projectSettings.dump(2));
   }
 
   void
   ProjectSettings::SetProjectName(const std::string& projectName)
   {
-    m_Data.projectName = projectName;
+    m_Name = projectName;
   }
 
   std::string
   ProjectSettings::GetProjectName() const
   {
-    return m_Data.projectName;
+    return m_Name;
   }
 
   void
   ProjectSettings::SetGraphicsApi(const GraphicsApi& graphicsAPI)
   {
-    m_Data.graphicsAPI = graphicsAPI;
+    m_GraphicsApi = graphicsAPI;
   }
 
   const GraphicsApi&
   ProjectSettings::GetGraphicsApi() const
   {
-    return m_Data.graphicsAPI;
+    return m_GraphicsApi;
   }
 
   void
-  ProjectSettings::SetLastOpenedScene(
-    const AssetReference<SceneAsset>& sceneGUID)
+  ProjectSettings::SetLastOpenedScene(const std::shared_ptr<UID>& sceneGUID)
   {
-    m_Data.lastOpenedSceneGUID = sceneGUID;
+    m_LastOpenedScene = sceneGUID;
   }
 
-  const AssetReference<SceneAsset>&
+  const std::shared_ptr<UID>&
   ProjectSettings::GetLastOpenedScene() const
   {
-    return m_Data.lastOpenedSceneGUID;
+    return m_LastOpenedScene;
   }
 
   void
   ProjectSettings::SetLastOpenedTimeStamp(const time_t& timeStamp)
   {
-    m_Data.lastOpenedTimeStamp = timeStamp;
+    m_LastOpenedTimeStamp = timeStamp;
   }
 
   const time_t&
   ProjectSettings::GetLastOpenedTimeStamp() const
   {
-    return m_Data.lastOpenedTimeStamp;
+    return m_LastOpenedTimeStamp;
   }
 }

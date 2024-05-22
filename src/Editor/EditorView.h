@@ -3,7 +3,7 @@
 #include "Window/Window.h"
 #include "Editor/Modules/GuiModule.h"
 #include "Editor/IEditorView.h"
-#include "Editor/IEditorModel.h"
+// #include "Editor/IEditorModel.h"
 
 namespace Dwarf
 {
@@ -11,8 +11,8 @@ namespace Dwarf
   class EditorView : public IEditorView
   {
   private:
-    std::unique_ptr<IEditorModel>& m_Model;
-    std::unique_ptr<Window>&       m_Window;
+    // std::unique_ptr<IEditorModel>& m_Model;
+    std::shared_ptr<Window> m_Window;
 
     /// @brief ID counter for GUI modules.
     int m_GuiModuleIDCount = 0;
@@ -38,8 +38,7 @@ namespace Dwarf
     UpdateWindowTitle() const;
 
   public:
-    explicit EditorView(std::unique_ptr<IEditorModel>& model,
-                        std::unique_ptr<Window>&       window);
+    explicit EditorView(std::shared_ptr<Window> window);
 
     /// @brief Initializes the view.
     // void
@@ -47,7 +46,7 @@ namespace Dwarf
 
     /// @brief Executes all pre frame tasks.
     void
-    OnUpdate(double deltaTime) override;
+    OnUpdate() override;
 
     /// @brief Renders the GUI of the editor.
     void

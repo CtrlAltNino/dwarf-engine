@@ -1,5 +1,7 @@
 #pragma once
 #include "pch.h"
+#include "Core/Asset/IAssetDatabase.h"
+#include "Project/ProjectTypes.h"
 #include <efsw/efsw.hpp>
 #include <entt/entt.hpp>
 
@@ -12,52 +14,37 @@
 
 namespace Dwarf
 {
-  enum class ASSET_TYPE
-  {
-    UNKNOWN,
-    MODEL,
-    TEXTURE,
-    SCENE,
-    MATERIAL,
-    VERTEX_SHADER,
-    TESC_SHADER,
-    TESE_SHADER,
-    GEOMETRY_SHADER,
-    FRAGMENT_SHADER,
-    COMPUTE_SHADER,
-    HLSL_SHADER
-  };
   /// @brief Dwarf Engines asset database system. It handles an ECS registry
   /// containing entities for every usable Asset inside the "/Assets" directory.
-  class AssetDatabase
+  class AssetDatabase : public IAssetDatabase
   {
   private:
     /// @brief Absolute path to the "/Asset" directory.
-    static std::filesystem::path s_AssetFolderPath;
+    std::filesystem::path s_AssetFolderPath;
 
     /// @brief Recursive file watcher for the "/Asset" directory.
-    static std::shared_ptr<efsw::FileWatcher> s_FileWatcher;
+    std::shared_ptr<efsw::FileWatcher> s_FileWatcher;
 
     /// @brief Watch ID for the EFSW file watcher.
-    static efsw::WatchID s_WatchID;
+    efsw::WatchID s_WatchID;
 
-    static std::vector<std::shared_ptr<Shader>> s_ShaderRecompilationStack;
+    std::vector<std::shared_ptr<Shader>> s_ShaderRecompilationStack;
 
-    static std::shared_ptr<AssetDirectoryListener> s_AssetDirectoryListener;
+    std::shared_ptr<AssetDirectoryListener> s_AssetDirectoryListener;
 
     /// @brief Recursively imports all found assets in a given directory.
     /// @param directory Absolute path to a directory.
-    static void
+    void
     RecursiveImport(std::filesystem::path const& directory);
 
-    static void
+    void
     CompileShaders();
 
     /// @brief Creates an asset reference for an asset at a given path.
     /// @param assetPath Path to the asset.
     /// @return The created asset reference instance.
     template<typename T>
-    static AssetReference<T>
+    AssetReference<T>
     CreateAssetReference(std::filesystem::path const& assetPath)
     {
       std::string           fileName = assetPath.stem().string();
@@ -82,30 +69,36 @@ namespace Dwarf
     }
 
   public:
-    static std::shared_ptr<entt::registry> s_Registry;
+    std::shared_ptr<entt::registry> s_Registry;
 
-    static std::map<std::filesystem::path, std::shared_ptr<Shader>>
-      s_ShaderAssetMap;
+    std::map<std::filesystem::path, std::shared_ptr<Shader>> s_ShaderAssetMap;
 
-    static const std::map<std::string, ASSET_TYPE> s_FileAssetAssociation;
+    const std::map<std::string, ASSET_TYPE> s_FileAssetAssociation;
 
-    /// @brief Initializes the asset database.
-    static void
-    Init(std::filesystem::path const& projectPath);
-
-    /// @brief Clears the asset database.
-    static void
-    Clear();
+    AssetDatabase(std::filesystem::path const& projectPath);
 
     /// @brief Imports an asset into the asset database.
     /// @param assetPath Path to the asset.
-    static std::shared_ptr<UID>
-    Import(std::filesystem::path const& assetPath);
+    std::shared_ptr<UID>
+    Import(std::filesystem::path const& assetPath) override;
 
-    static bool
-    Exists(std::shared_ptr<UID> uid);
-    static bool
-    Exists(std::filesystem::path const& path);
+    bool
+    Exists(std::shared_ptr<UID> uid) override;
+    bool
+    Exists(std::filesystem::path const& path) override;
+
+    /// @brief Clears the asset database.
+    void
+    Clear() override;
+    void
+    Remove(std::shared_ptr<UID> uid) override;
+    void
+    Remove(std::filesystem::path const& path) override;
+
+    void
+    ReimportAll() override;
+    std::shared_ptr<UID>
+    Reimport(std::filesystem::path const& assetPath) override;
 
     static void
     Rename(std::filesystem::path const& from, std::filesystem::path const& to);
@@ -121,11 +114,6 @@ namespace Dwarf
 
     static std::filesystem::path
     GetAssetDirectoryPath();
-
-    static void
-    Remove(std::shared_ptr<UID> uid);
-    static void
-    Remove(std::filesystem::path const& path);
 
     static void
     RecompileShaders();
@@ -155,22 +143,15 @@ namespace Dwarf
       s_ShaderRecompilationStack.push_back(shader);
     }
 
-    template<typename T>
-    static void
-    Reimport(std::shared_ptr<AssetReference<T>> asset)
+    static ASSET_TYPE
+    GetType(std::filesystem::path const& assetPath)
     {
-      Reimport(asset->GetPath());
+      std::string fileExtension = assetPath.extension().string();
+
+      return s_FileAssetAssociation.at(fileExtension);
     }
 
-    static std::shared_ptr<UID>
-    Reimport(std::filesystem::path const& assetPath)
-    {
-      return AssetDatabase::Import(assetPath);
-    }
-
-    static void
-    ReimportAssets();
-
+  private:
     template<typename T>
     static std::shared_ptr<AssetReference<T>>
     Retrieve(std::shared_ptr<UID> uid)
@@ -200,14 +181,6 @@ namespace Dwarf
         }
       }
       return nullptr;
-    }
-
-    static ASSET_TYPE
-    GetType(std::filesystem::path const& assetPath)
-    {
-      std::string fileExtension = assetPath.extension().string();
-
-      return s_FileAssetAssociation.at(fileExtension);
     }
   };
 }

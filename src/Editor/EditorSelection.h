@@ -1,16 +1,9 @@
 #pragma once
-#include "Core/Scene/Scene.h"
+#include "Editor/IEditorSelection.h"
 
 namespace Dwarf
 {
-  enum class CURRENT_SELECTION_TYPE
-  {
-    NONE,
-    ASSET,
-    ENTITY
-  };
-
-  class EditorSelection
+  class EditorSelection : public IEditorSelection
   {
   private:
     std::shared_ptr<Scene> m_Scene;
@@ -23,43 +16,43 @@ namespace Dwarf
     /// @param entity Entity instance.
     /// @return The full tree index.
     std::string
-    GetTreeIndex(Entity entity) const;
+    GetTreeIndex(const Entity& entity) const;
 
   public:
     EditorSelection() = default;
     EditorSelection(std::shared_ptr<Scene> scene);
 
     void
-    SelectEntity(Entity entity);
+    SelectEntity(const Entity& entity) override;
 
     void
-    SelectAsset(std::filesystem::path assetPath);
+    SelectAsset(const std::filesystem::path& assetPath) override;
 
     void
-    AddEntityToSelection(Entity entity);
+    AddEntityToSelection(const Entity& entity) override;
 
     void
-    ClearEntitySelection();
+    ClearEntitySelection() override;
 
     void
-    ClearAssetSelection();
+    ClearAssetSelection() override;
 
     void
-    RemoveEntityFromSelection(Entity entity);
+    RemoveEntityFromSelection(const Entity& entity) override;
 
     bool
-    IsEntitySelected(Entity entity);
+    IsEntitySelected(const Entity& entity) override;
 
     bool
-    IsAssetSelected(std::filesystem::path assetPath);
+    IsAssetSelected(const std::filesystem::path& assetPath) override;
 
     std::vector<Entity>&
-    GetSelectedEntities();
+    GetSelectedEntities() override;
 
     const std::filesystem::path&
-    GetAssetPath() const;
+    GetAssetPath() const override;
 
     CURRENT_SELECTION_TYPE
-    GetSelectionType() const;
+    GetSelectionType() const override;
   };
 }

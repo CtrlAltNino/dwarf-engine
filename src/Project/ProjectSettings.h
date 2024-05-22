@@ -1,9 +1,10 @@
 #pragma once
 
 #include "pch.h"
+#include "Core/Base.h"
 #include "IProjectSettings.h"
 #include "Logging/IDwarfLogger.h"
-#include <boost/serialization/strong_typedef.hpp>
+#include "ProjectTypes.h"
 
 namespace Dwarf
 {
@@ -34,20 +35,14 @@ namespace Dwarf
 
   class ProjectSettings : public IProjectSettings
   {
-    BOOST_STRONG_TYPEDEF(std::filesystem::path, ProjectPath);
-
-    struct ProjectSettingsData
-    {
-      ProjectPath                Path;
-      std::string                Name;
-      time_t                     LastOpenedTimeStamp;
-      GraphicsApi                GraphicsApi;
-      AssetReference<SceneAsset> LastOpenedScene;
-    };
-
   private:
+    // Data
+    ProjectPath                   m_Path;
+    std::string                   m_Name;
+    time_t                        m_LastOpenedTimeStamp;
+    GraphicsApi                   m_GraphicsApi;
+    std::shared_ptr<UID>          m_LastOpenedScene;
     std::shared_ptr<IDwarfLogger> m_Logger;
-    ProjectSettingsData           m_Data;
     LoadStatus                    m_LoadStatus;
 
   public:
@@ -79,10 +74,9 @@ namespace Dwarf
     GetGraphicsApi() const override;
 
     void
-    SetLastOpenedScene(
-      const AssetReference<SceneAsset>& lastOpenedScene) override;
+    SetLastOpenedScene(const std::shared_ptr<UID>& lastOpenedScene) override;
 
-    const AssetReference<SceneAsset>&
+    const std::shared_ptr<UID>&
     GetLastOpenedScene() const override;
   };
 }
