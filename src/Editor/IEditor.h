@@ -1,5 +1,4 @@
 #pragma once
-#include "pch.h"
 
 namespace Dwarf
 {
@@ -13,8 +12,5 @@ namespace Dwarf
     /// @brief Starts the render loop
     virtual bool
     Run() = 0;
-
-    virtual void
-    UpdateWindowTitle() const = 0;
   };
 }

@@ -1,12 +1,22 @@
-#include "pch.h"
+#include "AssetTypes.h"
 #include "Core/Asset/AssetDirectoryListener.h"
-#include "Core/Asset/AssetComponents.h"
-#include "Core/Asset/AssetDatabase.h"
+#include "Core/Rendering/Shader.h"
 
 namespace Dwarf
 {
-  AssetDirectoryListener::AssetDirectoryListener() = default;
-  AssetDirectoryListener::~AssetDirectoryListener() = default;
+  AssetDirectoryListener::AssetDirectoryListener(
+    AssetDirectoryPath const& assetDirectoryPath)
+    : m_FileWatcher()
+  {
+    m_WatchID =
+      m_FileWatcher.addWatch(assetDirectoryPath.t.string(), this, true);
+    m_WatchID = m_FileWatcher.addWatch(
+      Shader::GetDefaultShaderPath().string(), this, true);
+
+    // Start watching asynchronously the directories
+    m_FileWatcher.watch();
+  }
+  AssetDirectoryListener::~AssetDirectoryListener() {}
 
   void
   AssetDirectoryListener::handleFileAction(efsw::WatchID      watchid,
@@ -15,91 +25,42 @@ namespace Dwarf
                                            efsw::Action       action,
                                            std::string        oldFilename)
   {
-    std::filesystem::path path =
-      std::filesystem::path(dir) / std::filesystem::path(filename);
+
     switch (action)
     {
       case efsw::Actions::Add:
         std::cout << "DIR (" << dir << ") FILE (" << filename
                   << ") has event Added" << std::endl;
-        if (path.has_extension() &&
-            path.extension() != AssetMetaData::META_DATA_EXTENSION)
+
+        for (const auto& callback : m_AddFileCallbacks)
         {
-          AssetDatabase::Import(path);
+          callback(dir, filename);
         }
         break;
       case efsw::Actions::Delete:
         std::cout << "DIR (" << dir << ") FILE (" << filename
                   << ") has event Delete" << std::endl;
+        for (const auto& callback : m_DeleteFileCallbacks)
+        {
+          callback(dir, filename);
+        }
         break;
       case efsw::Actions::Modified:
         std::cout << "DIR (" << dir << ") FILE (" << filename
                   << ") has event Modified" << std::endl;
-
-        if (path.has_extension() &&
-            path.extension() != AssetMetaData::META_DATA_EXTENSION)
+        for (const auto& callback : m_ModifyFileCallbacks)
         {
-          AssetDatabase::Reimport(path);
-          switch (AssetDatabase::GetType(path))
-          {
-            using enum ASSET_TYPE;
-            case COMPUTE_SHADER:
-            case FRAGMENT_SHADER:
-            case GEOMETRY_SHADER:
-            case HLSL_SHADER:
-            case TESC_SHADER:
-            case TESE_SHADER:
-            case VERTEX_SHADER:
-              {
-                if (AssetDatabase::s_ShaderAssetMap.contains(path))
-                {
-                  std::cout << "A shader asset has been updated!" << std::endl;
-                  AssetDatabase::AddShaderToRecompilationQueue(path);
-                }
-                break;
-              }
-            case ASSET_TYPE::MATERIAL:
-              {
-                std::cout << "A material asset has been updated!" << std::endl;
-                std::shared_ptr<AssetReference<MaterialAsset>> mat =
-                  AssetDatabase::Retrieve<MaterialAsset>(path);
-                AssetDatabase::AddShaderToRecompilationQueue(
-                  mat->GetAsset()->m_Material->GetShader());
-                break;
-              }
-            case ASSET_TYPE::MODEL:
-              {
-                // TODO: REIMPORT MODEL FILE
-                std::cout << "A model asset has been updated!" << std::endl;
-                break;
-              }
-            case ASSET_TYPE::TEXTURE:
-              {
-                // TODO: REIMPORT TEXTURE
-                std::cout << "A texture asset has been updated!" << std::endl;
-                break;
-              }
-            case ASSET_TYPE::SCENE:
-              {
-                // TODO: IF ITS THE CURRENTLY OPEN SCENE, MODAL TO ASK IF IT
-                // SHOULD BE RELOADED
-                std::cout << "A scene asset has been updated!" << std::endl;
-                break;
-              }
-            case ASSET_TYPE::UNKNOWN:
-              {
-                std::cout << "An unsupported asset has been updated!"
-                          << std::endl;
-                break;
-              }
-          }
+          callback(dir, filename);
         }
-
         break;
       case efsw::Actions::Moved:
         std::cout << "DIR (" << dir << ") FILE (" << filename
                   << ") has event Moved from (" << oldFilename << ")"
                   << std::endl;
+        for (const auto& callback : m_MoveFileCallbacks)
+        {
+          callback(dir, filename, oldFilename);
+        }
         break;
       default: std::cout << "Should never happen!" << std::endl;
     }

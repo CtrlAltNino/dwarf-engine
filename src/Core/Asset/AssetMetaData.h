@@ -1,71 +1,33 @@
 #pragma once
 
-#include "pch.h"
-#include "Utilities/FileHandler.h"
-
+#include "IAssetMetaData.h"
 namespace Dwarf
 {
 
   /// @brief Utilities for Reading and writing meta data.
-  class AssetMetaData
+  class AssetMetaData : public IAssetMetaData
   {
-  public:
-    static constexpr const char* META_DATA_EXTENSION = ".dmeta";
-
-  private:
-    static std::filesystem::path
-    GetMetaDataPath(std::filesystem::path assetPath)
-    {
-      return assetPath.concat(META_DATA_EXTENSION);
-    }
-
   public:
     /// @brief Retrieves the meta data from an asset path.
     /// @param assetPath Path to an asset.
     /// @return Metadata in JSON.
-    static nlohmann::json
-    GetMetaData(const std::filesystem::path& assetPath)
-    {
-      std::string fileContent =
-        FileHandler::ReadFile(GetMetaDataPath(assetPath));
-      nlohmann::json jsonObject;
-
-      if (!fileContent.empty())
-      {
-        jsonObject = nlohmann::json::parse(fileContent);
-      }
-
-      return jsonObject;
-    }
+    nlohmann::json
+    GetMetaData(const std::filesystem::path& assetPath) const override;
 
     /// @brief Writes the given metadata to a path.
     /// @param assetPath Path to write the metadata to.
     /// @param metaData The metadata in JSON.
-    static void
-    SetMetaData(const std::filesystem::path& assetPath, nlohmann::json metaData)
-    {
-      std::string fileContent = metaData.dump(4);
-
-      if (!FileHandler::CheckIfDirectoyExists(assetPath))
-      {
-        FileHandler::CreateDirectoryAt(assetPath);
-      }
-
-      FileHandler::WriteToFile(GetMetaDataPath(assetPath), fileContent);
-    }
+    void
+    SetMetaData(const std::filesystem::path& assetPath,
+                const nlohmann::json&        metaData) override;
 
     /// @brief Removes the metadata file of an asset.
     /// @param assetPath Path to an asset.
-    static void
-    RemoveMetaData(const std::filesystem::path& assetPath)
-    {
-      FileHandler::Delete(GetMetaDataPath(assetPath));
-    }
+    void
+    RemoveMetaData(const std::filesystem::path& assetPath) override;
 
-    static void
-    Rename(const std::filesystem::path& from, const std::filesystem::path& to)
-    {
-      FileHandler::Rename(GetMetaDataPath(from), GetMetaDataPath(to));
-    }
+    void
+    Rename(const std::filesystem::path& from,
+           const std::filesystem::path& to) override;
   };
 }

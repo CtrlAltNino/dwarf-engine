@@ -1,16 +1,16 @@
 #pragma once
-#include "pch.h"
 #include "Core/Asset/IAssetDatabase.h"
+#include "IAssetMetaData.h"
+#include "IMaterialSerializer.h"
 #include "Project/ProjectTypes.h"
-#include <efsw/efsw.hpp>
 #include <entt/entt.hpp>
 
 #include "Core/UID.h"
 #include "Core/Asset/AssetReference.h"
-#include "Core/Asset/AssetMetaData.h"
 #include "Utilities/FileHandler.h"
-#include "Core/Asset/AssetDirectoryListener.h"
 #include "Core/Rendering/Shader.h"
+#include "Core/Asset/IAssetDirectoryListener.h"
+#include "Core/Asset/AssetTypes.h"
 
 namespace Dwarf
 {
@@ -20,17 +20,17 @@ namespace Dwarf
   {
   private:
     /// @brief Absolute path to the "/Asset" directory.
-    std::filesystem::path s_AssetFolderPath;
+    AssetDirectoryPath m_AssetDirectoryPath;
 
-    /// @brief Recursive file watcher for the "/Asset" directory.
-    std::shared_ptr<efsw::FileWatcher> s_FileWatcher;
+    std::shared_ptr<entt::registry> m_Registry;
 
-    /// @brief Watch ID for the EFSW file watcher.
-    efsw::WatchID s_WatchID;
+    std::map<std::filesystem::path, std::shared_ptr<Shader>> m_ShaderAssetMap;
 
-    std::vector<std::shared_ptr<Shader>> s_ShaderRecompilationStack;
+    std::vector<std::shared_ptr<Shader>> m_ShaderRecompilationStack;
 
-    std::shared_ptr<AssetDirectoryListener> s_AssetDirectoryListener;
+    std::shared_ptr<IAssetDirectoryListener> m_AssetDirectoryListener;
+    std::shared_ptr<IAssetMetaData>          m_AssetMetaData;
+    std::shared_ptr<IMaterialSerializer>     m_MaterialSerializer;
 
     /// @brief Recursively imports all found assets in a given directory.
     /// @param directory Absolute path to a directory.
@@ -49,33 +49,33 @@ namespace Dwarf
     {
       std::string           fileName = assetPath.stem().string();
       std::filesystem::path metaDataPath =
-        assetPath.string() + AssetMetaData::META_DATA_EXTENSION;
+        IAssetMetaData::GetMetaDataPath(assetPath);
 
       auto id = UID();
       if (FileHandler::CheckIfFileExists(metaDataPath.string().c_str()))
       {
-        nlohmann::json metaData = AssetMetaData::GetMetaData(assetPath);
+        nlohmann::json metaData = m_AssetMetaData->GetMetaData(assetPath);
         id = UID(metaData["guid"]);
       }
       else
       {
         nlohmann::json metaData;
         metaData["guid"] = (uint64_t)id;
-        AssetMetaData::SetMetaData(assetPath, metaData);
+        m_AssetMetaData->SetMetaData(assetPath, metaData);
       }
 
       return AssetReference<T>(
-        s_Registry->create(), fileName, s_Registry, id, assetPath);
+        m_Registry->create(), fileName, m_Registry, id, assetPath);
     }
 
   public:
-    std::shared_ptr<entt::registry> s_Registry;
+    AssetDatabase(
+      ProjectPath const&                       projectPath,
+      std::shared_ptr<IAssetDirectoryListener> assetDirectoryListener,
+      std::shared_ptr<IAssetMetaData>          assetMetaData,
+      std::shared_ptr<IMaterialSerializer>     materialSerializer);
 
-    std::map<std::filesystem::path, std::shared_ptr<Shader>> s_ShaderAssetMap;
-
-    const std::map<std::string, ASSET_TYPE> s_FileAssetAssociation;
-
-    AssetDatabase(std::filesystem::path const& projectPath);
+    ~AssetDatabase() override;
 
     /// @brief Imports an asset into the asset database.
     /// @param assetPath Path to the asset.
@@ -100,87 +100,59 @@ namespace Dwarf
     std::shared_ptr<UID>
     Reimport(std::filesystem::path const& assetPath) override;
 
-    static void
-    Rename(std::filesystem::path const& from, std::filesystem::path const& to);
+    void
+    Rename(std::filesystem::path const& from,
+           std::filesystem::path const& to) override;
 
-    static void
+    void
     RenameDirectory(std::filesystem::path const& from,
-                    std::filesystem::path const& to);
+                    std::filesystem::path const& to) override;
 
-    static void
-    CreateNewMaterialAsset();
-    static void
-    CreateNewMaterialAsset(std::filesystem::path const& path);
+    void
+    CreateNewMaterialAsset() override;
+    void
+    CreateNewMaterialAsset(std::filesystem::path const& path) override;
 
-    static std::filesystem::path
-    GetAssetDirectoryPath();
+    std::filesystem::path
+    GetAssetDirectoryPath() override;
 
-    static void
-    RecompileShaders();
+    void
+    RecompileShaders() override;
 
-    static void
+    void
     AddShaderWatch(std::filesystem::path const& shaderAssetPath,
-                   std::shared_ptr<Shader>      shader)
-    {
-      s_ShaderAssetMap[shaderAssetPath] = shader;
-    }
+                   std::shared_ptr<Shader>      shader) override;
+    void
+    RemoveShaderWatch(std::filesystem::path const& shaderAssetPath) override;
 
-    static void
-    RemoveShaderWatch(std::filesystem::path const& shaderAssetPath)
-    {
-      s_ShaderAssetMap.erase(shaderAssetPath);
-    }
+    void
+    AddShaderToRecompilationQueue(std::filesystem::path const& path) override;
+    void
+    AddShaderToRecompilationQueue(std::shared_ptr<Shader> shader) override;
 
-    static void
-    AddShaderToRecompilationQueue(std::filesystem::path const& path)
-    {
-      s_ShaderRecompilationStack.push_back(s_ShaderAssetMap[path]);
-    }
+    void
+    AddAssetCallback(const std::string& dir, const std::string& filename);
 
-    static void
-    AddShaderToRecompilationQueue(std::shared_ptr<Shader> shader)
-    {
-      s_ShaderRecompilationStack.push_back(shader);
-    }
+    void
+    DeleteAssetCallback(const std::string& dir, const std::string& filename);
 
-    static ASSET_TYPE
-    GetType(std::filesystem::path const& assetPath)
-    {
-      std::string fileExtension = assetPath.extension().string();
+    void
+    ModifyAssetCallback(const std::string& dir, const std::string& filename);
 
-      return s_FileAssetAssociation.at(fileExtension);
-    }
+    void
+    MoveAssetCallback(const std::string& dir,
+                      const std::string& filename,
+                      std::string        oldFilename);
 
   private:
-    template<typename T>
-    static std::shared_ptr<AssetReference<T>>
-    Retrieve(std::shared_ptr<UID> uid)
-    {
-      // Retrieve entt::entity with UID component
-      for (auto view = s_Registry->view<IDComponent>(); auto entity : view)
-      {
-        if (*view.get<IDComponent>(entity).ID == *uid)
-        {
-          return std::make_shared<AssetReference<T>>(
-            AssetReference<T>(entity, s_Registry));
-        }
-      }
-      return nullptr;
-    }
+    std::shared_ptr<void>
+    RetrieveImpl(std::type_index type, std::shared_ptr<UID> uid) override;
 
-    template<typename T>
-    static std::shared_ptr<AssetReference<T>>
-    Retrieve(std::filesystem::path const& path)
-    {
-      // Retrieve entt::entity with UID component
-      for (auto view = s_Registry->view<PathComponent>(); auto entity : view)
-      {
-        if (view.get<PathComponent>(entity).Path == path)
-        {
-          return std::make_shared<AssetReference<T>>(entity, s_Registry);
-        }
-      }
-      return nullptr;
-    }
+    std::shared_ptr<void>
+    RetrieveImpl(std::type_index              type,
+                 std::filesystem::path const& path) override;
+
+    std::shared_ptr<void>
+    CreateAssetReference(std::type_index type, entt::entity entity);
   };
 }

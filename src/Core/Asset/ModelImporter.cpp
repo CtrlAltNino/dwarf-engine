@@ -4,18 +4,21 @@
 #include <assimp/postprocess.h>
 
 #include "Core/Rendering/Mesh.h"
-#include "Core/Asset/AssetMetaData.h"
 #include "Core/Rendering/Vertex.h"
 
 namespace Dwarf
 {
+  ModelImporter::ModelImporter(std::shared_ptr<IAssetMetaData> assetMetaData)
+    : m_AssetMetaData(assetMetaData)
+  {
+  }
   // @brief Imports a model.
   /// @param path Path to the model.
   /// @return List of the imported meshes of a model.
   std::vector<std::shared_ptr<Mesh>>
   ModelImporter::Import(std::filesystem::path const& path)
   {
-    nlohmann::json metaData = AssetMetaData::GetMetaData(path);
+    nlohmann::json metaData = m_AssetMetaData->GetMetaData(path);
 
     Assimp::Importer importer;
     const aiScene*   scene = importer.ReadFile(

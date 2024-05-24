@@ -1,13 +1,10 @@
 #pragma once
-#include "pch.h"
 #include "Utilities/FileHandler.h"
-#include "Core/Base.h"
 #include "Core/Rendering/Mesh.h"
 #include "Core/Rendering/TextureCreator.h"
 #include "Core/Rendering/Material.h"
 #include "Core/Asset/ModelImporter.h"
 #include "Core/Asset/MaterialSerializer.h"
-#include "Core/Asset/AssetMetaData.h"
 
 namespace Dwarf
 {

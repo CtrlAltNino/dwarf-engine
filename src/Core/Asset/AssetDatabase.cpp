@@ -1,53 +1,59 @@
 #include "AssetDatabase.h"
+#include "Core/Asset/IAssetDatabase.h"
+#include "IAssetMetaData.h"
 #include "Utilities/FileHandler.h"
 #include "Core/Asset/AssetComponents.h"
-#include "Core/Asset/AssetMetaData.h"
-#include "Core/Rendering/Renderer.h"
-#include "Core/Asset/MaterialSerializer.h"
+#include "Core/Rendering/ComputeShader.h"
 #include "Core/Asset/AssetComponents.h"
-#include "Core/Base.h"
-#include "Core/Scene/SceneComponents.h"
 
 namespace Dwarf
 {
-  std::filesystem::path              AssetDatabase::s_AssetFolderPath = "";
-  std::shared_ptr<efsw::FileWatcher> AssetDatabase::s_FileWatcher;
-  std::shared_ptr<AssetDirectoryListener>
-                AssetDatabase::s_AssetDirectoryListener = nullptr;
-  efsw::WatchID AssetDatabase::s_WatchID;
-  std::shared_ptr<entt::registry> AssetDatabase::s_Registry;
-  std::map<std::filesystem::path, std::shared_ptr<Shader>>
-    AssetDatabase::s_ShaderAssetMap;
-  std::vector<std::shared_ptr<Shader>>
-    AssetDatabase::s_ShaderRecompilationStack;
-  const std::map<std::string, ASSET_TYPE>
-    AssetDatabase::s_FileAssetAssociation = {
-      { ".jpg", ASSET_TYPE::TEXTURE },
-      { ".jpeg", ASSET_TYPE::TEXTURE },
-      { ".png", ASSET_TYPE::TEXTURE },
-      { ".bmp", ASSET_TYPE::TEXTURE },
-      { ".tga", ASSET_TYPE::TEXTURE },
-      { ".hdr", ASSET_TYPE::TEXTURE },
-      { ".exr", ASSET_TYPE::TEXTURE },
-      { ".tiff", ASSET_TYPE::TEXTURE },
-      { ".tif", ASSET_TYPE::TEXTURE },
+  AssetDatabase::AssetDatabase(
+    ProjectPath const&                       projectPath,
+    std::shared_ptr<IAssetDirectoryListener> assetDirectoryListener,
+    std::shared_ptr<IAssetMetaData>          assetMetaData,
+    std::shared_ptr<IMaterialSerializer>     materialSerializer)
+    : m_AssetDirectoryPath(projectPath.t / "Assets")
+    , m_AssetDirectoryListener(assetDirectoryListener)
+    , m_AssetMetaData(assetMetaData)
+    , m_MaterialSerializer(materialSerializer)
+    , m_Registry(std::make_shared<entt::registry>())
+  {
+    if (!FileHandler::CheckIfDirectoyExists(m_AssetDirectoryPath))
+    {
+      FileHandler::CreateDirectoryAt(m_AssetDirectoryPath);
+    }
 
-      { ".obj", ASSET_TYPE::MODEL },
-      { ".fbx", ASSET_TYPE::MODEL },
-      { ".gltf", ASSET_TYPE::MODEL },
-      { ".glb", ASSET_TYPE::MODEL },
+    m_AssetDirectoryListener->registerAddFileCallback(
+      std::bind(&AssetDatabase::AddAssetCallback,
+                this,
+                std::placeholders::_1,
+                std::placeholders::_2));
+    m_AssetDirectoryListener->registerDeleteFileCallback(
+      std::bind(&AssetDatabase::DeleteAssetCallback,
+                this,
+                std::placeholders::_1,
+                std::placeholders::_2));
+    m_AssetDirectoryListener->registerModifyFileCallback(
+      std::bind(&AssetDatabase::ModifyAssetCallback,
+                this,
+                std::placeholders::_1,
+                std::placeholders::_2));
+    m_AssetDirectoryListener->registerMoveFileCallback(
+      std::bind(&AssetDatabase::MoveAssetCallback,
+                this,
+                std::placeholders::_1,
+                std::placeholders::_2,
+                std::placeholders::_3));
 
-      { ".dmat", ASSET_TYPE::MATERIAL },
-      { ".dscene", ASSET_TYPE::SCENE },
+    ReimportAll();
+    CompileShaders();
+  }
 
-      { ".vert", ASSET_TYPE::VERTEX_SHADER },
-      { ".tesc", ASSET_TYPE::TESC_SHADER },
-      { ".tese", ASSET_TYPE::TESE_SHADER },
-      { ".geom", ASSET_TYPE::GEOMETRY_SHADER },
-      { ".frag", ASSET_TYPE::FRAGMENT_SHADER },
-      { ".comp", ASSET_TYPE::COMPUTE_SHADER },
-      { ".hlsl", ASSET_TYPE::HLSL_SHADER }
-    };
+  AssetDatabase::~AssetDatabase()
+  {
+    m_Registry->clear();
+  }
 
   void
   AssetDatabase::RecursiveImport(std::filesystem::path const& directory)
@@ -60,8 +66,7 @@ namespace Dwarf
       }
       else if (directoryEntry.is_regular_file() &&
                directoryEntry.path().has_extension() &&
-               directoryEntry.path().extension() !=
-                 AssetMetaData::META_DATA_EXTENSION)
+               !IAssetMetaData::IsMetaDataPath(directoryEntry))
       {
         Import(directoryEntry.path());
       }
@@ -69,14 +74,14 @@ namespace Dwarf
   }
 
   void
-  AssetDatabase::ReimportAssets()
+  AssetDatabase::ReimportAll()
   {
-    s_Registry->clear();
+    Clear();
     Shader::Init();
     ComputeShader::Init();
     Material::Init();
     Mesh::Init();
-    RecursiveImport(s_AssetFolderPath);
+    RecursiveImport(m_AssetDirectoryPath);
   }
 
   std::shared_ptr<UID>
@@ -88,89 +93,53 @@ namespace Dwarf
   void
   AssetDatabase::Remove(std::shared_ptr<UID> uid)
   {
-    auto view = s_Registry->view<IDComponent>();
+    auto view = m_Registry->view<IDComponent>();
     for (auto entity : view)
     {
       if (*view.get<IDComponent>(entity).ID == *uid)
       {
-        s_Registry->destroy(entity);
+        m_Registry->destroy(entity);
       }
     }
   }
   void
   AssetDatabase::Remove(std::filesystem::path const& path)
   {
-    auto view = s_Registry->view<PathComponent>();
+    auto view = m_Registry->view<PathComponent>();
     for (auto entity : view)
     {
       if (view.get<PathComponent>(entity).Path == path &&
-          s_Registry->valid(entity))
+          m_Registry->valid(entity))
       {
-        s_Registry->destroy(entity);
+        m_Registry->destroy(entity);
       }
     }
   }
 
   void
-  AssetDatabase::Init(std::filesystem::path const& projectPath)
-  {
-    s_AssetFolderPath = projectPath / "Assets";
-
-    if (!FileHandler::CheckIfDirectoyExists(s_AssetFolderPath))
-    {
-      FileHandler::CreateDirectoryAt(s_AssetFolderPath);
-    }
-    s_Registry = std::make_shared<entt::registry>();
-
-    // Create the file system watcher instance
-    // efsw::FileWatcher allow a first boolean parameter that indicates if it
-    // should start with the generic file watcher instead of the platform
-    // specific backend
-    s_FileWatcher = std::make_shared<efsw::FileWatcher>();
-
-    // Create the instance of your efsw::FileWatcherListener implementation
-    s_AssetDirectoryListener = std::make_shared<AssetDirectoryListener>();
-
-    // Add a folder to watch, and get the efsw::WatchID
-    // It will watch the /tmp folder recursively ( the third parameter indicates
-    // that is recursive ) Reporting the files and directories changes to the
-    // instance of the listener
-    s_WatchID = s_FileWatcher->addWatch(
-      s_AssetFolderPath.string(), s_AssetDirectoryListener.get(), true);
-    s_WatchID = s_FileWatcher->addWatch(Shader::GetDefaultShaderPath().string(),
-                                        s_AssetDirectoryListener.get(),
-                                        true);
-
-    // Start watching asynchronously the directories
-    s_FileWatcher->watch();
-
-    ReimportAssets();
-
-    CompileShaders();
-  }
-
-  void
   AssetDatabase::CompileShaders()
   {
-    auto materialView = AssetDatabase::s_Registry->view<MaterialAsset>();
+    auto materialView = m_Registry->view<MaterialAsset>();
 
     for (auto entity : materialView)
     {
-      s_Registry->get<MaterialAsset>(entity).m_Material->GetShader()->Compile();
+      m_Registry->get<MaterialAsset>(entity).m_Material->GetShader()->Compile();
     }
   }
 
   void
   AssetDatabase::Clear()
   {
-    s_FileWatcher->removeWatch(s_WatchID);
+    // m_FileWatcher->removeWatch(m_WatchID);
+    m_Registry->clear();
   }
 
   std::shared_ptr<UID>
   AssetDatabase::Import(std::filesystem::path const& assetPath)
   {
     std::string fileName = assetPath.filename().string();
-    ASSET_TYPE  assetType = GetType(assetPath);
+    ASSET_TYPE  assetType =
+      IAssetDatabase::GetAssetType(assetPath.extension().string());
 
     // Remove asset if already present
     if (AssetDatabase::Exists(assetPath))
@@ -244,7 +213,7 @@ namespace Dwarf
     if (uid)
     {
       // Retrieve entt::entity with UID component
-      auto view = s_Registry->view<IDComponent>();
+      auto view = m_Registry->view<IDComponent>();
       for (auto entity : view)
       {
         if (*view.get<IDComponent>(entity).ID == *uid)
@@ -260,7 +229,7 @@ namespace Dwarf
   AssetDatabase::Exists(std::filesystem::path const& path)
   {
     // Retrieve entt::entity with UID component
-    auto view = s_Registry->view<PathComponent>();
+    auto view = m_Registry->view<PathComponent>();
     for (auto entity : view)
     {
       if (view.get<PathComponent>(entity).Path == path)
@@ -275,17 +244,17 @@ namespace Dwarf
   AssetDatabase::Rename(std::filesystem::path const& from,
                         std::filesystem::path const& to)
   {
-    AssetMetaData::Rename(from, to);
-    auto view = s_Registry->view<PathComponent, NameComponent>();
-    auto matView = s_Registry->view<MaterialAsset>();
+    m_AssetMetaData->Rename(from, to);
+    auto view = m_Registry->view<PathComponent, NameComponent>();
+    auto matView = m_Registry->view<MaterialAsset>();
     for (auto entity : view)
     {
       if (view.get<PathComponent>(entity).Path == from)
       {
-        s_Registry->remove<PathComponent>(entity);
-        s_Registry->remove<NameComponent>(entity);
-        s_Registry->emplace<PathComponent>(entity, to);
-        s_Registry->emplace<NameComponent>(entity, to.stem().string());
+        m_Registry->remove<PathComponent>(entity);
+        m_Registry->remove<NameComponent>(entity);
+        m_Registry->emplace<PathComponent>(entity, to);
+        m_Registry->emplace<NameComponent>(entity, to.stem().string());
 
         if (matView.contains(entity))
         {
@@ -301,7 +270,7 @@ namespace Dwarf
   AssetDatabase::RenameDirectory(std::filesystem::path const& from,
                                  std::filesystem::path const& to)
   {
-    auto view = s_Registry->view<PathComponent>();
+    auto view = m_Registry->view<PathComponent>();
     for (auto entity : view)
     {
       if (view.get<PathComponent>(entity).Path.string().find(from.string()) !=
@@ -310,8 +279,8 @@ namespace Dwarf
         std::filesystem::path newPath = to;
         newPath.concat(view.get<PathComponent>(entity).Path.string().erase(
           0, from.string().length()));
-        s_Registry->remove<PathComponent>(entity);
-        s_Registry->emplace<PathComponent>(entity, newPath);
+        m_Registry->remove<PathComponent>(entity);
+        m_Registry->emplace<PathComponent>(entity, newPath);
       }
     }
   }
@@ -319,7 +288,7 @@ namespace Dwarf
   void
   AssetDatabase::CreateNewMaterialAsset()
   {
-    CreateNewMaterialAsset(s_AssetFolderPath);
+    CreateNewMaterialAsset(m_AssetDirectoryPath);
   }
 
   void
@@ -368,22 +337,248 @@ namespace Dwarf
                                     std::string(" 2") + std::string(".dmat"));
       }
     }
-    MaterialSerializer::Serialize(newMat, newMatPath);
+    m_MaterialSerializer->Serialize(newMat, newMatPath);
   }
 
   std::filesystem::path
   AssetDatabase::GetAssetDirectoryPath()
   {
-    return s_AssetFolderPath;
+    return m_AssetDirectoryPath;
   }
 
   void
   AssetDatabase::RecompileShaders()
   {
-    for (std::shared_ptr<Shader> shader : s_ShaderRecompilationStack)
+    for (std::shared_ptr<Shader> shader : m_ShaderRecompilationStack)
     {
       shader->Compile();
     }
-    s_ShaderRecompilationStack.clear();
+    m_ShaderRecompilationStack.clear();
+  }
+
+  void
+  AssetDatabase::AddShaderWatch(std::filesystem::path const& shaderAssetPath,
+                                std::shared_ptr<Shader>      shader)
+  {
+    m_ShaderAssetMap[shaderAssetPath] = shader;
+  }
+
+  void
+  AssetDatabase::RemoveShaderWatch(std::filesystem::path const& shaderAssetPath)
+  {
+    m_ShaderAssetMap.erase(shaderAssetPath);
+  }
+
+  void
+  AssetDatabase::AddShaderToRecompilationQueue(
+    std::filesystem::path const& path)
+  {
+    m_ShaderRecompilationStack.push_back(m_ShaderAssetMap[path]);
+  }
+
+  void
+  AssetDatabase::AddShaderToRecompilationQueue(std::shared_ptr<Shader> shader)
+  {
+    m_ShaderRecompilationStack.push_back(shader);
+  }
+
+  std::shared_ptr<void>
+  AssetDatabase::RetrieveImpl(std::type_index type, std::shared_ptr<UID> uid)
+  {
+    // Retrieve entt::entity with UID component
+    for (auto view = m_Registry->view<IDComponent>(); auto entity : view)
+    {
+      if (*view.get<IDComponent>(entity).ID == *uid)
+      {
+        // return std::make_shared<void>(AssetReference<void>(entity,
+        // m_Registry));
+        return CreateAssetReference(type, entity);
+      }
+    }
+    return nullptr;
+  }
+
+  std::shared_ptr<void>
+  AssetDatabase::RetrieveImpl(std::type_index              type,
+                              std::filesystem::path const& path)
+  {
+    // Retrieve entt::entity with UID component
+    for (auto view = m_Registry->view<PathComponent>(); auto entity : view)
+    {
+      if (view.get<PathComponent>(entity).Path == path)
+      {
+        // return std::make_shared<AssetReference<T>>(entity, m_Registry);
+        return CreateAssetReference(type, entity);
+      }
+    }
+    return nullptr;
+  }
+
+  std::shared_ptr<void>
+  AssetDatabase::CreateAssetReference(std::type_index type, entt::entity entity)
+  {
+    if (type == typeid(ModelAsset))
+    {
+      return std::make_shared<AssetReference<ModelAsset>>(entity, m_Registry);
+    }
+    else if (type == typeid(MaterialAsset))
+    {
+      return std::make_shared<AssetReference<MaterialAsset>>(entity,
+                                                             m_Registry);
+    }
+    else if (type == typeid(TextureAsset))
+    {
+      return std::make_shared<AssetReference<TextureAsset>>(entity, m_Registry);
+    }
+    else if (type == typeid(SceneAsset))
+    {
+      return std::make_shared<AssetReference<SceneAsset>>(entity, m_Registry);
+    }
+    else if (type == typeid(VertexShaderAsset))
+    {
+      return std::make_shared<AssetReference<VertexShaderAsset>>(entity,
+                                                                 m_Registry);
+    }
+    else if (type == typeid(TesselationControlShaderAsset))
+    {
+      return std::make_shared<AssetReference<TesselationControlShaderAsset>>(
+        entity, m_Registry);
+    }
+    else if (type == typeid(TesselationEvaluationShaderAsset))
+    {
+      return std::make_shared<AssetReference<TesselationEvaluationShaderAsset>>(
+        entity, m_Registry);
+    }
+    else if (type == typeid(GeometryShaderAsset))
+    {
+      return std::make_shared<AssetReference<GeometryShaderAsset>>(entity,
+                                                                   m_Registry);
+    }
+    else if (type == typeid(FragmentShaderAsset))
+    {
+      return std::make_shared<AssetReference<FragmentShaderAsset>>(entity,
+                                                                   m_Registry);
+    }
+    else if (type == typeid(ComputeShaderAsset))
+    {
+      return std::make_shared<AssetReference<ComputeShaderAsset>>(entity,
+                                                                  m_Registry);
+    }
+    else if (type == typeid(HlslShaderAsset))
+    {
+      return std::make_shared<AssetReference<HlslShaderAsset>>(entity,
+                                                               m_Registry);
+    }
+    else
+    {
+      return std::make_shared<AssetReference<UnknownAsset>>(entity, m_Registry);
+    }
+  }
+
+  void
+  AssetDatabase::AddAssetCallback(const std::string& dir,
+                                  const std::string& filename)
+  {
+    std::filesystem::path path =
+      std::filesystem::path(dir) / std::filesystem::path(filename);
+    if (!m_AssetMetaData->IsMetaDataPath(path))
+    {
+      AssetDatabase::Import(path);
+    }
+  }
+
+  void
+  AssetDatabase::DeleteAssetCallback(const std::string& dir,
+                                     const std::string& filename)
+  {
+    std::filesystem::path path =
+      std::filesystem::path(dir) / std::filesystem::path(filename);
+    // TODO: Mark asset as deleted/missing
+  }
+
+  void
+  AssetDatabase::ModifyAssetCallback(const std::string& dir,
+                                     const std::string& filename)
+  {
+    std::filesystem::path path =
+      std::filesystem::path(dir) / std::filesystem::path(filename);
+    if (m_AssetMetaData->IsMetaDataPath(path))
+    {
+      AssetDatabase::Reimport(path);
+      switch (IAssetDatabase::GetAssetType(path.extension().string()))
+      {
+        using enum ASSET_TYPE;
+        case COMPUTE_SHADER:
+        case FRAGMENT_SHADER:
+        case GEOMETRY_SHADER:
+        case HLSL_SHADER:
+        case TESC_SHADER:
+        case TESE_SHADER:
+        case VERTEX_SHADER:
+          {
+            if (m_ShaderAssetMap.contains(path))
+            {
+              std::cout << "A shader asset has been updated!" << std::endl;
+              AssetDatabase::AddShaderToRecompilationQueue(path);
+            }
+            break;
+          }
+        case ASSET_TYPE::MATERIAL:
+          {
+            std::cout << "A material asset has been updated!" << std::endl;
+            std::shared_ptr<AssetReference<MaterialAsset>> mat =
+              AssetDatabase::Retrieve<MaterialAsset>(path);
+            AssetDatabase::AddShaderToRecompilationQueue(
+              mat->GetAsset()->m_Material->GetShader());
+            break;
+          }
+        case ASSET_TYPE::MODEL:
+          {
+            // TODO: REIMPORT MODEL FILE
+            std::cout << "A model asset has been updated!" << std::endl;
+            break;
+          }
+        case ASSET_TYPE::TEXTURE:
+          {
+            // TODO: REIMPORT TEXTURE
+            std::cout << "A texture asset has been updated!" << std::endl;
+            break;
+          }
+        case ASSET_TYPE::SCENE:
+          {
+            // TODO: IF ITS THE CURRENTLY OPEN SCENE, MODAL TO ASK IF IT
+            // SHOULD BE RELOADED
+            std::cout << "A scene asset has been updated!" << std::endl;
+            break;
+          }
+        case ASSET_TYPE::UNKNOWN:
+          {
+            std::cout << "An unsupported asset has been updated!" << std::endl;
+            break;
+          }
+      }
+    }
+  }
+
+  void
+  AssetDatabase::MoveAssetCallback(const std::string& dir,
+                                   const std::string& filename,
+                                   std::string        oldFilename)
+  {
+    std::filesystem::path path =
+      std::filesystem::path(dir) / std::filesystem::path(filename);
+    // Update PathComponent
+    auto view = m_Registry->view<PathComponent>();
+    for (auto entity : view)
+    {
+      if (view.get<PathComponent>(entity).Path == path)
+      {
+        m_Registry->remove<PathComponent>(entity);
+        m_Registry->emplace<PathComponent>(
+          entity,
+          std::filesystem::path(dir) / std::filesystem::path(oldFilename));
+        break;
+      }
+    }
   }
 }
