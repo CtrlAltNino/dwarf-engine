@@ -15,6 +15,6 @@ target_sources(${targetName}
     Framebuffer.cpp
     Texture.cpp
     RendererApi.cpp
-    ComputeShader.cpp
+    IComputeShader.cpp
     TextureCreator.cpp
 )

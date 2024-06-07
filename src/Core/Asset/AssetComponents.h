@@ -14,12 +14,8 @@ namespace Dwarf
     /// @brief Vector of submeshes.
     std::vector<std::shared_ptr<Mesh>> m_Meshes;
 
-    explicit ModelAsset(std::filesystem::path const& path)
-      : m_Meshes(ModelImporter::Import(path))
-    {
-    }
-    void
-    Load() const
+    explicit ModelAsset(std::vector<std::shared_ptr<Mesh>> meshes)
+      : m_Meshes(meshes)
     {
       for (const auto& mesh : m_Meshes)
       {

@@ -3,7 +3,7 @@
 #include "IAssetMetaData.h"
 #include "Utilities/FileHandler.h"
 #include "Core/Asset/AssetComponents.h"
-#include "Core/Rendering/ComputeShader.h"
+#include "Core/Rendering/IComputeShader.h"
 #include "Core/Asset/AssetComponents.h"
 
 namespace Dwarf
@@ -12,11 +12,13 @@ namespace Dwarf
     ProjectPath const&                       projectPath,
     std::shared_ptr<IAssetDirectoryListener> assetDirectoryListener,
     std::shared_ptr<IAssetMetaData>          assetMetaData,
-    std::shared_ptr<IMaterialSerializer>     materialSerializer)
+    std::shared_ptr<IMaterialSerializer>     materialSerializer,
+    std::shared_ptr<IModelImporter>          modelImporter)
     : m_AssetDirectoryPath(projectPath.t / "Assets")
     , m_AssetDirectoryListener(assetDirectoryListener)
     , m_AssetMetaData(assetMetaData)
     , m_MaterialSerializer(materialSerializer)
+    , m_ModelImporter(modelImporter)
     , m_Registry(std::make_shared<entt::registry>())
   {
     if (!FileHandler::CheckIfDirectoyExists(m_AssetDirectoryPath))
@@ -78,7 +80,7 @@ namespace Dwarf
   {
     Clear();
     Shader::Init();
-    ComputeShader::Init();
+    // ComputeShader::Init();
     Material::Init();
     Mesh::Init();
     RecursiveImport(m_AssetDirectoryPath);
@@ -153,8 +155,9 @@ namespace Dwarf
       case MODEL:
         {
           AssetReference<Dwarf::ModelAsset> model =
-            CreateAssetReference<ModelAsset>(assetPath);
-          model.GetAsset()->Load();
+            CreateAssetReference<ModelAsset>(
+              m_ModelImporter->Import(assetPath));
+          // model.GetAsset()->Load();
           return model.GetUID();
         }
       case MATERIAL:

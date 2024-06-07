@@ -1,5 +1,6 @@
 #pragma once
 #include "Core/Asset/IAssetDatabase.h"
+#include "Core/Asset/IModelImporter.h"
 #include "IAssetMetaData.h"
 #include "IMaterialSerializer.h"
 #include "Project/ProjectTypes.h"
@@ -31,6 +32,7 @@ namespace Dwarf
     std::shared_ptr<IAssetDirectoryListener> m_AssetDirectoryListener;
     std::shared_ptr<IAssetMetaData>          m_AssetMetaData;
     std::shared_ptr<IMaterialSerializer>     m_MaterialSerializer;
+    std::shared_ptr<IModelImporter>          m_ModelImporter;
 
     /// @brief Recursively imports all found assets in a given directory.
     /// @param directory Absolute path to a directory.
@@ -73,7 +75,8 @@ namespace Dwarf
       ProjectPath const&                       projectPath,
       std::shared_ptr<IAssetDirectoryListener> assetDirectoryListener,
       std::shared_ptr<IAssetMetaData>          assetMetaData,
-      std::shared_ptr<IMaterialSerializer>     materialSerializer);
+      std::shared_ptr<IMaterialSerializer>     materialSerializer,
+      std::shared_ptr<IModelImporter>          modelImporter);
 
     ~AssetDatabase() override;
 

@@ -17,8 +17,11 @@
 
 namespace Dwarf
 {
-  OpenGLComputeShader::OpenGLComputeShader() = default;
-  OpenGLComputeShader::~OpenGLComputeShader() = default;
+  OpenGLComputeShader::OpenGLComputeShader(
+    std::shared_ptr<IAssetDatabase> assetDatabase)
+    : m_AssetDatabase(assetDatabase)
+  {
+  }
 
   const std::map<GLenum, ShaderParameterType> glTypeToDwarfShaderType = {
     { GL_BOOL, ShaderParameterType::BOOLEAN },
@@ -33,15 +36,15 @@ namespace Dwarf
   void
   OpenGLComputeShader::Compile()
   {
-    SetIsCompiled(false);
+    m_SuccessfullyCompiled = false;
 
     std::string shaderSource;
 
     if (m_ComputeShaderAsset != nullptr &&
-        AssetDatabase::Exists(m_ComputeShaderAsset))
+        m_AssetDatabase->Exists(m_ComputeShaderAsset))
     {
       std::filesystem::path shaderPath =
-        AssetDatabase::Retrieve<ComputeShaderAsset>(m_ComputeShaderAsset)
+        m_AssetDatabase->Retrieve<ComputeShaderAsset>(m_ComputeShaderAsset)
           ->GetAsset()
           ->m_Path;
       shaderSource = FileHandler::ReadFile(shaderPath);
@@ -118,27 +121,27 @@ namespace Dwarf
     return m_ID;
   }
 
-  std::shared_ptr<OpenGLComputeShader>
-  OpenGLComputeShader::CreatePropagationShader()
-  {
-    std::shared_ptr<OpenGLComputeShader> compShader =
-      std::make_shared<OpenGLComputeShader>();
-    compShader->SetComputeShader(FileHandler::ReadFile(
-      ComputeShader::GetOutlineShaderPath() / "propagation.comp"));
-    compShader->Compile();
-    return compShader;
-  }
+  // std::shared_ptr<OpenGLComputeShader>
+  // OpenGLComputeShader::CreatePropagationShader()
+  // {
+  //   std::shared_ptr<OpenGLComputeShader> compShader =
+  //     std::make_shared<OpenGLComputeShader>();
+  //   compShader->SetComputeShader(FileHandler::ReadFile(
+  //     ComputeShader::GetOutlineShaderPath() / "propagation.comp"));
+  //   compShader->Compile();
+  //   return compShader;
+  // }
 
-  std::shared_ptr<OpenGLComputeShader>
-  OpenGLComputeShader::CreateFinalizationShader()
-  {
-    std::shared_ptr<OpenGLComputeShader> compShader =
-      std::make_shared<OpenGLComputeShader>();
-    compShader->SetComputeShader(FileHandler::ReadFile(
-      ComputeShader::GetOutlineShaderPath() / "finalization.comp"));
-    compShader->Compile();
-    return compShader;
-  }
+  // std::shared_ptr<OpenGLComputeShader>
+  // OpenGLComputeShader::CreateFinalizationShader()
+  // {
+  //   std::shared_ptr<OpenGLComputeShader> compShader =
+  //     std::make_shared<OpenGLComputeShader>();
+  //   compShader->SetComputeShader(FileHandler::ReadFile(
+  //     ComputeShader::GetOutlineShaderPath() / "finalization.comp"));
+  //   compShader->Compile();
+  //   return compShader;
+  // }
 
   std::map<std::string, std::shared_ptr<IShaderParameter>, std::less<>>
   OpenGLComputeShader::GetParameters()

@@ -57,7 +57,8 @@
     "libjpeg-turbo",
     "gtest",
     "spdlog",
-    "boost"
+    "boost",
+    "protobuf"
   ],
   "overrides": [
     {
