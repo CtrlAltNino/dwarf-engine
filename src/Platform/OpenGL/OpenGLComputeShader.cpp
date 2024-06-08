@@ -165,7 +165,7 @@ namespace Dwarf
       glGetActiveUniform(m_ID, (GLuint)i, bufSize, &length, &size, &type, name);
 
       parameters[std::string(name)] =
-        ComputeShader::CreateComputeShaderParameter(
+        IComputeShader::CreateComputeShaderParameter(
           glTypeToDwarfShaderType.find(type)->second);
     }
 
