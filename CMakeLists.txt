@@ -73,8 +73,11 @@ project(Dwarf\ Engine VERSION 0.0.1 LANGUAGES C CXX)
 
 target_precompile_headers(${targetName} PRIVATE src/pch.h)
 
+enable_testing()
+
 # Add the CMakeLists.txt files of the subdirectories
-smtg_add_subdirectories()
+add_subdirectory(src)
+add_subdirectory(tests)
 
 # Linking dependencies
 IF(WIN32 OR(UNIX AND NOT APPLE))

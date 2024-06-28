@@ -1,4 +1,4 @@
 target_sources(${testTarget}
     PRIVATE
-    InputManagerTests.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/InputManagerTests.cpp
 )
