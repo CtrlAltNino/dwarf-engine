@@ -1,5 +1,5 @@
 #pragma once
-#include "Core/Rendering/Mesh.h"
+#include "Core/Rendering/Mesh/Mesh.h"
 
 namespace Dwarf
 {

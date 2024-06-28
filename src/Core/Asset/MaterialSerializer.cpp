@@ -1,5 +1,5 @@
 #include "Core/Base.h"
-#include "Core/Rendering/Shader Parameters/UnsignedIntegerShaderParameter.h"
+// #include "Core/Rendering/Shader Parameters/UnsignedIntegerShaderParameter.h"
 
 #include "Core/Asset/MaterialSerializer.h"
 #include "Core/Rendering/Renderer.h"
@@ -14,19 +14,20 @@
 #elif __APPLE__
 // #include "Platform/Metal/MetalShader.h"
 #endif
-#include <Core/Rendering/Shader Parameters/BooleanShaderParameter.h>
-#include <Core/Rendering/Shader Parameters/IntegerShaderParameter.h>
-#include <Core/Rendering/Shader Parameters/FloatShaderParameter.h>
-#include <Core/Rendering/Shader Parameters/Tex2DShaderParameter.h>
-#include <Core/Rendering/Shader Parameters/Vec2ShaderParameter.h>
-#include <Core/Rendering/Shader Parameters/Vec3ShaderParameter.h>
-#include <Core/Rendering/Shader Parameters/Vec4ShaderParameter.h>
+// #include <Core/Rendering/Shader Parameters/BooleanShaderParameter.h>
+// #include <Core/Rendering/Shader Parameters/IntegerShaderParameter.h>
+// #include <Core/Rendering/Shader Parameters/FloatShaderParameter.h>
+// #include <Core/Rendering/Shader Parameters/Tex2DShaderParameter.h>
+// #include <Core/Rendering/Shader Parameters/Vec2ShaderParameter.h>
+// #include <Core/Rendering/Shader Parameters/Vec3ShaderParameter.h>
+// #include <Core/Rendering/Shader Parameters/Vec4ShaderParameter.h>
 
 namespace Dwarf
 {
   std::shared_ptr<Material>
   MaterialSerializer::Deserialize(std::filesystem::path const& path)
   {
+    // TODO: REPLACE OBJECT CREATION LOGIC WITH DI
     Material deserializedMat(path.stem().string());
 
     nlohmann::json serializedMat =

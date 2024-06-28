@@ -1,5 +1,7 @@
 cmake_minimum_required(VERSION 3.10.2)
-add_executable(${testTarget} ApplicationTests.cpp)
+add_executable(${testTarget} TestEntry.cpp)
+
+smtg_add_subdirectories()
 
 enable_testing()
 find_package(GTest CONFIG REQUIRED)

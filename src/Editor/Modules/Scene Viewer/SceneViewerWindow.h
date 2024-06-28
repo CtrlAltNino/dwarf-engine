@@ -8,7 +8,7 @@
 #include "Editor/EditorModel.h"
 #include "Editor/Modules/GuiModule.h"
 #include "Core/Scene/Camera.h"
-#include "Core/Rendering/Framebuffer.h"
+#include "Core/Rendering/Framebuffer/Framebuffer.h"
 
 namespace Dwarf
 {

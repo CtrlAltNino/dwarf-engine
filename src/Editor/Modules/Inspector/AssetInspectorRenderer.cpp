@@ -18,14 +18,14 @@
 #elif __APPLE__
 // #include "Platform/Metal/MetalShader.h"
 #endif
-#include <Core/Rendering/Shader Parameters/BooleanShaderParameter.h>
-#include <Core/Rendering/Shader Parameters/IntegerShaderParameter.h>
-#include <Core/Rendering/Shader Parameters/UnsignedIntegerShaderParameter.h>
-#include <Core/Rendering/Shader Parameters/FloatShaderParameter.h>
-#include <Core/Rendering/Shader Parameters/Tex2DShaderParameter.h>
-#include <Core/Rendering/Shader Parameters/Vec2ShaderParameter.h>
-#include <Core/Rendering/Shader Parameters/Vec3ShaderParameter.h>
-#include <Core/Rendering/Shader Parameters/Vec4ShaderParameter.h>
+// #include <Core/Rendering/Shader Parameters/BooleanShaderParameter.h>
+// #include <Core/Rendering/Shader Parameters/IntegerShaderParameter.h>
+// #include <Core/Rendering/Shader Parameters/UnsignedIntegerShaderParameter.h>
+// #include <Core/Rendering/Shader Parameters/FloatShaderParameter.h>
+// #include <Core/Rendering/Shader Parameters/Tex2DShaderParameter.h>
+// #include <Core/Rendering/Shader Parameters/Vec2ShaderParameter.h>
+// #include <Core/Rendering/Shader Parameters/Vec3ShaderParameter.h>
+// #include <Core/Rendering/Shader Parameters/Vec4ShaderParameter.h>
 
 #define COMPONENT_PANEL_PADDING (8.0f)
 #define ADD_BUTTON_WIDTH (40.0f)

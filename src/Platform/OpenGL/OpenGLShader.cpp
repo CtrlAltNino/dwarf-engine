@@ -1,15 +1,26 @@
 #include "OpenGLShader.h"
-#include "Utilities/FileHandler.h"
-#include "Core/Asset/AssetDatabase.h"
-#include "Core/Asset/AssetComponents.h"
 #include "Core/Base.h"
+#include "Core/Rendering/Shader/ShaderTypes.h"
 
 #define GL_SHADER_LOG_LENGTH (1024)
 
 namespace Dwarf
 {
-  OpenGLShader::OpenGLShader() = default;
-  OpenGLShader::~OpenGLShader() = default;
+  OpenGLShader::OpenGLShader(
+    std::shared_ptr<VertexShaderAsset>                    vertexShaderAsset,
+    std::shared_ptr<FragmentShaderAsset>                  fragmentShaderAsset,
+    boost::optional<std::shared_ptr<GeometryShaderAsset>> geometryShaderAsset,
+    boost::optional<std::shared_ptr<TessellationControlShaderAsset>>
+      tessellationControlShaderAsset,
+    boost::optional<std::shared_ptr<TessellationEvaluationShaderAsset>>
+      tessellationEvaluationShaderAsset)
+    : m_VertexShaderAsset(vertexShaderAsset)
+    , m_FragmentShaderAsset(fragmentShaderAsset)
+    , m_GeometryShaderAsset(geometryShaderAsset)
+    , m_TessellationControlShaderAsset(tessellationControlShaderAsset)
+    , m_TessellationEvaluationShaderAsset(tessellationEvaluationShaderAsset)
+  {
+  }
 
   const std::array<std::string, 3> OpenGLShader::ReservedUniformNames = {
     "modelMatrix",
@@ -31,85 +42,13 @@ namespace Dwarf
   void
   OpenGLShader::Compile()
   {
-    SetIsCompiled(false);
+    m_SuccessfullyCompiled = false;
 
-    std::string vertexShaderSource;
-    std::string tescShaderSource;
-    std::string teseShaderSource;
-    std::string geometryShaderSource;
-    std::string fragmentShaderSource;
-
-    if (m_ShaderAssets.m_VertexShaderAsset != nullptr &&
-        AssetDatabase::Exists(m_ShaderAssets.m_VertexShaderAsset))
+    if (m_VertexShaderSource.t.length() > 0 &&
+        m_FragmentShaderSource.t.length() > 0)
     {
-      std::filesystem::path vertexShaderPath =
-        AssetDatabase::Retrieve<VertexShaderAsset>(
-          m_ShaderAssets.m_VertexShaderAsset)
-          ->GetAsset()
-          ->m_Path;
-      vertexShaderSource = FileHandler::ReadFile(vertexShaderPath);
-      // TODO: This needs to move somewhere else
-      AssetDatabase::AddShaderWatch(vertexShaderPath,
-                                    std::make_shared<OpenGLShader>(*this));
-    }
-    else
-    {
-      vertexShaderSource = m_ShaderSources.m_VertexShaderSource;
-    }
-
-    if (AssetDatabase::Exists(m_ShaderAssets.m_TessellationControlShaderAsset))
-    {
-      tescShaderSource = FileHandler::ReadFile(
-        AssetDatabase::Retrieve<TesselationControlShaderAsset>(
-          m_ShaderAssets.m_TessellationControlShaderAsset)
-          ->GetAsset()
-          ->m_Path);
-    }
-
-    if (AssetDatabase::Exists(
-          m_ShaderAssets.m_TessellationEvaluationShaderAsset))
-    {
-      teseShaderSource = FileHandler::ReadFile(
-        AssetDatabase::Retrieve<TesselationEvaluationShaderAsset>(
-          m_ShaderAssets.m_TessellationEvaluationShaderAsset)
-          ->GetAsset()
-          ->m_Path);
-    }
-
-    if (AssetDatabase::Exists(m_ShaderAssets.m_GeometryShaderAsset))
-    {
-      geometryShaderSource =
-        FileHandler::ReadFile(AssetDatabase::Retrieve<GeometryShaderAsset>(
-                                m_ShaderAssets.m_GeometryShaderAsset)
-                                ->GetAsset()
-                                ->m_Path);
-    }
-
-    if (m_ShaderAssets.m_FragmentShaderAsset != nullptr &&
-        AssetDatabase::Exists(m_ShaderAssets.m_FragmentShaderAsset))
-    {
-      std::filesystem::path fragmentShaderPath =
-        AssetDatabase::Retrieve<FragmentShaderAsset>(
-          m_ShaderAssets.m_FragmentShaderAsset)
-          ->GetAsset()
-          ->m_Path;
-      fragmentShaderSource =
-        FileHandler::ReadFile(AssetDatabase::Retrieve<FragmentShaderAsset>(
-                                m_ShaderAssets.m_FragmentShaderAsset)
-                                ->GetAsset()
-                                ->m_Path);
-      AssetDatabase::AddShaderWatch(fragmentShaderPath,
-                                    std::make_shared<OpenGLShader>(*this));
-    }
-    else
-    {
-      fragmentShaderSource = m_ShaderSources.m_FragmentShaderSource;
-    }
-
-    if (vertexShaderSource.length() > 0 && fragmentShaderSource.length() > 0)
-    {
-      const char* vertexSource = vertexShaderSource.c_str();
-      const char* fragmentSource = fragmentShaderSource.c_str();
+      const char* vertexSource = m_VertexShaderSource.t.c_str();
+      const char* fragmentSource = m_FragmentShaderSource.t.c_str();
 
       GLsizei vert_log_length = 0;
       GLchar  vert_message[1024] = "";
@@ -162,9 +101,9 @@ namespace Dwarf
 
       GLuint geometryShader = -1;
 
-      if (geometryShaderSource.length() > 0)
+      if (m_GeometryShaderSource.t.length() > 0)
       {
-        const char* geometrySource = geometryShaderSource.c_str();
+        const char* geometrySource = m_GeometryShaderSource.t.c_str();
 
         GLsizei geom_log_length = 0;
         GLchar  geom_message[1024] = "";
@@ -202,107 +141,12 @@ namespace Dwarf
         glDeleteShader(geometryShader);
       }
 
-      SetIsCompiled(true);
+      m_SuccessfullyCompiled = true;
     }
     else
     {
       // TODO: log missing shader error
     }
-  }
-
-  void
-  OpenGLShader::SetVertexShader(std::shared_ptr<UID> vertexShader)
-  {
-    m_ShaderAssets.m_VertexShaderAsset = vertexShader;
-    m_ShaderSources.m_VertexShaderSource = "";
-  }
-
-  void
-  OpenGLShader::SetVertexShader(std::string_view vertexShader)
-  {
-    m_ShaderAssets.m_VertexShaderAsset = nullptr;
-    m_ShaderSources.m_VertexShaderSource = vertexShader;
-  }
-
-  void
-  OpenGLShader::SetFragmentShader(std::shared_ptr<UID> fragmentShader)
-  {
-    m_ShaderAssets.m_FragmentShaderAsset = fragmentShader;
-    m_ShaderSources.m_FragmentShaderSource = "";
-  }
-
-  void
-  OpenGLShader::SetFragmentShader(std::string_view fragmentShader)
-  {
-    m_ShaderAssets.m_FragmentShaderAsset = nullptr;
-    m_ShaderSources.m_FragmentShaderSource = fragmentShader;
-  }
-
-  void
-  OpenGLShader::SetTesselaltionControlShader(
-    std::shared_ptr<UID> tessellationControlShader)
-  {
-    m_ShaderAssets.m_TessellationControlShaderAsset = tessellationControlShader;
-    m_ShaderSources.m_TessellationControlShaderSource = "";
-  }
-
-  void
-  OpenGLShader::SetTesselaltionControlShader(
-    std::string_view tessellationControlShader)
-  {
-    m_ShaderAssets.m_TessellationControlShaderAsset = nullptr;
-    m_ShaderSources.m_TessellationControlShaderSource =
-      tessellationControlShader;
-  }
-
-  void
-  OpenGLShader::SetTesselaltionEvaluationShader(
-    std::shared_ptr<UID> tessellationEvaluationShader)
-  {
-    m_ShaderAssets.m_TessellationEvaluationShaderAsset =
-      tessellationEvaluationShader;
-    m_ShaderSources.m_TessellationEvaluationShaderSource = "";
-  }
-
-  void
-  OpenGLShader::SetTesselaltionEvaluationShader(
-    std::string_view tessellationEvaluationShader)
-  {
-    m_ShaderAssets.m_TessellationEvaluationShaderAsset = nullptr;
-    m_ShaderSources.m_TessellationEvaluationShaderSource =
-      tessellationEvaluationShader;
-  }
-
-  void
-  OpenGLShader::SetGeometryShader(std::shared_ptr<UID> geometryShader)
-  {
-    m_ShaderAssets.m_GeometryShaderAsset = geometryShader;
-    m_ShaderSources.m_GeometryShaderSource = "";
-  }
-
-  void
-  OpenGLShader::SetGeometryShader(std::string_view geometryShader)
-  {
-    m_ShaderAssets.m_GeometryShaderAsset = nullptr;
-    m_ShaderSources.m_GeometryShaderSource = geometryShader;
-  }
-
-  std::shared_ptr<UID>
-  OpenGLShader::GetVertexShader() const
-  {
-    return m_ShaderAssets.m_VertexShaderAsset;
-  }
-
-  std::shared_ptr<UID>
-  OpenGLShader::GetFragmentShader() const
-  {
-    return m_ShaderAssets.m_FragmentShaderAsset;
-  }
-
-  std::shared_ptr<UID>
-  OpenGLShader::GetGeometryShader() const
-  {
-    return m_ShaderAssets.m_GeometryShaderAsset;
   }
 
   GLuint
@@ -311,87 +155,89 @@ namespace Dwarf
     return m_ID;
   }
 
-  std::shared_ptr<OpenGLShader>
-  OpenGLShader::CreateDefaultShader()
-  {
-    std::shared_ptr<OpenGLShader> defaultShader =
-      std::make_shared<OpenGLShader>();
-    defaultShader->SetVertexShader(
-      FileHandler::ReadFile(Shader::GetDefaultShaderPath() / "default.vert"));
-    defaultShader->SetFragmentShader(
-      FileHandler::ReadFile(Shader::GetDefaultShaderPath() / "default.frag"));
-    defaultShader->Compile();
-    return defaultShader;
-  }
+  // std::shared_ptr<OpenGLShader>
+  // OpenGLShader::CreateDefaultShader()
+  // {
+  //   std::shared_ptr<OpenGLShader> defaultShader =
+  //     std::make_shared<OpenGLShader>();
+  //   defaultShader->SetVertexShader(
+  //     FileHandler::ReadFile(Shader::GetDefaultShaderPath() /
+  //     "default.vert"));
+  //   defaultShader->SetFragmentShader(
+  //     FileHandler::ReadFile(Shader::GetDefaultShaderPath() /
+  //     "default.frag"));
+  //   defaultShader->Compile();
+  //   return defaultShader;
+  // }
 
-  std::shared_ptr<OpenGLShader>
-  OpenGLShader::CreateErrorShader()
-  {
-    std::shared_ptr<OpenGLShader> errorShader =
-      std::make_shared<OpenGLShader>();
-    errorShader->SetVertexShader(
-      FileHandler::ReadFile(Shader::GetErrorShaderPath() / "error.vert"));
-    errorShader->SetFragmentShader(
-      FileHandler::ReadFile(Shader::GetErrorShaderPath() / "error.frag"));
-    errorShader->Compile();
-    return errorShader;
-  }
+  // std::shared_ptr<OpenGLShader>
+  // OpenGLShader::CreateErrorShader()
+  // {
+  //   std::shared_ptr<OpenGLShader> errorShader =
+  //     std::make_shared<OpenGLShader>();
+  //   errorShader->SetVertexShader(
+  //     FileHandler::ReadFile(Shader::GetErrorShaderPath() / "error.vert"));
+  //   errorShader->SetFragmentShader(
+  //     FileHandler::ReadFile(Shader::GetErrorShaderPath() / "error.frag"));
+  //   errorShader->Compile();
+  //   return errorShader;
+  // }
 
-  std::shared_ptr<OpenGLShader>
-  OpenGLShader::CreateGridShader()
-  {
-    std::shared_ptr<OpenGLShader> gridShader = std::make_shared<OpenGLShader>();
-    gridShader->SetVertexShader(
-      FileHandler::ReadFile(Shader::GetGridShaderPath() / "grid.vert"));
-    gridShader->SetFragmentShader(
-      FileHandler::ReadFile(Shader::GetGridShaderPath() / "grid.frag"));
-    gridShader->Compile();
-    return gridShader;
-  }
+  // std::shared_ptr<OpenGLShader>
+  // OpenGLShader::CreateGridShader()
+  // {
+  //   std::shared_ptr<OpenGLShader> gridShader =
+  //   std::make_shared<OpenGLShader>(); gridShader->SetVertexShader(
+  //     FileHandler::ReadFile(Shader::GetGridShaderPath() / "grid.vert"));
+  //   gridShader->SetFragmentShader(
+  //     FileHandler::ReadFile(Shader::GetGridShaderPath() / "grid.frag"));
+  //   gridShader->Compile();
+  //   return gridShader;
+  // }
 
-  std::shared_ptr<OpenGLShader>
-  OpenGLShader::CreatePreviewShader()
-  {
-    std::shared_ptr<OpenGLShader> previewShader =
-      std::make_shared<OpenGLShader>();
-    previewShader->SetVertexShader(
-      FileHandler::ReadFile(Shader::GetPreviewShaderPath() / "preview.vert"));
-    previewShader->SetFragmentShader(
-      FileHandler::ReadFile(Shader::GetPreviewShaderPath() / "preview.frag"));
-    previewShader->Compile();
-    return previewShader;
-  }
+  // std::shared_ptr<OpenGLShader>
+  // OpenGLShader::CreatePreviewShader()
+  // {
+  //   std::shared_ptr<OpenGLShader> previewShader =
+  //     std::make_shared<OpenGLShader>();
+  //   previewShader->SetVertexShader(
+  //     FileHandler::ReadFile(Shader::GetPreviewShaderPath() /
+  //     "preview.vert"));
+  //   previewShader->SetFragmentShader(
+  //     FileHandler::ReadFile(Shader::GetPreviewShaderPath() /
+  //     "preview.frag"));
+  //   previewShader->Compile();
+  //   return previewShader;
+  // }
 
-  std::shared_ptr<OpenGLShader>
-  OpenGLShader::CreateIdShader()
-  {
-    std::shared_ptr<OpenGLShader> idShader = std::make_shared<OpenGLShader>();
-    idShader->SetVertexShader(
-      FileHandler::ReadFile(Shader::GetIdShaderPath() / "id.vert"));
-    idShader->SetFragmentShader(
-      FileHandler::ReadFile(Shader::GetIdShaderPath() / "id.frag"));
-    idShader->Compile();
-    return idShader;
-  }
+  // std::shared_ptr<OpenGLShader>
+  // OpenGLShader::CreateIdShader()
+  // {
+  //   std::shared_ptr<OpenGLShader> idShader =
+  //   std::make_shared<OpenGLShader>(); idShader->SetVertexShader(
+  //     FileHandler::ReadFile(Shader::GetIdShaderPath() / "id.vert"));
+  //   idShader->SetFragmentShader(
+  //     FileHandler::ReadFile(Shader::GetIdShaderPath() / "id.frag"));
+  //   idShader->Compile();
+  //   return idShader;
+  // }
 
-  std::shared_ptr<OpenGLShader>
-  OpenGLShader::CreateWhiteShader()
-  {
-    std::shared_ptr<OpenGLShader> whiteShader =
-      std::make_shared<OpenGLShader>();
-    whiteShader->SetVertexShader(
-      FileHandler::ReadFile(Shader::GetOutlineShaderPath() / "white.vert"));
-    whiteShader->SetFragmentShader(
-      FileHandler::ReadFile(Shader::GetOutlineShaderPath() / "white.frag"));
-    whiteShader->Compile();
-    return whiteShader;
-  }
+  // std::shared_ptr<OpenGLShader>
+  // OpenGLShader::CreateWhiteShader()
+  // {
+  //   std::shared_ptr<OpenGLShader> whiteShader =
+  //     std::make_shared<OpenGLShader>();
+  //   whiteShader->SetVertexShader(
+  //     FileHandler::ReadFile(Shader::GetOutlineShaderPath() / "white.vert"));
+  //   whiteShader->SetFragmentShader(
+  //     FileHandler::ReadFile(Shader::GetOutlineShaderPath() / "white.frag"));
+  //   whiteShader->Compile();
+  //   return whiteShader;
+  // }
 
-  std::map<std::string, std::shared_ptr<IShaderParameter>, std::less<>>
-  OpenGLShader::GetParameters()
+  void
+  OpenGLShader::GenerateParameters()
   {
-    auto parameters =
-      std::map<std::string, std::shared_ptr<IShaderParameter>, std::less<>>();
     GLint i;
     GLint count;
 
@@ -412,23 +258,15 @@ namespace Dwarf
                     ReservedUniformNames.end(),
                     name) == ReservedUniformNames.end())
       {
-        parameters[std::string(name)] = Shader::CreateShaderParameter(
-          glTypeToDwarfShaderType.find(type)->second);
+        m_Parameters->m_DefaultValueAdders.at(glTypeToDwarfShaderType.at(type))(
+          name);
       }
     }
-
-    return parameters;
   }
 
   const ShaderLogs&
   OpenGLShader::GetShaderLogs() const
   {
     return m_ShaderLogs;
-  }
-
-  ShaderAssets&
-  OpenGLShader::GetShaderAssets()
-  {
-    return m_ShaderAssets;
   }
 }

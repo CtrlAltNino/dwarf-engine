@@ -1,6 +1,6 @@
 #include "AssetTypes.h"
 #include "Core/Asset/AssetDirectoryListener.h"
-#include "Core/Rendering/Shader.h"
+#include "Core/Rendering/Shader/Shader.h"
 
 namespace Dwarf
 {

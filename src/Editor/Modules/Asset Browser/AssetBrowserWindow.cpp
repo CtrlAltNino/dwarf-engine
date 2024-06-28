@@ -2,7 +2,7 @@
 #include "Editor/Modules/Asset Browser/AssetBrowserWindow.h"
 #include "Input/InputManager.h"
 #include "Core/Scene/SceneUtilities.h"
-#include "Core/Rendering/TextureCreator.h"
+#include "Core/Rendering/Texture/TextureCreator.h"
 
 namespace Dwarf
 {
@@ -303,7 +303,7 @@ namespace Dwarf
 
       if (!(directoryEntry.path().has_extension() &&
             directoryEntry.path().extension() ==
-              AssetMetaData::META_DATA_EXTENSION))
+              AssetMetadata::META_DATA_EXTENSION))
       {
         float padding = 16.0f * m_IconScale;
         float halfPadding = padding / 2.0f;
@@ -406,7 +406,7 @@ namespace Dwarf
             if (AssetDatabase::Exists(path))
             {
               AssetDatabase::Remove(path);
-              AssetMetaData::RemoveMetaData(path);
+              AssetMetadata::RemoveMetadata(path);
             }
             FileHandler::Delete(path);
           }

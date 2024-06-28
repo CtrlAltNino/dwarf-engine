@@ -1,0 +1,7 @@
+smtg_add_subdirectories()
+
+target_sources(${targetName}
+    PRIVATE
+    Texture.cpp
+    TextureCreator.cpp
+)

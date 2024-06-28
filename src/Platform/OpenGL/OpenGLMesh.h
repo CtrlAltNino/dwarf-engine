@@ -1,7 +1,7 @@
 #pragma once
 
 #include <glad/glad.h>
-#include "Core/Rendering/Mesh.h"
+#include "Core/Rendering/Mesh/Mesh.h"
 
 namespace Dwarf
 {

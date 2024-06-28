@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core/Rendering/Framebuffer.h"
+#include "Core/Rendering/Framebuffer/Framebuffer.h"
 
 namespace Dwarf
 {

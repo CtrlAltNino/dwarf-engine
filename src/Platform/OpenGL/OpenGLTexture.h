@@ -1,7 +1,7 @@
 #pragma once
 #include "pch.h"
 #include <glad/glad.h>
-#include "Core/Rendering/Texture.h"
+#include "Core/Rendering/Texture/Texture.h"
 
 namespace Dwarf
 {

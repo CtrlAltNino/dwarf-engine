@@ -2,10 +2,10 @@
 
 #include "pch.h"
 
-#include "Core/Rendering/Material.h"
+#include "Core/Rendering/Material/Material.h"
 #include "Core/Scene/Scene.h"
 #include "Core/Scene/Camera.h"
-#include "Core/Rendering/Framebuffer.h"
+#include "Core/Rendering/Framebuffer/Framebuffer.h"
 #include "Core/Asset/AssetComponents.h"
 #include "Core/Asset/AssetReference.h"
 #include "Core/Rendering/RendererApi.h"

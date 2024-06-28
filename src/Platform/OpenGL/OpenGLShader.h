@@ -2,11 +2,18 @@
 #include "pch.h"
 
 #include <glad/glad.h>
-#include "Core/Rendering/IShaderParameter.h"
-#include "Core/Rendering/Shader.h"
+#include <boost/serialization/strong_typedef.hpp>
+#include <boost/optional.hpp>
+#include "Core/Rendering/Shader/IShader.h"
+#include "Core/Rendering/Shader/ShaderTypes.h"
 
 namespace Dwarf
 {
+  BOOST_STRONG_TYPEDEF(std::shared_ptr<UID>, VertexShaderAsset);
+  BOOST_STRONG_TYPEDEF(std::shared_ptr<UID>, GeometryShaderAsset);
+  BOOST_STRONG_TYPEDEF(std::shared_ptr<UID>, TessellationControlShaderAsset);
+  BOOST_STRONG_TYPEDEF(std::shared_ptr<UID>, TessellationEvaluationShaderAsset);
+  BOOST_STRONG_TYPEDEF(std::shared_ptr<UID>, FragmentShaderAsset);
   struct ShaderLogs
   {
     std::string m_VertexShaderLog;
@@ -16,101 +23,47 @@ namespace Dwarf
     std::string m_FragmentShaderLog;
   };
 
-  struct ShaderSources
-  {
-    std::string m_VertexShaderSource;
-    std::string m_TessellationControlShaderSource;
-    std::string m_TessellationEvaluationShaderSource;
-    std::string m_GeometryShaderSource;
-    std::string m_FragmentShaderSource;
-  };
-
-  struct ShaderAssets
-  {
-    std::shared_ptr<UID> m_VertexShaderAsset;
-    std::shared_ptr<UID> m_TessellationControlShaderAsset;
-    std::shared_ptr<UID> m_TessellationEvaluationShaderAsset;
-    std::shared_ptr<UID> m_GeometryShaderAsset;
-    std::shared_ptr<UID> m_FragmentShaderAsset;
-  };
-
-  class OpenGLShader : public Shader
+  class OpenGLShader : public IShader
   {
   private:
-    GLuint        m_ID = -1;
-    ShaderSources m_ShaderSources;
-    ShaderAssets  m_ShaderAssets;
-    ShaderLogs    m_ShaderLogs;
+    GLuint     m_ID = -1;
+    ShaderLogs m_ShaderLogs;
+    // Flag to determine if the shader has been successfully compiled.
+    bool m_SuccessfullyCompiled;
+    // Map of parameters that the shader uses.
+    std::shared_ptr<IShaderParameterCollection> m_Parameters;
+
+    std::shared_ptr<VertexShaderAsset>                    m_VertexShaderAsset;
+    boost::optional<std::shared_ptr<GeometryShaderAsset>> m_GeometryShaderAsset;
+    boost::optional<std::shared_ptr<TessellationControlShaderAsset>>
+      m_TessellationControlShaderAsset;
+    boost::optional<std::shared_ptr<TessellationEvaluationShaderAsset>>
+                                         m_TessellationEvaluationShaderAsset;
+    std::shared_ptr<FragmentShaderAsset> m_FragmentShaderAsset;
 
   public:
-    OpenGLShader();
-    ~OpenGLShader() override;
-
-    void
-    SetVertexShader(std::shared_ptr<UID> vertexShader);
-    void
-    SetVertexShader(std::string_view vertexShader);
-
-    void
-    SetTesselaltionControlShader(
-      std::shared_ptr<UID> tessellationControlShader);
-    void
-    SetTesselaltionControlShader(std::string_view tessellationControlShader);
-
-    void
-    SetTesselaltionEvaluationShader(
-      std::shared_ptr<UID> tessellationEvaluationShader);
-    void
-    SetTesselaltionEvaluationShader(
-      std::string_view tessellationEvaluationShader);
-
-    void
-    SetGeometryShader(std::shared_ptr<UID> geometryShader);
-    void
-    SetGeometryShader(std::string_view geometryShader);
-
-    void
-    SetFragmentShader(std::shared_ptr<UID> fragmentShader);
-    void
-    SetFragmentShader(std::string_view fragmentShader);
-
-    std::shared_ptr<UID>
-    GetVertexShader() const;
-    std::shared_ptr<UID>
-    GetFragmentShader() const;
-    std::shared_ptr<UID>
-    GetTesselaltionControlShader() const;
-    std::shared_ptr<UID>
-    GetTesselaltionEvaluationShader() const;
-    std::shared_ptr<UID>
-    GetGeometryShader() const;
-
+    BOOST_DI_INJECT(
+      OpenGLShader,
+      std::shared_ptr<VertexShaderAsset>   vertexShaderAsset,
+      std::shared_ptr<FragmentShaderAsset> fragmentShaderAsset,
+      boost::optional<std::shared_ptr<GeometryShaderAsset>>
+        geometryShaderAsset = boost::none,
+      boost::optional<std::shared_ptr<TessellationControlShaderAsset>>
+        tessellationControlShaderAsset = boost::none,
+      boost::optional<std::shared_ptr<TessellationEvaluationShaderAsset>>
+        tessellationEvaluationShaderAsset = boost::none);
+    ~OpenGLShader() = default;
     GLuint
     GetID() const;
 
     void
     Compile() override;
 
-    std::map<std::string, std::shared_ptr<IShaderParameter>, std::less<>>
+    std::shared_ptr<IShaderParameterCollection>
     GetParameters() override;
-
-    static std::shared_ptr<OpenGLShader>
-    CreateDefaultShader();
-    static std::shared_ptr<OpenGLShader>
-    CreateErrorShader();
-    static std::shared_ptr<OpenGLShader>
-    CreateGridShader();
-    static std::shared_ptr<OpenGLShader>
-    CreatePreviewShader();
-    static std::shared_ptr<OpenGLShader>
-    CreateIdShader();
-    static std::shared_ptr<OpenGLShader>
-    CreateWhiteShader();
 
     const ShaderLogs&
     GetShaderLogs() const;
-    ShaderAssets&
-    GetShaderAssets();
 
     static const std::array<std::string, 3> ReservedUniformNames;
   };

@@ -2,7 +2,7 @@
 #include "pch.h"
 
 #include "Core/Rendering/RendererApi.h"
-#include "Core/Rendering/Material.h"
+#include "Core/Rendering/Material/Material.h"
 
 namespace Dwarf
 {
@@ -34,9 +34,9 @@ namespace Dwarf
                   glm::mat4                 viewMatrix,
                   glm::mat4                 projectionMatrix) override;
     void
-    ApplyComputeShader(std::shared_ptr<ComputeShader> computeShader,
-                       std::shared_ptr<Framebuffer>   fb,
-                       uint32_t                       sourceAttachment,
+    ApplyComputeShader(std::shared_ptr<IComputeShader> computeShader,
+                       std::shared_ptr<Framebuffer>    fb,
+                       uint32_t                        sourceAttachment,
                        uint32_t destinationAttachment) override;
 
     void

@@ -1,9 +1,8 @@
 #pragma once
 
+#include "Core/Rendering/Shader/IComputeShader.h"
+#include "Core/Rendering/Shader/ShaderTypes.h"
 #include <glad/glad.h>
-#include "Core/Asset/IAssetDatabase.h"
-#include "Core/Rendering/IComputeShader.h"
-#include <Core/Rendering/IShaderParameter.h>
 #include <memory>
 
 namespace Dwarf
@@ -11,28 +10,18 @@ namespace Dwarf
   class OpenGLComputeShader : public IComputeShader
   {
   private:
-    GLuint                          m_ID = -1;
-    std::string                     m_ComputeShaderLog;
-    std::string                     m_ComputeShaderSource;
-    std::shared_ptr<UID>            m_ComputeShaderAsset;
-    bool                            m_SuccessfullyCompiled = false;
-    std::shared_ptr<IAssetDatabase> m_AssetDatabase;
+    GLuint      m_ID = -1;
+    std::string m_ComputeShaderLog;
+    std::string m_Source;
+    // Flag to determine if the shader has been successfully compiled.
+    bool m_SuccessfullyCompiled;
+    // Map of parameters that the shader uses.
+    std::shared_ptr<IShaderParameterCollection> m_Parameters;
 
   public:
-    OpenGLComputeShader(std::shared_ptr<IAssetDatabase> assetDatabase);
+    OpenGLComputeShader(const ComputeShaderSource&                  source,
+                        std::shared_ptr<IShaderParameterCollection> parameters);
     ~OpenGLComputeShader() override = default;
-
-    void
-    SetComputeShader(std::shared_ptr<UID> computeShader);
-    void
-    SetComputeShader(std::string_view computeShader);
-    std::map<std::string, std::shared_ptr<IShaderParameter>, std::less<>>
-    GetParameters();
-    void
-    UpdateParameters() override;
-
-    std::shared_ptr<UID>
-    GetComputeShader() const;
 
     GLuint
     GetID() const;
@@ -43,14 +32,13 @@ namespace Dwarf
     bool
     IsCompiled() const override;
 
-    static std::shared_ptr<OpenGLComputeShader>
-    CreatePropagationShader();
-    static std::shared_ptr<OpenGLComputeShader>
-    CreateFinalizationShader();
-
     const std::string&
     GetLog() const;
-    std::shared_ptr<UID>&
-    GetAsset();
+
+    void
+    GenerateParameters();
+
+    std::shared_ptr<IShaderParameterCollection>
+    GetParameters() override;
   };
 }

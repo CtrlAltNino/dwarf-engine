@@ -1,5 +1,5 @@
 #pragma once
-#include "Core/Rendering/Material.h"
+#include "Core/Rendering/Material/Material.h"
 
 namespace Dwarf
 {

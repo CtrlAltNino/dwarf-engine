@@ -2,7 +2,7 @@
 #include "pch.h"
 #include <imgui_internal.h>
 #include "Core/Scene/Camera.h"
-#include "Core/Rendering/Framebuffer.h"
+#include "Core/Rendering/Framebuffer/Framebuffer.h"
 #include <Core/Asset/AssetComponents.h>
 #include <Core/Asset/AssetComponents.h>
 #include <Editor/EditorModel.h>

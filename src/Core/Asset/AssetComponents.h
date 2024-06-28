@@ -1,10 +1,8 @@
 #pragma once
 #include "Utilities/FileHandler.h"
-#include "Core/Rendering/Mesh.h"
-#include "Core/Rendering/TextureCreator.h"
-#include "Core/Rendering/Material.h"
-#include "Core/Asset/ModelImporter.h"
-#include "Core/Asset/MaterialSerializer.h"
+#include "Core/Rendering/Mesh/Mesh.h"
+#include "Core/Rendering/Texture/TextureCreator.h"
+#include "Core/Rendering/Material/Material.h"
 
 namespace Dwarf
 {
@@ -30,11 +28,11 @@ namespace Dwarf
     /// @brief Imported material.
     std::shared_ptr<Material> m_Material;
 
-    explicit MaterialAsset(std::filesystem::path const& path)
+    explicit MaterialAsset(std::shared_ptr<Material> material)
     {
       // Use Mesh Importer with meta data to import mesh
-      m_Material = MaterialSerializer::Deserialize(path);
-      m_Material->GetShader()->Compile();
+      // m_Material = MaterialSerializer::Deserialize(path);
+      // m_Material->GetShader()->Compile();
     }
   };
 

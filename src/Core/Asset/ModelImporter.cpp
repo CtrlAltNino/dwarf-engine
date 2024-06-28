@@ -8,8 +8,8 @@
 
 namespace Dwarf
 {
-  ModelImporter::ModelImporter(std::shared_ptr<IAssetMetaData> assetMetaData)
-    : m_AssetMetaData(assetMetaData)
+  ModelImporter::ModelImporter(std::shared_ptr<IAssetMetadata> assetMetadata)
+    : m_AssetMetadata(assetMetadata)
   {
   }
   // @brief Imports a model.
@@ -18,7 +18,7 @@ namespace Dwarf
   std::vector<std::shared_ptr<Mesh>>
   ModelImporter::Import(std::filesystem::path const& path)
   {
-    nlohmann::json metaData = m_AssetMetaData->GetMetaData(path);
+    nlohmann::json metaData = m_AssetMetadata->GetMetadata(path);
 
     Assimp::Importer importer;
     const aiScene*   scene = importer.ReadFile(

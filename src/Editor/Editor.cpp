@@ -35,7 +35,7 @@ namespace Dwarf
 
       m_Window->NewFrame();
       m_InputManager->OnUpdate();
-      m_AssetDatabase->RecompileShaders();
+      // m_AssetDatabase->RecompileShaders();
       m_View->OnUpdate();
       m_View->OnImGuiRender();
       m_Window->EndFrame();

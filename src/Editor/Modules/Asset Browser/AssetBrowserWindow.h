@@ -3,7 +3,7 @@
 #include "Core/Asset/AssetDatabase.h"
 #include "Editor/EditorModel.h"
 #include "Editor/Modules/GuiModule.h"
-#include "Core/Rendering/Texture.h"
+#include "Core/Rendering/Texture/Texture.h"
 
 #define RENAME_BUFFER_SIZE (128)
 
