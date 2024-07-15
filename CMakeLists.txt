@@ -16,6 +16,7 @@ set(CMAKE_PCH_INSTANTIATE_TEMPLATES ON)
 
 # Declaring a variable that can contain various settings for the executable
 set(EXECUTABLE_ADDITIONAL_SETTINGS "")
+set(VCPKG_MAX_CONCURRENCY 8)
 
 if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
 # using Clang
