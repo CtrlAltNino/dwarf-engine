@@ -6,10 +6,8 @@
 namespace Dwarf
 {
   OpenGLComputeShader::OpenGLComputeShader(
-    const ComputeShaderSource&                  source,
-    std::shared_ptr<IShaderParameterCollection> parameters)
-    : m_Source(source)
-    , m_Parameters(parameters)
+    std::shared_ptr<AssetReference<ComputeShaderAsset>> computeShaderAsset)
+    : m_ComputeShaderAsset(computeShaderAsset)
   {
   }
 
@@ -28,9 +26,10 @@ namespace Dwarf
   {
     m_SuccessfullyCompiled = false;
 
-    if (m_Source.length() > 0)
+    if (m_ComputeShaderAsset->GetAsset()->m_FileContent.length() > 0)
     {
-      const char* shadercstr = m_Source.c_str();
+      const char* shadercstr =
+        m_ComputeShaderAsset->GetAsset()->m_FileContent.c_str();
 
       GLsizei log_length = 0;
       GLchar  message[1024] = "";
@@ -63,8 +62,6 @@ namespace Dwarf
       glDeleteShader(shader);
 
       m_SuccessfullyCompiled = true;
-
-      GenerateParameters();
     }
     else
     {
@@ -84,11 +81,15 @@ namespace Dwarf
     return m_ComputeShaderLog;
   }
 
-  void
-  OpenGLComputeShader::GenerateParameters()
+  std::shared_ptr<IShaderParameterCollection>
+  OpenGLComputeShader::GetParameters()
   {
-    auto parameters =
-      std::map<std::string, std::shared_ptr<IShaderParameter>, std::less<>>();
+    if (!m_SuccessfullyCompiled)
+    {
+      return nullptr;
+    }
+    std::shared_ptr<IShaderParameterCollection> parameters =
+      std::make_shared<IShaderParameterCollection>();
     GLint i;
     GLint count;
 
@@ -104,8 +105,10 @@ namespace Dwarf
     for (i = 0; i < count; i++)
     {
       glGetActiveUniform(m_ID, (GLuint)i, bufSize, &length, &size, &type, name);
-      m_Parameters->m_DefaultValueAdders.at(glTypeToDwarfShaderType.at(type))(
+      parameters->m_DefaultValueAdders.at(glTypeToDwarfShaderType.at(type))(
         name);
     }
+
+    return parameters;
   }
 }

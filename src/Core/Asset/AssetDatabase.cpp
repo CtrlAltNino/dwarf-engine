@@ -1,6 +1,6 @@
 #include "AssetDatabase.h"
 #include "Core/Asset/IAssetDatabase.h"
-#include "IAssetMetadata.h"
+#include "Core/Asset/IAssetMetaData.h"
 #include "Utilities/FileHandler.h"
 #include "Core/Asset/AssetComponents.h"
 #include "Core/Rendering/Shader/IComputeShader.h"
@@ -180,12 +180,12 @@ namespace Dwarf
         }
       case TESC_SHADER:
         {
-          return CreateAssetReference<TesselationControlShaderAsset>(assetPath)
+          return CreateAssetReference<TessellationControlShaderAsset>(assetPath)
             .GetUID();
         }
       case TESE_SHADER:
         {
-          return CreateAssetReference<TesselationEvaluationShaderAsset>(
+          return CreateAssetReference<TessellationEvaluationShaderAsset>(
                    assetPath)
             .GetUID();
         }
@@ -448,15 +448,15 @@ namespace Dwarf
       return std::make_shared<AssetReference<VertexShaderAsset>>(entity,
                                                                  m_Registry);
     }
-    else if (type == typeid(TesselationControlShaderAsset))
+    else if (type == typeid(TessellationControlShaderAsset))
     {
-      return std::make_shared<AssetReference<TesselationControlShaderAsset>>(
+      return std::make_shared<AssetReference<TessellationControlShaderAsset>>(
         entity, m_Registry);
     }
-    else if (type == typeid(TesselationEvaluationShaderAsset))
+    else if (type == typeid(TessellationEvaluationShaderAsset))
     {
-      return std::make_shared<AssetReference<TesselationEvaluationShaderAsset>>(
-        entity, m_Registry);
+      return std::make_shared<
+        AssetReference<TessellationEvaluationShaderAsset>>(entity, m_Registry);
     }
     else if (type == typeid(GeometryShaderAsset))
     {

@@ -1,18 +1,23 @@
 #include "OpenGLShader.h"
 #include "Core/Base.h"
+#include "Core/Rendering/Shader/IShaderParameterCollection.h"
 #include "Core/Rendering/Shader/ShaderTypes.h"
+#include <memory>
 
 #define GL_SHADER_LOG_LENGTH (1024)
 
 namespace Dwarf
 {
   OpenGLShader::OpenGLShader(
-    std::shared_ptr<VertexShaderAsset>                    vertexShaderAsset,
-    std::shared_ptr<FragmentShaderAsset>                  fragmentShaderAsset,
-    boost::optional<std::shared_ptr<GeometryShaderAsset>> geometryShaderAsset,
-    boost::optional<std::shared_ptr<TessellationControlShaderAsset>>
+    std::shared_ptr<AssetReference<VertexShaderAsset>>   vertexShaderAsset,
+    std::shared_ptr<AssetReference<FragmentShaderAsset>> fragmentShaderAsset,
+    boost::optional<std::shared_ptr<AssetReference<GeometryShaderAsset>>>
+      geometryShaderAsset,
+    boost::optional<
+      std::shared_ptr<AssetReference<TessellationControlShaderAsset>>>
       tessellationControlShaderAsset,
-    boost::optional<std::shared_ptr<TessellationEvaluationShaderAsset>>
+    boost::optional<
+      std::shared_ptr<AssetReference<TessellationEvaluationShaderAsset>>>
       tessellationEvaluationShaderAsset)
     : m_VertexShaderAsset(vertexShaderAsset)
     , m_FragmentShaderAsset(fragmentShaderAsset)
@@ -44,11 +49,13 @@ namespace Dwarf
   {
     m_SuccessfullyCompiled = false;
 
-    if (m_VertexShaderSource.t.length() > 0 &&
-        m_FragmentShaderSource.t.length() > 0)
+    if (m_VertexShaderAsset->GetAsset()->m_FileContent.length() > 0 &&
+        m_FragmentShaderAsset->GetAsset()->m_FileContent.length() > 0)
     {
-      const char* vertexSource = m_VertexShaderSource.t.c_str();
-      const char* fragmentSource = m_FragmentShaderSource.t.c_str();
+      const char* vertexSource =
+        m_VertexShaderAsset->GetAsset()->m_FileContent.c_str();
+      const char* fragmentSource =
+        m_FragmentShaderAsset->GetAsset()->m_FileContent.c_str();
 
       GLsizei vert_log_length = 0;
       GLchar  vert_message[1024] = "";
@@ -101,9 +108,11 @@ namespace Dwarf
 
       GLuint geometryShader = -1;
 
-      if (m_GeometryShaderSource.t.length() > 0)
+      if (m_GeometryShaderAsset != boost::none &&
+          m_GeometryShaderAsset.get()->GetAsset()->m_FileContent.length() > 0)
       {
-        const char* geometrySource = m_GeometryShaderSource.t.c_str();
+        const char* geometrySource =
+          m_GeometryShaderAsset.get()->GetAsset()->m_FileContent.c_str();
 
         GLsizei geom_log_length = 0;
         GLchar  geom_message[1024] = "";
@@ -235,9 +244,15 @@ namespace Dwarf
   //   return whiteShader;
   // }
 
-  void
-  OpenGLShader::GenerateParameters()
+  std::shared_ptr<IShaderParameterCollection>
+  OpenGLShader::GetParameters()
   {
+    if (!m_SuccessfullyCompiled)
+    {
+      return nullptr;
+    }
+    std::shared_ptr<IShaderParameterCollection> parameters =
+      std::make_shared<IShaderParameterCollection>();
     GLint i;
     GLint count;
 
@@ -258,10 +273,12 @@ namespace Dwarf
                     ReservedUniformNames.end(),
                     name) == ReservedUniformNames.end())
       {
-        m_Parameters->m_DefaultValueAdders.at(glTypeToDwarfShaderType.at(type))(
+        parameters->m_DefaultValueAdders.at(glTypeToDwarfShaderType.at(type))(
           name);
       }
     }
+
+    return parameters;
   }
 
   const ShaderLogs&

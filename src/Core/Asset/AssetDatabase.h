@@ -1,7 +1,7 @@
 #pragma once
 #include "Core/Asset/IAssetDatabase.h"
 #include "Core/Asset/IModelImporter.h"
-#include "IAssetMetadata.h"
+#include "Core/Asset/IAssetMetaData.h"
 #include "IMaterialSerializer.h"
 #include "IShaderRecompiler.h"
 #include "Project/ProjectTypes.h"

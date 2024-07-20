@@ -79,13 +79,13 @@ namespace Dwarf
   };
 
   /// @brief Component containing a tesselation control shader asset.
-  struct TesselationControlShaderAsset
+  struct TessellationControlShaderAsset
   {
     /// @brief Path to the asset.
     std::filesystem::path m_Path;
     std::string           m_FileContent;
 
-    explicit TesselationControlShaderAsset(std::filesystem::path const& path)
+    explicit TessellationControlShaderAsset(std::filesystem::path const& path)
       : m_Path(path)
       , m_FileContent(FileHandler::ReadFile(m_Path))
     {
@@ -93,13 +93,14 @@ namespace Dwarf
   };
 
   /// @brief Component containing a tesselation evaluation shader asset.
-  struct TesselationEvaluationShaderAsset
+  struct TessellationEvaluationShaderAsset
   {
     /// @brief Path to the asset.
     std::filesystem::path m_Path;
     std::string           m_FileContent;
 
-    explicit TesselationEvaluationShaderAsset(std::filesystem::path const& path)
+    explicit TessellationEvaluationShaderAsset(
+      std::filesystem::path const& path)
       : m_Path(path)
       , m_FileContent(FileHandler::ReadFile(m_Path))
     {

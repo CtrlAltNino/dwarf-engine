@@ -1,7 +1,9 @@
 #pragma once
 
+#include "Core/Asset/AssetComponents.h"
 #include "Core/Rendering/Shader/IComputeShader.h"
 #include "Core/Rendering/Shader/ShaderTypes.h"
+#include "Core/Asset/AssetReference.h"
 #include <glad/glad.h>
 #include <memory>
 
@@ -12,15 +14,14 @@ namespace Dwarf
   private:
     GLuint      m_ID = -1;
     std::string m_ComputeShaderLog;
-    std::string m_Source;
     // Flag to determine if the shader has been successfully compiled.
-    bool m_SuccessfullyCompiled;
-    // Map of parameters that the shader uses.
-    std::shared_ptr<IShaderParameterCollection> m_Parameters;
+    bool                                                m_SuccessfullyCompiled;
+    std::shared_ptr<AssetReference<ComputeShaderAsset>> m_ComputeShaderAsset;
 
   public:
-    OpenGLComputeShader(const ComputeShaderSource&                  source,
-                        std::shared_ptr<IShaderParameterCollection> parameters);
+    BOOST_DI_INJECT(
+      OpenGLComputeShader,
+      std::shared_ptr<AssetReference<ComputeShaderAsset>> computeShaderAsset);
     ~OpenGLComputeShader() override = default;
 
     GLuint
@@ -34,9 +35,6 @@ namespace Dwarf
 
     const std::string&
     GetLog() const;
-
-    void
-    GenerateParameters();
 
     std::shared_ptr<IShaderParameterCollection>
     GetParameters() override;
