@@ -28,12 +28,12 @@ namespace Dwarf
   MaterialSerializer::Deserialize(std::filesystem::path const& path)
   {
     // TODO: REPLACE OBJECT CREATION LOGIC WITH DI
-    Material deserializedMat(path.stem().string());
+    // Material deserializedMat(path.stem().string());
 
     nlohmann::json serializedMat =
       nlohmann::json::parse(FileHandler::ReadFile(path));
 
-    deserializedMat.SetTransparency((bool)serializedMat["transparent"]);
+    // deserializedMat.SetTransparency((bool)serializedMat["transparent"]);
 
     if (serializedMat.contains("parameters"))
     {
@@ -203,7 +203,24 @@ namespace Dwarf
 #endif
       }
     }
-    return std::make_shared<Material>(deserializedMat);
+
+    // Retreive material properties from serialized data
+    MaterialIsTransparent = serializedMat["transparent"];
+    MaterialIsDoubleSided = serializedMat["doubleSided"];
+    MaterialIsWireframe = serializedMat["wireframe"];
+    MaterialIsUnlit = serializedMat["unlit"];
+
+    // Create material properties injector
+    auto materialPropertiesConfiguration = boost::di::make_injector(
+      boost::di::bind<MaterialIsTransparent>.to(MaterialIsTransparent),
+      boost::di::bind<MaterialIsDoubleSided>.to(MaterialIsDoubleSided),
+      boost::di::bind<MaterialIsWireframe>.to(MaterialIsWireframe),
+      boost::di::bind<MaterialIsUnlit>.to(MaterialIsUnlit));
+
+    // Create shader parameter collection injector
+    auto shader
+
+      return std::make_shared<Material>(deserializedMat);
   }
 
   void

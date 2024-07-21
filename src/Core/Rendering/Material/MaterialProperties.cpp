@@ -2,10 +2,10 @@
 
 namespace Dwarf
 {
-  MaterialProperties::MaterialProperties(bool isTransparent,
-                                         bool isDoubleSided,
-                                         bool isUnlit,
-                                         bool isWireframe)
+  MaterialProperties::MaterialProperties(MaterialIsTransparent isTransparent,
+                                         MaterialIsDoubleSided isDoubleSided,
+                                         MaterialIsUnlit       isUnlit,
+                                         MaterialIsWireframe   isWireframe)
     : m_IsTransparent(isTransparent)
     , m_IsDoubleSided(isDoubleSided)
     , m_IsUnlit(isUnlit)

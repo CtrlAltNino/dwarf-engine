@@ -1,16 +1,23 @@
 #pragma once
 
 #include "IMaterialProperties.h"
+#include <boost/di.hpp>
+#include <boost/serialization/strong_typedef.hpp>
 
 namespace Dwarf
 {
+  BOOST_STRONG_TYPEDEF(bool, MaterialIsTransparent);
+  BOOST_STRONG_TYPEDEF(bool, MaterialIsDoubleSided);
+  BOOST_STRONG_TYPEDEF(bool, MaterialIsUnlit);
+  BOOST_STRONG_TYPEDEF(bool, MaterialIsWireframe);
   class MaterialProperties : public IMaterialProperties
   {
   public:
-    MaterialProperties(bool isTransparent = false,
-                       bool isDoubleSided = false,
-                       bool isUnlit = false,
-                       bool isWireframe = false);
+    BOOST_DI_INJECT(MaterialProperties,
+                    MaterialIsTransparent isTransparent,
+                    MaterialIsDoubleSided isDoubleSided,
+                    MaterialIsUnlit       isUnlit,
+                    MaterialIsWireframe   isWireframe);
     virtual ~MaterialProperties() = default;
 
     bool
