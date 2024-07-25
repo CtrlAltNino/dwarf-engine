@@ -2,6 +2,7 @@
 #include "Utilities/ImageUtilities/TextureCommon.h"
 #include "Platform/OpenGL/OpenGLTexture.h"
 #include <SDL_opengl.h>
+#include <glm/fwd.hpp>
 
 namespace Dwarf
 {
@@ -305,7 +306,6 @@ namespace Dwarf
     GLuint textureMagFilter = GetTextureMagFilter(parameters->MagFilter);
     GLuint internalFormat = GetInternalFormat(data->Format, data->DataType);
 
-    SetSize(glm::ivec3(data->Width, data->Height, 0));
     glCreateTextures(textureType, 1, &m_Id);
 
     glTextureParameteri(m_Id, GL_TEXTURE_MIN_FILTER, textureMinFilter);
@@ -314,81 +314,86 @@ namespace Dwarf
     switch (data->Type)
     {
       case TextureType::TEXTURE_1D:
-        glTextureParameteri(m_Id, GL_TEXTURE_WRAP_S, textureWrapS);
-        glTextureStorage1D(m_Id, 1, internalFormat, data->Width);
-        if (data->ImageData)
         {
-          glTextureSubImage1D(m_Id,
-                              0,
-                              0,
-                              data->Width,
-                              textureFormat,
-                              textureDataType,
-                              data->ImageData);
+          glm::ivec1 size = std::get<glm::ivec1>(data->Size);
+          glTextureParameteri(m_Id, GL_TEXTURE_WRAP_S, textureWrapS);
+          glTextureStorage1D(m_Id, 1, internalFormat, size.x);
+          if (data->ImageData)
+          {
+            glTextureSubImage1D(m_Id,
+                                0,
+                                0,
+                                std::get<glm::ivec1>(data->Size).x,
+                                textureFormat,
+                                textureDataType,
+                                data->ImageData);
+          }
+          break;
         }
-        break;
       case TextureType::TEXTURE_2D:
-        glTextureParameteri(m_Id, GL_TEXTURE_WRAP_S, textureWrapS);
-        glTextureParameteri(m_Id, GL_TEXTURE_WRAP_T, textureWrapT);
+        {
+          glm::ivec2 size = std::get<glm::ivec2>(data->Size);
+          glTextureParameteri(m_Id, GL_TEXTURE_WRAP_S, textureWrapS);
+          glTextureParameteri(m_Id, GL_TEXTURE_WRAP_T, textureWrapT);
 
-        if (data->Samples > 1)
-        {
-          glTextureStorage2DMultisample(m_Id,
-                                        data->Samples,
-                                        internalFormat,
-                                        data->Width,
-                                        data->Height,
-                                        GL_FALSE);
-        }
-        else
-        {
-          glTextureStorage2D(
-            m_Id, 1, internalFormat, data->Width, data->Height);
-        }
+          if (data->Samples > 1)
+          {
+            glTextureStorage2DMultisample(
+              m_Id, data->Samples, internalFormat, size.x, size.y, GL_FALSE);
+          }
+          else
+          {
+            glTextureStorage2D(m_Id, 1, internalFormat, size.x, size.y);
+          }
 
-        if (data->ImageData)
-        {
-          glTextureSubImage2D(m_Id,
-                              0,
-                              0,
-                              0,
-                              data->Width,
-                              data->Height,
-                              textureFormat,
-                              textureDataType,
-                              data->ImageData);
+          if (data->ImageData)
+          {
+            glTextureSubImage2D(m_Id,
+                                0,
+                                0,
+                                0,
+                                size.x,
+                                size.y,
+                                textureFormat,
+                                textureDataType,
+                                data->ImageData);
+          }
+          break;
         }
-        break;
       case TextureType::TEXTURE_3D:
-        glTextureParameteri(m_Id, GL_TEXTURE_WRAP_S, textureWrapS);
-        glTextureParameteri(m_Id, GL_TEXTURE_WRAP_T, textureWrapT);
-        glTextureParameteri(m_Id, GL_TEXTURE_WRAP_R, textureWrapR);
-
-        glTextureStorage3D(
-          m_Id, 1, internalFormat, data->Width, data->Height, data->Depth);
-
-        if (data->ImageData)
         {
-          glTextureSubImage3D(m_Id,
-                              0,
-                              0,
-                              0,
-                              0,
-                              data->Width,
-                              data->Height,
-                              data->Depth,
-                              textureFormat,
-                              textureDataType,
-                              data->ImageData);
-        }
-        break;
-      case TextureType::TEXTURE_CUBE_MAP:
-        glTextureParameteri(m_Id, GL_TEXTURE_WRAP_S, textureWrapS);
-        glTextureParameteri(m_Id, GL_TEXTURE_WRAP_T, textureWrapT);
-        glTextureParameteri(m_Id, GL_TEXTURE_WRAP_R, textureWrapR);
+          glm::ivec3 size = std::get<glm::ivec3>(data->Size);
+          glTextureParameteri(m_Id, GL_TEXTURE_WRAP_S, textureWrapS);
+          glTextureParameteri(m_Id, GL_TEXTURE_WRAP_T, textureWrapT);
+          glTextureParameteri(m_Id, GL_TEXTURE_WRAP_R, textureWrapR);
 
-        // TODO: Implement cube map texture
-        break;
+          glTextureStorage3D(m_Id, 1, internalFormat, size.x, size.y, size.z);
+
+          if (data->ImageData)
+          {
+            glTextureSubImage3D(m_Id,
+                                0,
+                                0,
+                                0,
+                                0,
+                                size.x,
+                                size.y,
+                                size.z,
+                                textureFormat,
+                                textureDataType,
+                                data->ImageData);
+          }
+          break;
+        }
+      case TextureType::TEXTURE_CUBE_MAP:
+        {
+          glTextureParameteri(m_Id, GL_TEXTURE_WRAP_S, textureWrapS);
+          glTextureParameteri(m_Id, GL_TEXTURE_WRAP_T, textureWrapT);
+          glTextureParameteri(m_Id, GL_TEXTURE_WRAP_R, textureWrapR);
+
+          // TODO: Implement cube map texture
+          break;
+        }
     }
 
     glGenerateTextureMipmap(m_Id);

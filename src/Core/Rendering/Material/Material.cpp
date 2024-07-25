@@ -73,6 +73,17 @@ namespace Dwarf
     return m_Properties;
   }
 
+  nlohmann::json
+  Material::Serialize() const
+  {
+    nlohmann::json serializedMaterial;
+    // serializedMaterial["shader"] = m_Shader->Serialize();
+    // serializedMaterial["materialProperties"] = m_Properties->Serialize();
+    // serializedMaterial["ShaderParameterCollection"] =
+    //   m_ShaderParameters->Serialize();
+    return serializedMaterial;
+  }
+
   // void
   // Material::SetTransparency(bool transparent)
   // {

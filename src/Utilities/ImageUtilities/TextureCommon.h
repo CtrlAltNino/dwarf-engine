@@ -54,16 +54,16 @@ namespace Dwarf
     FLOAT
   };
 
+  using TextureResolution = std::variant<glm::ivec1, glm::ivec2, glm::ivec3>;
+
   struct TextureContainer
   {
-    TextureType     Type = TextureType::TEXTURE_2D;
-    TextureFormat   Format = TextureFormat::RGBA;
-    TextureDataType DataType = TextureDataType::UNSIGNED_BYTE;
-    int             Width = 0;
-    int             Height = 0;
-    int             Depth = 0;
-    void*           ImageData = nullptr;
-    int             Samples = 1;
+    TextureType       Type = TextureType::TEXTURE_2D;
+    TextureFormat     Format = TextureFormat::RGBA;
+    TextureDataType   DataType = TextureDataType::UNSIGNED_BYTE;
+    TextureResolution Size = glm::ivec2(0);
+    void*             ImageData = nullptr;
+    int               Samples = 1;
   };
 
   struct TextureParameters

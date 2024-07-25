@@ -80,4 +80,22 @@ namespace Dwarf
 
     Unbind();
   }
+
+  int
+  OpenGLMesh::GetMaterialIndex() const
+  {
+    return m_MaterialIndex;
+  }
+
+  std::vector<Vertex>
+  OpenGLMesh::GetVertices() const
+  {
+    return m_Vertices;
+  }
+
+  std::vector<unsigned int>
+  OpenGLMesh::GetIndices() const
+  {
+    return m_Indices;
+  }
 }

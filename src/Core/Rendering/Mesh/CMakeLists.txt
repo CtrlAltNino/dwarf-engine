@@ -2,5 +2,5 @@ smtg_add_subdirectories()
 
 target_sources(${targetName}
     PRIVATE
-    Mesh.cpp
+    MeshFactory.cpp
 )

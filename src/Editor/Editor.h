@@ -1,5 +1,5 @@
 #pragma once
-#include "Core/Asset/IAssetDatabase.h"
+#include "Core/Asset/Database/IAssetDatabase.h"
 #include "Logging/EditorLogger.h"
 #include "Window/Window.h"
 #include "Editor/IEditorView.h"
