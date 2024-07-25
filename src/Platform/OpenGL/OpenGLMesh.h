@@ -1,15 +1,22 @@
 #pragma once
 
 #include <glad/glad.h>
-#include "Core/Rendering/Mesh/Mesh.h"
+#include "Core/Rendering/Mesh/IMesh.h"
 
 namespace Dwarf
 {
 
-  class OpenGLMesh : public Mesh
+  class OpenGLMesh : public IMesh
   {
+  private:
+    std::vector<Vertex>       m_Vertices = std::vector<Vertex>();
+    std::vector<unsigned int> m_Indices = std::vector<unsigned int>();
+    unsigned int              m_MaterialIndex = 0;
+
   public:
-    using Mesh::Mesh;
+    OpenGLMesh(std::vector<Vertex>       vertices,
+               std::vector<unsigned int> indices,
+               unsigned int              materialIndex);
     ~OpenGLMesh() override;
     void
     SetupMesh() override;
@@ -17,6 +24,13 @@ namespace Dwarf
     Bind() const;
     void
     Unbind() const;
+
+    int
+    GetMaterialIndex() const override;
+    std::vector<Vertex>
+    GetVertices() const override;
+    std::vector<unsigned int>
+    GetIndices() const override;
 
   private:
     GLuint VAO;

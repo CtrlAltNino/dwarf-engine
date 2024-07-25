@@ -18,5 +18,8 @@ namespace Dwarf
 
     virtual const std::shared_ptr<IMaterialProperties>&
     GetProperties() const;
+
+    virtual nlohmann::json
+    Serialize() const = 0;
   };
 }

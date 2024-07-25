@@ -1,6 +1,6 @@
 #include "pch.h"
 #include <glad/glad.h>
-#include "Core/Rendering/TextureCreator.h"
+#include "Core/Rendering/Texture/TextureFactory.h"
 #include "Platform/OpenGL/OpenGLFramebuffer.h"
 
 namespace Dwarf
@@ -142,7 +142,7 @@ namespace Dwarf
       // Iterate through the color attachments
       for (size_t i = 0; i < m_ColorAttachmentSpecifications.size(); i++)
       {
-        m_ColorAttachments.push_back(TextureCreator::Empty(
+        m_ColorAttachments.push_back(TextureFactory::Empty(
           m_ColorAttachmentSpecifications[i],
           { m_Specification.Width, m_Specification.Height },
           m_Specification.Samples));

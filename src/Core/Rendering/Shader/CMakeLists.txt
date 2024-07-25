@@ -2,6 +2,7 @@ smtg_add_subdirectories()
 
 target_sources(${targetName}
     PRIVATE
-    Shader.cpp
+    ShaderFactory.cpp
     ShaderParameterCollection.cpp
+    ShaderParameterCollectionFactory.cpp
 )

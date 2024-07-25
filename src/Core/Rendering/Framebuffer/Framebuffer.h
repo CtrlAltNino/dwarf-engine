@@ -1,7 +1,7 @@
 #pragma once
 #include "pch.h"
 #include "Core/Base.h"
-#include "Core/Rendering/Texture/Texture.h"
+#include "Core/Rendering/Texture/ITexture.h"
 
 namespace Dwarf
 {
@@ -74,7 +74,7 @@ namespace Dwarf
     virtual void
     Clear(glm::vec4 clearColor) = 0;
 
-    virtual const std::shared_ptr<Texture>
+    virtual const std::shared_ptr<ITexture>
     GetColorAttachment(uint32_t index = 0) const = 0;
 
     virtual const FramebufferSpecification&

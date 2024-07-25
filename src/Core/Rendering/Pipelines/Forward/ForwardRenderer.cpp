@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "Core/Rendering/Forward/ForwardRenderer.h"
+#include "ForwardRenderer.h"
 #include "Core/Asset/AssetDatabase.h"
 
 namespace Dwarf

@@ -4,6 +4,7 @@
 #include "Editor/Editor.h"
 #include "Logging/DefaultLogger.h"
 #include "Project/ProjectTypes.h"
+#include "DI/DwarfEditorDI.h"
 
 namespace Dwarf
 {
@@ -30,9 +31,8 @@ namespace Dwarf
         logger.LogInfo("Opening project at: " + projectPath.string());
         logger.LogInfo("Creating editor...");
         // Create injector and bind the project path to the editor.
-        const auto injector = boost::di::make_injector(
-          boost::di::bind<Dwarf::ProjectPath>.to(ProjectPath(projectPath)));
-        auto editor = injector.create<Dwarf::Editor>();
+        const auto injector = Dwarf::DwarfEditorDI::CreateInjector(projectPath);
+        auto       editor = injector.create<Dwarf::Editor>();
         shouldClose = !editor.Run();
         logger.LogInfo("Editor finished running.");
         logger.LogInfo("Should close: " + std::to_string(shouldClose));

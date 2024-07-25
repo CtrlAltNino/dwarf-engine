@@ -1,21 +1,26 @@
 #pragma once
 #include "pch.h"
 #include <glad/glad.h>
-#include "Core/Rendering/Texture/Texture.h"
+#include "Core/Rendering/Texture/ITexture.h"
 
 namespace Dwarf
 {
-  class OpenGLTexture : public Texture
+  class OpenGLTexture : public ITexture
   {
   private:
     /// @brief The OpenGL texture handle.
-    GLuint m_Id;
+    GLuint            m_Id;
+    TextureResolution m_Size;
 
   public:
     explicit OpenGLTexture(std::shared_ptr<TextureContainer>  data,
                            std::shared_ptr<TextureParameters> parameters =
                              std::make_shared<TextureParameters>());
     ~OpenGLTexture() override;
+
+    TextureResolution
+    GetSize() const override;
+
     uintptr_t
     GetTextureID() override;
   };

@@ -1,10 +1,8 @@
 #pragma once
 
-#include "Core/Rendering/Texture/Texture.h"
 #include "pch.h"
 #include "Core/Base.h"
 #include "Core/UID.h"
-#include "Core/Rendering/Shader/ShaderParameter.h"
 
 #include <memory>
 #include <variant>
@@ -12,7 +10,7 @@
 
 namespace Dwarf
 {
-  using Texture2DAsset = std::shared_ptr<Texture>;
+  using Texture2DAsset = std::shared_ptr<UID>;
   using ParameterValue = std::variant<bool,
                                       int,
                                       unsigned int,
