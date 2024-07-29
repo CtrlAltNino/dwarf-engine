@@ -3,28 +3,18 @@
 #include "Core/Rendering/Shader/IShaderParameterCollection.h"
 #include "Core/Rendering/Shader/ShaderTypes.h"
 #include <memory>
+#include <variant>
 
 #define GL_SHADER_LOG_LENGTH (1024)
 
 namespace Dwarf
 {
-  OpenGLShader::OpenGLShader(
-    std::shared_ptr<AssetReference<VertexShaderAsset>>   vertexShaderAsset,
-    std::shared_ptr<AssetReference<FragmentShaderAsset>> fragmentShaderAsset,
-    boost::optional<std::shared_ptr<AssetReference<GeometryShaderAsset>>>
-      geometryShaderAsset,
-    boost::optional<
-      std::shared_ptr<AssetReference<TessellationControlShaderAsset>>>
-      tessellationControlShaderAsset,
-    boost::optional<
-      std::shared_ptr<AssetReference<TessellationEvaluationShaderAsset>>>
-      tessellationEvaluationShaderAsset)
-    : m_VertexShaderAsset(vertexShaderAsset)
-    , m_FragmentShaderAsset(fragmentShaderAsset)
-    , m_GeometryShaderAsset(geometryShaderAsset)
-    , m_TessellationControlShaderAsset(tessellationControlShaderAsset)
-    , m_TessellationEvaluationShaderAsset(tessellationEvaluationShaderAsset)
+  OpenGLShader::OpenGLShader(ShaderSourceCollection shaderSources)
   {
+    for (const auto& shaderSource : shaderSources.t)
+    {
+      std::visit(HandleShaderSourceVisitor(*this), shaderSource);
+    }
   }
 
   const std::array<std::string, 3> OpenGLShader::ReservedUniformNames = {
@@ -285,5 +275,42 @@ namespace Dwarf
   OpenGLShader::GetShaderLogs() const
   {
     return m_ShaderLogs;
+  }
+
+  void
+  OpenGLShader::HandleShaderSourceVisitor::operator()(
+    const std::shared_ptr<AssetReference<VertexShaderAsset>> source) const
+  {
+    instance.m_VertexShaderAsset = source;
+  }
+
+  void
+  OpenGLShader::HandleShaderSourceVisitor::operator()(
+    const std::shared_ptr<AssetReference<FragmentShaderAsset>> source) const
+  {
+    instance.m_FragmentShaderAsset = source;
+  }
+
+  void
+  OpenGLShader::HandleShaderSourceVisitor::operator()(
+    const std::shared_ptr<AssetReference<GeometryShaderAsset>> source) const
+  {
+    instance.m_GeometryShaderAsset = source;
+  }
+
+  void
+  OpenGLShader::HandleShaderSourceVisitor::operator()(
+    const std::shared_ptr<AssetReference<TessellationControlShaderAsset>>
+      source) const
+  {
+    instance.m_TessellationControlShaderAsset = source;
+  }
+
+  void
+  OpenGLShader::HandleShaderSourceVisitor::operator()(
+    const std::shared_ptr<AssetReference<TessellationEvaluationShaderAsset>>
+      source) const
+  {
+    instance.m_TessellationEvaluationShaderAsset = source;
   }
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Base.h"
+#include "Core/Rendering/Shader/ShaderTypes.h"
 #include "IShader.h"
 
 namespace Dwarf
@@ -14,8 +15,7 @@ namespace Dwarf
     CreateShader() = 0;
 
     virtual std::shared_ptr<IShader>
-    CreateShader(const std::string& vertexShaderPath,
-                 const std::string& fragmentShaderPath) = 0;
+    CreateShader(ShaderSourceCollection shaderSources) = 0;
 
     virtual std::shared_ptr<IShader>
     CreateShader(const nlohmann::json& serializedShader) = 0;

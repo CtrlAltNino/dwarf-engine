@@ -4,10 +4,10 @@
 
 namespace Dwarf
 {
-  class ITextureLoader
+  class IImageFileLoader
   {
   public:
-    virtual ~ITextureLoader() = default;
+    virtual ~IImageFileLoader() = default;
 
     virtual std::shared_ptr<TextureContainer>
     LoadTexture(std::filesystem::path texturePath) = 0;

@@ -1,5 +1,4 @@
-#include "Framebuffer.h"
-#include "Core/Rendering/Renderer.h"
+#include "FramebufferFactory.h"
 
 #ifdef _WIN32
 // #include "Platform/Direct3D12/D3D12Framebuffer.h"
@@ -14,10 +13,15 @@
 
 namespace Dwarf
 {
-  std::shared_ptr<Framebuffer>
-  Framebuffer::Create(const FramebufferSpecification& spec)
+  FramebufferFactory::FramebufferFactory(GraphicsApi api)
+    : m_Api(api)
   {
-    switch (Renderer::GetAPI())
+  }
+
+  std::shared_ptr<IFramebuffer>
+  FramebufferFactory::Create(const FramebufferSpecification& spec)
+  {
+    switch (m_Api)
     {
 #ifdef _WIN32
       case GraphicsApi::D3D12:
@@ -48,4 +52,4 @@ namespace Dwarf
     }
     return nullptr;
   }
-}
+} // namespace Dwarf

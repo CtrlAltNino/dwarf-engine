@@ -1,5 +1,7 @@
+#include "Utilities/ImageUtilities/TextureCommon.h"
 #include "pch.h"
 #include <glad/glad.h>
+#include <memory>
 #include "Core/Rendering/Texture/TextureFactory.h"
 #include "Platform/OpenGL/OpenGLFramebuffer.h"
 
@@ -93,8 +95,11 @@ namespace Dwarf
   }
 
   // @brief: Constructs an OpenGL framebuffer with the given specification
-  OpenGLFramebuffer::OpenGLFramebuffer(const FramebufferSpecification& spec)
+  OpenGLFramebuffer::OpenGLFramebuffer(
+    const FramebufferSpecification&  spec,
+    std::shared_ptr<ITextureFactory> textureFactory)
     : m_Specification(spec)
+    , m_TextureFactory(textureFactory)
   {
     for (auto attachments : m_Specification.Attachments.Attachments)
     {
@@ -142,9 +147,50 @@ namespace Dwarf
       // Iterate through the color attachments
       for (size_t i = 0; i < m_ColorAttachmentSpecifications.size(); i++)
       {
-        m_ColorAttachments.push_back(TextureFactory::Empty(
-          m_ColorAttachmentSpecifications[i],
-          { m_Specification.Width, m_Specification.Height },
+        // TextureType       Type = TextureType::TEXTURE_2D;
+        // TextureFormat     Format = TextureFormat::RGBA;
+        // TextureDataType   DataType = TextureDataType::UNSIGNED_BYTE;
+        // TextureResolution Size = glm::ivec2(0);
+        // void*             ImageData = nullptr;
+        // int               Samples = 1;
+        std::shared_ptr<TextureContainer> textureData =
+          std::make_shared<TextureContainer>();
+
+        textureData->Type = TextureType::TEXTURE_2D;
+        textureData->Samples = m_Specification.Samples;
+        textureData->Size =
+          glm::ivec2(m_Specification.Width, m_Specification.Height);
+
+        switch (m_ColorAttachmentSpecifications[i].TextureFormat)
+        {
+          using enum FramebufferTextureFormat;
+          case RGBA8: textureData->Format = TextureFormat::RGBA; break;
+          case RED_INTEGER:
+            textureData->Format = TextureFormat::RED;
+            textureData->DataType = TextureDataType::UNSIGNED_INT;
+            break;
+          case DEPTH24STENCIL8:
+            textureData->Format = TextureFormat::DEPTH_STENCIL;
+            textureData->DataType = TextureDataType::UNSIGNED_INT;
+            break;
+          case DEPTH:
+            textureData->Format = TextureFormat::DEPTH;
+            textureData->DataType = TextureDataType::FLOAT;
+            break;
+          case STENCIL: textureData->Format = TextureFormat::STENCIL; break;
+          case None: break;
+        }
+
+        // m_ColorAttachments.push_back(m_Tex tureFactory->CreateEmptyTexture(
+        //   m_ColorAttachmentSpecifications[i],
+        //   { m_Specification.Width, m_Specification.Height },
+        //   m_Specification.Samples));
+
+        m_ColorAttachments.push_back(m_TextureFactory->Empty(
+          TextureType::TEXTURE_2D,
+          TextureFormat::RGBA,
+          TextureDataType::UNSIGNED_BYTE,
+          glm::ivec2(m_Specification.Width, m_Specification.Height),
           m_Specification.Samples));
 
         glFramebufferTexture2D(
@@ -162,10 +208,35 @@ namespace Dwarf
     if (m_DepthAttachmentSpecification.TextureFormat !=
         FramebufferTextureFormat::None)
     {
-      m_DepthAttachment =
-        TextureCreator::Empty(m_DepthAttachmentSpecification,
-                              { m_Specification.Width, m_Specification.Height },
-                              m_Specification.Samples);
+      // switch (parameters.TextureFormat)
+      // {
+      //   using enum FramebufferTextureFormat;
+      //   case RGBA8: textureData->Format = TextureFormat::RGBA; break;
+      //   case RED_INTEGER:
+      //     textureData->Format = TextureFormat::RED;
+      //     textureData->DataType = TextureDataType::UNSIGNED_INT;
+      //     break;
+      //   case DEPTH24STENCIL8:
+      //     textureData->Format = TextureFormat::DEPTH_STENCIL;
+      //     break;
+      //   case DEPTH:
+      //     textureData->Format = TextureFormat::DEPTH;
+      //     textureData->DataType = TextureDataType::FLOAT;
+      //     break;
+      //   case STENCIL: textureData->Format = TextureFormat::STENCIL; break;
+      //   case None: break;
+      // }
+      // m_DepthAttachment =
+      //   TextureCreator::Empty(m_DepthAttachmentSpecification,
+      //                         { m_Specification.Width, m_Specification.Height
+      //                         }, m_Specification.Samples);
+
+      m_DepthAttachment = m_TextureFactory->Empty(
+        TextureType::TEXTURE_2D,
+        TextureFormat::DEPTH,
+        TextureDataType::FLOAT,
+        glm::ivec2(m_Specification.Width, m_Specification.Height),
+        m_Specification.Samples);
 
       glFramebufferTexture2D(GL_FRAMEBUFFER,
                              Utils::GetFramebufferAttachment(
@@ -263,7 +334,7 @@ namespace Dwarf
                     &value);
   }
 
-  const std::shared_ptr<Texture>
+  const std::shared_ptr<ITexture>
   OpenGLFramebuffer::GetColorAttachment(uint32_t index = 0) const
   {
     if (index < m_ColorAttachments.size())

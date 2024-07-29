@@ -1,10 +1,11 @@
 #pragma once
 
-#include "Core/Rendering/Framebuffer/Framebuffer.h"
+#include "Core/Rendering/Framebuffer/IFramebuffer.h"
+#include "Core/Rendering/Texture/ITextureFactory.h"
 
 namespace Dwarf
 {
-  class OpenGLFramebuffer : public Framebuffer
+  class OpenGLFramebuffer : public IFramebuffer
   {
   private:
     uint32_t                 m_RendererID = 0;
@@ -16,9 +17,11 @@ namespace Dwarf
     };
     std::vector<std::shared_ptr<ITexture>> m_ColorAttachments;
     std::shared_ptr<ITexture>              m_DepthAttachment = 0;
+    std::shared_ptr<ITextureFactory>       m_TextureFactory;
 
   public:
-    explicit OpenGLFramebuffer(const FramebufferSpecification& spec);
+    explicit OpenGLFramebuffer(const FramebufferSpecification&  spec,
+                               std::shared_ptr<ITextureFactory> textureFactory);
     ~OpenGLFramebuffer() override;
 
     uint32_t

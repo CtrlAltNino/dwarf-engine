@@ -5,18 +5,14 @@
 
 namespace Dwarf
 {
-
-  class GraphicsContext
+  class IGraphicsContext
   {
   public:
-    virtual ~GraphicsContext() = default;
+    virtual ~IGraphicsContext() = default;
 
     virtual void
     Init() = 0;
     virtual void
     SwapBuffers() = 0;
-
-    static std::unique_ptr<GraphicsContext>
-    Create(SDL_Window* window);
   };
 }

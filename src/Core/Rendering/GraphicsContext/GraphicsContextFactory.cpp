@@ -1,26 +1,25 @@
-#include "pch.h"
-#include "Core/Rendering/GraphicsContext.h"
-#include "Core/Rendering/Renderer.h"
+#include "GraphicsContextFactory.h"
 
-#ifdef _WIN32
-// #include "Platform/OpenGL/D3D12Context.h" - NOT SUPPORTED YET
+#if _WIN32
 #include "Platform/OpenGL/OpenGLContext.h"
-// #include "Platform/OpenGL/VulkanContext.h" - NOT SUPPORTED YET
 #elif __linux__
 #include "Platform/OpenGL/OpenGLContext.h"
-// #include "Platform/Vulkan/VulkanContext.h" - NOT SUPPORTED YET
 #elif __APPLE__
-// #include "Platform/Metal/MetalContext.h" - NOT SUPPORTED YET
+// #include "Platform/Metal/MetalContext.h"
 #endif
 
 namespace Dwarf
 {
-  std::unique_ptr<GraphicsContext>
-  GraphicsContext::Create(SDL_Window* window)
+  GraphicsContextFactory::GraphicsContextFactory(GraphicsApi api)
+    : m_Api(api)
   {
-    switch (Renderer::GetAPI())
+  }
+  std::unique_ptr<IGraphicsContext>
+  GraphicsContextFactory::Create(SDL_Window* window)
+  {
+    switch (m_Api)
     {
-#ifdef _WIN32
+#if _WIN32
       case GraphicsApi::D3D12:
         // return
         // std::make_unique<D3D12Context>(static_cast<SDL_Window*>(window)); -
@@ -32,8 +31,8 @@ namespace Dwarf
         break;
       case GraphicsApi::Vulkan:
         // return
-        // std::make_unique<VulkanContext>(static_cast<SDL_Window*>(window));
-        // - NOT SUPPORTED YET
+        // std::make_unique<VulkanContext>(static_cast<SDL_Window*>(window)); -
+        // NOT SUPPORTED YET
         break;
 #elif __linux__
       case GraphicsApi::D3D12: break;
@@ -56,6 +55,7 @@ namespace Dwarf
       case GraphicsApi::Vulkan: break;
 #endif
     }
+
     return nullptr;
   }
-}
+} // namespace Dwarf

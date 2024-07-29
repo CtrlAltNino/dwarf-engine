@@ -1,16 +1,16 @@
-#include "TextureLoader.h"
+#include "ImageFileLoader.h"
 
-#include "Core/Asset/Texture/ImageFileLoaders/BmpUtilities.h"
-#include "Core/Asset/Texture/ImageFileLoaders/HdrUtilities.h"
-#include "Core/Asset/Texture/ImageFileLoaders/JpegUtilities.h"
-#include "Core/Asset/Texture/ImageFileLoaders/PngUtilities.h"
-#include "Core/Asset/Texture/ImageFileLoaders/TgaUtilities.h"
-#include "Core/Asset/Texture/ImageFileLoaders/TiffUtilities.h"
+#include "Core/Asset/Texture/ImageFileTypeUtilities/BmpUtilities.h"
+#include "Core/Asset/Texture/ImageFileTypeUtilities/HdrUtilities.h"
+#include "Core/Asset/Texture/ImageFileTypeUtilities/JpegUtilities.h"
+#include "Core/Asset/Texture/ImageFileTypeUtilities/PngUtilities.h"
+#include "Core/Asset/Texture/ImageFileTypeUtilities/TgaUtilities.h"
+#include "Core/Asset/Texture/ImageFileTypeUtilities/TiffUtilities.h"
 
 namespace Dwarf
 {
   std::shared_ptr<TextureContainer>
-  TextureLoader::LoadTexture(std::filesystem::path texturePath)
+  ImageFileLoader::LoadTexture(std::filesystem::path texturePath)
   {
     std::string                       ext = texturePath.extension().string();
     std::shared_ptr<TextureContainer> textureData = nullptr;

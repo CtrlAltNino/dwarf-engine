@@ -10,8 +10,8 @@ namespace Dwarf
   {
     m_WatchID =
       m_FileWatcher.addWatch(assetDirectoryPath.t.string(), this, true);
-    m_WatchID = m_FileWatcher.addWatch(
-      Shader::GetDefaultShaderPath().string(), this, true);
+    // m_WatchID = m_FileWatcher.addWatch(
+    //   Shader::GetDefaultShaderPath().string(), this, true);
 
     // Start watching asynchronously the directories
     m_FileWatcher.watch();

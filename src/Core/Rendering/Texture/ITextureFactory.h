@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Core/Rendering/Texture/ITexture.h"
+#include "Utilities/ImageUtilities/TextureCommon.h"
+#include <memory>
 
 namespace Dwarf
 {
@@ -10,12 +12,24 @@ namespace Dwarf
     virtual ~ITextureFactory() = default;
 
     virtual std::shared_ptr<ITexture>
-    CreateTexture(std::filesystem::path texturePath) = 0;
+    FromPath(std::filesystem::path texturePath) = 0;
 
     virtual std::shared_ptr<ITexture>
-    CreateTexture(const TextureContainer& textureData) = 0;
+    FromData(const std::shared_ptr<TextureContainer>& textureData) = 0;
 
     virtual std::shared_ptr<ITexture>
-    CreateEmptyTexture(const TextureContainer& textureData) = 0;
+    Empty(const TextureType&       type,
+          const TextureFormat&     format,
+          const TextureDataType&   dataType,
+          const TextureResolution& size,
+          const TextureParameters& parameters,
+          int                      samples = 1) = 0;
+
+    virtual std::shared_ptr<ITexture>
+    Empty(const TextureType&       type,
+          const TextureFormat&     format,
+          const TextureDataType&   dataType,
+          const TextureResolution& size,
+          int                      samples = 1) = 0;
   };
 } // namespace Dwarf

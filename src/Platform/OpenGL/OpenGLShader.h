@@ -22,6 +22,23 @@ namespace Dwarf
 
   class OpenGLShader : public IShader
   {
+  public:
+    BOOST_DI_INJECT(OpenGLShader, ShaderSourceCollection shaderSources);
+    ~OpenGLShader() = default;
+    GLuint
+    GetID() const;
+
+    void
+    Compile() override;
+
+    std::shared_ptr<IShaderParameterCollection>
+    GetParameters() override;
+
+    const ShaderLogs&
+    GetShaderLogs() const;
+
+    static const std::array<std::string, 3> ReservedUniformNames;
+
   private:
     GLuint     m_ID = -1;
     ShaderLogs m_ShaderLogs;
@@ -41,32 +58,37 @@ namespace Dwarf
       m_TessellationEvaluationShaderAsset;
     std::shared_ptr<AssetReference<FragmentShaderAsset>> m_FragmentShaderAsset;
 
-  public:
-    BOOST_DI_INJECT(
-      OpenGLShader,
-      std::shared_ptr<AssetReference<VertexShaderAsset>>   vertexShaderAsset,
-      std::shared_ptr<AssetReference<FragmentShaderAsset>> fragmentShaderAsset,
-      boost::optional<std::shared_ptr<AssetReference<GeometryShaderAsset>>>
-        geometryShaderAsset = boost::none,
-      boost::optional<
-        std::shared_ptr<AssetReference<TessellationControlShaderAsset>>>
-        tessellationControlShaderAsset = boost::none,
-      boost::optional<
-        std::shared_ptr<AssetReference<TessellationEvaluationShaderAsset>>>
-        tessellationEvaluationShaderAsset = boost::none);
-    ~OpenGLShader() = default;
-    GLuint
-    GetID() const;
+    struct HandleShaderSourceVisitor;
+    friend struct HandleShaderSourceVisitor;
+    // Declare the visitor struct
+    struct HandleShaderSourceVisitor
+    {
+      HandleShaderSourceVisitor(OpenGLShader& instance);
 
-    void
-    Compile() override;
+      void
+      operator()(
+        const std::shared_ptr<AssetReference<VertexShaderAsset>> source) const;
 
-    std::shared_ptr<IShaderParameterCollection>
-    GetParameters() override;
+      void
+      operator()(const std::shared_ptr<AssetReference<FragmentShaderAsset>>
+                   source) const;
 
-    const ShaderLogs&
-    GetShaderLogs() const;
+      void
+      operator()(const std::shared_ptr<AssetReference<GeometryShaderAsset>>
+                   source) const;
 
-    static const std::array<std::string, 3> ReservedUniformNames;
+      void
+      operator()(
+        const std::shared_ptr<AssetReference<TessellationControlShaderAsset>>
+          source) const;
+
+      void
+      operator()(
+        const std::shared_ptr<AssetReference<TessellationEvaluationShaderAsset>>
+          source) const;
+
+    private:
+      OpenGLShader& instance; // Reference to the MyClass instance
+    };
   };
 }

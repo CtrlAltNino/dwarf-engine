@@ -1,10 +1,10 @@
 #pragma once
 
-#include "ITextureLoader.h"
+#include "IImageFileLoader.h"
 
 namespace Dwarf
 {
-  class TextureLoader : public ITextureLoader
+  class ImageFileLoader : public IImageFileLoader
   {
   public:
     std::shared_ptr<TextureContainer>

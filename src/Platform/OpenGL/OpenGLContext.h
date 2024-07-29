@@ -1,11 +1,11 @@
 #pragma once
 
-#include "Core/Rendering/GraphicsContext.h"
+#include "Core/Rendering/GraphicsContext/IGraphicsContext.h"
 #include <SDL2/SDL.h>
 
 namespace Dwarf
 {
-  class OpenGLContext : public GraphicsContext
+  class OpenGLContext : public IGraphicsContext
   {
   public:
     explicit OpenGLContext(SDL_Window* windowHandle);

@@ -1,4 +1,5 @@
 #include "TextureFactory.h"
+#include <cstdint>
 
 #if _WIN32
 #include "Platform/OpenGL/OpenGLTexture.h"
@@ -10,10 +11,10 @@
 
 namespace Dwarf
 {
-  TextureFactory::TextureFactory(GraphicsApi                     api,
-                                 std::shared_ptr<ITextureLoader> loader)
+  TextureFactory::TextureFactory(GraphicsApi                       api,
+                                 std::shared_ptr<IImageFileLoader> loader)
     : m_Api(api)
-    , m_Loader(loader)
+    , m_ImageFileLoader(loader)
   {
   }
 
@@ -31,21 +32,52 @@ namespace Dwarf
     return parameters;
   }
 
-  std::shared_ptr<ITexture>
-  TextureFactory::CreateTexture(std::filesystem::path texturePath)
+  uint64_t
+  GetPixelCount(const TextureResolution& size, const TextureType& type)
   {
-    std::string                        ext = texturePath.extension().string();
-    std::shared_ptr<TextureParameters> parameters = GetParameters(texturePath);
-    std::shared_ptr<TextureContainer>  textureData = nullptr;
+    switch (type)
+    {
+      case TextureType::TEXTURE_1D: return std::get<glm::ivec1>(size).x;
+      case TextureType::TEXTURE_2D:
+        return std::get<glm::ivec2>(size).x * std::get<glm::ivec2>(size).y;
+      case TextureType::TEXTURE_3D:
+        return std::get<glm::ivec3>(size).x * std::get<glm::ivec3>(size).y *
+               std::get<glm::ivec3>(size).z;
+      case TextureType::TEXTURE_CUBE_MAP:
+        return std::get<glm::ivec2>(size).x * 2 * 6;
+    }
+  }
 
-    textureData = m_Loader->LoadTexture(texturePath);
+  uint64_t
+  GetBytesPerPixel(const TextureFormat& format, const TextureDataType& type)
+  {
+    uint64_t channelCount = 0;
+    uint64_t channelSize = 0;
+    switch (format)
+    {
+      case TextureFormat::RED: channelCount = 1; break;
+      case TextureFormat::RG: channelCount = 2; break;
+      case TextureFormat::RGB: channelCount = 3; break;
+      case TextureFormat::RGBA: channelCount = 4; break;
+      case TextureFormat::DEPTH: channelCount = 1; break;
+      case TextureFormat::STENCIL: channelCount = 1; break;
+      case TextureFormat::DEPTH_STENCIL: channelCount = 2; break;
+    }
 
-    return LoadTexture(textureData, parameters);
+    switch (type)
+    {
+      case TextureDataType::UNSIGNED_BYTE: channelSize = 8; break;
+      case TextureDataType::UNSIGNED_SHORT: channelSize = 16; break;
+      case TextureDataType::INT: channelSize = 32; break;
+      case TextureDataType::UNSIGNED_INT: channelSize = 32; break;
+      case TextureDataType::FLOAT: channelSize = 32; break;
+    }
+
+    return channelCount * channelSize;
   }
 
   std::shared_ptr<ITexture>
-  TextureFactory::LoadTexture(std::shared_ptr<TextureContainer>  textureData,
-                              std::shared_ptr<TextureParameters> parameters)
+  TextureFactory::LoadTexture(std::shared_ptr<TextureContainer> textureData)
   {
     switch (m_Api)
     {
@@ -61,7 +93,7 @@ namespace Dwarf
 #elif __linux__
       case GraphicsApi::D3D12: break;
       case GraphicsApi::OpenGL:
-        return std::make_shared<OpenGLTexture>(textureData, parameters);
+        return std::make_shared<OpenGLTexture>(textureData);
         break;
       case GraphicsApi::Metal: break;
       case GraphicsApi::Vulkan:
@@ -80,73 +112,61 @@ namespace Dwarf
     return nullptr;
   }
 
-  // std::shared_ptr<Texture>
-  // TextureCreator::FromData(TextureParameters const& parameters,
-  //                          glm::ivec2               size,
-  //                          void*                    data)
-  // {
-  //   std::shared_ptr<TextureContainer> textureData =
-  //     std::make_shared<TextureContainer>();
-  //   textureData->Width = size.x;
-  //   textureData->Height = size.y;
-  //   textureData->Format = TextureFormat::RGBA;
-  //   textureData->Type = TextureType::TEXTURE_2D;
-  //   textureData->DataType = TextureDataType::UNSIGNED_BYTE;
-  //   textureData->ImageData = (unsigned char*)data;
+  std::shared_ptr<ITexture>
+  TextureFactory::FromPath(std::filesystem::path texturePath)
+  {
+    std::string                        ext = texturePath.extension().string();
+    std::shared_ptr<TextureParameters> parameters = GetParameters(texturePath);
+    std::shared_ptr<TextureContainer>  textureData =
+      m_ImageFileLoader->LoadTexture(texturePath);
 
-  //   return Texture::Create(textureData,
-  //                          std::make_shared<TextureParameters>(parameters));
-  // }
+    textureData = m_ImageFileLoader->LoadTexture(texturePath);
 
-  // std::shared_ptr<Texture>
-  // TextureCreator::Empty(glm::ivec2 size)
-  // {
-  //   std::shared_ptr<TextureContainer> textureData =
-  //     std::make_shared<TextureContainer>();
-  //   textureData->Width = size.x;
-  //   textureData->Height = size.y;
-  //   textureData->Format = TextureFormat::RGBA;
-  //   textureData->Type = TextureType::TEXTURE_2D;
-  //   textureData->DataType = TextureDataType::UNSIGNED_BYTE;
-  //   textureData->ImageData = nullptr;
+    return LoadTexture(textureData);
+  }
 
-  //   return Texture::Create(textureData);
-  // }
+  std::shared_ptr<ITexture>
+  TextureFactory::FromData(const std::shared_ptr<TextureContainer>& textureData)
+  {
+    return LoadTexture(textureData);
+  }
 
-  // std::shared_ptr<Texture>
-  // TextureCreator::Empty(FramebufferTextureSpecification const& parameters,
-  //                       glm::ivec2                             size,
-  //                       int                                    samples)
-  // {
-  //   std::shared_ptr<TextureContainer> textureData =
-  //     std::make_shared<TextureContainer>();
-  //   textureData->Width = size.x;
-  //   textureData->Height = size.y;
-  //   textureData->Format = TextureFormat::RGBA;
-  //   textureData->Type = TextureType::TEXTURE_2D;
-  //   textureData->DataType = TextureDataType::UNSIGNED_BYTE;
-  //   textureData->ImageData = nullptr;
-  //   textureData->Samples = samples;
+  std::shared_ptr<ITexture>
+  TextureFactory::Empty(const TextureType&       type,
+                        const TextureFormat&     format,
+                        const TextureDataType&   dataType,
+                        const TextureResolution& size,
+                        const TextureParameters& parameters,
+                        int                      samples)
+  {
+    std::shared_ptr<TextureContainer> textureData =
+      std::make_shared<TextureContainer>();
+    textureData->Size = size;
+    textureData->Type = type;
+    textureData->Format = format;
+    textureData->DataType = dataType;
+    textureData->Samples = samples;
+    textureData->Parameters = parameters;
+    // Calculate the size of the texture data
+    size_t dataSize =
+      GetPixelCount(size, type) * GetBytesPerPixel(format, dataType);
 
-  //   switch (parameters.TextureFormat)
-  //   {
-  //     using enum FramebufferTextureFormat;
-  //     case RGBA8: textureData->Format = TextureFormat::RGBA; break;
-  //     case RED_INTEGER:
-  //       textureData->Format = TextureFormat::RED;
-  //       textureData->DataType = TextureDataType::UNSIGNED_INT;
-  //       break;
-  //     case DEPTH24STENCIL8:
-  //       textureData->Format = TextureFormat::DEPTH_STENCIL;
-  //       break;
-  //     case DEPTH:
-  //       textureData->Format = TextureFormat::DEPTH;
-  //       textureData->DataType = TextureDataType::FLOAT;
-  //       break;
-  //     case STENCIL: textureData->Format = TextureFormat::STENCIL; break;
-  //     case None: break;
-  //   }
+    // Reserve space for the texture data
+    // textureData->ImageData->resize(dataSize);
+    textureData->ImageData =
+      calloc(GetPixelCount(size, type), GetBytesPerPixel(format, dataType));
 
-  //   return Texture::Create(textureData);
-  // }
+    return LoadTexture(textureData);
+  }
+
+  std::shared_ptr<ITexture>
+  TextureFactory::Empty(const TextureType&       type,
+                        const TextureFormat&     format,
+                        const TextureDataType&   dataType,
+                        const TextureResolution& size,
+                        int                      samples)
+  {
+    TextureParameters parameters;
+    return Empty(type, format, dataType, size, parameters, samples);
+  }
 } // namespace Dwarf

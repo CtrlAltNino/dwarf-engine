@@ -5,10 +5,10 @@
 #include "Core/Rendering/Material/Material.h"
 #include "Core/Scene/Scene.h"
 #include "Core/Scene/Camera.h"
-#include "Core/Rendering/Framebuffer/Framebuffer.h"
+#include "Core/Rendering/Framebuffer/IFramebuffer.h"
 #include "Core/Asset/Database/AssetComponents.h"
 #include "Core/Asset/Database/AssetReference.h"
-#include "Core/Rendering/RendererApi.h"
+#include "Core/Rendering/RendererApi/RendererApi.h"
 
 namespace Dwarf
 {

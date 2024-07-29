@@ -1,4 +1,6 @@
 #include "ShaderFactory.h"
+#include "Core/Asset/Database/AssetComponents.h"
+#include <memory>
 
 // Including the shader header files of the graphics API.
 #if _WIN32
@@ -11,13 +13,78 @@
 
 namespace Dwarf
 {
-  ShaderFactory::ShaderFactory(GraphicsApi graphicsApi)
+  ShaderFactory::ShaderFactory(GraphicsApi                     graphicsApi,
+                               std::shared_ptr<IAssetDatabase> assetDatabase)
     : m_GraphicsApi(graphicsApi)
+    , m_AssetDatabase(assetDatabase)
   {
   }
 
   std::shared_ptr<IShader>
   ShaderFactory::CreateShader()
+  {
+    return CreateShader(ShaderSourceCollection());
+  }
+
+  std::shared_ptr<IShader>
+  ShaderFactory::CreateShader(const nlohmann::json& shaderJson)
+  {
+    // Extracting shader sources from the JSON object.
+    ShaderSourceCollection shaderSources;
+
+    if (shaderJson.contains("vertexShader"))
+    {
+      std::shared_ptr<UID> vertexShaderId =
+        std::make_shared<UID>(shaderJson["vertexShader"]);
+
+      shaderSources.t.emplace_back(
+        m_AssetDatabase->Retrieve<VertexShaderAsset>(vertexShaderId));
+    }
+
+    if (shaderJson.contains("fragmentShader"))
+    {
+      std::shared_ptr<UID> fragmentShaderId =
+        std::make_shared<UID>(shaderJson["fragmentShader"]);
+
+      shaderSources.t.emplace_back(
+        m_AssetDatabase->Retrieve<FragmentShaderAsset>(fragmentShaderId));
+    }
+
+    if (shaderJson.contains("geometryShader"))
+    {
+      std::shared_ptr<UID> geometryShaderId =
+        std::make_shared<UID>(shaderJson["geometryShader"]);
+
+      shaderSources.t.emplace_back(
+        m_AssetDatabase->Retrieve<GeometryShaderAsset>(geometryShaderId));
+    }
+
+    if (shaderJson.contains("tessellationControlShader"))
+    {
+      std::shared_ptr<UID> tessellationControlShaderId =
+        std::make_shared<UID>(shaderJson["tessellationControlShader"]);
+
+      shaderSources.t.emplace_back(
+        m_AssetDatabase->Retrieve<TessellationControlShaderAsset>(
+          tessellationControlShaderId));
+    }
+
+    if (shaderJson.contains("tessellationEvaluationShader"))
+    {
+      std::shared_ptr<UID> tessellationEvaluationShaderId =
+        std::make_shared<UID>(shaderJson["tessellationEvaluationShader"]);
+
+      shaderSources.t.emplace_back(
+        m_AssetDatabase->Retrieve<TessellationEvaluationShaderAsset>(
+          tessellationEvaluationShaderId));
+    }
+
+    // Calling the CreateShader method that takes a ShaderSourceCollection.
+    return CreateShader(shaderSources);
+  }
+
+  std::shared_ptr<IShader>
+  ShaderFactory::CreateShader(ShaderSourceCollection shaderSources)
   {
     // Creating a shader based on the graphics API.
     switch (m_GraphicsApi)
@@ -33,7 +100,9 @@ namespace Dwarf
         break;
 #elif __linux__
       case GraphicsApi::D3D12: break;
-      case GraphicsApi::OpenGL: return std::make_shared<OpenGLShader>(); break;
+      case GraphicsApi::OpenGL:
+        return std::make_shared<OpenGLShader>(shaderSources);
+        break;
       case GraphicsApi::Metal: break;
       case GraphicsApi::Vulkan:
         // return std::make_shared<VulkanShader>();

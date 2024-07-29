@@ -51,10 +51,10 @@ namespace Dwarf
     bool                               SwapChainTarget = false;
   };
 
-  class Framebuffer
+  class IFramebuffer
   {
   public:
-    virtual ~Framebuffer() = default;
+    virtual ~IFramebuffer() = default;
 
     virtual void
     Bind() = 0;
@@ -79,8 +79,5 @@ namespace Dwarf
 
     virtual const FramebufferSpecification&
     GetSpecification() const = 0;
-
-    static std::shared_ptr<Framebuffer>
-    Create(const FramebufferSpecification& spec);
   };
 }

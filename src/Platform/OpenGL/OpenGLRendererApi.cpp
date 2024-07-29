@@ -2,7 +2,7 @@
 #include "OpenGLFramebuffer.h"
 
 #include "Platform/OpenGL/OpenGLRendererApi.h"
-#include "Core/Asset/AssetDatabase.h"
+#include "Core/Asset/Database/IAssetDatabase.h"
 #include "Platform/OpenGL/OpenGLComputeShader.h"
 #include "Core/Asset/AssetComponents.h"
 

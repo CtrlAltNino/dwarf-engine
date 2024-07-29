@@ -3,19 +3,16 @@
 #include "pch.h"
 
 #include "Core/Base.h"
-#include "Core/Rendering/Mesh/Mesh.h"
+#include "Core/Rendering/Mesh/IMesh.h"
 #include "Core/Rendering/Material/Material.h"
-#include "Core/Rendering/Framebuffer/Framebuffer.h"
-#include "Shader/IComputeShader.h"
+#include "Core/Rendering/Framebuffer/IFramebuffer.h"
+#include "Core/Rendering/Shader/IComputeShader.h"
 
 namespace Dwarf
 {
   class RendererApi
   {
   public:
-    static std::shared_ptr<RendererApi>
-    Create();
-
     virtual ~RendererApi() = default;
     virtual void
     Init() = 0;
@@ -28,11 +25,11 @@ namespace Dwarf
     virtual void
     Clear(unsigned int value) = 0;
     virtual void
-    RenderIndexed(std::shared_ptr<Mesh>     mesh,
-                  std::shared_ptr<Material> material,
-                  glm::mat4                 modelMatrix,
-                  glm::mat4                 viewMatrix,
-                  glm::mat4                 projectionMatrix) = 0;
+    RenderIndexed(std::shared_ptr<IMesh>     mesh,
+                  std::shared_ptr<IMaterial> material,
+                  glm::mat4                  modelMatrix,
+                  glm::mat4                  viewMatrix,
+                  glm::mat4                  projectionMatrix) = 0;
     virtual void
     ApplyComputeShader(std::shared_ptr<IComputeShader> computeShader,
                        std::shared_ptr<Framebuffer>    fb,
