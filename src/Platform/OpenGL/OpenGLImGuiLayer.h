@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core/UI/ImGuiLayer.h"
+#include "UI/ImGuiLayer.h"
 
 namespace Dwarf
 {

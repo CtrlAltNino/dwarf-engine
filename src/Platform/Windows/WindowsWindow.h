@@ -1,15 +1,18 @@
 #pragma once
 
-#include "Window/Window.h"
-#include "Core/Rendering/GraphicsContext.h"
-#include "Core/UI/ImGuiLayer.h"
+#include "Core/Rendering/GraphicsContext/IGraphicsContextFactory.h"
+#include "Window/IWindow.h"
+#include "Core/Rendering/GraphicsContext/IGraphicsContext.h"
+#include "UI/ImGuiLayer.h"
 
 namespace Dwarf
 {
-  class WindowsWindow : public Window
+  class WindowsWindow : public IWindow
   {
   public:
-    explicit WindowsWindow(const WindowProps& props);
+    explicit WindowsWindow(
+      const WindowProps&                       props,
+      std::shared_ptr<IGraphicsContextFactory> contextFactory);
     ~WindowsWindow() override;
 
     void
@@ -50,9 +53,6 @@ namespace Dwarf
       return m_Window;
     }
 
-    GraphicsApi
-    GetApi() override;
-
     void
     MaximizeWindow() override;
 
@@ -60,10 +60,10 @@ namespace Dwarf
     void
     Init(const WindowProps& props);
 
-    SDL_Window*                      m_Window;
-    std::unique_ptr<GraphicsContext> m_Context;
-    GraphicsApi                      m_Api;
-    std::shared_ptr<ImGuiLayer>      m_ImguiLayer;
+    SDL_Window*                              m_Window;
+    std::shared_ptr<IGraphicsContext>        m_Context;
+    std::shared_ptr<ImGuiLayer>              m_ImguiLayer;
+    std::shared_ptr<IGraphicsContextFactory> m_ContextFactory;
 
     struct WindowData
     {

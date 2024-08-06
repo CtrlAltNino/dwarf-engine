@@ -4,7 +4,7 @@
 
 #include "Core/Rendering/Material/Material.h"
 #include "Core/Scene/Scene.h"
-#include "Core/Scene/Camera.h"
+#include "Core/Scene/Camera/Camera.h"
 #include "Core/Rendering/Framebuffer/IFramebuffer.h"
 #include "Core/Asset/Database/AssetComponents.h"
 #include "Core/Asset/Database/AssetReference.h"
@@ -32,33 +32,6 @@ namespace Dwarf
     {
       return s_Renderer;
     }
-    // TODO: Maybe pass framebuffer?
-    virtual void
-    RenderEntity(Entity&                   entity,
-                 glm::mat4                 viewMatrix,
-                 glm::mat4                 projectionMatrix,
-                 std::shared_ptr<Material> overrideMaterial = nullptr) = 0;
-    virtual void
-    RenderScene(std::shared_ptr<Scene>  scene,
-                std::shared_ptr<Camera> camera,
-                glm::ivec2              viewportSize,
-                bool                    renderGrid) = 0;
-    virtual void
-    RenderIds(std::shared_ptr<Scene>  scene,
-              std::shared_ptr<Camera> camera,
-              glm::ivec2              viewportSize) = 0;
-
-    virtual void
-    RenderModelPreview(std::shared_ptr<AssetReference<ModelAsset>> modelAsset,
-                       std::shared_ptr<Camera>                     camera,
-                       glm::ivec2                                  viewportSize,
-                       glm::quat rotation) = 0;
-    virtual void
-    RenderMaterialPreview(
-      std::shared_ptr<AssetReference<MaterialAsset>> materialAsset,
-      std::shared_ptr<Camera>                        camera,
-      glm::ivec2                                     viewportSize,
-      glm::quat                                      rotation) = 0;
 
     virtual std::shared_ptr<Framebuffer>
     CreateFramebuffer(glm::ivec2 resolution) = 0;

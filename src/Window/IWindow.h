@@ -22,10 +22,10 @@ namespace Dwarf
     }
   };
 
-  class Window
+  class IWindow
   {
   public:
-    virtual ~Window() = default;
+    virtual ~IWindow() = default;
 
     virtual void
     NewFrame() = 0;
@@ -61,8 +61,5 @@ namespace Dwarf
 
     virtual void
     SetWindowTitle(std::string_view windowTitle) = 0;
-
-    static std::unique_ptr<Window>
-    Create(const WindowProps& props = WindowProps());
   };
 }

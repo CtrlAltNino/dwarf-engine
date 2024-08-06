@@ -1,9 +1,10 @@
 #pragma once
 
-#include "Core/Asset/AssetComponents.h"
+#include "Core/Asset/Database/AssetComponents.h"
 #include "Core/Rendering/Shader/IComputeShader.h"
 #include "Core/Rendering/Shader/ShaderTypes.h"
-#include "Core/Asset/AssetReference.h"
+#include "Core/Asset/Database/AssetReference.h"
+#include "Core/Asset/Database/IAssetDatabase.h"
 #include <glad/glad.h>
 #include <memory>
 

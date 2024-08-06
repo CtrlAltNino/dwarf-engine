@@ -4,8 +4,10 @@
 
 namespace Dwarf
 {
-  WindowsWindow::WindowsWindow(const WindowProps& props)
-    : m_Api(props.Api)
+  WindowsWindow::WindowsWindow(
+    const WindowProps&                       props,
+    std::shared_ptr<IGraphicsContextFactory> contextFactory)
+    : m_ContextFactory(contextFactory)
   {
     Init(props);
   }
@@ -15,12 +17,6 @@ namespace Dwarf
     m_ImguiLayer->OnDetach();
     SDL_DestroyWindow(m_Window);
     SDL_Quit();
-  }
-
-  GraphicsApi
-  WindowsWindow::GetApi()
-  {
-    return m_Api;
   }
 
   void
@@ -80,7 +76,7 @@ namespace Dwarf
                           mode.w / 2 - (props.Width / 2),
                           mode.h / 2 - (props.Height / 2));
 
-    m_Context = GraphicsContext::Create(m_Window);
+    m_Context = m_ContextFactory->Create(m_Window);
     m_Context->Init();
 
     m_ImguiLayer = ImGuiLayer::Create(m_Api);

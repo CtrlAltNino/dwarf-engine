@@ -1,4 +1,5 @@
 #pragma once
+#include "Utilities/ISerializable.h"
 #include "pch.h"
 
 #include <entt/entt.hpp>
@@ -7,7 +8,7 @@
 namespace Dwarf
 {
   /// @brief A component holding a transform.
-  struct TransformComponent
+  struct TransformComponent : public ISerializable
   {
 #define RAD_2_DEG (180.0f / std::numbers::pi_v<float>)
 #define DEG_2_RAD (std::numbers::pi_v<float> / 180.0f)
@@ -37,6 +38,19 @@ namespace Dwarf
       : position(pos)
       , rotation(rot)
     {
+    }
+
+    TransformComponent(nlohmann::json json)
+    {
+      position = { json["position"][0],
+                   json["position"][1],
+                   json["position"][2] };
+      rotation = { json["rotation"][0],
+                   json["rotation"][1],
+                   json["rotation"][2] };
+      scale = { json["scale"][0], json["scale"][1], json["scale"][2] };
+      // parent = json["parent"];
+      // children = json["children"];
     }
 
     // ========== Getters ==========
@@ -124,6 +138,18 @@ namespace Dwarf
       glm::mat4 rotationMatrix = getRotationMatrix();
 
       return translationMatrix * rotationMatrix * scaleMatrix;
+    }
+
+    nlohmann::json
+    Serialize() const override
+    {
+      nlohmann::json j;
+      j["position"] = { position.x, position.y, position.z };
+      j["rotation"] = { rotation.x, rotation.y, rotation.z };
+      j["scale"] = { scale.x, scale.y, scale.z };
+      // j["parent"] = parent;
+      // j["children"] = children;
+      return j;
     }
   };
 

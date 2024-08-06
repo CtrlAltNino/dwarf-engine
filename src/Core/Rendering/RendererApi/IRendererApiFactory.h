@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core/Rendering/RendererAPI/IRendererApi.h"
+#include "Core/Rendering/RendererApi/IRendererApi.h"
 namespace Dwarf
 {
   class IRendererApiFactory

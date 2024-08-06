@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core/Asset/AssetDatabase.h"
+#include "Core/Asset/Database/AssetDatabase.h"
 #include "Editor/EditorModel.h"
 #include "Editor/Modules/GuiModule.h"
 #include "Core/Rendering/Texture/Texture.h"

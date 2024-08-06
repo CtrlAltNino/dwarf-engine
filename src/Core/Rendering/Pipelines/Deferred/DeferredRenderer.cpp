@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "Core/Rendering/Deferred/DeferredRenderer.h"
+#include "DeferredRenderer.h"
 
 namespace Dwarf
 {
@@ -7,16 +7,10 @@ namespace Dwarf
   DeferredRenderer::~DeferredRenderer() {}
 
   void
-  DeferredRenderer::RenderScene(std::shared_ptr<Scene>  scene,
-                                std::shared_ptr<Camera> camera,
-                                glm::ivec2              viewportSize,
-                                bool                    renderGrid)
+  DeferredRenderer::RenderScene(std::shared_ptr<IScene>  scene,
+                                std::shared_ptr<ICamera> camera,
+                                glm::ivec2               viewportSize,
+                                bool                     renderGrid)
   {
-  }
-
-  std::shared_ptr<Framebuffer>
-  DeferredRenderer::CreateFramebuffer(glm::ivec2 resolution)
-  {
-    return nullptr;
   }
 }

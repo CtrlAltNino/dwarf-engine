@@ -1,26 +1,24 @@
 #pragma once
 
-#include "Core/Rendering/Renderer.h"
-#include "Core/Rendering/RendererApi.h"
-#include "Core/Scene/Scene.h"
-#include "Core/Scene/Camera.h"
+#include "Core/Rendering/Pipelines/IRenderingPipeline.h"
+#include "Core/Rendering/RendererApi/IRendererApi.h"
+#include "Core/Scene/IScene.h"
+#include "Core/Scene/Camera/ICamera.h"
 
 namespace Dwarf
 {
-  class DeferredRenderer : public Renderer
+  class DeferredRenderer : public IRenderingPipeline
   {
   private:
-    std::shared_ptr<RendererApi> rendererApi;
+    std::shared_ptr<IRendererApi> m_RendererApi;
 
   public:
     DeferredRenderer();
     ~DeferredRenderer();
     virtual void
-    RenderScene(std::shared_ptr<Scene>  scene,
-                std::shared_ptr<Camera> camera,
-                glm::ivec2              viewportSize,
-                bool                    renderGrid) override;
-    virtual std::shared_ptr<Framebuffer>
-    CreateFramebuffer(glm::ivec2 resolution) override;
+    RenderScene(std::shared_ptr<IScene>  scene,
+                std::shared_ptr<ICamera> camera,
+                glm::ivec2               viewportSize,
+                bool                     renderGrid) override;
   };
 }

@@ -5,4 +5,5 @@ target_sources(${targetName}
     Material.cpp
     MaterialFactory.cpp
     MaterialProperties.cpp
+    MaterialPropertiesFactory.cpp
 )

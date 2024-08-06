@@ -5,7 +5,7 @@
 #include "Core/Base.h"
 #include "Core/UID.h"
 #include "Core/GenericComponents.h"
-#include "Core/Scene/SceneComponents.h"
+#include "Core/Scene/Components/SceneComponents.h"
 
 namespace Dwarf
 {

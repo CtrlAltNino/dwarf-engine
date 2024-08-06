@@ -1,4 +1,5 @@
 #pragma once
+#include "Core/Asset/Database/IAssetDatabase.h"
 #include "pch.h"
 
 #include "Core/Rendering/RendererApi/IRendererApi.h"
@@ -7,8 +8,11 @@ namespace Dwarf
 {
   class OpenGLRendererApi : public IRendererApi
   {
+  private:
+    std::shared_ptr<IAssetDatabase> m_AssetDatabase;
+
   public:
-    OpenGLRendererApi();
+    OpenGLRendererApi(std::shared_ptr<IAssetDatabase> assetDatabase);
     ~OpenGLRendererApi() override;
 
     void

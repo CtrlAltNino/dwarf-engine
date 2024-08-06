@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "Core/Scene/Entity.h"
+#include "Entity.h"
 
 namespace Dwarf
 {

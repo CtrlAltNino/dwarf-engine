@@ -1,101 +1,76 @@
 #pragma once
 #include "pch.h"
-#include "Core/Scene/Entity.h"
-#include "Core/Scene/SceneComponents.h"
+#include "Core/Scene/IScene.h"
+#include "Core/Scene/Properties/ISceneProperties.h"
+#include "Core/Scene/Entity/Entity.h"
+#include "Core/Scene/Components/SceneComponents.h"
 
 namespace Dwarf
 {
-  enum class FogType
-  {
-    LINEAR,
-    EXPONENTIAL
-  };
-
-  struct FogSettings
-  {
-    glm::vec3 fogColor = { 0.3f, 0.3f, 0.3f };
-    float     fogStart = 20.0f;
-    float     fogEnd = 50.0f;
-    FogType   type = FogType::LINEAR;
-  };
-
-  struct GlobalLightSettings
-  {
-    glm::vec3 color = { 0.8f, 0.6f, 0.6f };
-    float     intensity = 0.2f;
-  };
-
-  struct SceneSettings
-  {
-    std::shared_ptr<UID> skyboxMaterial;
-    FogSettings          fogSettings;
-    GlobalLightSettings  globalLightSettings;
-  };
-
   /// @brief Class that represents a Dwarf Engine scene.
-  class Scene
+  class Scene : public IScene
   {
   public:
-    // ========== Constructors ==========
-    Scene(std::filesystem::path const& path, SceneSettings const& settings);
+    Scene(nlohmann::json                    serializedSceneGraph,
+          std::shared_ptr<ISceneProperties> properties);
     ~Scene();
 
-    // ========== Getters ==========
-
-    std::string
-    GetName() const;
-    std::filesystem::path
-    GetPath() const;
+    /// @brief Retrieves the asset reference of the scene.
+    /// @return The asset reference.
     std::shared_ptr<entt::registry>
-    GetRegistry() const;
+    GetRegistry() const override;
+
+    /// @brief Retrieves the root entity of the scene. This is the parent of all
+    /// entities in the scene.
+    /// @return The root entity.
     std::shared_ptr<Entity>
-    GetRootEntity() const;
-    SceneSettings
-    GetSettings() const;
+    GetRootEntity() const override;
 
-    // ========== Setters ==========
-    void
-    SetPath(std::filesystem::path const& path);
-
-    // ========== Scene Functions ==========
+    /// @brief Retrieves the settings of the scene.
+    /// @return The settings.
+    std::shared_ptr<ISceneProperties>
+    GetProperties() override;
 
     /// @brief Creates a new entity with a given name.
     /// @param name Name of the entity.
     /// @return The created entity instance.
     Entity
-    CreateEntity(const std::string& name = std::string()) const;
+    CreateEntity(const std::string& name) override;
+
+    /// @brief Deletes an entity from the scene.
+    /// @param entity Entity to delete.
+    void
+    DeleteEntity(Entity entity) override;
+
+    /// @brief Serializes the scene to a JSON object.
+    /// @return The JSON object.
+    nlohmann::json
+    Serialize() const override;
+
+  private:
+    /// @brief The registry that holds all entities and components.
+    std::shared_ptr<entt::registry> m_Registry =
+      std::make_shared<entt::registry>();
+
+    /// @brief The root entity in the scene graph.
+    std::shared_ptr<Entity> m_RootEntity;
+
+    /// @brief The settings of the scene.
+    std::shared_ptr<ISceneProperties> m_Properties;
+
+    /// @brief Because of dependency cycle
+    // friend class Entity;
+
+    /// @brief Creates the root entity.
+    void
+    CreateRootEntity();
 
     /// @brief Creates a new entity with a given name a UID.
     /// @param uid UID to use with the entity.
     /// @param name Name of the entity.
     /// @return The created entity instance.
     Entity
-    CreateEntityWithUID(UID uid, const std::string& name) const;
-
-    void
-    DeleteEntity(Entity entity);
-
-  private:
-    /// @brief Name of the opened scene.
-    std::string m_Name;
-
-    std::filesystem::path m_Path;
-
-    std::shared_ptr<entt::registry> m_Registry =
-      std::make_shared<entt::registry>();
-
-    SceneSettings m_Settings;
-
-    /// @brief The root entity in the scene graph.
-    std::shared_ptr<Entity> m_RootEntity;
-
-    /// @brief Because of dependency cycle
-    friend class Entity;
-
-    /// @brief Creates the root entity.
-    /// @return The created entity instance.
-    void
-    CreateRootEntity();
+    CreateEntityWithUID(UID uid, const std::string& name);
 
     /// @brief Returns the recursive model matrix of a transform.
     /// @param transform A transform component instance.
@@ -103,5 +78,12 @@ namespace Dwarf
     /// chain.
     glm::mat4
     GetFullModelMatrix(TransformComponent const& transform) const;
+
+    /// @brief Deserializes the scene from a JSON object.
+    void
+    Deserialize(const nlohmann::json& serializedSceneGraph);
+
+    Entity
+    DeserializeEntity(nlohmann::json serializedEntity);
   };
 }

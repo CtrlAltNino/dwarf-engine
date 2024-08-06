@@ -1,26 +1,86 @@
 #include <glad/glad.h>
+#include "Core/Asset/Database/IAssetDatabase.h"
 #include "OpenGLFramebuffer.h"
 
 #include "Platform/OpenGL/OpenGLRendererApi.h"
-#include "Core/Asset/Database/IAssetDatabase.h"
-#include "Platform/OpenGL/OpenGLComputeShader.h"
-#include "Core/Asset/AssetComponents.h"
-
-#include <Core/Rendering/Shader Parameters/Tex2DShaderParameter.h>
-#include <Core/Rendering/Shader Parameters/BooleanShaderParameter.h>
-#include <Core/Rendering/Shader Parameters/IntegerShaderParameter.h>
-#include <Core/Rendering/Shader Parameters/UnsignedIntegerShaderParameter.h>
-#include <Core/Rendering/Shader Parameters/FloatShaderParameter.h>
-#include <Core/Rendering/Shader Parameters/Vec4ShaderParameter.h>
-#include <Core/Rendering/Shader Parameters/Vec2ShaderParameter.h>
-#include <Core/Rendering/Shader Parameters/Vec3ShaderParameter.h>
 #include "Platform/OpenGL/OpenGLMesh.h"
 #include "Platform/OpenGL/OpenGLShader.h"
+#include "Platform/OpenGL/OpenGLComputeShader.h"
 
 namespace Dwarf
 {
-  OpenGLRendererApi::OpenGLRendererApi() = default;
+  OpenGLRendererApi::OpenGLRendererApi(
+    std::shared_ptr<IAssetDatabase> assetDatabase)
+    : m_AssetDatabase(assetDatabase)
+  {
+  }
   OpenGLRendererApi::~OpenGLRendererApi() = default;
+
+  struct SetShaderParameterVisitor
+  {
+    GLuint                          m_ShaderID;
+    std::string                     m_ParameterName;
+    std::shared_ptr<IAssetDatabase> m_AssetDatabase;
+    void
+    operator()(bool parameter)
+    {
+      glUniform1f(glGetUniformLocation(m_ShaderID, m_ParameterName.c_str()),
+                  parameter);
+    }
+    void
+    operator()(int parameter)
+    {
+      glUniform1i(glGetUniformLocation(m_ShaderID, m_ParameterName.c_str()),
+                  parameter);
+    }
+    void
+    operator()(unsigned int parameter)
+    {
+      glUniform1ui(glGetUniformLocation(m_ShaderID, m_ParameterName.c_str()),
+                   parameter);
+    }
+    void
+    operator()(float parameter)
+    {
+      glUniform1f(glGetUniformLocation(m_ShaderID, m_ParameterName.c_str()),
+                  parameter);
+    }
+    void
+    operator()(Texture2DAsset parameter)
+    {
+      // TODO: This needs to count the number of textures and bind them
+      glActiveTexture(GL_TEXTURE0);
+      glBindTexture(GL_TEXTURE_2D,
+                    m_AssetDatabase->Retrieve<TextureAsset>(parameter)
+                      ->GetAsset()
+                      ->m_Texture->GetTextureID());
+      glUniform1i(glGetUniformLocation(m_ShaderID, m_ParameterName.c_str()), 0);
+    }
+    void
+    operator()(glm::vec2 parameter)
+    {
+      glUniform2f(glGetUniformLocation(m_ShaderID, m_ParameterName.c_str()),
+                  parameter.x,
+                  parameter.y);
+    }
+    void
+    operator()(glm::vec3 parameter)
+    {
+      glUniform3f(glGetUniformLocation(m_ShaderID, m_ParameterName.c_str()),
+                  parameter.x,
+                  parameter.y,
+                  parameter.z);
+    }
+    void
+    operator()(glm::vec4 parameter)
+    {
+      glUniform4f(glGetUniformLocation(m_ShaderID, m_ParameterName.c_str()),
+                  parameter.x,
+                  parameter.y,
+                  parameter.z,
+                  parameter.w);
+    }
+  };
 
   void
   OpenGLRendererApi::Init()
@@ -63,11 +123,11 @@ namespace Dwarf
   }
 
   void
-  OpenGLRendererApi::RenderIndexed(std::shared_ptr<Mesh>     mesh,
-                                   std::shared_ptr<Material> material,
-                                   glm::mat4                 modelMatrix,
-                                   glm::mat4                 viewMatrix,
-                                   glm::mat4                 projectionMatrix)
+  OpenGLRendererApi::RenderIndexed(std::shared_ptr<IMesh>     mesh,
+                                   std::shared_ptr<IMaterial> material,
+                                   glm::mat4                  modelMatrix,
+                                   glm::mat4                  viewMatrix,
+                                   glm::mat4                  projectionMatrix)
   {
     std::shared_ptr<OpenGLMesh> oglMesh =
       std::dynamic_pointer_cast<OpenGLMesh>(mesh);
@@ -77,7 +137,7 @@ namespace Dwarf
 
     glUseProgram(shader->GetID());
 
-    if (material->IsTransparent())
+    if (material->GetProperties()->IsTransparent())
     {
       glEnable(GL_BLEND);
       glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -87,86 +147,15 @@ namespace Dwarf
     glCullFace(GL_BACK);
 
     // TODO: Move this to OpenGLShader.cpp
-    for (auto const& [key, val] : material->m_Parameters)
+    for (auto const& identifier :
+         material->GetParameters()->GetParameterIdentifiers())
     {
-      if (val)
+      auto shaderParameterValue =
+        material->GetParameters()->GetParameter(identifier);
+      if (shaderParameterValue.has_value())
       {
-        switch ((*val).GetType())
-        {
-          using enum ShaderParameterType;
-          case BOOLEAN:
-            glUniform1f(
-              glGetUniformLocation(shader->GetID(), key.c_str()),
-              (float)std::dynamic_pointer_cast<BooleanShaderParameter>(val)
-                ->m_Value);
-            break;
-          case INTEGER:
-            glUniform1i(
-              glGetUniformLocation(shader->GetID(), key.c_str()),
-              std::dynamic_pointer_cast<IntegerShaderParameter>(val)->m_Value);
-            break;
-          case UNSIGNED_INTEGER:
-            glUniform1ui(
-              glGetUniformLocation(shader->GetID(), key.c_str()),
-              std::dynamic_pointer_cast<UnsignedIntegerShaderParameter>(val)
-                ->m_Value);
-            break;
-          case FLOAT:
-            glUniform1f(
-              glGetUniformLocation(shader->GetID(), key.c_str()),
-              std::dynamic_pointer_cast<FloatShaderParameter>(val)->m_Value);
-            break;
-          case TEX2D:
-            {
-              std::shared_ptr<UID> parameter =
-                std::dynamic_pointer_cast<Tex2DShaderParameter>(val)->m_Value;
-              if (parameter)
-              {
-                glActiveTexture(GL_TEXTURE0 + textureInputCounter);
-                glBindTexture(GL_TEXTURE_2D,
-                              AssetDatabase::Retrieve<TextureAsset>(parameter)
-                                ->GetAsset()
-                                ->m_Texture->GetTextureID());
-
-                GLuint uniformID =
-                  glGetUniformLocation(shader->GetID(), key.c_str());
-                glUniform1i(uniformID, textureInputCounter);
-              }
-
-              textureInputCounter++;
-            }
-            break;
-          case VEC2:
-            {
-              glm::vec2 parameter =
-                std::dynamic_pointer_cast<Vec2ShaderParameter>(val)->m_Value;
-              glUniform2f(glGetUniformLocation(shader->GetID(), key.c_str()),
-                          parameter.x,
-                          parameter.y);
-            }
-            break;
-          case VEC3:
-            {
-              glm::vec3 parameter =
-                std::dynamic_pointer_cast<Vec3ShaderParameter>(val)->m_Value;
-              glUniform3f(glGetUniformLocation(shader->GetID(), key.c_str()),
-                          parameter.x,
-                          parameter.y,
-                          parameter.z);
-            }
-            break;
-          case VEC4:
-            {
-              glm::vec4 parameter =
-                std::dynamic_pointer_cast<Vec4ShaderParameter>(val)->m_Value;
-              glUniform4f(glGetUniformLocation(shader->GetID(), key.c_str()),
-                          parameter.x,
-                          parameter.y,
-                          parameter.z,
-                          parameter.w);
-            }
-            break;
-        }
+        std::visit(SetShaderParameterVisitor{ shader->GetID(), identifier },
+                   shaderParameterValue.value());
       }
     }
 
@@ -191,10 +180,10 @@ namespace Dwarf
 
   void
   OpenGLRendererApi::ApplyComputeShader(
-    std::shared_ptr<ComputeShader> computeShader,
-    std::shared_ptr<Framebuffer>   fb,
-    uint32_t                       sourceAttachment,
-    uint32_t                       destinationAttachment)
+    std::shared_ptr<IComputeShader> computeShader,
+    std::shared_ptr<IFramebuffer>   fb,
+    uint32_t                        sourceAttachment,
+    uint32_t                        destinationAttachment)
   {
     std::shared_ptr<OpenGLComputeShader> shader =
       std::dynamic_pointer_cast<OpenGLComputeShader>(computeShader);
@@ -222,12 +211,12 @@ namespace Dwarf
   }
 
   void
-  OpenGLRendererApi::Blit(std::shared_ptr<Framebuffer> source,
-                          std::shared_ptr<Framebuffer> destination,
-                          uint32_t                     sourceAttachment,
-                          uint32_t                     destinationAttachment,
-                          uint32_t                     width,
-                          uint32_t                     height)
+  OpenGLRendererApi::Blit(std::shared_ptr<IFramebuffer> source,
+                          std::shared_ptr<IFramebuffer> destination,
+                          uint32_t                      sourceAttachment,
+                          uint32_t                      destinationAttachment,
+                          uint32_t                      width,
+                          uint32_t                      height)
   {
     glBindFramebuffer(GL_READ_FRAMEBUFFER,
                       std::dynamic_pointer_cast<OpenGLFramebuffer>(source)

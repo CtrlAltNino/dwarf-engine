@@ -2,7 +2,7 @@
 #include <memory>
 #include <nfd.h>
 
-#include "Editor/EditorView.h"
+#include "EditorView.h"
 
 #include "Core/Asset/AssetDatabase.h"
 #include "Editor/Modules/Asset Browser/AssetBrowserWindow.h"
