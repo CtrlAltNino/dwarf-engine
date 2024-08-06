@@ -1,5 +1,6 @@
 #pragma once
 
+#include <variant>
 namespace Dwarf
 {
   enum class TextureFormat
