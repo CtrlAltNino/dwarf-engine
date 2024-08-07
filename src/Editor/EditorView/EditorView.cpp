@@ -4,7 +4,7 @@
 
 #include "EditorView.h"
 
-#include "Core/Asset/AssetDatabase.h"
+#include "Core/Asset/Database/AssetDatabase.h"
 #include "Editor/Modules/Asset Browser/AssetBrowserWindow.h"
 #include "Editor/Modules/Debug Information/DebugWindow.h"
 #include "Editor/Modules/Inspector/InspectorWindow.h"
@@ -17,10 +17,8 @@
 
 namespace Dwarf
 {
-  EditorView::EditorView(std::unique_ptr<IEditorModel>& model,
-                         std::unique_ptr<Window>&       window)
-    : m_Model(model)
-    , m_Window(window)
+  EditorView::EditorView(std::unique_ptr<IWindow>& window)
+    : m_Window(window)
   {
     using enum MODULE_TYPE;
     AddWindow(SCENE_GRAPH);

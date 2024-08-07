@@ -7,5 +7,4 @@ target_sources(${targetName}
     # EditorGui.cpp
     Editor.cpp
     EditorModel.cpp
-    EditorView.cpp
 )

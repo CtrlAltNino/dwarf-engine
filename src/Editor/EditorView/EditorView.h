@@ -1,8 +1,8 @@
 #pragma once
 #include "pch.h"
-#include "Window/Window.h"
+#include "Window/IWindow.h"
 #include "Editor/Modules/GuiModule.h"
-#include "Editor/IEditorView.h"
+#include "Editor/EditorView/IEditorView.h"
 // #include "Editor/IEditorModel.h"
 
 namespace Dwarf
@@ -12,7 +12,7 @@ namespace Dwarf
   {
   private:
     // std::unique_ptr<IEditorModel>& m_Model;
-    std::shared_ptr<Window> m_Window;
+    std::shared_ptr<IWindow> m_Window;
 
     /// @brief ID counter for GUI modules.
     int m_GuiModuleIDCount = 0;
@@ -38,7 +38,7 @@ namespace Dwarf
     UpdateWindowTitle() const;
 
   public:
-    explicit EditorView(std::shared_ptr<Window> window);
+    explicit EditorView(std::shared_ptr<IWindow> window);
 
     /// @brief Initializes the view.
     // void
