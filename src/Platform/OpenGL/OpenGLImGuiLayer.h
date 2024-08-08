@@ -1,10 +1,10 @@
 #pragma once
 
-#include "UI/ImGuiLayer.h"
+#include "UI/IImGuiLayer.h"
 
 namespace Dwarf
 {
-  class OpenGLImGuiLayer : public ImGuiLayer
+  class OpenGLImGuiLayer : public IImGuiLayer
   {
   public:
     OpenGLImGuiLayer() = default;

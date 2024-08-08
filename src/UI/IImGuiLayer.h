@@ -5,13 +5,13 @@
 
 namespace Dwarf
 {
-  class ImGuiLayer
+  class IImGuiLayer
   {
   protected:
     SDL_Window* m_Window;
 
   public:
-    virtual ~ImGuiLayer() = default;
+    virtual ~IImGuiLayer() = default;
 
     virtual void
     OnAttach(SDL_Window* window) = 0;
@@ -27,8 +27,5 @@ namespace Dwarf
 
     virtual void
     HandleSDLEvent(SDL_Event* event) = 0;
-
-    static std::shared_ptr<ImGuiLayer>
-    Create(GraphicsApi api);
   };
 }
