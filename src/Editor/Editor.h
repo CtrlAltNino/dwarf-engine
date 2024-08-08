@@ -27,7 +27,7 @@ namespace Dwarf
            const std::shared_ptr<IInputManager>&  inputManager,
            const std::shared_ptr<IAssetDatabase>& assetDatabase,
            const std::shared_ptr<IEditorView>&    view,
-           const std::shared_ptr<Window>&         window);
+           const std::shared_ptr<IWindow>&        window);
 
     /// @brief Starts the render loop
     bool

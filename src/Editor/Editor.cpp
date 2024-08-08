@@ -10,7 +10,7 @@ namespace Dwarf
                  const std::shared_ptr<IInputManager>&  inputManager,
                  const std::shared_ptr<IAssetDatabase>& assetDatabase,
                  const std::shared_ptr<IEditorView>&    view,
-                 const std::shared_ptr<Window>&         window)
+                 const std::shared_ptr<IWindow>&        window)
     : m_Logger(logger)
     , m_Stats(stats)
     , m_InputManager(inputManager)

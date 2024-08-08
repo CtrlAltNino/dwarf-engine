@@ -6,15 +6,19 @@ namespace Dwarf
 {
   WindowsWindow::WindowsWindow(
     const WindowProps&                       props,
-    std::shared_ptr<IGraphicsContextFactory> contextFactory)
+    std::shared_ptr<IGraphicsContextFactory> contextFactory,
+    std::shared_ptr<IImGuiLayerFactory>      imguiLayerFactory,
+    std::shared_ptr<IInputManager>           inputManager)
     : m_ContextFactory(contextFactory)
+    , m_ImguiLayerFactory(imguiLayerFactory)
+    , m_InputManager(inputManager)
   {
     Init(props);
   }
 
   WindowsWindow::~WindowsWindow()
   {
-    m_ImguiLayer->OnDetach();
+    m_ImGuiLayer->OnDetach();
     SDL_DestroyWindow(m_Window);
     SDL_Quit();
   }
@@ -79,8 +83,8 @@ namespace Dwarf
     m_Context = m_ContextFactory->Create(m_Window);
     m_Context->Init();
 
-    m_ImguiLayer = ImGuiLayer::Create(m_Api);
-    m_ImguiLayer->OnAttach(m_Window);
+    m_ImGuiLayer = m_ImguiLayerFactory->Create();
+    m_ImGuiLayer->OnAttach(m_Window);
   }
 
   void
@@ -101,28 +105,28 @@ namespace Dwarf
     SDL_Event event;
     while (SDL_PollEvent(&event))
     {
-      m_ImguiLayer->HandleSDLEvent(&event);
+      m_ImGuiLayer->HandleSDLEvent(&event);
 
       switch (event.type)
       {
         case SDL_QUIT: m_Data.ShouldClose = true; break;
         case SDL_KEYDOWN:
-          InputManager::ProcessKeyDown(event.key.keysym.scancode);
+          m_InputManager->ProcessKeyDown(event.key.keysym.scancode);
           break;
         case SDL_KEYUP:
-          InputManager::ProcessKeyUp(event.key.keysym.scancode);
+          m_InputManager->ProcessKeyUp(event.key.keysym.scancode);
           break;
-        case SDL_MOUSEWHEEL: InputManager::ProcessScroll(event); break;
+        case SDL_MOUSEWHEEL: m_InputManager->ProcessScroll(event); break;
         default: break;
       }
     }
-    m_ImguiLayer->Begin();
+    m_ImGuiLayer->Begin();
   }
 
   void
   WindowsWindow::EndFrame()
   {
-    m_ImguiLayer->End();
+    m_ImGuiLayer->End();
     m_Context->SwapBuffers();
   }
 

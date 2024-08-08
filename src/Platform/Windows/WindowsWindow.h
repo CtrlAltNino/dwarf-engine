@@ -1,9 +1,11 @@
 #pragma once
 
 #include "Core/Rendering/GraphicsContext/IGraphicsContextFactory.h"
+#include "UI/IImGuiLayerFactory.h"
 #include "Window/IWindow.h"
 #include "Core/Rendering/GraphicsContext/IGraphicsContext.h"
-#include "UI/ImGuiLayer.h"
+#include "UI/IImGuiLayer.h"
+#include "Input/IInputManager.h"
 
 namespace Dwarf
 {
@@ -12,7 +14,9 @@ namespace Dwarf
   public:
     explicit WindowsWindow(
       const WindowProps&                       props,
-      std::shared_ptr<IGraphicsContextFactory> contextFactory);
+      std::shared_ptr<IGraphicsContextFactory> contextFactory,
+      std::shared_ptr<IImGuiLayerFactory>      imguiLayerFactory,
+      std::shared_ptr<IInputManager>           inputManager);
     ~WindowsWindow() override;
 
     void
@@ -62,8 +66,10 @@ namespace Dwarf
 
     SDL_Window*                              m_Window;
     std::shared_ptr<IGraphicsContext>        m_Context;
-    std::shared_ptr<ImGuiLayer>              m_ImguiLayer;
+    std::shared_ptr<IImGuiLayer>             m_ImGuiLayer;
     std::shared_ptr<IGraphicsContextFactory> m_ContextFactory;
+    std::shared_ptr<IImGuiLayerFactory>      m_ImguiLayerFactory;
+    std::shared_ptr<IInputManager>           m_InputManager;
 
     struct WindowData
     {
