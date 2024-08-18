@@ -34,7 +34,7 @@ namespace Dwarf
       std::string           fileContent = jsonObject.dump(4);
       std::filesystem::path settingsPath =
         FileHandler::GetProjectSettingsPath();
-      if (!FileHandler::CheckIfDirectoyExists(settingsPath))
+      if (!FileHandler::DirectoyExists(settingsPath))
       {
         FileHandler::CreateDirectoryAt(settingsPath);
       }
@@ -263,7 +263,7 @@ namespace Dwarf
           projectSettingsPath.replace(pos, 1, "/");
       }*/
 
-      if (FileHandler::CheckIfFileExists(projectSettingsPath))
+      if (FileHandler::FileExists(projectSettingsPath))
       {
         // Update the projectSettings.dproj "projectName" entry
         // std::string templateProjectSettingsDirectory =
@@ -319,7 +319,7 @@ namespace Dwarf
 
       std::filesystem::path projectSettingsPath =
         (s_ProjectList[id].path / "projectSettings.dproj");
-      if (FileHandler::CheckIfFileExists(projectSettingsPath))
+      if (FileHandler::FileExists(projectSettingsPath))
       {
         // Update the projectSettings.dproj "projectName" entry
         // std::string templateProjectSettingsDirectory =

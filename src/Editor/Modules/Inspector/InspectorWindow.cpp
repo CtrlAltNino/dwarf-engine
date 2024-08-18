@@ -1,8 +1,8 @@
 #include "Editor/Modules/Inspector/InspectorWindow.h"
 
-#include "Core/Asset/AssetDatabase.h"
+// #include "Core/Asset/AssetDatabase.h"
 #include "Editor/Modules/Inspector/AssetInspectorRenderer.h"
-#include "Core/UI/DwarfUI.h"
+#include "UI/DwarfUI.h"
 
 #define COMPONENT_PANEL_PADDING (8.0f)
 #define ADD_BUTTON_WIDTH (40.0f)
@@ -10,9 +10,8 @@
 
 namespace Dwarf
 {
-
-  InspectorWindow::InspectorWindow(std::shared_ptr<EditorModel> model, int id)
-    : GuiModule(model, "Inspector", MODULE_TYPE::INSPECTOR, id)
+  InspectorWindow::InspectorWindow(int id)
+    : IGuiModule("Inspector", MODULE_TYPE::INSPECTOR, id)
     , m_Scene(model->GetScene())
   {
     AssetInspectorRenderer::Init(model);

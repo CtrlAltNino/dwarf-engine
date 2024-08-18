@@ -1,3 +1,4 @@
+#include "Editor/Modules/IGuiModuleFactory.h"
 #include "pch.h"
 #include <memory>
 #include <nfd.h>
@@ -5,20 +6,16 @@
 #include "EditorView.h"
 
 #include "Core/Asset/Database/AssetDatabase.h"
-#include "Editor/Modules/Asset Browser/AssetBrowserWindow.h"
-#include "Editor/Modules/Debug Information/DebugWindow.h"
-#include "Editor/Modules/Inspector/InspectorWindow.h"
-#include "Editor/Modules/Performance/PerformanceWindow.h"
-#include "Editor/Modules/Scene Hierarchy/SceneHierarchyWindow.h"
-#include "Editor/Modules/Scene Viewer/SceneViewerWindow.h"
 
 #include "Core/Scene/SceneUtilities.h"
 #include "Core/UI/DwarfUI.h"
 
 namespace Dwarf
 {
-  EditorView::EditorView(std::unique_ptr<IWindow>& window)
+  EditorView::EditorView(std::shared_ptr<IWindow>           window,
+                         std::shared_ptr<IGuiModuleFactory> guiModuleFactory)
     : m_Window(window)
+    , m_GuiModuleFactory(guiModuleFactory)
   {
     using enum MODULE_TYPE;
     AddWindow(SCENE_GRAPH);

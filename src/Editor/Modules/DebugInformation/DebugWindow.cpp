@@ -1,13 +1,17 @@
-#include "Editor/Modules/Debug Information/DebugWindow.h"
-#include "Core/Asset/AssetDatabase.h"
-#include "Core/Asset/AssetComponents.h"
+#include "DebugWindow.h"
+// #include "Core/Asset/Database/AssetDatabase.h"
+// #include "Core/Asset/Database/AssetComponents.h"
 #include "Core/GenericComponents.h"
+#include <entt/entity/fwd.hpp>
+#include <memory>
 
 namespace Dwarf
 {
 
-  DebugWindow::DebugWindow(std::shared_ptr<EditorModel> model, int id)
-    : GuiModule(model, "Debug", MODULE_TYPE::DEBUG, id)
+  DebugWindow::DebugWindow(int                             id,
+                           std::shared_ptr<IAssetDatabase> assetDatabase)
+    : IGuiModule("Debug", MODULE_TYPE::DEBUG, id)
+    , m_AssetDatabase(assetDatabase)
   {
   }
 
@@ -33,47 +37,43 @@ namespace Dwarf
     if (ImGui::CollapsingHeader("Asset Database"))
     {
       ImGui::Text("Listing all imported assets and their UID's");
+      std::shared_ptr<entt::registry> registry = m_AssetDatabase->GetRegistry();
 
       auto materialView =
-        AssetDatabase::s_Registry
+        registry
           ->view<MaterialAsset, PathComponent, NameComponent, IDComponent>();
       auto modelView =
-        AssetDatabase::s_Registry
-          ->view<ModelAsset, PathComponent, NameComponent, IDComponent>();
+        registry->view<ModelAsset, PathComponent, NameComponent, IDComponent>();
       auto sceneView =
-        AssetDatabase::s_Registry
-          ->view<SceneAsset, PathComponent, NameComponent, IDComponent>();
-      auto vertexShaderView = AssetDatabase::s_Registry->view<VertexShaderAsset,
-                                                              PathComponent,
-                                                              NameComponent,
-                                                              IDComponent>();
-      auto fragmentShaderView =
-        AssetDatabase::s_Registry->view<FragmentShaderAsset,
-                                        PathComponent,
-                                        NameComponent,
-                                        IDComponent>();
-      auto geometryShaderView =
-        AssetDatabase::s_Registry->view<GeometryShaderAsset,
-                                        PathComponent,
-                                        NameComponent,
-                                        IDComponent>();
-      auto computeShaderView =
-        AssetDatabase::s_Registry->view<ComputeShaderAsset,
-                                        PathComponent,
-                                        NameComponent,
-                                        IDComponent>();
+        registry->view<SceneAsset, PathComponent, NameComponent, IDComponent>();
+      auto vertexShaderView = registry->view<VertexShaderAsset,
+                                             PathComponent,
+                                             NameComponent,
+                                             IDComponent>();
+      auto fragmentShaderView = registry->view<FragmentShaderAsset,
+                                               PathComponent,
+                                               NameComponent,
+                                               IDComponent>();
+      auto geometryShaderView = registry->view<GeometryShaderAsset,
+                                               PathComponent,
+                                               NameComponent,
+                                               IDComponent>();
+      auto computeShaderView = registry->view<ComputeShaderAsset,
+                                              PathComponent,
+                                              NameComponent,
+                                              IDComponent>();
       auto tesselationControlShaderView =
-        AssetDatabase::s_Registry->view<TesselationControlShaderAsset,
-                                        PathComponent,
-                                        NameComponent,
-                                        IDComponent>();
+        registry->view<TessellationControlShaderAsset,
+                       PathComponent,
+                       NameComponent,
+                       IDComponent>();
       auto tesselationEvaluationShaderView =
-        AssetDatabase::s_Registry->view<TesselationEvaluationShaderAsset,
-                                        PathComponent,
-                                        NameComponent,
-                                        IDComponent>();
+        registry->view<TessellationEvaluationShaderAsset,
+                       PathComponent,
+                       NameComponent,
+                       IDComponent>();
       auto textureView =
-        AssetDatabase::s_Registry
+        registry
           ->view<TextureAsset, PathComponent, NameComponent, IDComponent>();
 
       if (ImGui::TreeNode("Materials##1"))
@@ -268,8 +268,8 @@ namespace Dwarf
     // Add Deserialization for data
   }
 
-  std::string
-  DebugWindow::Serialize()
+  nlohmann::json
+  DebugWindow::Serialize() const
   {
     return "";
   }

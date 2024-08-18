@@ -47,11 +47,11 @@ namespace Dwarf
     {
       // Create Project blabla
       std::filesystem::path projectDirectory = projectPath / projectName;
-      if (!FileHandler::CheckIfDirectoyExists(projectDirectory))
+      if (!FileHandler::DirectoyExists(projectDirectory))
       {
         std::filesystem::path projectSettingsPath =
           projectPath / projectName / "projectSettings.dproj";
-        if (!FileHandler::CheckIfFileExists(projectSettingsPath))
+        if (!FileHandler::FileExists(projectSettingsPath))
         {
           FileHandler::CreateDirectoryAt(projectDirectory);
 

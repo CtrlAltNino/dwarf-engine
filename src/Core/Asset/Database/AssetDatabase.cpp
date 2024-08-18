@@ -20,7 +20,7 @@ namespace Dwarf
     , m_ShaderRecompiler(shaderRecompiler)
     , m_Registry(std::make_shared<entt::registry>())
   {
-    if (!FileHandler::CheckIfDirectoyExists(m_AssetDirectoryPath))
+    if (!FileHandler::DirectoyExists(m_AssetDirectoryPath))
     {
       FileHandler::CreateDirectoryAt(m_AssetDirectoryPath);
     }
@@ -587,5 +587,11 @@ namespace Dwarf
         break;
       }
     }
+  }
+
+  std::shared_ptr<entt::registry>
+  AssetDatabase::GetRegistry()
+  {
+    return m_Registry;
   }
 }

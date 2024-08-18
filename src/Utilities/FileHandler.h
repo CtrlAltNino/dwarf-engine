@@ -39,7 +39,7 @@ namespace Dwarf
     /// @param filePath Absolute path to a file.
     /// @return True if file exists, false if not.
     static bool
-    CheckIfFileExists(std::filesystem::path const& filePath);
+    FileExists(std::filesystem::path const& filePath);
 
     /// @brief Reads a file and returns the content.
     /// @param filePath Absolute path to a file.
@@ -58,7 +58,7 @@ namespace Dwarf
     /// @param path Path to a directory.
     /// @return True if directory is present, false if not.
     static bool
-    CheckIfDirectoyExists(std::filesystem::path const& path);
+    DirectoyExists(std::filesystem::path const& path);
 
     /// @brief Creates a directory at a given path.
     /// @param path Path to a directory.

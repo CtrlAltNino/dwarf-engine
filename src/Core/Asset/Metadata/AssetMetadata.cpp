@@ -27,7 +27,7 @@ namespace Dwarf
   {
     std::string fileContent = metaData.dump(4);
 
-    if (!FileHandler::CheckIfDirectoyExists(assetPath))
+    if (!FileHandler::DirectoyExists(assetPath))
     {
       FileHandler::CreateDirectoryAt(assetPath);
     }

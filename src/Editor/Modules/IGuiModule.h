@@ -1,4 +1,5 @@
 #pragma once
+#include "Utilities/ISerializable.h"
 #include "pch.h"
 #include <imgui.h>
 #include <imgui_internal.h>
@@ -21,12 +22,9 @@ namespace Dwarf
   };
 
   /// @brief GUI module base class.
-  class GuiModule
+  class IGuiModule : ISerializable
   {
   protected:
-    /// @brief Interfaced editor controller to communicate with the controller.
-    std::shared_ptr<EditorModel> m_Model;
-
     /// @brief Name to use for the module.
     std::string m_Label;
 
@@ -40,18 +38,14 @@ namespace Dwarf
     bool m_WindowOpened = true;
 
   public:
-    GuiModule(std::shared_ptr<EditorModel> model,
-              std::string_view             name,
-              MODULE_TYPE                  type,
-              int                          index)
-      : m_Model(model)
-      , m_Label(name)
+    IGuiModule(std::string_view name, MODULE_TYPE type, int index)
+      : m_Label(name)
       , m_ModuleType(type)
       , m_Index(index)
     {
     }
 
-    virtual ~GuiModule() = default;
+    virtual ~IGuiModule() = default;
 
     /// @brief Returns the name of the module.
     /// @return Name of the module.
@@ -102,9 +96,6 @@ namespace Dwarf
     /// @brief Renders the module window.
     virtual void
     OnImGuiRender() = 0;
-
-    virtual std::string
-    Serialize() = 0;
 
     virtual void
     Deserialize(nlohmann::json moduleData) = 0;

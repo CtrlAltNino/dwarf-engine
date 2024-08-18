@@ -100,7 +100,7 @@ namespace Dwarf
   /// @param filePath Absolute path to a file.
   /// @return True if file exists, false if not.
   bool
-  FileHandler::CheckIfFileExists(std::filesystem::path const& filePath)
+  FileHandler::FileExists(std::filesystem::path const& filePath)
   {
     std::filesystem::path copy = filePath;
     std::ifstream         fileStream(copy.make_preferred(), std::ios::in);
@@ -160,7 +160,7 @@ namespace Dwarf
   /// @param path Path to a directory.
   /// @return True if directory is present, false if not.
   bool
-  FileHandler::CheckIfDirectoyExists(std::filesystem::path const& path)
+  FileHandler::DirectoyExists(std::filesystem::path const& path)
   {
     return std::filesystem::exists(path);
   }

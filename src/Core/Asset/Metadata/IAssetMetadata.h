@@ -4,10 +4,8 @@ namespace Dwarf
 {
   class IAssetMetadata
   {
-  private:
-    static constexpr const char* METADATA_EXTENSION = ".dmeta";
-
   public:
+    static constexpr const char* METADATA_EXTENSION = ".dmeta";
     virtual ~IAssetMetadata() = default;
 
     static std::filesystem::path

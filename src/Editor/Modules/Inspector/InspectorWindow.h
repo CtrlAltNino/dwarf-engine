@@ -2,14 +2,14 @@
 #include "pch.h"
 #include "Core/Scene/Scene.h"
 #include "Editor/EditorModel.h"
-#include "Editor/Modules/GuiModule.h"
+#include "Editor/Modules/IGuiModule.h"
 
 namespace Dwarf
 {
 
   /// @brief Module that renders a window, containing information of selected
   /// objects or assets.
-  class InspectorWindow : public GuiModule
+  class InspectorWindow : public IGuiModule
   {
   private:
     /// @brief Pointer to the currently opened scene instance.
@@ -31,7 +31,7 @@ namespace Dwarf
     RenderComponent(T& component);
 
   public:
-    InspectorWindow(std::shared_ptr<EditorModel> listener, int id);
+    InspectorWindow(int id);
 
     /// @brief Renders the module window.
     void
@@ -40,8 +40,8 @@ namespace Dwarf
     void
     OnUpdate(double deltaTime) override;
 
-    std::string
-    Serialize() override;
+    nlohmann::json
+    Serialize() const override;
 
     void
     Deserialize(nlohmann::json moduleData) override;

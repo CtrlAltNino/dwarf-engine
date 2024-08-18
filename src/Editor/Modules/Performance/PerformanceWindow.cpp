@@ -3,9 +3,8 @@
 namespace Dwarf
 {
 
-  PerformanceWindow::PerformanceWindow(std::shared_ptr<EditorModel> model,
-                                       int                          id)
-    : GuiModule(model, "Performance", MODULE_TYPE::PERFORMANCE, id)
+  PerformanceWindow::PerformanceWindow(int id)
+    : IGuiModule("Performance", MODULE_TYPE::PERFORMANCE, id)
   {
   }
 
@@ -69,9 +68,10 @@ namespace Dwarf
     // Deserialization of saved data
   }
 
-  std::string
-  PerformanceWindow::Serialize()
+  nlohmann::json
+  PerformanceWindow::Serialize() const
   {
+    // TODO: Implement serialization
     return "";
   }
 }

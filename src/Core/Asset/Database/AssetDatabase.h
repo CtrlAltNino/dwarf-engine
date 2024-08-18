@@ -12,6 +12,7 @@
 #include "Core/Rendering/Shader/IShader.h"
 #include "Utilities/FileHandler.h"
 
+#include <entt/entity/fwd.hpp>
 #include <entt/entt.hpp>
 
 namespace Dwarf
@@ -117,6 +118,9 @@ namespace Dwarf
     RenameDirectory(std::filesystem::path const& from,
                     std::filesystem::path const& to) override;
 
+    std::shared_ptr<entt::registry>
+    GetRegistry() override;
+
     // TODO: MOVE THESE
     // void
     // CreateNewMaterialAsset() override;
@@ -190,7 +194,7 @@ namespace Dwarf
         IAssetMetadata::GetMetadataPath(assetPath);
 
       auto id = UID();
-      if (FileHandler::CheckIfFileExists(metaDataPath.string().c_str()))
+      if (FileHandler::FileExists(metaDataPath.string().c_str()))
       {
         nlohmann::json metaData = m_AssetMetadata->GetMetadata(assetPath);
         id = UID(metaData["guid"]);

@@ -37,8 +37,8 @@ namespace Dwarf
     // Check if "New Scene" already exists, if so, increment the number
     std::string sceneName = "New Scene";
     int         i = 1;
-    while (FileHandler::CheckIfFileExists(
-      directory / (sceneName + std::to_string(i) + ".json")))
+    while (FileHandler::FileExists(directory /
+                                   (sceneName + std::to_string(i) + ".json")))
     {
       i++;
     }

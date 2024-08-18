@@ -1,13 +1,13 @@
 #pragma once
 #include "pch.h"
 #include "Editor/EditorModel.h"
-#include "Editor/Modules/GuiModule.h"
+#include "Editor/Modules/IGuiModule.h"
 
 namespace Dwarf
 {
 
   /// @brief Module to render a window that displays performance statistics.
-  class PerformanceWindow : public GuiModule
+  class PerformanceWindow : public IGuiModule
   {
   private:
     /// @brief Pointer to the frame time.
@@ -17,7 +17,7 @@ namespace Dwarf
     std::shared_ptr<double> m_RenderTime = nullptr;
 
   public:
-    PerformanceWindow(std::shared_ptr<EditorModel> model, int id);
+    PerformanceWindow(int id);
 
     /// @brief Renders the module window.
     void
@@ -26,8 +26,8 @@ namespace Dwarf
     void
     OnUpdate(double deltaTime) override;
 
-    std::string
-    Serialize() override;
+    nlohmann::json
+    Serialize() const override;
 
     void
     Deserialize(nlohmann::json moduleData) override;

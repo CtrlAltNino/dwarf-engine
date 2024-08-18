@@ -1,12 +1,14 @@
 #pragma once
+#include "Core/Scene/IScene.h"
 #include "Editor/IEditor.h"
 
 #include "Core/Asset/Database/IAssetDatabase.h"
 #include "Logging/IDwarfLogger.h"
 #include "Window/IWindow.h"
 #include "Editor/EditorView/IEditorView.h"
-#include "Editor/IEditorStats.h"
+#include "Editor/Stats/IEditorStats.h"
 #include "Input/IInputManager.h"
+#include <memory>
 
 namespace Dwarf
 {
@@ -20,6 +22,7 @@ namespace Dwarf
     std::shared_ptr<IEditorStats>   m_Stats;
     std::shared_ptr<IInputManager>  m_InputManager;
     std::shared_ptr<IAssetDatabase> m_AssetDatabase;
+    std::shared_ptr<IScene>         m_Scene;
 
   public:
     Editor(const std::shared_ptr<IDwarfLogger>&   logger,

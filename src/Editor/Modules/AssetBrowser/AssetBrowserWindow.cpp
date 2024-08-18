@@ -1,16 +1,33 @@
+#include "Core/Asset/AssetTypes.h"
 #include "pch.h"
-#include "Editor/Modules/Asset Browser/AssetBrowserWindow.h"
+#include "Editor/Modules/AssetBrowser/AssetBrowserWindow.h"
 #include "Input/InputManager.h"
 #include "Core/Scene/SceneUtilities.h"
 #include "Core/Rendering/Texture/TextureCreator.h"
+#include <cstring>
 
 namespace Dwarf
 {
-
-  AssetBrowserWindow::AssetBrowserWindow(std::shared_ptr<EditorModel> model,
-                                         int                          id)
-    : GuiModule(model, "Asset Browser", MODULE_TYPE::PERFORMANCE, id)
+  AssetBrowserWindow::AssetBrowserWindow(
+    AssetDirectoryPath                assetDirectoryPath,
+    int                               id,
+    std::shared_ptr<ITextureFactory>  textureFactory,
+    std::shared_ptr<IAssetDatabase>   assetDatabase,
+    std::shared_ptr<IInputManager>    inputManager,
+    std::shared_ptr<IEditorSelection> editorSelection,
+    std::shared_ptr<IMaterialIO>      materialIO,
+    std::shared_ptr<IMaterialFactory> materialFactory,
+    std::shared_ptr<IAssetMetadata>   assetMetadata)
+    : IGuiModule("Asset Browser", MODULE_TYPE::PERFORMANCE, id)
+    , m_AssetDirectoryPath(assetDirectoryPath)
     , m_CurrentDirectory(m_AssetDirectoryPath)
+    , m_TextureFactory(textureFactory)
+    , m_AssetDatabase(assetDatabase)
+    , m_InputManager(inputManager)
+    , m_EditorSelection(editorSelection)
+    , m_MaterialIO(materialIO)
+    , m_MaterialFactory(materialFactory)
+    , m_AssetMetadata(assetMetadata)
   {
     m_DirectoryHistory.push_back(m_CurrentDirectory);
     LoadIcons();
@@ -42,11 +59,11 @@ namespace Dwarf
   void
   AssetBrowserWindow::OnUpdate(double deltaTime)
   {
-    if (InputManager::GetMouseDown(MOUSE_BUTTON::MOUSE_BUTTON_4))
+    if (m_InputManager->GetMouseButtonDown(MOUSE_BUTTON::MOUSE_BUTTON_4))
     {
       GoBack();
     }
-    else if (InputManager::GetMouseDown(MOUSE_BUTTON::MOUSE_BUTTON_5))
+    else if (m_InputManager->GetMouseButtonDown(MOUSE_BUTTON::MOUSE_BUTTON_5))
     {
       GoForward();
     }
@@ -57,34 +74,35 @@ namespace Dwarf
   {
     std::filesystem::path iconPath("data/engine/img/icons/asset browser");
 
-    m_DirectoryIcon = TextureCreator::FromPath(iconPath / "directoryIcon.png");
+    m_DirectoryIcon =
+      m_TextureFactory->FromPath(iconPath / "directoryIcon.png");
 
-    m_FBXIcon = TextureCreator::FromPath(iconPath / "fbxIcon.png");
-    m_OBJIcon = TextureCreator::FromPath(iconPath / "objIcon.png");
+    m_FBXIcon = m_TextureFactory->FromPath(iconPath / "fbxIcon.png");
+    m_OBJIcon = m_TextureFactory->FromPath(iconPath / "objIcon.png");
 
-    m_JPGIcon = TextureCreator::FromPath(iconPath / "jpgIcon.png");
-    m_PNGIcon = TextureCreator::FromPath(iconPath / "pngIcon.png");
+    m_JPGIcon = m_TextureFactory->FromPath(iconPath / "jpgIcon.png");
+    m_PNGIcon = m_TextureFactory->FromPath(iconPath / "pngIcon.png");
 
     m_VertexShaderIcon =
-      TextureCreator::FromPath(iconPath / "vertexShaderIcon.png");
-    m_TessellationControlShaderIcon =
-      TextureCreator::FromPath(iconPath / "tessellationControlShaderIcon.png");
-    m_TessellationEvaluationShaderIcon = TextureCreator::FromPath(
+      m_TextureFactory->FromPath(iconPath / "vertexShaderIcon.png");
+    m_TessellationControlShaderIcon = m_TextureFactory->FromPath(
+      iconPath / "tessellationControlShaderIcon.png");
+    m_TessellationEvaluationShaderIcon = m_TextureFactory->FromPath(
       iconPath / "tessellationEvaluationShaderIcon.png");
     m_GeometryShaderIcon =
-      TextureCreator::FromPath(iconPath / "geometryShaderIcon.png");
+      m_TextureFactory->FromPath(iconPath / "geometryShaderIcon.png");
     m_FragmentShaderIcon =
-      TextureCreator::FromPath(iconPath / "fragmentShaderIcon.png");
+      m_TextureFactory->FromPath(iconPath / "fragmentShaderIcon.png");
     m_ComputeShaderIcon =
-      TextureCreator::FromPath(iconPath / "computeShaderIcon.png");
-    m_HLSLShaderIcon = TextureCreator::FromPath(iconPath / "hlslIcon.png");
+      m_TextureFactory->FromPath(iconPath / "computeShaderIcon.png");
+    m_HLSLShaderIcon = m_TextureFactory->FromPath(iconPath / "hlslIcon.png");
 
-    m_SceneIcon = TextureCreator::FromPath(iconPath / "sceneIcon.png");
+    m_SceneIcon = m_TextureFactory->FromPath(iconPath / "sceneIcon.png");
 
-    m_MaterialIcon = TextureCreator::FromPath(iconPath / "materialIcon.png");
+    m_MaterialIcon = m_TextureFactory->FromPath(iconPath / "materialIcon.png");
 
     m_UnknownFileIcon =
-      TextureCreator::FromPath(iconPath / "unknownFileIcon.png");
+      m_TextureFactory->FromPath(iconPath / "unknownFileIcon.png");
   }
 
   bool
@@ -163,10 +181,10 @@ namespace Dwarf
     {
       if (ImGui::IsItemClicked())
       {
-        m_CurrentDirectory = AssetDatabase::GetAssetDirectoryPath();
+        m_CurrentDirectory = m_AssetDirectoryPath;
       }
       ImGui::Indent(8.0f);
-      RenderDirectoryLevel(AssetDatabase::GetAssetDirectoryPath());
+      RenderDirectoryLevel(m_AssetDirectoryPath);
       ImGui::Unindent(8.0f);
     }
     ImGui::End();
@@ -219,7 +237,8 @@ namespace Dwarf
           // TODO: Make this moddable
           if (ImGui::MenuItem("Default"))
           {
-            AssetDatabase::CreateNewMaterialAsset(m_CurrentDirectory);
+            m_MaterialIO->SaveMaterial(
+              m_MaterialFactory->CreateMaterial(m_CurrentDirectory));
           }
           ImGui::EndMenu();
         }
@@ -303,7 +322,7 @@ namespace Dwarf
 
       if (!(directoryEntry.path().has_extension() &&
             directoryEntry.path().extension() ==
-              AssetMetadata::META_DATA_EXTENSION))
+              IAssetMetadata::METADATA_EXTENSION))
       {
         float padding = 16.0f * m_IconScale;
         float halfPadding = padding / 2.0f;
@@ -403,10 +422,10 @@ namespace Dwarf
           else if (ImGui::MenuItem("Delete"))
           {
             // TODO: Confirmation modal
-            if (AssetDatabase::Exists(path))
+            if (m_AssetDatabase->Exists(path))
             {
-              AssetDatabase::Remove(path);
-              AssetMetadata::RemoveMetadata(path);
+              m_AssetDatabase->Remove(path);
+              m_AssetMetadata->RemoveMetadata(path);
             }
             FileHandler::Delete(path);
           }
@@ -527,13 +546,13 @@ namespace Dwarf
       {
         std::filesystem::path newPath =
           m_RenamePathBuffer.remove_filename().concat(m_RenameBuffer);
-        if (AssetDatabase::Exists(old))
+        if (m_AssetDatabase->Exists(old))
         {
-          AssetDatabase::Rename(old, newPath);
+          m_AssetDatabase->Rename(old, newPath);
         }
         else
         {
-          AssetDatabase::RenameDirectory(old, newPath);
+          m_AssetDatabase->RenameDirectory(old, newPath);
         }
         FileHandler::Rename(old, newPath);
         ImGui::CloseCurrentPopup();
@@ -581,7 +600,8 @@ namespace Dwarf
     }
     else if (directoryEntry.path().extension() == ".dscene")
     {
-      m_Model->SetScene(SceneUtilities::LoadScene(directoryEntry.path()));
+      // m_Model->SetScene(SceneUtilities::LoadScene(directoryEntry.path()));
+      // TODO: Use SceneIO
     }
     else
     {
@@ -609,7 +629,7 @@ namespace Dwarf
   AssetBrowserWindow::SelectAsset(std::filesystem::path const& path)
   {
     m_SelectedAsset = path;
-    m_Model->GetSelection().SelectAsset(m_SelectedAsset);
+    m_EditorSelection->SelectAsset(m_SelectedAsset);
     // TODO: command to inspector
   }
 
@@ -623,7 +643,7 @@ namespace Dwarf
   AssetBrowserWindow::ClearSelection()
   {
     m_SelectedAsset = "";
-    m_Model->GetSelection().ClearAssetSelection();
+    m_EditorSelection->ClearAssetSelection();
   }
 
   void
@@ -633,47 +653,46 @@ namespace Dwarf
       (std::filesystem::path)moduleData["openedPath"].get<std::string>();
   }
 
-  std::string
-  AssetBrowserWindow::Serialize()
+  nlohmann::json
+  AssetBrowserWindow::Serialize() const
   {
     nlohmann::json moduleData;
 
     moduleData["openedPath"] = m_CurrentDirectory;
 
-    return moduleData.dump(4);
+    return moduleData;
   }
 
   void
   AssetBrowserWindow::SetRenameBuffer(std::filesystem::path const& path)
   {
-    if (FileHandler::CheckIfFileExists(path))
+    if (FileHandler::FileExists(path))
     {
+      // TODO: test this
 #ifdef _MSC_VER
       strncpy_s(
         m_RenameBuffer,
         std::filesystem::path(m_RenamePathBuffer).filename().string().c_str(),
         RENAME_BUFFER_SIZE - 1);
 #else
-      std::strncpy_s(
+      strncpy(
         m_RenameBuffer,
-        RENAME_BUFFER_SIZE,
         std::filesystem::path(m_RenamePathBuffer).filename().string().c_str(),
         RENAME_BUFFER_SIZE - 1);
 #endif
     }
-    else if (FileHandler::CheckIfDirectoyExists(path))
+    else if (FileHandler::DirectoyExists(path))
     {
+      // TODO: test this
 #ifdef _MSC_VER
       strncpy_s(
         m_RenameBuffer,
         std::filesystem::path(m_RenamePathBuffer).stem().string().c_str(),
         RENAME_BUFFER_SIZE - 1);
 #else
-      std::strncpy_s(
-        m_RenameBuffer,
-        RENAME_BUFFER_SIZE,
-        std::filesystem::path(m_RenamePathBuffer).stem().string().c_str(),
-        RENAME_BUFFER_SIZE - 1);
+      strncpy(m_RenameBuffer,
+              std::filesystem::path(m_RenamePathBuffer).stem().string().c_str(),
+              RENAME_BUFFER_SIZE - 1);
 #endif
     }
   }

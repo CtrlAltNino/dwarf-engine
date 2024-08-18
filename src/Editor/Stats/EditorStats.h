@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Editor/IEditorStats.h"
+#include "Editor/Stats/IEditorStats.h"
 
 namespace Dwarf
 {

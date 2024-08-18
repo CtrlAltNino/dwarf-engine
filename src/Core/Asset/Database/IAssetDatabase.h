@@ -2,6 +2,7 @@
 
 #include "Core/UID.h"
 #include "Core/Asset/Database/AssetReference.h"
+#include <entt/entity/fwd.hpp>
 #include <typeindex>
 
 namespace Dwarf
@@ -113,6 +114,9 @@ namespace Dwarf
         RetrieveImpl(typeid(T), path));
     }
 
+    virtual std::shared_ptr<entt::registry>
+    GetRegistry() = 0;
+
     /**
      * @brief Renames an asset in the asset database.
      * @param from Path to the asset.
@@ -130,30 +134,6 @@ namespace Dwarf
     virtual void
     RenameDirectory(std::filesystem::path const& from,
                     std::filesystem::path const& to) = 0;
-
-    // TODO: Move these
-    virtual void
-    CreateNewMaterialAsset();
-    virtual void
-    CreateNewMaterialAsset(std::filesystem::path const& path) = 0;
-
-    // TODO: Move these
-    // virtual std::filesystem::path
-    // GetAssetDirectoryPath() = 0;
-
-    // virtual void
-    // RecompileShaders() = 0;
-
-    // virtual void
-    // AddShaderWatch(std::filesystem::path const& shaderAssetPath,
-    //                std::shared_ptr<IShader>     shader) = 0;
-    // virtual void
-    // RemoveShaderWatch(std::filesystem::path const& shaderAssetPath) = 0;
-
-    // virtual void
-    // AddShaderToRecompilationQueue(std::filesystem::path const& path) = 0;
-    // virtual void
-    // AddShaderToRecompilationQueue(std::shared_ptr<IShader> shader) = 0;
 
     static ASSET_TYPE
     GetAssetType(const std::string& extension)
