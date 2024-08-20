@@ -10,7 +10,7 @@ namespace Dwarf
     virtual ~IGuiModuleFactory() = default;
 
     virtual std::shared_ptr<IGuiModule>
-    CreateGuiModule(MODULE_TYPE type, int index) = 0;
+    CreateGuiModule(MODULE_TYPE type) = 0;
 
     virtual std::shared_ptr<IGuiModule>
     CreateGuiModule(nlohmann::json serializedModule) = 0;

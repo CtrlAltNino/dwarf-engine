@@ -1,14 +1,20 @@
 #pragma once
 
+#include "DI/IDwarfEditorDI.h"
 #include "Editor/Editor.h"
 #include <boost/di.hpp>
 
 namespace Dwarf
 {
-  class DwarfEditorDI
+  class DwarfEditorDI : public IDwarfEditorDI
   {
+  private:
+    boost::di::injector<IEditor> m_Injector;
+
   public:
-    static boost::di::injector<Editor>
-    CreateInjector(std::filesystem::path projectPath);
+    DwarfEditorDI(std::filesystem::path projectPath);
+
+    const boost::di::injector<IEditor>&
+    Get() const override;
   };
 }

@@ -15,6 +15,7 @@ namespace Dwarf
     // std::unique_ptr<IEditorModel>& m_Model;
     std::shared_ptr<IWindow>           m_Window;
     std::shared_ptr<IGuiModuleFactory> m_GuiModuleFactory;
+    std::shared_ptr<IEditor>           m_Editor;
 
     /// @brief ID counter for GUI modules.
     int m_GuiModuleIDCount = 0;
@@ -40,7 +41,9 @@ namespace Dwarf
     UpdateWindowTitle() const;
 
   public:
-    explicit EditorView(std::shared_ptr<IWindow>           window,
+    explicit EditorView(std::optional<nlohmann::json>      serializedView,
+                        std::shared_ptr<IEditor>           editor,
+                        std::shared_ptr<IWindow>           window,
                         std::shared_ptr<IGuiModuleFactory> guiModuleFactory);
 
     /// @brief Initializes the view.
@@ -57,5 +60,8 @@ namespace Dwarf
 
     void
     DockWindowToFocused() override;
+
+    nlohmann::json
+    Serialize() const override;
   };
 }

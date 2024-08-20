@@ -56,7 +56,7 @@ namespace Dwarf
 
     if (projectSettings.contains(LAST_OPENED_SCENE_KEY))
     {
-      m_LastOpenedScene = std::make_shared<UID>(
+      m_LastOpenedScene = std::make_shared<UUID>(
         projectSettings.at(LAST_OPENED_SCENE_KEY).get<uint64_t>());
     }
     else
@@ -117,12 +117,12 @@ namespace Dwarf
   }
 
   void
-  ProjectSettings::SetLastOpenedScene(const std::shared_ptr<UID>& sceneGUID)
+  ProjectSettings::SetLastOpenedScene(const std::shared_ptr<UUID>& sceneGUID)
   {
     m_LastOpenedScene = sceneGUID;
   }
 
-  const std::shared_ptr<UID>&
+  const std::shared_ptr<UUID>&
   ProjectSettings::GetLastOpenedScene() const
   {
     return m_LastOpenedScene;

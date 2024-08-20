@@ -244,7 +244,7 @@ namespace Dwarf
 
   // void
   // Material::SetParameter(std::string_view     identifier,
-  //                        std::shared_ptr<UID> value,
+  //                        std::shared_ptr<UUID> value,
   //                        ShaderParameterType  type)
   // {
   //   if (m_Parameters.contains(identifier) &&

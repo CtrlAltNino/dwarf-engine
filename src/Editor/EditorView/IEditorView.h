@@ -1,10 +1,11 @@
 #pragma once
 #include "Editor/IEditor.h"
+#include "Utilities/ISerializable.h"
 
 namespace Dwarf
 {
   /// @brief View part of the editor's MVC structure.
-  class IEditorView
+  class IEditorView : public ISerializable
   {
   public:
     // explicit IEditorView() = default;

@@ -3,7 +3,7 @@
 #include "Core/Base.h"
 #include "IMaterial.h"
 #include "Core/Rendering/Shader/IShader.h"
-#include "Core/UID.h"
+#include "Core/UUID.h"
 #include "IMaterialProperties.h"
 #include "IMaterial.h"
 
@@ -69,7 +69,7 @@ namespace Dwarf
 
     // void
     // SetParameter(std::string_view     identifier,
-    //              std::shared_ptr<UID> value,
+    //              std::shared_ptr<UUID> value,
     //              ShaderParameterType  type);
 
     // void

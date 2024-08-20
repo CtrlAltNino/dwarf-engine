@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core/UID.h"
+#include "Core/UUID.h"
 #include "Core/Asset/Database/IAssetDatabase.h"
 #include "Core/Asset/Model/IModelImporter.h"
 #include "Core/Asset/Metadata/IAssetMetadata.h"
@@ -49,7 +49,7 @@ namespace Dwarf
      * @brief Imports an asset into the asset database.
      * @param assetPath Path to the asset.
      */
-    std::shared_ptr<UID>
+    std::shared_ptr<UUID>
     Import(std::filesystem::path const& assetPath) override;
 
     /**
@@ -57,7 +57,7 @@ namespace Dwarf
      * @param uid UID of the asset.
      */
     bool
-    Exists(std::shared_ptr<UID> uid) override;
+    Exists(std::shared_ptr<UUID> uid) override;
 
     /**
      * @brief Checks if an asset with a given path exists in the database.
@@ -78,7 +78,7 @@ namespace Dwarf
      * @param uid UID of the asset.
      */
     void
-    Remove(std::shared_ptr<UID> uid) override;
+    Remove(std::shared_ptr<UUID> uid) override;
 
     /**
      * @brief Removes an asset from the asset database.
@@ -97,7 +97,7 @@ namespace Dwarf
      * @brief Reimports an asset in the asset database.
      * @param assetPath Path to the asset.
      */
-    std::shared_ptr<UID>
+    std::shared_ptr<UUID>
     Reimport(std::filesystem::path const& assetPath) override;
 
     /**
@@ -120,6 +120,9 @@ namespace Dwarf
 
     std::shared_ptr<entt::registry>
     GetRegistry() override;
+
+    std::filesystem::path
+    GetAssetDirectoryPath() override;
 
     // TODO: MOVE THESE
     // void
@@ -193,16 +196,16 @@ namespace Dwarf
       std::filesystem::path metaDataPath =
         IAssetMetadata::GetMetadataPath(assetPath);
 
-      auto id = UID();
+      auto id = UUID();
       if (FileHandler::FileExists(metaDataPath.string().c_str()))
       {
         nlohmann::json metaData = m_AssetMetadata->GetMetadata(assetPath);
-        id = UID(metaData["guid"]);
+        id = UUID(metaData["guid"]);
       }
       else
       {
         nlohmann::json metaData;
-        metaData["guid"] = (uint64_t)id;
+        metaData["guid"] = id.ToString();
         m_AssetMetadata->SetMetadata(assetPath, metaData);
       }
 
@@ -211,7 +214,7 @@ namespace Dwarf
     }
 
     std::shared_ptr<void>
-    RetrieveImpl(std::type_index type, std::shared_ptr<UID> uid) override;
+    RetrieveImpl(std::type_index type, std::shared_ptr<UUID> uid) override;
 
     std::shared_ptr<void>
     RetrieveImpl(std::type_index              type,

@@ -1,8 +1,9 @@
 #pragma once
 
-#include "Core/UID.h"
+#include "Core/UUID.h"
 #include "Core/Asset/Database/AssetReference.h"
 #include <entt/entity/fwd.hpp>
+#include <filesystem>
 #include <typeindex>
 
 namespace Dwarf
@@ -40,7 +41,7 @@ namespace Dwarf
      * @brief Imports an asset into the asset database.
      * @param assetPath Path to the asset.
      */
-    virtual std::shared_ptr<UID>
+    virtual std::shared_ptr<UUID>
     Import(std::filesystem::path const& assetPath) = 0;
 
     /**
@@ -48,7 +49,7 @@ namespace Dwarf
      * @param uid UID of the asset.
      */
     virtual bool
-    Exists(std::shared_ptr<UID> uid) = 0;
+    Exists(std::shared_ptr<UUID> uid) = 0;
 
     /**
      * @brief Checks if an asset with a given path exists in the database.
@@ -68,7 +69,7 @@ namespace Dwarf
      * @param uid UID of the asset.
      */
     virtual void
-    Remove(std::shared_ptr<UID> uid) = 0;
+    Remove(std::shared_ptr<UUID> uid) = 0;
 
     /**
      * @brief Removes an asset from the asset database.
@@ -87,7 +88,7 @@ namespace Dwarf
      * @brief Reimports an asset in the asset database.
      * @param assetPath Path to the asset.
      */
-    virtual std::shared_ptr<UID>
+    virtual std::shared_ptr<UUID>
     Reimport(std::filesystem::path const& assetPath) = 0;
 
     /**
@@ -96,7 +97,7 @@ namespace Dwarf
      */
     template<typename T>
     std::shared_ptr<AssetReference<T>>
-    Retrieve(std::shared_ptr<UID> uid)
+    Retrieve(std::shared_ptr<UUID> uid)
     {
       return std::static_pointer_cast<AssetReference<T>>(
         RetrieveImpl(typeid(T), uid));
@@ -149,10 +150,13 @@ namespace Dwarf
       }
     }
 
+    virtual std::filesystem::path
+    GetAssetDirectoryPath() = 0;
+
   private:
     // NVI (Non-Virtual Interface) Implementations
     virtual std::shared_ptr<void>
-    RetrieveImpl(std::type_index type, std::shared_ptr<UID> uid) = 0;
+    RetrieveImpl(std::type_index type, std::shared_ptr<UUID> uid) = 0;
 
     virtual std::shared_ptr<void>
     RetrieveImpl(std::type_index type, std::filesystem::path const& path) = 0;

@@ -2,7 +2,7 @@
 
 #include "pch.h"
 #include "Core/Base.h"
-#include "Core/UID.h"
+#include "Core/UUID.h"
 
 namespace Dwarf
 {
@@ -33,9 +33,9 @@ namespace Dwarf
     GetGraphicsApi() const = 0;
 
     virtual void
-    SetLastOpenedScene(const std::shared_ptr<UID>& lastOpenedScene) = 0;
+    SetLastOpenedScene(const std::shared_ptr<UUID>& lastOpenedScene) = 0;
 
-    virtual const std::shared_ptr<UID>&
+    virtual const std::shared_ptr<UUID>&
     GetLastOpenedScene() const = 0;
   };
 }

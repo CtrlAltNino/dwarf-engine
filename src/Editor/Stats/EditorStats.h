@@ -29,17 +29,5 @@ namespace Dwarf
 
     double
     GetDeltaTime() const override;
-
-    void
-    SetReturnToLauncher(bool returnToLauncher) override;
-
-    bool
-    GetReturnToLauncher() const override;
-
-    void
-    SetCloseSignal(bool closeSignal) override;
-
-    bool
-    GetCloseSignal() const override;
   };
 }

@@ -23,17 +23,5 @@ namespace Dwarf
 
     virtual double
     GetDeltaTime() const = 0;
-
-    virtual void
-    SetReturnToLauncher(bool returnToLauncher) = 0;
-
-    virtual bool
-    GetReturnToLauncher() const = 0;
-
-    virtual void
-    SetCloseSignal(bool closeSignal) = 0;
-
-    virtual bool
-    GetCloseSignal() const = 0;
   };
 }

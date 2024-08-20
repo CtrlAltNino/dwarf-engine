@@ -4,7 +4,7 @@
 
 #include "IShaderParameterCollection.h"
 #include "Core/Base.h"
-#include "Core/UID.h"
+#include "Core/UUID.h"
 
 #include <memory>
 

@@ -70,7 +70,7 @@ namespace Dwarf
     /// @param name Name of the entity.
     /// @return The created entity instance.
     Entity
-    CreateEntityWithUID(UID uid, const std::string& name);
+    CreateEntityWithUID(UUID uid, const std::string& name);
 
     /// @brief Returns the recursive model matrix of a transform.
     /// @param transform A transform component instance.

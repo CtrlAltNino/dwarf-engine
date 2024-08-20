@@ -2,6 +2,7 @@
 #include "pch.h"
 #include <memory>
 #include <nfd.h>
+#include <nlohmann/json_fwd.hpp>
 
 #include "EditorView.h"
 
@@ -12,16 +13,26 @@
 
 namespace Dwarf
 {
-  EditorView::EditorView(std::shared_ptr<IWindow>           window,
+  EditorView::EditorView(std::optional<nlohmann::json>      serializedView,
+                         std::shared_ptr<IEditor>           editor,
+                         std::shared_ptr<IWindow>           window,
                          std::shared_ptr<IGuiModuleFactory> guiModuleFactory)
-    : m_Window(window)
+    : m_Editor(editor)
+    , m_Window(window)
     , m_GuiModuleFactory(guiModuleFactory)
   {
-    using enum MODULE_TYPE;
-    AddWindow(SCENE_GRAPH);
-    AddWindow(INSPECTOR);
-    AddWindow(ASSET_BROWSER);
-    AddWindow(SCENE_VIEWER);
+    // using enum MODULE_TYPE;
+    // AddWindow(SCENE_GRAPH);
+    // AddWindow(INSPECTOR);
+    // AddWindow(ASSET_BROWSER);
+    // AddWindow(SCENE_VIEWER);
+    if (serializedView)
+    {
+      for (auto& module : serializedView.value()["guiModules"])
+      {
+        m_GuiModules.push_back(m_GuiModuleFactory->CreateGuiModule(module));
+      }
+    }
   }
 
   void
@@ -127,12 +138,14 @@ namespace Dwarf
 
         if (ImGui::MenuItem("Return to project launcher"))
         {
-          m_Model->CloseEditor(true);
+          m_Editor->SetCloseSignal(true);
+          m_Editor->SetReturnToLauncher(true);
         }
 
         if (ImGui::MenuItem("Quit"))
         {
-          m_Model->CloseEditor(false);
+          m_Editor->SetCloseSignal(true);
+          m_Editor->SetReturnToLauncher(false);
         }
         ImGui::EndMenu();
       }
@@ -346,5 +359,17 @@ namespace Dwarf
     std::cout << "[EDITOR] Updating window title" << std::endl;
 
     m_Window->SetWindowTitle(windowTitle);
+  }
+
+  nlohmann::json
+  EditorView::Serialize() const
+  {
+    nlohmann::json j;
+    j["guiModules"] = nlohmann::json::array();
+    for (int i = 0; i < m_GuiModules.size(); i++)
+    {
+      j["guiModules"].push_back(m_GuiModules.at(i)->Serialize());
+    }
+    return j;
   }
 }

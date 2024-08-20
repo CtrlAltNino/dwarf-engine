@@ -1,10 +1,12 @@
 #pragma once
 #include "Utilities/ISerializable.h"
 #include "pch.h"
+#include <boost/serialization/strong_typedef.hpp>
 #include <imgui.h>
 #include <imgui_internal.h>
 
 #include "Editor/EditorModel.h"
+#include "Core/UUID.h"
 
 namespace Dwarf
 {
@@ -21,6 +23,10 @@ namespace Dwarf
     DEBUG
   };
 
+  BOOST_STRONG_TYPEDEF(std::string, ModuleLabel);
+  BOOST_STRONG_TYPEDEF(MODULE_TYPE, ModuleType);
+  BOOST_STRONG_TYPEDEF(std::shared_ptr<UUID>, ModuleID);
+
   /// @brief GUI module base class.
   class IGuiModule : ISerializable
   {
@@ -32,16 +38,16 @@ namespace Dwarf
     MODULE_TYPE m_ModuleType;
 
     /// @brief Incremented global GUI module ID.
-    int m_Index;
+    std::shared_ptr<UUID> m_Id;
 
     /// @brief Flag to check if the window is collapsed or not.
     bool m_WindowOpened = true;
 
   public:
-    IGuiModule(std::string_view name, MODULE_TYPE type, int index)
+    IGuiModule(ModuleLabel name, ModuleType type, ModuleID id)
       : m_Label(name)
       , m_ModuleType(type)
-      , m_Index(index)
+      , m_Id(id)
     {
     }
 
@@ -62,10 +68,10 @@ namespace Dwarf
 
     /// @brief Returns the global module index.
     /// @return The module index.
-    int
+    std::shared_ptr<UUID>
     GetIndex() const
     {
-      return m_Index;
+      return m_Id;
     }
 
     /// @brief Generates the ImGui window identifier for a module window..
@@ -73,7 +79,7 @@ namespace Dwarf
     std::string
     GetIdentifier() const
     {
-      return std::format("{}##{}", m_Label, std::to_string(m_Index));
+      return std::format("{}##{}", m_Label, m_Id->ToString());
     }
 
     /// @brief Generates a ImGui ID for the module.

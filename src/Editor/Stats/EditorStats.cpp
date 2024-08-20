@@ -34,28 +34,4 @@ namespace Dwarf
     return TimeUtilities::GetDifferenceInSeconds(m_CurrentTimeStamp,
                                                  m_LastTimeStamp);
   }
-
-  void
-  EditorStats::SetReturnToLauncher(bool returnToLauncher)
-  {
-    m_ReturnToLauncher = returnToLauncher;
-  }
-
-  bool
-  EditorStats::GetReturnToLauncher() const
-  {
-    return m_ReturnToLauncher;
-  }
-
-  void
-  EditorStats::SetCloseSignal(bool closeSignal)
-  {
-    m_CloseSignal = closeSignal;
-  }
-
-  bool
-  EditorStats::GetCloseSignal() const
-  {
-    return m_CloseSignal;
-  }
 }

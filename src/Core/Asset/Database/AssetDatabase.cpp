@@ -4,6 +4,7 @@
 #include "Core/Asset/Database/AssetComponents.h"
 #include "Core/Rendering/Shader/IComputeShader.h"
 #include "Core/Asset/Database/AssetComponents.h"
+#include <filesystem>
 
 namespace Dwarf
 {
@@ -85,14 +86,14 @@ namespace Dwarf
     RecursiveImport(m_AssetDirectoryPath);
   }
 
-  std::shared_ptr<UID>
+  std::shared_ptr<UUID>
   AssetDatabase::Reimport(std::filesystem::path const& assetPath)
   {
     return AssetDatabase::Import(assetPath);
   }
 
   void
-  AssetDatabase::Remove(std::shared_ptr<UID> uid)
+  AssetDatabase::Remove(std::shared_ptr<UUID> uid)
   {
     auto view = m_Registry->view<IDComponent>();
     for (auto entity : view)
@@ -135,7 +136,7 @@ namespace Dwarf
     m_Registry->clear();
   }
 
-  std::shared_ptr<UID>
+  std::shared_ptr<UUID>
   AssetDatabase::Import(const std::filesystem::path& assetPath)
   {
     std::string fileName = assetPath.filename().string();
@@ -210,7 +211,7 @@ namespace Dwarf
   }
 
   bool
-  AssetDatabase::Exists(std::shared_ptr<UID> uid)
+  AssetDatabase::Exists(std::shared_ptr<UUID> uid)
   {
     if (uid)
     {
@@ -240,6 +241,12 @@ namespace Dwarf
       }
     }
     return false;
+  }
+
+  std::filesystem::path
+  AssetDatabase::GetAssetDirectoryPath()
+  {
+    return m_AssetDirectoryPath;
   }
 
   void
@@ -389,7 +396,7 @@ namespace Dwarf
   // }
 
   std::shared_ptr<void>
-  AssetDatabase::RetrieveImpl(std::type_index type, std::shared_ptr<UID> uid)
+  AssetDatabase::RetrieveImpl(std::type_index type, std::shared_ptr<UUID> uid)
   {
     // Retrieve entt::entity with UID component
     for (auto view = m_Registry->view<IDComponent>(); auto entity : view)

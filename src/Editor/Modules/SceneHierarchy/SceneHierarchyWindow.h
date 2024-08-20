@@ -1,14 +1,14 @@
 #pragma once
 
 #include "Editor/EditorModel.h"
-#include "Editor/Modules/GuiModule.h"
-#include "Editor/Modules/Scene Hierarchy/GraphInstruction.h"
+#include "Editor/Modules/IGuiModule.h"
+#include "Editor/Modules/SceneHierarchy/GraphInstruction.h"
 
 namespace Dwarf
 {
 
   /// @brief Module to display and manipulate the scene graph.
-  class SceneHierarchyWindow : public GuiModule
+  class SceneHierarchyWindow : public IGuiModule
   {
   private:
     /// @brief List of graph instruction. Used as a buffer, executed at the end
@@ -36,8 +36,8 @@ namespace Dwarf
     void
     OnUpdate(double deltaTime) override;
 
-    std::string
-    Serialize() override;
+    nlohmann::json
+    Serialize() const override;
 
     void
     Deserialize(nlohmann::json moduleData) override;

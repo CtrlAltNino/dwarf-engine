@@ -5,12 +5,11 @@
 #include "Core/Scene/SceneUtilities.h"
 #include "Core/Rendering/Texture/TextureCreator.h"
 #include <cstring>
+#include <memory>
 
 namespace Dwarf
 {
   AssetBrowserWindow::AssetBrowserWindow(
-    AssetDirectoryPath                assetDirectoryPath,
-    int                               id,
     std::shared_ptr<ITextureFactory>  textureFactory,
     std::shared_ptr<IAssetDatabase>   assetDatabase,
     std::shared_ptr<IInputManager>    inputManager,
@@ -18,8 +17,10 @@ namespace Dwarf
     std::shared_ptr<IMaterialIO>      materialIO,
     std::shared_ptr<IMaterialFactory> materialFactory,
     std::shared_ptr<IAssetMetadata>   assetMetadata)
-    : IGuiModule("Asset Browser", MODULE_TYPE::PERFORMANCE, id)
-    , m_AssetDirectoryPath(assetDirectoryPath)
+    : IGuiModule(ModuleLabel("Asset Browser"),
+                 ModuleType(MODULE_TYPE::ASSET_BROWSER),
+                 ModuleID(std::make_shared<UUID>()))
+    , m_AssetDirectoryPath(assetDatabase->GetAssetDirectoryPath())
     , m_CurrentDirectory(m_AssetDirectoryPath)
     , m_TextureFactory(textureFactory)
     , m_AssetDatabase(assetDatabase)
@@ -31,6 +32,35 @@ namespace Dwarf
   {
     m_DirectoryHistory.push_back(m_CurrentDirectory);
     LoadIcons();
+  }
+
+  AssetBrowserWindow::AssetBrowserWindow(
+    nlohmann::json                    serializedModule,
+    std::shared_ptr<ITextureFactory>  textureFactory,
+    std::shared_ptr<IAssetDatabase>   assetDatabase,
+    std::shared_ptr<IInputManager>    inputManager,
+    std::shared_ptr<IEditorSelection> editorSelection,
+    std::shared_ptr<IMaterialIO>      materialIO,
+    std::shared_ptr<IMaterialFactory> materialFactory,
+    std::shared_ptr<IAssetMetadata>   assetMetadata)
+    : IGuiModule(ModuleLabel("Asset Browser"),
+                 ModuleType(MODULE_TYPE::ASSET_BROWSER),
+                 ModuleID(std::make_shared<UUID>(
+                   serializedModule["id"].get<std::string>())))
+    , m_AssetDirectoryPath(assetDatabase->GetAssetDirectoryPath())
+    , m_CurrentDirectory(serializedModule["openedPath"].get<std::string>())
+    , m_TextureFactory(textureFactory)
+    , m_AssetDatabase(assetDatabase)
+    , m_InputManager(inputManager)
+    , m_EditorSelection(editorSelection)
+    , m_MaterialIO(materialIO)
+    , m_MaterialFactory(materialFactory)
+    , m_AssetMetadata(assetMetadata)
+  {
+    m_DirectoryHistory.push_back(m_CurrentDirectory);
+    LoadIcons();
+
+    Deserialize(serializedModule);
   }
 
   void

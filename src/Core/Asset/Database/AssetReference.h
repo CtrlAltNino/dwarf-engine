@@ -3,7 +3,7 @@
 #include <entt/entt.hpp>
 
 #include "Core/Base.h"
-#include "Core/UID.h"
+#include "Core/UUID.h"
 #include "Core/GenericComponents.h"
 
 namespace Dwarf
@@ -31,7 +31,7 @@ namespace Dwarf
     AssetReference(entt::entity                    assetHandle,
                    std::string                     assetName,
                    std::shared_ptr<entt::registry> registry,
-                   UID                             uid,
+                   UUID                            uid,
                    std::filesystem::path           assetPath)
       : m_AssetHandle(assetHandle)
       , m_Registry(registry)
@@ -59,7 +59,7 @@ namespace Dwarf
 
     /// @brief Returns the UID of the asset.
     /// @return The UID.
-    std::shared_ptr<UID>
+    std::shared_ptr<UUID>
     GetUID() const
     {
       return m_Registry->get<IDComponent>(m_AssetHandle).ID;

@@ -34,8 +34,8 @@ namespace Dwarf
 
     if (shaderJson.contains("vertexShader"))
     {
-      std::shared_ptr<UID> vertexShaderId =
-        std::make_shared<UID>(shaderJson["vertexShader"]);
+      std::shared_ptr<UUID> vertexShaderId =
+        std::make_shared<UUID>(shaderJson["vertexShader"]);
 
       shaderSources.t.emplace_back(
         m_AssetDatabase->Retrieve<VertexShaderAsset>(vertexShaderId));
@@ -43,8 +43,8 @@ namespace Dwarf
 
     if (shaderJson.contains("fragmentShader"))
     {
-      std::shared_ptr<UID> fragmentShaderId =
-        std::make_shared<UID>(shaderJson["fragmentShader"]);
+      std::shared_ptr<UUID> fragmentShaderId =
+        std::make_shared<UUID>(shaderJson["fragmentShader"]);
 
       shaderSources.t.emplace_back(
         m_AssetDatabase->Retrieve<FragmentShaderAsset>(fragmentShaderId));
@@ -52,8 +52,8 @@ namespace Dwarf
 
     if (shaderJson.contains("geometryShader"))
     {
-      std::shared_ptr<UID> geometryShaderId =
-        std::make_shared<UID>(shaderJson["geometryShader"]);
+      std::shared_ptr<UUID> geometryShaderId =
+        std::make_shared<UUID>(shaderJson["geometryShader"]);
 
       shaderSources.t.emplace_back(
         m_AssetDatabase->Retrieve<GeometryShaderAsset>(geometryShaderId));
@@ -61,8 +61,8 @@ namespace Dwarf
 
     if (shaderJson.contains("tessellationControlShader"))
     {
-      std::shared_ptr<UID> tessellationControlShaderId =
-        std::make_shared<UID>(shaderJson["tessellationControlShader"]);
+      std::shared_ptr<UUID> tessellationControlShaderId =
+        std::make_shared<UUID>(shaderJson["tessellationControlShader"]);
 
       shaderSources.t.emplace_back(
         m_AssetDatabase->Retrieve<TessellationControlShaderAsset>(
@@ -71,8 +71,8 @@ namespace Dwarf
 
     if (shaderJson.contains("tessellationEvaluationShader"))
     {
-      std::shared_ptr<UID> tessellationEvaluationShaderId =
-        std::make_shared<UID>(shaderJson["tessellationEvaluationShader"]);
+      std::shared_ptr<UUID> tessellationEvaluationShaderId =
+        std::make_shared<UUID>(shaderJson["tessellationEvaluationShader"]);
 
       shaderSources.t.emplace_back(
         m_AssetDatabase->Retrieve<TessellationEvaluationShaderAsset>(

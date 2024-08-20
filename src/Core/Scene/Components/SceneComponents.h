@@ -3,7 +3,7 @@
 #include "pch.h"
 
 #include <entt/entt.hpp>
-#include "Core/UID.h"
+#include "Core/UUID.h"
 
 namespace Dwarf
 {
@@ -192,12 +192,12 @@ namespace Dwarf
   struct MeshRendererComponent
   {
     /// @brief ID of the mesh asset.
-    std::shared_ptr<UID> meshAsset;
+    std::shared_ptr<UUID> meshAsset;
 
     /// @brief The materials with which the model is to be rendered. The list
     /// index of the materials corresponds to the material index of the
     /// submeshes.
-    std::vector<std::shared_ptr<UID>> materialAssets;
+    std::vector<std::shared_ptr<UUID>> materialAssets;
 
     /// @brief Flag that decides if this model should be used in the shadow cast
     /// pass.
@@ -205,8 +205,8 @@ namespace Dwarf
 
     MeshRendererComponent() = default;
     MeshRendererComponent(const MeshRendererComponent&) = default;
-    MeshRendererComponent(std::shared_ptr<UID>                     mesh,
-                          std::vector<std::shared_ptr<UID>> const& materials)
+    MeshRendererComponent(std::shared_ptr<UUID>                     mesh,
+                          std::vector<std::shared_ptr<UUID>> const& materials)
       : meshAsset(mesh)
       , materialAssets(materials)
     {

@@ -41,7 +41,7 @@ namespace Dwarf
     //     serializedScene["skyboxMaterial"] != "null")
     // {
     //   settings.skyboxMaterial =
-    //     std::make_shared<UID>((uint64_t)serializedScene["skyboxMaterial"]);
+    //     std::make_shared<UUID>((uint64_t)serializedScene["skyboxMaterial"]);
     // }
 
     // std::shared_ptr<Scene> deserializedScene =
@@ -102,7 +102,7 @@ namespace Dwarf
       if (serializedEntity["meshRendererComponent"].contains("mesh") &&
           serializedEntity["meshRendererComponent"]["mesh"] != "null")
       {
-        meshRendererComponent.meshAsset = std::make_shared<UID>(
+        meshRendererComponent.meshAsset = std::make_shared<UUID>(
           (uint64_t)serializedEntity["meshRendererComponent"]["mesh"]);
       }
 
@@ -112,8 +112,9 @@ namespace Dwarf
              serializedEntity["meshRendererComponent"]["materials"])
         {
           meshRendererComponent.materialAssets.push_back(
-            (uint64_t)element == -1 ? nullptr
-                                    : std::make_shared<UID>((uint64_t)element));
+            (uint64_t)element == -1
+              ? nullptr
+              : std::make_shared<UUID>((uint64_t)element));
         }
       }
     }

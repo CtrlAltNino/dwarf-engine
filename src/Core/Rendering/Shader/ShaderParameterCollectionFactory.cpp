@@ -47,7 +47,8 @@ namespace Dwarf
         if (int(parameter.value()["value"]) != -1)
         {
           parameterCollection->SetParameter(
-            parameter.key(), std::make_shared<UID>(parameter.value()["value"]));
+            parameter.key(),
+            std::make_shared<UUID>(parameter.value()["value"]));
         }
         else
         {

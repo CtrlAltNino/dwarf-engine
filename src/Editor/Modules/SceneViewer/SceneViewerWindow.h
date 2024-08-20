@@ -1,4 +1,6 @@
 #pragma once
+#include "Core/Rendering/Framebuffer/IFramebuffer.h"
+#include "Core/Scene/Camera/ICamera.h"
 #include "pch.h"
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
@@ -6,9 +8,7 @@
 #include <ImGuizmo.h>
 
 #include "Editor/EditorModel.h"
-#include "Editor/Modules/GuiModule.h"
-#include "Core/Scene/Camera.h"
-#include "Core/Rendering/Framebuffer/Framebuffer.h"
+#include "Editor/Modules/IGuiModule.h"
 
 namespace Dwarf
 {
@@ -53,22 +53,22 @@ namespace Dwarf
 
   /// @brief Module to render a window that displays the scene and render
   /// options.
-  class SceneViewerWindow : public GuiModule
+  class SceneViewerWindow : public IGuiModule
   {
   private:
     SceneViewerSettings m_Settings;
     // Maintaining important dependencies
 
     /// @brief The render texture for this scene viewer.
-    std::shared_ptr<Framebuffer> m_Framebuffer;
+    std::shared_ptr<IFramebuffer> m_Framebuffer;
 
-    std::shared_ptr<Framebuffer> m_IdBuffer;
+    std::shared_ptr<IFramebuffer> m_IdBuffer;
 
-    std::shared_ptr<Framebuffer> m_OutlineBuffer;
+    std::shared_ptr<IFramebuffer> m_OutlineBuffer;
 
-    std::shared_ptr<Framebuffer> m_PresentationBuffer;
+    std::shared_ptr<IFramebuffer> m_PresentationBuffer;
 
-    std::shared_ptr<Camera> m_Camera;
+    std::shared_ptr<ICamera> m_Camera;
 
     /// @brief Calculates the cutout of the available resolution based on the
     /// given aspect ratio.
@@ -113,8 +113,8 @@ namespace Dwarf
     ImTextureID
     GetFrameBufferForImGui();
 
-    std::string
-    Serialize() override;
+    nlohmann::json
+    Serialize() const override;
 
     void
     Deserialize(nlohmann::json moduleData) override;

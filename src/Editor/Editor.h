@@ -24,6 +24,9 @@ namespace Dwarf
     std::shared_ptr<IAssetDatabase> m_AssetDatabase;
     std::shared_ptr<IScene>         m_Scene;
 
+    bool m_ReturnToLauncher = false;
+    bool m_CloseSignal = false;
+
   public:
     Editor(const std::shared_ptr<IDwarfLogger>&   logger,
            const std::shared_ptr<IEditorStats>&   stats,
@@ -35,5 +38,17 @@ namespace Dwarf
     /// @brief Starts the render loop
     bool
     Run() override;
+
+    void
+    SetReturnToLauncher(bool returnToLauncher) override;
+
+    bool
+    GetReturnToLauncher() const override;
+
+    void
+    SetCloseSignal(bool closeSignal) override;
+
+    bool
+    GetCloseSignal() const override;
   };
 }

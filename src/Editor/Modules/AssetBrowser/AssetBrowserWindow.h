@@ -121,16 +121,15 @@ namespace Dwarf
     RenderFolderContent();
 
   public:
-    AssetBrowserWindow(AssetDirectoryPath                assetDirectoryPath,
-                       int                               index,
-                       std::shared_ptr<ITextureFactory>  textureFactory,
+    AssetBrowserWindow(std::shared_ptr<ITextureFactory>  textureFactory,
                        std::shared_ptr<IAssetDatabase>   assetDatabase,
                        std::shared_ptr<IInputManager>    inputManager,
                        std::shared_ptr<IEditorSelection> editorSelection,
                        std::shared_ptr<IMaterialIO>      materialIO,
                        std::shared_ptr<IMaterialFactory> materialFactory,
                        std::shared_ptr<IAssetMetadata>   assetMetadata);
-    AssetBrowserWindow(nlohmann::json                    moduleData,
+
+    AssetBrowserWindow(nlohmann::json                    serializedModule,
                        std::shared_ptr<ITextureFactory>  textureFactory,
                        std::shared_ptr<IAssetDatabase>   assetDatabase,
                        std::shared_ptr<IInputManager>    inputManager,

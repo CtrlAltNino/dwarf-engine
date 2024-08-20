@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core/UID.h"
+#include "Core/UUID.h"
 #include "Utilities/ISerializable.h"
 
 namespace Dwarf
@@ -104,12 +104,12 @@ namespace Dwarf
 
     /// @brief Returns the UID of the skybox material.
     /// @return The UID of the skybox material.
-    virtual std::shared_ptr<UID>
+    virtual std::shared_ptr<UUID>
     GetSkyboxMaterial() const = 0;
 
     /// @brief Sets the UID of the skybox material.
     /// @param skyboxMaterial The UID of the skybox material.
     virtual void
-    SetSkyboxMaterial(std::shared_ptr<UID> skyboxMaterial) = 0;
+    SetSkyboxMaterial(std::shared_ptr<UUID> skyboxMaterial) = 0;
   };
 } // namespace Dwarf

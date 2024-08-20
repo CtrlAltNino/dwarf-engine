@@ -2,7 +2,7 @@
 
 #include "pch.h"
 #include "Core/Base.h"
-#include "Core/UID.h"
+#include "Core/UUID.h"
 
 #include <memory>
 #include <variant>
@@ -10,7 +10,7 @@
 
 namespace Dwarf
 {
-  using Texture2DAsset = std::shared_ptr<UID>;
+  using Texture2DAsset = std::shared_ptr<UUID>;
   using ParameterValue = std::variant<bool,
                                       int,
                                       unsigned int,

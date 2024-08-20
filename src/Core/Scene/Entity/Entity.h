@@ -3,7 +3,7 @@
 
 #include <entt/entt.hpp>
 #include "Core/Base.h"
-#include "Core/UID.h"
+#include "Core/UUID.h"
 #include "Core/GenericComponents.h"
 #include "Core/Scene/Components/SceneComponents.h"
 
@@ -68,7 +68,7 @@ namespace Dwarf
 
     /// @brief Retrieves the UID of the entity.
     /// @return The UID.
-    std::shared_ptr<UID>
+    std::shared_ptr<UUID>
     GetUID()
     {
       return GetComponent<IDComponent>().ID;

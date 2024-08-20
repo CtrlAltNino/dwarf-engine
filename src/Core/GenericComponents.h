@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Core/Base.h"
-#include "Core/UID.h"
+#include "Core/UUID.h"
 #include <filesystem>
 
 namespace Dwarf
@@ -23,11 +23,11 @@ namespace Dwarf
   struct IDComponent
   {
     /// @brief The UID of an entity.
-    std::shared_ptr<UID> ID;
+    std::shared_ptr<UUID> ID;
     IDComponent() = default;
     IDComponent(const IDComponent&) = default;
-    explicit IDComponent(const UID& other)
-      : ID(std::make_shared<UID>(other))
+    explicit IDComponent(const UUID& other)
+      : ID(std::make_shared<UUID>(other))
     {
     }
   };
