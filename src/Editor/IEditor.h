@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Scene/IScene.h"
 namespace Dwarf
 {
   /// @brief The controller part of the editors MVC structure.
@@ -24,5 +25,11 @@ namespace Dwarf
 
     virtual bool
     GetCloseSignal() const = 0;
+
+    virtual void
+    SetScene(std::shared_ptr<IScene> scene) = 0;
+
+    virtual std::shared_ptr<IScene>
+    GetScene() const = 0;
   };
 }

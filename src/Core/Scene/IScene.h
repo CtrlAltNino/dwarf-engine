@@ -6,7 +6,7 @@
 namespace Dwarf
 {
   /// @brief Interface that represents a Dwarf Engine scene.
-  class IScene : ISerializable
+  class IScene : public ISerializable
   {
   public:
     /// @brief Destructor.

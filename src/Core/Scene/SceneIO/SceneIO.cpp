@@ -1,0 +1,124 @@
+#include "SceneIO.h"
+
+#include "Utilities/FileHandler.h"
+#include <nfd.h>
+
+namespace Dwarf
+{
+  SceneIO::SceneIO(std::shared_ptr<ISceneFactory>    sceneFactory,
+                   std::shared_ptr<IProjectSettings> projectSettings,
+                   std::shared_ptr<IAssetDatabase>   assetDatabase)
+    : m_SceneFactory(sceneFactory)
+    , m_ProjectSettings(projectSettings)
+    , m_AssetDatabase(assetDatabase)
+  {
+  }
+
+  void
+  SceneIO::SaveScene(std::shared_ptr<IScene> scene) const
+  {
+    // TODO: Add error handling and logging.
+    nlohmann::json sceneJson = scene->Serialize();
+
+    if (scene->GetProperties()->GetAsset() != nullptr &&
+        scene->GetProperties()->GetAsset()->GetPath().empty())
+    {
+      WriteSceneToFile(scene->GetProperties()->GetAsset()->GetPath(),
+                       sceneJson);
+    }
+    else
+    {
+      SaveSceneDialog(scene);
+    }
+  }
+
+  void
+  SceneIO::SaveSceneDialog(std::shared_ptr<IScene> scene) const
+  {
+    nfdchar_t*  savePath = nullptr;
+    nfdresult_t result =
+      NFD_SaveDialog("dscene",
+                     m_AssetDatabase->GetAssetDirectoryPath().string().c_str(),
+                     &savePath);
+    nlohmann::json sceneJson = scene->Serialize();
+
+    if (result == NFD_OKAY)
+    {
+      std::filesystem::path path(savePath);
+
+      if (!path.has_extension())
+      {
+        path.concat(".dscene");
+      }
+
+      WriteSceneToFile(path, sceneJson);
+      delete savePath;
+    }
+    else if (result == NFD_CANCEL)
+    {
+      // return false;
+      //  TODO: Add logging.
+    }
+    else
+    {
+      printf("Error: %s\n", NFD_GetError());
+      // return false;
+      //  TODO: Add logging.
+    }
+  }
+
+  std::shared_ptr<IScene>
+  SceneIO::LoadScene(
+    std::shared_ptr<AssetReference<SceneAsset>> sceneAsset) const
+  {
+    if (FileHandler::FileExists(sceneAsset->GetAsset()->m_Path))
+    {
+      return m_SceneFactory->FromAsset(sceneAsset);
+    }
+    else
+    {
+      // TODO: Add logging.
+      return nullptr;
+    }
+  }
+
+  std::shared_ptr<IScene>
+  SceneIO::LoadSceneDialog() const
+  {
+    nfdchar_t* outPath = nullptr;
+
+    if (nfdresult_t result = NFD_OpenDialog(
+          "dscene",
+          m_AssetDatabase->GetAssetDirectoryPath().string().c_str(),
+          &outPath);
+        result == NFD_OKAY)
+    {
+      std::filesystem::path path(outPath);
+      delete outPath;
+      return m_SceneFactory->FromFile(path);
+    }
+    else if (result == NFD_CANCEL)
+    {
+      // TODO: Cancel stuff?
+      return nullptr;
+    }
+    else
+    {
+      printf("Error: %s\n", NFD_GetError());
+      return nullptr;
+    }
+  }
+
+  std::shared_ptr<IScene>
+  SceneIO::LoadDefaultScene() const
+  {
+    return m_SceneFactory->NewEmpty();
+  }
+
+  void
+  SceneIO::WriteSceneToFile(nlohmann::json        serializedScene,
+                            std::filesystem::path scenePath) const
+  {
+    FileHandler::WriteToFile(scenePath, serializedScene);
+  }
+}

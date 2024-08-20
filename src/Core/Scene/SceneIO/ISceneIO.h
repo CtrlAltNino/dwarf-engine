@@ -5,17 +5,24 @@
 
 namespace Dwarf
 {
-  namespace SceneIO
+  class ISceneIO
   {
-    class ISceneIO
-    {
-    public:
-      virtual ~ISceneIO() {}
+  public:
+    virtual ~ISceneIO() {}
 
-      virtual bool
-      LoadScene(AssetReference<SceneAsset> sceneAsset) = 0;
-      virtual bool
-      SaveScene(const std::string& path, const IScene& scene) = 0;
-    };
-  }
+    virtual void
+    SaveScene(std::shared_ptr<IScene> scene) const = 0;
+
+    virtual void
+    SaveSceneDialog(std::shared_ptr<IScene> scene) const = 0;
+
+    virtual std::shared_ptr<IScene>
+    LoadScene(std::shared_ptr<AssetReference<SceneAsset>> sceneAsset) const = 0;
+
+    virtual std::shared_ptr<IScene>
+    LoadSceneDialog() const = 0;
+
+    virtual std::shared_ptr<IScene>
+    LoadDefaultScene() const = 0;
+  };
 }

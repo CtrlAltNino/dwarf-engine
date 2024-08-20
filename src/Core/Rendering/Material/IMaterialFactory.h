@@ -4,20 +4,18 @@
 
 namespace Dwarf
 {
-
   class IMaterialFactory
   {
   public:
     virtual ~IMaterialFactory() = default;
 
     virtual std::shared_ptr<IMaterial>
-    CreateMaterial() = 0;
+    CreateDefaultMaterial() const = 0;
 
     virtual std::shared_ptr<IMaterial>
-    CreateMaterial(std::shared_ptr<IShader> shader) = 0;
+    CreateMaterial(std::shared_ptr<IShader> shader) const = 0;
 
     virtual std::shared_ptr<IMaterial>
-    CreateMaterial(const nlohmann::json& serializedMaterial) = 0;
+    FromSerialized(const nlohmann::json& serializedMaterial) const = 0;
   };
-
 } // namespace Dwarf

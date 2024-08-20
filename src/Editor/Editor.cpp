@@ -5,19 +5,33 @@
 
 namespace Dwarf
 {
-  Editor::Editor(const std::shared_ptr<IDwarfLogger>&   logger,
-                 const std::shared_ptr<IEditorStats>&   stats,
-                 const std::shared_ptr<IInputManager>&  inputManager,
-                 const std::shared_ptr<IAssetDatabase>& assetDatabase,
-                 const std::shared_ptr<IEditorView>&    view,
-                 const std::shared_ptr<IWindow>&        window)
+  Editor::Editor(const std::shared_ptr<IDwarfLogger>&     logger,
+                 const std::shared_ptr<IEditorStats>&     stats,
+                 const std::shared_ptr<IInputManager>&    inputManager,
+                 const std::shared_ptr<IAssetDatabase>&   assetDatabase,
+                 const std::shared_ptr<IEditorView>&      view,
+                 const std::shared_ptr<IWindow>&          window,
+                 const std::shared_ptr<ISceneIO>&         sceneIO,
+                 const std::shared_ptr<IProjectSettings>& projectSettings)
     : m_Logger(logger)
     , m_Stats(stats)
     , m_InputManager(inputManager)
     , m_AssetDatabase(assetDatabase)
     , m_View(view)
     , m_Window(window)
+    , m_SceneIO(sceneIO)
+    , m_ProjectSettings(projectSettings)
   {
+    // Either load the last opened scene or the default scene
+    if (m_ProjectSettings->GetLastOpenedScene() != nullptr)
+    {
+      m_Scene = m_SceneIO->LoadScene(m_AssetDatabase->Retrieve<SceneAsset>(
+        m_ProjectSettings->GetLastOpenedScene()));
+    }
+    else
+    {
+      m_Scene = m_SceneIO->LoadDefaultScene();
+    }
   }
 
   bool
@@ -85,5 +99,17 @@ namespace Dwarf
   Editor::GetCloseSignal() const
   {
     return m_CloseSignal;
+  }
+
+  void
+  Editor::SetScene(std::shared_ptr<IScene> scene)
+  {
+    m_Scene = scene;
+  }
+
+  std::shared_ptr<IScene>
+  Editor::GetScene() const
+  {
+    return m_Scene;
   }
 }

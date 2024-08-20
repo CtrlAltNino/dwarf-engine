@@ -22,13 +22,13 @@ namespace Dwarf
 
     // Implement the CreateMaterial method
     virtual std::shared_ptr<IMaterial>
-    CreateMaterial() override;
+    CreateDefaultMaterial() override;
 
     virtual std::shared_ptr<IMaterial>
     CreateMaterial(std::shared_ptr<IShader> shader) override;
 
     virtual std::shared_ptr<IMaterial>
-    CreateMaterial(const nlohmann::json& serializedMaterial) override;
+    FromSerialized(const nlohmann::json& serializedMaterial) override;
 
   private:
     std::shared_ptr<IShaderFactory>             m_ShaderFactory;

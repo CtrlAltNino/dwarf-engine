@@ -4,12 +4,14 @@ namespace Dwarf
 {
   template<>
   void
-  DwarfUI::AssetInput<VertexShaderAsset>(std::shared_ptr<UUID>& assetID,
-                                         const char*            imguiID)
+  DwarfUI::AssetInput<VertexShaderAsset>(
+    std::shared_ptr<IAssetDatabase> assetDatabase,
+    std::shared_ptr<UUID>&          assetID,
+    const char*                     imguiID)
   {
     std::vector<entt::entity> availableAssets;
     int                       selectedAsset = -1;
-    auto                      view = AssetDatabase::AssetDatabase::s_Registry
+    auto                      view = assetDatabase->GetRegistry()
                   ->view<IDComponent, NameComponent, VertexShaderAsset>();
 
     int count = 0;
@@ -58,12 +60,14 @@ namespace Dwarf
 
   template<>
   void
-  DwarfUI::AssetInput<FragmentShaderAsset>(std::shared_ptr<UUID>& assetID,
-                                           const char*            imguiID)
+  DwarfUI::AssetInput<FragmentShaderAsset>(
+    std::shared_ptr<IAssetDatabase> assetDatabase,
+    std::shared_ptr<UUID>&          assetID,
+    const char*                     imguiID)
   {
     std::vector<entt::entity> availableAssets;
     int                       selectedAsset = -1;
-    auto                      view = AssetDatabase::AssetDatabase::s_Registry
+    auto                      view = assetDatabase->GetRegistry()
                   ->view<IDComponent, NameComponent, FragmentShaderAsset>();
 
     int count = 0;

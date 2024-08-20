@@ -1,12 +1,12 @@
 #pragma once
 
+#include "Core/Asset/Database/IAssetDatabase.h"
 #include "pch.h"
 
-#include "Core/Asset/AssetComponents.h"
+#include "Core/Asset/Database/AssetComponents.h"
 #include "Core/GenericComponents.h"
 #include <imgui.h>
 #include <entt/entt.hpp>
-#include <Core/Asset/AssetDatabase.h>
 
 #define COL_BLACK IM_COL32(0, 0, 0, 0)
 #define COL_DIM2 IM_COL32(59, 66, 82, 255)
@@ -51,12 +51,14 @@ namespace Dwarf
 
     template<typename T>
     static void
-    AssetInput(std::shared_ptr<UUID>& assetID, const char* imguiID)
+    AssetInput(std::shared_ptr<IAssetDatabase> assetDatabase,
+               std::shared_ptr<UUID>&          assetID,
+               const char*                     imguiID)
     {
       std::vector<entt::entity> availableAssets;
       int                       selectedAsset = -1;
-      auto                      view = AssetDatabase::AssetDatabase::s_Registry
-                    ->view<IDComponent, NameComponent, T>();
+      auto                      view =
+        assetDatabase->GetRegistry()->view<IDComponent, NameComponent, T>();
 
       int count = 0;
       for (auto entity : view)
@@ -106,11 +108,15 @@ namespace Dwarf
 
   template<>
   void
-  DwarfUI::AssetInput<VertexShaderAsset>(std::shared_ptr<UUID>& assetID,
-                                         const char*            imguiID);
+  DwarfUI::AssetInput<VertexShaderAsset>(
+    std::shared_ptr<IAssetDatabase> assetDatabase,
+    std::shared_ptr<UUID>&          assetID,
+    const char*                     imguiID);
 
   template<>
   void
-  DwarfUI::AssetInput<FragmentShaderAsset>(std::shared_ptr<UUID>& assetID,
-                                           const char*            imguiID);
+  DwarfUI::AssetInput<FragmentShaderAsset>(
+    std::shared_ptr<IAssetDatabase> assetDatabase,
+    std::shared_ptr<UUID>&          assetID,
+    const char*                     imguiID);
 }

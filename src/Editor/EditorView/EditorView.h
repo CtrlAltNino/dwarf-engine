@@ -1,4 +1,7 @@
 #pragma once
+#include "Core/Asset/Database/IAssetDatabase.h"
+#include "Core/Asset/IO/IMaterialIO.h"
+#include "Core/Scene/SceneIO/ISceneIO.h"
 #include "Editor/Modules/IGuiModule.h"
 #include "pch.h"
 #include "Window/IWindow.h"
@@ -16,6 +19,9 @@ namespace Dwarf
     std::shared_ptr<IWindow>           m_Window;
     std::shared_ptr<IGuiModuleFactory> m_GuiModuleFactory;
     std::shared_ptr<IEditor>           m_Editor;
+    std::shared_ptr<ISceneIO>          m_SceneIO;
+    std::shared_ptr<IAssetDatabase>    m_AssetDatabase;
+    std::shared_ptr<IMaterialIO>       m_MaterialIO;
 
     /// @brief ID counter for GUI modules.
     int m_GuiModuleIDCount = 0;
@@ -44,7 +50,10 @@ namespace Dwarf
     explicit EditorView(std::optional<nlohmann::json>      serializedView,
                         std::shared_ptr<IEditor>           editor,
                         std::shared_ptr<IWindow>           window,
-                        std::shared_ptr<IGuiModuleFactory> guiModuleFactory);
+                        std::shared_ptr<IGuiModuleFactory> guiModuleFactory,
+                        std::shared_ptr<ISceneIO>          sceneIO,
+                        std::shared_ptr<IAssetDatabase>    assetDatabase,
+                        std::shared_ptr<IMaterialIO>       materialIO);
 
     /// @brief Initializes the view.
     // void

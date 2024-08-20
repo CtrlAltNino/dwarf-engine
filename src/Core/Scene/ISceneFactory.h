@@ -12,12 +12,18 @@ namespace Dwarf
     /// @param sceneAsset The asset reference of the scene.
     /// @return The created scene.
     virtual std::shared_ptr<IScene>
-    FromAsset(const AssetReference<SceneAsset>& sceneAsset) = 0;
+    FromAsset(std::shared_ptr<AssetReference<SceneAsset>> sceneAsset) = 0;
+
+    virtual std::shared_ptr<IScene>
+    FromFile(std::filesystem::path path) = 0;
 
     /// @brief Creates a new empty scene.
     /// @param sceneProperties The properties of the scene.
     /// @return The created scene.
     virtual std::shared_ptr<IScene>
-    New(std::filesystem::path directory) = 0;
+    NewAsset(std::filesystem::path directory) = 0;
+
+    virtual std::shared_ptr<IScene>
+    NewEmpty() = 0;
   };
 } // namespace Dwarf

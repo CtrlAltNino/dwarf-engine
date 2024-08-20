@@ -7,19 +7,23 @@
 #include "EditorView.h"
 
 #include "Core/Asset/Database/AssetDatabase.h"
-
-#include "Core/Scene/SceneUtilities.h"
-#include "Core/UI/DwarfUI.h"
+#include "UI/DwarfUI.h"
 
 namespace Dwarf
 {
   EditorView::EditorView(std::optional<nlohmann::json>      serializedView,
                          std::shared_ptr<IEditor>           editor,
                          std::shared_ptr<IWindow>           window,
-                         std::shared_ptr<IGuiModuleFactory> guiModuleFactory)
+                         std::shared_ptr<IGuiModuleFactory> guiModuleFactory,
+                         std::shared_ptr<ISceneIO>          sceneIO,
+                         std::shared_ptr<IAssetDatabase>    assetDatabase,
+                         std::shared_ptr<IMaterialIO>       materialIO)
     : m_Editor(editor)
     , m_Window(window)
     , m_GuiModuleFactory(guiModuleFactory)
+    , m_SceneIO(sceneIO)
+    , m_AssetDatabase(assetDatabase)
+    , m_MaterialIO(materialIO)
   {
     // using enum MODULE_TYPE;
     // AddWindow(SCENE_GRAPH);
@@ -104,34 +108,46 @@ namespace Dwarf
         if (ImGui::MenuItem("Create new scene"))
         {
           // TODO: check for unsaved changes in scene
-          m_Model->SetScene(SceneUtilities::LoadDefaultScene());
+          // m_Model->SetScene(SceneUtilities::LoadDefaultScene());
+          m_Editor->SetScene(m_SceneIO->LoadDefaultScene());
         }
         if (ImGui::MenuItem("Save scene"))
         {
-          if (SceneUtilities::SaveScene(m_Model->GetScene()))
-          {
-            AssetDatabase::Import(m_Model->GetScene()->GetPath());
-            SceneUtilities::SetLastOpenedScene(m_Model->GetScene()->GetPath());
-            UpdateWindowTitle();
-          }
+          // if (SceneUtilities::SaveScene(m_Model->GetScene()))
+          // {
+          //   AssetDatabase::Import(m_Model->GetScene()->GetPath());
+          //   SceneUtilities::SetLastOpenedScene(m_Model->GetScene()->GetPath());
+          //   UpdateWindowTitle();
+          // }
+
+          m_SceneIO->SaveScene(m_Editor->GetScene());
         }
         if (ImGui::MenuItem("Save scene as"))
         {
-          if (SceneUtilities::SaveSceneDialog(m_Model->GetScene()))
-          {
-            AssetDatabase::Import(m_Model->GetScene()->GetPath());
-            SceneUtilities::SetLastOpenedScene(m_Model->GetScene()->GetPath());
-            UpdateWindowTitle();
-          }
+          // if (SceneUtilities::SaveSceneDialog(m_Model->GetScene()))
+          // {
+          //   AssetDatabase::Import(m_Model->GetScene()->GetPath());
+          //   SceneUtilities::SetLastOpenedScene(m_Model->GetScene()->GetPath());
+          //   UpdateWindowTitle();
+          // }
+
+          m_SceneIO->SaveSceneDialog(m_Editor->GetScene());
         }
         if (ImGui::MenuItem("Load scene"))
         {
-          std::shared_ptr<Scene> loadedScene =
-            SceneUtilities::LoadSceneDialog();
+          // std::shared_ptr<Scene> loadedScene =
+          //   SceneUtilities::LoadSceneDialog();
+          // if (loadedScene)
+          // {
+          //   m_Model->SetScene(loadedScene);
+          //   SceneUtilities::SetLastOpenedScene(m_Model->GetScene()->GetPath());
+          //   UpdateWindowTitle();
+          // }
+
+          std::shared_ptr<IScene> loadedScene = m_SceneIO->LoadSceneDialog();
           if (loadedScene)
           {
-            m_Model->SetScene(loadedScene);
-            SceneUtilities::SetLastOpenedScene(m_Model->GetScene()->GetPath());
+            m_Editor->SetScene(loadedScene);
             UpdateWindowTitle();
           }
         }
@@ -153,12 +169,14 @@ namespace Dwarf
       {
         if (ImGui::MenuItem("Create new material"))
         {
-          AssetDatabase::CreateNewMaterialAsset();
+          // AssetDatabase::CreateNewMaterialAsset();
+          m_MaterialIO->
         }
         ImGui::MenuItem("Import Assets");
         if (ImGui::MenuItem("Reimport Assets"))
         {
-          AssetDatabase::ReimportAssets();
+          // AssetDatabase::ReimportAssets();
+          m_AssetDatabase->ReimportAll();
         }
         ImGui::EndMenu();
       }

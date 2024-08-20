@@ -13,10 +13,13 @@ namespace Dwarf
       std::shared_ptr<IScenePropertiesFactory> scenePropertiesFactory);
 
     std::shared_ptr<IScene>
-    FromAsset(const AssetReference<SceneAsset>& sceneAsset) override;
+    FromAsset(std::shared_ptr<AssetReference<SceneAsset>> sceneAsset) override;
 
     std::shared_ptr<IScene>
-    New(std::filesystem::path directory) override;
+    NewAsset(std::filesystem::path directory) override;
+
+    std::shared_ptr<IScene>
+    NewEmpty() override;
 
   private:
     std::shared_ptr<IScenePropertiesFactory> m_ScenePropertiesFactory;

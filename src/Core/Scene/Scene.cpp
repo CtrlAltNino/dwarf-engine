@@ -57,8 +57,8 @@ namespace Dwarf
   Entity
   Scene::DeserializeEntity(nlohmann::json serializedEntity)
   {
-    Entity newEntity = CreateEntityWithUID(
-      UID((uint64_t)serializedEntity["guid"]), serializedEntity["name"]);
+    Entity newEntity = CreateEntityWithUID(UUID(serializedEntity["guid"]),
+                                           serializedEntity["name"]);
 
     TransformComponent& tc = newEntity.GetComponent<TransformComponent>();
     tc.position = { serializedEntity["transformComponent"]["position"]["x"],
@@ -132,7 +132,7 @@ namespace Dwarf
   Scene::CreateRootEntity()
   {
     m_RootEntity = std::make_shared<Entity>(m_Registry->create(), m_Registry);
-    m_RootEntity->AddComponent<IDComponent>(UID());
+    m_RootEntity->AddComponent<IDComponent>(UUID());
     m_RootEntity->AddComponent<TransformComponent>();
     m_RootEntity->AddComponent<NameComponent>("Root");
   }
@@ -140,11 +140,11 @@ namespace Dwarf
   Entity
   Scene::CreateEntity(const std::string& name)
   {
-    return CreateEntityWithUID(UID(), name);
+    return CreateEntityWithUID(UUID(), name);
   }
 
   Entity
-  Scene::CreateEntityWithUID(UID uid, const std::string& name)
+  Scene::CreateEntityWithUID(UUID uid, const std::string& name)
   {
     Entity entity(m_Registry->create(), m_Registry);
     entity.AddComponent<IDComponent>(uid);
