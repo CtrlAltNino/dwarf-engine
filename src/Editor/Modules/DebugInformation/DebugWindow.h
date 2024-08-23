@@ -14,7 +14,9 @@ namespace Dwarf
     std::shared_ptr<IAssetDatabase> m_AssetDatabase;
 
   public:
-    DebugWindow(int id, std::shared_ptr<IAssetDatabase> assetDatabase);
+    DebugWindow(std::shared_ptr<IAssetDatabase> assetDatabase);
+    DebugWindow(nlohmann::json                  serializedModule,
+                std::shared_ptr<IAssetDatabase> assetDatabase);
 
     /// @brief Renders the module window.
     void
@@ -22,7 +24,7 @@ namespace Dwarf
 
     /// @brief Executes all pre frame tasks.
     void
-    OnUpdate(double deltaTime) override;
+    OnUpdate() override;
 
     nlohmann::json
     Serialize() const override;

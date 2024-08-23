@@ -13,9 +13,11 @@ namespace Dwarf
   MaterialIO::~MaterialIO() {}
 
   void
-  MaterialIO::SaveMaterial(std::shared_ptr<IMaterial> material)
+  MaterialIO::SaveMaterial(std::shared_ptr<IMaterial>   material,
+                           std::filesystem::path const& path)
   {
     // Save the material to a file
+    FileHandler::WriteToFile(path, material->Serialize().dump(2));
   }
 
   std::shared_ptr<IMaterial>
@@ -33,7 +35,7 @@ namespace Dwarf
       throw std::runtime_error("Material asset file does not exist");
     }
 
-    return m_MaterialFactory->CreateMaterial(
+    return m_MaterialFactory->FromSerialized(
       nlohmann::json::parse(FileHandler::ReadFile(path)));
   }
 }

@@ -1,3 +1,4 @@
+#include "Core/Asset/Creation/Material/IMaterialCreator.h"
 #include "Editor/Modules/IGuiModuleFactory.h"
 #include "pch.h"
 #include <memory>
@@ -17,13 +18,14 @@ namespace Dwarf
                          std::shared_ptr<IGuiModuleFactory> guiModuleFactory,
                          std::shared_ptr<ISceneIO>          sceneIO,
                          std::shared_ptr<IAssetDatabase>    assetDatabase,
-                         std::shared_ptr<IMaterialIO>       materialIO)
+                         std::shared_ptr<IMaterialCreator>  materialCreator,
+                         std::shared_ptr<IProjectSettings>  projectSettings)
     : m_Editor(editor)
     , m_Window(window)
     , m_GuiModuleFactory(guiModuleFactory)
     , m_SceneIO(sceneIO)
     , m_AssetDatabase(assetDatabase)
-    , m_MaterialIO(materialIO)
+    , m_MaterialCreator(materialCreator)
   {
     // using enum MODULE_TYPE;
     // AddWindow(SCENE_GRAPH);
@@ -169,13 +171,11 @@ namespace Dwarf
       {
         if (ImGui::MenuItem("Create new material"))
         {
-          // AssetDatabase::CreateNewMaterialAsset();
-          m_MaterialIO->
+          m_MaterialCreator->CreateMaterialAsset();
         }
         ImGui::MenuItem("Import Assets");
         if (ImGui::MenuItem("Reimport Assets"))
         {
-          // AssetDatabase::ReimportAssets();
           m_AssetDatabase->ReimportAll();
         }
         ImGui::EndMenu();
@@ -184,12 +184,12 @@ namespace Dwarf
       {
         if (ImGui::MenuItem("Create empty object"))
         {
-          Entity newEntity = m_Model->GetScene()->CreateEntity("New object");
+          Entity newEntity = m_Editor->GetScene()->CreateEntity("New object");
           newEntity.AddComponent<MeshRendererComponent>();
         }
         if (ImGui::MenuItem("Create light"))
         {
-          Entity newEntity = m_Model->GetScene()->CreateEntity("New Light");
+          Entity newEntity = m_Editor->GetScene()->CreateEntity("New Light");
           newEntity.AddComponent<LightComponent>();
         }
         ImGui::EndMenu();
@@ -231,11 +231,11 @@ namespace Dwarf
   }
 
   void
-  EditorView::OnUpdate(double deltaTime)
+  EditorView::OnUpdate()
   {
     for (int i = 0; i < m_GuiModules.size(); i++)
     {
-      m_GuiModules.at(i)->OnUpdate(deltaTime);
+      m_GuiModules.at(i)->OnUpdate();
     }
   }
 
@@ -285,7 +285,7 @@ namespace Dwarf
     {
       if (m_GuiModules.at(i)->GetWindowClose())
       {
-        RemoveWindow(m_GuiModules.at(i)->GetIndex());
+        RemoveWindow(m_GuiModules.at(i)->GetUuid());
       }
       else
       {
@@ -314,36 +314,39 @@ namespace Dwarf
   void
   EditorView::AddWindow(MODULE_TYPE moduleType)
   {
-    std::shared_ptr<GuiModule> guiModule;
-    switch (moduleType)
-    {
-      using enum MODULE_TYPE;
-      case PERFORMANCE:
-        guiModule = std::make_shared<PerformanceWindow>(this->m_Model,
-                                                        m_GuiModuleIDCount++);
-        break;
-      case SCENE_GRAPH:
-        guiModule = std::make_shared<SceneHierarchyWindow>(
-          this->m_Model, m_GuiModuleIDCount++);
-        break;
-      case SCENE_VIEWER:
-        guiModule = std::make_shared<SceneViewerWindow>(this->m_Model,
-                                                        m_GuiModuleIDCount++);
-        break;
-      case ASSET_BROWSER:
-        guiModule = std::make_shared<AssetBrowserWindow>(this->m_Model,
-                                                         m_GuiModuleIDCount++);
-        break;
-      case INSPECTOR:
-        guiModule = std::make_shared<InspectorWindow>(this->m_Model,
-                                                      m_GuiModuleIDCount++);
-        break;
-      case DEBUG:
-        guiModule =
-          std::make_shared<DebugWindow>(this->m_Model, m_GuiModuleIDCount++);
-        break;
-      case CONSOLE: break;
-    }
+    std::shared_ptr<IGuiModule> guiModule =
+      m_GuiModuleFactory->CreateGuiModule(moduleType);
+    // std::shared_ptr<IGuiModule> guiModule;
+    //  switch (moduleType)
+    //  {
+    //    using enum MODULE_TYPE;
+    //    case PERFORMANCE:
+    //      guiModule = std::make_shared<PerformanceWindow>(this->m_Model,
+    //                                                      m_GuiModuleIDCount++);
+    //      break;
+    //    case SCENE_GRAPH:
+    //      guiModule = std::make_shared<SceneHierarchyWindow>(
+    //        this->m_Model, m_GuiModuleIDCount++);
+    //      break;
+    //    case SCENE_VIEWER:
+    //      guiModule = std::make_shared<SceneViewerWindow>(this->m_Model,
+    //                                                      m_GuiModuleIDCount++);
+    //      break;
+    //    case ASSET_BROWSER:
+    //      guiModule = std::make_shared<AssetBrowserWindow>(this->m_Model,
+    //                                                       m_GuiModuleIDCount++);
+    //      break;
+    //    case INSPECTOR:
+    //      guiModule = std::make_shared<InspectorWindow>(this->m_Model,
+    //                                                    m_GuiModuleIDCount++);
+    //      break;
+    //    case DEBUG:
+    //      guiModule =
+    //        std::make_shared<DebugWindow>(this->m_Model,
+    //        m_GuiModuleIDCount++);
+    //      break;
+    //    case CONSOLE: break;
+    //  }
 
     if (guiModule)
     {
@@ -352,11 +355,11 @@ namespace Dwarf
   }
 
   void
-  EditorView::RemoveWindow(int index)
+  EditorView::RemoveWindow(std::shared_ptr<UUID> uuid)
   {
     for (int i = 0; i < m_GuiModules.size(); i++)
     {
-      if (m_GuiModules[i]->GetIndex() == index)
+      if (*m_GuiModules[i]->GetUuid() == *uuid)
       {
         m_GuiModules.erase(m_GuiModules.begin() + i);
       }
@@ -367,9 +370,9 @@ namespace Dwarf
   EditorView::UpdateWindowTitle() const
   {
     std::string windowTitle = "Dwarf Engine Editor - ";
-    windowTitle.append(m_Model->GetName());
+    windowTitle.append(m_ProjectSettings->GetProjectName());
     windowTitle.append(" - ");
-    windowTitle.append(m_Model->GetScene()->GetName());
+    windowTitle.append(m_Editor->GetScene()->GetProperties()->GetName());
     windowTitle.append(" <");
     windowTitle.append(graphicsApiNames[(int)m_Window->GetApi()]);
     windowTitle.append(">");

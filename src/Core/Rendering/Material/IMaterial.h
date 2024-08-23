@@ -1,7 +1,7 @@
 #pragma once
 #include "Core/Rendering/Shader/IShader.h"
 #include "Core/Rendering/Shader/IShaderParameterCollection.h"
-#include "IMaterialProperties.h"
+#include "Core/Rendering/Material/Properties/IMaterialProperties.h"
 
 namespace Dwarf
 {

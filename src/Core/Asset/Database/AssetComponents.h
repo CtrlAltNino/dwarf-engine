@@ -2,7 +2,7 @@
 #include "Core/Rendering/Texture/ITexture.h"
 #include "Utilities/FileHandler.h"
 #include "Core/Rendering/Mesh/IMesh.h"
-#include "Core/Rendering/Material/Material.h"
+#include "Core/Rendering/Material/IMaterial.h"
 
 namespace Dwarf
 {
@@ -26,9 +26,9 @@ namespace Dwarf
   struct MaterialAsset
   {
     /// @brief Imported material.
-    std::shared_ptr<Material> m_Material;
+    std::shared_ptr<IMaterial> m_Material;
 
-    explicit MaterialAsset(std::shared_ptr<Material> material)
+    explicit MaterialAsset(std::shared_ptr<IMaterial> material)
     {
       // Use Mesh Importer with meta data to import mesh
       // m_Material = MaterialSerializer::Deserialize(path);

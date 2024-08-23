@@ -28,7 +28,7 @@ namespace Dwarf
   BOOST_STRONG_TYPEDEF(std::shared_ptr<UUID>, ModuleID);
 
   /// @brief GUI module base class.
-  class IGuiModule : ISerializable
+  class IGuiModule : public ISerializable
   {
   protected:
     /// @brief Name to use for the module.
@@ -69,7 +69,7 @@ namespace Dwarf
     /// @brief Returns the global module index.
     /// @return The module index.
     std::shared_ptr<UUID>
-    GetIndex() const
+    GetUuid() const
     {
       return m_Id;
     }
@@ -97,7 +97,7 @@ namespace Dwarf
     }
 
     virtual void
-    OnUpdate(double deltaTime) = 0;
+    OnUpdate() = 0;
 
     /// @brief Renders the module window.
     virtual void

@@ -1,4 +1,7 @@
 #pragma once
+#include "Core/Asset/Database/IAssetDatabase.h"
+#include "Editor/IEditor.h"
+#include "Editor/IEditorSelection.h"
 #include "pch.h"
 #include "Core/Scene/Scene.h"
 #include "Editor/EditorModel.h"
@@ -13,7 +16,9 @@ namespace Dwarf
   {
   private:
     /// @brief Pointer to the currently opened scene instance.
-    std::shared_ptr<Scene> m_Scene;
+    std::shared_ptr<IEditor>          m_Editor;
+    std::shared_ptr<IEditorSelection> m_Selection;
+    std::shared_ptr<IAssetDatabase>   m_AssetDatabase;
 
     /// @brief Renders the components of an entity.
     /// @param entity Entity to render in the inspector.
@@ -31,14 +36,17 @@ namespace Dwarf
     RenderComponent(T& component);
 
   public:
-    InspectorWindow(int id);
+    InspectorWindow(std::optional<nlohmann::json>     serializedModule,
+                    std::shared_ptr<IEditor>          editor,
+                    std::shared_ptr<IEditorSelection> selection,
+                    std::shared_ptr<IAssetDatabase>   assetDatabase);
 
     /// @brief Renders the module window.
     void
     OnImGuiRender() override;
 
     void
-    OnUpdate(double deltaTime) override;
+    OnUpdate() override;
 
     nlohmann::json
     Serialize() const override;

@@ -1,8 +1,9 @@
 #pragma once
 
 #include "Core/Asset/AssetTypes.h"
+#include "Core/Asset/Creation/Material/IMaterialCreator.h"
 #include "Core/Asset/Database/AssetDatabase.h"
-#include "Core/Asset/IO/IMaterialIO.h"
+#include "Core/Rendering/Material/IO/IMaterialIO.h"
 #include "Core/Asset/Metadata/IAssetMetadata.h"
 #include "Core/Rendering/Material/IMaterialFactory.h"
 #include "Editor/EditorModel.h"
@@ -29,6 +30,7 @@ namespace Dwarf
     std::shared_ptr<IMaterialIO>      m_MaterialIO;
     std::shared_ptr<IMaterialFactory> m_MaterialFactory;
     std::shared_ptr<IAssetMetadata>   m_AssetMetadata;
+    std::shared_ptr<IMaterialCreator> m_MaterialCreator;
 
     /// @brief Path of the currently navigated directory.
     std::filesystem::path m_CurrentDirectory;
@@ -127,7 +129,8 @@ namespace Dwarf
                        std::shared_ptr<IEditorSelection> editorSelection,
                        std::shared_ptr<IMaterialIO>      materialIO,
                        std::shared_ptr<IMaterialFactory> materialFactory,
-                       std::shared_ptr<IAssetMetadata>   assetMetadata);
+                       std::shared_ptr<IAssetMetadata>   assetMetadata,
+                       std::shared_ptr<IMaterialCreator> materialCreator);
 
     AssetBrowserWindow(nlohmann::json                    serializedModule,
                        std::shared_ptr<ITextureFactory>  textureFactory,
@@ -136,7 +139,8 @@ namespace Dwarf
                        std::shared_ptr<IEditorSelection> editorSelection,
                        std::shared_ptr<IMaterialIO>      materialIO,
                        std::shared_ptr<IMaterialFactory> materialFactory,
-                       std::shared_ptr<IAssetMetadata>   assetMetadata);
+                       std::shared_ptr<IAssetMetadata>   assetMetadata,
+                       std::shared_ptr<IMaterialCreator> materialCreator);
 
     /// @brief Renders the module window.
     void
@@ -144,7 +148,7 @@ namespace Dwarf
 
     /// @brief Executes all pre frame tasks.
     void
-    OnUpdate(double deltaTime) override;
+    OnUpdate() override;
 
     nlohmann::json
     Serialize() const override;

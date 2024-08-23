@@ -4,7 +4,7 @@
 #include "IMaterial.h"
 #include "Core/Rendering/Shader/IShader.h"
 #include "Core/UUID.h"
-#include "IMaterialProperties.h"
+#include "Core/Rendering/Material/Properties/IMaterialProperties.h"
 #include "IMaterial.h"
 
 namespace Dwarf

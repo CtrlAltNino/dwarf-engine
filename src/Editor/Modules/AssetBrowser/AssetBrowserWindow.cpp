@@ -2,8 +2,7 @@
 #include "pch.h"
 #include "Editor/Modules/AssetBrowser/AssetBrowserWindow.h"
 #include "Input/InputManager.h"
-#include "Core/Scene/SceneUtilities.h"
-#include "Core/Rendering/Texture/TextureCreator.h"
+// #include "Core/Scene/SceneUtilities.h"
 #include <cstring>
 #include <memory>
 
@@ -16,7 +15,8 @@ namespace Dwarf
     std::shared_ptr<IEditorSelection> editorSelection,
     std::shared_ptr<IMaterialIO>      materialIO,
     std::shared_ptr<IMaterialFactory> materialFactory,
-    std::shared_ptr<IAssetMetadata>   assetMetadata)
+    std::shared_ptr<IAssetMetadata>   assetMetadata,
+    std::shared_ptr<IMaterialCreator> materialCreator)
     : IGuiModule(ModuleLabel("Asset Browser"),
                  ModuleType(MODULE_TYPE::ASSET_BROWSER),
                  ModuleID(std::make_shared<UUID>()))
@@ -29,6 +29,7 @@ namespace Dwarf
     , m_MaterialIO(materialIO)
     , m_MaterialFactory(materialFactory)
     , m_AssetMetadata(assetMetadata)
+    , m_MaterialCreator(materialCreator)
   {
     m_DirectoryHistory.push_back(m_CurrentDirectory);
     LoadIcons();
@@ -42,7 +43,8 @@ namespace Dwarf
     std::shared_ptr<IEditorSelection> editorSelection,
     std::shared_ptr<IMaterialIO>      materialIO,
     std::shared_ptr<IMaterialFactory> materialFactory,
-    std::shared_ptr<IAssetMetadata>   assetMetadata)
+    std::shared_ptr<IAssetMetadata>   assetMetadata,
+    std::shared_ptr<IMaterialCreator> materialCreator)
     : IGuiModule(ModuleLabel("Asset Browser"),
                  ModuleType(MODULE_TYPE::ASSET_BROWSER),
                  ModuleID(std::make_shared<UUID>(
@@ -56,6 +58,7 @@ namespace Dwarf
     , m_MaterialIO(materialIO)
     , m_MaterialFactory(materialFactory)
     , m_AssetMetadata(assetMetadata)
+    , m_MaterialCreator(materialCreator)
   {
     m_DirectoryHistory.push_back(m_CurrentDirectory);
     LoadIcons();
@@ -87,7 +90,7 @@ namespace Dwarf
   }
 
   void
-  AssetBrowserWindow::OnUpdate(double deltaTime)
+  AssetBrowserWindow::OnUpdate()
   {
     if (m_InputManager->GetMouseButtonDown(MOUSE_BUTTON::MOUSE_BUTTON_4))
     {
@@ -267,8 +270,7 @@ namespace Dwarf
           // TODO: Make this moddable
           if (ImGui::MenuItem("Default"))
           {
-            m_MaterialIO->SaveMaterial(
-              m_MaterialFactory->CreateMaterial(m_CurrentDirectory));
+            m_MaterialCreator->CreateMaterialAsset(m_CurrentDirectory);
           }
           ImGui::EndMenu();
         }
@@ -277,14 +279,19 @@ namespace Dwarf
         {
           if (ImGui::MenuItem("Vertex"))
           {
-            FileHandler::Copy(Shader::GetDefaultShaderPath() / "default.vert",
-                              m_CurrentDirectory / "New vertex shader.vert");
+            // TODO: Reimplement this
+            // FileHandler::Copy(Shader::GetDefaultShaderPath() /
+            // "default.vert",
+            //                   m_CurrentDirectory / "New vertex shader.vert");
           }
 
           if (ImGui::MenuItem("Fragment"))
           {
-            FileHandler::Copy(Shader::GetDefaultShaderPath() / "default.frag",
-                              m_CurrentDirectory / "New fragment shader.frag");
+            // TODO: Reimplement this
+            // FileHandler::Copy(Shader::GetDefaultShaderPath() /
+            // "default.frag",
+            //                   m_CurrentDirectory / "New fragment
+            //                   shader.frag");
           }
 
           ImGui::EndMenu();

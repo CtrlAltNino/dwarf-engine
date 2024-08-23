@@ -1,6 +1,7 @@
 #include "Editor/Modules/Inspector/InspectorWindow.h"
 
 // #include "Core/Asset/AssetDatabase.h"
+#include "Editor/IEditor.h"
 #include "Editor/Modules/Inspector/AssetInspectorRenderer.h"
 #include "UI/DwarfUI.h"
 
@@ -10,11 +11,22 @@
 
 namespace Dwarf
 {
-  InspectorWindow::InspectorWindow(int id)
-    : IGuiModule("Inspector", MODULE_TYPE::INSPECTOR, id)
-    , m_Scene(model->GetScene())
+  InspectorWindow::InspectorWindow(
+    std::optional<nlohmann::json>     serializedModule,
+    std::shared_ptr<IEditor>          editor,
+    std::shared_ptr<IEditorSelection> selection,
+    std::shared_ptr<IAssetDatabase>   assetDatabase)
+    : IGuiModule(ModuleLabel("Inspector"),
+                 ModuleType(MODULE_TYPE::INSPECTOR),
+                 ModuleID(std::make_shared<UUID>(
+                   serializedModule.has_value()
+                     ? serializedModule.value()["id"].get<std::string>()
+                     : UUID())))
+    , m_Editor(editor)
+    , m_Selection(selection)
+    , m_AssetDatabase(assetDatabase)
   {
-    AssetInspectorRenderer::Init(model);
+    // AssetInspectorRenderer::Init(model);
   }
 
   template<>
@@ -22,7 +34,7 @@ namespace Dwarf
   InspectorWindow::RenderComponent<IDComponent>(IDComponent& component)
   {
     ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
-    ImGui::TextWrapped("%s", std::to_string(*component.ID).c_str());
+    ImGui::TextWrapped("%s", component.ID->ToString().c_str());
   }
 
   template<>
@@ -208,67 +220,66 @@ namespace Dwarf
       return;
     }
 
-    switch (m_Model->GetSelection().GetSelectionType())
+    switch (m_Selection->GetSelectionType())
     {
       case CURRENT_SELECTION_TYPE::ASSET:
         {
           // TODO: Render Asset data
-          if (std::filesystem::path assetPath =
-                m_Model->GetSelection().GetAssetPath();
+          if (std::filesystem::path assetPath = m_Selection->GetAssetPath();
               std::filesystem::is_regular_file(assetPath))
           {
-            switch (AssetDatabase::GetType(assetPath))
+            switch (m_AssetDatabase->GetAssetType(assetPath))
             {
               using enum ASSET_TYPE;
               case MODEL:
                 AssetInspectorRenderer::RenderAssetInspector(
-                  AssetDatabase::Retrieve<ModelAsset>(assetPath));
+                  m_AssetDatabase->Retrieve<ModelAsset>(assetPath));
                 break;
               case TEXTURE:
                 AssetInspectorRenderer::RenderAssetInspector(
-                  AssetDatabase::Retrieve<TextureAsset>(assetPath));
+                  m_AssetDatabase->Retrieve<TextureAsset>(assetPath));
                 break;
               case SCENE:
                 AssetInspectorRenderer::RenderAssetInspector(
-                  AssetDatabase::Retrieve<SceneAsset>(assetPath));
+                  m_AssetDatabase->Retrieve<SceneAsset>(assetPath));
                 break;
               case MATERIAL:
                 AssetInspectorRenderer::RenderAssetInspector(
-                  AssetDatabase::Retrieve<MaterialAsset>(assetPath));
+                  m_AssetDatabase->Retrieve<MaterialAsset>(assetPath));
                 break;
               case VERTEX_SHADER:
                 AssetInspectorRenderer::RenderAssetInspector(
-                  AssetDatabase::Retrieve<VertexShaderAsset>(assetPath));
+                  m_AssetDatabase->Retrieve<VertexShaderAsset>(assetPath));
                 break;
               case TESC_SHADER:
                 AssetInspectorRenderer::RenderAssetInspector(
-                  AssetDatabase::Retrieve<TesselationControlShaderAsset>(
+                  m_AssetDatabase->Retrieve<TessellationControlShaderAsset>(
                     assetPath));
                 break;
               case TESE_SHADER:
                 AssetInspectorRenderer::RenderAssetInspector(
-                  AssetDatabase::Retrieve<TesselationEvaluationShaderAsset>(
+                  m_AssetDatabase->Retrieve<TessellationEvaluationShaderAsset>(
                     assetPath));
                 break;
               case GEOMETRY_SHADER:
                 AssetInspectorRenderer::RenderAssetInspector(
-                  AssetDatabase::Retrieve<GeometryShaderAsset>(assetPath));
+                  m_AssetDatabase->Retrieve<GeometryShaderAsset>(assetPath));
                 break;
               case FRAGMENT_SHADER:
                 AssetInspectorRenderer::RenderAssetInspector(
-                  AssetDatabase::Retrieve<FragmentShaderAsset>(assetPath));
+                  m_AssetDatabase->Retrieve<FragmentShaderAsset>(assetPath));
                 break;
               case HLSL_SHADER:
                 AssetInspectorRenderer::RenderAssetInspector(
-                  AssetDatabase::Retrieve<HlslShaderAsset>(assetPath));
+                  m_AssetDatabase->Retrieve<HlslShaderAsset>(assetPath));
                 break;
               case COMPUTE_SHADER:
                 AssetInspectorRenderer::RenderAssetInspector(
-                  AssetDatabase::Retrieve<ComputeShaderAsset>(assetPath));
+                  m_AssetDatabase->Retrieve<ComputeShaderAsset>(assetPath));
                 break;
               case UNKNOWN:
                 AssetInspectorRenderer::RenderAssetInspector(
-                  AssetDatabase::Retrieve<UnknownAsset>(assetPath));
+                  m_AssetDatabase->Retrieve<UnknownAsset>(assetPath));
                 break;
               default: break;
             }
@@ -276,13 +287,15 @@ namespace Dwarf
           break;
         }
       case CURRENT_SELECTION_TYPE::ENTITY:
-        static std::vector<Entity>* selectedEntities =
-          &m_Model->GetSelection().GetSelectedEntities();
-        if (selectedEntities->size() == 1)
         {
-          RenderComponents(selectedEntities->at(0));
+          std::vector<Entity>& selectedEntities =
+            m_Selection->GetSelectedEntities();
+          if (selectedEntities.size() == 1)
+          {
+            RenderComponents(selectedEntities.at(0));
+          }
+          break;
         }
-        break;
       case CURRENT_SELECTION_TYPE::NONE: break;
     }
 
@@ -292,7 +305,7 @@ namespace Dwarf
   }
 
   void
-  InspectorWindow::OnUpdate(double deltaTime)
+  InspectorWindow::OnUpdate()
   {
     // Place Update code here (Before rendering)
   }
@@ -383,9 +396,10 @@ namespace Dwarf
     // Deserialize the saved data
   }
 
-  std::string
-  InspectorWindow::Serialize()
+  nlohmann::json
+  InspectorWindow::Serialize() const
   {
+    // TODO:: Serialize the data
     return "";
   }
 }

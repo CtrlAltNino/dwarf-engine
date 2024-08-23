@@ -1,12 +1,14 @@
 #pragma once
+#include "Core/Asset/Creation/Material/IMaterialCreator.h"
+#include "Editor/EditorView/IEditorView.h"
 #include "Core/Asset/Database/IAssetDatabase.h"
-#include "Core/Asset/IO/IMaterialIO.h"
-#include "Core/Scene/SceneIO/ISceneIO.h"
+#include "Core/Rendering/Material/IO/IMaterialIO.h"
+#include "Core/Scene/IO/ISceneIO.h"
 #include "Editor/Modules/IGuiModule.h"
+#include "Project/IProjectSettings.h"
 #include "pch.h"
 #include "Window/IWindow.h"
 #include "Editor/Modules/IGuiModuleFactory.h"
-#include "Editor/EditorView/IEditorView.h"
 // #include "Editor/IEditorModel.h"
 
 namespace Dwarf
@@ -21,7 +23,8 @@ namespace Dwarf
     std::shared_ptr<IEditor>           m_Editor;
     std::shared_ptr<ISceneIO>          m_SceneIO;
     std::shared_ptr<IAssetDatabase>    m_AssetDatabase;
-    std::shared_ptr<IMaterialIO>       m_MaterialIO;
+    std::shared_ptr<IMaterialCreator>  m_MaterialCreator;
+    std::shared_ptr<IProjectSettings>  m_ProjectSettings;
 
     /// @brief ID counter for GUI modules.
     int m_GuiModuleIDCount = 0;
@@ -41,7 +44,7 @@ namespace Dwarf
     /// @brief Removes a IMGUI window that corresponds to a given index.
     /// @param index Index of the window to remove.
     void
-    RemoveWindow(int index);
+    RemoveWindow(std::shared_ptr<UUID> uuid);
 
     void
     UpdateWindowTitle() const;
@@ -53,7 +56,8 @@ namespace Dwarf
                         std::shared_ptr<IGuiModuleFactory> guiModuleFactory,
                         std::shared_ptr<ISceneIO>          sceneIO,
                         std::shared_ptr<IAssetDatabase>    assetDatabase,
-                        std::shared_ptr<IMaterialIO>       materialIO);
+                        std::shared_ptr<IMaterialCreator>  materialCreator,
+                        std::shared_ptr<IProjectSettings>  projectSettings);
 
     /// @brief Initializes the view.
     // void
