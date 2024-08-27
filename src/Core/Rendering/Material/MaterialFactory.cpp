@@ -17,7 +17,7 @@ namespace Dwarf
   MaterialFactory::~MaterialFactory() {}
 
   std::shared_ptr<IMaterial>
-  MaterialFactory::CreateDefaultMaterial()
+  MaterialFactory::CreateDefaultMaterial() const
   {
     return std::make_shared<Material>(
       m_ShaderFactory->CreateShader(),
@@ -27,7 +27,7 @@ namespace Dwarf
   }
 
   std::shared_ptr<IMaterial>
-  MaterialFactory::CreateMaterial(std::shared_ptr<IShader> shader)
+  MaterialFactory::CreateMaterial(std::shared_ptr<IShader> shader) const
   {
     return std::make_shared<Material>(
       shader,
@@ -36,7 +36,8 @@ namespace Dwarf
   }
 
   std::shared_ptr<IMaterial>
-  MaterialFactory::FromSerialized(const nlohmann::json& serializedMaterial)
+  MaterialFactory::FromSerialized(
+    const nlohmann::json& serializedMaterial) const
   {
     return std::make_shared<Material>(
       m_ShaderFactory->CreateShader(serializedMaterial["shader"]),

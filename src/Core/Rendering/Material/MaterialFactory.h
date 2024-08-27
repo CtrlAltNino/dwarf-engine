@@ -2,7 +2,7 @@
 
 #include "IMaterialFactory.h"
 #include "Core/Rendering/Shader/IShaderFactory.h"
-#include "Core/Rendering/Material/IMaterialPropertiesFactory.h"
+#include "Core/Rendering/Material/Properties/IMaterialPropertiesFactory.h"
 #include "Core/Rendering/Shader/IShaderParameterCollectionFactory.h"
 
 namespace Dwarf
@@ -22,13 +22,13 @@ namespace Dwarf
 
     // Implement the CreateMaterial method
     virtual std::shared_ptr<IMaterial>
-    CreateDefaultMaterial() override;
+    CreateDefaultMaterial() const override;
 
     virtual std::shared_ptr<IMaterial>
-    CreateMaterial(std::shared_ptr<IShader> shader) override;
+    CreateMaterial(std::shared_ptr<IShader> shader) const override;
 
     virtual std::shared_ptr<IMaterial>
-    FromSerialized(const nlohmann::json& serializedMaterial) override;
+    FromSerialized(const nlohmann::json& serializedMaterial) const override;
 
   private:
     std::shared_ptr<IShaderFactory>             m_ShaderFactory;

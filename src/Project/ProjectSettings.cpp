@@ -19,13 +19,15 @@ namespace Dwarf
   void
   ProjectSettings::Load()
   {
-    m_Logger->LogInfo("Loading project settings from [" + m_Path.t.string() +
-                      "]");
+    m_Logger->LogInfo(
+      Log("Loading project settings from [" + m_Path.t.string() + "]",
+          "ProjectSettings"));
 
-    if (!FileHandler::CheckIfFileExists(m_Path))
+    if (!FileHandler::FileExists(m_Path))
     {
-      m_Logger->LogError("Project settings file does not exist at [" +
-                         m_Path.t.string() + "]");
+      m_Logger->LogError(Log("Project settings file does not exist at [" +
+                               m_Path.t.string() + "]",
+                             "ProjectSettings"));
       return;
     }
 
@@ -39,7 +41,8 @@ namespace Dwarf
     }
     else
     {
-      m_Logger->LogError("Missing required field: projectName");
+      m_Logger->LogError(
+        Log("Missing required field: projectName", "ProjectSettings"));
       m_LoadStatus.addMissingField(PROJECT_NAME_KEY);
     }
 
@@ -50,7 +53,8 @@ namespace Dwarf
     else
     {
       m_Logger->LogError(
-        std::format("Missing required field: %s", GRAPHICS_API_KEY));
+        Log(std::format("Missing required field: %s", GRAPHICS_API_KEY),
+            "ProjectSettings"));
       m_LoadStatus.addMissingField(GRAPHICS_API_KEY);
     }
 
@@ -62,7 +66,8 @@ namespace Dwarf
     else
     {
       m_Logger->LogError(
-        std::format("Missing required field: %s", LAST_OPENED_SCENE_KEY));
+        Log(std::format("Missing required field: %s", LAST_OPENED_SCENE_KEY),
+            "ProjectSettings"));
       m_LastOpenedScene = nullptr; // or some default value
     }
 
@@ -73,8 +78,9 @@ namespace Dwarf
     }
     else
     {
-      m_Logger->LogError(std::format("Missing required field: %s",
-                                     PROJECT_LAST_OPENED_DATE_KEY));
+      m_Logger->LogError(Log(
+        std::format("Missing required field: %s", PROJECT_LAST_OPENED_DATE_KEY),
+        "ProjectSettings"));
       m_LastOpenedTimeStamp = 0; // or some default value
     }
   }
@@ -86,7 +92,7 @@ namespace Dwarf
     projectSettings[PROJECT_NAME_KEY] = m_Name;
     projectSettings[GRAPHICS_API_KEY] = m_GraphicsApi;
     projectSettings[LAST_OPENED_SCENE_KEY] =
-      m_LastOpenedScene == nullptr ? -1 : (uint64_t)*m_LastOpenedScene;
+      m_LastOpenedScene == nullptr ? "" : m_LastOpenedScene->ToString();
     projectSettings[PROJECT_LAST_OPENED_DATE_KEY] = m_LastOpenedTimeStamp;
 
     FileHandler::WriteToFile(m_Path, projectSettings.dump(2));
