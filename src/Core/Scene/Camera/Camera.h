@@ -22,23 +22,6 @@ namespace Dwarf
 
     Camera(std::shared_ptr<IInputManager> inputManager, nlohmann::json json);
 
-    // ========== Getters ==========
-
-    /// @brief Returns the field of view.
-    /// @return Fov of the camera.
-    float
-    GetFov() const override;
-
-    /// @brief Returns the near and far plane distances.
-    /// @return The near and far plane distances as a 2D vector.
-    glm::vec2
-    GetRenderPlaneParameters() const override;
-
-    /// @brief Returns the aspect ratio of the camera.
-    /// @return Aspect ratio.
-    float
-    GetAspectRatio() const override;
-
     /// @brief Returns the view matrix of the camera.
     /// @return 4x4 view matrix.
     glm::mat4x4

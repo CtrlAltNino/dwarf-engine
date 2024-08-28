@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "AssetInspectorRenderer.h"
-#include "Core/Asset/AssetDatabase.h"
 #include "Core/Base.h"
 #include "Core/Rendering/Renderer.h"
 #include "Core/UI/DwarfUI.h"

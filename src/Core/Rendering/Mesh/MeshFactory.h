@@ -15,5 +15,14 @@ namespace Dwarf
     CreateMesh(std::vector<Vertex>       vertices,
                std::vector<unsigned int> indices,
                unsigned int              materialIndex) override;
+
+    std::shared_ptr<IMesh>
+    CreateUnitSphere(int stacks, int slices) override;
+
+    std::shared_ptr<IMesh>
+    CreateUnitCube() override;
+
+    std::shared_ptr<IMesh>
+    CreateUnitQuad() override;
   };
 }

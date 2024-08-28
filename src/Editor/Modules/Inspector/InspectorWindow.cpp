@@ -15,7 +15,9 @@ namespace Dwarf
     std::optional<nlohmann::json>     serializedModule,
     std::shared_ptr<IEditor>          editor,
     std::shared_ptr<IEditorSelection> selection,
-    std::shared_ptr<IAssetDatabase>   assetDatabase)
+    std::shared_ptr<IAssetDatabase>   assetDatabase,
+    std::shared_ptr<IMaterialPreview> materialPreview,
+    std::shared_ptr<IModelPreview>    modelPreview)
     : IGuiModule(ModuleLabel("Inspector"),
                  ModuleType(MODULE_TYPE::INSPECTOR),
                  ModuleID(std::make_shared<UUID>(
@@ -25,6 +27,8 @@ namespace Dwarf
     , m_Editor(editor)
     , m_Selection(selection)
     , m_AssetDatabase(assetDatabase)
+    , m_MaterialPreview(materialPreview)
+    , m_ModelPreview(modelPreview)
   {
     // AssetInspectorRenderer::Init(model);
   }
@@ -228,7 +232,8 @@ namespace Dwarf
           if (std::filesystem::path assetPath = m_Selection->GetAssetPath();
               std::filesystem::is_regular_file(assetPath))
           {
-            switch (m_AssetDatabase->GetAssetType(assetPath))
+            switch (
+              m_AssetDatabase->GetAssetType(assetPath.extension().string()))
             {
               using enum ASSET_TYPE;
               case MODEL:

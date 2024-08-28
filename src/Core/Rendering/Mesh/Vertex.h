@@ -21,5 +21,25 @@ namespace Dwarf
 
     /// @brief The UV of the vertex.
     glm::vec2 UV;
+
+    Vertex(glm::vec3 position,
+           glm::vec3 normal,
+           glm::vec3 tangent,
+           glm::vec3 biTangent,
+           glm::vec2 uv)
+      : Position(position)
+      , Normal(normal)
+      , Tangent(tangent)
+      , BiTangent(biTangent)
+      , UV(uv)
+    {
+    }
+
+    Vertex(glm::vec3 position, glm::vec3 normal, glm::vec2 uv)
+      : Position(position)
+      , Normal(normal)
+      , UV(uv)
+    {
+    }
   };
 }
