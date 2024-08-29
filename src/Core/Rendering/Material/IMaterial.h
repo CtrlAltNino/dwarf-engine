@@ -1,10 +1,17 @@
 #pragma once
 #include "Core/Rendering/Shader/IShader.h"
 #include "Core/Rendering/Shader/IShaderParameterCollection.h"
-#include "Core/Rendering/Material/Properties/IMaterialProperties.h"
 
 namespace Dwarf
 {
+  struct MaterialProperties
+  {
+    bool IsTransparent;
+    bool IsDoubleSided;
+    bool IsUnlit;
+    bool IsWireframe;
+  };
+
   class IMaterial
   {
   public:
@@ -16,8 +23,8 @@ namespace Dwarf
     virtual const std::shared_ptr<IShaderParameterCollection>&
     GetParameters() const;
 
-    virtual const std::shared_ptr<IMaterialProperties>&
-    GetProperties() const;
+    virtual MaterialProperties&
+    GetProperties();
 
     virtual nlohmann::json
     Serialize() const = 0;

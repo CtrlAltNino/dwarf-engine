@@ -37,6 +37,23 @@ namespace Dwarf
     const ShaderLogs&
     GetShaderLogs() const;
 
+    std::shared_ptr<AssetReference<VertexShaderAsset>>&
+    GetVertexShaderAsset();
+
+    std::shared_ptr<AssetReference<FragmentShaderAsset>>&
+    GetFragmentShaderAsset();
+
+    boost::optional<std::shared_ptr<AssetReference<GeometryShaderAsset>>>&
+    GetGeometryShaderAsset();
+
+    boost::optional<
+      std::shared_ptr<AssetReference<TessellationControlShaderAsset>>>&
+    GetTessellationControlShaderAsset();
+
+    boost::optional<
+      std::shared_ptr<AssetReference<TessellationEvaluationShaderAsset>>>&
+    GetTessellationEvaluationShaderAsset();
+
     static const std::array<std::string, 3> ReservedUniformNames;
 
   private:

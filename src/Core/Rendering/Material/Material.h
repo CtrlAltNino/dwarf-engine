@@ -4,7 +4,6 @@
 #include "IMaterial.h"
 #include "Core/Rendering/Shader/IShader.h"
 #include "Core/UUID.h"
-#include "Core/Rendering/Material/Properties/IMaterialProperties.h"
 #include "IMaterial.h"
 
 namespace Dwarf
@@ -16,7 +15,7 @@ namespace Dwarf
   public:
     explicit Material(
       std::shared_ptr<IShader>                    shader = nullptr,
-      std::shared_ptr<IMaterialProperties>        properties = nullptr,
+      MaterialProperties                          properties = {},
       std::shared_ptr<IShaderParameterCollection> shaderParameters = nullptr);
     explicit Material(const nlohmann::json& serializedMaterial);
     ~Material();
@@ -48,14 +47,14 @@ namespace Dwarf
     const std::shared_ptr<IShaderParameterCollection>&
     GetParameters() const override;
 
-    const std::shared_ptr<IMaterialProperties>&
-    GetProperties() const override;
+    MaterialProperties&
+    GetProperties() override;
 
     nlohmann::json
     Serialize() const override;
 
   private:
-    std::shared_ptr<IMaterialProperties>        m_Properties;
+    MaterialProperties                          m_Properties;
     std::shared_ptr<IShaderParameterCollection> m_ShaderParameters;
     /// @brief Shader program for this material.
     std::shared_ptr<IShader> m_Shader;

@@ -39,7 +39,7 @@ namespace Dwarf
 
   Material::Material(
     std::shared_ptr<IShader>                    shader,
-    std::shared_ptr<IMaterialProperties>        properties,
+    MaterialProperties                          properties,
     std::shared_ptr<IShaderParameterCollection> shaderParameters)
     : m_Shader(shader)
     , m_Properties(properties)
@@ -67,8 +67,8 @@ namespace Dwarf
     return m_ShaderParameters;
   }
 
-  const std::shared_ptr<IMaterialProperties>&
-  Material::GetProperties() const
+  MaterialProperties&
+  Material::GetProperties()
   {
     return m_Properties;
   }

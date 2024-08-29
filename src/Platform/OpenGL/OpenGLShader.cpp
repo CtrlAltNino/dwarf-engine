@@ -271,6 +271,38 @@ namespace Dwarf
     return parameters;
   }
 
+  const std::shared_ptr<AssetReference<VertexShaderAsset>>&
+  OpenGLShader::GetVertexShaderAsset() const
+  {
+    return m_VertexShaderAsset;
+  }
+
+  const std::shared_ptr<AssetReference<FragmentShaderAsset>>&
+  OpenGLShader::GetFragmentShaderAsset() const
+  {
+    return m_FragmentShaderAsset;
+  }
+
+  const boost::optional<std::shared_ptr<AssetReference<GeometryShaderAsset>>>&
+  OpenGLShader::GetGeometryShaderAsset() const
+  {
+    return m_GeometryShaderAsset;
+  }
+
+  const boost::optional<
+    std::shared_ptr<AssetReference<TessellationControlShaderAsset>>>&
+  OpenGLShader::GetTessellationControlShaderAsset() const
+  {
+    return m_TessellationControlShaderAsset;
+  }
+
+  const boost::optional<
+    std::shared_ptr<AssetReference<TessellationEvaluationShaderAsset>>>&
+  OpenGLShader::GetTessellationEvaluationShaderAsset() const
+  {
+    return m_TessellationEvaluationShaderAsset;
+  }
+
   const ShaderLogs&
   OpenGLShader::GetShaderLogs() const
   {
