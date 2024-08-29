@@ -98,7 +98,7 @@ namespace Dwarf
 
       GLuint geometryShader = -1;
 
-      if (m_GeometryShaderAsset != boost::none &&
+      if (m_GeometryShaderAsset &&
           m_GeometryShaderAsset.get()->GetAsset()->m_FileContent.length() > 0)
       {
         const char* geometrySource =
@@ -271,34 +271,32 @@ namespace Dwarf
     return parameters;
   }
 
-  const std::shared_ptr<AssetReference<VertexShaderAsset>>&
-  OpenGLShader::GetVertexShaderAsset() const
+  std::shared_ptr<AssetReference<VertexShaderAsset>>&
+  OpenGLShader::GetVertexShaderAsset()
   {
     return m_VertexShaderAsset;
   }
 
-  const std::shared_ptr<AssetReference<FragmentShaderAsset>>&
-  OpenGLShader::GetFragmentShaderAsset() const
+  std::shared_ptr<AssetReference<FragmentShaderAsset>>&
+  OpenGLShader::GetFragmentShaderAsset()
   {
     return m_FragmentShaderAsset;
   }
 
-  const boost::optional<std::shared_ptr<AssetReference<GeometryShaderAsset>>>&
-  OpenGLShader::GetGeometryShaderAsset() const
+  std::shared_ptr<AssetReference<GeometryShaderAsset>>&
+  OpenGLShader::GetGeometryShaderAsset()
   {
     return m_GeometryShaderAsset;
   }
 
-  const boost::optional<
-    std::shared_ptr<AssetReference<TessellationControlShaderAsset>>>&
-  OpenGLShader::GetTessellationControlShaderAsset() const
+  std::shared_ptr<AssetReference<TessellationControlShaderAsset>>&
+  OpenGLShader::GetTessellationControlShaderAsset()
   {
     return m_TessellationControlShaderAsset;
   }
 
-  const boost::optional<
-    std::shared_ptr<AssetReference<TessellationEvaluationShaderAsset>>>&
-  OpenGLShader::GetTessellationEvaluationShaderAsset() const
+  std::shared_ptr<AssetReference<TessellationEvaluationShaderAsset>>&
+  OpenGLShader::GetTessellationEvaluationShaderAsset()
   {
     return m_TessellationEvaluationShaderAsset;
   }

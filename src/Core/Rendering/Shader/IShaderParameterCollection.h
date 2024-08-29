@@ -41,7 +41,7 @@ namespace Dwarf
      * @brief Gets the list of parameter identifiers.
      */
 
-    virtual std::vector<std::string>
+    virtual const std::vector<std::string>
     GetParameterIdentifiers() const = 0;
 
     /**

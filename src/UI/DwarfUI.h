@@ -51,9 +51,9 @@ namespace Dwarf
 
     template<typename T>
     static void
-    AssetInput(std::shared_ptr<IAssetDatabase> assetDatabase,
-               std::shared_ptr<UUID>&          assetID,
-               const char*                     imguiID)
+    AssetInput(std::shared_ptr<IAssetDatabase>     assetDatabase,
+               std::shared_ptr<AssetReference<T>>& asset,
+               const char*                         imguiID)
     {
       std::vector<entt::entity> availableAssets;
       int                       selectedAsset = -1;
@@ -64,7 +64,8 @@ namespace Dwarf
       for (auto entity : view)
       {
         availableAssets.push_back(entity);
-        if (assetID && (*view.template get<IDComponent>(entity).ID == *assetID))
+        if (asset && (view.template get<IDComponent>(entity).ID.get() ==
+                      asset->GetUID().get()))
         {
           selectedAsset = count;
         }
@@ -83,7 +84,7 @@ namespace Dwarf
               "None", selectedAsset == -1, 0, ImVec2(0, 16 + 10)))
         {
           selectedAsset = -1;
-          assetID = nullptr;
+          asset = nullptr;
         }
 
         for (int i = 0; i < availableAssets.size(); i++)
@@ -97,7 +98,8 @@ namespace Dwarf
                 ImVec2(0, 16 + 10)))
           {
             selectedAsset = i;
-            assetID = view.template get<IDComponent>(availableAssets[i]).ID;
+            asset = assetDatabase->Retrieve<T>(
+              view.template get<IDComponent>(availableAssets[i]).ID);
           }
         }
 
@@ -109,14 +111,14 @@ namespace Dwarf
   template<>
   void
   DwarfUI::AssetInput<VertexShaderAsset>(
-    std::shared_ptr<IAssetDatabase> assetDatabase,
-    std::shared_ptr<UUID>&          assetID,
-    const char*                     imguiID);
+    std::shared_ptr<IAssetDatabase>                     assetDatabase,
+    std::shared_ptr<AssetReference<VertexShaderAsset>>& asset,
+    const char*                                         imguiID);
 
   template<>
   void
   DwarfUI::AssetInput<FragmentShaderAsset>(
-    std::shared_ptr<IAssetDatabase> assetDatabase,
-    std::shared_ptr<UUID>&          assetID,
-    const char*                     imguiID);
+    std::shared_ptr<IAssetDatabase>                       assetDatabase,
+    std::shared_ptr<AssetReference<FragmentShaderAsset>>& asset,
+    const char*                                           imguiID);
 }

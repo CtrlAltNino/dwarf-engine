@@ -24,7 +24,7 @@ namespace Dwarf
     return std::nullopt;
   }
 
-  std::vector<std::string>
+  const std::vector<std::string>
   ShaderParameterCollection::GetParameterIdentifiers() const
   {
     std::vector<std::string> keys;

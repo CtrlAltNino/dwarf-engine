@@ -43,15 +43,13 @@ namespace Dwarf
     std::shared_ptr<AssetReference<FragmentShaderAsset>>&
     GetFragmentShaderAsset();
 
-    boost::optional<std::shared_ptr<AssetReference<GeometryShaderAsset>>>&
+    std::shared_ptr<AssetReference<GeometryShaderAsset>>&
     GetGeometryShaderAsset();
 
-    boost::optional<
-      std::shared_ptr<AssetReference<TessellationControlShaderAsset>>>&
+    std::shared_ptr<AssetReference<TessellationControlShaderAsset>>&
     GetTessellationControlShaderAsset();
 
-    boost::optional<
-      std::shared_ptr<AssetReference<TessellationEvaluationShaderAsset>>>&
+    std::shared_ptr<AssetReference<TessellationEvaluationShaderAsset>>&
     GetTessellationEvaluationShaderAsset();
 
     static const std::array<std::string, 3> ReservedUniformNames;
@@ -64,14 +62,13 @@ namespace Dwarf
     // Map of parameters that the shader uses.
     std::shared_ptr<IShaderParameterCollection> m_Parameters;
 
-    std::shared_ptr<AssetReference<VertexShaderAsset>> m_VertexShaderAsset;
-    boost::optional<std::shared_ptr<AssetReference<GeometryShaderAsset>>>
-      m_GeometryShaderAsset;
-    boost::optional<
-      std::shared_ptr<AssetReference<TessellationControlShaderAsset>>>
+    std::shared_ptr<AssetReference<VertexShaderAsset>>   m_VertexShaderAsset;
+    std::shared_ptr<AssetReference<GeometryShaderAsset>> m_GeometryShaderAsset;
+
+    std::shared_ptr<AssetReference<TessellationControlShaderAsset>>
       m_TessellationControlShaderAsset;
-    boost::optional<
-      std::shared_ptr<AssetReference<TessellationEvaluationShaderAsset>>>
+
+    std::shared_ptr<AssetReference<TessellationEvaluationShaderAsset>>
       m_TessellationEvaluationShaderAsset;
     std::shared_ptr<AssetReference<FragmentShaderAsset>> m_FragmentShaderAsset;
 

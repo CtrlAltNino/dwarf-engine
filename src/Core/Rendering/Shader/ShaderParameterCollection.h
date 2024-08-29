@@ -29,7 +29,7 @@ namespace Dwarf
      * @brief Gets the list of parameter identifiers.
      */
 
-    std::vector<std::string>
+    const std::vector<std::string>
     GetParameterIdentifiers() const override;
 
     /**
