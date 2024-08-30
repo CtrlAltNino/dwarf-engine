@@ -1,6 +1,7 @@
 #include "OpenGLShader.h"
 #include "Core/Base.h"
 #include "Core/Rendering/Shader/IShaderParameterCollection.h"
+#include "Core/Rendering/Shader/IShaderParameterCollectionFactory.h"
 #include "Core/Rendering/Shader/ShaderTypes.h"
 #include <memory>
 #include <variant>
@@ -9,7 +10,10 @@
 
 namespace Dwarf
 {
-  OpenGLShader::OpenGLShader(ShaderSourceCollection shaderSources)
+  OpenGLShader::OpenGLShader(ShaderSourceCollection shaderSources,
+                             std::shared_ptr<IShaderParameterCollectionFactory>
+                               shaderParameterCollectionFactory)
+    : m_ShaderParameterCollectionFactory(shaderParameterCollectionFactory)
   {
     for (const auto& shaderSource : shaderSources.t)
     {
@@ -241,8 +245,9 @@ namespace Dwarf
     {
       return nullptr;
     }
+
     std::shared_ptr<IShaderParameterCollection> parameters =
-      std::make_shared<IShaderParameterCollection>();
+      m_ShaderParameterCollectionFactory->CreateShaderParameterCollection();
     GLint i;
     GLint count;
 

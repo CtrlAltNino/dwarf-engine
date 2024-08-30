@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Base.h"
 #include "IShaderParameterCollectionFactory.h"
 
 namespace Dwarf
@@ -7,7 +8,12 @@ namespace Dwarf
   class ShaderParameterCollectionFactory
     : public IShaderParameterCollectionFactory
   {
+  private:
+    GraphicsApi m_GraphicsApi;
+
   public:
+    ShaderParameterCollectionFactory(GraphicsApi graphicsApi);
+
     std::shared_ptr<IShaderParameterCollection>
     CreateShaderParameterCollection() override;
 

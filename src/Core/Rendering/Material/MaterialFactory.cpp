@@ -4,12 +4,10 @@
 namespace Dwarf
 {
   MaterialFactory::MaterialFactory(
-    std::shared_ptr<IShaderFactory>             shaderFactory,
-    std::shared_ptr<IMaterialPropertiesFactory> materialPropertiesFactory,
+    std::shared_ptr<IShaderFactory> shaderFactory,
     std::shared_ptr<IShaderParameterCollectionFactory>
       shaderParameterCollectionFactory)
     : m_ShaderFactory(shaderFactory)
-    , m_MaterialPropertiesFactory(materialPropertiesFactory)
     , m_ShaderParameterCollectionFactory(shaderParameterCollectionFactory)
   {
   }
@@ -19,20 +17,14 @@ namespace Dwarf
   std::shared_ptr<IMaterial>
   MaterialFactory::CreateDefaultMaterial() const
   {
-    return std::make_shared<Material>(
-      m_ShaderFactory->CreateShader(),
-      m_MaterialPropertiesFactory->CreateMaterialProperties(),
-      m_ShaderParameterCollectionFactory->CreateShaderParameterCollection());
-    ;
+    // TODO: Use default shader
+    return std::make_shared<Material>(m_ShaderFactory->CreateShader());
   }
 
   std::shared_ptr<IMaterial>
   MaterialFactory::CreateMaterial(std::shared_ptr<IShader> shader) const
   {
-    return std::make_shared<Material>(
-      shader,
-      m_MaterialPropertiesFactory->CreateMaterialProperties(),
-      m_ShaderParameterCollectionFactory->CreateShaderParameterCollection());
+    return std::make_shared<Material>(shader);
   }
 
   std::shared_ptr<IMaterial>
@@ -41,9 +33,6 @@ namespace Dwarf
   {
     return std::make_shared<Material>(
       m_ShaderFactory->CreateShader(serializedMaterial["shader"]),
-      m_MaterialPropertiesFactory->CreateMaterialProperties(
-        serializedMaterial["materialProperties"]),
-      m_ShaderParameterCollectionFactory->CreateShaderParameterCollection(
-        serializedMaterial["ShaderParameterCollection"]));
+      serializedMaterial["materialProperties"]);
   }
 }

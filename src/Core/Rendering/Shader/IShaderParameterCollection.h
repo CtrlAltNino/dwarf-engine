@@ -4,18 +4,19 @@
 #include "Core/Base.h"
 #include "Core/UUID.h"
 
+#include <fmt/base.h>
 #include <memory>
 #include <variant>
 #include <optional>
 
 namespace Dwarf
 {
-  using Texture2DAsset = std::shared_ptr<UUID>;
+  using Texture2DAssetValue = std::shared_ptr<UUID>;
   using ParameterValue = std::variant<bool,
                                       int,
                                       unsigned int,
                                       float,
-                                      Texture2DAsset,
+                                      Texture2DAssetValue,
                                       glm::vec2,
                                       glm::vec3,
                                       glm::vec4>;
@@ -43,6 +44,12 @@ namespace Dwarf
 
     virtual const std::vector<std::string>
     GetParameterIdentifiers() const = 0;
+
+    virtual void
+    RemoveParameter(std::string const& name) = 0;
+
+    virtual bool
+    HasParameter(std::string const& name) const = 0;
 
     /**
      * @brief Clears the parameters.

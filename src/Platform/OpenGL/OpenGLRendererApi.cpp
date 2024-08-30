@@ -46,7 +46,7 @@ namespace Dwarf
                   parameter);
     }
     void
-    operator()(Texture2DAsset parameter)
+    operator()(Texture2DAssetValue parameter)
     {
       // TODO: This needs to count the number of textures and bind them
       glActiveTexture(GL_TEXTURE0);
@@ -137,7 +137,7 @@ namespace Dwarf
 
     glUseProgram(shader->GetID());
 
-    if (material->GetProperties()->IsTransparent())
+    if (material->GetMaterialProperties().IsTransparent)
     {
       glEnable(GL_BLEND);
       glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -148,10 +148,10 @@ namespace Dwarf
 
     // TODO: Move this to OpenGLShader.cpp
     for (auto const& identifier :
-         material->GetParameters()->GetParameterIdentifiers())
+         material->GetShaderParameters()->GetParameterIdentifiers())
     {
       auto shaderParameterValue =
-        material->GetParameters()->GetParameter(identifier);
+        material->GetShaderParameters()->GetParameter(identifier);
       if (shaderParameterValue.has_value())
       {
         std::visit(SetShaderParameterVisitor{ shader->GetID(), identifier },

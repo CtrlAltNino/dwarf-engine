@@ -37,6 +37,18 @@ namespace Dwarf
   }
 
   void
+  ShaderParameterCollection::RemoveParameter(std::string const& name)
+  {
+    m_Parameters.erase(name);
+  }
+
+  bool
+  ShaderParameterCollection::HasParameter(std::string const& name) const
+  {
+    return m_Parameters.find(name) != m_Parameters.end();
+  }
+
+  void
   ShaderParameterCollection::ClearParameters()
   {
     m_Parameters.clear();

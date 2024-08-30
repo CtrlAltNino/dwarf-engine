@@ -1,4 +1,5 @@
 #pragma once
+#include "Core/Rendering/Shader/IShader.h"
 #include "IShaderParameterCollection.h"
 
 namespace Dwarf

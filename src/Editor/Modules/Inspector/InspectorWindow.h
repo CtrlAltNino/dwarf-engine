@@ -1,7 +1,9 @@
 #pragma once
+#include "AssetInspector/IAssetInspector.h"
 #include "Core/Asset/Database/IAssetDatabase.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorSelection.h"
+#include "EntityInspector/IEntityInspector.h"
 #include "pch.h"
 #include "Core/Scene/Scene.h"
 #include "Editor/EditorModel.h"
@@ -20,31 +22,16 @@ namespace Dwarf
     std::shared_ptr<IEditor>          m_Editor;
     std::shared_ptr<IEditorSelection> m_Selection;
     std::shared_ptr<IAssetDatabase>   m_AssetDatabase;
-    std::shared_ptr<IMaterialPreview> m_MaterialPreview;
-    std::shared_ptr<IModelPreview>    m_ModelPreview;
-
-    /// @brief Renders the components of an entity.
-    /// @param entity Entity to render in the inspector.
-    void
-    RenderComponents(Entity entity);
-
-    void
-    BeginComponent(const char* componentHeader) const;
-
-    void
-    EndComponent() const;
-
-    template<typename T>
-    void
-    RenderComponent(T& component);
+    std::shared_ptr<IAssetInspector>  m_AssetInspector;
+    std::shared_ptr<IEntityInspector> m_EntityInspector;
 
   public:
     InspectorWindow(std::optional<nlohmann::json>     serializedModule,
                     std::shared_ptr<IEditor>          editor,
                     std::shared_ptr<IEditorSelection> selection,
                     std::shared_ptr<IAssetDatabase>   assetDatabase,
-                    std::shared_ptr<IMaterialPreview> materialPreview,
-                    std::shared_ptr<IModelPreview>    modelPreview);
+                    std::shared_ptr<IAssetInspector>  assetInspector,
+                    std::shared_ptr<IEntityInspector> entityInspector);
 
     /// @brief Renders the module window.
     void

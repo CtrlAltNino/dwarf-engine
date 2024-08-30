@@ -1,5 +1,6 @@
 #pragma once
 #include "Core/Asset/Database/AssetComponents.h"
+#include "Core/Rendering/Shader/IShaderParameterCollectionFactory.h"
 #include "pch.h"
 
 #include <glad/glad.h>
@@ -23,7 +24,10 @@ namespace Dwarf
   class OpenGLShader : public IShader
   {
   public:
-    BOOST_DI_INJECT(OpenGLShader, ShaderSourceCollection shaderSources);
+    BOOST_DI_INJECT(OpenGLShader,
+                    ShaderSourceCollection shaderSources,
+                    std::shared_ptr<IShaderParameterCollectionFactory>
+                      shaderParameterCollectionFactory);
     ~OpenGLShader() = default;
     GLuint
     GetID() const;
@@ -60,7 +64,8 @@ namespace Dwarf
     // Flag to determine if the shader has been successfully compiled.
     bool m_SuccessfullyCompiled;
     // Map of parameters that the shader uses.
-    std::shared_ptr<IShaderParameterCollection> m_Parameters;
+    std::shared_ptr<IShaderParameterCollectionFactory>
+      m_ShaderParameterCollectionFactory;
 
     std::shared_ptr<AssetReference<VertexShaderAsset>>   m_VertexShaderAsset;
     std::shared_ptr<AssetReference<GeometryShaderAsset>> m_GeometryShaderAsset;

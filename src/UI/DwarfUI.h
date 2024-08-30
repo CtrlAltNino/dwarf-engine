@@ -51,6 +51,63 @@ namespace Dwarf
 
     template<typename T>
     static void
+    AssetInput(std::shared_ptr<IAssetDatabase> assetDatabase,
+               std::shared_ptr<UUID>&          assetID,
+               const char*                     imguiID)
+    {
+      std::vector<entt::entity> availableAssets;
+      int                       selectedAsset = -1;
+      auto                      view =
+        assetDatabase->GetRegistry()->view<IDComponent, NameComponent, T>();
+
+      int count = 0;
+      for (auto entity : view)
+      {
+        availableAssets.push_back(entity);
+        if (assetID &&
+            (view.template get<IDComponent>(entity).ID.get() == assetID))
+        {
+          selectedAsset = count;
+        }
+        count++;
+      }
+
+      const char* preview =
+        (selectedAsset == -1)
+          ? "None"
+          : view.template get<NameComponent>(availableAssets[selectedAsset])
+              .Name.c_str();
+
+      if (ImGui::BeginCombo(imguiID, preview))
+      {
+        if (ImGui::Selectable(
+              "None", selectedAsset == -1, 0, ImVec2(0, 16 + 10)))
+        {
+          selectedAsset = -1;
+          assetID = nullptr;
+        }
+
+        for (int i = 0; i < availableAssets.size(); i++)
+        {
+          const bool is_selected = (selectedAsset == i);
+          if (ImGui::Selectable(
+                view.template get<NameComponent>(availableAssets[i])
+                  .Name.c_str(),
+                is_selected,
+                0,
+                ImVec2(0, 16 + 10)))
+          {
+            selectedAsset = i;
+            assetID = view.template get<IDComponent>(availableAssets[i]).ID;
+          }
+        }
+
+        ImGui::EndCombo();
+      }
+    }
+
+    template<typename T>
+    static void
     AssetInput(std::shared_ptr<IAssetDatabase>     assetDatabase,
                std::shared_ptr<AssetReference<T>>& asset,
                const char*                         imguiID)

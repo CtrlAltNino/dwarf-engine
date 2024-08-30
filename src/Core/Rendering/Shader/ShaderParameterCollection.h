@@ -32,6 +32,12 @@ namespace Dwarf
     const std::vector<std::string>
     GetParameterIdentifiers() const override;
 
+    void
+    RemoveParameter(std::string const& name) override;
+
+    bool
+    HasParameter(std::string const& name) const override;
+
     /**
      * @brief Clears the parameters.
      */

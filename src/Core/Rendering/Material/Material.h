@@ -1,4 +1,5 @@
 #pragma once
+#include "Core/Rendering/Shader/IShaderParameterCollectionFactory.h"
 #include "pch.h"
 #include "Core/Base.h"
 #include "IMaterial.h"
@@ -8,16 +9,12 @@
 
 namespace Dwarf
 {
-
   /// @brief Class representing a modular Material.
   class Material : public IMaterial
   {
   public:
-    explicit Material(
-      std::shared_ptr<IShader>                    shader = nullptr,
-      MaterialProperties                          properties = {},
-      std::shared_ptr<IShaderParameterCollection> shaderParameters = nullptr);
-    explicit Material(const nlohmann::json& serializedMaterial);
+    explicit Material(std::shared_ptr<IShader> shader = nullptr,
+                      const nlohmann::json& serializedMaterialProperties = "");
     ~Material();
 
     // static std::shared_ptr<Material> s_DefaultMaterial;
@@ -41,20 +38,28 @@ namespace Dwarf
     // std::string
     // GetName() const;
 
-    const std::shared_ptr<IShader>&
+    const std::shared_ptr<IShader>
     GetShader() const override;
 
+    void
+    SetShader(std::shared_ptr<IShader> shader) override;
+
     const std::shared_ptr<IShaderParameterCollection>&
-    GetParameters() const override;
+    GetShaderParameters() const override;
 
     MaterialProperties&
-    GetProperties() override;
+    GetMaterialProperties() override;
+
+    void
+    GenerateShaderParameters() override;
 
     nlohmann::json
     Serialize() const override;
 
   private:
-    MaterialProperties                          m_Properties;
+    MaterialProperties m_MaterialProperties;
+    std::shared_ptr<IShaderParameterCollectionFactory>
+      m_ShaderParameterCollectionFactory;
     std::shared_ptr<IShaderParameterCollection> m_ShaderParameters;
     /// @brief Shader program for this material.
     std::shared_ptr<IShader> m_Shader;

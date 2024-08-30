@@ -5,6 +5,11 @@
 
 namespace Dwarf
 {
+  ShaderParameterCollectionFactory::ShaderParameterCollectionFactory(
+    GraphicsApi graphicsApi)
+    : m_GraphicsApi(graphicsApi)
+  {
+  }
   std::shared_ptr<IShaderParameterCollection>
   ShaderParameterCollectionFactory::CreateShaderParameterCollection()
   {
