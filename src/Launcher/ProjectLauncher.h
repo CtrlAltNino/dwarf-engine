@@ -3,7 +3,7 @@
 #include "pch.h"
 #include "Launcher/IProjectLauncherModel.h"
 #include "Launcher/IProjectLauncherView.h"
-#include "Window/Window.h"
+#include "Window/IWindow.h"
 
 namespace Dwarf
 {
@@ -12,7 +12,7 @@ namespace Dwarf
   private:
     std::unique_ptr<IProjectLauncherModel> m_Model;
     std::unique_ptr<IProjectLauncherView>  m_View;
-    std::unique_ptr<Window>                m_Window;
+    std::unique_ptr<IWindow>               m_Window;
 
   public:
     ProjectLauncher();

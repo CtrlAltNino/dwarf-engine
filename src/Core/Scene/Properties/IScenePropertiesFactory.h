@@ -11,8 +11,8 @@ namespace Dwarf
     virtual ~IScenePropertiesFactory() = default;
 
     virtual std::shared_ptr<ISceneProperties>
-    Create(AssetReference<SceneAsset> sceneAsset,
-           nlohmann::json             serializedProperties) = 0;
+    Create(std::shared_ptr<AssetReference<SceneAsset>> sceneAsset,
+           nlohmann::json serializedProperties) = 0;
 
     virtual std::shared_ptr<ISceneProperties>
     Create(std::string name) = 0;

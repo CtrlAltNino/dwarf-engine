@@ -2,7 +2,7 @@
 
 #include "Core/Asset/Database/IAssetDatabase.h"
 #include "Core/Scene/ISceneFactory.h"
-#include "Core/Scene/SceneIO/ISceneIO.h"
+#include "Core/Scene/IO/ISceneIO.h"
 #include "Core/Scene/IScene.h"
 #include "Project/IProjectSettings.h"
 #include "Utilities/FileHandler.h"

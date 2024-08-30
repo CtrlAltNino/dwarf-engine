@@ -1,6 +1,6 @@
 #pragma once
 #include "Core/Scene/IScene.h"
-#include "Core/Scene/SceneIO/ISceneIO.h"
+#include "Core/Scene/IO/ISceneIO.h"
 #include "Editor/IEditor.h"
 
 #include "Core/Asset/Database/IAssetDatabase.h"

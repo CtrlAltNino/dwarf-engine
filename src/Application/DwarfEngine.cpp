@@ -2,7 +2,7 @@
 #include "Application/DwarfEngine.h"
 #include "Launcher/ProjectLauncher.h"
 #include "Editor/Editor.h"
-#include "Logging/DefaultLogger.h"
+#include "Logging/DwarfLogger.h"
 #include "Project/ProjectTypes.h"
 #include "DI/DwarfEditorDI.h"
 
@@ -11,35 +11,39 @@ namespace Dwarf
   void
   DwarfEngine::Run()
   {
-    DefaultLogger logger = DefaultLogger();
-    bool          shouldClose = false;
+    DwarfLogger logger = DwarfLogger();
+    bool        shouldClose = false;
     while (!shouldClose)
     {
       std::filesystem::path projectPath = "";
       {
-        logger.LogInfo("Creating project launcher...");
+        logger.LogInfo(Log("Creating project launcher...", "DwarfEngine"));
         auto launcher = Dwarf::ProjectLauncher();
-        logger.LogInfo("Project launcher created.");
+        logger.LogInfo(Log("Project launcher created.", "DwarfEngine"));
 
-        logger.LogInfo("Running project launcher...");
+        logger.LogInfo(Log("Running project launcher...", "DwarfEngine"));
         launcher.Run(projectPath);
-        logger.LogInfo("Project launcher finished running.");
+        logger.LogInfo(
+          Log("Project launcher finished running.", "DwarfEngine"));
       }
 
       if (!projectPath.empty())
       {
-        logger.LogInfo("Opening project at: " + projectPath.string());
-        logger.LogInfo("Creating editor...");
+        logger.LogInfo(
+          Log("Opening project at: " + projectPath.string(), "DwarfEngine"));
+        logger.LogInfo(Log("Creating editor...", "DwarfEngine"));
         // Create injector and bind the project path to the editor.
-        const auto injector = Dwarf::DwarfEditorDI::CreateInjector(projectPath);
-        auto       editor = injector.create<Dwarf::Editor>();
+        const auto injector = Dwarf::DwarfEditorDI(projectPath);
+        auto       editor = injector.Get().create<Dwarf::Editor>();
         shouldClose = !editor.Run();
-        logger.LogInfo("Editor finished running.");
-        logger.LogInfo("Should close: " + std::to_string(shouldClose));
+        logger.LogInfo(Log("Editor finished running.", "DwarfEngine"));
+        logger.LogInfo(
+          Log("Should close: " + std::to_string(shouldClose), "DwarfEngine"));
       }
       else
       {
-        logger.LogInfo("No project path provided. Exiting Dwarf Engine...");
+        logger.LogInfo(Log("No project path provided. Exiting Dwarf Engine...",
+                           "DwarfEngine"));
         shouldClose = true;
       }
     }

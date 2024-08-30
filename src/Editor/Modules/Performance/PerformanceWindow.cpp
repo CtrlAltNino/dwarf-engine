@@ -3,13 +3,28 @@
 namespace Dwarf
 {
 
-  PerformanceWindow::PerformanceWindow(int id)
-    : IGuiModule("Performance", MODULE_TYPE::PERFORMANCE, id)
+  PerformanceWindow::PerformanceWindow(
+    std::shared_ptr<IEditorStats> editorStats)
+    : IGuiModule(ModuleLabel("Performance"),
+                 ModuleType(MODULE_TYPE::PERFORMANCE),
+                 ModuleID(std::make_shared<UUID>()))
+    , m_EditorStats(editorStats)
   {
   }
 
+  PerformanceWindow::PerformanceWindow(
+    nlohmann::json                serializedModule,
+    std::shared_ptr<IEditorStats> editorStats)
+    : IGuiModule(ModuleLabel("Performance"),
+                 ModuleType(MODULE_TYPE::PERFORMANCE),
+                 ModuleID(std::make_shared<UUID>()))
+    , m_EditorStats(editorStats)
+  {
+    Deserialize(serializedModule);
+  }
+
   void
-  PerformanceWindow::OnUpdate(double deltaTimte)
+  PerformanceWindow::OnUpdate()
   {
     // Code that needs to be run before render
   }
@@ -44,20 +59,22 @@ namespace Dwarf
     ImGui::Text("Statistics");
     // ImGui::PopFont();
 
+    ImGui::Text("%s",
+                std::format("Frames per second: {}",
+                            std::to_string(1.0 / m_EditorStats->GetDeltaTime()))
+                  .c_str());
     ImGui::Text(
       "%s",
-      std::format("Frames per second: {}", std::to_string(1.0 / *m_Frametime))
+      std::format("Frametime: {}{}",
+                  std::to_string(m_EditorStats->GetDeltaTime() * 1000.0),
+                  " ms")
         .c_str());
-    ImGui::Text("%s",
-                std::format("Frametime: {}{}",
-                            std::to_string(*m_Frametime * 1000.0),
-                            " ms")
-                  .c_str());
-    ImGui::Text("%s",
-                std::format("Render time: {}{}",
-                            std::to_string(*m_RenderTime * 1000.0),
-                            " ms")
-                  .c_str());
+    // ImGui::Text(
+    //   "%s",
+    //   std::format("Render time: {}{}",
+    //               std::to_string(m_EditorStats->GetDeltaTime() * 1000.0),
+    //               " ms")
+    //     .c_str());
 
     ImGui::End();
   }

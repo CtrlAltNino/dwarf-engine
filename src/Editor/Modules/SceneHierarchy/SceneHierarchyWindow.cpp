@@ -1,6 +1,6 @@
 #include "pch.h"
 
-#include "Editor/Modules/Scene Hierarchy/SceneHierarchyWindow.h"
+#include "Editor/Modules/SceneHierarchy/SceneHierarchyWindow.h"
 #include "Core/Scene/Scene.h"
 #include "Editor/Modules/Scene Hierarchy/NewParentInstruction.h"
 #include "Editor/Modules/Scene Hierarchy/ChildIndexInstruction.h"

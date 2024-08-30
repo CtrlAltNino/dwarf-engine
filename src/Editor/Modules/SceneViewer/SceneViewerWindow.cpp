@@ -1,4 +1,4 @@
-#include "Editor/Modules/Scene Viewer/SceneViewerWindow.h"
+#include "Editor/Modules/SceneViewer/SceneViewerWindow.h"
 #include "Core/Scene/Scene.h"
 #include "Input/InputManager.h"
 #include "Core/Rendering/Renderer.h"

@@ -41,5 +41,7 @@ namespace Dwarf
       , UV(uv)
     {
     }
+
+    Vertex();
   };
 }

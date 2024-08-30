@@ -13,10 +13,11 @@ namespace Dwarf
   }
 
   std::shared_ptr<IScene>
-  SceneFactory::FromAsset(const AssetReference<SceneAsset>& sceneAsset)
+  SceneFactory::FromAsset(
+    std::shared_ptr<AssetReference<SceneAsset>> sceneAsset)
   {
     nlohmann::json serializedScene =
-      nlohmann::json::parse(FileHandler::ReadFile(sceneAsset.GetPath()));
+      nlohmann::json::parse(FileHandler::ReadFile(sceneAsset->GetPath()));
     return std::make_shared<Scene>(
       serializedScene["Graph"],
       m_ScenePropertiesFactory->Create(sceneAsset,
@@ -24,7 +25,7 @@ namespace Dwarf
   }
 
   std::shared_ptr<IScene>
-  SceneFactory::New(std::filesystem::path directory)
+  SceneFactory::NewAsset(std::filesystem::path directory)
   {
     return std::make_shared<Scene>(
       nlohmann::json(""),

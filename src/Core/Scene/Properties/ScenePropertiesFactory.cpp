@@ -12,8 +12,9 @@ namespace Dwarf
   }
 
   std::shared_ptr<ISceneProperties>
-  ScenePropertiesFactory::Create(AssetReference<SceneAsset> sceneAsset,
-                                 nlohmann::json serializedProperties)
+  ScenePropertiesFactory::Create(
+    std::shared_ptr<AssetReference<SceneAsset>> sceneAsset,
+    nlohmann::json                              serializedProperties)
   {
     return std::make_shared<SceneProperties>(
       sceneAsset,

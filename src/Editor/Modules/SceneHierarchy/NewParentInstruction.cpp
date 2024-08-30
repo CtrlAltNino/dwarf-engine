@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "Editor/Modules/Scene Hierarchy/NewParentInstruction.h"
+#include "Editor/Modules/SceneHierarchy/NewParentInstruction.h"
 
 namespace Dwarf
 {
