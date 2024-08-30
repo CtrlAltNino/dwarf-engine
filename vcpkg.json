@@ -44,7 +44,7 @@
     "assimp",
     "stb",
     "nlohmann-json",
-    "nativefiledialog",
+    "nativefiledialog-extended",
     "bext-di",
     "efsw",
     "imguizmo",
@@ -67,15 +67,15 @@
     },
     {
       "name": "glm",
-      "version": "1.0.0"
+      "version": "1.0.1#3"
     },
     {
       "name": "imgui",
-      "version": "1.90#4"
+      "version": "1.91.0"
     },
     {
       "name": "assimp",
-      "version": "5.3.1#4"
+      "version": "5.4.2"
     },
     {
       "name": "stb",
@@ -83,40 +83,40 @@
     },
     {
       "name": "nlohmann-json",
-      "version": "3.11.3"
+      "version": "3.11.3#1"
     },
     {
-      "name": "nativefiledialog",
-      "version-date": "2022-01-20"
+      "name": "nativefiledialog-extended",
+      "version": "1.2.0"
     },
     {
       "name": "bext-di",
-      "version": "1.3.0"
+      "version": "1.3.0#1"
     },
     {
       "name": "efsw",
-      "version": "1.3.1"
+      "version": "1.4.0"
     },
     {
       "name": "imguizmo",
-      "version": "1.83#1"
+      "version": "2024-05-29"
     },
     {
       "name": "entt",
-      "version": "3.13.1"
+      "version": "3.13.2"
     },
     {
       "name": "sdl2",
-      "version": "2.30.0"
+      "version": "2.30.6#1"
     },
     {
       "name": "tiff",
-      "version": "4.6.0"
+      "version": "4.6.0#4"
     },
     {
       "name": "libspng",
       "version": "0.7.4"
     }
   ],
-  "builtin-baseline": "6af584dd59aa5bdba75dae6781ec74614e03e5b9"
+  "builtin-baseline": "f0c8848cde589649bca3ab3649668540403786ce"
 }

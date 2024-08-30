@@ -109,8 +109,8 @@ target_link_libraries(${targetName} PRIVATE glm::glm)
 find_package(imgui CONFIG REQUIRED)
 target_link_libraries(${targetName} PRIVATE imgui::imgui)
 
-find_package(unofficial-nativefiledialog CONFIG REQUIRED)
-target_link_libraries(${targetName} PRIVATE unofficial::nativefiledialog::nfd)
+find_package(nfd CONFIG REQUIRED)
+target_link_libraries(${targetName} PRIVATE nfd::nfd)
 
 find_package(nlohmann_json CONFIG REQUIRED)
 target_link_libraries(${targetName} PRIVATE nlohmann_json nlohmann_json::nlohmann_json)
@@ -121,8 +121,8 @@ target_link_libraries(${targetName} PRIVATE efsw::efsw)
 find_package(Threads REQUIRED)
 target_link_libraries(${targetName} PRIVATE Threads::Threads)
 
-find_package(imguizmo CONFIG REQUIRED)
-target_link_libraries(${targetName} PRIVATE imguizmo::imguizmo)
+find_package(unofficial-imguizmo CONFIG REQUIRED)
+target_link_libraries(${targetName} PRIVATE unofficial::imguizmo::imguizmo)
 
 find_package(EnTT CONFIG REQUIRED)
 target_link_libraries(${targetName} PRIVATE EnTT::EnTT)
