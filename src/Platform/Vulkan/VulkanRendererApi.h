@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Core/Rendering/RendererApi.h"
+#include "Core/Rendering/RendererAPI/IRendererApi.h"
 
 namespace Dwarf
 {
-  class VulkanRendererApi : public RendererApi
+  class VulkanRendererApi : public IRendererApi
   {
   public:
     VulkanRendererApi();

@@ -35,11 +35,15 @@ namespace Dwarf
   void
   SceneIO::SaveSceneDialog(std::shared_ptr<IScene> scene) const
   {
-    nfdchar_t*  savePath = nullptr;
-    nfdresult_t result =
-      NFD_SaveDialog("dscene",
-                     m_AssetDatabase->GetAssetDirectoryPath().string().c_str(),
-                     &savePath);
+    nfdu8char_t*          savePath = nullptr;
+    nfdu8filteritem_t     filters[1] = { { "Dwarf scene", "dscene" } };
+    nfdsavedialogu8args_t args = { 0 };
+    args.filterList = filters;
+    args.filterCount = 1;
+    args.defaultPath =
+      m_AssetDatabase->GetAssetDirectoryPath().string().c_str();
+
+    nfdresult_t    result = NFD_SaveDialogU8_With(&savePath, &args);
     nlohmann::json sceneJson = scene->Serialize();
 
     if (result == NFD_OKAY)
@@ -85,16 +89,19 @@ namespace Dwarf
   std::shared_ptr<IScene>
   SceneIO::LoadSceneDialog() const
   {
-    nfdchar_t* outPath = nullptr;
+    nfdu8char_t*          savePath = nullptr;
+    nfdu8filteritem_t     filters[1] = { { "Dwarf scene", "dscene" } };
+    nfdopendialogu8args_t args = { 0 };
+    args.filterList = filters;
+    args.filterCount = 1;
+    args.defaultPath =
+      m_AssetDatabase->GetAssetDirectoryPath().string().c_str();
 
-    if (nfdresult_t result = NFD_OpenDialog(
-          "dscene",
-          m_AssetDatabase->GetAssetDirectoryPath().string().c_str(),
-          &outPath);
+    if (nfdresult_t result = NFD_OpenDialogU8_With(&savePath, &args);
         result == NFD_OKAY)
     {
-      std::filesystem::path path(outPath);
-      delete outPath;
+      std::filesystem::path path(savePath);
+      delete savePath;
       return m_SceneFactory->FromFile(path);
     }
     else if (result == NFD_CANCEL)

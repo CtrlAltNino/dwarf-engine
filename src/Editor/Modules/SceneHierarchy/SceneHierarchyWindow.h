@@ -1,16 +1,21 @@
 #pragma once
 
 #include "Editor/EditorModel.h"
+#include "Editor/IEditor.h"
+#include "Editor/IEditorSelection.h"
 #include "Editor/Modules/IGuiModule.h"
 #include "Editor/Modules/SceneHierarchy/GraphInstruction.h"
+#include "Input/IInputManager.h"
 
 namespace Dwarf
 {
-
   /// @brief Module to display and manipulate the scene graph.
   class SceneHierarchyWindow : public IGuiModule
   {
   private:
+    std::shared_ptr<IEditor>          m_Editor;
+    std::shared_ptr<IEditorSelection> m_EditorSelection;
+    std::shared_ptr<IInputManager>    m_InputManager;
     /// @brief List of graph instruction. Used as a buffer, executed at the end
     /// of a frame.
     std::vector<std::shared_ptr<GraphInstruction>> m_Instructions;
@@ -27,14 +32,20 @@ namespace Dwarf
     ProcessInstructions();
 
   public:
-    SceneHierarchyWindow(std::shared_ptr<EditorModel> model, int index);
+    SceneHierarchyWindow(std::shared_ptr<IEditor>          editor,
+                         std::shared_ptr<IEditorSelection> editorSelection,
+                         std::shared_ptr<IInputManager>    inputManager);
+    SceneHierarchyWindow(nlohmann::json                    serializedModule,
+                         std::shared_ptr<IEditor>          editor,
+                         std::shared_ptr<IEditorSelection> editorSelection,
+                         std::shared_ptr<IInputManager>    inputManager);
 
     /// @brief Renders the module window.
     void
     OnImGuiRender() override;
 
     void
-    OnUpdate(double deltaTime) override;
+    OnUpdate() override;
 
     nlohmann::json
     Serialize() const override;

@@ -1,5 +1,5 @@
 #include "pch.h"
-#include "Logging/DefaultLogger.h"
+#include "Logging/DwarfLogger.h"
 #include "Application/DwarfEngine.h"
 #include <spdlog/spdlog.h>
 #include <boost/di.hpp>
@@ -8,16 +8,16 @@ int
 main()
 {
   const auto injector = boost::di::make_injector();
-  const auto logger = injector.create<Dwarf::DefaultLogger>();
+  const auto logger = injector.create<Dwarf::DwarfLogger>();
 
-  logger.LogInfo("Starting Dwarf Engine...");
+  logger.LogInfo(Dwarf::Log("Starting Dwarf Engine...", "EntryPoint"));
   Dwarf::DwarfEngine engine = Dwarf::DwarfEngine();
-  logger.LogInfo("Dwarf Engine instance created.");
+  logger.LogInfo(Dwarf::Log("Dwarf Engine instance created.", "EntryPoint"));
 
-  logger.LogInfo("Running Dwarf Engine...");
+  logger.LogInfo(Dwarf::Log("Running Dwarf Engine...", "EntryPoint"));
   engine.Run();
-  logger.LogInfo("Dwarf Engine finished running.");
+  logger.LogInfo(Dwarf::Log("Dwarf Engine finished running.", "EntryPoint"));
 
-  logger.LogInfo("Exiting Dwarf Engine...");
+  logger.LogInfo(Dwarf::Log("Exiting Dwarf Engine...", "EntryPoint"));
   return 0;
 }

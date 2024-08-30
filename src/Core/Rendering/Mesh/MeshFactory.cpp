@@ -27,7 +27,9 @@ namespace Dwarf
       case GraphicsApi::D3D12:
         // return std::make_shared<D3D12Shader>();
         break;
-      case GraphicsApi::OpenGL: return std::make_shared<OpenGLMesh>(); break;
+      case GraphicsApi::OpenGL:
+        return std::make_shared<OpenGLMesh>(vertices, indices, materialIndex);
+        break;
       case GraphicsApi::Metal: break;
       case GraphicsApi::Vulkan:
         // return std::make_shared<VulkanShader>();

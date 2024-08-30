@@ -1,6 +1,11 @@
 #pragma once
 #include "Core/Rendering/Framebuffer/IFramebuffer.h"
+#include "Core/Rendering/Pipelines/IRenderingPipeline.h"
 #include "Core/Scene/Camera/ICamera.h"
+#include "Editor/IEditor.h"
+#include "Editor/IEditorSelection.h"
+#include "Editor/Stats/IEditorStats.h"
+#include "Input/IInputManager.h"
 #include "pch.h"
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
@@ -9,6 +14,7 @@
 
 #include "Editor/EditorModel.h"
 #include "Editor/Modules/IGuiModule.h"
+#include "Core/Rendering/Pipelines/IRenderingPipelineFactory.h"
 
 namespace Dwarf
 {
@@ -60,15 +66,17 @@ namespace Dwarf
     // Maintaining important dependencies
 
     /// @brief The render texture for this scene viewer.
-    std::shared_ptr<IFramebuffer> m_Framebuffer;
-
-    std::shared_ptr<IFramebuffer> m_IdBuffer;
-
-    std::shared_ptr<IFramebuffer> m_OutlineBuffer;
-
-    std::shared_ptr<IFramebuffer> m_PresentationBuffer;
-
-    std::shared_ptr<ICamera> m_Camera;
+    std::shared_ptr<IFramebuffer>              m_Framebuffer;
+    std::shared_ptr<IFramebuffer>              m_IdBuffer;
+    std::shared_ptr<IFramebuffer>              m_OutlineBuffer;
+    std::shared_ptr<IFramebuffer>              m_PresentationBuffer;
+    std::shared_ptr<ICamera>                   m_Camera;
+    std::shared_ptr<IInputManager>             m_InputManager;
+    std::shared_ptr<IEditorStats>              m_EditorStats;
+    std::shared_ptr<IEditor>                   m_Editor;
+    std::shared_ptr<IEditorSelection>          m_EditorSelection;
+    std::shared_ptr<IRenderingPipelineFactory> m_RenderingPipelineFactory;
+    std::shared_ptr<IRenderingPipeline>        m_RenderingPipeline;
 
     /// @brief Calculates the cutout of the available resolution based on the
     /// given aspect ratio.
@@ -99,10 +107,33 @@ namespace Dwarf
                       glm::vec2 const& viewportSize);
 
   public:
-    SceneViewerWindow(std::shared_ptr<EditorModel> model, int index);
+    SceneViewerWindow(
+      std::shared_ptr<ICamera>                   camera,
+      std::shared_ptr<IFramebuffer>              framebuffer,
+      std::shared_ptr<IFramebuffer>              idBuffer,
+      std::shared_ptr<IFramebuffer>              outlineBuffer,
+      std::shared_ptr<IFramebuffer>              presentationBuffer,
+      std::shared_ptr<IEditorStats>              editorStats,
+      std::shared_ptr<IInputManager>             inputManager,
+      std::shared_ptr<IEditor>                   editor,
+      std::shared_ptr<IEditorSelection>          selection,
+      std::shared_ptr<IRenderingPipelineFactory> renderingPipelineFactory);
+
+    SceneViewerWindow(
+      nlohmann::json                             serializedModule,
+      std::shared_ptr<ICamera>                   camera,
+      std::shared_ptr<IFramebuffer>              framebuffer,
+      std::shared_ptr<IFramebuffer>              idBuffer,
+      std::shared_ptr<IFramebuffer>              outlineBuffer,
+      std::shared_ptr<IFramebuffer>              presentationBuffer,
+      std::shared_ptr<IEditorStats>              editorStats,
+      std::shared_ptr<IInputManager>             inputManager,
+      std::shared_ptr<IEditor>                   editor,
+      std::shared_ptr<IEditorSelection>          selection,
+      std::shared_ptr<IRenderingPipelineFactory> renderingPipelineFactory);
 
     void
-    OnUpdate(double deltaTime) override;
+    OnUpdate() override;
     /// @brief Renders the module window.
     void
     OnImGuiRender() override;

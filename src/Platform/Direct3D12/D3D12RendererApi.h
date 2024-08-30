@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Core/Rendering/RendererApi.h"
+#include "Core/Rendering/RendererApi/IRendererApi.h"
 
 namespace Dwarf
 {
-  class D3D12RendererApi : public RendererApi
+  class D3D12RendererApi : public IRendererApi
   {
   public:
     D3D12RendererApi();

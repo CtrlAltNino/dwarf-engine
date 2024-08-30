@@ -85,7 +85,9 @@ namespace Dwarf
       case GraphicsApi::D3D12:
         // return std::make_shared<D3D12Texture>();
         break;
-      case GraphicsApi::OpenGL: return std::make_shared<OpenGLTexture>(); break;
+      case GraphicsApi::OpenGL:
+        return std::make_shared<OpenGLTexture>(textureData);
+        break;
       case GraphicsApi::Metal: break;
       case GraphicsApi::Vulkan:
         // return std::make_shared<VulkanTexture>();

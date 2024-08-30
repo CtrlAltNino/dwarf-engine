@@ -1,7 +1,4 @@
 #include "Editor/Modules/SceneViewer/SceneViewerWindow.h"
-#include "Core/Scene/Scene.h"
-#include "Input/InputManager.h"
-#include "Core/Rendering/Renderer.h"
 
 #define MIN_RESOLUTION_WIDTH 10
 #define MIN_RESOLUTION_HEIGHT 10
@@ -10,11 +7,33 @@
 
 namespace Dwarf
 {
-  SceneViewerWindow::SceneViewerWindow(std::shared_ptr<EditorModel> model,
-                                       int                          index)
-    : GuiModule(model, "Scene Viewer", MODULE_TYPE::SCENE_VIEWER, index)
+  SceneViewerWindow::SceneViewerWindow(
+    std::shared_ptr<ICamera>                   camera,
+    std::shared_ptr<IFramebuffer>              framebuffer,
+    std::shared_ptr<IFramebuffer>              idBuffer,
+    std::shared_ptr<IFramebuffer>              outlineBuffer,
+    std::shared_ptr<IFramebuffer>              presentationBuffer,
+    std::shared_ptr<IEditorStats>              editorStats,
+    std::shared_ptr<IInputManager>             inputManager,
+    std::shared_ptr<IEditor>                   editor,
+    std::shared_ptr<IEditorSelection>          editorSelection,
+    std::shared_ptr<IRenderingPipelineFactory> renderingPipelineFactory)
+    : IGuiModule(ModuleLabel("Scene Viewer"),
+                 ModuleType(MODULE_TYPE::SCENE_VIEWER),
+                 ModuleID(std::make_shared<UUID>()))
+    , m_Camera(camera)
+    , m_Framebuffer(framebuffer)
+    , m_IdBuffer(idBuffer)
+    , m_OutlineBuffer(outlineBuffer)
+    , m_PresentationBuffer(presentationBuffer)
+    , m_InputManager(inputManager)
+    , m_EditorStats(editorStats)
+    , m_Editor(editor)
+    , m_EditorSelection(editorSelection)
+    , m_RenderingPipelineFactory(renderingPipelineFactory)
+
   {
-    m_Framebuffer = Renderer::Get()->CreateFramebuffer({ 512, 512 });
+    /*m_Framebuffer = Renderer::Get()->CreateFramebuffer({ 512, 512 });
     m_IdBuffer = Renderer::Get()->CreateIDFramebuffer({ 512, 512 });
     m_Camera = std::make_shared<Camera>();
 
@@ -30,21 +49,49 @@ namespace Dwarf
     presentationSpec.Attachments = FramebufferAttachmentSpecification{
       FramebufferTextureSpecification{ FramebufferTextureFormat::RGBA8 }
     };
-    m_PresentationBuffer = Framebuffer::Create(presentationSpec);
+    m_PresentationBuffer = Framebuffer::Create(presentationSpec);*/
+  }
+
+  SceneViewerWindow::SceneViewerWindow(
+    nlohmann::json                             serializedModule,
+    std::shared_ptr<ICamera>                   camera,
+    std::shared_ptr<IFramebuffer>              framebuffer,
+    std::shared_ptr<IFramebuffer>              idBuffer,
+    std::shared_ptr<IFramebuffer>              outlineBuffer,
+    std::shared_ptr<IFramebuffer>              presentationBuffer,
+    std::shared_ptr<IEditorStats>              editorStats,
+    std::shared_ptr<IInputManager>             inputManager,
+    std::shared_ptr<IEditor>                   editor,
+    std::shared_ptr<IEditorSelection>          editorSelection,
+    std::shared_ptr<IRenderingPipelineFactory> renderingPipelineFactory)
+    : IGuiModule(ModuleLabel("Scene Viewer"),
+                 ModuleType(MODULE_TYPE::SCENE_VIEWER),
+                 ModuleID(std::make_shared<UUID>()))
+    , m_Camera(camera)
+    , m_Framebuffer(framebuffer)
+    , m_IdBuffer(idBuffer)
+    , m_OutlineBuffer(outlineBuffer)
+    , m_PresentationBuffer(presentationBuffer)
+    , m_InputManager(inputManager)
+    , m_EditorStats(editorStats)
+    , m_Editor(editor)
+    , m_EditorSelection(editorSelection)
+    , m_RenderingPipelineFactory(renderingPipelineFactory)
+  {
   }
 
   void
-  SceneViewerWindow::OnUpdate(double deltaTime)
+  SceneViewerWindow::OnUpdate()
   {
-    if (m_Settings.CameraMovement &&
-        InputManager::GetMouse(MOUSE_BUTTON::RIGHT))
+    /*if (m_Settings.CameraMovement &&
+        m_InputManager->GetMouseButton(MOUSE_BUTTON::RIGHT))
     {
-      m_Camera->OnUpdate(deltaTime);
+      m_Camera->OnUpdate(m_EditorStats->GetDeltaTime());
     }
 
     // Render scene to the framebuffer with the camera
     m_Framebuffer->Bind();
-    Renderer::Get()->RenderScene(m_Model->GetScene(),
+    Renderer::Get()->RenderScene(m_Editor->GetScene(),
                                  m_Camera,
                                  { m_Framebuffer->GetSpecification().Width,
                                    m_Framebuffer->GetSpecification().Height },
@@ -52,7 +99,7 @@ namespace Dwarf
     m_Framebuffer->Unbind();
 
     m_IdBuffer->Bind();
-    Renderer::Get()->RenderIds(m_Model->GetScene(),
+    Renderer::Get()->RenderIds(m_Editor->GetScene(),
                                m_Camera,
                                { m_IdBuffer->GetSpecification().Width,
                                  m_IdBuffer->GetSpecification().Height });
@@ -86,13 +133,13 @@ namespace Dwarf
       0,
       0,
       m_Framebuffer->GetSpecification().Width,
-      m_Framebuffer->GetSpecification().Height);
+      m_Framebuffer->GetSpecification().Height);*/
   }
 
   void
   SceneViewerWindow::OnImGuiRender()
   {
-    ImGuiWindowFlags window_flags = 0;
+    /*ImGuiWindowFlags window_flags = 0;
     window_flags |= ImGuiWindowFlags_NoCollapse;
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(800, 500));
@@ -363,25 +410,25 @@ namespace Dwarf
       glm::vec3 deltaRotation = rotation - tc.rotation;
 
       tc.rotation += deltaRotation;
-    }
+    }*/
   }
 
   void
   SceneViewerWindow::UpdateGizmoType()
   {
     if (ImGui::IsWindowFocused() &&
-        !InputManager::GetMouse(MOUSE_BUTTON::RIGHT))
+        !m_InputManager->GetMouseButton(MOUSE_BUTTON::RIGHT))
     {
       using enum KEYCODE;
-      if (InputManager::GetKeyDown(W))
+      if (m_InputManager->GetKeyDown(W))
       {
         m_Settings.GizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
       }
-      else if (InputManager::GetKeyDown(E))
+      else if (m_InputManager->GetKeyDown(E))
       {
         m_Settings.GizmoOperation = ImGuizmo::OPERATION::ROTATE;
       }
-      else if (InputManager::GetKeyDown(R))
+      else if (m_InputManager->GetKeyDown(R))
       {
         m_Settings.GizmoOperation = ImGuizmo::OPERATION::SCALE;
       }
@@ -393,12 +440,12 @@ namespace Dwarf
   {
     auto center = glm::vec3(0);
 
-    for (auto entity : m_Model->GetSelection().GetSelectedEntities())
+    for (auto entity : m_EditorSelection->GetSelectedEntities())
     {
       center += entity.GetComponent<TransformComponent>().position;
     }
 
-    return center / (float)m_Model->GetSelection().GetSelectedEntities().size();
+    return center / (float)m_EditorSelection->GetSelectedEntities().size();
   }
 
   void
@@ -442,30 +489,31 @@ namespace Dwarf
       m_IdBuffer->Resize(desiredResolution.x, desiredResolution.y);
       m_OutlineBuffer->Resize(desiredResolution.x, desiredResolution.y);
       m_PresentationBuffer->Resize(desiredResolution.x, desiredResolution.y);
-      m_Camera->SetAspectRatio((float)desiredResolution.x /
-                               (float)desiredResolution.y);
+      m_Camera->GetProperties().AspectRatio =
+        (float)desiredResolution.x / (float)desiredResolution.y;
     }
   }
 
   void
   SceneViewerWindow::Deserialize(nlohmann::json moduleData)
   {
-    m_Camera->GetTransform()->position = {
+
+    m_Camera->GetProperties().Transform.position = {
       moduleData["camera"]["position"]["x"],
       moduleData["camera"]["position"]["y"],
       moduleData["camera"]["position"]["z"]
     };
 
-    m_Camera->GetTransform()->rotation = {
+    m_Camera->GetProperties().Transform.rotation = {
       moduleData["camera"]["rotation"]["x"],
       moduleData["camera"]["rotation"]["y"],
       moduleData["camera"]["rotation"]["z"]
     };
 
-    m_Camera->SetFov(moduleData["camera"]["fov"]);
+    m_Camera->GetProperties().Fov = moduleData["camera"]["fov"];
 
-    m_Camera->SetRenderPlaneParameters(
-      { moduleData["camera"]["near"], moduleData["camera"]["far"] });
+    m_Camera->GetProperties().NearPlane = moduleData["camera"]["near"];
+    m_Camera->GetProperties().FarPlane = moduleData["camera"]["far"];
 
     m_Settings.AspectRatio[0] =
       moduleData["settings"]["aspectRatioConstraint"]["x"];
@@ -483,22 +531,28 @@ namespace Dwarf
     m_Settings.RenderGrid = moduleData["settings"]["renderGrid"];
   }
 
-  std::string
-  SceneViewerWindow::Serialize()
+  nlohmann::json
+  SceneViewerWindow::Serialize() const
   {
     nlohmann::json state;
 
-    state["camera"]["position"]["x"] = m_Camera->GetTransform()->position.x;
-    state["camera"]["position"]["y"] = m_Camera->GetTransform()->position.y;
-    state["camera"]["position"]["z"] = m_Camera->GetTransform()->position.z;
+    state["camera"]["position"]["x"] =
+      m_Camera->GetProperties().Transform.position.x;
+    state["camera"]["position"]["y"] =
+      m_Camera->GetProperties().Transform.position.y;
+    state["camera"]["position"]["z"] =
+      m_Camera->GetProperties().Transform.position.z;
 
-    state["camera"]["rotation"]["x"] = m_Camera->GetTransform()->rotation.x;
-    state["camera"]["rotation"]["y"] = m_Camera->GetTransform()->rotation.y;
-    state["camera"]["rotation"]["z"] = m_Camera->GetTransform()->rotation.z;
+    state["camera"]["rotation"]["x"] =
+      m_Camera->GetProperties().Transform.rotation.x;
+    state["camera"]["rotation"]["y"] =
+      m_Camera->GetProperties().Transform.rotation.y;
+    state["camera"]["rotation"]["z"] =
+      m_Camera->GetProperties().Transform.rotation.z;
 
-    state["camera"]["fov"] = m_Camera->GetFov();
-    state["camera"]["near"] = m_Camera->GetRenderPlaneParameters().x;
-    state["camera"]["far"] = m_Camera->GetRenderPlaneParameters().y;
+    state["camera"]["fov"] = m_Camera->GetProperties().Fov;
+    state["camera"]["near"] = m_Camera->GetProperties().NearPlane;
+    state["camera"]["far"] = m_Camera->GetProperties().FarPlane;
 
     state["settings"]["aspectRatioConstraint"]["x"] = m_Settings.AspectRatio[0];
     state["settings"]["aspectRatioConstraint"]["y"] = m_Settings.AspectRatio[1];
@@ -523,12 +577,12 @@ namespace Dwarf
     if (handle > 0)
     {
       entt::entity entity = static_cast<entt::entity>(handle);
-      m_Model->GetSelection().SelectEntity(
-        Entity(entity, m_Model->GetScene()->GetRegistry()));
+      m_EditorSelection->SelectEntity(
+        Entity(entity, m_Editor->GetScene()->GetRegistry()));
     }
     else
     {
-      m_Model->GetSelection().ClearEntitySelection();
+      m_EditorSelection->ClearEntitySelection();
     }
   }
 }
