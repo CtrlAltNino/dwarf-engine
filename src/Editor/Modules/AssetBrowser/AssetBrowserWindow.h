@@ -6,7 +6,6 @@
 #include "Core/Rendering/Material/IO/IMaterialIO.h"
 #include "Core/Asset/Metadata/IAssetMetadata.h"
 #include "Core/Rendering/Material/IMaterialFactory.h"
-#include "Editor/EditorModel.h"
 #include "Editor/IEditorSelection.h"
 #include "Editor/Modules/IGuiModule.h"
 #include "Core/Rendering/Texture/ITextureFactory.h"

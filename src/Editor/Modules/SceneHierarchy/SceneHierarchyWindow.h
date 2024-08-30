@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Editor/EditorModel.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorSelection.h"
 #include "Editor/Modules/IGuiModule.h"

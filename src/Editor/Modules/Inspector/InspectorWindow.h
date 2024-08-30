@@ -6,7 +6,6 @@
 #include "EntityInspector/IEntityInspector.h"
 #include "pch.h"
 #include "Core/Scene/Scene.h"
-#include "Editor/EditorModel.h"
 #include "Editor/Modules/IGuiModule.h"
 #include "Core/Rendering/PreviewRenderer/MaterialPreview/IMaterialPreview.h"
 #include "Core/Rendering/PreviewRenderer/ModelPreview/IModelPreview.h"

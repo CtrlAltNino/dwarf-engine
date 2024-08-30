@@ -12,7 +12,6 @@
 #include <imgui_internal.h>
 #include <ImGuizmo.h>
 
-#include "Editor/EditorModel.h"
 #include "Editor/Modules/IGuiModule.h"
 #include "Core/Rendering/Pipelines/IRenderingPipelineFactory.h"
 

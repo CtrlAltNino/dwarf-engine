@@ -1,7 +1,6 @@
 #pragma once
 #include "Editor/Stats/IEditorStats.h"
 #include "pch.h"
-#include "Editor/EditorModel.h"
 #include "Editor/Modules/IGuiModule.h"
 
 namespace Dwarf

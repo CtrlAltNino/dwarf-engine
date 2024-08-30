@@ -4,8 +4,6 @@
 #include <boost/serialization/strong_typedef.hpp>
 #include <imgui.h>
 #include <imgui_internal.h>
-
-#include "Editor/EditorModel.h"
 #include "Core/UUID.h"
 
 namespace Dwarf

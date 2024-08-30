@@ -7,7 +7,6 @@
 #include "Core/Scene/IO/ISceneIO.h"
 #include "Editor/IEditor.h"
 #include "Editor/Modules/Inspector/AssetInspector/IAssetInspector.h"
-#include "Editor/EditorModel.h"
 #include "Editor/Stats/IEditorStats.h"
 #include "Input/IInputManager.h"
 #include <memory>

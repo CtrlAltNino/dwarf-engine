@@ -2,7 +2,6 @@
 #include "Core/Asset/Database/IAssetDatabase.h"
 #include "pch.h"
 #include "Editor/Modules/IGuiModule.h"
-#include "Editor/EditorModel.h"
 
 namespace Dwarf
 {
