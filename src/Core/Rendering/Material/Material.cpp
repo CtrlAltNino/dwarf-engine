@@ -44,8 +44,6 @@ namespace Dwarf
   {
   }
 
-  Material::~Material() = default;
-
   // void
   // Material::SetShader(std::shared_ptr<IShader> shader)
   // {

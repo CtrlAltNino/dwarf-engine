@@ -1,5 +1,3 @@
-#pragma once
-
 #include "SceneFactory.h"
 #include "Scene.h"
 #include "Core/Asset/Database/IAssetDatabase.h"
@@ -30,6 +28,15 @@ namespace Dwarf
     return std::make_shared<Scene>(
       nlohmann::json(""),
       m_ScenePropertiesFactory->Create(CreateNewSceneName(directory)));
+  }
+
+  // TODO: Create default scene here
+  std::shared_ptr<IScene>
+  SceneFactory::NewEmpty()
+  {
+    return std::make_shared<Scene>(
+      nlohmann::json(""),
+      m_ScenePropertiesFactory->Create(CreateNewSceneName("")));
   }
 
   std::string

@@ -4,23 +4,23 @@
 
 namespace Dwarf
 {
-
-  LinuxWindow::LinuxWindow(GraphicsApi api)
-    : m_Api(api)
+  LinuxWindow::LinuxWindow(
+    const WindowProps&                       props,
+    std::shared_ptr<IGraphicsContextFactory> contextFactory,
+    std::shared_ptr<IImGuiLayerFactory>      imguiLayerFactory,
+    std::shared_ptr<IInputManager>           inputManager)
+    : m_ContextFactory(contextFactory)
+    , m_ImguiLayerFactory(imguiLayerFactory)
+    , m_InputManager(inputManager)
   {
+    Init(props);
   }
 
   LinuxWindow::~LinuxWindow()
   {
-    m_ImguiLayer->OnDetach();
+    m_ImGuiLayer->OnDetach();
     SDL_DestroyWindow(m_Window);
     SDL_Quit();
-  }
-
-  GraphicsApi
-  LinuxWindow::GetApi()
-  {
-    return m_Api;
   }
 
   void
@@ -43,16 +43,19 @@ namespace Dwarf
     {
       using enum GraphicsApi;
       case D3D12: break;
-      case Metal: break;
       case OpenGL:
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
         SDL_GL_SetAttribute(SDL_GL_DOUBLEBUFFER, 1);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK,
                             SDL_GL_CONTEXT_PROFILE_CORE);
+        SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
         WindowFlags |= SDL_WINDOW_OPENGL;
         break;
       case Vulkan: WindowFlags |= SDL_WINDOW_VULKAN; break;
+      case Metal:
+        // NOT SUPPORTED
+        break;
     }
 
     m_Window = SDL_CreateWindow(m_Data.Title.c_str(),
@@ -77,11 +80,11 @@ namespace Dwarf
                           mode.w / 2 - (props.Width / 2),
                           mode.h / 2 - (props.Height / 2));
 
-    m_Context = GraphicsContext::Create(m_Window);
+    m_Context = m_ContextFactory->Create(m_Window);
     m_Context->Init();
 
-    m_ImguiLayer = ImGuiLayer::Create(m_Api);
-    m_ImguiLayer->OnAttach(m_Window);
+    m_ImGuiLayer = m_ImguiLayerFactory->Create();
+    m_ImGuiLayer->OnAttach(m_Window);
   }
 
   void
@@ -102,27 +105,28 @@ namespace Dwarf
     SDL_Event event;
     while (SDL_PollEvent(&event))
     {
-      m_ImguiLayer->HandleSDLEvent(&event);
+      m_ImGuiLayer->HandleSDLEvent(&event);
 
       switch (event.type)
       {
         case SDL_QUIT: m_Data.ShouldClose = true; break;
         case SDL_KEYDOWN:
-          InputManager::ProcessKeyDown(event.key.keysym.scancode);
+          m_InputManager->ProcessKeyDown(event.key.keysym.scancode);
           break;
         case SDL_KEYUP:
-          InputManager::ProcessKeyUp(event.key.keysym.scancode);
+          m_InputManager->ProcessKeyUp(event.key.keysym.scancode);
           break;
+        case SDL_MOUSEWHEEL: m_InputManager->ProcessScroll(event); break;
         default: break;
       }
     }
-    m_ImguiLayer->Begin();
+    m_ImGuiLayer->Begin();
   }
 
   void
   LinuxWindow::EndFrame()
   {
-    m_ImguiLayer->End();
+    m_ImGuiLayer->End();
     m_Context->SwapBuffers();
   }
 

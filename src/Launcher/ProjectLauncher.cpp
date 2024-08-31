@@ -5,9 +5,11 @@
 namespace Dwarf
 {
   ProjectLauncher::ProjectLauncher(std::shared_ptr<IWindow>              window,
-                                   std::shared_ptr<IProjectLauncherView> view)
+                                   std::shared_ptr<IProjectLauncherView> view,
+                                   std::shared_ptr<IDwarfLogger>         logger)
     : m_Window(window)
     , m_View(view)
+    , m_Logger(logger)
   {
     //     // Initializing the project launcher model (e.g. loading the project
     //     list) WindowProps props("Dwarf Engine", 1100, 600);
@@ -27,6 +29,9 @@ namespace Dwarf
   ProjectPath
   ProjectLauncher::Run()
   {
+    m_Logger->LogInfo(Log("Running project launcher...", "ProjectLauncher"));
+
+    m_Logger->LogInfo(Log("Showing window...", "ProjectLauncher"));
     m_Window->ShowWindow();
 
     while (((m_State != ProjectChooserState::Done) &&

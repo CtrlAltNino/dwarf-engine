@@ -19,8 +19,10 @@ namespace Dwarf
   }
 
   Camera::Camera(std::shared_ptr<IInputManager> inputManager,
-                 nlohmann::json                 json)
+                 nlohmann::json                 json,
+                 CameraProperties               properties)
     : m_InputManager(inputManager)
+    , m_Properties(properties)
   {
     m_Properties.Transform = TransformComponent(json["transform"]);
     m_Properties.Fov = json["fov"];

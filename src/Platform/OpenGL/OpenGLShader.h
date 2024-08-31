@@ -23,12 +23,16 @@ namespace Dwarf
 
   class OpenGLShader : public IShader
   {
+
+    struct HandleShaderSourceVisitor;
+    friend struct HandleShaderSourceVisitor;
+
   public:
     BOOST_DI_INJECT(OpenGLShader,
                     ShaderSourceCollection shaderSources,
                     std::shared_ptr<IShaderParameterCollectionFactory>
                       shaderParameterCollectionFactory);
-    ~OpenGLShader() = default;
+    ~OpenGLShader() override;
     GLuint
     GetID() const;
 
@@ -80,8 +84,6 @@ namespace Dwarf
       m_TessellationEvaluationShaderAsset;
     std::shared_ptr<AssetReference<FragmentShaderAsset>> m_FragmentShaderAsset;
 
-    struct HandleShaderSourceVisitor;
-    friend struct HandleShaderSourceVisitor;
     // Declare the visitor struct
     struct HandleShaderSourceVisitor
     {

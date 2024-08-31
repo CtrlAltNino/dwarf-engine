@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Launcher/IProjectLauncher.h"
+#include "Logging/IDwarfLogger.h"
 #include "Project/ProjectTypes.h"
 #include "Launcher/View/IProjectLauncherView.h"
 #include "Window/IWindow.h"
@@ -15,10 +16,12 @@ namespace Dwarf
     std::shared_ptr<IProjectLauncherView> m_View;
     std::shared_ptr<IWindow>              m_Window;
     ProjectChooserState                   m_State;
+    std::shared_ptr<IDwarfLogger>         m_Logger;
 
   public:
     ProjectLauncher(std::shared_ptr<IWindow>              window,
-                    std::shared_ptr<IProjectLauncherView> view);
+                    std::shared_ptr<IProjectLauncherView> view,
+                    std::shared_ptr<IDwarfLogger>         logger);
 
     ProjectPath
     Run() override;

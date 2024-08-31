@@ -7,7 +7,7 @@
 namespace Dwarf
 {
   /// @brief Interface for scene properties.
-  class ISceneProperties : ISerializable
+  class ISceneProperties : public ISerializable
   {
   public:
     /// @brief Destructor.

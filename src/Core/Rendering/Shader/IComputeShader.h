@@ -13,7 +13,7 @@ namespace Dwarf
   class IComputeShader
   {
   public:
-    virtual ~IComputeShader();
+    virtual ~IComputeShader() = default;
 
     // Compiles the shader.
     virtual void

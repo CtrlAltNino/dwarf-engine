@@ -344,6 +344,7 @@ namespace Dwarf
       RenderGizmos(minRect, maxRect);
     }
     ImGui::End();
+    */
   }
 
   ImTextureID
@@ -385,8 +386,7 @@ namespace Dwarf
     ImGuizmo::SetRect(
       minRect.x, minRect.y, maxRect.x - minRect.x, maxRect.y - minRect.y);
 
-    TransformComponent& tc = m_Model->GetSelection()
-                               .GetSelectedEntities()
+    TransformComponent& tc = m_EditorSelection->GetSelectedEntities()
                                .at(0)
                                .GetComponent<TransformComponent>();
     glm::mat4 transform = tc.getModelMatrix();
@@ -410,7 +410,7 @@ namespace Dwarf
       glm::vec3 deltaRotation = rotation - tc.rotation;
 
       tc.rotation += deltaRotation;
-    }*/
+    }
   }
 
   void

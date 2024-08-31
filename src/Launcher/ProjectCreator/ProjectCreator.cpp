@@ -8,6 +8,8 @@ namespace Dwarf
   {
   }
 
+  ProjectCreator::~ProjectCreator() {}
+
   void
   ProjectCreator::CreateProject(std::string           projectName,
                                 std::filesystem::path projectPath,
@@ -112,5 +114,11 @@ namespace Dwarf
       std::cout << "[PROJECT CREATOR] Project folder already exists at: "
                 << (projectPath / projectName) << std::endl;
     }
+  }
+
+  std::filesystem::path
+  ProjectCreator::GetDefaultProjectPath() const
+  {
+    return FileHandler::GetDocumentsPath();
   }
 }

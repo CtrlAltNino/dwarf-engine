@@ -19,7 +19,7 @@ namespace Dwarf
   }
 
   std::shared_ptr<IImGuiLayer>
-  ImGuiLayerFactory::Create()
+  ImGuiLayerFactory::Create() const
   {
     switch (m_Api)
     {

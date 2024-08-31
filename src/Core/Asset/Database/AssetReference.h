@@ -57,12 +57,12 @@ namespace Dwarf
       return m_AssetHandle;
     }
 
-    template<typename T, typename... Args>
-    T&
+    template<typename U = T, typename... Args>
+    U&
     AddAssetComponent(Args&&... args)
     {
       // TODO: Check component requirements
-      return m_Registry->emplace<T>(m_AssetHandle, std::forward<Args>(args)...);
+      return m_Registry->emplace<U>(m_AssetHandle, std::forward<Args>(args)...);
     }
 
     /// @brief Returns the UID of the asset.

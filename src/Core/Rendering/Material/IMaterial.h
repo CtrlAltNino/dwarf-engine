@@ -38,16 +38,16 @@ namespace Dwarf
     virtual ~IMaterial() = default;
 
     virtual const std::shared_ptr<IShader>
-    GetShader() const;
+    GetShader() const = 0;
 
     virtual void
-    SetShader(std::shared_ptr<IShader> shader);
+    SetShader(std::shared_ptr<IShader> shader) = 0;
 
     virtual const std::shared_ptr<IShaderParameterCollection>&
-    GetShaderParameters() const;
+    GetShaderParameters() const = 0;
 
     virtual MaterialProperties&
-    GetMaterialProperties();
+    GetMaterialProperties() = 0;
 
     virtual void
     GenerateShaderParameters() = 0;

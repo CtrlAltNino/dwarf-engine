@@ -126,6 +126,6 @@ namespace Dwarf
   SceneIO::WriteSceneToFile(nlohmann::json        serializedScene,
                             std::filesystem::path scenePath) const
   {
-    FileHandler::WriteToFile(scenePath, serializedScene);
+    FileHandler::WriteToFile(scenePath, serializedScene.get<std::string>());
   }
 }

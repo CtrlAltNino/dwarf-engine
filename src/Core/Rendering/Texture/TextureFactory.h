@@ -14,17 +14,17 @@ namespace Dwarf
     GraphicsApi                       m_Api;
     std::shared_ptr<IImageFileLoader> m_ImageFileLoader;
 
-    std::shared_ptr<ITexture>
-    LoadTexture(std::shared_ptr<TextureContainer> textureData);
-
-    std::shared_ptr<TextureParameters>
-    GetParameters(std::filesystem::path const& path);
-
     uint64_t
     GetPixelCount(const TextureResolution& size, const TextureType& type);
 
     uint64_t
     GetBytesPerPixel(const TextureFormat& format, const TextureDataType& type);
+
+    std::shared_ptr<TextureParameters>
+    GetParameters(std::filesystem::path const& path);
+
+    std::shared_ptr<ITexture>
+    LoadTexture(std::shared_ptr<TextureContainer> textureData);
 
   public:
     TextureFactory(GraphicsApi api, std::shared_ptr<IImageFileLoader> loader);

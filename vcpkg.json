@@ -50,8 +50,7 @@
       "default-features": false,
       "features": [
         "extensions"
-      ],
-      "platform": "windows & x64 & static"
+      ]
     },
     "efsw",
     "imguizmo",

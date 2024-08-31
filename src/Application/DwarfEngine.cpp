@@ -1,5 +1,8 @@
+#include "pch.h"
 #include "Core/Asset/Texture/IImageFileLoader.h"
 #include "Core/Asset/Texture/ImageFileLoader.h"
+#include "UI/IImGuiLayerFactory.h"
+#include "UI/ImGuiLayerFactory.h"
 #include "Core/Base.h"
 #include "Core/Rendering/GraphicsContext/GraphicsContextFactory.h"
 #include "Core/Rendering/GraphicsContext/IGraphicsContextFactory.h"
@@ -7,9 +10,6 @@
 #include "Core/Rendering/Texture/TextureFactory.h"
 #include "Input/IInputManager.h"
 #include "Input/InputManager.h"
-#include "Platform/OpenGL/OpenGLImGuiLayer.h"
-#include "UI/IImGuiLayerFactory.h"
-#include "pch.h"
 #include "Application/DwarfEngine.h"
 #include "Launcher/IProjectLauncher.h"
 #include "Launcher/ProjectLauncher.h"
@@ -20,8 +20,6 @@
 #include "Project/ProjectTypes.h"
 #include "DI/DwarfEditorDI.h"
 #include "Window/IWindow.h"
-#include "Platform/Windows/WindowsWindow.h"
-#include "UI/ImGuiLayerFactory.h"
 #include "Launcher/ProjectList/IProjectList.h"
 #include "Launcher/ProjectList/ProjectList.h"
 #include "Launcher/ProjectList/IO/IProjectListIO.h"
@@ -31,24 +29,35 @@
 #include "Launcher/ProjectCreator/IProjectCreator.h"
 #include "Launcher/ProjectCreator/ProjectCreator.h"
 
+#ifdef WIN32
+#include "Platform/Windows/WindowsWindow.h"
+#elif __linux__
+#include "Platform/Linux/LinuxWindow.h"
+#endif
+
 namespace Dwarf
 {
   void
   DwarfEngine::Run()
   {
-    DwarfLogger logger = DwarfLogger();
-    bool        shouldClose = false;
+    std::shared_ptr<DwarfLogger> logger = std::make_shared<DwarfLogger>();
+    bool                         shouldClose = false;
     while (!shouldClose)
     {
       std::filesystem::path projectPath = "";
       {
-        logger.LogInfo(Log("Creating project launcher...", "DwarfEngine"));
+        logger->LogInfo(Log("Creating injector...", "DwarfEngine"));
         auto injector = boost::di::make_injector(
-          boost::di::bind<IProjectLauncher>.to<ProjectLauncher>(),
-          boost::di::bind<IWindow>.to<WindowsWindow>(),
-          boost::di::bind<IGraphicsContextFactory>.to<GraphicsContextFactory>(),
+          boost::di::bind<IDwarfLogger>.to(logger),
           boost::di::bind<GraphicsApi>.to(GraphicsApi::OpenGL),
+          boost::di::bind<IProjectLauncher>.to<ProjectLauncher>(),
           boost::di::bind<IImGuiLayerFactory>.to<ImGuiLayerFactory>(),
+#ifdef WIN32
+          boost::di::bind<IWindow>.to<WindowsWindow>(),
+#elif __linux__
+          boost::di::bind<IWindow>.to<LinuxWindow>(),
+#endif
+          boost::di::bind<IGraphicsContextFactory>.to<GraphicsContextFactory>(),
           boost::di::bind<IInputManager>.to<InputManager>(),
           boost::di::bind<IProjectLauncherView>.to<ProjectLauncherView>(),
           boost::di::bind<ITextureFactory>.to<TextureFactory>(),
@@ -58,14 +67,15 @@ namespace Dwarf
           boost::di::bind<IProjectListSorter>.to<ProjectListSorter>(),
           boost::di::bind<IProjectCreator>.to<ProjectCreator>(),
           boost::di::bind<WindowProps>.to(
-            WindowProps("Dwarf Engine", 1100, 600)));
+            WindowProps("Dwarf Engine", 1100, 600, GraphicsApi::OpenGL)));
 
+        logger->LogInfo(Log("Creating project launcher...", "DwarfEngine"));
         auto launcher = injector.create<std::shared_ptr<ProjectLauncher>>();
-        logger.LogInfo(Log("Project launcher created.", "DwarfEngine"));
+        logger->LogInfo(Log("Project launcher created.", "DwarfEngine"));
 
-        logger.LogInfo(Log("Running project launcher...", "DwarfEngine"));
+        logger->LogInfo(Log("Running project launcher...", "DwarfEngine"));
         ProjectPath selectedProjectPath = launcher->Run();
-        logger.LogInfo(
+        logger->LogInfo(
           Log("Project launcher finished running.", "DwarfEngine"));
       }
 
@@ -84,8 +94,8 @@ namespace Dwarf
       }
       else
       {
-        logger.LogInfo(Log("No project path provided. Exiting Dwarf Engine...",
-                           "DwarfEngine"));
+        logger->LogInfo(Log("No project path provided. Exiting Dwarf Engine...",
+                            "DwarfEngine"));
         shouldClose = true;
       }
     }

@@ -14,6 +14,11 @@ namespace Dwarf
   {
   }
 
+  OpenGLComputeShader::~OpenGLComputeShader()
+  {
+    glDeleteProgram(m_ID);
+  }
+
   const std::map<GLenum, ShaderParameterType> glTypeToDwarfShaderType = {
     { GL_BOOL, ShaderParameterType::BOOLEAN },
     { GL_INT, ShaderParameterType::INTEGER },
@@ -70,6 +75,12 @@ namespace Dwarf
     {
       // TODO: log missing shader error
     }
+  }
+
+  bool
+  OpenGLComputeShader::IsCompiled() const
+  {
+    return m_SuccessfullyCompiled;
   }
 
   GLuint

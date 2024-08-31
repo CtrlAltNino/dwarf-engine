@@ -2,6 +2,7 @@
 #include "Platform/OpenGL/OpenGLContext.h"
 #include <glad/glad.h>
 #include <SDL2/SDL_opengl.h>
+#include <iostream>
 
 namespace Dwarf
 {
@@ -25,6 +26,8 @@ namespace Dwarf
   OpenGLContext::OpenGLContext(SDL_Window* windowHandle)
     : m_WindowHandle(windowHandle)
   {
+    std::cout << "OpenGLContext created." << std::endl;
+    std::cout << "Window handle: " << m_WindowHandle << std::endl;
   }
 
   OpenGLContext::~OpenGLContext()
@@ -36,6 +39,13 @@ namespace Dwarf
   OpenGLContext::Init()
   {
     m_Context = SDL_GL_CreateContext(m_WindowHandle);
+
+    // Check if the OpenGL context was created successfully.
+    if (!m_Context)
+    {
+      std::cerr << "Failed to create OpenGL context." << std::endl;
+      return;
+    }
 
     SDL_GL_MakeCurrent(m_WindowHandle, m_Context);
     gladLoadGLLoader((GLADloadproc)SDL_GL_GetProcAddress);

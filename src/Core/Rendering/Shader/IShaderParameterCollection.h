@@ -36,7 +36,7 @@ namespace Dwarf
      * @brief Gets a parameter from the collection.
      */
     virtual std::optional<ParameterValue>
-    GetParameter(std::string const& name) const;
+    GetParameter(std::string const& name) const = 0;
 
     /**
      * @brief Gets the list of parameter identifiers.

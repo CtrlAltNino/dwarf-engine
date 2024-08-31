@@ -12,9 +12,10 @@ namespace Dwarf
 
   public:
     ProjectCreator(std::shared_ptr<IProjectList> projectList);
+    ~ProjectCreator() override;
 
     std::filesystem::path
-    GetDefaultProjectPath() override;
+    GetDefaultProjectPath() const override;
 
     void
     CreateProject(std::string           projectName,

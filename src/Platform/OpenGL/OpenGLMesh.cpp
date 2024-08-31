@@ -4,6 +4,14 @@
 
 namespace Dwarf
 {
+  OpenGLMesh::OpenGLMesh(std::vector<Vertex>       vertices,
+                         std::vector<unsigned int> indices,
+                         unsigned int              materialIndex)
+    : m_Vertices(vertices)
+    , m_Indices(indices)
+    , m_MaterialIndex(materialIndex)
+  {
+  }
   OpenGLMesh::~OpenGLMesh()
   {
     Unbind();

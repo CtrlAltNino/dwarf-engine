@@ -224,9 +224,9 @@ namespace Dwarf
       AssetReference<T> assetReference =
         AssetReference<T>(m_Registry->create(), m_Registry);
 
-      assetReference.AddAssetComponent<IDComponent>(id);
-      assetReference.AddAssetComponent<NameComponent>(fileName);
-      assetReference.AddAssetComponent<PathComponent>(assetPath);
+      assetReference.template AddAssetComponent<IDComponent>(id);
+      assetReference.template AddAssetComponent<NameComponent>(fileName);
+      assetReference.template AddAssetComponent<PathComponent>(assetPath);
       return AssetReference<T>(m_Registry->create(), m_Registry);
     }
 

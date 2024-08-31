@@ -12,6 +12,6 @@ namespace Dwarf
     /// @param path Path to the model.
     /// @return List of the imported meshes of a model.
     virtual std::vector<std::shared_ptr<IMesh>>
-    Import(std::filesystem::path const& path);
+    Import(std::filesystem::path const& path) = 0;
   };
 }

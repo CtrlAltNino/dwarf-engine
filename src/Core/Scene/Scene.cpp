@@ -216,4 +216,24 @@ namespace Dwarf
       m_Registry->destroy(entity.GetHandle());
     }
   }
+
+  nlohmann::json
+  Scene::Serialize() const
+  {
+    nlohmann::json serializedSceneGraph;
+
+    // TODO: Serialize Scene
+    // serializedSceneGraph["hierarchy"] = nlohmann::json::array();
+
+    // for (entt::entity entity : m_Registry->view<IDComponent>())
+    // {
+    //   Entity e(entity, m_Registry);
+    //   if (e.GetParent() == m_RootEntity->GetHandle())
+    //   {
+    //     serializedSceneGraph["hierarchy"].push_back(e.Serialize());
+    //   }
+    // }
+
+    return serializedSceneGraph;
+  }
 }

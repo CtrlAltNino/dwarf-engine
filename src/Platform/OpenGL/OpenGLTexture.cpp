@@ -409,4 +409,10 @@ namespace Dwarf
   {
     return m_Id;
   }
+
+  TextureResolution
+  OpenGLTexture::GetSize() const
+  {
+    return m_Size;
+  }
 }

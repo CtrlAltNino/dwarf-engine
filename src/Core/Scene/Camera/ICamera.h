@@ -25,28 +25,30 @@ namespace Dwarf
 
     float MovementSpeed = 4.0f;
   };
-  class ICamera : public ISerializable
+  class ICamera : ISerializable
   {
   public:
+    virtual ~ICamera() = default;
+
     /// @brief Returns the view matrix of the camera.
     /// @return 4x4 view matrix.
     virtual glm::mat4x4
-    GetViewMatrix() const;
+    GetViewMatrix() const = 0;
 
     /// @brief Returns the projection matrix of the camera.
     /// @return 4x4 projection matrix.
     virtual glm::mat4x4
-    GetProjectionMatrix() const;
+    GetProjectionMatrix() const = 0;
 
     virtual CameraProperties&
-    GetProperties();
+    GetProperties() = 0;
 
     // ========== Camera Functions ==========
     virtual void
-    OnUpdate(double deltaTime);
+    OnUpdate(double deltaTime) = 0;
 
     virtual glm::vec3
     ScreenToWorld(glm::vec2 const& screenPosition,
-                  glm::vec2 const& viewport) const;
+                  glm::vec2 const& viewport) const = 0;
   };
 }

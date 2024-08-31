@@ -42,6 +42,6 @@ namespace Dwarf
     {
     }
 
-    Vertex();
+    Vertex(){};
   };
 }

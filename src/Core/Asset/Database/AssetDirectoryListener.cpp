@@ -19,6 +19,39 @@ namespace Dwarf
   AssetDirectoryListener::~AssetDirectoryListener() {}
 
   void
+  AssetDirectoryListener::registerAddFileCallback(
+    std::function<void(const std::string& dir, const std::string& filename)>
+      callback)
+  {
+    m_AddFileCallbacks.push_back(callback);
+  }
+
+  void
+  AssetDirectoryListener::registerDeleteFileCallback(
+    std::function<void(const std::string& dir, const std::string& filename)>
+      callback)
+  {
+    m_DeleteFileCallbacks.push_back(callback);
+  }
+
+  void
+  AssetDirectoryListener::registerModifyFileCallback(
+    std::function<void(const std::string& dir, const std::string& filename)>
+      callback)
+  {
+    m_ModifyFileCallbacks.push_back(callback);
+  }
+
+  void
+  AssetDirectoryListener::registerMoveFileCallback(
+    std::function<void(const std::string& dir,
+                       const std::string& filename,
+                       std::string        oldFilename)> callback)
+  {
+    m_MoveFileCallbacks.push_back(callback);
+  }
+
+  void
   AssetDirectoryListener::handleFileAction(efsw::WatchID      watchid,
                                            const std::string& dir,
                                            const std::string& filename,

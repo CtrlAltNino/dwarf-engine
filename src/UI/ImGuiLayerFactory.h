@@ -12,8 +12,9 @@ namespace Dwarf
 
   public:
     ImGuiLayerFactory(GraphicsApi api);
+    ~ImGuiLayerFactory() override = default;
 
     std::shared_ptr<IImGuiLayer>
-    Create() override;
+    Create() const override;
   };
 } // namespace Dwarf

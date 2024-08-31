@@ -28,7 +28,7 @@ namespace Dwarf
       std::shared_ptr<AssetReference<ComputeShaderAsset>> computeShaderAsset,
       std::shared_ptr<IShaderParameterCollectionFactory>
         shaderParameterCollectionFactory);
-    ~OpenGLComputeShader() override = default;
+    ~OpenGLComputeShader() override;
 
     GLuint
     GetID() const;

@@ -10,6 +10,6 @@ namespace Dwarf
     virtual ~IImGuiLayerFactory() = default;
 
     virtual std::shared_ptr<IImGuiLayer>
-    Create() = 0;
+    Create() const = 0;
   };
 } // namespace Dwarf

@@ -14,8 +14,9 @@ namespace Dwarf
   class IProjectCreator
   {
   public:
+    virtual ~IProjectCreator() = default;
     virtual std::filesystem::path
-    GetDefaultProjectPath() = 0;
+    GetDefaultProjectPath() const = 0;
 
     virtual void
     CreateProject(std::string           projectName,

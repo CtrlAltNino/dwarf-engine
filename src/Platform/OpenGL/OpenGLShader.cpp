@@ -17,8 +17,13 @@ namespace Dwarf
   {
     for (const auto& shaderSource : shaderSources.t)
     {
-      std::visit(HandleShaderSourceVisitor(*this), shaderSource);
+      // std::visit(HandleShaderSourceVisitor(*this), shaderSource);
     }
+  }
+
+  OpenGLShader::~OpenGLShader()
+  {
+    glDeleteProgram(m_ID);
   }
 
   const std::array<std::string, 3> OpenGLShader::ReservedUniformNames = {

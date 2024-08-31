@@ -9,7 +9,7 @@ namespace Dwarf
   class IShader
   {
   public:
-    virtual ~IShader();
+    virtual ~IShader() = default;
 
     // Compiles the shader.
     virtual void

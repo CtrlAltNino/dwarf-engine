@@ -18,22 +18,9 @@ namespace Dwarf
   {
   }
 
-  std::shared_ptr<TextureParameters>
-  TextureFactory::GetParameters(std::filesystem::path const& path)
-  {
-    // TODO: Implement getting the actual parameters from the file/meta data
-    std::shared_ptr<TextureParameters> parameters =
-      std::make_shared<TextureParameters>();
-    parameters->WrapR = TextureWrap::REPEAT;
-    parameters->WrapS = TextureWrap::REPEAT;
-    parameters->WrapT = TextureWrap::REPEAT;
-    parameters->MinFilter = TextureMinFilter::LINEAR;
-    parameters->MagFilter = TextureMagFilter::LINEAR;
-    return parameters;
-  }
-
   uint64_t
-  GetPixelCount(const TextureResolution& size, const TextureType& type)
+  TextureFactory::GetPixelCount(const TextureResolution& size,
+                                const TextureType&       type)
   {
     switch (type)
     {
@@ -50,7 +37,8 @@ namespace Dwarf
   }
 
   uint64_t
-  GetBytesPerPixel(const TextureFormat& format, const TextureDataType& type)
+  TextureFactory::GetBytesPerPixel(const TextureFormat&   format,
+                                   const TextureDataType& type)
   {
     uint64_t channelCount = 0;
     uint64_t channelSize = 0;
@@ -75,6 +63,20 @@ namespace Dwarf
     }
 
     return channelCount * channelSize;
+  }
+
+  std::shared_ptr<TextureParameters>
+  TextureFactory::GetParameters(std::filesystem::path const& path)
+  {
+    // TODO: Implement getting the actual parameters from the file/meta data
+    std::shared_ptr<TextureParameters> parameters =
+      std::make_shared<TextureParameters>();
+    parameters->WrapR = TextureWrap::REPEAT;
+    parameters->WrapS = TextureWrap::REPEAT;
+    parameters->WrapT = TextureWrap::REPEAT;
+    parameters->MinFilter = TextureMinFilter::LINEAR;
+    parameters->MagFilter = TextureMagFilter::LINEAR;
+    return parameters;
   }
 
   std::shared_ptr<ITexture>

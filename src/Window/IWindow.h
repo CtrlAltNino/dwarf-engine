@@ -14,10 +14,12 @@ namespace Dwarf
 
     WindowProps(const std::string& title = "Dwarf Engine",
                 uint32_t           width = 1600,
-                uint32_t           height = 900)
+                uint32_t           height = 900,
+                GraphicsApi        api = GraphicsApi::OpenGL)
       : Title(title)
       , Width(width)
       , Height(height)
+      , Api(api)
     {
     }
   };
