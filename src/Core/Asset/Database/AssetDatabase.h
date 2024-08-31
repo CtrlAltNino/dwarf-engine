@@ -1,6 +1,10 @@
 #pragma once
 
 #include "Core/Asset/Database/AssetComponents.h"
+#include "Core/GenericComponents.h"
+#include "Core/Rendering/Material/IMaterial.h"
+#include "Core/Rendering/Material/IMaterialFactory.h"
+#include "Core/Rendering/Material/IO/IMaterialIO.h"
 #include "Core/Rendering/Texture/ITextureFactory.h"
 #include "Core/UUID.h"
 #include "Core/Asset/Database/IAssetDatabase.h"
@@ -40,7 +44,10 @@ namespace Dwarf
       std::shared_ptr<IAssetDirectoryListener> assetDirectoryListener,
       std::shared_ptr<IAssetMetadata>          assetMetadata,
       std::shared_ptr<IModelImporter>          modelImporter,
-      std::shared_ptr<IShaderRecompiler>       shaderRecompiler);
+      std::shared_ptr<IShaderRecompiler>       shaderRecompiler,
+      std::shared_ptr<ITextureFactory>         textureFactory,
+      std::shared_ptr<IMaterialFactory>        materialFactory,
+      std::shared_ptr<IMaterialIO>             materialIO);
 
     /**
      * @brief Destroy the Asset Database object
@@ -179,6 +186,8 @@ namespace Dwarf
     std::shared_ptr<IModelImporter>          m_ModelImporter;
     std::shared_ptr<IShaderRecompiler>       m_ShaderRecompiler;
     std::shared_ptr<ITextureFactory>         m_TextureFactory;
+    std::shared_ptr<IMaterialFactory>        m_MaterialFactory;
+    std::shared_ptr<IMaterialIO>             m_MaterialIO;
 
     /// @brief Recursively imports all found assets in a given directory.
     /// @param directory Absolute path to a directory.
@@ -212,35 +221,13 @@ namespace Dwarf
         m_AssetMetadata->SetMetadata(assetPath, metaData);
       }
 
-      return AssetReference<T>(
-        m_Registry->create(), fileName, m_Registry, id, assetPath);
-    }
+      AssetReference<T> assetReference =
+        AssetReference<T>(m_Registry->create(), m_Registry);
 
-    // CreateAssetReference specialization for TextureAsset
-    template<>
-    AssetReference<TextureAsset>
-    CreateAssetReference<TextureAsset>(std::filesystem::path const& assetPath)
-    {
-      std::string           fileName = assetPath.stem().string();
-      std::filesystem::path metaDataPath =
-        IAssetMetadata::GetMetadataPath(assetPath);
-
-      auto id = UUID();
-      if (FileHandler::FileExists(metaDataPath.string().c_str()))
-      {
-        nlohmann::json metaData = m_AssetMetadata->GetMetadata(assetPath);
-        id = UUID(metaData["guid"]);
-      }
-      else
-      {
-        nlohmann::json metaData;
-        metaData["guid"] = id.ToString();
-        m_AssetMetadata->SetMetadata(assetPath, metaData);
-      }
-
-      auto texture = m_TextureFactory->FromPath(assetPath);
-      return AssetReference<TextureAsset>(
-        m_Registry->create(), fileName, m_Registry, id, assetPath, texture);
+      assetReference.AddAssetComponent<IDComponent>(id);
+      assetReference.AddAssetComponent<NameComponent>(fileName);
+      assetReference.AddAssetComponent<PathComponent>(assetPath);
+      return AssetReference<T>(m_Registry->create(), m_Registry);
     }
 
     std::shared_ptr<void>

@@ -1,5 +1,4 @@
 #pragma once
-#include "Core/Asset/Database/AssetComponents.h"
 #include "pch.h"
 #include <entt/entt.hpp>
 
@@ -29,27 +28,21 @@ namespace Dwarf
     {
     }
 
-    AssetReference(entt::entity                    assetHandle,
-                   std::string                     assetName,
-                   std::shared_ptr<entt::registry> registry,
-                   UUID                            uid,
-                   std::filesystem::path           assetPath)
-      : m_AssetHandle(assetHandle)
-      , m_Registry(registry)
-    {
-      m_Registry->emplace<T>(assetHandle, assetPath);
-      m_Registry->emplace<IDComponent>(assetHandle, uid);
-      m_Registry->emplace<NameComponent>(assetHandle, assetName);
-      m_Registry->emplace<PathComponent>(assetHandle, assetPath);
-    }
+    // AssetReference(entt::entity                    assetHandle,
+    //                std::string                     assetName,
+    //                std::shared_ptr<entt::registry> registry,
+    //                UUID                            uid,
+    //                std::filesystem::path           assetPath)
+    //   : m_AssetHandle(assetHandle)
+    //   , m_Registry(registry)
+    // {
+    //   m_Registry->emplace<T>(assetHandle, assetPath);
+    //   m_Registry->emplace<IDComponent>(assetHandle, uid);
+    //   m_Registry->emplace<NameComponent>(assetHandle, assetName);
+    //   m_Registry->emplace<PathComponent>(assetHandle, assetPath);
+    // }
 
-    template<typename U = T,
-             typename = std::enable_if_t<std::is_base_of_v<TextureAsset, U>>>
-
-    operator bool() const
-    {
-      return (std::uint32_t)m_AssetHandle != 0;
-    }
+    operator bool() const { return (std::uint32_t)m_AssetHandle != 0; }
     bool
     operator==(const AssetReference& b)
     {
@@ -62,6 +55,14 @@ namespace Dwarf
     GetHandle() const
     {
       return m_AssetHandle;
+    }
+
+    template<typename T, typename... Args>
+    T&
+    AddAssetComponent(Args&&... args)
+    {
+      // TODO: Check component requirements
+      return m_Registry->emplace<T>(m_AssetHandle, std::forward<Args>(args)...);
     }
 
     /// @brief Returns the UID of the asset.

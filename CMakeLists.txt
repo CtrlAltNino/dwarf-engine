@@ -10,6 +10,7 @@ set(CMAKE_CXX_STANDARD 20)
 set(targetName dwarf-engine)
 set(testTarget dwarf-test)
 
+# set(testTarget dwarf-test)
 set(CMAKE_PCH_INSTANTIATE_TEMPLATES ON)
 
 # Need to find a way to make the path to the vcpkg.cmake file dynamic, maybe I can even store it in the repo
@@ -48,7 +49,6 @@ IF(WIN32)
     # Maybe move to windows only, need to test
     ADD_DEFINITIONS(-DUNICODE)
     ADD_DEFINITIONS(-D_UNICODE)
-
     add_executable(${targetName} "")
 ELSEIF(UNIX AND NOT APPLE)
     # ~/.vcpkg/vcpkg.path.txt
@@ -78,6 +78,7 @@ enable_testing()
 
 # Add the CMakeLists.txt files of the subdirectories
 add_subdirectory(src)
+
 add_subdirectory(tests)
 
 # Linking dependencies
@@ -86,8 +87,8 @@ IF(WIN32 OR(UNIX AND NOT APPLE))
     target_link_libraries(${targetName} PRIVATE glad::glad)
 ENDIF()
 
-find_path(STB_INCLUDE_DIRS "stb_c_lexer.h")
-target_include_directories(${targetName} PRIVATE ${STB_INCLUDE_DIRS})
+find_package(Stb REQUIRED)
+target_include_directories(${targetName} PRIVATE ${Stb_INCLUDE_DIR})
 
 find_package(assimp CONFIG REQUIRED)
 target_link_libraries(${targetName} PRIVATE assimp::assimp)
@@ -98,49 +99,57 @@ target_include_directories(${targetName} PRIVATE ${BEXT_DI_INCLUDE_DIRS})
 find_path(BOOST_INCLUDE_DIRS "boost/")
 target_include_directories(${targetName} PRIVATE ${BOOST_INCLUDE_DIRS})
 
-find_package(SDL2 CONFIG REQUIRED)
-target_link_libraries(${targetName} PRIVATE SDL2::SDL2 SDL2::SDL2main SDL2::SDL2-static)
+find_package(efsw CONFIG REQUIRED)
+target_link_libraries(${targetName} PRIVATE efsw::efsw)
 
-# find_package(glfw3 CONFIG REQUIRED)
-# target_link_libraries(${targetName} PRIVATE glfw)
+find_package(EnTT CONFIG REQUIRED)
+target_link_libraries(${targetName} PRIVATE EnTT::EnTT)
+
 find_package(glm CONFIG REQUIRED)
 target_link_libraries(${targetName} PRIVATE glm::glm)
 
+find_package(SDL2 CONFIG REQUIRED)
+target_link_libraries(${targetName}
+    PRIVATE
+    $<TARGET_NAME_IF_EXISTS:SDL2::SDL2main>
+    $<IF:$<TARGET_EXISTS:SDL2::SDL2>,SDL2::SDL2,SDL2::SDL2-static>
+)
+
 find_package(imgui CONFIG REQUIRED)
 target_link_libraries(${targetName} PRIVATE imgui::imgui)
+
+find_package(unofficial-imguizmo CONFIG REQUIRED)
+target_link_libraries(${targetName} PRIVATE unofficial::imguizmo::imguizmo)
+
+find_package(libjpeg-turbo CONFIG REQUIRED)
+target_link_libraries(${targetName} PRIVATE PRIVATE $<IF:$<TARGET_EXISTS:libjpeg-turbo::turbojpeg>,libjpeg-turbo::turbojpeg,libjpeg-turbo::turbojpeg-static>)
+
+find_package(SPNG CONFIG REQUIRED)
+target_link_libraries(${targetName} PRIVATE $<IF:$<TARGET_EXISTS:spng::spng>,spng::spng,spng::spng_static>)
 
 find_package(nfd CONFIG REQUIRED)
 target_link_libraries(${targetName} PRIVATE nfd::nfd)
 
 find_package(nlohmann_json CONFIG REQUIRED)
-target_link_libraries(${targetName} PRIVATE nlohmann_json nlohmann_json::nlohmann_json)
-
-find_package(efsw CONFIG REQUIRED)
-target_link_libraries(${targetName} PRIVATE efsw::efsw)
-
-find_package(Threads REQUIRED)
-target_link_libraries(${targetName} PRIVATE Threads::Threads)
-
-find_package(unofficial-imguizmo CONFIG REQUIRED)
-target_link_libraries(${targetName} PRIVATE unofficial::imguizmo::imguizmo)
-
-find_package(EnTT CONFIG REQUIRED)
-target_link_libraries(${targetName} PRIVATE EnTT::EnTT)
-
-find_package(xxHash CONFIG REQUIRED)
-target_link_libraries(${targetName} PRIVATE xxHash::xxhash)
+target_link_libraries(${targetName} PRIVATE nlohmann_json::nlohmann_json)
 
 find_package(platform_folders CONFIG REQUIRED)
 target_link_libraries(${targetName} PRIVATE sago::platform_folders)
 
-find_package(libjpeg-turbo CONFIG REQUIRED)
-target_link_libraries(${targetName} PRIVATE $<IF:$<TARGET_EXISTS:libjpeg-turbo::turbojpeg>,libjpeg-turbo::turbojpeg,libjpeg-turbo::turbojpeg-static>)
-
-find_package(SPNG CONFIG REQUIRED)
-target_link_libraries(${targetName} PRIVATE $<IF:$<TARGET_EXISTS:spng::spng>,spng::spng,spng::spng_static>)
+find_package(Protobuf CONFIG REQUIRED)
+target_link_libraries(${targetName} PRIVATE protobuf::libprotoc protobuf::libprotobuf protobuf::libprotobuf-lite)
 
 find_package(spdlog CONFIG REQUIRED)
 target_link_libraries(${targetName} PRIVATE spdlog::spdlog)
+
+find_package(TIFF REQUIRED)
+target_link_libraries(${targetName} PRIVATE TIFF::TIFF)
+
+find_package(xxHash CONFIG REQUIRED)
+target_link_libraries(${targetName} PRIVATE xxHash::xxhash)
+
+find_package(Threads REQUIRED)
+target_link_libraries(${targetName} PRIVATE Threads::Threads)
 
 IF(APPLE)
     find_library(METAL Metal)

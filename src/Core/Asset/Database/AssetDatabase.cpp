@@ -1,8 +1,8 @@
 #include "AssetDatabase.h"
 #include "Core/Asset/Metadata/IAssetMetadata.h"
+#include "Core/Rendering/Material/IMaterial.h"
 #include "Utilities/FileHandler.h"
 #include "Core/Asset/Database/AssetComponents.h"
-#include "Core/Rendering/Shader/IComputeShader.h"
 #include "Core/Asset/Database/AssetComponents.h"
 #include <filesystem>
 
@@ -13,13 +13,19 @@ namespace Dwarf
     std::shared_ptr<IAssetDirectoryListener> assetDirectoryListener,
     std::shared_ptr<IAssetMetadata>          assetMetadata,
     std::shared_ptr<IModelImporter>          modelImporter,
-    std::shared_ptr<IShaderRecompiler>       shaderRecompiler)
+    std::shared_ptr<IShaderRecompiler>       shaderRecompiler,
+    std::shared_ptr<ITextureFactory>         textureFactory,
+    std::shared_ptr<IMaterialFactory>        materialFactory,
+    std::shared_ptr<IMaterialIO>             materialIO)
     : m_AssetDirectoryPath(assetDirectoryPath)
     , m_AssetDirectoryListener(assetDirectoryListener)
     , m_AssetMetadata(assetMetadata)
     , m_ModelImporter(modelImporter)
     , m_ShaderRecompiler(shaderRecompiler)
     , m_Registry(std::make_shared<entt::registry>())
+    , m_TextureFactory(textureFactory)
+    , m_MaterialFactory(materialFactory)
+    , m_MaterialIO(materialIO)
   {
     if (!FileHandler::DirectoyExists(m_AssetDirectoryPath))
     {
@@ -159,53 +165,96 @@ namespace Dwarf
           //     m_ModelImporter->Import(assetPath));
           // // model.GetAsset()->Load();
           // return model.GetUID();
+          AssetReference<ModelAsset> modelAsset =
+            CreateAssetReference<ModelAsset>(assetPath);
+          modelAsset.AddAssetComponent<ModelAsset>(
+            ModelAsset(m_ModelImporter->Import(assetPath)));
+
+          return modelAsset.GetUID();
         }
       case MATERIAL:
         {
-          return CreateAssetReference<MaterialAsset>(assetPath).GetUID();
+          AssetReference<MaterialAsset> materialAsset =
+            CreateAssetReference<MaterialAsset>(assetPath);
+          materialAsset.AddAssetComponent<MaterialAsset>(
+            m_MaterialIO->LoadMaterial(assetPath));
+          return materialAsset.GetUID();
         }
       case TEXTURE:
         {
-          return CreateAssetReference<TextureAsset>(assetPath).GetUID();
+          AssetReference<TextureAsset> textureAsset =
+            CreateAssetReference<TextureAsset>(assetPath);
+          textureAsset.AddAssetComponent<TextureAsset>(
+            m_TextureFactory->FromPath(assetPath));
+          return textureAsset.GetUID();
         }
       case SCENE:
         {
-          return CreateAssetReference<SceneAsset>(assetPath).GetUID();
+          AssetReference<SceneAsset> sceneAsset =
+            CreateAssetReference<SceneAsset>(assetPath);
+          sceneAsset.AddAssetComponent<SceneAsset>(assetPath);
+          return sceneAsset.GetUID();
         }
       case VERTEX_SHADER:
         {
-          return CreateAssetReference<VertexShaderAsset>(assetPath).GetUID();
+          AssetReference<VertexShaderAsset> vertexShaderAsset =
+            CreateAssetReference<VertexShaderAsset>(assetPath);
+          vertexShaderAsset.AddAssetComponent<VertexShaderAsset>(assetPath);
+          return vertexShaderAsset.GetUID();
         }
       case TESC_SHADER:
         {
-          return CreateAssetReference<TessellationControlShaderAsset>(assetPath)
-            .GetUID();
+          AssetReference<TessellationControlShaderAsset>
+            tessControlShaderAsset =
+              CreateAssetReference<TessellationControlShaderAsset>(assetPath);
+          tessControlShaderAsset
+            .AddAssetComponent<TessellationControlShaderAsset>(assetPath);
+          return tessControlShaderAsset.GetUID();
         }
       case TESE_SHADER:
         {
-          return CreateAssetReference<TessellationEvaluationShaderAsset>(
-                   assetPath)
-            .GetUID();
+          AssetReference<TessellationEvaluationShaderAsset>
+            tessEvalShaderAsset =
+              CreateAssetReference<TessellationEvaluationShaderAsset>(
+                assetPath);
+          tessEvalShaderAsset
+            .AddAssetComponent<TessellationEvaluationShaderAsset>(assetPath);
+          tessEvalShaderAsset.GetUID();
         }
       case GEOMETRY_SHADER:
         {
-          return CreateAssetReference<GeometryShaderAsset>(assetPath).GetUID();
+          AssetReference<GeometryShaderAsset> geometryShaderAsset =
+            CreateAssetReference<GeometryShaderAsset>(assetPath);
+          geometryShaderAsset.AddAssetComponent<GeometryShaderAsset>(assetPath);
+          return geometryShaderAsset.GetUID();
         }
       case FRAGMENT_SHADER:
         {
-          return CreateAssetReference<FragmentShaderAsset>(assetPath).GetUID();
+          AssetReference<FragmentShaderAsset> fragmentShaderAsset =
+            CreateAssetReference<FragmentShaderAsset>(assetPath);
+          fragmentShaderAsset.AddAssetComponent<FragmentShaderAsset>(assetPath);
+          return fragmentShaderAsset.GetUID();
         }
       case COMPUTE_SHADER:
         {
-          return CreateAssetReference<ComputeShaderAsset>(assetPath).GetUID();
+          AssetReference<ComputeShaderAsset> computeShaderAsset =
+            CreateAssetReference<ComputeShaderAsset>(assetPath);
+          computeShaderAsset.AddAssetComponent<ComputeShaderAsset>(assetPath);
+          return computeShaderAsset.GetUID();
         }
       case HLSL_SHADER:
         {
-          return CreateAssetReference<HlslShaderAsset>(assetPath).GetUID();
+          AssetReference<HlslShaderAsset> hlslShaderAsset =
+            CreateAssetReference<HlslShaderAsset>(assetPath);
+          hlslShaderAsset.AddAssetComponent<HlslShaderAsset>(assetPath);
+          return hlslShaderAsset.GetUID();
         }
       default:
         {
-          return CreateAssetReference<UnknownAsset>(assetPath).GetUID();
+          AssetReference<UnknownAsset> unknownAsset =
+            CreateAssetReference<UnknownAsset>(assetPath);
+          unknownAsset.AddAssetComponent<UnknownAsset>(assetPath);
+          return unknownAsset.GetUID();
         }
     }
   }
@@ -420,7 +469,6 @@ namespace Dwarf
     {
       if (view.get<PathComponent>(entity).Path == path)
       {
-        // return std::make_shared<AssetReference<T>>(entity, m_Registry);
         return CreateAssetReference(type, entity);
       }
     }
@@ -430,69 +478,62 @@ namespace Dwarf
   std::shared_ptr<void>
   AssetDatabase::CreateAssetReference(std::type_index type, entt::entity entity)
   {
-    return nullptr;
-    // if (type == typeid(ModelAsset))
-    // {
-    //   return std::make_shared<AssetReference<ModelAsset>>(entity,
-    //   m_Registry);
-    // }
-    // else if (type == typeid(MaterialAsset))
-    // {
-    //   return std::make_shared<AssetReference<MaterialAsset>>(entity,
-    //                                                          m_Registry);
-    // }
-    // else if (type == typeid(TextureAsset))
-    // {
-    //   return std::make_shared<AssetReference<TextureAsset>>(entity,
-    //   m_Registry);
-    // }
-    // else if (type == typeid(SceneAsset))
-    // {
-    //   return std::make_shared<AssetReference<SceneAsset>>(entity,
-    //   m_Registry);
-    // }
-    // else if (type == typeid(VertexShaderAsset))
-    // {
-    //   return std::make_shared<AssetReference<VertexShaderAsset>>(entity,
-    //                                                              m_Registry);
-    // }
-    // else if (type == typeid(TessellationControlShaderAsset))
-    // {
-    //   return
-    //   std::make_shared<AssetReference<TessellationControlShaderAsset>>(
-    //     entity, m_Registry);
-    // }
-    // else if (type == typeid(TessellationEvaluationShaderAsset))
-    // {
-    //   return std::make_shared<
-    //     AssetReference<TessellationEvaluationShaderAsset>>(entity,
-    //     m_Registry);
-    // }
-    // else if (type == typeid(GeometryShaderAsset))
-    // {
-    //   return std::make_shared<AssetReference<GeometryShaderAsset>>(entity,
-    //                                                                m_Registry);
-    // }
-    // else if (type == typeid(FragmentShaderAsset))
-    // {
-    //   return std::make_shared<AssetReference<FragmentShaderAsset>>(entity,
-    //                                                                m_Registry);
-    // }
-    // else if (type == typeid(ComputeShaderAsset))
-    // {
-    //   return std::make_shared<AssetReference<ComputeShaderAsset>>(entity,
-    //                                                               m_Registry);
-    // }
-    // else if (type == typeid(HlslShaderAsset))
-    // {
-    //   return std::make_shared<AssetReference<HlslShaderAsset>>(entity,
-    //                                                            m_Registry);
-    // }
-    // else
-    // {
-    //   return std::make_shared<AssetReference<UnknownAsset>>(entity,
-    //   m_Registry);
-    // }
+    if (type == typeid(ModelAsset))
+    {
+      return std::make_shared<AssetReference<ModelAsset>>(entity, m_Registry);
+    }
+    else if (type == typeid(MaterialAsset))
+    {
+      return std::make_shared<AssetReference<MaterialAsset>>(entity,
+                                                             m_Registry);
+    }
+    else if (type == typeid(TextureAsset))
+    {
+      return std::make_shared<AssetReference<TextureAsset>>(entity, m_Registry);
+    }
+    else if (type == typeid(SceneAsset))
+    {
+      return std::make_shared<AssetReference<SceneAsset>>(entity, m_Registry);
+    }
+    else if (type == typeid(VertexShaderAsset))
+    {
+      return std::make_shared<AssetReference<VertexShaderAsset>>(entity,
+                                                                 m_Registry);
+    }
+    else if (type == typeid(TessellationControlShaderAsset))
+    {
+      return std::make_shared<AssetReference<TessellationControlShaderAsset>>(
+        entity, m_Registry);
+    }
+    else if (type == typeid(TessellationEvaluationShaderAsset))
+    {
+      return std::make_shared<
+        AssetReference<TessellationEvaluationShaderAsset>>(entity, m_Registry);
+    }
+    else if (type == typeid(GeometryShaderAsset))
+    {
+      return std::make_shared<AssetReference<GeometryShaderAsset>>(entity,
+                                                                   m_Registry);
+    }
+    else if (type == typeid(FragmentShaderAsset))
+    {
+      return std::make_shared<AssetReference<FragmentShaderAsset>>(entity,
+                                                                   m_Registry);
+    }
+    else if (type == typeid(ComputeShaderAsset))
+    {
+      return std::make_shared<AssetReference<ComputeShaderAsset>>(entity,
+                                                                  m_Registry);
+    }
+    else if (type == typeid(HlslShaderAsset))
+    {
+      return std::make_shared<AssetReference<HlslShaderAsset>>(entity,
+                                                               m_Registry);
+    }
+    else
+    {
+      return std::make_shared<AssetReference<UnknownAsset>>(entity, m_Registry);
+    }
   }
 
   void

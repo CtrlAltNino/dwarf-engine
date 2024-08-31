@@ -25,6 +25,7 @@ namespace Dwarf
       wchar_t*     wc = new wchar_t[cSize];
       size_t       convertedChars = 0;
       mbstowcs_s(&convertedChars, wc, cSize, link, cSize);
+
       ShellExecute(0, 0, wc, 0, 0, SW_SHOW);
       delete[] (wc);
 #endif
