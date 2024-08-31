@@ -30,10 +30,10 @@ namespace Dwarf
   /// @brief Structure holding information about a project.
   struct ProjectInformation
   {
-    std::string           name;
-    std::filesystem::path path;
-    int                   lastOpened;
-    GraphicsApi           graphicsApi;
+    std::string name;
+    ProjectPath path;
+    int         lastOpened;
+    GraphicsApi graphicsApi;
 
     // Equality operator for ProjectInformation.
     bool

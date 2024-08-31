@@ -45,9 +45,6 @@ namespace Dwarf
     virtual SDL_Window*
     GetNativeWindow() const = 0;
 
-    virtual GraphicsApi
-    GetApi() = 0;
-
     virtual void
     ShowWindow() = 0;
     virtual void

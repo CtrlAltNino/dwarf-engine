@@ -1,17 +1,21 @@
 #pragma once
 
+#include "Core/Asset/Database/IAssetDatabase.h"
 #include "Core/Base.h"
 #include "Core/Rendering/RendererApi/IRendererApiFactory.h"
 
 namespace Dwarf
 {
-  class OpenGLRendererApiFactory : public IRendererApiFactory
+  class RendererApiFactory : public IRendererApiFactory
   {
   private:
-    GraphicsApi m_GraphicsApi;
+    GraphicsApi                     m_GraphicsApi;
+    std::shared_ptr<IAssetDatabase> m_AssetDatabase;
 
   public:
-    OpenGLRendererApiFactory(GraphicsApi api);
+    RendererApiFactory(GraphicsApi                     api,
+                       std::shared_ptr<IAssetDatabase> assetDatabase);
+
     std::shared_ptr<IRendererApi>
     Create() override;
   };

@@ -27,9 +27,6 @@ namespace Dwarf
     virtual void
     RegisterProjectOpening(const std::filesystem::path& path) = 0;
 
-    virtual void
-    Sort(ProjectListColumn column) = 0;
-
     // virtual void
     // ClearProjectList() = 0;
 

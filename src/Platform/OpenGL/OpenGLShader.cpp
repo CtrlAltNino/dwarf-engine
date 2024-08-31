@@ -152,6 +152,12 @@ namespace Dwarf
     }
   }
 
+  bool
+  OpenGLShader::IsCompiled() const
+  {
+    return m_SuccessfullyCompiled;
+  }
+
   GLuint
   OpenGLShader::GetID() const
   {

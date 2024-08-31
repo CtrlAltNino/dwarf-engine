@@ -1,4 +1,5 @@
 #include "Core/Asset/Creation/Material/IMaterialCreator.h"
+#include "Core/Base.h"
 #include "Editor/Modules/IGuiModuleFactory.h"
 #include "pch.h"
 #include <memory>
@@ -12,7 +13,8 @@
 
 namespace Dwarf
 {
-  EditorView::EditorView(std::optional<nlohmann::json>      serializedView,
+  EditorView::EditorView(GraphicsApi                        graphicsApi,
+                         std::optional<nlohmann::json>      serializedView,
                          std::shared_ptr<IEditor>           editor,
                          std::shared_ptr<IWindow>           window,
                          std::shared_ptr<IGuiModuleFactory> guiModuleFactory,
@@ -20,7 +22,8 @@ namespace Dwarf
                          std::shared_ptr<IAssetDatabase>    assetDatabase,
                          std::shared_ptr<IMaterialCreator>  materialCreator,
                          std::shared_ptr<IProjectSettings>  projectSettings)
-    : m_Editor(editor)
+    : m_GraphicsApi(graphicsApi)
+    , m_Editor(editor)
     , m_Window(window)
     , m_GuiModuleFactory(guiModuleFactory)
     , m_SceneIO(sceneIO)
@@ -374,7 +377,7 @@ namespace Dwarf
     windowTitle.append(" - ");
     windowTitle.append(m_Editor->GetScene()->GetProperties()->GetName());
     windowTitle.append(" <");
-    windowTitle.append(graphicsApiNames[(int)m_Window->GetApi()]);
+    windowTitle.append(graphicsApiNames[(int)m_GraphicsApi]);
     windowTitle.append(">");
 
     std::cout << "[EDITOR] Updating window title" << std::endl;

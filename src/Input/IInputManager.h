@@ -37,8 +37,6 @@ namespace Dwarf
     GetMousePosition() const = 0;
     virtual glm::vec2
     GetMouseDelta() const = 0;
-    virtual void
-    GetMouseScrollDelta(int& x, int& y) const = 0;
     virtual glm::vec2
     GetMouseScrollDelta() const = 0;
 

@@ -56,7 +56,7 @@ namespace Dwarf
     for (int i = 0; i < projectList.size(); i++)
     {
       jsonObject["projects"][i]["name"] = projectList[i].name;
-      jsonObject["projects"][i]["path"] = projectList[i].path.string();
+      jsonObject["projects"][i]["path"] = projectList[i].path.t.string();
       jsonObject["projects"][i]["lastOpened"] = projectList[i].lastOpened;
       jsonObject["projects"][i]["graphicsApi"] = projectList[i].graphicsApi;
     }

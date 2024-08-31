@@ -6,8 +6,11 @@
 namespace Dwarf
 {
   OpenGLComputeShader::OpenGLComputeShader(
-    std::shared_ptr<AssetReference<ComputeShaderAsset>> computeShaderAsset)
+    std::shared_ptr<AssetReference<ComputeShaderAsset>> computeShaderAsset,
+    std::shared_ptr<IShaderParameterCollectionFactory>
+      shaderParameterCollectionFactory)
     : m_ComputeShaderAsset(computeShaderAsset)
+    , m_ShaderParameterCollectionFactory(shaderParameterCollectionFactory)
   {
   }
 
@@ -89,7 +92,7 @@ namespace Dwarf
       return nullptr;
     }
     std::shared_ptr<IShaderParameterCollection> parameters =
-      std::make_shared<IShaderParameterCollection>();
+      m_ShaderParameterCollectionFactory->CreateShaderParameterCollection();
     GLint i;
     GLint count;
 

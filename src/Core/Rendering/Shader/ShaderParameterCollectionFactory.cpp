@@ -53,7 +53,8 @@ namespace Dwarf
         {
           parameterCollection->SetParameter(
             parameter.key(),
-            std::make_shared<UUID>(parameter.value()["value"]));
+            std::make_shared<UUID>(
+              parameter.value()["value"].get<std::string>()));
         }
         else
         {
@@ -91,7 +92,6 @@ namespace Dwarf
                     (float)parameter.value()["value"]["w"]));
       }
     }
-    return std::make_shared<ShaderParameterCollection>(
-      serializedShaderParameterCollection);
+    return parameterCollection;
   }
 } // namespace Dwarf

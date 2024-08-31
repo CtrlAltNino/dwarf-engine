@@ -5,5 +5,4 @@ target_sources(${targetName}
 
     # ProjectLauncher.cpp
     ProjectLauncher.cpp
-    ProjectLauncherModel.cpp
 )

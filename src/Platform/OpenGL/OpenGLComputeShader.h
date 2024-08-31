@@ -2,6 +2,7 @@
 
 #include "Core/Asset/Database/AssetComponents.h"
 #include "Core/Rendering/Shader/IComputeShader.h"
+#include "Core/Rendering/Shader/IShaderParameterCollectionFactory.h"
 #include "Core/Rendering/Shader/ShaderTypes.h"
 #include "Core/Asset/Database/AssetReference.h"
 #include "Core/Asset/Database/IAssetDatabase.h"
@@ -16,13 +17,17 @@ namespace Dwarf
     GLuint      m_ID = -1;
     std::string m_ComputeShaderLog;
     // Flag to determine if the shader has been successfully compiled.
-    bool                                                m_SuccessfullyCompiled;
+    bool m_SuccessfullyCompiled;
+    std::shared_ptr<IShaderParameterCollectionFactory>
+      m_ShaderParameterCollectionFactory;
     std::shared_ptr<AssetReference<ComputeShaderAsset>> m_ComputeShaderAsset;
 
   public:
     BOOST_DI_INJECT(
       OpenGLComputeShader,
-      std::shared_ptr<AssetReference<ComputeShaderAsset>> computeShaderAsset);
+      std::shared_ptr<AssetReference<ComputeShaderAsset>> computeShaderAsset,
+      std::shared_ptr<IShaderParameterCollectionFactory>
+        shaderParameterCollectionFactory);
     ~OpenGLComputeShader() override = default;
 
     GLuint

@@ -9,6 +9,7 @@
 #include "Core/Rendering/Texture/ITextureFactory.h"
 #include "Window/IWindow.h"
 #include <imgui.h>
+#include <boost/di/extension/injections/lazy.hpp>
 
 namespace Dwarf
 {
@@ -21,7 +22,8 @@ namespace Dwarf
     /// @brief Model for the project launcher
     // std::shared_ptr<IProjectLauncherModel> m_Model;
     /// @brief Window to render the project launcher in
-    std::shared_ptr<IProjectLauncher>   m_ProjectLauncher;
+    boost::di::extension::lazy<std::shared_ptr<IProjectLauncher>>
+                                        m_ProjectLauncher;
     std::shared_ptr<IWindow>            m_Window;
     std::shared_ptr<ITextureFactory>    m_TextureFactory;
     std::shared_ptr<IProjectList>       m_ProjectList;
@@ -84,13 +86,14 @@ namespace Dwarf
     RenderCreateNewProjectModal();
 
   public:
-    ProjectLauncherView(std::shared_ptr<IProjectLauncher>   projectLauncher,
-                        std::shared_ptr<IWindow>            window,
-                        std::shared_ptr<ITextureFactory>    textureFactory,
-                        std::shared_ptr<IProjectList>       projectList,
-                        std::shared_ptr<IProjectListIO>     projectListIO,
-                        std::shared_ptr<IProjectListSorter> projectListSorter,
-                        std::shared_ptr<IProjectCreator>    projectCreator);
+    ProjectLauncherView(boost::di::extension::lazy<
+                          std::shared_ptr<IProjectLauncher>> projectLauncher,
+                        std::shared_ptr<IWindow>             window,
+                        std::shared_ptr<ITextureFactory>     textureFactory,
+                        std::shared_ptr<IProjectList>        projectList,
+                        std::shared_ptr<IProjectListIO>      projectListIO,
+                        std::shared_ptr<IProjectListSorter>  projectListSorter,
+                        std::shared_ptr<IProjectCreator>     projectCreator);
 
     /**
      * @brief Render the project launcher view

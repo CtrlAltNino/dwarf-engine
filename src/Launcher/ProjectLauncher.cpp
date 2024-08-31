@@ -51,16 +51,17 @@ namespace Dwarf
 
     // int selectedProjectId = m_Model->GetSelectedProjectID();
 
-    // if (m_State == ProjectChooserState::Done)
-    // {
-    //   ProjectInformation projectInformation =
-    //     ProjectListHandler::GetProjectInformation(selectedProjectId);
-    //   if (projectInformation.name != "")
-    //   {
-    //     projectPath = projectInformation.path;
-    //     ProjectListHandler::RegisterProjectOpening(selectedProjectId);
-    //   }
-    // }
+    if (m_State == ProjectChooserState::Done)
+    {
+      // ProjectInformation projectInformation =
+      //   ProjectListHandler::GetProjectInformation(selectedProjectId);
+      // if (projectInformation.name != "")
+      // {
+      //   projectPath = projectInformation.path;
+      //   ProjectListHandler::RegisterProjectOpening(selectedProjectId);
+      // }
+    }
+    return m_SelectedProject.path;
   }
 
   ProjectChooserState

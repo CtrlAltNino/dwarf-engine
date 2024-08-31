@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Core/Asset/Database/AssetComponents.h"
+#include "Core/Rendering/Texture/ITextureFactory.h"
 #include "Core/UUID.h"
 #include "Core/Asset/Database/IAssetDatabase.h"
 #include "Core/Asset/Model/IModelImporter.h"
@@ -176,6 +178,7 @@ namespace Dwarf
     std::shared_ptr<IAssetMetadata>          m_AssetMetadata;
     std::shared_ptr<IModelImporter>          m_ModelImporter;
     std::shared_ptr<IShaderRecompiler>       m_ShaderRecompiler;
+    std::shared_ptr<ITextureFactory>         m_TextureFactory;
 
     /// @brief Recursively imports all found assets in a given directory.
     /// @param directory Absolute path to a directory.
@@ -211,6 +214,33 @@ namespace Dwarf
 
       return AssetReference<T>(
         m_Registry->create(), fileName, m_Registry, id, assetPath);
+    }
+
+    // CreateAssetReference specialization for TextureAsset
+    template<>
+    AssetReference<TextureAsset>
+    CreateAssetReference<TextureAsset>(std::filesystem::path const& assetPath)
+    {
+      std::string           fileName = assetPath.stem().string();
+      std::filesystem::path metaDataPath =
+        IAssetMetadata::GetMetadataPath(assetPath);
+
+      auto id = UUID();
+      if (FileHandler::FileExists(metaDataPath.string().c_str()))
+      {
+        nlohmann::json metaData = m_AssetMetadata->GetMetadata(assetPath);
+        id = UUID(metaData["guid"]);
+      }
+      else
+      {
+        nlohmann::json metaData;
+        metaData["guid"] = id.ToString();
+        m_AssetMetadata->SetMetadata(assetPath, metaData);
+      }
+
+      auto texture = m_TextureFactory->FromPath(assetPath);
+      return AssetReference<TextureAsset>(
+        m_Registry->create(), fileName, m_Registry, id, assetPath, texture);
     }
 
     std::shared_ptr<void>

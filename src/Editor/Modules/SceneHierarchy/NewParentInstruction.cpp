@@ -4,10 +4,9 @@
 namespace Dwarf
 {
 
-  NewParentInstruction::NewParentInstruction(
-    std::shared_ptr<Scene>     scene,
-    std::vector<Entity> const& sourceEntities,
-    entt::entity               newParent)
+  NewParentInstruction::NewParentInstruction(std::shared_ptr<IScene> scene,
+                                             std::vector<Entity> sourceEntities,
+                                             entt::entity        newParent)
     : m_Scene(scene)
     , m_SourceEntities(sourceEntities)
     , m_NewParent(newParent)

@@ -35,6 +35,9 @@ namespace Dwarf
     void
     Compile() override;
 
+    bool
+    IsCompiled() const override;
+
     std::shared_ptr<IShaderParameterCollection>
     GetParameters() override;
 

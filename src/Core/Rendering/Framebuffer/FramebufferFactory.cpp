@@ -13,8 +13,11 @@
 
 namespace Dwarf
 {
-  FramebufferFactory::FramebufferFactory(GraphicsApi api)
+  FramebufferFactory::FramebufferFactory(
+    GraphicsApi                      api,
+    std::shared_ptr<ITextureFactory> textureFactory)
     : m_Api(api)
+    , m_TextureFactory(textureFactory)
   {
   }
 
@@ -29,7 +32,7 @@ namespace Dwarf
         break;
       case GraphicsApi::Metal: break;
       case GraphicsApi::OpenGL:
-        return std::make_shared<OpenGLFramebuffer>(spec);
+        return std::make_shared<OpenGLFramebuffer>(spec, m_TextureFactory);
         break;
       case GraphicsApi::Vulkan:
         // return std::make_shared<VulkanFramebuffer>(spec);
@@ -38,7 +41,7 @@ namespace Dwarf
       case GraphicsApi::D3D12: break;
       case GraphicsApi::Metal: break;
       case GraphicsApi::OpenGL:
-        return std::make_shared<OpenGLFramebuffer>(spec);
+        return std::make_shared<OpenGLFramebuffer>(spec, m_TextureFactory);
         break;
       case GraphicsApi::Vulkan: break;
 #elif __APPLE__

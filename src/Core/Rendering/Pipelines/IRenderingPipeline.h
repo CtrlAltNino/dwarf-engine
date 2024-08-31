@@ -16,8 +16,6 @@ namespace Dwarf
   {
   public:
     virtual ~IRenderingPipeline() = default;
-    virtual void
-    Render() = 0;
 
     // TODO: Maybe pass framebuffer?
     virtual void

@@ -430,62 +430,69 @@ namespace Dwarf
   std::shared_ptr<void>
   AssetDatabase::CreateAssetReference(std::type_index type, entt::entity entity)
   {
-    if (type == typeid(ModelAsset))
-    {
-      return std::make_shared<AssetReference<ModelAsset>>(entity, m_Registry);
-    }
-    else if (type == typeid(MaterialAsset))
-    {
-      return std::make_shared<AssetReference<MaterialAsset>>(entity,
-                                                             m_Registry);
-    }
-    else if (type == typeid(TextureAsset))
-    {
-      return std::make_shared<AssetReference<TextureAsset>>(entity, m_Registry);
-    }
-    else if (type == typeid(SceneAsset))
-    {
-      return std::make_shared<AssetReference<SceneAsset>>(entity, m_Registry);
-    }
-    else if (type == typeid(VertexShaderAsset))
-    {
-      return std::make_shared<AssetReference<VertexShaderAsset>>(entity,
-                                                                 m_Registry);
-    }
-    else if (type == typeid(TessellationControlShaderAsset))
-    {
-      return std::make_shared<AssetReference<TessellationControlShaderAsset>>(
-        entity, m_Registry);
-    }
-    else if (type == typeid(TessellationEvaluationShaderAsset))
-    {
-      return std::make_shared<
-        AssetReference<TessellationEvaluationShaderAsset>>(entity, m_Registry);
-    }
-    else if (type == typeid(GeometryShaderAsset))
-    {
-      return std::make_shared<AssetReference<GeometryShaderAsset>>(entity,
-                                                                   m_Registry);
-    }
-    else if (type == typeid(FragmentShaderAsset))
-    {
-      return std::make_shared<AssetReference<FragmentShaderAsset>>(entity,
-                                                                   m_Registry);
-    }
-    else if (type == typeid(ComputeShaderAsset))
-    {
-      return std::make_shared<AssetReference<ComputeShaderAsset>>(entity,
-                                                                  m_Registry);
-    }
-    else if (type == typeid(HlslShaderAsset))
-    {
-      return std::make_shared<AssetReference<HlslShaderAsset>>(entity,
-                                                               m_Registry);
-    }
-    else
-    {
-      return std::make_shared<AssetReference<UnknownAsset>>(entity, m_Registry);
-    }
+    return nullptr;
+    // if (type == typeid(ModelAsset))
+    // {
+    //   return std::make_shared<AssetReference<ModelAsset>>(entity,
+    //   m_Registry);
+    // }
+    // else if (type == typeid(MaterialAsset))
+    // {
+    //   return std::make_shared<AssetReference<MaterialAsset>>(entity,
+    //                                                          m_Registry);
+    // }
+    // else if (type == typeid(TextureAsset))
+    // {
+    //   return std::make_shared<AssetReference<TextureAsset>>(entity,
+    //   m_Registry);
+    // }
+    // else if (type == typeid(SceneAsset))
+    // {
+    //   return std::make_shared<AssetReference<SceneAsset>>(entity,
+    //   m_Registry);
+    // }
+    // else if (type == typeid(VertexShaderAsset))
+    // {
+    //   return std::make_shared<AssetReference<VertexShaderAsset>>(entity,
+    //                                                              m_Registry);
+    // }
+    // else if (type == typeid(TessellationControlShaderAsset))
+    // {
+    //   return
+    //   std::make_shared<AssetReference<TessellationControlShaderAsset>>(
+    //     entity, m_Registry);
+    // }
+    // else if (type == typeid(TessellationEvaluationShaderAsset))
+    // {
+    //   return std::make_shared<
+    //     AssetReference<TessellationEvaluationShaderAsset>>(entity,
+    //     m_Registry);
+    // }
+    // else if (type == typeid(GeometryShaderAsset))
+    // {
+    //   return std::make_shared<AssetReference<GeometryShaderAsset>>(entity,
+    //                                                                m_Registry);
+    // }
+    // else if (type == typeid(FragmentShaderAsset))
+    // {
+    //   return std::make_shared<AssetReference<FragmentShaderAsset>>(entity,
+    //                                                                m_Registry);
+    // }
+    // else if (type == typeid(ComputeShaderAsset))
+    // {
+    //   return std::make_shared<AssetReference<ComputeShaderAsset>>(entity,
+    //                                                               m_Registry);
+    // }
+    // else if (type == typeid(HlslShaderAsset))
+    // {
+    //   return std::make_shared<AssetReference<HlslShaderAsset>>(entity,
+    //                                                            m_Registry);
+    // }
+    // else
+    // {
+    //   return std::make_shared<AssetReference<UnknownAsset>>(entity,
+    //   m_Registry);
+    // }
   }
 
   void

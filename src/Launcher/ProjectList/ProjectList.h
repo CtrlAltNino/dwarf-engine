@@ -21,22 +21,22 @@ namespace Dwarf
   public:
     ProjectList(std::shared_ptr<IProjectListIO> projectListIO);
 
-    virtual void
-    AddProject(const std::filesystem::path& path) = 0;
+    void
+    AddProject(const std::filesystem::path& path);
 
-    virtual void
-    OpenAddProjectDialog() = 0;
+    void
+    OpenAddProjectDialog();
 
-    virtual void
-    RemoveProject(const std::filesystem::path& path) = 0;
+    void
+    RemoveProject(const std::filesystem::path& path);
 
-    virtual void
-    ChangeGraphicsApi(const std::filesystem::path& path, GraphicsApi api) = 0;
+    void
+    ChangeGraphicsApi(const std::filesystem::path& path, GraphicsApi api);
 
-    virtual void
-    RegisterProjectOpening(const std::filesystem::path& path) = 0;
+    void
+    RegisterProjectOpening(const std::filesystem::path& path);
 
-    virtual std::vector<ProjectInformation>&
-    GetProjectList() = 0;
+    std::vector<ProjectInformation>&
+    GetProjectList();
   };
 }

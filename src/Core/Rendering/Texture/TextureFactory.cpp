@@ -46,6 +46,7 @@ namespace Dwarf
       case TextureType::TEXTURE_CUBE_MAP:
         return std::get<glm::ivec2>(size).x * 2 * 6;
     }
+    return 0;
   }
 
   uint64_t

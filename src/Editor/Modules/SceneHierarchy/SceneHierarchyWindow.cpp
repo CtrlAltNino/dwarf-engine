@@ -290,7 +290,7 @@ namespace Dwarf
                    m_EditorSelection->GetSelectedEntities().size()));
 
         std::vector<Entity> payload_e =
-          *(const std::vector<Entity>*)acceptedPayload->Data;
+          *(std::vector<Entity>*)acceptedPayload->Data;
 
         if (heightFrac < 0.33f)
         {

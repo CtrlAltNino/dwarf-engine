@@ -1,6 +1,7 @@
 #include "Core/Scene/Components/SceneComponents.h"
 #include "Core/Scene/Scene.h"
 #include <Core/Asset/Database/AssetDatabase.h>
+#include <string>
 
 namespace Dwarf
 {
@@ -57,8 +58,9 @@ namespace Dwarf
   Entity
   Scene::DeserializeEntity(nlohmann::json serializedEntity)
   {
-    Entity newEntity = CreateEntityWithUID(UUID(serializedEntity["guid"]),
-                                           serializedEntity["name"]);
+    Entity newEntity =
+      CreateEntityWithUID(UUID(serializedEntity["guid"].get<std::string>()),
+                          serializedEntity["name"]);
 
     TransformComponent& tc = newEntity.GetComponent<TransformComponent>();
     tc.position = { serializedEntity["transformComponent"]["position"]["x"],
@@ -103,7 +105,7 @@ namespace Dwarf
           serializedEntity["meshRendererComponent"]["mesh"] != "null")
       {
         meshRendererComponent.meshAsset = std::make_shared<UUID>(
-          (uint64_t)serializedEntity["meshRendererComponent"]["mesh"]);
+          serializedEntity["meshRendererComponent"]["mesh"].get<std::string>());
       }
 
       if (serializedEntity["meshRendererComponent"].contains("materials"))
@@ -112,9 +114,8 @@ namespace Dwarf
              serializedEntity["meshRendererComponent"]["materials"])
         {
           meshRendererComponent.materialAssets.push_back(
-            (uint64_t)element == -1
-              ? nullptr
-              : std::make_shared<UUID>((uint64_t)element));
+            element.get<std::string>() == "" ? nullptr
+                                             : std::make_shared<UUID>(element));
         }
       }
     }

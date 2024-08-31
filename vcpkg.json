@@ -45,7 +45,14 @@
     "stb",
     "nlohmann-json",
     "nativefiledialog-extended",
-    "bext-di",
+    {
+      "name": "bext-di",
+      "default-features": false,
+      "features": [
+        "extensions"
+      ],
+      "platform": "windows & x64 & static"
+    },
     "efsw",
     "imguizmo",
     "entt",

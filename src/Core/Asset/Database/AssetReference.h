@@ -1,4 +1,5 @@
 #pragma once
+#include "Core/Asset/Database/AssetComponents.h"
 #include "pch.h"
 #include <entt/entt.hpp>
 
@@ -42,7 +43,13 @@ namespace Dwarf
       m_Registry->emplace<PathComponent>(assetHandle, assetPath);
     }
 
-    operator bool() const { return (std::uint32_t)m_AssetHandle != 0; }
+    template<typename U = T,
+             typename = std::enable_if_t<std::is_base_of_v<TextureAsset, U>>>
+
+    operator bool() const
+    {
+      return (std::uint32_t)m_AssetHandle != 0;
+    }
     bool
     operator==(const AssetReference& b)
     {

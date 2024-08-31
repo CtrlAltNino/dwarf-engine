@@ -2,6 +2,5 @@ smtg_add_subdirectories()
 
 target_sources(${targetName}
     PRIVATE
-
-    # DwarfEditorDI.cpp
+    ProjectList.cpp
 )

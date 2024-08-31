@@ -1,5 +1,6 @@
 #pragma once
 #include "Core/Asset/Creation/Material/IMaterialCreator.h"
+#include "Core/Base.h"
 #include "Editor/EditorView/IEditorView.h"
 #include "Core/Asset/Database/IAssetDatabase.h"
 #include "Core/Rendering/Material/IO/IMaterialIO.h"
@@ -18,6 +19,7 @@ namespace Dwarf
   {
   private:
     // std::unique_ptr<IEditorModel>& m_Model;
+    GraphicsApi                        m_GraphicsApi;
     std::shared_ptr<IWindow>           m_Window;
     std::shared_ptr<IGuiModuleFactory> m_GuiModuleFactory;
     std::shared_ptr<IEditor>           m_Editor;
@@ -50,7 +52,8 @@ namespace Dwarf
     UpdateWindowTitle() const;
 
   public:
-    explicit EditorView(std::optional<nlohmann::json>      serializedView,
+    explicit EditorView(GraphicsApi                        graphicsApi,
+                        std::optional<nlohmann::json>      serializedView,
                         std::shared_ptr<IEditor>           editor,
                         std::shared_ptr<IWindow>           window,
                         std::shared_ptr<IGuiModuleFactory> guiModuleFactory,

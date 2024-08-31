@@ -1,8 +1,8 @@
 #pragma once
 
+#include "Window/IWindow.h"
 #include "Core/Rendering/GraphicsContext/IGraphicsContextFactory.h"
 #include "UI/IImGuiLayerFactory.h"
-#include "Window/IWindow.h"
 #include "Core/Rendering/GraphicsContext/IGraphicsContext.h"
 #include "UI/IImGuiLayer.h"
 #include "Input/IInputManager.h"
