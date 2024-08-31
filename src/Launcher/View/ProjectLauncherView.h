@@ -1,10 +1,14 @@
 #pragma once
+#include "Launcher/ProjectCreator/IProjectCreator.h"
+#include "Launcher/ProjectList/IProjectList.h"
+#include "Launcher/ProjectList/IO/IProjectListIO.h"
+#include "Launcher/ProjectList/Sorter/IProjectListSorter.h"
 #include "pch.h"
-#include "IProjectLauncherModel.h"
-#include "Core/Rendering/Texture.h"
-#include "Launcher/IProjectLauncherView.h"
-#include "Window/Window.h"
-#include "imgui.h"
+#include "Launcher/View/IProjectLauncherView.h"
+#include "Launcher/IProjectLauncher.h"
+#include "Core/Rendering/Texture/ITextureFactory.h"
+#include "Window/IWindow.h"
+#include <imgui.h>
 
 namespace Dwarf
 {
@@ -15,9 +19,15 @@ namespace Dwarf
   {
   private:
     /// @brief Model for the project launcher
-    const std::unique_ptr<IProjectLauncherModel>& m_Model;
+    // std::shared_ptr<IProjectLauncherModel> m_Model;
     /// @brief Window to render the project launcher in
-    const std::unique_ptr<Window>& m_Window;
+    std::shared_ptr<IProjectLauncher>   m_ProjectLauncher;
+    std::shared_ptr<IWindow>            m_Window;
+    std::shared_ptr<ITextureFactory>    m_TextureFactory;
+    std::shared_ptr<IProjectList>       m_ProjectList;
+    std::shared_ptr<IProjectListIO>     m_ProjectListIO;
+    std::shared_ptr<IProjectListSorter> m_ProjectListSorter;
+    std::shared_ptr<IProjectCreator>    m_ProjectCreator;
 
     /// @brief Font loaded into IMGUI for header text
     ImFont* m_HeaderFont;
@@ -26,13 +36,13 @@ namespace Dwarf
     ImFont* m_TextFont;
 
     /// @brief Loaded image for the github icon
-    std::shared_ptr<Texture> m_GithubIcon;
+    std::shared_ptr<ITexture> m_GithubIcon;
 
     /// @brief Loaded image for the patreon icon
-    std::shared_ptr<Texture> m_PatreonIcon;
+    std::shared_ptr<ITexture> m_PatreonIcon;
 
     /// @brief Loaded image for the twitter icon
-    std::shared_ptr<Texture> m_TwitterIcon;
+    std::shared_ptr<ITexture> m_XIcon;
 
     /**
      * @brief Render the project list
@@ -74,8 +84,13 @@ namespace Dwarf
     RenderCreateNewProjectModal();
 
   public:
-    ProjectLauncherView(const std::unique_ptr<IProjectLauncherModel>& model,
-                        const std::unique_ptr<Window>&                window);
+    ProjectLauncherView(std::shared_ptr<IProjectLauncher>   projectLauncher,
+                        std::shared_ptr<IWindow>            window,
+                        std::shared_ptr<ITextureFactory>    textureFactory,
+                        std::shared_ptr<IProjectList>       projectList,
+                        std::shared_ptr<IProjectListIO>     projectListIO,
+                        std::shared_ptr<IProjectListSorter> projectListSorter,
+                        std::shared_ptr<IProjectCreator>    projectCreator);
 
     /**
      * @brief Render the project launcher view

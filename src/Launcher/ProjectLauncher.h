@@ -1,23 +1,38 @@
 #pragma once
 
-#include "pch.h"
-#include "Launcher/IProjectLauncherModel.h"
-#include "Launcher/IProjectLauncherView.h"
+#include "Launcher/IProjectLauncher.h"
+#include "Project/ProjectTypes.h"
+#include "Launcher/View/IProjectLauncherView.h"
 #include "Window/IWindow.h"
+#include "pch.h"
 
 namespace Dwarf
 {
-  class ProjectLauncher
+  class ProjectLauncher : public IProjectLauncher
   {
   private:
-    std::unique_ptr<IProjectLauncherModel> m_Model;
-    std::unique_ptr<IProjectLauncherView>  m_View;
-    std::unique_ptr<IWindow>               m_Window;
+    ProjectInformation                    m_SelectedProject;
+    std::shared_ptr<IProjectLauncherView> m_View;
+    std::shared_ptr<IWindow>              m_Window;
+    ProjectChooserState                   m_State;
 
   public:
-    ProjectLauncher(std::filesystem::path& projectPath);
+    ProjectLauncher(std::shared_ptr<IWindow>              window,
+                    std::shared_ptr<IProjectLauncherView> view);
+
+    ProjectPath
+    Run() override;
+
+    ProjectChooserState
+    GetState() const override;
 
     void
-    Run();
+    SetState(ProjectChooserState state) override;
+
+    void
+    SetSelectedProject(const ProjectInformation& project) override;
+
+    const ProjectInformation&
+    GetSelectedProject() const override;
   };
 }
