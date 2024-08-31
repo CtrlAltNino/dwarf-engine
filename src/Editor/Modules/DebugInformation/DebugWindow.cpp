@@ -1,6 +1,7 @@
 #include "DebugWindow.h"
 // #include "Core/Asset/Database/AssetDatabase.h"
 // #include "Core/Asset/Database/AssetComponents.h"
+#include "Core/Asset/Database/AssetComponents.h"
 #include "Core/GenericComponents.h"
 #include <entt/entity/fwd.hpp>
 #include <memory>

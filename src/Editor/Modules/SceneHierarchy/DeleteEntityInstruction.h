@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Editor/Modules/SceneHierarchy/GraphInstruction.h"
-#include "Core/Scene/Scene.h"
+#include "Core/Scene/IScene.h"
 
 namespace Dwarf
 {
@@ -11,7 +11,7 @@ namespace Dwarf
   {
   private:
     /// @brief Pointer to the currently opened scene.
-    std::shared_ptr<Scene> m_Scene;
+    std::shared_ptr<IScene> m_Scene;
 
     /// @brief The entities to delete.
     std::vector<Entity> m_SourceEntities;
@@ -20,7 +20,7 @@ namespace Dwarf
     /// @brief Executes the instruction.
     void
     PerformInstruction() override;
-    DeleteEntityInstruction(std::shared_ptr<Scene> scene,
-                            std::vector<Entity>    sourceEntities);
+    DeleteEntityInstruction(std::shared_ptr<IScene> scene,
+                            std::vector<Entity>     sourceEntities);
   };
 }

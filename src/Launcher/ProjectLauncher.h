@@ -15,9 +15,9 @@ namespace Dwarf
     std::unique_ptr<IWindow>               m_Window;
 
   public:
-    ProjectLauncher();
+    ProjectLauncher(std::filesystem::path& projectPath);
 
     void
-    Run(std::filesystem::path& projectPath);
+    Run();
   };
 }

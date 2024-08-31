@@ -3,6 +3,7 @@
 #include "Core/Asset/Database/IAssetDatabase.h"
 #include "Core/Base.h"
 #include "Core/Rendering/Shader/IShader.h"
+#include "Core/Rendering/Shader/IShaderParameterCollectionFactory.h"
 #include "Core/Rendering/Shader/ShaderTypes.h"
 #include "IShaderFactory.h"
 
@@ -13,10 +14,14 @@ namespace Dwarf
   private:
     GraphicsApi                     m_GraphicsApi;
     std::shared_ptr<IAssetDatabase> m_AssetDatabase;
+    std::shared_ptr<IShaderParameterCollectionFactory>
+      m_ShaderParameterCollectionFactory;
 
   public:
     ShaderFactory(GraphicsApi                     graphicsApi,
-                  std::shared_ptr<IAssetDatabase> assetDatabase);
+                  std::shared_ptr<IAssetDatabase> assetDatabase,
+                  std::shared_ptr<IShaderParameterCollectionFactory>
+                    shaderParameterCollectionFactory);
 
     std::shared_ptr<IShader>
     CreateShader() override;
