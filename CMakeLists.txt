@@ -1,47 +1,24 @@
 # Set the minimum required CMake Version
 cmake_minimum_required(VERSION 3.22)
 
-# Project declaration
-project(Dwarf\ Engine VERSION 0.0.1 LANGUAGES C CXX)
-
 # Helper functions
 include(${CMAKE_SOURCE_DIR}/helper.cmake)
 
 # add_compile_definitions(NOMINMAX)
 set(CMAKE_CXX_STANDARD 20)
+set(CMAKE_CXX_STANDARD_REQUIRED True)
 
 set(targetName dwarf-engine)
 set(testTarget dwarf-test)
 
-# set(testTarget dwarf-test)
 set(CMAKE_PCH_INSTANTIATE_TEMPLATES ON)
-
-# Need to find a way to make the path to the vcpkg.cmake file dynamic, maybe I can even store it in the repo
-
-# Declaring a variable that can contain various settings for the executable
-set(EXECUTABLE_ADDITIONAL_SETTINGS "")
 set(VCPKG_MAX_CONCURRENCY 8)
-
-if(CMAKE_CXX_COMPILER_ID STREQUAL "Clang")
-# using Clang
-elseif(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
-# using GCC
-elseif(CMAKE_CXX_COMPILER_ID STREQUAL "Intel")
-# using Intel C++
-elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-    # using Visual Studio C++
-endif()
-
-set(BUILD_SHARED_LIBS OFF)
 
 # Platform dependant settings
 IF(WIN32)
     file(READ "$ENV{LOCALAPPDATA}/vcpkg/vcpkg.path.txt" VCPKG_PATH)
-
     set(CMAKE_TOOLCHAIN_FILE "${VCPKG_PATH}/scripts/buildsystems/vcpkg.cmake")
     set(VCPKG_TARGET_TRIPLET "x64-windows-static")
-    set(VCPKG_LIBRARY_LINKAGE static)
-    set(VCPKG_CRT_LINKAGE static)
 
     set(APP_ICON_RESOURCE_WINDOWS "${CMAKE_CURRENT_SOURCE_DIR}/app_icon_windows.rc")
     set(EXECUTABLE_ADDITIONAL_SETTINGS ${APP_ICON_RESOURCE_WINDOWS})
@@ -56,36 +33,34 @@ IF(WIN32)
     # Maybe move to windows only, need to test
     ADD_DEFINITIONS(-DUNICODE)
     ADD_DEFINITIONS(-D_UNICODE)
-    add_executable(${targetName} "")
 ELSEIF(UNIX AND NOT APPLE)
     # ~/.vcpkg/vcpkg.path.txt
     file(READ "$ENV{HOME}/.vcpkg/vcpkg.path.txt" VCPKG_PATH)
     set(CMAKE_TOOLCHAIN_FILE "${VCPKG_PATH}/scripts/buildsystems/vcpkg.cmake")
     set(VCPKG_TARGET_TRIPLET "x64-linux")
-    add_executable(${targetName} "")
 ELSEIF(APPLE)
     # ~/.vcpkg/vcpkg.path.txt
     file(READ "$ENV{HOME}/.vcpkg/vcpkg.path.txt" VCPKG_PATH)
     set(CMAKE_TOOLCHAIN_FILE "${VCPKG_PATH}/scripts/buildsystems/vcpkg.cmake")
     set(VCPKG_TARGET_TRIPLET "x64-osx")
-    add_executable(${targetName} "")
     enable_language(OBJC OBJCXX)
 ENDIF()
 
+# Project declaration
+project(Dwarf\ Engine VERSION 0.0.1 LANGUAGES C CXX)
+add_executable(${targetName} "")
 include_directories(src)
-
-target_compile_options(${targetName} PRIVATE /utf-8)
 
 target_sources(${targetName} PRIVATE ${EXECUTABLE_ADDITIONAL_SETTINGS})
 
-target_precompile_headers(${targetName} PRIVATE src/pch.h)
-
-enable_testing()
+add_subdirectory(tests)
 
 # Add the CMakeLists.txt files of the subdirectories
 add_subdirectory(src)
 
-add_subdirectory(tests)
+target_precompile_headers(${targetName} PRIVATE src/pch.h)
+
+enable_testing()
 
 IF(WIN32)
     target_link_libraries(${targetName} PRIVATE bcrypt)
@@ -172,10 +147,6 @@ IF(APPLE)
     # target_include_directories(${targetName} PRIVATE "lib/metal-cpp/")
     target_include_directories(${targetName} PRIVATE ${CMAKE_SOURCE_DIR}/include/metal-cpp)
 ENDIF()
-
-set_target_properties(${targetName} PROPERTIES
-    IMPORTED_IMPLIB ""
-)
 
 # Copy files to build folder
 add_custom_command(TARGET

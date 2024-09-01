@@ -29,7 +29,7 @@
 #include "Launcher/ProjectCreator/IProjectCreator.h"
 #include "Launcher/ProjectCreator/ProjectCreator.h"
 
-#ifdef WIN32
+#ifdef _WIN32
 #include "Platform/Windows/WindowsWindow.h"
 #elif __linux__
 #include "Platform/Linux/LinuxWindow.h"
@@ -52,7 +52,7 @@ namespace Dwarf
           boost::di::bind<GraphicsApi>.to(GraphicsApi::OpenGL),
           boost::di::bind<IProjectLauncher>.to<ProjectLauncher>(),
           boost::di::bind<IImGuiLayerFactory>.to<ImGuiLayerFactory>(),
-#ifdef WIN32
+#ifdef _WIN32
           boost::di::bind<IWindow>.to<WindowsWindow>(),
 #elif __linux__
           boost::di::bind<IWindow>.to<LinuxWindow>(),
