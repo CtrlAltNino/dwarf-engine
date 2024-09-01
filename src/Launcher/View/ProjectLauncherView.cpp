@@ -419,7 +419,6 @@ namespace Dwarf
     if (ImGui::Button("Create new project",
                       ImVec2(ImGui::GetContentRegionAvail().x, 75)))
     {
-      // TODO: Open modal for creating a new project
       m_ProjectLauncher.get()->SetState(ProjectChooserState::CreateNewProject);
     }
 
@@ -510,7 +509,7 @@ namespace Dwarf
       return;
     }
 
-    ImGui::Text("An open source project created by flash-miller");
+    ImGui::Text("An open source project created by CtrlAltNino");
     std::string versionText = "early development version";
     float       textWidth =
       ImGui::CalcTextSize(versionText.c_str(), nullptr, false).x;

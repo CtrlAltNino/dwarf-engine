@@ -9,6 +9,9 @@ namespace Dwarf
     virtual std::vector<ProjectInformation>
     LoadProjectList() const = 0;
 
+    virtual ProjectInformation
+    LoadProject(const std::filesystem::path& path) const = 0;
+
     virtual void
     SaveProjectList(
       const std::vector<ProjectInformation>& projectList) const = 0;

@@ -1,4 +1,4 @@
-![dwarf-engine-banner](https://github.com/flash-miller/dwarf-engine/blob/48a726511e9f49cb88681a106bb3afe30eb4cc5c/Dwarf%20Engine%20Banner.png)
+![dwarf-engine-banner](https://github.com/CtrlAltNino/dwarf-engine/blob/48a726511e9f49cb88681a106bb3afe30eb4cc5c/Dwarf%20Engine%20Banner.png)
 
 # Dwarf Engine
 
@@ -39,7 +39,7 @@ When creativity hits, it hits hard. So if you want to experiment on any front, D
 - Write our own custom post processing effect
 - Implement your own rendering Pipeline
 - Create your own volumetric cloud system
-- Develop your own module with an editor window to create noise textures 
+- Develop your own module with an editor window to create noise textures
 
 ---
 

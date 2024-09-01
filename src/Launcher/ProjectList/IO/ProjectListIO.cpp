@@ -48,6 +48,33 @@ namespace Dwarf
     return projectList;
   }
 
+  ProjectInformation
+  ProjectListIO::LoadProject(const std::filesystem::path& path) const
+  {
+    std::filesystem::path projectSettingsPath = path / "projectSettings.dproj";
+    std::string fileContent = FileHandler::ReadFile(projectSettingsPath);
+
+    ProjectInformation foundInfo;
+
+    if (!fileContent.empty())
+    {
+      nlohmann::json jsonObject = nlohmann::json::parse(fileContent);
+
+      if (jsonObject.contains("projectInformation"))
+      {
+        foundInfo.name = jsonObject["projectInformation"]["projectName"];
+        foundInfo.path = path;
+        foundInfo.graphicsApi = jsonObject["projectInformation"]["graphicsApi"];
+        foundInfo.lastOpened =
+          jsonObject.contains("lastOpened")
+            ? (int)jsonObject["projectInformation"]["lastOpened"]
+            : -1;
+      }
+    }
+
+    return foundInfo;
+  }
+
   void
   ProjectListIO::SaveProjectList(
     const std::vector<ProjectInformation>& projectList) const
