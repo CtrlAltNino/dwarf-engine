@@ -1,6 +1,4 @@
 #include "ShaderParameterCollectionFactory.h"
-
-#include "Core/Base.h"
 #include "ShaderParameterCollection.h"
 
 namespace Dwarf

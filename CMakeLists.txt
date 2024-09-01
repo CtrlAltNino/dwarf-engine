@@ -1,6 +1,9 @@
 # Set the minimum required CMake Version
 cmake_minimum_required(VERSION 3.22)
 
+# Project declaration
+project(Dwarf\ Engine VERSION 0.0.1 LANGUAGES C CXX)
+
 # Helper functions
 include(${CMAKE_SOURCE_DIR}/helper.cmake)
 
@@ -29,15 +32,19 @@ elseif(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
     # using Visual Studio C++
 endif()
 
+set(BUILD_SHARED_LIBS OFF)
+
 # Platform dependant settings
 IF(WIN32)
     file(READ "$ENV{LOCALAPPDATA}/vcpkg/vcpkg.path.txt" VCPKG_PATH)
+
     set(CMAKE_TOOLCHAIN_FILE "${VCPKG_PATH}/scripts/buildsystems/vcpkg.cmake")
     set(VCPKG_TARGET_TRIPLET "x64-windows-static")
+    set(VCPKG_LIBRARY_LINKAGE static)
+    set(VCPKG_CRT_LINKAGE static)
+
     set(APP_ICON_RESOURCE_WINDOWS "${CMAKE_CURRENT_SOURCE_DIR}/app_icon_windows.rc")
     set(EXECUTABLE_ADDITIONAL_SETTINGS ${APP_ICON_RESOURCE_WINDOWS})
-    set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
-
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
     # Hiding the console window in release mode
@@ -67,10 +74,9 @@ ENDIF()
 
 include_directories(src)
 
-target_sources(${targetName} PRIVATE ${EXECUTABLE_ADDITIONAL_SETTINGS})
+target_compile_options(${targetName} PRIVATE /utf-8)
 
-# Project declaration
-project(Dwarf\ Engine VERSION 0.0.1 LANGUAGES C CXX)
+target_sources(${targetName} PRIVATE ${EXECUTABLE_ADDITIONAL_SETTINGS})
 
 target_precompile_headers(${targetName} PRIVATE src/pch.h)
 
@@ -81,9 +87,14 @@ add_subdirectory(src)
 
 add_subdirectory(tests)
 
+IF(WIN32)
+    target_link_libraries(${targetName} PRIVATE bcrypt)
+ENDIF()
+
 # Linking dependencies
 IF(WIN32 OR(UNIX AND NOT APPLE))
     find_package(glad CONFIG REQUIRED)
+
     target_link_libraries(${targetName} PRIVATE glad::glad)
 ENDIF()
 
@@ -109,12 +120,12 @@ find_package(glm CONFIG REQUIRED)
 target_link_libraries(${targetName} PRIVATE glm::glm)
 
 find_package(SDL2 CONFIG REQUIRED)
+
 target_link_libraries(${targetName}
     PRIVATE
     $<TARGET_NAME_IF_EXISTS:SDL2::SDL2main>
     $<IF:$<TARGET_EXISTS:SDL2::SDL2>,SDL2::SDL2,SDL2::SDL2-static>
 )
-
 find_package(imgui CONFIG REQUIRED)
 target_link_libraries(${targetName} PRIVATE imgui::imgui)
 
@@ -122,14 +133,13 @@ find_package(unofficial-imguizmo CONFIG REQUIRED)
 target_link_libraries(${targetName} PRIVATE unofficial::imguizmo::imguizmo)
 
 find_package(libjpeg-turbo CONFIG REQUIRED)
-target_link_libraries(${targetName} PRIVATE PRIVATE $<IF:$<TARGET_EXISTS:libjpeg-turbo::turbojpeg>,libjpeg-turbo::turbojpeg,libjpeg-turbo::turbojpeg-static>)
+target_link_libraries(${targetName} PRIVATE PRIVATE libjpeg-turbo::turbojpeg-static)
 
 find_package(SPNG CONFIG REQUIRED)
 target_link_libraries(${targetName} PRIVATE $<IF:$<TARGET_EXISTS:spng::spng>,spng::spng,spng::spng_static>)
 
 find_package(nfd CONFIG REQUIRED)
 target_link_libraries(${targetName} PRIVATE nfd::nfd)
-
 find_package(nlohmann_json CONFIG REQUIRED)
 target_link_libraries(${targetName} PRIVATE nlohmann_json::nlohmann_json)
 
@@ -138,7 +148,6 @@ target_link_libraries(${targetName} PRIVATE sago::platform_folders)
 
 find_package(Protobuf CONFIG REQUIRED)
 target_link_libraries(${targetName} PRIVATE protobuf::libprotoc protobuf::libprotobuf protobuf::libprotobuf-lite)
-
 find_package(spdlog CONFIG REQUIRED)
 target_link_libraries(${targetName} PRIVATE spdlog::spdlog)
 
@@ -163,6 +172,10 @@ IF(APPLE)
     # target_include_directories(${targetName} PRIVATE "lib/metal-cpp/")
     target_include_directories(${targetName} PRIVATE ${CMAKE_SOURCE_DIR}/include/metal-cpp)
 ENDIF()
+
+set_target_properties(${targetName} PROPERTIES
+    IMPORTED_IMPLIB ""
+)
 
 # Copy files to build folder
 add_custom_command(TARGET

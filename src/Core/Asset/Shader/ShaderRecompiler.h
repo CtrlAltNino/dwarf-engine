@@ -1,3 +1,4 @@
+#pragma once
 #include "IShaderRecompiler.h"
 
 namespace Dwarf

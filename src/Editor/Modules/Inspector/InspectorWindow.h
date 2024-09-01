@@ -1,14 +1,11 @@
 #pragma once
+#include "pch.h"
+#include "Editor/Modules/IGuiModule.h"
 #include "AssetInspector/IAssetInspector.h"
 #include "Core/Asset/Database/IAssetDatabase.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorSelection.h"
 #include "EntityInspector/IEntityInspector.h"
-#include "pch.h"
-#include "Core/Scene/Scene.h"
-#include "Editor/Modules/IGuiModule.h"
-#include "Core/Rendering/PreviewRenderer/MaterialPreview/IMaterialPreview.h"
-#include "Core/Rendering/PreviewRenderer/ModelPreview/IModelPreview.h"
 
 namespace Dwarf
 {

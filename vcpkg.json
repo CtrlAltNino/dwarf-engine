@@ -36,8 +36,7 @@
       "default-features": false,
       "features": [
         "docking-experimental",
-        "sdl2-binding",
-        "metal-binding"
+        "sdl2-binding"
       ],
       "platform": "osx & x64"
     },
@@ -122,6 +121,10 @@
     {
       "name": "libspng",
       "version": "0.7.4"
+    },
+    {
+      "name": "libjpeg-turbo",
+      "version": "3.0.3"
     }
   ],
   "builtin-baseline": "f0c8848cde589649bca3ab3649668540403786ce"

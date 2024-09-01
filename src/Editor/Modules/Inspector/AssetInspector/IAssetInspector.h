@@ -1,8 +1,5 @@
 #pragma once
 
-#include "Core/Asset/Database/AssetReference.h"
-#include <typeindex>
-
 namespace Dwarf
 {
   class IAssetInspector
