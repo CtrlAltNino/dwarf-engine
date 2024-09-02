@@ -145,6 +145,8 @@ namespace Dwarf
           case TextureDataType::FLOAT: return GL_DEPTH_STENCIL;
         }
     }
+
+    return GL_NONE;
   }
 
   // A mapping function that maps TextureWrap to OpenGL wrap
