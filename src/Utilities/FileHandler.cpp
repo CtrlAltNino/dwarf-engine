@@ -1,6 +1,7 @@
 #include "Utilities/FileHandler.h"
 
 #include <sago/platform_folders.h>
+#include <sys/wait.h>
 
 #ifdef _WIN32
 #include <Windows.h>
@@ -189,8 +190,21 @@ namespace Dwarf
     delete[] (argStr);
 #endif
 #if __linux__
-    std::string command = "xdg-open \"" + path.parent_path().string() + "\"";
-    system(command.c_str());
+    pid_t pid = fork();
+
+    if (pid == 0)
+    { // Child process
+      execlp("xdg-open", "xdg-open", path.string().c_str(), nullptr);
+    }
+    else if (pid > 0)
+    {                           // Parent process
+      waitpid(pid, nullptr, 0); // Wait for the child process to complete
+    }
+    else
+    {
+      // Fork failed
+      perror("fork failed");
+    }
 #endif
   }
 
@@ -211,8 +225,21 @@ namespace Dwarf
     // system(path.string().c_str());
 #endif
 #if __linux__
-    std::string command = "xdg-open \"" + path.string() + "\"";
-    system(command.c_str());
+    pid_t pid = fork();
+
+    if (pid == 0)
+    { // Child process
+      execlp("xdg-open", "xdg-open", path.string().c_str(), nullptr);
+    }
+    else if (pid > 0)
+    {                           // Parent process
+      waitpid(pid, nullptr, 0); // Wait for the child process to complete
+    }
+    else
+    {
+      // Fork failed
+      perror("fork failed");
+    }
 #endif
   }
 

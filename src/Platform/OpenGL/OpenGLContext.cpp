@@ -26,8 +26,6 @@ namespace Dwarf
   OpenGLContext::OpenGLContext(SDL_Window* windowHandle)
     : m_WindowHandle(windowHandle)
   {
-    std::cout << "OpenGLContext created." << std::endl;
-    std::cout << "Window handle: " << m_WindowHandle << std::endl;
   }
 
   OpenGLContext::~OpenGLContext()
