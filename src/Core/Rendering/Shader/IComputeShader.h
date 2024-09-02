@@ -1,8 +1,8 @@
 #pragma once
-#include "ShaderParameterCollection.h"
+#include "ShaderParameterCollection/ShaderParameterCollection.h"
 #include "pch.h"
 
-#include "IShaderParameterCollection.h"
+#include "ShaderParameterCollection/IShaderParameterCollection.h"
 #include "Core/Base.h"
 #include "Core/UUID.h"
 

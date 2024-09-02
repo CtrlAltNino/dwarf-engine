@@ -1,5 +1,6 @@
 #include "ShaderFactory.h"
 #include "Core/Asset/Database/AssetComponents.h"
+#include "Core/Asset/Shader/IShaderSourceCollectionFactory.h"
 #include <memory>
 
 // Including the shader header files of the graphics API.
@@ -14,12 +15,13 @@
 namespace Dwarf
 {
   ShaderFactory::ShaderFactory(
-    GraphicsApi                     graphicsApi,
-    std::shared_ptr<IAssetDatabase> assetDatabase,
+    GraphicsApi graphicsApi,
+    std::shared_ptr<IShaderSourceCollectionFactory>
+      shaderSourceCollectionFactory,
     std::shared_ptr<IShaderParameterCollectionFactory>
       shaderParameterCollectionFactory)
     : m_GraphicsApi(graphicsApi)
-    , m_AssetDatabase(assetDatabase)
+    , m_ShaderSourceCollectionFactory(shaderSourceCollectionFactory)
     , m_ShaderParameterCollectionFactory(shaderParameterCollectionFactory)
   {
   }
@@ -34,57 +36,59 @@ namespace Dwarf
   ShaderFactory::CreateShader(const nlohmann::json& shaderJson)
   {
     // Extracting shader sources from the JSON object.
-    ShaderSourceCollection shaderSources;
+    // ShaderSourceCollection shaderSources;
 
-    if (shaderJson.contains("vertexShader"))
-    {
-      std::shared_ptr<UUID> vertexShaderId =
-        std::make_shared<UUID>(shaderJson["vertexShader"]);
+    // if (shaderJson.contains("vertexShader"))
+    // {
+    //   std::shared_ptr<UUID> vertexShaderId =
+    //     std::make_shared<UUID>(shaderJson["vertexShader"]);
 
-      shaderSources.t.emplace_back(
-        m_AssetDatabase->Retrieve<VertexShaderAsset>(vertexShaderId));
-    }
+    //   shaderSources.t.emplace_back(
+    //     m_AssetDatabase->Retrieve<VertexShaderAsset>(vertexShaderId));
+    // }
 
-    if (shaderJson.contains("fragmentShader"))
-    {
-      std::shared_ptr<UUID> fragmentShaderId =
-        std::make_shared<UUID>(shaderJson["fragmentShader"]);
+    // if (shaderJson.contains("fragmentShader"))
+    // {
+    //   std::shared_ptr<UUID> fragmentShaderId =
+    //     std::make_shared<UUID>(shaderJson["fragmentShader"]);
 
-      shaderSources.t.emplace_back(
-        m_AssetDatabase->Retrieve<FragmentShaderAsset>(fragmentShaderId));
-    }
+    //   shaderSources.t.emplace_back(
+    //     m_AssetDatabase->Retrieve<FragmentShaderAsset>(fragmentShaderId));
+    // }
 
-    if (shaderJson.contains("geometryShader"))
-    {
-      std::shared_ptr<UUID> geometryShaderId =
-        std::make_shared<UUID>(shaderJson["geometryShader"]);
+    // if (shaderJson.contains("geometryShader"))
+    // {
+    //   std::shared_ptr<UUID> geometryShaderId =
+    //     std::make_shared<UUID>(shaderJson["geometryShader"]);
 
-      shaderSources.t.emplace_back(
-        m_AssetDatabase->Retrieve<GeometryShaderAsset>(geometryShaderId));
-    }
+    //   shaderSources.t.emplace_back(
+    //     m_AssetDatabase->Retrieve<GeometryShaderAsset>(geometryShaderId));
+    // }
 
-    if (shaderJson.contains("tessellationControlShader"))
-    {
-      std::shared_ptr<UUID> tessellationControlShaderId =
-        std::make_shared<UUID>(shaderJson["tessellationControlShader"]);
+    // if (shaderJson.contains("tessellationControlShader"))
+    // {
+    //   std::shared_ptr<UUID> tessellationControlShaderId =
+    //     std::make_shared<UUID>(shaderJson["tessellationControlShader"]);
 
-      shaderSources.t.emplace_back(
-        m_AssetDatabase->Retrieve<TessellationControlShaderAsset>(
-          tessellationControlShaderId));
-    }
+    //   shaderSources.t.emplace_back(
+    //     m_AssetDatabase->Retrieve<TessellationControlShaderAsset>(
+    //       tessellationControlShaderId));
+    // }
 
-    if (shaderJson.contains("tessellationEvaluationShader"))
-    {
-      std::shared_ptr<UUID> tessellationEvaluationShaderId =
-        std::make_shared<UUID>(shaderJson["tessellationEvaluationShader"]);
+    // if (shaderJson.contains("tessellationEvaluationShader"))
+    // {
+    //   std::shared_ptr<UUID> tessellationEvaluationShaderId =
+    //     std::make_shared<UUID>(shaderJson["tessellationEvaluationShader"]);
 
-      shaderSources.t.emplace_back(
-        m_AssetDatabase->Retrieve<TessellationEvaluationShaderAsset>(
-          tessellationEvaluationShaderId));
-    }
+    //   shaderSources.t.emplace_back(
+    //     m_AssetDatabase->Retrieve<TessellationEvaluationShaderAsset>(
+    //       tessellationEvaluationShaderId));
+    // }
 
     // Calling the CreateShader method that takes a ShaderSourceCollection.
-    return CreateShader(shaderSources);
+    return CreateShader(
+      m_ShaderSourceCollectionFactory->CreateShaderSourceCollection(
+        shaderJson));
   }
 
   std::shared_ptr<IShader>

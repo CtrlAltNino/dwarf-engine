@@ -1,7 +1,6 @@
 #pragma once
 
 #include "GuiModuleFactory.h"
-
 #include "Editor/IEditor.h"
 #include "Editor/Modules/AssetBrowser/AssetBrowserWindow.h"
 #include "Editor/Modules/DebugInformation/DebugWindow.h"
@@ -12,7 +11,6 @@
 #include "Editor/Modules/SceneHierarchy/SceneHierarchyWindow.h"
 #include "Editor/Modules/SceneViewer/SceneViewerWindow.h"
 #include "Editor/Stats/IEditorStats.h"
-#include <cstddef>
 #include <memory>
 #include <optional>
 

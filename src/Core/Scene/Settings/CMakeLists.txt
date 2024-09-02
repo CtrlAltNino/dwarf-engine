@@ -2,5 +2,6 @@ smtg_add_subdirectories()
 
 target_sources(${targetName}
     PRIVATE
-    GuiModuleFactory.cpp
+    SceneSettings.cpp
+    SceneSettingsFactory.cpp
 )

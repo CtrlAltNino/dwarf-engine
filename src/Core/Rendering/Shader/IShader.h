@@ -1,6 +1,6 @@
 #pragma once
 
-#include "IShaderParameterCollection.h"
+#include "Core/Rendering/Shader/ShaderParameterCollection/IShaderParameterCollection.h"
 
 #include <memory>
 

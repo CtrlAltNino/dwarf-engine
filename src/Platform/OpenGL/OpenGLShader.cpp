@@ -1,7 +1,7 @@
 #include "OpenGLShader.h"
 #include "Core/Base.h"
-#include "Core/Rendering/Shader/IShaderParameterCollection.h"
-#include "Core/Rendering/Shader/IShaderParameterCollectionFactory.h"
+#include "Core/Rendering/Shader/ShaderParameterCollection/IShaderParameterCollection.h"
+#include "Core/Rendering/Shader/ShaderParameterCollection/IShaderParameterCollectionFactory.h"
 #include "Core/Rendering/Shader/ShaderTypes.h"
 #include <memory>
 #include <variant>

@@ -11,13 +11,13 @@
 #include "Core/Rendering/RendererApi/IRendererApiFactory.h"
 #include "Core/Rendering/Texture/ITextureFactory.h"
 #include "Core/Scene/Camera/ICameraFactory.h"
-#include "DI/IDwarfEditorDI.h"
 #include "Editor/IEditorSelection.h"
 #include "Editor/Modules/IGuiModuleFactory.h"
 #include "Editor/Modules/Inspector/AssetInspector/IAssetInspector.h"
 #include "Editor/Modules/Inspector/EntityInspector/IEntityInspector.h"
 #include "Editor/Stats/IEditorStats.h"
 #include "Input/IInputManager.h"
+#include "Editor/IEditor.h"
 
 namespace Dwarf
 {
@@ -57,7 +57,7 @@ namespace Dwarf
                               std::shared_ptr<IAssetInspector>  assetInspector,
                               std::shared_ptr<IEntityInspector> entityInspector,
                               std::shared_ptr<ICameraFactory>   cameraFactory);
-
+    ~GuiModuleFactory() override = default;
     std::shared_ptr<IGuiModule>
     CreateGuiModule(MODULE_TYPE type) override;
 

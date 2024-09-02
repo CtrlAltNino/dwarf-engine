@@ -2,7 +2,7 @@
 
 #include "Core/Asset/Database/AssetComponents.h"
 #include "Core/Rendering/Shader/IComputeShader.h"
-#include "Core/Rendering/Shader/IShaderParameterCollectionFactory.h"
+#include "Core/Rendering/Shader/ShaderParameterCollection/IShaderParameterCollectionFactory.h"
 #include "Core/Rendering/Shader/ShaderTypes.h"
 #include "Core/Asset/Database/AssetReference.h"
 #include "Core/Asset/Database/IAssetDatabase.h"

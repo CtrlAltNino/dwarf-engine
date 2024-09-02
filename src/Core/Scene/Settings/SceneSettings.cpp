@@ -18,7 +18,7 @@ namespace Dwarf
     serializedSettings["FogSettings"] = m_FogSettings.Serialize();
     serializedSettings["GlobalLightSettings"] =
       m_GlobalLightSettings.Serialize();
-    serializedSettings["SkyboxMaterial"] = (uint32_t)*m_SkyboxMaterial;
+    serializedSettings["SkyboxMaterial"] = m_SkyboxMaterial->ToString();
     return serializedSettings;
   }
 

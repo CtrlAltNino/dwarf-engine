@@ -35,11 +35,11 @@ namespace Dwarf
     Editor(std::shared_ptr<IDwarfLogger>     logger,
            std::shared_ptr<IEditorStats>     stats,
            std::shared_ptr<IInputManager>    inputManager,
-           std::shared_ptr<IAssetDatabase>   assetDatabase/*,
+           std::shared_ptr<IAssetDatabase>   assetDatabase,
            std::shared_ptr<IEditorView>      view,
            std::shared_ptr<IWindow>          window,
            std::shared_ptr<ISceneIO>         sceneIO,
-           std::shared_ptr<IProjectSettings> projectSettings*/);
+           std::shared_ptr<IProjectSettings> projectSettings);
 
     /// @brief Starts the render loop
     bool

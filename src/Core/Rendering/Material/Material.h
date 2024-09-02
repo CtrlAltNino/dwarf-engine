@@ -1,5 +1,5 @@
 #pragma once
-#include "Core/Rendering/Shader/IShaderParameterCollectionFactory.h"
+#include "Core/Rendering/Shader/ShaderParameterCollection/IShaderParameterCollectionFactory.h"
 #include "pch.h"
 #include "Core/Base.h"
 #include "IMaterial.h"
@@ -15,7 +15,7 @@ namespace Dwarf
   public:
     explicit Material(std::shared_ptr<IShader> shader = nullptr,
                       const nlohmann::json& serializedMaterialProperties = "");
-    ~Material() override{};
+    ~Material() override {};
 
     // static std::shared_ptr<Material> s_DefaultMaterial;
     // static std::shared_ptr<Material> s_ErrorMaterial;

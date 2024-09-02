@@ -1,6 +1,6 @@
 #pragma once
 #include "Core/Asset/Database/AssetComponents.h"
-#include "Core/Rendering/Shader/IShaderParameterCollectionFactory.h"
+#include "Core/Rendering/Shader/ShaderParameterCollection/IShaderParameterCollectionFactory.h"
 #include "pch.h"
 
 #include <glad/glad.h>
