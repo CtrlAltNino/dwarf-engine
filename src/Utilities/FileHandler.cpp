@@ -1,7 +1,6 @@
 #include "Utilities/FileHandler.h"
 
 #include <sago/platform_folders.h>
-#include <sys/wait.h>
 
 #ifdef _WIN32
 #include <Windows.h>
@@ -9,6 +8,11 @@
 #include <ShlObj.h>
 #include <shlwapi.h>
 #include <objbase.h>
+#endif
+
+#ifdef __linux__
+#include <unistd.h>
+#include <sys/wait.h>
 #endif
 
 namespace Dwarf

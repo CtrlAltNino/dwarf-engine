@@ -153,8 +153,8 @@ namespace Dwarf
           boost::di::bind<WindowProps>.to(WindowProps(
             "Dwarf Engine", 1100, 600, selectedProject.graphicsApi)));
 
-        // auto editor = injector.create<Dwarf::Editor>();
-        // shouldClose = !editor.Run();
+        auto editor = injector.create<Dwarf::Editor>();
+        shouldClose = !editor.Run();
 
         logger->LogInfo(Log("Editor finished running.", "DwarfEngine"));
         logger->LogInfo(

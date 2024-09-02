@@ -18,8 +18,8 @@ namespace Dwarf
       m_ShaderParameterCollectionFactory;
 
   public:
-    ShaderFactory(GraphicsApi graphicsApi,
-                  // std::shared_ptr<IAssetDatabase> assetDatabase,
+    ShaderFactory(GraphicsApi                     graphicsApi,
+                  std::shared_ptr<IAssetDatabase> assetDatabase,
                   std::shared_ptr<IShaderParameterCollectionFactory>
                     shaderParameterCollectionFactory);
     ~ShaderFactory() = default;

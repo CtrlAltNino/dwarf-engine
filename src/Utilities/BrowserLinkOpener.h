@@ -27,10 +27,10 @@ namespace Dwarf
     OpenLink(std::string link)
     {
 #if _WIN32
-      const size_t cSize = strlen(link) + 1;
+      const size_t cSize = strlen(link.c_str()) + 1;
       wchar_t*     wc = new wchar_t[cSize];
       size_t       convertedChars = 0;
-      mbstowcs_s(&convertedChars, wc, cSize, link, cSize);
+      mbstowcs_s(&convertedChars, wc, cSize, link.c_str(), cSize);
 
       ShellExecute(0, 0, wc, 0, 0, SW_SHOW);
       delete[] (wc);

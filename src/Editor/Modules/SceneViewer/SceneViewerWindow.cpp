@@ -8,11 +8,8 @@
 namespace Dwarf
 {
   SceneViewerWindow::SceneViewerWindow(
-    std::shared_ptr<ICamera>                   camera,
-    std::shared_ptr<IFramebuffer>              framebuffer,
-    std::shared_ptr<IFramebuffer>              idBuffer,
-    std::shared_ptr<IFramebuffer>              outlineBuffer,
-    std::shared_ptr<IFramebuffer>              presentationBuffer,
+    std::shared_ptr<ICameraFactory>            cameraFactory,
+    std::shared_ptr<IFramebufferFactory>       framebufferFactory,
     std::shared_ptr<IEditorStats>              editorStats,
     std::shared_ptr<IInputManager>             inputManager,
     std::shared_ptr<IEditor>                   editor,
@@ -21,13 +18,10 @@ namespace Dwarf
     : IGuiModule(ModuleLabel("Scene Viewer"),
                  ModuleType(MODULE_TYPE::SCENE_VIEWER),
                  ModuleID(std::make_shared<UUID>()))
-    , m_Camera(camera)
-    , m_Framebuffer(framebuffer)
-    , m_IdBuffer(idBuffer)
-    , m_OutlineBuffer(outlineBuffer)
-    , m_PresentationBuffer(presentationBuffer)
-    , m_InputManager(inputManager)
+    , m_CameraFactory(cameraFactory)
+    , m_FramebufferFactory(framebufferFactory)
     , m_EditorStats(editorStats)
+    , m_InputManager(inputManager)
     , m_Editor(editor)
     , m_EditorSelection(editorSelection)
     , m_RenderingPipelineFactory(renderingPipelineFactory)
@@ -54,11 +48,8 @@ namespace Dwarf
 
   SceneViewerWindow::SceneViewerWindow(
     nlohmann::json                             serializedModule,
-    std::shared_ptr<ICamera>                   camera,
-    std::shared_ptr<IFramebuffer>              framebuffer,
-    std::shared_ptr<IFramebuffer>              idBuffer,
-    std::shared_ptr<IFramebuffer>              outlineBuffer,
-    std::shared_ptr<IFramebuffer>              presentationBuffer,
+    std::shared_ptr<ICameraFactory>            cameraFactory,
+    std::shared_ptr<IFramebufferFactory>       framebufferFactory,
     std::shared_ptr<IEditorStats>              editorStats,
     std::shared_ptr<IInputManager>             inputManager,
     std::shared_ptr<IEditor>                   editor,
@@ -67,17 +58,15 @@ namespace Dwarf
     : IGuiModule(ModuleLabel("Scene Viewer"),
                  ModuleType(MODULE_TYPE::SCENE_VIEWER),
                  ModuleID(std::make_shared<UUID>()))
-    , m_Camera(camera)
-    , m_Framebuffer(framebuffer)
-    , m_IdBuffer(idBuffer)
-    , m_OutlineBuffer(outlineBuffer)
-    , m_PresentationBuffer(presentationBuffer)
-    , m_InputManager(inputManager)
+    , m_CameraFactory(cameraFactory)
+    , m_FramebufferFactory(framebufferFactory)
     , m_EditorStats(editorStats)
+    , m_InputManager(inputManager)
     , m_Editor(editor)
     , m_EditorSelection(editorSelection)
     , m_RenderingPipelineFactory(renderingPipelineFactory)
   {
+    Deserialize(serializedModule);
   }
 
   void

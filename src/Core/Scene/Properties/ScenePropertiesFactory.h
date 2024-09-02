@@ -13,6 +13,7 @@ namespace Dwarf
   public:
     ScenePropertiesFactory(
       std::shared_ptr<ISceneSettingsFactory> sceneSettingsFactory);
+
     std::shared_ptr<ISceneProperties>
     Create(std::shared_ptr<AssetReference<SceneAsset>> sceneAsset,
            nlohmann::json serializedProperties) override;

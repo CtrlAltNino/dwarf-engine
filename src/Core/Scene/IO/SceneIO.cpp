@@ -102,7 +102,7 @@ namespace Dwarf
     {
       std::filesystem::path path(savePath);
       delete savePath;
-      return m_SceneFactory->FromFile(path);
+      return LoadScene(m_AssetDatabase->Retrieve<SceneAsset>(path));
     }
     else if (result == NFD_CANCEL)
     {

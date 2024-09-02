@@ -121,15 +121,12 @@ namespace Dwarf
 
     SceneViewerWindow(
       nlohmann::json                             serializedModule,
-      std::shared_ptr<ICamera>                   camera,
-      std::shared_ptr<IFramebuffer>              framebuffer,
-      std::shared_ptr<IFramebuffer>              idBuffer,
-      std::shared_ptr<IFramebuffer>              outlineBuffer,
-      std::shared_ptr<IFramebuffer>              presentationBuffer,
+      std::shared_ptr<ICameraFactory>            cameraFactory,
+      std::shared_ptr<IFramebufferFactory>       framebufferFactory,
       std::shared_ptr<IEditorStats>              editorStats,
       std::shared_ptr<IInputManager>             inputManager,
       std::shared_ptr<IEditor>                   editor,
-      std::shared_ptr<IEditorSelection>          selection,
+      std::shared_ptr<IEditorSelection>          editorSelection,
       std::shared_ptr<IRenderingPipelineFactory> renderingPipelineFactory);
 
     void

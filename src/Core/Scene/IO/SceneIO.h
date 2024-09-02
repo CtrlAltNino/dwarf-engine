@@ -5,7 +5,6 @@
 #include "Core/Scene/IO/ISceneIO.h"
 #include "Core/Scene/IScene.h"
 #include "Project/IProjectSettings.h"
-#include "Utilities/FileHandler.h"
 #include <filesystem>
 
 namespace Dwarf

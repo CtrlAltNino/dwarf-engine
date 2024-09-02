@@ -14,12 +14,12 @@
 namespace Dwarf
 {
   ShaderFactory::ShaderFactory(
-    GraphicsApi graphicsApi,
-    // std::shared_ptr<IAssetDatabase> assetDatabase,
+    GraphicsApi                     graphicsApi,
+    std::shared_ptr<IAssetDatabase> assetDatabase,
     std::shared_ptr<IShaderParameterCollectionFactory>
       shaderParameterCollectionFactory)
     : m_GraphicsApi(graphicsApi)
-    //, m_AssetDatabase(assetDatabase)
+    , m_AssetDatabase(assetDatabase)
     , m_ShaderParameterCollectionFactory(shaderParameterCollectionFactory)
   {
   }
