@@ -294,7 +294,9 @@ namespace Dwarf
   // A map that maps
   // Constructor without meta data
   OpenGLTexture::OpenGLTexture(std::shared_ptr<TextureContainer>  data,
+                               std::shared_ptr<IDwarfLogger>      logger,
                                std::shared_ptr<TextureParameters> parameters)
+    : m_Logger(logger)
   {
     GLuint textureType = GetTextureType(data->Type, data->Samples);
     GLuint textureDataType = GetTextureDataType(data->DataType);
@@ -306,6 +308,7 @@ namespace Dwarf
     GLuint textureMagFilter = GetTextureMagFilter(parameters->MagFilter);
     GLuint internalFormat = GetInternalFormat(data->Format, data->DataType);
 
+    m_Logger->LogInfo(Log("Creating OpenGL texture", "OpenGLTexture"));
     glCreateTextures(textureType, 1, &m_Id);
 
     glTextureParameteri(m_Id, GL_TEXTURE_MIN_FILTER, textureMinFilter);
@@ -315,6 +318,7 @@ namespace Dwarf
     {
       case TextureType::TEXTURE_1D:
         {
+          m_Logger->LogInfo(Log("Creating 1D texture", "OpenGLTexture"));
           glm::ivec1 size = std::get<glm::ivec1>(data->Size);
           glTextureParameteri(m_Id, GL_TEXTURE_WRAP_S, textureWrapS);
           glTextureStorage1D(m_Id, 1, internalFormat, size.x);
@@ -332,6 +336,7 @@ namespace Dwarf
         }
       case TextureType::TEXTURE_2D:
         {
+          m_Logger->LogInfo(Log("Creating 2D texture", "OpenGLTexture"));
           glm::ivec2 size = std::get<glm::ivec2>(data->Size);
           glTextureParameteri(m_Id, GL_TEXTURE_WRAP_S, textureWrapS);
           glTextureParameteri(m_Id, GL_TEXTURE_WRAP_T, textureWrapT);
@@ -362,6 +367,7 @@ namespace Dwarf
         }
       case TextureType::TEXTURE_3D:
         {
+          m_Logger->LogInfo(Log("Creating 3D texture", "OpenGLTexture"));
           glm::ivec3 size = std::get<glm::ivec3>(data->Size);
           glTextureParameteri(m_Id, GL_TEXTURE_WRAP_S, textureWrapS);
           glTextureParameteri(m_Id, GL_TEXTURE_WRAP_T, textureWrapT);
@@ -387,6 +393,7 @@ namespace Dwarf
         }
       case TextureType::TEXTURE_CUBE_MAP:
         {
+          m_Logger->LogInfo(Log("Creating cube map texture", "OpenGLTexture"));
           glTextureParameteri(m_Id, GL_TEXTURE_WRAP_S, textureWrapS);
           glTextureParameteri(m_Id, GL_TEXTURE_WRAP_T, textureWrapT);
           glTextureParameteri(m_Id, GL_TEXTURE_WRAP_R, textureWrapR);
@@ -401,6 +408,7 @@ namespace Dwarf
 
   OpenGLTexture::~OpenGLTexture()
   {
+    m_Logger->LogInfo(Log("Deleting OpenGL texture", "OpenGLTexture"));
     glDeleteTextures(1, &m_Id);
   }
 

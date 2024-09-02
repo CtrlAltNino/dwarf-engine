@@ -7,10 +7,12 @@ namespace Dwarf
     const WindowProps&                       props,
     std::shared_ptr<IGraphicsContextFactory> contextFactory,
     std::shared_ptr<IImGuiLayerFactory>      imguiLayerFactory,
-    std::shared_ptr<IInputManager>           inputManager)
+    std::shared_ptr<IInputManager>           inputManager,
+    std::shared_ptr<IDwarfLogger>            logger)
     : m_ContextFactory(contextFactory)
     , m_ImguiLayerFactory(imguiLayerFactory)
     , m_InputManager(inputManager)
+    , m_Logger(logger)
   {
     Init(props);
   }
@@ -25,8 +27,17 @@ namespace Dwarf
   void
   WindowsWindow::Init(const WindowProps& props)
   {
+    m_Logger->LogInfo(Log("Initializing Windows Window", "WindowsWindow"));
     // SDL Setup
-    SDL_Init(SDL_INIT_VIDEO);
+    int result = SDL_Init(SDL_INIT_VIDEO);
+
+    if (result != 0)
+    {
+      m_Logger->LogError(
+        Log("Failed to initialize SDL", "WindowsWindow", fmt::color::red));
+      SDL_Quit();
+      return;
+    }
 
     m_Data.Title = props.Title;
     m_Data.Height = props.Height;
@@ -66,9 +77,10 @@ namespace Dwarf
 
     if (m_Window == nullptr)
     {
-      std::cout << "[WINDOW CREATION] Error: Failed to create window"
-                << std::endl;
+      m_Logger->LogError(
+        Log("Failed to create window", "WindowsWindow", fmt::color::red));
       SDL_Quit();
+      return;
     }
 
     SDL_DisplayMode mode;
@@ -89,12 +101,14 @@ namespace Dwarf
   void
   WindowsWindow::ShowWindow()
   {
+    m_Logger->LogInfo(Log("Showing window", "WindowsWindow"));
     SDL_ShowWindow(m_Window);
   }
 
   void
   WindowsWindow::HideWindow()
   {
+    m_Logger->LogInfo(Log("Hiding window", "WindowsWindow"));
     SDL_HideWindow(m_Window);
   }
 
@@ -132,6 +146,8 @@ namespace Dwarf
   void
   WindowsWindow::SetVSync(bool enabled)
   {
+    m_Logger->LogInfo(
+      Log("Setting VSync to " + std::to_string(enabled), "WindowsWindow"));
     if (enabled)
       SDL_GL_SetSwapInterval(1);
     else
@@ -155,12 +171,15 @@ namespace Dwarf
   void
   WindowsWindow::SetWindowTitle(std::string_view windowName)
   {
+    m_Logger->LogInfo(Log("Setting window title to " + std::string(windowName),
+                          "WindowsWindow"));
     SDL_SetWindowTitle(m_Window, windowName.data());
   }
 
   void
   WindowsWindow::MaximizeWindow()
   {
+    m_Logger->LogInfo(Log("Maximizing window", "WindowsWindow"));
     SDL_MaximizeWindow(m_Window);
   }
 }

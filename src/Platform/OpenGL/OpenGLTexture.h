@@ -1,4 +1,5 @@
 #pragma once
+#include "Logging/IDwarfLogger.h"
 #include "pch.h"
 #include <glad/glad.h>
 #include "Core/Rendering/Texture/ITexture.h"
@@ -9,11 +10,13 @@ namespace Dwarf
   {
   private:
     /// @brief The OpenGL texture handle.
-    GLuint            m_Id;
-    TextureResolution m_Size;
+    GLuint                        m_Id;
+    TextureResolution             m_Size;
+    std::shared_ptr<IDwarfLogger> m_Logger;
 
   public:
     explicit OpenGLTexture(std::shared_ptr<TextureContainer>  data,
+                           std::shared_ptr<IDwarfLogger>      logger,
                            std::shared_ptr<TextureParameters> parameters =
                              std::make_shared<TextureParameters>());
     ~OpenGLTexture() override;

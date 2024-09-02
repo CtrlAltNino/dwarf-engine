@@ -43,7 +43,7 @@ namespace Dwarf
     /// @brief Loaded image for the patreon icon
     std::shared_ptr<ITexture> m_PatreonIcon;
 
-    /// @brief Loaded image for the twitter icon
+    /// @brief Loaded image for the X/Twitter icon
     std::shared_ptr<ITexture> m_XIcon;
 
     /**

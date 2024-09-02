@@ -12,9 +12,11 @@
 namespace Dwarf
 {
   TextureFactory::TextureFactory(GraphicsApi                       api,
-                                 std::shared_ptr<IImageFileLoader> loader)
+                                 std::shared_ptr<IImageFileLoader> loader,
+                                 std::shared_ptr<IDwarfLogger>     logger)
     : m_Api(api)
     , m_ImageFileLoader(loader)
+    , m_Logger(logger)
   {
   }
 
@@ -82,6 +84,7 @@ namespace Dwarf
   std::shared_ptr<ITexture>
   TextureFactory::LoadTexture(std::shared_ptr<TextureContainer> textureData)
   {
+    m_Logger->LogInfo(Log("Creating texture", "TextureFactory"));
     switch (m_Api)
     {
 #if _WIN32
@@ -89,7 +92,8 @@ namespace Dwarf
         // return std::make_shared<D3D12Texture>();
         break;
       case GraphicsApi::OpenGL:
-        return std::make_shared<OpenGLTexture>(textureData);
+        m_Logger->LogInfo(Log("Creating OpenGL texture", "TextureFactory"));
+        return std::make_shared<OpenGLTexture>(textureData, m_Logger);
         break;
       case GraphicsApi::Metal: break;
       case GraphicsApi::Vulkan:
@@ -98,7 +102,7 @@ namespace Dwarf
 #elif __linux__
       case GraphicsApi::D3D12: break;
       case GraphicsApi::OpenGL:
-        return std::make_shared<OpenGLTexture>(textureData);
+        return std::make_shared<OpenGLTexture>(textureData, m_Logger);
         break;
       case GraphicsApi::Metal: break;
       case GraphicsApi::Vulkan:
@@ -120,12 +124,12 @@ namespace Dwarf
   std::shared_ptr<ITexture>
   TextureFactory::FromPath(std::filesystem::path texturePath)
   {
+    m_Logger->LogInfo(Log("Creating texture from path: " + texturePath.string(),
+                          "TextureFactory"));
     std::string                        ext = texturePath.extension().string();
     std::shared_ptr<TextureParameters> parameters = GetParameters(texturePath);
     std::shared_ptr<TextureContainer>  textureData =
       m_ImageFileLoader->LoadTexture(texturePath);
-
-    textureData = m_ImageFileLoader->LoadTexture(texturePath);
 
     return LoadTexture(textureData);
   }
@@ -133,6 +137,7 @@ namespace Dwarf
   std::shared_ptr<ITexture>
   TextureFactory::FromData(const std::shared_ptr<TextureContainer>& textureData)
   {
+    m_Logger->LogInfo(Log("Creating texture from data", "TextureFactory"));
     return LoadTexture(textureData);
   }
 
@@ -144,6 +149,7 @@ namespace Dwarf
                         const TextureParameters& parameters,
                         int                      samples)
   {
+    m_Logger->LogInfo(Log("Creating empty texture", "TextureFactory"));
     std::shared_ptr<TextureContainer> textureData =
       std::make_shared<TextureContainer>();
     textureData->Size = size;
@@ -171,6 +177,7 @@ namespace Dwarf
                         const TextureResolution& size,
                         int                      samples)
   {
+    m_Logger->LogInfo(Log("Creating empty texture", "TextureFactory"));
     TextureParameters parameters;
     return Empty(type, format, dataType, size, parameters, samples);
   }

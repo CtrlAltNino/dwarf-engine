@@ -598,7 +598,7 @@ namespace Dwarf
       ImGui::SameLine();
 
       ImGui::SetCursorPosY(ImGui::GetCursorPosY() + verticalIconOffset);
-      ImGui::Text("Twitter");
+      ImGui::Text("X");
       if (ImGui::IsItemHovered())
       {
         ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);

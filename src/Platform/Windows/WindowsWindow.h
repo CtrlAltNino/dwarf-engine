@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Logging/IDwarfLogger.h"
 #include "Window/IWindow.h"
 #include "Core/Rendering/GraphicsContext/IGraphicsContextFactory.h"
 #include "UI/IImGuiLayerFactory.h"
@@ -16,7 +17,8 @@ namespace Dwarf
       const WindowProps&                       props,
       std::shared_ptr<IGraphicsContextFactory> contextFactory,
       std::shared_ptr<IImGuiLayerFactory>      imguiLayerFactory,
-      std::shared_ptr<IInputManager>           inputManager);
+      std::shared_ptr<IInputManager>           inputManager,
+      std::shared_ptr<IDwarfLogger>            logger);
     ~WindowsWindow() override;
 
     void
@@ -70,6 +72,7 @@ namespace Dwarf
     std::shared_ptr<IGraphicsContextFactory> m_ContextFactory;
     std::shared_ptr<IImGuiLayerFactory>      m_ImguiLayerFactory;
     std::shared_ptr<IInputManager>           m_InputManager;
+    std::shared_ptr<IDwarfLogger>            m_Logger;
 
     struct WindowData
     {

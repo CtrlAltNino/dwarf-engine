@@ -4,6 +4,7 @@
 #include "Core/Base.h"
 #include "ITextureFactory.h"
 #include "Core/Asset/Texture/IImageFileLoader.h"
+#include "Logging/IDwarfLogger.h"
 #include <cstdint>
 
 namespace Dwarf
@@ -13,6 +14,7 @@ namespace Dwarf
   private:
     GraphicsApi                       m_Api;
     std::shared_ptr<IImageFileLoader> m_ImageFileLoader;
+    std::shared_ptr<IDwarfLogger>     m_Logger;
 
     uint64_t
     GetPixelCount(const TextureResolution& size, const TextureType& type);
@@ -27,7 +29,9 @@ namespace Dwarf
     LoadTexture(std::shared_ptr<TextureContainer> textureData);
 
   public:
-    TextureFactory(GraphicsApi api, std::shared_ptr<IImageFileLoader> loader);
+    TextureFactory(GraphicsApi                       api,
+                   std::shared_ptr<IImageFileLoader> loader,
+                   std::shared_ptr<IDwarfLogger>     logger);
 
     std::shared_ptr<ITexture>
     FromPath(std::filesystem::path texturePath) override;

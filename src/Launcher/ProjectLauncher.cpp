@@ -34,11 +34,12 @@ namespace Dwarf
     m_Logger->LogInfo(Log("Showing window...", "ProjectLauncher"));
     m_Window->ShowWindow();
 
+    m_Logger->LogInfo(Log("Starting main loop...", "ProjectLauncher"));
     while (((m_State != ProjectChooserState::Done) &&
             (m_State != ProjectChooserState::Canceled)) &&
            !m_Window->ShouldClose())
     {
-      TimeStamp currentFrameStamp = TimeUtilities::GetCurrent();
+      TimeStamp currentTimeStamp = TimeUtilities::GetCurrent();
 
       m_Window->NewFrame();
 
@@ -48,24 +49,13 @@ namespace Dwarf
 
       // TODO: Fps lock
       while (TimeUtilities::GetDifferenceInSeconds(
-               TimeUtilities::GetCurrent(), currentFrameStamp) < (1.0 / 60.0))
+               TimeUtilities::GetCurrent(), currentTimeStamp) < (1.0 / 60.0))
       {
         // TODO: Update this when implementing multi threading
       }
     }
 
-    // int selectedProjectId = m_Model->GetSelectedProjectID();
-
-    if (m_State == ProjectChooserState::Done)
-    {
-      // ProjectInformation projectInformation =
-      //   ProjectListHandler::GetProjectInformation(selectedProjectId);
-      // if (projectInformation.name != "")
-      // {
-      //   projectPath = projectInformation.path;
-      //   ProjectListHandler::RegisterProjectOpening(selectedProjectId);
-      // }
-    }
+    m_Logger->LogInfo(Log("Project launcher finished", "ProjectLauncher"));
     return m_SelectedProject.path;
   }
 
