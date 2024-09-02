@@ -1,7 +1,9 @@
 #pragma once
 #include "Core/Rendering/Framebuffer/IFramebuffer.h"
+#include "Core/Rendering/Framebuffer/IFramebufferFactory.h"
 #include "Core/Rendering/Pipelines/IRenderingPipeline.h"
 #include "Core/Scene/Camera/ICamera.h"
+#include "Core/Scene/Camera/ICameraFactory.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorSelection.h"
 #include "Editor/Stats/IEditorStats.h"
@@ -76,6 +78,8 @@ namespace Dwarf
     std::shared_ptr<IEditorSelection>          m_EditorSelection;
     std::shared_ptr<IRenderingPipelineFactory> m_RenderingPipelineFactory;
     std::shared_ptr<IRenderingPipeline>        m_RenderingPipeline;
+    std::shared_ptr<IFramebufferFactory>       m_FramebufferFactory;
+    std::shared_ptr<ICameraFactory>            m_CameraFactory;
 
     /// @brief Calculates the cutout of the available resolution based on the
     /// given aspect ratio.
@@ -107,11 +111,8 @@ namespace Dwarf
 
   public:
     SceneViewerWindow(
-      std::shared_ptr<ICamera>                   camera,
-      std::shared_ptr<IFramebuffer>              framebuffer,
-      std::shared_ptr<IFramebuffer>              idBuffer,
-      std::shared_ptr<IFramebuffer>              outlineBuffer,
-      std::shared_ptr<IFramebuffer>              presentationBuffer,
+      std::shared_ptr<ICameraFactory>            cameraFactory,
+      std::shared_ptr<IFramebufferFactory>       framebufferFactory,
       std::shared_ptr<IEditorStats>              editorStats,
       std::shared_ptr<IInputManager>             inputManager,
       std::shared_ptr<IEditor>                   editor,

@@ -3,8 +3,8 @@
 
 namespace Dwarf
 {
-  EditorSelection::EditorSelection(std::shared_ptr<Scene> scene)
-    : m_Scene(scene)
+  EditorSelection::EditorSelection(std::shared_ptr<IEditor> editor)
+    : m_Editor(editor)
   {
   }
 
@@ -98,11 +98,12 @@ namespace Dwarf
     std::string index = "";
     Entity      cursor = entity;
 
-    while (cursor.GetHandle() != m_Scene->GetRootEntity()->GetHandle())
+    while (cursor.GetHandle() !=
+           m_Editor->GetScene()->GetRootEntity()->GetHandle())
     {
       index =
         std::format("{}{}", std::to_string(cursor.GetChildIndex()), index);
-      cursor = Entity(cursor.GetParent(), m_Scene->GetRegistry());
+      cursor = Entity(cursor.GetParent(), m_Editor->GetScene()->GetRegistry());
     }
 
     return index;

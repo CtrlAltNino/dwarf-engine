@@ -46,8 +46,7 @@ namespace Dwarf
     LoadStatus                    m_LoadStatus;
 
   public:
-    ProjectSettings(ProjectPath                          path,
-                    const std::shared_ptr<IDwarfLogger>& logger);
+    ProjectSettings(ProjectPath path, std::shared_ptr<IDwarfLogger> logger);
 
     void
     Load();

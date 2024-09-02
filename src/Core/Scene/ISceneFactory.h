@@ -14,9 +14,6 @@ namespace Dwarf
     virtual std::shared_ptr<IScene>
     FromAsset(std::shared_ptr<AssetReference<SceneAsset>> sceneAsset) = 0;
 
-    virtual std::shared_ptr<IScene>
-    FromFile(std::filesystem::path path) = 0;
-
     /// @brief Creates a new empty scene.
     /// @param sceneProperties The properties of the scene.
     /// @return The created scene.

@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Core/Asset/Database/IAssetDatabase.h"
 #include "Core/Base.h"
-#include "Core/Rendering/Shader/IShader.h"
 #include "Core/Rendering/Shader/IShaderParameterCollectionFactory.h"
+#include "Core/Asset/Database/IAssetDatabase.h"
+#include "Core/Rendering/Shader/IShader.h"
 #include "Core/Rendering/Shader/ShaderTypes.h"
 #include "IShaderFactory.h"
 
@@ -18,10 +18,11 @@ namespace Dwarf
       m_ShaderParameterCollectionFactory;
 
   public:
-    ShaderFactory(GraphicsApi                     graphicsApi,
-                  std::shared_ptr<IAssetDatabase> assetDatabase,
+    ShaderFactory(GraphicsApi graphicsApi,
+                  // std::shared_ptr<IAssetDatabase> assetDatabase,
                   std::shared_ptr<IShaderParameterCollectionFactory>
                     shaderParameterCollectionFactory);
+    ~ShaderFactory() = default;
 
     std::shared_ptr<IShader>
     CreateShader() override;

@@ -5,7 +5,7 @@
 namespace Dwarf
 {
   AssetDirectoryListener::AssetDirectoryListener(
-    AssetDirectoryPath const& assetDirectoryPath)
+    AssetDirectoryPath assetDirectoryPath)
     : m_FileWatcher()
   {
     m_WatchID =

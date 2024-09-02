@@ -23,7 +23,7 @@ namespace Dwarf
                     std::shared_ptr<IProjectLauncherView> view,
                     std::shared_ptr<IDwarfLogger>         logger);
 
-    ProjectPath
+    ProjectInformation
     Run() override;
 
     ProjectChooserState

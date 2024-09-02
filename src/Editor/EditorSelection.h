@@ -1,15 +1,17 @@
 #pragma once
+#include "Core/Scene/IScene.h"
 #include "Editor/IEditorSelection.h"
+#include "Editor/IEditor.h"
 
 namespace Dwarf
 {
   class EditorSelection : public IEditorSelection
   {
   private:
-    std::shared_ptr<Scene> m_Scene;
-    CURRENT_SELECTION_TYPE m_SelectionType = CURRENT_SELECTION_TYPE::NONE;
-    std::filesystem::path  m_SelectedAsset;
-    std::vector<Entity>    m_SelectedEntities;
+    std::shared_ptr<IEditor> m_Editor;
+    CURRENT_SELECTION_TYPE   m_SelectionType = CURRENT_SELECTION_TYPE::NONE;
+    std::filesystem::path    m_SelectedAsset;
+    std::vector<Entity>      m_SelectedEntities;
 
     /// @brief Returns the tree index of a given entity. Used for sorting based
     /// on their graph positions.
@@ -19,8 +21,7 @@ namespace Dwarf
     GetTreeIndex(const Entity& entity) const;
 
   public:
-    EditorSelection() = default;
-    EditorSelection(std::shared_ptr<Scene> scene);
+    EditorSelection(std::shared_ptr<IEditor> editor);
 
     void
     SelectEntity(const Entity& entity) override;

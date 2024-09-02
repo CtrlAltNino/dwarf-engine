@@ -8,8 +8,8 @@ namespace Dwarf
 #define PROJECT_LAST_OPENED_DATE_KEY "projectLastOpenedDate"
 #define PROJECT_NAME_KEY "projectName"
 
-  ProjectSettings::ProjectSettings(ProjectPath                          path,
-                                   const std::shared_ptr<IDwarfLogger>& logger)
+  ProjectSettings::ProjectSettings(ProjectPath                   path,
+                                   std::shared_ptr<IDwarfLogger> logger)
     : m_Logger(logger)
   {
     m_Path = path;

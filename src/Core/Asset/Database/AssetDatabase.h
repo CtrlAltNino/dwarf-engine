@@ -40,7 +40,7 @@ namespace Dwarf
      * @brief Construct a new Asset Database object
      */
     AssetDatabase(
-      const AssetDirectoryPath&                assetDirectoryPath,
+      AssetDirectoryPath                       assetDirectoryPath,
       std::shared_ptr<IAssetDirectoryListener> assetDirectoryListener,
       std::shared_ptr<IAssetMetadata>          assetMetadata,
       std::shared_ptr<IModelImporter>          modelImporter,

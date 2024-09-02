@@ -9,7 +9,7 @@
 namespace Dwarf
 {
   AssetDatabase::AssetDatabase(
-    const AssetDirectoryPath&                assetDirectoryPath,
+    AssetDirectoryPath                       assetDirectoryPath,
     std::shared_ptr<IAssetDirectoryListener> assetDirectoryListener,
     std::shared_ptr<IAssetMetadata>          assetMetadata,
     std::shared_ptr<IModelImporter>          modelImporter,
@@ -22,10 +22,10 @@ namespace Dwarf
     , m_AssetMetadata(assetMetadata)
     , m_ModelImporter(modelImporter)
     , m_ShaderRecompiler(shaderRecompiler)
-    , m_Registry(std::make_shared<entt::registry>())
     , m_TextureFactory(textureFactory)
     , m_MaterialFactory(materialFactory)
     , m_MaterialIO(materialIO)
+    , m_Registry(std::make_shared<entt::registry>())
   {
     if (!FileHandler::DirectoyExists(m_AssetDirectoryPath))
     {

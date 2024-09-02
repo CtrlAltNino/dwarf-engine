@@ -4,11 +4,8 @@
 namespace Dwarf
 {
   MaterialFactory::MaterialFactory(
-    std::shared_ptr<IShaderFactory> shaderFactory,
-    std::shared_ptr<IShaderParameterCollectionFactory>
-      shaderParameterCollectionFactory)
+    std::shared_ptr<IShaderFactory> shaderFactory)
     : m_ShaderFactory(shaderFactory)
-    , m_ShaderParameterCollectionFactory(shaderParameterCollectionFactory)
   {
   }
 

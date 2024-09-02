@@ -26,7 +26,7 @@ namespace Dwarf
     //     m_View = std::make_unique<ProjectLauncherView>(m_Model, m_Window);
   }
 
-  ProjectPath
+  ProjectInformation
   ProjectLauncher::Run()
   {
     m_Logger->LogInfo(Log("Running project launcher...", "ProjectLauncher"));
@@ -56,7 +56,7 @@ namespace Dwarf
     }
 
     m_Logger->LogInfo(Log("Project launcher finished", "ProjectLauncher"));
-    return m_SelectedProject.path;
+    return m_SelectedProject;
   }
 
   ProjectChooserState

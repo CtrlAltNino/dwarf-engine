@@ -47,7 +47,7 @@ namespace Dwarf
   class IProjectLauncher
   {
   public:
-    virtual ProjectPath
+    virtual ProjectInformation
     Run() = 0;
 
     virtual ProjectChooserState

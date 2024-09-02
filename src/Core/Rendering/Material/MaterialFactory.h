@@ -2,7 +2,6 @@
 
 #include "IMaterialFactory.h"
 #include "Core/Rendering/Shader/IShaderFactory.h"
-#include "Core/Rendering/Shader/IShaderParameterCollectionFactory.h"
 
 namespace Dwarf
 {
@@ -10,9 +9,7 @@ namespace Dwarf
   {
   public:
     // Constructor
-    MaterialFactory(std::shared_ptr<IShaderFactory> shaderFactory,
-                    std::shared_ptr<IShaderParameterCollectionFactory>
-                      shaderParameterCollectionFactory);
+    MaterialFactory(std::shared_ptr<IShaderFactory> shaderFactory);
 
     // Destructor
     ~MaterialFactory();
@@ -29,7 +26,5 @@ namespace Dwarf
 
   private:
     std::shared_ptr<IShaderFactory> m_ShaderFactory;
-    std::shared_ptr<IShaderParameterCollectionFactory>
-      m_ShaderParameterCollectionFactory;
   };
 };

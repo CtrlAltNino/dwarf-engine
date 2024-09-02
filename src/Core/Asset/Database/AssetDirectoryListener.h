@@ -35,7 +35,7 @@ namespace Dwarf
     efsw::WatchID m_WatchID;
 
   public:
-    AssetDirectoryListener(AssetDirectoryPath const& assetDirectoryPath);
+    AssetDirectoryListener(AssetDirectoryPath assetDirectoryPath);
     ~AssetDirectoryListener() override;
 
     void
