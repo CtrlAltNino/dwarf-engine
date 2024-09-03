@@ -1,5 +1,3 @@
-#pragma once
-
 #include "GuiModuleFactory.h"
 #include "Editor/IEditor.h"
 #include "Editor/Modules/AssetBrowser/AssetBrowserWindow.h"
