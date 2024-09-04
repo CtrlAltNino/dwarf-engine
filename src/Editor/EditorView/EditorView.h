@@ -53,14 +53,14 @@ namespace Dwarf
 
   public:
     explicit EditorView(GraphicsApi                        graphicsApi,
-                        std::optional<nlohmann::json>      serializedView,
-                        std::shared_ptr<IEditor>           editor,
+                        std::shared_ptr<IProjectSettings>  projectSettings,
                         std::shared_ptr<IWindow>           window,
+                        std::shared_ptr<IMaterialCreator>  materialCreator,
+                        std::optional<SerializedView>      serializedView,
                         std::shared_ptr<IGuiModuleFactory> guiModuleFactory,
                         std::shared_ptr<ISceneIO>          sceneIO,
                         std::shared_ptr<IAssetDatabase>    assetDatabase,
-                        std::shared_ptr<IMaterialCreator>  materialCreator,
-                        std::shared_ptr<IProjectSettings>  projectSettings);
+                        std::shared_ptr<IEditor>           editor);
 
     /// @brief Initializes the view.
     // void

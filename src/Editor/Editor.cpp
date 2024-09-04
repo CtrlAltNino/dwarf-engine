@@ -8,7 +8,6 @@ namespace Dwarf
   Editor::Editor(std::shared_ptr<IDwarfLogger>     logger,
                  std::shared_ptr<IEditorStats>     stats,
                  std::shared_ptr<IInputManager>    inputManager,
-                 std::shared_ptr<IAssetDatabase>   assetDatabase,
                  std::shared_ptr<IEditorView>      view,
                  std::shared_ptr<IWindow>          window,
                  std::shared_ptr<ISceneIO>         sceneIO,
@@ -16,7 +15,6 @@ namespace Dwarf
     : m_Logger(logger)
     , m_Stats(stats)
     , m_InputManager(inputManager)
-    , m_AssetDatabase(assetDatabase)
     , m_View(view)
     , m_Window(window)
     , m_SceneIO(sceneIO)

@@ -34,6 +34,8 @@ namespace Dwarf
     static std::map<MOUSE_BUTTON, int> s_MouseCodeMap;
 
   public:
+    InputManager() = default;
+    ~InputManager() override = default;
     /**
      * Returns true while the specified key is being pressed
      */

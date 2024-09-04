@@ -146,19 +146,20 @@ namespace Dwarf
           boost::di::bind<IScenePropertiesFactory>.to<ScenePropertiesFactory>(),
           boost::di::bind<ISceneFactory>.to<SceneFactory>(),
           boost::di::bind<ICameraFactory>.to<CameraFactory>(),
+          boost::di::bind<WindowProps>.to(WindowProps(
+            "Dwarf Engine", 1100, 600, selectedProject.graphicsApi)),
 #ifdef _WIN32
           boost::di::bind<IWindow>.to<WindowsWindow>(),
 #elif __linux__
           boost::di::bind<IWindow>.to<LinuxWindow>(),
 #endif
-          boost::di::bind<WindowProps>.to(WindowProps(
-            "Dwarf Engine", 1100, 600, selectedProject.graphicsApi)),
 
-          boost::di::bind<IMaterialIO>.to<MaterialIO>(),
+          boost::di::bind<IShaderSourceCollectionFactory>.to<ShaderSourceCollectionFactory>(),
           boost::di::bind<IShaderFactory>.to<ShaderFactory>(),
           boost::di::bind<IMaterialFactory>.to<MaterialFactory>(),
+          boost::di::bind<IMaterialIO>.to<MaterialIO>(),
           boost::di::bind<IAssetDatabase>.to<AssetDatabase>(),
-          boost::di::bind<IShaderSourceCollectionFactory>.to<ShaderSourceCollectionFactory>(),
+
           boost::di::bind<ISceneIO>.to<SceneIO>(),
           boost::di::bind<IEditorView>.to<EditorView>(),
           boost::di::bind<IEditor>.to<Editor>(),

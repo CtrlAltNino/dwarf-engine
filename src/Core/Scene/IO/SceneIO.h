@@ -21,8 +21,8 @@ namespace Dwarf
                      std::filesystem::path scenePath) const;
 
   public:
-    SceneIO(std::shared_ptr<ISceneFactory>    sceneFactory,
-            std::shared_ptr<IProjectSettings> projectSettings,
+    SceneIO(std::shared_ptr<IProjectSettings> projectSettings,
+            std::shared_ptr<ISceneFactory>    sceneFactory,
             std::shared_ptr<IAssetDatabase>   assetDatabase);
 
     void

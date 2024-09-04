@@ -1,9 +1,11 @@
 #pragma once
 #include "Editor/IEditor.h"
 #include "Utilities/ISerializable.h"
+#include <boost/serialization/strong_typedef.hpp>
 
 namespace Dwarf
 {
+  BOOST_STRONG_TYPEDEF(nlohmann::json, SerializedView);
   /// @brief View part of the editor's MVC structure.
   class IEditorView : public ISerializable
   {

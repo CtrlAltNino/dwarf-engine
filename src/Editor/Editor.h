@@ -14,7 +14,6 @@
 
 namespace Dwarf
 {
-  /// @brief The controller part of the editors MVC structure.
   class Editor : public IEditor
   {
   private:
@@ -23,7 +22,6 @@ namespace Dwarf
     std::shared_ptr<IDwarfLogger>     m_Logger;
     std::shared_ptr<IEditorStats>     m_Stats;
     std::shared_ptr<IInputManager>    m_InputManager;
-    std::shared_ptr<IAssetDatabase>   m_AssetDatabase;
     std::shared_ptr<IScene>           m_Scene;
     std::shared_ptr<ISceneIO>         m_SceneIO;
     std::shared_ptr<IProjectSettings> m_ProjectSettings;
@@ -35,11 +33,10 @@ namespace Dwarf
     Editor(std::shared_ptr<IDwarfLogger>     logger,
            std::shared_ptr<IEditorStats>     stats,
            std::shared_ptr<IInputManager>    inputManager,
-           std::shared_ptr<IAssetDatabase>   assetDatabase,
-           std::shared_ptr<IEditorView>      view,
+           std::shared_ptr<IProjectSettings> projectSettings,
            std::shared_ptr<IWindow>          window,
            std::shared_ptr<ISceneIO>         sceneIO,
-           std::shared_ptr<IProjectSettings> projectSettings);
+           std::shared_ptr<IEditorView>      view);
 
     /// @brief Starts the render loop
     bool
