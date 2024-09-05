@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Rendering/Texture/ITexture.h"
 #include "pch.h"
 #include "Core/Base.h"
 #include "Core/UUID.h"
@@ -11,7 +12,7 @@
 
 namespace Dwarf
 {
-  using Texture2DAssetValue = std::shared_ptr<UUID>;
+  using Texture2DAssetValue = std::shared_ptr<ITexture>;
   using ParameterValue = std::variant<bool,
                                       int,
                                       unsigned int,

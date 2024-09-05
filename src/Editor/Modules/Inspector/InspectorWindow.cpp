@@ -1,10 +1,10 @@
 #include "Editor/Modules/Inspector/InspectorWindow.h"
+#include "Editor/Modules/IGuiModule.h"
 
 namespace Dwarf
 {
   InspectorWindow::InspectorWindow(
-    std::optional<nlohmann::json>     serializedModule,
-    std::shared_ptr<IEditor>          editor,
+    std::optional<SerializedModule>   serializedModule,
     std::shared_ptr<IEditorSelection> selection,
     std::shared_ptr<IAssetDatabase>   assetDatabase,
     std::shared_ptr<IAssetInspector>  assetInspector,
@@ -13,9 +13,8 @@ namespace Dwarf
                  ModuleType(MODULE_TYPE::INSPECTOR),
                  ModuleID(std::make_shared<UUID>(
                    serializedModule.has_value()
-                     ? serializedModule.value()["id"].get<std::string>()
+                     ? serializedModule.value().t["id"].get<std::string>()
                      : UUID())))
-    , m_Editor(editor)
     , m_Selection(selection)
     , m_AssetDatabase(assetDatabase)
     , m_AssetInspector(assetInspector)

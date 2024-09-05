@@ -5,8 +5,8 @@
 
 namespace Dwarf
 {
-  SceneIO::SceneIO(std::shared_ptr<ISceneFactory>    sceneFactory,
-                   std::shared_ptr<IProjectSettings> projectSettings,
+  SceneIO::SceneIO(std::shared_ptr<IProjectSettings> projectSettings,
+                   std::shared_ptr<ISceneFactory>    sceneFactory,
                    std::shared_ptr<IAssetDatabase>   assetDatabase)
     : m_SceneFactory(sceneFactory)
     , m_ProjectSettings(projectSettings)

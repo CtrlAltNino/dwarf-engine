@@ -9,18 +9,14 @@
 
 namespace Dwarf
 {
-  OpenGLRendererApi::OpenGLRendererApi(
-    std::shared_ptr<IAssetDatabase> assetDatabase)
-    : m_AssetDatabase(assetDatabase)
-  {
-  }
+  OpenGLRendererApi::OpenGLRendererApi() {}
   OpenGLRendererApi::~OpenGLRendererApi() = default;
 
   struct SetShaderParameterVisitor
   {
-    GLuint                          m_ShaderID;
-    std::string                     m_ParameterName;
-    std::shared_ptr<IAssetDatabase> m_AssetDatabase;
+    GLuint      m_ShaderID;
+    std::string m_ParameterName;
+
     void
     operator()(bool parameter)
     {
@@ -50,10 +46,7 @@ namespace Dwarf
     {
       // TODO: This needs to count the number of textures and bind them
       glActiveTexture(GL_TEXTURE0);
-      glBindTexture(GL_TEXTURE_2D,
-                    m_AssetDatabase->Retrieve<TextureAsset>(parameter)
-                      ->GetAsset()
-                      ->m_Texture->GetTextureID());
+      glBindTexture(GL_TEXTURE_2D, parameter->GetTextureID());
       glUniform1i(glGetUniformLocation(m_ShaderID, m_ParameterName.c_str()), 0);
     }
     void

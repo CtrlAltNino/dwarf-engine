@@ -12,7 +12,7 @@ namespace Dwarf
     std::shared_ptr<IFramebufferFactory>       framebufferFactory,
     std::shared_ptr<IEditorStats>              editorStats,
     std::shared_ptr<IInputManager>             inputManager,
-    std::shared_ptr<IEditor>                   editor,
+    std::shared_ptr<ILoadedScene>              loadedScene,
     std::shared_ptr<IEditorSelection>          editorSelection,
     std::shared_ptr<IRenderingPipelineFactory> renderingPipelineFactory)
     : IGuiModule(ModuleLabel("Scene Viewer"),
@@ -22,7 +22,7 @@ namespace Dwarf
     , m_FramebufferFactory(framebufferFactory)
     , m_EditorStats(editorStats)
     , m_InputManager(inputManager)
-    , m_Editor(editor)
+    , m_LoadedScene(loadedScene)
     , m_EditorSelection(editorSelection)
     , m_RenderingPipelineFactory(renderingPipelineFactory)
 
@@ -52,7 +52,7 @@ namespace Dwarf
     std::shared_ptr<IFramebufferFactory>       framebufferFactory,
     std::shared_ptr<IEditorStats>              editorStats,
     std::shared_ptr<IInputManager>             inputManager,
-    std::shared_ptr<IEditor>                   editor,
+    std::shared_ptr<ILoadedScene>              loadedScene,
     std::shared_ptr<IEditorSelection>          editorSelection,
     std::shared_ptr<IRenderingPipelineFactory> renderingPipelineFactory)
     : IGuiModule(ModuleLabel("Scene Viewer"),
@@ -62,7 +62,7 @@ namespace Dwarf
     , m_FramebufferFactory(framebufferFactory)
     , m_EditorStats(editorStats)
     , m_InputManager(inputManager)
-    , m_Editor(editor)
+    , m_LoadedScene(loadedScene)
     , m_EditorSelection(editorSelection)
     , m_RenderingPipelineFactory(renderingPipelineFactory)
   {
@@ -567,7 +567,7 @@ namespace Dwarf
     {
       entt::entity entity = static_cast<entt::entity>(handle);
       m_EditorSelection->SelectEntity(
-        Entity(entity, m_Editor->GetScene()->GetRegistry()));
+        Entity(entity, m_LoadedScene->GetScene()->GetRegistry()));
     }
     else
     {

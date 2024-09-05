@@ -9,12 +9,10 @@ namespace Dwarf
   class RendererApiFactory : public IRendererApiFactory
   {
   private:
-    GraphicsApi                     m_GraphicsApi;
-    std::shared_ptr<IAssetDatabase> m_AssetDatabase;
+    GraphicsApi m_GraphicsApi;
 
   public:
-    RendererApiFactory(GraphicsApi                     api,
-                       std::shared_ptr<IAssetDatabase> assetDatabase);
+    RendererApiFactory(GraphicsApi api);
 
     std::shared_ptr<IRendererApi>
     Create() override;

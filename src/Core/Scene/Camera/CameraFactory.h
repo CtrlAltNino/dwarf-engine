@@ -7,6 +7,7 @@ namespace Dwarf
   class CameraFactory : public ICameraFactory
   {
   public:
+    ~CameraFactory() override = default;
     std::shared_ptr<ICamera>
     Create() override;
 

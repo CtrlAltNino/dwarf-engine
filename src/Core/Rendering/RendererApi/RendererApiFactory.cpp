@@ -11,11 +11,8 @@
 
 namespace Dwarf
 {
-  RendererApiFactory::RendererApiFactory(
-    GraphicsApi                     api,
-    std::shared_ptr<IAssetDatabase> assetDatabase)
+  RendererApiFactory::RendererApiFactory(GraphicsApi api)
     : m_GraphicsApi(api)
-    , m_AssetDatabase(assetDatabase)
   {
   }
 
@@ -29,7 +26,7 @@ namespace Dwarf
         // return std::make_shared<D3D12Shader>();
         break;
       case GraphicsApi::OpenGL:
-        return std::make_shared<OpenGLRendererApi>(m_AssetDatabase);
+        return std::make_shared<OpenGLRendererApi>();
         break;
       case GraphicsApi::Metal: break;
       case GraphicsApi::Vulkan:
@@ -38,7 +35,7 @@ namespace Dwarf
 #elif __linux__
       case GraphicsApi::D3D12: break;
       case GraphicsApi::OpenGL:
-        return std::make_shared<OpenGLRendererApi>(m_AssetDatabase);
+        return std::make_shared<OpenGLRendererApi>();
         break;
       case GraphicsApi::Metal: break;
       case GraphicsApi::Vulkan:

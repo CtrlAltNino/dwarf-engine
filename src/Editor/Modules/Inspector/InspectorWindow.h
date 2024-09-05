@@ -15,15 +15,13 @@ namespace Dwarf
   {
   private:
     /// @brief Pointer to the currently opened scene instance.
-    std::shared_ptr<IEditor>          m_Editor;
     std::shared_ptr<IEditorSelection> m_Selection;
     std::shared_ptr<IAssetDatabase>   m_AssetDatabase;
     std::shared_ptr<IAssetInspector>  m_AssetInspector;
     std::shared_ptr<IEntityInspector> m_EntityInspector;
 
   public:
-    InspectorWindow(std::optional<nlohmann::json>     serializedModule,
-                    std::shared_ptr<IEditor>          editor,
+    InspectorWindow(std::optional<SerializedModule>   serializedModule,
                     std::shared_ptr<IEditorSelection> selection,
                     std::shared_ptr<IAssetDatabase>   assetDatabase,
                     std::shared_ptr<IAssetInspector>  assetInspector,

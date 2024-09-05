@@ -5,12 +5,13 @@
 #include "Core/Asset/Database/IAssetDatabase.h"
 #include "Core/Rendering/Material/IO/IMaterialIO.h"
 #include "Core/Scene/IO/ISceneIO.h"
+#include "Editor/LoadedScene/ILoadedScene.h"
 #include "Editor/Modules/IGuiModule.h"
+#include "Editor/Stats/IEditorStats.h"
 #include "Project/IProjectSettings.h"
 #include "pch.h"
 #include "Window/IWindow.h"
 #include "Editor/Modules/IGuiModuleFactory.h"
-// #include "Editor/IEditorModel.h"
 
 namespace Dwarf
 {
@@ -22,11 +23,12 @@ namespace Dwarf
     GraphicsApi                        m_GraphicsApi;
     std::shared_ptr<IWindow>           m_Window;
     std::shared_ptr<IGuiModuleFactory> m_GuiModuleFactory;
-    std::shared_ptr<IEditor>           m_Editor;
     std::shared_ptr<ISceneIO>          m_SceneIO;
     std::shared_ptr<IAssetDatabase>    m_AssetDatabase;
     std::shared_ptr<IMaterialCreator>  m_MaterialCreator;
     std::shared_ptr<IProjectSettings>  m_ProjectSettings;
+    std::shared_ptr<ILoadedScene>      m_LoadedScene;
+    std::shared_ptr<IEditorStats>      m_EditorStats;
 
     /// @brief ID counter for GUI modules.
     int m_GuiModuleIDCount = 0;
@@ -54,13 +56,14 @@ namespace Dwarf
   public:
     explicit EditorView(GraphicsApi                        graphicsApi,
                         std::shared_ptr<IProjectSettings>  projectSettings,
+                        SerializedView                     serializedView,
                         std::shared_ptr<IWindow>           window,
-                        std::shared_ptr<IMaterialCreator>  materialCreator,
-                        std::optional<SerializedView>      serializedView,
                         std::shared_ptr<IGuiModuleFactory> guiModuleFactory,
+                        std::shared_ptr<IMaterialCreator>  materialCreator,
                         std::shared_ptr<ISceneIO>          sceneIO,
                         std::shared_ptr<IAssetDatabase>    assetDatabase,
-                        std::shared_ptr<IEditor>           editor);
+                        std::shared_ptr<ILoadedScene>      loadedScene,
+                        std::shared_ptr<IEditorStats>      editorStats);
 
     /// @brief Initializes the view.
     // void

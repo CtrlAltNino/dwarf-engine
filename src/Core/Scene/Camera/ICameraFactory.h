@@ -7,6 +7,7 @@ namespace Dwarf
   class ICameraFactory
   {
   public:
+    virtual ~ICameraFactory() = default;
     virtual std::shared_ptr<ICamera>
     Create() = 0;
     virtual std::shared_ptr<ICamera>

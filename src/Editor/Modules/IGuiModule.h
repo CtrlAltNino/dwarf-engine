@@ -24,6 +24,7 @@ namespace Dwarf
   BOOST_STRONG_TYPEDEF(std::string, ModuleLabel);
   BOOST_STRONG_TYPEDEF(MODULE_TYPE, ModuleType);
   BOOST_STRONG_TYPEDEF(std::shared_ptr<UUID>, ModuleID);
+  BOOST_STRONG_TYPEDEF(nlohmann::json, SerializedModule);
 
   /// @brief GUI module base class.
   class IGuiModule : public ISerializable

@@ -2,6 +2,7 @@
 
 #include "Editor/IEditor.h"
 #include "Editor/IEditorSelection.h"
+#include "Editor/LoadedScene/ILoadedScene.h"
 #include "Editor/Modules/IGuiModule.h"
 #include "Editor/Modules/SceneHierarchy/GraphInstruction.h"
 #include "Input/IInputManager.h"
@@ -12,7 +13,7 @@ namespace Dwarf
   class SceneHierarchyWindow : public IGuiModule
   {
   private:
-    std::shared_ptr<IEditor>          m_Editor;
+    std::shared_ptr<ILoadedScene>     m_LoadedScene;
     std::shared_ptr<IEditorSelection> m_EditorSelection;
     std::shared_ptr<IInputManager>    m_InputManager;
     /// @brief List of graph instruction. Used as a buffer, executed at the end
@@ -31,11 +32,11 @@ namespace Dwarf
     ProcessInstructions();
 
   public:
-    SceneHierarchyWindow(std::shared_ptr<IEditor>          editor,
+    SceneHierarchyWindow(std::shared_ptr<ILoadedScene>     loadedScene,
                          std::shared_ptr<IEditorSelection> editorSelection,
                          std::shared_ptr<IInputManager>    inputManager);
     SceneHierarchyWindow(nlohmann::json                    serializedModule,
-                         std::shared_ptr<IEditor>          editor,
+                         std::shared_ptr<ILoadedScene>     loadedScene,
                          std::shared_ptr<IEditorSelection> editorSelection,
                          std::shared_ptr<IInputManager>    inputManager);
 

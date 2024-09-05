@@ -9,11 +9,12 @@ namespace Dwarf
   class ShaderSourceCollectionFactory : public IShaderSourceCollectionFactory
   {
   private:
-    std::shared_ptr<IAssetDatabase> m_AssetDatabase;
+    // std::shared_ptr<IAssetDatabase> m_AssetDatabase;
 
   public:
     ShaderSourceCollectionFactory(
-      std::shared_ptr<IAssetDatabase> assetDatabase);
+      // std::shared_ptr<IAssetDatabase> assetDatabase
+    );
     ~ShaderSourceCollectionFactory() override = default;
 
     ShaderSourceCollection

@@ -1,14 +1,14 @@
 #pragma once
+#include "pch.h"
 #include "Core/Rendering/Framebuffer/IFramebuffer.h"
 #include "Core/Rendering/Framebuffer/IFramebufferFactory.h"
 #include "Core/Rendering/Pipelines/IRenderingPipeline.h"
 #include "Core/Scene/Camera/ICamera.h"
 #include "Core/Scene/Camera/ICameraFactory.h"
-#include "Editor/IEditor.h"
 #include "Editor/IEditorSelection.h"
+#include "Editor/LoadedScene/ILoadedScene.h"
 #include "Editor/Stats/IEditorStats.h"
 #include "Input/IInputManager.h"
-#include "pch.h"
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 #include <imgui_internal.h>
@@ -74,7 +74,7 @@ namespace Dwarf
     std::shared_ptr<ICamera>                   m_Camera;
     std::shared_ptr<IInputManager>             m_InputManager;
     std::shared_ptr<IEditorStats>              m_EditorStats;
-    std::shared_ptr<IEditor>                   m_Editor;
+    std::shared_ptr<ILoadedScene>              m_LoadedScene;
     std::shared_ptr<IEditorSelection>          m_EditorSelection;
     std::shared_ptr<IRenderingPipelineFactory> m_RenderingPipelineFactory;
     std::shared_ptr<IRenderingPipeline>        m_RenderingPipeline;
@@ -115,7 +115,7 @@ namespace Dwarf
       std::shared_ptr<IFramebufferFactory>       framebufferFactory,
       std::shared_ptr<IEditorStats>              editorStats,
       std::shared_ptr<IInputManager>             inputManager,
-      std::shared_ptr<IEditor>                   editor,
+      std::shared_ptr<ILoadedScene>              loadedScene,
       std::shared_ptr<IEditorSelection>          selection,
       std::shared_ptr<IRenderingPipelineFactory> renderingPipelineFactory);
 
@@ -125,7 +125,7 @@ namespace Dwarf
       std::shared_ptr<IFramebufferFactory>       framebufferFactory,
       std::shared_ptr<IEditorStats>              editorStats,
       std::shared_ptr<IInputManager>             inputManager,
-      std::shared_ptr<IEditor>                   editor,
+      std::shared_ptr<ILoadedScene>              loadedScene,
       std::shared_ptr<IEditorSelection>          editorSelection,
       std::shared_ptr<IRenderingPipelineFactory> renderingPipelineFactory);
 
