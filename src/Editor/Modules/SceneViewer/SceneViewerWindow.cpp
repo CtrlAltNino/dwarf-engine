@@ -8,6 +8,7 @@
 namespace Dwarf
 {
   SceneViewerWindow::SceneViewerWindow(
+    SerializedModule                           serializedModule,
     std::shared_ptr<ICameraFactory>            cameraFactory,
     std::shared_ptr<IFramebufferFactory>       framebufferFactory,
     std::shared_ptr<IEditorStats>              editorStats,
@@ -17,7 +18,10 @@ namespace Dwarf
     std::shared_ptr<IRenderingPipelineFactory> renderingPipelineFactory)
     : IGuiModule(ModuleLabel("Scene Viewer"),
                  ModuleType(MODULE_TYPE::SCENE_VIEWER),
-                 ModuleID(std::make_shared<UUID>()))
+                 ModuleID(std::make_shared<UUID>(
+                   serializedModule.t.has_value()
+                     ? serializedModule.t.value()["id"].get<std::string>()
+                     : UUID())))
     , m_CameraFactory(cameraFactory)
     , m_FramebufferFactory(framebufferFactory)
     , m_EditorStats(editorStats)
@@ -25,8 +29,12 @@ namespace Dwarf
     , m_LoadedScene(loadedScene)
     , m_EditorSelection(editorSelection)
     , m_RenderingPipelineFactory(renderingPipelineFactory)
-
   {
+    if (serializedModule.t.has_value())
+    {
+      Deserialize(serializedModule.t.value());
+    }
+
     /*m_Framebuffer = Renderer::Get()->CreateFramebuffer({ 512, 512 });
     m_IdBuffer = Renderer::Get()->CreateIDFramebuffer({ 512, 512 });
     m_Camera = std::make_shared<Camera>();
@@ -44,29 +52,6 @@ namespace Dwarf
       FramebufferTextureSpecification{ FramebufferTextureFormat::RGBA8 }
     };
     m_PresentationBuffer = Framebuffer::Create(presentationSpec);*/
-  }
-
-  SceneViewerWindow::SceneViewerWindow(
-    nlohmann::json                             serializedModule,
-    std::shared_ptr<ICameraFactory>            cameraFactory,
-    std::shared_ptr<IFramebufferFactory>       framebufferFactory,
-    std::shared_ptr<IEditorStats>              editorStats,
-    std::shared_ptr<IInputManager>             inputManager,
-    std::shared_ptr<ILoadedScene>              loadedScene,
-    std::shared_ptr<IEditorSelection>          editorSelection,
-    std::shared_ptr<IRenderingPipelineFactory> renderingPipelineFactory)
-    : IGuiModule(ModuleLabel("Scene Viewer"),
-                 ModuleType(MODULE_TYPE::SCENE_VIEWER),
-                 ModuleID(std::make_shared<UUID>()))
-    , m_CameraFactory(cameraFactory)
-    , m_FramebufferFactory(framebufferFactory)
-    , m_EditorStats(editorStats)
-    , m_InputManager(inputManager)
-    , m_LoadedScene(loadedScene)
-    , m_EditorSelection(editorSelection)
-    , m_RenderingPipelineFactory(renderingPipelineFactory)
-  {
-    Deserialize(serializedModule);
   }
 
   void

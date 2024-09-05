@@ -4,7 +4,7 @@
 namespace Dwarf
 {
   InspectorWindow::InspectorWindow(
-    std::optional<SerializedModule>   serializedModule,
+    SerializedModule                  serializedModule,
     std::shared_ptr<IEditorSelection> selection,
     std::shared_ptr<IAssetDatabase>   assetDatabase,
     std::shared_ptr<IAssetInspector>  assetInspector,
@@ -12,15 +12,18 @@ namespace Dwarf
     : IGuiModule(ModuleLabel("Inspector"),
                  ModuleType(MODULE_TYPE::INSPECTOR),
                  ModuleID(std::make_shared<UUID>(
-                   serializedModule.has_value()
-                     ? serializedModule.value().t["id"].get<std::string>()
+                   serializedModule.t.has_value()
+                     ? serializedModule.t.value()["id"].get<std::string>()
                      : UUID())))
     , m_Selection(selection)
     , m_AssetDatabase(assetDatabase)
     , m_AssetInspector(assetInspector)
     , m_EntityInspector(entityInspector)
   {
-    // AssetInspectorRenderer::Init(model);
+    if (serializedModule.t.has_value())
+    {
+      Deserialize(serializedModule.t.value());
+    }
   }
 
   void
@@ -44,7 +47,7 @@ namespace Dwarf
       case CURRENT_SELECTION_TYPE::ASSET:
         {
           // TODO: Render Asset data
-          m_AssetInspector->Render(m_Selection->GetAssetPath());
+          m_AssetInspector->Render(m_Selection->GetSelectedAssetPath());
           break;
         }
       case CURRENT_SELECTION_TYPE::ENTITY:

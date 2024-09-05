@@ -5,10 +5,10 @@ namespace Dwarf
   PreviewRenderer::PreviewRenderer(
     std::shared_ptr<IFramebufferFactory> framebufferFactory,
     std::shared_ptr<ICamera>             camera,
-    std::shared_ptr<IRendererApi>        rendererApi)
+    std::shared_ptr<IRendererApiFactory> rendererApiFactory)
     : m_FramebufferFactory(framebufferFactory)
     , m_Camera(camera)
-    , m_RendererApi(rendererApi)
+    , m_RendererApi(rendererApiFactory->Create())
   {
   }
 

@@ -9,34 +9,7 @@
 namespace Dwarf
 {
   AssetBrowserWindow::AssetBrowserWindow(
-    std::shared_ptr<ITextureFactory>  textureFactory,
-    std::shared_ptr<IAssetDatabase>   assetDatabase,
-    std::shared_ptr<IInputManager>    inputManager,
-    std::shared_ptr<IEditorSelection> editorSelection,
-    std::shared_ptr<IMaterialIO>      materialIO,
-    std::shared_ptr<IMaterialFactory> materialFactory,
-    std::shared_ptr<IAssetMetadata>   assetMetadata,
-    std::shared_ptr<IMaterialCreator> materialCreator)
-    : IGuiModule(ModuleLabel("Asset Browser"),
-                 ModuleType(MODULE_TYPE::ASSET_BROWSER),
-                 ModuleID(std::make_shared<UUID>()))
-    , m_AssetDirectoryPath(assetDatabase->GetAssetDirectoryPath())
-    , m_CurrentDirectory(m_AssetDirectoryPath)
-    , m_TextureFactory(textureFactory)
-    , m_AssetDatabase(assetDatabase)
-    , m_InputManager(inputManager)
-    , m_EditorSelection(editorSelection)
-    , m_MaterialIO(materialIO)
-    , m_MaterialFactory(materialFactory)
-    , m_AssetMetadata(assetMetadata)
-    , m_MaterialCreator(materialCreator)
-  {
-    m_DirectoryHistory.push_back(m_CurrentDirectory);
-    LoadIcons();
-  }
-
-  AssetBrowserWindow::AssetBrowserWindow(
-    nlohmann::json                    serializedModule,
+    SerializedModule                  serializedModule,
     std::shared_ptr<ITextureFactory>  textureFactory,
     std::shared_ptr<IAssetDatabase>   assetDatabase,
     std::shared_ptr<IInputManager>    inputManager,
@@ -48,9 +21,10 @@ namespace Dwarf
     : IGuiModule(ModuleLabel("Asset Browser"),
                  ModuleType(MODULE_TYPE::ASSET_BROWSER),
                  ModuleID(std::make_shared<UUID>(
-                   serializedModule["id"].get<std::string>())))
+                   serializedModule.t.value()["id"].get<std::string>())))
     , m_AssetDirectoryPath(assetDatabase->GetAssetDirectoryPath())
-    , m_CurrentDirectory(serializedModule["openedPath"].get<std::string>())
+    , m_CurrentDirectory(
+        serializedModule.t.value()["openedPath"].get<std::string>())
     , m_TextureFactory(textureFactory)
     , m_AssetDatabase(assetDatabase)
     , m_InputManager(inputManager)
@@ -62,8 +36,10 @@ namespace Dwarf
   {
     m_DirectoryHistory.push_back(m_CurrentDirectory);
     LoadIcons();
-
-    Deserialize(serializedModule);
+    if (serializedModule.t.has_value())
+    {
+      Deserialize(serializedModule.t.value());
+    }
   }
 
   void

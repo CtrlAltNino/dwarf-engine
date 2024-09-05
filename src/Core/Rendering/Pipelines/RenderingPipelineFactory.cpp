@@ -6,8 +6,8 @@
 namespace Dwarf
 {
   RenderingPipelineFactory::RenderingPipelineFactory(
-    std::shared_ptr<IRendererApi> rendererApi)
-    : m_RendererApi(rendererApi)
+    std::shared_ptr<IRendererApiFactory> rendererApiFactory)
+    : m_RendererApi(rendererApiFactory->Create())
   {
   }
 

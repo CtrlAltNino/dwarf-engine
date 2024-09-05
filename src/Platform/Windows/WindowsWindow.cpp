@@ -4,11 +4,11 @@
 namespace Dwarf
 {
   WindowsWindow::WindowsWindow(
-    const WindowProps&                       props,
-    std::shared_ptr<IGraphicsContextFactory> contextFactory,
-    std::shared_ptr<IImGuiLayerFactory>      imguiLayerFactory,
+    WindowProps                              props,
+    std::shared_ptr<IDwarfLogger>            logger,
     std::shared_ptr<IInputManager>           inputManager,
-    std::shared_ptr<IDwarfLogger>            logger)
+    std::shared_ptr<IGraphicsContextFactory> contextFactory,
+    std::shared_ptr<IImGuiLayerFactory>      imguiLayerFactory)
     : m_ContextFactory(contextFactory)
     , m_ImguiLayerFactory(imguiLayerFactory)
     , m_InputManager(inputManager)

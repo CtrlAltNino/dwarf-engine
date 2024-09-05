@@ -1,4 +1,5 @@
 #pragma once
+
 #include "pch.h"
 #include "Core/Rendering/Framebuffer/IFramebuffer.h"
 #include "Core/Rendering/Framebuffer/IFramebufferFactory.h"
@@ -9,6 +10,7 @@
 #include "Editor/LoadedScene/ILoadedScene.h"
 #include "Editor/Stats/IEditorStats.h"
 #include "Input/IInputManager.h"
+#include <boost/serialization/strong_typedef.hpp>
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
 #include <imgui_internal.h>
@@ -67,11 +69,12 @@ namespace Dwarf
     // Maintaining important dependencies
 
     /// @brief The render texture for this scene viewer.
-    std::shared_ptr<IFramebuffer>              m_Framebuffer;
-    std::shared_ptr<IFramebuffer>              m_IdBuffer;
-    std::shared_ptr<IFramebuffer>              m_OutlineBuffer;
-    std::shared_ptr<IFramebuffer>              m_PresentationBuffer;
-    std::shared_ptr<ICamera>                   m_Camera;
+    std::shared_ptr<IFramebuffer> m_Framebuffer;
+    std::shared_ptr<IFramebuffer> m_IdBuffer;
+    std::shared_ptr<IFramebuffer> m_OutlineBuffer;
+    std::shared_ptr<IFramebuffer> m_PresentationBuffer;
+    std::shared_ptr<ICamera>      m_Camera;
+
     std::shared_ptr<IInputManager>             m_InputManager;
     std::shared_ptr<IEditorStats>              m_EditorStats;
     std::shared_ptr<ILoadedScene>              m_LoadedScene;
@@ -111,16 +114,7 @@ namespace Dwarf
 
   public:
     SceneViewerWindow(
-      std::shared_ptr<ICameraFactory>            cameraFactory,
-      std::shared_ptr<IFramebufferFactory>       framebufferFactory,
-      std::shared_ptr<IEditorStats>              editorStats,
-      std::shared_ptr<IInputManager>             inputManager,
-      std::shared_ptr<ILoadedScene>              loadedScene,
-      std::shared_ptr<IEditorSelection>          selection,
-      std::shared_ptr<IRenderingPipelineFactory> renderingPipelineFactory);
-
-    SceneViewerWindow(
-      nlohmann::json                             serializedModule,
+      SerializedModule                           serializedModule,
       std::shared_ptr<ICameraFactory>            cameraFactory,
       std::shared_ptr<IFramebufferFactory>       framebufferFactory,
       std::shared_ptr<IEditorStats>              editorStats,

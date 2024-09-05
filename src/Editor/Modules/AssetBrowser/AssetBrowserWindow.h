@@ -10,12 +10,12 @@
 #include "Editor/Modules/IGuiModule.h"
 #include "Core/Rendering/Texture/ITextureFactory.h"
 #include "Input/IInputManager.h"
+#include <boost/serialization/strong_typedef.hpp>
 
 #define RENAME_BUFFER_SIZE (128)
 
 namespace Dwarf
 {
-
   /// @brief GUI Module to display a window for the asset directory structure.
   class AssetBrowserWindow : public IGuiModule
   {
@@ -122,16 +122,7 @@ namespace Dwarf
     RenderFolderContent();
 
   public:
-    AssetBrowserWindow(std::shared_ptr<ITextureFactory>  textureFactory,
-                       std::shared_ptr<IAssetDatabase>   assetDatabase,
-                       std::shared_ptr<IInputManager>    inputManager,
-                       std::shared_ptr<IEditorSelection> editorSelection,
-                       std::shared_ptr<IMaterialIO>      materialIO,
-                       std::shared_ptr<IMaterialFactory> materialFactory,
-                       std::shared_ptr<IAssetMetadata>   assetMetadata,
-                       std::shared_ptr<IMaterialCreator> materialCreator);
-
-    AssetBrowserWindow(nlohmann::json                    serializedModule,
+    AssetBrowserWindow(SerializedModule                  serializedModule,
                        std::shared_ptr<ITextureFactory>  textureFactory,
                        std::shared_ptr<IAssetDatabase>   assetDatabase,
                        std::shared_ptr<IInputManager>    inputManager,

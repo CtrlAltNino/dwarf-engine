@@ -6,6 +6,8 @@ namespace Dwarf
   class IEntityInspector
   {
   public:
+    virtual ~IEntityInspector() = default;
+
     virtual void
     Render(std::vector<Entity>&) = 0;
   };

@@ -26,6 +26,7 @@ namespace Dwarf
 
   public:
     EntityInspector(std::shared_ptr<IAssetDatabase> assetDatabase);
+    ~EntityInspector() override = default;
 
     void
     Render(std::vector<Entity>& entities) override;

@@ -5,7 +5,7 @@
 #include "Core/Rendering/PreviewRenderer/MaterialPreview/IMaterialPreview.h"
 #include "Core/Rendering/PreviewRenderer/ModelPreview/IModelPreview.h"
 #include "Core/Scene/IO/ISceneIO.h"
-#include "Editor/IEditor.h"
+#include "Editor/LoadedScene/ILoadedScene.h"
 #include "Editor/Modules/Inspector/AssetInspector/IAssetInspector.h"
 #include "Editor/Stats/IEditorStats.h"
 #include "Input/IInputManager.h"
@@ -17,7 +17,7 @@ namespace Dwarf
   {
   public:
     GraphicsApi                       m_GraphicsApi;
-    std::shared_ptr<IEditor>          m_Editor;
+    std::shared_ptr<ILoadedScene>     m_LoadedScene;
     std::shared_ptr<ISceneIO>         m_SceneIO;
     std::shared_ptr<IAssetDatabase>   m_AssetDatabase;
     std::shared_ptr<IMaterialPreview> m_MaterialPreview;
@@ -26,7 +26,7 @@ namespace Dwarf
     std::shared_ptr<IEditorStats>     m_EditorStats;
 
     AssetInspector(GraphicsApi                       graphicsApi,
-                   std::shared_ptr<IEditor>          editor,
+                   std::shared_ptr<ILoadedScene>     loadedScene,
                    std::shared_ptr<ISceneIO>         sceneIO,
                    std::shared_ptr<IAssetDatabase>   assetDatabase,
                    std::shared_ptr<IMaterialPreview> materialPreview,
@@ -34,8 +34,9 @@ namespace Dwarf
                    std::shared_ptr<IInputManager>    inputManager,
                    std::shared_ptr<IEditorStats>     editorStats);
 
+    ~AssetInspector() override = default;
     void
-    Render(const std::filesystem::path& assetPath) override;
+    Render(const std::filesystem::path& assetPath) const override;
 
   private:
     // void
@@ -44,6 +45,6 @@ namespace Dwarf
 
     template<typename T>
     void
-    RenderAssetInspector(std::shared_ptr<AssetReference<T>> asset);
+    RenderAssetInspector(std::shared_ptr<AssetReference<T>> asset) const;
   };
 }

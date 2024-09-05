@@ -6,6 +6,7 @@
 #include "Core/Rendering/Material/IMaterialFactory.h"
 #include "Core/Rendering/PreviewRenderer/ModelPreview/IModelPreview.h"
 #include "Core/Scene/Camera/ICamera.h"
+#include "Core/Scene/Camera/ICameraFactory.h"
 
 namespace Dwarf
 {
@@ -17,8 +18,8 @@ namespace Dwarf
 
   public:
     ModelPreview(std::shared_ptr<IFramebufferFactory> framebufferFactory,
-                 std::shared_ptr<ICamera>             camera,
-                 std::shared_ptr<IRendererApi>        rendererApi,
+                 std::shared_ptr<ICameraFactory>      cameraFactory,
+                 std::shared_ptr<IRendererApiFactory> rendererApiFactory,
                  std::shared_ptr<IMaterialFactory>    materialFactory);
 
     void

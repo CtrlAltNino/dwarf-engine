@@ -11,30 +11,24 @@ namespace Dwarf
 {
 
   SceneHierarchyWindow::SceneHierarchyWindow(
-    std::shared_ptr<ILoadedScene>     loadedScene,
-    std::shared_ptr<IEditorSelection> editorSelection,
-    std::shared_ptr<IInputManager>    inputManager)
-    : IGuiModule(ModuleLabel("Scene Graph"),
-                 ModuleType(MODULE_TYPE::SCENE_GRAPH),
-                 ModuleID(std::make_shared<UUID>()))
-    , m_LoadedScene(loadedScene)
-    , m_EditorSelection(editorSelection)
-    , m_InputManager(inputManager)
-  {
-  }
-
-  SceneHierarchyWindow::SceneHierarchyWindow(
-    nlohmann::json                    serializedModule,
+    SerializedModule                  serializedModule,
     std::shared_ptr<ILoadedScene>     loadedScene,
     std::shared_ptr<IEditorSelection> editorSelection,
     std::shared_ptr<IInputManager>    inputManager)
     : IGuiModule(ModuleLabel("Performance"),
                  ModuleType(MODULE_TYPE::PERFORMANCE),
-                 ModuleID(std::make_shared<UUID>()))
+                 ModuleID(std::make_shared<UUID>(
+                   serializedModule.t.has_value()
+                     ? serializedModule.t.value()["id"].get<std::string>()
+                     : UUID())))
     , m_LoadedScene(loadedScene)
     , m_EditorSelection(editorSelection)
     , m_InputManager(inputManager)
   {
+    if (serializedModule.t.has_value())
+    {
+      Deserialize(serializedModule.t.value());
+    }
   }
 
   void

@@ -16,21 +16,21 @@ namespace Dwarf
   EditorView::EditorView(GraphicsApi                        graphicsApi,
                          std::shared_ptr<IProjectSettings>  projectSettings,
                          SerializedView                     serializedView,
+                         std::shared_ptr<ILoadedScene>      loadedScene,
                          std::shared_ptr<IWindow>           window,
                          std::shared_ptr<IGuiModuleFactory> guiModuleFactory,
-                         std::shared_ptr<IMaterialCreator>  materialCreator,
                          std::shared_ptr<ISceneIO>          sceneIO,
                          std::shared_ptr<IAssetDatabase>    assetDatabase,
-                         std::shared_ptr<ILoadedScene>      loadedScene,
+                         std::shared_ptr<IMaterialCreator>  materialCreator,
                          std::shared_ptr<IEditorStats>      editorStats)
     : m_GraphicsApi(graphicsApi)
+    , m_ProjectSettings(projectSettings)
+    , m_LoadedScene(loadedScene)
     , m_Window(window)
     , m_GuiModuleFactory(guiModuleFactory)
     , m_SceneIO(sceneIO)
     , m_AssetDatabase(assetDatabase)
     , m_MaterialCreator(materialCreator)
-    , m_ProjectSettings(projectSettings)
-    , m_LoadedScene(loadedScene)
     , m_EditorStats(editorStats)
   {
     // using enum MODULE_TYPE;

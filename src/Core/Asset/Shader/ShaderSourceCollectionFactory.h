@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Core/Asset/Shader/IShaderSourceCollectionFactory.h"
-#include "Core/Asset/Database/IAssetDatabase.h"
 #include <memory>
 
 namespace Dwarf

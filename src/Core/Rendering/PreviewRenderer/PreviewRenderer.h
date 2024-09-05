@@ -5,6 +5,7 @@
 #include "Core/Rendering/Framebuffer/IFramebuffer.h"
 #include "Core/Rendering/Framebuffer/IFramebufferFactory.h"
 #include "Core/Rendering/RendererApi/IRendererApi.h"
+#include "Core/Rendering/RendererApi/IRendererApiFactory.h"
 #include "Core/Scene/Camera/ICamera.h"
 #include <imgui.h>
 namespace Dwarf
@@ -32,7 +33,7 @@ namespace Dwarf
   public:
     PreviewRenderer(std::shared_ptr<IFramebufferFactory> framebufferFactory,
                     std::shared_ptr<ICamera>             camera,
-                    std::shared_ptr<IRendererApi>        rendererApi);
+                    std::shared_ptr<IRendererApiFactory> rendererApiFactory);
 
     void
     Resize(glm::ivec2 size);

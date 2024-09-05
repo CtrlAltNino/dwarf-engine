@@ -1,6 +1,7 @@
-#include "Core/Asset/Database/AssetComponents.h"
-#include "Core/Rendering/Shader/IShaderParameterCollection.h"
 #include "pch.h"
+#include "Core/Asset/Database/AssetComponents.h"
+#include "Core/Rendering/Shader/ShaderParameterCollection/IShaderParameterCollection.h"
+#include "Editor/LoadedScene/ILoadedScene.h"
 #include "AssetInspector.h"
 #include "Core/Base.h"
 #include "UI/DwarfUI.h"
@@ -37,14 +38,14 @@ namespace Dwarf
 {
   AssetInspector::AssetInspector(
     GraphicsApi                       graphicsApi,
-    std::shared_ptr<IEditor>          editor,
+    std::shared_ptr<ILoadedScene>     loadedScene,
     std::shared_ptr<ISceneIO>         sceneIO,
     std::shared_ptr<IAssetDatabase>   assetDatabase,
     std::shared_ptr<IMaterialPreview> materialPreview,
     std::shared_ptr<IModelPreview>    modelPreview,
     std::shared_ptr<IInputManager>    inputManager,
     std::shared_ptr<IEditorStats>     editorStats)
-    : m_Editor(editor)
+    : m_LoadedScene(loadedScene)
     , m_SceneIO(sceneIO)
     , m_AssetDatabase(assetDatabase)
     , m_GraphicsApi(graphicsApi)
@@ -58,7 +59,7 @@ namespace Dwarf
   template<>
   void
   AssetInspector::RenderAssetInspector<UnknownAsset>(
-    std::shared_ptr<AssetReference<UnknownAsset>> asset)
+    std::shared_ptr<AssetReference<UnknownAsset>> asset) const
   {
     ImGui::TextWrapped("File name: ");
     ImGui::SameLine(0, 5.0f);
@@ -172,7 +173,7 @@ namespace Dwarf
   template<>
   void
   AssetInspector::RenderAssetInspector<MaterialAsset>(
-    std::shared_ptr<AssetReference<MaterialAsset>> asset)
+    std::shared_ptr<AssetReference<MaterialAsset>> asset) const
   {
     ImDrawList* draw_list = ImGui::GetWindowDrawList();
     draw_list->ChannelsSplit(2);
@@ -804,7 +805,7 @@ namespace Dwarf
   template<>
   void
   AssetInspector::RenderAssetInspector<SceneAsset>(
-    std::shared_ptr<AssetReference<SceneAsset>> asset)
+    std::shared_ptr<AssetReference<SceneAsset>> asset) const
   {
     ImDrawList* draw_list = ImGui::GetWindowDrawList();
     draw_list->ChannelsSplit(2);
@@ -852,7 +853,7 @@ namespace Dwarf
     if (ImGui::Button("Load scene") &&
         FileHandler::FileExists(asset->GetPath()))
     {
-      m_Editor->SetScene(m_SceneIO->LoadScene(asset));
+      m_LoadedScene->SetScene(m_SceneIO->LoadScene(asset));
     }
 
     draw_list->ChannelsSetCurrent(0);
@@ -872,7 +873,7 @@ namespace Dwarf
   template<>
   void
   AssetInspector::RenderAssetInspector<ModelAsset>(
-    std::shared_ptr<AssetReference<ModelAsset>> asset)
+    std::shared_ptr<AssetReference<ModelAsset>> asset) const
   {
     ImDrawList* draw_list = ImGui::GetWindowDrawList();
     draw_list->ChannelsSplit(2);
@@ -989,7 +990,7 @@ namespace Dwarf
   template<>
   void
   AssetInspector::RenderAssetInspector<TextureAsset>(
-    std::shared_ptr<AssetReference<TextureAsset>> asset)
+    std::shared_ptr<AssetReference<TextureAsset>> asset) const
   {
     ImDrawList* draw_list = ImGui::GetWindowDrawList();
     draw_list->ChannelsSplit(2);
@@ -1056,7 +1057,7 @@ namespace Dwarf
   template<>
   void
   AssetInspector::RenderAssetInspector<VertexShaderAsset>(
-    std::shared_ptr<AssetReference<VertexShaderAsset>> asset)
+    std::shared_ptr<AssetReference<VertexShaderAsset>> asset) const
   {
     ImGui::TextWrapped("File name: ");
     ImGui::SameLine(0, 5.0f);
@@ -1074,7 +1075,7 @@ namespace Dwarf
   template<>
   void
   AssetInspector::RenderAssetInspector<TessellationControlShaderAsset>(
-    std::shared_ptr<AssetReference<TessellationControlShaderAsset>> asset)
+    std::shared_ptr<AssetReference<TessellationControlShaderAsset>> asset) const
   {
     ImGui::TextWrapped("File name: ");
     ImGui::SameLine(0, 5.0f);
@@ -1093,6 +1094,7 @@ namespace Dwarf
   void
   AssetInspector::RenderAssetInspector<TessellationEvaluationShaderAsset>(
     std::shared_ptr<AssetReference<TessellationEvaluationShaderAsset>> asset)
+    const
   {
     ImGui::TextWrapped("File name: ");
     ImGui::SameLine(0, 5.0f);
@@ -1110,7 +1112,7 @@ namespace Dwarf
   template<>
   void
   AssetInspector::RenderAssetInspector<GeometryShaderAsset>(
-    std::shared_ptr<AssetReference<GeometryShaderAsset>> asset)
+    std::shared_ptr<AssetReference<GeometryShaderAsset>> asset) const
   {
     ImGui::TextWrapped("File name: ");
     ImGui::SameLine(0, 5.0f);
@@ -1128,7 +1130,7 @@ namespace Dwarf
   template<>
   void
   AssetInspector::RenderAssetInspector<FragmentShaderAsset>(
-    std::shared_ptr<AssetReference<FragmentShaderAsset>> asset)
+    std::shared_ptr<AssetReference<FragmentShaderAsset>> asset) const
   {
     ImGui::TextWrapped("File name: ");
     ImGui::SameLine(0, 5.0f);
@@ -1146,7 +1148,7 @@ namespace Dwarf
   template<>
   void
   AssetInspector::RenderAssetInspector<ComputeShaderAsset>(
-    std::shared_ptr<AssetReference<ComputeShaderAsset>> asset)
+    std::shared_ptr<AssetReference<ComputeShaderAsset>> asset) const
   {
     ImGui::TextWrapped("File name: ");
     ImGui::SameLine(0, 5.0f);
@@ -1164,7 +1166,7 @@ namespace Dwarf
   template<>
   void
   AssetInspector::RenderAssetInspector<HlslShaderAsset>(
-    std::shared_ptr<AssetReference<HlslShaderAsset>> asset)
+    std::shared_ptr<AssetReference<HlslShaderAsset>> asset) const
   {
     ImGui::TextWrapped("File name: ");
     ImGui::SameLine(0, 5.0f);
@@ -1180,7 +1182,7 @@ namespace Dwarf
   }
 
   void
-  AssetInspector::Render(const std::filesystem::path& assetPath)
+  AssetInspector::Render(const std::filesystem::path& assetPath) const
   {
     if (m_AssetDatabase->Exists(assetPath))
     {

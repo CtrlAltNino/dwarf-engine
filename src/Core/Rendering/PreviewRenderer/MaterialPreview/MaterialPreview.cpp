@@ -5,10 +5,12 @@ namespace Dwarf
 {
   MaterialPreview::MaterialPreview(
     std::shared_ptr<IFramebufferFactory> framebufferFactory,
-    std::shared_ptr<ICamera>             camera,
-    std::shared_ptr<IRendererApi>        rendererApi,
+    std::shared_ptr<ICameraFactory>      cameraFactory,
+    std::shared_ptr<IRendererApiFactory> rendererApiFactory,
     std::shared_ptr<IMeshFactory>        meshFactory)
-    : PreviewRenderer(framebufferFactory, camera, rendererApi)
+    : PreviewRenderer(framebufferFactory,
+                      cameraFactory->Create(),
+                      rendererApiFactory)
     , m_MeshFactory(meshFactory)
   {
     FramebufferSpecification spec = { 512, 512 };

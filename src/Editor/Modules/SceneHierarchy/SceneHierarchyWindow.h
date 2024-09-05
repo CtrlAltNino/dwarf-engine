@@ -6,6 +6,7 @@
 #include "Editor/Modules/IGuiModule.h"
 #include "Editor/Modules/SceneHierarchy/GraphInstruction.h"
 #include "Input/IInputManager.h"
+#include <boost/serialization/strong_typedef.hpp>
 
 namespace Dwarf
 {
@@ -32,10 +33,7 @@ namespace Dwarf
     ProcessInstructions();
 
   public:
-    SceneHierarchyWindow(std::shared_ptr<ILoadedScene>     loadedScene,
-                         std::shared_ptr<IEditorSelection> editorSelection,
-                         std::shared_ptr<IInputManager>    inputManager);
-    SceneHierarchyWindow(nlohmann::json                    serializedModule,
+    SceneHierarchyWindow(SerializedModule                  serializedModule,
                          std::shared_ptr<ILoadedScene>     loadedScene,
                          std::shared_ptr<IEditorSelection> editorSelection,
                          std::shared_ptr<IInputManager>    inputManager);

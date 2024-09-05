@@ -1,10 +1,11 @@
+#include "Editor/LoadedScene/ILoadedScene.h"
 #include "pch.h"
 #include "EditorSelection.h"
 
 namespace Dwarf
 {
-  EditorSelection::EditorSelection(std::shared_ptr<IEditor> editor)
-    : m_Editor(editor)
+  EditorSelection::EditorSelection(std::shared_ptr<ILoadedScene> loadedScene)
+    : m_LoadedScene(loadedScene)
   {
   }
 
@@ -99,13 +100,32 @@ namespace Dwarf
     Entity      cursor = entity;
 
     while (cursor.GetHandle() !=
-           m_Editor->GetScene()->GetRootEntity()->GetHandle())
+           m_LoadedScene->GetScene()->GetRootEntity()->GetHandle())
     {
       index =
         std::format("{}{}", std::to_string(cursor.GetChildIndex()), index);
-      cursor = Entity(cursor.GetParent(), m_Editor->GetScene()->GetRegistry());
+      cursor =
+        Entity(cursor.GetParent(), m_LoadedScene->GetScene()->GetRegistry());
     }
 
     return index;
+  }
+
+  std::vector<Entity>&
+  EditorSelection::GetSelectedEntities()
+  {
+    return m_SelectedEntities;
+  }
+
+  CURRENT_SELECTION_TYPE
+  EditorSelection::GetSelectionType() const
+  {
+    return m_SelectionType;
+  }
+
+  const std::filesystem::path&
+  EditorSelection::GetSelectedAssetPath() const
+  {
+    return m_SelectedAsset;
   }
 }

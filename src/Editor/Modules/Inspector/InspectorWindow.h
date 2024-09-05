@@ -6,6 +6,7 @@
 #include "Editor/IEditor.h"
 #include "Editor/IEditorSelection.h"
 #include "EntityInspector/IEntityInspector.h"
+#include <boost/serialization/strong_typedef.hpp>
 
 namespace Dwarf
 {
@@ -21,7 +22,7 @@ namespace Dwarf
     std::shared_ptr<IEntityInspector> m_EntityInspector;
 
   public:
-    InspectorWindow(std::optional<SerializedModule>   serializedModule,
+    InspectorWindow(SerializedModule                  serializedModule,
                     std::shared_ptr<IEditorSelection> selection,
                     std::shared_ptr<IAssetDatabase>   assetDatabase,
                     std::shared_ptr<IAssetInspector>  assetInspector,

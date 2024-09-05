@@ -1,5 +1,8 @@
+#include "Core/Rendering/PreviewRenderer/MaterialPreview/IMaterialPreview.h"
+#include "Core/Rendering/PreviewRenderer/ModelPreview/IModelPreview.h"
+#include "Core/Rendering/PreviewRenderer/MaterialPreview/MaterialPreview.h"
+#include "Core/Rendering/PreviewRenderer/ModelPreview/ModelPreview.h"
 #include "Editor/LoadedScene/LoadedScene.h"
-#include "Editor/Modules/AssetBrowser/AssetBrowserWindow.h"
 #include "pch.h"
 #include "Core/Asset/Creation/Material/IMaterialCreator.h"
 #include "Core/Asset/Creation/Material/MaterialCreator.h"
@@ -129,11 +132,12 @@ namespace Dwarf
         const auto injector = boost::di::make_injector(
           boost::di::bind<IDwarfLogger>.to(logger),
           boost::di::bind<GraphicsApi>.to(selectedProject.graphicsApi),
+          boost::di::bind<AssetDirectoryPath>.to(
+            AssetDirectoryPath(selectedProject.path.t / "Assets")),
+          boost::di::bind<ICameraFactory>.to<CameraFactory>(),
           boost::di::bind<IEditorStats>.to<EditorStats>(),
           boost::di::bind<IInputManager>.to<InputManager>(),
           boost::di::bind<IGraphicsContextFactory>.to<GraphicsContextFactory>(),
-          boost::di::bind<AssetDirectoryPath>.to(
-            AssetDirectoryPath(selectedProject.path.t / "Assets")),
           boost::di::bind<ProjectPath>.to(selectedProject.path),
           boost::di::bind<IAssetDirectoryListener>.to<AssetDirectoryListener>(),
           boost::di::bind<IAssetMetadata>.to<AssetMetadata>(),
@@ -142,14 +146,13 @@ namespace Dwarf
           boost::di::bind<IShaderRecompiler>.to<ShaderRecompiler>(),
           boost::di::bind<ITextureFactory>.to<TextureFactory>(),
           boost::di::bind<IImageFileLoader>.to<ImageFileLoader>(),
-          boost::di::bind<IShaderParameterCollectionFactory>.to<ShaderParameterCollectionFactory>(),
           boost::di::bind<IImGuiLayerFactory>.to<ImGuiLayerFactory>(),
           boost::di::bind<IProjectSettings>.to<ProjectSettings>(),
           boost::di::bind<ISceneSettingsFactory>.to<SceneSettingsFactory>(),
           boost::di::bind<IScenePropertiesFactory>.to<ScenePropertiesFactory>(),
           boost::di::bind<ISceneFactory>.to<SceneFactory>(),
-          boost::di::bind<ICameraFactory>.to<CameraFactory>(),
           boost::di::bind<ILoadedScene>.to<LoadedScene>(),
+          boost::di::bind<IEditorSelection>.to<EditorSelection>(),
           boost::di::bind<WindowProps>.to(WindowProps(
             "Dwarf Engine", 1100, 600, selectedProject.graphicsApi)),
 #ifdef _WIN32
@@ -157,37 +160,29 @@ namespace Dwarf
 #elif __linux__
           boost::di::bind<IWindow>.to<LinuxWindow>(),
 #endif
+          boost::di::bind<IFramebufferFactory>.to<FramebufferFactory>(),
+          boost::di::bind<IShaderParameterCollectionFactory>.to<ShaderParameterCollectionFactory>(),
           boost::di::bind<IShaderSourceCollectionFactory>.to<ShaderSourceCollectionFactory>(),
           boost::di::bind<IShaderFactory>.to<ShaderFactory>(),
           boost::di::bind<IMaterialFactory>.to<MaterialFactory>(),
           boost::di::bind<IMaterialIO>.to<MaterialIO>(),
           boost::di::bind<IAssetDatabase>.to<AssetDatabase>(),
           boost::di::bind<ISceneIO>.to<SceneIO>(),
-          boost::di::bind<CreateGuiModuleInjector>.to(
-            []()
-            {
-              return boost::di::make_injector(
-                boost::di::bind<AssetBrowserWindow>.to<AssetBrowserWindow>(),
-                boost::di::bind<DebugWindow>.to<DebugWindow>(),
-                boost::di::bind<PerformanceWindow>.to<PerformanceWindow>(),
-                boost::di::bind<SceneHierarchyWindow>.to<SceneHierarchyWindow>(),
-                boost::di::bind<SceneViewerWindow>.to<SceneViewerWindow>(),
-                boost::di::bind<InspectorWindow>.to<InspectorWindow>());
-            }),
-          boost::di::bind<IGuiModuleFactory>.to<GuiModuleFactory>(),
           boost::di::bind<IMaterialCreator>.to<MaterialCreator>(),
-          boost::di::bind<IAssetInspector>.to<AssetInspector>(),
-          boost::di::bind<IEntityInspector>.to<EntityInspector>(),
-          boost::di::bind<IEditorSelection>.to<EditorSelection>(),
+
           boost::di::bind<IRendererApiFactory>.to<RendererApiFactory>(),
           boost::di::bind<IRenderingPipelineFactory>.to<RenderingPipelineFactory>(),
-          boost::di::bind<IFramebufferFactory>.to<FramebufferFactory>(),
+          boost::di::bind<IMaterialPreview>.to<MaterialPreview>(),
+          boost::di::bind<IModelPreview>.to<ModelPreview>(),
+          boost::di::bind<IAssetInspector>.to<AssetInspector>(),
+          boost::di::bind<IEntityInspector>.to<EntityInspector>(),
           boost::di::bind<SerializedView>.to(SerializedView(std::nullopt)),
+          boost::di::bind<IGuiModuleFactory>.to<GuiModuleFactory>(),
           boost::di::bind<IEditorView>.to<EditorView>(),
           boost::di::bind<IEditor>.to<Editor>());
 
-        auto editor = injector.create<Dwarf::Editor>();
-        shouldClose = !editor.Run();
+        auto editor = injector.create<Dwarf::AssetInspector>();
+        //  shouldClose = !editor.Run();
 
         logger->LogInfo(Log("Editor finished running.", "DwarfEngine"));
         logger->LogInfo(

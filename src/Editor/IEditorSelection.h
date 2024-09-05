@@ -33,7 +33,7 @@ namespace Dwarf
     virtual std::vector<Entity>&
     GetSelectedEntities() = 0;
     virtual const std::filesystem::path&
-    GetAssetPath() const = 0;
+    GetSelectedAssetPath() const = 0;
     virtual CURRENT_SELECTION_TYPE
     GetSelectionType() const = 0;
   };

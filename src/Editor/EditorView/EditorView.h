@@ -1,15 +1,14 @@
 #pragma once
+#include "pch.h"
 #include "Core/Asset/Creation/Material/IMaterialCreator.h"
 #include "Core/Base.h"
 #include "Editor/EditorView/IEditorView.h"
 #include "Core/Asset/Database/IAssetDatabase.h"
-#include "Core/Rendering/Material/IO/IMaterialIO.h"
 #include "Core/Scene/IO/ISceneIO.h"
 #include "Editor/LoadedScene/ILoadedScene.h"
 #include "Editor/Modules/IGuiModule.h"
 #include "Editor/Stats/IEditorStats.h"
 #include "Project/IProjectSettings.h"
-#include "pch.h"
 #include "Window/IWindow.h"
 #include "Editor/Modules/IGuiModuleFactory.h"
 
@@ -57,12 +56,12 @@ namespace Dwarf
     explicit EditorView(GraphicsApi                        graphicsApi,
                         std::shared_ptr<IProjectSettings>  projectSettings,
                         SerializedView                     serializedView,
+                        std::shared_ptr<ILoadedScene>      loadedScene,
                         std::shared_ptr<IWindow>           window,
                         std::shared_ptr<IGuiModuleFactory> guiModuleFactory,
-                        std::shared_ptr<IMaterialCreator>  materialCreator,
                         std::shared_ptr<ISceneIO>          sceneIO,
                         std::shared_ptr<IAssetDatabase>    assetDatabase,
-                        std::shared_ptr<ILoadedScene>      loadedScene,
+                        std::shared_ptr<IMaterialCreator>  materialCreator,
                         std::shared_ptr<IEditorStats>      editorStats);
 
     /// @brief Initializes the view.
