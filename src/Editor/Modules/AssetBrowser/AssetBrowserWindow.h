@@ -1,8 +1,7 @@
 #pragma once
 
-#include "Core/Asset/AssetTypes.h"
+#include "Core/Asset/Database/IAssetDatabase.h"
 #include "Core/Asset/Creation/Material/IMaterialCreator.h"
-#include "Core/Asset/Database/AssetDatabase.h"
 #include "Core/Rendering/Material/IO/IMaterialIO.h"
 #include "Core/Asset/Metadata/IAssetMetadata.h"
 #include "Core/Rendering/Material/IMaterialFactory.h"
@@ -123,6 +122,7 @@ namespace Dwarf
 
   public:
     AssetBrowserWindow(SerializedModule                  serializedModule,
+                       AssetDirectoryPath                assetDirectoryPath,
                        std::shared_ptr<ITextureFactory>  textureFactory,
                        std::shared_ptr<IAssetDatabase>   assetDatabase,
                        std::shared_ptr<IInputManager>    inputManager,

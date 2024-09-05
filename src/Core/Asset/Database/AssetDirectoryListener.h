@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core/Asset/AssetTypes.h"
+#include "Core/Asset/Database/IAssetDatabase.h"
 #include "Core/Asset/Database/IAssetDirectoryListener.h"
 #include <efsw/efsw.hpp>
 
@@ -36,7 +36,7 @@ namespace Dwarf
 
   public:
     AssetDirectoryListener(AssetDirectoryPath assetDirectoryPath);
-    ~AssetDirectoryListener() override;
+    ~AssetDirectoryListener() override = default;
 
     void
     handleFileAction(efsw::WatchID      watchid,

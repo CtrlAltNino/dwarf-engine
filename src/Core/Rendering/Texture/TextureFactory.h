@@ -32,7 +32,7 @@ namespace Dwarf
     TextureFactory(GraphicsApi                       api,
                    std::shared_ptr<IImageFileLoader> loader,
                    std::shared_ptr<IDwarfLogger>     logger);
-
+    ~TextureFactory() override = default;
     std::shared_ptr<ITexture>
     FromPath(std::filesystem::path texturePath) override;
 

@@ -9,7 +9,8 @@ namespace Dwarf
   {
   public:
     // Constructor
-    MaterialFactory(std::shared_ptr<IShaderFactory> shaderFactory);
+    BOOST_DI_INJECT(MaterialFactory,
+                    std::shared_ptr<IShaderFactory> shaderFactory);
 
     // Destructor
     ~MaterialFactory();

@@ -27,9 +27,9 @@ namespace Dwarf
     , m_MaterialIO(materialIO)
     , m_Registry(std::make_shared<entt::registry>())
   {
-    if (!FileHandler::DirectoyExists(m_AssetDirectoryPath))
+    if (!FileHandler::DirectoyExists(m_AssetDirectoryPath.t))
     {
-      FileHandler::CreateDirectoryAt(m_AssetDirectoryPath);
+      FileHandler::CreateDirectoryAt(m_AssetDirectoryPath.t);
     }
 
     m_AssetDirectoryListener->registerAddFileCallback(
@@ -89,7 +89,7 @@ namespace Dwarf
     // ComputeShader::Init();
     // Material::Init();
     // Mesh::Init();
-    RecursiveImport(m_AssetDirectoryPath);
+    RecursiveImport(m_AssetDirectoryPath.t);
   }
 
   std::shared_ptr<UUID>
@@ -295,7 +295,7 @@ namespace Dwarf
   std::filesystem::path
   AssetDatabase::GetAssetDirectoryPath()
   {
-    return m_AssetDirectoryPath;
+    return m_AssetDirectoryPath.t;
   }
 
   void

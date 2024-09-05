@@ -1,3 +1,4 @@
+#include "IDwarfLogger.h"
 #include "pch.h"
 #include "DwarfLogger.h"
 #include <spdlog/common.h>
@@ -5,8 +6,8 @@
 
 namespace Dwarf
 {
-  DwarfLogger::DwarfLogger()
-    : m_Logger(spdlog::stdout_color_mt("Dwarf"))
+  DwarfLogger::DwarfLogger(LogName logName)
+    : m_Logger(spdlog::stdout_color_mt(logName.t))
   {
   }
 
@@ -45,6 +46,6 @@ namespace Dwarf
       log.Color.has_value()
         ? fmt::format(
             fg(fmt::color::red), "[{}] {}", log.Scope.c_str(), log.Message)
-        : fmt::format("[{}] {}", log.Scope.c_str(), log.Message));
+        : fmt::format("[{}] {}", log.Scope.c_str(), log.Scope));
   }
 }

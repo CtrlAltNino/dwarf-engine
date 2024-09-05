@@ -1186,64 +1186,61 @@ namespace Dwarf
   {
     if (m_AssetDatabase->Exists(assetPath))
     {
+      using enum ASSET_TYPE;
       switch (m_AssetDatabase->GetAssetType(assetPath.extension().string()))
       {
         using enum ASSET_TYPE;
-        switch (m_AssetDatabase->GetAssetType(assetPath.extension().string()))
-        {
-          using enum ASSET_TYPE;
-          case MODEL:
-            RenderAssetInspector(
-              m_AssetDatabase->Retrieve<ModelAsset>(assetPath));
-            break;
-          case TEXTURE:
-            RenderAssetInspector(
-              m_AssetDatabase->Retrieve<TextureAsset>(assetPath));
-            break;
-          case SCENE:
-            RenderAssetInspector(
-              m_AssetDatabase->Retrieve<SceneAsset>(assetPath));
-            break;
-          case MATERIAL:
-            RenderAssetInspector(
-              m_AssetDatabase->Retrieve<MaterialAsset>(assetPath));
-            break;
-          case VERTEX_SHADER:
-            RenderAssetInspector(
-              m_AssetDatabase->Retrieve<VertexShaderAsset>(assetPath));
-            break;
-          case TESC_SHADER:
-            RenderAssetInspector(
-              m_AssetDatabase->Retrieve<TessellationControlShaderAsset>(
-                assetPath));
-            break;
-          case TESE_SHADER:
-            RenderAssetInspector(
-              m_AssetDatabase->Retrieve<TessellationEvaluationShaderAsset>(
-                assetPath));
-            break;
-          case GEOMETRY_SHADER:
-            RenderAssetInspector(
-              m_AssetDatabase->Retrieve<GeometryShaderAsset>(assetPath));
-            break;
-          case FRAGMENT_SHADER:
-            RenderAssetInspector(
-              m_AssetDatabase->Retrieve<FragmentShaderAsset>(assetPath));
-            break;
-          case HLSL_SHADER:
-            RenderAssetInspector(
-              m_AssetDatabase->Retrieve<HlslShaderAsset>(assetPath));
-            break;
-          case COMPUTE_SHADER:
-            RenderAssetInspector(
-              m_AssetDatabase->Retrieve<ComputeShaderAsset>(assetPath));
-            break;
-          case UNKNOWN:
-            RenderAssetInspector(
-              m_AssetDatabase->Retrieve<UnknownAsset>(assetPath));
-            break;
-          default: break;
-        }
+        case MODEL:
+          RenderAssetInspector(
+            m_AssetDatabase->Retrieve<ModelAsset>(assetPath));
+          break;
+        case TEXTURE:
+          RenderAssetInspector(
+            m_AssetDatabase->Retrieve<TextureAsset>(assetPath));
+          break;
+        case SCENE:
+          RenderAssetInspector(
+            m_AssetDatabase->Retrieve<SceneAsset>(assetPath));
+          break;
+        case MATERIAL:
+          RenderAssetInspector(
+            m_AssetDatabase->Retrieve<MaterialAsset>(assetPath));
+          break;
+        case VERTEX_SHADER:
+          RenderAssetInspector(
+            m_AssetDatabase->Retrieve<VertexShaderAsset>(assetPath));
+          break;
+        case TESC_SHADER:
+          RenderAssetInspector(
+            m_AssetDatabase->Retrieve<TessellationControlShaderAsset>(
+              assetPath));
+          break;
+        case TESE_SHADER:
+          RenderAssetInspector(
+            m_AssetDatabase->Retrieve<TessellationEvaluationShaderAsset>(
+              assetPath));
+          break;
+        case GEOMETRY_SHADER:
+          RenderAssetInspector(
+            m_AssetDatabase->Retrieve<GeometryShaderAsset>(assetPath));
+          break;
+        case FRAGMENT_SHADER:
+          RenderAssetInspector(
+            m_AssetDatabase->Retrieve<FragmentShaderAsset>(assetPath));
+          break;
+        case HLSL_SHADER:
+          RenderAssetInspector(
+            m_AssetDatabase->Retrieve<HlslShaderAsset>(assetPath));
+          break;
+        case COMPUTE_SHADER:
+          RenderAssetInspector(
+            m_AssetDatabase->Retrieve<ComputeShaderAsset>(assetPath));
+          break;
+        case UNKNOWN:
+          RenderAssetInspector(
+            m_AssetDatabase->Retrieve<UnknownAsset>(assetPath));
+          break;
+        default: break;
       }
     }
     else

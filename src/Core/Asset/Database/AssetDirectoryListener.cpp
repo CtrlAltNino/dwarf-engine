@@ -1,6 +1,4 @@
 #include "AssetDirectoryListener.h"
-#include "Core/Asset/AssetTypes.h"
-#include "Core/Rendering/Shader/IShader.h"
 
 namespace Dwarf
 {
@@ -16,7 +14,6 @@ namespace Dwarf
     // Start watching asynchronously the directories
     m_FileWatcher.watch();
   }
-  AssetDirectoryListener::~AssetDirectoryListener() {}
 
   void
   AssetDirectoryListener::registerAddFileCallback(

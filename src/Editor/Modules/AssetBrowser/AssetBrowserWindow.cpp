@@ -1,7 +1,6 @@
-#include "Core/Asset/AssetTypes.h"
 #include "pch.h"
 #include "Editor/Modules/AssetBrowser/AssetBrowserWindow.h"
-#include "Input/InputManager.h"
+#include "Utilities/FileHandler.h"
 // #include "Core/Scene/SceneUtilities.h"
 #include <cstring>
 #include <memory>
@@ -10,6 +9,7 @@ namespace Dwarf
 {
   AssetBrowserWindow::AssetBrowserWindow(
     SerializedModule                  serializedModule,
+    AssetDirectoryPath                assetDirectoryPath,
     std::shared_ptr<ITextureFactory>  textureFactory,
     std::shared_ptr<IAssetDatabase>   assetDatabase,
     std::shared_ptr<IInputManager>    inputManager,
@@ -22,7 +22,7 @@ namespace Dwarf
                  ModuleType(MODULE_TYPE::ASSET_BROWSER),
                  ModuleID(std::make_shared<UUID>(
                    serializedModule.t.value()["id"].get<std::string>())))
-    , m_AssetDirectoryPath(assetDatabase->GetAssetDirectoryPath())
+    , m_AssetDirectoryPath(assetDirectoryPath)
     , m_CurrentDirectory(
         serializedModule.t.value()["openedPath"].get<std::string>())
     , m_TextureFactory(textureFactory)
@@ -190,10 +190,10 @@ namespace Dwarf
     {
       if (ImGui::IsItemClicked())
       {
-        m_CurrentDirectory = m_AssetDirectoryPath;
+        m_CurrentDirectory = m_AssetDirectoryPath.t;
       }
       ImGui::Indent(8.0f);
-      RenderDirectoryLevel(m_AssetDirectoryPath);
+      RenderDirectoryLevel(m_AssetDirectoryPath.t);
       ImGui::Unindent(8.0f);
     }
     ImGui::End();
@@ -331,7 +331,8 @@ namespace Dwarf
     for (auto const& directoryEntry : combinedEntries)
     {
       const auto& path = directoryEntry.path();
-      auto relativePath = std::filesystem::relative(path, m_AssetDirectoryPath);
+      auto        relativePath =
+        std::filesystem::relative(path, m_AssetDirectoryPath.t);
 
       if (!(directoryEntry.path().has_extension() &&
             directoryEntry.path().extension() ==

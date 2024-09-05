@@ -5,9 +5,11 @@
 #include <entt/entity/fwd.hpp>
 #include <filesystem>
 #include <typeindex>
+#include <boost/serialization/strong_typedef.hpp>
 
 namespace Dwarf
 {
+  BOOST_STRONG_TYPEDEF(std::filesystem::path, AssetDirectoryPath);
   /**
    * @brief Enum class representing the type of an asset.
    */

@@ -5,12 +5,12 @@
 namespace Dwarf
 {
   MaterialCreator::MaterialCreator(
-    std::shared_ptr<IAssetDatabase>   assetDatabase,
+    AssetDirectoryPath                assetDirectoryPath,
     std::shared_ptr<IMaterialFactory> materialFactory,
     std::shared_ptr<IMaterialIO>      materialIO)
-    : m_assetDatabase(assetDatabase)
-    , m_materialFactory(materialFactory)
-    , m_materialIO(materialIO)
+    : m_AssetDirectoryPath(assetDirectoryPath)
+    , m_MaterialFactory(materialFactory)
+    , m_MaterialIO(materialIO)
   {
   }
 
@@ -19,11 +19,10 @@ namespace Dwarf
     std::optional<std::filesystem::path> directory)
   {
     std::shared_ptr<IMaterial> newMaterial =
-      m_materialFactory->CreateDefaultMaterial();
+      m_MaterialFactory->CreateDefaultMaterial();
 
-    std::filesystem::path path = directory.has_value()
-                                   ? directory.value()
-                                   : m_assetDatabase->GetAssetDirectoryPath();
+    std::filesystem::path path =
+      directory.has_value() ? directory.value() : m_AssetDirectoryPath.t;
 
     std::filesystem::path assetPath = path / "New Material.dmat";
 
@@ -35,6 +34,6 @@ namespace Dwarf
         path / ("New Material (" + std::to_string(counter) + ").dmat");
     }
 
-    m_materialIO->SaveMaterial(newMaterial, assetPath);
+    m_MaterialIO->SaveMaterial(newMaterial, assetPath);
   }
 } // namespace Dwarf

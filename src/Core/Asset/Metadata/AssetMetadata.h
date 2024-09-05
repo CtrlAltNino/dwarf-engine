@@ -8,6 +8,8 @@ namespace Dwarf
   class AssetMetadata : public IAssetMetadata
   {
   public:
+    AssetMetadata() = default;
+    ~AssetMetadata() override = default;
     /// @brief Retrieves the meta data from an asset path.
     /// @param assetPath Path to an asset.
     /// @return Metadata in JSON.

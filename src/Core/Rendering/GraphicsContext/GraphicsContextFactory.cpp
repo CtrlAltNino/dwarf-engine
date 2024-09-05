@@ -14,8 +14,8 @@ namespace Dwarf
     : m_Api(api)
   {
   }
-  std::unique_ptr<IGraphicsContext>
-  GraphicsContextFactory::Create(SDL_Window* window)
+  std::shared_ptr<IGraphicsContext>
+  GraphicsContextFactory::Create(SDL_Window* window) const
   {
     switch (m_Api)
     {
@@ -27,7 +27,7 @@ namespace Dwarf
         break;
       case GraphicsApi::Metal: break;
       case GraphicsApi::OpenGL:
-        return std::make_unique<OpenGLContext>(window);
+        return std::make_shared<OpenGLContext>(window);
         break;
       case GraphicsApi::Vulkan:
         // return
@@ -38,7 +38,7 @@ namespace Dwarf
       case GraphicsApi::D3D12: break;
       case GraphicsApi::Metal: break;
       case GraphicsApi::OpenGL:
-        return std::make_unique<OpenGLContext>(window);
+        return std::make_shared<OpenGLContext>(window);
         break;
       case GraphicsApi::Vulkan:
         // return std::make_unique<VulkanContext>(static_cast<SDL_Window

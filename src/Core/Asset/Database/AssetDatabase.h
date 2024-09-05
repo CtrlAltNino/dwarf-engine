@@ -13,7 +13,6 @@
 #include "Core/Asset/Shader/IShaderRecompiler.h"
 #include "Core/Asset/Database/AssetReference.h"
 #include "Core/Asset/Database/IAssetDirectoryListener.h"
-#include "Core/Asset/AssetTypes.h"
 
 #include "Core/Rendering/Shader/IShader.h"
 #include "Utilities/FileHandler.h"
@@ -212,7 +211,7 @@ namespace Dwarf
       if (FileHandler::FileExists(metaDataPath.string().c_str()))
       {
         nlohmann::json metaData = m_AssetMetadata->GetMetadata(assetPath);
-        id = UUID(metaData["guid"]);
+        id = UUID(metaData["guid"].get<std::string>());
       }
       else
       {

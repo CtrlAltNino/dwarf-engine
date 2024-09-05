@@ -1,24 +1,25 @@
 #pragma once
 
 #include "IDwarfLogger.h"
+#include <boost/serialization/strong_typedef.hpp>
 #include <spdlog/spdlog.h>
 
 namespace Dwarf
 {
+  BOOST_STRONG_TYPEDEF(std::string, LogName)
   /**
    * @brief Default logger implementation.
    */
   class DwarfLogger : public IDwarfLogger
   {
   private:
-    std::string                     m_Scope;
     std::shared_ptr<spdlog::logger> m_Logger;
 
     void
     LogMessage(spdlog::level::level_enum log_level, const Log& log) const;
 
   public:
-    DwarfLogger();
+    BOOST_DI_INJECT(DwarfLogger, LogName logName);
     ~DwarfLogger() override;
 
     /**

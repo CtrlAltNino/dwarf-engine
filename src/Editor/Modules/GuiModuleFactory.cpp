@@ -1,6 +1,4 @@
 #include "GuiModuleFactory.h"
-#include "Core/Asset/AssetTypes.h"
-#include "Editor/IEditor.h"
 #include "Editor/LoadedScene/ILoadedScene.h"
 #include "Editor/Modules/AssetBrowser/AssetBrowserWindow.h"
 #include "Editor/Modules/DebugInformation/DebugWindow.h"
@@ -18,25 +16,24 @@
 namespace Dwarf
 {
   GuiModuleFactory::GuiModuleFactory(
-    // AssetDirectoryPath assetDirectoryPath,
-    // std::shared_ptr<ILoadedScene>        loadedScene,
-    // std::shared_ptr<IEditorSelection> editorSelection,
-    // std::shared_ptr<IAssetMetadata>      assetMetadata,
-    // std::shared_ptr<IEditorStats>        editorStats,
-    // std::shared_ptr<ITextureFactory>     textureFactory,
-    // std::shared_ptr<IFramebufferFactory> framebufferFactory,
-    // std::shared_ptr<ICameraFactory>            cameraFactory,
-    // std::shared_ptr<IInputManager>             inputManager,
-    // std::shared_ptr<IMaterialFactory>          materialFactory,
-    // std::shared_ptr<IMaterialIO>               materialIO,
-    // std::shared_ptr<IAssetDatabase>            assetDatabase,
-    // std::shared_ptr<IRenderingPipelineFactory> renderingPipelineFactory,
-    // std::shared_ptr<IMaterialCreator>          materialCreator,
-    std::shared_ptr<IAssetInspector> assetInspector
-    // std::shared_ptr<IEntityInspector> entityInspector
-    )
+    AssetDirectoryPath                         assetDirectoryPath,
+    std::shared_ptr<IInputManager>             inputManager,
+    std::shared_ptr<ICameraFactory>            cameraFactory,
+    std::shared_ptr<IMaterialFactory>          materialFactory,
+    std::shared_ptr<IMaterialIO>               materialIO,
+    std::shared_ptr<ILoadedScene>              loadedScene,
+    std::shared_ptr<IEditorSelection>          editorSelection,
+    std::shared_ptr<IAssetMetadata>            assetMetadata,
+    std::shared_ptr<IEditorStats>              editorStats,
+    std::shared_ptr<ITextureFactory>           textureFactory,
+    std::shared_ptr<IFramebufferFactory>       framebufferFactory,
+    std::shared_ptr<IAssetDatabase>            assetDatabase,
+    std::shared_ptr<IRenderingPipelineFactory> renderingPipelineFactory,
+    std::shared_ptr<IMaterialCreator>          materialCreator,
+    std::shared_ptr<IAssetInspector>           assetInspector,
+    std::shared_ptr<IEntityInspector>          entityInspector)
     : m_CreateInjector(
-        /*[&assetDirectoryPath,
+        [&assetDirectoryPath,
          &textureFactory,
          &assetDatabase,
          &inputManager,
@@ -71,8 +68,7 @@ namespace Dwarf
               renderingPipelineFactory),
             boost::di::bind<IFramebufferFactory>.to(framebufferFactory),
             boost::di::bind<ICameraFactory>.to(cameraFactory));
-        }*/
-        nullptr)
+        })
   {
   }
 

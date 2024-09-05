@@ -65,7 +65,7 @@ namespace Dwarf
       {
         availableAssets.push_back(entity);
         if (assetID &&
-            (view.template get<IDComponent>(entity).ID.get() == assetID))
+            (view.template get<IDComponent>(entity).ID.get() == assetID.get()))
         {
           selectedAsset = count;
         }

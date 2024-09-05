@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Core/Base.h"
-#include "Core/Rendering/Texture/ITextureFactory.h"
 #include "IFramebufferFactory.h"
+#include "Core/Rendering/Texture/ITextureFactory.h"
 
 namespace Dwarf
 {
@@ -11,6 +11,7 @@ namespace Dwarf
   public:
     FramebufferFactory(GraphicsApi                      api,
                        std::shared_ptr<ITextureFactory> textureFactory);
+    ~FramebufferFactory() override = default;
 
     virtual std::shared_ptr<IFramebuffer>
     Create(const FramebufferSpecification& spec) override;

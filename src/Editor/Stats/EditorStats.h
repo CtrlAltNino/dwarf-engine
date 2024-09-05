@@ -14,6 +14,7 @@ namespace Dwarf
 
   public:
     EditorStats() = default;
+    ~EditorStats() override = default;
 
     const TimeStamp&
     GetCurrentTimeStamp() const override;

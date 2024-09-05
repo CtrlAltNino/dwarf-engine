@@ -9,8 +9,8 @@ namespace Dwarf
   {
   public:
     GraphicsContextFactory(GraphicsApi api);
-    virtual std::unique_ptr<IGraphicsContext>
-    Create(SDL_Window* window) override;
+    virtual std::shared_ptr<IGraphicsContext>
+    Create(SDL_Window* window) const override;
 
   private:
     GraphicsApi m_Api;

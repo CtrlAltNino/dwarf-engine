@@ -10,14 +10,15 @@ namespace Dwarf
   class MaterialCreator : public IMaterialCreator
   {
   private:
-    std::shared_ptr<IAssetDatabase>   m_assetDatabase;
-    std::shared_ptr<IMaterialFactory> m_materialFactory;
-    std::shared_ptr<IMaterialIO>      m_materialIO;
+    AssetDirectoryPath                m_AssetDirectoryPath;
+    std::shared_ptr<IMaterialFactory> m_MaterialFactory;
+    std::shared_ptr<IMaterialIO>      m_MaterialIO;
 
   public:
-    MaterialCreator(std::shared_ptr<IAssetDatabase>   assetDatabase,
+    MaterialCreator(AssetDirectoryPath                assetDirectoryPath,
                     std::shared_ptr<IMaterialFactory> materialFactory,
                     std::shared_ptr<IMaterialIO>      materialIO);
+    ~MaterialCreator() override = default;
     void
     CreateMaterialAsset(
       std::optional<std::filesystem::path> assetPath) override;

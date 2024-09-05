@@ -11,8 +11,8 @@ namespace Dwarf
   ProjectSettings::ProjectSettings(ProjectPath                   path,
                                    std::shared_ptr<IDwarfLogger> logger)
     : m_Logger(logger)
+    , m_Path(path)
   {
-    m_Path = path;
     Load();
   }
 
@@ -23,7 +23,7 @@ namespace Dwarf
       Log("Loading project settings from [" + m_Path.t.string() + "]",
           "ProjectSettings"));
 
-    if (!FileHandler::FileExists(m_Path))
+    if (!FileHandler::FileExists(m_Path.t))
     {
       m_Logger->LogError(Log("Project settings file does not exist at [" +
                                m_Path.t.string() + "]",
@@ -33,7 +33,7 @@ namespace Dwarf
 
     // Loading project settings from file
     nlohmann::json projectSettings =
-      nlohmann::json::parse(FileHandler::ReadFile(m_Path));
+      nlohmann::json::parse(FileHandler::ReadFile(m_Path.t));
 
     if (projectSettings.contains(PROJECT_NAME_KEY))
     {
@@ -95,7 +95,7 @@ namespace Dwarf
       m_LastOpenedScene == nullptr ? "" : m_LastOpenedScene->ToString();
     projectSettings[PROJECT_LAST_OPENED_DATE_KEY] = m_LastOpenedTimeStamp;
 
-    FileHandler::WriteToFile(m_Path, projectSettings.dump(2));
+    FileHandler::WriteToFile(m_Path.t, projectSettings.dump(2));
   }
 
   void

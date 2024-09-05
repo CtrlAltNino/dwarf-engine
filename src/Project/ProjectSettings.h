@@ -46,7 +46,10 @@ namespace Dwarf
     LoadStatus                    m_LoadStatus;
 
   public:
-    ProjectSettings(ProjectPath path, std::shared_ptr<IDwarfLogger> logger);
+    BOOST_DI_INJECT(ProjectSettings,
+                    ProjectPath                   path,
+                    std::shared_ptr<IDwarfLogger> logger);
+    ~ProjectSettings() override = default;
 
     void
     Load();
