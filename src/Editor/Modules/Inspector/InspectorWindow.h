@@ -22,6 +22,11 @@ namespace Dwarf
     std::shared_ptr<IEntityInspector> m_EntityInspector;
 
   public:
+    InspectorWindow(std::shared_ptr<IEditorSelection> selection,
+                    std::shared_ptr<IAssetDatabase>   assetDatabase,
+                    std::shared_ptr<IAssetInspector>  assetInspector,
+                    std::shared_ptr<IEntityInspector> entityInspector);
+
     InspectorWindow(SerializedModule                  serializedModule,
                     std::shared_ptr<IEditorSelection> selection,
                     std::shared_ptr<IAssetDatabase>   assetDatabase,

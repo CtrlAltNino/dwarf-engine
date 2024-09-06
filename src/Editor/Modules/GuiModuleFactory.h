@@ -1,12 +1,14 @@
 #pragma once
 
-#include "Editor/Modules/AssetBrowser/AssetBrowserWindow.h"
-#include "Editor/Modules/DebugInformation/DebugWindow.h"
 #include "Editor/Modules/IGuiModuleFactory.h"
-#include "Editor/Modules/Inspector/InspectorWindow.h"
-#include "Editor/Modules/Performance/PerformanceWindow.h"
-#include "Editor/Modules/SceneHierarchy/SceneHierarchyWindow.h"
-#include "Editor/Modules/SceneViewer/SceneViewerWindow.h"
+#include "AssetBrowser/IAssetBrowserWindowFactory.h"
+#include "Editor/Modules/AssetBrowser/IAssetBrowserWindowFactory.h"
+#include "Editor/Modules/DebugInformation/IDebugWindowFactory.h"
+#include "Editor/Modules/Inspector/IInspectorWindowFactory.h"
+#include "Editor/Modules/Performance/IPerformanceWindowFactory.h"
+#include "Editor/Modules/SceneHierarchy/ISceneHierarchyWindowFactory.h"
+#include "Editor/Modules/SceneViewer/ISceneViewerWindowFactory.h"
+
 #include <boost/di.hpp>
 #include <functional>
 #include <boost/serialization/strong_typedef.hpp>
@@ -16,38 +18,27 @@ namespace Dwarf
   class GuiModuleFactory : public IGuiModuleFactory
   {
   private:
-    std::function<boost::di::injector<AssetBrowserWindow,
-                                      DebugWindow,
-                                      PerformanceWindow,
-                                      SceneHierarchyWindow,
-                                      SceneViewerWindow,
-                                      InspectorWindow>()>
-      m_CreateInjector;
+    std::shared_ptr<IAssetBrowserWindowFactory>   m_AssetBrowserWindowFactory;
+    std::shared_ptr<IDebugWindowFactory>          m_DebugWindowFactory;
+    std::shared_ptr<IPerformanceWindowFactory>    m_PerformanceWindowFactory;
+    std::shared_ptr<ISceneHierarchyWindowFactory> m_SceneHierarchyWindowFactory;
+    std::shared_ptr<ISceneViewerWindowFactory>    m_SceneViewerWindowFactory;
+    std::shared_ptr<IInspectorWindowFactory>      m_InspectorWindowFactory;
 
   public:
     GuiModuleFactory(
-      AssetDirectoryPath                         assetDirectoryPath,
-      std::shared_ptr<IInputManager>             inputManager,
-      std::shared_ptr<ICameraFactory>            cameraFactory,
-      std::shared_ptr<IMaterialFactory>          materialFactory,
-      std::shared_ptr<IMaterialIO>               materialIO,
-      std::shared_ptr<ILoadedScene>              loadedScene,
-      std::shared_ptr<IEditorSelection>          editorSelection,
-      std::shared_ptr<IAssetMetadata>            assetMetadata,
-      std::shared_ptr<IEditorStats>              editorStats,
-      std::shared_ptr<ITextureFactory>           textureFactory,
-      std::shared_ptr<IFramebufferFactory>       framebufferFactory,
-      std::shared_ptr<IAssetDatabase>            assetDatabase,
-      std::shared_ptr<IRenderingPipelineFactory> renderingPipelineFactory,
-      std::shared_ptr<IMaterialCreator>          materialCreator,
-      std::shared_ptr<IAssetInspector>           assetInspector,
-      std::shared_ptr<IEntityInspector>          entityInspector);
+      std::shared_ptr<IAssetBrowserWindowFactory>   assetBrowserWindowFactory,
+      std::shared_ptr<IDebugWindowFactory>          debugWindowFactory,
+      std::shared_ptr<IPerformanceWindowFactory>    performanceWindowFactory,
+      std::shared_ptr<ISceneHierarchyWindowFactory> sceneHierarchyWindowFactory,
+      std::shared_ptr<ISceneViewerWindowFactory>    sceneViewerWindowFactory,
+      std::shared_ptr<IInspectorWindowFactory>      inspectorWindowFactory);
 
     ~GuiModuleFactory() override = default;
     std::shared_ptr<IGuiModule>
-    CreateGuiModule(MODULE_TYPE type) override;
+    CreateGuiModule(MODULE_TYPE type) const override;
 
     std::shared_ptr<IGuiModule>
-    CreateGuiModule(nlohmann::json serializedModule) override;
+    CreateGuiModule(SerializedModule serializedModule) const override;
   };
 } // namespace Dwarf

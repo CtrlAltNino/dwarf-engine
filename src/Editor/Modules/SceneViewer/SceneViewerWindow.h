@@ -114,6 +114,15 @@ namespace Dwarf
 
   public:
     SceneViewerWindow(
+      std::shared_ptr<ICameraFactory>            cameraFactory,
+      std::shared_ptr<IFramebufferFactory>       framebufferFactory,
+      std::shared_ptr<IEditorStats>              editorStats,
+      std::shared_ptr<IInputManager>             inputManager,
+      std::shared_ptr<ILoadedScene>              loadedScene,
+      std::shared_ptr<IEditorSelection>          editorSelection,
+      std::shared_ptr<IRenderingPipelineFactory> renderingPipelineFactory);
+
+    SceneViewerWindow(
       SerializedModule                           serializedModule,
       std::shared_ptr<ICameraFactory>            cameraFactory,
       std::shared_ptr<IFramebufferFactory>       framebufferFactory,

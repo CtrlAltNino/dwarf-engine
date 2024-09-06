@@ -8,6 +8,44 @@
 namespace Dwarf
 {
   SceneViewerWindow::SceneViewerWindow(
+    std::shared_ptr<ICameraFactory>            cameraFactory,
+    std::shared_ptr<IFramebufferFactory>       framebufferFactory,
+    std::shared_ptr<IEditorStats>              editorStats,
+    std::shared_ptr<IInputManager>             inputManager,
+    std::shared_ptr<ILoadedScene>              loadedScene,
+    std::shared_ptr<IEditorSelection>          editorSelection,
+    std::shared_ptr<IRenderingPipelineFactory> renderingPipelineFactory)
+    : IGuiModule(ModuleLabel("Scene Viewer"),
+                 ModuleType(MODULE_TYPE::SCENE_VIEWER),
+                 ModuleID(std::make_shared<UUID>()))
+    , m_CameraFactory(cameraFactory)
+    , m_FramebufferFactory(framebufferFactory)
+    , m_EditorStats(editorStats)
+    , m_InputManager(inputManager)
+    , m_LoadedScene(loadedScene)
+    , m_EditorSelection(editorSelection)
+    , m_RenderingPipelineFactory(renderingPipelineFactory)
+  {
+    /*m_Framebuffer = Renderer::Get()->CreateFramebuffer({ 512, 512 });
+    m_IdBuffer = Renderer::Get()->CreateIDFramebuffer({ 512, 512 });
+    m_Camera = std::make_shared<Camera>();
+
+    FramebufferSpecification outlineSpec;
+    outlineSpec.Attachments = FramebufferAttachmentSpecification{
+      FramebufferTextureSpecification{ FramebufferTextureFormat::RGBA8 },
+      FramebufferTextureSpecification{ FramebufferTextureFormat::RGBA8 },
+      FramebufferTextureSpecification{ FramebufferTextureFormat::DEPTH }
+    };
+    m_OutlineBuffer = Framebuffer::Create(outlineSpec);
+
+    FramebufferSpecification presentationSpec;
+    presentationSpec.Attachments = FramebufferAttachmentSpecification{
+      FramebufferTextureSpecification{ FramebufferTextureFormat::RGBA8 }
+    };
+    m_PresentationBuffer = Framebuffer::Create(presentationSpec);*/
+  }
+
+  SceneViewerWindow::SceneViewerWindow(
     SerializedModule                           serializedModule,
     std::shared_ptr<ICameraFactory>            cameraFactory,
     std::shared_ptr<IFramebufferFactory>       framebufferFactory,
@@ -19,9 +57,7 @@ namespace Dwarf
     : IGuiModule(ModuleLabel("Scene Viewer"),
                  ModuleType(MODULE_TYPE::SCENE_VIEWER),
                  ModuleID(std::make_shared<UUID>(
-                   serializedModule.t.has_value()
-                     ? serializedModule.t.value()["id"].get<std::string>()
-                     : UUID())))
+                   serializedModule.t["id"].get<std::string>())))
     , m_CameraFactory(cameraFactory)
     , m_FramebufferFactory(framebufferFactory)
     , m_EditorStats(editorStats)
@@ -30,10 +66,8 @@ namespace Dwarf
     , m_EditorSelection(editorSelection)
     , m_RenderingPipelineFactory(renderingPipelineFactory)
   {
-    if (serializedModule.t.has_value())
-    {
-      Deserialize(serializedModule.t.value());
-    }
+    // FIX: Warning telling me this may be dangerous
+    Deserialize(serializedModule.t);
 
     /*m_Framebuffer = Renderer::Get()->CreateFramebuffer({ 512, 512 });
     m_IdBuffer = Renderer::Get()->CreateIDFramebuffer({ 512, 512 });

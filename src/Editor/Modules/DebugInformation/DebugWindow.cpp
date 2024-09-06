@@ -9,18 +9,23 @@
 namespace Dwarf
 {
 
+  DebugWindow::DebugWindow(std::shared_ptr<IAssetDatabase> assetDatabase)
+    : IGuiModule(ModuleLabel("Debug"),
+                 ModuleType(MODULE_TYPE::DEBUG),
+                 ModuleID(std::make_shared<UUID>()))
+    , m_AssetDatabase(assetDatabase)
+  {
+  }
+
   DebugWindow::DebugWindow(SerializedModule                serializedModule,
                            std::shared_ptr<IAssetDatabase> assetDatabase)
     : IGuiModule(ModuleLabel("Debug"),
                  ModuleType(MODULE_TYPE::DEBUG),
                  ModuleID(std::make_shared<UUID>(
-                   serializedModule.t.value()["id"].get<std::string>())))
+                   serializedModule.t["id"].get<std::string>())))
     , m_AssetDatabase(assetDatabase)
   {
-    if (serializedModule.t.has_value())
-    {
-      Deserialize(serializedModule.t.value());
-    }
+    Deserialize(serializedModule.t);
   }
 
   void

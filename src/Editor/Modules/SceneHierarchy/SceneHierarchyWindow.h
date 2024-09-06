@@ -33,6 +33,10 @@ namespace Dwarf
     ProcessInstructions();
 
   public:
+    SceneHierarchyWindow(std::shared_ptr<ILoadedScene>     loadedScene,
+                         std::shared_ptr<IEditorSelection> editorSelection,
+                         std::shared_ptr<IInputManager>    inputManager);
+
     SceneHierarchyWindow(SerializedModule                  serializedModule,
                          std::shared_ptr<ILoadedScene>     loadedScene,
                          std::shared_ptr<IEditorSelection> editorSelection,

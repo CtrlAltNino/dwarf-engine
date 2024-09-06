@@ -4,6 +4,21 @@
 namespace Dwarf
 {
   InspectorWindow::InspectorWindow(
+    std::shared_ptr<IEditorSelection> selection,
+    std::shared_ptr<IAssetDatabase>   assetDatabase,
+    std::shared_ptr<IAssetInspector>  assetInspector,
+    std::shared_ptr<IEntityInspector> entityInspector)
+    : IGuiModule(ModuleLabel("Inspector"),
+                 ModuleType(MODULE_TYPE::INSPECTOR),
+                 ModuleID(std::make_shared<UUID>()))
+    , m_Selection(selection)
+    , m_AssetDatabase(assetDatabase)
+    , m_AssetInspector(assetInspector)
+    , m_EntityInspector(entityInspector)
+  {
+  }
+
+  InspectorWindow::InspectorWindow(
     SerializedModule                  serializedModule,
     std::shared_ptr<IEditorSelection> selection,
     std::shared_ptr<IAssetDatabase>   assetDatabase,
@@ -12,18 +27,13 @@ namespace Dwarf
     : IGuiModule(ModuleLabel("Inspector"),
                  ModuleType(MODULE_TYPE::INSPECTOR),
                  ModuleID(std::make_shared<UUID>(
-                   serializedModule.t.has_value()
-                     ? serializedModule.t.value()["id"].get<std::string>()
-                     : UUID())))
+                   serializedModule.t["id"].get<std::string>())))
     , m_Selection(selection)
     , m_AssetDatabase(assetDatabase)
     , m_AssetInspector(assetInspector)
     , m_EntityInspector(entityInspector)
   {
-    if (serializedModule.t.has_value())
-    {
-      Deserialize(serializedModule.t.value());
-    }
+    Deserialize(serializedModule.t);
   }
 
   void

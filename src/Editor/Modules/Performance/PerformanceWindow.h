@@ -13,6 +13,8 @@ namespace Dwarf
     std::shared_ptr<IEditorStats> m_EditorStats;
 
   public:
+    PerformanceWindow(std::shared_ptr<IEditorStats> editorStats);
+
     PerformanceWindow(SerializedModule              serializedModule,
                       std::shared_ptr<IEditorStats> editorStats);
 

@@ -1,5 +1,16 @@
 #include "pch.h"
-#include <boost/di.hpp>
+#include "Editor/Modules/AssetBrowser/IAssetBrowserWindowFactory.h"
+#include "Editor/Modules/DebugInformation/IDebugWindowFactory.h"
+#include "Editor/Modules/Inspector/IInspectorWindowFactory.h"
+#include "Editor/Modules/Performance/IPerformanceWindowFactory.h"
+#include "Editor/Modules/SceneHierarchy/ISceneHierarchyWindowFactory.h"
+#include "Editor/Modules/SceneViewer/ISceneViewerWindowFactory.h"
+#include "Editor/Modules/AssetBrowser/AssetBrowserWindowFactory.h"
+#include "Editor/Modules/DebugInformation/DebugWindowFactory.h"
+#include "Editor/Modules/Inspector/InspectorWindowFactory.h"
+#include "Editor/Modules/Performance/PerformanceWindowFactory.h"
+#include "Editor/Modules/SceneHierarchy/SceneHierarchyWindowFactory.h"
+#include "Editor/Modules/SceneViewer/SceneViewerWindowFactory.h"
 #include "Core/Asset/Database/IAssetDatabase.h"
 #include "Core/Asset/Database/AssetDatabase.h"
 #include "Core/Rendering/PreviewRenderer/MaterialPreview/IMaterialPreview.h"
@@ -222,6 +233,12 @@ namespace Dwarf
           boost::di::bind<IModelPreview>.to<ModelPreview>().in(boost::di::singleton),
           boost::di::bind<IAssetInspector>.to<AssetInspector>().in(boost::di::singleton),
           boost::di::bind<IEntityInspector>.to<EntityInspector>().in(boost::di::singleton),
+          boost::di::bind<IAssetBrowserWindowFactory>.to<AssetBrowserWindowFactory>().in(boost::di::singleton),
+          boost::di::bind<IDebugWindowFactory>.to<DebugWindowFactory>().in(boost::di::singleton),
+          boost::di::bind<IInspectorWindowFactory>.to<InspectorWindowFactory>().in(boost::di::singleton),
+          boost::di::bind<IPerformanceWindowFactory>.to<PerformanceWindowFactory>().in(boost::di::singleton),
+          boost::di::bind<ISceneHierarchyWindowFactory>.to<SceneHierarchyWindowFactory>().in(boost::di::singleton),
+          boost::di::bind<ISceneViewerWindowFactory>.to<SceneViewerWindowFactory>().in(boost::di::singleton),
           boost::di::bind<IGuiModuleFactory>.to<GuiModuleFactory>().in(boost::di::singleton),
           boost::di::bind<IEditorView>.to<EditorView>().in(boost::di::singleton)
         );

@@ -2,6 +2,7 @@
 #include "Logging/DwarfLogger.h"
 #include "Application/DwarfEngine.h"
 #include <spdlog/spdlog.h>
+#define BOOST_DI_CFG_CTOR_LIMIT_SIZE 20
 #include <boost/di.hpp>
 
 int

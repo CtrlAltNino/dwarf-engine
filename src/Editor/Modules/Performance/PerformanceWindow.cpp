@@ -4,20 +4,24 @@ namespace Dwarf
 {
 
   PerformanceWindow::PerformanceWindow(
+    std::shared_ptr<IEditorStats> editorStats)
+    : IGuiModule(ModuleLabel("Performance"),
+                 ModuleType(MODULE_TYPE::PERFORMANCE),
+                 ModuleID(std::make_shared<UUID>()))
+    , m_EditorStats(editorStats)
+  {
+  }
+
+  PerformanceWindow::PerformanceWindow(
     SerializedModule              serializedModule,
     std::shared_ptr<IEditorStats> editorStats)
     : IGuiModule(ModuleLabel("Performance"),
                  ModuleType(MODULE_TYPE::PERFORMANCE),
                  ModuleID(std::make_shared<UUID>(
-                   serializedModule.t.has_value()
-                     ? serializedModule.t.value()["id"].get<std::string>()
-                     : UUID())))
+                   serializedModule.t["id"].get<std::string>())))
     , m_EditorStats(editorStats)
   {
-    if (serializedModule.t.has_value())
-    {
-      Deserialize(serializedModule.t.value());
-    }
+    Deserialize(serializedModule.t);
   }
 
   void
