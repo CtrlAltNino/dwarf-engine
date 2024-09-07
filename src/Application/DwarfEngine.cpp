@@ -100,7 +100,7 @@ namespace Dwarf
     std::shared_ptr<DwarfLogger> logger =
       std::make_shared<DwarfLogger>(DwarfLogger(LogName("Application")));
 
-    bool               returnToLauncher = false;
+    bool               returnToLauncher = true;
     ProjectInformation selectedProject = ProjectInformation();
 
     while (returnToLauncher)
