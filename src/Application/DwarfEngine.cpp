@@ -252,7 +252,7 @@ namespace Dwarf
           boost::di::bind<IEditorView>.to<EditorView>().in(boost::di::singleton)
         );
 
-    auto editor = editorInjector.create<std::shared_ptr<Dwarf::Editor>>();
+    auto editor = editorInjector.create<std::unique_ptr<Dwarf::Editor>>();
     // returnToLauncher = !editor->Run();
     bool returnToLauncher = false;
 
