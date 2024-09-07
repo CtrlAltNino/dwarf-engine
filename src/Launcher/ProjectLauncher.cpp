@@ -6,11 +6,14 @@ namespace Dwarf
 {
   ProjectLauncher::ProjectLauncher(std::shared_ptr<IWindow>              window,
                                    std::shared_ptr<IProjectLauncherView> view,
+                                   std::shared_ptr<IProjectLauncherData> data,
                                    std::shared_ptr<IDwarfLogger>         logger)
     : m_Window(window)
     , m_View(view)
+    , m_Data(data)
     , m_Logger(logger)
   {
+    m_Logger->LogInfo(Log("Constructor", "ProjectLauncher"));
     //     // Initializing the project launcher model (e.g. loading the project
     //     list) WindowProps props("Dwarf Engine", 1100, 600);
 
@@ -35,8 +38,8 @@ namespace Dwarf
     m_Window->ShowWindow();
 
     m_Logger->LogInfo(Log("Starting main loop...", "ProjectLauncher"));
-    while (((m_State != ProjectChooserState::Done) &&
-            (m_State != ProjectChooserState::Canceled)) &&
+    while (((m_Data->GetState() != ProjectChooserState::Done) &&
+            (m_Data->GetState() != ProjectChooserState::Canceled)) &&
            !m_Window->ShouldClose())
     {
       TimeStamp currentTimeStamp = TimeUtilities::GetCurrent();
@@ -56,30 +59,6 @@ namespace Dwarf
     }
 
     m_Logger->LogInfo(Log("Project launcher finished", "ProjectLauncher"));
-    return m_SelectedProject;
-  }
-
-  ProjectChooserState
-  ProjectLauncher::GetState() const
-  {
-    return m_State;
-  }
-
-  void
-  ProjectLauncher::SetState(ProjectChooserState state)
-  {
-    m_State = state;
-  }
-
-  void
-  ProjectLauncher::SetSelectedProject(const ProjectInformation& project)
-  {
-    m_SelectedProject = project;
-  }
-
-  const ProjectInformation&
-  ProjectLauncher::GetSelectedProject() const
-  {
-    return m_SelectedProject;
+    return m_Data->GetSelectedProject();
   }
 }

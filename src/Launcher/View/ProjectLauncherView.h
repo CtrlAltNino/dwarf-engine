@@ -1,4 +1,5 @@
 #pragma once
+#include "Launcher/IProjectLauncherData.h"
 #include "Launcher/ProjectCreator/IProjectCreator.h"
 #include "Launcher/ProjectList/IProjectList.h"
 #include "Launcher/ProjectList/IO/IProjectListIO.h"
@@ -22,14 +23,13 @@ namespace Dwarf
     /// @brief Model for the project launcher
     // std::shared_ptr<IProjectLauncherModel> m_Model;
     /// @brief Window to render the project launcher in
-    boost::di::extension::lazy<std::shared_ptr<IProjectLauncher>>
-                                        m_ProjectLauncher;
-    std::shared_ptr<IWindow>            m_Window;
-    std::shared_ptr<ITextureFactory>    m_TextureFactory;
-    std::shared_ptr<IProjectList>       m_ProjectList;
-    std::shared_ptr<IProjectListIO>     m_ProjectListIO;
-    std::shared_ptr<IProjectListSorter> m_ProjectListSorter;
-    std::shared_ptr<IProjectCreator>    m_ProjectCreator;
+    std::shared_ptr<IWindow>              m_Window;
+    std::shared_ptr<IProjectLauncherData> m_Data;
+    std::shared_ptr<ITextureFactory>      m_TextureFactory;
+    std::shared_ptr<IProjectList>         m_ProjectList;
+    std::shared_ptr<IProjectListIO>       m_ProjectListIO;
+    std::shared_ptr<IProjectListSorter>   m_ProjectListSorter;
+    std::shared_ptr<IProjectCreator>      m_ProjectCreator;
 
     /// @brief Font loaded into IMGUI for header text
     ImFont* m_HeaderFont;
@@ -86,14 +86,13 @@ namespace Dwarf
     RenderCreateNewProjectModal();
 
   public:
-    ProjectLauncherView(boost::di::extension::lazy<
-                          std::shared_ptr<IProjectLauncher>> projectLauncher,
-                        std::shared_ptr<IWindow>             window,
-                        std::shared_ptr<ITextureFactory>     textureFactory,
-                        std::shared_ptr<IProjectList>        projectList,
-                        std::shared_ptr<IProjectListIO>      projectListIO,
-                        std::shared_ptr<IProjectListSorter>  projectListSorter,
-                        std::shared_ptr<IProjectCreator>     projectCreator);
+    ProjectLauncherView(std::shared_ptr<IWindow>              window,
+                        std::shared_ptr<IProjectLauncherData> data,
+                        std::shared_ptr<ITextureFactory>      textureFactory,
+                        std::shared_ptr<IProjectList>         projectList,
+                        std::shared_ptr<IProjectListIO>       projectListIO,
+                        std::shared_ptr<IProjectListSorter>   projectListSorter,
+                        std::shared_ptr<IProjectCreator>      projectCreator);
 
     /**
      * @brief Render the project launcher view

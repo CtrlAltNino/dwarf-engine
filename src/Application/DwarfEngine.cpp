@@ -1,4 +1,6 @@
 #include "pch.h"
+#include "Launcher/ProjectLauncherData.h"
+#include "Application/DwarfEngine.h"
 #include "Editor/Modules/AssetBrowser/IAssetBrowserWindowFactory.h"
 #include "Editor/Modules/DebugInformation/IDebugWindowFactory.h"
 #include "Editor/Modules/Inspector/IInspectorWindowFactory.h"
@@ -60,14 +62,12 @@
 #include "Core/Rendering/Texture/TextureFactory.h"
 #include "Input/IInputManager.h"
 #include "Input/InputManager.h"
-#include "Application/DwarfEngine.h"
 #include "Launcher/IProjectLauncher.h"
 #include "Launcher/ProjectLauncher.h"
 #include "Launcher/View/IProjectLauncherView.h"
 #include "Launcher/View/ProjectLauncherView.h"
 #include "Editor/Editor.h"
 #include "Editor/Stats/EditorStats.h"
-#include "Logging/DwarfLogger.h"
 #include "Project/ProjectTypes.h"
 #include "Window/IWindow.h"
 #include "Core/Asset/Metadata/IAssetMetadata.h"
@@ -85,6 +85,7 @@
 #include "Editor/Modules/Inspector/EntityInspector/EntityInspector.h"
 #include "Editor/EditorSelection.h"
 #include "Core/Scene/Settings/SceneSettingsFactory.h"
+#include <boost/di.hpp>
 
 #ifdef _WIN32
 #include "Platform/Windows/WindowsWindow.h"
@@ -94,80 +95,91 @@
 
 namespace Dwarf
 {
+  DwarfEngine::DwarfEngine()
+    : m_Logger(
+        std::make_shared<DwarfLogger>(DwarfLogger(LogName("Application"))))
+  {
+  }
+
   void
   DwarfEngine::Run()
   {
-    std::shared_ptr<DwarfLogger> logger =
-      std::make_shared<DwarfLogger>(DwarfLogger(LogName("Application")));
-
     bool               returnToLauncher = true;
     ProjectInformation selectedProject = ProjectInformation();
 
     while (returnToLauncher)
     {
-      {
-        logger->LogInfo(Log("Creating injector...", "DwarfEngine"));
-        auto launcherInjector = boost::di::make_injector(
-          boost::di::bind<LogName>.to(LogName("Launcher")),
-          boost::di::bind<IDwarfLogger>.to<DwarfLogger>().in(
-            boost::di::singleton),
-          boost::di::bind<GraphicsApi>.to(GraphicsApi::OpenGL),
-          boost::di::bind<IProjectLauncher>.to<ProjectLauncher>().in(
-            boost::di::singleton),
-          boost::di::bind<IImGuiLayerFactory>.to<ImGuiLayerFactory>().in(
-            boost::di::singleton),
-#ifdef _WIN32
-          boost::di::bind<IWindow>.to<WindowsWindow>().in(boost::di::singleton),
-#elif __linux__
-          boost::di::bind<IWindow>.to<LinuxWindow>().in(boost::di::singleton),
-#endif
-          boost::di::bind<IGraphicsContextFactory>.to<GraphicsContextFactory>().in(
-            boost::di::singleton),
-          boost::di::bind<IInputManager>.to<InputManager>().in(
-            boost::di::singleton),
-          boost::di::bind<IProjectLauncherView>.to<ProjectLauncherView>().in(
-            boost::di::singleton),
-          boost::di::bind<ITextureFactory>.to<TextureFactory>().in(
-            boost::di::singleton),
-          boost::di::bind<IImageFileLoader>.to<ImageFileLoader>().in(
-            boost::di::singleton),
-          boost::di::bind<IProjectList>.to<ProjectList>().in(
-            boost::di::singleton),
-          boost::di::bind<IProjectListIO>.to<ProjectListIO>().in(
-            boost::di::singleton),
-          boost::di::bind<IProjectListSorter>.to<ProjectListSorter>().in(
-            boost::di::singleton),
-          boost::di::bind<IProjectCreator>.to<ProjectCreator>().in(
-            boost::di::singleton),
-          boost::di::bind<WindowProps>.to(
-            WindowProps("Dwarf Engine", 1100, 600, GraphicsApi::OpenGL)));
-
-        logger->LogInfo(Log("Creating project launcher...", "DwarfEngine"));
-        auto launcher =
-          launcherInjector.create<std::shared_ptr<ProjectLauncher>>();
-        logger->LogInfo(Log("Project launcher created.", "DwarfEngine"));
-
-        logger->LogInfo(Log("Running project launcher...", "DwarfEngine"));
-        selectedProject = launcher->Run();
-        logger->LogInfo(
-          Log("Project launcher finished running.", "DwarfEngine"));
-      }
+      selectedProject = RunLauncher();
 
       if (!selectedProject.path.t.empty())
       {
-        logger->LogInfo(
-          Log("Opening project at: " + selectedProject.path.t.string(),
-              "DwarfEngine"));
-        logger->LogInfo(Log("Creating editor...", "DwarfEngine"));
+        returnToLauncher = RunEditor(selectedProject);
+      }
+      else
+      {
+        m_Logger->LogInfo(Log(
+          "No project path provided. Exiting Dwarf Engine... ", "DwarfEngine"));
+        returnToLauncher = false;
+      }
+    }
+  }
 
-        std::shared_ptr<AssetDirectoryPath> assetDirectoryPath =
-          std::make_shared<AssetDirectoryPath>(selectedProject.path.t /
-                                               "Assets");
-        ProjectPath    projectPath = ProjectPath(selectedProject.path);
-        SerializedView serializedView = SerializedView(std::nullopt);
-        GraphicsApi    graphicsApi = selectedProject.graphicsApi;
+  ProjectInformation
+  DwarfEngine::RunLauncher()
+  {
+    ProjectInformation selectedProject = ProjectInformation();
 
-        const auto editorInjector = boost::di::make_injector(
+    m_Logger->LogInfo(Log("Creating injector...", "DwarfEngine"));
+
+    auto launcherInjector = boost::di::make_injector(
+      boost::di::bind<LogName>.to(LogName("Launcher")),
+      boost::di::bind<IDwarfLogger>.to<DwarfLogger>(),
+      boost::di::bind<GraphicsApi>.to(GraphicsApi::OpenGL),
+      boost::di::bind<IProjectLauncher>.to<ProjectLauncher>(),
+      boost::di::bind<IImGuiLayerFactory>.to<ImGuiLayerFactory>(),
+      boost::di::bind<IProjectLauncherData>.to<ProjectLauncherData>(),
+#ifdef _WIN32
+      boost::di::bind<IWindow>.to<WindowsWindow>(),
+#elif __linux__
+      boost::di::bind<IWindow>.to<LinuxWindow>(),
+#endif
+      boost::di::bind<IGraphicsContextFactory>.to<GraphicsContextFactory>(),
+      boost::di::bind<IInputManager>.to<InputManager>(),
+      boost::di::bind<IProjectLauncherView>.to<ProjectLauncherView>(),
+      boost::di::bind<ITextureFactory>.to<TextureFactory>(),
+      boost::di::bind<IImageFileLoader>.to<ImageFileLoader>(),
+      boost::di::bind<IProjectList>.to<ProjectList>(),
+      boost::di::bind<IProjectListIO>.to<ProjectListIO>(),
+      boost::di::bind<IProjectListSorter>.to<ProjectListSorter>(),
+      boost::di::bind<IProjectCreator>.to<ProjectCreator>(),
+      boost::di::bind<WindowProps>.to(
+        WindowProps("Dwarf Engine", 1100, 600, GraphicsApi::OpenGL)));
+
+    m_Logger->LogInfo(Log("Creating project launcher...", "DwarfEngine"));
+    auto launcher = launcherInjector.create<ProjectLauncher>();
+    m_Logger->LogInfo(Log("Project launcher created.", "DwarfEngine"));
+
+    m_Logger->LogInfo(Log("Running project launcher...", "DwarfEngine"));
+    selectedProject = launcher.Run();
+    m_Logger->LogInfo(Log("Project launcher finished running.", "DwarfEngine"));
+
+    return selectedProject;
+  }
+
+  bool
+  DwarfEngine::RunEditor(ProjectInformation selectedProject)
+  {
+    m_Logger->LogInfo(Log(
+      "Opening project at: " + selectedProject.path.t.string(), "DwarfEngine"));
+    m_Logger->LogInfo(Log("Creating editor...", "DwarfEngine"));
+
+    std::shared_ptr<AssetDirectoryPath> assetDirectoryPath =
+      std::make_shared<AssetDirectoryPath>(selectedProject.path.t / "Assets");
+    ProjectPath    projectPath = ProjectPath(selectedProject.path);
+    SerializedView serializedView = SerializedView(std::nullopt);
+    GraphicsApi    graphicsApi = selectedProject.graphicsApi;
+
+    const auto editorInjector = boost::di::make_injector(
           boost::di::bind<LogName>.to(LogName("Editor")),
           boost::di::bind<IDwarfLogger>.to<DwarfLogger>().in(boost::di::singleton),
           boost::di::bind<GraphicsApi>.to(graphicsApi),
@@ -240,20 +252,15 @@ namespace Dwarf
           boost::di::bind<IEditorView>.to<EditorView>().in(boost::di::singleton)
         );
 
-        auto editor = editorInjector.create<Dwarf::Editor>();
-        returnToLauncher = !editor.Run();
+    auto editor = editorInjector.create<std::shared_ptr<Dwarf::Editor>>();
+    // returnToLauncher = !editor->Run();
+    bool returnToLauncher = false;
 
-        logger->LogInfo(Log("Editor finished running.", "DwarfEngine"));
-        logger->LogInfo(
-          Log("Return to launcheer: " + std::to_string(returnToLauncher),
-              "DwarfEngine"));
-      }
-      else
-      {
-        logger->LogInfo(Log(
-          "No project path provided. Exiting Dwarf Engine... ", "DwarfEngine"));
-        returnToLauncher = false;
-      }
-    }
+    m_Logger->LogInfo(Log("Editor finished running.", "DwarfEngine"));
+    m_Logger->LogInfo(
+      Log("Return to launcheer: " + std::to_string(returnToLauncher),
+          "DwarfEngine"));
+
+    return returnToLauncher;
   }
 }

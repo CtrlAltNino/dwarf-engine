@@ -46,6 +46,6 @@ namespace Dwarf
       log.Color.has_value()
         ? fmt::format(
             fg(fmt::color::red), "[{}] {}", log.Scope.c_str(), log.Message)
-        : fmt::format("[{}] {}", log.Scope.c_str(), log.Scope));
+        : fmt::format("[{}] {}", log.Scope.c_str(), log.Message));
   }
 }

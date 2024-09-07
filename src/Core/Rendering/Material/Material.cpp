@@ -37,6 +37,12 @@ namespace Dwarf
   //   m_Shader = Shader::s_DefaultShader;
   // }
 
+  Material::Material(std::shared_ptr<IShader> shader)
+    : m_Shader(shader)
+    , m_MaterialProperties(MaterialProperties{})
+  {
+  }
+
   Material::Material(std::shared_ptr<IShader> shader,
                      const nlohmann::json&    serializedMaterialProperties)
     : m_Shader(shader)

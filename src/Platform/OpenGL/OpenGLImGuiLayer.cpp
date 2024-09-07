@@ -9,6 +9,16 @@
 
 namespace Dwarf
 {
+  OpenGLImGuiLayer::~OpenGLImGuiLayer()
+  {
+    std::cout << "Shutting down ImGui" << std::endl;
+    if (m_Window && ImGui::GetCurrentContext())
+    {
+      ImGui_ImplOpenGL3_Shutdown();
+      ImGui_ImplSDL2_Shutdown();
+      ImGui::DestroyContext();
+    }
+  }
   void
   OpenGLImGuiLayer::OnAttach(SDL_Window* window)
   {

@@ -8,7 +8,7 @@ namespace Dwarf
   {
   public:
     OpenGLImGuiLayer() = default;
-    ~OpenGLImGuiLayer() override = default;
+    ~OpenGLImGuiLayer() override;
 
     void
     OnAttach(SDL_Window* window) override;

@@ -1,5 +1,8 @@
 #pragma once
 #include "Core/Base.h"
+#include "Logging/DwarfLogger.h"
+#include "Launcher/IProjectLauncher.h"
+#include "Editor/IEditor.h"
 
 namespace Dwarf
 {
@@ -8,8 +11,17 @@ namespace Dwarf
    */
   class DwarfEngine
   {
+  private:
+    std::shared_ptr<DwarfLogger> m_Logger;
+
+    ProjectInformation
+    RunLauncher();
+
+    bool
+    RunEditor(ProjectInformation projectInformation);
+
   public:
-    DwarfEngine() = default;
+    DwarfEngine();
     ~DwarfEngine() = default;
 
     /**

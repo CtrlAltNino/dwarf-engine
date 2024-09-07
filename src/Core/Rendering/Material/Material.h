@@ -13,8 +13,9 @@ namespace Dwarf
   class Material : public IMaterial
   {
   public:
-    explicit Material(std::shared_ptr<IShader> shader = nullptr,
-                      const nlohmann::json& serializedMaterialProperties = "");
+    explicit Material(std::shared_ptr<IShader> shader = nullptr);
+    explicit Material(std::shared_ptr<IShader> shader,
+                      const nlohmann::json&    serializedMaterialProperties);
     ~Material() override {};
 
     // static std::shared_ptr<Material> s_DefaultMaterial;

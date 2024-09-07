@@ -21,17 +21,16 @@ namespace Dwarf
 #define PROJECT_INFORMATION_HEIGHT (30)
 
   ProjectLauncherView::ProjectLauncherView(
-    boost::di::extension::lazy<std::shared_ptr<IProjectLauncher>>
-                                        projectLauncher,
-    std::shared_ptr<IWindow>            window,
-    std::shared_ptr<ITextureFactory>    textureFactory,
-    std::shared_ptr<IProjectList>       projectList,
-    std::shared_ptr<IProjectListIO>     projectListIO,
-    std::shared_ptr<IProjectListSorter> projectListSorter,
-    std::shared_ptr<IProjectCreator>    projectCreator)
+    std::shared_ptr<IWindow>              window,
+    std::shared_ptr<IProjectLauncherData> data,
+    std::shared_ptr<ITextureFactory>      textureFactory,
+    std::shared_ptr<IProjectList>         projectList,
+    std::shared_ptr<IProjectListIO>       projectListIO,
+    std::shared_ptr<IProjectListSorter>   projectListSorter,
+    std::shared_ptr<IProjectCreator>      projectCreator)
     : m_Window(window)
+    , m_Data(data)
     , m_TextureFactory(textureFactory)
-    , m_ProjectLauncher(projectLauncher)
     , m_ProjectList(projectList)
     , m_ProjectListIO(projectListIO)
     , m_ProjectListSorter(projectListSorter)
@@ -58,21 +57,21 @@ namespace Dwarf
     RenderProjectList(windowSize);
     RenderButtons(windowSize);
     RenderFooter(windowSize);
-    ProjectChooserState state = m_ProjectLauncher.get()->GetState();
+    ProjectChooserState state = m_Data->GetState();
 
     if (state == ProjectChooserState::ProjectNotFound)
     {
-      m_ProjectLauncher.get()->SetState(ProjectChooserState::Choosing);
+      m_Data->SetState(ProjectChooserState::Choosing);
       ImGui::OpenPopup("Project not found!");
     }
     else if (state == ProjectChooserState::CreateNewProject)
     {
-      m_ProjectLauncher.get()->SetState(ProjectChooserState::Choosing);
+      m_Data->SetState(ProjectChooserState::Choosing);
       ImGui::OpenPopup("Create new project");
     }
     else if (state == ProjectChooserState::ChangeGraphicsApi)
     {
-      m_ProjectLauncher.get()->SetState(ProjectChooserState::Choosing);
+      m_Data->SetState(ProjectChooserState::Choosing);
       ImGui::OpenPopup("Change Graphics API");
     }
 
@@ -239,8 +238,7 @@ namespace Dwarf
             ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0, 0, 0, 0));
             draw_list->ChannelsSetCurrent(1);
             ImGui::Selectable(cellText.c_str(),
-                              m_ProjectLauncher.get()->GetSelectedProject() ==
-                                project,
+                              m_Data->GetSelectedProject() == project,
                               ImGuiSelectableFlags_SpanAllColumns,
                               ImVec2(0, ROW_HEIGHT));
             ImGui::PopStyleVar(1);
@@ -248,7 +246,7 @@ namespace Dwarf
 
             if (ImGui::IsItemClicked(1))
             {
-              m_ProjectLauncher.get()->SetSelectedProject(project);
+              m_Data->SetSelectedProject(project);
             }
 
             {
@@ -264,7 +262,7 @@ namespace Dwarf
               ImGui::PushStyleColor(ImGuiCol_PopupBg,
                                     IM_COL32(76, 86, 106, 255));
               ImGui::SetNextWindowSize(ImVec2(0, 0));
-              if ((m_ProjectLauncher.get()->GetSelectedProject() == project) &&
+              if ((m_Data->GetSelectedProject() == project) &&
                   ImGui::BeginPopupContextItem(
                     "Project options")) // <-- use last item id as popup id
               {
@@ -281,9 +279,8 @@ namespace Dwarf
                 if (ImGui::Button("Change Graphics API",
                                   ImVec2(ImGui::GetContentRegionAvail().x, 0)))
                 {
-                  m_ProjectLauncher.get()->SetState(
-                    ProjectChooserState::ChangeGraphicsApi);
-                  m_ProjectLauncher.get()->SetSelectedProject(project);
+                  m_Data->SetState(ProjectChooserState::ChangeGraphicsApi);
+                  m_Data->SetSelectedProject(project);
 
                   ImGui::CloseCurrentPopup();
                 }
@@ -309,18 +306,17 @@ namespace Dwarf
 
             if (ImGui::IsItemClicked())
             {
-              m_ProjectLauncher.get()->SetSelectedProject(project);
+              m_Data->SetSelectedProject(project);
               if (FileHandler::FileExists(project.path.t /
                                           "projectSettings.dproj"))
               {
-                m_ProjectLauncher.get()->SetState(ProjectChooserState::Done);
+                m_Data->SetState(ProjectChooserState::Done);
               }
               else
               {
                 // Error dialog that the project doesn't exist anymore with the
                 // option to remove the entry
-                m_ProjectLauncher.get()->SetState(
-                  ProjectChooserState::ProjectNotFound);
+                m_Data->SetState(ProjectChooserState::ProjectNotFound);
               }
             }
 
@@ -419,7 +415,7 @@ namespace Dwarf
     if (ImGui::Button("Create new project",
                       ImVec2(ImGui::GetContentRegionAvail().x, 75)))
     {
-      m_ProjectLauncher.get()->SetState(ProjectChooserState::CreateNewProject);
+      m_Data->SetState(ProjectChooserState::CreateNewProject);
     }
 
     if (ImGui::IsItemHovered())
@@ -670,7 +666,7 @@ namespace Dwarf
       ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
 
       static int currentApiIndex =
-        (int)m_ProjectLauncher.get()->GetSelectedProject().graphicsApi;
+        (int)m_Data->GetSelectedProject().graphicsApi;
       // ==================== Graphics API Selection Dropdown
       // ====================
       {
@@ -812,9 +808,8 @@ namespace Dwarf
       if (ImGui::Button("Apply",
                         ImVec2(ImGui::GetContentRegionAvail().x / 2 - 10, 0)))
       {
-        m_ProjectList->ChangeGraphicsApi(
-          m_ProjectLauncher.get()->GetSelectedProject().path,
-          (GraphicsApi)currentApiIndex);
+        m_ProjectList->ChangeGraphicsApi(m_Data->GetSelectedProject().path,
+                                         (GraphicsApi)currentApiIndex);
         ImGui::CloseCurrentPopup();
       }
 
@@ -882,9 +877,7 @@ namespace Dwarf
       // ==================== Information Text ====================
       float textWidth =
         ImGui::CalcTextSize(
-          m_ProjectLauncher.get()->GetSelectedProject().path.t.string().c_str(),
-          nullptr,
-          false)
+          m_Data->GetSelectedProject().path.t.string().c_str(), nullptr, false)
           .x;
 
       ImGui::Text("The project you are trying to open could not be found:");
@@ -893,9 +886,7 @@ namespace Dwarf
       ImGui::SetCursorPosX(
         ImGui::GetCursorPosX() +
         (ImGui::GetContentRegionAvail().x / 2 - textWidth / 2));
-      ImGui::Text(
-        "%s",
-        m_ProjectLauncher.get()->GetSelectedProject().path.t.string().c_str());
+      ImGui::Text("%s", m_Data->GetSelectedProject().path.t.string().c_str());
 
       ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 20);
       ImGui::Text("Do you want to remove it from the list?");
@@ -917,8 +908,7 @@ namespace Dwarf
       if (ImGui::Button("Remove",
                         ImVec2(ImGui::GetContentRegionAvail().x / 2 - 10, 0)))
       {
-        m_ProjectList->RemoveProject(
-          m_ProjectLauncher.get()->GetSelectedProject().path);
+        m_ProjectList->RemoveProject(m_Data->GetSelectedProject().path);
         ImGui::CloseCurrentPopup();
       }
 

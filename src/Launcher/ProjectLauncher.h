@@ -1,5 +1,6 @@
 #pragma once
 
+#include "IProjectLauncherData.h"
 #include "Launcher/IProjectLauncher.h"
 #include "Logging/IDwarfLogger.h"
 #include "Project/ProjectTypes.h"
@@ -12,30 +13,18 @@ namespace Dwarf
   class ProjectLauncher : public IProjectLauncher
   {
   private:
-    ProjectInformation                    m_SelectedProject;
-    std::shared_ptr<IProjectLauncherView> m_View;
     std::shared_ptr<IWindow>              m_Window;
-    ProjectChooserState                   m_State;
+    std::shared_ptr<IProjectLauncherView> m_View;
+    std::shared_ptr<IProjectLauncherData> m_Data;
     std::shared_ptr<IDwarfLogger>         m_Logger;
 
   public:
     ProjectLauncher(std::shared_ptr<IWindow>              window,
                     std::shared_ptr<IProjectLauncherView> view,
+                    std::shared_ptr<IProjectLauncherData> data,
                     std::shared_ptr<IDwarfLogger>         logger);
 
     ProjectInformation
     Run() override;
-
-    ProjectChooserState
-    GetState() const override;
-
-    void
-    SetState(ProjectChooserState state) override;
-
-    void
-    SetSelectedProject(const ProjectInformation& project) override;
-
-    const ProjectInformation&
-    GetSelectedProject() const override;
   };
 }

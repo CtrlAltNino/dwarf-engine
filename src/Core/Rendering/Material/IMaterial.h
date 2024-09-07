@@ -12,6 +12,17 @@ namespace Dwarf
     bool IsUnlit;
     bool IsWireframe;
 
+    MaterialProperties(bool isTransparent = false,
+                       bool isDoubleSided = false,
+                       bool isUnlit = false,
+                       bool isWireframe = false)
+      : IsTransparent(isTransparent)
+      , IsDoubleSided(isDoubleSided)
+      , IsUnlit(isUnlit)
+      , IsWireframe(isWireframe)
+    {
+    }
+
     MaterialProperties(nlohmann::json serializedMaterialProperties)
       : IsTransparent(serializedMaterialProperties["IsTransparent"])
       , IsDoubleSided(serializedMaterialProperties["IsDoubleSided"])
