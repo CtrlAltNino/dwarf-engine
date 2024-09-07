@@ -10,7 +10,6 @@
 #include "Editor/Modules/SceneViewer/ISceneViewerWindowFactory.h"
 
 #include <boost/di.hpp>
-#include <functional>
 #include <boost/serialization/strong_typedef.hpp>
 
 namespace Dwarf
@@ -35,6 +34,7 @@ namespace Dwarf
       std::shared_ptr<IInspectorWindowFactory>      inspectorWindowFactory);
 
     ~GuiModuleFactory() override = default;
+
     std::shared_ptr<IGuiModule>
     CreateGuiModule(MODULE_TYPE type) const override;
 

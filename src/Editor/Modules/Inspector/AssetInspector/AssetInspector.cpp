@@ -351,12 +351,14 @@ namespace Dwarf
         case Metal: break;
         case OpenGL:
           {
-            auto shader = (OpenGLShader*)mat->m_Shader.get();
+            auto shader = (OpenGLShader*)mat->GetShader().get();
             ImGui::TextWrapped("Vertex Shader");
             ImGui::SameLine();
             ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
             DwarfUI::AssetInput<VertexShaderAsset>(
-              shader->GetShaderAssets().m_VertexShaderAsset, "##vertexShader");
+              m_AssetDatabase,
+              shader->GetVertexShaderAsset(),
+              "##vertexShader");
             ImGui::PopItemWidth();
 
             if (!shader->GetShaderLogs().m_VertexShaderLog.empty())
@@ -373,8 +375,9 @@ namespace Dwarf
             ImGui::TextWrapped("Tessellation Control Shader");
             ImGui::SameLine();
             ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
-            DwarfUI::AssetInput<TesselationControlShaderAsset>(
-              shader->GetShaderAssets().m_TessellationControlShaderAsset,
+            DwarfUI::AssetInput<TessellationControlShaderAsset>(
+              m_AssetDatabase,
+              shader->GetTessellationControlShaderAsset(),
               "##tessellationControlShader");
             ImGui::PopItemWidth();
 
@@ -394,8 +397,9 @@ namespace Dwarf
             ImGui::TextWrapped("Tessellation Evaluation Shader");
             ImGui::SameLine();
             ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
-            DwarfUI::AssetInput<TesselationEvaluationShaderAsset>(
-              shader->GetShaderAssets().m_TessellationEvaluationShaderAsset,
+            DwarfUI::AssetInput<TessellationEvaluationShaderAsset>(
+              m_AssetDatabase,
+              shader->GetTessellationEvaluationShaderAsset(),
               "##tessellationEvaluationShader");
             ImGui::PopItemWidth();
 
@@ -418,7 +422,8 @@ namespace Dwarf
             ImGui::SameLine();
             ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
             DwarfUI::AssetInput<GeometryShaderAsset>(
-              shader->GetShaderAssets().m_GeometryShaderAsset,
+              m_AssetDatabase,
+              shader->GetGeometryShaderAsset(),
               "##geometryShader");
             ImGui::PopItemWidth();
 
@@ -437,7 +442,8 @@ namespace Dwarf
             ImGui::SameLine();
             ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
             DwarfUI::AssetInput<FragmentShaderAsset>(
-              shader->GetShaderAssets().m_FragmentShaderAsset,
+              m_AssetDatabase,
+              shader->GetFragmentShaderAsset(),
               "##fragmentShader");
             ImGui::PopItemWidth();
 

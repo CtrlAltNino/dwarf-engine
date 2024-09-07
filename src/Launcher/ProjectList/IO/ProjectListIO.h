@@ -1,15 +1,19 @@
 #pragma once
 
 #include "Launcher/ProjectList/IO/IProjectListIO.h"
+#include "Logging/IDwarfLogger.h"
 
 namespace Dwarf
 {
   class ProjectListIO : public IProjectListIO
   {
-  public:
-    ProjectListIO() = default;
+  private:
+    std::shared_ptr<IDwarfLogger> m_Logger;
 
-    ~ProjectListIO() override = default;
+  public:
+    ProjectListIO(std::shared_ptr<IDwarfLogger> logger);
+
+    ~ProjectListIO() override;
 
     virtual std::vector<ProjectInformation>
     LoadProjectList() const override;

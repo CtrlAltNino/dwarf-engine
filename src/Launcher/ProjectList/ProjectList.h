@@ -4,6 +4,8 @@
 #include "Launcher/ProjectList/IO/IProjectListIO.h"
 #include "Launcher/ProjectList/IProjectList.h"
 #include "Launcher/ProjectList/Sorter/IProjectListSorter.h"
+#include "Logging/IDwarfLogger.h"
+#include "Window/IWindow.h"
 
 namespace Dwarf
 {
@@ -13,12 +15,16 @@ namespace Dwarf
     std::vector<ProjectInformation>     m_ProjectList;
     std::shared_ptr<IProjectListIO>     m_ProjectListIO;
     std::shared_ptr<IProjectListSorter> m_ProjectListSorter;
+    std::shared_ptr<IWindow>            m_Window;
+    std::shared_ptr<IDwarfLogger>       m_Logger;
 
   public:
     ProjectList(std::shared_ptr<IProjectListIO>     projectListIO,
-                std::shared_ptr<IProjectListSorter> projectSorter);
+                std::shared_ptr<IProjectListSorter> projectSorter,
+                std::shared_ptr<IWindow>            window,
+                std::shared_ptr<IDwarfLogger>       logger);
 
-    ~ProjectList() override = default;
+    ~ProjectList() override;
     void
     AddProject(const std::filesystem::path& path) override;
 

@@ -8,24 +8,41 @@ namespace Dwarf
     const WindowProps&                       props,
     std::shared_ptr<IGraphicsContextFactory> contextFactory,
     std::shared_ptr<IImGuiLayerFactory>      imguiLayerFactory,
-    std::shared_ptr<IInputManager>           inputManager)
+    std::shared_ptr<IInputManager>           inputManager,
+    std::shared_ptr<IDwarfLogger>            logger)
     : m_ContextFactory(contextFactory)
     , m_ImguiLayerFactory(imguiLayerFactory)
     , m_InputManager(inputManager)
+    , m_Logger(logger)
   {
+    m_Logger->LogInfo(Log("Creating Linux Window...", "LinuxWindow"));
     Init(props);
+    m_Logger->LogInfo(Log("Linux Window created", "LinuxWindow"));
   }
 
   LinuxWindow::~LinuxWindow()
   {
+    m_Logger->LogInfo(Log("Destroying Linux Window...", "LinuxWindow"));
+
+    m_Logger->LogInfo(Log("Detaching ImGui Layer...", "LinuxWindow"));
     m_ImGuiLayer->OnDetach();
+    m_Logger->LogInfo(Log("ImGui Layer detached", "LinuxWindow"));
+
+    m_Logger->LogInfo(Log("Destroying SDL Window...", "LinuxWindow"));
     SDL_DestroyWindow(m_Window);
+    m_Logger->LogInfo(Log("SDL Window destroyed", "LinuxWindow"));
+
+    m_Logger->LogInfo(Log("Quitting SDL...", "LinuxWindow"));
     SDL_Quit();
+    m_Logger->LogInfo(Log("SDL Quit", "LinuxWindow"));
+
+    m_Logger->LogInfo(Log("Linux Window destroyed", "LinuxWindow"));
   }
 
   void
   LinuxWindow::Init(const WindowProps& props)
   {
+    m_Logger->LogInfo(Log("Initializing Linux Window...", "LinuxWindow"));
     // SDL Setup
     SDL_Init(SDL_INIT_VIDEO);
 
@@ -67,10 +84,11 @@ namespace Dwarf
 
     if (m_Window == nullptr)
     {
-      std::cout << "[WINDOW CREATION] Error: Failed to create window"
-                << std::endl;
+      m_Logger->LogError(Log("Failed to create window", "LinuxWindow"));
       SDL_Quit();
     }
+
+    m_Logger->LogInfo(Log("Window created", "LinuxWindow"));
 
     SDL_DisplayMode mode;
     SDL_GetDesktopDisplayMode(SDL_GetWindowDisplayIndex(m_Window), &mode);
@@ -80,22 +98,54 @@ namespace Dwarf
                           mode.w / 2 - (props.Width / 2),
                           mode.h / 2 - (props.Height / 2));
 
+    m_Logger->LogInfo(Log("Creating Graphics Context...", "LinuxWindow"));
     m_Context = m_ContextFactory->Create(m_Window);
+
+    if (m_Context == nullptr)
+    {
+      m_Logger->LogError(
+        Log("Failed to create Graphics Context", "LinuxWindow"));
+      SDL_DestroyWindow(m_Window);
+      SDL_Quit();
+    }
+
+    m_Logger->LogInfo(Log("Graphics Context created", "LinuxWindow"));
+
+    m_Logger->LogInfo(Log("Initializing Graphics Context...", "LinuxWindow"));
     m_Context->Init();
 
+    m_Logger->LogInfo(Log("Graphics Context initialized", "LinuxWindow"));
+
+    m_Logger->LogInfo(Log("Creating ImGui Layer...", "LinuxWindow"));
     m_ImGuiLayer = m_ImguiLayerFactory->Create();
+
+    if (m_ImGuiLayer == nullptr)
+    {
+      m_Logger->LogError(Log("Failed to create ImGui Layer", "LinuxWindow"));
+      SDL_DestroyWindow(m_Window);
+      SDL_Quit();
+    }
+
+    m_Logger->LogInfo(Log("ImGui Layer created", "LinuxWindow"));
+
+    m_Logger->LogInfo(Log("Attaching ImGui Layer...", "LinuxWindow"));
     m_ImGuiLayer->OnAttach(m_Window);
+
+    m_Logger->LogInfo(Log("ImGui Layer attached", "LinuxWindow"));
+    m_Logger->LogInfo(Log("Linux Window initialized", "LinuxWindow"));
   }
 
   void
   LinuxWindow::ShowWindow()
   {
+    m_Logger->LogInfo(Log("Showing Window...", "LinuxWindow"));
     SDL_ShowWindow(m_Window);
   }
 
   void
   LinuxWindow::HideWindow()
   {
+    m_Logger->LogInfo(Log("Hiding Window...", "LinuxWindow"));
     SDL_HideWindow(m_Window);
   }
 
@@ -133,6 +183,7 @@ namespace Dwarf
   void
   LinuxWindow::SetVSync(bool enabled)
   {
+    m_Logger->LogInfo(Log("Setting VSync...", "LinuxWindow"));
     if (enabled)
       SDL_GL_SetSwapInterval(1);
     else
@@ -156,12 +207,15 @@ namespace Dwarf
   void
   LinuxWindow::SetWindowTitle(std::string_view windowName)
   {
+    m_Logger->LogInfo(Log(fmt::format("Setting Window Title to {}", windowName),
+                          "LinuxWindow"));
     SDL_SetWindowTitle(m_Window, windowName.data());
   }
 
   void
   LinuxWindow::MaximizeWindow()
   {
+    m_Logger->LogInfo(Log("Maximizing Window...", "LinuxWindow"));
     SDL_MaximizeWindow(m_Window);
   }
 }

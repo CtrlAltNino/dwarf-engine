@@ -12,6 +12,7 @@ namespace Dwarf
 
   public:
     ImageFileLoader(std::shared_ptr<IDwarfLogger> logger);
+    ~ImageFileLoader() override;
     std::shared_ptr<TextureContainer>
     LoadTexture(std::filesystem::path texturePath) override;
   };

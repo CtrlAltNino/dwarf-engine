@@ -36,6 +36,17 @@ namespace Dwarf
     { MOUSE_BUTTON::MOUSE_BUTTON_5, 5 }
   };
 
+  InputManager::InputManager(std::shared_ptr<IDwarfLogger> logger)
+    : m_Logger(logger)
+  {
+    m_Logger->LogInfo(Log("InputManager created.", "InputManager"));
+  }
+
+  InputManager::~InputManager()
+  {
+    m_Logger->LogInfo(Log("InputManager destroyed.", "InputManager"));
+  }
+
   bool
   InputManager::GetKey(KEYCODE key) const
   {

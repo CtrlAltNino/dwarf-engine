@@ -1,4 +1,5 @@
 #include "GraphicsContextFactory.h"
+#include <stdexcept>
 
 #if _WIN32
 #include "Platform/OpenGL/OpenGLContext.h"
@@ -10,39 +11,61 @@
 
 namespace Dwarf
 {
-  GraphicsContextFactory::GraphicsContextFactory(GraphicsApi api)
-    : m_Api(api)
+  GraphicsContextFactory::GraphicsContextFactory(
+    std::shared_ptr<IDwarfLogger> logger,
+    GraphicsApi                   api)
+    : m_Logger(logger)
+    , m_Api(api)
   {
+    m_Logger->LogInfo(
+      Log("GraphicsContextFactory created.", "GraphicsContext"));
   }
+
+  GraphicsContextFactory::~GraphicsContextFactory()
+  {
+    m_Logger->LogInfo(
+      Log("GraphicsContextFactory destroyed.", "GraphicsContext"));
+  }
+
   std::shared_ptr<IGraphicsContext>
   GraphicsContextFactory::Create(SDL_Window* window) const
   {
+    m_Logger->LogInfo(Log("Creating GraphicsContext...", "GraphicsContext"));
     switch (m_Api)
     {
 #if _WIN32
       case GraphicsApi::D3D12:
-        // return
-        // std::make_unique<D3D12Context>(static_cast<SDL_Window*>(window)); -
-        // NOT SUPPORTED YET
+        std::runtime_error("Vulkan API has not been implemented yet.");
         break;
-      case GraphicsApi::Metal: break;
+      case GraphicsApi::Metal:
+        std::runtime_error("Vulkan API has not been implemented yet.");
+        break;
       case GraphicsApi::OpenGL:
-        return std::make_shared<OpenGLContext>(window);
-        break;
+        {
+          m_Logger->LogInfo(
+            Log("Creating OpenGLContext...", "GraphicsContext"));
+          return std::make_shared<OpenGLContext>(window);
+          break;
+        }
       case GraphicsApi::Vulkan:
-        // return
-        // std::make_unique<VulkanContext>(static_cast<SDL_Window*>(window)); -
-        // NOT SUPPORTED YET
+        std::runtime_error("Vulkan API has not been implemented yet.");
         break;
 #elif __linux__
-      case GraphicsApi::D3D12: break;
-      case GraphicsApi::Metal: break;
-      case GraphicsApi::OpenGL:
-        return std::make_shared<OpenGLContext>(window);
+      case GraphicsApi::D3D12:
+        std::runtime_error("Vulkan API has not been implemented yet.");
         break;
+      case GraphicsApi::Metal:
+        std::runtime_error("Vulkan API has not been implemented yet.");
+        break;
+      case GraphicsApi::OpenGL:
+        {
+          m_Logger->LogInfo(
+            Log("Creating OpenGLContext...", "GraphicsContext"));
+          return std::make_shared<OpenGLContext>(window);
+          break;
+        }
       case GraphicsApi::Vulkan:
-        // return std::make_unique<VulkanContext>(static_cast<SDL_Window
-        // *>(window)); -NOT SUPPORTED YET
+        std::runtime_error("Vulkan API has not been implemented yet.");
         break;
 #elif __APPLE__
       case GraphicsApi::D3D12: break;
@@ -55,6 +78,9 @@ namespace Dwarf
       case GraphicsApi::Vulkan: break;
 #endif
     }
+
+    m_Logger->LogError(
+      Log("Failed to create GraphicsContext.", "GraphicsContext"));
 
     return nullptr;
   }
