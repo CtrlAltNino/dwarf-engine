@@ -38,7 +38,7 @@ namespace Dwarf
 #elif __linux__
       case GraphicsApi::D3D12: break;
       case GraphicsApi::OpenGL:
-        return std::make_shared<OpenGLRendererApi>(m_AssetDatabase);
+        return std::make_shared<OpenGLRendererApi>(m_AssetDatabase.get());
         break;
       case GraphicsApi::Metal: break;
       case GraphicsApi::Vulkan:

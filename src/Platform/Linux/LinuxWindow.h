@@ -66,7 +66,7 @@ namespace Dwarf
     Init(const WindowProps& props);
 
     SDL_Window*                              m_Window;
-    std::unique_ptr<IGraphicsContext>        m_Context;
+    std::shared_ptr<IGraphicsContext>        m_Context;
     std::shared_ptr<IImGuiLayer>             m_ImGuiLayer;
     std::shared_ptr<IGraphicsContextFactory> m_ContextFactory;
     std::shared_ptr<IImGuiLayerFactory>      m_ImguiLayerFactory;
