@@ -21,25 +21,33 @@ namespace Dwarf
 #define PROJECT_INFORMATION_HEIGHT (30)
 
   ProjectLauncherView::ProjectLauncherView(
-    std::unique_ptr<IWindow>              window,
+    std::shared_ptr<IWindow>              window,
     std::shared_ptr<IProjectLauncherData> data,
     std::shared_ptr<ITextureFactory>      textureFactory,
     std::shared_ptr<IProjectList>         projectList,
     std::shared_ptr<IProjectListIO>       projectListIO,
     std::shared_ptr<IProjectListSorter>   projectListSorter,
-    std::shared_ptr<IProjectCreator>      projectCreator)
-    : m_Window(std::move(window))
+    std::shared_ptr<IProjectCreator>      projectCreator,
+    std::shared_ptr<IDwarfLogger>         logger)
+    : m_Window(window)
     , m_Data(data)
     , m_TextureFactory(textureFactory)
     , m_ProjectList(projectList)
     , m_ProjectListIO(projectListIO)
     , m_ProjectListSorter(projectListSorter)
     , m_ProjectCreator(projectCreator)
+    , m_Logger(logger)
   {
+    m_Logger->LogInfo(
+      Log("Initializing project launcher view", "ProjectLauncherView"));
+
     ImGuiIO io = ImGui::GetIO();
     io.Fonts->AddFontDefault();
-    m_HeaderFont = io.Fonts->AddFontFromFileTTF(FONT_ROBOTO_LIGHT_PATH, 26);
-    m_TextFont = io.Fonts->AddFontFromFileTTF(FONT_ROBOTO_REGULAR_PATH, 15);
+    m_HeaderFont = std::shared_ptr<ImFont>(
+      io.Fonts->AddFontFromFileTTF(FONT_ROBOTO_LIGHT_PATH, 26));
+    m_TextFont = std::shared_ptr<ImFont>(
+      io.Fonts->AddFontFromFileTTF(FONT_ROBOTO_REGULAR_PATH, 15));
+    m_Logger->LogInfo(Log("Fonts loaded", "ProjectLauncherView"));
 
     m_GithubIcon =
       m_TextureFactory->FromPath(std::filesystem::path(GITHUB_PNG_ICON_PATH));
@@ -47,6 +55,16 @@ namespace Dwarf
       m_TextureFactory->FromPath(std::filesystem::path(PATREON_PNG_ICON_PATH));
     m_XIcon =
       m_TextureFactory->FromPath(std::filesystem::path(X_PNG_ICON_PATH));
+    m_Logger->LogInfo(Log("Icons loaded", "ProjectLauncherView"));
+
+    m_Logger->LogInfo(
+      Log("Project launcher view initialized", "ProjectLauncherView"));
+  }
+
+  ProjectLauncherView::~ProjectLauncherView()
+  {
+    m_Logger->LogInfo(
+      Log("Destroying project launcher view", "ProjectLauncherView"));
   }
 
   void
@@ -121,7 +139,7 @@ namespace Dwarf
     }
 
     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 10));
-    ImGui::PushFont(m_HeaderFont);
+    ImGui::PushFont(m_HeaderFont.get());
     ImGui::Text("Your Projects");
     ImGui::PopFont();
     ImGui::Separator();
@@ -173,7 +191,7 @@ namespace Dwarf
       // Instead of calling TableHeadersRow() we'll submit custom headers
       // ourselves
       ImGui::TableNextRow(ImGuiTableRowFlags_Headers, HEADER_ROW_HEIGHT);
-      ImGui::PushFont(m_HeaderFont);
+      ImGui::PushFont(m_HeaderFont.get());
       ImGui::PushStyleColor(ImGuiCol_HeaderHovered, IM_COL32(76, 86, 106, 255));
       ImGui::PushStyleColor(ImGuiCol_HeaderActive,
                             IM_COL32(129, 161, 193, 255));
@@ -202,7 +220,7 @@ namespace Dwarf
       ImGui::PopStyleColor(2);
       ImGui::PopFont();
 
-      ImGui::PushFont(m_TextFont);
+      ImGui::PushFont(m_TextFont.get());
       for (ProjectInformation project : projectList)
       {
         ImGui::TableNextRow(ImGuiTableRowFlags_None, ROW_HEIGHT);
@@ -411,12 +429,12 @@ namespace Dwarf
       return;
     }
 
-    ImGui::PushFont(m_HeaderFont);
+    ImGui::PushFont(m_HeaderFont.get());
     ImGui::Text("Add Project");
     ImGui::PopFont();
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 6);
     ImGui::Separator();
-    ImGui::PushFont(m_TextFont);
+    ImGui::PushFont(m_TextFont.get());
     ImGui::PushStyleColor(ImGuiCol_Button,
                           ImVec4(76 / 255.0, 86 / 255.0, 106 / 255.0, 1));
     ImGui::PushStyleColor(ImGuiCol_ButtonHovered,
@@ -454,7 +472,7 @@ namespace Dwarf
 
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 15);
 
-    ImGui::PushFont(m_HeaderFont);
+    ImGui::PushFont(m_HeaderFont.get());
     ImGui::Text("Options");
     ImGui::PopFont();
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 6);
@@ -511,7 +529,7 @@ namespace Dwarf
                           ImVec4(59 / 255.0, 66 / 255.0, 82 / 255.0, 1.0));
     ImGui::PushStyleColor(ImGuiCol_Border,
                           ImVec4(59 / 255.0, 66 / 255.0, 82 / 255.0, 0));
-    ImGui::PushFont(m_TextFont);
+    ImGui::PushFont(m_TextFont.get());
 
     if (!ImGui::Begin("Information", NULL, window_flags))
     {
@@ -644,7 +662,7 @@ namespace Dwarf
     style->Colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0, 0, 0, 0.7);
 
     // Setting the font for the modal window title
-    ImGui::PushFont(m_HeaderFont);
+    ImGui::PushFont(m_HeaderFont.get());
     ImGui::SetNextWindowSize(ImVec2(425, 0));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(10, 10));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 10);
@@ -662,7 +680,7 @@ namespace Dwarf
                                ImGuiWindowFlags_AlwaysAutoResize |
                                  ImGuiWindowFlags_NoMove))
     {
-      ImGui::PushFont(m_TextFont);
+      ImGui::PushFont(m_TextFont.get());
       // ==================== Information Text ====================
       ImGui::Text(
         "You are about to change the graphics API of a project.\nThis can break the project.\n\
@@ -686,7 +704,7 @@ namespace Dwarf
       // ====================
       {
         // Graphics Title
-        ImGui::PushFont(m_HeaderFont);
+        ImGui::PushFont(m_HeaderFont.get());
         ImGui::Text("Graphics API");
         ImGui::PopFont();
 
@@ -701,7 +719,7 @@ namespace Dwarf
         ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 8));
         ImGui::PushStyleVar(ImGuiStyleVar_SelectableTextAlign,
                             ImVec2(0.5f, 0.5f));
-        ImGui::PushFont(m_TextFont);
+        ImGui::PushFont(m_TextFont.get());
 
         // Coloring the combo preview
         ImGui::PushStyleColor(ImGuiCol_FrameBg, IM_COL32(59, 66, 82, 255));
@@ -870,7 +888,7 @@ namespace Dwarf
     style->Colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0, 0, 0, 0.7);
 
     // Setting the font for the modal window title
-    ImGui::PushFont(m_HeaderFont);
+    ImGui::PushFont(m_HeaderFont.get());
     ImGui::SetNextWindowSize(ImVec2(350, 0));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(10, 10));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 10);
@@ -888,7 +906,7 @@ namespace Dwarf
                                ImGuiWindowFlags_AlwaysAutoResize |
                                  ImGuiWindowFlags_NoMove))
     {
-      ImGui::PushFont(m_TextFont);
+      ImGui::PushFont(m_TextFont.get());
       // ==================== Information Text ====================
       float textWidth =
         ImGui::CalcTextSize(
@@ -971,7 +989,7 @@ namespace Dwarf
     ImGui::SetNextWindowPos(center, ImGuiCond_Always, ImVec2(0.5f, 0.5f));
 
     // Setting the font for the modal window title
-    ImGui::PushFont(m_HeaderFont);
+    ImGui::PushFont(m_HeaderFont.get());
     ImGui::SetNextWindowSize(ImVec2(450, 0));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(10, 10));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 10);
@@ -997,7 +1015,7 @@ namespace Dwarf
       {
         ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
         // Title
-        ImGui::PushFont(m_HeaderFont);
+        ImGui::PushFont(m_HeaderFont.get());
         ImGui::Text("Name");
         ImGui::PopFont();
 
@@ -1006,7 +1024,7 @@ namespace Dwarf
                              ImGui::GetContentRegionAvail().x - 200);
 
         // Text Input
-        ImGui::PushFont(m_TextFont);
+        ImGui::PushFont(m_TextFont.get());
         ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
         ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(5, 5));
         ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5);
@@ -1031,7 +1049,7 @@ namespace Dwarf
       {
         ImDrawList* draw_list = ImGui::GetWindowDrawList();
         // Title
-        ImGui::PushFont(m_HeaderFont);
+        ImGui::PushFont(m_HeaderFont.get());
         ImGui::Text("Path");
         ImGui::PopFont();
 
@@ -1043,7 +1061,7 @@ namespace Dwarf
         draw_list->ChannelsSplit(2);
         draw_list->ChannelsSetCurrent(1);
         // Path preview
-        ImGui::PushFont(m_TextFont);
+        ImGui::PushFont(m_TextFont.get());
         std::string renderText = newProjectPath.string();
 
         float pathPreviewWidth = ImGui::GetContentRegionAvail().x - 35;
@@ -1128,7 +1146,7 @@ namespace Dwarf
       // ==================== Project Template Selector ====================
       {
         // Template Title
-        ImGui::PushFont(m_HeaderFont);
+        ImGui::PushFont(m_HeaderFont.get());
         ImGui::Text("Template");
         ImGui::PopFont();
 
@@ -1145,7 +1163,7 @@ namespace Dwarf
         ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 8));
         ImGui::PushStyleVar(ImGuiStyleVar_SelectableTextAlign,
                             ImVec2(0.5f, 0.5f));
-        ImGui::PushFont(m_TextFont);
+        ImGui::PushFont(m_TextFont.get());
 
         // Coloring the combo preview
         ImGui::PushStyleColor(ImGuiCol_FrameBg, IM_COL32(59, 66, 82, 255));
@@ -1255,7 +1273,7 @@ namespace Dwarf
       // ====================
       {
         // Graphics Title
-        ImGui::PushFont(m_HeaderFont);
+        ImGui::PushFont(m_HeaderFont.get());
         ImGui::Text("Graphics API");
         ImGui::PopFont();
 
@@ -1270,7 +1288,7 @@ namespace Dwarf
         ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 8));
         ImGui::PushStyleVar(ImGuiStyleVar_SelectableTextAlign,
                             ImVec2(0.5f, 0.5f));
-        ImGui::PushFont(m_TextFont);
+        ImGui::PushFont(m_TextFont.get());
 
         // Coloring the combo preview
         ImGui::PushStyleColor(ImGuiCol_FrameBg, IM_COL32(59, 66, 82, 255));
@@ -1393,7 +1411,7 @@ namespace Dwarf
 
       // ==================== Create Button ====================
       {
-        ImGui::PushFont(m_TextFont);
+        ImGui::PushFont(m_TextFont.get());
         if (ImGui::Button("Create",
                           ImVec2(ImGui::GetContentRegionAvail().x / 2 - 8, 40)))
         {
@@ -1428,7 +1446,7 @@ namespace Dwarf
       {
         ImGui::SetItemDefaultFocus();
         ImGui::SameLine();
-        ImGui::PushFont(m_TextFont);
+        ImGui::PushFont(m_TextFont.get());
         if (ImGui::Button("Cancel",
                           ImVec2(ImGui::GetContentRegionAvail().x, 40)))
         {

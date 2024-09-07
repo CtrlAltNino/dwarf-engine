@@ -3,17 +3,34 @@
 
 namespace Dwarf
 {
+  ProjectListIO::ProjectListIO(std::shared_ptr<IDwarfLogger> logger)
+    : m_Logger(logger)
+  {
+    m_Logger->LogInfo(Log("ProjectListIO created", "ProjectListIO"));
+  }
+
+  ProjectListIO::~ProjectListIO()
+  {
+    m_Logger->LogInfo(Log("ProjectListIO destroyed", "ProjectListIO"));
+  }
+
   std::vector<ProjectInformation>
   ProjectListIO::LoadProjectList() const
   {
     std::vector<ProjectInformation> projectList;
-    bool                            success = true;
     std::filesystem::path           savedProjectsPath =
       FileHandler::GetProjectSettingsPath() / "savedProjects.json";
+
+    m_Logger->LogInfo(Log(
+      fmt::format("Loading project list from {}", savedProjectsPath.string()),
+      "ProjectListIO"));
     std::string fileContent = FileHandler::ReadFile(savedProjectsPath);
+
     if (!fileContent.empty())
     {
       nlohmann::json jsonObject = nlohmann::json::parse(fileContent);
+
+      m_Logger->LogInfo(Log("Parsing project list", "ProjectListIO"));
 
       if (jsonObject.contains("projects"))
       {
@@ -43,7 +60,16 @@ namespace Dwarf
 
           projectList.push_back({ projectToAdd });
         }
+
+        m_Logger->LogInfo(
+          Log(fmt::format("Loaded {} projects", projectList.size()),
+              "ProjectListIO"));
       }
+    }
+    else
+    {
+      m_Logger->LogWarn(
+        Log("No projects found in project list", "ProjectListIO"));
     }
     return projectList;
   }
@@ -53,6 +79,10 @@ namespace Dwarf
   {
     std::filesystem::path projectSettingsPath = path / "projectSettings.dproj";
     std::string fileContent = FileHandler::ReadFile(projectSettingsPath);
+
+    m_Logger->LogInfo(Log(fmt::format("Loading project information from {}",
+                                      projectSettingsPath.string()),
+                          "ProjectListIO"));
 
     ProjectInformation foundInfo;
 
@@ -70,6 +100,16 @@ namespace Dwarf
             ? (int)jsonObject["projectInformation"]["lastOpened"]
             : -1;
       }
+
+      m_Logger->LogInfo(
+        Log(fmt::format("Loaded project information for {}", foundInfo.name),
+            "ProjectListIO"));
+    }
+    else
+    {
+      m_Logger->LogWarn(Log(fmt::format("No project information found at {}",
+                                        projectSettingsPath.string()),
+                            "ProjectListIO"));
     }
 
     return foundInfo;
@@ -80,6 +120,7 @@ namespace Dwarf
     const std::vector<ProjectInformation>& projectList) const
   {
     nlohmann::json jsonObject;
+    m_Logger->LogInfo(Log("Saving project list", "ProjectListIO"));
     for (int i = 0; i < projectList.size(); i++)
     {
       jsonObject["projects"][i]["name"] = projectList[i].name;
@@ -97,5 +138,7 @@ namespace Dwarf
     std::filesystem::path savedProjectsPath =
       settingsPath / "savedProjects.json";
     FileHandler::WriteToFile(savedProjectsPath.make_preferred(), fileContent);
+
+    m_Logger->LogInfo(Log("Project list saved", "ProjectListIO"));
   }
 }

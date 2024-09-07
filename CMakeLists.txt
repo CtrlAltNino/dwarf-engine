@@ -3,6 +3,7 @@ cmake_minimum_required(VERSION 3.22)
 
 # Helper functions
 include(${CMAKE_SOURCE_DIR}/helper.cmake)
+set(DNFD_PORTAL ON CACHE BOOL "Use portal for NFD")
 
 # add_compile_definitions(NOMINMAX)
 set(CMAKE_CXX_STANDARD 20)
@@ -38,6 +39,7 @@ ELSEIF(UNIX AND NOT APPLE)
     file(READ "$ENV{HOME}/.vcpkg/vcpkg.path.txt" VCPKG_PATH)
     set(CMAKE_TOOLCHAIN_FILE "${VCPKG_PATH}/scripts/buildsystems/vcpkg.cmake")
     set(VCPKG_TARGET_TRIPLET "x64-linux")
+
 ELSEIF(APPLE)
     # ~/.vcpkg/vcpkg.path.txt
     file(READ "$ENV{HOME}/.vcpkg/vcpkg.path.txt" VCPKG_PATH)
@@ -49,6 +51,7 @@ ENDIF()
 # Project declaration
 project(Dwarf\ Engine VERSION 0.0.1 LANGUAGES C CXX)
 add_executable(${targetName} "")
+
 include_directories(src)
 
 target_sources(${targetName} PRIVATE ${EXECUTABLE_ADDITIONAL_SETTINGS})

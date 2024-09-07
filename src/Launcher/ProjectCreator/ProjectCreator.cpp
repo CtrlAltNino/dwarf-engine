@@ -1,11 +1,21 @@
 #include "ProjectCreator.h"
+#include "Logging/IDwarfLogger.h"
 #include "Utilities/FileHandler.h"
+#include <filesystem>
 
 namespace Dwarf
 {
-  ProjectCreator::ProjectCreator(std::shared_ptr<IProjectList> projectList)
-    : m_ProjectList(projectList)
+  ProjectCreator::ProjectCreator(std::shared_ptr<IDwarfLogger> logger,
+                                 std::shared_ptr<IProjectList> projectList)
+    : m_Logger(logger)
+    , m_ProjectList(projectList)
   {
+    m_Logger->LogInfo(Log("ProjectCreator created", "ProjectCreator"));
+  }
+
+  ProjectCreator::~ProjectCreator()
+  {
+    m_Logger->LogInfo(Log("ProjectCreator destroyed", "ProjectCreator"));
   }
 
   void
@@ -14,7 +24,11 @@ namespace Dwarf
                                 GraphicsApi           graphicsApi,
                                 ProjectTemplate       projectTemplate)
   {
-    // Create Project blabla
+    m_Logger->LogInfo(Log(fmt::format("Creating project {} at {} ",
+                                      projectName,
+                                      projectPath.string()),
+                          "ProjectCreator"));
+    // Create Project
     std::filesystem::path projectDirectory = projectPath / projectName;
     if (!FileHandler::DirectoyExists(projectDirectory))
     {
@@ -22,17 +36,26 @@ namespace Dwarf
         projectPath / projectName / "projectSettings.dproj";
       if (!FileHandler::FileExists(projectSettingsPath))
       {
+        m_Logger->LogInfo(
+          Log("Creating project directory at: " + projectDirectory.string(),
+              "ProjectCreator"));
         FileHandler::CreateDirectoryAt(projectDirectory);
 
         if (projectTemplate == ProjectTemplate::Blank)
         {
+          std::filesystem::path projectSettingsPath =
+            projectPath / projectName / "projectSettings.dproj";
           nlohmann::json jsonObject;
           jsonObject["projectInformation"]["projectName"] = projectName;
           jsonObject["projectInformation"]["graphicsApi"] = (int)graphicsApi;
+          jsonObject["projectInformation"]["path"] =
+            projectSettingsPath.string();
 
           std::string fileContent = jsonObject.dump(4);
-          FileHandler::WriteToFile(
-            projectPath / projectName / "projectSettings.dproj", fileContent);
+          FileHandler::WriteToFile(projectSettingsPath, fileContent);
+          m_Logger->LogInfo(Log("Project settings file created at: " +
+                                  projectSettingsPath.string(),
+                                "ProjectCreator"));
         }
         else
         {
@@ -75,6 +98,10 @@ namespace Dwarf
 #endif
           system(copyCommand.c_str());
 
+          m_Logger->LogInfo(Log("Project template copied to: " +
+                                  (projectPath / projectName).string(),
+                                "ProjectCreator"));
+
           // Update the projectSettings.dproj "projectName" entry
           std::filesystem::path templateProjectSettingsDirectory =
             templateProjectDirectory / "projectSettings.dproj";
@@ -88,29 +115,35 @@ namespace Dwarf
             std::string newFileContent = jsonObject.dump(4);
             FileHandler::WriteToFile(projectSettingsPath.c_str(),
                                      newFileContent);
+            m_Logger->LogInfo(Log("Project settings file updated at: " +
+                                    projectSettingsPath.string(),
+                                  "ProjectCreator"));
           }
           else
           {
-            std::cout << "[PROJECT CREATOR] Could not read project settings"
-                      << std::endl;
+            m_Logger->LogWarn(
+              Log("Failed to read template project settings file",
+                  "ProjectCreator"));
           }
         }
 
         m_ProjectList->AddProject(projectDirectory);
+        m_Logger->LogInfo(
+          Log("Newly created project added to project list", "ProjectCreator"));
       }
       else
       {
-        // wtf
-        std::cout << "[PROJECT CREATOR] projectSettings.dproj already exists "
-                     "at project directory!"
-                  << std::endl;
+        // Wtf how
+        m_Logger->LogWarn(Log("Project settings file already exists at: " +
+                                projectSettingsPath.string(),
+                              "ProjectCreator"));
       }
     }
     else
     {
-      // Project folder already exists
-      std::cout << "[PROJECT CREATOR] Project folder already exists at: "
-                << (projectPath / projectName) << std::endl;
+      m_Logger->LogWarn(
+        Log("Project directory already exists at: " + projectDirectory.string(),
+            "ProjectCreator"));
     }
   }
 

@@ -1,4 +1,5 @@
 #pragma once
+#include "Logging/IDwarfLogger.h"
 #include "pch.h"
 #include "Input/IInputManager.h"
 
@@ -7,6 +8,7 @@ namespace Dwarf
   class InputManager : public IInputManager
   {
   private:
+    std::shared_ptr<IDwarfLogger> m_Logger;
     /**
      * Saved position of the current mouse position
      */
@@ -34,8 +36,8 @@ namespace Dwarf
     static std::map<MOUSE_BUTTON, int> s_MouseCodeMap;
 
   public:
-    InputManager() = default;
-    ~InputManager() override = default;
+    InputManager(std::shared_ptr<IDwarfLogger> logger);
+    ~InputManager() override;
     /**
      * Returns true while the specified key is being pressed
      */

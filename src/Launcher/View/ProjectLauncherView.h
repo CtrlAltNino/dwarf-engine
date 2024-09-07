@@ -4,6 +4,7 @@
 #include "Launcher/ProjectList/IProjectList.h"
 #include "Launcher/ProjectList/IO/IProjectListIO.h"
 #include "Launcher/ProjectList/Sorter/IProjectListSorter.h"
+#include "Logging/IDwarfLogger.h"
 #include "pch.h"
 #include "Launcher/View/IProjectLauncherView.h"
 #include "Launcher/IProjectLauncher.h"
@@ -23,19 +24,20 @@ namespace Dwarf
     /// @brief Model for the project launcher
     // std::shared_ptr<IProjectLauncherModel> m_Model;
     /// @brief Window to render the project launcher in
-    std::unique_ptr<IWindow>              m_Window;
+    std::shared_ptr<IWindow>              m_Window;
     std::shared_ptr<IProjectLauncherData> m_Data;
     std::shared_ptr<ITextureFactory>      m_TextureFactory;
     std::shared_ptr<IProjectList>         m_ProjectList;
     std::shared_ptr<IProjectListIO>       m_ProjectListIO;
     std::shared_ptr<IProjectListSorter>   m_ProjectListSorter;
     std::shared_ptr<IProjectCreator>      m_ProjectCreator;
+    std::shared_ptr<IDwarfLogger>         m_Logger;
 
     /// @brief Font loaded into IMGUI for header text
-    ImFont* m_HeaderFont;
+    std::shared_ptr<ImFont> m_HeaderFont;
 
     /// @brief Font loaded into IMGUI for regular text
-    ImFont* m_TextFont;
+    std::shared_ptr<ImFont> m_TextFont;
 
     /// @brief Loaded image for the github icon
     std::shared_ptr<ITexture> m_GithubIcon;
@@ -86,15 +88,16 @@ namespace Dwarf
     RenderCreateNewProjectModal();
 
   public:
-    ProjectLauncherView(std::unique_ptr<IWindow>              window,
+    ProjectLauncherView(std::shared_ptr<IWindow>              window,
                         std::shared_ptr<IProjectLauncherData> data,
                         std::shared_ptr<ITextureFactory>      textureFactory,
                         std::shared_ptr<IProjectList>         projectList,
                         std::shared_ptr<IProjectListIO>       projectListIO,
                         std::shared_ptr<IProjectListSorter>   projectListSorter,
-                        std::shared_ptr<IProjectCreator>      projectCreator);
+                        std::shared_ptr<IProjectCreator>      projectCreator,
+                        std::shared_ptr<IDwarfLogger>         logger);
 
-    ~ProjectLauncherView() override = default;
+    ~ProjectLauncherView() override;
 
     /**
      * @brief Show the project launcher view
