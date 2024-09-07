@@ -9,9 +9,16 @@ namespace Dwarf
   DwarfLogger::DwarfLogger(LogName logName)
     : m_Logger(spdlog::stdout_color_mt(logName.t))
   {
+    m_Logger->log(spdlog::level::info,
+                  fmt::format("[{}] {}", "DwarfLogger", "Logger initialized."));
   }
 
-  DwarfLogger::~DwarfLogger() = default;
+  DwarfLogger::~DwarfLogger()
+  {
+    m_Logger->log(spdlog::level::info,
+                  fmt::format("[{}] {}", "DwarfLogger", "Logger destroyed."));
+    m_Logger->flush();
+  }
 
   void
   DwarfLogger::LogDebug(const Log logMessage) const

@@ -14,6 +14,9 @@ namespace Dwarf
      * @brief Render the project launcher view
      */
     virtual void
+    Show() = 0;
+
+    virtual void
     Render() = 0;
   };
 }

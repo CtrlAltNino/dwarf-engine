@@ -9,6 +9,7 @@ namespace Dwarf
   class IProjectList
   {
   public:
+    virtual ~IProjectList() = default;
     virtual void
     AddProject(const std::filesystem::path& path) = 0;
 

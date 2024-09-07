@@ -135,17 +135,17 @@ namespace Dwarf
       boost::di::bind<LogName>.to(LogName("Launcher")),
       boost::di::bind<IDwarfLogger>.to<DwarfLogger>(),
       boost::di::bind<GraphicsApi>.to(GraphicsApi::OpenGL),
-      boost::di::bind<IProjectLauncher>.to<ProjectLauncher>(),
       boost::di::bind<IImGuiLayerFactory>.to<ImGuiLayerFactory>(),
       boost::di::bind<IProjectLauncherData>.to<ProjectLauncherData>(),
 #ifdef _WIN32
-      boost::di::bind<IWindow>.to<WindowsWindow>(),
+      boost::di::bind<IWindow>.to<WindowsWindow>().in(boost::di::unique),
 #elif __linux__
       boost::di::bind<IWindow>.to<LinuxWindow>(),
 #endif
       boost::di::bind<IGraphicsContextFactory>.to<GraphicsContextFactory>(),
       boost::di::bind<IInputManager>.to<InputManager>(),
-      boost::di::bind<IProjectLauncherView>.to<ProjectLauncherView>(),
+      boost::di::bind<IProjectLauncherView>.to<ProjectLauncherView>().in(
+        boost::di::unique),
       boost::di::bind<ITextureFactory>.to<TextureFactory>(),
       boost::di::bind<IImageFileLoader>.to<ImageFileLoader>(),
       boost::di::bind<IProjectList>.to<ProjectList>(),
@@ -156,11 +156,11 @@ namespace Dwarf
         WindowProps("Dwarf Engine", 1100, 600, GraphicsApi::OpenGL)));
 
     m_Logger->LogInfo(Log("Creating project launcher...", "DwarfEngine"));
-    auto launcher = launcherInjector.create<ProjectLauncher>();
+    auto launcher = launcherInjector.create<std::unique_ptr<ProjectLauncher>>();
     m_Logger->LogInfo(Log("Project launcher created.", "DwarfEngine"));
 
     m_Logger->LogInfo(Log("Running project launcher...", "DwarfEngine"));
-    selectedProject = launcher.Run();
+    selectedProject = launcher->Run();
     m_Logger->LogInfo(Log("Project launcher finished running.", "DwarfEngine"));
 
     return selectedProject;
@@ -179,7 +179,7 @@ namespace Dwarf
     SerializedView serializedView = SerializedView(std::nullopt);
     GraphicsApi    graphicsApi = selectedProject.graphicsApi;
 
-    const auto editorInjector = boost::di::make_injector(
+    auto editorInjector = boost::di::make_injector(
           boost::di::bind<LogName>.to(LogName("Editor")),
           boost::di::bind<IDwarfLogger>.to<DwarfLogger>().in(boost::di::singleton),
           boost::di::bind<GraphicsApi>.to(graphicsApi),

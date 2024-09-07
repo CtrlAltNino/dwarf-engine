@@ -23,7 +23,7 @@ namespace Dwarf
     /// @brief Model for the project launcher
     // std::shared_ptr<IProjectLauncherModel> m_Model;
     /// @brief Window to render the project launcher in
-    std::shared_ptr<IWindow>              m_Window;
+    std::unique_ptr<IWindow>              m_Window;
     std::shared_ptr<IProjectLauncherData> m_Data;
     std::shared_ptr<ITextureFactory>      m_TextureFactory;
     std::shared_ptr<IProjectList>         m_ProjectList;
@@ -86,7 +86,7 @@ namespace Dwarf
     RenderCreateNewProjectModal();
 
   public:
-    ProjectLauncherView(std::shared_ptr<IWindow>              window,
+    ProjectLauncherView(std::unique_ptr<IWindow>              window,
                         std::shared_ptr<IProjectLauncherData> data,
                         std::shared_ptr<ITextureFactory>      textureFactory,
                         std::shared_ptr<IProjectList>         projectList,
@@ -94,10 +94,18 @@ namespace Dwarf
                         std::shared_ptr<IProjectListSorter>   projectListSorter,
                         std::shared_ptr<IProjectCreator>      projectCreator);
 
+    ~ProjectLauncherView() override = default;
+
+    /**
+     * @brief Show the project launcher view
+     */
+    void
+    Show() override;
+
     /**
      * @brief Render the project launcher view
      */
     void
-    Render();
+    Render() override;
   };
 }

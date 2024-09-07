@@ -47,6 +47,8 @@ namespace Dwarf
   class IProjectLauncher
   {
   public:
+    virtual ~IProjectLauncher() = default;
+
     virtual ProjectInformation
     Run() = 0;
   };

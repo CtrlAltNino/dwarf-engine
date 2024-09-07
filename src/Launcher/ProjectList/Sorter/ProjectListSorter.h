@@ -11,7 +11,9 @@ namespace Dwarf
     ProjectSortOrder m_SortOrder = ProjectSortOrder::Date;
 
   public:
-    ProjectListSorter();
+    ProjectListSorter() = default;
+
+    ~ProjectListSorter() override = default;
 
     void
     UpdateSortOrder(ProjectListColumn columnId) override;

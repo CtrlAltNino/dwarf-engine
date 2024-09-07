@@ -23,6 +23,8 @@ namespace Dwarf
   class IProjectListSorter
   {
   public:
+    virtual ~IProjectListSorter() = default;
+
     virtual void
     UpdateSortOrder(ProjectListColumn columnId) = 0;
 

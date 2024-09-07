@@ -18,6 +18,7 @@ namespace Dwarf
     ProjectList(std::shared_ptr<IProjectListIO>     projectListIO,
                 std::shared_ptr<IProjectListSorter> projectSorter);
 
+    ~ProjectList() override = default;
     void
     AddProject(const std::filesystem::path& path) override;
 

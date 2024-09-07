@@ -21,14 +21,14 @@ namespace Dwarf
 #define PROJECT_INFORMATION_HEIGHT (30)
 
   ProjectLauncherView::ProjectLauncherView(
-    std::shared_ptr<IWindow>              window,
+    std::unique_ptr<IWindow>              window,
     std::shared_ptr<IProjectLauncherData> data,
     std::shared_ptr<ITextureFactory>      textureFactory,
     std::shared_ptr<IProjectList>         projectList,
     std::shared_ptr<IProjectListIO>       projectListIO,
     std::shared_ptr<IProjectListSorter>   projectListSorter,
     std::shared_ptr<IProjectCreator>      projectCreator)
-    : m_Window(window)
+    : m_Window(std::move(window))
     , m_Data(data)
     , m_TextureFactory(textureFactory)
     , m_ProjectList(projectList)
@@ -50,8 +50,21 @@ namespace Dwarf
   }
 
   void
+  ProjectLauncherView::Show()
+  {
+    m_Window->ShowWindow();
+  }
+
+  void
   ProjectLauncherView::Render()
   {
+    if (m_Window->ShouldClose())
+    {
+      m_Data->SetState(ProjectChooserState::Canceled);
+    }
+
+    m_Window->NewFrame();
+
     glm::ivec2 windowSize = { m_Window->GetWidth(), m_Window->GetHeight() };
 
     RenderProjectList(windowSize);
@@ -78,6 +91,8 @@ namespace Dwarf
     RenderProjectNotFoundModal();
     RenderCreateNewProjectModal();
     RenderChangeGraphicsApiModal();
+
+    m_Window->EndFrame();
   }
 
   void

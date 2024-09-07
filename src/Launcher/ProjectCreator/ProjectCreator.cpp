@@ -8,8 +8,6 @@ namespace Dwarf
   {
   }
 
-  ProjectCreator::~ProjectCreator() {}
-
   void
   ProjectCreator::CreateProject(std::string           projectName,
                                 std::filesystem::path projectPath,

@@ -6,6 +6,8 @@ namespace Dwarf
   class IProjectListIO
   {
   public:
+    virtual ~IProjectListIO() = default;
+
     virtual std::vector<ProjectInformation>
     LoadProjectList() const = 0;
 

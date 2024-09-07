@@ -18,6 +18,8 @@ namespace Dwarf
   {
   }
 
+  ImGuiLayerFactory::~ImGuiLayerFactory() {}
+
   std::shared_ptr<IImGuiLayer>
   ImGuiLayerFactory::Create() const
   {

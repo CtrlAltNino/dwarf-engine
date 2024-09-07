@@ -2,8 +2,6 @@
 
 namespace Dwarf
 {
-  ProjectListSorter::ProjectListSorter() {}
-
   /// @brief Converts a string to lower case.
   /// @param s The source string.
   /// @return The converted output.

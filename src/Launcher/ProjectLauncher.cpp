@@ -4,29 +4,14 @@
 
 namespace Dwarf
 {
-  ProjectLauncher::ProjectLauncher(std::shared_ptr<IWindow>              window,
-                                   std::shared_ptr<IProjectLauncherView> view,
+  ProjectLauncher::ProjectLauncher(std::unique_ptr<IProjectLauncherView> view,
                                    std::shared_ptr<IProjectLauncherData> data,
                                    std::shared_ptr<IDwarfLogger>         logger)
-    : m_Window(window)
-    , m_View(view)
+    : m_View(std::move(view))
     , m_Data(data)
     , m_Logger(logger)
   {
     m_Logger->LogInfo(Log("Constructor", "ProjectLauncher"));
-    //     // Initializing the project launcher model (e.g. loading the project
-    //     list) WindowProps props("Dwarf Engine", 1100, 600);
-
-    // #if defined(_WIN32) || defined(__linux__)
-    //     props.Api = GraphicsApi::OpenGL;
-    // #endif
-
-    //     m_Window = Window::Create(props);
-
-    //     m_Model = std::make_unique<ProjectLauncherModel>();
-
-    //     // Initializing the view
-    //     m_View = std::make_unique<ProjectLauncherView>(m_Model, m_Window);
   }
 
   ProjectInformation
@@ -35,20 +20,20 @@ namespace Dwarf
     m_Logger->LogInfo(Log("Running project launcher...", "ProjectLauncher"));
 
     m_Logger->LogInfo(Log("Showing window...", "ProjectLauncher"));
-    m_Window->ShowWindow();
+    // m_Window->ShowWindow();
+    m_View->Show();
 
     m_Logger->LogInfo(Log("Starting main loop...", "ProjectLauncher"));
-    while (((m_Data->GetState() != ProjectChooserState::Done) &&
-            (m_Data->GetState() != ProjectChooserState::Canceled)) &&
-           !m_Window->ShouldClose())
+    while ((m_Data->GetState() != ProjectChooserState::Done) &&
+           (m_Data->GetState() != ProjectChooserState::Canceled))
     {
       TimeStamp currentTimeStamp = TimeUtilities::GetCurrent();
 
-      m_Window->NewFrame();
+      // m_Window->NewFrame();
 
       m_View->Render();
 
-      m_Window->EndFrame();
+      // m_Window->EndFrame();
 
       // TODO: Fps lock
       while (TimeUtilities::GetDifferenceInSeconds(
