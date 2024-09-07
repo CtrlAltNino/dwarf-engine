@@ -11,6 +11,7 @@
 #include "Utilities/BrowserLinkOpener.h"
 #include "Core/Base.h"
 #include "Utilities/FileHandler.h"
+#include <imgui.h>
 #include <iostream>
 #include <nfd.h>
 
@@ -43,10 +44,12 @@ namespace Dwarf
 
     ImGuiIO io = ImGui::GetIO();
     io.Fonts->AddFontDefault();
+    auto no_op_deleter = [](ImFont*) {};
     m_HeaderFont = std::shared_ptr<ImFont>(
-      io.Fonts->AddFontFromFileTTF(FONT_ROBOTO_LIGHT_PATH, 26));
+      io.Fonts->AddFontFromFileTTF(FONT_ROBOTO_LIGHT_PATH, 26), no_op_deleter);
     m_TextFont = std::shared_ptr<ImFont>(
-      io.Fonts->AddFontFromFileTTF(FONT_ROBOTO_REGULAR_PATH, 15));
+      io.Fonts->AddFontFromFileTTF(FONT_ROBOTO_REGULAR_PATH, 15),
+      no_op_deleter);
     m_Logger->LogInfo(Log("Fonts loaded", "ProjectLauncherView"));
 
     m_GithubIcon =
@@ -78,7 +81,7 @@ namespace Dwarf
   {
     if (m_Window->ShouldClose())
     {
-      m_Data->SetState(ProjectChooserState::Canceled);
+      m_Data->SetState(ProjectChooserState::Cancelled);
     }
 
     m_Window->NewFrame();

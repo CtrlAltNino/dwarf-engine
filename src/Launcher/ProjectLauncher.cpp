@@ -27,7 +27,7 @@ namespace Dwarf
 
     m_Logger->LogInfo(Log("Starting main loop...", "ProjectLauncher"));
     while ((m_Data->GetState() != ProjectChooserState::Done) &&
-           (m_Data->GetState() != ProjectChooserState::Canceled))
+           (m_Data->GetState() != ProjectChooserState::Cancelled))
     {
       TimeStamp currentTimeStamp = TimeUtilities::GetCurrent();
 
@@ -46,7 +46,10 @@ namespace Dwarf
     }
 
     m_Logger->LogInfo(Log("Project launcher finished", "ProjectLauncher"));
-    m_ProjectList->RegisterProjectOpening(m_Data->GetSelectedProject().path);
+    if (m_Data->GetState() == ProjectChooserState::Done)
+    {
+      m_ProjectList->RegisterProjectOpening(m_Data->GetSelectedProject().path);
+    }
     return m_Data->GetSelectedProject();
   }
 }

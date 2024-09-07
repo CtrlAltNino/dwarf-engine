@@ -25,7 +25,7 @@ namespace Dwarf
     ProjectNotFound,
     CreateNewProject,
     ChangeGraphicsApi,
-    Canceled
+    Cancelled
   };
 
   /// @brief Structure holding information about a project.

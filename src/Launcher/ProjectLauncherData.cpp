@@ -40,7 +40,7 @@ namespace Dwarf
       case ProjectChooserState::ChangeGraphicsApi:
         stateString = "ChangeGraphicsApi";
         break;
-      case ProjectChooserState::Canceled: stateString = "Canceled"; break;
+      case ProjectChooserState::Cancelled: stateString = "Cancelled"; break;
     }
     m_Logger->LogInfo(
       Log(fmt::format("Setting project launcher state to: {}", stateString),

@@ -140,7 +140,7 @@ namespace Dwarf
         "Dwarf Engine - Project Launcher", 1100, 600, GraphicsApi::OpenGL)),
       boost::di::bind<IProjectLauncherData>.to<ProjectLauncherData>(),
 #ifdef _WIN32
-      boost::di::bind<IWindow>.to<WindowsWindow>().in(boost::di::unique),
+      boost::di::bind<IWindow>.to<WindowsWindow>().in(boost::di::singleton),
 #elif __linux__
       boost::di::bind<IWindow>.to<LinuxWindow>().in(boost::di::singleton),
 #endif
