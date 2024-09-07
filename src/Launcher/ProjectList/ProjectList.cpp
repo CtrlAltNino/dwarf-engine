@@ -26,22 +26,27 @@ namespace Dwarf
 
     m_Logger->LogInfo(Log("ProjectList created.", "ProjectList"));
     NFD_Init();
+    m_Logger->LogInfo(Log("Native File Dialog initialized.", "ProjectList"));
   }
 
   ProjectList::~ProjectList()
   {
+    m_Logger->LogInfo(Log("Destroying ProjectList...", "ProjectList"));
     NFD_Quit();
+    m_Logger->LogInfo(Log("Native File Dialog destroyed.", "ProjectList"));
   }
 
   void
   ProjectList::AddProject(const std::filesystem::path& path)
   {
+    m_Logger->LogInfo(Log("Adding project...", "ProjectList"));
     ProjectInformation info;
     info.path = path;
     info.name = path.filename().string();
     info.lastOpened = 0;
     info.graphicsApi = GraphicsApi::OpenGL;
     m_ProjectList.push_back(info);
+    m_Logger->LogInfo(Log("Project added.", "ProjectList"));
   }
 
   void
