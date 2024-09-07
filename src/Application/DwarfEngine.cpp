@@ -100,10 +100,10 @@ namespace Dwarf
     std::shared_ptr<DwarfLogger> logger =
       std::make_shared<DwarfLogger>(DwarfLogger(LogName("Application")));
 
-    bool               shouldClose = false;
+    bool               returnToLauncher = false;
     ProjectInformation selectedProject = ProjectInformation();
 
-    while (!shouldClose)
+    while (returnToLauncher)
     {
       {
         logger->LogInfo(Log("Creating injector...", "DwarfEngine"));
@@ -159,17 +159,14 @@ namespace Dwarf
           Log("Opening project at: " + selectedProject.path.t.string(),
               "DwarfEngine"));
         logger->LogInfo(Log("Creating editor...", "DwarfEngine"));
+
         std::shared_ptr<AssetDirectoryPath> assetDirectoryPath =
           std::make_shared<AssetDirectoryPath>(selectedProject.path.t /
                                                "Assets");
-
-        ProjectPath projectPath = ProjectPath(selectedProject.path);
-
+        ProjectPath    projectPath = ProjectPath(selectedProject.path);
         SerializedView serializedView = SerializedView(std::nullopt);
+        GraphicsApi    graphicsApi = selectedProject.graphicsApi;
 
-        GraphicsApi graphicsApi = selectedProject.graphicsApi;
-
-        // Create injector and bind the project path to the editor.
         const auto editorInjector = boost::di::make_injector(
           boost::di::bind<LogName>.to(LogName("Editor")),
           boost::di::bind<IDwarfLogger>.to<DwarfLogger>().in(boost::di::singleton),
@@ -244,18 +241,18 @@ namespace Dwarf
         );
 
         auto editor = editorInjector.create<Dwarf::Editor>();
-        //  shouldClose = !editor.Run();
-        shouldClose = true;
+        returnToLauncher = !editor.Run();
 
         logger->LogInfo(Log("Editor finished running.", "DwarfEngine"));
         logger->LogInfo(
-          Log("Should close: " + std::to_string(shouldClose), "DwarfEngine"));
+          Log("Return to launcheer: " + std::to_string(returnToLauncher),
+              "DwarfEngine"));
       }
       else
       {
         logger->LogInfo(Log(
           "No project path provided. Exiting Dwarf Engine... ", "DwarfEngine"));
-        shouldClose = true;
+        returnToLauncher = false;
       }
     }
   }

@@ -7,10 +7,13 @@ namespace Dwarf
   class IEditor
   {
   public:
-    IEditor() = default;
-    ~IEditor() = default;
+    virtual ~IEditor() = default;
 
-    /// @brief Starts the render loop
+    /*
+     * @brief Starts the editor.
+     * @return True if the user wants to return to the project launcher after
+     * closing the editor.
+     */
     virtual bool
     Run() = 0;
   };

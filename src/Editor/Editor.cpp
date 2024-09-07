@@ -5,15 +5,16 @@
 
 namespace Dwarf
 {
-  Editor::Editor(std::shared_ptr<IDwarfLogger>     logger,
-                 std::shared_ptr<IEditorStats>     stats,
-                 std::shared_ptr<IInputManager>    inputManager,
-                 std::shared_ptr<IProjectSettings> projectSettings,
-                 std::shared_ptr<ILoadedScene>     loadedScene,
-                 std::shared_ptr<IWindow>          window,
-                 std::shared_ptr<ISceneIO>         sceneIO,
-                 std::shared_ptr<IEditorView>      view,
-                 std::shared_ptr<IAssetDatabase>   assetDatabase)
+  Editor::Editor(std::shared_ptr<IDwarfLogger>      logger,
+                 std::shared_ptr<IEditorStats>      stats,
+                 std::shared_ptr<IInputManager>     inputManager,
+                 std::shared_ptr<IProjectSettings>  projectSettings,
+                 std::shared_ptr<ILoadedScene>      loadedScene,
+                 std::shared_ptr<IWindow>           window,
+                 std::shared_ptr<ISceneIO>          sceneIO,
+                 std::shared_ptr<IEditorView>       view,
+                 std::shared_ptr<IAssetDatabase>    assetDatabase,
+                 std::shared_ptr<IShaderRecompiler> shaderRecompiler)
     : m_Logger(logger)
     , m_EditorStats(stats)
     , m_InputManager(inputManager)
@@ -21,6 +22,9 @@ namespace Dwarf
     , m_Window(window)
     , m_SceneIO(sceneIO)
     , m_ProjectSettings(projectSettings)
+    , m_LoadedScene(loadedScene)
+    , m_AssetDatabase(assetDatabase)
+    , m_ShaderRecompiler(shaderRecompiler)
 
   {
     // Either load the last opened scene or the default scene
@@ -50,7 +54,7 @@ namespace Dwarf
     m_Logger->LogInfo(Log("Entering editor loop", "Editor"));
     m_Logger->LogWarn(
       Log("There is currently no fps cap implemented", "Editor"));
-    // TODO: abstract the close condition
+
     while (!m_Window->ShouldClose() && !m_CloseSignal)
     {
       m_Logger->LogInfo(Log("Handling time stamps", "Editor"));
@@ -60,7 +64,7 @@ namespace Dwarf
 
       m_Window->NewFrame();
       m_InputManager->OnUpdate();
-      // m_AssetDatabase->RecompileShaders();
+      m_ShaderRecompiler->Recompile();
       m_View->OnUpdate();
       m_View->OnImGuiRender();
       m_Window->EndFrame();
