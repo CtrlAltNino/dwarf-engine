@@ -6,10 +6,12 @@ namespace Dwarf
 {
   ProjectLauncher::ProjectLauncher(std::unique_ptr<IProjectLauncherView> view,
                                    std::shared_ptr<IProjectLauncherData> data,
-                                   std::shared_ptr<IDwarfLogger>         logger)
+                                   std::shared_ptr<IDwarfLogger>         logger,
+                                   std::shared_ptr<IProjectList> projectList)
     : m_View(std::move(view))
     , m_Data(data)
     , m_Logger(logger)
+    , m_ProjectList(projectList)
   {
     m_Logger->LogInfo(Log("Constructor", "ProjectLauncher"));
   }
@@ -44,6 +46,7 @@ namespace Dwarf
     }
 
     m_Logger->LogInfo(Log("Project launcher finished", "ProjectLauncher"));
+    m_ProjectList->RegisterProjectOpening(m_Data->GetSelectedProject().path);
     return m_Data->GetSelectedProject();
   }
 }
