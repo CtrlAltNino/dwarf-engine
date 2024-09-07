@@ -170,7 +170,8 @@ namespace Dwarf
     m_Logger->LogInfo(Log("Registering project opening...", "ProjectList"));
     for (auto& project : m_ProjectList)
     {
-      if (project.path == path)
+      m_Logger->LogInfo(Log("Checking project...", "ProjectList"));
+      if (project.path.t == path)
       {
         project.lastOpened = time(nullptr);
         m_Logger->LogInfo(Log("Project opening registered.", "ProjectList"));

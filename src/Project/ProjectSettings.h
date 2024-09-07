@@ -37,7 +37,7 @@ namespace Dwarf
   {
   private:
     // Data
-    ProjectPath                   m_Path;
+    std::filesystem::path         m_ProjectSettingsPath;
     std::string                   m_Name;
     time_t                        m_LastOpenedTimeStamp;
     GraphicsApi                   m_GraphicsApi;

@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Core/Base.h"
 #include "Logging/IDwarfLogger.h"
 #include "Window/IWindow.h"
 #include "Core/Rendering/GraphicsContext/IGraphicsContextFactory.h"

@@ -13,7 +13,12 @@ namespace Dwarf
     , m_Logger(logger)
     , m_ProjectList(projectList)
   {
-    m_Logger->LogInfo(Log("Constructor", "ProjectLauncher"));
+    m_Logger->LogInfo(Log("Creating ProjectLauncher", "ProjectLauncher"));
+  }
+
+  ProjectLauncher::~ProjectLauncher()
+  {
+    m_Logger->LogInfo(Log("Destroying ProjectLauncher", "ProjectLauncher"));
   }
 
   ProjectInformation

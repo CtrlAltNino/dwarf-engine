@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "Platform/Linux/LinuxWindow.h"
-#include "Input/InputManager.h"
 
 namespace Dwarf
 {
@@ -44,7 +43,15 @@ namespace Dwarf
   {
     m_Logger->LogInfo(Log("Initializing Linux Window...", "LinuxWindow"));
     // SDL Setup
-    SDL_Init(SDL_INIT_VIDEO);
+    int result = SDL_Init(SDL_INIT_VIDEO);
+
+    if (result != 0)
+    {
+      m_Logger->LogError(
+        Log("Failed to initialize SDL", "LinuxWindow", fmt::color::red));
+      SDL_Quit();
+      return;
+    }
 
     m_Data.Title = props.Title;
     m_Data.Height = props.Height;
@@ -84,7 +91,8 @@ namespace Dwarf
 
     if (m_Window == nullptr)
     {
-      m_Logger->LogError(Log("Failed to create window", "LinuxWindow"));
+      m_Logger->LogError(
+        Log("Failed to create window", "LinuxWindow", fmt::color::red));
       SDL_Quit();
     }
 

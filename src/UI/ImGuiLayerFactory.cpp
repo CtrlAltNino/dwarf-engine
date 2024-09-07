@@ -47,7 +47,7 @@ namespace Dwarf
         {
           m_Logger->LogInfo(
             Log("Creating OpenGLImGuiLayer...", "ImGuiLayerFactory"));
-          return std::make_shared<OpenGLImGuiLayer>();
+          return std::make_shared<OpenGLImGuiLayer>(m_Logger);
           break;
         }
       case Vulkan:
@@ -66,7 +66,7 @@ namespace Dwarf
         {
           m_Logger->LogInfo(
             Log("Creating OpenGLImGuiLayer...", "ImGuiLayerFactory"));
-          return std::make_shared<OpenGLImGuiLayer>();
+          return std::make_shared<OpenGLImGuiLayer>(m_Logger);
           break;
         }
       case Vulkan:

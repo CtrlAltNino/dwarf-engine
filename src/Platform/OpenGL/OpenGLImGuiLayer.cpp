@@ -9,9 +9,15 @@
 
 namespace Dwarf
 {
+  OpenGLImGuiLayer::OpenGLImGuiLayer(std::shared_ptr<IDwarfLogger> logger)
+    : m_Logger(logger)
+  {
+    m_Logger->LogInfo(Log("Creating OpenGLImGuiLayer", "OpenGLImGuiLayer"));
+  }
+
   OpenGLImGuiLayer::~OpenGLImGuiLayer()
   {
-    std::cout << "Shutting down ImGui" << std::endl;
+    m_Logger->LogInfo(Log("Destroying OpenGLImGuiLayer", "OpenGLImGuiLayer"));
     if (m_Window && ImGui::GetCurrentContext())
     {
       ImGui_ImplOpenGL3_Shutdown();

@@ -25,7 +25,7 @@ namespace Dwarf
                     std::shared_ptr<IDwarfLogger>         logger,
                     std::shared_ptr<IProjectList>         projectList);
 
-    ~ProjectLauncher() override = default;
+    ~ProjectLauncher() override;
 
     ProjectInformation
     Run() override;

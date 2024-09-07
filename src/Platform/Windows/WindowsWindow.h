@@ -14,11 +14,11 @@ namespace Dwarf
   {
   public:
     explicit WindowsWindow(
-      WindowProps                              props,
-      std::shared_ptr<IDwarfLogger>            logger,
-      std::shared_ptr<IInputManager>           inputManager,
+      const WindowProps&                       props,
       std::shared_ptr<IGraphicsContextFactory> contextFactory,
-      std::shared_ptr<IImGuiLayerFactory>      imguiLayerFactory);
+      std::shared_ptr<IImGuiLayerFactory>      imguiLayerFactory,
+      std::shared_ptr<IInputManager>           inputManager,
+      std::shared_ptr<IDwarfLogger>            logger);
     ~WindowsWindow() override;
 
     void
