@@ -2,18 +2,18 @@
 
 namespace Dwarf
 {
-  ProjectLauncherData::ProjectLauncherData(std::shared_ptr<IDwarfLogger> logger)
+  ProjectLauncherData::ProjectLauncherData(IDwarfLogger& logger)
     : m_Logger(logger)
     , m_State()
     , m_SelectedProject()
   {
-    m_Logger->LogInfo(
+    m_Logger.LogInfo(
       Log("ProjectLauncherData created.", "ProjectLauncherData"));
   }
 
   ProjectLauncherData::~ProjectLauncherData()
   {
-    m_Logger->LogInfo(
+    m_Logger.LogInfo(
       Log("ProjectLauncherData destroyed.", "ProjectLauncherData"));
   }
 
@@ -42,7 +42,7 @@ namespace Dwarf
         break;
       case ProjectChooserState::Cancelled: stateString = "Cancelled"; break;
     }
-    m_Logger->LogInfo(
+    m_Logger.LogInfo(
       Log(fmt::format("Setting project launcher state to: {}", stateString),
           "ProjectLauncherData"));
     m_State = state;

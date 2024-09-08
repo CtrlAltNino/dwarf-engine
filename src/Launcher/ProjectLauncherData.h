@@ -8,12 +8,12 @@ namespace Dwarf
   class ProjectLauncherData : public IProjectLauncherData
   {
   private:
-    std::shared_ptr<IDwarfLogger> m_Logger;
-    ProjectChooserState           m_State;
-    ProjectInformation            m_SelectedProject;
+    IDwarfLogger&       m_Logger;
+    ProjectChooserState m_State;
+    ProjectInformation  m_SelectedProject;
 
   public:
-    ProjectLauncherData(std::shared_ptr<IDwarfLogger> logger);
+    ProjectLauncherData(IDwarfLogger& logger);
     ~ProjectLauncherData() override;
 
     ProjectChooserState

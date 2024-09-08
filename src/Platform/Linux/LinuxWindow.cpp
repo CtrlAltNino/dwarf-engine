@@ -94,6 +94,7 @@ namespace Dwarf
       m_Logger->LogError(
         Log("Failed to create window", "LinuxWindow", fmt::color::red));
       SDL_Quit();
+      return;
     }
 
     m_Logger->LogInfo(Log("Window created", "LinuxWindow"));
@@ -121,7 +122,6 @@ namespace Dwarf
 
     m_Logger->LogInfo(Log("Initializing Graphics Context...", "LinuxWindow"));
     m_Context->Init();
-
     m_Logger->LogInfo(Log("Graphics Context initialized", "LinuxWindow"));
 
     m_Logger->LogInfo(Log("Creating ImGui Layer...", "LinuxWindow"));
@@ -191,7 +191,8 @@ namespace Dwarf
   void
   LinuxWindow::SetVSync(bool enabled)
   {
-    m_Logger->LogInfo(Log("Setting VSync...", "LinuxWindow"));
+    m_Logger->LogInfo(
+      Log("Setting VSync to " + std::to_string(enabled), "LinuxWindow"));
     if (enabled)
       SDL_GL_SetSwapInterval(1);
     else

@@ -24,14 +24,14 @@ namespace Dwarf
     /// @brief Model for the project launcher
     // std::shared_ptr<IProjectLauncherModel> m_Model;
     /// @brief Window to render the project launcher in
-    std::shared_ptr<IWindow>              m_Window;
-    std::shared_ptr<IProjectLauncherData> m_Data;
-    std::shared_ptr<ITextureFactory>      m_TextureFactory;
-    std::shared_ptr<IProjectList>         m_ProjectList;
-    std::shared_ptr<IProjectListIO>       m_ProjectListIO;
-    std::shared_ptr<IProjectListSorter>   m_ProjectListSorter;
-    std::shared_ptr<IProjectCreator>      m_ProjectCreator;
-    std::shared_ptr<IDwarfLogger>         m_Logger;
+    IDwarfLogger&         m_Logger;
+    IWindow&              m_Window;
+    IProjectLauncherData& m_Data;
+    ITextureFactory&      m_TextureFactory;
+    IProjectList&         m_ProjectList;
+    IProjectListIO&       m_ProjectListIO;
+    IProjectListSorter&   m_ProjectListSorter;
+    IProjectCreator&      m_ProjectCreator;
 
     /// @brief Font loaded into IMGUI for header text
     std::shared_ptr<ImFont> m_HeaderFont;
@@ -88,14 +88,14 @@ namespace Dwarf
     RenderCreateNewProjectModal();
 
   public:
-    ProjectLauncherView(std::shared_ptr<IWindow>              window,
-                        std::shared_ptr<IProjectLauncherData> data,
-                        std::shared_ptr<ITextureFactory>      textureFactory,
-                        std::shared_ptr<IProjectList>         projectList,
-                        std::shared_ptr<IProjectListIO>       projectListIO,
-                        std::shared_ptr<IProjectListSorter>   projectListSorter,
-                        std::shared_ptr<IProjectCreator>      projectCreator,
-                        std::shared_ptr<IDwarfLogger>         logger);
+    ProjectLauncherView(IDwarfLogger&         logger,
+                        IWindow&              window,
+                        IProjectLauncherData& data,
+                        ITextureFactory&      textureFactory,
+                        IProjectList&         projectList,
+                        IProjectListIO&       projectListIO,
+                        IProjectListSorter&   projectListSorter,
+                        IProjectCreator&      projectCreator);
 
     ~ProjectLauncherView() override;
 

@@ -16,7 +16,7 @@ namespace Dwarf
     ImGuiLayerFactory(std::shared_ptr<IDwarfLogger> logger, GraphicsApi api);
     ~ImGuiLayerFactory() override;
 
-    std::shared_ptr<IImGuiLayer>
+    std::unique_ptr<IImGuiLayer>
     Create() const override;
   };
 } // namespace Dwarf

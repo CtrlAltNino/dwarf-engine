@@ -8,10 +8,10 @@ namespace Dwarf
   class ProjectListIO : public IProjectListIO
   {
   private:
-    std::shared_ptr<IDwarfLogger> m_Logger;
+    IDwarfLogger& m_Logger;
 
   public:
-    ProjectListIO(std::shared_ptr<IDwarfLogger> logger);
+    ProjectListIO(IDwarfLogger& logger);
 
     ~ProjectListIO() override;
 

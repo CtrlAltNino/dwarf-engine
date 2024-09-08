@@ -9,7 +9,7 @@ namespace Dwarf
   public:
     virtual ~IImGuiLayerFactory() = default;
 
-    virtual std::shared_ptr<IImGuiLayer>
+    virtual std::unique_ptr<IImGuiLayer>
     Create() const = 0;
   };
 } // namespace Dwarf

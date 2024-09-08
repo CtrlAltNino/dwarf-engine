@@ -11,7 +11,7 @@ namespace Dwarf
   public:
     virtual ~IGraphicsContextFactory() = default;
 
-    virtual std::shared_ptr<IGraphicsContext>
+    virtual std::unique_ptr<IGraphicsContext>
     Create(SDL_Window* window) const = 0;
   };
 } // namespace Dwarf

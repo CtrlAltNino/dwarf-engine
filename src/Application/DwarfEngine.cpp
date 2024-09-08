@@ -96,8 +96,7 @@
 namespace Dwarf
 {
   DwarfEngine::DwarfEngine()
-    : m_Logger(
-        std::make_shared<DwarfLogger>(DwarfLogger(LogName("Application"))))
+    : m_Logger(std::make_shared<DwarfLogger>(LogName("Application")))
   {
   }
 
@@ -114,9 +113,19 @@ namespace Dwarf
       if (!selectedProject.path.t.empty())
       {
         returnToLauncher = RunEditor(selectedProject);
+
+        if (returnToLauncher)
+        {
+          m_Logger->LogInfo(Log("Returning to launcher...", "DwarfEngine"));
+        }
+        else
+        {
+          m_Logger->LogInfo(Log("Exiting Dwarf Engine...", "DwarfEngine"));
+        }
       }
       else
       {
+
         m_Logger->LogInfo(Log(
           "No project path provided. Exiting Dwarf Engine... ", "DwarfEngine"));
         returnToLauncher = false;
@@ -130,37 +139,51 @@ namespace Dwarf
     ProjectInformation selectedProject = ProjectInformation();
 
     m_Logger->LogInfo(Log("Creating injector...", "DwarfEngine"));
-
-    auto launcherInjector = boost::di::make_injector(
-      boost::di::bind<LogName>.to(LogName("Launcher")),
-      boost::di::bind<IDwarfLogger>.to<DwarfLogger>(),
-      boost::di::bind<GraphicsApi>.to(GraphicsApi::OpenGL),
-      boost::di::bind<IImGuiLayerFactory>.to<ImGuiLayerFactory>(),
-      boost::di::bind<WindowProps>.to(WindowProps(
-        "Dwarf Engine - Project Launcher", 1100, 600, GraphicsApi::OpenGL)),
-      boost::di::bind<IProjectLauncherData>.to<ProjectLauncherData>(),
+    {
+      auto launcherInjector = std::make_unique<
+        boost::di::
+          injector<std::unique_ptr<ProjectLauncher>>>(boost::di::make_injector(
+        boost::di::bind<LogName>.to(LogName("Project launcher")),
+        boost::di::bind<IDwarfLogger>.to<DwarfLogger>().in(
+          boost::di::singleton),
+        boost::di::bind<GraphicsApi>.to(GraphicsApi::OpenGL),
+        boost::di::bind<IImGuiLayerFactory>.to<ImGuiLayerFactory>().in(
+          boost::di::singleton),
+        boost::di::bind<WindowProps>.to(WindowProps(
+          "Dwarf Engine - Project Launcher", 1100, 600, GraphicsApi::OpenGL)),
+        boost::di::bind<IProjectLauncherData>.to<ProjectLauncherData>().in(
+          boost::di::singleton),
 #ifdef _WIN32
-      boost::di::bind<IWindow>.to<WindowsWindow>().in(boost::di::singleton),
+        boost::di::bind<IWindow>.to<WindowsWindow>(),
 #elif __linux__
-      boost::di::bind<IWindow>.to<LinuxWindow>().in(boost::di::singleton),
+        boost::di::bind<IWindow>.to<LinuxWindow>().in(boost::di::singleton),
 #endif
-      boost::di::bind<IGraphicsContextFactory>.to<GraphicsContextFactory>(),
-      boost::di::bind<IInputManager>.to<InputManager>(),
-      boost::di::bind<IProjectLauncherView>.to<ProjectLauncherView>().in(
-        boost::di::unique),
-      boost::di::bind<ITextureFactory>.to<TextureFactory>(),
-      boost::di::bind<IImageFileLoader>.to<ImageFileLoader>(),
-      boost::di::bind<IProjectList>.to<ProjectList>(),
-      boost::di::bind<IProjectListIO>.to<ProjectListIO>(),
-      boost::di::bind<IProjectListSorter>.to<ProjectListSorter>(),
-      boost::di::bind<IProjectCreator>.to<ProjectCreator>());
+        boost::di::bind<IGraphicsContextFactory>.to<GraphicsContextFactory>().in(
+          boost::di::singleton),
+        boost::di::bind<IInputManager>.to<InputManager>().in(
+          boost::di::singleton),
+        boost::di::bind<IProjectLauncherView>.to<ProjectLauncherView>().in(
+          boost::di::unique),
+        boost::di::bind<ITextureFactory>.to<TextureFactory>().in(
+          boost::di::singleton),
+        boost::di::bind<IImageFileLoader>.to<ImageFileLoader>().in(
+          boost::di::singleton),
+        boost::di::bind<IProjectList>.to<ProjectList>().in(
+          boost::di::singleton),
+        boost::di::bind<IProjectListIO>.to<ProjectListIO>().in(
+          boost::di::singleton),
+        boost::di::bind<IProjectListSorter>.to<ProjectListSorter>().in(
+          boost::di::singleton),
+        boost::di::bind<IProjectCreator>.to<ProjectCreator>().in(
+          boost::di::singleton)));
 
-    m_Logger->LogInfo(Log("Creating project launcher...", "DwarfEngine"));
-    auto launcher = launcherInjector.create<std::unique_ptr<ProjectLauncher>>();
-    m_Logger->LogInfo(Log("Project launcher created.", "DwarfEngine"));
-
+      m_Logger->LogInfo(Log("Creating project launcher...", "DwarfEngine"));
+      // auto launcher =
+      launcherInjector->create<std::unique_ptr<ProjectLauncher>>();
+      m_Logger->LogInfo(Log("Project launcher created.", "DwarfEngine"));
+    }
     m_Logger->LogInfo(Log("Running project launcher...", "DwarfEngine"));
-    selectedProject = launcher->Run();
+    // selectedProject = launcher->Run();
     m_Logger->LogInfo(Log("Project launcher finished running.", "DwarfEngine"));
 
     return selectedProject;
@@ -252,7 +275,7 @@ namespace Dwarf
           boost::di::bind<IEditorView>.to<EditorView>().in(boost::di::singleton)
         );
 
-    auto editor = editorInjector.create<std::unique_ptr<Dwarf::Editor>>();
+    // auto editor = editorInjector.create<std::unique_ptr<Dwarf::Editor>>();
     // returnToLauncher = !editor->Run();
     bool returnToLauncher = false;
 

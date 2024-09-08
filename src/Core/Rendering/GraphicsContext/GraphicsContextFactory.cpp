@@ -11,26 +11,24 @@
 
 namespace Dwarf
 {
-  GraphicsContextFactory::GraphicsContextFactory(
-    std::shared_ptr<IDwarfLogger> logger,
-    GraphicsApi                   api)
+  GraphicsContextFactory::GraphicsContextFactory(IDwarfLogger& logger,
+                                                 GraphicsApi   api)
     : m_Logger(logger)
     , m_Api(api)
   {
-    m_Logger->LogInfo(
-      Log("GraphicsContextFactory created.", "GraphicsContext"));
+    m_Logger.LogInfo(Log("GraphicsContextFactory created.", "GraphicsContext"));
   }
 
   GraphicsContextFactory::~GraphicsContextFactory()
   {
-    m_Logger->LogInfo(
+    m_Logger.LogInfo(
       Log("GraphicsContextFactory destroyed.", "GraphicsContext"));
   }
 
-  std::shared_ptr<IGraphicsContext>
+  std::unique_ptr<IGraphicsContext>
   GraphicsContextFactory::Create(SDL_Window* window) const
   {
-    m_Logger->LogInfo(Log("Creating GraphicsContext...", "GraphicsContext"));
+    m_Logger.LogInfo(Log("Creating GraphicsContext...", "GraphicsContext"));
     switch (m_Api)
     {
 #if _WIN32
@@ -42,9 +40,8 @@ namespace Dwarf
         break;
       case GraphicsApi::OpenGL:
         {
-          m_Logger->LogInfo(
-            Log("Creating OpenGLContext...", "GraphicsContext"));
-          return std::make_shared<OpenGLContext>(window);
+          m_Logger.LogInfo(Log("Creating OpenGLContext...", "GraphicsContext"));
+          return std::make_unique<OpenGLContext>(window);
           break;
         }
       case GraphicsApi::Vulkan:
@@ -59,8 +56,7 @@ namespace Dwarf
         break;
       case GraphicsApi::OpenGL:
         {
-          m_Logger->LogInfo(
-            Log("Creating OpenGLContext...", "GraphicsContext"));
+          m_Logger.LogInfo(Log("Creating OpenGLContext...", "GraphicsContext"));
           return std::make_shared<OpenGLContext>(window);
           break;
         }
@@ -79,7 +75,7 @@ namespace Dwarf
 #endif
     }
 
-    m_Logger->LogError(
+    m_Logger.LogError(
       Log("Failed to create GraphicsContext.", "GraphicsContext"));
 
     return nullptr;

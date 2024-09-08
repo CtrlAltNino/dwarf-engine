@@ -9,12 +9,11 @@ namespace Dwarf
   class ProjectCreator : public IProjectCreator
   {
   private:
-    std::shared_ptr<IDwarfLogger> m_Logger;
-    std::shared_ptr<IProjectList> m_ProjectList;
+    IDwarfLogger& m_Logger;
+    IProjectList& m_ProjectList;
 
   public:
-    ProjectCreator(std::shared_ptr<IDwarfLogger> logger,
-                   std::shared_ptr<IProjectList> projectList);
+    ProjectCreator(IDwarfLogger& logger, IProjectList& projectList);
 
     ~ProjectCreator() override;
 

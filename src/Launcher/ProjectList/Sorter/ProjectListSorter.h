@@ -9,11 +9,11 @@ namespace Dwarf
   class ProjectListSorter : public IProjectListSorter
   {
   private:
-    std::shared_ptr<IDwarfLogger> m_Logger;
-    ProjectSortOrder              m_SortOrder = ProjectSortOrder::Date;
+    IDwarfLogger&    m_Logger;
+    ProjectSortOrder m_SortOrder = ProjectSortOrder::Date;
 
   public:
-    ProjectListSorter(std::shared_ptr<IDwarfLogger> logger);
+    ProjectListSorter(IDwarfLogger& logger);
 
     ~ProjectListSorter() override;
 

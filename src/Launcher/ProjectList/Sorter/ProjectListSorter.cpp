@@ -2,15 +2,15 @@
 
 namespace Dwarf
 {
-  ProjectListSorter::ProjectListSorter(std::shared_ptr<IDwarfLogger> logger)
+  ProjectListSorter::ProjectListSorter(IDwarfLogger& logger)
     : m_Logger(logger)
   {
-    m_Logger->LogInfo(Log("ProjectListSorter created", "ProjectListSorter"));
+    m_Logger.LogInfo(Log("ProjectListSorter created", "ProjectListSorter"));
   }
 
   ProjectListSorter::~ProjectListSorter()
   {
-    m_Logger->LogInfo(Log("ProjectListSorter destroyed", "ProjectListSorter"));
+    m_Logger.LogInfo(Log("ProjectListSorter destroyed", "ProjectListSorter"));
   }
 
   /// @brief Converts a string to lower case.
@@ -99,7 +99,7 @@ namespace Dwarf
   void
   ProjectListSorter::UpdateSortOrder(ProjectListColumn columnId)
   {
-    m_Logger->LogInfo(Log("Updating sort order", "ProjectListSorter"));
+    m_Logger.LogInfo(Log("Updating sort order", "ProjectListSorter"));
 
     switch (columnId)
     {
@@ -143,7 +143,7 @@ namespace Dwarf
   ProjectListSorter::SortProjectList(
     std::vector<ProjectInformation>& projectList)
   {
-    m_Logger->LogInfo(Log("Sorting project list", "ProjectListSorter"));
+    m_Logger.LogInfo(Log("Sorting project list", "ProjectListSorter"));
 
     switch (m_SortOrder)
     {

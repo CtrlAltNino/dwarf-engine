@@ -13,12 +13,11 @@ namespace Dwarf
   class WindowsWindow : public IWindow
   {
   public:
-    explicit WindowsWindow(
-      const WindowProps&                       props,
-      std::shared_ptr<IGraphicsContextFactory> contextFactory,
-      std::shared_ptr<IImGuiLayerFactory>      imguiLayerFactory,
-      std::shared_ptr<IInputManager>           inputManager,
-      std::shared_ptr<IDwarfLogger>            logger);
+    explicit WindowsWindow(const WindowProps&       props,
+                           IDwarfLogger&            logger,
+                           IGraphicsContextFactory& contextFactory,
+                           IImGuiLayerFactory&      imguiLayerFactory,
+                           IInputManager&           inputManager);
     ~WindowsWindow() override;
 
     void
@@ -66,13 +65,13 @@ namespace Dwarf
     void
     Init(const WindowProps& props);
 
-    SDL_Window*                              m_Window;
-    std::shared_ptr<IGraphicsContext>        m_Context;
-    std::shared_ptr<IImGuiLayer>             m_ImGuiLayer;
-    std::shared_ptr<IGraphicsContextFactory> m_ContextFactory;
-    std::shared_ptr<IImGuiLayerFactory>      m_ImguiLayerFactory;
-    std::shared_ptr<IInputManager>           m_InputManager;
-    std::shared_ptr<IDwarfLogger>            m_Logger;
+    SDL_Window*                       m_Window;
+    std::unique_ptr<IGraphicsContext> m_Context;
+    std::unique_ptr<IImGuiLayer>      m_ImGuiLayer;
+    IDwarfLogger&                     m_Logger;
+    IGraphicsContextFactory&          m_ContextFactory;
+    IImGuiLayerFactory&               m_ImguiLayerFactory;
+    IInputManager&                    m_InputManager;
 
     struct WindowData
     {

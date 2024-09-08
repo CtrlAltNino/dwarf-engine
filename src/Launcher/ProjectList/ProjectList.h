@@ -5,24 +5,25 @@
 #include "Launcher/ProjectList/IProjectList.h"
 #include "Launcher/ProjectList/Sorter/IProjectListSorter.h"
 #include "Logging/IDwarfLogger.h"
-#include "Window/IWindow.h"
+// #include "Window/IWindow.h"
 
 namespace Dwarf
 {
   class ProjectList : public IProjectList
   {
   private:
-    std::vector<ProjectInformation>     m_ProjectList;
-    std::shared_ptr<IProjectListIO>     m_ProjectListIO;
-    std::shared_ptr<IProjectListSorter> m_ProjectListSorter;
-    std::shared_ptr<IWindow>            m_Window;
-    std::shared_ptr<IDwarfLogger>       m_Logger;
+    std::vector<ProjectInformation> m_ProjectList;
+    IDwarfLogger&                   m_Logger;
+    IProjectListIO&                 m_ProjectListIO;
+    IProjectListSorter&             m_ProjectListSorter;
+    // IWindow&                        m_Window;
 
   public:
-    ProjectList(std::shared_ptr<IProjectListIO>     projectListIO,
-                std::shared_ptr<IProjectListSorter> projectSorter,
-                std::shared_ptr<IWindow>            window,
-                std::shared_ptr<IDwarfLogger>       logger);
+    ProjectList(IDwarfLogger&       logger,
+                IProjectListIO&     projectListIO,
+                IProjectListSorter& projectListSorter
+                // ,IWindow&            window
+    );
 
     ~ProjectList() override;
     void

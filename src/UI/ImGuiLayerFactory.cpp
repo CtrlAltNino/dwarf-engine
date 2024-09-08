@@ -26,7 +26,7 @@ namespace Dwarf
     m_Logger->LogInfo(Log("ImGuiLayerFactory destroyed.", "ImGuiLayerFactory"));
   }
 
-  std::shared_ptr<IImGuiLayer>
+  std::unique_ptr<IImGuiLayer>
   ImGuiLayerFactory::Create() const
   {
     m_Logger->LogInfo(Log("Creating ImGuiLayer...", "ImGuiLayerFactory"));
@@ -47,7 +47,7 @@ namespace Dwarf
         {
           m_Logger->LogInfo(
             Log("Creating OpenGLImGuiLayer...", "ImGuiLayerFactory"));
-          return std::make_shared<OpenGLImGuiLayer>(m_Logger);
+          return std::make_unique<OpenGLImGuiLayer>(m_Logger);
           break;
         }
       case Vulkan:
@@ -66,7 +66,7 @@ namespace Dwarf
         {
           m_Logger->LogInfo(
             Log("Creating OpenGLImGuiLayer...", "ImGuiLayerFactory"));
-          return std::make_shared<OpenGLImGuiLayer>(m_Logger);
+          return std::make_unique<OpenGLImGuiLayer>(m_Logger);
           break;
         }
       case Vulkan:
