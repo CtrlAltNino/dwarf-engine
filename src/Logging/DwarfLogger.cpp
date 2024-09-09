@@ -15,9 +15,14 @@ namespace Dwarf
 
   DwarfLogger::~DwarfLogger()
   {
-    m_Logger->log(spdlog::level::info,
-                  fmt::format("[{}] {}", "DwarfLogger", "Logger destroyed."));
-    m_Logger->flush();
+    if (m_Logger)
+    {
+      m_Logger->log(spdlog::level::info,
+                    fmt::format("[{}] {}", "DwarfLogger", "Logger destroyed."));
+      m_Logger->flush();
+    }
+
+    spdlog::drop(m_Logger->name());
   }
 
   void
