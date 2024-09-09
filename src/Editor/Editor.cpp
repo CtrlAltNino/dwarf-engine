@@ -55,7 +55,7 @@ namespace Dwarf
     m_Logger->LogWarn(
       Log("There is currently no fps cap implemented", "Editor"));
 
-    while (!m_Window->ShouldClose() && !m_CloseSignal)
+    while (!m_Window->ShouldClose() && !m_EditorStats->GetCloseSignal())
     {
       // m_Logger->LogInfo(Log("Handling time stamps", "Editor"));
       //  ===== Time related stuff
@@ -81,6 +81,6 @@ namespace Dwarf
 
     m_Logger->LogInfo(Log("Exiting editor loop", "Editor"));
 
-    return m_ReturnToLauncher;
+    return m_EditorStats->GetReturnToLauncher();
   }
 }

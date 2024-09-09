@@ -30,9 +30,6 @@ namespace Dwarf
     std::shared_ptr<IAssetDatabase>    m_AssetDatabase;
     std::shared_ptr<IShaderRecompiler> m_ShaderRecompiler;
 
-    bool m_ReturnToLauncher = false;
-    bool m_CloseSignal = false;
-
   public:
     Editor(std::shared_ptr<IDwarfLogger>      logger,
            std::shared_ptr<IEditorStats>      stats,
