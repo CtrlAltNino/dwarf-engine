@@ -11,13 +11,13 @@ namespace Dwarf
   public:
     virtual ~ITextureFactory() = default;
 
-    virtual std::shared_ptr<ITexture>
+    virtual std::unique_ptr<ITexture>
     FromPath(std::filesystem::path texturePath) = 0;
 
-    virtual std::shared_ptr<ITexture>
+    virtual std::unique_ptr<ITexture>
     FromData(const std::shared_ptr<TextureContainer>& textureData) = 0;
 
-    virtual std::shared_ptr<ITexture>
+    virtual std::unique_ptr<ITexture>
     Empty(const TextureType&       type,
           const TextureFormat&     format,
           const TextureDataType&   dataType,
@@ -25,7 +25,7 @@ namespace Dwarf
           const TextureParameters& parameters,
           int                      samples = 1) = 0;
 
-    virtual std::shared_ptr<ITexture>
+    virtual std::unique_ptr<ITexture>
     Empty(const TextureType&       type,
           const TextureFormat&     format,
           const TextureDataType&   dataType,

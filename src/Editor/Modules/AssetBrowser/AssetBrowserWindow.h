@@ -71,27 +71,27 @@ namespace Dwarf
 
     float m_IconScale = 1.0f;
 
-    std::shared_ptr<ITexture> m_DirectoryIcon;
+    std::unique_ptr<ITexture> m_DirectoryIcon;
 
-    std::shared_ptr<ITexture> m_FBXIcon;
-    std::shared_ptr<ITexture> m_OBJIcon;
+    std::unique_ptr<ITexture> m_FBXIcon;
+    std::unique_ptr<ITexture> m_OBJIcon;
 
-    std::shared_ptr<ITexture> m_JPGIcon;
-    std::shared_ptr<ITexture> m_PNGIcon;
+    std::unique_ptr<ITexture> m_JPGIcon;
+    std::unique_ptr<ITexture> m_PNGIcon;
 
-    std::shared_ptr<ITexture> m_VertexShaderIcon;
-    std::shared_ptr<ITexture> m_TessellationControlShaderIcon;
-    std::shared_ptr<ITexture> m_TessellationEvaluationShaderIcon;
-    std::shared_ptr<ITexture> m_GeometryShaderIcon;
-    std::shared_ptr<ITexture> m_FragmentShaderIcon;
-    std::shared_ptr<ITexture> m_ComputeShaderIcon;
-    std::shared_ptr<ITexture> m_HLSLShaderIcon;
+    std::unique_ptr<ITexture> m_VertexShaderIcon;
+    std::unique_ptr<ITexture> m_TessellationControlShaderIcon;
+    std::unique_ptr<ITexture> m_TessellationEvaluationShaderIcon;
+    std::unique_ptr<ITexture> m_GeometryShaderIcon;
+    std::unique_ptr<ITexture> m_FragmentShaderIcon;
+    std::unique_ptr<ITexture> m_ComputeShaderIcon;
+    std::unique_ptr<ITexture> m_HLSLShaderIcon;
 
-    std::shared_ptr<ITexture> m_SceneIcon;
+    std::unique_ptr<ITexture> m_SceneIcon;
 
-    std::shared_ptr<ITexture> m_MaterialIcon;
+    std::unique_ptr<ITexture> m_MaterialIcon;
 
-    std::shared_ptr<ITexture> m_UnknownFileIcon;
+    std::unique_ptr<ITexture> m_UnknownFileIcon;
 
     bool firstFrame = true;
 
@@ -131,8 +131,7 @@ namespace Dwarf
                        std::shared_ptr<IAssetMetadata>   assetMetadata,
                        std::shared_ptr<IMaterialCreator> materialCreator);
 
-    AssetBrowserWindow(SerializedModule                  serializedModule,
-                       AssetDirectoryPath                assetDirectoryPath,
+    AssetBrowserWindow(AssetDirectoryPath                assetDirectoryPath,
                        std::shared_ptr<ITextureFactory>  textureFactory,
                        std::shared_ptr<IAssetDatabase>   assetDatabase,
                        std::shared_ptr<IInputManager>    inputManager,
@@ -140,7 +139,8 @@ namespace Dwarf
                        std::shared_ptr<IMaterialIO>      materialIO,
                        std::shared_ptr<IMaterialFactory> materialFactory,
                        std::shared_ptr<IAssetMetadata>   assetMetadata,
-                       std::shared_ptr<IMaterialCreator> materialCreator);
+                       std::shared_ptr<IMaterialCreator> materialCreator,
+                       SerializedModule                  serializedModule);
 
     /// @brief Renders the module window.
     void

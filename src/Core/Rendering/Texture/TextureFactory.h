@@ -25,7 +25,7 @@ namespace Dwarf
     std::shared_ptr<TextureParameters>
     GetParameters(std::filesystem::path const& path);
 
-    std::shared_ptr<ITexture>
+    std::unique_ptr<ITexture>
     LoadTexture(std::shared_ptr<TextureContainer> textureData);
 
   public:
@@ -33,13 +33,13 @@ namespace Dwarf
                    std::shared_ptr<IImageFileLoader> loader,
                    std::shared_ptr<IDwarfLogger>     logger);
     ~TextureFactory() override;
-    std::shared_ptr<ITexture>
+    std::unique_ptr<ITexture>
     FromPath(std::filesystem::path texturePath) override;
 
-    std::shared_ptr<ITexture>
+    std::unique_ptr<ITexture>
     FromData(const std::shared_ptr<TextureContainer>& textureData) override;
 
-    std::shared_ptr<ITexture>
+    std::unique_ptr<ITexture>
     Empty(const TextureType&       type,
           const TextureFormat&     format,
           const TextureDataType&   dataType,
@@ -47,7 +47,7 @@ namespace Dwarf
           const TextureParameters& parameters,
           int                      samples = 1) override;
 
-    virtual std::shared_ptr<ITexture>
+    std::unique_ptr<ITexture>
     Empty(const TextureType&       type,
           const TextureFormat&     format,
           const TextureDataType&   dataType,

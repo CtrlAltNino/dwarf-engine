@@ -36,7 +36,6 @@ namespace Dwarf
   }
 
   AssetBrowserWindow::AssetBrowserWindow(
-    SerializedModule                  serializedModule,
     AssetDirectoryPath                assetDirectoryPath,
     std::shared_ptr<ITextureFactory>  textureFactory,
     std::shared_ptr<IAssetDatabase>   assetDatabase,
@@ -45,7 +44,8 @@ namespace Dwarf
     std::shared_ptr<IMaterialIO>      materialIO,
     std::shared_ptr<IMaterialFactory> materialFactory,
     std::shared_ptr<IAssetMetadata>   assetMetadata,
-    std::shared_ptr<IMaterialCreator> materialCreator)
+    std::shared_ptr<IMaterialCreator> materialCreator,
+    SerializedModule                  serializedModule)
     : IGuiModule(ModuleLabel("Asset Browser"),
                  ModuleType(MODULE_TYPE::ASSET_BROWSER),
                  ModuleID(std::make_shared<UUID>(
@@ -128,7 +128,8 @@ namespace Dwarf
       m_TextureFactory->FromPath(iconPath / "fragmentShaderIcon.png");
     m_ComputeShaderIcon =
       m_TextureFactory->FromPath(iconPath / "computeShaderIcon.png");
-    m_HLSLShaderIcon = m_TextureFactory->FromPath(iconPath / "hlslIcon.png");
+    m_HLSLShaderIcon =
+      m_TextureFactory->FromPath(iconPath / "hlslShaderIcon.png");
 
     m_SceneIcon = m_TextureFactory->FromPath(iconPath / "sceneIcon.png");
 

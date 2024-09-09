@@ -88,7 +88,7 @@ namespace Dwarf
     return parameters;
   }
 
-  std::shared_ptr<ITexture>
+  std::unique_ptr<ITexture>
   TextureFactory::LoadTexture(std::shared_ptr<TextureContainer> textureData)
   {
     m_Logger->LogInfo(Log("Creating texture", "TextureFactory"));
@@ -101,7 +101,7 @@ namespace Dwarf
       case GraphicsApi::OpenGL:
         {
           m_Logger->LogInfo(Log("Created OpenGL texture", "TextureFactory"));
-          return std::make_shared<OpenGLTexture>(textureData, m_Logger);
+          return std::make_unique<OpenGLTexture>(textureData, m_Logger);
           break;
         }
       case GraphicsApi::Metal:
@@ -117,7 +117,7 @@ namespace Dwarf
       case GraphicsApi::OpenGL:
         {
           m_Logger->LogInfo(Log("Created OpenGL texture", "TextureFactory"));
-          return std::make_shared<OpenGLTexture>(textureData, m_Logger);
+          return std::make_unique<OpenGLTexture>(textureData, m_Logger);
           break;
         }
       case GraphicsApi::Metal:
@@ -141,7 +141,7 @@ namespace Dwarf
     return nullptr;
   }
 
-  std::shared_ptr<ITexture>
+  std::unique_ptr<ITexture>
   TextureFactory::FromPath(std::filesystem::path texturePath)
   {
     m_Logger->LogInfo(Log("Creating texture from path: " + texturePath.string(),
@@ -154,14 +154,14 @@ namespace Dwarf
     return LoadTexture(textureData);
   }
 
-  std::shared_ptr<ITexture>
+  std::unique_ptr<ITexture>
   TextureFactory::FromData(const std::shared_ptr<TextureContainer>& textureData)
   {
     m_Logger->LogInfo(Log("Creating texture from data", "TextureFactory"));
     return LoadTexture(textureData);
   }
 
-  std::shared_ptr<ITexture>
+  std::unique_ptr<ITexture>
   TextureFactory::Empty(const TextureType&       type,
                         const TextureFormat&     format,
                         const TextureDataType&   dataType,
@@ -190,7 +190,7 @@ namespace Dwarf
     return LoadTexture(textureData);
   }
 
-  std::shared_ptr<ITexture>
+  std::unique_ptr<ITexture>
   TextureFactory::Empty(const TextureType&       type,
                         const TextureFormat&     format,
                         const TextureDataType&   dataType,

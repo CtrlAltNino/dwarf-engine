@@ -23,10 +23,6 @@ namespace Dwarf
   std::unique_ptr<DebugWindow>
   DebugWindowFactory::Create(SerializedModule serializedModule) const
   {
-    auto injector = boost::di::make_injector(
-      m_InjectorFactory(m_AssetDatabase),
-      boost::di::bind<SerializedModule>.to(serializedModule));
-
     return std::make_unique<DebugWindow>(m_AssetDatabase, serializedModule);
   }
 }

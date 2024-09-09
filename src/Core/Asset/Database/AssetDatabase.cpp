@@ -10,6 +10,7 @@ namespace Dwarf
 {
   AssetDatabase::AssetDatabase(
     AssetDirectoryPath                       assetDirectoryPath,
+    std::shared_ptr<IDwarfLogger>            logger,
     std::shared_ptr<IAssetDirectoryListener> assetDirectoryListener,
     std::shared_ptr<IAssetMetadata>          assetMetadata,
     std::shared_ptr<IModelImporter>          modelImporter,
@@ -18,6 +19,7 @@ namespace Dwarf
     std::shared_ptr<IMaterialFactory>        materialFactory,
     std::shared_ptr<IMaterialIO>             materialIO)
     : m_AssetDirectoryPath(assetDirectoryPath)
+    , m_Logger(logger)
     , m_AssetDirectoryListener(assetDirectoryListener)
     , m_AssetMetadata(assetMetadata)
     , m_ModelImporter(modelImporter)
@@ -55,7 +57,7 @@ namespace Dwarf
                 std::placeholders::_3));
 
     ReimportAll();
-    // CompileShaders();
+    //  CompileShaders();
   }
 
   AssetDatabase::~AssetDatabase()
@@ -70,7 +72,7 @@ namespace Dwarf
     {
       if (directoryEntry.is_directory())
       {
-        RecursiveImport(directoryEntry.path().string());
+        RecursiveImport(directoryEntry.path());
       }
       else if (directoryEntry.is_regular_file() &&
                directoryEntry.path().has_extension() &&

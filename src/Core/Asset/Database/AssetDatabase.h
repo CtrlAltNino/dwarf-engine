@@ -15,10 +15,12 @@
 #include "Core/Asset/Database/IAssetDirectoryListener.h"
 
 #include "Core/Rendering/Shader/IShader.h"
+#include "Logging/IDwarfLogger.h"
 #include "Utilities/FileHandler.h"
 
 #include <entt/entity/fwd.hpp>
 #include <entt/entt.hpp>
+#include <string>
 
 namespace Dwarf
 {
@@ -40,6 +42,7 @@ namespace Dwarf
      */
     AssetDatabase(
       AssetDirectoryPath                       assetDirectoryPath,
+      std::shared_ptr<IDwarfLogger>            logger,
       std::shared_ptr<IAssetDirectoryListener> assetDirectoryListener,
       std::shared_ptr<IAssetMetadata>          assetMetadata,
       std::shared_ptr<IModelImporter>          modelImporter,
@@ -180,6 +183,7 @@ namespace Dwarf
 
     // std::vector<std::shared_ptr<IShader>> m_ShaderRecompilationStack;
 
+    std::shared_ptr<IDwarfLogger>            m_Logger;
     std::shared_ptr<IAssetDirectoryListener> m_AssetDirectoryListener;
     std::shared_ptr<IAssetMetadata>          m_AssetMetadata;
     std::shared_ptr<IModelImporter>          m_ModelImporter;
@@ -208,10 +212,11 @@ namespace Dwarf
         IAssetMetadata::GetMetadataPath(assetPath);
 
       auto id = UUID();
-      if (FileHandler::FileExists(metaDataPath.string().c_str()))
+      if (FileHandler::FileExists(metaDataPath))
       {
         nlohmann::json metaData = m_AssetMetadata->GetMetadata(assetPath);
-        id = UUID(metaData["guid"].get<std::string>());
+        std::string    guid = metaData["guid"].get<std::string>();
+        id = UUID(guid);
       }
       else
       {
@@ -226,7 +231,7 @@ namespace Dwarf
       assetReference.template AddAssetComponent<IDComponent>(id);
       assetReference.template AddAssetComponent<NameComponent>(fileName);
       assetReference.template AddAssetComponent<PathComponent>(assetPath);
-      return AssetReference<T>(m_Registry->create(), m_Registry);
+      return assetReference;
     }
 
     std::shared_ptr<void>

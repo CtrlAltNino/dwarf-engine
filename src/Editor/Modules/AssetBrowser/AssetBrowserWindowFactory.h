@@ -10,12 +10,18 @@ namespace Dwarf
   class AssetBrowserWindowFactory : public IAssetBrowserWindowFactory
   {
   private:
-    std::function<boost::di::injector<std::unique_ptr<AssetBrowserWindow>>()>
-      m_InjectorFactory;
+    AssetDirectoryPath                m_AssetDirectoryPath;
+    std::shared_ptr<ITextureFactory>  m_TextureFactory;
+    std::shared_ptr<IAssetDatabase>   m_AssetDatabase;
+    std::shared_ptr<IInputManager>    m_InputManager;
+    std::shared_ptr<IEditorSelection> m_EditorSelection;
+    std::shared_ptr<IMaterialIO>      m_MaterialIO;
+    std::shared_ptr<IMaterialFactory> m_MaterialFactory;
+    std::shared_ptr<IAssetMetadata>   m_AssetMetadata;
+    std::shared_ptr<IMaterialCreator> m_MaterialCreator;
 
   public:
     BOOST_DI_INJECT(AssetBrowserWindowFactory,
-                    SerializedModule                  serializedModule,
                     AssetDirectoryPath                assetDirectoryPath,
                     std::shared_ptr<ITextureFactory>  textureFactory,
                     std::shared_ptr<IAssetDatabase>   assetDatabase,
