@@ -14,8 +14,8 @@ namespace Dwarf
     std::shared_ptr<ILoadedScene>     loadedScene,
     std::shared_ptr<IEditorSelection> editorSelection,
     std::shared_ptr<IInputManager>    inputManager)
-    : IGuiModule(ModuleLabel("Performance"),
-                 ModuleType(MODULE_TYPE::PERFORMANCE),
+    : IGuiModule(ModuleLabel("Scene Hierarchy"),
+                 ModuleType(MODULE_TYPE::SCENE_GRAPH),
                  ModuleID(std::make_shared<UUID>()))
     , m_LoadedScene(loadedScene)
     , m_EditorSelection(editorSelection)
@@ -24,10 +24,10 @@ namespace Dwarf
   }
 
   SceneHierarchyWindow::SceneHierarchyWindow(
-    SerializedModule                  serializedModule,
     std::shared_ptr<ILoadedScene>     loadedScene,
     std::shared_ptr<IEditorSelection> editorSelection,
-    std::shared_ptr<IInputManager>    inputManager)
+    std::shared_ptr<IInputManager>    inputManager,
+    SerializedModule                  serializedModule)
     : IGuiModule(ModuleLabel("Performance"),
                  ModuleType(MODULE_TYPE::PERFORMANCE),
                  ModuleID(std::make_shared<UUID>(

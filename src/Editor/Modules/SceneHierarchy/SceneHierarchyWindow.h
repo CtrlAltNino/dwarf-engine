@@ -37,10 +37,10 @@ namespace Dwarf
                          std::shared_ptr<IEditorSelection> editorSelection,
                          std::shared_ptr<IInputManager>    inputManager);
 
-    SceneHierarchyWindow(SerializedModule                  serializedModule,
-                         std::shared_ptr<ILoadedScene>     loadedScene,
+    SceneHierarchyWindow(std::shared_ptr<ILoadedScene>     loadedScene,
                          std::shared_ptr<IEditorSelection> editorSelection,
-                         std::shared_ptr<IInputManager>    inputManager);
+                         std::shared_ptr<IInputManager>    inputManager,
+                         SerializedModule                  serializedModule);
 
     /// @brief Renders the module window.
     void
