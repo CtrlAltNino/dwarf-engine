@@ -7,31 +7,27 @@ namespace Dwarf
     std::shared_ptr<IAssetDatabase>   assetDatabase,
     std::shared_ptr<IAssetInspector>  assetInspector,
     std::shared_ptr<IEntityInspector> entityInspector)
-    : m_InjectorFactory(
-        [&selection, &assetDatabase, &assetInspector, &entityInspector]()
-        {
-          return boost::di::make_injector(
-            boost::di::bind<IEditorSelection>.to(selection),
-            boost::di::bind<IAssetDatabase>.to(assetDatabase),
-            boost::di::bind<IAssetInspector>.to(assetInspector),
-            boost::di::bind<IEntityInspector>.to(entityInspector));
-        })
+    : m_Selection(selection)
+    , m_AssetDatabase(assetDatabase)
+    , m_AssetInspector(assetInspector)
+    , m_EntityInspector(entityInspector)
   {
   }
 
   std::unique_ptr<InspectorWindow>
   InspectorWindowFactory::Create() const
   {
-    return m_InjectorFactory().create<std::unique_ptr<InspectorWindow>>();
+    return std::make_unique<InspectorWindow>(
+      m_Selection, m_AssetDatabase, m_AssetInspector, m_EntityInspector);
   }
 
   std::unique_ptr<InspectorWindow>
   InspectorWindowFactory::Create(SerializedModule serializedModule) const
   {
-    auto injector = boost::di::make_injector(
-      m_InjectorFactory(),
-      boost::di::bind<SerializedModule>.to(serializedModule));
-
-    return injector.create<std::unique_ptr<InspectorWindow>>();
+    return std::make_unique<InspectorWindow>(m_Selection,
+                                             m_AssetDatabase,
+                                             m_AssetInspector,
+                                             m_EntityInspector,
+                                             serializedModule);
   }
 } // namespace Dwarf

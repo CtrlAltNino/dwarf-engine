@@ -27,34 +27,34 @@ namespace Dwarf
     glm::mat4                  projectionMatrix,
     std::shared_ptr<IMaterial> overrideMaterial = nullptr)
   {
-    auto& transform = entity.GetComponent<TransformComponent>();
-    auto& meshRenderer = entity.GetComponent<MeshRendererComponent>();
-    std::shared_ptr<ModelAsset> model =
+    auto&       transform = entity.GetComponent<TransformComponent>();
+    auto&       meshRenderer = entity.GetComponent<MeshRendererComponent>();
+    ModelAsset& model =
       m_AssetDatabase->Retrieve<ModelAsset>(meshRenderer.meshAsset)->GetAsset();
     glm::mat4 modelMatrix = transform.getModelMatrix();
 
-    for (int i = 0; i < model->m_Meshes.size(); i++)
+    for (int i = 0; i < model.m_Meshes.size(); i++)
     {
-      if (model->m_Meshes.at(i)->GetMaterialIndex() - 1 <
+      if (model.m_Meshes.at(i)->GetMaterialIndex() - 1 <
           meshRenderer.materialAssets.size())
       {
         if (meshRenderer.materialAssets.at(
-              model->m_Meshes.at(i)->GetMaterialIndex() - 1) != nullptr &&
+              model.m_Meshes.at(i)->GetMaterialIndex() - 1) != nullptr &&
             m_AssetDatabase->Exists(meshRenderer.materialAssets.at(
-              model->m_Meshes.at(i)->GetMaterialIndex() - 1)))
+              model.m_Meshes.at(i)->GetMaterialIndex() - 1)))
         {
           std::shared_ptr<IMaterial> material =
             overrideMaterial != nullptr
               ? overrideMaterial
               : m_AssetDatabase
                   ->Retrieve<MaterialAsset>(meshRenderer.materialAssets.at(
-                    model->m_Meshes.at(i)->GetMaterialIndex() - 1))
+                    model.m_Meshes.at(i)->GetMaterialIndex() - 1))
                   ->GetAsset()
-                  ->m_Material;
+                  .m_Material;
           if (material->GetShader() != nullptr &&
               material->GetShader()->IsCompiled())
           {
-            m_RendererApi->RenderIndexed(model->m_Meshes.at(i),
+            m_RendererApi->RenderIndexed(model.m_Meshes.at(i),
                                          material,
                                          modelMatrix,
                                          viewMatrix,

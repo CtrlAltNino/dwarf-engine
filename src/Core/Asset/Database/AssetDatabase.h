@@ -1,8 +1,7 @@
 #pragma once
 
-#include "Core/Asset/Database/AssetComponents.h"
+#include "Core/Asset/AssetReimporter/IAssetReimporter.h"
 #include "Core/GenericComponents.h"
-#include "Core/Rendering/Material/IMaterial.h"
 #include "Core/Rendering/Material/IMaterialFactory.h"
 #include "Core/Rendering/Material/IO/IMaterialIO.h"
 #include "Core/Rendering/Texture/ITextureFactory.h"
@@ -49,7 +48,8 @@ namespace Dwarf
       std::shared_ptr<IShaderRecompiler>       shaderRecompiler,
       std::shared_ptr<ITextureFactory>         textureFactory,
       std::shared_ptr<IMaterialFactory>        materialFactory,
-      std::shared_ptr<IMaterialIO>             materialIO);
+      std::shared_ptr<IMaterialIO>             materialIO,
+      std::shared_ptr<IAssetReimporter>        assetReimporter);
 
     /**
      * @brief Destroy the Asset Database object
@@ -191,6 +191,7 @@ namespace Dwarf
     std::shared_ptr<ITextureFactory>         m_TextureFactory;
     std::shared_ptr<IMaterialFactory>        m_MaterialFactory;
     std::shared_ptr<IMaterialIO>             m_MaterialIO;
+    std::shared_ptr<IAssetReimporter>        m_AssetReimporter;
 
     /// @brief Recursively imports all found assets in a given directory.
     /// @param directory Absolute path to a directory.

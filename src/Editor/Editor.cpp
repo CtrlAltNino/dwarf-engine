@@ -1,5 +1,6 @@
 #include "Editor/Editor.h"
 
+#include "Core/Asset/Database/IAssetDatabase.h"
 #include "Input/IInputManager.h"
 #include "Utilities/TimeUtilities.h"
 
@@ -14,7 +15,8 @@ namespace Dwarf
                  std::shared_ptr<ISceneIO>          sceneIO,
                  std::shared_ptr<IEditorView>       view,
                  std::shared_ptr<IAssetDatabase>    assetDatabase,
-                 std::shared_ptr<IShaderRecompiler> shaderRecompiler)
+                 std::shared_ptr<IShaderRecompiler> shaderRecompiler,
+                 std::shared_ptr<IAssetReimporter>  assetReimporter)
     : m_Logger(logger)
     , m_EditorStats(stats)
     , m_InputManager(inputManager)
@@ -25,6 +27,7 @@ namespace Dwarf
     , m_LoadedScene(loadedScene)
     , m_AssetDatabase(assetDatabase)
     , m_ShaderRecompiler(shaderRecompiler)
+    , m_AssetReimporter(assetReimporter)
 
   {
     // Either load the last opened scene or the default scene
@@ -48,6 +51,8 @@ namespace Dwarf
 
     m_Logger->LogInfo(Log("Starting the editor", "Editor"));
 
+    m_AssetDatabase->ReimportAll();
+
     m_Logger->LogInfo(Log("Showing window", "Editor"));
     m_Window->ShowWindow();
 
@@ -64,6 +69,7 @@ namespace Dwarf
 
       m_Window->NewFrame();
       m_InputManager->OnUpdate();
+      m_AssetReimporter->ReimportQueuedAssets();
       m_ShaderRecompiler->Recompile();
       m_View->OnUpdate();
       m_View->OnImGuiRender();

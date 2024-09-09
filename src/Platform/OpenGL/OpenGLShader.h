@@ -4,6 +4,7 @@
 #include "pch.h"
 
 #include <glad/glad.h>
+#include <boost/di.hpp>
 #include <boost/serialization/strong_typedef.hpp>
 #include <boost/optional.hpp>
 #include "Core/Rendering/Shader/IShader.h"

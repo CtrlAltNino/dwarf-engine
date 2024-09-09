@@ -17,7 +17,8 @@ namespace Dwarf
     std::shared_ptr<IShaderRecompiler>       shaderRecompiler,
     std::shared_ptr<ITextureFactory>         textureFactory,
     std::shared_ptr<IMaterialFactory>        materialFactory,
-    std::shared_ptr<IMaterialIO>             materialIO)
+    std::shared_ptr<IMaterialIO>             materialIO,
+    std::shared_ptr<IAssetReimporter>        assetReimporter)
     : m_AssetDirectoryPath(assetDirectoryPath)
     , m_Logger(logger)
     , m_AssetDirectoryListener(assetDirectoryListener)
@@ -27,6 +28,7 @@ namespace Dwarf
     , m_TextureFactory(textureFactory)
     , m_MaterialFactory(materialFactory)
     , m_MaterialIO(materialIO)
+    , m_AssetReimporter(assetReimporter)
     , m_Registry(std::make_shared<entt::registry>())
   {
     if (!FileHandler::DirectoyExists(m_AssetDirectoryPath.t))
@@ -56,8 +58,8 @@ namespace Dwarf
                 std::placeholders::_2,
                 std::placeholders::_3));
 
-    ReimportAll();
-    //  CompileShaders();
+    // ReimportAll();
+    //   CompileShaders();
   }
 
   AssetDatabase::~AssetDatabase()
@@ -546,7 +548,8 @@ namespace Dwarf
       std::filesystem::path(dir) / std::filesystem::path(filename);
     if (!m_AssetMetadata->IsMetadataPath(path))
     {
-      AssetDatabase::Import(path);
+      // Import(path);
+      m_AssetReimporter->QueueReimport(path);
     }
   }
 
@@ -567,7 +570,7 @@ namespace Dwarf
       std::filesystem::path(dir) / std::filesystem::path(filename);
     if (!m_AssetMetadata->IsMetadataPath(path))
     {
-      AssetDatabase::Reimport(path);
+      m_AssetReimporter->QueueReimport(path);
       switch (IAssetDatabase::GetAssetType(path.extension().string()))
       {
         using enum ASSET_TYPE;
@@ -593,7 +596,7 @@ namespace Dwarf
             std::shared_ptr<AssetReference<MaterialAsset>> mat =
               AssetDatabase::Retrieve<MaterialAsset>(path);
             m_ShaderRecompiler->MarkForRecompilation(
-              mat->GetAsset()->m_Material->GetShader());
+              mat->GetAsset().m_Material->GetShader());
             break;
           }
         case ASSET_TYPE::MODEL:

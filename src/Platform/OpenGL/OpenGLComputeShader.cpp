@@ -34,10 +34,10 @@ namespace Dwarf
   {
     m_SuccessfullyCompiled = false;
 
-    if (m_ComputeShaderAsset->GetAsset()->m_FileContent.length() > 0)
+    if (m_ComputeShaderAsset->GetAsset().m_FileContent.length() > 0)
     {
       const char* shadercstr =
-        m_ComputeShaderAsset->GetAsset()->m_FileContent.c_str();
+        m_ComputeShaderAsset->GetAsset().m_FileContent.c_str();
 
       GLsizei log_length = 0;
       GLchar  message[1024] = "";

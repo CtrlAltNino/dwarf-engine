@@ -2,6 +2,7 @@
 
 #include "Editor/Modules/SceneViewer/ISceneViewerWindowFactory.h"
 #include "Editor/Modules/SceneViewer/SceneViewerWindow.h"
+#include <boost/di.hpp>
 
 namespace Dwarf
 {

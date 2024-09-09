@@ -406,6 +406,10 @@ namespace Dwarf
     }
 
     glGenerateTextureMipmap(m_Id);
+
+    m_Logger->LogInfo(Log("OpenGL texture created", "OpenGLTexture"));
+    m_Logger->LogInfo(
+      Log("Texture ID: " + std::to_string(m_Id), "OpenGLTexture"));
   }
 
   OpenGLTexture::~OpenGLTexture()

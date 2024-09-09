@@ -48,13 +48,13 @@ namespace Dwarf
   {
     m_SuccessfullyCompiled = false;
 
-    if (m_VertexShaderAsset->GetAsset()->m_FileContent.length() > 0 &&
-        m_FragmentShaderAsset->GetAsset()->m_FileContent.length() > 0)
+    if (m_VertexShaderAsset->GetAsset().m_FileContent.length() > 0 &&
+        m_FragmentShaderAsset->GetAsset().m_FileContent.length() > 0)
     {
       const char* vertexSource =
-        m_VertexShaderAsset->GetAsset()->m_FileContent.c_str();
+        m_VertexShaderAsset->GetAsset().m_FileContent.c_str();
       const char* fragmentSource =
-        m_FragmentShaderAsset->GetAsset()->m_FileContent.c_str();
+        m_FragmentShaderAsset->GetAsset().m_FileContent.c_str();
 
       GLsizei vert_log_length = 0;
       GLchar  vert_message[1024] = "";
@@ -108,10 +108,10 @@ namespace Dwarf
       GLuint geometryShader = -1;
 
       if (m_GeometryShaderAsset &&
-          m_GeometryShaderAsset.get()->GetAsset()->m_FileContent.length() > 0)
+          m_GeometryShaderAsset.get()->GetAsset().m_FileContent.length() > 0)
       {
         const char* geometrySource =
-          m_GeometryShaderAsset.get()->GetAsset()->m_FileContent.c_str();
+          m_GeometryShaderAsset.get()->GetAsset().m_FileContent.c_str();
 
         GLsizei geom_log_length = 0;
         GLchar  geom_message[1024] = "";

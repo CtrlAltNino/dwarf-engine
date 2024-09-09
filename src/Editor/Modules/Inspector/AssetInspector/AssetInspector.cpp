@@ -5,6 +5,7 @@
 #include "AssetInspector.h"
 #include "Core/Base.h"
 #include "UI/DwarfUI.h"
+#include <iostream>
 #include <string>
 #include <variant>
 // #include "Core/Scene/SceneUtilities.h"
@@ -220,7 +221,7 @@ namespace Dwarf
       separatorMin, separatorMax, COL_BG_DIM);
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 20);
 
-    std::shared_ptr<IMaterial> mat = asset->GetAsset()->m_Material;
+    std::shared_ptr<IMaterial> mat = asset->GetAsset().m_Material;
 
     ImGui::Checkbox("Transparent", &mat->GetMaterialProperties().IsTransparent);
 
@@ -1043,7 +1044,8 @@ namespace Dwarf
     float width = ImGui::GetContentRegionAvail().x;
     ImGui::TextWrapped("Preview:");
 
-    auto texID = (ImTextureID)asset->GetAsset()->m_Texture->GetTextureID();
+    auto texID = (ImTextureID)(asset->GetAsset().m_Texture->GetTextureID());
+    // std::cout << "Texture ID: " << texID << std::endl;
     ImGui::Image(texID, ImVec2(width, width));
 
     draw_list->ChannelsSetCurrent(0);

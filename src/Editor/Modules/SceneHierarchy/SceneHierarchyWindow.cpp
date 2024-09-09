@@ -1,11 +1,9 @@
 #include "pch.h"
 
 #include "Editor/Modules/SceneHierarchy/SceneHierarchyWindow.h"
-#include "Core/Scene/Scene.h"
 #include "Editor/Modules/SceneHierarchy/NewParentInstruction.h"
 #include "Editor/Modules/SceneHierarchy/ChildIndexInstruction.h"
 #include "Editor/Modules/SceneHierarchy/DeleteEntityInstruction.h"
-#include "Input/InputManager.h"
 
 namespace Dwarf
 {

@@ -202,7 +202,7 @@ namespace Dwarf
       std::vector<std::shared_ptr<IMesh>> meshes =
         m_AssetDatabase->Retrieve<ModelAsset>(component.meshAsset)
           ->GetAsset()
-          ->m_Meshes;
+          .m_Meshes;
 
       for (int i = 0; i < meshes.size(); i++)
       {

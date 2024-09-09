@@ -19,11 +19,11 @@ namespace Dwarf
   }
 
   InspectorWindow::InspectorWindow(
-    SerializedModule                  serializedModule,
     std::shared_ptr<IEditorSelection> selection,
     std::shared_ptr<IAssetDatabase>   assetDatabase,
     std::shared_ptr<IAssetInspector>  assetInspector,
-    std::shared_ptr<IEntityInspector> entityInspector)
+    std::shared_ptr<IEntityInspector> entityInspector,
+    SerializedModule                  serializedModule)
     : IGuiModule(ModuleLabel("Inspector"),
                  ModuleType(MODULE_TYPE::INSPECTOR),
                  ModuleID(std::make_shared<UUID>(

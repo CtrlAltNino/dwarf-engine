@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Editor/Modules/SceneHierarchy/ISceneHierarchyWindowFactory.h"
+#include <boost/di.hpp>
 
 namespace Dwarf
 {

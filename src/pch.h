@@ -1,5 +1,7 @@
 #pragma once
 
+#define BOOST_DI_CFG_CTOR_LIMIT_SIZE 20
+
 #include <filesystem>
 #include <iostream>
 #include <stdlib.h>

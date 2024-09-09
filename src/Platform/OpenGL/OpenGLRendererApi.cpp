@@ -54,8 +54,7 @@ namespace Dwarf
       glBindTexture(GL_TEXTURE_2D,
                     m_AssetDatabase->Retrieve<TextureAsset>(parameter)
                       ->GetAsset()
-                      ->Get()
-                      ->GetTextureID());
+                      .m_Texture->GetTextureID());
       glUniform1i(glGetUniformLocation(m_ShaderID, m_ParameterName.c_str()), 0);
     }
     void

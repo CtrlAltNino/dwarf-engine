@@ -58,9 +58,9 @@ namespace Dwarf
                                m_Framebuffer->GetSpecification().Width,
                                m_Framebuffer->GetSpecification().Height);
 
-    for (int i = 0; i < modelAsset->GetAsset()->m_Meshes.size(); i++)
+    for (int i = 0; i < modelAsset->GetAsset().m_Meshes.size(); i++)
     {
-      m_RendererApi->RenderIndexed(modelAsset->GetAsset()->m_Meshes.at(i),
+      m_RendererApi->RenderIndexed(modelAsset->GetAsset().m_Meshes.at(i),
                                    m_Material,
                                    glm::toMat4(m_Properties.ModelRotationQuat),
                                    m_Camera->GetViewMatrix(),
@@ -73,7 +73,7 @@ namespace Dwarf
   ModelPreview::FocusModel(
     std::shared_ptr<AssetReference<ModelAsset>> modelAsset)
   {
-    std::vector<std::shared_ptr<IMesh>> vec = modelAsset->GetAsset()->m_Meshes;
+    std::vector<std::shared_ptr<IMesh>> vec = modelAsset->GetAsset().m_Meshes;
     float                               longestDist = 0;
 
     for (const auto& subMesh : vec)

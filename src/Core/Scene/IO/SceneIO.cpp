@@ -75,7 +75,7 @@ namespace Dwarf
   SceneIO::LoadScene(
     std::shared_ptr<AssetReference<SceneAsset>> sceneAsset) const
   {
-    if (FileHandler::FileExists(sceneAsset->GetAsset()->m_Path))
+    if (FileHandler::FileExists(sceneAsset->GetAsset().m_Path))
     {
       return m_SceneFactory->FromAsset(sceneAsset);
     }

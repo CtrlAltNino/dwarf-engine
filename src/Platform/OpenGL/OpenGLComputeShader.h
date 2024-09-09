@@ -8,6 +8,7 @@
 #include "Core/Asset/Database/IAssetDatabase.h"
 #include <glad/glad.h>
 #include <memory>
+#include <boost/di.hpp>
 
 namespace Dwarf
 {

@@ -139,19 +139,13 @@ namespace Dwarf
   struct TextureAsset
   {
     /// @brief Imported texture.
-    std::shared_ptr<ITexture> m_Texture;
+    std::unique_ptr<ITexture> m_Texture;
 
-    explicit TextureAsset(std::shared_ptr<ITexture> const& texture)
-      : m_Texture(texture)
+    explicit TextureAsset(std::unique_ptr<ITexture> texture)
+      : m_Texture(std::move(texture))
     {
-    }
-
-    /// @brief Retrieves the texture.
-    /// @return The imported texture instance.
-    std::shared_ptr<ITexture>
-    Get() const
-    {
-      return m_Texture;
+      std::cout << "Texture Asset created" << std::endl;
+      std::cout << "Texture ID: " << m_Texture->GetTextureID() << std::endl;
     }
   };
 

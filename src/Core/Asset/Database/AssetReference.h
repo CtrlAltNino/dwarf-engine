@@ -82,10 +82,10 @@ namespace Dwarf
     /// @brief Retrieves the asset component of the asset, containing the actual
     /// payload.
     /// @return The asset component.
-    std::shared_ptr<T>
+    T&
     GetAsset()
     {
-      return std::make_shared<T>(m_Registry->get<T>(m_AssetHandle));
+      return m_Registry->get<T>(m_AssetHandle);
     }
   };
 }

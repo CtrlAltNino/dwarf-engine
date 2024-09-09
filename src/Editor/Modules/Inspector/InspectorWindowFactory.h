@@ -2,14 +2,18 @@
 
 #include "Editor/Modules/IGuiModule.h"
 #include "Editor/Modules/Inspector/IInspectorWindowFactory.h"
+#include <memory>
+#include <boost/di.hpp>
 
 namespace Dwarf
 {
   class InspectorWindowFactory : public IInspectorWindowFactory
   {
   private:
-    std::function<boost::di::injector<std::unique_ptr<InspectorWindow>>()>
-      m_InjectorFactory;
+    std::shared_ptr<IEditorSelection> m_Selection;
+    std::shared_ptr<IAssetDatabase>   m_AssetDatabase;
+    std::shared_ptr<IAssetInspector>  m_AssetInspector;
+    std::shared_ptr<IEntityInspector> m_EntityInspector;
 
   public:
     BOOST_DI_INJECT(InspectorWindowFactory,

@@ -2,6 +2,7 @@
 
 #include "IMaterialFactory.h"
 #include "Core/Rendering/Shader/IShaderFactory.h"
+#include <boost/di.hpp>
 
 namespace Dwarf
 {

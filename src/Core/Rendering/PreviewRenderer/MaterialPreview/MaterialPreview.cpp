@@ -50,7 +50,7 @@ namespace Dwarf
                                m_Framebuffer->GetSpecification().Height);
 
     m_RendererApi->RenderIndexed(m_Mesh,
-                                 materialAsset->GetAsset()->m_Material,
+                                 materialAsset->GetAsset().m_Material,
                                  glm::toMat4(m_Properties.ModelRotationQuat),
                                  m_Camera->GetViewMatrix(),
                                  m_Camera->GetProjectionMatrix());

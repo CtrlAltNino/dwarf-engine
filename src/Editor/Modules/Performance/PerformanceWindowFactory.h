@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Editor/Modules/Performance/IPerformanceWindowFactory.h"
+#include <boost/di.hpp>
 
 namespace Dwarf
 {

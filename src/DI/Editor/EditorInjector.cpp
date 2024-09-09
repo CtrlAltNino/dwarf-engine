@@ -1,5 +1,7 @@
 #include "DI/Editor/EditorInjector.h"
 
+#include "Core/Asset/AssetReimporter/AssetReimporter.h"
+#include "Core/Asset/AssetReimporter/IAssetReimporter.h"
 #include "Logging/DwarfLogger.h"
 #include "Editor/Modules/AssetBrowser/IAssetBrowserWindowFactory.h"
 #include "Editor/Modules/DebugInformation/IDebugWindowFactory.h"
@@ -142,6 +144,8 @@ namespace Dwarf
           boost::di::bind<IMaterialIO>.to<MaterialIO>().in(boost::di::extension::shared),
           boost::di::bind<IAssetDirectoryListener>.to<AssetDirectoryListener>().in(boost::di::extension::shared),
           boost::di::bind<IAssetDatabase>.to<AssetDatabase>().in(
+          boost::di::extension::shared),
+          boost::di::bind<IAssetReimporter>.to<AssetReimporter>().in(
           boost::di::extension::shared),
           boost::di::bind<ISceneIO>.to<SceneIO>().in(boost::di::extension::shared),
           boost::di::bind<IMaterialCreator>.to<MaterialCreator>().in(boost::di::extension::shared),

@@ -5,6 +5,7 @@
 #include "IProjectSettings.h"
 #include "Logging/IDwarfLogger.h"
 #include "ProjectTypes.h"
+#include <boost/di.hpp>
 
 namespace Dwarf
 {

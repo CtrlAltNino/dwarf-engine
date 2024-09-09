@@ -1,6 +1,7 @@
 #pragma once
 
 #include "IDwarfLogger.h"
+#include <boost/di.hpp>
 #include <boost/serialization/strong_typedef.hpp>
 #include <spdlog/spdlog.h>
 
