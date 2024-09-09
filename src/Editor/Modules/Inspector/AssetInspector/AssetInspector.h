@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Asset/AssetReimporter/IAssetReimporter.h"
 #include "Core/Asset/Database/IAssetDatabase.h"
 #include "Core/Base.h"
 #include "Core/Rendering/PreviewRenderer/MaterialPreview/IMaterialPreview.h"
@@ -24,6 +25,7 @@ namespace Dwarf
     std::shared_ptr<IModelPreview>    m_ModelPreview;
     std::shared_ptr<IInputManager>    m_InputManager;
     std::shared_ptr<IEditorStats>     m_EditorStats;
+    std::shared_ptr<IAssetReimporter> m_AssetReimporter;
 
     AssetInspector(GraphicsApi                       graphicsApi,
                    std::shared_ptr<ILoadedScene>     loadedScene,
@@ -32,7 +34,8 @@ namespace Dwarf
                    std::shared_ptr<IMaterialPreview> materialPreview,
                    std::shared_ptr<IModelPreview>    modelPreview,
                    std::shared_ptr<IInputManager>    inputManager,
-                   std::shared_ptr<IEditorStats>     editorStats);
+                   std::shared_ptr<IEditorStats>     editorStats,
+                   std::shared_ptr<IAssetReimporter> assetReimporter);
 
     ~AssetInspector() override = default;
     void

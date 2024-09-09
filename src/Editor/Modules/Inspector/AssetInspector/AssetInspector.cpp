@@ -45,7 +45,8 @@ namespace Dwarf
     std::shared_ptr<IMaterialPreview> materialPreview,
     std::shared_ptr<IModelPreview>    modelPreview,
     std::shared_ptr<IInputManager>    inputManager,
-    std::shared_ptr<IEditorStats>     editorStats)
+    std::shared_ptr<IEditorStats>     editorStats,
+    std::shared_ptr<IAssetReimporter> assetReimporter)
     : m_LoadedScene(loadedScene)
     , m_SceneIO(sceneIO)
     , m_AssetDatabase(assetDatabase)
@@ -54,6 +55,7 @@ namespace Dwarf
     , m_ModelPreview(modelPreview)
     , m_InputManager(inputManager)
     , m_EditorStats(editorStats)
+    , m_AssetReimporter(assetReimporter)
   {
   }
 
@@ -201,7 +203,8 @@ namespace Dwarf
     if (ImGui::Button("Reimport"))
     {
       // TODO: Fix: Crashes when not returned here
-      m_AssetDatabase->Reimport(asset->GetPath());
+      // m_AssetDatabase->Reimport(asset->GetPath());
+      m_AssetReimporter->QueueReimport(asset->GetPath());
       ImGui::EndChild();
       return;
     }
@@ -838,7 +841,8 @@ namespace Dwarf
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
     if (ImGui::Button("Reimport"))
     {
-      m_AssetDatabase->Reimport(asset->GetPath());
+      // m_AssetDatabase->Reimport(asset->GetPath());
+      m_AssetReimporter->QueueReimport(asset->GetPath());
     }
 
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
@@ -906,7 +910,8 @@ namespace Dwarf
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
     if (ImGui::Button("Reimport"))
     {
-      m_AssetDatabase->Reimport(asset->GetPath());
+      // m_AssetDatabase->Reimport(asset->GetPath());
+      m_AssetReimporter->QueueReimport(asset->GetPath());
     }
 
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
@@ -1023,7 +1028,8 @@ namespace Dwarf
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
     if (ImGui::Button("Reimport"))
     {
-      m_AssetDatabase->Reimport(asset->GetPath());
+      // m_AssetDatabase->Reimport(asset->GetPath());
+      m_AssetReimporter->QueueReimport(asset->GetPath());
     }
 
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
