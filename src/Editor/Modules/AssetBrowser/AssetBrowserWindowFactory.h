@@ -10,7 +10,8 @@ namespace Dwarf
   class AssetBrowserWindowFactory : public IAssetBrowserWindowFactory
   {
   private:
-    std::function<boost::di::injector<AssetBrowserWindow>()> m_InjectorFactory;
+    std::function<boost::di::injector<std::unique_ptr<AssetBrowserWindow>>()>
+      m_InjectorFactory;
 
   public:
     BOOST_DI_INJECT(AssetBrowserWindowFactory,
@@ -26,10 +27,10 @@ namespace Dwarf
                     std::shared_ptr<IMaterialCreator> materialCreator);
 
     ~AssetBrowserWindowFactory() override = default;
-    std::shared_ptr<AssetBrowserWindow>
+    std::unique_ptr<AssetBrowserWindow>
     Create() const override;
 
-    std::shared_ptr<AssetBrowserWindow>
+    std::unique_ptr<AssetBrowserWindow>
     Create(SerializedModule serializedModule) const override;
   };
 } // namespace Dwarf

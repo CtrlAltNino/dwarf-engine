@@ -9,10 +9,10 @@ namespace Dwarf
   public:
     virtual ~IGuiModuleFactory() = default;
 
-    virtual std::shared_ptr<IGuiModule>
+    virtual std::unique_ptr<IGuiModule>
     CreateGuiModule(MODULE_TYPE type) const = 0;
 
-    virtual std::shared_ptr<IGuiModule>
+    virtual std::unique_ptr<IGuiModule>
     CreateGuiModule(SerializedModule serializedModule) const = 0;
   };
 } // namespace Dwarf

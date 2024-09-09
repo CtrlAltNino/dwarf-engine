@@ -57,8 +57,8 @@ namespace Dwarf
 
     while (!m_Window->ShouldClose() && !m_CloseSignal)
     {
-      m_Logger->LogInfo(Log("Handling time stamps", "Editor"));
-      // ===== Time related stuff
+      // m_Logger->LogInfo(Log("Handling time stamps", "Editor"));
+      //  ===== Time related stuff
       m_EditorStats->SetLastTimeStamp(m_EditorStats->GetCurrentTimeStamp());
       m_EditorStats->SetCurrentTimeStamp(TimeUtilities::GetCurrent());
 
@@ -69,13 +69,14 @@ namespace Dwarf
       m_View->OnImGuiRender();
       m_Window->EndFrame();
 
-      m_Logger->LogInfo(Log("Editor loop end", "Editor"));
-      // while (TimeUtilities::GetDifferenceInSeconds(
-      //          TimeUtilities::GetCurrent(), m_Stats->GetCurrentTimeStamp()) <
-      //        (1.0 / 60.0))
-      // {
-      //   // TODO: Update this when implementing multi threading
-      // }
+      // m_Logger->LogInfo(Log("Editor loop end", "Editor"));
+      //  while (TimeUtilities::GetDifferenceInSeconds(
+      //           TimeUtilities::GetCurrent(), m_Stats->GetCurrentTimeStamp())
+      //           <
+      //         (1.0 / 60.0))
+      //  {
+      //    // TODO: Update this when implementing multi threading
+      //  }
     }
 
     m_Logger->LogInfo(Log("Exiting editor loop", "Editor"));

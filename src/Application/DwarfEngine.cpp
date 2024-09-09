@@ -27,6 +27,7 @@ namespace Dwarf
       if (!selectedProject.path.t.empty())
       {
         returnToLauncher = RunEditor(selectedProject);
+        m_Logger->LogInfo(Log("Editor finished running.", "DwarfEngine"));
 
         if (returnToLauncher)
         {
@@ -75,8 +76,7 @@ namespace Dwarf
     auto editorInjector = EditorInjector::CreateInjector(selectedProject);
 
     auto editor = editorInjector.create<std::shared_ptr<Dwarf::Editor>>();
-    // returnToLauncher = !editor->Run();
-    bool returnToLauncher = false;
+    bool returnToLauncher = editor->Run();
 
     m_Logger->LogInfo(Log("Editor finished running.", "DwarfEngine"));
     m_Logger->LogInfo(

@@ -8,10 +8,10 @@ namespace Dwarf
   {
   public:
     virtual ~IAssetBrowserWindowFactory() = default;
-    virtual std::shared_ptr<AssetBrowserWindow>
+    virtual std::unique_ptr<AssetBrowserWindow>
     Create() const = 0;
 
-    virtual std::shared_ptr<AssetBrowserWindow>
+    virtual std::unique_ptr<AssetBrowserWindow>
     Create(SerializedModule serializedModule) const = 0;
   };
 }

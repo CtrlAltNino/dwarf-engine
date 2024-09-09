@@ -8,7 +8,8 @@ namespace Dwarf
   class SceneViewerWindowFactory : public ISceneViewerWindowFactory
   {
   private:
-    std::function<boost::di::injector<SceneViewerWindow>()> m_InjectorFactory;
+    std::function<boost::di::injector<std::unique_ptr<SceneViewerWindow>>()>
+      m_InjectorFactory;
 
   public:
     BOOST_DI_INJECT(
@@ -21,10 +22,10 @@ namespace Dwarf
       std::shared_ptr<IEditorSelection>          editorSelection,
       std::shared_ptr<IRenderingPipelineFactory> renderingPipelineFactory);
     ~SceneViewerWindowFactory() override = default;
-    std::shared_ptr<SceneViewerWindow>
+    std::unique_ptr<SceneViewerWindow>
     Create() const override;
 
-    std::shared_ptr<SceneViewerWindow>
+    std::unique_ptr<SceneViewerWindow>
     Create(SerializedModule serializedModule) const override;
   };
 } // namespace Dwarf

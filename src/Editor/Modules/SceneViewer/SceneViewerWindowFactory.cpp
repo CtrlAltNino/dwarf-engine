@@ -32,21 +32,19 @@ namespace Dwarf
   {
   }
 
-  std::shared_ptr<SceneViewerWindow>
+  std::unique_ptr<SceneViewerWindow>
   SceneViewerWindowFactory::Create() const
   {
-    return std::make_shared<SceneViewerWindow>(
-      m_InjectorFactory().create<SceneViewerWindow>());
+    return m_InjectorFactory().create<std::unique_ptr<SceneViewerWindow>>();
   }
 
-  std::shared_ptr<SceneViewerWindow>
+  std::unique_ptr<SceneViewerWindow>
   SceneViewerWindowFactory::Create(SerializedModule serializedModule) const
   {
     auto injector = boost::di::make_injector(
       m_InjectorFactory(),
       boost::di::bind<SerializedModule>.to(serializedModule));
 
-    return std::make_shared<SceneViewerWindow>(
-      injector.create<SceneViewerWindow>());
+    return injector.create<std::unique_ptr<SceneViewerWindow>>();
   }
 } // namespace Dwarf

@@ -33,7 +33,7 @@ namespace Dwarf
     int m_GuiModuleIDCount = 0;
 
     /// @brief List of GUI modules.
-    std::vector<std::shared_ptr<IGuiModule>> m_GuiModules;
+    std::vector<std::unique_ptr<IGuiModule>> m_GuiModules;
 
     /// @brief IMGUI example function to render the base docking layout.
     void

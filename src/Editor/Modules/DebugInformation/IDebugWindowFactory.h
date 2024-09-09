@@ -9,10 +9,10 @@ namespace Dwarf
   {
   public:
     virtual ~IDebugWindowFactory() = default;
-    virtual std::shared_ptr<DebugWindow>
+    virtual std::unique_ptr<DebugWindow>
     Create() const = 0;
 
-    virtual std::shared_ptr<DebugWindow>
+    virtual std::unique_ptr<DebugWindow>
     Create(SerializedModule serializedModule) const = 0;
   };
 } // namespace Dwarf

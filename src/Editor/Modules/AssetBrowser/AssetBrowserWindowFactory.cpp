@@ -42,21 +42,19 @@ namespace Dwarf
   {
   }
 
-  std::shared_ptr<AssetBrowserWindow>
+  std::unique_ptr<AssetBrowserWindow>
   AssetBrowserWindowFactory::Create() const
   {
-    return std::make_shared<AssetBrowserWindow>(
-      m_InjectorFactory().create<AssetBrowserWindow>());
+    return m_InjectorFactory().create<std::unique_ptr<AssetBrowserWindow>>();
   }
 
-  std::shared_ptr<AssetBrowserWindow>
+  std::unique_ptr<AssetBrowserWindow>
   AssetBrowserWindowFactory::Create(SerializedModule serializedModule) const
   {
     auto injector = boost::di::make_injector(
       m_InjectorFactory(),
       boost::di::bind<SerializedModule>.to(serializedModule));
 
-    return std::make_shared<AssetBrowserWindow>(
-      injector.create<AssetBrowserWindow>());
+    return injector.create<std::unique_ptr<AssetBrowserWindow>>();
   }
 } // namespace Dwarf

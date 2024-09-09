@@ -31,7 +31,7 @@ namespace Dwarf
   {
   }
 
-  std::shared_ptr<IGuiModule>
+  std::unique_ptr<IGuiModule>
   GuiModuleFactory::CreateGuiModule(MODULE_TYPE type) const
   {
     switch (type)
@@ -47,7 +47,7 @@ namespace Dwarf
     }
   }
 
-  std::shared_ptr<IGuiModule>
+  std::unique_ptr<IGuiModule>
   GuiModuleFactory::CreateGuiModule(SerializedModule serializedModule) const
   {
     auto type = serializedModule.t["type"].get<MODULE_TYPE>();

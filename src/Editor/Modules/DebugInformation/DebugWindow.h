@@ -15,8 +15,8 @@ namespace Dwarf
   public:
     DebugWindow(std::shared_ptr<IAssetDatabase> assetDatabase);
 
-    DebugWindow(SerializedModule                serializedModule,
-                std::shared_ptr<IAssetDatabase> assetDatabase);
+    DebugWindow(std::shared_ptr<IAssetDatabase> assetDatabase,
+                SerializedModule                serializedModule);
 
     /// @brief Renders the module window.
     void

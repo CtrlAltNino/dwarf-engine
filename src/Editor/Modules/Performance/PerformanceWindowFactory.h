@@ -7,17 +7,18 @@ namespace Dwarf
   class PerformanceWindowFactory : public IPerformanceWindowFactory
   {
   private:
-    std::function<boost::di::injector<PerformanceWindow>()> m_InjectorFactory;
+    std::function<boost::di::injector<std::unique_ptr<PerformanceWindow>>()>
+      m_InjectorFactory;
 
   public:
     BOOST_DI_INJECT(PerformanceWindowFactory,
                     std::shared_ptr<IEditorStats> editorStats);
 
     ~PerformanceWindowFactory() override = default;
-    std::shared_ptr<PerformanceWindow>
+    std::unique_ptr<PerformanceWindow>
     Create() const override;
 
-    std::shared_ptr<PerformanceWindow>
+    std::unique_ptr<PerformanceWindow>
     Create(SerializedModule serializedModule) const override;
   };
 }

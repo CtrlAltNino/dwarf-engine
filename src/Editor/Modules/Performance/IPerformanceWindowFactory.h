@@ -9,10 +9,10 @@ namespace Dwarf
   {
   public:
     virtual ~IPerformanceWindowFactory() = default;
-    virtual std::shared_ptr<PerformanceWindow>
+    virtual std::unique_ptr<PerformanceWindow>
     Create() const = 0;
 
-    virtual std::shared_ptr<PerformanceWindow>
+    virtual std::unique_ptr<PerformanceWindow>
     Create(SerializedModule serializedModule) const = 0;
   };
 } // namespace Dwarf

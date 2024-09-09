@@ -35,10 +35,10 @@ namespace Dwarf
 
     ~GuiModuleFactory() override = default;
 
-    std::shared_ptr<IGuiModule>
+    std::unique_ptr<IGuiModule>
     CreateGuiModule(MODULE_TYPE type) const override;
 
-    std::shared_ptr<IGuiModule>
+    std::unique_ptr<IGuiModule>
     CreateGuiModule(SerializedModule serializedModule) const override;
   };
 } // namespace Dwarf

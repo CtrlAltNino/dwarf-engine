@@ -4,8 +4,9 @@ namespace Dwarf
 {
   DebugWindowFactory::DebugWindowFactory(
     std::shared_ptr<IAssetDatabase> assetDatabase)
-    : m_InjectorFactory(
-        [&assetDatabase]()
+    : m_AssetDatabase(assetDatabase)
+    , m_InjectorFactory(
+        [](std::shared_ptr<IAssetDatabase> assetDatabase)
         {
           return boost::di::make_injector(
             boost::di::bind<IAssetDatabase>.to(assetDatabase));
@@ -13,20 +14,19 @@ namespace Dwarf
   {
   }
 
-  std::shared_ptr<DebugWindow>
+  std::unique_ptr<DebugWindow>
   DebugWindowFactory::Create() const
   {
-    return std::make_shared<DebugWindow>(
-      m_InjectorFactory().create<DebugWindow>());
+    return std::make_unique<DebugWindow>(m_AssetDatabase);
   }
 
-  std::shared_ptr<DebugWindow>
+  std::unique_ptr<DebugWindow>
   DebugWindowFactory::Create(SerializedModule serializedModule) const
   {
     auto injector = boost::di::make_injector(
-      m_InjectorFactory(),
+      m_InjectorFactory(m_AssetDatabase),
       boost::di::bind<SerializedModule>.to(serializedModule));
 
-    return std::make_shared<DebugWindow>(injector.create<DebugWindow>());
+    return std::make_unique<DebugWindow>(m_AssetDatabase, serializedModule);
   }
 }

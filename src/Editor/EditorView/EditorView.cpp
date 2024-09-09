@@ -312,7 +312,7 @@ namespace Dwarf
   void
   EditorView::AddWindow(MODULE_TYPE moduleType)
   {
-    std::shared_ptr<IGuiModule> guiModule =
+    std::unique_ptr<IGuiModule> guiModule =
       m_GuiModuleFactory->CreateGuiModule(moduleType);
     // std::shared_ptr<IGuiModule> guiModule;
     //  switch (moduleType)
@@ -348,7 +348,7 @@ namespace Dwarf
 
     if (guiModule)
     {
-      m_GuiModules.push_back(guiModule);
+      m_GuiModules.push_back(std::move(guiModule));
     }
   }
 

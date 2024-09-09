@@ -17,8 +17,8 @@ namespace Dwarf
   {
   }
 
-  DebugWindow::DebugWindow(SerializedModule                serializedModule,
-                           std::shared_ptr<IAssetDatabase> assetDatabase)
+  DebugWindow::DebugWindow(std::shared_ptr<IAssetDatabase> assetDatabase,
+                           SerializedModule                serializedModule)
     : IGuiModule(ModuleLabel("Debug"),
                  ModuleType(MODULE_TYPE::DEBUG),
                  ModuleID(std::make_shared<UUID>(

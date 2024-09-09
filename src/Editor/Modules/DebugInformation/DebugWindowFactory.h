@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Asset/Database/IAssetDatabase.h"
 #include "Editor/Modules/DebugInformation/IDebugWindowFactory.h"
 #include <boost/di.hpp>
 
@@ -8,16 +9,19 @@ namespace Dwarf
   class DebugWindowFactory : public IDebugWindowFactory
   {
   private:
-    std::function<boost::di::injector<DebugWindow>()> m_InjectorFactory;
+    std::shared_ptr<IAssetDatabase> m_AssetDatabase;
+    std::function<boost::di::injector<std::unique_ptr<DebugWindow>>(
+      std::shared_ptr<IAssetDatabase>)>
+      m_InjectorFactory;
 
   public:
     BOOST_DI_INJECT(DebugWindowFactory,
                     std::shared_ptr<IAssetDatabase> assetDatabase);
     ~DebugWindowFactory() override = default;
-    std::shared_ptr<DebugWindow>
+    std::unique_ptr<DebugWindow>
     Create() const override;
 
-    std::shared_ptr<DebugWindow>
+    std::unique_ptr<DebugWindow>
     Create(SerializedModule serializedModule) const override;
   };
 }

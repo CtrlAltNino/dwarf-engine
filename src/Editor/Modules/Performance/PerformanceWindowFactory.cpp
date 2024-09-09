@@ -13,21 +13,19 @@ namespace Dwarf
   {
   }
 
-  std::shared_ptr<PerformanceWindow>
+  std::unique_ptr<PerformanceWindow>
   PerformanceWindowFactory::Create() const
   {
-    return std::make_shared<PerformanceWindow>(
-      m_InjectorFactory().create<PerformanceWindow>());
+    return m_InjectorFactory().create<std::unique_ptr<PerformanceWindow>>();
   }
 
-  std::shared_ptr<PerformanceWindow>
+  std::unique_ptr<PerformanceWindow>
   PerformanceWindowFactory::Create(SerializedModule serializedModule) const
   {
     auto injector = boost::di::make_injector(
       m_InjectorFactory(),
       boost::di::bind<SerializedModule>.to(serializedModule));
 
-    return std::make_shared<PerformanceWindow>(
-      injector.create<PerformanceWindow>());
+    return injector.create<std::unique_ptr<PerformanceWindow>>();
   }
 } // namespace Dwarf
