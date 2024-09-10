@@ -1,5 +1,6 @@
 #include "MaterialIO.h"
 #include "Utilities/FileHandler.h"
+#include <string>
 
 namespace Dwarf
 {
@@ -16,8 +17,14 @@ namespace Dwarf
   MaterialIO::SaveMaterial(std::shared_ptr<IMaterial>   material,
                            std::filesystem::path const& path)
   {
-    // Save the material to a file
-    FileHandler::WriteToFile(path, material->Serialize().dump(2));
+    // Save the material to a file (Overwrite if it already exists)
+    m_Logger->LogInfo(Log(
+      fmt::format("Saving material to file: {}", path.string()), "MaterialIO"));
+    std::string serializedMaterial = material->Serialize().dump(2);
+    m_Logger->LogInfo(
+      Log(fmt::format("Serialized material: {}", serializedMaterial),
+          "MaterialIO"));
+    FileHandler::WriteToFile(path, serializedMaterial);
   }
 
   std::shared_ptr<IMaterial>
@@ -35,7 +42,12 @@ namespace Dwarf
       throw std::runtime_error("Material asset file does not exist");
     }
 
+    std::string serializedMaterial = FileHandler::ReadFile(path);
+    m_Logger->LogInfo(
+      Log(fmt::format("Serialized material: {}", serializedMaterial),
+          "MaterialIO"));
+
     return m_MaterialFactory->FromSerialized(
-      nlohmann::json::parse(FileHandler::ReadFile(path)));
+      nlohmann::json::parse(serializedMaterial));
   }
 }

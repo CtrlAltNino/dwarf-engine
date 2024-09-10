@@ -8,6 +8,10 @@ namespace Dwarf
 {
   class MaterialIO : public IMaterialIO
   {
+  private:
+    std::shared_ptr<IMaterialFactory> m_MaterialFactory;
+    std::shared_ptr<IDwarfLogger>     m_Logger;
+
   public:
     // Constructor
     MaterialIO(std::shared_ptr<IMaterialFactory> materialFactory,
@@ -23,9 +27,5 @@ namespace Dwarf
 
     virtual std::shared_ptr<IMaterial>
     LoadMaterial(std::filesystem::path const& path) override;
-
-  private:
-    std::shared_ptr<IMaterialFactory> m_MaterialFactory;
-    std::shared_ptr<IDwarfLogger>     m_Logger;
   };
 }; // namespace Dwarf

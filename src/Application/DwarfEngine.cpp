@@ -40,7 +40,6 @@ namespace Dwarf
       }
       else
       {
-
         m_Logger->LogInfo(Log(
           "No project path provided. Exiting Dwarf Engine... ", "DwarfEngine"));
         returnToLauncher = false;

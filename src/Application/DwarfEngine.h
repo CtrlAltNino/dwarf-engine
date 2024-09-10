@@ -1,8 +1,6 @@
 #pragma once
-#include "Core/Base.h"
 #include "Logging/DwarfLogger.h"
 #include "Launcher/IProjectLauncher.h"
-#include "Editor/IEditor.h"
 
 namespace Dwarf
 {

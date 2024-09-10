@@ -9,6 +9,7 @@ set(DNFD_PORTAL ON CACHE BOOL "Use portal for NFD")
 set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED True)
 
+set(libname dwarf-lib)
 set(targetName dwarf-engine)
 set(testTarget dwarf-test)
 
@@ -48,108 +49,18 @@ ELSEIF(APPLE)
     enable_language(OBJC OBJCXX)
 ENDIF()
 
-# Project declaration
-project(Dwarf\ Engine VERSION 0.0.1 LANGUAGES C CXX)
-add_executable(${targetName} "")
-
-include_directories(src)
-
-target_sources(${targetName} PRIVATE ${EXECUTABLE_ADDITIONAL_SETTINGS})
-
-add_subdirectory(tests)
-
-# Add the CMakeLists.txt files of the subdirectories
-add_subdirectory(src)
-
-target_precompile_headers(${targetName} PRIVATE src/pch.h)
-
 enable_testing()
 
-IF(WIN32)
-    target_link_libraries(${targetName} PRIVATE bcrypt)
-ENDIF()
+# Project declaration
+project(Dwarf\ Engine VERSION 0.0.1 LANGUAGES C CXX)
 
-# Linking dependencies
-IF(WIN32 OR(UNIX AND NOT APPLE))
-    find_package(glad CONFIG REQUIRED)
+add_executable(${targetName} "")
+include_directories(src)
+add_subdirectory(src)
+target_sources(${targetName} PRIVATE ${EXECUTABLE_ADDITIONAL_SETTINGS})
+target_link_libraries(${targetName} PRIVATE ${libname})
 
-    target_link_libraries(${targetName} PRIVATE glad::glad)
-ENDIF()
-
-find_package(Stb REQUIRED)
-target_include_directories(${targetName} PRIVATE ${Stb_INCLUDE_DIR})
-
-find_package(assimp CONFIG REQUIRED)
-target_link_libraries(${targetName} PRIVATE assimp::assimp)
-
-find_path(BEXT_DI_INCLUDE_DIRS "boost/di.hpp")
-target_include_directories(${targetName} PRIVATE ${BEXT_DI_INCLUDE_DIRS})
-
-find_path(BOOST_INCLUDE_DIRS "boost/")
-target_include_directories(${targetName} PRIVATE ${BOOST_INCLUDE_DIRS})
-
-find_package(efsw CONFIG REQUIRED)
-target_link_libraries(${targetName} PRIVATE efsw::efsw)
-
-find_package(EnTT CONFIG REQUIRED)
-target_link_libraries(${targetName} PRIVATE EnTT::EnTT)
-
-find_package(glm CONFIG REQUIRED)
-target_link_libraries(${targetName} PRIVATE glm::glm)
-
-find_package(SDL2 CONFIG REQUIRED)
-
-target_link_libraries(${targetName}
-    PRIVATE
-    $<TARGET_NAME_IF_EXISTS:SDL2::SDL2main>
-    $<IF:$<TARGET_EXISTS:SDL2::SDL2>,SDL2::SDL2,SDL2::SDL2-static>
-)
-find_package(imgui CONFIG REQUIRED)
-target_link_libraries(${targetName} PRIVATE imgui::imgui)
-
-find_package(unofficial-imguizmo CONFIG REQUIRED)
-target_link_libraries(${targetName} PRIVATE unofficial::imguizmo::imguizmo)
-
-find_package(libjpeg-turbo CONFIG REQUIRED)
-target_link_libraries(${targetName} PRIVATE PRIVATE libjpeg-turbo::turbojpeg-static)
-
-find_package(SPNG CONFIG REQUIRED)
-target_link_libraries(${targetName} PRIVATE $<IF:$<TARGET_EXISTS:spng::spng>,spng::spng,spng::spng_static>)
-
-find_package(nfd CONFIG REQUIRED)
-target_link_libraries(${targetName} PRIVATE nfd::nfd)
-find_package(nlohmann_json CONFIG REQUIRED)
-target_link_libraries(${targetName} PRIVATE nlohmann_json::nlohmann_json)
-
-find_package(platform_folders CONFIG REQUIRED)
-target_link_libraries(${targetName} PRIVATE sago::platform_folders)
-
-find_package(Protobuf CONFIG REQUIRED)
-target_link_libraries(${targetName} PRIVATE protobuf::libprotoc protobuf::libprotobuf protobuf::libprotobuf-lite)
-find_package(spdlog CONFIG REQUIRED)
-target_link_libraries(${targetName} PRIVATE spdlog::spdlog)
-
-find_package(TIFF REQUIRED)
-target_link_libraries(${targetName} PRIVATE TIFF::TIFF)
-
-find_package(xxHash CONFIG REQUIRED)
-target_link_libraries(${targetName} PRIVATE xxHash::xxhash)
-
-find_package(Threads REQUIRED)
-target_link_libraries(${targetName} PRIVATE Threads::Threads)
-
-IF(APPLE)
-    find_library(METAL Metal)
-    find_library(FOUNDATION Foundation)
-    find_library(QUARTZCORE QuartzCore)
-
-    target_link_libraries(${targetName} PRIVATE ${METAL})
-    target_link_libraries(${targetName} PRIVATE ${FOUNDATION})
-    target_link_libraries(${targetName} PRIVATE ${QUARTZCORE})
-
-    # target_include_directories(${targetName} PRIVATE "lib/metal-cpp/")
-    target_include_directories(${targetName} PRIVATE ${CMAKE_SOURCE_DIR}/include/metal-cpp)
-ENDIF()
+add_subdirectory(tests)
 
 # Copy files to build folder
 add_custom_command(TARGET
