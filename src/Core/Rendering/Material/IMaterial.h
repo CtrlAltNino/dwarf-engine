@@ -48,21 +48,50 @@ namespace Dwarf
   public:
     virtual ~IMaterial() = default;
 
+    /**
+     * @brief Get the shader for this material.
+     *
+     * @return The shader for this material.
+     */
     virtual const std::shared_ptr<IShader>
     GetShader() const = 0;
 
+    /**
+     * @brief Set the shader for this material.
+     *
+     * @param shader The shader to set.
+     */
     virtual void
     SetShader(std::shared_ptr<IShader> shader) = 0;
 
+    /**
+     * @brief Get the shader parameters for this material.
+     *
+     * @return The shader parameters for this material.
+     */
     virtual const std::shared_ptr<IShaderParameterCollection>&
     GetShaderParameters() const = 0;
 
+    /**
+     * @brief Get the properties for this material.
+     *
+     * @return The material properties for this material.
+     */
     virtual MaterialProperties&
     GetMaterialProperties() = 0;
 
+    /**
+     * @brief Generate the shader parameters for this material based on the
+     * shader. This clears the existing shader parameters.
+     */
     virtual void
     GenerateShaderParameters() = 0;
 
+    /**
+     * @brief Serialize the material.
+     *
+     * @return The serialized material.
+     */
     virtual nlohmann::json
     Serialize() const = 0;
   };
