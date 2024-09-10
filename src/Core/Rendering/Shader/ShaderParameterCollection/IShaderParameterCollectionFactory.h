@@ -9,10 +9,10 @@ namespace Dwarf
   public:
     virtual ~IShaderParameterCollectionFactory() = default;
 
-    virtual std::shared_ptr<IShaderParameterCollection>
+    virtual std::unique_ptr<IShaderParameterCollection>
     CreateShaderParameterCollection() = 0;
 
-    virtual std::shared_ptr<IShaderParameterCollection>
+    virtual std::unique_ptr<IShaderParameterCollection>
     CreateShaderParameterCollection(
       const nlohmann::json& serializedShaderParameterCollection) = 0;
   };

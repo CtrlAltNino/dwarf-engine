@@ -249,16 +249,16 @@ namespace Dwarf
   //   return whiteShader;
   // }
 
-  std::shared_ptr<IShaderParameterCollection>
-  OpenGLShader::GetParameters()
+  std::unique_ptr<IShaderParameterCollection>
+  OpenGLShader::CreateParameters()
   {
     if (!m_SuccessfullyCompiled)
     {
       return nullptr;
     }
 
-    std::shared_ptr<IShaderParameterCollection> parameters =
-      m_ShaderParameterCollectionFactory->CreateShaderParameterCollection();
+    std::unique_ptr<IShaderParameterCollection> parameters = std::move(
+      m_ShaderParameterCollectionFactory->CreateShaderParameterCollection());
     GLint i;
     GLint count;
 

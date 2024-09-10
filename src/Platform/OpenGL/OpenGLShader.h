@@ -43,8 +43,8 @@ namespace Dwarf
     bool
     IsCompiled() const override;
 
-    std::shared_ptr<IShaderParameterCollection>
-    GetParameters() override;
+    std::unique_ptr<IShaderParameterCollection>
+    CreateParameters() override;
 
     const ShaderLogs&
     GetShaderLogs() const;

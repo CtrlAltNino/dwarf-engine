@@ -53,4 +53,52 @@ namespace Dwarf
   {
     m_Parameters.clear();
   }
+
+  nlohmann::json
+  ShaderParameterCollection::Serialize() const
+  {
+    nlohmann::json serialized;
+    for (const auto& pair : m_Parameters)
+    {
+      std::visit(
+        [&serialized, &pair](auto&& arg)
+        {
+          using T = std::decay_t<decltype(arg)>;
+          if constexpr (std::is_same_v<T, bool>)
+          {
+            serialized[pair.first] = arg;
+          }
+          else if constexpr (std::is_same_v<T, int>)
+          {
+            serialized[pair.first] = arg;
+          }
+          else if constexpr (std::is_same_v<T, unsigned int>)
+          {
+            serialized[pair.first] = arg;
+          }
+          else if constexpr (std::is_same_v<T, float>)
+          {
+            serialized[pair.first] = arg;
+          }
+          else if constexpr (std::is_same_v<T, glm::vec2>)
+          {
+            serialized[pair.first] = { arg.x, arg.y };
+          }
+          else if constexpr (std::is_same_v<T, glm::vec3>)
+          {
+            serialized[pair.first] = { arg.x, arg.y, arg.z };
+          }
+          else if constexpr (std::is_same_v<T, glm::vec4>)
+          {
+            serialized[pair.first] = { arg.x, arg.y, arg.z, arg.w };
+          }
+          else if constexpr (std::is_same_v<T, Texture2DAssetValue>)
+          {
+            serialized[pair.first] = arg->ToString();
+          }
+        },
+        pair.second);
+    }
+    return serialized;
+  }
 }

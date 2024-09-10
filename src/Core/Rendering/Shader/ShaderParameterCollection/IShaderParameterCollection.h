@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Utilities/ISerializable.h"
 #include "pch.h"
 #include "Core/Base.h"
 #include "Core/UUID.h"
@@ -21,7 +22,7 @@ namespace Dwarf
                                       glm::vec3,
                                       glm::vec4>;
 
-  class IShaderParameterCollection
+  class IShaderParameterCollection : ISerializable
   {
   public:
     virtual ~IShaderParameterCollection() = default;
@@ -56,6 +57,15 @@ namespace Dwarf
      */
     virtual void
     ClearParameters() = 0;
+
+    /**
+     * @brief Serialize the object.
+     *
+     * @return The serialized object.
+     */
+
+    virtual nlohmann::json
+    Serialize() const override = 0;
 
     std::map<ShaderParameterType, std::function<void(std::string_view)>>
       m_DefaultValueAdders = {

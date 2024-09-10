@@ -69,7 +69,7 @@ namespace Dwarf
      *
      * @return The shader parameters for this material.
      */
-    virtual const std::shared_ptr<IShaderParameterCollection>&
+    virtual const std::unique_ptr<IShaderParameterCollection>&
     GetShaderParameters() const = 0;
 
     /**

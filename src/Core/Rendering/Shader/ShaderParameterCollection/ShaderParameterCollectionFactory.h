@@ -14,10 +14,10 @@ namespace Dwarf
   public:
     ShaderParameterCollectionFactory(GraphicsApi graphicsApi);
 
-    std::shared_ptr<IShaderParameterCollection>
+    std::unique_ptr<IShaderParameterCollection>
     CreateShaderParameterCollection() override;
 
-    std::shared_ptr<IShaderParameterCollection>
+    std::unique_ptr<IShaderParameterCollection>
     CreateShaderParameterCollection(
       const nlohmann::json& serializedShaderParameterCollection) override;
   };

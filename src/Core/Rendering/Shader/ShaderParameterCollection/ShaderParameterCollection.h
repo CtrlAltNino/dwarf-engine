@@ -43,5 +43,14 @@ namespace Dwarf
      */
     void
     ClearParameters() override;
+
+    /**
+     * @brief Serialize the object.
+     *
+     * @return The serialized object.
+     */
+
+    nlohmann::json
+    Serialize() const override;
   };
 }

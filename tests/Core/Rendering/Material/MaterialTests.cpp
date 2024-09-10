@@ -1,3 +1,4 @@
+#include "Core/Rendering/Material/IMaterial.h"
 #include <Core/Rendering/Material/Material.h>
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
@@ -35,11 +36,17 @@ class MockIShader : public Dwarf::IShader
 public:
   MOCK_METHOD(void, Compile, (), (override));
   MOCK_METHOD(bool, IsCompiled, (), (const, override));
-  MOCK_METHOD(std::shared_ptr<Dwarf::IShaderParameterCollection>,
-              GetParameters,
+  MOCK_METHOD(std::unique_ptr<Dwarf::IShaderParameterCollection>,
+              CreateParameters,
               (),
               (override));
 };
+
+TEST(MaterialTests, EmptyShaderInitialization)
+{
+  Dwarf::Material material(nullptr);
+  ASSERT_EQ(material.GetShader(), nullptr);
+}
 
 TEST(MaterialTests, DefaultShaderInitialization)
 {
@@ -48,9 +55,55 @@ TEST(MaterialTests, DefaultShaderInitialization)
   ASSERT_EQ(material.GetShader(), shader);
 }
 
+TEST(MaterialTests, DefaultMaterialProperties)
+{
+  auto            shader = std::make_shared<MockIShader>();
+  Dwarf::Material material(shader);
+  auto            properties = material.GetMaterialProperties();
+  ASSERT_FALSE(properties.IsTransparent);
+  ASSERT_FALSE(properties.IsDoubleSided);
+  ASSERT_FALSE(properties.IsUnlit);
+  ASSERT_FALSE(properties.IsWireframe);
+}
+
+TEST(MaterialTests, CustomMaterialProperties)
+{
+  auto                      shader = std::make_shared<MockIShader>();
+  Dwarf::MaterialProperties sourceProperties(false, true, true, false);
+  Dwarf::Material           material(shader, sourceProperties);
+  auto                      properties = material.GetMaterialProperties();
+  ASSERT_FALSE(properties.IsTransparent);
+  ASSERT_TRUE(properties.IsDoubleSided);
+  ASSERT_TRUE(properties.IsUnlit);
+  ASSERT_FALSE(properties.IsWireframe);
+}
+
+TEST(MaterialTests, MaterialSerialization)
+{
+  auto            shader = std::make_shared<MockIShader>();
+  Dwarf::Material material(shader);
+  auto            serialized = material.Serialize();
+  ASSERT_FALSE(serialized.empty());
+  ASSERT_TRUE(serialized.contains("shader"));
+  ASSERT_TRUE(serialized.contains("Properties"));
+  ASSERT_TRUE(serialized["Properties"]["IsTransparent"].is_boolean());
+  ASSERT_TRUE(serialized["Properties"]["IsTransparent"].get<bool>() == false);
+
+  ASSERT_TRUE(serialized["Properties"]["IsDoubleSided"].is_boolean());
+  ASSERT_TRUE(serialized["Properties"]["IsDoubleSided"].get<bool>() == false);
+
+  ASSERT_TRUE(serialized["Properties"]["IsUnlit"].is_boolean());
+  ASSERT_TRUE(serialized["Properties"]["IsUnlit"].get<bool>() == false);
+
+  ASSERT_TRUE(serialized["Properties"]["IsWireframe"].is_boolean());
+  ASSERT_TRUE(serialized["Properties"]["IsWireframe"].get<bool>() == false);
+
+  // ASSERT_TRUE(serialized.contains("ShaderParameters"));
+}
+
 // TEST(MaterialTests, ShaderInitializationWithProperties)
 // {
-//   auto            shader = std::make_shared<Dwarf::IShader>();
+//   auto            shader = std::make_shared<MockIShader>();
 //   nlohmann::json  properties = { { "property1", "value1" },
 //                                  { "property2", "value2" } };
 //   Dwarf::Material material(shader, properties);

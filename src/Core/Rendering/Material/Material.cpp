@@ -37,18 +37,17 @@ namespace Dwarf
   //   m_Shader = Shader::s_DefaultShader;
   // }
 
-  Material::Material(std::shared_ptr<IShader> shader)
+  Material::Material(
+    std::shared_ptr<IShader>                    shader,
+    MaterialProperties                          materialProperties,
+    std::unique_ptr<IShaderParameterCollection> shaderParameters)
     : m_Shader(shader)
-    , m_MaterialProperties(MaterialProperties{})
+    , m_MaterialProperties(materialProperties)
+    , m_ShaderParameters(std::move(shaderParameters))
   {
   }
 
-  Material::Material(std::shared_ptr<IShader> shader,
-                     const nlohmann::json&    serializedMaterialProperties)
-    : m_Shader(shader)
-    , m_MaterialProperties(serializedMaterialProperties)
-  {
-  }
+  Material::~Material() {}
 
   // void
   // Material::SetShader(std::shared_ptr<IShader> shader)
@@ -68,7 +67,7 @@ namespace Dwarf
     m_Shader = shader;
   }
 
-  const std::shared_ptr<IShaderParameterCollection>&
+  const std::unique_ptr<IShaderParameterCollection>&
   Material::GetShaderParameters() const
   {
     return m_ShaderParameters;
@@ -83,7 +82,7 @@ namespace Dwarf
   void
   Material::GenerateShaderParameters()
   {
-    m_ShaderParameters = m_Shader->GetParameters();
+    m_ShaderParameters = std::move(m_Shader->CreateParameters());
   }
 
   nlohmann::json
@@ -91,9 +90,8 @@ namespace Dwarf
   {
     nlohmann::json serializedMaterial;
     // serializedMaterial["shader"] = m_Shader->Serialize();
-    // serializedMaterial["materialProperties"] = m_Properties->Serialize();
-    // serializedMaterial["ShaderParameterCollection"] =
-    //   m_ShaderParameters->Serialize();
+    serializedMaterial["Properties"] = m_MaterialProperties.Serialize();
+    serializedMaterial["ShaderParameters"] = m_ShaderParameters->Serialize();
     return serializedMaterial;
   }
 
