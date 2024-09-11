@@ -57,7 +57,7 @@ namespace Dwarf
       case GraphicsApi::OpenGL:
         {
           m_Logger.LogInfo(Log("Creating OpenGLContext...", "GraphicsContext"));
-          return std::make_shared<OpenGLContext>(window);
+          return std::make_unique<OpenGLContext>(window);
           break;
         }
       case GraphicsApi::Vulkan:

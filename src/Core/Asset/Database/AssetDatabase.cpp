@@ -108,7 +108,7 @@ namespace Dwarf
     auto view = m_Registry->view<IDComponent>();
     for (auto entity : view)
     {
-      if (*view.get<IDComponent>(entity).ID == *uid)
+      if (view.get<IDComponent>(entity).GetID() == *uid)
       {
         m_Registry->destroy(entity);
       }
@@ -120,7 +120,7 @@ namespace Dwarf
     auto view = m_Registry->view<PathComponent>();
     for (auto entity : view)
     {
-      if (view.get<PathComponent>(entity).Path == path &&
+      if (view.get<PathComponent>(entity).GetPath() == path &&
           m_Registry->valid(entity))
       {
         m_Registry->destroy(entity);
@@ -272,7 +272,7 @@ namespace Dwarf
       auto view = m_Registry->view<IDComponent>();
       for (auto entity : view)
       {
-        if (*view.get<IDComponent>(entity).ID == *uid)
+        if (view.get<IDComponent>(entity).GetID() == *uid)
         {
           return true;
         }
@@ -288,7 +288,7 @@ namespace Dwarf
     auto view = m_Registry->view<PathComponent>();
     for (auto entity : view)
     {
-      if (view.get<PathComponent>(entity).Path == path)
+      if (view.get<PathComponent>(entity).GetPath() == path)
       {
         return true;
       }
@@ -311,7 +311,7 @@ namespace Dwarf
     // auto matView = m_Registry->view<MaterialAsset>();
     for (auto entity : view)
     {
-      if (view.get<PathComponent>(entity).Path == from)
+      if (view.get<PathComponent>(entity).GetPath() == from)
       {
         m_Registry->remove<PathComponent>(entity);
         m_Registry->remove<NameComponent>(entity);
@@ -335,11 +335,11 @@ namespace Dwarf
     auto view = m_Registry->view<PathComponent>();
     for (auto entity : view)
     {
-      if (view.get<PathComponent>(entity).Path.string().find(from.string()) !=
-          std::string::npos)
+      if (view.get<PathComponent>(entity).GetPath().string().find(
+            from.string()) != std::string::npos)
       {
         std::filesystem::path newPath = to;
-        newPath.concat(view.get<PathComponent>(entity).Path.string().erase(
+        newPath.concat(view.get<PathComponent>(entity).GetPath().string().erase(
           0, from.string().length()));
         m_Registry->remove<PathComponent>(entity);
         m_Registry->emplace<PathComponent>(entity, newPath);
@@ -454,7 +454,7 @@ namespace Dwarf
     // Retrieve entt::entity with UID component
     for (auto view = m_Registry->view<IDComponent>(); auto entity : view)
     {
-      if (*view.get<IDComponent>(entity).ID == *uid)
+      if (view.get<IDComponent>(entity).GetID() == *uid)
       {
         // return std::make_shared<void>(AssetReference<void>(entity,
         // m_Registry));
@@ -471,7 +471,7 @@ namespace Dwarf
     // Retrieve entt::entity with UID component
     for (auto view = m_Registry->view<PathComponent>(); auto entity : view)
     {
-      if (view.get<PathComponent>(entity).Path == path)
+      if (view.get<PathComponent>(entity).GetPath() == path)
       {
         return CreateAssetReference(type, entity);
       }
@@ -638,7 +638,7 @@ namespace Dwarf
     auto view = m_Registry->view<PathComponent>();
     for (auto entity : view)
     {
-      if (view.get<PathComponent>(entity).Path == path)
+      if (view.get<PathComponent>(entity).GetPath() == path)
       {
         m_Registry->remove<PathComponent>(entity);
         m_Registry->emplace<PathComponent>(

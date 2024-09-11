@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Asset/AssetReference/IAssetReferenceFactory.h"
 #include "Core/Asset/AssetReimporter/IAssetReimporter.h"
 #include "Core/GenericComponents.h"
 #include "Core/Rendering/Material/IMaterialFactory.h"
@@ -49,7 +50,8 @@ namespace Dwarf
       std::shared_ptr<ITextureFactory>         textureFactory,
       std::shared_ptr<IMaterialFactory>        materialFactory,
       std::shared_ptr<IMaterialIO>             materialIO,
-      std::shared_ptr<IAssetReimporter>        assetReimporter);
+      std::shared_ptr<IAssetReimporter>        assetReimporter,
+      std::shared_ptr<IAssetReferenceFactory>  assetReferenceFactory);
 
     /**
      * @brief Destroy the Asset Database object
@@ -192,21 +194,19 @@ namespace Dwarf
     std::shared_ptr<IMaterialFactory>        m_MaterialFactory;
     std::shared_ptr<IMaterialIO>             m_MaterialIO;
     std::shared_ptr<IAssetReimporter>        m_AssetReimporter;
+    std::shared_ptr<IAssetReferenceFactory>  m_AssetReferenceFactory;
 
     /// @brief Recursively imports all found assets in a given directory.
     /// @param directory Absolute path to a directory.
     void
     RecursiveImport(std::filesystem::path const& directory);
 
-    // void
-    // CompileShaders();
-
     /// @brief Creates an asset reference for an asset at a given path.
     /// @param assetPath Path to the asset.
     /// @return The created asset reference instance.
     template<typename T>
     AssetReference<T>
-    CreateAssetReference(std::filesystem::path const& assetPath)
+    CreateNewAsset(std::filesystem::path const& assetPath)
     {
       std::string           fileName = assetPath.stem().string();
       std::filesystem::path metaDataPath =
