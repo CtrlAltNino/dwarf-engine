@@ -1,7 +1,8 @@
 #pragma once
 
 #include "Core/UUID.h"
-#include "Core/Asset/Database/AssetReference.h"
+// #include "Core/Asset/Database/AssetReference.h"
+#include "Core/Asset/AssetReference/IAssetReference.h"
 #include <entt/entity/fwd.hpp>
 #include <filesystem>
 #include <typeindex>
@@ -43,7 +44,7 @@ namespace Dwarf
      * @brief Imports an asset into the asset database.
      * @param assetPath Path to the asset.
      */
-    virtual std::shared_ptr<UUID>
+    virtual UUID
     Import(std::filesystem::path const& assetPath) = 0;
 
     /**
@@ -51,14 +52,14 @@ namespace Dwarf
      * @param uid UID of the asset.
      */
     virtual bool
-    Exists(std::shared_ptr<UUID> uid) = 0;
+    Exists(const UUID& uid) = 0;
 
     /**
      * @brief Checks if an asset with a given path exists in the database.
      * @param path Path to the asset.
      */
     virtual bool
-    Exists(std::filesystem::path const& path) = 0;
+    Exists(const std::filesystem::path& path) = 0;
 
     /**
      * @brief Clears the asset database.
@@ -71,14 +72,14 @@ namespace Dwarf
      * @param uid UID of the asset.
      */
     virtual void
-    Remove(std::shared_ptr<UUID> uid) = 0;
+    Remove(const UUID& uid) = 0;
 
     /**
      * @brief Removes an asset from the asset database.
      * @param path Path to the asset.
      */
     virtual void
-    Remove(std::filesystem::path const& path) = 0;
+    Remove(const std::filesystem::path& path) = 0;
 
     /**
      * @brief Reimports all assets in the asset database.
@@ -90,19 +91,20 @@ namespace Dwarf
      * @brief Reimports an asset in the asset database.
      * @param assetPath Path to the asset.
      */
-    virtual std::shared_ptr<UUID>
-    Reimport(std::filesystem::path const& assetPath) = 0;
+    virtual UUID
+    Reimport(const std::filesystem::path& assetPath) = 0;
 
     /**
      * @brief Retrieves an asset from the asset database.
      * @param uid UID of the asset.
      */
     template<typename T>
-    std::shared_ptr<AssetReference<T>>
-    Retrieve(std::shared_ptr<UUID> uid)
+    std::unique_ptr<IAssetReference<T>>
+    Retrieve(const UUID& uid)
     {
-      return std::static_pointer_cast<AssetReference<T>>(
-        RetrieveImpl(typeid(T), uid));
+      std::unique_ptr<void> asset = RetrieveImpl(typeid(T), uid);
+      return std::unique_ptr<IAssetReference<T>>(
+        static_cast<IAssetReference<T>*>(asset.release()));
     }
 
     /**
@@ -110,14 +112,15 @@ namespace Dwarf
      * @param path Path to the asset.
      */
     template<typename T>
-    std::shared_ptr<AssetReference<T>>
-    Retrieve(std::filesystem::path const& path)
+    std::unique_ptr<IAssetReference<T>>
+    Retrieve(const std::filesystem::path& path)
     {
-      return std::static_pointer_cast<AssetReference<T>>(
-        RetrieveImpl(typeid(T), path));
+      std::unique_ptr<void> asset = RetrieveImpl(typeid(T), path);
+      return std::unique_ptr<IAssetReference<T>>(
+        static_cast<IAssetReference<T>*>(asset.release()));
     }
 
-    virtual std::shared_ptr<entt::registry>
+    virtual const entt::registry&
     GetRegistry() = 0;
 
     /**
@@ -126,8 +129,8 @@ namespace Dwarf
      * @param to New path to the asset.
      */
     virtual void
-    Rename(std::filesystem::path const& from,
-           std::filesystem::path const& to) = 0;
+    Rename(const std::filesystem::path& from,
+           const std::filesystem::path& to) = 0;
 
     /**
      * @brief Renames a directory in the asset database.
@@ -135,8 +138,8 @@ namespace Dwarf
      * @param to New path to the directory.
      */
     virtual void
-    RenameDirectory(std::filesystem::path const& from,
-                    std::filesystem::path const& to) = 0;
+    RenameDirectory(const std::filesystem::path& from,
+                    const std::filesystem::path& to) = 0;
 
     static ASSET_TYPE
     GetAssetType(const std::string& extension)
@@ -157,11 +160,11 @@ namespace Dwarf
 
   private:
     // NVI (Non-Virtual Interface) Implementations
-    virtual std::shared_ptr<void>
-    RetrieveImpl(std::type_index type, std::shared_ptr<UUID> uid) = 0;
+    virtual std::unique_ptr<void>
+    RetrieveImpl(std::type_index type, const UUID& uid) = 0;
 
-    virtual std::shared_ptr<void>
-    RetrieveImpl(std::type_index type, std::filesystem::path const& path) = 0;
+    virtual std::unique_ptr<void>
+    RetrieveImpl(std::type_index type, const std::filesystem::path& path) = 0;
 
   protected:
     static inline const std::unordered_map<std::string, ASSET_TYPE>

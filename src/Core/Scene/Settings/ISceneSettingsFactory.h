@@ -9,10 +9,10 @@ namespace Dwarf
   public:
     virtual ~ISceneSettingsFactory() = default;
 
-    virtual std::shared_ptr<ISceneSettings>
+    virtual std::unique_ptr<ISceneSettings>
     Create(nlohmann::json serializedSettings) = 0;
 
-    virtual std::shared_ptr<ISceneSettings>
+    virtual std::unique_ptr<ISceneSettings>
     Create() = 0;
   };
 }

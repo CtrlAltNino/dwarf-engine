@@ -11,18 +11,18 @@ namespace Dwarf
 
   public:
     MeshFactory(GraphicsApi graphicsApi);
-    std::shared_ptr<IMesh>
-    CreateMesh(std::vector<Vertex>       vertices,
-               std::vector<unsigned int> indices,
-               unsigned int              materialIndex) override;
+    std::unique_ptr<IMesh>
+    CreateMesh(const std::vector<Vertex>&       vertices,
+               const std::vector<unsigned int>& indices,
+               unsigned int                     materialIndex) override;
 
-    std::shared_ptr<IMesh>
+    std::unique_ptr<IMesh>
     CreateUnitSphere(int stacks, int slices) override;
 
-    std::shared_ptr<IMesh>
+    std::unique_ptr<IMesh>
     CreateUnitCube() override;
 
-    std::shared_ptr<IMesh>
+    std::unique_ptr<IMesh>
     CreateUnitQuad() override;
   };
 }

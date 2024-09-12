@@ -11,6 +11,6 @@ namespace Dwarf
 
     template<typename T>
     std::unique_ptr<IAssetReference<T>>
-    Create(entt::entity assetHandle, std::shared_ptr<entt::registry> registry);
+    Create(entt::entity assetHandle, const entt::registry& registry);
   };
 }

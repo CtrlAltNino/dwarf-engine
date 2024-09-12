@@ -19,16 +19,15 @@ namespace Dwarf
 
     // TODO: Maybe pass framebuffer?
     virtual void
-    RenderEntity(Entity&                    entity,
-                 glm::mat4                  viewMatrix,
-                 glm::mat4                  projectionMatrix,
-                 std::shared_ptr<IMaterial> overrideMaterial = nullptr) = 0;
+    RenderEntity(Entity&   entity,
+                 glm::mat4 viewMatrix,
+                 glm::mat4 projectionMatrix) = 0;
 
     virtual void
-    RenderScene(std::shared_ptr<IScene>  scene,
-                std::shared_ptr<ICamera> camera,
-                glm::ivec2               viewportSize,
-                bool                     renderGrid) = 0;
+    RenderScene(IScene&    scene,
+                ICamera&   camera,
+                glm::ivec2 viewportSize,
+                bool       renderGrid) = 0;
     // virtual void
     // RenderIds(std::shared_ptr<IScene>  scene,
     //           std::shared_ptr<ICamera> camera,

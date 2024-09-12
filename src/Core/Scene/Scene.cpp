@@ -5,11 +5,11 @@
 
 namespace Dwarf
 {
-  Scene::Scene(nlohmann::json                    serializedSceneGraph,
-               std::shared_ptr<ISceneProperties> properties)
-    : m_Properties(properties)
+  Scene::Scene(const nlohmann::json&             serializedSceneGraph,
+               std::unique_ptr<ISceneProperties> properties)
+    : m_Properties(std::move(properties))
+    , m_RootEntity(CreateRootEntity())
   {
-    CreateRootEntity();
     Deserialize(serializedSceneGraph);
   }
 
@@ -52,13 +52,13 @@ namespace Dwarf
       for (auto const& element : serializedSceneGraph["hierarchy"])
       {
         Entity newEntity = DeserializeEntity(element);
-        newEntity.SetParent(GetRootEntity()->GetHandle());
+        newEntity.SetParent(m_RootEntity.GetHandle());
       }
     }
   }
 
   Entity
-  Scene::DeserializeEntity(nlohmann::json serializedEntity)
+  Scene::DeserializeEntity(const nlohmann::json& serializedEntity)
   {
     Entity newEntity =
       CreateEntityWithUID(UUID(serializedEntity["guid"].get<std::string>()),
@@ -106,18 +106,17 @@ namespace Dwarf
       if (serializedEntity["meshRendererComponent"].contains("mesh") &&
           serializedEntity["meshRendererComponent"]["mesh"] != "null")
       {
-        meshRendererComponent.meshAsset = std::make_shared<UUID>(
+        meshRendererComponent.GetMeshAsset() = UUID(
           serializedEntity["meshRendererComponent"]["mesh"].get<std::string>());
       }
 
       if (serializedEntity["meshRendererComponent"].contains("materials"))
       {
-        for (auto const& element :
+        for (const auto& element :
              serializedEntity["meshRendererComponent"]["materials"])
         {
-          meshRendererComponent.materialAssets.push_back(
-            element.get<std::string>() == "" ? nullptr
-                                             : std::make_shared<UUID>(element));
+          meshRendererComponent.GetMaterialAssets().push_back(
+            UUID(element.get<std::string>()));
         }
       }
     }
@@ -131,13 +130,14 @@ namespace Dwarf
     return newEntity;
   }
 
-  void
+  Entity
   Scene::CreateRootEntity()
   {
-    m_RootEntity = std::make_shared<Entity>(m_Registry->create(), m_Registry);
-    m_RootEntity->AddComponent<IDComponent>(UUID());
-    m_RootEntity->AddComponent<TransformComponent>();
-    m_RootEntity->AddComponent<NameComponent>("Root");
+    Entity m_RootEntity(m_Registry.create(), m_Registry);
+    m_RootEntity.AddComponent<IDComponent>(UUID());
+    m_RootEntity.AddComponent<TransformComponent>();
+    m_RootEntity.AddComponent<NameComponent>("Root");
+    return m_RootEntity;
   }
 
   Entity
@@ -147,35 +147,35 @@ namespace Dwarf
   }
 
   Entity
-  Scene::CreateEntityWithUID(UUID uid, const std::string& name)
+  Scene::CreateEntityWithUID(const UUID& uid, const std::string& name)
   {
-    Entity entity(m_Registry->create(), m_Registry);
+    Entity entity(m_Registry.create(), m_Registry);
     entity.AddComponent<IDComponent>(uid);
     entity.AddComponent<TransformComponent>();
     auto& nameComp = entity.AddComponent<NameComponent>(name);
     nameComp.Name = name.empty() ? "Entity" : name;
 
-    entity.SetParent(m_RootEntity->GetHandle());
+    entity.SetParent(m_RootEntity.GetHandle());
 
     return entity;
   }
 
-  std::shared_ptr<entt::registry>
-  Scene::GetRegistry() const
+  entt::registry&
+  Scene::GetRegistry()
   {
     return m_Registry;
   }
 
-  std::shared_ptr<Entity>
+  const Entity&
   Scene::GetRootEntity() const
   {
     return m_RootEntity;
   }
 
-  std::shared_ptr<ISceneProperties>
+  ISceneProperties&
   Scene::GetProperties()
   {
-    return m_Properties;
+    return *m_Properties;
   }
 
   glm::mat4
@@ -202,20 +202,20 @@ namespace Dwarf
   }
 
   void
-  Scene::DeleteEntity(Entity entity)
+  Scene::DeleteEntity(const Entity& entity)
   {
-    if (m_Registry->valid(entity.GetHandle()))
+    if (m_Registry.valid(entity.GetHandle()))
     {
-      if (!entity.GetChildren()->empty())
+      if (!entity.GetChildren().empty())
       {
-        for (entt::entity child : *(entity.GetChildren()))
+        for (entt::entity child : entity.GetChildren())
         {
           DeleteEntity(Entity(child, m_Registry));
         }
       }
 
       Entity(entity.GetParent(), m_Registry).RemoveChild(entity.GetHandle());
-      m_Registry->destroy(entity.GetHandle());
+      m_Registry.destroy(entity.GetHandle());
     }
   }
 

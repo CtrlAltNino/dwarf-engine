@@ -36,7 +36,7 @@ namespace Dwarf
 
   public:
     AssetDirectoryListener(AssetDirectoryPath assetDirectoryPath);
-    ~AssetDirectoryListener() override = default;
+    ~AssetDirectoryListener() override;
 
     void
     handleFileAction(efsw::WatchID      watchid,

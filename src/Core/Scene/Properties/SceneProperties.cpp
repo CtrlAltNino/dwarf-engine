@@ -3,12 +3,12 @@
 namespace Dwarf
 {
   SceneProperties::SceneProperties(
-    std::shared_ptr<AssetReference<SceneAsset>> asset,
-    std::string                                 name,
-    std::shared_ptr<ISceneSettings>             settings)
-    : m_Asset(asset)
+    std::unique_ptr<IAssetReference<SceneAsset>> asset,
+    const std::string&                           name,
+    std::unique_ptr<ISceneSettings>              settings)
+    : m_Asset(std::move(asset))
     , m_Name(name)
-    , m_Settings(settings)
+    , m_Settings(std::move(settings))
   {
   }
 
@@ -28,15 +28,15 @@ namespace Dwarf
     return m_Name;
   }
 
-  std::shared_ptr<AssetReference<SceneAsset>>
+  IAssetReference<SceneAsset>&
   SceneProperties::GetAsset() const
   {
-    return m_Asset;
+    return *m_Asset;
   }
 
-  std::shared_ptr<ISceneSettings>
+  ISceneSettings&
   SceneProperties::GetSettings() const
   {
-    return m_Settings;
+    return *m_Settings;
   }
 } // namespace Dwarf

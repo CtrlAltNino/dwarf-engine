@@ -21,40 +21,35 @@ namespace Dwarf
   }
 
   void
-  ForwardRenderer::RenderEntity(
-    Entity&                    entity,
-    glm::mat4                  viewMatrix,
-    glm::mat4                  projectionMatrix,
-    std::shared_ptr<IMaterial> overrideMaterial = nullptr)
+  ForwardRenderer::RenderEntity(Entity&   entity,
+                                glm::mat4 viewMatrix,
+                                glm::mat4 projectionMatrix)
   {
     auto&       transform = entity.GetComponent<TransformComponent>();
     auto&       meshRenderer = entity.GetComponent<MeshRendererComponent>();
     ModelAsset& model =
-      m_AssetDatabase->Retrieve<ModelAsset>(meshRenderer.meshAsset)->GetAsset();
+      m_AssetDatabase->Retrieve<ModelAsset>(meshRenderer.GetMeshAsset())
+        ->GetAsset();
     glm::mat4 modelMatrix = transform.getModelMatrix();
 
-    for (int i = 0; i < model.m_Meshes.size(); i++)
+    for (int i = 0; i < model.GetMeshes().size(); i++)
     {
-      if (model.m_Meshes.at(i)->GetMaterialIndex() - 1 <
-          meshRenderer.materialAssets.size())
+      if (model.GetMeshes().at(i)->GetMaterialIndex() - 1 <
+          meshRenderer.GetMaterialAssets().size())
       {
-        if (meshRenderer.materialAssets.at(
-              model.m_Meshes.at(i)->GetMaterialIndex() - 1) != nullptr &&
-            m_AssetDatabase->Exists(meshRenderer.materialAssets.at(
-              model.m_Meshes.at(i)->GetMaterialIndex() - 1)))
+        if (m_AssetDatabase->Exists(meshRenderer.GetMaterialAssets().at(
+              model.GetMeshes().at(i)->GetMaterialIndex() - 1)))
         {
-          std::shared_ptr<IMaterial> material =
-            overrideMaterial != nullptr
-              ? overrideMaterial
-              : m_AssetDatabase
-                  ->Retrieve<MaterialAsset>(meshRenderer.materialAssets.at(
-                    model.m_Meshes.at(i)->GetMaterialIndex() - 1))
-                  ->GetAsset()
-                  .m_Material;
-          if (material->GetShader() != nullptr &&
-              material->GetShader()->IsCompiled())
+          IMaterial& material =
+            m_AssetDatabase
+              ->Retrieve<MaterialAsset>(meshRenderer.GetMaterialAssets().at(
+                model.GetMeshes().at(i)->GetMaterialIndex() - 1))
+              ->GetAsset()
+              .GetMaterial();
+          if (material.GetShader() != nullptr &&
+              material.GetShader()->IsCompiled())
           {
-            m_RendererApi->RenderIndexed(model.m_Meshes.at(i),
+            m_RendererApi->RenderIndexed(*model.GetMeshes().at(i),
                                          material,
                                          modelMatrix,
                                          viewMatrix,
@@ -75,26 +70,26 @@ namespace Dwarf
   }
 
   void
-  ForwardRenderer::RenderScene(std::shared_ptr<IScene>  scene,
-                               std::shared_ptr<ICamera> camera,
-                               glm::ivec2               viewportSize,
-                               bool                     renderGrid)
+  ForwardRenderer::RenderScene(IScene&    scene,
+                               ICamera&   camera,
+                               glm::ivec2 viewportSize,
+                               bool       renderGrid)
   {
     m_RendererApi->SetClearColor(glm::vec4(0.065f, 0.07f, 0.085, 1.0f));
     m_RendererApi->Clear();
     m_RendererApi->SetViewport(0, 0, viewportSize.x, viewportSize.y);
-    glm::mat4 viewMatrix = camera->GetViewMatrix();
-    glm::mat4 projectionMatrix = camera->GetProjectionMatrix();
+    glm::mat4 viewMatrix = camera.GetViewMatrix();
+    glm::mat4 projectionMatrix = camera.GetProjectionMatrix();
 
     // Rendering skybox first???
 
-    for (auto view = scene->GetRegistry()
-                       ->view<TransformComponent, MeshRendererComponent>();
+    for (auto view = scene.GetRegistry()
+                       .view<TransformComponent, MeshRendererComponent>();
          auto [entity, transform, meshRenderer] : view.each())
     {
-      if (meshRenderer.meshAsset != nullptr)
+      if (!meshRenderer.GetMeshAsset().ToString().empty())
       {
-        Entity e(entity, scene->GetRegistry());
+        Entity e(entity, scene.GetRegistry());
         RenderEntity(e, viewMatrix, projectionMatrix);
       }
     }

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Core/Asset/Database/AssetComponents.h"
-#include "Core/Asset/Database/AssetReference.h"
+#include "Core/Asset/AssetReference/IAssetReference.h"
 #include "Core/Rendering/Framebuffer/IFramebuffer.h"
 #include "Core/Rendering/Framebuffer/IFramebufferFactory.h"
 #include "Core/Rendering/RendererApi/IRendererApi.h"
@@ -39,7 +39,7 @@ namespace Dwarf
     Resize(glm::ivec2 size);
 
     void
-    FocusModel(std::shared_ptr<AssetReference<ModelAsset>> modelAsset);
+    FocusModel(IAssetReference<ModelAsset>& modelAsset);
 
     void
     UpdateRotation(glm::vec2 deltaMousePos);

@@ -1,6 +1,5 @@
 #include "ScenePropertiesFactory.h"
 #include "Core/Asset/Database/AssetComponents.h"
-#include "Core/Asset/Database/AssetReference.h"
 #include "SceneProperties.h"
 
 namespace Dwarf
@@ -11,21 +10,20 @@ namespace Dwarf
   {
   }
 
-  std::shared_ptr<ISceneProperties>
-  ScenePropertiesFactory::Create(
-    std::shared_ptr<AssetReference<SceneAsset>> sceneAsset,
-    nlohmann::json                              serializedProperties)
+  std::unique_ptr<ISceneProperties>
+  ScenePropertiesFactory::Create(IAssetReference<SceneAsset>& sceneAsset,
+                                 const nlohmann::json& serializedProperties)
   {
-    return std::make_shared<SceneProperties>(
-      sceneAsset,
+    return std::make_unique<SceneProperties>(
+      std::make_unique<IAssetReference<SceneAsset>>(sceneAsset),
       serializedProperties["Name"],
       m_sceneSettingsFactory->Create(serializedProperties["Settings"]));
   }
 
-  std::shared_ptr<ISceneProperties>
-  ScenePropertiesFactory::Create(std::string name)
+  std::unique_ptr<ISceneProperties>
+  ScenePropertiesFactory::Create(const std::string& name)
   {
-    return std::make_shared<SceneProperties>(
+    return std::make_unique<SceneProperties>(
       nullptr, name, m_sceneSettingsFactory->Create());
   }
 }

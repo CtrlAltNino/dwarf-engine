@@ -9,7 +9,7 @@
 #include <boost/optional.hpp>
 #include "Core/Rendering/Shader/IShader.h"
 #include "Core/Rendering/Shader/ShaderTypes.h"
-#include "Core/Asset/Database/AssetReference.h"
+#include "Core/Asset/AssetReference/IAssetReference.h"
 
 namespace Dwarf
 {
@@ -49,19 +49,19 @@ namespace Dwarf
     const ShaderLogs&
     GetShaderLogs() const;
 
-    std::shared_ptr<AssetReference<VertexShaderAsset>>&
+    std::unique_ptr<IAssetReference<VertexShaderAsset>>&
     GetVertexShaderAsset();
 
-    std::shared_ptr<AssetReference<FragmentShaderAsset>>&
+    std::unique_ptr<IAssetReference<FragmentShaderAsset>>&
     GetFragmentShaderAsset();
 
-    std::shared_ptr<AssetReference<GeometryShaderAsset>>&
+    std::unique_ptr<IAssetReference<GeometryShaderAsset>>&
     GetGeometryShaderAsset();
 
-    std::shared_ptr<AssetReference<TessellationControlShaderAsset>>&
+    std::unique_ptr<IAssetReference<TessellationControlShaderAsset>>&
     GetTessellationControlShaderAsset();
 
-    std::shared_ptr<AssetReference<TessellationEvaluationShaderAsset>>&
+    std::unique_ptr<IAssetReference<TessellationEvaluationShaderAsset>>&
     GetTessellationEvaluationShaderAsset();
 
     static const std::array<std::string, 3> ReservedUniformNames;
@@ -75,15 +75,15 @@ namespace Dwarf
     std::shared_ptr<IShaderParameterCollectionFactory>
       m_ShaderParameterCollectionFactory;
 
-    std::shared_ptr<AssetReference<VertexShaderAsset>>   m_VertexShaderAsset;
-    std::shared_ptr<AssetReference<GeometryShaderAsset>> m_GeometryShaderAsset;
+    std::unique_ptr<IAssetReference<VertexShaderAsset>>   m_VertexShaderAsset;
+    std::unique_ptr<IAssetReference<GeometryShaderAsset>> m_GeometryShaderAsset;
 
-    std::shared_ptr<AssetReference<TessellationControlShaderAsset>>
+    std::unique_ptr<IAssetReference<TessellationControlShaderAsset>>
       m_TessellationControlShaderAsset;
 
-    std::shared_ptr<AssetReference<TessellationEvaluationShaderAsset>>
+    std::unique_ptr<IAssetReference<TessellationEvaluationShaderAsset>>
       m_TessellationEvaluationShaderAsset;
-    std::shared_ptr<AssetReference<FragmentShaderAsset>> m_FragmentShaderAsset;
+    std::unique_ptr<IAssetReference<FragmentShaderAsset>> m_FragmentShaderAsset;
 
     // Declare the visitor struct
     struct HandleShaderSourceVisitor
@@ -92,25 +92,25 @@ namespace Dwarf
 
       void
       operator()(
-        const std::shared_ptr<AssetReference<VertexShaderAsset>> source) const;
+        const std::unique_ptr<IAssetReference<VertexShaderAsset>> source) const;
 
       void
-      operator()(const std::shared_ptr<AssetReference<FragmentShaderAsset>>
+      operator()(const std::unique_ptr<IAssetReference<FragmentShaderAsset>>
                    source) const;
 
       void
-      operator()(const std::shared_ptr<AssetReference<GeometryShaderAsset>>
+      operator()(const std::unique_ptr<IAssetReference<GeometryShaderAsset>>
                    source) const;
 
       void
       operator()(
-        const std::shared_ptr<AssetReference<TessellationControlShaderAsset>>
+        const std::unique_ptr<IAssetReference<TessellationControlShaderAsset>>
           source) const;
 
       void
       operator()(
-        const std::shared_ptr<AssetReference<TessellationEvaluationShaderAsset>>
-          source) const;
+        const std::unique_ptr<
+          IAssetReference<TessellationEvaluationShaderAsset>> source) const;
 
     private:
       OpenGLShader& instance; // Reference to the MyClass instance

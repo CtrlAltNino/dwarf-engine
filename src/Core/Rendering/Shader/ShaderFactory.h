@@ -26,13 +26,13 @@ namespace Dwarf
                     shaderParameterCollectionFactory);
     ~ShaderFactory() = default;
 
-    std::shared_ptr<IShader>
+    std::unique_ptr<IShader>
     CreateShader() override;
 
-    std::shared_ptr<IShader>
-    CreateShader(ShaderSourceCollection shaderSources) override;
+    std::unique_ptr<IShader>
+    CreateShader(ShaderSourceCollection& shaderSources) override;
 
-    std::shared_ptr<IShader>
+    std::unique_ptr<IShader>
     CreateShader(const nlohmann::json& serializedShader) override;
   };
 } // namespace Dwarf

@@ -13,7 +13,7 @@ namespace Dwarf
   private:
     MaterialPreviewMeshType       m_MeshType = MaterialPreviewMeshType::Sphere;
     std::shared_ptr<IMeshFactory> m_MeshFactory;
-    std::shared_ptr<IMesh>        m_Mesh;
+    std::unique_ptr<IMesh>        m_Mesh;
 
     void
     UpdateMesh();
@@ -26,7 +26,7 @@ namespace Dwarf
 
     void
     RenderMaterialPreview(
-      std::shared_ptr<AssetReference<MaterialAsset>> materialAsset) override;
+      IAssetReference<MaterialAsset>& materialAsset) override;
 
     void
     SetMeshType(MaterialPreviewMeshType meshType) override;

@@ -9,13 +9,13 @@ namespace Dwarf
   public:
     virtual ~IMaterialFactory() = default;
 
-    virtual std::shared_ptr<IMaterial>
+    virtual std::unique_ptr<IMaterial>
     CreateDefaultMaterial() const = 0;
 
-    virtual std::shared_ptr<IMaterial>
+    virtual std::unique_ptr<IMaterial>
     CreateMaterial(std::shared_ptr<IShader> shader) const = 0;
 
-    virtual std::shared_ptr<IMaterial>
+    virtual std::unique_ptr<IMaterial>
     FromSerialized(const nlohmann::json& serializedMaterial) const = 0;
   };
 } // namespace Dwarf

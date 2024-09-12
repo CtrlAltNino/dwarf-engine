@@ -9,30 +9,46 @@ namespace Dwarf
   /// @brief Component containing a model asset.
   struct ModelAsset
   {
+  private:
     /// @brief Vector of submeshes.
-    std::vector<std::shared_ptr<IMesh>> m_Meshes;
+    std::vector<std::unique_ptr<IMesh>> m_Meshes;
 
-    explicit ModelAsset(std::vector<std::shared_ptr<IMesh>> meshes)
-      : m_Meshes(meshes)
+  public:
+    explicit ModelAsset(std::vector<std::unique_ptr<IMesh>>& meshes)
+      : m_Meshes(std::move(meshes))
     {
-      for (const auto& mesh : m_Meshes)
+      for (auto& mesh : m_Meshes)
       {
         mesh->SetupMesh();
       }
+    }
+
+    std::vector<std::unique_ptr<IMesh>>&
+    GetMeshes()
+    {
+      return m_Meshes;
     }
   };
 
   /// @brief Component containing a material asset.
   struct MaterialAsset
   {
+  private:
     /// @brief Imported material.
-    std::shared_ptr<IMaterial> m_Material;
+    std::unique_ptr<IMaterial> m_Material;
 
-    explicit MaterialAsset(std::shared_ptr<IMaterial> material)
+  public:
+    explicit MaterialAsset(std::unique_ptr<IMaterial> material)
     {
       // Use Mesh Importer with meta data to import mesh
       // m_Material = MaterialSerializer::Deserialize(path);
       // m_Material->GetShader()->Compile();
+    }
+
+    IMaterial&
+    GetMaterial()
+    {
+      return *m_Material;
     }
   };
 

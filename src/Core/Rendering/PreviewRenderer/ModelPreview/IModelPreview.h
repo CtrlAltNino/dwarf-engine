@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Core/Asset/Database/AssetComponents.h"
-#include "Core/Asset/Database/AssetReference.h"
+#include "Core/Asset/AssetReference/IAssetReference.h"
 #include "Core/Rendering/PreviewRenderer/PreviewRenderer.h"
 #include <imgui.h>
 
@@ -11,10 +11,9 @@ namespace Dwarf
   {
   public:
     virtual void
-    RenderModelPreview(
-      std::shared_ptr<AssetReference<ModelAsset>> modelAsset) = 0;
+    RenderModelPreview(IAssetReference<ModelAsset>& modelAsset) = 0;
 
     virtual void
-    FocusModel(std::shared_ptr<AssetReference<ModelAsset>> modelAsset) = 0;
+    FocusModel(IAssetReference<ModelAsset>& modelAsset) = 0;
   };
 }

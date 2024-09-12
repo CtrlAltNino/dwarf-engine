@@ -8,18 +8,18 @@ namespace Dwarf
   public:
     virtual ~IMeshFactory() = default;
 
-    virtual std::shared_ptr<IMesh>
-    CreateMesh(std::vector<Vertex>       vertices,
-               std::vector<unsigned int> indices,
-               unsigned int              materialIndex) = 0;
+    virtual std::unique_ptr<IMesh>
+    CreateMesh(const std::vector<Vertex>&       vertices,
+               const std::vector<unsigned int>& indices,
+               unsigned int                     materialIndex) = 0;
 
-    virtual std::shared_ptr<IMesh>
+    virtual std::unique_ptr<IMesh>
     CreateUnitSphere(int stacks, int slices) = 0;
 
-    virtual std::shared_ptr<IMesh>
+    virtual std::unique_ptr<IMesh>
     CreateUnitCube() = 0;
 
-    virtual std::shared_ptr<IMesh>
+    virtual std::unique_ptr<IMesh>
     CreateUnitQuad() = 0;
   };
 }

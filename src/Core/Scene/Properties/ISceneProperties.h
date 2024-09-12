@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Core/Asset/Database/AssetComponents.h"
-#include "Core/Asset/Database/AssetReference.h"
+#include "Core/Asset/AssetReference/IAssetReference.h"
 #include "Core/Scene/Settings/ISceneSettings.h"
 #include "Utilities/ISerializable.h"
 namespace Dwarf
@@ -20,12 +20,12 @@ namespace Dwarf
 
     /// @brief Returns the asset reference of the scene.
     /// @return The asset reference of the scene.
-    virtual std::shared_ptr<AssetReference<SceneAsset>>
+    virtual IAssetReference<SceneAsset>&
     GetAsset() const = 0;
 
     /// @brief Returns the settings of the scene.
     /// @return The settings of the scene.
-    virtual std::shared_ptr<ISceneSettings>
+    virtual ISceneSettings&
     GetSettings() const = 0;
   };
 }

@@ -4,15 +4,15 @@
 
 namespace Dwarf
 {
-  std::shared_ptr<ISceneSettings>
+  std::unique_ptr<ISceneSettings>
   SceneSettingsFactory::Create(nlohmann::json serializedSettings)
   {
-    return std::make_shared<SceneSettings>(SceneSettings(serializedSettings));
+    return std::make_unique<SceneSettings>(SceneSettings(serializedSettings));
   }
 
-  std::shared_ptr<ISceneSettings>
+  std::unique_ptr<ISceneSettings>
   SceneSettingsFactory::Create()
   {
-    return std::make_shared<SceneSettings>(SceneSettings());
+    return std::make_unique<SceneSettings>(SceneSettings());
   }
 } // namespace Dwarf

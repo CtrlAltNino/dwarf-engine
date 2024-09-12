@@ -15,7 +15,7 @@ namespace Dwarf
   class Entity
   {
   public:
-    Entity(entt::entity handle, std::shared_ptr<entt::registry> registry);
+    Entity(entt::entity handle, const entt::registry& registry);
     Entity(const Entity& other) = default;
 
     /// @brief Adds a component to the entity.
@@ -28,8 +28,7 @@ namespace Dwarf
     AddComponent(Args&&... args)
     {
       // TODO: Check component requirements
-      return m_Registry->emplace<T>(m_EntityHandle,
-                                    std::forward<Args>(args)...);
+      return m_Registry.emplace<T>(m_EntityHandle, std::forward<Args>(args)...);
     }
 
     /// @brief Retrieves a component of the Entity if present.
@@ -40,7 +39,7 @@ namespace Dwarf
     GetComponent()
     {
       // TODO: Check if component present
-      return m_Registry->get<T>(m_EntityHandle);
+      return m_Registry.get<T>(m_EntityHandle);
     }
 
     /// @brief Removes a component from the entity.
@@ -52,7 +51,7 @@ namespace Dwarf
       // TODO: Check if component is present
       if (HasComponent<T>())
       {
-        m_Registry->remove<T>(m_EntityHandle);
+        m_Registry.remove<T>(m_EntityHandle);
       }
     }
 
@@ -63,15 +62,15 @@ namespace Dwarf
     bool
     HasComponent()
     {
-      return m_Registry->try_get<T>(m_EntityHandle) != nullptr;
+      return m_Registry.try_get<T>(m_EntityHandle) != nullptr;
     }
 
     /// @brief Retrieves the UID of the entity.
     /// @return The UID.
-    std::shared_ptr<UUID>
-    GetUID()
+    const UUID&
+    GetUID() const
     {
-      return GetComponent<IDComponent>().ID;
+      return m_Registry.get<IDComponent>(m_EntityHandle).GetID();
     }
 
     operator bool() const { return (std::uint32_t)m_EntityHandle != 0; }
@@ -96,7 +95,7 @@ namespace Dwarf
       }
 
       GetComponent<TransformComponent>().parent = entity;
-      if (m_Registry->valid(entity))
+      if (m_Registry.valid(entity))
       {
         newParent.AddChild(m_EntityHandle);
       }
@@ -184,18 +183,18 @@ namespace Dwarf
 
     /// @brief Returns the entity handle of this entity's parent.
     /// @return Entity handle of the parent.
-    entt::entity
-    GetParent()
+    const entt::entity&
+    GetParent() const
     {
-      return GetComponent<TransformComponent>().parent;
+      return m_Registry.get<TransformComponent>(m_EntityHandle).parent;
     }
 
     /// @brief Returns the list of this entity's children.
     /// @return Pointer to the list of child entities.
-    std::vector<entt::entity>*
-    GetChildren()
+    const std::vector<entt::entity>&
+    GetChildren() const
     {
-      return &(GetComponent<TransformComponent>().children);
+      return m_Registry.get<TransformComponent>(m_EntityHandle).children;
     }
 
     entt::entity
@@ -209,6 +208,6 @@ namespace Dwarf
     entt::entity m_EntityHandle{ entt::null };
 
     /// @brief Pointer to a holder of an ECS registry.
-    std::shared_ptr<entt::registry> m_Registry;
+    entt::registry& m_Registry;
   };
 }

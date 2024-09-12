@@ -14,8 +14,8 @@ namespace Dwarf
   // @brief Imports a model.
   /// @param path Path to the model.
   /// @return List of the imported meshes of a model.
-  std::vector<std::shared_ptr<IMesh>>
-  ModelImporter::Import(std::filesystem::path const& path)
+  std::vector<std::unique_ptr<IMesh>>
+  ModelImporter::Import(const std::filesystem::path& path)
   {
     nlohmann::json metaData = m_AssetMetadata->GetMetadata(path);
 
@@ -27,40 +27,39 @@ namespace Dwarf
         !scene->mRootNode)
     {
       std::cout << "ERROR::ASSIMP::" << importer.GetErrorString() << std::endl;
-      return std::vector<std::shared_ptr<IMesh>>();
+      return std::vector<std::unique_ptr<IMesh>>();
     }
 
     return ModelImporter::ProcessNode(scene->mRootNode, scene);
   }
 
-  std::vector<std::shared_ptr<IMesh>>
+  std::vector<std::unique_ptr<IMesh>>
   ModelImporter::ProcessNode(const aiNode* node, const aiScene* scene)
   {
-    std::vector<std::shared_ptr<IMesh>> meshes;
+    std::vector<std::unique_ptr<IMesh>> meshes;
 
     // process all the node's meshes (if any)
     for (unsigned int i = 0; i < node->mNumMeshes; i++)
     {
       const aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-      meshes.push_back(ModelImporter::ProcessMesh(mesh, scene));
+      meshes.push_back(ProcessMesh(mesh, scene));
     }
     // then do the same for each of its children
     for (unsigned int i = 0; i < node->mNumChildren; i++)
     {
-      std::vector<std::shared_ptr<IMesh>> joinedMeshes;
-      std::vector<std::shared_ptr<IMesh>> recursedMeshes =
-        ModelImporter::ProcessNode(node->mChildren[i], scene);
-      joinedMeshes.reserve(meshes.size() + meshes.size()); // preallocate memory
-      joinedMeshes.insert(joinedMeshes.end(), meshes.begin(), meshes.end());
-      joinedMeshes.insert(
-        joinedMeshes.end(), recursedMeshes.begin(), recursedMeshes.end());
-      meshes = joinedMeshes;
+      std::vector<std::unique_ptr<IMesh>> recursedMeshes =
+        ProcessNode(node->mChildren[i], scene);
+      // join the meshes
+      // TODO: Check if this is the correct way to join the meshes
+      meshes.insert(meshes.end(),
+                    std::make_move_iterator(recursedMeshes.begin()),
+                    std::make_move_iterator(recursedMeshes.end()));
     }
 
     return meshes;
   }
 
-  std::shared_ptr<IMesh>
+  std::unique_ptr<IMesh>
   ModelImporter::ProcessMesh(const aiMesh* mesh, const aiScene* scene)
   {
     std::vector<Vertex>       vertices;

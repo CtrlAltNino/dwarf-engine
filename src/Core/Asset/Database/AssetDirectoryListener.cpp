@@ -15,6 +15,11 @@ namespace Dwarf
     m_FileWatcher.watch();
   }
 
+  AssetDirectoryListener::~AssetDirectoryListener()
+  {
+    m_FileWatcher.removeWatch(m_WatchID);
+  }
+
   void
   AssetDirectoryListener::registerAddFileCallback(
     std::function<void(const std::string& dir, const std::string& filename)>

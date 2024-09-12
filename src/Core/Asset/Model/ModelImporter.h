@@ -15,16 +15,17 @@ namespace Dwarf
     // @brief Imports a model.
     /// @param path Path to the model.
     /// @return List of the imported meshes of a model.
-    std::vector<std::shared_ptr<IMesh>>
-    Import(std::filesystem::path const& path) override;
+    std::vector<std::unique_ptr<IMesh>>
+    Import(const std::filesystem::path& path) override;
 
   private:
     std::shared_ptr<IAssetMetadata> m_AssetMetadata;
     std::shared_ptr<IMeshFactory>   m_MeshFactory;
-    std::vector<std::shared_ptr<IMesh>>
+
+    std::vector<std::unique_ptr<IMesh>>
     ProcessNode(const aiNode* node, const aiScene* scene);
 
-    std::shared_ptr<IMesh>
+    std::unique_ptr<IMesh>
     ProcessMesh(const aiMesh* mesh, const aiScene* scene);
   };
 }

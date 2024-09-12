@@ -191,25 +191,37 @@ namespace Dwarf
   /// well as other information on how to render these meshes.
   struct MeshRendererComponent
   {
+  private:
     /// @brief ID of the mesh asset.
-    std::shared_ptr<UUID> meshAsset;
+    UUID meshAsset;
 
     /// @brief The materials with which the model is to be rendered. The list
     /// index of the materials corresponds to the material index of the
     /// submeshes.
-    std::vector<std::shared_ptr<UUID>> materialAssets;
+    std::vector<UUID> materialAssets;
 
+  public:
+    MeshRendererComponent() = default;
+    MeshRendererComponent(const MeshRendererComponent&) = default;
+    MeshRendererComponent(const UUID& mesh, const std::vector<UUID>& materials)
+      : meshAsset(mesh)
+      , materialAssets(materials)
+    {
+    }
     /// @brief Flag that decides if this model should be used in the shadow cast
     /// pass.
     bool canCastShadow;
 
-    MeshRendererComponent() = default;
-    MeshRendererComponent(const MeshRendererComponent&) = default;
-    MeshRendererComponent(std::shared_ptr<UUID>                     mesh,
-                          std::vector<std::shared_ptr<UUID>> const& materials)
-      : meshAsset(mesh)
-      , materialAssets(materials)
+    UUID&
+    GetMeshAsset()
     {
+      return meshAsset;
+    }
+
+    std::vector<UUID>&
+    GetMaterialAssets()
+    {
+      return materialAssets;
     }
   };
 }

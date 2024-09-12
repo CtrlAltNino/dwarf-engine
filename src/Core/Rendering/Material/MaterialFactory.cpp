@@ -11,24 +11,24 @@ namespace Dwarf
 
   MaterialFactory::~MaterialFactory() {}
 
-  std::shared_ptr<IMaterial>
+  std::unique_ptr<IMaterial>
   MaterialFactory::CreateDefaultMaterial() const
   {
     // TODO: Use default shader
-    return std::make_shared<Material>(m_ShaderFactory->CreateShader());
+    return std::make_unique<Material>(m_ShaderFactory->CreateShader());
   }
 
-  std::shared_ptr<IMaterial>
+  std::unique_ptr<IMaterial>
   MaterialFactory::CreateMaterial(std::shared_ptr<IShader> shader) const
   {
-    return std::make_shared<Material>(shader);
+    return std::make_unique<Material>(shader);
   }
 
-  std::shared_ptr<IMaterial>
+  std::unique_ptr<IMaterial>
   MaterialFactory::FromSerialized(
     const nlohmann::json& serializedMaterial) const
   {
-    return std::make_shared<Material>(
+    return std::make_unique<Material>(
       m_ShaderFactory->CreateShader(serializedMaterial["shader"]),
       serializedMaterial["materialProperties"]);
   }

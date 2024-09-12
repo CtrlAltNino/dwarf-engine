@@ -11,13 +11,13 @@ namespace Dwarf
   public:
     virtual ~IShaderFactory() = default;
 
-    virtual std::shared_ptr<IShader>
+    virtual std::unique_ptr<IShader>
     CreateShader() = 0;
 
-    virtual std::shared_ptr<IShader>
-    CreateShader(ShaderSourceCollection shaderSources) = 0;
+    virtual std::unique_ptr<IShader>
+    CreateShader(ShaderSourceCollection& shaderSources) = 0;
 
-    virtual std::shared_ptr<IShader>
+    virtual std::unique_ptr<IShader>
     CreateShader(const nlohmann::json& serializedShader) = 0;
   };
 } // namespace Dwarf

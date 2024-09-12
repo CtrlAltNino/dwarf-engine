@@ -8,6 +8,9 @@ namespace Dwarf
 {
   class MaterialFactory : public IMaterialFactory
   {
+  private:
+    std::shared_ptr<IShaderFactory> m_ShaderFactory;
+
   public:
     // Constructor
     BOOST_DI_INJECT(MaterialFactory,
@@ -17,16 +20,13 @@ namespace Dwarf
     ~MaterialFactory();
 
     // Implement the CreateMaterial method
-    virtual std::shared_ptr<IMaterial>
+    virtual std::unique_ptr<IMaterial>
     CreateDefaultMaterial() const override;
 
-    virtual std::shared_ptr<IMaterial>
+    virtual std::unique_ptr<IMaterial>
     CreateMaterial(std::shared_ptr<IShader> shader) const override;
 
-    virtual std::shared_ptr<IMaterial>
+    virtual std::unique_ptr<IMaterial>
     FromSerialized(const nlohmann::json& serializedMaterial) const override;
-
-  private:
-    std::shared_ptr<IShaderFactory> m_ShaderFactory;
   };
 };

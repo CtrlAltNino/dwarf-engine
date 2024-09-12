@@ -17,8 +17,8 @@ namespace Dwarf
     std::shared_ptr<IAssetDatabase>   m_AssetDatabase;
 
     void
-    WriteSceneToFile(nlohmann::json        serializedScene,
-                     std::filesystem::path scenePath) const;
+    WriteSceneToFile(const nlohmann::json&        serializedScene,
+                     const std::filesystem::path& scenePath) const;
 
   public:
     SceneIO(std::shared_ptr<IProjectSettings> projectSettings,
@@ -26,19 +26,18 @@ namespace Dwarf
             std::shared_ptr<IAssetDatabase>   assetDatabase);
 
     void
-    SaveScene(std::shared_ptr<IScene> scene) const override;
+    SaveScene(IScene& scene) const override;
 
     void
-    SaveSceneDialog(std::shared_ptr<IScene> scene) const override;
+    SaveSceneDialog(IScene& scene) const override;
 
-    std::shared_ptr<IScene>
-    LoadScene(
-      std::shared_ptr<AssetReference<SceneAsset>> sceneAsset) const override;
+    std::unique_ptr<IScene>
+    LoadScene(IAssetReference<SceneAsset>& sceneAsset) const override;
 
-    std::shared_ptr<IScene>
+    std::unique_ptr<IScene>
     LoadSceneDialog() const override;
 
-    std::shared_ptr<IScene>
+    std::unique_ptr<IScene>
     LoadDefaultScene() const override;
 
     // void

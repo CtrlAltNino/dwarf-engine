@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core/Asset/Database/AssetReference.h"
+#include "Core/Asset/AssetReference/IAssetReference.h"
 #include "Core/Scene/Properties/ISceneProperties.h"
 
 namespace Dwarf
@@ -10,11 +10,11 @@ namespace Dwarf
   public:
     virtual ~IScenePropertiesFactory() = default;
 
-    virtual std::shared_ptr<ISceneProperties>
-    Create(std::shared_ptr<AssetReference<SceneAsset>> sceneAsset,
-           nlohmann::json serializedProperties) = 0;
+    virtual std::unique_ptr<ISceneProperties>
+    Create(IAssetReference<SceneAsset>& sceneAsset,
+           const nlohmann::json&        serializedProperties) = 0;
 
-    virtual std::shared_ptr<ISceneProperties>
-    Create(std::string name) = 0;
+    virtual std::unique_ptr<ISceneProperties>
+    Create(const std::string& name) = 0;
   };
 }

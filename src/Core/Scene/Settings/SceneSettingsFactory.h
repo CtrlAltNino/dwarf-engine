@@ -9,10 +9,10 @@ namespace Dwarf
   public:
     ~SceneSettingsFactory() override = default;
 
-    std::shared_ptr<ISceneSettings>
+    std::unique_ptr<ISceneSettings>
     Create(nlohmann::json serializedSettings) override;
 
-    std::shared_ptr<ISceneSettings>
+    std::unique_ptr<ISceneSettings>
     Create() override;
   };
 } // namespace Dwarf

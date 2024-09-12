@@ -31,11 +31,11 @@ namespace Dwarf
     Clear() override;
 
     void
-    RenderIndexed(std::shared_ptr<IMesh>     mesh,
-                  std::shared_ptr<IMaterial> material,
-                  glm::mat4                  modelMatrix,
-                  glm::mat4                  viewMatrix,
-                  glm::mat4                  projectionMatrix) override;
+    RenderIndexed(IMesh&     mesh,
+                  IMaterial& material,
+                  glm::mat4  modelMatrix,
+                  glm::mat4  viewMatrix,
+                  glm::mat4  projectionMatrix) override;
     void
     ApplyComputeShader(std::shared_ptr<IComputeShader> computeShader,
                        std::shared_ptr<IFramebuffer>   fb,

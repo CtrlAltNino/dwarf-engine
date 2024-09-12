@@ -26,13 +26,13 @@ namespace Dwarf
   {
   }
 
-  std::shared_ptr<IShader>
+  std::unique_ptr<IShader>
   ShaderFactory::CreateShader()
   {
     return CreateShader(ShaderSourceCollection());
   }
 
-  std::shared_ptr<IShader>
+  std::unique_ptr<IShader>
   ShaderFactory::CreateShader(const nlohmann::json& shaderJson)
   {
     // Extracting shader sources from the JSON object.
@@ -91,8 +91,8 @@ namespace Dwarf
         shaderJson));
   }
 
-  std::shared_ptr<IShader>
-  ShaderFactory::CreateShader(ShaderSourceCollection shaderSources)
+  std::unique_ptr<IShader>
+  ShaderFactory::CreateShader(ShaderSourceCollection& shaderSources)
   {
     // Creating a shader based on the graphics API.
     switch (m_GraphicsApi)
@@ -102,7 +102,7 @@ namespace Dwarf
         // return std::make_shared<D3D12Shader>();
         break;
       case GraphicsApi::OpenGL:
-        return std::make_shared<OpenGLShader>(
+        return std::make_unique<OpenGLShader>(
           shaderSources, m_ShaderParameterCollectionFactory);
         break;
       case GraphicsApi::Metal: break;
@@ -112,7 +112,7 @@ namespace Dwarf
 #elif __linux__
       case GraphicsApi::D3D12: break;
       case GraphicsApi::OpenGL:
-        return std::make_shared<OpenGLShader>(
+        return std::make_unique<OpenGLShader>(
           shaderSources, m_ShaderParameterCollectionFactory);
         break;
       case GraphicsApi::Metal: break;

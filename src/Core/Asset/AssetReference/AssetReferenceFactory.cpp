@@ -1,12 +1,13 @@
 #include "AssetReferenceFactory.h"
+#include "AssetReference.h"
 
 namespace Dwarf
 {
   template<typename T>
   std::unique_ptr<IAssetReference<T>>
-  AssetReferenceFactory::Create(entt::entity                    assetHandle,
-                                std::shared_ptr<entt::registry> registry)
+  AssetReferenceFactory::Create(entt::entity          assetHandle,
+                                const entt::registry& registry)
   {
-    return std::make_unique<IAssetReference<T>>(assetHandle, registry);
+    return std::make_unique<AssetReference<T>>(assetHandle, registry);
   }
 }

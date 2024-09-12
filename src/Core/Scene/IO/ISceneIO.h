@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core/Asset/Database/AssetReference.h"
+#include "Core/Asset/AssetReference/IAssetReference.h"
 #include "Core/Scene/IScene.h"
 
 namespace Dwarf
@@ -11,18 +11,18 @@ namespace Dwarf
     virtual ~ISceneIO() {}
 
     virtual void
-    SaveScene(std::shared_ptr<IScene> scene) const = 0;
+    SaveScene(IScene& scene) const = 0;
 
     virtual void
-    SaveSceneDialog(std::shared_ptr<IScene> scene) const = 0;
+    SaveSceneDialog(IScene& scene) const = 0;
 
-    virtual std::shared_ptr<IScene>
-    LoadScene(std::shared_ptr<AssetReference<SceneAsset>> sceneAsset) const = 0;
+    virtual std::unique_ptr<IScene>
+    LoadScene(IAssetReference<SceneAsset>& sceneAsset) const = 0;
 
-    virtual std::shared_ptr<IScene>
+    virtual std::unique_ptr<IScene>
     LoadSceneDialog() const = 0;
 
-    virtual std::shared_ptr<IScene>
+    virtual std::unique_ptr<IScene>
     LoadDefaultScene() const = 0;
   };
 }

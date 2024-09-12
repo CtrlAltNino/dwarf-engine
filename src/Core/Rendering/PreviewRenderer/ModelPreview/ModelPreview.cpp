@@ -31,14 +31,13 @@ namespace Dwarf
     m_Material = m_MaterialFactory->CreateDefaultMaterial();
   }
   void
-  ModelPreview::RenderModelPreview(
-    std::shared_ptr<AssetReference<ModelAsset>> modelAsset)
+  ModelPreview::RenderModelPreview(IAssetReference<ModelAsset>& modelAsset)
   {
     if (static entt::entity memory = entt::null;
-        memory != modelAsset->GetHandle())
+        memory != modelAsset.GetHandle())
     {
       FocusModel(modelAsset);
-      memory = modelAsset->GetHandle();
+      memory = modelAsset.GetHandle();
       m_Properties.ModelRotation = { 15, 20, 0 };
       m_Properties.ModelRotationTarget = { 15, 20, 0 };
       UpdateRotation({ 0, 0 });
@@ -58,10 +57,10 @@ namespace Dwarf
                                m_Framebuffer->GetSpecification().Width,
                                m_Framebuffer->GetSpecification().Height);
 
-    for (int i = 0; i < modelAsset->GetAsset().m_Meshes.size(); i++)
+    for (int i = 0; i < modelAsset.GetAsset().GetMeshes().size(); i++)
     {
-      m_RendererApi->RenderIndexed(modelAsset->GetAsset().m_Meshes.at(i),
-                                   m_Material,
+      m_RendererApi->RenderIndexed(*modelAsset.GetAsset().GetMeshes().at(i),
+                                   *m_Material,
                                    glm::toMat4(m_Properties.ModelRotationQuat),
                                    m_Camera->GetViewMatrix(),
                                    m_Camera->GetProjectionMatrix());
@@ -70,11 +69,11 @@ namespace Dwarf
   }
 
   void
-  ModelPreview::FocusModel(
-    std::shared_ptr<AssetReference<ModelAsset>> modelAsset)
+  ModelPreview::FocusModel(IAssetReference<ModelAsset>& modelAsset)
   {
-    std::vector<std::shared_ptr<IMesh>> vec = modelAsset->GetAsset().m_Meshes;
-    float                               longestDist = 0;
+    std::vector<std::unique_ptr<IMesh>>& vec =
+      modelAsset.GetAsset().GetMeshes();
+    float longestDist = 0;
 
     for (const auto& subMesh : vec)
     {

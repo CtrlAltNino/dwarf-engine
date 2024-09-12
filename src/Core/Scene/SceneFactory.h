@@ -8,23 +8,23 @@ namespace Dwarf
   /// @brief Factory for creating scenes.
   class SceneFactory : public ISceneFactory
   {
-  public:
-    SceneFactory(
-      std::shared_ptr<IScenePropertiesFactory> scenePropertiesFactory);
-
-    std::shared_ptr<IScene>
-    FromAsset(std::shared_ptr<AssetReference<SceneAsset>> sceneAsset) override;
-
-    std::shared_ptr<IScene>
-    NewAsset(std::filesystem::path directory) override;
-
-    std::shared_ptr<IScene>
-    NewEmpty() override;
-
   private:
     std::shared_ptr<IScenePropertiesFactory> m_ScenePropertiesFactory;
 
     std::string
-    CreateNewSceneName(std::filesystem::path directory);
+    CreateNewSceneName(const std::filesystem::path& directory);
+
+  public:
+    SceneFactory(
+      std::shared_ptr<IScenePropertiesFactory> scenePropertiesFactory);
+
+    std::unique_ptr<IScene>
+    FromAsset(IAssetReference<SceneAsset>& sceneAsset) override;
+
+    std::unique_ptr<IScene>
+    NewSceneAsset(const std::filesystem::path& directory) override;
+
+    std::unique_ptr<IScene>
+    NewEmptyScene() override;
   };
 } // namespace Dwarf

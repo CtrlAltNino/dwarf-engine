@@ -14,7 +14,7 @@ namespace Dwarf
   {
   private:
     std::shared_ptr<IMaterialFactory> m_MaterialFactory;
-    std::shared_ptr<IMaterial>        m_Material;
+    std::unique_ptr<IMaterial>        m_Material;
 
   public:
     ModelPreview(std::shared_ptr<IFramebufferFactory> framebufferFactory,
@@ -23,10 +23,9 @@ namespace Dwarf
                  std::shared_ptr<IMaterialFactory>    materialFactory);
 
     void
-    RenderModelPreview(
-      std::shared_ptr<AssetReference<ModelAsset>> modelAsset) override;
+    RenderModelPreview(IAssetReference<ModelAsset>& modelAsset) override;
 
     void
-    FocusModel(std::shared_ptr<AssetReference<ModelAsset>> modelAsset) override;
+    FocusModel(IAssetReference<ModelAsset>& modelAsset) override;
   };
 }

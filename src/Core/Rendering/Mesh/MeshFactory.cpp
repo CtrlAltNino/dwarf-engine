@@ -15,10 +15,10 @@ namespace Dwarf
   {
   }
 
-  std::shared_ptr<IMesh>
-  MeshFactory::CreateMesh(std::vector<Vertex>       vertices,
-                          std::vector<unsigned int> indices,
-                          unsigned int              materialIndex)
+  std::unique_ptr<IMesh>
+  MeshFactory::CreateMesh(const std::vector<Vertex>&       vertices,
+                          const std::vector<unsigned int>& indices,
+                          unsigned int                     materialIndex)
   {
     // Creating a shader based on the graphics API.
     switch (m_GraphicsApi)
@@ -28,7 +28,7 @@ namespace Dwarf
         // return std::make_shared<D3D12Shader>();
         break;
       case GraphicsApi::OpenGL:
-        return std::make_shared<OpenGLMesh>(vertices, indices, materialIndex);
+        return std::make_unique<OpenGLMesh>(vertices, indices, materialIndex);
         break;
       case GraphicsApi::Metal: break;
       case GraphicsApi::Vulkan:
@@ -37,7 +37,7 @@ namespace Dwarf
 #elif __linux__
       case GraphicsApi::D3D12: break;
       case GraphicsApi::OpenGL:
-        return std::make_shared<OpenGLMesh>(vertices, indices, materialIndex);
+        return std::make_unique<OpenGLMesh>(vertices, indices, materialIndex);
         break;
       case GraphicsApi::Metal: break;
       case GraphicsApi::Vulkan:
@@ -56,7 +56,7 @@ namespace Dwarf
     return nullptr;
   }
 
-  std::shared_ptr<IMesh>
+  std::unique_ptr<IMesh>
   MeshFactory::CreateUnitSphere(int stacks, int slices)
   {
     auto vertices = std::vector<Vertex>();
@@ -105,7 +105,7 @@ namespace Dwarf
     return CreateMesh(vertices, indices, 0);
   }
 
-  std::shared_ptr<IMesh>
+  std::unique_ptr<IMesh>
   MeshFactory::CreateUnitCube()
   {
     std::vector<Vertex> vertices = {
@@ -241,7 +241,7 @@ namespace Dwarf
     return CreateMesh(vertices, indices, 0);
   }
 
-  std::shared_ptr<IMesh>
+  std::unique_ptr<IMesh>
   MeshFactory::CreateUnitQuad()
   {
     return CreateMesh({ Vertex(glm::vec3(-0.5f, -0.5f, 0.0f),

@@ -53,7 +53,7 @@ namespace Dwarf
       glActiveTexture(GL_TEXTURE0);
       glBindTexture(GL_TEXTURE_2D,
                     m_AssetDatabase->Retrieve<TextureAsset>(parameter)
-                      ->GetAsset()
+                      .GetAsset()
                       .m_Texture->GetTextureID());
       glUniform1i(glGetUniformLocation(m_ShaderID, m_ParameterName.c_str()), 0);
     }
@@ -124,21 +124,20 @@ namespace Dwarf
   }
 
   void
-  OpenGLRendererApi::RenderIndexed(std::shared_ptr<IMesh>     mesh,
-                                   std::shared_ptr<IMaterial> material,
-                                   glm::mat4                  modelMatrix,
-                                   glm::mat4                  viewMatrix,
-                                   glm::mat4                  projectionMatrix)
+  OpenGLRendererApi::RenderIndexed(IMesh&     mesh,
+                                   IMaterial& material,
+                                   glm::mat4  modelMatrix,
+                                   glm::mat4  viewMatrix,
+                                   glm::mat4  projectionMatrix)
   {
-    std::shared_ptr<OpenGLMesh> oglMesh =
-      std::dynamic_pointer_cast<OpenGLMesh>(mesh);
+    OpenGLMesh&                   oglMesh = (OpenGLMesh&)mesh;
     std::shared_ptr<OpenGLShader> shader =
-      std::dynamic_pointer_cast<OpenGLShader>(material->GetShader());
+      std::dynamic_pointer_cast<OpenGLShader>(material.GetShader());
     char textureInputCounter = 0;
 
     glUseProgram(shader->GetID());
 
-    if (material->GetMaterialProperties().IsTransparent)
+    if (material.GetMaterialProperties().IsTransparent)
     {
       glEnable(GL_BLEND);
       glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
@@ -149,10 +148,10 @@ namespace Dwarf
 
     // TODO: Move this to OpenGLShader.cpp
     for (auto const& identifier :
-         material->GetShaderParameters()->GetParameterIdentifiers())
+         material.GetShaderParameters()->GetParameterIdentifiers())
     {
       auto shaderParameterValue =
-        material->GetShaderParameters()->GetParameter(identifier);
+        material.GetShaderParameters()->GetParameter(identifier);
       if (shaderParameterValue.has_value())
       {
         std::visit(SetShaderParameterVisitor{ shader->GetID(), identifier },
@@ -167,12 +166,12 @@ namespace Dwarf
     glUniformMatrix4fv(mmID, 1, GL_FALSE, &modelMatrix[0][0]);
     glUniformMatrix4fv(vmID, 1, GL_FALSE, &viewMatrix[0][0]);
     glUniformMatrix4fv(pmID, 1, GL_FALSE, &projectionMatrix[0][0]);
-    oglMesh->Bind();
+    oglMesh.Bind();
 
     glDrawElements(
-      GL_TRIANGLES, oglMesh->GetIndices().size(), GL_UNSIGNED_INT, nullptr);
+      GL_TRIANGLES, oglMesh.GetIndices().size(), GL_UNSIGNED_INT, nullptr);
 
-    oglMesh->Unbind();
+    oglMesh.Unbind();
 
     glDisable(GL_BLEND);
     glDisable(GL_CULL_FACE);

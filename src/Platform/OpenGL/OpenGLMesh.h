@@ -14,9 +14,9 @@ namespace Dwarf
     unsigned int              m_MaterialIndex = 0;
 
   public:
-    OpenGLMesh(std::vector<Vertex>       vertices,
-               std::vector<unsigned int> indices,
-               unsigned int              materialIndex);
+    OpenGLMesh(const std::vector<Vertex>&       vertices,
+               const std::vector<unsigned int>& indices,
+               unsigned int                     materialIndex);
     ~OpenGLMesh() override;
     void
     SetupMesh() override;

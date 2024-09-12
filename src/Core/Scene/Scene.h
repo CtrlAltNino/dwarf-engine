@@ -11,24 +11,24 @@ namespace Dwarf
   class Scene : public IScene
   {
   public:
-    Scene(nlohmann::json                    serializedSceneGraph,
-          std::shared_ptr<ISceneProperties> properties);
+    Scene(const nlohmann::json&             serializedSceneGraph,
+          std::unique_ptr<ISceneProperties> properties);
     ~Scene();
 
     /// @brief Retrieves the asset reference of the scene.
     /// @return The asset reference.
-    std::shared_ptr<entt::registry>
-    GetRegistry() const override;
+    entt::registry&
+    GetRegistry() override;
 
     /// @brief Retrieves the root entity of the scene. This is the parent of all
     /// entities in the scene.
     /// @return The root entity.
-    std::shared_ptr<Entity>
+    const Entity&
     GetRootEntity() const override;
 
     /// @brief Retrieves the settings of the scene.
     /// @return The settings.
-    std::shared_ptr<ISceneProperties>
+    ISceneProperties&
     GetProperties() override;
 
     /// @brief Creates a new entity with a given name.
@@ -40,7 +40,7 @@ namespace Dwarf
     /// @brief Deletes an entity from the scene.
     /// @param entity Entity to delete.
     void
-    DeleteEntity(Entity entity) override;
+    DeleteEntity(const Entity& entity) override;
 
     /// @brief Serializes the scene to a JSON object.
     /// @return The JSON object.
@@ -49,20 +49,19 @@ namespace Dwarf
 
   private:
     /// @brief The registry that holds all entities and components.
-    std::shared_ptr<entt::registry> m_Registry =
-      std::make_shared<entt::registry>();
+    entt::registry m_Registry = entt::registry();
 
     /// @brief The root entity in the scene graph.
-    std::shared_ptr<Entity> m_RootEntity;
+    Entity m_RootEntity;
 
     /// @brief The settings of the scene.
-    std::shared_ptr<ISceneProperties> m_Properties;
+    std::unique_ptr<ISceneProperties> m_Properties;
 
     /// @brief Because of dependency cycle
     // friend class Entity;
 
     /// @brief Creates the root entity.
-    void
+    Entity
     CreateRootEntity();
 
     /// @brief Creates a new entity with a given name a UID.
@@ -70,20 +69,20 @@ namespace Dwarf
     /// @param name Name of the entity.
     /// @return The created entity instance.
     Entity
-    CreateEntityWithUID(UUID uid, const std::string& name);
+    CreateEntityWithUID(const UUID& uid, const std::string& name);
 
     /// @brief Returns the recursive model matrix of a transform.
     /// @param transform A transform component instance.
     /// @return 4x4 model matrix composition of a transform and its full parent
     /// chain.
     glm::mat4
-    GetFullModelMatrix(TransformComponent const& transform) const;
+    GetFullModelMatrix(const TransformComponent& transform) const;
 
     /// @brief Deserializes the scene from a JSON object.
     void
     Deserialize(const nlohmann::json& serializedSceneGraph);
 
     Entity
-    DeserializeEntity(nlohmann::json serializedEntity);
+    DeserializeEntity(const nlohmann::json& serializedEntity);
   };
 }
