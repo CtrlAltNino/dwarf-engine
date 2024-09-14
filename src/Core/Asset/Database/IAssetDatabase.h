@@ -120,7 +120,7 @@ namespace Dwarf
         static_cast<IAssetReference<T>*>(asset.release()));
     }
 
-    virtual const entt::registry&
+    virtual entt::registry&
     GetRegistry() = 0;
 
     /**

@@ -10,18 +10,13 @@ namespace Dwarf
   ShaderParameterCollection::SetParameter(std::string_view identifier,
                                           ParameterValue   parameter)
   {
-    m_Parameters[identifier.data()] = parameter;
+    m_Parameters[identifier.data()] = std::move(parameter);
   }
 
-  std::optional<ParameterValue>
-  ShaderParameterCollection::GetParameter(std::string const& name) const
+  ParameterValue&
+  ShaderParameterCollection::GetParameter(const std::string& name)
   {
-    auto it = m_Parameters.find(name);
-    if (it != m_Parameters.end())
-    {
-      return it->second;
-    }
-    return std::nullopt;
+    return m_Parameters.at(name);
   }
 
   const std::vector<std::string>

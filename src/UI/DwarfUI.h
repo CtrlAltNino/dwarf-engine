@@ -1,7 +1,7 @@
 #pragma once
+#include "pch.h"
 
 #include "Core/Asset/Database/IAssetDatabase.h"
-#include "pch.h"
 
 #include "Core/Asset/Database/AssetComponents.h"
 #include "Core/GenericComponents.h"
@@ -51,21 +51,21 @@ namespace Dwarf
 
     template<typename T>
     static void
-    AssetInput(std::shared_ptr<IAssetDatabase> assetDatabase,
-               std::shared_ptr<UUID>&          assetID,
-               const char*                     imguiID)
+    AssetInput(std::shared_ptr<IAssetDatabase>      assetDatabase,
+               std::unique_ptr<IAssetReference<T>>& assetRef,
+               const char*                          imguiID)
     {
       std::vector<entt::entity> availableAssets;
       int                       selectedAsset = -1;
       auto                      view =
-        assetDatabase->GetRegistry()->view<IDComponent, NameComponent, T>();
+        assetDatabase->GetRegistry().view<IDComponent, NameComponent, T>();
 
       int count = 0;
       for (auto entity : view)
       {
         availableAssets.push_back(entity);
-        if (assetID &&
-            (view.template get<IDComponent>(entity).ID.get() == assetID.get()))
+        if (assetRef && (view.template get<IDComponent>(entity).GetID() ==
+                         assetRef->GetUID()))
         {
           selectedAsset = count;
         }
@@ -84,7 +84,7 @@ namespace Dwarf
               "None", selectedAsset == -1, 0, ImVec2(0, 16 + 10)))
         {
           selectedAsset = -1;
-          assetID = nullptr;
+          assetRef = nullptr;
         }
 
         for (int i = 0; i < availableAssets.size(); i++)
@@ -98,7 +98,8 @@ namespace Dwarf
                 ImVec2(0, 16 + 10)))
           {
             selectedAsset = i;
-            assetID = view.template get<IDComponent>(availableAssets[i]).ID;
+            assetRef = assetDatabase->Retrieve<T>(
+              view.template get<IDComponent>(availableAssets[i]).GetID());
           }
         }
 
@@ -108,21 +109,21 @@ namespace Dwarf
 
     template<typename T>
     static void
-    AssetInput(std::shared_ptr<IAssetDatabase>     assetDatabase,
-               std::shared_ptr<AssetReference<T>>& asset,
-               const char*                         imguiID)
+    AssetInput(std::shared_ptr<IAssetDatabase> assetDatabase,
+               std::unique_ptr<UUID>&          assetRef,
+               const char*                     imguiID)
     {
       std::vector<entt::entity> availableAssets;
       int                       selectedAsset = -1;
       auto                      view =
-        assetDatabase->GetRegistry()->view<IDComponent, NameComponent, T>();
+        assetDatabase->GetRegistry().view<IDComponent, NameComponent, T>();
 
       int count = 0;
       for (auto entity : view)
       {
         availableAssets.push_back(entity);
-        if (asset && (view.template get<IDComponent>(entity).ID.get() ==
-                      asset->GetUID().get()))
+        if (assetRef &&
+            (view.template get<IDComponent>(entity).GetID() == *assetRef))
         {
           selectedAsset = count;
         }
@@ -141,7 +142,7 @@ namespace Dwarf
               "None", selectedAsset == -1, 0, ImVec2(0, 16 + 10)))
         {
           selectedAsset = -1;
-          asset = nullptr;
+          assetRef = nullptr;
         }
 
         for (int i = 0; i < availableAssets.size(); i++)
@@ -155,8 +156,8 @@ namespace Dwarf
                 ImVec2(0, 16 + 10)))
           {
             selectedAsset = i;
-            asset = assetDatabase->Retrieve<T>(
-              view.template get<IDComponent>(availableAssets[i]).ID);
+            assetRef =
+              view.template get<IDComponent>(availableAssets[i]).GetID();
           }
         }
 
@@ -168,14 +169,14 @@ namespace Dwarf
   template<>
   void
   DwarfUI::AssetInput<VertexShaderAsset>(
-    std::shared_ptr<IAssetDatabase>                     assetDatabase,
-    std::shared_ptr<AssetReference<VertexShaderAsset>>& asset,
-    const char*                                         imguiID);
+    std::shared_ptr<IAssetDatabase>                      assetDatabase,
+    std::unique_ptr<IAssetReference<VertexShaderAsset>>& asset,
+    const char*                                          imguiID);
 
   template<>
   void
   DwarfUI::AssetInput<FragmentShaderAsset>(
-    std::shared_ptr<IAssetDatabase>                       assetDatabase,
-    std::shared_ptr<AssetReference<FragmentShaderAsset>>& asset,
-    const char*                                           imguiID);
+    std::shared_ptr<IAssetDatabase>                        assetDatabase,
+    std::unique_ptr<IAssetReference<FragmentShaderAsset>>& asset,
+    const char*                                            imguiID);
 }

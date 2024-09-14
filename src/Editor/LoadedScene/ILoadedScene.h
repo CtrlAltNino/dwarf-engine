@@ -9,10 +9,10 @@ namespace Dwarf
   public:
     virtual ~ILoadedScene() = default;
 
-    virtual std::shared_ptr<IScene>
-    GetScene() const = 0;
+    virtual std::unique_ptr<IScene>&
+    GetScene() = 0;
 
     virtual void
-    SetScene(std::shared_ptr<IScene> scene) = 0;
+    SetScene(std::unique_ptr<IScene>& scene) = 0;
   };
 }

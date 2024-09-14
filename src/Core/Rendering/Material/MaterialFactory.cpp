@@ -15,7 +15,7 @@ namespace Dwarf
   MaterialFactory::CreateDefaultMaterial() const
   {
     // TODO: Use default shader
-    return std::make_unique<Material>(m_ShaderFactory->CreateShader());
+    return std::make_unique<Material>(m_ShaderFactory->CreateDefaultShader());
   }
 
   std::unique_ptr<IMaterial>

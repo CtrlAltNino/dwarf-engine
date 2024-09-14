@@ -23,8 +23,8 @@ namespace Dwarf
     /// @brief Retrieves the root entity of the scene. This is the parent of all
     /// entities in the scene.
     /// @return The root entity.
-    const Entity&
-    GetRootEntity() const override;
+    Entity&
+    GetRootEntity() override;
 
     /// @brief Retrieves the settings of the scene.
     /// @return The settings.
@@ -76,7 +76,7 @@ namespace Dwarf
     /// @return 4x4 model matrix composition of a transform and its full parent
     /// chain.
     glm::mat4
-    GetFullModelMatrix(const TransformComponent& transform) const;
+    GetFullModelMatrix(TransformComponent& transform);
 
     /// @brief Deserializes the scene from a JSON object.
     void

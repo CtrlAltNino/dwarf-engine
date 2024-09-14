@@ -1,8 +1,8 @@
 #pragma once
 
+#include "Core/Asset/Shader/ShaderSourceCollection/IShaderSourceCollectionFactory.h"
 #include "Core/Base.h"
 #include "Core/Rendering/Shader/ShaderParameterCollection/IShaderParameterCollectionFactory.h"
-#include "Core/Asset/Shader/IShaderSourceCollectionFactory.h"
 #include "Core/Rendering/Shader/IShader.h"
 #include "Core/Rendering/Shader/ShaderTypes.h"
 #include "IShaderFactory.h"
@@ -27,10 +27,11 @@ namespace Dwarf
     ~ShaderFactory() = default;
 
     std::unique_ptr<IShader>
-    CreateShader() override;
+    CreateDefaultShader() override;
 
     std::unique_ptr<IShader>
-    CreateShader(ShaderSourceCollection& shaderSources) override;
+    CreateShader(
+      std::unique_ptr<IShaderSourceCollection> shaderSources) override;
 
     std::unique_ptr<IShader>
     CreateShader(const nlohmann::json& serializedShader) override;

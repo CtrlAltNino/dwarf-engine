@@ -22,8 +22,8 @@ namespace Dwarf
     /// @brief Retrieves the root entity of the scene. This is the parent of
     /// all entities in the scene.
     /// @return The root entity.
-    virtual const Entity&
-    GetRootEntity() const = 0;
+    virtual Entity&
+    GetRootEntity() = 0;
 
     /// @brief Retrieves the properties of the scene.
     /// @return The properties.

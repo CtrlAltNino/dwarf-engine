@@ -7,6 +7,6 @@ namespace Dwarf
   public:
     virtual ~IAssetInspector() = default;
     virtual void
-    Render(const std::filesystem::path& assetPath) const = 0;
+    Render(const std::filesystem::path& assetPath) = 0;
   };
 }

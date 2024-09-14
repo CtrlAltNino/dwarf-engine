@@ -1,4 +1,6 @@
 #pragma once
+#include "Core/Asset/AssetReference/IAssetReference.h"
+#include "Core/Asset/Database/AssetComponents.h"
 #include "Utilities/ISerializable.h"
 #include "pch.h"
 
@@ -40,7 +42,7 @@ namespace Dwarf
     {
     }
 
-    TransformComponent(nlohmann::json json)
+    TransformComponent(const nlohmann::json& json)
     {
       position = { json["position"][0],
                    json["position"][1],
@@ -95,6 +97,12 @@ namespace Dwarf
     getScale() const
     {
       return scale;
+    }
+
+    std::vector<entt::entity>&
+    GetChildren()
+    {
+      return children;
     }
 
     /// @brief Returns the vector that points into the entity's forward
@@ -193,33 +201,35 @@ namespace Dwarf
   {
   private:
     /// @brief ID of the mesh asset.
-    UUID meshAsset;
+    std::unique_ptr<IAssetReference<ModelAsset>> modelAsset = nullptr;
 
     /// @brief The materials with which the model is to be rendered. The list
     /// index of the materials corresponds to the material index of the
     /// submeshes.
-    std::vector<UUID> materialAssets;
+    std::vector<std::unique_ptr<IAssetReference<MaterialAsset>>>
+      materialAssets = {};
 
   public:
-    MeshRendererComponent() = default;
-    MeshRendererComponent(const MeshRendererComponent&) = default;
-    MeshRendererComponent(const UUID& mesh, const std::vector<UUID>& materials)
-      : meshAsset(mesh)
-      , materialAssets(materials)
+    MeshRendererComponent(
+      std::unique_ptr<IAssetReference<ModelAsset>>&                 modelAsset,
+      std::vector<std::unique_ptr<IAssetReference<MaterialAsset>>>& materials)
+      : modelAsset(std::move(modelAsset))
+      , materialAssets(std::move(materials))
     {
     }
+
     /// @brief Flag that decides if this model should be used in the shadow cast
     /// pass.
     bool canCastShadow;
 
-    UUID&
-    GetMeshAsset()
+    std::unique_ptr<IAssetReference<ModelAsset>>&
+    ModelAsset()
     {
-      return meshAsset;
+      return modelAsset;
     }
 
-    std::vector<UUID>&
-    GetMaterialAssets()
+    std::vector<std::unique_ptr<IAssetReference<MaterialAsset>>>&
+    MaterialAssets()
     {
       return materialAssets;
     }

@@ -45,7 +45,7 @@ namespace Dwarf
     ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow;
     std::string        objectLabel = ent.GetComponent<NameComponent>().Name;
     ImDrawList*        draw_list = ImGui::GetWindowDrawList();
-    std::shared_ptr<IScene> scene = m_LoadedScene->GetScene();
+    std::unique_ptr<IScene>& scene = m_LoadedScene->GetScene();
 
     // Splitting the channel to draw an extra rect when selected
     draw_list->ChannelsSplit(2);
@@ -169,7 +169,8 @@ namespace Dwarf
 
       if (ImGui::MenuItem("Copy"))
       {
-        m_CopyBuffer = m_EditorSelection->GetSelectedEntities();
+        m_CopyBuffer =
+          std::vector<Entity>(m_EditorSelection->GetSelectedEntities());
       }
 
       if (ImGui::MenuItem("Paste"))
@@ -384,17 +385,16 @@ namespace Dwarf
 
     // auto view = m_Model->GetScene()->GetRegistry()->view<TransformComponent,
     // NameComponent, IDComponent>();
-    std::shared_ptr<IScene>    scene = m_LoadedScene->GetScene();
-    std::vector<entt::entity>* container =
-      &(m_LoadedScene->GetScene()
-          ->GetRootEntity()
-          ->GetComponent<TransformComponent>()
-          .children);
+    std::unique_ptr<IScene>&   scene = m_LoadedScene->GetScene();
+    std::vector<entt::entity>& container = m_LoadedScene->GetScene()
+                                             ->GetRootEntity()
+                                             .GetComponent<TransformComponent>()
+                                             .GetChildren();
 
     int it = 0;
-    while ((container->begin() + it) != container->end())
+    while ((container.begin() + it) != container.end())
     {
-      DrawNode(*(container->begin() + it));
+      DrawNode(*(container.begin() + it));
       it++;
     }
 
@@ -440,8 +440,7 @@ namespace Dwarf
       if (ImGui::MenuItem("Paste"))
       {
         // TODO: Implement pasting deleted entities
-        std::shared_ptr<Entity> rootEntity =
-          m_LoadedScene->GetScene()->GetRootEntity();
+        Entity& rootEntity = m_LoadedScene->GetScene()->GetRootEntity();
         for (Entity selectedEntity : m_CopyBuffer)
         {
           Entity copy = m_LoadedScene->GetScene()->CreateEntity(
@@ -479,7 +478,7 @@ namespace Dwarf
         m_Instructions.push_back(std::make_shared<NewParentInstruction>(
           m_LoadedScene->GetScene(),
           payload_e,
-          m_LoadedScene->GetScene()->GetRootEntity()->GetHandle()));
+          m_LoadedScene->GetScene()->GetRootEntity().GetHandle()));
       }
       ImGui::EndDragDropTarget();
     }

@@ -39,7 +39,7 @@ namespace Dwarf
 
     ~AssetInspector() override = default;
     void
-    Render(const std::filesystem::path& assetPath) const override;
+    Render(const std::filesystem::path& assetPath) override;
 
   private:
     // void
@@ -48,6 +48,6 @@ namespace Dwarf
 
     template<typename T>
     void
-    RenderAssetInspector(std::shared_ptr<AssetReference<T>> asset) const;
+    RenderAssetInspector(IAssetReference<T>& asset);
   };
 }

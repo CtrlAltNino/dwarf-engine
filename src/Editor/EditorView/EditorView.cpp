@@ -116,7 +116,8 @@ namespace Dwarf
         if (ImGui::MenuItem("Create new scene"))
         {
           // TODO: check for unsaved changes in scene
-          m_LoadedScene->SetScene(m_SceneIO->LoadDefaultScene());
+          std::unique_ptr<IScene> newScene = m_SceneIO->LoadDefaultScene();
+          m_LoadedScene->SetScene(newScene);
         }
         if (ImGui::MenuItem("Save scene"))
         {
@@ -127,7 +128,7 @@ namespace Dwarf
           //   UpdateWindowTitle();
           // }
 
-          m_SceneIO->SaveScene(m_LoadedScene->GetScene());
+          m_SceneIO->SaveScene(*m_LoadedScene->GetScene());
         }
         if (ImGui::MenuItem("Save scene as"))
         {
@@ -138,11 +139,11 @@ namespace Dwarf
           //   UpdateWindowTitle();
           // }
 
-          m_SceneIO->SaveSceneDialog(m_LoadedScene->GetScene());
+          m_SceneIO->SaveSceneDialog(*m_LoadedScene->GetScene());
         }
         if (ImGui::MenuItem("Load scene"))
         {
-          std::shared_ptr<IScene> loadedScene = m_SceneIO->LoadSceneDialog();
+          std::unique_ptr<IScene> loadedScene = m_SceneIO->LoadSceneDialog();
           if (loadedScene)
           {
             m_LoadedScene->SetScene(loadedScene);
@@ -370,7 +371,7 @@ namespace Dwarf
     std::string windowTitle = "Dwarf Engine Editor - ";
     windowTitle.append(m_ProjectSettings->GetProjectName());
     windowTitle.append(" - ");
-    windowTitle.append(m_LoadedScene->GetScene()->GetProperties()->GetName());
+    windowTitle.append(m_LoadedScene->GetScene()->GetProperties().GetName());
     windowTitle.append(" <");
     windowTitle.append(graphicsApiNames[(int)m_GraphicsApi]);
     windowTitle.append(">");

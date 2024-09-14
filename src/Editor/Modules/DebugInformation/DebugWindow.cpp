@@ -50,44 +50,43 @@ namespace Dwarf
     if (ImGui::CollapsingHeader("Asset Database"))
     {
       ImGui::Text("Listing all imported assets and their UID's");
-      std::shared_ptr<entt::registry> registry = m_AssetDatabase->GetRegistry();
+      entt::registry& registry = m_AssetDatabase->GetRegistry();
 
       auto materialView =
         registry
-          ->view<MaterialAsset, PathComponent, NameComponent, IDComponent>();
+          .view<MaterialAsset, PathComponent, NameComponent, IDComponent>();
       auto modelView =
-        registry->view<ModelAsset, PathComponent, NameComponent, IDComponent>();
+        registry.view<ModelAsset, PathComponent, NameComponent, IDComponent>();
       auto sceneView =
-        registry->view<SceneAsset, PathComponent, NameComponent, IDComponent>();
-      auto vertexShaderView = registry->view<VertexShaderAsset,
-                                             PathComponent,
-                                             NameComponent,
-                                             IDComponent>();
-      auto fragmentShaderView = registry->view<FragmentShaderAsset,
-                                               PathComponent,
-                                               NameComponent,
-                                               IDComponent>();
-      auto geometryShaderView = registry->view<GeometryShaderAsset,
-                                               PathComponent,
-                                               NameComponent,
-                                               IDComponent>();
-      auto computeShaderView = registry->view<ComputeShaderAsset,
+        registry.view<SceneAsset, PathComponent, NameComponent, IDComponent>();
+      auto vertexShaderView =
+        registry
+          .view<VertexShaderAsset, PathComponent, NameComponent, IDComponent>();
+      auto fragmentShaderView = registry.view<FragmentShaderAsset,
                                               PathComponent,
                                               NameComponent,
                                               IDComponent>();
+      auto geometryShaderView = registry.view<GeometryShaderAsset,
+                                              PathComponent,
+                                              NameComponent,
+                                              IDComponent>();
+      auto computeShaderView = registry.view<ComputeShaderAsset,
+                                             PathComponent,
+                                             NameComponent,
+                                             IDComponent>();
       auto tesselationControlShaderView =
-        registry->view<TessellationControlShaderAsset,
-                       PathComponent,
-                       NameComponent,
-                       IDComponent>();
+        registry.view<TessellationControlShaderAsset,
+                      PathComponent,
+                      NameComponent,
+                      IDComponent>();
       auto tesselationEvaluationShaderView =
-        registry->view<TessellationEvaluationShaderAsset,
-                       PathComponent,
-                       NameComponent,
-                       IDComponent>();
+        registry.view<TessellationEvaluationShaderAsset,
+                      PathComponent,
+                      NameComponent,
+                      IDComponent>();
       auto textureView =
         registry
-          ->view<TextureAsset, PathComponent, NameComponent, IDComponent>();
+          .view<TextureAsset, PathComponent, NameComponent, IDComponent>();
 
       if (ImGui::TreeNode("Materials##1"))
       {
@@ -98,9 +97,9 @@ namespace Dwarf
           ImGui::Text("Name");
           ImGui::Text("%s", nameComp.Name.c_str());
           ImGui::Text("Path");
-          ImGui::Text("%s", pathComp.Path.string().c_str());
+          ImGui::Text("%s", pathComp.GetPath().string().c_str());
           ImGui::Text("ID");
-          ImGui::Text("%s", idComp.ID->ToString().c_str());
+          ImGui::Text("%s", idComp.GetID().ToString().c_str());
           ImGui::Separator();
           ImGui::Separator();
         }
@@ -116,9 +115,9 @@ namespace Dwarf
           ImGui::Text("Name");
           ImGui::Text("%s", nameComp.Name.c_str());
           ImGui::Text("Path");
-          ImGui::Text("%s", pathComp.Path.string().c_str());
+          ImGui::Text("%s", pathComp.GetPath().string().c_str());
           ImGui::Text("ID");
-          ImGui::Text("%s", idComp.ID->ToString().c_str());
+          ImGui::Text("%s", idComp.GetID().ToString().c_str());
           ImGui::Separator();
         }
         ImGui::TreePop();
@@ -133,9 +132,9 @@ namespace Dwarf
           ImGui::Text("Name");
           ImGui::Text("%s", nameComp.Name.c_str());
           ImGui::Text("Path");
-          ImGui::Text("%s", pathComp.Path.string().c_str());
+          ImGui::Text("%s", pathComp.GetPath().string().c_str());
           ImGui::Text("ID");
-          ImGui::Text("%s", idComp.ID->ToString().c_str());
+          ImGui::Text("%s", idComp.GetID().ToString().c_str());
           ImGui::Separator();
         }
         ImGui::TreePop();
@@ -153,9 +152,9 @@ namespace Dwarf
             ImGui::Text("Name");
             ImGui::Text("%s", nameComp.Name.c_str());
             ImGui::Text("Path");
-            ImGui::Text("%s", pathComp.Path.string().c_str());
+            ImGui::Text("%s", pathComp.GetPath().string().c_str());
             ImGui::Text("ID");
-            ImGui::Text("%s", idComp.ID->ToString().c_str());
+            ImGui::Text("%s", idComp.GetID().ToString().c_str());
             ImGui::Separator();
           }
           ImGui::TreePop();
@@ -171,9 +170,9 @@ namespace Dwarf
             ImGui::Text("Name");
             ImGui::Text("%s", nameComp.Name.c_str());
             ImGui::Text("Path");
-            ImGui::Text("%s", pathComp.Path.string().c_str());
+            ImGui::Text("%s", pathComp.GetPath().string().c_str());
             ImGui::Text("ID");
-            ImGui::Text("%s", idComp.ID->ToString().c_str());
+            ImGui::Text("%s", idComp.GetID().ToString().c_str());
             ImGui::Separator();
           }
           ImGui::TreePop();
@@ -189,9 +188,9 @@ namespace Dwarf
             ImGui::Text("Name");
             ImGui::Text("%s", nameComp.Name.c_str());
             ImGui::Text("Path");
-            ImGui::Text("%s", pathComp.Path.string().c_str());
+            ImGui::Text("%s", pathComp.GetPath().string().c_str());
             ImGui::Text("ID");
-            ImGui::Text("%s", idComp.ID->ToString().c_str());
+            ImGui::Text("%s", idComp.GetID().ToString().c_str());
             ImGui::Separator();
           }
           ImGui::TreePop();
@@ -207,9 +206,9 @@ namespace Dwarf
             ImGui::Text("Name");
             ImGui::Text("%s", nameComp.Name.c_str());
             ImGui::Text("Path");
-            ImGui::Text("%s", pathComp.Path.string().c_str());
+            ImGui::Text("%s", pathComp.GetPath().string().c_str());
             ImGui::Text("ID");
-            ImGui::Text("%s", idComp.ID->ToString().c_str());
+            ImGui::Text("%s", idComp.GetID().ToString().c_str());
             ImGui::Separator();
           }
           ImGui::TreePop();
@@ -225,9 +224,9 @@ namespace Dwarf
             ImGui::Text("Name");
             ImGui::Text("%s", nameComp.Name.c_str());
             ImGui::Text("Path");
-            ImGui::Text("%s", pathComp.Path.string().c_str());
+            ImGui::Text("%s", pathComp.GetPath().string().c_str());
             ImGui::Text("ID");
-            ImGui::Text("%s", idComp.ID->ToString().c_str());
+            ImGui::Text("%s", idComp.GetID().ToString().c_str());
             ImGui::Separator();
           }
           ImGui::TreePop();
@@ -243,9 +242,9 @@ namespace Dwarf
             ImGui::Text("Name");
             ImGui::Text("%s", nameComp.Name.c_str());
             ImGui::Text("Path");
-            ImGui::Text("%s", pathComp.Path.string().c_str());
+            ImGui::Text("%s", pathComp.GetPath().string().c_str());
             ImGui::Text("ID");
-            ImGui::Text("%s", idComp.ID->ToString().c_str());
+            ImGui::Text("%s", idComp.GetID().ToString().c_str());
             ImGui::Separator();
           }
           ImGui::TreePop();
@@ -262,9 +261,9 @@ namespace Dwarf
           ImGui::Text("Name");
           ImGui::Text("%s", nameComp.Name.c_str());
           ImGui::Text("Path");
-          ImGui::Text("%s", pathComp.Path.string().c_str());
+          ImGui::Text("%s", pathComp.GetPath().string().c_str());
           ImGui::Text("ID");
-          ImGui::Text("%s", idComp.ID->ToString().c_str());
+          ImGui::Text("%s", idComp.GetID().ToString().c_str());
           ImGui::Separator();
         }
         ImGui::TreePop();

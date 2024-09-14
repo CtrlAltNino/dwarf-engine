@@ -151,7 +151,7 @@ namespace Dwarf
     RenameDirectory(const std::filesystem::path& from,
                     const std::filesystem::path& to) override;
 
-    const entt::registry&
+    entt::registry&
     GetRegistry() override;
 
   private:
@@ -208,9 +208,9 @@ namespace Dwarf
       std::unique_ptr<IAssetReference<T>> assetReference =
         m_AssetReferenceFactory->Create<T>(m_Registry.create(), m_Registry);
 
-      assetReference->AddAssetComponent<IDComponent>(id);
-      assetReference->AddAssetComponent<NameComponent>(fileName);
-      assetReference->AddAssetComponent<PathComponent>(assetPath);
+      assetReference->template AddAssetComponent<IDComponent>(id);
+      assetReference->template AddAssetComponent<NameComponent>(fileName);
+      assetReference->template AddAssetComponent<PathComponent>(assetPath);
       return assetReference;
     }
 

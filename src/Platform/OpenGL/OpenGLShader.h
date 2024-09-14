@@ -1,14 +1,15 @@
 #pragma once
-#include "Core/Asset/Database/AssetComponents.h"
-#include "Core/Rendering/Shader/ShaderParameterCollection/IShaderParameterCollectionFactory.h"
 #include "pch.h"
+
+#include "Core/Asset/Database/AssetComponents.h"
+#include "Core/Asset/Shader/ShaderSourceCollection/IShaderSourceCollection.h"
+#include "Core/Rendering/Shader/ShaderParameterCollection/IShaderParameterCollectionFactory.h"
 
 #include <glad/glad.h>
 #include <boost/di.hpp>
 #include <boost/serialization/strong_typedef.hpp>
 #include <boost/optional.hpp>
 #include "Core/Rendering/Shader/IShader.h"
-#include "Core/Rendering/Shader/ShaderTypes.h"
 #include "Core/Asset/AssetReference/IAssetReference.h"
 
 namespace Dwarf
@@ -30,7 +31,7 @@ namespace Dwarf
 
   public:
     BOOST_DI_INJECT(OpenGLShader,
-                    ShaderSourceCollection shaderSources,
+                    std::unique_ptr<IShaderSourceCollection> shaderSources,
                     std::shared_ptr<IShaderParameterCollectionFactory>
                       shaderParameterCollectionFactory);
     ~OpenGLShader() override;

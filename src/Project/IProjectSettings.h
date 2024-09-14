@@ -33,9 +33,9 @@ namespace Dwarf
     GetGraphicsApi() const = 0;
 
     virtual void
-    SetLastOpenedScene(const std::shared_ptr<UUID>& lastOpenedScene) = 0;
+    SetLastOpenedScene(const UUID& lastOpenedScene) = 0;
 
-    virtual const std::shared_ptr<UUID>&
+    virtual const std::unique_ptr<UUID>&
     GetLastOpenedScene() const = 0;
   };
 }

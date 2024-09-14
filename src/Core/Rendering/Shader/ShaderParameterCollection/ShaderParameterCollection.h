@@ -22,8 +22,8 @@ namespace Dwarf
     /**
      * @brief Gets a parameter from the collection.
      */
-    std::optional<ParameterValue>
-    GetParameter(std::string const& name) const override;
+    ParameterValue&
+    GetParameter(const std::string& name) override;
 
     /**
      * @brief Gets the list of parameter identifiers.
@@ -33,10 +33,10 @@ namespace Dwarf
     GetParameterIdentifiers() const override;
 
     void
-    RemoveParameter(std::string const& name) override;
+    RemoveParameter(const std::string& name) override;
 
     bool
-    HasParameter(std::string const& name) const override;
+    HasParameter(const std::string& name) const override;
 
     /**
      * @brief Clears the parameters.

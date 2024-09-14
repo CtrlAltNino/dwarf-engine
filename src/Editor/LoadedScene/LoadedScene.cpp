@@ -7,15 +7,15 @@ namespace Dwarf
   {
   }
 
-  std::shared_ptr<IScene>
-  LoadedScene::GetScene() const
+  std::unique_ptr<IScene>&
+  LoadedScene::GetScene()
   {
     return m_Scene;
   }
 
   void
-  LoadedScene::SetScene(std::shared_ptr<IScene> scene)
+  LoadedScene::SetScene(std::unique_ptr<IScene>& scene)
   {
-    m_Scene = scene;
+    m_Scene = std::move(scene);
   }
 }

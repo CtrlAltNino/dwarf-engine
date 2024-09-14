@@ -1,11 +1,9 @@
 #pragma once
 
-#include "Core/Rendering/Framebuffer/IFramebuffer.h"
 #include "Core/Rendering/Framebuffer/IFramebufferFactory.h"
 #include "Core/Rendering/Material/IMaterial.h"
 #include "Core/Rendering/Material/IMaterialFactory.h"
 #include "Core/Rendering/PreviewRenderer/ModelPreview/IModelPreview.h"
-#include "Core/Scene/Camera/ICamera.h"
 #include "Core/Scene/Camera/ICameraFactory.h"
 
 namespace Dwarf

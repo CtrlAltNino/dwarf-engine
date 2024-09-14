@@ -64,7 +64,7 @@ namespace Dwarf
       CreateEntityWithUID(UUID(serializedEntity["guid"].get<std::string>()),
                           serializedEntity["name"]);
 
-    TransformComponent& tc = newEntity.GetComponent<TransformComponent>();
+    /*TransformComponent& tc = newEntity.GetComponent<TransformComponent>();
     tc.position = { serializedEntity["transformComponent"]["position"]["x"],
                     serializedEntity["transformComponent"]["position"]["y"],
                     serializedEntity["transformComponent"]["position"]["z"] };
@@ -106,7 +106,7 @@ namespace Dwarf
       if (serializedEntity["meshRendererComponent"].contains("mesh") &&
           serializedEntity["meshRendererComponent"]["mesh"] != "null")
       {
-        meshRendererComponent.GetMeshAsset() = UUID(
+        meshRendererComponent.ModelAsset() = UUID(
           serializedEntity["meshRendererComponent"]["mesh"].get<std::string>());
       }
 
@@ -115,7 +115,7 @@ namespace Dwarf
         for (const auto& element :
              serializedEntity["meshRendererComponent"]["materials"])
         {
-          meshRendererComponent.GetMaterialAssets().push_back(
+          meshRendererComponent.MaterialAssets().push_back(
             UUID(element.get<std::string>()));
         }
       }
@@ -125,7 +125,7 @@ namespace Dwarf
     {
       Entity childEntity = DeserializeEntity(element);
       childEntity.SetParent(newEntity.GetHandle());
-    }
+    }*/
 
     return newEntity;
   }
@@ -166,8 +166,8 @@ namespace Dwarf
     return m_Registry;
   }
 
-  const Entity&
-  Scene::GetRootEntity() const
+  Entity&
+  Scene::GetRootEntity()
   {
     return m_RootEntity;
   }
@@ -179,7 +179,7 @@ namespace Dwarf
   }
 
   glm::mat4
-  Scene::GetFullModelMatrix(TransformComponent const& transform) const
+  Scene::GetFullModelMatrix(TransformComponent& transform)
   {
     auto                   parentMat = glm::mat4(1.0f);
     std::vector<glm::mat4> matriceStack;

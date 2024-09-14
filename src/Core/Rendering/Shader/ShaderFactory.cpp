@@ -1,6 +1,5 @@
 #include "ShaderFactory.h"
 #include "Core/Asset/Database/AssetComponents.h"
-#include "Core/Asset/Shader/IShaderSourceCollectionFactory.h"
 #include <memory>
 
 // Including the shader header files of the graphics API.
@@ -27,9 +26,11 @@ namespace Dwarf
   }
 
   std::unique_ptr<IShader>
-  ShaderFactory::CreateShader()
+  ShaderFactory::CreateDefaultShader()
   {
-    return CreateShader(ShaderSourceCollection());
+    // TODO: Implement the default shader creation.
+    return CreateShader(
+      m_ShaderSourceCollectionFactory->CreateDefaultShaderSourceCollection());
   }
 
   std::unique_ptr<IShader>
@@ -92,7 +93,8 @@ namespace Dwarf
   }
 
   std::unique_ptr<IShader>
-  ShaderFactory::CreateShader(ShaderSourceCollection& shaderSources)
+  ShaderFactory::CreateShader(
+    std::unique_ptr<IShaderSourceCollection> shaderSources)
   {
     // Creating a shader based on the graphics API.
     switch (m_GraphicsApi)
@@ -113,7 +115,7 @@ namespace Dwarf
       case GraphicsApi::D3D12: break;
       case GraphicsApi::OpenGL:
         return std::make_unique<OpenGLShader>(
-          shaderSources, m_ShaderParameterCollectionFactory);
+          std::move(shaderSources), m_ShaderParameterCollectionFactory);
         break;
       case GraphicsApi::Metal: break;
       case GraphicsApi::Vulkan:

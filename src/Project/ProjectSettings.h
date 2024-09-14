@@ -42,7 +42,7 @@ namespace Dwarf
     std::string                   m_Name;
     time_t                        m_LastOpenedTimeStamp;
     GraphicsApi                   m_GraphicsApi;
-    std::shared_ptr<UUID>         m_LastOpenedScene;
+    std::unique_ptr<UUID>         m_LastOpenedScene;
     std::shared_ptr<IDwarfLogger> m_Logger;
     LoadStatus                    m_LoadStatus;
 
@@ -77,9 +77,9 @@ namespace Dwarf
     GetGraphicsApi() const override;
 
     void
-    SetLastOpenedScene(const std::shared_ptr<UUID>& lastOpenedScene) override;
+    SetLastOpenedScene(const UUID& lastOpenedScene) override;
 
-    const std::shared_ptr<UUID>&
+    const std::unique_ptr<UUID>&
     GetLastOpenedScene() const override;
   };
 }

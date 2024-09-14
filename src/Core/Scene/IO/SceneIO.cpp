@@ -72,7 +72,7 @@ namespace Dwarf
   std::unique_ptr<IScene>
   SceneIO::LoadScene(IAssetReference<SceneAsset>& sceneAsset) const
   {
-    if (FileHandler::FileExists(sceneAsset.GetAsset().m_Path))
+    if (FileHandler::FileExists(sceneAsset.GetPath()))
     {
       return m_SceneFactory->FromAsset(sceneAsset);
     }

@@ -3,8 +3,6 @@
 #include "Core/Asset/Database/IAssetDatabase.h"
 #include "Core/Rendering/Pipelines/IRenderingPipeline.h"
 #include "Core/Rendering/RendererApi/IRendererApi.h"
-#include "Core/Scene/Scene.h"
-#include "Core/Scene/Camera/Camera.h"
 
 namespace Dwarf
 {

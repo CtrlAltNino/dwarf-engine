@@ -12,7 +12,7 @@
 
 namespace Dwarf
 {
-  using Texture2DAssetValue = std::shared_ptr<UUID>;
+  using Texture2DAssetValue = std::unique_ptr<UUID>;
   using ParameterValue = std::variant<bool,
                                       int,
                                       unsigned int,
@@ -36,8 +36,8 @@ namespace Dwarf
     /**
      * @brief Gets a parameter from the collection.
      */
-    virtual std::optional<ParameterValue>
-    GetParameter(std::string const& name) const = 0;
+    virtual ParameterValue&
+    GetParameter(const std::string& name) = 0;
 
     /**
      * @brief Gets the list of parameter identifiers.
@@ -47,10 +47,10 @@ namespace Dwarf
     GetParameterIdentifiers() const = 0;
 
     virtual void
-    RemoveParameter(std::string const& name) = 0;
+    RemoveParameter(const std::string& name) = 0;
 
     virtual bool
-    HasParameter(std::string const& name) const = 0;
+    HasParameter(const std::string& name) const = 0;
 
     /**
      * @brief Clears the parameters.

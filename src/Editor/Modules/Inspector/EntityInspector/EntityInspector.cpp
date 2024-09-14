@@ -64,7 +64,7 @@ namespace Dwarf
   EntityInspector::RenderComponent<IDComponent>(IDComponent& component)
   {
     ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
-    ImGui::TextWrapped("%s", component.ID->ToString().c_str());
+    ImGui::TextWrapped("%s", component.GetID().ToString().c_str());
   }
 
   template<>
@@ -193,16 +193,14 @@ namespace Dwarf
     ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
                          COMPONENT_PANEL_PADDING);
     DwarfUI::AssetInput<ModelAsset>(
-      m_AssetDatabase, component.meshAsset, "##modelAsset");
+      m_AssetDatabase, component.ModelAsset(), "##modelAsset");
     ImGui::PopItemWidth();
 
-    if (component.meshAsset)
+    if (component.ModelAsset())
     {
-      int                                 numMaterials = 0;
-      std::vector<std::shared_ptr<IMesh>> meshes =
-        m_AssetDatabase->Retrieve<ModelAsset>(component.meshAsset)
-          ->GetAsset()
-          .m_Meshes;
+      int                                  numMaterials = 0;
+      std::vector<std::unique_ptr<IMesh>>& meshes =
+        component.ModelAsset()->GetAsset().Meshes();
 
       for (int i = 0; i < meshes.size(); i++)
       {
@@ -214,9 +212,9 @@ namespace Dwarf
       ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
       ImGui::TextWrapped("Materials");
 
-      if (component.materialAssets.size() != numMaterials)
+      if (component.MaterialAssets().size() != numMaterials)
       {
-        component.materialAssets.resize(numMaterials);
+        component.MaterialAssets().resize(numMaterials);
       }
 
       ImGui::Indent(16.0f);
@@ -229,7 +227,7 @@ namespace Dwarf
                              COMPONENT_PANEL_PADDING);
         DwarfUI::AssetInput<MaterialAsset>(
           m_AssetDatabase,
-          component.materialAssets.at(i),
+          component.MaterialAssets().at(i),
           std::format("##materialAsset{}", std::to_string(i)).c_str());
         ImGui::PopItemWidth();
       }

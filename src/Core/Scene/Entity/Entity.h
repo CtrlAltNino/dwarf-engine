@@ -15,8 +15,18 @@ namespace Dwarf
   class Entity
   {
   public:
-    Entity(entt::entity handle, const entt::registry& registry);
+    Entity(entt::entity handle, entt::registry& registry);
+    // Copy constructor
     Entity(const Entity& other) = default;
+
+    // Move operator
+    Entity&
+    operator=(Entity&& other) noexcept
+    {
+      m_EntityHandle = other.m_EntityHandle;
+      m_Registry = std::move(other.m_Registry);
+      return *this;
+    }
 
     /// @brief Adds a component to the entity.
     /// @tparam T Type of component.

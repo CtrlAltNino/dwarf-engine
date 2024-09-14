@@ -14,7 +14,7 @@ namespace Dwarf
     std::vector<std::unique_ptr<IMesh>> m_Meshes;
 
   public:
-    explicit ModelAsset(std::vector<std::unique_ptr<IMesh>>& meshes)
+    ModelAsset(std::vector<std::unique_ptr<IMesh>>& meshes)
       : m_Meshes(std::move(meshes))
     {
       for (auto& mesh : m_Meshes)
@@ -24,7 +24,7 @@ namespace Dwarf
     }
 
     std::vector<std::unique_ptr<IMesh>>&
-    GetMeshes()
+    Meshes()
     {
       return m_Meshes;
     }
@@ -38,11 +38,9 @@ namespace Dwarf
     std::unique_ptr<IMaterial> m_Material;
 
   public:
-    explicit MaterialAsset(std::unique_ptr<IMaterial> material)
+    MaterialAsset(std::unique_ptr<IMaterial>& material)
+      : m_Material(std::move(material))
     {
-      // Use Mesh Importer with meta data to import mesh
-      // m_Material = MaterialSerializer::Deserialize(path);
-      // m_Material->GetShader()->Compile();
     }
 
     IMaterial&
@@ -55,136 +53,192 @@ namespace Dwarf
   /// @brief Component containing a vertex shader asset.
   struct VertexShaderAsset
   {
-    /// @brief Path to the asset.
-    std::filesystem::path m_Path;
-    std::string           m_FileContent;
+  private:
+    /// @brief The content of the file.
+    std::string m_FileContent;
 
-    explicit VertexShaderAsset(std::filesystem::path const& path)
-      : m_Path(path)
-      , m_FileContent(FileHandler::ReadFile(m_Path))
+  public:
+    explicit VertexShaderAsset(const std::filesystem::path& path)
+      : m_FileContent(FileHandler::ReadFile(path))
     {
+    }
+
+    const std::string&
+    GetFileContent() const
+    {
+      return m_FileContent;
     }
   };
 
   /// @brief Component containing a fragment shader asset.
   struct FragmentShaderAsset
   {
-    /// @brief Path to the asset.
-    std::filesystem::path m_Path;
-    std::string           m_FileContent;
+  private:
+    std::string m_FileContent;
 
-    explicit FragmentShaderAsset(std::filesystem::path const& path)
-      : m_Path(path)
-      , m_FileContent(FileHandler::ReadFile(m_Path))
+  public:
+    explicit FragmentShaderAsset(const std::filesystem::path& path)
+      : m_FileContent(FileHandler::ReadFile(path))
     {
+    }
+
+    const std::string&
+    GetFileContent() const
+    {
+      return m_FileContent;
     }
   };
 
   /// @brief Component containing a geometry shader asset.
   struct GeometryShaderAsset
   {
-    /// @brief Path to the asset.
-    std::filesystem::path m_Path;
-    std::string           m_FileContent;
+  private:
+    std::string m_FileContent;
 
-    explicit GeometryShaderAsset(std::filesystem::path const& path)
-      : m_Path(path)
-      , m_FileContent(FileHandler::ReadFile(m_Path))
+  public:
+    explicit GeometryShaderAsset(const std::filesystem::path& path)
+      : m_FileContent(FileHandler::ReadFile(path))
     {
+    }
+
+    const std::string&
+    GetFileContent() const
+    {
+      return m_FileContent;
     }
   };
 
   /// @brief Component containing a tesselation control shader asset.
   struct TessellationControlShaderAsset
   {
-    /// @brief Path to the asset.
-    std::filesystem::path m_Path;
-    std::string           m_FileContent;
+  private:
+    std::string m_FileContent;
 
-    explicit TessellationControlShaderAsset(std::filesystem::path const& path)
-      : m_Path(path)
-      , m_FileContent(FileHandler::ReadFile(m_Path))
+  public:
+    explicit TessellationControlShaderAsset(const std::filesystem::path& path)
+      : m_FileContent(FileHandler::ReadFile(path))
     {
+    }
+
+    const std::string&
+    GetFileContent() const
+    {
+      return m_FileContent;
     }
   };
 
   /// @brief Component containing a tesselation evaluation shader asset.
   struct TessellationEvaluationShaderAsset
   {
-    /// @brief Path to the asset.
-    std::filesystem::path m_Path;
-    std::string           m_FileContent;
+  private:
+    std::string m_FileContent;
 
+  public:
     explicit TessellationEvaluationShaderAsset(
-      std::filesystem::path const& path)
-      : m_Path(path)
-      , m_FileContent(FileHandler::ReadFile(m_Path))
+      const std::filesystem::path& path)
+      : m_FileContent(FileHandler::ReadFile(path))
     {
+    }
+
+    const std::string&
+    GetFileContent() const
+    {
+      return m_FileContent;
     }
   };
 
   /// @brief Component containing a compute shader asset.
   struct ComputeShaderAsset
   {
-    /// @brief Path to the asset.
-    std::filesystem::path m_Path;
-    std::string           m_FileContent;
+  private:
+    std::string m_FileContent;
 
-    explicit ComputeShaderAsset(std::filesystem::path const& path)
-      : m_Path(path)
-      , m_FileContent(FileHandler::ReadFile(m_Path))
+  public:
+    explicit ComputeShaderAsset(const std::filesystem::path& path)
+      : m_FileContent(FileHandler::ReadFile(path))
     {
+    }
+
+    const std::string&
+    GetFileContent() const
+    {
+      return m_FileContent;
     }
   };
 
   /// @brief Component containing a compute shader asset.
   struct HlslShaderAsset
   {
-    /// @brief Path to the asset.
-    std::filesystem::path m_Path;
-    std::string           m_FileContent;
+  private:
+    std::string m_FileContent;
 
-    explicit HlslShaderAsset(std::filesystem::path const& path)
-      : m_Path(path)
-      , m_FileContent(FileHandler::ReadFile(m_Path))
+  public:
+    explicit HlslShaderAsset(const std::filesystem::path& path)
+      : m_FileContent(FileHandler::ReadFile(path))
     {
+    }
+
+    const std::string&
+    GetFileContent() const
+    {
+      return m_FileContent;
     }
   };
 
   /// @brief Component containing a texture asset.
   struct TextureAsset
   {
+  private:
     /// @brief Imported texture.
     std::unique_ptr<ITexture> m_Texture;
 
+  public:
     explicit TextureAsset(std::unique_ptr<ITexture> texture)
       : m_Texture(std::move(texture))
     {
-      std::cout << "Texture Asset created" << std::endl;
-      std::cout << "Texture ID: " << m_Texture->GetTextureID() << std::endl;
+    }
+
+    ITexture&
+    GetTexture()
+    {
+      return *m_Texture;
     }
   };
 
   /// @brief Asset containing a Dwarf Engine scene.
   struct SceneAsset
   {
-    /// @brief Path to the asset.
-    std::filesystem::path m_Path;
+  private:
+    nlohmann::json m_SerializedScene;
 
-    explicit SceneAsset(std::filesystem::path const& path)
-      : m_Path(path)
+  public:
+    explicit SceneAsset(const std::filesystem::path& path)
+      : m_SerializedScene(nlohmann::json::parse(FileHandler::ReadFile(path)))
     {
+    }
+
+    const nlohmann::json&
+    GetSerializedScene()
+    {
+      return m_SerializedScene;
     }
   };
 
   struct UnknownAsset
   {
-    std::filesystem::path m_Path;
-    std::string           m_FileContent;
-    explicit UnknownAsset(std::filesystem::path const& path)
-      : m_Path(path)
-      , m_FileContent(FileHandler::ReadFile(m_Path))
+  private:
+    std::string m_FileContent;
+
+  public:
+    explicit UnknownAsset(const std::filesystem::path& path)
+      : m_FileContent(FileHandler::ReadFile(path))
     {
+    }
+
+    const std::string&
+    GetFileContent() const
+    {
+      return m_FileContent;
     }
   };
 }

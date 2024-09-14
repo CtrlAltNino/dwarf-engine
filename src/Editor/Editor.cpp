@@ -1,6 +1,8 @@
 #include "Editor/Editor.h"
 
+#include "Core/Asset/Database/AssetComponents.h"
 #include "Core/Asset/Database/IAssetDatabase.h"
+#include "Core/Scene/IScene.h"
 #include "Input/IInputManager.h"
 #include "Utilities/TimeUtilities.h"
 
@@ -31,15 +33,19 @@ namespace Dwarf
 
   {
     // Either load the last opened scene or the default scene
-    if (m_ProjectSettings->GetLastOpenedScene() != nullptr)
+    if (m_ProjectSettings->GetLastOpenedScene() != nullptr &&
+        m_AssetDatabase->Exists(*m_ProjectSettings->GetLastOpenedScene()))
     {
-      m_LoadedScene->SetScene(
-        m_SceneIO->LoadScene(m_AssetDatabase->Retrieve<SceneAsset>(
-          m_ProjectSettings->GetLastOpenedScene())));
+      std::unique_ptr<IAssetReference<SceneAsset>> lastOpenedScene =
+        m_AssetDatabase->Retrieve<SceneAsset>(
+          *m_ProjectSettings->GetLastOpenedScene());
+      std::unique_ptr<IScene> scene = m_SceneIO->LoadScene(*lastOpenedScene);
+      m_LoadedScene->SetScene(scene);
     }
     else
     {
-      m_LoadedScene->SetScene(m_SceneIO->LoadDefaultScene());
+      std::unique_ptr<IScene> defaultScene = m_SceneIO->LoadDefaultScene();
+      m_LoadedScene->SetScene(defaultScene);
     }
   }
 

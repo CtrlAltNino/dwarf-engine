@@ -51,7 +51,7 @@ namespace Dwarf
         {
           parameterCollection->SetParameter(
             parameter.key(),
-            std::make_shared<UUID>(
+            std::make_unique<UUID>(
               parameter.value()["value"].get<std::string>()));
         }
         else

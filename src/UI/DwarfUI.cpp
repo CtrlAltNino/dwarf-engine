@@ -5,21 +5,21 @@ namespace Dwarf
   template<>
   void
   DwarfUI::AssetInput<VertexShaderAsset>(
-    std::shared_ptr<IAssetDatabase>                     assetDatabase,
-    std::shared_ptr<AssetReference<VertexShaderAsset>>& asset,
-    const char*                                         imguiID)
+    std::shared_ptr<IAssetDatabase>                      assetDatabase,
+    std::unique_ptr<IAssetReference<VertexShaderAsset>>& asset,
+    const char*                                          imguiID)
   {
     std::vector<entt::entity> availableAssets;
     int                       selectedAsset = -1;
     auto                      view = assetDatabase->GetRegistry()
-                  ->view<IDComponent, NameComponent, VertexShaderAsset>();
+                  .view<IDComponent, NameComponent, VertexShaderAsset>();
 
     int count = 0;
     for (auto entity : view)
     {
       availableAssets.push_back(entity);
-      if (asset && (view.template get<IDComponent>(entity).ID.get() ==
-                    asset->GetUID().get()))
+      if (asset &&
+          (view.template get<IDComponent>(entity).GetID() == asset->GetUID()))
       {
         selectedAsset = count;
       }
@@ -52,7 +52,7 @@ namespace Dwarf
         {
           selectedAsset = i;
           asset = assetDatabase->Retrieve<VertexShaderAsset>(
-            view.template get<IDComponent>(availableAssets[i]).ID);
+            view.template get<IDComponent>(availableAssets[i]).GetID());
         }
       }
 
@@ -63,21 +63,21 @@ namespace Dwarf
   template<>
   void
   DwarfUI::AssetInput<FragmentShaderAsset>(
-    std::shared_ptr<IAssetDatabase>                       assetDatabase,
-    std::shared_ptr<AssetReference<FragmentShaderAsset>>& asset,
-    const char*                                           imguiID)
+    std::shared_ptr<IAssetDatabase>                        assetDatabase,
+    std::unique_ptr<IAssetReference<FragmentShaderAsset>>& asset,
+    const char*                                            imguiID)
   {
     std::vector<entt::entity> availableAssets;
     int                       selectedAsset = -1;
     auto                      view = assetDatabase->GetRegistry()
-                  ->view<IDComponent, NameComponent, FragmentShaderAsset>();
+                  .view<IDComponent, NameComponent, FragmentShaderAsset>();
 
     int count = 0;
     for (auto entity : view)
     {
       availableAssets.push_back(entity);
-      if (asset && (view.template get<IDComponent>(entity).ID.get() ==
-                    asset->GetUID().get()))
+      if (asset &&
+          (view.template get<IDComponent>(entity).GetID() == asset->GetUID()))
       {
         selectedAsset = count;
       }
@@ -110,7 +110,7 @@ namespace Dwarf
         {
           selectedAsset = i;
           asset = assetDatabase->Retrieve<FragmentShaderAsset>(
-            view.template get<IDComponent>(availableAssets[i]).ID);
+            view.template get<IDComponent>(availableAssets[i]).GetID());
         }
       }
 

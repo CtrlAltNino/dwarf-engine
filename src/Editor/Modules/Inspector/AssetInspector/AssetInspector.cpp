@@ -62,15 +62,15 @@ namespace Dwarf
   template<>
   void
   AssetInspector::RenderAssetInspector<UnknownAsset>(
-    std::shared_ptr<AssetReference<UnknownAsset>> asset) const
+    IAssetReference<UnknownAsset>& asset)
   {
     ImGui::TextWrapped("File name: ");
     ImGui::SameLine(0, 5.0f);
-    ImGui::TextWrapped("%s", asset->GetPath().filename().string().c_str());
+    ImGui::TextWrapped("%s", asset.GetPath().filename().string().c_str());
 
     ImGui::TextWrapped("Path: ");
     ImGui::SameLine(0, 5.0f);
-    ImGui::TextWrapped("%s", asset->GetPath().string().c_str());
+    ImGui::TextWrapped("%s", asset.GetPath().string().c_str());
 
     ImGui::TextWrapped("Type: ");
     ImGui::SameLine(0, 5.0f);
@@ -132,6 +132,7 @@ namespace Dwarf
       ImGui::SameLine();
       ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
                            UNIFORM_DELETE_BUTTON_WIDTH - 8.0f);
+
       DwarfUI::AssetInput<TextureAsset>(
         AssetDatabase, std::get<Texture2DAssetValue>(Value), ImGuiID.c_str());
       ImGui::PopItemWidth();
@@ -176,7 +177,7 @@ namespace Dwarf
   template<>
   void
   AssetInspector::RenderAssetInspector<MaterialAsset>(
-    std::shared_ptr<AssetReference<MaterialAsset>> asset) const
+    IAssetReference<MaterialAsset>& asset)
   {
     ImDrawList* draw_list = ImGui::GetWindowDrawList();
     draw_list->ChannelsSplit(2);
@@ -189,11 +190,11 @@ namespace Dwarf
 
     ImGui::TextWrapped("File name: ");
     ImGui::SameLine(0, 5.0f);
-    ImGui::TextWrapped("%s", asset->GetPath().filename().string().c_str());
+    ImGui::TextWrapped("%s", asset.GetPath().filename().string().c_str());
 
     ImGui::TextWrapped("Path: ");
     ImGui::SameLine(0, 5.0f);
-    ImGui::TextWrapped("%s", asset->GetPath().string().c_str());
+    ImGui::TextWrapped("%s", asset.GetPath().string().c_str());
 
     ImGui::TextWrapped("Type: ");
     ImGui::SameLine(0, 5.0f);
@@ -204,7 +205,7 @@ namespace Dwarf
     {
       // TODO: Fix: Crashes when not returned here
       // m_AssetDatabase->Reimport(asset->GetPath());
-      m_AssetReimporter->QueueReimport(asset->GetPath());
+      m_AssetReimporter->QueueReimport(asset.GetPath());
       ImGui::EndChild();
       return;
     }
@@ -224,9 +225,9 @@ namespace Dwarf
       separatorMin, separatorMax, COL_BG_DIM);
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 20);
 
-    std::shared_ptr<IMaterial> mat = asset->GetAsset().m_Material;
+    IMaterial& mat = asset.GetAsset().GetMaterial();
 
-    ImGui::Checkbox("Transparent", &mat->GetMaterialProperties().IsTransparent);
+    ImGui::Checkbox("Transparent", &mat.GetMaterialProperties().IsTransparent);
 
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + COMPONENT_PANEL_PADDING);
 
@@ -355,7 +356,7 @@ namespace Dwarf
         case Metal: break;
         case OpenGL:
           {
-            auto shader = (OpenGLShader*)mat->GetShader().get();
+            auto shader = (OpenGLShader*)mat.GetShader().get();
             ImGui::TextWrapped("Vertex Shader");
             ImGui::SameLine();
             ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
@@ -476,14 +477,13 @@ namespace Dwarf
 
       if (ImGui::Button("Compile", ImVec2(60, 25)))
       {
-        mat->GetShader()->Compile();
+        mat.GetShader()->Compile();
       }
 
       ImGui::SameLine();
 
-      ImGui::TextWrapped(mat->GetShader()->IsCompiled()
-                           ? "Successfully Compiled"
-                           : "Couldn't compile");
+      ImGui::TextWrapped(mat.GetShader()->IsCompiled() ? "Successfully Compiled"
+                                                       : "Couldn't compile");
       ImGui::Unindent(15.0f);
     }
 
@@ -494,7 +494,7 @@ namespace Dwarf
       // engine)
       int n = 0;
       for (auto paramIdentifier :
-           mat->GetShaderParameters()->GetParameterIdentifiers())
+           mat.GetShaderParameters()->GetParameterIdentifiers())
       {
         if (std::ranges::find(std::begin(reservedParameterNames),
                               std::end(reservedParameterNames),
@@ -502,16 +502,17 @@ namespace Dwarf
             std::end(reservedParameterNames))
         {
           auto parameter =
-            mat->GetShaderParameters()->GetParameter(paramIdentifier);
-          if (parameter.has_value())
+            &mat.GetShaderParameters()->GetParameter(paramIdentifier);
+          auto derefParam = *parameter;
+          if (parameter)
           {
             std::visit(
               RenderShaderParameterVisitor{
                 m_AssetDatabase,
                 paramIdentifier,
-                parameter.value(),
+                *parameter,
                 std::format("##boolean{}", std::to_string(n++)) },
-              parameter.value());
+              derefParam);
             // Parameter UI specific to parameter type
             // switch (parameter->index())
             // {
@@ -652,7 +653,7 @@ namespace Dwarf
                 ImVec2(UNIFORM_DELETE_BUTTON_WIDTH - 15.0f, 0)))
           {
             // i = mat->m_Parameters.erase(i)--;
-            mat->GetShaderParameters()->RemoveParameter(paramIdentifier);
+            mat.GetShaderParameters()->RemoveParameter(paramIdentifier);
           }
           else
           {
@@ -696,37 +697,37 @@ namespace Dwarf
       if (ImGui::Button("Add##addParam",
                         ImVec2(UNIFORM_DELETE_BUTTON_WIDTH - 15.0f, 0)) &&
           (std::strlen(paramName) > 0) &&
-          !mat->GetShaderParameters()->HasParameter(paramName))
+          !mat.GetShaderParameters()->HasParameter(paramName))
       {
         switch ((ShaderParameterType)selectedParameterType)
         {
           using enum ShaderParameterType;
           case BOOLEAN:
-            mat->GetShaderParameters()->SetParameter(paramName, false);
+            mat.GetShaderParameters()->SetParameter(paramName, false);
             break;
           case INTEGER:
-            mat->GetShaderParameters()->SetParameter(paramName, 0);
+            mat.GetShaderParameters()->SetParameter(paramName, 0);
             break;
           case UNSIGNED_INTEGER:
-            mat->GetShaderParameters()->SetParameter(paramName, 0u);
+            mat.GetShaderParameters()->SetParameter(paramName, 0u);
             break;
           case FLOAT:
-            mat->GetShaderParameters()->SetParameter(paramName, 0.0f);
+            mat.GetShaderParameters()->SetParameter(paramName, 0.0f);
             break;
           case TEX2D:
-            mat->GetShaderParameters()->SetParameter(
+            mat.GetShaderParameters()->SetParameter(
               paramName, Texture2DAssetValue(nullptr));
             break;
           case VEC2:
-            mat->GetShaderParameters()->SetParameter(paramName,
-                                                     glm::vec2(0.0f, 0.0f));
+            mat.GetShaderParameters()->SetParameter(paramName,
+                                                    glm::vec2(0.0f, 0.0f));
             break;
           case VEC3:
-            mat->GetShaderParameters()->SetParameter(
+            mat.GetShaderParameters()->SetParameter(
               paramName, glm::vec3(0.0f, 0.0f, 0.0f));
             break;
           case VEC4:
-            mat->GetShaderParameters()->SetParameter(
+            mat.GetShaderParameters()->SetParameter(
               paramName, glm::vec4(0.0f, 0.0f, 0.0f, 0.0f));
             break;
         }
@@ -750,8 +751,8 @@ namespace Dwarf
     if (ImGui::Button("Generate parameters",
                       ImVec2(ImGui::GetContentRegionAvail().x, 50)))
     {
-      mat->GenerateShaderParameters();
-      mat->GetShader()->Compile();
+      mat.GenerateShaderParameters();
+      mat.GetShader()->Compile();
     }
 
     ImGui::Text("Preview:");
@@ -815,7 +816,7 @@ namespace Dwarf
   template<>
   void
   AssetInspector::RenderAssetInspector<SceneAsset>(
-    std::shared_ptr<AssetReference<SceneAsset>> asset) const
+    IAssetReference<SceneAsset>& asset)
   {
     ImDrawList* draw_list = ImGui::GetWindowDrawList();
     draw_list->ChannelsSplit(2);
@@ -828,11 +829,11 @@ namespace Dwarf
 
     ImGui::TextWrapped("File name: ");
     ImGui::SameLine(0, 5.0f);
-    ImGui::TextWrapped("%s", asset->GetPath().filename().string().c_str());
+    ImGui::TextWrapped("%s", asset.GetPath().filename().string().c_str());
 
     ImGui::TextWrapped("Path: ");
     ImGui::SameLine(0, 5.0f);
-    ImGui::TextWrapped("%s", asset->GetPath().string().c_str());
+    ImGui::TextWrapped("%s", asset.GetPath().string().c_str());
 
     ImGui::TextWrapped("Type: ");
     ImGui::SameLine(0, 5.0f);
@@ -842,7 +843,7 @@ namespace Dwarf
     if (ImGui::Button("Reimport"))
     {
       // m_AssetDatabase->Reimport(asset->GetPath());
-      m_AssetReimporter->QueueReimport(asset->GetPath());
+      m_AssetReimporter->QueueReimport(asset.GetPath());
     }
 
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
@@ -861,10 +862,10 @@ namespace Dwarf
 
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 20);
 
-    if (ImGui::Button("Load scene") &&
-        FileHandler::FileExists(asset->GetPath()))
+    if (ImGui::Button("Load scene") && FileHandler::FileExists(asset.GetPath()))
     {
-      m_LoadedScene->SetScene(m_SceneIO->LoadScene(asset));
+      std::unique_ptr<IScene> loadedScene = m_SceneIO->LoadScene(asset);
+      m_LoadedScene->SetScene(loadedScene);
     }
 
     draw_list->ChannelsSetCurrent(0);
@@ -884,7 +885,7 @@ namespace Dwarf
   template<>
   void
   AssetInspector::RenderAssetInspector<ModelAsset>(
-    std::shared_ptr<AssetReference<ModelAsset>> asset) const
+    IAssetReference<ModelAsset>& asset)
   {
     ImDrawList* draw_list = ImGui::GetWindowDrawList();
     draw_list->ChannelsSplit(2);
@@ -897,11 +898,11 @@ namespace Dwarf
 
     ImGui::TextWrapped("File name: ");
     ImGui::SameLine(0, 5.0f);
-    ImGui::TextWrapped("%s", asset->GetPath().filename().string().c_str());
+    ImGui::TextWrapped("%s", asset.GetPath().filename().string().c_str());
 
     ImGui::TextWrapped("Path: ");
     ImGui::SameLine(0, 5.0f);
-    ImGui::TextWrapped("%s", asset->GetPath().string().c_str());
+    ImGui::TextWrapped("%s", asset.GetPath().string().c_str());
 
     ImGui::TextWrapped("Type: ");
     ImGui::SameLine(0, 5.0f);
@@ -911,7 +912,7 @@ namespace Dwarf
     if (ImGui::Button("Reimport"))
     {
       // m_AssetDatabase->Reimport(asset->GetPath());
-      m_AssetReimporter->QueueReimport(asset->GetPath());
+      m_AssetReimporter->QueueReimport(asset.GetPath());
     }
 
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
@@ -1002,7 +1003,7 @@ namespace Dwarf
   template<>
   void
   AssetInspector::RenderAssetInspector<TextureAsset>(
-    std::shared_ptr<AssetReference<TextureAsset>> asset) const
+    IAssetReference<TextureAsset>& asset)
   {
     ImDrawList* draw_list = ImGui::GetWindowDrawList();
     draw_list->ChannelsSplit(2);
@@ -1015,11 +1016,11 @@ namespace Dwarf
 
     ImGui::TextWrapped("File name: ");
     ImGui::SameLine(0, 5.0f);
-    ImGui::TextWrapped("%s", asset->GetPath().filename().string().c_str());
+    ImGui::TextWrapped("%s", asset.GetPath().filename().string().c_str());
 
     ImGui::TextWrapped("Path: ");
     ImGui::SameLine(0, 5.0f);
-    ImGui::TextWrapped("%s", asset->GetPath().string().c_str());
+    ImGui::TextWrapped("%s", asset.GetPath().string().c_str());
 
     ImGui::TextWrapped("Type: ");
     ImGui::SameLine(0, 5.0f);
@@ -1029,7 +1030,7 @@ namespace Dwarf
     if (ImGui::Button("Reimport"))
     {
       // m_AssetDatabase->Reimport(asset->GetPath());
-      m_AssetReimporter->QueueReimport(asset->GetPath());
+      m_AssetReimporter->QueueReimport(asset.GetPath());
     }
 
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
@@ -1050,7 +1051,7 @@ namespace Dwarf
     float width = ImGui::GetContentRegionAvail().x;
     ImGui::TextWrapped("Preview:");
 
-    auto texID = (ImTextureID)(asset->GetAsset().m_Texture->GetTextureID());
+    auto texID = (ImTextureID)(asset.GetAsset().GetTexture().GetTextureID());
     // std::cout << "Texture ID: " << texID << std::endl;
     ImGui::Image(texID, ImVec2(width, width));
 
@@ -1071,15 +1072,15 @@ namespace Dwarf
   template<>
   void
   AssetInspector::RenderAssetInspector<VertexShaderAsset>(
-    std::shared_ptr<AssetReference<VertexShaderAsset>> asset) const
+    IAssetReference<VertexShaderAsset>& asset)
   {
     ImGui::TextWrapped("File name: ");
     ImGui::SameLine(0, 5.0f);
-    ImGui::TextWrapped("%s", asset->GetPath().filename().string().c_str());
+    ImGui::TextWrapped("%s", asset.GetPath().filename().string().c_str());
 
     ImGui::TextWrapped("Path: ");
     ImGui::SameLine(0, 5.0f);
-    ImGui::TextWrapped("%s", asset->GetPath().string().c_str());
+    ImGui::TextWrapped("%s", asset.GetPath().string().c_str());
 
     ImGui::TextWrapped("Type: ");
     ImGui::SameLine(0, 5.0f);
@@ -1089,15 +1090,15 @@ namespace Dwarf
   template<>
   void
   AssetInspector::RenderAssetInspector<TessellationControlShaderAsset>(
-    std::shared_ptr<AssetReference<TessellationControlShaderAsset>> asset) const
+    IAssetReference<TessellationControlShaderAsset>& asset)
   {
     ImGui::TextWrapped("File name: ");
     ImGui::SameLine(0, 5.0f);
-    ImGui::TextWrapped("%s", asset->GetPath().filename().string().c_str());
+    ImGui::TextWrapped("%s", asset.GetPath().filename().string().c_str());
 
     ImGui::TextWrapped("Path: ");
     ImGui::SameLine(0, 5.0f);
-    ImGui::TextWrapped("%s", asset->GetPath().string().c_str());
+    ImGui::TextWrapped("%s", asset.GetPath().string().c_str());
 
     ImGui::TextWrapped("Type: ");
     ImGui::SameLine(0, 5.0f);
@@ -1107,16 +1108,15 @@ namespace Dwarf
   template<>
   void
   AssetInspector::RenderAssetInspector<TessellationEvaluationShaderAsset>(
-    std::shared_ptr<AssetReference<TessellationEvaluationShaderAsset>> asset)
-    const
+    IAssetReference<TessellationEvaluationShaderAsset>& asset)
   {
     ImGui::TextWrapped("File name: ");
     ImGui::SameLine(0, 5.0f);
-    ImGui::TextWrapped("%s", asset->GetPath().filename().string().c_str());
+    ImGui::TextWrapped("%s", asset.GetPath().filename().string().c_str());
 
     ImGui::TextWrapped("Path: ");
     ImGui::SameLine(0, 5.0f);
-    ImGui::TextWrapped("%s", asset->GetPath().string().c_str());
+    ImGui::TextWrapped("%s", asset.GetPath().string().c_str());
 
     ImGui::TextWrapped("Type: ");
     ImGui::SameLine(0, 5.0f);
@@ -1126,15 +1126,15 @@ namespace Dwarf
   template<>
   void
   AssetInspector::RenderAssetInspector<GeometryShaderAsset>(
-    std::shared_ptr<AssetReference<GeometryShaderAsset>> asset) const
+    IAssetReference<GeometryShaderAsset>& asset)
   {
     ImGui::TextWrapped("File name: ");
     ImGui::SameLine(0, 5.0f);
-    ImGui::TextWrapped("%s", asset->GetPath().filename().string().c_str());
+    ImGui::TextWrapped("%s", asset.GetPath().filename().string().c_str());
 
     ImGui::TextWrapped("Path: ");
     ImGui::SameLine(0, 5.0f);
-    ImGui::TextWrapped("%s", asset->GetPath().string().c_str());
+    ImGui::TextWrapped("%s", asset.GetPath().string().c_str());
 
     ImGui::TextWrapped("Type: ");
     ImGui::SameLine(0, 5.0f);
@@ -1144,15 +1144,15 @@ namespace Dwarf
   template<>
   void
   AssetInspector::RenderAssetInspector<FragmentShaderAsset>(
-    std::shared_ptr<AssetReference<FragmentShaderAsset>> asset) const
+    IAssetReference<FragmentShaderAsset>& asset)
   {
     ImGui::TextWrapped("File name: ");
     ImGui::SameLine(0, 5.0f);
-    ImGui::TextWrapped("%s", asset->GetPath().filename().string().c_str());
+    ImGui::TextWrapped("%s", asset.GetPath().filename().string().c_str());
 
     ImGui::TextWrapped("Path: ");
     ImGui::SameLine(0, 5.0f);
-    ImGui::TextWrapped("%s", asset->GetPath().string().c_str());
+    ImGui::TextWrapped("%s", asset.GetPath().string().c_str());
 
     ImGui::TextWrapped("Type: ");
     ImGui::SameLine(0, 5.0f);
@@ -1162,15 +1162,15 @@ namespace Dwarf
   template<>
   void
   AssetInspector::RenderAssetInspector<ComputeShaderAsset>(
-    std::shared_ptr<AssetReference<ComputeShaderAsset>> asset) const
+    IAssetReference<ComputeShaderAsset>& asset)
   {
     ImGui::TextWrapped("File name: ");
     ImGui::SameLine(0, 5.0f);
-    ImGui::TextWrapped("%s", asset->GetPath().filename().string().c_str());
+    ImGui::TextWrapped("%s", asset.GetPath().filename().string().c_str());
 
     ImGui::TextWrapped("Path: ");
     ImGui::SameLine(0, 5.0f);
-    ImGui::TextWrapped("%s", asset->GetPath().string().c_str());
+    ImGui::TextWrapped("%s", asset.GetPath().string().c_str());
 
     ImGui::TextWrapped("Type: ");
     ImGui::SameLine(0, 5.0f);
@@ -1180,15 +1180,15 @@ namespace Dwarf
   template<>
   void
   AssetInspector::RenderAssetInspector<HlslShaderAsset>(
-    std::shared_ptr<AssetReference<HlslShaderAsset>> asset) const
+    IAssetReference<HlslShaderAsset>& asset)
   {
     ImGui::TextWrapped("File name: ");
     ImGui::SameLine(0, 5.0f);
-    ImGui::TextWrapped("%s", asset->GetPath().filename().string().c_str());
+    ImGui::TextWrapped("%s", asset.GetPath().filename().string().c_str());
 
     ImGui::TextWrapped("Path: ");
     ImGui::SameLine(0, 5.0f);
-    ImGui::TextWrapped("%s", asset->GetPath().string().c_str());
+    ImGui::TextWrapped("%s", asset.GetPath().string().c_str());
 
     ImGui::TextWrapped("Type: ");
     ImGui::SameLine(0, 5.0f);
@@ -1196,7 +1196,7 @@ namespace Dwarf
   }
 
   void
-  AssetInspector::Render(const std::filesystem::path& assetPath) const
+  AssetInspector::Render(const std::filesystem::path& assetPath)
   {
     if (m_AssetDatabase->Exists(assetPath))
     {
@@ -1206,53 +1206,53 @@ namespace Dwarf
         using enum ASSET_TYPE;
         case MODEL:
           RenderAssetInspector(
-            m_AssetDatabase->Retrieve<ModelAsset>(assetPath));
+            *m_AssetDatabase->Retrieve<ModelAsset>(assetPath));
           break;
         case TEXTURE:
           RenderAssetInspector(
-            m_AssetDatabase->Retrieve<TextureAsset>(assetPath));
+            *m_AssetDatabase->Retrieve<TextureAsset>(assetPath));
           break;
         case SCENE:
           RenderAssetInspector(
-            m_AssetDatabase->Retrieve<SceneAsset>(assetPath));
+            *m_AssetDatabase->Retrieve<SceneAsset>(assetPath));
           break;
         case MATERIAL:
           RenderAssetInspector(
-            m_AssetDatabase->Retrieve<MaterialAsset>(assetPath));
+            *m_AssetDatabase->Retrieve<MaterialAsset>(assetPath));
           break;
         case VERTEX_SHADER:
           RenderAssetInspector(
-            m_AssetDatabase->Retrieve<VertexShaderAsset>(assetPath));
+            *m_AssetDatabase->Retrieve<VertexShaderAsset>(assetPath));
           break;
         case TESC_SHADER:
           RenderAssetInspector(
-            m_AssetDatabase->Retrieve<TessellationControlShaderAsset>(
+            *m_AssetDatabase->Retrieve<TessellationControlShaderAsset>(
               assetPath));
           break;
         case TESE_SHADER:
           RenderAssetInspector(
-            m_AssetDatabase->Retrieve<TessellationEvaluationShaderAsset>(
+            *m_AssetDatabase->Retrieve<TessellationEvaluationShaderAsset>(
               assetPath));
           break;
         case GEOMETRY_SHADER:
           RenderAssetInspector(
-            m_AssetDatabase->Retrieve<GeometryShaderAsset>(assetPath));
+            *m_AssetDatabase->Retrieve<GeometryShaderAsset>(assetPath));
           break;
         case FRAGMENT_SHADER:
           RenderAssetInspector(
-            m_AssetDatabase->Retrieve<FragmentShaderAsset>(assetPath));
+            *m_AssetDatabase->Retrieve<FragmentShaderAsset>(assetPath));
           break;
         case HLSL_SHADER:
           RenderAssetInspector(
-            m_AssetDatabase->Retrieve<HlslShaderAsset>(assetPath));
+            *m_AssetDatabase->Retrieve<HlslShaderAsset>(assetPath));
           break;
         case COMPUTE_SHADER:
           RenderAssetInspector(
-            m_AssetDatabase->Retrieve<ComputeShaderAsset>(assetPath));
+            *m_AssetDatabase->Retrieve<ComputeShaderAsset>(assetPath));
           break;
         case UNKNOWN:
           RenderAssetInspector(
-            m_AssetDatabase->Retrieve<UnknownAsset>(assetPath));
+            *m_AssetDatabase->Retrieve<UnknownAsset>(assetPath));
           break;
         default: break;
       }

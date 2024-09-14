@@ -631,7 +631,7 @@ namespace Dwarf
     }
   }
 
-  const entt::registry&
+  entt::registry&
   AssetDatabase::GetRegistry()
   {
     return m_Registry;
