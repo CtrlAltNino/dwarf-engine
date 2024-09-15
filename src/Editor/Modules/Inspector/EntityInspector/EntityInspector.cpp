@@ -94,7 +94,8 @@ namespace Dwarf
 
     ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
                          COMPONENT_PANEL_PADDING);
-    ImGui::DragFloat3("##transform_position", &component.position.x, 0.015f);
+    ImGui::DragFloat3(
+      "##transform_position", &component.GetPosition().x, 0.015f);
     ImGui::PopItemWidth();
 
     ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
@@ -102,11 +103,11 @@ namespace Dwarf
     ImGui::TextWrapped("Rotation");
     ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
 
-    glm::vec3 rot = component.getEulerAngles();
+    glm::vec3 rot = component.GetEulerAngles();
     ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
                          COMPONENT_PANEL_PADDING);
     ImGui::DragFloat3("##transform_rotation", &rot.x, 0.05f);
-    component.rotation = rot;
+    component.GetEulerAngles() = rot;
     ImGui::PopItemWidth();
 
     ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
@@ -116,7 +117,7 @@ namespace Dwarf
 
     ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
                          COMPONENT_PANEL_PADDING);
-    ImGui::DragFloat3("##transform_scale", &component.scale.x, 0.015f);
+    ImGui::DragFloat3("##transform_scale", &component.GetScale().x, 0.015f);
     ImGui::PopItemWidth();
   }
 
@@ -136,7 +137,7 @@ namespace Dwarf
                  LightComponent::LIGHT_TYPE_NAMES.data(),
                  LightComponent::LIGHT_TYPE_NAMES.size());
     ImGui::PopItemWidth();
-    component.type = (LightComponent::LIGHT_TYPE)item_current;
+    component.GetType() = (LightComponent::LIGHT_TYPE)item_current;
 
     ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
 
@@ -145,7 +146,7 @@ namespace Dwarf
     ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
                          COMPONENT_PANEL_PADDING);
     ImGui::ColorEdit3(
-      "##light_color", &component.lightColor.r, ImGuiColorEditFlags_None);
+      "##light_color", &component.GetColor().r, ImGuiColorEditFlags_None);
     ImGui::PopItemWidth();
 
     ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
@@ -154,21 +155,22 @@ namespace Dwarf
     ImGui::SameLine();
     ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
                          COMPONENT_PANEL_PADDING);
-    ImGui::DragFloat("##light_attenuation", &component.attenuation, 0.015f);
+    ImGui::DragFloat(
+      "##light_attenuation", &component.GetAttenuation(), 0.015f);
     ImGui::PopItemWidth();
 
-    if (component.type == LightComponent::LIGHT_TYPE::POINT_LIGHT)
+    if (component.GetType() == LightComponent::LIGHT_TYPE::POINT_LIGHT)
     {
       ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
       ImGui::TextWrapped("Radius");
       ImGui::SameLine();
       ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
                            COMPONENT_PANEL_PADDING);
-      ImGui::DragFloat("##light_point_radius", &component.radius, 0.015f);
+      ImGui::DragFloat("##light_point_radius", &component.GetRadius(), 0.015f);
       ImGui::PopItemWidth();
     }
 
-    if (component.type == LightComponent::LIGHT_TYPE::SPOT_LIGHT)
+    if (component.GetType() == LightComponent::LIGHT_TYPE::SPOT_LIGHT)
     {
       ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
       ImGui::TextWrapped("Opening Angle");
@@ -176,7 +178,7 @@ namespace Dwarf
       ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
                            COMPONENT_PANEL_PADDING);
       ImGui::SliderFloat(
-        "##light_spot_angle", &component.openingAngle, 0.0f, 180.0f);
+        "##light_spot_angle", &component.GetOpeningAngle(), 0.0f, 180.0f);
       ImGui::PopItemWidth();
     }
   }
@@ -193,20 +195,20 @@ namespace Dwarf
     ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
                          COMPONENT_PANEL_PADDING);
     DwarfUI::AssetInput<ModelAsset>(
-      m_AssetDatabase, component.ModelAsset(), "##modelAsset");
+      m_AssetDatabase, component.GetModelAsset(), "##modelAsset");
     ImGui::PopItemWidth();
 
-    if (component.ModelAsset())
+    if (component.GetModelAsset().has_value())
     {
-      int                                  numMaterials = 0;
-      std::vector<std::unique_ptr<IMesh>>& meshes =
-        component.ModelAsset()->GetAsset().Meshes();
+      int                 numMaterials = 0;
+      std::vector<IMesh>& meshes =
+        component.GetModelAsset().value().GetAsset().Meshes();
 
       for (int i = 0; i < meshes.size(); i++)
       {
-        if (meshes[i]->GetMaterialIndex() > numMaterials)
+        if (meshes[i].GetMaterialIndex() > numMaterials)
         {
-          numMaterials = meshes[i]->GetMaterialIndex();
+          numMaterials = meshes[i].GetMaterialIndex();
         }
       }
       ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);

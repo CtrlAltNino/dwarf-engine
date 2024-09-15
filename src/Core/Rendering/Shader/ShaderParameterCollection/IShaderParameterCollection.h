@@ -12,7 +12,7 @@
 
 namespace Dwarf
 {
-  using Texture2DAssetValue = std::unique_ptr<UUID>;
+  using Texture2DAssetValue = std::optional<UUID>;
   using ParameterValue = std::variant<bool,
                                       int,
                                       unsigned int,
@@ -136,7 +136,7 @@ namespace Dwarf
     void
     AddDefaultTex2d(std::string_view identifier)
     {
-      SetParameter(identifier, nullptr);
+      SetParameter(identifier, std::nullopt);
     }
   };
 }

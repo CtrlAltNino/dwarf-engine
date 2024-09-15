@@ -5,9 +5,9 @@ namespace Dwarf
   template<>
   void
   DwarfUI::AssetInput<VertexShaderAsset>(
-    std::shared_ptr<IAssetDatabase>                      assetDatabase,
-    std::unique_ptr<IAssetReference<VertexShaderAsset>>& asset,
-    const char*                                          imguiID)
+    std::shared_ptr<IAssetDatabase>                    assetDatabase,
+    std::optional<IAssetReference<VertexShaderAsset>>& asset,
+    const char*                                        imguiID)
   {
     std::vector<entt::entity> availableAssets;
     int                       selectedAsset = -1;
@@ -38,7 +38,7 @@ namespace Dwarf
             "Default", selectedAsset == -1, 0, ImVec2(0, 16 + 10)))
       {
         selectedAsset = -1;
-        asset = nullptr;
+        asset = std::nullopt;
       }
 
       for (int i = 0; i < availableAssets.size(); i++)
@@ -63,9 +63,9 @@ namespace Dwarf
   template<>
   void
   DwarfUI::AssetInput<FragmentShaderAsset>(
-    std::shared_ptr<IAssetDatabase>                        assetDatabase,
-    std::unique_ptr<IAssetReference<FragmentShaderAsset>>& asset,
-    const char*                                            imguiID)
+    std::shared_ptr<IAssetDatabase>                      assetDatabase,
+    std::optional<IAssetReference<FragmentShaderAsset>>& asset,
+    const char*                                          imguiID)
   {
     std::vector<entt::entity> availableAssets;
     int                       selectedAsset = -1;
@@ -96,7 +96,7 @@ namespace Dwarf
             "Default", selectedAsset == -1, 0, ImVec2(0, 16 + 10)))
       {
         selectedAsset = -1;
-        asset = nullptr;
+        asset = std::nullopt;
       }
 
       for (int i = 0; i < availableAssets.size(); i++)

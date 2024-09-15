@@ -98,13 +98,13 @@ namespace Dwarf
       TransformComponent transform = GetComponent<TransformComponent>();
       auto               newParent = Entity(entity, m_Registry);
 
-      if (transform.parent != entt::null)
+      if (transform.GetParent() != entt::null)
       {
-        auto oldParent = Entity(transform.parent, m_Registry);
+        auto oldParent = Entity(transform.GetParent(), m_Registry);
         oldParent.RemoveChild(m_EntityHandle);
       }
 
-      GetComponent<TransformComponent>().parent = entity;
+      transform.GetParent() = entity;
       if (m_Registry.valid(entity))
       {
         newParent.AddChild(m_EntityHandle);
@@ -118,12 +118,12 @@ namespace Dwarf
     {
       TransformComponent transform = GetComponent<TransformComponent>();
 
-      if (transform.children.empty() ||
-          (std::ranges::find(transform.children.begin(),
-                             transform.children.end(),
-                             entity) == transform.children.end()))
+      if (transform.GetChildren().empty() ||
+          (std::ranges::find(transform.GetChildren().begin(),
+                             transform.GetChildren().end(),
+                             entity) == transform.GetChildren().end()))
       {
-        GetComponent<TransformComponent>().children.push_back(entity);
+        GetComponent<TransformComponent>().GetChildren().push_back(entity);
       }
     }
 
@@ -132,13 +132,13 @@ namespace Dwarf
     void
     RemoveChild(entt::entity entity)
     {
-      auto it =
-        std::ranges::find(GetComponent<TransformComponent>().children.begin(),
-                          GetComponent<TransformComponent>().children.end(),
-                          entity);
-      if (it != GetComponent<TransformComponent>().children.end())
+      auto it = std::ranges::find(
+        GetComponent<TransformComponent>().GetChildren().begin(),
+        GetComponent<TransformComponent>().GetChildren().end(),
+        entity);
+      if (it != GetComponent<TransformComponent>().GetChildren().end())
       {
-        GetComponent<TransformComponent>().children.erase(it);
+        GetComponent<TransformComponent>().GetChildren().erase(it);
       }
     }
 
@@ -149,9 +149,9 @@ namespace Dwarf
     SetChildIndex(int index)
     {
       std::vector<entt::entity>* siblings =
-        &Entity(GetComponent<TransformComponent>().parent, m_Registry)
+        &Entity(GetComponent<TransformComponent>().GetParent(), m_Registry)
            .GetComponent<TransformComponent>()
-           .children;
+           .GetChildren();
       auto it =
         std::ranges::find(siblings->begin(), siblings->end(), m_EntityHandle);
 
@@ -176,9 +176,9 @@ namespace Dwarf
       int index = -1;
 
       std::vector<entt::entity> siblings =
-        Entity(GetComponent<TransformComponent>().parent, m_Registry)
+        Entity(GetComponent<TransformComponent>().GetParent(), m_Registry)
           .GetComponent<TransformComponent>()
-          .children;
+          .GetChildren();
 
       // If element was found
       if (auto it =
@@ -196,7 +196,7 @@ namespace Dwarf
     const entt::entity&
     GetParent() const
     {
-      return m_Registry.get<TransformComponent>(m_EntityHandle).parent;
+      return m_Registry.get<TransformComponent>(m_EntityHandle).GetParent();
     }
 
     /// @brief Returns the list of this entity's children.
@@ -204,7 +204,7 @@ namespace Dwarf
     const std::vector<entt::entity>&
     GetChildren() const
     {
-      return m_Registry.get<TransformComponent>(m_EntityHandle).children;
+      return m_Registry.get<TransformComponent>(m_EntityHandle).GetChildren();
     }
 
     entt::entity

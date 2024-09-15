@@ -6,9 +6,11 @@
 namespace Dwarf
 {
   Scene::Scene(const nlohmann::json&             serializedSceneGraph,
-               std::unique_ptr<ISceneProperties> properties)
+               std::unique_ptr<ISceneProperties> properties,
+               std::shared_ptr<IAssetDatabase>   assetDatabase)
     : m_Properties(std::move(properties))
     , m_RootEntity(CreateRootEntity())
+    , m_AssetDatabase(assetDatabase)
   {
     Deserialize(serializedSceneGraph);
   }
@@ -64,34 +66,38 @@ namespace Dwarf
       CreateEntityWithUID(UUID(serializedEntity["guid"].get<std::string>()),
                           serializedEntity["name"]);
 
-    /*TransformComponent& tc = newEntity.GetComponent<TransformComponent>();
-    tc.position = { serializedEntity["transformComponent"]["position"]["x"],
-                    serializedEntity["transformComponent"]["position"]["y"],
-                    serializedEntity["transformComponent"]["position"]["z"] };
-    tc.rotation = { serializedEntity["transformComponent"]["rotation"]["x"],
-                    serializedEntity["transformComponent"]["rotation"]["y"],
-                    serializedEntity["transformComponent"]["rotation"]["z"] };
-    tc.scale = { serializedEntity["transformComponent"]["scale"]["x"],
-                 serializedEntity["transformComponent"]["scale"]["y"],
-                 serializedEntity["transformComponent"]["scale"]["z"] };
+    TransformComponent& tc = newEntity.GetComponent<TransformComponent>();
+    tc.GetPosition() = {
+      serializedEntity["transformComponent"]["position"]["x"],
+      serializedEntity["transformComponent"]["position"]["y"],
+      serializedEntity["transformComponent"]["position"]["z"]
+    };
+    tc.GetEulerAngles() = {
+      serializedEntity["transformComponent"]["rotation"]["x"],
+      serializedEntity["transformComponent"]["rotation"]["y"],
+      serializedEntity["transformComponent"]["rotation"]["z"]
+    };
+    tc.GetScale() = { serializedEntity["transformComponent"]["scale"]["x"],
+                      serializedEntity["transformComponent"]["scale"]["y"],
+                      serializedEntity["transformComponent"]["scale"]["z"] };
 
     if (serializedEntity.contains("lightComponent"))
     {
       LightComponent& lightComponent = newEntity.AddComponent<LightComponent>();
-      lightComponent.type =
+      lightComponent.GetType() =
         (LightComponent::LIGHT_TYPE)serializedEntity["lightComponent"]["type"];
-      lightComponent.lightColor = {
+      lightComponent.GetColor() = {
         serializedEntity["lightComponent"]["lightColor"]["r"],
         serializedEntity["lightComponent"]["lightColor"]["g"],
         serializedEntity["lightComponent"]["lightColor"]["b"]
       };
 
-      lightComponent.attenuation =
+      lightComponent.GetAttenuation() =
         serializedEntity["lightComponent"]["attenuation"];
 
-      lightComponent.radius = serializedEntity["lightComponent"]["radius"];
+      lightComponent.GetRadius() = serializedEntity["lightComponent"]["radius"];
 
-      lightComponent.openingAngle =
+      lightComponent.GetOpeningAngle() =
         serializedEntity["lightComponent"]["openingAngle"];
     }
 
@@ -106,8 +112,14 @@ namespace Dwarf
       if (serializedEntity["meshRendererComponent"].contains("mesh") &&
           serializedEntity["meshRendererComponent"]["mesh"] != "null")
       {
-        meshRendererComponent.ModelAsset() = UUID(
+        UUID uid = UUID(
           serializedEntity["meshRendererComponent"]["mesh"].get<std::string>());
+        if (m_AssetDatabase->Exists(uid))
+        {
+
+          meshRendererComponent.GetModelAsset() =
+            m_AssetDatabase->Retrieve<ModelAsset>(uid);
+        }
       }
 
       if (serializedEntity["meshRendererComponent"].contains("materials"))
@@ -115,8 +127,13 @@ namespace Dwarf
         for (const auto& element :
              serializedEntity["meshRendererComponent"]["materials"])
         {
-          meshRendererComponent.MaterialAssets().push_back(
-            UUID(element.get<std::string>()));
+          UUID uid = UUID(serializedEntity["meshRendererComponent"]["mesh"]
+                            .get<std::string>());
+          if (m_AssetDatabase->Exists(uid))
+          {
+            meshRendererComponent.MaterialAssets().push_back(
+              m_AssetDatabase->Retrieve<MaterialAsset>(uid));
+          }
         }
       }
     }
@@ -125,7 +142,7 @@ namespace Dwarf
     {
       Entity childEntity = DeserializeEntity(element);
       childEntity.SetParent(newEntity.GetHandle());
-    }*/
+    }
 
     return newEntity;
   }
@@ -184,13 +201,13 @@ namespace Dwarf
     auto                   parentMat = glm::mat4(1.0f);
     std::vector<glm::mat4> matriceStack;
 
-    matriceStack.push_back(transform.getModelMatrix());
+    matriceStack.push_back(transform.GetModelMatrix());
 
-    if (entt::entity cursor = transform.parent; cursor != entt::null)
+    if (entt::entity cursor = transform.GetParent(); cursor != entt::null)
     {
       Entity cur(cursor, m_Registry);
       matriceStack.push_back(
-        cur.GetComponent<TransformComponent>().getModelMatrix());
+        cur.GetComponent<TransformComponent>().GetModelMatrix());
     }
 
     for (auto it = matriceStack.rbegin(); it < matriceStack.rend(); it++)

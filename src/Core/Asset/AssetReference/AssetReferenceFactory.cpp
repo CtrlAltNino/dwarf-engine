@@ -4,10 +4,10 @@
 namespace Dwarf
 {
   template<typename T>
-  std::unique_ptr<IAssetReference<T>>
+  IAssetReference<T>
   AssetReferenceFactory::Create(entt::entity          assetHandle,
                                 const entt::registry& registry)
   {
-    return std::make_unique<AssetReference<T>>(assetHandle, registry);
+    return AssetReference<T>(assetHandle, registry);
   }
 }

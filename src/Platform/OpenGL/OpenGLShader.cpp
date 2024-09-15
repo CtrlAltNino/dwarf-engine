@@ -18,7 +18,7 @@ namespace Dwarf
   {
     for (const auto& shaderSource : shaderSources->GetShaderSources())
     {
-      // std::visit(HandleShaderSourceVisitor(*this), shaderSource);
+      std::visit(HandleShaderSourceVisitor(*this), shaderSource);
     }
   }
 
@@ -108,11 +108,12 @@ namespace Dwarf
 
       GLuint geometryShader = -1;
 
-      if (m_GeometryShaderAsset &&
-          m_GeometryShaderAsset.get()->GetAsset().GetFileContent().length() > 0)
+      if (m_GeometryShaderAsset.has_value() &&
+          m_GeometryShaderAsset.value().GetAsset().GetFileContent().length() >
+            0)
       {
         const char* geometrySource =
-          m_GeometryShaderAsset.get()->GetAsset().GetFileContent().c_str();
+          m_GeometryShaderAsset.value().GetAsset().GetFileContent().c_str();
 
         GLsizei geom_log_length = 0;
         GLchar  geom_message[1024] = "";
@@ -288,31 +289,31 @@ namespace Dwarf
     return parameters;
   }
 
-  std::unique_ptr<IAssetReference<VertexShaderAsset>>&
+  std::optional<IAssetReference<VertexShaderAsset>>&
   OpenGLShader::GetVertexShaderAsset()
   {
     return m_VertexShaderAsset;
   }
 
-  std::unique_ptr<IAssetReference<FragmentShaderAsset>>&
+  std::optional<IAssetReference<FragmentShaderAsset>>&
   OpenGLShader::GetFragmentShaderAsset()
   {
     return m_FragmentShaderAsset;
   }
 
-  std::unique_ptr<IAssetReference<GeometryShaderAsset>>&
+  std::optional<IAssetReference<GeometryShaderAsset>>&
   OpenGLShader::GetGeometryShaderAsset()
   {
     return m_GeometryShaderAsset;
   }
 
-  std::unique_ptr<IAssetReference<TessellationControlShaderAsset>>&
+  std::optional<IAssetReference<TessellationControlShaderAsset>>&
   OpenGLShader::GetTessellationControlShaderAsset()
   {
     return m_TessellationControlShaderAsset;
   }
 
-  std::unique_ptr<IAssetReference<TessellationEvaluationShaderAsset>>&
+  std::optional<IAssetReference<TessellationEvaluationShaderAsset>>&
   OpenGLShader::GetTessellationEvaluationShaderAsset()
   {
     return m_TessellationEvaluationShaderAsset;
@@ -326,65 +327,41 @@ namespace Dwarf
 
   void
   OpenGLShader::HandleShaderSourceVisitor::operator()(
-    const std::unique_ptr<IAssetReference<VertexShaderAsset>> source) const
+    const IAssetReference<VertexShaderAsset> source) const
   {
-    if (source)
-    {
-      instance.m_VertexShaderAsset.reset();
-      instance.m_VertexShaderAsset =
-        std::make_unique<IAssetReference<VertexShaderAsset>>(*source);
-    }
+    instance.m_VertexShaderAsset.reset();
+    instance.m_VertexShaderAsset = source;
   }
 
   void
   OpenGLShader::HandleShaderSourceVisitor::operator()(
-    const std::unique_ptr<IAssetReference<FragmentShaderAsset>> source) const
+    const IAssetReference<FragmentShaderAsset> source) const
   {
-    if (source)
-    {
-      instance.m_FragmentShaderAsset.reset();
-      instance.m_FragmentShaderAsset =
-        std::make_unique<IAssetReference<FragmentShaderAsset>>(*source);
-    }
+    instance.m_FragmentShaderAsset.reset();
+    instance.m_FragmentShaderAsset = source;
   }
 
   void
   OpenGLShader::HandleShaderSourceVisitor::operator()(
-    const std::unique_ptr<IAssetReference<GeometryShaderAsset>> source) const
+    const IAssetReference<GeometryShaderAsset> source) const
   {
-    if (source)
-    {
-      instance.m_GeometryShaderAsset.reset();
-      instance.m_GeometryShaderAsset =
-        std::make_unique<IAssetReference<GeometryShaderAsset>>(*source);
-    }
+    instance.m_GeometryShaderAsset.reset();
+    instance.m_GeometryShaderAsset = source;
   }
 
   void
   OpenGLShader::HandleShaderSourceVisitor::operator()(
-    const std::unique_ptr<IAssetReference<TessellationControlShaderAsset>>
-      source) const
+    const IAssetReference<TessellationControlShaderAsset> source) const
   {
-    if (source)
-    {
-      instance.m_TessellationControlShaderAsset.reset();
-      instance.m_TessellationControlShaderAsset =
-        std::make_unique<IAssetReference<TessellationControlShaderAsset>>(
-          *source);
-    }
+    instance.m_TessellationControlShaderAsset.reset();
+    instance.m_TessellationControlShaderAsset = source;
   }
 
   void
   OpenGLShader::HandleShaderSourceVisitor::operator()(
-    const std::unique_ptr<IAssetReference<TessellationEvaluationShaderAsset>>
-      source) const
+    const IAssetReference<TessellationEvaluationShaderAsset> source) const
   {
-    if (source)
-    {
-      instance.m_TessellationEvaluationShaderAsset.reset();
-      instance.m_TessellationEvaluationShaderAsset =
-        std::make_unique<IAssetReference<TessellationEvaluationShaderAsset>>(
-          *source);
-    }
+    instance.m_TessellationEvaluationShaderAsset.reset();
+    instance.m_TessellationEvaluationShaderAsset = source;
   }
 }

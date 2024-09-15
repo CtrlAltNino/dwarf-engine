@@ -10,7 +10,7 @@ namespace Dwarf
     virtual ~IAssetReferenceFactory() = default;
 
     template<typename T>
-    std::unique_ptr<IAssetReference<T>>
+    IAssetReference<T>
     Create(entt::entity assetHandle, const entt::registry& registry);
   };
 }

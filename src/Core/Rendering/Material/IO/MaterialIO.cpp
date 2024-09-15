@@ -14,21 +14,21 @@ namespace Dwarf
   MaterialIO::~MaterialIO() {}
 
   void
-  MaterialIO::SaveMaterial(std::shared_ptr<IMaterial>   material,
-                           std::filesystem::path const& path)
+  MaterialIO::SaveMaterial(IMaterial&                   material,
+                           const std::filesystem::path& path)
   {
     // Save the material to a file (Overwrite if it already exists)
     m_Logger->LogInfo(Log(
       fmt::format("Saving material to file: {}", path.string()), "MaterialIO"));
-    std::string serializedMaterial = material->Serialize().dump(2);
+    std::string serializedMaterial = material.Serialize().dump(2);
     m_Logger->LogInfo(
       Log(fmt::format("Serialized material: {}", serializedMaterial),
           "MaterialIO"));
     FileHandler::WriteToFile(path, serializedMaterial);
   }
 
-  std::shared_ptr<IMaterial>
-  MaterialIO::LoadMaterial(std::filesystem::path const& path)
+  std::unique_ptr<IMaterial>
+  MaterialIO::LoadMaterial(const std::filesystem::path& path)
   {
     m_Logger->LogInfo(
       Log(fmt::format("Loading material from file: {}", path.string()),

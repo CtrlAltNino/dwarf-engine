@@ -419,7 +419,7 @@ namespace Dwarf
   }
 
   uintptr_t
-  OpenGLTexture::GetTextureID()
+  OpenGLTexture::GetTextureID() const
   {
     return m_Id;
   }

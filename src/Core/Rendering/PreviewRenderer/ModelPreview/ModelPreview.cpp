@@ -25,8 +25,8 @@ namespace Dwarf
     m_Camera->GetProperties().NearPlane = 0.1f;
     m_Camera->GetProperties().FarPlane = 25000.0f;
     m_Camera->GetProperties().AspectRatio = 1.0f;
-    m_Camera->GetProperties().Transform.position = { 0.0f, 0.0f, 0.0f };
-    m_Camera->GetProperties().Transform.rotation = { 0, 0, 0 };
+    m_Camera->GetProperties().Transform.GetPosition() = { 0.0f, 0.0f, 0.0f };
+    m_Camera->GetProperties().Transform.GetEulerAngles() = { 0, 0, 0 };
 
     m_Material = m_MaterialFactory->CreateDefaultMaterial();
   }
@@ -44,8 +44,8 @@ namespace Dwarf
       m_Properties.Distance = 1.0f;
     }
 
-    m_Camera->GetProperties().Transform.position = InterpolateVectors(
-      m_Camera->GetProperties().Transform.position,
+    m_Camera->GetProperties().Transform.GetPosition() = InterpolateVectors(
+      m_Camera->GetProperties().Transform.GetPosition(),
       { 0, 0, 1.3 * m_Properties.MaxDistance * m_Properties.Distance },
       m_Properties.ScrollSpeed);
 
@@ -59,7 +59,7 @@ namespace Dwarf
 
     for (int i = 0; i < modelAsset.GetAsset().Meshes().size(); i++)
     {
-      m_RendererApi->RenderIndexed(*modelAsset.GetAsset().Meshes().at(i),
+      m_RendererApi->RenderIndexed(modelAsset.GetAsset().Meshes().at(i),
                                    *m_Material,
                                    glm::toMat4(m_Properties.ModelRotationQuat),
                                    m_Camera->GetViewMatrix(),
@@ -71,12 +71,11 @@ namespace Dwarf
   void
   ModelPreview::FocusModel(IAssetReference<ModelAsset>& modelAsset)
   {
-    std::vector<std::unique_ptr<IMesh>>& vec = modelAsset.GetAsset().Meshes();
-    float                                longestDist = 0;
+    float longestDist = 0;
 
-    for (const auto& subMesh : vec)
+    for (const auto& subMesh : modelAsset.GetAsset().Meshes())
     {
-      for (Vertex vert : subMesh->GetVertices())
+      for (Vertex vert : subMesh.GetVertices())
       {
         float dist = glm::length(vert.Position);
         if (dist > longestDist)
@@ -88,7 +87,7 @@ namespace Dwarf
 
     m_Properties.MaxDistance =
       longestDist / (tanf(0.5f * m_Camera->GetProperties().Fov * DEG_2_RAD));
-    m_Camera->GetProperties().Transform.position = {
+    m_Camera->GetProperties().Transform.GetPosition() = {
       0, 0, 1.3 * m_Properties.MaxDistance * m_Properties.Distance
     };
     m_Camera->GetProperties().NearPlane = 0.1f;

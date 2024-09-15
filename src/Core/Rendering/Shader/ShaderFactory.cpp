@@ -1,5 +1,4 @@
 #include "ShaderFactory.h"
-#include "Core/Asset/Database/AssetComponents.h"
 #include <memory>
 
 // Including the shader header files of the graphics API.
@@ -105,7 +104,7 @@ namespace Dwarf
         break;
       case GraphicsApi::OpenGL:
         return std::make_unique<OpenGLShader>(
-          shaderSources, m_ShaderParameterCollectionFactory);
+          std::move(shaderSources), m_ShaderParameterCollectionFactory);
         break;
       case GraphicsApi::Metal: break;
       case GraphicsApi::Vulkan:

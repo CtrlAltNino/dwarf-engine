@@ -22,7 +22,10 @@ namespace Dwarf
     virtual std::unique_ptr<IScene>
     LoadSceneDialog() const = 0;
 
-    virtual std::unique_ptr<IScene>
-    LoadDefaultScene() const = 0;
+    /// @brief Creates a new empty scene.
+    /// @param sceneProperties The properties of the scene.
+    /// @return The created scene.
+    virtual void
+    NewSceneAsset(const std::filesystem::path& directory) = 0;
   };
 }

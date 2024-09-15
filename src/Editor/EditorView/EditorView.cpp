@@ -1,5 +1,6 @@
 #include "Core/Asset/Creation/Material/IMaterialCreator.h"
 #include "Core/Base.h"
+#include "Core/Scene/ISceneFactory.h"
 #include "Editor/Modules/IGuiModuleFactory.h"
 #include "pch.h"
 #include <memory>
@@ -20,6 +21,7 @@ namespace Dwarf
                          std::shared_ptr<IWindow>           window,
                          std::shared_ptr<IGuiModuleFactory> guiModuleFactory,
                          std::shared_ptr<ISceneIO>          sceneIO,
+                         std::shared_ptr<ISceneFactory>     sceneFactory,
                          std::shared_ptr<IAssetDatabase>    assetDatabase,
                          std::shared_ptr<IMaterialCreator>  materialCreator,
                          std::shared_ptr<IEditorStats>      editorStats)
@@ -29,6 +31,7 @@ namespace Dwarf
     , m_Window(window)
     , m_GuiModuleFactory(guiModuleFactory)
     , m_SceneIO(sceneIO)
+    , m_SceneFactory(sceneFactory)
     , m_AssetDatabase(assetDatabase)
     , m_MaterialCreator(materialCreator)
     , m_EditorStats(editorStats)
@@ -116,8 +119,9 @@ namespace Dwarf
         if (ImGui::MenuItem("Create new scene"))
         {
           // TODO: check for unsaved changes in scene
-          std::unique_ptr<IScene> newScene = m_SceneIO->LoadDefaultScene();
-          m_LoadedScene->SetScene(newScene);
+          std::unique_ptr<IScene> newScene =
+            m_SceneFactory->CreateDefaultScene();
+          m_LoadedScene->SetScene(std::move(newScene));
         }
         if (ImGui::MenuItem("Save scene"))
         {
@@ -128,7 +132,7 @@ namespace Dwarf
           //   UpdateWindowTitle();
           // }
 
-          m_SceneIO->SaveScene(*m_LoadedScene->GetScene());
+          m_SceneIO->SaveScene(m_LoadedScene->GetScene());
         }
         if (ImGui::MenuItem("Save scene as"))
         {
@@ -139,14 +143,14 @@ namespace Dwarf
           //   UpdateWindowTitle();
           // }
 
-          m_SceneIO->SaveSceneDialog(*m_LoadedScene->GetScene());
+          m_SceneIO->SaveSceneDialog(m_LoadedScene->GetScene());
         }
         if (ImGui::MenuItem("Load scene"))
         {
           std::unique_ptr<IScene> loadedScene = m_SceneIO->LoadSceneDialog();
           if (loadedScene)
           {
-            m_LoadedScene->SetScene(loadedScene);
+            m_LoadedScene->SetScene(std::move(loadedScene));
             UpdateWindowTitle();
           }
         }
@@ -182,13 +186,13 @@ namespace Dwarf
         if (ImGui::MenuItem("Create empty object"))
         {
           Entity newEntity =
-            m_LoadedScene->GetScene()->CreateEntity("New object");
+            m_LoadedScene->GetScene().CreateEntity("New object");
           newEntity.AddComponent<MeshRendererComponent>();
         }
         if (ImGui::MenuItem("Create light"))
         {
           Entity newEntity =
-            m_LoadedScene->GetScene()->CreateEntity("New Light");
+            m_LoadedScene->GetScene().CreateEntity("New Light");
           newEntity.AddComponent<LightComponent>();
         }
         ImGui::EndMenu();
@@ -371,7 +375,7 @@ namespace Dwarf
     std::string windowTitle = "Dwarf Engine Editor - ";
     windowTitle.append(m_ProjectSettings->GetProjectName());
     windowTitle.append(" - ");
-    windowTitle.append(m_LoadedScene->GetScene()->GetProperties().GetName());
+    windowTitle.append(m_LoadedScene->GetScene().GetProperties().GetName());
     windowTitle.append(" <");
     windowTitle.append(graphicsApiNames[(int)m_GraphicsApi]);
     windowTitle.append(">");

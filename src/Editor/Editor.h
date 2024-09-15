@@ -3,6 +3,7 @@
 #include "Core/Asset/Shader/IShaderRecompiler.h"
 #include "Core/Scene/IScene.h"
 #include "Core/Scene/IO/ISceneIO.h"
+#include "Core/Scene/ISceneFactory.h"
 #include "Editor/IEditor.h"
 
 #include "Core/Asset/Database/IAssetDatabase.h"
@@ -27,6 +28,7 @@ namespace Dwarf
     std::shared_ptr<IInputManager>     m_InputManager;
     std::shared_ptr<ILoadedScene>      m_LoadedScene;
     std::shared_ptr<ISceneIO>          m_SceneIO;
+    std::shared_ptr<ISceneFactory>     m_SceneFactory;
     std::shared_ptr<IProjectSettings>  m_ProjectSettings;
     std::shared_ptr<IAssetDatabase>    m_AssetDatabase;
     std::shared_ptr<IShaderRecompiler> m_ShaderRecompiler;
@@ -40,6 +42,7 @@ namespace Dwarf
            std::shared_ptr<ILoadedScene>      loadedScene,
            std::shared_ptr<IWindow>           window,
            std::shared_ptr<ISceneIO>          sceneIO,
+           std::shared_ptr<ISceneFactory>     sceneFactory,
            std::shared_ptr<IEditorView>       view,
            std::shared_ptr<IAssetDatabase>    assetDatabase,
            std::shared_ptr<IShaderRecompiler> shaderRecompiler,

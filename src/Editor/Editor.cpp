@@ -15,6 +15,7 @@ namespace Dwarf
                  std::shared_ptr<ILoadedScene>      loadedScene,
                  std::shared_ptr<IWindow>           window,
                  std::shared_ptr<ISceneIO>          sceneIO,
+                 std::shared_ptr<ISceneFactory>     sceneFactory,
                  std::shared_ptr<IEditorView>       view,
                  std::shared_ptr<IAssetDatabase>    assetDatabase,
                  std::shared_ptr<IShaderRecompiler> shaderRecompiler,
@@ -25,6 +26,7 @@ namespace Dwarf
     , m_View(view)
     , m_Window(window)
     , m_SceneIO(sceneIO)
+    , m_SceneFactory(sceneFactory)
     , m_ProjectSettings(projectSettings)
     , m_LoadedScene(loadedScene)
     , m_AssetDatabase(assetDatabase)
@@ -32,21 +34,6 @@ namespace Dwarf
     , m_AssetReimporter(assetReimporter)
 
   {
-    // Either load the last opened scene or the default scene
-    if (m_ProjectSettings->GetLastOpenedScene() != nullptr &&
-        m_AssetDatabase->Exists(*m_ProjectSettings->GetLastOpenedScene()))
-    {
-      std::unique_ptr<IAssetReference<SceneAsset>> lastOpenedScene =
-        m_AssetDatabase->Retrieve<SceneAsset>(
-          *m_ProjectSettings->GetLastOpenedScene());
-      std::unique_ptr<IScene> scene = m_SceneIO->LoadScene(*lastOpenedScene);
-      m_LoadedScene->SetScene(scene);
-    }
-    else
-    {
-      std::unique_ptr<IScene> defaultScene = m_SceneIO->LoadDefaultScene();
-      m_LoadedScene->SetScene(defaultScene);
-    }
   }
 
   bool
@@ -58,6 +45,24 @@ namespace Dwarf
     m_Logger->LogInfo(Log("Starting the editor", "Editor"));
 
     m_AssetDatabase->ReimportAll();
+
+    // Either load the last opened scene or the default scene
+    if (m_ProjectSettings->GetLastOpenedScene() != nullptr &&
+        m_AssetDatabase->Exists(*m_ProjectSettings->GetLastOpenedScene()))
+    {
+      IAssetReference<SceneAsset> lastOpenedScene =
+        m_AssetDatabase->Retrieve<SceneAsset>(
+          *m_ProjectSettings->GetLastOpenedScene());
+
+      std::unique_ptr<IScene> scene = m_SceneIO->LoadScene(lastOpenedScene);
+      m_LoadedScene->SetScene(std::move(scene));
+    }
+    else
+    {
+      std::unique_ptr<IScene> defaultScene =
+        m_SceneFactory->CreateDefaultScene();
+      m_LoadedScene->SetScene(std::move(defaultScene));
+    }
 
     m_Logger->LogInfo(Log("Showing window", "Editor"));
     m_Window->ShowWindow();

@@ -3,6 +3,7 @@
 #include "Core/Rendering/Material/IO/IMaterialIO.h"
 #include "Core/Rendering/Material/IMaterialFactory.h"
 #include "Logging/IDwarfLogger.h"
+#include <memory>
 
 namespace Dwarf
 {
@@ -22,10 +23,10 @@ namespace Dwarf
 
     // Implement the SaveMaterial method
     virtual void
-    SaveMaterial(std::shared_ptr<IMaterial>   material,
-                 std::filesystem::path const& path) override;
+    SaveMaterial(IMaterial&                   material,
+                 const std::filesystem::path& path) override;
 
-    virtual std::shared_ptr<IMaterial>
-    LoadMaterial(std::filesystem::path const& path) override;
+    virtual std::unique_ptr<IMaterial>
+    LoadMaterial(const std::filesystem::path& path) override;
   };
 }; // namespace Dwarf

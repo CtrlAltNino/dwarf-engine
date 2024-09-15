@@ -13,6 +13,6 @@ namespace Dwarf
     GetSize() const = 0;
 
     virtual uintptr_t
-    GetTextureID() = 0;
+    GetTextureID() const = 0;
   };
 } // namespace Dwarf

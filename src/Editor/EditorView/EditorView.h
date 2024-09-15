@@ -1,4 +1,5 @@
 #pragma once
+#include "Core/Scene/ISceneFactory.h"
 #include "pch.h"
 #include "Core/Asset/Creation/Material/IMaterialCreator.h"
 #include "Core/Base.h"
@@ -23,6 +24,7 @@ namespace Dwarf
     std::shared_ptr<IWindow>           m_Window;
     std::shared_ptr<IGuiModuleFactory> m_GuiModuleFactory;
     std::shared_ptr<ISceneIO>          m_SceneIO;
+    std::shared_ptr<ISceneFactory>     m_SceneFactory;
     std::shared_ptr<IAssetDatabase>    m_AssetDatabase;
     std::shared_ptr<IMaterialCreator>  m_MaterialCreator;
     std::shared_ptr<IProjectSettings>  m_ProjectSettings;
@@ -60,6 +62,7 @@ namespace Dwarf
                         std::shared_ptr<IWindow>           window,
                         std::shared_ptr<IGuiModuleFactory> guiModuleFactory,
                         std::shared_ptr<ISceneIO>          sceneIO,
+                        std::shared_ptr<ISceneFactory>     sceneFactory,
                         std::shared_ptr<IAssetDatabase>    assetDatabase,
                         std::shared_ptr<IMaterialCreator>  materialCreator,
                         std::shared_ptr<IEditorStats>      editorStats);

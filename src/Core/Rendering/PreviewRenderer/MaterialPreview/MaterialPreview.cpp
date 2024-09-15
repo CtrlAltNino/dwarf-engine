@@ -25,8 +25,8 @@ namespace Dwarf
     m_Camera->GetProperties().NearPlane = 0.1f;
     m_Camera->GetProperties().FarPlane = 25000.0f;
     m_Camera->GetProperties().AspectRatio = 1.0f;
-    m_Camera->GetProperties().Transform.position = { 0.0f, 0.0f, 0.0f };
-    m_Camera->GetProperties().Transform.rotation = { 0, 0, 0 };
+    m_Camera->GetProperties().Transform.GetPosition() = { 0.0f, 0.0f, 0.0f };
+    m_Camera->GetProperties().Transform.GetEulerAngles() = { 0, 0, 0 };
 
     UpdateMesh();
   }
@@ -36,8 +36,8 @@ namespace Dwarf
     IAssetReference<MaterialAsset>& materialAsset)
   {
     // TODO: Reset sphere rotation when rendering a different material
-    m_Camera->GetProperties().Transform.position = { 0, 0, 3 };
-    m_Camera->GetProperties().Transform.rotation = { 0, 0, 0 };
+    m_Camera->GetProperties().Transform.GetPosition() = { 0, 0, 3 };
+    m_Camera->GetProperties().Transform.GetEulerAngles() = { 0, 0, 0 };
     m_Camera->GetProperties().NearPlane = 0.1f;
     m_Camera->GetProperties().FarPlane = 4;
 

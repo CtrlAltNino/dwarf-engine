@@ -1,4 +1,5 @@
 #include "AssetDatabase.h"
+#include "Core/Asset/AssetReference/IAssetReference.h"
 #include "Core/Asset/Metadata/IAssetMetadata.h"
 #include "Core/Rendering/Material/IMaterial.h"
 #include "Utilities/FileHandler.h"
@@ -152,100 +153,96 @@ namespace Dwarf
           //     m_ModelImporter->Import(assetPath));
           // // model.GetAsset()->Load();
           // return model.GetUID();
-          std::unique_ptr<IAssetReference<ModelAsset>> modelAsset =
+          IAssetReference<ModelAsset> modelAsset =
             CreateNewAsset<ModelAsset>(assetPath);
 
-          modelAsset->AddAssetComponent<ModelAsset>(
+          modelAsset.AddAssetComponent<ModelAsset>(
             m_ModelImporter->Import(assetPath));
 
-          return modelAsset->GetUID();
+          return modelAsset.GetUID();
         }
       case MATERIAL:
         {
-          std::unique_ptr<IAssetReference<MaterialAsset>> materialAsset =
+          IAssetReference<MaterialAsset> materialAsset =
             CreateNewAsset<MaterialAsset>(assetPath);
-          materialAsset->AddAssetComponent<MaterialAsset>(
+          materialAsset.AddAssetComponent<MaterialAsset>(
             m_MaterialIO->LoadMaterial(assetPath));
-          return materialAsset->GetUID();
+          return materialAsset.GetUID();
         }
       case TEXTURE:
         {
-          std::unique_ptr<IAssetReference<TextureAsset>> textureAsset =
+          IAssetReference<TextureAsset> textureAsset =
             CreateNewAsset<TextureAsset>(assetPath);
-          textureAsset->AddAssetComponent<TextureAsset>(
+          textureAsset.AddAssetComponent<TextureAsset>(
             m_TextureFactory->FromPath(assetPath));
-          return textureAsset->GetUID();
+          return textureAsset.GetUID();
         }
       case SCENE:
         {
-          std::unique_ptr<IAssetReference<SceneAsset>> sceneAsset =
+          IAssetReference<SceneAsset> sceneAsset =
             CreateNewAsset<SceneAsset>(assetPath);
-          sceneAsset->AddAssetComponent<SceneAsset>(assetPath);
-          return sceneAsset->GetUID();
+          sceneAsset.AddAssetComponent<SceneAsset>(assetPath);
+          return sceneAsset.GetUID();
         }
       case VERTEX_SHADER:
         {
-          std::unique_ptr<IAssetReference<VertexShaderAsset>>
-            vertexShaderAsset = CreateNewAsset<VertexShaderAsset>(assetPath);
-          vertexShaderAsset->AddAssetComponent<VertexShaderAsset>(assetPath);
-          return vertexShaderAsset->GetUID();
+          IAssetReference<VertexShaderAsset> vertexShaderAsset =
+            CreateNewAsset<VertexShaderAsset>(assetPath);
+          vertexShaderAsset.AddAssetComponent<VertexShaderAsset>(assetPath);
+          return vertexShaderAsset.GetUID();
         }
       case TESC_SHADER:
         {
-          std::unique_ptr<IAssetReference<TessellationControlShaderAsset>>
+          IAssetReference<TessellationControlShaderAsset>
             tessControlShaderAsset =
               CreateNewAsset<TessellationControlShaderAsset>(assetPath);
           tessControlShaderAsset
-            ->AddAssetComponent<TessellationControlShaderAsset>(assetPath);
-          return tessControlShaderAsset->GetUID();
+            .AddAssetComponent<TessellationControlShaderAsset>(assetPath);
+          return tessControlShaderAsset.GetUID();
         }
       case TESE_SHADER:
         {
-          std::unique_ptr<IAssetReference<TessellationEvaluationShaderAsset>>
+          IAssetReference<TessellationEvaluationShaderAsset>
             tessEvalShaderAsset =
               CreateNewAsset<TessellationEvaluationShaderAsset>(assetPath);
           tessEvalShaderAsset
-            ->AddAssetComponent<TessellationEvaluationShaderAsset>(assetPath);
-          tessEvalShaderAsset->GetUID();
+            .AddAssetComponent<TessellationEvaluationShaderAsset>(assetPath);
+          tessEvalShaderAsset.GetUID();
         }
       case GEOMETRY_SHADER:
         {
-          std::unique_ptr<IAssetReference<GeometryShaderAsset>>
-            geometryShaderAsset =
-              CreateNewAsset<GeometryShaderAsset>(assetPath);
-          geometryShaderAsset->AddAssetComponent<GeometryShaderAsset>(
-            assetPath);
-          return geometryShaderAsset->GetUID();
+          IAssetReference<GeometryShaderAsset> geometryShaderAsset =
+            CreateNewAsset<GeometryShaderAsset>(assetPath);
+          geometryShaderAsset.AddAssetComponent<GeometryShaderAsset>(assetPath);
+          return geometryShaderAsset.GetUID();
         }
       case FRAGMENT_SHADER:
         {
-          std::unique_ptr<IAssetReference<FragmentShaderAsset>>
-            fragmentShaderAsset =
-              CreateNewAsset<FragmentShaderAsset>(assetPath);
-          fragmentShaderAsset->AddAssetComponent<FragmentShaderAsset>(
-            assetPath);
-          return fragmentShaderAsset->GetUID();
+          IAssetReference<FragmentShaderAsset> fragmentShaderAsset =
+            CreateNewAsset<FragmentShaderAsset>(assetPath);
+          fragmentShaderAsset.AddAssetComponent<FragmentShaderAsset>(assetPath);
+          return fragmentShaderAsset.GetUID();
         }
       case COMPUTE_SHADER:
         {
-          std::unique_ptr<IAssetReference<ComputeShaderAsset>>
-            computeShaderAsset = CreateNewAsset<ComputeShaderAsset>(assetPath);
-          computeShaderAsset->AddAssetComponent<ComputeShaderAsset>(assetPath);
-          return computeShaderAsset->GetUID();
+          IAssetReference<ComputeShaderAsset> computeShaderAsset =
+            CreateNewAsset<ComputeShaderAsset>(assetPath);
+          computeShaderAsset.AddAssetComponent<ComputeShaderAsset>(assetPath);
+          return computeShaderAsset.GetUID();
         }
       case HLSL_SHADER:
         {
-          std::unique_ptr<IAssetReference<HlslShaderAsset>> hlslShaderAsset =
+          IAssetReference<HlslShaderAsset> hlslShaderAsset =
             CreateNewAsset<HlslShaderAsset>(assetPath);
-          hlslShaderAsset->AddAssetComponent<HlslShaderAsset>(assetPath);
-          return hlslShaderAsset->GetUID();
+          hlslShaderAsset.AddAssetComponent<HlslShaderAsset>(assetPath);
+          return hlslShaderAsset.GetUID();
         }
       default:
         {
-          std::unique_ptr<IAssetReference<UnknownAsset>> unknownAsset =
+          IAssetReference<UnknownAsset> unknownAsset =
             CreateNewAsset<UnknownAsset>(assetPath);
-          unknownAsset->AddAssetComponent<UnknownAsset>(assetPath);
-          return unknownAsset->GetUID();
+          unknownAsset.AddAssetComponent<UnknownAsset>(assetPath);
+          return unknownAsset.GetUID();
         }
     }
   }
@@ -432,7 +429,7 @@ namespace Dwarf
   //   m_ShaderRecompilationStack.push_back(shader);
   // }
 
-  std::unique_ptr<void>
+  std::any
   AssetDatabase::RetrieveImpl(std::type_index type, const UUID& uid)
   {
     // Retrieve entt::entity with UID component
@@ -448,7 +445,7 @@ namespace Dwarf
     return nullptr;
   }
 
-  std::unique_ptr<void>
+  std::any
   AssetDatabase::RetrieveImpl(std::type_index              type,
                               const std::filesystem::path& path)
   {
@@ -463,7 +460,7 @@ namespace Dwarf
     return nullptr;
   }
 
-  std::unique_ptr<void>
+  std::any
   AssetDatabase::CreateAssetReference(std::type_index type, entt::entity entity)
   {
     if (type == typeid(ModelAsset))
@@ -575,7 +572,7 @@ namespace Dwarf
         case ASSET_TYPE::MATERIAL:
           {
             std::cout << "A material asset has been updated!" << std::endl;
-            std::unique_ptr<IAssetReference<MaterialAsset>> mat =
+            std::optional<IAssetReference<MaterialAsset>> mat =
               AssetDatabase::Retrieve<MaterialAsset>(path);
             m_ShaderRecompiler->MarkForRecompilation(
               mat->GetAsset().GetMaterial().GetShader());

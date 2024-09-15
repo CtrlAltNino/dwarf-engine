@@ -20,6 +20,9 @@ namespace Dwarf
     WriteSceneToFile(const nlohmann::json&        serializedScene,
                      const std::filesystem::path& scenePath) const;
 
+    std::string
+    CreateNewSceneName(const std::filesystem::path& directory);
+
   public:
     SceneIO(std::shared_ptr<IProjectSettings> projectSettings,
             std::shared_ptr<ISceneFactory>    sceneFactory,
@@ -37,8 +40,8 @@ namespace Dwarf
     std::unique_ptr<IScene>
     LoadSceneDialog() const override;
 
-    std::unique_ptr<IScene>
-    LoadDefaultScene() const override;
+    void
+    NewSceneAsset(const std::filesystem::path& directory) override;
 
     // void
     // SetLastOpenedScene(AssetReference<SceneAsset> sceneAsset);

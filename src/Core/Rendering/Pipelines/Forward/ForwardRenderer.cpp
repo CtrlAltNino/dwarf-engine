@@ -1,3 +1,4 @@
+#include "Core/Scene/Components/SceneComponents.h"
 #include "pch.h"
 #include "ForwardRenderer.h"
 
@@ -24,29 +25,32 @@ namespace Dwarf
                                 glm::mat4 viewMatrix,
                                 glm::mat4 projectionMatrix)
   {
-    auto&       transform = entity.GetComponent<TransformComponent>();
-    auto&       meshRenderer = entity.GetComponent<MeshRendererComponent>();
-    ModelAsset& model = meshRenderer.ModelAsset()->GetAsset();
-    glm::mat4   modelMatrix = transform.getModelMatrix();
+    TransformComponent& transform = entity.GetComponent<TransformComponent>();
+    MeshRendererComponent& meshRenderer =
+      entity.GetComponent<MeshRendererComponent>();
+    ModelAsset& model = meshRenderer.GetModelAsset().value().GetAsset();
+    glm::mat4   modelMatrix = transform.GetModelMatrix();
 
     for (int i = 0; i < model.Meshes().size(); i++)
     {
-      if (model.Meshes().at(i)->GetMaterialIndex() - 1 <
+      if (model.Meshes().at(i).GetMaterialIndex() - 1 <
           meshRenderer.MaterialAssets().size())
       {
-        if (meshRenderer.MaterialAssets().at(
-              model.Meshes().at(i)->GetMaterialIndex() - 1) != nullptr)
+        if (meshRenderer.MaterialAssets()
+              .at(model.Meshes().at(i).GetMaterialIndex() - 1)
+              .has_value())
         {
           IMaterial& material =
             meshRenderer.MaterialAssets()
-              .at(model.Meshes().at(i)->GetMaterialIndex() - 1)
-              ->GetAsset()
+              .at(model.Meshes().at(i).GetMaterialIndex() - 1)
+              .value()
+              .GetAsset()
               .GetMaterial();
 
           if (material.GetShader() != nullptr &&
               material.GetShader()->IsCompiled())
           {
-            m_RendererApi->RenderIndexed(*model.Meshes().at(i),
+            m_RendererApi->RenderIndexed(model.Meshes().at(i),
                                          material,
                                          modelMatrix,
                                          viewMatrix,
@@ -84,7 +88,7 @@ namespace Dwarf
                        .view<TransformComponent, MeshRendererComponent>();
          auto [entity, transform, meshRenderer] : view.each())
     {
-      if (meshRenderer.ModelAsset() != nullptr)
+      if (meshRenderer.GetModelAsset().has_value())
       {
         Entity e(entity, scene.GetRegistry());
         RenderEntity(e, viewMatrix, projectionMatrix);

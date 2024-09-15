@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Asset/Database/IAssetDatabase.h"
 #include "Core/Scene/Properties/IScenePropertiesFactory.h"
 #include "ISceneFactory.h"
 
@@ -10,21 +11,17 @@ namespace Dwarf
   {
   private:
     std::shared_ptr<IScenePropertiesFactory> m_ScenePropertiesFactory;
-
-    std::string
-    CreateNewSceneName(const std::filesystem::path& directory);
+    std::shared_ptr<IAssetDatabase>          m_AssetDatabase;
 
   public:
     SceneFactory(
-      std::shared_ptr<IScenePropertiesFactory> scenePropertiesFactory);
+      std::shared_ptr<IScenePropertiesFactory> scenePropertiesFactory,
+      std::shared_ptr<IAssetDatabase>          assetDatabase);
 
     std::unique_ptr<IScene>
     FromAsset(IAssetReference<SceneAsset>& sceneAsset) override;
 
     std::unique_ptr<IScene>
-    NewSceneAsset(const std::filesystem::path& directory) override;
-
-    std::unique_ptr<IScene>
-    NewEmptyScene() override;
+    CreateDefaultScene() override;
   };
 } // namespace Dwarf

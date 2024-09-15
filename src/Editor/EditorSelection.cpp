@@ -100,12 +100,12 @@ namespace Dwarf
     Entity      cursor = entity;
 
     while (cursor.GetHandle() !=
-           m_LoadedScene->GetScene()->GetRootEntity().GetHandle())
+           m_LoadedScene->GetScene().GetRootEntity().GetHandle())
     {
       index =
         std::format("{}{}", std::to_string(cursor.GetChildIndex()), index);
       cursor =
-        Entity(cursor.GetParent(), m_LoadedScene->GetScene()->GetRegistry());
+        Entity(cursor.GetParent(), m_LoadedScene->GetScene().GetRegistry());
     }
 
     return index;

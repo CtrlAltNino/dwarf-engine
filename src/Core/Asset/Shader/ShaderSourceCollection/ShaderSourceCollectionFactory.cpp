@@ -33,8 +33,8 @@ namespace Dwarf
       UUID vertexShaderId =
         UUID(serializedShaderSourceCollection["vertexShader"]);
 
-      shaderSources.emplace_back(
-        m_AssetDatabase->Retrieve<VertexShaderAsset>(vertexShaderId));
+      shaderSources.emplace_back(std::move(
+        m_AssetDatabase->Retrieve<VertexShaderAsset>(vertexShaderId)));
     }
 
     if (serializedShaderSourceCollection.contains("fragmentShader"))

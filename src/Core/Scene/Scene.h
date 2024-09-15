@@ -1,9 +1,11 @@
 #pragma once
+#include "Core/Asset/Database/IAssetDatabase.h"
 #include "pch.h"
 #include "Core/Scene/IScene.h"
 #include "Core/Scene/Properties/ISceneProperties.h"
 #include "Core/Scene/Entity/Entity.h"
 #include "Core/Scene/Components/SceneComponents.h"
+#include <memory>
 
 namespace Dwarf
 {
@@ -12,7 +14,8 @@ namespace Dwarf
   {
   public:
     Scene(const nlohmann::json&             serializedSceneGraph,
-          std::unique_ptr<ISceneProperties> properties);
+          std::unique_ptr<ISceneProperties> properties,
+          std::shared_ptr<IAssetDatabase>   assetDatabase);
     ~Scene();
 
     /// @brief Retrieves the asset reference of the scene.
@@ -49,7 +52,8 @@ namespace Dwarf
 
   private:
     /// @brief The registry that holds all entities and components.
-    entt::registry m_Registry = entt::registry();
+    entt::registry                  m_Registry = entt::registry();
+    std::shared_ptr<IAssetDatabase> m_AssetDatabase;
 
     /// @brief The root entity in the scene graph.
     Entity m_RootEntity;

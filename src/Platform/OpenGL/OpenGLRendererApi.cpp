@@ -23,49 +23,50 @@ namespace Dwarf
     std::shared_ptr<IAssetDatabase> m_AssetDatabase;
 
     void
-    operator()(bool parameter)
+    operator()(bool& parameter)
     {
       glUniform1f(glGetUniformLocation(m_ShaderID, m_ParameterName.c_str()),
                   parameter);
     }
     void
-    operator()(int parameter)
+    operator()(int& parameter)
     {
       glUniform1i(glGetUniformLocation(m_ShaderID, m_ParameterName.c_str()),
                   parameter);
     }
     void
-    operator()(unsigned int parameter)
+    operator()(unsigned int& parameter)
     {
       glUniform1ui(glGetUniformLocation(m_ShaderID, m_ParameterName.c_str()),
                    parameter);
     }
     void
-    operator()(float parameter)
+    operator()(float& parameter)
     {
       glUniform1f(glGetUniformLocation(m_ShaderID, m_ParameterName.c_str()),
                   parameter);
     }
     void
-    operator()(Texture2DAssetValue parameter)
+    operator()(Texture2DAssetValue& parameter)
     {
       // TODO: This needs to count the number of textures and bind them
       glActiveTexture(GL_TEXTURE0);
       glBindTexture(GL_TEXTURE_2D,
-                    m_AssetDatabase->Retrieve<TextureAsset>(parameter)
+                    m_AssetDatabase->Retrieve<TextureAsset>(*parameter)
                       .GetAsset()
-                      .m_Texture->GetTextureID());
+                      .GetTexture()
+                      .GetTextureID());
       glUniform1i(glGetUniformLocation(m_ShaderID, m_ParameterName.c_str()), 0);
     }
     void
-    operator()(glm::vec2 parameter)
+    operator()(glm::vec2& parameter)
     {
       glUniform2f(glGetUniformLocation(m_ShaderID, m_ParameterName.c_str()),
                   parameter.x,
                   parameter.y);
     }
     void
-    operator()(glm::vec3 parameter)
+    operator()(glm::vec3& parameter)
     {
       glUniform3f(glGetUniformLocation(m_ShaderID, m_ParameterName.c_str()),
                   parameter.x,
@@ -73,7 +74,7 @@ namespace Dwarf
                   parameter.z);
     }
     void
-    operator()(glm::vec4 parameter)
+    operator()(glm::vec4& parameter)
     {
       glUniform4f(glGetUniformLocation(m_ShaderID, m_ParameterName.c_str()),
                   parameter.x,
@@ -150,12 +151,12 @@ namespace Dwarf
     for (auto const& identifier :
          material.GetShaderParameters()->GetParameterIdentifiers())
     {
-      auto shaderParameterValue =
-        material.GetShaderParameters()->GetParameter(identifier);
-      if (shaderParameterValue.has_value())
+      if (material.GetShaderParameters()->HasParameter(identifier))
       {
+        ParameterValue& shaderParameterValue =
+          material.GetShaderParameters()->GetParameter(identifier);
         std::visit(SetShaderParameterVisitor{ shader->GetID(), identifier },
-                   shaderParameterValue.value());
+                   shaderParameterValue);
       }
     }
 

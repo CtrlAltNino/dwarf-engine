@@ -1,8 +1,6 @@
 #pragma once
 
 #include "Core/Asset/Shader/ShaderSourceCollection/IShaderSourceCollection.h"
-#include "Core/Base.h"
-#include "Core/Rendering/Shader/ShaderTypes.h"
 #include "IShader.h"
 
 namespace Dwarf

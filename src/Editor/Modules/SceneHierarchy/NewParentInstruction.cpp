@@ -19,7 +19,8 @@ namespace Dwarf
     auto p = Entity(m_NewParent, m_Scene->GetRegistry());
     for (Entity ent : m_SourceEntities)
     {
-      if ((p.GetComponent<TransformComponent>().parent != ent.GetHandle()) &&
+      if ((p.GetComponent<TransformComponent>().GetParent() !=
+           ent.GetHandle()) &&
           (ent.GetHandle() != m_NewParent))
       {
         ent.SetParent(m_NewParent);

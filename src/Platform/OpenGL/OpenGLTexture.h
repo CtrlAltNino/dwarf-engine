@@ -25,6 +25,6 @@ namespace Dwarf
     GetSize() const override;
 
     uintptr_t
-    GetTextureID() override;
+    GetTextureID() const override;
   };
 } // namespace Dwarf

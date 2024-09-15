@@ -1,7 +1,7 @@
 #pragma once
-#include "Core/Asset/Database/IAssetDatabase.h"
 #include "pch.h"
 
+#include "Core/Asset/Database/IAssetDatabase.h"
 #include "Core/Rendering/RendererApi/IRendererApi.h"
 
 namespace Dwarf
@@ -17,6 +17,7 @@ namespace Dwarf
 
     void
     Init() override;
+
     void
     SetViewport(uint32_t x,
                 uint32_t y,

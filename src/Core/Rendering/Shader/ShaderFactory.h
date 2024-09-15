@@ -4,7 +4,6 @@
 #include "Core/Base.h"
 #include "Core/Rendering/Shader/ShaderParameterCollection/IShaderParameterCollectionFactory.h"
 #include "Core/Rendering/Shader/IShader.h"
-#include "Core/Rendering/Shader/ShaderTypes.h"
 #include "IShaderFactory.h"
 
 namespace Dwarf

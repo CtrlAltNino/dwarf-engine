@@ -5,12 +5,12 @@
 
 namespace Dwarf
 {
-  using ShaderSource = std::variant<
-    std::unique_ptr<IAssetReference<VertexShaderAsset>>,
-    std::unique_ptr<IAssetReference<FragmentShaderAsset>>,
-    std::unique_ptr<IAssetReference<GeometryShaderAsset>>,
-    std::unique_ptr<IAssetReference<TessellationControlShaderAsset>>,
-    std::unique_ptr<IAssetReference<TessellationEvaluationShaderAsset>>>;
+  using ShaderSource =
+    std::variant<IAssetReference<VertexShaderAsset>,
+                 IAssetReference<FragmentShaderAsset>,
+                 IAssetReference<GeometryShaderAsset>,
+                 IAssetReference<TessellationControlShaderAsset>,
+                 IAssetReference<TessellationEvaluationShaderAsset>>;
 
   class IShaderSourceCollection
   {

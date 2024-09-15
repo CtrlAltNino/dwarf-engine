@@ -181,7 +181,7 @@ namespace Dwarf
     /// @param assetPath Path to the asset.
     /// @return The created asset reference instance.
     template<typename T>
-    std::unique_ptr<IAssetReference<T>>
+    IAssetReference<T>
     CreateNewAsset(const std::filesystem::path& assetPath)
     {
       std::string           fileName = assetPath.stem().string();
@@ -205,23 +205,23 @@ namespace Dwarf
       // IAssetReference<T> assetReference =
       //   AssetReference<T>(m_Registry.create(), m_Registry);
 
-      std::unique_ptr<IAssetReference<T>> assetReference =
+      IAssetReference<T> assetReference =
         m_AssetReferenceFactory->Create<T>(m_Registry.create(), m_Registry);
 
-      assetReference->template AddAssetComponent<IDComponent>(id);
-      assetReference->template AddAssetComponent<NameComponent>(fileName);
-      assetReference->template AddAssetComponent<PathComponent>(assetPath);
+      assetReference.template AddAssetComponent<IDComponent>(id);
+      assetReference.template AddAssetComponent<NameComponent>(fileName);
+      assetReference.template AddAssetComponent<PathComponent>(assetPath);
       return assetReference;
     }
 
-    std::unique_ptr<void>
+    std::any
     RetrieveImpl(std::type_index type, const UUID& uid) override;
 
-    std::unique_ptr<void>
+    std::any
     RetrieveImpl(std::type_index              type,
                  const std::filesystem::path& path) override;
 
-    std::unique_ptr<void>
+    std::any
     CreateAssetReference(std::type_index type, entt::entity entity);
   };
 }

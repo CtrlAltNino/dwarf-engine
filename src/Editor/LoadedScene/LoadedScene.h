@@ -15,10 +15,10 @@ namespace Dwarf
     LoadedScene(std::shared_ptr<IProjectSettings> projectSettings);
     ~LoadedScene() override = default;
 
-    std::unique_ptr<IScene>&
+    IScene&
     GetScene() override;
 
     void
-    SetScene(std::unique_ptr<IScene>& scene) override;
+    SetScene(std::unique_ptr<IScene> scene) override;
   };
 }

@@ -84,7 +84,7 @@ namespace Dwarf
     ParameterValue&                 Value;
     std::string                     ImGuiID;
     void
-    operator()(bool parameter)
+    operator()(bool& parameter)
     {
       ImGui::TextWrapped("%s", ParameterName.c_str());
       ImGui::SameLine();
@@ -92,7 +92,7 @@ namespace Dwarf
     }
 
     void
-    operator()(int parameter)
+    operator()(int& parameter)
     {
       ImGui::TextWrapped("%s", ParameterName.c_str());
       ImGui::SameLine();
@@ -103,7 +103,7 @@ namespace Dwarf
     }
 
     void
-    operator()(unsigned int parameter)
+    operator()(unsigned int& parameter)
     {
       ImGui::TextWrapped("%s", ParameterName.c_str());
       ImGui::SameLine();
@@ -115,7 +115,7 @@ namespace Dwarf
     }
 
     void
-    operator()(float parameter)
+    operator()(float& parameter)
     {
       ImGui::TextWrapped("%s", ParameterName.c_str());
       ImGui::SameLine();
@@ -126,7 +126,7 @@ namespace Dwarf
     }
 
     void
-    operator()(Texture2DAssetValue parameter)
+    operator()(Texture2DAssetValue& parameter)
     {
       ImGui::TextWrapped("%s", ParameterName.c_str());
       ImGui::SameLine();
@@ -139,7 +139,7 @@ namespace Dwarf
     }
 
     void
-    operator()(glm::vec2 parameter)
+    operator()(glm::vec2& parameter)
     {
       ImGui::TextWrapped("%s", ParameterName.c_str());
       ImGui::SameLine();
@@ -150,7 +150,7 @@ namespace Dwarf
     }
 
     void
-    operator()(glm::vec3 parameter)
+    operator()(glm::vec3& parameter)
     {
       ImGui::TextWrapped("%s", ParameterName.c_str());
       ImGui::SameLine();
@@ -161,7 +161,7 @@ namespace Dwarf
     }
 
     void
-    operator()(glm::vec4 parameter)
+    operator()(glm::vec4& parameter)
     {
       ImGui::TextWrapped("%s", ParameterName.c_str());
       ImGui::SameLine();
@@ -242,7 +242,7 @@ namespace Dwarf
         case Metal: break;
         case OpenGL:
           {
-            auto shader = (OpenGLShader*)mat->GetShader().get();
+            auto shader = (OpenGLShader*)mat.GetShader().get();
             ImGui::TextWrapped("Vertex Shader");
             ImGui::SameLine();
             ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
@@ -501,18 +501,18 @@ namespace Dwarf
                               paramIdentifier) ==
             std::end(reservedParameterNames))
         {
-          auto parameter =
-            &mat.GetShaderParameters()->GetParameter(paramIdentifier);
-          auto derefParam = *parameter;
-          if (parameter)
+          if (mat.GetShaderParameters()->HasParameter(paramIdentifier))
           {
+
+            ParameterValue& parameter =
+              mat.GetShaderParameters()->GetParameter(paramIdentifier);
             std::visit(
               RenderShaderParameterVisitor{
                 m_AssetDatabase,
                 paramIdentifier,
-                *parameter,
+                parameter,
                 std::format("##boolean{}", std::to_string(n++)) },
-              derefParam);
+              parameter);
             // Parameter UI specific to parameter type
             // switch (parameter->index())
             // {
@@ -547,7 +547,8 @@ namespace Dwarf
             //     break;
             //   case UNSIGNED_INTEGER:
             //     {
-            //       std::shared_ptr<UnsignedIntegerShaderParameter> parameter =
+            //       std::shared_ptr<UnsignedIntegerShaderParameter> parameter
+            //       =
             //         std::dynamic_pointer_cast<UnsignedIntegerShaderParameter>(
             //           i->second);
             //       ImGui::TextWrapped("%s", i->first.c_str());
@@ -642,7 +643,6 @@ namespace Dwarf
             //     break;
             // }
           }
-
           // Delete button for parameter
           ImGui::SameLine();
           ImGui::SetCursorPosX(ImGui::GetCursorPosX() +
@@ -865,7 +865,7 @@ namespace Dwarf
     if (ImGui::Button("Load scene") && FileHandler::FileExists(asset.GetPath()))
     {
       std::unique_ptr<IScene> loadedScene = m_SceneIO->LoadScene(asset);
-      m_LoadedScene->SetScene(loadedScene);
+      m_LoadedScene->SetScene(std::move(loadedScene));
     }
 
     draw_list->ChannelsSetCurrent(0);
@@ -1205,55 +1205,93 @@ namespace Dwarf
       {
         using enum ASSET_TYPE;
         case MODEL:
-          RenderAssetInspector(
-            *m_AssetDatabase->Retrieve<ModelAsset>(assetPath));
-          break;
+          {
+            IAssetReference<ModelAsset> modelAsset =
+              m_AssetDatabase->Retrieve<ModelAsset>(assetPath);
+            RenderAssetInspector(modelAsset);
+            break;
+          }
         case TEXTURE:
-          RenderAssetInspector(
-            *m_AssetDatabase->Retrieve<TextureAsset>(assetPath));
-          break;
+          {
+            IAssetReference<TextureAsset> textureAsset =
+              m_AssetDatabase->Retrieve<TextureAsset>(assetPath);
+            RenderAssetInspector(textureAsset);
+            break;
+          }
         case SCENE:
-          RenderAssetInspector(
-            *m_AssetDatabase->Retrieve<SceneAsset>(assetPath));
-          break;
+          {
+            IAssetReference<SceneAsset> sceneAsset =
+              m_AssetDatabase->Retrieve<SceneAsset>(assetPath);
+            RenderAssetInspector(sceneAsset);
+            break;
+          }
         case MATERIAL:
-          RenderAssetInspector(
-            *m_AssetDatabase->Retrieve<MaterialAsset>(assetPath));
-          break;
+          {
+            IAssetReference<MaterialAsset> materialAsset =
+              m_AssetDatabase->Retrieve<MaterialAsset>(assetPath);
+            RenderAssetInspector(materialAsset);
+            break;
+          }
         case VERTEX_SHADER:
-          RenderAssetInspector(
-            *m_AssetDatabase->Retrieve<VertexShaderAsset>(assetPath));
-          break;
+          {
+            IAssetReference<VertexShaderAsset> vertexShaderAsset =
+              m_AssetDatabase->Retrieve<VertexShaderAsset>(assetPath);
+            RenderAssetInspector(vertexShaderAsset);
+            break;
+          }
         case TESC_SHADER:
-          RenderAssetInspector(
-            *m_AssetDatabase->Retrieve<TessellationControlShaderAsset>(
-              assetPath));
-          break;
+          {
+            IAssetReference<TessellationControlShaderAsset>
+              tessControlShaderAsset =
+                m_AssetDatabase->Retrieve<TessellationControlShaderAsset>(
+                  assetPath);
+            RenderAssetInspector(tessControlShaderAsset);
+            break;
+          }
         case TESE_SHADER:
-          RenderAssetInspector(
-            *m_AssetDatabase->Retrieve<TessellationEvaluationShaderAsset>(
-              assetPath));
-          break;
+          {
+            IAssetReference<TessellationEvaluationShaderAsset>
+              tessEvalShaderAsset =
+                m_AssetDatabase->Retrieve<TessellationEvaluationShaderAsset>(
+                  assetPath);
+            RenderAssetInspector(tessEvalShaderAsset);
+            break;
+          }
         case GEOMETRY_SHADER:
-          RenderAssetInspector(
-            *m_AssetDatabase->Retrieve<GeometryShaderAsset>(assetPath));
-          break;
+          {
+            IAssetReference<GeometryShaderAsset> geometryShaderAsset =
+              m_AssetDatabase->Retrieve<GeometryShaderAsset>(assetPath);
+            RenderAssetInspector(geometryShaderAsset);
+            break;
+          }
         case FRAGMENT_SHADER:
-          RenderAssetInspector(
-            *m_AssetDatabase->Retrieve<FragmentShaderAsset>(assetPath));
-          break;
+          {
+            IAssetReference<FragmentShaderAsset> fragmentShaderAsset =
+              m_AssetDatabase->Retrieve<FragmentShaderAsset>(assetPath);
+            RenderAssetInspector(fragmentShaderAsset);
+            break;
+          }
         case HLSL_SHADER:
-          RenderAssetInspector(
-            *m_AssetDatabase->Retrieve<HlslShaderAsset>(assetPath));
-          break;
+          {
+            IAssetReference<HlslShaderAsset> hlslShaderAsset =
+              m_AssetDatabase->Retrieve<HlslShaderAsset>(assetPath);
+            RenderAssetInspector(hlslShaderAsset);
+            break;
+          }
         case COMPUTE_SHADER:
-          RenderAssetInspector(
-            *m_AssetDatabase->Retrieve<ComputeShaderAsset>(assetPath));
-          break;
+          {
+            IAssetReference<ComputeShaderAsset> computeShaderAsset =
+              m_AssetDatabase->Retrieve<ComputeShaderAsset>(assetPath);
+            RenderAssetInspector(computeShaderAsset);
+            break;
+          }
         case UNKNOWN:
-          RenderAssetInspector(
-            *m_AssetDatabase->Retrieve<UnknownAsset>(assetPath));
-          break;
+          {
+            IAssetReference<UnknownAsset> unknownAsset =
+              m_AssetDatabase->Retrieve<UnknownAsset>(assetPath);
+            RenderAssetInspector(unknownAsset);
+            break;
+          }
         default: break;
       }
     }

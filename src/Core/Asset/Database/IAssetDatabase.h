@@ -99,12 +99,14 @@ namespace Dwarf
      * @param uid UID of the asset.
      */
     template<typename T>
-    std::unique_ptr<IAssetReference<T>>
+    IAssetReference<T>
     Retrieve(const UUID& uid)
     {
-      std::unique_ptr<void> asset = RetrieveImpl(typeid(T), uid);
-      return std::unique_ptr<IAssetReference<T>>(
-        static_cast<IAssetReference<T>*>(asset.release()));
+      // Retrieve the std::any from RetrieveImpl
+      std::any retrievedAsset = RetrieveImpl(typeid(T), uid);
+
+      // Cast the std::any to IAssetReference<T>
+      return std::any_cast<IAssetReference<T>>(retrievedAsset);
     }
 
     /**
@@ -112,12 +114,14 @@ namespace Dwarf
      * @param path Path to the asset.
      */
     template<typename T>
-    std::unique_ptr<IAssetReference<T>>
+    IAssetReference<T>
     Retrieve(const std::filesystem::path& path)
     {
-      std::unique_ptr<void> asset = RetrieveImpl(typeid(T), path);
-      return std::unique_ptr<IAssetReference<T>>(
-        static_cast<IAssetReference<T>*>(asset.release()));
+      // Retrieve the std::any from RetrieveImpl
+      std::any retrievedAsset = RetrieveImpl(typeid(T), path);
+
+      // Cast the std::any to IAssetReference<T>
+      return std::any_cast<IAssetReference<T>>(retrievedAsset);
     }
 
     virtual entt::registry&
@@ -160,10 +164,10 @@ namespace Dwarf
 
   private:
     // NVI (Non-Virtual Interface) Implementations
-    virtual std::unique_ptr<void>
+    virtual std::any
     RetrieveImpl(std::type_index type, const UUID& uid) = 0;
 
-    virtual std::unique_ptr<void>
+    virtual std::any
     RetrieveImpl(std::type_index type, const std::filesystem::path& path) = 0;
 
   protected:

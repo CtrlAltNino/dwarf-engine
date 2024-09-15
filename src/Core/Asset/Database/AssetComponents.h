@@ -1,8 +1,10 @@
 #pragma once
+
 #include "Core/Rendering/Texture/ITexture.h"
 #include "Utilities/FileHandler.h"
 #include "Core/Rendering/Mesh/IMesh.h"
 #include "Core/Rendering/Material/IMaterial.h"
+#include <optional>
 
 namespace Dwarf
 {
@@ -11,20 +13,27 @@ namespace Dwarf
   {
   private:
     /// @brief Vector of submeshes.
-    std::vector<std::unique_ptr<IMesh>> m_Meshes;
+    std::vector<IMesh> m_Meshes;
 
   public:
-    ModelAsset(std::vector<std::unique_ptr<IMesh>>& meshes)
+    ModelAsset() = default;
+    ModelAsset(std::vector<IMesh> meshes)
       : m_Meshes(std::move(meshes))
     {
-      for (auto& mesh : m_Meshes)
-      {
-        mesh->SetupMesh();
-      }
+      // for (auto& mesh : m_Meshes)
+      // {
+      //   mesh.SetupMesh();
+      // }
     }
 
-    std::vector<std::unique_ptr<IMesh>>&
+    std::vector<IMesh>&
     Meshes()
+    {
+      return m_Meshes;
+    }
+
+    const std::vector<IMesh>&
+    Meshes() const
     {
       return m_Meshes;
     }
@@ -38,13 +47,19 @@ namespace Dwarf
     std::unique_ptr<IMaterial> m_Material;
 
   public:
-    MaterialAsset(std::unique_ptr<IMaterial>& material)
+    MaterialAsset(std::unique_ptr<IMaterial>&& material)
       : m_Material(std::move(material))
     {
     }
 
     IMaterial&
     GetMaterial()
+    {
+      return *m_Material;
+    }
+
+    const IMaterial&
+    GetMaterial() const
     {
       return *m_Material;
     }
@@ -193,13 +208,13 @@ namespace Dwarf
     std::unique_ptr<ITexture> m_Texture;
 
   public:
-    explicit TextureAsset(std::unique_ptr<ITexture> texture)
+    explicit TextureAsset(std::unique_ptr<ITexture>&& texture)
       : m_Texture(std::move(texture))
     {
     }
 
-    ITexture&
-    GetTexture()
+    const ITexture&
+    GetTexture() const
     {
       return *m_Texture;
     }
@@ -218,7 +233,7 @@ namespace Dwarf
     }
 
     const nlohmann::json&
-    GetSerializedScene()
+    GetSerializedScene() const
     {
       return m_SerializedScene;
     }

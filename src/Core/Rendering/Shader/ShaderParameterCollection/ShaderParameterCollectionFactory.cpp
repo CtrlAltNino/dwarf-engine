@@ -51,12 +51,11 @@ namespace Dwarf
         {
           parameterCollection->SetParameter(
             parameter.key(),
-            std::make_unique<UUID>(
-              parameter.value()["value"].get<std::string>()));
+            UUID(parameter.value()["value"].get<std::string>()));
         }
         else
         {
-          parameterCollection->SetParameter(parameter.key(), nullptr);
+          parameterCollection->SetParameter(parameter.key(), std::nullopt);
         }
       }
       else if (serializedShaderParameterCollection["parameters"]

@@ -397,7 +397,7 @@ namespace Dwarf
     TransformComponent& tc = m_EditorSelection->GetSelectedEntities()
                                .at(0)
                                .GetComponent<TransformComponent>();
-    glm::mat4 transform = tc.getModelMatrix();
+    glm::mat4 transform = tc.GetModelMatrix();
 
     ImGuizmo::Manipulate(glm::value_ptr(m_Camera->GetViewMatrix()),
                          glm::value_ptr(m_Camera->GetProjectionMatrix()),
@@ -407,17 +407,17 @@ namespace Dwarf
 
     if (ImGuizmo::IsUsing())
     {
-      tc.position = glm::vec3(transform[3]);
+      tc.GetPosition() = glm::vec3(transform[3]);
       glm::vec3 rotation;
 
       ImGuizmo::DecomposeMatrixToComponents(glm::value_ptr(transform),
-                                            glm::value_ptr(tc.position),
+                                            glm::value_ptr(tc.GetPosition()),
                                             glm::value_ptr(rotation),
-                                            glm::value_ptr(tc.scale));
+                                            glm::value_ptr(tc.GetScale()));
 
-      glm::vec3 deltaRotation = rotation - tc.rotation;
+      glm::vec3 deltaRotation = rotation - tc.GetEulerAngles();
 
-      tc.rotation += deltaRotation;
+      tc.GetEulerAngles() += deltaRotation;
     }
   }
 
@@ -450,7 +450,7 @@ namespace Dwarf
 
     for (auto entity : m_EditorSelection->GetSelectedEntities())
     {
-      center += entity.GetComponent<TransformComponent>().position;
+      center += entity.GetComponent<TransformComponent>().GetPosition();
     }
 
     return center / (float)m_EditorSelection->GetSelectedEntities().size();
@@ -506,13 +506,13 @@ namespace Dwarf
   SceneViewerWindow::Deserialize(nlohmann::json moduleData)
   {
 
-    m_Camera->GetProperties().Transform.position = {
+    m_Camera->GetProperties().Transform.GetPosition() = {
       moduleData["camera"]["position"]["x"],
       moduleData["camera"]["position"]["y"],
       moduleData["camera"]["position"]["z"]
     };
 
-    m_Camera->GetProperties().Transform.rotation = {
+    m_Camera->GetProperties().Transform.GetEulerAngles() = {
       moduleData["camera"]["rotation"]["x"],
       moduleData["camera"]["rotation"]["y"],
       moduleData["camera"]["rotation"]["z"]
@@ -545,18 +545,18 @@ namespace Dwarf
     nlohmann::json state;
 
     state["camera"]["position"]["x"] =
-      m_Camera->GetProperties().Transform.position.x;
+      m_Camera->GetProperties().Transform.GetPosition().x;
     state["camera"]["position"]["y"] =
-      m_Camera->GetProperties().Transform.position.y;
+      m_Camera->GetProperties().Transform.GetPosition().y;
     state["camera"]["position"]["z"] =
-      m_Camera->GetProperties().Transform.position.z;
+      m_Camera->GetProperties().Transform.GetPosition().z;
 
     state["camera"]["rotation"]["x"] =
-      m_Camera->GetProperties().Transform.rotation.x;
+      m_Camera->GetProperties().Transform.GetEulerAngles().x;
     state["camera"]["rotation"]["y"] =
-      m_Camera->GetProperties().Transform.rotation.y;
+      m_Camera->GetProperties().Transform.GetEulerAngles().y;
     state["camera"]["rotation"]["z"] =
-      m_Camera->GetProperties().Transform.rotation.z;
+      m_Camera->GetProperties().Transform.GetEulerAngles().z;
 
     state["camera"]["fov"] = m_Camera->GetProperties().Fov;
     state["camera"]["near"] = m_Camera->GetProperties().NearPlane;
@@ -586,7 +586,7 @@ namespace Dwarf
     {
       entt::entity entity = static_cast<entt::entity>(handle);
       m_EditorSelection->SelectEntity(
-        Entity(entity, m_LoadedScene->GetScene()->GetRegistry()));
+        Entity(entity, m_LoadedScene->GetScene().GetRegistry()));
     }
     else
     {

@@ -1,7 +1,10 @@
 #include "SceneIO.h"
 
+#include "Core/Asset/AssetReference/IAssetReference.h"
+#include "Core/Asset/Database/AssetComponents.h"
 #include "Utilities/FileHandler.h"
 #include <nfd.h>
+#include <fmt/format.h>
 
 namespace Dwarf
 {
@@ -17,11 +20,10 @@ namespace Dwarf
   void
   SceneIO::SaveScene(IScene& scene) const
   {
-    // TODO: Add error handling and logging.
-    nlohmann::json sceneJson = scene.Serialize();
-
     if (scene.GetProperties().GetAsset().GetPath().empty())
     {
+      // TODO: Add error handling and logging.
+      nlohmann::json sceneJson = scene.Serialize();
       WriteSceneToFile(scene.GetProperties().GetAsset().GetPath(), sceneJson);
     }
     else
@@ -99,7 +101,9 @@ namespace Dwarf
     {
       std::filesystem::path path(savePath);
       delete savePath;
-      return LoadScene(*m_AssetDatabase->Retrieve<SceneAsset>(path));
+      IAssetReference<SceneAsset> sceneAsset =
+        m_AssetDatabase->Retrieve<SceneAsset>(path);
+      return LoadScene(sceneAsset);
     }
     else if (result == NFD_CANCEL)
     {
@@ -113,10 +117,19 @@ namespace Dwarf
     }
   }
 
-  std::unique_ptr<IScene>
-  SceneIO::LoadDefaultScene() const
+  std::string
+  SceneIO::CreateNewSceneName(const std::filesystem::path& directory)
   {
-    return m_SceneFactory->NewEmptyScene();
+    // Check if "New Scene" already exists, if so, increment the number
+    std::string sceneName = "New Scene";
+    int         i = 1;
+    while (FileHandler::FileExists(directory /
+                                   (sceneName + std::to_string(i) + ".scene")))
+    {
+      i++;
+    }
+
+    return fmt::format("{} ({}).dscene", sceneName, std::to_string(i));
   }
 
   void
@@ -124,5 +137,14 @@ namespace Dwarf
                             const std::filesystem::path& scenePath) const
   {
     FileHandler::WriteToFile(scenePath, serializedScene.get<std::string>());
+  }
+
+  void
+  SceneIO::NewSceneAsset(const std::filesystem::path& directory)
+  {
+    std::unique_ptr<IScene> scene = m_SceneFactory->CreateDefaultScene();
+    nlohmann::json          sceneJson = scene->Serialize();
+    std::string             name = CreateNewSceneName(directory);
+    WriteSceneToFile(directory / name, sceneJson);
   }
 }
