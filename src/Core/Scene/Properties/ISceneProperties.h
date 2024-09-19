@@ -20,8 +20,8 @@ namespace Dwarf
 
     /// @brief Returns the asset reference of the scene.
     /// @return The asset reference of the scene.
-    virtual IAssetReference<SceneAsset>&
-    GetAsset() const = 0;
+    virtual const std::optional<UUID>&
+    GetAssetID() const = 0;
 
     /// @brief Returns the settings of the scene.
     /// @return The settings of the scene.

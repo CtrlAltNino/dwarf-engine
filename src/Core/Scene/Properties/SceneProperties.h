@@ -12,9 +12,9 @@ namespace Dwarf
     /// @param name The name of the scene.
     /// @param asset The asset reference of the scene.
     /// @param settings The settings of the scene.
-    SceneProperties(std::unique_ptr<IAssetReference<SceneAsset>> asset,
-                    const std::string&                           name,
-                    std::unique_ptr<ISceneSettings>              settings);
+    SceneProperties(std::optional<UUID>             assetID,
+                    const std::string&              name,
+                    std::unique_ptr<ISceneSettings> settings);
 
     /// @copydoc ISerializable::Serialize
     nlohmann::json
@@ -25,16 +25,16 @@ namespace Dwarf
     GetName() const override;
 
     /// @copydoc ISceneProperties::GetAsset
-    IAssetReference<SceneAsset>&
-    GetAsset() const override;
+    const std::optional<UUID>&
+    GetAssetID() const override;
 
     /// @copydoc ISceneProperties::GetSettings
     ISceneSettings&
     GetSettings() const override;
 
   private:
-    std::string                                  m_Name;
-    std::unique_ptr<IAssetReference<SceneAsset>> m_Asset;
-    std::unique_ptr<ISceneSettings>              m_Settings;
+    std::string                     m_Name;
+    std::optional<UUID>             m_AssetID;
+    std::unique_ptr<ISceneSettings> m_Settings;
   };
 }

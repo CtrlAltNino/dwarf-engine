@@ -50,19 +50,19 @@ namespace Dwarf
     const ShaderLogs&
     GetShaderLogs() const;
 
-    std::optional<IAssetReference<VertexShaderAsset>>&
+    std::optional<std::unique_ptr<IAssetReference>>&
     GetVertexShaderAsset();
 
-    std::optional<IAssetReference<FragmentShaderAsset>>&
+    std::optional<std::unique_ptr<IAssetReference>>&
     GetFragmentShaderAsset();
 
-    std::optional<IAssetReference<GeometryShaderAsset>>&
+    std::optional<std::unique_ptr<IAssetReference>>&
     GetGeometryShaderAsset();
 
-    std::optional<IAssetReference<TessellationControlShaderAsset>>&
+    std::optional<std::unique_ptr<IAssetReference>>&
     GetTessellationControlShaderAsset();
 
-    std::optional<IAssetReference<TessellationEvaluationShaderAsset>>&
+    std::optional<std::unique_ptr<IAssetReference>>&
     GetTessellationEvaluationShaderAsset();
 
     static const std::array<std::string, 3> ReservedUniformNames;
@@ -76,38 +76,12 @@ namespace Dwarf
     std::shared_ptr<IShaderParameterCollectionFactory>
       m_ShaderParameterCollectionFactory;
 
-    std::optional<IAssetReference<VertexShaderAsset>>   m_VertexShaderAsset;
-    std::optional<IAssetReference<GeometryShaderAsset>> m_GeometryShaderAsset;
-    std::optional<IAssetReference<TessellationControlShaderAsset>>
+    std::optional<std::unique_ptr<IAssetReference>> m_VertexShaderAsset;
+    std::optional<std::unique_ptr<IAssetReference>> m_GeometryShaderAsset;
+    std::optional<std::unique_ptr<IAssetReference>>
       m_TessellationControlShaderAsset;
-    std::optional<IAssetReference<TessellationEvaluationShaderAsset>>
+    std::optional<std::unique_ptr<IAssetReference>>
       m_TessellationEvaluationShaderAsset;
-    std::optional<IAssetReference<FragmentShaderAsset>> m_FragmentShaderAsset;
-
-    // Declare the visitor struct
-    struct HandleShaderSourceVisitor
-    {
-      HandleShaderSourceVisitor(OpenGLShader& instance);
-
-      void
-      operator()(const IAssetReference<VertexShaderAsset> source) const;
-
-      void
-      operator()(const IAssetReference<FragmentShaderAsset> source) const;
-
-      void
-      operator()(const IAssetReference<GeometryShaderAsset> source) const;
-
-      void
-      operator()(
-        const IAssetReference<TessellationControlShaderAsset> source) const;
-
-      void
-      operator()(
-        const IAssetReference<TessellationEvaluationShaderAsset> source) const;
-
-    private:
-      OpenGLShader& instance; // Reference to the MyClass instance
-    };
+    std::optional<std::unique_ptr<IAssetReference>> m_FragmentShaderAsset;
   };
 }

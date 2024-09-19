@@ -51,11 +51,9 @@ namespace Dwarf
     {
       // TODO: This needs to count the number of textures and bind them
       glActiveTexture(GL_TEXTURE0);
-      glBindTexture(GL_TEXTURE_2D,
-                    m_AssetDatabase->Retrieve<TextureAsset>(*parameter)
-                      .GetAsset()
-                      .GetTexture()
-                      .GetTextureID());
+      TextureAsset& textureAsset =
+        (TextureAsset&)m_AssetDatabase->Retrieve(*parameter)->GetAsset();
+      glBindTexture(GL_TEXTURE_2D, textureAsset.GetTexture().GetTextureID());
       glUniform1i(glGetUniformLocation(m_ShaderID, m_ParameterName.c_str()), 0);
     }
     void
@@ -125,11 +123,11 @@ namespace Dwarf
   }
 
   void
-  OpenGLRendererApi::RenderIndexed(IMesh&     mesh,
-                                   IMaterial& material,
-                                   glm::mat4  modelMatrix,
-                                   glm::mat4  viewMatrix,
-                                   glm::mat4  projectionMatrix)
+  OpenGLRendererApi::RenderIndexed(std::unique_ptr<IMesh>& mesh,
+                                   IMaterial&              material,
+                                   glm::mat4               modelMatrix,
+                                   glm::mat4               viewMatrix,
+                                   glm::mat4               projectionMatrix)
   {
     OpenGLMesh&                   oglMesh = (OpenGLMesh&)mesh;
     std::shared_ptr<OpenGLShader> shader =

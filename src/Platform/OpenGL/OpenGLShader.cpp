@@ -1,4 +1,7 @@
 #include "OpenGLShader.h"
+#include "Core/Asset/AssetReference/IAssetReference.h"
+#include "Core/Asset/AssetTypes.h"
+#include "Core/Asset/Database/AssetComponents.h"
 #include "Core/Base.h"
 #include "Core/Rendering/Shader/ShaderParameterCollection/IShaderParameterCollection.h"
 #include "Core/Rendering/Shader/ShaderParameterCollection/IShaderParameterCollectionFactory.h"
@@ -16,9 +19,28 @@ namespace Dwarf
       shaderParameterCollectionFactory)
     : m_ShaderParameterCollectionFactory(shaderParameterCollectionFactory)
   {
-    for (const auto& shaderSource : shaderSources->GetShaderSources())
+    for (std::unique_ptr<IAssetReference>& shaderSource :
+         shaderSources->GetShaderSources())
     {
-      std::visit(HandleShaderSourceVisitor(*this), shaderSource);
+      // std::visit(HandleShaderSourceVisitor(*this), shaderSource);
+      switch (shaderSource->GetType())
+      {
+        case Dwarf::ASSET_TYPE::VERTEX_SHADER:
+          m_VertexShaderAsset = std::move(shaderSource);
+          break;
+        case Dwarf::ASSET_TYPE::FRAGMENT_SHADER:
+          m_FragmentShaderAsset = std::move(shaderSource);
+          break;
+        case Dwarf::ASSET_TYPE::GEOMETRY_SHADER:
+          m_GeometryShaderAsset = std::move(shaderSource);
+          break;
+        case Dwarf::ASSET_TYPE::TESC_SHADER:
+          m_TessellationControlShaderAsset = std::move(shaderSource);
+          break;
+        case Dwarf::ASSET_TYPE::TESE_SHADER:
+          m_TessellationEvaluationShaderAsset = std::move(shaderSource);
+          break;
+      }
     }
   }
 
@@ -49,13 +71,22 @@ namespace Dwarf
   {
     m_SuccessfullyCompiled = false;
 
-    if (m_VertexShaderAsset->GetAsset().GetFileContent().length() > 0 &&
-        m_FragmentShaderAsset->GetAsset().GetFileContent().length() > 0)
+    if (!m_VertexShaderAsset.has_value() || !m_FragmentShaderAsset.has_value())
     {
-      const char* vertexSource =
-        m_VertexShaderAsset->GetAsset().GetFileContent().c_str();
-      const char* fragmentSource =
-        m_FragmentShaderAsset->GetAsset().GetFileContent().c_str();
+      return;
+    }
+
+    VertexShaderAsset& vertexShaderAsset =
+      (VertexShaderAsset&)m_VertexShaderAsset.value()->GetAsset();
+
+    FragmentShaderAsset& fragmentShaderAsset =
+      (FragmentShaderAsset&)m_FragmentShaderAsset.value()->GetAsset();
+
+    if (vertexShaderAsset.GetFileContent().length() > 0 &&
+        fragmentShaderAsset.GetFileContent().length() > 0)
+    {
+      const char* vertexSource = vertexShaderAsset.GetFileContent().c_str();
+      const char* fragmentSource = fragmentShaderAsset.GetFileContent().c_str();
 
       GLsizei vert_log_length = 0;
       GLchar  vert_message[1024] = "";
@@ -108,12 +139,12 @@ namespace Dwarf
 
       GLuint geometryShader = -1;
 
-      if (m_GeometryShaderAsset.has_value() &&
-          m_GeometryShaderAsset.value().GetAsset().GetFileContent().length() >
-            0)
+      if (m_GeometryShaderAsset.has_value())
       {
         const char* geometrySource =
-          m_GeometryShaderAsset.value().GetAsset().GetFileContent().c_str();
+          ((GeometryShaderAsset&)m_GeometryShaderAsset.value()->GetAsset())
+            .GetFileContent()
+            .c_str();
 
         GLsizei geom_log_length = 0;
         GLchar  geom_message[1024] = "";
@@ -289,31 +320,31 @@ namespace Dwarf
     return parameters;
   }
 
-  std::optional<IAssetReference<VertexShaderAsset>>&
+  std::optional<std::unique_ptr<IAssetReference>>&
   OpenGLShader::GetVertexShaderAsset()
   {
     return m_VertexShaderAsset;
   }
 
-  std::optional<IAssetReference<FragmentShaderAsset>>&
+  std::optional<std::unique_ptr<IAssetReference>>&
   OpenGLShader::GetFragmentShaderAsset()
   {
     return m_FragmentShaderAsset;
   }
 
-  std::optional<IAssetReference<GeometryShaderAsset>>&
+  std::optional<std::unique_ptr<IAssetReference>>&
   OpenGLShader::GetGeometryShaderAsset()
   {
     return m_GeometryShaderAsset;
   }
 
-  std::optional<IAssetReference<TessellationControlShaderAsset>>&
+  std::optional<std::unique_ptr<IAssetReference>>&
   OpenGLShader::GetTessellationControlShaderAsset()
   {
     return m_TessellationControlShaderAsset;
   }
 
-  std::optional<IAssetReference<TessellationEvaluationShaderAsset>>&
+  std::optional<std::unique_ptr<IAssetReference>>&
   OpenGLShader::GetTessellationEvaluationShaderAsset()
   {
     return m_TessellationEvaluationShaderAsset;
@@ -323,45 +354,5 @@ namespace Dwarf
   OpenGLShader::GetShaderLogs() const
   {
     return m_ShaderLogs;
-  }
-
-  void
-  OpenGLShader::HandleShaderSourceVisitor::operator()(
-    const IAssetReference<VertexShaderAsset> source) const
-  {
-    instance.m_VertexShaderAsset.reset();
-    instance.m_VertexShaderAsset = source;
-  }
-
-  void
-  OpenGLShader::HandleShaderSourceVisitor::operator()(
-    const IAssetReference<FragmentShaderAsset> source) const
-  {
-    instance.m_FragmentShaderAsset.reset();
-    instance.m_FragmentShaderAsset = source;
-  }
-
-  void
-  OpenGLShader::HandleShaderSourceVisitor::operator()(
-    const IAssetReference<GeometryShaderAsset> source) const
-  {
-    instance.m_GeometryShaderAsset.reset();
-    instance.m_GeometryShaderAsset = source;
-  }
-
-  void
-  OpenGLShader::HandleShaderSourceVisitor::operator()(
-    const IAssetReference<TessellationControlShaderAsset> source) const
-  {
-    instance.m_TessellationControlShaderAsset.reset();
-    instance.m_TessellationControlShaderAsset = source;
-  }
-
-  void
-  OpenGLShader::HandleShaderSourceVisitor::operator()(
-    const IAssetReference<TessellationEvaluationShaderAsset> source) const
-  {
-    instance.m_TessellationEvaluationShaderAsset.reset();
-    instance.m_TessellationEvaluationShaderAsset = source;
   }
 }

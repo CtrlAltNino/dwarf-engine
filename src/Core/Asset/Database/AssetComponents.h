@@ -8,31 +8,63 @@
 
 namespace Dwarf
 {
+  // Abstract struct for asset components
+  struct IAssetComponent
+  {
+    virtual ~IAssetComponent() = default;
+  };
+
   /// @brief Component containing a model asset.
-  struct ModelAsset
+  struct ModelAsset : public IAssetComponent
   {
   private:
     /// @brief Vector of submeshes.
-    std::vector<IMesh> m_Meshes;
+    std::vector<std::unique_ptr<IMesh>> m_Meshes = {};
 
   public:
-    ModelAsset() = default;
-    ModelAsset(std::vector<IMesh> meshes)
+    ModelAsset() {}
+    ModelAsset(std::vector<std::unique_ptr<IMesh>> meshes)
       : m_Meshes(std::move(meshes))
     {
-      // for (auto& mesh : m_Meshes)
-      // {
-      //   mesh.SetupMesh();
-      // }
+      for (auto& mesh : meshes)
+      {
+        mesh->SetupMesh();
+      }
     }
 
-    std::vector<IMesh>&
+    // copy constructors using the clone function
+    ModelAsset(const ModelAsset& other)
+    {
+      for (const auto& mesh : other.m_Meshes)
+      {
+        m_Meshes.push_back(mesh->Clone());
+      }
+    }
+
+    ModelAsset&
+    operator=(const ModelAsset& other)
+    {
+      if (this == &other)
+      {
+        return *this;
+      }
+
+      m_Meshes.clear();
+      for (const auto& mesh : other.m_Meshes)
+      {
+        m_Meshes.push_back(mesh->Clone());
+      }
+
+      return *this;
+    }
+
+    std::vector<std::unique_ptr<IMesh>>&
     Meshes()
     {
       return m_Meshes;
     }
 
-    const std::vector<IMesh>&
+    const std::vector<std::unique_ptr<IMesh>>&
     Meshes() const
     {
       return m_Meshes;
@@ -40,7 +72,7 @@ namespace Dwarf
   };
 
   /// @brief Component containing a material asset.
-  struct MaterialAsset
+  struct MaterialAsset : public IAssetComponent
   {
   private:
     /// @brief Imported material.
@@ -66,7 +98,7 @@ namespace Dwarf
   };
 
   /// @brief Component containing a vertex shader asset.
-  struct VertexShaderAsset
+  struct VertexShaderAsset : public IAssetComponent
   {
   private:
     /// @brief The content of the file.
@@ -86,7 +118,7 @@ namespace Dwarf
   };
 
   /// @brief Component containing a fragment shader asset.
-  struct FragmentShaderAsset
+  struct FragmentShaderAsset : public IAssetComponent
   {
   private:
     std::string m_FileContent;
@@ -105,7 +137,7 @@ namespace Dwarf
   };
 
   /// @brief Component containing a geometry shader asset.
-  struct GeometryShaderAsset
+  struct GeometryShaderAsset : public IAssetComponent
   {
   private:
     std::string m_FileContent;
@@ -124,7 +156,7 @@ namespace Dwarf
   };
 
   /// @brief Component containing a tesselation control shader asset.
-  struct TessellationControlShaderAsset
+  struct TessellationControlShaderAsset : public IAssetComponent
   {
   private:
     std::string m_FileContent;
@@ -143,7 +175,7 @@ namespace Dwarf
   };
 
   /// @brief Component containing a tesselation evaluation shader asset.
-  struct TessellationEvaluationShaderAsset
+  struct TessellationEvaluationShaderAsset : public IAssetComponent
   {
   private:
     std::string m_FileContent;
@@ -163,7 +195,7 @@ namespace Dwarf
   };
 
   /// @brief Component containing a compute shader asset.
-  struct ComputeShaderAsset
+  struct ComputeShaderAsset : public IAssetComponent
   {
   private:
     std::string m_FileContent;
@@ -182,7 +214,7 @@ namespace Dwarf
   };
 
   /// @brief Component containing a compute shader asset.
-  struct HlslShaderAsset
+  struct HlslShaderAsset : public IAssetComponent
   {
   private:
     std::string m_FileContent;
@@ -201,7 +233,7 @@ namespace Dwarf
   };
 
   /// @brief Component containing a texture asset.
-  struct TextureAsset
+  struct TextureAsset : public IAssetComponent
   {
   private:
     /// @brief Imported texture.
@@ -221,7 +253,7 @@ namespace Dwarf
   };
 
   /// @brief Asset containing a Dwarf Engine scene.
-  struct SceneAsset
+  struct SceneAsset : public IAssetComponent
   {
   private:
     nlohmann::json m_SerializedScene;
@@ -239,7 +271,7 @@ namespace Dwarf
     }
   };
 
-  struct UnknownAsset
+  struct UnknownAsset : public IAssetComponent
   {
   private:
     std::string m_FileContent;

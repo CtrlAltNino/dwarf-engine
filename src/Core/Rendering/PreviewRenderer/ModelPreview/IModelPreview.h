@@ -11,9 +11,9 @@ namespace Dwarf
   {
   public:
     virtual void
-    RenderModelPreview(IAssetReference<ModelAsset>& modelAsset) = 0;
+    RenderModelPreview(IAssetReference& modelAsset) = 0;
 
     virtual void
-    FocusModel(IAssetReference<ModelAsset>& modelAsset) = 0;
+    FocusModel(ModelAsset& modelAsset) = 0;
   };
 }

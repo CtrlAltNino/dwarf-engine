@@ -25,8 +25,7 @@ namespace Dwarf
                     std::shared_ptr<IMeshFactory>        meshFactory);
 
     void
-    RenderMaterialPreview(
-      IAssetReference<MaterialAsset>& materialAsset) override;
+    RenderMaterialPreview(IMaterial& materialAsset) override;
 
     void
     SetMeshType(MaterialPreviewMeshType meshType) override;

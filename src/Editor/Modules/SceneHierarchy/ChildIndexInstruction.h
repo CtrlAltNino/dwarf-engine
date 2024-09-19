@@ -11,7 +11,7 @@ namespace Dwarf
   {
   private:
     /// @brief Pointer to the currently opened scene.
-    std::shared_ptr<IScene> m_Scene;
+    IScene& m_Scene;
 
     /// @brief The entities to process.
     std::vector<Entity> m_SourceEntities;
@@ -23,7 +23,7 @@ namespace Dwarf
     /// @brief Executes the instruction.
     void
     PerformInstruction() override;
-    ChildIndexInstruction(std::shared_ptr<IScene>    scene,
+    ChildIndexInstruction(IScene&                    scene,
                           std::vector<Entity> const& sourceEntities,
                           int                        index);
   };

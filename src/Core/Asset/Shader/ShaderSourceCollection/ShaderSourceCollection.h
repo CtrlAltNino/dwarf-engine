@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Asset/AssetReference/IAssetReference.h"
 #include "Core/Asset/Shader/ShaderSourceCollection/IShaderSourceCollection.h"
 
 namespace Dwarf
@@ -7,12 +8,15 @@ namespace Dwarf
   class ShaderSourceCollection : public IShaderSourceCollection
   {
   private:
-    std::vector<ShaderSource> m_ShaderSources;
+    std::vector<std::unique_ptr<IAssetReference>> m_ShaderSources;
 
   public:
-    ShaderSourceCollection(std::vector<ShaderSource>& shaderSources);
+    ShaderSourceCollection(
+      std::vector<std::unique_ptr<IAssetReference>>& shaderSources);
+
     ~ShaderSourceCollection() override = default;
-    std::vector<ShaderSource>&
+
+    std::vector<std::unique_ptr<IAssetReference>>&
     GetShaderSources() override;
   };
 }

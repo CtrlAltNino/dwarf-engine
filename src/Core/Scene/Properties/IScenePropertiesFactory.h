@@ -11,8 +11,8 @@ namespace Dwarf
     virtual ~IScenePropertiesFactory() = default;
 
     virtual std::unique_ptr<ISceneProperties>
-    Create(IAssetReference<SceneAsset>& sceneAsset,
-           const nlohmann::json&        serializedProperties) = 0;
+    Create(IAssetReference&      sceneAsset,
+           const nlohmann::json& serializedProperties) = 0;
 
     virtual std::unique_ptr<ISceneProperties>
     Create(const std::string& name) = 0;

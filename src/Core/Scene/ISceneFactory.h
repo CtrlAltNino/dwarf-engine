@@ -12,7 +12,7 @@ namespace Dwarf
     /// @param sceneAsset The asset reference of the scene.
     /// @return The created scene.
     virtual std::unique_ptr<IScene>
-    FromAsset(IAssetReference<SceneAsset>& sceneAsset) = 0;
+    FromAsset(IAssetReference& sceneAsset) = 0;
 
     virtual std::unique_ptr<IScene>
     CreateDefaultScene() = 0;

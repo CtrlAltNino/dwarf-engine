@@ -21,11 +21,11 @@ namespace Dwarf
     virtual void
     Clear(unsigned int value) = 0;
     virtual void
-    RenderIndexed(IMesh&     mesh,
-                  IMaterial& material,
-                  glm::mat4  modelMatrix,
-                  glm::mat4  viewMatrix,
-                  glm::mat4  projectionMatrix) = 0;
+    RenderIndexed(std::unique_ptr<IMesh>& mesh,
+                  IMaterial&              material,
+                  glm::mat4               modelMatrix,
+                  glm::mat4               viewMatrix,
+                  glm::mat4               projectionMatrix) = 0;
     virtual void
     ApplyComputeShader(std::shared_ptr<IComputeShader> computeShader,
                        std::shared_ptr<IFramebuffer>   fb,

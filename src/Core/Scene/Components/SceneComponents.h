@@ -305,19 +305,18 @@ namespace Dwarf
   {
   private:
     /// @brief ID of the mesh asset.
-    std::optional<IAssetReference<ModelAsset>> modelAsset = std::nullopt;
+    std::unique_ptr<IAssetReference> modelAsset = nullptr;
 
     /// @brief The materials with which the model is to be rendered. The list
     /// index of the materials corresponds to the material index of the
     /// submeshes.
-    std::vector<std::optional<IAssetReference<MaterialAsset>>>
-      materialAssets = {};
+    std::vector<std::unique_ptr<IAssetReference>> materialAssets = {};
 
   public:
     MeshRendererComponent() = default;
     MeshRendererComponent(
-      std::optional<IAssetReference<ModelAsset>>&&                modelAsset,
-      std::vector<std::optional<IAssetReference<MaterialAsset>>>& materials)
+      std::unique_ptr<IAssetReference>&&             modelAsset,
+      std::vector<std::unique_ptr<IAssetReference>>& materials)
       : modelAsset(std::move(modelAsset))
     {
       materialAssets.clear();
@@ -332,25 +331,25 @@ namespace Dwarf
     /// pass.
     bool canCastShadow;
 
-    std::optional<IAssetReference<ModelAsset>>&
+    std::unique_ptr<IAssetReference>&
     GetModelAsset()
     {
       return modelAsset;
     }
 
-    const std::optional<IAssetReference<ModelAsset>>&
+    const std::unique_ptr<IAssetReference>&
     GetModelAsset() const
     {
       return modelAsset;
     }
 
-    std::vector<std::optional<IAssetReference<MaterialAsset>>>&
+    std::vector<std::unique_ptr<IAssetReference>>&
     MaterialAssets()
     {
       return materialAssets;
     }
 
-    const std::vector<std::optional<IAssetReference<MaterialAsset>>>&
+    const std::vector<std::unique_ptr<IAssetReference>>&
     GetMaterialAssets() const
     {
       return materialAssets;
@@ -360,15 +359,14 @@ namespace Dwarf
     Serialize() const override
     {
       nlohmann::json j;
-      j["modelAsset"] =
-        modelAsset.has_value() ? modelAsset.value().GetUID().ToString() : "";
+      j["modelAsset"] = modelAsset ? modelAsset->GetUID().ToString() : "-1";
       j["materialAssets"] = nlohmann::json::array();
 
       for (auto& material : materialAssets)
       {
-        if (material.has_value())
+        if (material)
         {
-          j["materialAssets"].push_back(material.value().GetUID().ToString());
+          j["materialAssets"].push_back(material->GetUID().ToString());
         }
         else
         {

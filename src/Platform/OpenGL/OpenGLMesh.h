@@ -32,6 +32,9 @@ namespace Dwarf
     std::vector<unsigned int>
     GetIndices() const override;
 
+    std::unique_ptr<IMesh>
+    Clone() const override;
+
   private:
     GLuint VAO;
     GLuint VBO;

@@ -1,29 +1,32 @@
 #pragma once
 
+#include "Core/Asset/AssetTypes.h"
+#include "Core/Asset/Database/AssetComponents.h"
 #include "Core/UUID.h"
 #include <entt/entity/fwd.hpp>
 #include <entt/entt.hpp>
 
 namespace Dwarf
 {
-  template<typename T>
   class IAssetReference
   {
   public:
-    virtual entt::entity
-    GetHandle() const;
+    // IAssetReference() = delete;
+    virtual ~IAssetReference() = default;
 
-    template<typename U = T, typename... Args>
-    U&
-    AddAssetComponent(Args&&... args);
+    virtual entt::entity
+    GetHandle() const = 0;
 
     virtual const UUID&
-    GetUID() const;
+    GetUID() const = 0;
 
     virtual const std::filesystem::path&
-    GetPath() const;
+    GetPath() const = 0;
 
-    virtual T&
-    GetAsset();
+    virtual IAssetComponent&
+    GetAsset() = 0;
+
+    virtual ASSET_TYPE
+    GetType() const = 0;
   };
 }

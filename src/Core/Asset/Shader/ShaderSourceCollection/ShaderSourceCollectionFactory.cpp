@@ -1,4 +1,5 @@
 #include "ShaderSourceCollectionFactory.h"
+#include "Core/Asset/AssetReference/IAssetReference.h"
 #include "Core/Asset/Shader/ShaderSourceCollection/ShaderSourceCollection.h"
 #include <memory>
 #include <vector>
@@ -6,8 +7,8 @@
 namespace Dwarf
 {
   ShaderSourceCollectionFactory::ShaderSourceCollectionFactory(
-    std::shared_ptr<IAssetDatabase> assetDatabase,
-    GraphicsApi                     graphicsApi)
+    boost::di::extension::lazy<std::shared_ptr<IAssetDatabase>> assetDatabase,
+    GraphicsApi                                                 graphicsApi)
     : m_AssetDatabase(assetDatabase)
     , m_GraphicsApi(graphicsApi)
   {
@@ -16,7 +17,7 @@ namespace Dwarf
   std::unique_ptr<IShaderSourceCollection>
   ShaderSourceCollectionFactory::CreateDefaultShaderSourceCollection()
   {
-    std::vector<ShaderSource> shaderSources = {};
+    std::vector<std::unique_ptr<IAssetReference>> shaderSources = {};
     // TODO: Get default shader sources depending on the graphics API.
     return std::make_unique<ShaderSourceCollection>(shaderSources);
   }
@@ -26,15 +27,15 @@ namespace Dwarf
     const nlohmann::json& serializedShaderSourceCollection)
   {
     // Extracting shader sources from the JSON object.
-    std::vector<ShaderSource> shaderSources = {};
+    std::vector<std::unique_ptr<IAssetReference>> shaderSources = {};
 
     if (serializedShaderSourceCollection.contains("vertexShader"))
     {
       UUID vertexShaderId =
         UUID(serializedShaderSourceCollection["vertexShader"]);
 
-      shaderSources.emplace_back(std::move(
-        m_AssetDatabase->Retrieve<VertexShaderAsset>(vertexShaderId)));
+      shaderSources.emplace_back(
+        std::move(m_AssetDatabase.get()->Retrieve(vertexShaderId)));
     }
 
     if (serializedShaderSourceCollection.contains("fragmentShader"))
@@ -43,7 +44,7 @@ namespace Dwarf
         UUID(serializedShaderSourceCollection["fragmentShader"]);
 
       shaderSources.emplace_back(
-        m_AssetDatabase->Retrieve<FragmentShaderAsset>(fragmentShaderId));
+        m_AssetDatabase.get()->Retrieve(fragmentShaderId));
     }
 
     if (serializedShaderSourceCollection.contains("geometryShader"))
@@ -52,7 +53,7 @@ namespace Dwarf
         UUID(serializedShaderSourceCollection["geometryShader"]);
 
       shaderSources.emplace_back(
-        m_AssetDatabase->Retrieve<GeometryShaderAsset>(geometryShaderId));
+        m_AssetDatabase.get()->Retrieve(geometryShaderId));
     }
 
     if (serializedShaderSourceCollection.contains("tessellationControlShader"))
@@ -61,8 +62,7 @@ namespace Dwarf
         UUID(serializedShaderSourceCollection["tessellationControlShader"]);
 
       shaderSources.emplace_back(
-        m_AssetDatabase->Retrieve<TessellationControlShaderAsset>(
-          tessellationControlShaderId));
+        m_AssetDatabase.get()->Retrieve(tessellationControlShaderId));
     }
 
     if (serializedShaderSourceCollection.contains(
@@ -72,8 +72,7 @@ namespace Dwarf
         UUID(serializedShaderSourceCollection["tessellationEvaluationShader"]);
 
       shaderSources.emplace_back(
-        m_AssetDatabase->Retrieve<TessellationEvaluationShaderAsset>(
-          tessellationEvaluationShaderId));
+        m_AssetDatabase.get()->Retrieve(tessellationEvaluationShaderId));
     }
 
     return std::make_unique<ShaderSourceCollection>(shaderSources);

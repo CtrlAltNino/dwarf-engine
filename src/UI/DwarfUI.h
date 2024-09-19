@@ -5,6 +5,7 @@
 
 #include "Core/Asset/Database/AssetComponents.h"
 #include "Core/GenericComponents.h"
+#include <cstddef>
 #include <imgui.h>
 #include <entt/entt.hpp>
 
@@ -35,6 +36,10 @@
 #define COL_TAB_UNFOCUSED IM_COL32(59, 66, 82, 255)
 #define COL_TAB_UNFOCUSED_ACTIVE IM_COL32(76, 86, 106, 255)
 
+#define COMPONENT_PANEL_PADDING (8.0f)
+#define ADD_BUTTON_WIDTH (40.0f)
+#define UNIFORM_DELETE_BUTTON_WIDTH (80.0f)
+
 namespace Dwarf
 {
   class DwarfUI
@@ -51,22 +56,80 @@ namespace Dwarf
 
     template<typename T>
     static void
-    AssetInput(std::shared_ptr<IAssetDatabase>    assetDatabase,
-               std::optional<IAssetReference<T>>& assetRef,
-               const char*                        imguiID)
+    AssetInput(std::shared_ptr<IAssetDatabase>   assetDatabase,
+               std::unique_ptr<IAssetReference>& assetRef,
+               const char*                       imguiID)
     {
       std::vector<entt::entity> availableAssets;
       int                       selectedAsset = -1;
-      auto                      view =
+      const auto&               view =
         assetDatabase->GetRegistry().view<IDComponent, NameComponent, T>();
 
       int count = 0;
       for (auto entity : view)
       {
         availableAssets.push_back(entity);
-        if (assetRef.has_value() &&
+        if (assetRef && (view.template get<IDComponent>(entity).GetID() ==
+                         assetRef->GetUID()))
+        {
+          selectedAsset = count;
+        }
+        count++;
+      }
+
+      const char* preview =
+        (selectedAsset == -1)
+          ? "None"
+          : view.template get<NameComponent>(availableAssets[selectedAsset])
+              .Name.c_str();
+
+      if (ImGui::BeginCombo(imguiID, preview))
+      {
+        if (ImGui::Selectable(
+              "None", selectedAsset == -1, 0, ImVec2(0, 16 + 10)))
+        {
+          selectedAsset = -1;
+          assetRef = nullptr;
+        }
+
+        for (int i = 0; i < availableAssets.size(); i++)
+        {
+          const bool is_selected = (selectedAsset == i);
+          if (ImGui::Selectable(
+                view.template get<NameComponent>(availableAssets[i])
+                  .Name.c_str(),
+                is_selected,
+                0,
+                ImVec2(0, 16 + 10)))
+          {
+            selectedAsset = i;
+            assetRef = assetDatabase->Retrieve(
+              view.template get<IDComponent>(availableAssets[i]).GetID());
+          }
+        }
+
+        ImGui::EndCombo();
+      }
+    }
+
+    template<typename T>
+    static void
+    AssetInput(std::shared_ptr<IAssetDatabase>                  assetDatabase,
+               std::optional<std::unique_ptr<IAssetReference>>& assetRef,
+               const char*                                      imguiID)
+    {
+      std::vector<entt::entity> availableAssets;
+      int                       selectedAsset = -1;
+      const auto&               view =
+        assetDatabase->GetRegistry().view<IDComponent, NameComponent, T>();
+
+      int count = 0;
+      for (auto entity : view)
+      {
+        availableAssets.push_back(entity);
+        if (assetRef.has_value() && assetRef.value() != nullptr &&
             (view.template get<IDComponent>(entity).GetID() ==
-             assetRef.value().GetUID()))
+             assetRef.value()->GetUID()))
         {
           selectedAsset = count;
         }
@@ -99,8 +162,8 @@ namespace Dwarf
                 ImVec2(0, 16 + 10)))
           {
             selectedAsset = i;
-            // assetRef = assetDatabase->Retrieve<T>(
-            //   view.template get<IDComponent>(availableAssets[i]).GetID());
+            assetRef = assetDatabase->Retrieve(
+              view.template get<IDComponent>(availableAssets[i]).GetID());
           }
         }
 
@@ -167,18 +230,4 @@ namespace Dwarf
       }
     }
   };
-
-  template<>
-  void
-  DwarfUI::AssetInput<VertexShaderAsset>(
-    std::shared_ptr<IAssetDatabase>                    assetDatabase,
-    std::optional<IAssetReference<VertexShaderAsset>>& asset,
-    const char*                                        imguiID);
-
-  template<>
-  void
-  DwarfUI::AssetInput<FragmentShaderAsset>(
-    std::shared_ptr<IAssetDatabase>                      assetDatabase,
-    std::optional<IAssetReference<FragmentShaderAsset>>& asset,
-    const char*                                          imguiID);
 }

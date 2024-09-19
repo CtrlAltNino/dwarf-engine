@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Asset/AssetReference/IAssetReference.h"
 #include "Core/Rendering/Framebuffer/IFramebufferFactory.h"
 #include "Core/Rendering/Material/IMaterial.h"
 #include "Core/Rendering/Material/IMaterialFactory.h"
@@ -21,9 +22,9 @@ namespace Dwarf
                  std::shared_ptr<IMaterialFactory>    materialFactory);
 
     void
-    RenderModelPreview(IAssetReference<ModelAsset>& modelAsset) override;
+    RenderModelPreview(IAssetReference& modelAsset) override;
 
     void
-    FocusModel(IAssetReference<ModelAsset>& modelAsset) override;
+    FocusModel(ModelAsset& modelAsset) override;
   };
 }

@@ -19,7 +19,7 @@ namespace Dwarf
       std::shared_ptr<IAssetDatabase>          assetDatabase);
 
     std::unique_ptr<IScene>
-    FromAsset(IAssetReference<SceneAsset>& sceneAsset) override;
+    FromAsset(IAssetReference& sceneAsset) override;
 
     std::unique_ptr<IScene>
     CreateDefaultScene() override;

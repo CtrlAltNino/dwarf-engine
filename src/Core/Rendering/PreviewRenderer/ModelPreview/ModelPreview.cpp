@@ -1,5 +1,6 @@
 #include "ModelPreview.h"
 #include "Core/Rendering/Framebuffer/IFramebufferFactory.h"
+#include <entt/entity/fwd.hpp>
 
 namespace Dwarf
 {
@@ -31,18 +32,20 @@ namespace Dwarf
     m_Material = m_MaterialFactory->CreateDefaultMaterial();
   }
   void
-  ModelPreview::RenderModelPreview(IAssetReference<ModelAsset>& modelAsset)
+  ModelPreview::RenderModelPreview(IAssetReference& modelAsset)
   {
     if (static entt::entity memory = entt::null;
         memory != modelAsset.GetHandle())
     {
-      FocusModel(modelAsset);
+      FocusModel((ModelAsset&)modelAsset.GetAsset());
       memory = modelAsset.GetHandle();
       m_Properties.ModelRotation = { 15, 20, 0 };
       m_Properties.ModelRotationTarget = { 15, 20, 0 };
       UpdateRotation({ 0, 0 });
       m_Properties.Distance = 1.0f;
     }
+
+    ModelAsset& modelAssetRef = (ModelAsset&)modelAsset.GetAsset();
 
     m_Camera->GetProperties().Transform.GetPosition() = InterpolateVectors(
       m_Camera->GetProperties().Transform.GetPosition(),
@@ -57,9 +60,9 @@ namespace Dwarf
                                m_Framebuffer->GetSpecification().Width,
                                m_Framebuffer->GetSpecification().Height);
 
-    for (int i = 0; i < modelAsset.GetAsset().Meshes().size(); i++)
+    for (int i = 0; i < modelAssetRef.Meshes().size(); i++)
     {
-      m_RendererApi->RenderIndexed(modelAsset.GetAsset().Meshes().at(i),
+      m_RendererApi->RenderIndexed(modelAssetRef.Meshes().at(i),
                                    *m_Material,
                                    glm::toMat4(m_Properties.ModelRotationQuat),
                                    m_Camera->GetViewMatrix(),
@@ -69,13 +72,13 @@ namespace Dwarf
   }
 
   void
-  ModelPreview::FocusModel(IAssetReference<ModelAsset>& modelAsset)
+  ModelPreview::FocusModel(ModelAsset& modelAsset)
   {
     float longestDist = 0;
 
-    for (const auto& subMesh : modelAsset.GetAsset().Meshes())
+    for (const auto& subMesh : modelAsset.Meshes())
     {
-      for (Vertex vert : subMesh.GetVertices())
+      for (Vertex vert : subMesh->GetVertices())
       {
         float dist = glm::length(vert.Position);
         if (dist > longestDist)

@@ -107,7 +107,7 @@ namespace Dwarf
         if (ImGui::MenuItem("Mesh"))
         {
           Entity newMesh = scene.CreateEntity("New Mesh");
-          newMesh.AddComponent<MeshRendererComponent>();
+          // newMesh.AddComponent<MeshRendererComponent>();
           ent.AddChild(newMesh.GetHandle());
           m_EditorSelection->SelectEntity(newMesh);
         }
@@ -158,8 +158,8 @@ namespace Dwarf
 
             if (selectedEntity.HasComponent<MeshRendererComponent>())
             {
-              copy.AddComponent<MeshRendererComponent>(
-                selectedEntity.GetComponent<MeshRendererComponent>());
+              // copy.AddComponent<MeshRendererComponent>(
+              //   selectedEntity.GetComponent<MeshRendererComponent>());
             }
           }
         }
@@ -188,8 +188,8 @@ namespace Dwarf
 
           if (selectedEntity.HasComponent<MeshRendererComponent>())
           {
-            copy.AddComponent<MeshRendererComponent>(
-              selectedEntity.GetComponent<MeshRendererComponent>());
+            // copy.AddComponent<MeshRendererComponent>(
+            //   selectedEntity.GetComponent<MeshRendererComponent>());
           }
         }
       }
@@ -412,7 +412,7 @@ namespace Dwarf
         if (ImGui::MenuItem("Mesh"))
         {
           Entity newMesh = m_LoadedScene->GetScene().CreateEntity("New Mesh");
-          newMesh.AddComponent<MeshRendererComponent>();
+          // newMesh.AddComponent<MeshRendererComponent>();
           m_EditorSelection->SelectEntity(newMesh);
         }
 
@@ -448,8 +448,8 @@ namespace Dwarf
 
           if (selectedEntity.HasComponent<MeshRendererComponent>())
           {
-            copy.AddComponent<MeshRendererComponent>(
-              selectedEntity.GetComponent<MeshRendererComponent>());
+            // copy.AddComponent<MeshRendererComponent>(
+            //   selectedEntity.GetComponent<MeshRendererComponent>());
           }
         }
       }

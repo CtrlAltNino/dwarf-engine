@@ -194,21 +194,21 @@ namespace Dwarf
     ImGui::SameLine();
     ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
                          COMPONENT_PANEL_PADDING);
-    DwarfUI::AssetInput<ModelAsset>(
-      m_AssetDatabase, component.GetModelAsset(), "##modelAsset");
+    // DwarfUI::AssetInput<ModelAsset>(
+    //   m_AssetDatabase, component.GetModelAsset(), "##modelAsset");
     ImGui::PopItemWidth();
 
-    if (component.GetModelAsset().has_value())
+    if (component.GetModelAsset() != nullptr)
     {
-      int                 numMaterials = 0;
-      std::vector<IMesh>& meshes =
-        component.GetModelAsset().value().GetAsset().Meshes();
+      int                                  numMaterials = 0;
+      std::vector<std::unique_ptr<IMesh>>& meshes =
+        ((ModelAsset&)component.GetModelAsset()->GetAsset()).Meshes();
 
       for (int i = 0; i < meshes.size(); i++)
       {
-        if (meshes[i].GetMaterialIndex() > numMaterials)
+        if (meshes[i]->GetMaterialIndex() > numMaterials)
         {
-          numMaterials = meshes[i].GetMaterialIndex();
+          numMaterials = meshes[i]->GetMaterialIndex();
         }
       }
       ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);

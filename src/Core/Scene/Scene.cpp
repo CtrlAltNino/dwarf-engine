@@ -118,7 +118,7 @@ namespace Dwarf
         {
 
           meshRendererComponent.GetModelAsset() =
-            m_AssetDatabase->Retrieve<ModelAsset>(uid);
+            std::move(m_AssetDatabase->Retrieve(uid));
         }
       }
 
@@ -132,7 +132,7 @@ namespace Dwarf
           if (m_AssetDatabase->Exists(uid))
           {
             meshRendererComponent.MaterialAssets().push_back(
-              m_AssetDatabase->Retrieve<MaterialAsset>(uid));
+              std::move(m_AssetDatabase->Retrieve(uid)));
           }
         }
       }

@@ -39,9 +39,6 @@ namespace Dwarf
     Resize(glm::ivec2 size);
 
     void
-    FocusModel(IAssetReference<ModelAsset>& modelAsset);
-
-    void
     UpdateRotation(glm::vec2 deltaMousePos);
 
     float

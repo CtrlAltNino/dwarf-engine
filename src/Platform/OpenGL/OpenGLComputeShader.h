@@ -20,12 +20,12 @@ namespace Dwarf
     // Flag to determine if the shader has been successfully compiled.
     bool m_SuccessfullyCompiled;
     std::shared_ptr<IShaderParameterCollectionFactory>
-                                         m_ShaderParameterCollectionFactory;
-    IAssetReference<ComputeShaderAsset>& m_ComputeShaderAsset;
+                                     m_ShaderParameterCollectionFactory;
+    std::unique_ptr<IAssetReference> m_ComputeShaderAsset;
 
   public:
     BOOST_DI_INJECT(OpenGLComputeShader,
-                    IAssetReference<ComputeShaderAsset>& computeShaderAsset,
+                    std::unique_ptr<IAssetReference>& computeShaderAsset,
                     std::shared_ptr<IShaderParameterCollectionFactory>
                       shaderParameterCollectionFactory);
     ~OpenGLComputeShader() override;

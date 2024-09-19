@@ -35,7 +35,7 @@ namespace Dwarf
     SaveSceneDialog(IScene& scene) const override;
 
     std::unique_ptr<IScene>
-    LoadScene(IAssetReference<SceneAsset>& sceneAsset) const override;
+    LoadScene(IAssetReference& sceneAsset) const override;
 
     std::unique_ptr<IScene>
     LoadSceneDialog() const override;

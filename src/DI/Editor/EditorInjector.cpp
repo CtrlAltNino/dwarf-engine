@@ -1,7 +1,16 @@
 #include "DI/Editor/EditorInjector.h"
 
+#include "Core/Asset/AssetReference/AssetReferenceFactory.h"
+#include "Core/Asset/AssetReference/IAssetReferenceFactory.h"
 #include "Core/Asset/AssetReimporter/AssetReimporter.h"
 #include "Core/Asset/AssetReimporter/IAssetReimporter.h"
+#include "Editor/Modules/Inspector/AssetInspector/MaterialAsset/IMaterialAssetInspector.h"
+#include "Editor/Modules/Inspector/AssetInspector/MaterialAsset/MaterialAssetInspector.h"
+#include "Editor/Modules/Inspector/AssetInspector/ModelAsset/IModelAssetInspector.h"
+#include "Editor/Modules/Inspector/AssetInspector/ModelAsset/ModelAssetInspector.h"
+#include "Editor/Modules/Inspector/AssetInspector/SceneAsset/ISceneAssetInspector.h"
+#include "Editor/Modules/Inspector/AssetInspector/SceneAsset/SceneAssetInspector.h"
+#include "Editor/Modules/Inspector/AssetInspector/TextureAsset/TextureAssetInspector.h"
 #include "Logging/DwarfLogger.h"
 #include "Editor/Modules/AssetBrowser/IAssetBrowserWindowFactory.h"
 #include "Editor/Modules/DebugInformation/IDebugWindowFactory.h"
@@ -143,6 +152,7 @@ namespace Dwarf
           boost::di::bind<IMaterialFactory>.to<MaterialFactory>().in(boost::di::extension::shared),
           boost::di::bind<IMaterialIO>.to<MaterialIO>().in(boost::di::extension::shared),
           boost::di::bind<IAssetDirectoryListener>.to<AssetDirectoryListener>().in(boost::di::extension::shared),
+          boost::di::bind<IAssetReferenceFactory>.to<AssetReferenceFactory>().in(boost::di::extension::shared),
           boost::di::bind<IAssetDatabase>.to<AssetDatabase>().in(
           boost::di::extension::shared),
           boost::di::bind<IAssetReimporter>.to<AssetReimporter>().in(
@@ -153,6 +163,10 @@ namespace Dwarf
           boost::di::bind<IRenderingPipelineFactory>.to<RenderingPipelineFactory>().in(boost::di::extension::shared),
           boost::di::bind<IMaterialPreview>.to<MaterialPreview>().in(boost::di::extension::shared),
           boost::di::bind<IModelPreview>.to<ModelPreview>().in(boost::di::extension::shared),
+          boost::di::bind<IMaterialAssetInspector>.to<MaterialAssetInspector>().in(boost::di::extension::shared),
+          boost::di::bind<IModelAssetInspector>.to<ModelAssetInspector>().in(boost::di::extension::shared),
+          boost::di::bind<ISceneAssetInspector>.to<SceneAssetInspector>().in(boost::di::extension::shared),
+          boost::di::bind<ITextureAssetInspector>.to<TextureAssetInspector>().in(boost::di::extension::shared),
           boost::di::bind<IAssetInspector>.to<AssetInspector>().in(boost::di::extension::shared),
           boost::di::bind<IEntityInspector>.to<EntityInspector>().in(boost::di::extension::shared),
           boost::di::bind<IAssetBrowserWindowFactory>.to<AssetBrowserWindowFactory>().in(boost::di::extension::shared),

@@ -13,7 +13,7 @@ namespace Dwarf
   }
 
   std::unique_ptr<IScene>
-  SceneFactory::FromAsset(IAssetReference<SceneAsset>& sceneAsset)
+  SceneFactory::FromAsset(IAssetReference& sceneAsset)
   {
     nlohmann::json serializedScene =
       nlohmann::json::parse(FileHandler::ReadFile(sceneAsset.GetPath()));

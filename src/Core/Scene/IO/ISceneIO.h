@@ -17,7 +17,7 @@ namespace Dwarf
     SaveSceneDialog(IScene& scene) const = 0;
 
     virtual std::unique_ptr<IScene>
-    LoadScene(IAssetReference<SceneAsset>& sceneAsset) const = 0;
+    LoadScene(IAssetReference& sceneAsset) const = 0;
 
     virtual std::unique_ptr<IScene>
     LoadSceneDialog() const = 0;

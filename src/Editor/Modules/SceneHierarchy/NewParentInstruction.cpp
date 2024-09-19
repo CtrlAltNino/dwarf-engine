@@ -4,7 +4,7 @@
 namespace Dwarf
 {
 
-  NewParentInstruction::NewParentInstruction(std::shared_ptr<IScene> scene,
+  NewParentInstruction::NewParentInstruction(IScene&             scene,
                                              std::vector<Entity> sourceEntities,
                                              entt::entity        newParent)
     : m_Scene(scene)
@@ -16,7 +16,7 @@ namespace Dwarf
   void
   NewParentInstruction::PerformInstruction()
   {
-    auto p = Entity(m_NewParent, m_Scene->GetRegistry());
+    auto p = Entity(m_NewParent, m_Scene.GetRegistry());
     for (Entity ent : m_SourceEntities)
     {
       if ((p.GetComponent<TransformComponent>().GetParent() !=

@@ -11,7 +11,7 @@ namespace Dwarf
   {
   private:
     /// @brief Pointer to the currently opened scene.
-    std::shared_ptr<IScene> m_Scene;
+    IScene& m_Scene;
 
     /// @brief The entities to delete.
     std::vector<Entity> m_SourceEntities;
@@ -20,7 +20,6 @@ namespace Dwarf
     /// @brief Executes the instruction.
     void
     PerformInstruction() override;
-    DeleteEntityInstruction(std::shared_ptr<IScene> scene,
-                            std::vector<Entity>     sourceEntities);
+    DeleteEntityInstruction(IScene& scene, std::vector<Entity> sourceEntities);
   };
 }

@@ -1,7 +1,7 @@
 #pragma once
+#include "pch.h"
 #include "ICamera.h"
 #include "Input/IInputManager.h"
-#include "pch.h"
 #include <memory>
 
 namespace Dwarf

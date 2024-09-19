@@ -5,7 +5,7 @@ namespace Dwarf
 {
 
   ChildIndexInstruction::ChildIndexInstruction(
-    std::shared_ptr<IScene>    scene,
+    IScene&                    scene,
     std::vector<Entity> const& sourceEntities,
     int                        index)
     : m_Scene(scene)

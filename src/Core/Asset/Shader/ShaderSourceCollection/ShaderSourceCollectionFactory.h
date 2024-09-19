@@ -3,6 +3,7 @@
 #include "Core/Asset/Database/IAssetDatabase.h"
 #include "Core/Asset/Shader/ShaderSourceCollection/IShaderSourceCollectionFactory.h"
 #include "Core/Base.h"
+#include <boost/di/extension/injections/lazy.hpp>
 #include <memory>
 
 namespace Dwarf
@@ -10,12 +11,13 @@ namespace Dwarf
   class ShaderSourceCollectionFactory : public IShaderSourceCollectionFactory
   {
   private:
-    std::shared_ptr<IAssetDatabase> m_AssetDatabase;
-    GraphicsApi                     m_GraphicsApi;
+    boost::di::extension::lazy<std::shared_ptr<IAssetDatabase>> m_AssetDatabase;
+    GraphicsApi                                                 m_GraphicsApi;
 
   public:
-    ShaderSourceCollectionFactory(std::shared_ptr<IAssetDatabase> assetDatabase,
-                                  GraphicsApi                     graphicsApi);
+    ShaderSourceCollectionFactory(
+      boost::di::extension::lazy<std::shared_ptr<IAssetDatabase>> assetDatabase,
+      GraphicsApi                                                 graphicsApi);
     ~ShaderSourceCollectionFactory() override = default;
 
     std::unique_ptr<IShaderSourceCollection>

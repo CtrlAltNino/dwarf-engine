@@ -16,7 +16,7 @@ namespace Dwarf
   {
   public:
     virtual void
-    RenderMaterialPreview(IAssetReference<MaterialAsset>& materialAsset) = 0;
+    RenderMaterialPreview(IMaterial& materialAsset) = 0;
 
     virtual void
     SetMeshType(MaterialPreviewMeshType meshType) = 0;

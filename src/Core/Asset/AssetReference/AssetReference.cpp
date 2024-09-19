@@ -1,57 +1,153 @@
 #include "AssetReference.h"
+#include "Core/Asset/Database/AssetComponents.h"
+#include "Core/Asset/Database/IAssetDatabase.h"
 #include "Core/GenericComponents.h"
 
 namespace Dwarf
 {
-  template<typename T>
-  AssetReference<T>::AssetReference(entt::entity                    assetHandle,
-                                    std::shared_ptr<entt::registry> registry)
+  // Assuming already emplaced components
+  AssetReference::AssetReference(
+    entt::entity                     assetHandle,
+    entt::registry&                  registry,
+    ASSET_TYPE                       type,
+    std::shared_ptr<IModelImporter>  modelImporter,
+    std::shared_ptr<ITextureFactory> textureFactory,
+    std::shared_ptr<IMaterialIO>     materialIO)
     : m_AssetHandle(assetHandle)
     , m_Registry(registry)
+    , m_Type(type)
+    , m_ModelImporter(modelImporter)
+    , m_TextureFactory(textureFactory)
+    , m_MaterialIO(materialIO)
   {
+  }
+
+  // Assuming no components have been emplaced
+  AssetReference::AssetReference(
+    entt::entity                     assetHandle,
+    entt::registry&                  registry,
+    UUID                             uid,
+    std::filesystem::path            path,
+    std::string                      name,
+    std::shared_ptr<IModelImporter>  modelImporter,
+    std::shared_ptr<ITextureFactory> textureFactory,
+    std::shared_ptr<IMaterialIO>     materialIO)
+    : m_AssetHandle(assetHandle)
+    , m_Registry(registry)
+    , m_Type(IAssetDatabase::GetAssetType(path))
+    , m_ModelImporter(modelImporter)
+    , m_TextureFactory(textureFactory)
+    , m_MaterialIO(materialIO)
+  {
+    m_Registry.emplace_or_replace<IDComponent>(m_AssetHandle, uid);
+    m_Registry.emplace_or_replace<PathComponent>(m_AssetHandle, path);
+    m_Registry.emplace_or_replace<NameComponent>(m_AssetHandle, name);
+
+    switch (m_Type)
+    {
+      case ASSET_TYPE::TEXTURE:
+        m_Registry.emplace_or_replace<TextureAsset>(
+          m_AssetHandle, m_TextureFactory->FromPath(path));
+        break;
+      case ASSET_TYPE::MODEL:
+        m_Registry.emplace_or_replace<ModelAsset>(
+          m_AssetHandle, m_ModelImporter->Import(path));
+        break;
+      case ASSET_TYPE::MATERIAL:
+        m_Registry.emplace_or_replace<MaterialAsset>(
+          m_AssetHandle, m_MaterialIO->LoadMaterial(path));
+        break;
+      case ASSET_TYPE::UNKNOWN:
+        m_Registry.emplace_or_replace<UnknownAsset>(m_AssetHandle, path);
+        break;
+      case ASSET_TYPE::SCENE:
+        m_Registry.emplace_or_replace<SceneAsset>(m_AssetHandle, path);
+        break;
+      case ASSET_TYPE::VERTEX_SHADER:
+        m_Registry.emplace_or_replace<VertexShaderAsset>(m_AssetHandle, path);
+        break;
+      case ASSET_TYPE::TESC_SHADER:
+        m_Registry.emplace_or_replace<TessellationControlShaderAsset>(
+          m_AssetHandle, path);
+        break;
+      case ASSET_TYPE::TESE_SHADER:
+        m_Registry.emplace_or_replace<TessellationEvaluationShaderAsset>(
+          m_AssetHandle, path);
+        break;
+      case ASSET_TYPE::GEOMETRY_SHADER:
+        m_Registry.emplace_or_replace<GeometryShaderAsset>(m_AssetHandle, path);
+        break;
+      case ASSET_TYPE::FRAGMENT_SHADER:
+        m_Registry.emplace_or_replace<FragmentShaderAsset>(m_AssetHandle, path);
+        break;
+      case ASSET_TYPE::COMPUTE_SHADER:
+        m_Registry.emplace_or_replace<ComputeShaderAsset>(m_AssetHandle, path);
+        break;
+      case ASSET_TYPE::HLSL_SHADER:
+        m_Registry.emplace_or_replace<HlslShaderAsset>(m_AssetHandle, path);
+        break;
+        break;
+    }
   }
 
   /// @brief Retrieves the handle of the asset entity.
   /// @return The handle.
-  template<typename T>
   entt::entity
-  AssetReference<T>::GetHandle() const
+  AssetReference::GetHandle() const
   {
     return m_AssetHandle;
-  }
-  template<typename T>
-  template<typename U, typename... Args>
-  U&
-  AssetReference<T>::AddAssetComponent(Args&&... args)
-  {
-    // TODO: Check component requirements
-    return m_Registry->emplace<U>(m_AssetHandle, std::forward<Args>(args)...);
   }
 
   /// @brief Returns the UID of the asset.
   /// @return The UID.
-  template<typename T>
   const UUID&
-  AssetReference<T>::GetUID() const
+  AssetReference::GetUID() const
   {
-    return m_Registry->get<IDComponent>(m_AssetHandle).GetID();
+    return m_Registry.get<IDComponent>(m_AssetHandle).GetID();
   }
 
-  template<typename T>
   const std::filesystem::path&
-  AssetReference<T>::GetPath() const
+  AssetReference::GetPath() const
   {
-    return m_Registry->get<PathComponent>(m_AssetHandle).GetPath();
+    return m_Registry.get<PathComponent>(m_AssetHandle).GetPath();
   }
 
   /// @brief Retrieves the asset component of the asset, containing the actual
   /// payload.
   /// @return The asset component.
-  template<typename T>
-  T&
-  AssetReference<T>::GetAsset()
+  IAssetComponent&
+  AssetReference::GetAsset()
   {
-    return m_Registry->get<T>(m_AssetHandle);
+    switch (m_Type)
+    {
+      case ASSET_TYPE::TEXTURE:
+        return m_Registry.get<TextureAsset>(m_AssetHandle);
+      case ASSET_TYPE::MODEL: return m_Registry.get<ModelAsset>(m_AssetHandle);
+      case ASSET_TYPE::MATERIAL:
+        return m_Registry.get<MaterialAsset>(m_AssetHandle);
+      case ASSET_TYPE::UNKNOWN:
+        return m_Registry.get<UnknownAsset>(m_AssetHandle);
+      case ASSET_TYPE::SCENE: return m_Registry.get<SceneAsset>(m_AssetHandle);
+      case ASSET_TYPE::VERTEX_SHADER:
+        return m_Registry.get<VertexShaderAsset>(m_AssetHandle);
+      case ASSET_TYPE::TESC_SHADER:
+        return m_Registry.get<TessellationControlShaderAsset>(m_AssetHandle);
+      case ASSET_TYPE::TESE_SHADER:
+        return m_Registry.get<TessellationEvaluationShaderAsset>(m_AssetHandle);
+      case ASSET_TYPE::GEOMETRY_SHADER:
+        return m_Registry.get<GeometryShaderAsset>(m_AssetHandle);
+      case ASSET_TYPE::FRAGMENT_SHADER:
+        return m_Registry.get<FragmentShaderAsset>(m_AssetHandle);
+      case ASSET_TYPE::COMPUTE_SHADER:
+        return m_Registry.get<ComputeShaderAsset>(m_AssetHandle);
+      case ASSET_TYPE::HLSL_SHADER:
+        return m_Registry.get<HlslShaderAsset>(m_AssetHandle);
+    }
   }
 
+  ASSET_TYPE
+  AssetReference::GetType() const
+  {
+    return m_Type;
+  }
 }

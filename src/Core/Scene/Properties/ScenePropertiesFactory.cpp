@@ -11,11 +11,11 @@ namespace Dwarf
   }
 
   std::unique_ptr<ISceneProperties>
-  ScenePropertiesFactory::Create(IAssetReference<SceneAsset>& sceneAsset,
+  ScenePropertiesFactory::Create(IAssetReference&      sceneAsset,
                                  const nlohmann::json& serializedProperties)
   {
     return std::make_unique<SceneProperties>(
-      std::make_unique<IAssetReference<SceneAsset>>(sceneAsset),
+      sceneAsset.GetUID(),
       serializedProperties["Name"],
       m_sceneSettingsFactory->Create(serializedProperties["Settings"]));
   }
@@ -24,6 +24,6 @@ namespace Dwarf
   ScenePropertiesFactory::Create(const std::string& name)
   {
     return std::make_unique<SceneProperties>(
-      nullptr, name, m_sceneSettingsFactory->Create());
+      std::nullopt, name, m_sceneSettingsFactory->Create());
   }
 }

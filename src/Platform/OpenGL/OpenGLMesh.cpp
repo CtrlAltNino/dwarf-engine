@@ -106,4 +106,10 @@ namespace Dwarf
   {
     return m_Indices;
   }
+
+  std::unique_ptr<IMesh>
+  OpenGLMesh::Clone() const
+  {
+    return std::make_unique<OpenGLMesh>(m_Vertices, m_Indices, m_MaterialIndex);
+  }
 }

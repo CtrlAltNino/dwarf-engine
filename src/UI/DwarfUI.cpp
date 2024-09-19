@@ -2,7 +2,7 @@
 
 namespace Dwarf
 {
-  template<>
+  /*template<>
   void
   DwarfUI::AssetInput<VertexShaderAsset>(
     std::shared_ptr<IAssetDatabase>                    assetDatabase,
@@ -116,5 +116,5 @@ namespace Dwarf
 
       ImGui::EndCombo();
     }
-  }
+  }*/
 }

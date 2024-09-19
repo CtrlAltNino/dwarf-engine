@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Core/Asset/AssetTypes.h"
+#include "Core/Asset/Database/AssetComponents.h"
 #include "Core/UUID.h"
 // #include "Core/Asset/Database/AssetReference.h"
 #include "Core/Asset/AssetReference/IAssetReference.h"
@@ -11,24 +13,6 @@
 namespace Dwarf
 {
   BOOST_STRONG_TYPEDEF(std::filesystem::path, AssetDirectoryPath);
-  /**
-   * @brief Enum class representing the type of an asset.
-   */
-  enum class ASSET_TYPE
-  {
-    UNKNOWN,
-    MODEL,
-    TEXTURE,
-    SCENE,
-    MATERIAL,
-    VERTEX_SHADER,
-    TESC_SHADER,
-    TESE_SHADER,
-    GEOMETRY_SHADER,
-    FRAGMENT_SHADER,
-    COMPUTE_SHADER,
-    HLSL_SHADER
-  };
 
   /**
    * @brief Interface for the Asset Database.
@@ -98,31 +82,15 @@ namespace Dwarf
      * @brief Retrieves an asset from the asset database.
      * @param uid UID of the asset.
      */
-    template<typename T>
-    IAssetReference<T>
-    Retrieve(const UUID& uid)
-    {
-      // Retrieve the std::any from RetrieveImpl
-      std::any retrievedAsset = RetrieveImpl(typeid(T), uid);
-
-      // Cast the std::any to IAssetReference<T>
-      return std::any_cast<IAssetReference<T>>(retrievedAsset);
-    }
+    virtual std::unique_ptr<IAssetReference>
+    Retrieve(const UUID& uid) = 0;
 
     /**
      * @brief Retrieves an asset from the asset database.
      * @param path Path to the asset.
      */
-    template<typename T>
-    IAssetReference<T>
-    Retrieve(const std::filesystem::path& path)
-    {
-      // Retrieve the std::any from RetrieveImpl
-      std::any retrievedAsset = RetrieveImpl(typeid(T), path);
-
-      // Cast the std::any to IAssetReference<T>
-      return std::any_cast<IAssetReference<T>>(retrievedAsset);
-    }
+    virtual std::unique_ptr<IAssetReference>
+    Retrieve(const std::filesystem::path& path) = 0;
 
     virtual entt::registry&
     GetRegistry() = 0;
@@ -161,14 +129,6 @@ namespace Dwarf
 
     virtual std::filesystem::path
     GetAssetDirectoryPath() = 0;
-
-  private:
-    // NVI (Non-Virtual Interface) Implementations
-    virtual std::any
-    RetrieveImpl(std::type_index type, const UUID& uid) = 0;
-
-    virtual std::any
-    RetrieveImpl(std::type_index type, const std::filesystem::path& path) = 0;
 
   protected:
     static inline const std::unordered_map<std::string, ASSET_TYPE>

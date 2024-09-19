@@ -44,17 +44,16 @@ namespace Dwarf
 
     m_Logger->LogInfo(Log("Starting the editor", "Editor"));
 
-    m_AssetDatabase->ReimportAll();
+    // m_AssetDatabase->ReimportAll();
 
     // Either load the last opened scene or the default scene
     if (m_ProjectSettings->GetLastOpenedScene() != nullptr &&
         m_AssetDatabase->Exists(*m_ProjectSettings->GetLastOpenedScene()))
     {
-      IAssetReference<SceneAsset> lastOpenedScene =
-        m_AssetDatabase->Retrieve<SceneAsset>(
-          *m_ProjectSettings->GetLastOpenedScene());
+      std::unique_ptr<IAssetReference> lastOpenedScene =
+        m_AssetDatabase->Retrieve(*m_ProjectSettings->GetLastOpenedScene());
 
-      std::unique_ptr<IScene> scene = m_SceneIO->LoadScene(lastOpenedScene);
+      std::unique_ptr<IScene> scene = m_SceneIO->LoadScene(*lastOpenedScene);
       m_LoadedScene->SetScene(std::move(scene));
     }
     else

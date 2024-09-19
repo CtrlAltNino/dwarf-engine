@@ -1,3 +1,4 @@
+#include "Core/Asset/Database/AssetComponents.h"
 #include "Core/Base.h"
 #include "OpenGLComputeShader.h"
 
@@ -6,10 +7,10 @@
 namespace Dwarf
 {
   OpenGLComputeShader::OpenGLComputeShader(
-    IAssetReference<ComputeShaderAsset>& computeShaderAsset,
+    std::unique_ptr<IAssetReference>& computeShaderAsset,
     std::shared_ptr<IShaderParameterCollectionFactory>
       shaderParameterCollectionFactory)
-    : m_ComputeShaderAsset(computeShaderAsset)
+    : m_ComputeShaderAsset(std::move(computeShaderAsset))
     , m_ShaderParameterCollectionFactory(shaderParameterCollectionFactory)
   {
   }
@@ -34,10 +35,12 @@ namespace Dwarf
   {
     m_SuccessfullyCompiled = false;
 
-    if (m_ComputeShaderAsset.GetAsset().GetFileContent().length() > 0)
+    ComputeShaderAsset& computeShaderAsset =
+      (ComputeShaderAsset&)m_ComputeShaderAsset->GetAsset();
+
+    if (computeShaderAsset.GetFileContent().length() > 0)
     {
-      const char* shadercstr =
-        m_ComputeShaderAsset.GetAsset().GetFileContent().c_str();
+      const char* shadercstr = computeShaderAsset.GetFileContent().c_str();
 
       GLsizei log_length = 0;
       GLchar  message[1024] = "";

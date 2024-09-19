@@ -1,3 +1,4 @@
+#include "Core/Rendering/Material/IMaterial.h"
 #include "Core/Scene/Components/SceneComponents.h"
 #include "pch.h"
 #include "ForwardRenderer.h"
@@ -28,24 +29,23 @@ namespace Dwarf
     TransformComponent& transform = entity.GetComponent<TransformComponent>();
     MeshRendererComponent& meshRenderer =
       entity.GetComponent<MeshRendererComponent>();
-    ModelAsset& model = meshRenderer.GetModelAsset().value().GetAsset();
+    ModelAsset& model = (ModelAsset&)meshRenderer.GetModelAsset()->GetAsset();
     glm::mat4   modelMatrix = transform.GetModelMatrix();
 
     for (int i = 0; i < model.Meshes().size(); i++)
     {
-      if (model.Meshes().at(i).GetMaterialIndex() - 1 <
+      if (model.Meshes().at(i)->GetMaterialIndex() - 1 <
           meshRenderer.MaterialAssets().size())
       {
-        if (meshRenderer.MaterialAssets()
-              .at(model.Meshes().at(i).GetMaterialIndex() - 1)
-              .has_value())
+        if (meshRenderer.MaterialAssets().at(
+              model.Meshes().at(i)->GetMaterialIndex() - 1))
         {
-          IMaterial& material =
-            meshRenderer.MaterialAssets()
-              .at(model.Meshes().at(i).GetMaterialIndex() - 1)
-              .value()
-              .GetAsset()
-              .GetMaterial();
+          MaterialAsset& materialAsset =
+            (MaterialAsset&)meshRenderer.MaterialAssets()
+              .at(model.Meshes().at(i)->GetMaterialIndex() - 1)
+              ->GetAsset();
+
+          IMaterial& material = materialAsset.GetMaterial();
 
           if (material.GetShader() != nullptr &&
               material.GetShader()->IsCompiled())
@@ -88,7 +88,7 @@ namespace Dwarf
                        .view<TransformComponent, MeshRendererComponent>();
          auto [entity, transform, meshRenderer] : view.each())
     {
-      if (meshRenderer.GetModelAsset().has_value())
+      if (meshRenderer.GetModelAsset() != nullptr)
       {
         Entity e(entity, scene.GetRegistry());
         RenderEntity(e, viewMatrix, projectionMatrix);

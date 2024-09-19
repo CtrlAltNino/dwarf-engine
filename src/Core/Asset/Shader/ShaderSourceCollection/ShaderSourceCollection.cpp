@@ -3,12 +3,12 @@
 namespace Dwarf
 {
   ShaderSourceCollection::ShaderSourceCollection(
-    std::vector<ShaderSource>& shaderSources)
+    std::vector<std::unique_ptr<IAssetReference>>& shaderSources)
     : m_ShaderSources(std::move(shaderSources))
   {
   }
 
-  std::vector<ShaderSource>&
+  std::vector<std::unique_ptr<IAssetReference>>&
   ShaderSourceCollection::GetShaderSources()
   {
     return m_ShaderSources;

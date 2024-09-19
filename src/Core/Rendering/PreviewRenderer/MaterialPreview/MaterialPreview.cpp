@@ -32,8 +32,7 @@ namespace Dwarf
   }
 
   void
-  MaterialPreview::RenderMaterialPreview(
-    IAssetReference<MaterialAsset>& materialAsset)
+  MaterialPreview::RenderMaterialPreview(IMaterial& materialAsset)
   {
     // TODO: Reset sphere rotation when rendering a different material
     m_Camera->GetProperties().Transform.GetPosition() = { 0, 0, 3 };
@@ -49,8 +48,8 @@ namespace Dwarf
                                m_Framebuffer->GetSpecification().Width,
                                m_Framebuffer->GetSpecification().Height);
 
-    m_RendererApi->RenderIndexed(*m_Mesh,
-                                 materialAsset.GetAsset().GetMaterial(),
+    m_RendererApi->RenderIndexed(m_Mesh,
+                                 materialAsset,
                                  glm::toMat4(m_Properties.ModelRotationQuat),
                                  m_Camera->GetViewMatrix(),
                                  m_Camera->GetProjectionMatrix());

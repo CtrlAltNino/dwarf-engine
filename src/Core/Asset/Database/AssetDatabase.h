@@ -154,6 +154,12 @@ namespace Dwarf
     entt::registry&
     GetRegistry() override;
 
+    std::unique_ptr<IAssetReference>
+    Retrieve(const UUID& uid) override;
+
+    std::unique_ptr<IAssetReference>
+    Retrieve(const std::filesystem::path& path) override;
+
   private:
     std::filesystem::path
     GetAssetDirectoryPath() override;
@@ -176,52 +182,5 @@ namespace Dwarf
     /// @param directory Absolute path to a directory.
     void
     RecursiveImport(const std::filesystem::path& directory);
-
-    /// @brief Creates an asset reference for an asset at a given path.
-    /// @param assetPath Path to the asset.
-    /// @return The created asset reference instance.
-    template<typename T>
-    IAssetReference<T>
-    CreateNewAsset(const std::filesystem::path& assetPath)
-    {
-      std::string           fileName = assetPath.stem().string();
-      std::filesystem::path metaDataPath =
-        IAssetMetadata::GetMetadataPath(assetPath);
-
-      auto id = UUID();
-      if (FileHandler::FileExists(metaDataPath))
-      {
-        nlohmann::json metaData = m_AssetMetadata->GetMetadata(assetPath);
-        std::string    guid = metaData["guid"].get<std::string>();
-        id = UUID(guid);
-      }
-      else
-      {
-        nlohmann::json metaData;
-        metaData["guid"] = id.ToString();
-        m_AssetMetadata->SetMetadata(assetPath, metaData);
-      }
-
-      // IAssetReference<T> assetReference =
-      //   AssetReference<T>(m_Registry.create(), m_Registry);
-
-      IAssetReference<T> assetReference =
-        m_AssetReferenceFactory->Create<T>(m_Registry.create(), m_Registry);
-
-      assetReference.template AddAssetComponent<IDComponent>(id);
-      assetReference.template AddAssetComponent<NameComponent>(fileName);
-      assetReference.template AddAssetComponent<PathComponent>(assetPath);
-      return assetReference;
-    }
-
-    std::any
-    RetrieveImpl(std::type_index type, const UUID& uid) override;
-
-    std::any
-    RetrieveImpl(std::type_index              type,
-                 const std::filesystem::path& path) override;
-
-    std::any
-    CreateAssetReference(std::type_index type, entt::entity entity);
   };
 }

@@ -1,6 +1,4 @@
 #include "Camera.h"
-#include "Input/IInputManager.h"
-#include "Input/InputManager.h"
 
 namespace Dwarf
 {

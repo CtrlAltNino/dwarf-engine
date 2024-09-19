@@ -55,8 +55,11 @@ namespace Dwarf
       auto materialView =
         registry
           .view<MaterialAsset, PathComponent, NameComponent, IDComponent>();
-      auto modelView =
-        registry.view<ModelAsset, PathComponent, NameComponent, IDComponent>();
+      entt::observer modelObserver{
+        registry,
+        entt::collector
+          .group<ModelAsset, PathComponent, NameComponent, IDComponent>()
+      };
       auto sceneView =
         registry.view<SceneAsset, PathComponent, NameComponent, IDComponent>();
       auto vertexShaderView =
@@ -108,10 +111,10 @@ namespace Dwarf
 
       if (ImGui::TreeNode("Models##1"))
       {
-        for (auto entity : modelView)
+        for (auto& entity : modelObserver)
         {
           auto [pathComp, nameComp, idComp] =
-            modelView.get<PathComponent, NameComponent, IDComponent>(entity);
+            registry.get<PathComponent, NameComponent, IDComponent>(entity);
           ImGui::Text("Name");
           ImGui::Text("%s", nameComp.Name.c_str());
           ImGui::Text("Path");
