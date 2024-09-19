@@ -1,4 +1,5 @@
 #include "ShaderFactory.h"
+#include <fmt/format.h>
 #include <memory>
 
 // Including the shader header files of the graphics API.
@@ -13,20 +14,29 @@
 namespace Dwarf
 {
   ShaderFactory::ShaderFactory(
-    GraphicsApi graphicsApi,
+    GraphicsApi                   graphicsApi,
+    std::shared_ptr<IDwarfLogger> logger,
     std::shared_ptr<IShaderSourceCollectionFactory>
       shaderSourceCollectionFactory,
     std::shared_ptr<IShaderParameterCollectionFactory>
       shaderParameterCollectionFactory)
     : m_GraphicsApi(graphicsApi)
+    , m_Logger(logger)
     , m_ShaderSourceCollectionFactory(shaderSourceCollectionFactory)
     , m_ShaderParameterCollectionFactory(shaderParameterCollectionFactory)
   {
+    m_Logger->LogInfo(Log("ShaderFactory created", "ShaderFactory"));
+  }
+
+  ShaderFactory::~ShaderFactory()
+  {
+    m_Logger->LogInfo(Log("ShaderFactory destroyed", "ShaderFactory"));
   }
 
   std::unique_ptr<IShader>
   ShaderFactory::CreateDefaultShader()
   {
+    m_Logger->LogInfo(Log("Creating default shader", "ShaderFactory"));
     // TODO: Implement the default shader creation.
     return CreateShader(
       m_ShaderSourceCollectionFactory->CreateDefaultShaderSourceCollection());
@@ -35,6 +45,9 @@ namespace Dwarf
   std::unique_ptr<IShader>
   ShaderFactory::CreateShader(const nlohmann::json& shaderJson)
   {
+    m_Logger->LogInfo(
+      Log(fmt::format("Creating shader from JSON:\n{}", shaderJson.dump(2)),
+          "ShaderFactory"));
     // Extracting shader sources from the JSON object.
     // ShaderSourceCollection shaderSources;
 
@@ -95,6 +108,7 @@ namespace Dwarf
   ShaderFactory::CreateShader(
     std::unique_ptr<IShaderSourceCollection> shaderSources)
   {
+    m_Logger->LogInfo(Log("Creating shader from sources", "ShaderFactory"));
     // Creating a shader based on the graphics API.
     switch (m_GraphicsApi)
     {
