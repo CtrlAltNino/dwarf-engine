@@ -53,7 +53,8 @@ namespace Dwarf
       boost::di::bind<IWindow>.to<WindowsWindow>().in(
         boost::di::extension::shared),
 #elif __linux__
-      boost::di::bind<IWindow>.to<LinuxWindow>().in(boost::di::singleton),
+      boost::di::bind<IWindow>.to<LinuxWindow>().in(
+        boost::di::extension::shared),
 #endif
       boost::di::bind<IGraphicsContextFactory>.to<GraphicsContextFactory>().in(
         boost::di::extension::shared),

@@ -34,57 +34,56 @@ namespace Dwarf
     std::shared_ptr<IMaterialIO>     materialIO)
     : m_AssetHandle(assetHandle)
     , m_Registry(registry)
-    , m_Type(IAssetDatabase::GetAssetType(path))
+    , m_Type(IAssetDatabase::GetAssetType(path.extension()))
     , m_ModelImporter(modelImporter)
     , m_TextureFactory(textureFactory)
     , m_MaterialIO(materialIO)
   {
-    m_Registry.emplace_or_replace<IDComponent>(m_AssetHandle, uid);
-    m_Registry.emplace_or_replace<PathComponent>(m_AssetHandle, path);
-    m_Registry.emplace_or_replace<NameComponent>(m_AssetHandle, name);
+    m_Registry.emplace<IDComponent>(m_AssetHandle, uid);
+    m_Registry.emplace<PathComponent>(m_AssetHandle, path);
+    m_Registry.emplace<NameComponent>(m_AssetHandle, name);
 
     switch (m_Type)
     {
       case ASSET_TYPE::TEXTURE:
-        m_Registry.emplace_or_replace<TextureAsset>(
-          m_AssetHandle, m_TextureFactory->FromPath(path));
+        m_Registry.emplace<TextureAsset>(m_AssetHandle,
+                                         m_TextureFactory->FromPath(path));
         break;
       case ASSET_TYPE::MODEL:
-        m_Registry.emplace_or_replace<ModelAsset>(
-          m_AssetHandle, m_ModelImporter->Import(path));
+        m_Registry.emplace<ModelAsset>(m_AssetHandle,
+                                       m_ModelImporter->Import(path));
         break;
       case ASSET_TYPE::MATERIAL:
-        m_Registry.emplace_or_replace<MaterialAsset>(
-          m_AssetHandle, m_MaterialIO->LoadMaterial(path));
+        m_Registry.emplace<MaterialAsset>(m_AssetHandle,
+                                          m_MaterialIO->LoadMaterial(path));
         break;
       case ASSET_TYPE::UNKNOWN:
-        m_Registry.emplace_or_replace<UnknownAsset>(m_AssetHandle, path);
+        m_Registry.emplace<UnknownAsset>(m_AssetHandle, path);
         break;
       case ASSET_TYPE::SCENE:
-        m_Registry.emplace_or_replace<SceneAsset>(m_AssetHandle, path);
+        m_Registry.emplace<SceneAsset>(m_AssetHandle, path);
         break;
       case ASSET_TYPE::VERTEX_SHADER:
-        m_Registry.emplace_or_replace<VertexShaderAsset>(m_AssetHandle, path);
+        m_Registry.emplace<VertexShaderAsset>(m_AssetHandle, path);
         break;
       case ASSET_TYPE::TESC_SHADER:
-        m_Registry.emplace_or_replace<TessellationControlShaderAsset>(
-          m_AssetHandle, path);
+        m_Registry.emplace<TessellationControlShaderAsset>(m_AssetHandle, path);
         break;
       case ASSET_TYPE::TESE_SHADER:
-        m_Registry.emplace_or_replace<TessellationEvaluationShaderAsset>(
-          m_AssetHandle, path);
+        m_Registry.emplace<TessellationEvaluationShaderAsset>(m_AssetHandle,
+                                                              path);
         break;
       case ASSET_TYPE::GEOMETRY_SHADER:
-        m_Registry.emplace_or_replace<GeometryShaderAsset>(m_AssetHandle, path);
+        m_Registry.emplace<GeometryShaderAsset>(m_AssetHandle, path);
         break;
       case ASSET_TYPE::FRAGMENT_SHADER:
-        m_Registry.emplace_or_replace<FragmentShaderAsset>(m_AssetHandle, path);
+        m_Registry.emplace<FragmentShaderAsset>(m_AssetHandle, path);
         break;
       case ASSET_TYPE::COMPUTE_SHADER:
-        m_Registry.emplace_or_replace<ComputeShaderAsset>(m_AssetHandle, path);
+        m_Registry.emplace<ComputeShaderAsset>(m_AssetHandle, path);
         break;
       case ASSET_TYPE::HLSL_SHADER:
-        m_Registry.emplace_or_replace<HlslShaderAsset>(m_AssetHandle, path);
+        m_Registry.emplace<HlslShaderAsset>(m_AssetHandle, path);
         break;
         break;
     }

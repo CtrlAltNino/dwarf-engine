@@ -44,7 +44,7 @@ namespace Dwarf
 
     m_Logger->LogInfo(Log("Starting the editor", "Editor"));
 
-    // m_AssetDatabase->ReimportAll();
+    m_AssetDatabase->ReimportAll();
 
     // Either load the last opened scene or the default scene
     if (m_ProjectSettings->GetLastOpenedScene() != nullptr &&

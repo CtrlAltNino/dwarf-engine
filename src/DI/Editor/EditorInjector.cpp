@@ -143,7 +143,7 @@ namespace Dwarf
 #ifdef _WIN32
           boost::di::bind<IWindow>.to<WindowsWindow>().in(boost::di::extension::shared),
 #elif __linux__
-          boost::di::bind<IWindow>.to<LinuxWindow>().in(boost::di::singleton),
+          boost::di::bind<IWindow>.to<LinuxWindow>().in(boost::di::extension::shared),
 #endif
           boost::di::bind<IFramebufferFactory>.to<FramebufferFactory>().in(boost::di::extension::shared),
           boost::di::bind<IShaderParameterCollectionFactory>.to<ShaderParameterCollectionFactory>().in(boost::di::extension::shared),

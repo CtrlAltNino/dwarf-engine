@@ -158,6 +158,9 @@ namespace Dwarf
       m_AssetMetadata->SetMetadata(assetPath, metaData);
     }
 
+    m_Logger->LogInfo(
+      Log("Importing asset: " + assetPath.string(), "AssetDatabase"));
+
     return m_AssetReferenceFactory
       ->CreateNew(m_Registry.create(), m_Registry, id, assetPath, fileName)
       ->GetUID();
