@@ -4,7 +4,7 @@
 #include "AssetInspector/IAssetInspector.h"
 #include "Core/Asset/Database/IAssetDatabase.h"
 #include "Editor/IEditor.h"
-#include "Editor/IEditorSelection.h"
+#include "Editor/Selection/IEditorSelection.h"
 #include "EntityInspector/IEntityInspector.h"
 #include <boost/serialization/strong_typedef.hpp>
 

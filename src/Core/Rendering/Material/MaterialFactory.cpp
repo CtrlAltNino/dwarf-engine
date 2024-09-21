@@ -25,12 +25,12 @@ namespace Dwarf
     return std::make_unique<Material>(m_ShaderFactory->CreateDefaultShader());
   }
 
-  std::unique_ptr<IMaterial>
-  MaterialFactory::CreateMaterial(std::shared_ptr<IShader> shader) const
-  {
-    m_Logger->LogInfo(Log("Creating material", "MaterialFactory"));
-    return std::make_unique<Material>(shader);
-  }
+  // std::unique_ptr<IMaterial>
+  // MaterialFactory::CreateMaterial(std::shared_ptr<IShader> shader) const
+  // {
+  //   m_Logger->LogInfo(Log("Creating material", "MaterialFactory"));
+  //   return std::make_unique<Material>(shader);
+  // }
 
   std::unique_ptr<IMaterial>
   MaterialFactory::FromSerialized(

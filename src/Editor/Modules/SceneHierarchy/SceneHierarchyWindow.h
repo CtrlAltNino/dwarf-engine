@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Editor/IEditor.h"
-#include "Editor/IEditorSelection.h"
+#include "Editor/Selection/IEditorSelection.h"
 #include "Editor/LoadedScene/ILoadedScene.h"
 #include "Editor/Modules/IGuiModule.h"
 #include "Editor/Modules/SceneHierarchy/GraphInstruction.h"

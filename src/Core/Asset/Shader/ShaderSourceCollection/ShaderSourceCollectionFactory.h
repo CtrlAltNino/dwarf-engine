@@ -3,6 +3,7 @@
 #include "Core/Asset/Database/IAssetDatabase.h"
 #include "Core/Asset/Shader/ShaderSourceCollection/IShaderSourceCollectionFactory.h"
 #include "Core/Base.h"
+#include "Project/IProjectSettings.h"
 #include <boost/di/extension/injections/lazy.hpp>
 #include <memory>
 

@@ -1,12 +1,13 @@
 #pragma once
 
 #include "Core/Rendering/Shader/ShaderParameterCollection/IShaderParameterCollection.h"
+#include "Utilities/ISerializable.h"
 
 #include <memory>
 
 namespace Dwarf
 {
-  class IShader
+  class IShader : public ISerializable
   {
   public:
     virtual ~IShader() = default;
@@ -25,5 +26,8 @@ namespace Dwarf
 
     virtual std::unique_ptr<IShaderParameterCollection>
     CreateParameters() = 0;
+
+    virtual nlohmann::json
+    Serialize() const = 0;
   };
 }

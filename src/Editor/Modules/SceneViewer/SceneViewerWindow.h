@@ -6,7 +6,7 @@
 #include "Core/Rendering/Pipelines/IRenderingPipeline.h"
 #include "Core/Scene/Camera/ICamera.h"
 #include "Core/Scene/Camera/ICameraFactory.h"
-#include "Editor/IEditorSelection.h"
+#include "Editor/Selection/IEditorSelection.h"
 #include "Editor/LoadedScene/ILoadedScene.h"
 #include "Editor/Stats/IEditorStats.h"
 #include "Input/IInputManager.h"

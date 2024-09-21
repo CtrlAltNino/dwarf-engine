@@ -67,6 +67,9 @@ namespace Dwarf
 
     static const std::array<std::string, 3> ReservedUniformNames;
 
+    nlohmann::json
+    Serialize() const override;
+
   private:
     GLuint     m_ID = -1;
     ShaderLogs m_ShaderLogs;

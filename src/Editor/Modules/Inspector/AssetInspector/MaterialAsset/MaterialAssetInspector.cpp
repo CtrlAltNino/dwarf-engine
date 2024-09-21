@@ -184,7 +184,7 @@ namespace Dwarf
         case Metal: break;
         case OpenGL:
           {
-            auto shader = (OpenGLShader*)mat.GetShader().get();
+            auto shader = (OpenGLShader*)material.GetShader().get();
             ImGui::TextWrapped("Vertex Shader");
             ImGui::SameLine();
             ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);

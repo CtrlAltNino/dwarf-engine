@@ -355,4 +355,36 @@ namespace Dwarf
   {
     return m_ShaderLogs;
   }
+
+  nlohmann::json
+  OpenGLShader::Serialize() const
+  {
+    nlohmann::json serializedShader;
+    serializedShader["VertexShader"] =
+      m_VertexShaderAsset.has_value()
+        ? m_VertexShaderAsset.value()->GetUID().ToString()
+        : "-1";
+
+    serializedShader["FragmentShader"] =
+      m_FragmentShaderAsset.has_value()
+        ? m_FragmentShaderAsset.value()->GetUID().ToString()
+        : "-1";
+
+    serializedShader["GeometryShader"] =
+      m_GeometryShaderAsset.has_value()
+        ? m_GeometryShaderAsset.value()->GetUID().ToString()
+        : "-1";
+
+    serializedShader["TessellationControlShader"] =
+      m_TessellationControlShaderAsset.has_value()
+        ? m_TessellationControlShaderAsset.value()->GetUID().ToString()
+        : "-1";
+
+    serializedShader["TessellationEvaluationShader"] =
+      m_TessellationEvaluationShaderAsset.has_value()
+        ? m_TessellationEvaluationShaderAsset.value()->GetUID().ToString()
+        : "-1";
+
+    return serializedShader;
+  }
 }

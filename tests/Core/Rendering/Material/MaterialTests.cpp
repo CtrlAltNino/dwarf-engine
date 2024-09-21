@@ -18,10 +18,10 @@ public:
               SetParameter,
               (std::string_view identifier, Dwarf::ParameterValue parameter),
               (override));
-  MOCK_METHOD(std::optional<Dwarf::ParameterValue>,
+  MOCK_METHOD(Dwarf::ParameterValue&,
               GetParameter,
-              (std::string const& name),
-              (const, override));
+              (const std::string& name),
+              (override));
   MOCK_METHOD(const std::vector<std::string>,
               GetParameterIdentifiers,
               (),
@@ -40,14 +40,17 @@ public:
               CreateParameters,
               (),
               (override));
+  MOCK_METHOD(nlohmann::json, Serialize, (), (const, override));
 };
 
+// Testing the basic functionality of the Material class
 TEST(MaterialTests, EmptyShaderInitialization)
 {
   Dwarf::Material material(nullptr);
   ASSERT_EQ(material.GetShader(), nullptr);
 }
 
+// Testing if the default shader is initialized correctly
 TEST(MaterialTests, DefaultShaderInitialization)
 {
   auto            shader = std::make_shared<MockIShader>();
@@ -55,6 +58,7 @@ TEST(MaterialTests, DefaultShaderInitialization)
   ASSERT_EQ(material.GetShader(), shader);
 }
 
+// Testing if the default material properties are initialized correctly
 TEST(MaterialTests, DefaultMaterialProperties)
 {
   auto            shader = std::make_shared<MockIShader>();
@@ -66,6 +70,7 @@ TEST(MaterialTests, DefaultMaterialProperties)
   ASSERT_FALSE(properties.IsWireframe);
 }
 
+// Testing if the custom material properties are initialized correctly
 TEST(MaterialTests, CustomMaterialProperties)
 {
   auto                      shader = std::make_shared<MockIShader>();
@@ -78,13 +83,14 @@ TEST(MaterialTests, CustomMaterialProperties)
   ASSERT_FALSE(properties.IsWireframe);
 }
 
+// Testing serialization of the material
 TEST(MaterialTests, MaterialSerialization)
 {
   auto            shader = std::make_shared<MockIShader>();
   Dwarf::Material material(shader);
   auto            serialized = material.Serialize();
   ASSERT_FALSE(serialized.empty());
-  ASSERT_TRUE(serialized.contains("shader"));
+  ASSERT_TRUE(serialized.contains("Shader"));
   ASSERT_TRUE(serialized.contains("Properties"));
   ASSERT_TRUE(serialized["Properties"]["IsTransparent"].is_boolean());
   ASSERT_TRUE(serialized["Properties"]["IsTransparent"].get<bool>() == false);

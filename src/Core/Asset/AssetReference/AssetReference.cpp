@@ -34,7 +34,7 @@ namespace Dwarf
     std::shared_ptr<IMaterialIO>     materialIO)
     : m_AssetHandle(assetHandle)
     , m_Registry(registry)
-    , m_Type(IAssetDatabase::GetAssetType(path.extension()))
+    , m_Type(IAssetDatabase::GetAssetType(path.extension().string()))
     , m_ModelImporter(modelImporter)
     , m_TextureFactory(textureFactory)
     , m_MaterialIO(materialIO)

@@ -59,7 +59,7 @@
 #include "Core/Scene/Settings/ISceneSettingsFactory.h"
 #include "Editor/EditorView/EditorView.h"
 #include "Editor/EditorView/IEditorView.h"
-#include "Editor/IEditorSelection.h"
+#include "Editor/Selection/IEditorSelection.h"
 #include "Editor/Modules/Inspector/AssetInspector/IAssetInspector.h"
 #include "Project/ProjectSettings.h"
 #include "Core/Asset/Texture/IImageFileLoader.h"
@@ -83,7 +83,7 @@
 #include "Core/Asset/Database/AssetDirectoryListener.h"
 #include "Editor/Modules/Inspector/AssetInspector/AssetInspector.h"
 #include "Editor/Modules/Inspector/EntityInspector/EntityInspector.h"
-#include "Editor/EditorSelection.h"
+#include "Editor/Selection/EditorSelection.h"
 #include "Core/Scene/Settings/SceneSettingsFactory.h"
 #include <boost/di.hpp>
 #include <boost/di/extension/scopes/shared.hpp>
