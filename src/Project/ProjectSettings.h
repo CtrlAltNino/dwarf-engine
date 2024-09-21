@@ -43,11 +43,11 @@ namespace Dwarf
   {
   private:
     // Data
-    std::filesystem::path         m_ProjectSettingsPath;
-    std::string                   m_Name;
-    time_t                        m_LastOpenedTimeStamp;
-    GraphicsApi                   m_GraphicsApi;
-    std::optional<UUID>           m_LastOpenedScene;
+    std::filesystem::path         m_ProjectSettingsPath = "";
+    std::string                   m_Name = "";
+    time_t                        m_LastOpenedTimeStamp = 0;
+    GraphicsApi                   m_GraphicsApi = GraphicsApi::None;
+    std::optional<UUID>           m_LastOpenedScene = std::nullopt;
     std::shared_ptr<IDwarfLogger> m_Logger;
     LoadStatus                    m_LoadStatus;
 

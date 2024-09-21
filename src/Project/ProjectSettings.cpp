@@ -88,7 +88,7 @@ namespace Dwarf
     projectSettings[PROJECT_NAME_KEY] = m_Name;
     projectSettings[GRAPHICS_API_KEY] = m_GraphicsApi;
     projectSettings[LAST_OPENED_SCENE_KEY] =
-      m_LastOpenedScene.has_value() ? "" : m_LastOpenedScene->ToString();
+      m_LastOpenedScene.has_value() ? m_LastOpenedScene->ToString() : "";
     projectSettings[PROJECT_LAST_OPENED_DATE_KEY] = m_LastOpenedTimeStamp;
 
     FileHandler::WriteToFile(m_ProjectSettingsPath, projectSettings.dump(2));

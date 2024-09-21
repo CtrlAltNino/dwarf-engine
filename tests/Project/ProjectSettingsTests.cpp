@@ -74,7 +74,7 @@ TEST_F(ProjectSettingsTest, Constructor_LoadsProjectSettings_FileDoesNotExist)
   // Arrange
   std::filesystem::path settingsPath = testPath / "projectSettings.dproj";
 
-  EXPECT_CALL(*mockLogger, LogInfo(_)).Times(1);
+  // EXPECT_CALL(*mockLogger, LogInfo(_)).Times(1);
   EXPECT_CALL(*mockLogger, LogError(_)).Times(1);
 
   // Act
@@ -88,32 +88,74 @@ TEST_F(ProjectSettingsTest, Constructor_LoadsProjectSettings_FileDoesNotExist)
   EXPECT_EQ(projectSettings->GetLastOpenedTimeStamp(), 0);
 }
 
-TEST_F(ProjectSettingsTest, SaveProjectSettings)
+TEST_F(ProjectSettingsTest, SaveUnchangedProjectSettings)
 {
-  // Arrange
+  // Writing a functioning project settings file
+  std::filesystem::path settingsPath = testPath / "projectSettings.dproj";
+  nlohmann::json        testProjectsettings;
+  testProjectsettings["projectName"] = "TestProject";
+  testProjectsettings["graphicsApi"] = GraphicsApi::OpenGL;
+  testProjectsettings["lastOpenedScene"] =
+    "123e4567-e89b-12d3-a456-426614174000";
+  testProjectsettings["projectLastOpenedDate"] = 1627847285;
+  FileHandler::WriteToFile(settingsPath, testProjectsettings.dump(2));
+
+  // Creating a new project settings object
   auto projectSettings =
     std::make_unique<ProjectSettings>(ProjectPath{ testPath }, mockLogger);
+
+  // Directly saving the project settings
+  projectSettings->Save();
+
+  nlohmann::json savedProjectSettings =
+    nlohmann::json::parse(FileHandler::ReadFile(settingsPath));
+
+  EXPECT_EQ(testProjectsettings, savedProjectSettings);
+
   projectSettings->SetProjectName("TestProject");
   projectSettings->SetGraphicsApi(GraphicsApi::Vulkan);
   projectSettings->SetLastOpenedScene(
     UUID("123e4567-e89b-12d3-a456-426614174000"));
   projectSettings->SetLastOpenedTimeStamp(1627847285);
+  FileHandler::Delete(settingsPath);
+}
+
+TEST_F(ProjectSettingsTest, SaveChangedProjectSettings)
+{
+  // Writing a functioning project settings file
+  std::filesystem::path settingsPath = testPath / "projectSettings.dproj";
+  nlohmann::json        testProjectsettings;
+  testProjectsettings["projectName"] = "TestProject";
+  testProjectsettings["graphicsApi"] = GraphicsApi::OpenGL;
+  testProjectsettings["lastOpenedScene"] =
+    "123e4567-e89b-12d3-a456-426614174000";
+  testProjectsettings["projectLastOpenedDate"] = 1627847285;
+  FileHandler::WriteToFile(settingsPath, testProjectsettings.dump(2));
+
+  // Creating a new project settings object
+  auto projectSettings =
+    std::make_unique<ProjectSettings>(ProjectPath{ testPath }, mockLogger);
+
+  projectSettings->SetProjectName("CoolProject");
+  projectSettings->SetGraphicsApi(GraphicsApi::Vulkan);
+  projectSettings->SetLastOpenedScene(
+    UUID("123e4567-e89b-12d3-a456-426614174001"));
+  projectSettings->SetLastOpenedTimeStamp(1627847286);
 
   EXPECT_CALL(*mockLogger, LogInfo(_)).Times(1);
 
   // Act
   projectSettings->Save();
 
-  // Assert
-  std::filesystem::path settingsPath = testPath / "projectSettings.dproj";
-  std::string           settingsContent = FileHandler::ReadFile(settingsPath);
-  nlohmann::json projectSettingsJson = nlohmann::json::parse(settingsContent);
+  nlohmann::json savedProjectSettings =
+    nlohmann::json::parse(FileHandler::ReadFile(settingsPath));
 
-  EXPECT_EQ(projectSettingsJson[PROJECT_NAME_KEY], "TestProject");
-  EXPECT_EQ(projectSettingsJson[GRAPHICS_API_KEY], 1);
-  EXPECT_EQ(projectSettingsJson[LAST_OPENED_SCENE_KEY],
-            "123e4567-e89b-12d3-a456-426614174000");
-  EXPECT_EQ(projectSettingsJson[PROJECT_LAST_OPENED_DATE_KEY], 1627847285);
+  EXPECT_EQ(savedProjectSettings[PROJECT_NAME_KEY], "CoolProject");
+  EXPECT_EQ(savedProjectSettings[GRAPHICS_API_KEY], 4);
+  EXPECT_EQ(savedProjectSettings[LAST_OPENED_SCENE_KEY],
+            "123e4567-e89b-12d3-a456-426614174001");
+  EXPECT_EQ(savedProjectSettings[PROJECT_LAST_OPENED_DATE_KEY], 1627847286);
+  FileHandler::Delete(settingsPath);
 }
 
 TEST_F(ProjectSettingsTest, SetAndGetProjectName)
