@@ -8,11 +8,13 @@ namespace Dwarf
     std::shared_ptr<IDwarfLogger>    logger,
     std::shared_ptr<IModelImporter>  modelImporter,
     std::shared_ptr<ITextureFactory> textureFactory,
-    std::shared_ptr<IMaterialIO>     materialIO)
+    std::shared_ptr<IMaterialIO>     materialIO,
+    std::shared_ptr<IFileHandler>    fileHandler)
     : m_Logger(logger)
     , m_ModelImporter(modelImporter)
     , m_TextureFactory(textureFactory)
     , m_MaterialIO(materialIO)
+    , m_FileHandler(fileHandler)
   {
     m_Logger->LogInfo(
       Log("AssetReferenceFactory created", "AssetReferenceFactory"));
@@ -30,7 +32,8 @@ namespace Dwarf
                                             type,
                                             m_ModelImporter,
                                             m_TextureFactory,
-                                            m_MaterialIO);
+                                            m_MaterialIO,
+                                            m_FileHandler);
   }
 
   std::unique_ptr<IAssetReference>
@@ -51,6 +54,7 @@ namespace Dwarf
                                             name,
                                             m_ModelImporter,
                                             m_TextureFactory,
-                                            m_MaterialIO);
+                                            m_MaterialIO,
+                                            m_FileHandler);
   }
 }

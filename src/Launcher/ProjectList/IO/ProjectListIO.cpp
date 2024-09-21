@@ -1,10 +1,11 @@
 #include "ProjectListIO.h"
-#include "Utilities/FileHandler.h"
 
 namespace Dwarf
 {
-  ProjectListIO::ProjectListIO(IDwarfLogger& logger)
+  ProjectListIO::ProjectListIO(IDwarfLogger&                 logger,
+                               std::shared_ptr<IFileHandler> fileHandler)
     : m_Logger(logger)
+    , m_FileHandler(fileHandler)
   {
     m_Logger.LogInfo(Log("ProjectListIO created", "ProjectListIO"));
   }
@@ -19,12 +20,12 @@ namespace Dwarf
   {
     std::vector<ProjectInformation> projectList;
     std::filesystem::path           savedProjectsPath =
-      FileHandler::GetProjectSettingsPath() / "savedProjects.json";
+      m_FileHandler->GetProjectSettingsPath() / "savedProjects.json";
 
     m_Logger.LogInfo(Log(
       fmt::format("Loading project list from {}", savedProjectsPath.string()),
       "ProjectListIO"));
-    std::string fileContent = FileHandler::ReadFile(savedProjectsPath);
+    std::string fileContent = m_FileHandler->ReadFile(savedProjectsPath);
 
     if (!fileContent.empty())
     {
@@ -78,7 +79,7 @@ namespace Dwarf
   ProjectListIO::LoadProject(const std::filesystem::path& path) const
   {
     std::filesystem::path projectSettingsPath = path / "projectSettings.dproj";
-    std::string fileContent = FileHandler::ReadFile(projectSettingsPath);
+    std::string fileContent = m_FileHandler->ReadFile(projectSettingsPath);
 
     m_Logger.LogInfo(Log(fmt::format("Loading project information from {}",
                                      projectSettingsPath.string()),
@@ -130,14 +131,15 @@ namespace Dwarf
     }
 
     std::string           fileContent = jsonObject.dump(4);
-    std::filesystem::path settingsPath = FileHandler::GetProjectSettingsPath();
-    if (!FileHandler::DirectoyExists(settingsPath))
+    std::filesystem::path settingsPath =
+      m_FileHandler->GetProjectSettingsPath();
+    if (!m_FileHandler->DirectoyExists(settingsPath))
     {
-      FileHandler::CreateDirectoryAt(settingsPath);
+      m_FileHandler->CreateDirectoryAt(settingsPath);
     }
     std::filesystem::path savedProjectsPath =
       settingsPath / "savedProjects.json";
-    FileHandler::WriteToFile(savedProjectsPath.make_preferred(), fileContent);
+    m_FileHandler->WriteToFile(savedProjectsPath.make_preferred(), fileContent);
 
     m_Logger.LogInfo(Log("Project list saved", "ProjectListIO"));
   }

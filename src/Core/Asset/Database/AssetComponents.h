@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Core/Rendering/Texture/ITexture.h"
-#include "Utilities/FileHandler.h"
 #include "Core/Rendering/Mesh/IMesh.h"
 #include "Core/Rendering/Material/IMaterial.h"
 #include <optional>
@@ -105,8 +104,8 @@ namespace Dwarf
     std::string m_FileContent;
 
   public:
-    explicit VertexShaderAsset(const std::filesystem::path& path)
-      : m_FileContent(FileHandler::ReadFile(path))
+    explicit VertexShaderAsset(const std::string& fileContent)
+      : m_FileContent(fileContent)
     {
     }
 
@@ -124,8 +123,8 @@ namespace Dwarf
     std::string m_FileContent;
 
   public:
-    explicit FragmentShaderAsset(const std::filesystem::path& path)
-      : m_FileContent(FileHandler::ReadFile(path))
+    explicit FragmentShaderAsset(const std::string& fileContent)
+      : m_FileContent(fileContent)
     {
     }
 
@@ -143,8 +142,8 @@ namespace Dwarf
     std::string m_FileContent;
 
   public:
-    explicit GeometryShaderAsset(const std::filesystem::path& path)
-      : m_FileContent(FileHandler::ReadFile(path))
+    explicit GeometryShaderAsset(const std::string& fileContent)
+      : m_FileContent(fileContent)
     {
     }
 
@@ -162,8 +161,8 @@ namespace Dwarf
     std::string m_FileContent;
 
   public:
-    explicit TessellationControlShaderAsset(const std::filesystem::path& path)
-      : m_FileContent(FileHandler::ReadFile(path))
+    explicit TessellationControlShaderAsset(const std::string& fileContent)
+      : m_FileContent(fileContent)
     {
     }
 
@@ -181,9 +180,8 @@ namespace Dwarf
     std::string m_FileContent;
 
   public:
-    explicit TessellationEvaluationShaderAsset(
-      const std::filesystem::path& path)
-      : m_FileContent(FileHandler::ReadFile(path))
+    explicit TessellationEvaluationShaderAsset(const std::string& fileContent)
+      : m_FileContent(fileContent)
     {
     }
 
@@ -201,8 +199,8 @@ namespace Dwarf
     std::string m_FileContent;
 
   public:
-    explicit ComputeShaderAsset(const std::filesystem::path& path)
-      : m_FileContent(FileHandler::ReadFile(path))
+    explicit ComputeShaderAsset(const std::string& fileContent)
+      : m_FileContent(fileContent)
     {
     }
 
@@ -220,8 +218,8 @@ namespace Dwarf
     std::string m_FileContent;
 
   public:
-    explicit HlslShaderAsset(const std::filesystem::path& path)
-      : m_FileContent(FileHandler::ReadFile(path))
+    explicit HlslShaderAsset(const std::string& fileContent)
+      : m_FileContent(fileContent)
     {
     }
 
@@ -259,8 +257,8 @@ namespace Dwarf
     nlohmann::json m_SerializedScene;
 
   public:
-    explicit SceneAsset(const std::filesystem::path& path)
-      : m_SerializedScene(nlohmann::json::parse(FileHandler::ReadFile(path)))
+    explicit SceneAsset(const nlohmann::json& serializedScene)
+      : m_SerializedScene(serializedScene)
     {
     }
 
@@ -277,8 +275,8 @@ namespace Dwarf
     std::string m_FileContent;
 
   public:
-    explicit UnknownAsset(const std::filesystem::path& path)
-      : m_FileContent(FileHandler::ReadFile(path))
+    explicit UnknownAsset(const std::string& fileContent)
+      : m_FileContent(fileContent)
     {
     }
 

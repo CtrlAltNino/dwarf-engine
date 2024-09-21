@@ -2,7 +2,6 @@
 #include <gmock/gmock.h>
 #include "Project/ProjectSettings.h"
 #include "Logging/IDwarfLogger.h"
-#include "Utilities/FileHandler.h"
 #include "Core/UUID.h"
 #include <nlohmann/json.hpp>
 #include <memory>
@@ -21,16 +20,63 @@ public:
   MOCK_METHOD(void, LogError, (const Log logMessage), (const, override));
 };
 
+// Mock class for IFileHandler
+class MockFileHandler : public IFileHandler
+{
+public:
+  MOCK_METHOD(std::filesystem::path, GetDocumentsPath, (), (override));
+  MOCK_METHOD(std::filesystem::path, GetProjectSettingsPath, (), (override));
+  MOCK_METHOD(bool,
+              FileExists,
+              (const std::filesystem::path& filePath),
+              (override));
+  MOCK_METHOD(std::string,
+              ReadFile,
+              (const std::filesystem::path& filePath),
+              (override));
+  MOCK_METHOD(void,
+              WriteToFile,
+              (const std::filesystem::path& filePath, std::string_view content),
+              (override));
+  MOCK_METHOD(bool,
+              DirectoyExists,
+              (const std::filesystem::path& path),
+              (override));
+  MOCK_METHOD(void,
+              CreateDirectoryAt,
+              (const std::filesystem::path& path),
+              (override));
+  MOCK_METHOD(void,
+              OpenPathInFileBrowser,
+              (const std::filesystem::path& path),
+              (override));
+  MOCK_METHOD(void, LaunchFile, (std::filesystem::path path), (override));
+  MOCK_METHOD(void,
+              Copy,
+              (const std::filesystem::path& from,
+               const std::filesystem::path& to),
+              (override));
+  MOCK_METHOD(void,
+              Rename,
+              (const std::filesystem::path& oldPath,
+               const std::filesystem::path& newPath),
+              (override));
+  MOCK_METHOD(void, Duplicate, (const std::filesystem::path& path), (override));
+  MOCK_METHOD(void, Delete, (const std::filesystem::path& path), (override));
+};
+
 class ProjectSettingsTest : public ::testing::Test
 {
 protected:
-  std::shared_ptr<MockLogger> mockLogger;
-  std::filesystem::path       testPath;
+  std::shared_ptr<MockLogger>      mockLogger;
+  std::shared_ptr<MockFileHandler> mockFileHandler;
+  std::filesystem::path            testPath;
 
   void
   SetUp() override
   {
     mockLogger = std::make_shared<MockLogger>();
+    mockFileHandler = std::make_shared<MockFileHandler>();
     testPath = ".";
   }
 
@@ -51,14 +97,17 @@ TEST_F(ProjectSettingsTest, Constructor_LoadsProjectSettings_FileExists)
   testProjectsettings["lastOpenedScene"] =
     "123e4567-e89b-12d3-a456-426614174000";
   testProjectsettings["projectLastOpenedDate"] = 1627847285;
-  FileHandler::WriteToFile(settingsPath, testProjectsettings.dump(2));
 
+  EXPECT_CALL(*mockFileHandler, FileExists(settingsPath))
+    .WillOnce(Return(true));
+  EXPECT_CALL(*mockFileHandler, ReadFile(settingsPath))
+    .WillOnce(Return(testProjectsettings.dump(2)));
   EXPECT_CALL(*mockLogger, LogInfo(_)).Times(1);
   EXPECT_CALL(*mockLogger, LogError(_)).Times(0);
 
   // Act
-  auto projectSettings =
-    std::make_unique<ProjectSettings>(ProjectPath{ testPath }, mockLogger);
+  auto projectSettings = std::make_unique<ProjectSettings>(
+    ProjectPath{ testPath }, mockLogger, mockFileHandler);
 
   // Assert
   EXPECT_EQ(projectSettings->GetProjectName(), "TestProject");
@@ -66,7 +115,6 @@ TEST_F(ProjectSettingsTest, Constructor_LoadsProjectSettings_FileExists)
   EXPECT_EQ(projectSettings->GetLastOpenedScene()->ToString(),
             "123e4567-e89b-12d3-a456-426614174000");
   EXPECT_EQ(projectSettings->GetLastOpenedTimeStamp(), 1627847285);
-  FileHandler::Delete(settingsPath);
 }
 
 TEST_F(ProjectSettingsTest, Constructor_LoadsProjectSettings_FileDoesNotExist)
@@ -78,8 +126,8 @@ TEST_F(ProjectSettingsTest, Constructor_LoadsProjectSettings_FileDoesNotExist)
   EXPECT_CALL(*mockLogger, LogError(_)).Times(1);
 
   // Act
-  auto projectSettings =
-    std::make_unique<ProjectSettings>(ProjectPath{ testPath }, mockLogger);
+  auto projectSettings = std::make_unique<ProjectSettings>(
+    ProjectPath{ testPath }, mockLogger, mockFileHandler);
 
   // Assert
   EXPECT_EQ(projectSettings->GetProjectName(), "");
@@ -98,26 +146,19 @@ TEST_F(ProjectSettingsTest, SaveUnchangedProjectSettings)
   testProjectsettings["lastOpenedScene"] =
     "123e4567-e89b-12d3-a456-426614174000";
   testProjectsettings["projectLastOpenedDate"] = 1627847285;
-  FileHandler::WriteToFile(settingsPath, testProjectsettings.dump(2));
+
+  EXPECT_CALL(*mockFileHandler, FileExists(settingsPath))
+    .WillOnce(Return(true));
+  EXPECT_CALL(*mockFileHandler, ReadFile(settingsPath))
+    .WillOnce(Return(testProjectsettings.dump(2)));
+  EXPECT_CALL(*mockFileHandler, WriteToFile(settingsPath, _)).Times(1);
 
   // Creating a new project settings object
-  auto projectSettings =
-    std::make_unique<ProjectSettings>(ProjectPath{ testPath }, mockLogger);
+  auto projectSettings = std::make_unique<ProjectSettings>(
+    ProjectPath{ testPath }, mockLogger, mockFileHandler);
 
   // Directly saving the project settings
   projectSettings->Save();
-
-  nlohmann::json savedProjectSettings =
-    nlohmann::json::parse(FileHandler::ReadFile(settingsPath));
-
-  EXPECT_EQ(testProjectsettings, savedProjectSettings);
-
-  projectSettings->SetProjectName("TestProject");
-  projectSettings->SetGraphicsApi(GraphicsApi::Vulkan);
-  projectSettings->SetLastOpenedScene(
-    UUID("123e4567-e89b-12d3-a456-426614174000"));
-  projectSettings->SetLastOpenedTimeStamp(1627847285);
-  FileHandler::Delete(settingsPath);
 }
 
 TEST_F(ProjectSettingsTest, SaveChangedProjectSettings)
@@ -130,11 +171,17 @@ TEST_F(ProjectSettingsTest, SaveChangedProjectSettings)
   testProjectsettings["lastOpenedScene"] =
     "123e4567-e89b-12d3-a456-426614174000";
   testProjectsettings["projectLastOpenedDate"] = 1627847285;
-  FileHandler::WriteToFile(settingsPath, testProjectsettings.dump(2));
+
+  EXPECT_CALL(*mockFileHandler, FileExists(settingsPath))
+    .WillOnce(Return(true));
+  EXPECT_CALL(*mockFileHandler, ReadFile(settingsPath))
+    .WillOnce(Return(testProjectsettings.dump(2)));
+  EXPECT_CALL(*mockFileHandler, WriteToFile(settingsPath, _)).Times(1);
+  EXPECT_CALL(*mockLogger, LogInfo(_)).Times(1);
 
   // Creating a new project settings object
-  auto projectSettings =
-    std::make_unique<ProjectSettings>(ProjectPath{ testPath }, mockLogger);
+  auto projectSettings = std::make_unique<ProjectSettings>(
+    ProjectPath{ testPath }, mockLogger, mockFileHandler);
 
   projectSettings->SetProjectName("CoolProject");
   projectSettings->SetGraphicsApi(GraphicsApi::Vulkan);

@@ -2,7 +2,6 @@ smtg_add_subdirectories()
 target_sources(${libname}
     PRIVATE
     stb.cpp
-    FileHandler.cpp
 )
 
 if(APPLE)

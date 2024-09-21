@@ -15,6 +15,7 @@
 #include "Launcher/ProjectLauncher.h"
 #include "Launcher/View/IProjectLauncherView.h"
 #include "Launcher/View/ProjectLauncherView.h"
+#include "Utilities/FileHandler/FileHandler.h"
 #include "Window/IWindow.h"
 #include "Launcher/ProjectList/IProjectList.h"
 #include "Launcher/ProjectList/ProjectList.h"
@@ -43,6 +44,8 @@ namespace Dwarf
       boost::di::bind<IDwarfLogger>.to<DwarfLogger>().in(
         boost::di::extension::shared),
       boost::di::bind<GraphicsApi>.to(GraphicsApi::OpenGL),
+      boost::di::bind<IFileHandler>.to<FileHandler>().in(
+        boost::di::extension::shared),
       boost::di::bind<IImGuiLayerFactory>.to<ImGuiLayerFactory>().in(
         boost::di::extension::shared),
       boost::di::bind<WindowProps>.to(WindowProps(

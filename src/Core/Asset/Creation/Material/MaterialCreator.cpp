@@ -1,5 +1,5 @@
 #include "MaterialCreator.h"
-#include "Utilities/FileHandler.h"
+#include "Core/Rendering/Material/IO/IMaterialIO.h"
 #include <memory>
 
 namespace Dwarf
@@ -7,10 +7,12 @@ namespace Dwarf
   MaterialCreator::MaterialCreator(
     AssetDirectoryPath                assetDirectoryPath,
     std::shared_ptr<IMaterialFactory> materialFactory,
-    std::shared_ptr<IMaterialIO>      materialIO)
+    std::shared_ptr<IMaterialIO>      materialIO,
+    std::shared_ptr<IFileHandler>     fileHandler)
     : m_AssetDirectoryPath(assetDirectoryPath)
     , m_MaterialFactory(materialFactory)
     , m_MaterialIO(materialIO)
+    , m_FileHandler(fileHandler)
   {
   }
 
@@ -26,7 +28,7 @@ namespace Dwarf
 
     std::filesystem::path assetPath = path / "New Material.dmat";
 
-    while (FileHandler::FileExists(assetPath))
+    while (m_FileHandler->FileExists(assetPath))
     {
       static int counter = 0;
 

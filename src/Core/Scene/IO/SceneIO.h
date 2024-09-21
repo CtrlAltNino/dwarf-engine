@@ -5,6 +5,7 @@
 #include "Core/Scene/IO/ISceneIO.h"
 #include "Core/Scene/IScene.h"
 #include "Project/IProjectSettings.h"
+#include "Utilities/FileHandler/IFileHandler.h"
 #include <filesystem>
 
 namespace Dwarf
@@ -15,6 +16,7 @@ namespace Dwarf
     std::shared_ptr<ISceneFactory>    m_SceneFactory;
     std::shared_ptr<IProjectSettings> m_ProjectSettings;
     std::shared_ptr<IAssetDatabase>   m_AssetDatabase;
+    std::shared_ptr<IFileHandler>     m_FileHandler;
 
     void
     WriteSceneToFile(const nlohmann::json&        serializedScene,
@@ -26,7 +28,8 @@ namespace Dwarf
   public:
     SceneIO(std::shared_ptr<IProjectSettings> projectSettings,
             std::shared_ptr<ISceneFactory>    sceneFactory,
-            std::shared_ptr<IAssetDatabase>   assetDatabase);
+            std::shared_ptr<IAssetDatabase>   assetDatabase,
+            std::shared_ptr<IFileHandler>     fileHandler);
 
     void
     SaveScene(IScene& scene) const override;

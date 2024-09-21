@@ -19,6 +19,7 @@ namespace Dwarf
     std::shared_ptr<IMaterialFactory> m_MaterialFactory;
     std::shared_ptr<IAssetMetadata>   m_AssetMetadata;
     std::shared_ptr<IMaterialCreator> m_MaterialCreator;
+    std::shared_ptr<IFileHandler>     m_FileHandler;
 
   public:
     BOOST_DI_INJECT(AssetBrowserWindowFactory,
@@ -30,7 +31,8 @@ namespace Dwarf
                     std::shared_ptr<IMaterialIO>      materialIO,
                     std::shared_ptr<IMaterialFactory> materialFactory,
                     std::shared_ptr<IAssetMetadata>   assetMetadata,
-                    std::shared_ptr<IMaterialCreator> materialCreator);
+                    std::shared_ptr<IMaterialCreator> materialCreator,
+                    std::shared_ptr<IFileHandler>     fileHandler);
 
     ~AssetBrowserWindowFactory() override = default;
     std::unique_ptr<AssetBrowserWindow>

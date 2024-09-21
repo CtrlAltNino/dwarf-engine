@@ -2,7 +2,6 @@
 
 #include "Core/Asset/AssetReference/IAssetReference.h"
 #include "Core/Asset/Database/AssetComponents.h"
-#include "Utilities/FileHandler.h"
 #include <nfd.h>
 #include <fmt/format.h>
 
@@ -10,10 +9,12 @@ namespace Dwarf
 {
   SceneIO::SceneIO(std::shared_ptr<IProjectSettings> projectSettings,
                    std::shared_ptr<ISceneFactory>    sceneFactory,
-                   std::shared_ptr<IAssetDatabase>   assetDatabase)
+                   std::shared_ptr<IAssetDatabase>   assetDatabase,
+                   std::shared_ptr<IFileHandler>     fileHandler)
     : m_SceneFactory(sceneFactory)
     , m_ProjectSettings(projectSettings)
     , m_AssetDatabase(assetDatabase)
+    , m_FileHandler(fileHandler)
   {
   }
 
@@ -77,7 +78,7 @@ namespace Dwarf
   std::unique_ptr<IScene>
   SceneIO::LoadScene(IAssetReference& sceneAsset) const
   {
-    if (FileHandler::FileExists(sceneAsset.GetPath()))
+    if (m_FileHandler->FileExists(sceneAsset.GetPath()))
     {
       return m_SceneFactory->FromAsset(sceneAsset);
     }
@@ -126,8 +127,8 @@ namespace Dwarf
     // Check if "New Scene" already exists, if so, increment the number
     std::string sceneName = "New Scene";
     int         i = 1;
-    while (FileHandler::FileExists(directory /
-                                   (sceneName + std::to_string(i) + ".scene")))
+    while (m_FileHandler->FileExists(
+      directory / (sceneName + std::to_string(i) + ".scene")))
     {
       i++;
     }
@@ -139,7 +140,7 @@ namespace Dwarf
   SceneIO::WriteSceneToFile(const nlohmann::json&        serializedScene,
                             const std::filesystem::path& scenePath) const
   {
-    FileHandler::WriteToFile(scenePath, serializedScene.get<std::string>());
+    m_FileHandler->WriteToFile(scenePath, serializedScene.get<std::string>());
   }
 
   void

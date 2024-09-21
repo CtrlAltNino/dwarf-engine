@@ -5,6 +5,8 @@
 #include "Launcher/ProjectList/IProjectList.h"
 #include "Launcher/ProjectList/Sorter/IProjectListSorter.h"
 #include "Logging/IDwarfLogger.h"
+#include "Utilities/FileHandler/IFileHandler.h"
+#include <memory>
 // #include "Window/IWindow.h"
 
 namespace Dwarf
@@ -16,14 +18,11 @@ namespace Dwarf
     IDwarfLogger&                   m_Logger;
     IProjectListIO&                 m_ProjectListIO;
     IProjectListSorter&             m_ProjectListSorter;
-    // IWindow&                        m_Window;
 
   public:
     ProjectList(IDwarfLogger&       logger,
                 IProjectListIO&     projectListIO,
-                IProjectListSorter& projectListSorter
-                // ,IWindow&            window
-    );
+                IProjectListSorter& projectListSorter);
 
     ~ProjectList() override;
     void

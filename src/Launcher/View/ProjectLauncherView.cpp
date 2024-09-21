@@ -10,7 +10,6 @@
 #include "Utilities/TimeUtilities.h"
 #include "Utilities/BrowserLinkOpener.h"
 #include "Core/Base.h"
-#include "Utilities/FileHandler.h"
 #include <imgui.h>
 #include <iostream>
 #include <nfd.h>
@@ -22,14 +21,15 @@ namespace Dwarf
 #define PROJECT_INFORMATION_HEIGHT (30)
 
   ProjectLauncherView::ProjectLauncherView(
-    IDwarfLogger&         logger,
-    IWindow&              window,
-    IProjectLauncherData& data,
-    ITextureFactory&      textureFactory,
-    IProjectList&         projectList,
-    IProjectListIO&       projectListIO,
-    IProjectListSorter&   projectListSorter,
-    IProjectCreator&      projectCreator)
+    IDwarfLogger&                 logger,
+    IWindow&                      window,
+    IProjectLauncherData&         data,
+    ITextureFactory&              textureFactory,
+    IProjectList&                 projectList,
+    IProjectListIO&               projectListIO,
+    IProjectListSorter&           projectListSorter,
+    IProjectCreator&              projectCreator,
+    std::shared_ptr<IFileHandler> fileHandler)
     : m_Window(window)
     , m_Data(data)
     , m_TextureFactory(textureFactory)
@@ -38,6 +38,7 @@ namespace Dwarf
     , m_ProjectListSorter(projectListSorter)
     , m_ProjectCreator(projectCreator)
     , m_Logger(logger)
+    , m_FileHandler(fileHandler)
   {
     m_Logger.LogInfo(
       Log("Initializing project launcher view", "ProjectLauncherView"));
@@ -304,7 +305,7 @@ namespace Dwarf
                 if (ImGui::Button("Open in file browser",
                                   ImVec2(ImGui::GetContentRegionAvail().x, 0)))
                 {
-                  FileHandler::OpenPathInFileBrowser(project.path);
+                  m_FileHandler->OpenPathInFileBrowser(project.path);
                   ImGui::CloseCurrentPopup();
                 }
 
@@ -342,8 +343,8 @@ namespace Dwarf
             if (ImGui::IsItemClicked())
             {
               m_Data.SetSelectedProject(project);
-              if (FileHandler::FileExists(project.path.t /
-                                          "projectSettings.dproj"))
+              if (m_FileHandler->FileExists(project.path.t /
+                                            "projectSettings.dproj"))
               {
                 m_Data.SetState(ProjectChooserState::Done);
               }

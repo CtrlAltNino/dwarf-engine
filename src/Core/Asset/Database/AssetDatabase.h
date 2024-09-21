@@ -2,6 +2,7 @@
 
 #include "Core/Asset/AssetReference/IAssetReferenceFactory.h"
 #include "Core/Asset/AssetReimporter/IAssetReimporter.h"
+#include "Utilities/FileHandler/IFileHandler.h"
 #include "Core/GenericComponents.h"
 #include "Core/Rendering/Material/IMaterialFactory.h"
 #include "Core/Rendering/Material/IO/IMaterialIO.h"
@@ -16,7 +17,6 @@
 
 #include "Core/Rendering/Shader/IShader.h"
 #include "Logging/IDwarfLogger.h"
-#include "Utilities/FileHandler.h"
 
 #include <entt/entity/fwd.hpp>
 #include <entt/entt.hpp>
@@ -55,6 +55,7 @@ namespace Dwarf
     std::shared_ptr<IMaterialIO>             m_MaterialIO;
     std::shared_ptr<IAssetReimporter>        m_AssetReimporter;
     std::shared_ptr<IAssetReferenceFactory>  m_AssetReferenceFactory;
+    std::shared_ptr<IFileHandler>            m_FileHandler;
 
   public:
     /**
@@ -71,7 +72,8 @@ namespace Dwarf
       std::shared_ptr<IMaterialFactory>        materialFactory,
       std::shared_ptr<IMaterialIO>             materialIO,
       std::shared_ptr<IAssetReimporter>        assetReimporter,
-      std::shared_ptr<IAssetReferenceFactory>  assetReferenceFactory);
+      std::shared_ptr<IAssetReferenceFactory>  assetReferenceFactory,
+      std::shared_ptr<IFileHandler>            fileHandler);
 
     /**
      * @brief Destroy the Asset Database object

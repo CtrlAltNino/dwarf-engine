@@ -4,6 +4,8 @@
 #include "Core/Asset/Database/IAssetDatabase.h"
 #include "Core/Rendering/Material/IMaterialFactory.h"
 #include "Core/Rendering/Material/IO/IMaterialIO.h"
+#include "Utilities/FileHandler/FileHandler.h"
+#include "Utilities/FileHandler/IFileHandler.h"
 
 namespace Dwarf
 {
@@ -13,11 +15,13 @@ namespace Dwarf
     AssetDirectoryPath                m_AssetDirectoryPath;
     std::shared_ptr<IMaterialFactory> m_MaterialFactory;
     std::shared_ptr<IMaterialIO>      m_MaterialIO;
+    std::shared_ptr<IFileHandler>     m_FileHandler;
 
   public:
     MaterialCreator(AssetDirectoryPath                assetDirectoryPath,
                     std::shared_ptr<IMaterialFactory> materialFactory,
-                    std::shared_ptr<IMaterialIO>      materialIO);
+                    std::shared_ptr<IMaterialIO>      materialIO,
+                    std::shared_ptr<IFileHandler>     fileHandler);
     ~MaterialCreator() override = default;
     void
     CreateMaterialAsset(

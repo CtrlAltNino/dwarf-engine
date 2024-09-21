@@ -1,13 +1,17 @@
 #include "AssetMetadata.h"
-#include "Utilities/FileHandler.h"
 
 namespace Dwarf
 {
+  AssetMetadata::AssetMetadata(std::shared_ptr<IFileHandler> fileHandler)
+    : m_FileHandler(fileHandler)
+  {
+  }
+
   nlohmann::json
   AssetMetadata::GetMetadata(const std::filesystem::path& assetPath) const
   {
     std::string fileContent =
-      FileHandler::ReadFile(IAssetMetadata::GetMetadataPath(assetPath));
+      m_FileHandler->ReadFile(IAssetMetadata::GetMetadataPath(assetPath));
     nlohmann::json jsonObject;
 
     if (!fileContent.empty())
@@ -27,12 +31,12 @@ namespace Dwarf
   {
     std::string fileContent = metaData.dump(4);
 
-    if (!FileHandler::DirectoyExists(assetPath))
+    if (!m_FileHandler->DirectoyExists(assetPath))
     {
-      FileHandler::CreateDirectoryAt(assetPath);
+      m_FileHandler->CreateDirectoryAt(assetPath);
     }
 
-    FileHandler::WriteToFile(GetMetadataPath(assetPath), fileContent);
+    m_FileHandler->WriteToFile(GetMetadataPath(assetPath), fileContent);
   }
 
   /// @brief Removes the metadata file of an asset.
@@ -40,13 +44,13 @@ namespace Dwarf
   void
   AssetMetadata::RemoveMetadata(const std::filesystem::path& assetPath)
   {
-    FileHandler::Delete(GetMetadataPath(assetPath));
+    m_FileHandler->Delete(GetMetadataPath(assetPath));
   }
 
   void
   AssetMetadata::Rename(const std::filesystem::path& from,
                         const std::filesystem::path& to)
   {
-    FileHandler::Rename(GetMetadataPath(from), GetMetadataPath(to));
+    m_FileHandler->Rename(GetMetadataPath(from), GetMetadataPath(to));
   }
 }

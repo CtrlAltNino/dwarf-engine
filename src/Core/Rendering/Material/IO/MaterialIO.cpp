@@ -1,13 +1,14 @@
 #include "MaterialIO.h"
-#include "Utilities/FileHandler.h"
 #include <string>
 
 namespace Dwarf
 {
   MaterialIO::MaterialIO(std::shared_ptr<IMaterialFactory> materialFactory,
-                         std::shared_ptr<IDwarfLogger>     logger)
+                         std::shared_ptr<IDwarfLogger>     logger,
+                         std::shared_ptr<IFileHandler>     fileHandler)
     : m_MaterialFactory(materialFactory)
     , m_Logger(logger)
+    , m_FileHandler(fileHandler)
   {
   }
 
@@ -15,7 +16,7 @@ namespace Dwarf
 
   void
   MaterialIO::SaveMaterial(IMaterial&                   material,
-                           const std::filesystem::path& path)
+                           const std::filesystem::path& path) const
   {
     // Save the material to a file (Overwrite if it already exists)
     m_Logger->LogInfo(Log(
@@ -24,17 +25,17 @@ namespace Dwarf
     m_Logger->LogInfo(
       Log(fmt::format("Serialized material: {}", serializedMaterial),
           "MaterialIO"));
-    FileHandler::WriteToFile(path, serializedMaterial);
+    m_FileHandler->WriteToFile(path, serializedMaterial);
   }
 
   std::unique_ptr<IMaterial>
-  MaterialIO::LoadMaterial(const std::filesystem::path& path)
+  MaterialIO::LoadMaterial(const std::filesystem::path& path) const
   {
     m_Logger->LogInfo(
       Log(fmt::format("Loading material from file: {}", path.string()),
           "MaterialIO"));
 
-    if (!FileHandler::FileExists(path))
+    if (!m_FileHandler->FileExists(path))
     {
       m_Logger->LogError(Log(
         fmt::format("Material asset file does not exist: {}", path.string()),
@@ -42,7 +43,7 @@ namespace Dwarf
       throw std::runtime_error("Material asset file does not exist");
     }
 
-    std::string serializedMaterial = FileHandler::ReadFile(path);
+    std::string serializedMaterial = m_FileHandler->ReadFile(path);
     m_Logger->LogInfo(
       Log(fmt::format("Serialized material: {}", serializedMaterial),
           "MaterialIO"));

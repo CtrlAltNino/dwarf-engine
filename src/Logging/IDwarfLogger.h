@@ -18,6 +18,14 @@ namespace Dwarf
       , Color(color)
     {
     }
+
+    // Comparison operator for testing purposes.
+    bool
+    operator==(const Log& other) const
+    {
+      return Message == other.Message && Scope == other.Scope &&
+             Color == other.Color;
+    }
   };
 
   /// @brief Interface for logging messages with different log levels.

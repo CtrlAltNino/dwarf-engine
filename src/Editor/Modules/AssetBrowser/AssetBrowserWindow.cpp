@@ -1,6 +1,5 @@
 #include "pch.h"
 #include "Editor/Modules/AssetBrowser/AssetBrowserWindow.h"
-#include "Utilities/FileHandler.h"
 // #include "Core/Scene/SceneUtilities.h"
 #include <cstring>
 #include <memory>
@@ -16,7 +15,8 @@ namespace Dwarf
     std::shared_ptr<IMaterialIO>      materialIO,
     std::shared_ptr<IMaterialFactory> materialFactory,
     std::shared_ptr<IAssetMetadata>   assetMetadata,
-    std::shared_ptr<IMaterialCreator> materialCreator)
+    std::shared_ptr<IMaterialCreator> materialCreator,
+    std::shared_ptr<IFileHandler>     fileHandler)
     : IGuiModule(ModuleLabel("Asset Browser"),
                  ModuleType(MODULE_TYPE::ASSET_BROWSER),
                  ModuleID(std::make_shared<UUID>()))
@@ -30,6 +30,7 @@ namespace Dwarf
     , m_MaterialFactory(materialFactory)
     , m_AssetMetadata(assetMetadata)
     , m_MaterialCreator(materialCreator)
+    , m_FileHandler(fileHandler)
   {
     m_DirectoryHistory.push_back(m_CurrentDirectory);
     LoadIcons();
@@ -45,6 +46,7 @@ namespace Dwarf
     std::shared_ptr<IMaterialFactory> materialFactory,
     std::shared_ptr<IAssetMetadata>   assetMetadata,
     std::shared_ptr<IMaterialCreator> materialCreator,
+    std::shared_ptr<IFileHandler>     fileHandler,
     SerializedModule                  serializedModule)
     : IGuiModule(ModuleLabel("Asset Browser"),
                  ModuleType(MODULE_TYPE::ASSET_BROWSER),
@@ -60,6 +62,7 @@ namespace Dwarf
     , m_MaterialFactory(materialFactory)
     , m_AssetMetadata(assetMetadata)
     , m_MaterialCreator(materialCreator)
+    , m_FileHandler(fileHandler)
   {
     m_DirectoryHistory.push_back(m_CurrentDirectory);
     LoadIcons();
@@ -304,20 +307,20 @@ namespace Dwarf
 
       if (ImGui::MenuItem("Create Folder"))
       {
-        FileHandler::CreateDirectoryAt(m_CurrentDirectory / "New Folder");
+        m_FileHandler->CreateDirectoryAt(m_CurrentDirectory / "New Folder");
       }
 
       if (ImGui::MenuItem("Paste"))
       {
         if (std::filesystem::exists(m_CopyPathBuffer))
         {
-          FileHandler::Copy(m_CopyPathBuffer, m_CurrentDirectory);
+          m_FileHandler->Copy(m_CopyPathBuffer, m_CurrentDirectory);
         }
       }
 
       if (ImGui::MenuItem("Open in file browser"))
       {
-        FileHandler::OpenPathInFileBrowser(m_CurrentDirectory);
+        m_FileHandler->OpenPathInFileBrowser(m_CurrentDirectory);
       }
       ImGui::EndPopup();
     }
@@ -439,7 +442,7 @@ namespace Dwarf
           }
           else if (ImGui::MenuItem("Duplicate"))
           {
-            FileHandler::Duplicate(path);
+            m_FileHandler->Duplicate(path);
           }
           else if (ImGui::MenuItem("Rename"))
           {
@@ -451,11 +454,11 @@ namespace Dwarf
           {
             if (directoryEntry.is_directory())
             {
-              FileHandler::OpenPathInFileBrowser(directoryEntry.path());
+              m_FileHandler->OpenPathInFileBrowser(directoryEntry.path());
             }
             else
             {
-              FileHandler::OpenPathInFileBrowser(m_CurrentDirectory);
+              m_FileHandler->OpenPathInFileBrowser(m_CurrentDirectory);
             }
           }
           else if (ImGui::MenuItem("Delete"))
@@ -466,7 +469,7 @@ namespace Dwarf
               m_AssetDatabase->Remove(path);
               m_AssetMetadata->RemoveMetadata(path);
             }
-            FileHandler::Delete(path);
+            m_FileHandler->Delete(path);
           }
           ImGui::EndPopup();
         }
@@ -593,7 +596,7 @@ namespace Dwarf
         {
           m_AssetDatabase->RenameDirectory(old, newPath);
         }
-        FileHandler::Rename(old, newPath);
+        m_FileHandler->Rename(old, newPath);
         ImGui::CloseCurrentPopup();
       }
 
@@ -645,7 +648,7 @@ namespace Dwarf
     else
     {
       // TODO:s Open file
-      FileHandler::LaunchFile(directoryEntry.path());
+      m_FileHandler->LaunchFile(directoryEntry.path());
     }
   }
 
@@ -705,7 +708,7 @@ namespace Dwarf
   void
   AssetBrowserWindow::SetRenameBuffer(std::filesystem::path const& path)
   {
-    if (FileHandler::FileExists(path))
+    if (m_FileHandler->FileExists(path))
     {
       // TODO: test this
 #ifdef _MSC_VER
@@ -720,7 +723,7 @@ namespace Dwarf
         RENAME_BUFFER_SIZE - 1);
 #endif
     }
-    else if (FileHandler::DirectoyExists(path))
+    else if (m_FileHandler->DirectoyExists(path))
     {
       // TODO: test this
 #ifdef _MSC_VER

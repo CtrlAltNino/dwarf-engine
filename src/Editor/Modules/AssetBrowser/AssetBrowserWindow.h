@@ -9,6 +9,7 @@
 #include "Editor/Modules/IGuiModule.h"
 #include "Core/Rendering/Texture/ITextureFactory.h"
 #include "Input/IInputManager.h"
+#include "Utilities/FileHandler/IFileHandler.h"
 #include <boost/serialization/strong_typedef.hpp>
 
 #define RENAME_BUFFER_SIZE (128)
@@ -29,6 +30,7 @@ namespace Dwarf
     std::shared_ptr<IMaterialFactory> m_MaterialFactory;
     std::shared_ptr<IAssetMetadata>   m_AssetMetadata;
     std::shared_ptr<IMaterialCreator> m_MaterialCreator;
+    std::shared_ptr<IFileHandler>     m_FileHandler;
 
     /// @brief Path of the currently navigated directory.
     std::filesystem::path m_CurrentDirectory;
@@ -129,7 +131,8 @@ namespace Dwarf
                        std::shared_ptr<IMaterialIO>      materialIO,
                        std::shared_ptr<IMaterialFactory> materialFactory,
                        std::shared_ptr<IAssetMetadata>   assetMetadata,
-                       std::shared_ptr<IMaterialCreator> materialCreator);
+                       std::shared_ptr<IMaterialCreator> materialCreator,
+                       std::shared_ptr<IFileHandler>     fileHandler);
 
     AssetBrowserWindow(AssetDirectoryPath                assetDirectoryPath,
                        std::shared_ptr<ITextureFactory>  textureFactory,
@@ -140,6 +143,7 @@ namespace Dwarf
                        std::shared_ptr<IMaterialFactory> materialFactory,
                        std::shared_ptr<IAssetMetadata>   assetMetadata,
                        std::shared_ptr<IMaterialCreator> materialCreator,
+                       std::shared_ptr<IFileHandler>     fileHandler,
                        SerializedModule                  serializedModule);
 
     /// @brief Renders the module window.

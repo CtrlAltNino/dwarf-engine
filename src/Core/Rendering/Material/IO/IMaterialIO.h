@@ -10,9 +10,10 @@ namespace Dwarf
     virtual ~IMaterialIO() = default;
 
     virtual void
-    SaveMaterial(IMaterial& material, const std::filesystem::path& path) = 0;
+    SaveMaterial(IMaterial&                   material,
+                 const std::filesystem::path& path) const = 0;
 
     virtual std::unique_ptr<IMaterial>
-    LoadMaterial(const std::filesystem::path& path) = 0;
+    LoadMaterial(const std::filesystem::path& path) const = 0;
   };
 };

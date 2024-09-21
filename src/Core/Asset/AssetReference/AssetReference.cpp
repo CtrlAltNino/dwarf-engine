@@ -12,13 +12,15 @@ namespace Dwarf
     ASSET_TYPE                       type,
     std::shared_ptr<IModelImporter>  modelImporter,
     std::shared_ptr<ITextureFactory> textureFactory,
-    std::shared_ptr<IMaterialIO>     materialIO)
+    std::shared_ptr<IMaterialIO>     materialIO,
+    std::shared_ptr<IFileHandler>    fileHandler)
     : m_AssetHandle(assetHandle)
     , m_Registry(registry)
     , m_Type(type)
     , m_ModelImporter(modelImporter)
     , m_TextureFactory(textureFactory)
     , m_MaterialIO(materialIO)
+    , m_FileHandler(fileHandler)
   {
   }
 
@@ -31,13 +33,15 @@ namespace Dwarf
     std::string                      name,
     std::shared_ptr<IModelImporter>  modelImporter,
     std::shared_ptr<ITextureFactory> textureFactory,
-    std::shared_ptr<IMaterialIO>     materialIO)
+    std::shared_ptr<IMaterialIO>     materialIO,
+    std::shared_ptr<IFileHandler>    fileHandler)
     : m_AssetHandle(assetHandle)
     , m_Registry(registry)
     , m_Type(IAssetDatabase::GetAssetType(path.extension().string()))
     , m_ModelImporter(modelImporter)
     , m_TextureFactory(textureFactory)
     , m_MaterialIO(materialIO)
+    , m_FileHandler(fileHandler)
   {
     m_Registry.emplace<IDComponent>(m_AssetHandle, uid);
     m_Registry.emplace<PathComponent>(m_AssetHandle, path);
@@ -58,32 +62,40 @@ namespace Dwarf
                                           m_MaterialIO->LoadMaterial(path));
         break;
       case ASSET_TYPE::UNKNOWN:
-        m_Registry.emplace<UnknownAsset>(m_AssetHandle, path);
+        m_Registry.emplace<UnknownAsset>(m_AssetHandle,
+                                         m_FileHandler->ReadFile(path));
         break;
       case ASSET_TYPE::SCENE:
-        m_Registry.emplace<SceneAsset>(m_AssetHandle, path);
+        m_Registry.emplace<SceneAsset>(
+          m_AssetHandle, nlohmann::json::parse(m_FileHandler->ReadFile(path)));
         break;
       case ASSET_TYPE::VERTEX_SHADER:
-        m_Registry.emplace<VertexShaderAsset>(m_AssetHandle, path);
+        m_Registry.emplace<VertexShaderAsset>(m_AssetHandle,
+                                              m_FileHandler->ReadFile(path));
         break;
       case ASSET_TYPE::TESC_SHADER:
-        m_Registry.emplace<TessellationControlShaderAsset>(m_AssetHandle, path);
+        m_Registry.emplace<TessellationControlShaderAsset>(
+          m_AssetHandle, m_FileHandler->ReadFile(path));
         break;
       case ASSET_TYPE::TESE_SHADER:
-        m_Registry.emplace<TessellationEvaluationShaderAsset>(m_AssetHandle,
-                                                              path);
+        m_Registry.emplace<TessellationEvaluationShaderAsset>(
+          m_AssetHandle, m_FileHandler->ReadFile(path));
         break;
       case ASSET_TYPE::GEOMETRY_SHADER:
-        m_Registry.emplace<GeometryShaderAsset>(m_AssetHandle, path);
+        m_Registry.emplace<GeometryShaderAsset>(m_AssetHandle,
+                                                m_FileHandler->ReadFile(path));
         break;
       case ASSET_TYPE::FRAGMENT_SHADER:
-        m_Registry.emplace<FragmentShaderAsset>(m_AssetHandle, path);
+        m_Registry.emplace<FragmentShaderAsset>(m_AssetHandle,
+                                                m_FileHandler->ReadFile(path));
         break;
       case ASSET_TYPE::COMPUTE_SHADER:
-        m_Registry.emplace<ComputeShaderAsset>(m_AssetHandle, path);
+        m_Registry.emplace<ComputeShaderAsset>(m_AssetHandle,
+                                               m_FileHandler->ReadFile(path));
         break;
       case ASSET_TYPE::HLSL_SHADER:
-        m_Registry.emplace<HlslShaderAsset>(m_AssetHandle, path);
+        m_Registry.emplace<HlslShaderAsset>(m_AssetHandle,
+                                            m_FileHandler->ReadFile(path));
         break;
         break;
     }

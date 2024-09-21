@@ -1,4 +1,4 @@
-#include "Utilities/FileHandler.h"
+#include "Utilities/FileHandler/FileHandler.h"
 
 #include <sago/platform_folders.h>
 
@@ -17,13 +17,11 @@
 
 namespace Dwarf
 {
-  /// @brief Path to the documents directory.
-  std::filesystem::path FileHandler::s_DocumentsPath =
-    CreateDocumentsFolderPath();
-
-  /// @brief Path to the project settings.
-  std::filesystem::path FileHandler::s_ProjectSettingsPath =
-    CreateProjectSettingsPath();
+  FileHandler::FileHandler()
+    : m_DocumentsPath(CreateDocumentsFolderPath())
+    , m_ProjectSettingsPath(CreateProjectSettingsPath())
+  {
+  }
 
   /// @brief Creates the platform depending path to the documents directory.
   /// @return Absolute path to the documents directory.
@@ -90,7 +88,7 @@ namespace Dwarf
   std::filesystem::path
   FileHandler::GetDocumentsPath()
   {
-    return s_DocumentsPath;
+    return m_DocumentsPath;
   }
 
   /// @brief Returns the path to the project settings file.
@@ -98,7 +96,7 @@ namespace Dwarf
   std::filesystem::path
   FileHandler::GetProjectSettingsPath()
   {
-    return s_ProjectSettingsPath;
+    return m_ProjectSettingsPath;
   }
 
   /// @brief Checks if a file is present at a given path.

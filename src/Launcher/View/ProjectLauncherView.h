@@ -5,6 +5,7 @@
 #include "Launcher/ProjectList/IO/IProjectListIO.h"
 #include "Launcher/ProjectList/Sorter/IProjectListSorter.h"
 #include "Logging/IDwarfLogger.h"
+#include "Utilities/FileHandler/IFileHandler.h"
 #include "pch.h"
 #include "Launcher/View/IProjectLauncherView.h"
 #include "Launcher/IProjectLauncher.h"
@@ -24,14 +25,15 @@ namespace Dwarf
     /// @brief Model for the project launcher
     // std::shared_ptr<IProjectLauncherModel> m_Model;
     /// @brief Window to render the project launcher in
-    IDwarfLogger&         m_Logger;
-    IWindow&              m_Window;
-    IProjectLauncherData& m_Data;
-    ITextureFactory&      m_TextureFactory;
-    IProjectList&         m_ProjectList;
-    IProjectListIO&       m_ProjectListIO;
-    IProjectListSorter&   m_ProjectListSorter;
-    IProjectCreator&      m_ProjectCreator;
+    IDwarfLogger&                 m_Logger;
+    IWindow&                      m_Window;
+    IProjectLauncherData&         m_Data;
+    ITextureFactory&              m_TextureFactory;
+    IProjectList&                 m_ProjectList;
+    IProjectListIO&               m_ProjectListIO;
+    IProjectListSorter&           m_ProjectListSorter;
+    IProjectCreator&              m_ProjectCreator;
+    std::shared_ptr<IFileHandler> m_FileHandler;
 
     /// @brief Font loaded into IMGUI for header text
     std::shared_ptr<ImFont> m_HeaderFont;
@@ -88,14 +90,15 @@ namespace Dwarf
     RenderCreateNewProjectModal();
 
   public:
-    ProjectLauncherView(IDwarfLogger&         logger,
-                        IWindow&              window,
-                        IProjectLauncherData& data,
-                        ITextureFactory&      textureFactory,
-                        IProjectList&         projectList,
-                        IProjectListIO&       projectListIO,
-                        IProjectListSorter&   projectListSorter,
-                        IProjectCreator&      projectCreator);
+    ProjectLauncherView(IDwarfLogger&                 logger,
+                        IWindow&                      window,
+                        IProjectLauncherData&         data,
+                        ITextureFactory&              textureFactory,
+                        IProjectList&                 projectList,
+                        IProjectListIO&               projectListIO,
+                        IProjectListSorter&           projectListSorter,
+                        IProjectCreator&              projectCreator,
+                        std::shared_ptr<IFileHandler> fileHandler);
 
     ~ProjectLauncherView() override;
 

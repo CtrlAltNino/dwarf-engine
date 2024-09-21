@@ -1,6 +1,5 @@
 #include "ProjectList.h"
 #include "IO/IProjectListIO.h"
-#include "Utilities/FileHandler.h"
 #include <nfd.h>
 #include <nfd_sdl2.h>
 
@@ -8,12 +7,9 @@ namespace Dwarf
 {
   ProjectList::ProjectList(IDwarfLogger&       logger,
                            IProjectListIO&     projectListIO,
-                           IProjectListSorter& projectListSorter
-                           //,IWindow&            window
-                           )
+                           IProjectListSorter& projectListSorter)
     : m_ProjectListIO(projectListIO)
     , m_ProjectListSorter(projectListSorter)
-    //, m_Window(window)
     , m_Logger(logger)
   {
     m_Logger.LogInfo(Log("Loading ProjectList...", "ProjectList"));

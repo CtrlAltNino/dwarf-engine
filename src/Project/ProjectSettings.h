@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Utilities/FileHandler/IFileHandler.h"
 #include "pch.h"
 #include "Core/Base.h"
 #include "IProjectSettings.h"
@@ -49,6 +50,7 @@ namespace Dwarf
     GraphicsApi                   m_GraphicsApi = GraphicsApi::None;
     std::optional<UUID>           m_LastOpenedScene = std::nullopt;
     std::shared_ptr<IDwarfLogger> m_Logger;
+    std::shared_ptr<IFileHandler> m_FileHandler;
     LoadStatus                    m_LoadStatus;
 
     void
@@ -57,7 +59,8 @@ namespace Dwarf
   public:
     BOOST_DI_INJECT(ProjectSettings,
                     ProjectPath                   path,
-                    std::shared_ptr<IDwarfLogger> logger);
+                    std::shared_ptr<IDwarfLogger> logger,
+                    std::shared_ptr<IFileHandler> fileHandler);
     ~ProjectSettings() override = default;
 
     void

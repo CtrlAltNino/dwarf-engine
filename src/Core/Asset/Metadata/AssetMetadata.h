@@ -1,14 +1,18 @@
 #pragma once
 
 #include "IAssetMetadata.h"
+#include "Utilities/FileHandler/IFileHandler.h"
 namespace Dwarf
 {
 
   /// @brief Utilities for Reading and writing meta data.
   class AssetMetadata : public IAssetMetadata
   {
+  private:
+    std::shared_ptr<IFileHandler> m_FileHandler;
+
   public:
-    AssetMetadata() = default;
+    AssetMetadata(std::shared_ptr<IFileHandler> fileHandler);
     ~AssetMetadata() override = default;
     /// @brief Retrieves the meta data from an asset path.
     /// @param assetPath Path to an asset.

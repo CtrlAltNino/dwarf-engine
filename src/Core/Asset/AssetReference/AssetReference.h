@@ -6,6 +6,7 @@
 #include "Core/Asset/Model/IModelImporter.h"
 #include "Core/Rendering/Material/IO/IMaterialIO.h"
 #include "Core/Rendering/Texture/ITextureFactory.h"
+#include "Utilities/FileHandler/IFileHandler.h"
 
 namespace Dwarf
 {
@@ -19,15 +20,19 @@ namespace Dwarf
     std::shared_ptr<IModelImporter>  m_ModelImporter;
     std::shared_ptr<ITextureFactory> m_TextureFactory;
     std::shared_ptr<IMaterialIO>     m_MaterialIO;
+    std::shared_ptr<IFileHandler>    m_FileHandler;
 
   public:
+    // Used for existing assets
     AssetReference(entt::entity                     assetHandle,
                    entt::registry&                  registry,
                    ASSET_TYPE                       type,
                    std::shared_ptr<IModelImporter>  modelImporter,
                    std::shared_ptr<ITextureFactory> textureFactory,
-                   std::shared_ptr<IMaterialIO>     materialIO);
+                   std::shared_ptr<IMaterialIO>     materialIO,
+                   std::shared_ptr<IFileHandler>    fileHandler);
 
+    // Used for new assets
     AssetReference(entt::entity                     assetHandle,
                    entt::registry&                  registry,
                    UUID                             uid,
@@ -35,7 +40,8 @@ namespace Dwarf
                    std::string                      name,
                    std::shared_ptr<IModelImporter>  modelImporter,
                    std::shared_ptr<ITextureFactory> textureFactory,
-                   std::shared_ptr<IMaterialIO>     materialIO);
+                   std::shared_ptr<IMaterialIO>     materialIO,
+                   std::shared_ptr<IFileHandler>    fileHandler);
 
     ~AssetReference() override = default;
 

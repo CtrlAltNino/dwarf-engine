@@ -3,7 +3,6 @@
 #include "Core/Asset/Metadata/IAssetMetadata.h"
 #include "Core/GenericComponents.h"
 #include "Core/Rendering/Material/IMaterial.h"
-#include "Utilities/FileHandler.h"
 #include "Core/Asset/Database/AssetComponents.h"
 #include "Core/Asset/Database/AssetComponents.h"
 #include <filesystem>
@@ -21,7 +20,8 @@ namespace Dwarf
     std::shared_ptr<IMaterialFactory>        materialFactory,
     std::shared_ptr<IMaterialIO>             materialIO,
     std::shared_ptr<IAssetReimporter>        assetReimporter,
-    std::shared_ptr<IAssetReferenceFactory>  assetReferenceFactory)
+    std::shared_ptr<IAssetReferenceFactory>  assetReferenceFactory,
+    std::shared_ptr<IFileHandler>            fileHandler)
     : m_AssetDirectoryPath(assetDirectoryPath)
     , m_Logger(logger)
     , m_AssetDirectoryListener(assetDirectoryListener)
@@ -33,11 +33,12 @@ namespace Dwarf
     , m_MaterialIO(materialIO)
     , m_AssetReimporter(assetReimporter)
     , m_AssetReferenceFactory(assetReferenceFactory)
+    , m_FileHandler(fileHandler)
     , m_Registry(entt::registry())
   {
-    if (!FileHandler::DirectoyExists(m_AssetDirectoryPath.t))
+    if (!m_FileHandler->DirectoyExists(m_AssetDirectoryPath.t))
     {
-      FileHandler::CreateDirectoryAt(m_AssetDirectoryPath.t);
+      m_FileHandler->CreateDirectoryAt(m_AssetDirectoryPath.t);
     }
 
     m_AssetDirectoryListener->registerAddFileCallback(
@@ -145,7 +146,7 @@ namespace Dwarf
     }
 
     auto id = UUID();
-    if (FileHandler::FileExists(metaDataPath))
+    if (m_FileHandler->FileExists(metaDataPath))
     {
       nlohmann::json metaData = m_AssetMetadata->GetMetadata(assetPath);
       std::string    guid = metaData["guid"].get<std::string>();

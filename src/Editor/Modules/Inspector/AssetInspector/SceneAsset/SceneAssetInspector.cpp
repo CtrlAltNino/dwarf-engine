@@ -10,13 +10,15 @@ namespace Dwarf
     std::shared_ptr<IAssetReimporter> assetReimporter,
     std::shared_ptr<IInputManager>    inputManager,
     std::shared_ptr<ISceneIO>         sceneIO,
-    std::shared_ptr<ILoadedScene>     loadedScene)
+    std::shared_ptr<ILoadedScene>     loadedScene,
+    std::shared_ptr<IFileHandler>     fileHandler)
     : m_GraphicsApi(graphicsApi)
     , m_AssetDatabase(assetDatabase)
     , m_AssetReimporter(assetReimporter)
     , m_InputManager(inputManager)
     , m_SceneIO(sceneIO)
     , m_LoadedScene(loadedScene)
+    , m_FileHandler(fileHandler)
   {
   }
 
@@ -67,7 +69,8 @@ namespace Dwarf
 
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 20);
 
-    if (ImGui::Button("Load scene") && FileHandler::FileExists(asset.GetPath()))
+    if (ImGui::Button("Load scene") &&
+        m_FileHandler->FileExists(asset.GetPath()))
     {
       std::unique_ptr<IScene> loadedScene = m_SceneIO->LoadScene(asset);
       m_LoadedScene->SetScene(std::move(loadedScene));

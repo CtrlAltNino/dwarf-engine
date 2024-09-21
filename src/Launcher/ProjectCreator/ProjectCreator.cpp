@@ -1,14 +1,15 @@
 #include "ProjectCreator.h"
 #include "Logging/IDwarfLogger.h"
-#include "Utilities/FileHandler.h"
 #include <filesystem>
 
 namespace Dwarf
 {
-  ProjectCreator::ProjectCreator(IDwarfLogger& logger,
-                                 IProjectList& projectList)
+  ProjectCreator::ProjectCreator(IDwarfLogger&                 logger,
+                                 IProjectList&                 projectList,
+                                 std::shared_ptr<IFileHandler> fileHandler)
     : m_Logger(logger)
     , m_ProjectList(projectList)
+    , m_FileHandler(fileHandler)
   {
     m_Logger.LogInfo(Log("ProjectCreator created", "ProjectCreator"));
   }
@@ -30,16 +31,16 @@ namespace Dwarf
                          "ProjectCreator"));
     // Create Project
     std::filesystem::path projectDirectory = projectPath / projectName;
-    if (!FileHandler::DirectoyExists(projectDirectory))
+    if (!m_FileHandler->DirectoyExists(projectDirectory))
     {
       std::filesystem::path projectSettingsPath =
         projectPath / projectName / "projectSettings.dproj";
-      if (!FileHandler::FileExists(projectSettingsPath))
+      if (!m_FileHandler->FileExists(projectSettingsPath))
       {
         m_Logger.LogInfo(
           Log("Creating project directory at: " + projectDirectory.string(),
               "ProjectCreator"));
-        FileHandler::CreateDirectoryAt(projectDirectory);
+        m_FileHandler->CreateDirectoryAt(projectDirectory);
 
         if (projectTemplate == ProjectTemplate::Blank)
         {
@@ -52,7 +53,7 @@ namespace Dwarf
             projectSettingsPath.string();
 
           std::string fileContent = jsonObject.dump(4);
-          FileHandler::WriteToFile(projectSettingsPath, fileContent);
+          m_FileHandler->WriteToFile(projectSettingsPath, fileContent);
           m_Logger.LogInfo(Log("Project settings file created at: " +
                                  projectSettingsPath.string(),
                                "ProjectCreator"));
@@ -106,15 +107,15 @@ namespace Dwarf
           std::filesystem::path templateProjectSettingsDirectory =
             templateProjectDirectory / "projectSettings.dproj";
           std::string fileContent =
-            FileHandler::ReadFile(templateProjectSettingsDirectory);
+            m_FileHandler->ReadFile(templateProjectSettingsDirectory);
           if (!fileContent.empty())
           {
             nlohmann::json jsonObject = nlohmann::json::parse(fileContent);
             jsonObject["projectInformation"]["projectName"] = projectName;
 
             std::string newFileContent = jsonObject.dump(4);
-            FileHandler::WriteToFile(projectSettingsPath.c_str(),
-                                     newFileContent);
+            m_FileHandler->WriteToFile(projectSettingsPath.c_str(),
+                                       newFileContent);
             m_Logger.LogInfo(Log("Project settings file updated at: " +
                                    projectSettingsPath.string(),
                                  "ProjectCreator"));
@@ -150,6 +151,6 @@ namespace Dwarf
   std::filesystem::path
   ProjectCreator::GetDefaultProjectPath() const
   {
-    return FileHandler::GetDocumentsPath();
+    return m_FileHandler->GetDocumentsPath();
   }
 }
