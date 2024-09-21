@@ -3,11 +3,6 @@
 
 namespace Dwarf
 {
-#define GRAPHICS_API_KEY "graphicsApi"
-#define LAST_OPENED_SCENE_KEY "lastOpenedScene"
-#define PROJECT_LAST_OPENED_DATE_KEY "projectLastOpenedDate"
-#define PROJECT_NAME_KEY "projectName"
-
   ProjectSettings::ProjectSettings(ProjectPath                   path,
                                    std::shared_ptr<IDwarfLogger> logger)
     : m_Logger(logger)
@@ -60,15 +55,15 @@ namespace Dwarf
 
     if (projectSettings.contains(LAST_OPENED_SCENE_KEY))
     {
-      m_LastOpenedScene = std::make_unique<UUID>(
-        projectSettings.at(LAST_OPENED_SCENE_KEY).get<std::string>());
+      m_LastOpenedScene =
+        UUID(projectSettings.at(LAST_OPENED_SCENE_KEY).get<std::string>());
     }
     else
     {
       m_Logger->LogError(
         Log(std::format("Missing required field: %s", LAST_OPENED_SCENE_KEY),
             "ProjectSettings"));
-      m_LastOpenedScene = nullptr; // or some default value
+      m_LastOpenedScene = std::nullopt; // or some default value
     }
 
     if (projectSettings.contains(PROJECT_LAST_OPENED_DATE_KEY))
@@ -93,7 +88,7 @@ namespace Dwarf
     projectSettings[PROJECT_NAME_KEY] = m_Name;
     projectSettings[GRAPHICS_API_KEY] = m_GraphicsApi;
     projectSettings[LAST_OPENED_SCENE_KEY] =
-      m_LastOpenedScene == nullptr ? "" : m_LastOpenedScene->ToString();
+      m_LastOpenedScene.has_value() ? "" : m_LastOpenedScene->ToString();
     projectSettings[PROJECT_LAST_OPENED_DATE_KEY] = m_LastOpenedTimeStamp;
 
     FileHandler::WriteToFile(m_ProjectSettingsPath, projectSettings.dump(2));
@@ -126,10 +121,10 @@ namespace Dwarf
   void
   ProjectSettings::SetLastOpenedScene(const UUID& sceneGUID)
   {
-    m_LastOpenedScene = std::make_unique<UUID>(sceneGUID);
+    m_LastOpenedScene = sceneGUID;
   }
 
-  const std::unique_ptr<UUID>&
+  const std::optional<UUID>&
   ProjectSettings::GetLastOpenedScene() const
   {
     return m_LastOpenedScene;

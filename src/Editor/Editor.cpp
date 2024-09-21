@@ -47,7 +47,7 @@ namespace Dwarf
     m_AssetDatabase->ReimportAll();
 
     // Either load the last opened scene or the default scene
-    if (m_ProjectSettings->GetLastOpenedScene() != nullptr &&
+    if (m_ProjectSettings->GetLastOpenedScene().has_value() &&
         m_AssetDatabase->Exists(*m_ProjectSettings->GetLastOpenedScene()))
     {
       std::unique_ptr<IAssetReference> lastOpenedScene =

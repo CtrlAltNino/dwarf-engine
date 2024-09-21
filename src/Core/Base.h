@@ -8,6 +8,7 @@ namespace Dwarf
   /// @brief Enum containing the different API's
   enum class GraphicsApi
   {
+    None,
     D3D12,
     Metal,
     OpenGL,

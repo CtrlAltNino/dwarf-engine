@@ -9,6 +9,11 @@
 
 namespace Dwarf
 {
+#define GRAPHICS_API_KEY "graphicsApi"
+#define LAST_OPENED_SCENE_KEY "lastOpenedScene"
+#define PROJECT_LAST_OPENED_DATE_KEY "projectLastOpenedDate"
+#define PROJECT_NAME_KEY "projectName"
+
   class LoadStatus
   {
   public:
@@ -42,18 +47,18 @@ namespace Dwarf
     std::string                   m_Name;
     time_t                        m_LastOpenedTimeStamp;
     GraphicsApi                   m_GraphicsApi;
-    std::unique_ptr<UUID>         m_LastOpenedScene;
+    std::optional<UUID>           m_LastOpenedScene;
     std::shared_ptr<IDwarfLogger> m_Logger;
     LoadStatus                    m_LoadStatus;
+
+    void
+    Load();
 
   public:
     BOOST_DI_INJECT(ProjectSettings,
                     ProjectPath                   path,
                     std::shared_ptr<IDwarfLogger> logger);
     ~ProjectSettings() override = default;
-
-    void
-    Load();
 
     void
     Save() override;
@@ -79,7 +84,7 @@ namespace Dwarf
     void
     SetLastOpenedScene(const UUID& lastOpenedScene) override;
 
-    const std::unique_ptr<UUID>&
+    const std::optional<UUID>&
     GetLastOpenedScene() const override;
   };
 }
