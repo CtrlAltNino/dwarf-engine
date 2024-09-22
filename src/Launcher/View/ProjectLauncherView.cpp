@@ -247,9 +247,7 @@ namespace Dwarf
                         project.lastOpened);
                 break;
               }
-            case 3:
-              cellText = graphicsApiNames[(int)project.graphicsApi];
-              break;
+            case 3: cellText = GetGraphicsApiString(project.graphicsApi); break;
           }
 
           if (column == 0)
@@ -737,8 +735,9 @@ namespace Dwarf
         // Coloring the combo popup background
         ImGui::PushStyleColor(ImGuiCol_PopupBg, IM_COL32(46, 52, 64, 255));
 
-        if (ImGui::BeginCombo("##graphicsApi",
-                              graphicsApiNames[currentApiIndex].data()))
+        if (ImGui::BeginCombo(
+              "##graphicsApi",
+              GetGraphicsApiString((GraphicsApi)currentApiIndex).c_str()))
         {
           ImDrawList* draw_list = ImGui::GetWindowDrawList();
 
@@ -770,10 +769,11 @@ namespace Dwarf
               }
 
               // ==================== Graphics Selectable ====================
-              if (ImGui::Selectable(graphicsApiNames[n].data(),
-                                    is_selected,
-                                    0,
-                                    ImVec2(0, 16 + 10)))
+              if (ImGui::Selectable(
+                    GetGraphicsApiString((GraphicsApi)n).c_str(),
+                    is_selected,
+                    0,
+                    ImVec2(0, 16 + 10)))
               {
                 currentApiIndex = n;
               }
@@ -1306,8 +1306,9 @@ namespace Dwarf
         // Coloring the combo popup background
         ImGui::PushStyleColor(ImGuiCol_PopupBg, IM_COL32(46, 52, 64, 255));
 
-        if (ImGui::BeginCombo("##graphicsApi",
-                              graphicsApiNames[currentApiIndex].data()))
+        if (ImGui::BeginCombo(
+              "##graphicsApi",
+              GetGraphicsApiString((GraphicsApi)currentApiIndex).c_str()))
         {
           ImDrawList* draw_list = ImGui::GetWindowDrawList();
 
@@ -1339,10 +1340,11 @@ namespace Dwarf
               }
 
               // ==================== Rendering Selectable ====================
-              if (ImGui::Selectable(graphicsApiNames[n].data(),
-                                    is_selected,
-                                    0,
-                                    ImVec2(0, 16 + 10)))
+              if (ImGui::Selectable(
+                    GetGraphicsApiString((GraphicsApi)n).c_str(),
+                    is_selected,
+                    0,
+                    ImVec2(0, 16 + 10)))
               {
                 currentApiIndex = n;
               }
@@ -1473,5 +1475,11 @@ namespace Dwarf
     ImGui::PopStyleVar(5);
     ImGui::PopFont();
     ImGui::PopStyleColor(2);
+  }
+
+  std::string
+  ProjectLauncherView::GetGraphicsApiString(GraphicsApi api)
+  {
+    return std::string(graphicsApiNames[(int)api - 1]);
   }
 }

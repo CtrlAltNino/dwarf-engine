@@ -13,6 +13,7 @@
 #include "Window/IWindow.h"
 #include <imgui.h>
 #include <boost/di/extension/injections/lazy.hpp>
+#include <string>
 
 namespace Dwarf
 {
@@ -88,6 +89,9 @@ namespace Dwarf
      */
     void
     RenderCreateNewProjectModal();
+
+    std::string
+    GetGraphicsApiString(GraphicsApi api);
 
   public:
     ProjectLauncherView(IDwarfLogger&                 logger,
