@@ -180,10 +180,3 @@ TEST_F(MaterialCreatorTest, CreateMaterialAsset_FileExists)
 
   materialCreator->CreateMaterialAsset(std::nullopt);
 }
-
-int
-main(int argc, char** argv)
-{
-  ::testing::InitGoogleTest(&argc, argv);
-  return RUN_ALL_TESTS();
-}

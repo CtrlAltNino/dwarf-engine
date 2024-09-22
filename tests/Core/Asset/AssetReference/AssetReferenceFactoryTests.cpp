@@ -13,6 +13,51 @@
 
 using namespace Dwarf;
 
+// Mock class for IFileHandler
+class MockFileHandler : public IFileHandler
+{
+public:
+  MOCK_METHOD(std::filesystem::path, GetDocumentsPath, (), (override));
+  MOCK_METHOD(std::filesystem::path, GetProjectSettingsPath, (), (override));
+  MOCK_METHOD(bool,
+              FileExists,
+              (const std::filesystem::path& filePath),
+              (override));
+  MOCK_METHOD(std::string,
+              ReadFile,
+              (const std::filesystem::path& filePath),
+              (override));
+  MOCK_METHOD(void,
+              WriteToFile,
+              (const std::filesystem::path& filePath, std::string_view content),
+              (override));
+  MOCK_METHOD(bool,
+              DirectoyExists,
+              (const std::filesystem::path& path),
+              (override));
+  MOCK_METHOD(void,
+              CreateDirectoryAt,
+              (const std::filesystem::path& path),
+              (override));
+  MOCK_METHOD(void,
+              OpenPathInFileBrowser,
+              (const std::filesystem::path& path),
+              (override));
+  MOCK_METHOD(void, LaunchFile, (std::filesystem::path path), (override));
+  MOCK_METHOD(void,
+              Copy,
+              (const std::filesystem::path& from,
+               const std::filesystem::path& to),
+              (override));
+  MOCK_METHOD(void,
+              Rename,
+              (const std::filesystem::path& oldPath,
+               const std::filesystem::path& newPath),
+              (override));
+  MOCK_METHOD(void, Duplicate, (const std::filesystem::path& path), (override));
+  MOCK_METHOD(void, Delete, (const std::filesystem::path& path), (override));
+};
+
 class MockLogger : public IDwarfLogger
 {
 public:
@@ -67,11 +112,11 @@ public:
   MOCK_METHOD(void,
               SaveMaterial,
               (IMaterial & material, const std::filesystem::path& path),
-              (override));
+              (const, override));
   MOCK_METHOD(std::unique_ptr<IMaterial>,
               LoadMaterial,
               (const std::filesystem::path& path),
-              (override));
+              (const, override));
 };
 
 class AssetReferenceFactoryTest : public ::testing::Test
@@ -81,6 +126,7 @@ protected:
   std::shared_ptr<MockModelImporter>  modelImporter;
   std::shared_ptr<MockTextureFactory> textureFactory;
   std::shared_ptr<MockMaterialIO>     materialIO;
+  std::shared_ptr<MockFileHandler>    fileHandler;
   entt::registry                      registry;
   entt::entity                        assetHandle;
 
@@ -91,6 +137,7 @@ protected:
     modelImporter = std::make_shared<MockModelImporter>();
     textureFactory = std::make_shared<MockTextureFactory>();
     materialIO = std::make_shared<MockMaterialIO>();
+    fileHandler = std::make_shared<MockFileHandler>();
     assetHandle = registry.create();
   }
 };
@@ -98,14 +145,14 @@ protected:
 TEST_F(AssetReferenceFactoryTest, Constructor)
 {
   AssetReferenceFactory factory(
-    logger, modelImporter, textureFactory, materialIO);
+    logger, modelImporter, textureFactory, materialIO, fileHandler);
   EXPECT_NE(&factory, nullptr);
 }
 
 TEST_F(AssetReferenceFactoryTest, Create)
 {
   AssetReferenceFactory factory(
-    logger, modelImporter, textureFactory, materialIO);
+    logger, modelImporter, textureFactory, materialIO, fileHandler);
   ASSET_TYPE type = ASSET_TYPE::MODEL;
   auto       assetRef = factory.Create(assetHandle, registry, type);
 
@@ -117,7 +164,7 @@ TEST_F(AssetReferenceFactoryTest, Create)
 TEST_F(AssetReferenceFactoryTest, CreateNew)
 {
   AssetReferenceFactory factory(
-    logger, modelImporter, textureFactory, materialIO);
+    logger, modelImporter, textureFactory, materialIO, fileHandler);
   UUID                  uid;
   std::filesystem::path path = "test_path";
   std::string           name = "test_name";

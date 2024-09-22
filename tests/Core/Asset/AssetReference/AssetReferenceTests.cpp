@@ -10,6 +10,51 @@
 
 using namespace Dwarf;
 
+// Mock class for IFileHandler
+class MockFileHandler : public IFileHandler
+{
+public:
+  MOCK_METHOD(std::filesystem::path, GetDocumentsPath, (), (override));
+  MOCK_METHOD(std::filesystem::path, GetProjectSettingsPath, (), (override));
+  MOCK_METHOD(bool,
+              FileExists,
+              (const std::filesystem::path& filePath),
+              (override));
+  MOCK_METHOD(std::string,
+              ReadFile,
+              (const std::filesystem::path& filePath),
+              (override));
+  MOCK_METHOD(void,
+              WriteToFile,
+              (const std::filesystem::path& filePath, std::string_view content),
+              (override));
+  MOCK_METHOD(bool,
+              DirectoyExists,
+              (const std::filesystem::path& path),
+              (override));
+  MOCK_METHOD(void,
+              CreateDirectoryAt,
+              (const std::filesystem::path& path),
+              (override));
+  MOCK_METHOD(void,
+              OpenPathInFileBrowser,
+              (const std::filesystem::path& path),
+              (override));
+  MOCK_METHOD(void, LaunchFile, (std::filesystem::path path), (override));
+  MOCK_METHOD(void,
+              Copy,
+              (const std::filesystem::path& from,
+               const std::filesystem::path& to),
+              (override));
+  MOCK_METHOD(void,
+              Rename,
+              (const std::filesystem::path& oldPath,
+               const std::filesystem::path& newPath),
+              (override));
+  MOCK_METHOD(void, Duplicate, (const std::filesystem::path& path), (override));
+  MOCK_METHOD(void, Delete, (const std::filesystem::path& path), (override));
+};
+
 class MockModelImporter : public IModelImporter
 {
 public:
@@ -55,11 +100,11 @@ public:
   MOCK_METHOD(void,
               SaveMaterial,
               (IMaterial & material, const std::filesystem::path& path),
-              (override));
+              (const, override));
   MOCK_METHOD(std::unique_ptr<IMaterial>,
               LoadMaterial,
               (const std::filesystem::path& path),
-              (override));
+              (const, override));
 };
 
 class AssetReferenceTest : public ::testing::Test
@@ -70,6 +115,7 @@ protected:
   std::shared_ptr<MockModelImporter>  modelImporter;
   std::shared_ptr<MockTextureFactory> textureFactory;
   std::shared_ptr<MockMaterialIO>     materialIO;
+  std::shared_ptr<MockFileHandler>    fileHandler;
 
   void
   SetUp() override
@@ -78,14 +124,20 @@ protected:
     modelImporter = std::make_shared<MockModelImporter>();
     textureFactory = std::make_shared<MockTextureFactory>();
     materialIO = std::make_shared<MockMaterialIO>();
+    fileHandler = std::make_shared<MockFileHandler>();
   }
 };
 
 TEST_F(AssetReferenceTest, ConstructorForExistingAssets)
 {
   ASSET_TYPE     type = ASSET_TYPE::MODEL;
-  AssetReference assetRef(
-    assetHandle, registry, type, modelImporter, textureFactory, materialIO);
+  AssetReference assetRef(assetHandle,
+                          registry,
+                          type,
+                          modelImporter,
+                          textureFactory,
+                          materialIO,
+                          fileHandler);
 
   EXPECT_EQ(assetRef.GetHandle(), assetHandle);
   EXPECT_EQ(assetRef.GetType(), type);
@@ -103,7 +155,8 @@ TEST_F(AssetReferenceTest, ConstructorForNewAssets)
                           name,
                           modelImporter,
                           textureFactory,
-                          materialIO);
+                          materialIO,
+                          fileHandler);
 
   EXPECT_EQ(assetRef.GetHandle(), assetHandle);
   EXPECT_EQ(assetRef.GetType(),
@@ -115,8 +168,13 @@ TEST_F(AssetReferenceTest, ConstructorForNewAssets)
 TEST_F(AssetReferenceTest, GetHandle)
 {
   ASSET_TYPE     type = ASSET_TYPE::MODEL;
-  AssetReference assetRef(
-    assetHandle, registry, type, modelImporter, textureFactory, materialIO);
+  AssetReference assetRef(assetHandle,
+                          registry,
+                          type,
+                          modelImporter,
+                          textureFactory,
+                          materialIO,
+                          fileHandler);
 
   EXPECT_EQ(assetRef.GetHandle(), assetHandle);
 }
@@ -133,7 +191,8 @@ TEST_F(AssetReferenceTest, GetUID)
                           name,
                           modelImporter,
                           textureFactory,
-                          materialIO);
+                          materialIO,
+                          fileHandler);
 
   EXPECT_EQ(assetRef.GetUID(), uid);
 }
@@ -150,7 +209,8 @@ TEST_F(AssetReferenceTest, GetPath)
                           name,
                           modelImporter,
                           textureFactory,
-                          materialIO);
+                          materialIO,
+                          fileHandler);
 
   EXPECT_EQ(assetRef.GetPath(), path);
 }
@@ -158,8 +218,13 @@ TEST_F(AssetReferenceTest, GetPath)
 TEST_F(AssetReferenceTest, GetType)
 {
   ASSET_TYPE     type = ASSET_TYPE::MODEL;
-  AssetReference assetRef(
-    assetHandle, registry, type, modelImporter, textureFactory, materialIO);
+  AssetReference assetRef(assetHandle,
+                          registry,
+                          type,
+                          modelImporter,
+                          textureFactory,
+                          materialIO,
+                          fileHandler);
 
   EXPECT_EQ(assetRef.GetType(), type);
 }
@@ -177,7 +242,8 @@ TEST_F(AssetReferenceTest, GetAsset)
                           name,
                           modelImporter,
                           textureFactory,
-                          materialIO);
+                          materialIO,
+                          fileHandler);
 
   EXPECT_NO_THROW(assetRef.GetAsset());
 }

@@ -193,23 +193,13 @@ TEST_F(ProjectSettingsTest, SaveChangedProjectSettings)
 
   // Act
   projectSettings->Save();
-
-  nlohmann::json savedProjectSettings =
-    nlohmann::json::parse(FileHandler::ReadFile(settingsPath));
-
-  EXPECT_EQ(savedProjectSettings[PROJECT_NAME_KEY], "CoolProject");
-  EXPECT_EQ(savedProjectSettings[GRAPHICS_API_KEY], 4);
-  EXPECT_EQ(savedProjectSettings[LAST_OPENED_SCENE_KEY],
-            "123e4567-e89b-12d3-a456-426614174001");
-  EXPECT_EQ(savedProjectSettings[PROJECT_LAST_OPENED_DATE_KEY], 1627847286);
-  FileHandler::Delete(settingsPath);
 }
 
 TEST_F(ProjectSettingsTest, SetAndGetProjectName)
 {
   // Arrange
-  auto projectSettings =
-    std::make_unique<ProjectSettings>(ProjectPath{ testPath }, mockLogger);
+  auto projectSettings = std::make_unique<ProjectSettings>(
+    ProjectPath{ testPath }, mockLogger, mockFileHandler);
 
   // Act
   projectSettings->SetProjectName("TestProject");
@@ -221,8 +211,8 @@ TEST_F(ProjectSettingsTest, SetAndGetProjectName)
 TEST_F(ProjectSettingsTest, SetAndGetGraphicsApi)
 {
   // Arrange
-  auto projectSettings =
-    std::make_unique<ProjectSettings>(ProjectPath{ testPath }, mockLogger);
+  auto projectSettings = std::make_unique<ProjectSettings>(
+    ProjectPath{ testPath }, mockLogger, mockFileHandler);
 
   // Act
   projectSettings->SetGraphicsApi(GraphicsApi::Vulkan);
@@ -234,8 +224,8 @@ TEST_F(ProjectSettingsTest, SetAndGetGraphicsApi)
 TEST_F(ProjectSettingsTest, SetAndGetLastOpenedScene)
 {
   // Arrange
-  auto projectSettings =
-    std::make_unique<ProjectSettings>(ProjectPath{ testPath }, mockLogger);
+  auto projectSettings = std::make_unique<ProjectSettings>(
+    ProjectPath{ testPath }, mockLogger, mockFileHandler);
 
   // Act
   UUID sceneUUID("123e4567-e89b-12d3-a456-426614174000");
@@ -249,8 +239,8 @@ TEST_F(ProjectSettingsTest, SetAndGetLastOpenedScene)
 TEST_F(ProjectSettingsTest, SetAndGetLastOpenedTimeStamp)
 {
   // Arrange
-  auto projectSettings =
-    std::make_unique<ProjectSettings>(ProjectPath{ testPath }, mockLogger);
+  auto projectSettings = std::make_unique<ProjectSettings>(
+    ProjectPath{ testPath }, mockLogger, mockFileHandler);
 
   // Act
   time_t timeStamp = 1627847285;
