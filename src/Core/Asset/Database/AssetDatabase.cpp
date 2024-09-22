@@ -1,6 +1,7 @@
 #include "AssetDatabase.h"
 #include "Core/Asset/AssetReference/IAssetReference.h"
 #include "Core/Asset/Metadata/IAssetMetadata.h"
+#include "Core/Base.h"
 #include "Core/GenericComponents.h"
 #include "Core/Rendering/Material/IMaterial.h"
 #include "Core/Asset/Database/AssetComponents.h"
@@ -11,6 +12,7 @@ namespace Dwarf
 {
   AssetDatabase::AssetDatabase(
     AssetDirectoryPath                       assetDirectoryPath,
+    GraphicsApi                              graphicsApi,
     std::shared_ptr<IDwarfLogger>            logger,
     std::shared_ptr<IAssetDirectoryListener> assetDirectoryListener,
     std::shared_ptr<IAssetMetadata>          assetMetadata,
@@ -23,6 +25,7 @@ namespace Dwarf
     std::shared_ptr<IAssetReferenceFactory>  assetReferenceFactory,
     std::shared_ptr<IFileHandler>            fileHandler)
     : m_AssetDirectoryPath(assetDirectoryPath)
+    , m_GraphicsApi(graphicsApi)
     , m_Logger(logger)
     , m_AssetDirectoryListener(assetDirectoryListener)
     , m_AssetMetadata(assetMetadata)
@@ -90,7 +93,13 @@ namespace Dwarf
   void
   AssetDatabase::ReimportAll()
   {
+    // CLearing database
     Clear();
+
+    // Reimporting default assets
+    ImportDefaultAssets();
+
+    // Reimporting all assets from the asset directory
     RecursiveImport(m_AssetDirectoryPath.t);
   }
 
@@ -283,167 +292,6 @@ namespace Dwarf
     }
   }
 
-  // void
-  // AssetDatabase::CreateNewMaterialAsset()
-  // {
-  //   CreateNewMaterialAsset(m_AssetDirectoryPath);
-  // }
-
-  // void
-  // AssetDatabase::CreateNewMaterialAsset(std::filesystem::path const& path)
-  // {
-  //   auto newMat = Material("New Material");
-  //   newMat.GenerateShaderParameters();
-  //   std::filesystem::path newMatPath = path / "New Material.dmat";
-
-  //   while (FileHandler::CheckIfFileExists(newMatPath))
-  //   {
-  //     std::filesystem::path fileNameWithoutExtension =
-  //       newMatPath.filename().replace_extension("");
-  //     std::string lastPart = fileNameWithoutExtension.string();
-
-  //     size_t      pos = 0;
-  //     std::string token;
-  //     while ((pos = lastPart.find(" ")) != std::string::npos)
-  //     {
-  //       lastPart.erase(0, pos + 1);
-  //     }
-
-  //     bool isNumber = true;
-
-  //     for (char c : lastPart)
-  //     {
-  //       if (!std::isdigit(c))
-  //       {
-  //         isNumber = false;
-  //       }
-  //     }
-
-  //     if (isNumber)
-  //     {
-  //       int val = stoi(lastPart);
-  //       val++;
-
-  //       newMatPath.replace_filename(
-  //         fileNameWithoutExtension.string().substr(
-  //           0, fileNameWithoutExtension.string().length() -
-  //           lastPart.length()) +
-  //         std::to_string(val) + std::string(".dmat"));
-  //     }
-  //     else
-  //     {
-  //       newMatPath.replace_filename(fileNameWithoutExtension.string() +
-  //                                   std::string(" 2") +
-  //                                   std::string(".dmat"));
-  //     }
-  //   }
-  //   m_MaterialSerializer->Serialize(newMat, newMatPath);
-  // }
-
-  // std::filesystem::path
-  // AssetDatabase::GetAssetDirectoryPath()
-  // {
-  //   return m_AssetDirectoryPath;
-  // }
-
-  // void
-  // AssetDatabase::RecompileShaders()
-  // {
-  //   for (std::shared_ptr<IShader> shader : m_ShaderRecompilationStack)
-  //   {
-  //     shader->Compile();
-  //   }
-  //   m_ShaderRecompilationStack.clear();
-  // }
-
-  // void
-  // AssetDatabase::AddShaderWatch(std::filesystem::path const& shaderAssetPath,
-  //                               std::shared_ptr<IShader>     shader)
-  // {
-  //   m_ShaderAssetMap[shaderAssetPath] = shader;
-  // }
-
-  // void
-  // AssetDatabase::RemoveShaderWatch(std::filesystem::path const&
-  // shaderAssetPath)
-  // {
-  //   m_ShaderAssetMap.erase(shaderAssetPath);
-  // }
-
-  // void
-  // AssetDatabase::AddShaderToRecompilationQueue(
-  //   std::filesystem::path const& path)
-  // {
-  //   m_ShaderRecompilationStack.push_back(m_ShaderAssetMap[path]);
-  // }
-
-  // void
-  // AssetDatabase::AddShaderToRecompilationQueue(std::shared_ptr<IShader>
-  // shader)
-  // {
-  //   m_ShaderRecompilationStack.push_back(shader);
-  // }
-
-  /*std::any
-  AssetDatabase::CreateAssetReference(std::type_index type, entt::entity entity)
-  {
-    if (type == typeid(ModelAsset))
-    {
-      return m_AssetReferenceFactory->Create<ModelAsset>(entity, m_Registry);
-    }
-    else if (type == typeid(MaterialAsset))
-    {
-      return m_AssetReferenceFactory->Create<MaterialAsset>(entity, m_Registry);
-    }
-    else if (type == typeid(TextureAsset))
-    {
-      return m_AssetReferenceFactory->Create<TextureAsset>(entity, m_Registry);
-    }
-    else if (type == typeid(SceneAsset))
-    {
-      return m_AssetReferenceFactory->Create<SceneAsset>(entity, m_Registry);
-    }
-    else if (type == typeid(VertexShaderAsset))
-    {
-      return m_AssetReferenceFactory->Create<VertexShaderAsset>(entity,
-                                                                m_Registry);
-    }
-    else if (type == typeid(TessellationControlShaderAsset))
-    {
-      return m_AssetReferenceFactory->Create<TessellationControlShaderAsset>(
-        entity, m_Registry);
-    }
-    else if (type == typeid(TessellationEvaluationShaderAsset))
-    {
-      return m_AssetReferenceFactory->Create<TessellationEvaluationShaderAsset>(
-        entity, m_Registry);
-    }
-    else if (type == typeid(GeometryShaderAsset))
-    {
-      return m_AssetReferenceFactory->Create<GeometryShaderAsset>(entity,
-                                                                  m_Registry);
-    }
-    else if (type == typeid(FragmentShaderAsset))
-    {
-      return m_AssetReferenceFactory->Create<FragmentShaderAsset>(entity,
-                                                                  m_Registry);
-    }
-    else if (type == typeid(ComputeShaderAsset))
-    {
-      return m_AssetReferenceFactory->Create<ComputeShaderAsset>(entity,
-                                                                 m_Registry);
-    }
-    else if (type == typeid(HlslShaderAsset))
-    {
-      return m_AssetReferenceFactory->Create<HlslShaderAsset>(entity,
-                                                              m_Registry);
-    }
-    else
-    {
-      return m_AssetReferenceFactory->Create<UnknownAsset>(entity, m_Registry);
-    }
-  }*/
-
   void
   AssetDatabase::AddAssetCallback(const std::string& dir,
                                   const std::string& filename)
@@ -556,5 +404,103 @@ namespace Dwarf
   AssetDatabase::GetRegistry()
   {
     return m_Registry;
+  }
+
+  void
+  AssetDatabase::ImportDefaultAssets()
+  {
+    ImportDefaultShaders();
+    ImportDefaultTextures();
+    ImportDefaultMaterials();
+    ImportDefaultModels();
+  }
+
+  void
+  AssetDatabase::ImportDefaultShaders()
+  {
+    std::filesystem::path shaderDir = "./data/engine/shaders/";
+
+    std::filesystem::path graphicsApiDir = "";
+
+    switch (m_GraphicsApi)
+    {
+      case GraphicsApi::OpenGL: graphicsApiDir = "opengl"; break;
+      case GraphicsApi::Vulkan: graphicsApiDir = "vulkan"; break;
+      case GraphicsApi::D3D12: graphicsApiDir = "d3d12"; break;
+      case GraphicsApi::Metal: graphicsApiDir = "metal"; break;
+      default: throw std::runtime_error("Unsupported Graphics API.");
+    }
+
+    std::filesystem::path defaultShaderDir =
+      shaderDir / graphicsApiDir / "default";
+
+    for (auto& directoryEntry :
+         std::filesystem::directory_iterator(defaultShaderDir))
+    {
+      if (directoryEntry.is_regular_file())
+      {
+        Import(directoryEntry.path());
+      }
+    }
+
+    std::filesystem::path errorShaderDir = shaderDir / graphicsApiDir / "error";
+
+    for (auto& directoryEntry :
+         std::filesystem::directory_iterator(errorShaderDir))
+    {
+      if (directoryEntry.is_regular_file())
+      {
+        Import(directoryEntry.path());
+      }
+    }
+
+    std::filesystem::path gridShaderDir = shaderDir / graphicsApiDir / "grid";
+
+    for (auto& directoryEntry :
+         std::filesystem::directory_iterator(gridShaderDir))
+    {
+      if (directoryEntry.is_regular_file())
+      {
+        Import(directoryEntry.path());
+      }
+    }
+
+    std::filesystem::path idShaderDir = shaderDir / graphicsApiDir / "id";
+
+    for (auto& directoryEntry :
+         std::filesystem::directory_iterator(idShaderDir))
+    {
+      if (directoryEntry.is_regular_file())
+      {
+        Import(directoryEntry.path());
+      }
+    }
+
+    std::filesystem::path previewShaderDir =
+      shaderDir / graphicsApiDir / "preview";
+
+    for (auto& directoryEntry :
+         std::filesystem::directory_iterator(previewShaderDir))
+    {
+      if (directoryEntry.is_regular_file())
+      {
+        Import(directoryEntry.path());
+      }
+    }
+  }
+
+  void
+  AssetDatabase::ImportDefaultTextures()
+  {
+  }
+
+  void
+  AssetDatabase::ImportDefaultMaterials()
+  {
+  }
+
+  void
+  AssetDatabase::ImportDefaultModels()
+  {
   }
 }

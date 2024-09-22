@@ -2,6 +2,7 @@
 
 #include "Core/Asset/AssetReference/IAssetReferenceFactory.h"
 #include "Core/Asset/AssetReimporter/IAssetReimporter.h"
+#include "Core/Base.h"
 #include "Utilities/FileHandler/IFileHandler.h"
 #include "Core/GenericComponents.h"
 #include "Core/Rendering/Material/IMaterialFactory.h"
@@ -45,6 +46,7 @@ namespace Dwarf
 
     std::map<std::filesystem::path, std::shared_ptr<IShader>> m_ShaderAssetMap;
 
+    GraphicsApi                              m_GraphicsApi;
     std::shared_ptr<IDwarfLogger>            m_Logger;
     std::shared_ptr<IAssetDirectoryListener> m_AssetDirectoryListener;
     std::shared_ptr<IAssetMetadata>          m_AssetMetadata;
@@ -63,6 +65,7 @@ namespace Dwarf
      */
     AssetDatabase(
       AssetDirectoryPath                       assetDirectoryPath,
+      GraphicsApi                              graphicsApi,
       std::shared_ptr<IDwarfLogger>            logger,
       std::shared_ptr<IAssetDirectoryListener> assetDirectoryListener,
       std::shared_ptr<IAssetMetadata>          assetMetadata,
@@ -184,5 +187,20 @@ namespace Dwarf
     /// @param directory Absolute path to a directory.
     void
     RecursiveImport(const std::filesystem::path& directory);
+
+    void
+    ImportDefaultAssets();
+
+    void
+    ImportDefaultShaders();
+
+    void
+    ImportDefaultTextures();
+
+    void
+    ImportDefaultMaterials();
+
+    void
+    ImportDefaultModels();
   };
 }
