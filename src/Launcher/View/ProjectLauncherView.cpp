@@ -1313,11 +1313,9 @@ namespace Dwarf
           ImDrawList* draw_list = ImGui::GetWindowDrawList();
 
           // Looping through all the combo entries
-          for (int n = 0;
-               n < sizeof(graphicsApiNames) / sizeof(graphicsApiNames[0]);
-               n++)
+          for (int n = 1; n < 5; n++)
           {
-            if (apiAvailability[n])
+            if (apiAvailability[n - 1])
             {
               const bool is_selected = (currentApiIndex == n);
 
@@ -1334,7 +1332,7 @@ namespace Dwarf
               draw_list->ChannelsSplit(2);
               draw_list->ChannelsSetCurrent(1);
 
-              if (n > 0)
+              if (n > 1)
               {
                 ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
               }

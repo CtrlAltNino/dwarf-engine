@@ -61,21 +61,21 @@ namespace Dwarf
   };
 
 #ifdef _WIN32
-  constexpr std::array<bool, 4> apiAvailability = {
+  constexpr std::array<bool, 5> apiAvailability = {
     true,
     false,
     true,
     true,
   };
 #elif __linux__
-  constexpr std::array<bool, 4> apiAvailability = {
+  constexpr std::array<bool, 5> apiAvailability = {
     false,
     false,
     true,
     true,
   };
 #elif __APPLE__
-  constexpr std::array<bool, 4> apiAvailability = {
+  constexpr std::array<bool, 5> apiAvailability = {
     false,
     true,
     false,

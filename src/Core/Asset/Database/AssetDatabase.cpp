@@ -44,6 +44,9 @@ namespace Dwarf
       m_FileHandler->CreateDirectoryAt(m_AssetDirectoryPath.t);
     }
 
+    // Reimporting default assets
+    ImportDefaultAssets();
+
     m_AssetDirectoryListener->registerAddFileCallback(
       std::bind(&AssetDatabase::AddAssetCallback,
                 this,
@@ -95,9 +98,6 @@ namespace Dwarf
   {
     // CLearing database
     Clear();
-
-    // Reimporting default assets
-    ImportDefaultAssets();
 
     // Reimporting all assets from the asset directory
     RecursiveImport(m_AssetDirectoryPath.t);
@@ -418,7 +418,7 @@ namespace Dwarf
   void
   AssetDatabase::ImportDefaultShaders()
   {
-    std::filesystem::path shaderDir = "./data/engine/shaders/";
+    std::filesystem::path shaderDir = "data/engine/shaders/";
 
     std::filesystem::path graphicsApiDir = "";
 
@@ -432,10 +432,10 @@ namespace Dwarf
     }
 
     std::filesystem::path defaultShaderDir =
-      shaderDir / graphicsApiDir / "default";
+      shaderDir / "default" / graphicsApiDir;
 
     for (auto& directoryEntry :
-         std::filesystem::directory_iterator(defaultShaderDir))
+         std::filesystem::directory_iterator(defaultShaderDir.make_preferred()))
     {
       if (directoryEntry.is_regular_file())
       {
@@ -443,7 +443,7 @@ namespace Dwarf
       }
     }
 
-    std::filesystem::path errorShaderDir = shaderDir / graphicsApiDir / "error";
+    std::filesystem::path errorShaderDir = shaderDir / "error" / graphicsApiDir;
 
     for (auto& directoryEntry :
          std::filesystem::directory_iterator(errorShaderDir))
@@ -454,7 +454,7 @@ namespace Dwarf
       }
     }
 
-    std::filesystem::path gridShaderDir = shaderDir / graphicsApiDir / "grid";
+    std::filesystem::path gridShaderDir = shaderDir / "grid" / graphicsApiDir;
 
     for (auto& directoryEntry :
          std::filesystem::directory_iterator(gridShaderDir))
@@ -465,7 +465,7 @@ namespace Dwarf
       }
     }
 
-    std::filesystem::path idShaderDir = shaderDir / graphicsApiDir / "id";
+    std::filesystem::path idShaderDir = shaderDir / "id" / graphicsApiDir;
 
     for (auto& directoryEntry :
          std::filesystem::directory_iterator(idShaderDir))
@@ -477,7 +477,7 @@ namespace Dwarf
     }
 
     std::filesystem::path previewShaderDir =
-      shaderDir / graphicsApiDir / "preview";
+      shaderDir / "preview" / graphicsApiDir;
 
     for (auto& directoryEntry :
          std::filesystem::directory_iterator(previewShaderDir))
