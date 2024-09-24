@@ -75,7 +75,7 @@ namespace Dwarf
      * @brief Reimports an asset in the asset database.
      * @param assetPath Path to the asset.
      */
-    virtual UUID
+    virtual void
     Reimport(const std::filesystem::path& assetPath) = 0;
 
     /**

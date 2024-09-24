@@ -98,7 +98,13 @@ namespace Dwarf
       glShaderSource(vertexShader, 1, &vertexSource, nullptr);
       glCompileShader(vertexShader);
 
-      GLint vertex_compiled;
+      GLenum error = glGetError();
+      if (error != GL_NO_ERROR)
+      {
+        std::cerr << "OpenGL error before compilation: " << error << std::endl;
+      }
+
+      GLint vertex_compiled = 33;
       glGetShaderInfoLog(vertexShader, 1024, &vert_log_length, vert_message);
       glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &vertex_compiled);
 
@@ -106,6 +112,10 @@ namespace Dwarf
       {
         m_ShaderLogs.m_VertexShaderLog = std::string(vert_message);
       }
+
+      std::cout << vertex_compiled << std::endl;
+      std::cout << "GL_TRUE: " << GL_TRUE << std::endl;
+
       if (vertex_compiled != GL_TRUE)
       {
         glDeleteShader(vertexShader);
@@ -127,6 +137,7 @@ namespace Dwarf
 
       if (fragment_compiled != GL_TRUE)
       {
+        std::cout << "Fragment shader compilation failed" << std::endl;
         glDeleteShader(vertexShader);
         glDeleteShader(fragmentShader);
         return;
@@ -363,27 +374,27 @@ namespace Dwarf
     serializedShader["VertexShader"] =
       m_VertexShaderAsset.has_value()
         ? m_VertexShaderAsset.value()->GetUID().ToString()
-        : "-1";
+        : "";
 
     serializedShader["FragmentShader"] =
       m_FragmentShaderAsset.has_value()
         ? m_FragmentShaderAsset.value()->GetUID().ToString()
-        : "-1";
+        : "";
 
     serializedShader["GeometryShader"] =
       m_GeometryShaderAsset.has_value()
         ? m_GeometryShaderAsset.value()->GetUID().ToString()
-        : "-1";
+        : "";
 
     serializedShader["TessellationControlShader"] =
       m_TessellationControlShaderAsset.has_value()
         ? m_TessellationControlShaderAsset.value()->GetUID().ToString()
-        : "-1";
+        : "";
 
     serializedShader["TessellationEvaluationShader"] =
       m_TessellationEvaluationShaderAsset.has_value()
         ? m_TessellationEvaluationShaderAsset.value()->GetUID().ToString()
-        : "-1";
+        : "";
 
     return serializedShader;
   }

@@ -129,7 +129,7 @@ namespace Dwarf
                                    glm::mat4               viewMatrix,
                                    glm::mat4               projectionMatrix)
   {
-    OpenGLMesh&                   oglMesh = (OpenGLMesh&)mesh;
+    OpenGLMesh*                   oglMesh = (OpenGLMesh*)mesh.get();
     std::shared_ptr<OpenGLShader> shader =
       std::dynamic_pointer_cast<OpenGLShader>(material.GetShader());
     char textureInputCounter = 0;
@@ -165,12 +165,12 @@ namespace Dwarf
     glUniformMatrix4fv(mmID, 1, GL_FALSE, &modelMatrix[0][0]);
     glUniformMatrix4fv(vmID, 1, GL_FALSE, &viewMatrix[0][0]);
     glUniformMatrix4fv(pmID, 1, GL_FALSE, &projectionMatrix[0][0]);
-    oglMesh.Bind();
+    oglMesh->Bind();
 
     glDrawElements(
-      GL_TRIANGLES, oglMesh.GetIndices().size(), GL_UNSIGNED_INT, nullptr);
+      GL_TRIANGLES, oglMesh->GetIndices().size(), GL_UNSIGNED_INT, nullptr);
 
-    oglMesh.Unbind();
+    oglMesh->Unbind();
 
     glDisable(GL_BLEND);
     glDisable(GL_CULL_FACE);

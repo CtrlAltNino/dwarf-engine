@@ -9,12 +9,14 @@ namespace Dwarf
     std::shared_ptr<IMaterialAssetInspector> materialAssetInspector,
     std::shared_ptr<ISceneAssetInspector>    sceneAssetInspector,
     std::shared_ptr<IModelAssetInspector>    modelAssetInspector,
-    std::shared_ptr<ITextureAssetInspector>  textureAssetInspector)
+    std::shared_ptr<ITextureAssetInspector>  textureAssetInspector,
+    std::shared_ptr<IEditorSelection>        editorSelection)
     : m_AssetDatabase(assetDatabase)
     , m_MaterialAssetInspector(materialAssetInspector)
     , m_SceneAssetInspector(sceneAssetInspector)
     , m_ModelAssetInspector(modelAssetInspector)
     , m_TextureAssetInspector(textureAssetInspector)
+    , m_EditorSelection(editorSelection)
   {
   }
 
@@ -35,49 +37,41 @@ namespace Dwarf
   }
 
   void
-  AssetInspector::Render(const std::filesystem::path& assetPath)
+  AssetInspector::Render()
   {
-    if (m_AssetDatabase->Exists(assetPath))
+    IAssetReference& asset = m_EditorSelection->GetSelectedAsset();
+    switch (asset.GetType())
     {
-      std::unique_ptr<IAssetReference> asset =
-        m_AssetDatabase->Retrieve(assetPath);
-      switch (asset->GetType())
-      {
-        using enum ASSET_TYPE;
-        case MODEL:
-          {
-            m_ModelAssetInspector->Render(*asset);
-            break;
-          }
-        case TEXTURE:
-          {
-            m_TextureAssetInspector->Render(*asset);
-            break;
-          }
-        case SCENE:
-          {
-            m_SceneAssetInspector->Render(*asset);
-            break;
-          }
-        case MATERIAL:
-          {
-            m_MaterialAssetInspector->Render(*asset);
-            break;
-          }
-        case VERTEX_SHADER:
-        case TESC_SHADER:
-        case TESE_SHADER:
-        case GEOMETRY_SHADER:
-        case FRAGMENT_SHADER:
-        case HLSL_SHADER:
-        case COMPUTE_SHADER:
-        case UNKNOWN:
-        default: RenderBasicInspector(*asset); break;
-      }
-    }
-    else
-    {
-      ImGui::TextWrapped("Asset not found.");
+      using enum ASSET_TYPE;
+      case MODEL:
+        {
+          m_ModelAssetInspector->Render(asset);
+          break;
+        }
+      case TEXTURE:
+        {
+          m_TextureAssetInspector->Render(asset);
+          break;
+        }
+      case SCENE:
+        {
+          m_SceneAssetInspector->Render(asset);
+          break;
+        }
+      case MATERIAL:
+        {
+          m_MaterialAssetInspector->Render(asset);
+          break;
+        }
+      case VERTEX_SHADER:
+      case TESC_SHADER:
+      case TESE_SHADER:
+      case GEOMETRY_SHADER:
+      case FRAGMENT_SHADER:
+      case HLSL_SHADER:
+      case COMPUTE_SHADER:
+      case UNKNOWN:
+      default: RenderBasicInspector(asset); break;
     }
   }
 }

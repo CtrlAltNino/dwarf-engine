@@ -1,6 +1,9 @@
 #pragma once
+#include "Core/Asset/AssetReference/IAssetReference.h"
+#include "Core/Asset/Database/IAssetDatabase.h"
 #include "Editor/Selection/IEditorSelection.h"
 #include "Editor/LoadedScene/ILoadedScene.h"
+#include <boost/di/extension/injections/lazy.hpp>
 
 namespace Dwarf
 {
@@ -9,8 +12,10 @@ namespace Dwarf
   private:
     std::shared_ptr<ILoadedScene> m_LoadedScene;
     CURRENT_SELECTION_TYPE m_SelectionType = CURRENT_SELECTION_TYPE::NONE;
-    std::filesystem::path  m_SelectedAsset;
-    std::vector<Entity>    m_SelectedEntities;
+    std::unique_ptr<IAssetReference> m_SelectedAsset;
+    std::vector<Entity>              m_SelectedEntities;
+    // boost::di::extension::lazy<std::shared_ptr<IAssetDatabase>>
+    // m_AssetDatabase;
 
     /// @brief Returns the tree index of a given entity. Used for sorting based
     /// on their graph positions.
@@ -20,13 +25,15 @@ namespace Dwarf
     GetTreeIndex(const Entity& entity) const;
 
   public:
-    EditorSelection(std::shared_ptr<ILoadedScene> loadedScene);
+    EditorSelection(std::shared_ptr<ILoadedScene> loadedScene,
+                    boost::di::extension::lazy<std::shared_ptr<IAssetDatabase>>
+                      assetDatabase);
 
     void
     SelectEntity(const Entity& entity) override;
 
     void
-    SelectAsset(const std::filesystem::path& assetPath) override;
+    SelectAsset(std::unique_ptr<IAssetReference> assetPath) override;
 
     void
     AddEntityToSelection(const Entity& entity) override;
@@ -52,7 +59,7 @@ namespace Dwarf
     CURRENT_SELECTION_TYPE
     GetSelectionType() const override;
 
-    const std::filesystem::path&
-    GetSelectedAssetPath() const override;
+    IAssetReference&
+    GetSelectedAsset() const override;
   };
 }

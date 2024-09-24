@@ -3,8 +3,8 @@
 #include "Core/Asset/AssetReference/IAssetReferenceFactory.h"
 #include "Core/Asset/AssetReimporter/IAssetReimporter.h"
 #include "Core/Base.h"
+#include "Editor/Selection/IEditorSelection.h"
 #include "Utilities/FileHandler/IFileHandler.h"
-#include "Core/GenericComponents.h"
 #include "Core/Rendering/Material/IMaterialFactory.h"
 #include "Core/Rendering/Material/IO/IMaterialIO.h"
 #include "Core/Rendering/Texture/ITextureFactory.h"
@@ -13,11 +13,11 @@
 #include "Core/Asset/Model/IModelImporter.h"
 #include "Core/Asset/Metadata/IAssetMetadata.h"
 #include "Core/Asset/Shader/IShaderRecompiler.h"
-// #include "Core/Asset/Database/AssetReference.h"
 #include "Core/Asset/Database/IAssetDirectoryListener.h"
 
 #include "Core/Rendering/Shader/IShader.h"
 #include "Logging/IDwarfLogger.h"
+#include "Window/IWindow.h"
 
 #include <entt/entity/fwd.hpp>
 #include <entt/entt.hpp>
@@ -76,7 +76,8 @@ namespace Dwarf
       std::shared_ptr<IMaterialIO>             materialIO,
       std::shared_ptr<IAssetReimporter>        assetReimporter,
       std::shared_ptr<IAssetReferenceFactory>  assetReferenceFactory,
-      std::shared_ptr<IFileHandler>            fileHandler);
+      std::shared_ptr<IFileHandler>            fileHandler,
+      std::shared_ptr<IWindow>                 window);
 
     /**
      * @brief Destroy the Asset Database object
@@ -135,7 +136,7 @@ namespace Dwarf
      * @brief Reimports an asset in the asset database.
      * @param assetPath Path to the asset.
      */
-    UUID
+    void
     Reimport(const std::filesystem::path& assetPath) override;
 
     /**
@@ -186,7 +187,9 @@ namespace Dwarf
     /// @brief Recursively imports all found assets in a given directory.
     /// @param directory Absolute path to a directory.
     void
-    RecursiveImport(const std::filesystem::path& directory);
+    GatherAssetPaths(const std::filesystem::path&        directory,
+                     std::vector<std::filesystem::path>& materialPaths,
+                     std::vector<std::filesystem::path>& otherPaths);
 
     void
     ImportDefaultAssets();

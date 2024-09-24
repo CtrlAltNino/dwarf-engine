@@ -6,6 +6,7 @@
 #include "Core/Rendering/Material/IMaterial.h"
 #include "Core/Asset/Database/AssetComponents.h"
 #include "Core/Asset/Database/AssetComponents.h"
+#include <cerrno>
 #include <filesystem>
 
 namespace Dwarf
@@ -23,7 +24,8 @@ namespace Dwarf
     std::shared_ptr<IMaterialIO>             materialIO,
     std::shared_ptr<IAssetReimporter>        assetReimporter,
     std::shared_ptr<IAssetReferenceFactory>  assetReferenceFactory,
-    std::shared_ptr<IFileHandler>            fileHandler)
+    std::shared_ptr<IFileHandler>            fileHandler,
+    std::shared_ptr<IWindow>                 window)
     : m_AssetDirectoryPath(assetDirectoryPath)
     , m_GraphicsApi(graphicsApi)
     , m_Logger(logger)
@@ -44,7 +46,6 @@ namespace Dwarf
       m_FileHandler->CreateDirectoryAt(m_AssetDirectoryPath.t);
     }
 
-    // Reimporting default assets
     ImportDefaultAssets();
 
     m_AssetDirectoryListener->registerAddFileCallback(
@@ -76,19 +77,31 @@ namespace Dwarf
   }
 
   void
-  AssetDatabase::RecursiveImport(std::filesystem::path const& directory)
+  AssetDatabase::GatherAssetPaths(
+    const std::filesystem::path&        directory,
+    std::vector<std::filesystem::path>& materialPaths,
+    std::vector<std::filesystem::path>& otherPaths)
   {
+
     for (auto& directoryEntry : std::filesystem::directory_iterator(directory))
     {
       if (directoryEntry.is_directory())
       {
-        RecursiveImport(directoryEntry.path());
+        GatherAssetPaths(directoryEntry.path(), materialPaths, otherPaths);
       }
       else if (directoryEntry.is_regular_file() &&
                directoryEntry.path().has_extension() &&
                !IAssetMetadata::IsMetadataPath(directoryEntry))
       {
-        Import(directoryEntry.path());
+        if (directoryEntry.path().has_extension() &&
+            directoryEntry.path().extension() == ".dmat")
+        {
+          materialPaths.push_back(directoryEntry.path());
+        }
+        else
+        {
+          otherPaths.push_back(directoryEntry.path());
+        }
       }
     }
   }
@@ -97,16 +110,114 @@ namespace Dwarf
   AssetDatabase::ReimportAll()
   {
     // CLearing database
-    Clear();
+    // Clear();
+
+    // Reimporting default assets
+    // ImportDefaultAssets();
+
+    std::vector<std::filesystem::path> materialPaths = {};
+    std::vector<std::filesystem::path> otherPaths = {};
 
     // Reimporting all assets from the asset directory
-    RecursiveImport(m_AssetDirectoryPath.t);
+    // RecursiveImport(m_AssetDirectoryPath.t);
+
+    GatherAssetPaths(m_AssetDirectoryPath, materialPaths, otherPaths);
+
+    for (auto& path : otherPaths)
+    {
+      Import(path);
+    }
+
+    for (auto& path : materialPaths)
+    {
+      Import(path);
+    }
   }
 
-  UUID
-  AssetDatabase::Reimport(std::filesystem::path const& assetPath)
+  void
+  AssetDatabase::Reimport(const std::filesystem::path& assetPath)
   {
-    return AssetDatabase::Import(assetPath);
+    if (Exists(assetPath))
+    {
+      std::unique_ptr<IAssetReference> asset = Retrieve(assetPath);
+
+      switch (asset->GetType())
+      {
+        case ASSET_TYPE::MODEL:
+          {
+            m_Registry.emplace_or_replace<ModelAsset>(
+              asset->GetHandle(), m_ModelImporter->Import(assetPath));
+            break;
+          }
+        case ASSET_TYPE::TEXTURE:
+          {
+            m_Registry.emplace_or_replace<TextureAsset>(
+              asset->GetHandle(), m_TextureFactory->FromPath(assetPath));
+            break;
+          }
+        case ASSET_TYPE::MATERIAL:
+          {
+            m_Registry.emplace_or_replace<MaterialAsset>(
+              asset->GetHandle(), m_MaterialIO->LoadMaterial(assetPath));
+            break;
+          }
+        case ASSET_TYPE::COMPUTE_SHADER:
+          {
+            m_Registry.emplace_or_replace<ComputeShaderAsset>(
+              asset->GetHandle(), m_FileHandler->ReadFile(assetPath));
+            break;
+          }
+        case ASSET_TYPE::FRAGMENT_SHADER:
+          {
+            m_Registry.emplace_or_replace<FragmentShaderAsset>(
+              asset->GetHandle(), m_FileHandler->ReadFile(assetPath));
+            break;
+          }
+        case ASSET_TYPE::GEOMETRY_SHADER:
+          {
+            m_Registry.emplace_or_replace<GeometryShaderAsset>(
+              asset->GetHandle(), m_FileHandler->ReadFile(assetPath));
+            break;
+          }
+        case ASSET_TYPE::HLSL_SHADER:
+          {
+            m_Registry.emplace_or_replace<HlslShaderAsset>(
+              asset->GetHandle(), m_FileHandler->ReadFile(assetPath));
+            break;
+          }
+        case ASSET_TYPE::TESC_SHADER:
+          {
+            m_Registry.emplace_or_replace<TessellationControlShaderAsset>(
+              asset->GetHandle(), m_FileHandler->ReadFile(assetPath));
+            break;
+          }
+        case ASSET_TYPE::TESE_SHADER:
+          {
+            m_Registry.emplace_or_replace<TessellationEvaluationShaderAsset>(
+              asset->GetHandle(), m_FileHandler->ReadFile(assetPath));
+            break;
+          }
+        case ASSET_TYPE::VERTEX_SHADER:
+          {
+            m_Registry.emplace_or_replace<VertexShaderAsset>(
+              asset->GetHandle(), m_FileHandler->ReadFile(assetPath));
+            break;
+          }
+        case ASSET_TYPE::SCENE:
+          {
+            m_Registry.emplace_or_replace<SceneAsset>(
+              asset->GetHandle(),
+              nlohmann::json::parse(m_FileHandler->ReadFile(assetPath)));
+            break;
+          }
+        case ASSET_TYPE::UNKNOWN:
+          {
+            m_Registry.emplace_or_replace<UnknownAsset>(
+              asset->GetHandle(), m_FileHandler->ReadFile(assetPath));
+            break;
+          }
+      }
+    }
   }
 
   void
@@ -265,7 +376,8 @@ namespace Dwarf
 
         // if (matView.contains(entity))
         // {
-        //   matView.get<MaterialAsset>(entity).m_Material->GetProperties() =
+        //   matView.get<MaterialAsset>(entity).m_Material->GetProperties()
+        //   =
         //     to.stem().string();
         // }
         break;
@@ -344,10 +456,13 @@ namespace Dwarf
         case ASSET_TYPE::MATERIAL:
           {
             std::cout << "A material asset has been updated!" << std::endl;
-            MaterialAsset& mat =
-              (MaterialAsset&)AssetDatabase::Retrieve(path)->GetAsset();
-            m_ShaderRecompiler->MarkForRecompilation(
-              mat.GetMaterial().GetShader());
+            // if (AssetDatabase::Exists(path))
+            // {
+            //   MaterialAsset& mat =
+            //     (MaterialAsset&)AssetDatabase::Retrieve(path)->GetAsset();
+            //   m_ShaderRecompiler->MarkForRecompilation(
+            //     mat.GetMaterial().GetShader());
+            // }
             break;
           }
         case ASSET_TYPE::MODEL:
@@ -437,7 +552,8 @@ namespace Dwarf
     for (auto& directoryEntry :
          std::filesystem::directory_iterator(defaultShaderDir.make_preferred()))
     {
-      if (directoryEntry.is_regular_file())
+      if (directoryEntry.is_regular_file() &&
+          directoryEntry.path().extension() != ".dmeta")
       {
         Import(directoryEntry.path());
       }
@@ -448,7 +564,8 @@ namespace Dwarf
     for (auto& directoryEntry :
          std::filesystem::directory_iterator(errorShaderDir))
     {
-      if (directoryEntry.is_regular_file())
+      if (directoryEntry.is_regular_file() &&
+          directoryEntry.path().extension() != ".dmeta")
       {
         Import(directoryEntry.path());
       }
@@ -459,7 +576,8 @@ namespace Dwarf
     for (auto& directoryEntry :
          std::filesystem::directory_iterator(gridShaderDir))
     {
-      if (directoryEntry.is_regular_file())
+      if (directoryEntry.is_regular_file() &&
+          directoryEntry.path().extension() != ".dmeta")
       {
         Import(directoryEntry.path());
       }
@@ -470,7 +588,8 @@ namespace Dwarf
     for (auto& directoryEntry :
          std::filesystem::directory_iterator(idShaderDir))
     {
-      if (directoryEntry.is_regular_file())
+      if (directoryEntry.is_regular_file() &&
+          directoryEntry.path().extension() != ".dmeta")
       {
         Import(directoryEntry.path());
       }
@@ -482,7 +601,8 @@ namespace Dwarf
     for (auto& directoryEntry :
          std::filesystem::directory_iterator(previewShaderDir))
     {
-      if (directoryEntry.is_regular_file())
+      if (directoryEntry.is_regular_file() &&
+          directoryEntry.path().extension() != ".dmeta")
       {
         Import(directoryEntry.path());
       }

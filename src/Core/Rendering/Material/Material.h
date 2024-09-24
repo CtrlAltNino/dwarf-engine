@@ -25,10 +25,9 @@ namespace Dwarf
     std::unique_ptr<IShaderParameterCollection> m_ShaderParameters;
 
   public:
-    Material(
-      std::shared_ptr<IShader> shader = nullptr,
-      MaterialProperties       materialProperties = MaterialProperties(),
-      std::unique_ptr<IShaderParameterCollection> shaderParameters = nullptr);
+    Material(std::shared_ptr<IShader>                    shader,
+             MaterialProperties                          materialProperties,
+             std::unique_ptr<IShaderParameterCollection> shaderParameters);
     ~Material() override;
 
     /**

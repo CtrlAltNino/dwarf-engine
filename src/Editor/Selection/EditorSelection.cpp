@@ -1,11 +1,15 @@
-#include "Editor/LoadedScene/ILoadedScene.h"
+#include "Core/Asset/AssetReference/IAssetReference.h"
 #include "pch.h"
+#include "Editor/LoadedScene/ILoadedScene.h"
 #include "Editor/Selection/EditorSelection.h"
 
 namespace Dwarf
 {
-  EditorSelection::EditorSelection(std::shared_ptr<ILoadedScene> loadedScene)
+  EditorSelection::EditorSelection(
+    std::shared_ptr<ILoadedScene>                               loadedScene,
+    boost::di::extension::lazy<std::shared_ptr<IAssetDatabase>> assetDatabase)
     : m_LoadedScene(loadedScene)
+  //, m_AssetDatabase(assetDatabase)
   {
   }
 
@@ -18,9 +22,9 @@ namespace Dwarf
   }
 
   void
-  EditorSelection::SelectAsset(const std::filesystem::path& assetPath)
+  EditorSelection::SelectAsset(std::unique_ptr<IAssetReference> asset)
   {
-    m_SelectedAsset = assetPath;
+    m_SelectedAsset = std::move(asset);
     m_SelectionType = CURRENT_SELECTION_TYPE::ASSET;
   }
 
@@ -54,14 +58,14 @@ namespace Dwarf
   EditorSelection::ClearEntitySelection()
   {
     m_SelectedEntities.clear();
-    m_SelectionType = m_SelectedAsset.empty() ? CURRENT_SELECTION_TYPE::NONE
-                                              : CURRENT_SELECTION_TYPE::ASSET;
+    m_SelectionType = m_SelectedAsset ? CURRENT_SELECTION_TYPE::ASSET
+                                      : CURRENT_SELECTION_TYPE::NONE;
   }
 
   void
   EditorSelection::ClearAssetSelection()
   {
-    m_SelectedAsset.clear();
+    m_SelectedAsset.reset();
     m_SelectionType = m_SelectedEntities.empty()
                         ? CURRENT_SELECTION_TYPE::NONE
                         : CURRENT_SELECTION_TYPE::ENTITY;
@@ -74,8 +78,8 @@ namespace Dwarf
       std::find(m_SelectedEntities.begin(), m_SelectedEntities.end(), entity));
     if (m_SelectedEntities.empty())
     {
-      m_SelectionType = m_SelectedAsset.empty() ? CURRENT_SELECTION_TYPE::NONE
-                                                : CURRENT_SELECTION_TYPE::ASSET;
+      m_SelectionType = m_SelectedAsset ? CURRENT_SELECTION_TYPE::ASSET
+                                        : CURRENT_SELECTION_TYPE::NONE;
     }
   }
 
@@ -90,7 +94,7 @@ namespace Dwarf
   bool
   EditorSelection::IsAssetSelected(const std::filesystem::path& assetPath)
   {
-    return m_SelectedAsset == assetPath;
+    return m_SelectedAsset && (m_SelectedAsset->GetPath() == assetPath);
   }
 
   std::string
@@ -123,9 +127,9 @@ namespace Dwarf
     return m_SelectionType;
   }
 
-  const std::filesystem::path&
-  EditorSelection::GetSelectedAssetPath() const
+  IAssetReference&
+  EditorSelection::GetSelectedAsset() const
   {
-    return m_SelectedAsset;
+    return *m_SelectedAsset;
   }
 }

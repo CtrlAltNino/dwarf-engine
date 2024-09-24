@@ -20,31 +20,27 @@ namespace Dwarf
   {
     std::unique_ptr<ShaderParameterCollection> parameterCollection =
       std::make_unique<ShaderParameterCollection>();
-    for (auto const& parameter :
-         serializedShaderParameterCollection["parameters"].items())
+    for (auto const& parameter : serializedShaderParameterCollection.items())
     {
-      if (serializedShaderParameterCollection["parameters"][parameter.key()]
-                                             ["type"] == "boolean")
+      if (serializedShaderParameterCollection[parameter.key()]["type"] ==
+          "boolean")
       {
         parameterCollection->SetParameter(parameter.key(),
                                           bool(parameter.value()["value"]));
       }
-      else if (serializedShaderParameterCollection["parameters"]
-                                                  [parameter.key()]["type"] ==
+      else if (serializedShaderParameterCollection[parameter.key()]["type"] ==
                "integer")
       {
         parameterCollection->SetParameter(parameter.key(),
                                           int(parameter.value()["value"]));
       }
-      else if (serializedShaderParameterCollection["parameters"]
-                                                  [parameter.key()]["type"] ==
+      else if (serializedShaderParameterCollection[parameter.key()]["type"] ==
                "float")
       {
         parameterCollection->SetParameter(parameter.key(),
                                           float(parameter.value()["value"]));
       }
-      else if (serializedShaderParameterCollection["parameters"]
-                                                  [parameter.key()]["type"] ==
+      else if (serializedShaderParameterCollection[parameter.key()]["type"] ==
                "tex2d")
       {
         if (int(parameter.value()["value"]) != -1)
@@ -58,8 +54,7 @@ namespace Dwarf
           parameterCollection->SetParameter(parameter.key(), std::nullopt);
         }
       }
-      else if (serializedShaderParameterCollection["parameters"]
-                                                  [parameter.key()]["type"] ==
+      else if (serializedShaderParameterCollection[parameter.key()]["type"] ==
                "vec2")
       {
         parameterCollection->SetParameter(
@@ -67,8 +62,7 @@ namespace Dwarf
           glm::vec2((float)parameter.value()["value"]["x"],
                     (float)parameter.value()["value"]["y"]));
       }
-      else if (serializedShaderParameterCollection["parameters"]
-                                                  [parameter.key()]["type"] ==
+      else if (serializedShaderParameterCollection[parameter.key()]["type"] ==
                "vec3")
       {
         parameterCollection->SetParameter(
@@ -77,8 +71,7 @@ namespace Dwarf
                     (float)parameter.value()["value"]["y"],
                     (float)parameter.value()["value"]["z"]));
       }
-      else if (serializedShaderParameterCollection["parameters"]
-                                                  [parameter.key()]["type"] ==
+      else if (serializedShaderParameterCollection[parameter.key()]["type"] ==
                "vec4")
       {
         parameterCollection->SetParameter(

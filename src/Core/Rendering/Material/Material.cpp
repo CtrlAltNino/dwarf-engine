@@ -45,6 +45,7 @@ namespace Dwarf
     , m_MaterialProperties(materialProperties)
     , m_ShaderParameters(std::move(shaderParameters))
   {
+    m_Shader->Compile();
   }
 
   Material::~Material() {}
@@ -91,11 +92,7 @@ namespace Dwarf
     nlohmann::json serializedMaterial;
     serializedMaterial["Shader"] = m_Shader->Serialize();
     serializedMaterial["Properties"] = m_MaterialProperties.Serialize();
-
-    if (m_ShaderParameters)
-    {
-      serializedMaterial["ShaderParameters"] = m_ShaderParameters->Serialize();
-    }
+    serializedMaterial["ShaderParameters"] = m_ShaderParameters->Serialize();
 
     return serializedMaterial;
   }

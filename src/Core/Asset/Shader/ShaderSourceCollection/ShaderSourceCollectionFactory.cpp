@@ -54,7 +54,10 @@ namespace Dwarf
     // Extracting shader sources from the JSON object.
     std::vector<std::unique_ptr<IAssetReference>> shaderSources = {};
 
-    if (serializedShaderSourceCollection.contains("vertexShader"))
+    if (serializedShaderSourceCollection.contains("vertexShader") &&
+        !serializedShaderSourceCollection["vertexShader"]
+           .get<std::string>()
+           .empty())
     {
       UUID vertexShaderId =
         UUID(serializedShaderSourceCollection["vertexShader"]);
@@ -63,7 +66,10 @@ namespace Dwarf
         std::move(m_AssetDatabase.get()->Retrieve(vertexShaderId)));
     }
 
-    if (serializedShaderSourceCollection.contains("fragmentShader"))
+    if (serializedShaderSourceCollection.contains("fragmentShader") &&
+        !serializedShaderSourceCollection["fragmentShader"]
+           .get<std::string>()
+           .empty())
     {
       UUID fragmentShaderId =
         UUID(serializedShaderSourceCollection["fragmentShader"]);
@@ -72,7 +78,10 @@ namespace Dwarf
         m_AssetDatabase.get()->Retrieve(fragmentShaderId));
     }
 
-    if (serializedShaderSourceCollection.contains("geometryShader"))
+    if (serializedShaderSourceCollection.contains("geometryShader") &&
+        !serializedShaderSourceCollection["geometryShader"]
+           .get<std::string>()
+           .empty())
     {
       UUID geometryShaderId =
         UUID(serializedShaderSourceCollection["geometryShader"]);
@@ -81,7 +90,11 @@ namespace Dwarf
         m_AssetDatabase.get()->Retrieve(geometryShaderId));
     }
 
-    if (serializedShaderSourceCollection.contains("tessellationControlShader"))
+    if (serializedShaderSourceCollection.contains(
+          "tessellationControlShader") &&
+        !serializedShaderSourceCollection["tessellationControlShader"]
+           .get<std::string>()
+           .empty())
     {
       UUID tessellationControlShaderId =
         UUID(serializedShaderSourceCollection["tessellationControlShader"]);
@@ -91,7 +104,10 @@ namespace Dwarf
     }
 
     if (serializedShaderSourceCollection.contains(
-          "tessellationEvaluationShader"))
+          "tessellationEvaluationShader") &&
+        !serializedShaderSourceCollection["tessellationEvaluationShader"]
+           .get<std::string>()
+           .empty())
     {
       UUID tessellationEvaluationShaderId =
         UUID(serializedShaderSourceCollection["tessellationEvaluationShader"]);

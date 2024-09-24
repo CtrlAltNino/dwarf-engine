@@ -413,7 +413,7 @@ namespace Dwarf
           }
           else if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
           {
-            SelectAsset(path);
+            m_EditorSelection->SelectAsset(m_AssetDatabase->Retrieve(path));
           }
 
           // TODO: Drag Asset
@@ -665,14 +665,6 @@ namespace Dwarf
     }
     m_DirectoryHistory.push_back(m_CurrentDirectory);
     m_HistoryPos = (int)m_DirectoryHistory.size() - 1;
-  }
-
-  void
-  AssetBrowserWindow::SelectAsset(std::filesystem::path const& path)
-  {
-    m_SelectedAsset = path;
-    m_EditorSelection->SelectAsset(m_SelectedAsset);
-    // TODO: command to inspector
   }
 
   void

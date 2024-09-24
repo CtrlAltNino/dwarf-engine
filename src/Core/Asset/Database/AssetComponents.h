@@ -25,7 +25,7 @@ namespace Dwarf
     ModelAsset(std::vector<std::unique_ptr<IMesh>> meshes)
       : m_Meshes(std::move(meshes))
     {
-      for (auto& mesh : meshes)
+      for (auto& mesh : m_Meshes)
       {
         mesh->SetupMesh();
       }

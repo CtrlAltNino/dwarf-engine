@@ -264,7 +264,13 @@ namespace Dwarf
 
     // Check if framebuffer is complete
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+    {
       std::cerr << "Framebuffer is not complete!" << std::endl;
+    }
+    else
+    {
+      std::cout << "Framebuffer is complete!" << std::endl;
+    }
 
     // Unbind the framebuffer
     glBindFramebuffer(GL_FRAMEBUFFER, 0);

@@ -52,7 +52,7 @@ namespace Dwarf
   nlohmann::json
   ShaderParameterCollection::Serialize() const
   {
-    nlohmann::json serialized;
+    nlohmann::json serialized = nlohmann::json::object();
     for (const auto& pair : m_Parameters)
     {
       std::visit(

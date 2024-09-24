@@ -108,9 +108,6 @@ namespace Dwarf
     SetupDockspace(ImGuiID id);
 
     void
-    SelectAsset(std::filesystem::path const& path);
-
-    void
     ClearSelection();
 
     void

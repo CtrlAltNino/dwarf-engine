@@ -57,7 +57,7 @@ namespace Dwarf
       case CURRENT_SELECTION_TYPE::ASSET:
         {
           // TODO: Render Asset data
-          m_AssetInspector->Render(m_Selection->GetSelectedAssetPath());
+          m_AssetInspector->Render();
           break;
         }
       case CURRENT_SELECTION_TYPE::ENTITY:

@@ -46,7 +46,7 @@ public:
 // Testing the basic functionality of the Material class
 TEST(MaterialTests, EmptyShaderInitialization)
 {
-  Dwarf::Material material(nullptr);
+  Dwarf::Material material(nullptr, Dwarf::MaterialProperties(), nullptr);
   ASSERT_EQ(material.GetShader(), nullptr);
 }
 
@@ -54,7 +54,7 @@ TEST(MaterialTests, EmptyShaderInitialization)
 TEST(MaterialTests, DefaultShaderInitialization)
 {
   auto            shader = std::make_shared<MockIShader>();
-  Dwarf::Material material(shader);
+  Dwarf::Material material(shader, Dwarf::MaterialProperties(), nullptr);
   ASSERT_EQ(material.GetShader(), shader);
 }
 
@@ -62,7 +62,7 @@ TEST(MaterialTests, DefaultShaderInitialization)
 TEST(MaterialTests, DefaultMaterialProperties)
 {
   auto            shader = std::make_shared<MockIShader>();
-  Dwarf::Material material(shader);
+  Dwarf::Material material(shader, Dwarf::MaterialProperties(), nullptr);
   auto            properties = material.GetMaterialProperties();
   ASSERT_FALSE(properties.IsTransparent);
   ASSERT_FALSE(properties.IsDoubleSided);
@@ -75,7 +75,7 @@ TEST(MaterialTests, CustomMaterialProperties)
 {
   auto                      shader = std::make_shared<MockIShader>();
   Dwarf::MaterialProperties sourceProperties(false, true, true, false);
-  Dwarf::Material           material(shader, sourceProperties);
+  Dwarf::Material           material(shader, sourceProperties, nullptr);
   auto                      properties = material.GetMaterialProperties();
   ASSERT_FALSE(properties.IsTransparent);
   ASSERT_TRUE(properties.IsDoubleSided);
@@ -87,7 +87,7 @@ TEST(MaterialTests, CustomMaterialProperties)
 TEST(MaterialTests, MaterialSerialization)
 {
   auto            shader = std::make_shared<MockIShader>();
-  Dwarf::Material material(shader);
+  Dwarf::Material material(shader, Dwarf::MaterialProperties(), nullptr);
   auto            serialized = material.Serialize();
   ASSERT_FALSE(serialized.empty());
   ASSERT_TRUE(serialized.contains("Shader"));

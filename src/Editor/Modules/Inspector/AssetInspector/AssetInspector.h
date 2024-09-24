@@ -12,6 +12,7 @@
 #include "Editor/Modules/Inspector/AssetInspector/ModelAsset/IModelAssetInspector.h"
 #include "Editor/Modules/Inspector/AssetInspector/SceneAsset/ISceneAssetInspector.h"
 #include "Editor/Modules/Inspector/AssetInspector/TextureAsset/ITextureAssetInspector.h"
+#include "Editor/Selection/IEditorSelection.h"
 #include "Editor/Stats/IEditorStats.h"
 #include "Input/IInputManager.h"
 #include <memory>
@@ -34,17 +35,19 @@ namespace Dwarf
     std::shared_ptr<ISceneAssetInspector>    m_SceneAssetInspector;
     std::shared_ptr<IModelAssetInspector>    m_ModelAssetInspector;
     std::shared_ptr<ITextureAssetInspector>  m_TextureAssetInspector;
+    std::shared_ptr<IEditorSelection>        m_EditorSelection;
 
     AssetInspector(
       std::shared_ptr<IAssetDatabase>          assetDatabase,
       std::shared_ptr<IMaterialAssetInspector> materialAssetInspector,
       std::shared_ptr<ISceneAssetInspector>    sceneAssetInspector,
       std::shared_ptr<IModelAssetInspector>    modelAssetInspector,
-      std::shared_ptr<ITextureAssetInspector>  textureAssetInspector);
+      std::shared_ptr<ITextureAssetInspector>  textureAssetInspector,
+      std::shared_ptr<IEditorSelection>        editorSelection);
 
     ~AssetInspector() override = default;
     void
-    Render(const std::filesystem::path& assetPath) override;
+    Render() override;
 
   private:
     void

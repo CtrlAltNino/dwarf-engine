@@ -10,12 +10,14 @@ namespace Dwarf
     std::shared_ptr<IAssetDatabase>   assetDatabase,
     std::shared_ptr<IAssetReimporter> assetReimporter,
     std::shared_ptr<IMaterialPreview> materialPreview,
-    std::shared_ptr<IInputManager>    inputManager)
+    std::shared_ptr<IInputManager>    inputManager,
+    std::shared_ptr<IMaterialIO>      materialIO)
     : m_GraphicsApi(graphicsApi)
     , m_AssetDatabase(assetDatabase)
     , m_AssetReimporter(assetReimporter)
     , m_MaterialPreview(materialPreview)
     , m_InputManager(inputManager)
+    , m_MaterialIO(materialIO)
   {
   }
 
@@ -685,6 +687,7 @@ namespace Dwarf
                       ImVec2(ImGui::GetContentRegionAvail().x / 2.0f, 50)))
     {
       // MaterialSerializer::Serialize(*mat, asset->GetPath());
+      m_MaterialIO->SaveMaterial(material, asset.GetPath());
       ImGui::EndChild();
       return;
     }

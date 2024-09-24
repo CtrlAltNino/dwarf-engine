@@ -124,11 +124,18 @@ namespace Dwarf
           boost::di::extension::shared),
           boost::di::bind<IShaderRecompiler>.to<ShaderRecompiler>().in(
           boost::di::extension::shared),
+          boost::di::bind<IImGuiLayerFactory>.to<ImGuiLayerFactory>().in(boost::di::extension::shared),
+          boost::di::bind<WindowProps>.to(WindowProps(
+          "Dwarf Engine", 1100, 600, selectedProject.graphicsApi)),
+#ifdef _WIN32
+          boost::di::bind<IWindow>.to<WindowsWindow>().in(boost::di::extension::shared),
+#elif __linux__
+          boost::di::bind<IWindow>.to<LinuxWindow>().in(boost::di::extension::shared),
+#endif
           boost::di::bind<ITextureFactory>.to<TextureFactory>().in(
           boost::di::extension::shared),
           boost::di::bind<IImageFileLoader>.to<ImageFileLoader>().in(
           boost::di::extension::shared),
-          boost::di::bind<IImGuiLayerFactory>.to<ImGuiLayerFactory>().in(boost::di::extension::shared),
           boost::di::bind<ISceneSettingsFactory>.to<SceneSettingsFactory>().in(
           boost::di::extension::shared),
           boost::di::bind<IScenePropertiesFactory>.to<ScenePropertiesFactory>().in(
@@ -139,13 +146,6 @@ namespace Dwarf
           boost::di::extension::shared),
           boost::di::bind<IEditorSelection>.to<EditorSelection>().in(
           boost::di::extension::shared),
-          boost::di::bind<WindowProps>.to(WindowProps(
-          "Dwarf Engine", 1100, 600, selectedProject.graphicsApi)),
-#ifdef _WIN32
-          boost::di::bind<IWindow>.to<WindowsWindow>().in(boost::di::extension::shared),
-#elif __linux__
-          boost::di::bind<IWindow>.to<LinuxWindow>().in(boost::di::extension::shared),
-#endif
           boost::di::bind<IFramebufferFactory>.to<FramebufferFactory>().in(boost::di::extension::shared),
           boost::di::bind<IShaderParameterCollectionFactory>.to<ShaderParameterCollectionFactory>().in(boost::di::extension::shared),
           boost::di::bind<IShaderSourceCollectionFactory>.to<ShaderSourceCollectionFactory>().in(boost::di::extension::shared),

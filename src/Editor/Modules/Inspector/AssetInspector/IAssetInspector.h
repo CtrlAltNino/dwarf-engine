@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Asset/AssetReference/IAssetReference.h"
 namespace Dwarf
 {
   class IAssetInspector
@@ -7,6 +8,6 @@ namespace Dwarf
   public:
     virtual ~IAssetInspector() = default;
     virtual void
-    Render(const std::filesystem::path& assetPath) = 0;
+    Render() = 0;
   };
 }
