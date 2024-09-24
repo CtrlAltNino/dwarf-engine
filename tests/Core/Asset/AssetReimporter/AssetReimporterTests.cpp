@@ -32,7 +32,7 @@ public:
   MOCK_METHOD(void, Remove, (const UUID& uid), (override));
   MOCK_METHOD(void, Remove, (const std::filesystem::path& path), (override));
   MOCK_METHOD(void, ReimportAll, (), (override));
-  MOCK_METHOD(UUID,
+  MOCK_METHOD(void,
               Reimport,
               (const std::filesystem::path& assetPath),
               (override));

@@ -21,7 +21,7 @@ public:
   MOCK_METHOD(void, Remove, (const UUID&), (override));
   MOCK_METHOD(void, Remove, (const std::filesystem::path&), (override));
   MOCK_METHOD(void, ReimportAll, (), (override));
-  MOCK_METHOD(UUID, Reimport, (const std::filesystem::path&), (override));
+  MOCK_METHOD(void, Reimport, (const std::filesystem::path&), (override));
   MOCK_METHOD(std::unique_ptr<IAssetReference>,
               Retrieve,
               (const UUID&),
