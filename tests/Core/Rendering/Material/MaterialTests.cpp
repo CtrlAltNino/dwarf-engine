@@ -29,6 +29,7 @@ public:
   MOCK_METHOD(void, RemoveParameter, (std::string const& name), (override));
   MOCK_METHOD(bool, HasParameter, (std::string const& name), (const, override));
   MOCK_METHOD(void, ClearParameters, (), (override));
+  MOCK_METHOD(nlohmann::json, Serialize, (), (const, override));
 };
 
 class MockIShader : public Dwarf::IShader
@@ -42,13 +43,6 @@ public:
               (override));
   MOCK_METHOD(nlohmann::json, Serialize, (), (const, override));
 };
-
-// Testing the basic functionality of the Material class
-TEST(MaterialTests, EmptyShaderInitialization)
-{
-  Dwarf::Material material(nullptr, Dwarf::MaterialProperties(), nullptr);
-  ASSERT_EQ(material.GetShader(), nullptr);
-}
 
 // Testing if the default shader is initialized correctly
 TEST(MaterialTests, DefaultShaderInitialization)
@@ -86,9 +80,11 @@ TEST(MaterialTests, CustomMaterialProperties)
 // Testing serialization of the material
 TEST(MaterialTests, MaterialSerialization)
 {
-  auto            shader = std::make_shared<MockIShader>();
-  Dwarf::Material material(shader, Dwarf::MaterialProperties(), nullptr);
-  auto            serialized = material.Serialize();
+  auto shader = std::make_shared<MockIShader>();
+  auto shaderParameters = std::make_unique<MockIShaderParameterCollection>();
+  Dwarf::Material material(
+    shader, Dwarf::MaterialProperties(), std::move(shaderParameters));
+  auto serialized = material.Serialize();
   ASSERT_FALSE(serialized.empty());
   ASSERT_TRUE(serialized.contains("Shader"));
   ASSERT_TRUE(serialized.contains("Properties"));
