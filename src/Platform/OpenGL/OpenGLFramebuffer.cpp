@@ -1,9 +1,9 @@
-#include "Utilities/ImageUtilities/TextureCommon.h"
+#include "OpenGLUtilities.h"
 #include "pch.h"
+#include "Platform/OpenGL/OpenGLFramebuffer.h"
+#include "Utilities/ImageUtilities/TextureCommon.h"
 #include <glad/glad.h>
 #include <memory>
-#include "Core/Rendering/Texture/TextureFactory.h"
-#include "Platform/OpenGL/OpenGLFramebuffer.h"
 
 namespace Dwarf
 {
@@ -96,11 +96,14 @@ namespace Dwarf
 
   // @brief: Constructs an OpenGL framebuffer with the given specification
   OpenGLFramebuffer::OpenGLFramebuffer(
+    std::shared_ptr<IDwarfLogger>    logger,
     const FramebufferSpecification&  spec,
     std::shared_ptr<ITextureFactory> textureFactory)
-    : m_Specification(spec)
+    : m_Logger(logger)
+    , m_Specification(spec)
     , m_TextureFactory(textureFactory)
   {
+    m_Logger->LogInfo(Log("OpenGLFramebuffer created.", "OpenGLFramebuffer"));
     for (auto attachments : m_Specification.Attachments.Attachments)
     {
       if (!Utils::IsDepthFormat(attachments.TextureFormat))
@@ -126,6 +129,8 @@ namespace Dwarf
   void
   OpenGLFramebuffer::Invalidate()
   {
+    OpenGLUtilities::CheckOpenGLError("Before OpenGLFramebuffer Invalidate",
+                                      m_Logger);
     // If the renderer ID is not 0, delete the framebuffer and its attachments
     if (m_RendererID)
     {
@@ -137,9 +142,11 @@ namespace Dwarf
 
     // Create the framebuffer
     glCreateFramebuffers(1, &m_RendererID);
+    OpenGLUtilities::CheckOpenGLError("glCreateFramebuffer", m_Logger);
 
     // Bind the framebuffer
     glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
+    OpenGLUtilities::CheckOpenGLError("glBindFramebuffer", m_Logger);
 
     // Create the color attachments
     if (m_ColorAttachmentSpecifications.size())
@@ -186,12 +193,12 @@ namespace Dwarf
         //   { m_Specification.Width, m_Specification.Height },
         //   m_Specification.Samples));
 
-        m_ColorAttachments.push_back(m_TextureFactory->Empty(
+        m_ColorAttachments.push_back(std::move(m_TextureFactory->Empty(
           TextureType::TEXTURE_2D,
           TextureFormat::RGBA,
           TextureDataType::UNSIGNED_BYTE,
           glm::ivec2(m_Specification.Width, m_Specification.Height),
-          m_Specification.Samples));
+          m_Specification.Samples)));
 
         glFramebufferTexture2D(
           GL_FRAMEBUFFER,
@@ -201,6 +208,8 @@ namespace Dwarf
           textarget,
           m_ColorAttachments[i]->GetTextureID(),
           0);
+        OpenGLUtilities::CheckOpenGLError(
+          "glFramebufferTexture2D color attachment", m_Logger);
       }
     }
 
@@ -231,12 +240,12 @@ namespace Dwarf
       //                         { m_Specification.Width, m_Specification.Height
       //                         }, m_Specification.Samples);
 
-      m_DepthAttachment = m_TextureFactory->Empty(
+      m_DepthAttachment = std::move(m_TextureFactory->Empty(
         TextureType::TEXTURE_2D,
         TextureFormat::DEPTH,
         TextureDataType::FLOAT,
         glm::ivec2(m_Specification.Width, m_Specification.Height),
-        m_Specification.Samples);
+        m_Specification.Samples));
 
       glFramebufferTexture2D(GL_FRAMEBUFFER,
                              Utils::GetFramebufferAttachment(
@@ -244,6 +253,9 @@ namespace Dwarf
                              textarget,
                              m_DepthAttachment->GetTextureID(),
                              0);
+
+      OpenGLUtilities::CheckOpenGLError(
+        "glFramebufferTexture2D depth attachment", m_Logger);
     }
 
     // Check if the framebuffer is complete
@@ -255,6 +267,7 @@ namespace Dwarf
                                         GL_COLOR_ATTACHMENT2,
                                         GL_COLOR_ATTACHMENT3 };
       glDrawBuffers(buffers.size(), buffers.data());
+      OpenGLUtilities::CheckOpenGLError("glDrawBuffers", m_Logger);
     }
     else if (m_ColorAttachments.empty())
     {
@@ -272,23 +285,31 @@ namespace Dwarf
       std::cout << "Framebuffer is complete!" << std::endl;
     }
 
+    std::cout << "Framebuffer ID: " << m_RendererID << std::endl;
+
     // Unbind the framebuffer
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    OpenGLUtilities::CheckOpenGLError("glBindFramebuffer Invalidate() end", m_Logger);
   }
 
   // @brief: Binds the framebuffer
   void
   OpenGLFramebuffer::Bind()
   {
+    OpenGLUtilities::CheckOpenGLError("Before Bind()", m_Logger);
     glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
+    OpenGLUtilities::CheckOpenGLError("glBindFramebuffer Bind()", m_Logger);
     glViewport(0, 0, m_Specification.Width, m_Specification.Height);
+    OpenGLUtilities::CheckOpenGLError("glViewport", m_Logger);
   }
 
   // @brief: Unbinds the framebuffer
   void
   OpenGLFramebuffer::Unbind()
   {
+    OpenGLUtilities::CheckOpenGLError("Before Unbind()", m_Logger);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    OpenGLUtilities::CheckOpenGLError("glBindFramebuffer Unbind()", m_Logger);
   }
 
   // @brief: Resizes the framebuffer
@@ -314,6 +335,7 @@ namespace Dwarf
     glm::ivec2 convertedCoords =
       Utils::ConvertToOpenGLCoords({ x, y }, m_Specification.Height);
     glReadBuffer(GL_COLOR_ATTACHMENT0);
+    OpenGLUtilities::CheckOpenGLError("glReadBuffer", m_Logger);
 
     GLuint pixel;
     glReadPixels(convertedCoords.x,
@@ -323,6 +345,7 @@ namespace Dwarf
                  GL_RED_INTEGER,
                  GL_UNSIGNED_INT,
                  &pixel);
+    OpenGLUtilities::CheckOpenGLError("glReadPixels", m_Logger);
 
     Unbind();
     return pixel;
@@ -338,21 +361,22 @@ namespace Dwarf
                     Utils::DwarfFBTextureFormatToGL(spec.TextureFormat),
                     GL_INT,
                     &value);
+    OpenGLUtilities::CheckOpenGLError("glClearTexImage", m_Logger);
   }
 
-  const std::shared_ptr<ITexture>
+  const std::optional<std::reference_wrapper<ITexture>>
   OpenGLFramebuffer::GetColorAttachment(uint32_t index = 0) const
   {
     if (index < m_ColorAttachments.size())
     {
       // Return the address of the value at the specified index
-      return m_ColorAttachments[index];
+      return *m_ColorAttachments[index];
     }
     else
     {
       // If the index is out of bounds, return nullptr or handle the error
       // accordingly
-      return nullptr;
+      return std::nullopt;
     }
   }
 
@@ -362,6 +386,7 @@ namespace Dwarf
   {
     Bind();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    OpenGLUtilities::CheckOpenGLError("glClear", m_Logger);
     Unbind();
   }
 
@@ -372,13 +397,16 @@ namespace Dwarf
     Bind();
     glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    OpenGLUtilities::CheckOpenGLError("glClear", m_Logger);
     Unbind();
   }
 
   void
   OpenGLFramebuffer::DeleteFramebuffer()
   {
+    m_Logger->LogInfo(Log("Deleting framebuffer", "OpenGLFramebuffer"));
     glDeleteFramebuffers(1, &m_RendererID);
+    OpenGLUtilities::CheckOpenGLError("glDeleteFramebuffers", m_Logger);
     m_ColorAttachments.clear();
     m_DepthAttachment = nullptr;
   }

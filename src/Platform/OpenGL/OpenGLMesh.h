@@ -2,6 +2,7 @@
 
 #include <glad/glad.h>
 #include "Core/Rendering/Mesh/IMesh.h"
+#include "Logging/IDwarfLogger.h"
 
 namespace Dwarf
 {
@@ -9,14 +10,16 @@ namespace Dwarf
   class OpenGLMesh : public IMesh
   {
   private:
-    std::vector<Vertex>       m_Vertices = std::vector<Vertex>();
-    std::vector<unsigned int> m_Indices = std::vector<unsigned int>();
-    unsigned int              m_MaterialIndex = 0;
+    std::shared_ptr<IDwarfLogger> m_Logger;
+    std::vector<Vertex>           m_Vertices = std::vector<Vertex>();
+    std::vector<unsigned int>     m_Indices = std::vector<unsigned int>();
+    unsigned int                  m_MaterialIndex = 0;
 
   public:
     OpenGLMesh(const std::vector<Vertex>&       vertices,
                const std::vector<unsigned int>& indices,
-               unsigned int                     materialIndex);
+               unsigned int                     materialIndex,
+               std::shared_ptr<IDwarfLogger>    logger);
     ~OpenGLMesh() override;
     void
     SetupMesh() override;

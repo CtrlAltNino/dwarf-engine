@@ -10,9 +10,17 @@
 
 namespace Dwarf
 {
-  MeshFactory::MeshFactory(GraphicsApi graphicsApi)
+  MeshFactory::MeshFactory(GraphicsApi                   graphicsApi,
+                           std::shared_ptr<IDwarfLogger> logger)
     : m_GraphicsApi(graphicsApi)
+    , m_Logger(logger)
   {
+    m_Logger->LogInfo(Log("MeshFactory created.", "MeshFactory"));
+  }
+
+  MeshFactory::~MeshFactory()
+  {
+    m_Logger->LogInfo(Log("MeshFactory destroyed.", "MeshFactory"));
   }
 
   std::unique_ptr<IMesh>
@@ -20,6 +28,7 @@ namespace Dwarf
                           const std::vector<unsigned int>& indices,
                           unsigned int                     materialIndex)
   {
+    m_Logger->LogInfo(Log("Creating mesh.", "MeshFactory"));
     // Creating a shader based on the graphics API.
     switch (m_GraphicsApi)
     {
@@ -28,7 +37,8 @@ namespace Dwarf
         // return std::make_shared<D3D12Shader>();
         break;
       case GraphicsApi::OpenGL:
-        return std::make_unique<OpenGLMesh>(vertices, indices, materialIndex);
+        return std::make_unique<OpenGLMesh>(
+          vertices, indices, materialIndex, m_Logger);
         break;
       case GraphicsApi::Metal: break;
       case GraphicsApi::Vulkan:
@@ -37,7 +47,8 @@ namespace Dwarf
 #elif __linux__
       case GraphicsApi::D3D12: break;
       case GraphicsApi::OpenGL:
-        return std::make_unique<OpenGLMesh>(vertices, indices, materialIndex);
+        return std::make_unique<OpenGLMesh>(
+          vertices, indices, materialIndex, m_Logger);
         break;
       case GraphicsApi::Metal: break;
       case GraphicsApi::Vulkan:

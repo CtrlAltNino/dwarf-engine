@@ -359,7 +359,9 @@ namespace Dwarf
   SceneViewerWindow::GetFrameBufferForImGui()
   {
     return (ImTextureID)m_PresentationBuffer->GetColorAttachment()
-      ->GetTextureID();
+      .value()
+      .get()
+      .GetTextureID();
   }
 
   glm::ivec2

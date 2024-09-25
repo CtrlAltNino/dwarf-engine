@@ -1,5 +1,6 @@
 #include "ShaderSourceCollectionFactory.h"
 #include "Core/Asset/AssetReference/IAssetReference.h"
+#include "Core/Asset/Shader/ShaderSourceCollection/IShaderSourceCollection.h"
 #include "Core/Asset/Shader/ShaderSourceCollection/ShaderSourceCollection.h"
 #include <iostream>
 #include <memory>
@@ -19,21 +20,14 @@ namespace Dwarf
   ShaderSourceCollectionFactory::CreateDefaultShaderSourceCollection()
   {
     std::vector<std::unique_ptr<IAssetReference>> shaderSources = {};
-    std::cout << "1" << std::endl;
 
     switch (m_GraphicsApi)
     {
       case GraphicsApi::OpenGL:
-        std::cout << "2" << std::endl;
-        // Check if asset database is nullptr
-        std::cout << "AssetDatabase: " << (m_AssetDatabase.get() == nullptr)
-                  << std::endl;
         shaderSources.emplace_back(m_AssetDatabase.get()->Retrieve(
           "data/engine/shaders/default/opengl/default.vert"));
-        std::cout << "3" << std::endl;
         shaderSources.emplace_back(m_AssetDatabase.get()->Retrieve(
           "data/engine/shaders/default/opengl/default.frag"));
-        std::cout << "4" << std::endl;
         break;
       case GraphicsApi::Vulkan:
       case GraphicsApi::D3D12:
@@ -42,7 +36,28 @@ namespace Dwarf
       default: throw std::runtime_error("Unsupported Graphics API.");
     }
 
-    std::cout << "5" << std::endl;
+    return std::make_unique<ShaderSourceCollection>(shaderSources);
+  }
+
+  std::unique_ptr<IShaderSourceCollection>
+  ShaderSourceCollectionFactory::CreateErrorShaderSourceCollection()
+  {
+    std::vector<std::unique_ptr<IAssetReference>> shaderSources = {};
+
+    switch (m_GraphicsApi)
+    {
+      case GraphicsApi::OpenGL:
+        shaderSources.emplace_back(m_AssetDatabase.get()->Retrieve(
+          "data/engine/shaders/error/opengl/error.vert"));
+        shaderSources.emplace_back(m_AssetDatabase.get()->Retrieve(
+          "data/engine/shaders/error/opengl/error.frag"));
+        break;
+      case GraphicsApi::Vulkan:
+      case GraphicsApi::D3D12:
+      case GraphicsApi::Metal:
+        throw std::runtime_error("Graphics API not supported yet.");
+      default: throw std::runtime_error("Unsupported Graphics API.");
+    }
 
     return std::make_unique<ShaderSourceCollection>(shaderSources);
   }

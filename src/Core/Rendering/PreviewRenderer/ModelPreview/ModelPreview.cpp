@@ -15,7 +15,7 @@ namespace Dwarf
     , m_MaterialFactory(materialFactory)
   {
     FramebufferSpecification spec = { 512, 512 };
-    spec.Samples = 8;
+    spec.Samples = 1;
     spec.Attachments = FramebufferAttachmentSpecification{
       FramebufferTextureSpecification{ FramebufferTextureFormat::RGBA8 },
       FramebufferTextureSpecification{ FramebufferTextureFormat::DEPTH }

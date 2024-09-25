@@ -13,6 +13,9 @@ namespace Dwarf
     CreateDefaultShaderSourceCollection() = 0;
 
     virtual std::unique_ptr<IShaderSourceCollection>
+    CreateErrorShaderSourceCollection() = 0;
+
+    virtual std::unique_ptr<IShaderSourceCollection>
     CreateShaderSourceCollection(
       const nlohmann::json& serializedShaderSourceCollection) = 0;
   };

@@ -43,6 +43,14 @@ namespace Dwarf
   }
 
   std::unique_ptr<IShader>
+  ShaderFactory::CreateErrorShader()
+  {
+    m_Logger->LogInfo(Log("Creating error shader", "ShaderFactory"));
+    return CreateShader(
+      m_ShaderSourceCollectionFactory->CreateErrorShaderSourceCollection());
+  }
+
+  std::unique_ptr<IShader>
   ShaderFactory::CreateShader(const nlohmann::json& shaderJson)
   {
     m_Logger->LogInfo(
@@ -118,7 +126,9 @@ namespace Dwarf
         break;
       case GraphicsApi::OpenGL:
         return std::make_unique<OpenGLShader>(
-          std::move(shaderSources), m_ShaderParameterCollectionFactory);
+          std::move(shaderSources),
+          m_ShaderParameterCollectionFactory,
+          m_Logger);
         break;
       case GraphicsApi::Metal: break;
       case GraphicsApi::Vulkan:
@@ -128,7 +138,9 @@ namespace Dwarf
       case GraphicsApi::D3D12: break;
       case GraphicsApi::OpenGL:
         return std::make_unique<OpenGLShader>(
-          std::move(shaderSources), m_ShaderParameterCollectionFactory);
+          std::move(shaderSources),
+          m_ShaderParameterCollectionFactory,
+          m_Logger);
         break;
       case GraphicsApi::Metal: break;
       case GraphicsApi::Vulkan:

@@ -53,7 +53,16 @@ namespace Dwarf
   ImTextureID
   PreviewRenderer::GetTextureId() const
   {
-    return (ImTextureID)m_Framebuffer->GetColorAttachment(0)->GetTextureID();
+    ImTextureID textureId = 0;
+
+    if (m_Framebuffer->GetColorAttachment(0))
+    {
+      textureId = (ImTextureID)m_Framebuffer->GetColorAttachment(0)
+                    .value()
+                    .get()
+                    .GetTextureID();
+    }
+    return textureId;
   }
 
   float

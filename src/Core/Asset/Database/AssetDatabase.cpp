@@ -6,6 +6,7 @@
 #include "Core/Rendering/Material/IMaterial.h"
 #include "Core/Asset/Database/AssetComponents.h"
 #include "Core/Asset/Database/AssetComponents.h"
+#include "IAssetDatabase.h"
 #include <cerrno>
 #include <filesystem>
 
@@ -412,7 +413,8 @@ namespace Dwarf
       std::filesystem::path(dir) / std::filesystem::path(filename);
     if (!m_AssetMetadata->IsMetadataPath(path))
     {
-      m_AssetReimporter->QueueReimport(path);
+      // m_AssetReimporter->QueueReimport(path);
+      Import(path);
     }
   }
 

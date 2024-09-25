@@ -14,6 +14,9 @@ namespace Dwarf
     CreateDefaultShader() = 0;
 
     virtual std::unique_ptr<IShader>
+    CreateErrorShader() = 0;
+
+    virtual std::unique_ptr<IShader>
     CreateShader(std::unique_ptr<IShaderSourceCollection> shaderSources) = 0;
 
     virtual std::unique_ptr<IShader>

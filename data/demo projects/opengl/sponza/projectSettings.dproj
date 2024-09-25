@@ -1,7 +1,5 @@
 {
-    "projectInformation": {
-        "graphicsApi": 2,
-        "lastOpenedScene": 5031561088998297457,
-        "projectName": "Sponza Example"
-    }
+    "graphicsApi": 2,
+    "lastOpenedScene": 5031561088998297457,
+    "projectName": "Sponza Example"
 }

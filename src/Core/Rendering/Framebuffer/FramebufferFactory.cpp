@@ -1,4 +1,5 @@
 #include "FramebufferFactory.h"
+#include <memory>
 
 #ifdef _WIN32
 // #include "Platform/Direct3D12/D3D12Framebuffer.h"
@@ -14,16 +15,21 @@
 namespace Dwarf
 {
   FramebufferFactory::FramebufferFactory(
+    std::shared_ptr<IDwarfLogger>    logger,
     GraphicsApi                      api,
     std::shared_ptr<ITextureFactory> textureFactory)
-    : m_Api(api)
+    : m_Logger(logger)
+    , m_Api(api)
     , m_TextureFactory(textureFactory)
   {
+    m_Logger->LogInfo(Log("FramebufferFactory created", "FramebufferFactory"));
   }
 
   std::shared_ptr<IFramebuffer>
   FramebufferFactory::Create(const FramebufferSpecification& spec)
   {
+    m_Logger->LogInfo(Log("Creating framebuffer", "FramebufferFactory"));
+
     switch (m_Api)
     {
 #ifdef _WIN32
@@ -32,7 +38,8 @@ namespace Dwarf
         break;
       case GraphicsApi::Metal: break;
       case GraphicsApi::OpenGL:
-        return std::make_shared<OpenGLFramebuffer>(spec, m_TextureFactory);
+        return std::make_shared<OpenGLFramebuffer>(
+          m_Logger, spec, m_TextureFactory);
         break;
       case GraphicsApi::Vulkan:
         // return std::make_shared<VulkanFramebuffer>(spec);
@@ -41,7 +48,8 @@ namespace Dwarf
       case GraphicsApi::D3D12: break;
       case GraphicsApi::Metal: break;
       case GraphicsApi::OpenGL:
-        return std::make_shared<OpenGLFramebuffer>(spec, m_TextureFactory);
+        return std::make_shared<OpenGLFramebuffer>(
+          m_Logger, spec, m_TextureFactory);
         break;
       case GraphicsApi::Vulkan: break;
 #elif __APPLE__

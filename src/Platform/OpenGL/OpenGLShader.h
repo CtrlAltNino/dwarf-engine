@@ -1,6 +1,7 @@
 #pragma once
 #include "pch.h"
 
+#include "Logging/IDwarfLogger.h"
 #include "Core/Asset/Database/AssetComponents.h"
 #include "Core/Asset/Shader/ShaderSourceCollection/IShaderSourceCollection.h"
 #include "Core/Rendering/Shader/ShaderParameterCollection/IShaderParameterCollectionFactory.h"
@@ -33,7 +34,8 @@ namespace Dwarf
     BOOST_DI_INJECT(OpenGLShader,
                     std::unique_ptr<IShaderSourceCollection> shaderSources,
                     std::shared_ptr<IShaderParameterCollectionFactory>
-                      shaderParameterCollectionFactory);
+                      shaderParameterCollectionFactory,
+                    std::shared_ptr<IDwarfLogger> logger);
     ~OpenGLShader() override;
     GLuint
     GetID() const;
@@ -76,6 +78,7 @@ namespace Dwarf
     // Flag to determine if the shader has been successfully compiled.
     bool m_SuccessfullyCompiled;
     // Map of parameters that the shader uses.
+    std::shared_ptr<IDwarfLogger> m_Logger;
     std::shared_ptr<IShaderParameterCollectionFactory>
       m_ShaderParameterCollectionFactory;
 

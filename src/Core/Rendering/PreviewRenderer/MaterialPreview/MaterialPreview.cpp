@@ -4,6 +4,7 @@
 namespace Dwarf
 {
   MaterialPreview::MaterialPreview(
+    std::shared_ptr<IDwarfLogger>        logger,
     std::shared_ptr<IFramebufferFactory> framebufferFactory,
     std::shared_ptr<ICameraFactory>      cameraFactory,
     std::shared_ptr<IRendererApiFactory> rendererApiFactory,
@@ -11,10 +12,11 @@ namespace Dwarf
     : PreviewRenderer(framebufferFactory,
                       cameraFactory->Create(),
                       rendererApiFactory)
+    , m_Logger(logger)
     , m_MeshFactory(meshFactory)
   {
     FramebufferSpecification spec = { 512, 512 };
-    spec.Samples = 8;
+    spec.Samples = 1;
     spec.Attachments = FramebufferAttachmentSpecification{
       FramebufferTextureSpecification{ FramebufferTextureFormat::RGBA8 },
       FramebufferTextureSpecification{ FramebufferTextureFormat::DEPTH }
@@ -28,7 +30,7 @@ namespace Dwarf
     m_Camera->GetProperties().Transform.GetPosition() = { 0.0f, 0.0f, 0.0f };
     m_Camera->GetProperties().Transform.GetEulerAngles() = { 0, 0, 0 };
 
-    UpdateMesh();
+    m_Logger->LogInfo(Log("MaterialPreview created", "MaterialPreview"));
   }
 
   void
@@ -41,12 +43,12 @@ namespace Dwarf
     m_Camera->GetProperties().FarPlane = 4;
 
     m_Framebuffer->Bind();
-    m_RendererApi->SetClearColor({ 59 / 255.0f, 66 / 255.0f, 82 / 255.0f, 1 });
-    m_RendererApi->Clear();
     m_RendererApi->SetViewport(0,
                                0,
                                m_Framebuffer->GetSpecification().Width,
                                m_Framebuffer->GetSpecification().Height);
+    m_RendererApi->SetClearColor({ 1.0f, 0.0f, 0.0f, 1.0f });
+    m_RendererApi->Clear();
 
     m_RendererApi->RenderIndexed(m_Mesh,
                                  materialAsset,
@@ -59,6 +61,7 @@ namespace Dwarf
   void
   MaterialPreview::SetMeshType(MaterialPreviewMeshType meshType)
   {
+    m_Logger->LogInfo(Log("Updating preview mesh", "MaterialPreview"));
     m_MeshType = meshType;
     UpdateMesh();
   }
@@ -78,5 +81,6 @@ namespace Dwarf
         m_Mesh = m_MeshFactory->CreateUnitQuad();
         break;
     }
+    m_Mesh->SetupMesh();
   }
 }

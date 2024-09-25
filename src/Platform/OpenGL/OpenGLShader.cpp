@@ -1,4 +1,5 @@
 #include "OpenGLShader.h"
+#include "OpenGLUtilities.h"
 #include "Core/Asset/AssetReference/IAssetReference.h"
 #include "Core/Asset/AssetTypes.h"
 #include "Core/Asset/Database/AssetComponents.h"
@@ -6,8 +7,10 @@
 #include "Core/Rendering/Shader/ShaderParameterCollection/IShaderParameterCollection.h"
 #include "Core/Rendering/Shader/ShaderParameterCollection/IShaderParameterCollectionFactory.h"
 #include "Core/Rendering/Shader/ShaderTypes.h"
+#include "Platform/OpenGL/OpenGLUtilities.h"
 #include <memory>
 #include <variant>
+#include <fmt/format.h>
 
 #define GL_SHADER_LOG_LENGTH (1024)
 
@@ -16,8 +19,10 @@ namespace Dwarf
   OpenGLShader::OpenGLShader(
     std::unique_ptr<IShaderSourceCollection> shaderSources,
     std::shared_ptr<IShaderParameterCollectionFactory>
-      shaderParameterCollectionFactory)
+                                  shaderParameterCollectionFactory,
+    std::shared_ptr<IDwarfLogger> logger)
     : m_ShaderParameterCollectionFactory(shaderParameterCollectionFactory)
+    , m_Logger(logger)
   {
     for (std::unique_ptr<IAssetReference>& shaderSource :
          shaderSources->GetShaderSources())
@@ -46,7 +51,10 @@ namespace Dwarf
 
   OpenGLShader::~OpenGLShader()
   {
+    OpenGLUtilities::CheckOpenGLError("Errors before deleting shader",
+                                      m_Logger);
     glDeleteProgram(m_ID);
+    OpenGLUtilities::CheckOpenGLError("glDeleteProgram", m_Logger);
   }
 
   const std::array<std::string, 3> OpenGLShader::ReservedUniformNames = {
@@ -94,41 +102,61 @@ namespace Dwarf
       GLsizei frag_log_length = 0;
       GLchar  frag_message[1024] = "";
 
+      OpenGLUtilities::CheckOpenGLError("Errors before compiling shader",
+                                        m_Logger);
       GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+      OpenGLUtilities::CheckOpenGLError("glCreateShader vertex shader",
+                                        m_Logger);
       glShaderSource(vertexShader, 1, &vertexSource, nullptr);
+      OpenGLUtilities::CheckOpenGLError("glShaderSource vertex shader",
+                                        m_Logger);
       glCompileShader(vertexShader);
-
-      GLenum error = glGetError();
-      if (error != GL_NO_ERROR)
-      {
-        std::cerr << "OpenGL error before compilation: " << error << std::endl;
-      }
+      OpenGLUtilities::CheckOpenGLError("glCompileShader vertex shader",
+                                        m_Logger);
 
       GLint vertex_compiled = 33;
       glGetShaderInfoLog(vertexShader, 1024, &vert_log_length, vert_message);
+      OpenGLUtilities::CheckOpenGLError("glGetShaderInfoLog vertex shader",
+                                        m_Logger);
       glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &vertex_compiled);
+      OpenGLUtilities::CheckOpenGLError("glGetShaderiv vertex shader",
+                                        m_Logger);
 
       if (vert_log_length > 0)
       {
         m_ShaderLogs.m_VertexShaderLog = std::string(vert_message);
       }
 
-      std::cout << vertex_compiled << std::endl;
-      std::cout << "GL_TRUE: " << GL_TRUE << std::endl;
-
       if (vertex_compiled != GL_TRUE)
       {
         glDeleteShader(vertexShader);
+        OpenGLUtilities::CheckOpenGLError("glDeleteShader vertex shader",
+                                          m_Logger);
         return;
+      }
+      else
+      {
+        m_Logger->LogInfo(
+          Log("Vertex shader compiled successfully", "OpenGLShader"));
       }
 
       GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+      OpenGLUtilities::CheckOpenGLError("glCreateShader fragment shader",
+                                        m_Logger);
       glShaderSource(fragmentShader, 1, &fragmentSource, nullptr);
+      OpenGLUtilities::CheckOpenGLError("glShaderSource fragment shader",
+                                        m_Logger);
       glCompileShader(fragmentShader);
+      OpenGLUtilities::CheckOpenGLError("glCompileShader fragment shader",
+                                        m_Logger);
 
       GLint fragment_compiled;
       glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &fragment_compiled);
+      OpenGLUtilities::CheckOpenGLError("glGetShaderiv fragment shader",
+                                        m_Logger);
       glGetShaderInfoLog(fragmentShader, 1024, &frag_log_length, frag_message);
+      OpenGLUtilities::CheckOpenGLError("glGetShaderInfoLog fragment shader",
+                                        m_Logger);
 
       if (frag_log_length > 0)
       {
@@ -137,16 +165,33 @@ namespace Dwarf
 
       if (fragment_compiled != GL_TRUE)
       {
-        std::cout << "Fragment shader compilation failed" << std::endl;
         glDeleteShader(vertexShader);
+        OpenGLUtilities::CheckOpenGLError("glDeleteShader vertex shader",
+                                          m_Logger);
         glDeleteShader(fragmentShader);
+        OpenGLUtilities::CheckOpenGLError("glDeleteShader fragment shader",
+                                          m_Logger);
         return;
+      }
+      else
+      {
+        m_Logger->LogInfo(
+          Log("Fragment shader compiled successfully", "OpenGLShader"));
       }
 
       m_ID = glCreateProgram();
 
+      OpenGLUtilities::CheckOpenGLError("glCreateProgram", m_Logger);
+
       glAttachShader(m_ID, vertexShader);
+
+      OpenGLUtilities::CheckOpenGLError("glAttachShader vertex shader",
+                                        m_Logger);
+
       glAttachShader(m_ID, fragmentShader);
+
+      OpenGLUtilities::CheckOpenGLError("glAttachShader fragment shader",
+                                        m_Logger);
 
       GLuint geometryShader = -1;
 
@@ -184,13 +229,46 @@ namespace Dwarf
       }
 
       glLinkProgram(m_ID);
+      OpenGLUtilities::CheckOpenGLError("glLinkProgram", m_Logger);
+
+      GLint program_linked;
+      glGetProgramiv(m_ID, GL_LINK_STATUS, &program_linked);
+
+      OpenGLUtilities::CheckOpenGLError("glGetProgramiv", m_Logger);
+
+      if (program_linked != GL_TRUE)
+      {
+        m_Logger->LogError(
+          Log("Shader program failed to link", "OpenGLShader"));
+        glDeleteShader(vertexShader);
+        OpenGLUtilities::CheckOpenGLError("glDeleteShader vertex shader",
+                                          m_Logger);
+        glDeleteShader(fragmentShader);
+        OpenGLUtilities::CheckOpenGLError("glDeleteShader fragment shader",
+                                          m_Logger);
+
+        if (geometryShader != -1)
+        {
+          glDeleteShader(geometryShader);
+          OpenGLUtilities::CheckOpenGLError("glDeleteShader geometry shader",
+                                            m_Logger);
+        }
+        glDeleteProgram(m_ID);
+        OpenGLUtilities::CheckOpenGLError("glDeleteProgram", m_Logger);
+      }
 
       glDeleteShader(vertexShader);
+      OpenGLUtilities::CheckOpenGLError("glDeleteShader vertex shader",
+                                        m_Logger);
       glDeleteShader(fragmentShader);
+      OpenGLUtilities::CheckOpenGLError("glDeleteShader fragment shader",
+                                        m_Logger);
 
-      if (std::cmp_not_equal(geometryShader, -1))
+      if (geometryShader != -1)
       {
         glDeleteShader(geometryShader);
+        OpenGLUtilities::CheckOpenGLError("glDeleteShader geometry shader",
+                                          m_Logger);
       }
 
       m_SuccessfullyCompiled = true;

@@ -32,6 +32,9 @@ namespace Dwarf
     CreateDefaultShader() override;
 
     std::unique_ptr<IShader>
+    CreateErrorShader() override;
+
+    std::unique_ptr<IShader>
     CreateShader(
       std::unique_ptr<IShaderSourceCollection> shaderSources) override;
 

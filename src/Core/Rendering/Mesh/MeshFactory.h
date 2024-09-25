@@ -2,15 +2,19 @@
 
 #include "Core/Base.h"
 #include "Core/Rendering/Mesh/IMeshFactory.h"
+#include "Logging/IDwarfLogger.h"
 namespace Dwarf
 {
   class MeshFactory : public IMeshFactory
   {
   private:
-    GraphicsApi m_GraphicsApi;
+    GraphicsApi                   m_GraphicsApi;
+    std::shared_ptr<IDwarfLogger> m_Logger;
 
   public:
-    MeshFactory(GraphicsApi graphicsApi);
+    MeshFactory(GraphicsApi graphicsApi, std::shared_ptr<IDwarfLogger> logger);
+    ~MeshFactory() override;
+
     std::unique_ptr<IMesh>
     CreateMesh(const std::vector<Vertex>&       vertices,
                const std::vector<unsigned int>& indices,

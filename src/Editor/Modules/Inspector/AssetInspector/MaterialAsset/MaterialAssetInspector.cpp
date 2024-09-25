@@ -1,5 +1,6 @@
 #include "MaterialAssetInspector.h"
 #include <imgui.h>
+#include "Core/Rendering/PreviewRenderer/MaterialPreview/IMaterialPreview.h"
 #include "Platform/OpenGL/OpenGLShader.h"
 #include "UI/DwarfUI.h"
 
@@ -19,6 +20,7 @@ namespace Dwarf
     , m_InputManager(inputManager)
     , m_MaterialIO(materialIO)
   {
+    m_MaterialPreview->SetMeshType(MaterialPreviewMeshType::Cube);
   }
 
   struct RenderShaderParameterVisitor
@@ -738,11 +740,12 @@ namespace Dwarf
       m_MaterialPreview->UpdateRotation(m_InputManager->GetMouseDelta());
     }
 
-    draw_list->AddImage(m_MaterialPreview->GetTextureId(),
-                        minRect,
-                        maxRect,
-                        ImVec2(0, 1),
-                        ImVec2(1, 0));
+    // std::cout << m_MaterialPreview->GetTextureId() << std::endl;
+
+    draw_list->AddImage(m_MaterialPreview->GetTextureId(), minRect, maxRect);
+    ImGui::Image((ImTextureID)1,
+                 ImVec2(ImGui::GetContentRegionAvail().x,
+                        ImGui::GetContentRegionAvail().x));
 
     float endY = maxRect.y;
     ImGui::EndChild();
