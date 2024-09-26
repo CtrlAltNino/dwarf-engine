@@ -169,19 +169,13 @@ namespace Dwarf
   {
     OpenGLUtilities::CheckOpenGLError("Before rendering", m_Logger);
     OpenGLMesh*   oglMesh = (OpenGLMesh*)mesh.get();
-    OpenGLShader* shader = (OpenGLShader*)material.GetShader().get();
+    OpenGLShader* shader = material.GetShader()->IsCompiled()
+                             ? (OpenGLShader*)material.GetShader().get()
+                             : (OpenGLShader*)m_ErrorShader.get();
     char          textureInputCounter = 0;
 
-    if (shader->IsCompiled())
-    {
-      glUseProgram(shader->GetID());
-      OpenGLUtilities::CheckOpenGLError("glUseProgram", m_Logger);
-    }
-    else
-    {
-      glUseProgram(((OpenGLShader*)m_ErrorShader.get())->GetID());
-      OpenGLUtilities::CheckOpenGLError("glUseProgram", m_Logger);
-    }
+    glUseProgram(shader->GetID());
+    OpenGLUtilities::CheckOpenGLError("glUseProgram", m_Logger);
 
     if (material.GetMaterialProperties().IsTransparent)
     {
