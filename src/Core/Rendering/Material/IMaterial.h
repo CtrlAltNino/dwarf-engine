@@ -53,8 +53,8 @@ namespace Dwarf
      *
      * @return The shader for this material.
      */
-    virtual const std::shared_ptr<IShader>
-    GetShader() const = 0;
+    virtual IShader&
+    GetShader() = 0;
 
     /**
      * @brief Set the shader for this material.
@@ -62,7 +62,7 @@ namespace Dwarf
      * @param shader The shader to set.
      */
     virtual void
-    SetShader(std::shared_ptr<IShader> shader) = 0;
+    SetShader(std::unique_ptr<IShader>&& shader) = 0;
 
     /**
      * @brief Get the shader parameters for this material.

@@ -1,4 +1,5 @@
 #include "Core/Rendering/RendererApi/RendererApiFactory.h"
+#include "Core/Base.h"
 
 // Including the shader header files of the graphics API.
 #if _WIN32
@@ -58,6 +59,9 @@ namespace Dwarf
         break;
       case GraphicsApi::Vulkan: break;
 #endif
+      case GraphicsApi::None:
+        throw std::runtime_error("Graphics API not set.");
+        break;
     }
 
     return nullptr;

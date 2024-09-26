@@ -322,17 +322,19 @@ namespace Dwarf
     m_Logger->LogInfo(Log("Internal format: " + GLenumToString(internalFormat),
                           "OpenGLTexture"));
 
-    OpenGLUtilities::CheckOpenGLError("Before creating texture", m_Logger);
+    OpenGLUtilities::CheckOpenGLError(
+      "Before creating texture", "OpenGLTexture", m_Logger);
     glCreateTextures(textureType, 1, &m_Id);
-    OpenGLUtilities::CheckOpenGLError("glCreateTextures", m_Logger);
+    OpenGLUtilities::CheckOpenGLError(
+      "glCreateTextures", "OpenGLTexture", m_Logger);
 
     glTextureParameteri(m_Id, GL_TEXTURE_MIN_FILTER, textureMinFilter);
-    OpenGLUtilities::CheckOpenGLError("glTextureParameteri MIN FILTER",
-                                      m_Logger);
+    OpenGLUtilities::CheckOpenGLError(
+      "glTextureParameteri MIN FILTER", "OpenGLTexture", m_Logger);
 
     glTextureParameteri(m_Id, GL_TEXTURE_MAG_FILTER, textureMagFilter);
-    OpenGLUtilities::CheckOpenGLError("glTextureParameteri MAG FILTER",
-                                      m_Logger);
+    OpenGLUtilities::CheckOpenGLError(
+      "glTextureParameteri MAG FILTER", "OpenGLTexture", m_Logger);
 
     switch (data->Type)
     {
@@ -341,11 +343,12 @@ namespace Dwarf
           m_Logger->LogInfo(Log("Creating 1D texture", "OpenGLTexture"));
           glm::ivec1 size = std::get<glm::ivec1>(data->Size);
           glTextureParameteri(m_Id, GL_TEXTURE_WRAP_S, textureWrapS);
-          OpenGLUtilities::CheckOpenGLError("glTextureParameteri WRAP S",
-                                            m_Logger);
+          OpenGLUtilities::CheckOpenGLError(
+            "glTextureParameteri WRAP S", "OpenGLTexture", m_Logger);
 
           glTextureStorage1D(m_Id, 1, internalFormat, size.x);
-          OpenGLUtilities::CheckOpenGLError("glTextureStorage1D", m_Logger);
+          OpenGLUtilities::CheckOpenGLError(
+            "glTextureStorage1D", "OpenGLTexture", m_Logger);
           if (data->ImageData)
           {
             glTextureSubImage1D(m_Id,
@@ -355,7 +358,8 @@ namespace Dwarf
                                 textureFormat,
                                 textureDataType,
                                 data->ImageData);
-            OpenGLUtilities::CheckOpenGLError("glTextureSubImage1D", m_Logger);
+            OpenGLUtilities::CheckOpenGLError(
+              "glTextureSubImage1D", "OpenGLTexture", m_Logger);
           }
           break;
         }
@@ -364,23 +368,24 @@ namespace Dwarf
           m_Logger->LogInfo(Log("Creating 2D texture", "OpenGLTexture"));
           glm::ivec2 size = std::get<glm::ivec2>(data->Size);
           glTextureParameteri(m_Id, GL_TEXTURE_WRAP_S, textureWrapS);
-          OpenGLUtilities::CheckOpenGLError("glTextureParameteri WRAP S",
-                                            m_Logger);
+          OpenGLUtilities::CheckOpenGLError(
+            "glTextureParameteri WRAP S", "OpenGLTexture", m_Logger);
           glTextureParameteri(m_Id, GL_TEXTURE_WRAP_T, textureWrapT);
-          OpenGLUtilities::CheckOpenGLError("glTextureParameteri WRAP T",
-                                            m_Logger);
+          OpenGLUtilities::CheckOpenGLError(
+            "glTextureParameteri WRAP T", "OpenGLTexture", m_Logger);
 
           if (data->Samples > 1)
           {
             glTextureStorage2DMultisample(
               m_Id, data->Samples, internalFormat, size.x, size.y, GL_FALSE);
-            OpenGLUtilities::CheckOpenGLError("glTextureStorage2DMultisample",
-                                              m_Logger);
+            OpenGLUtilities::CheckOpenGLError(
+              "glTextureStorage2DMultisample", "OpenGLTexture", m_Logger);
           }
           else
           {
             glTextureStorage2D(m_Id, 1, internalFormat, size.x, size.y);
-            OpenGLUtilities::CheckOpenGLError("glTextureStorage2D", m_Logger);
+            OpenGLUtilities::CheckOpenGLError(
+              "glTextureStorage2D", "OpenGLTexture", m_Logger);
           }
 
           if (data->ImageData)
@@ -394,7 +399,8 @@ namespace Dwarf
                                 textureFormat,
                                 textureDataType,
                                 data->ImageData);
-            OpenGLUtilities::CheckOpenGLError("glTextureSubImage2D", m_Logger);
+            OpenGLUtilities::CheckOpenGLError(
+              "glTextureSubImage2D", "OpenGLTexture", m_Logger);
           }
           break;
         }
@@ -437,7 +443,8 @@ namespace Dwarf
     }
 
     glGenerateTextureMipmap(m_Id);
-    OpenGLUtilities::CheckOpenGLError("glGenerateTextureMipmap", m_Logger);
+    OpenGLUtilities::CheckOpenGLError(
+      "glGenerateTextureMipmap", "OpenGLTexture", m_Logger);
 
     m_Logger->LogInfo(Log("OpenGL texture created", "OpenGLTexture"));
     m_Logger->LogInfo(
@@ -447,9 +454,11 @@ namespace Dwarf
   OpenGLTexture::~OpenGLTexture()
   {
     m_Logger->LogInfo(Log("Deleting OpenGL texture", "OpenGLTexture"));
-    OpenGLUtilities::CheckOpenGLError("Before deleting texture", m_Logger);
+    OpenGLUtilities::CheckOpenGLError(
+      "Before deleting texture", "OpenGLTexture", m_Logger);
     glDeleteTextures(1, &m_Id);
-    OpenGLUtilities::CheckOpenGLError("glDeleteTextures", m_Logger);
+    OpenGLUtilities::CheckOpenGLError(
+      "glDeleteTextures", "OpenGLTexture", m_Logger);
   }
 
   uintptr_t

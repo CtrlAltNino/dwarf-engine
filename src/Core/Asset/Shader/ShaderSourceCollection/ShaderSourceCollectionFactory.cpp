@@ -6,6 +6,8 @@
 #include <memory>
 #include <vector>
 
+#include "Platform/OpenGL/OpenGLUtilities.h"
+
 namespace Dwarf
 {
   ShaderSourceCollectionFactory::ShaderSourceCollectionFactory(
@@ -25,9 +27,9 @@ namespace Dwarf
     {
       case GraphicsApi::OpenGL:
         shaderSources.emplace_back(m_AssetDatabase.get()->Retrieve(
-          "data/engine/shaders/default/opengl/default.vert"));
+          OpenGLUtilities::GetDefaultShaderPath() / "default.vert"));
         shaderSources.emplace_back(m_AssetDatabase.get()->Retrieve(
-          "data/engine/shaders/default/opengl/default.frag"));
+          OpenGLUtilities::GetDefaultShaderPath() / "default.frag"));
         break;
       case GraphicsApi::Vulkan:
       case GraphicsApi::D3D12:
@@ -48,9 +50,9 @@ namespace Dwarf
     {
       case GraphicsApi::OpenGL:
         shaderSources.emplace_back(m_AssetDatabase.get()->Retrieve(
-          "data/engine/shaders/error/opengl/error.vert"));
+          OpenGLUtilities::GetErrorShaderPath() / "error.vert"));
         shaderSources.emplace_back(m_AssetDatabase.get()->Retrieve(
-          "data/engine/shaders/error/opengl/error.frag"));
+          OpenGLUtilities::GetErrorShaderPath() / "error.frag"));
         break;
       case GraphicsApi::Vulkan:
       case GraphicsApi::D3D12:
@@ -69,63 +71,63 @@ namespace Dwarf
     // Extracting shader sources from the JSON object.
     std::vector<std::unique_ptr<IAssetReference>> shaderSources = {};
 
-    if (serializedShaderSourceCollection.contains("vertexShader") &&
-        !serializedShaderSourceCollection["vertexShader"]
+    if (serializedShaderSourceCollection.contains("VertexShader") &&
+        !serializedShaderSourceCollection["VertexShader"]
            .get<std::string>()
            .empty())
     {
       UUID vertexShaderId =
-        UUID(serializedShaderSourceCollection["vertexShader"]);
+        UUID(serializedShaderSourceCollection["VertexShader"]);
 
       shaderSources.emplace_back(
         std::move(m_AssetDatabase.get()->Retrieve(vertexShaderId)));
     }
 
-    if (serializedShaderSourceCollection.contains("fragmentShader") &&
-        !serializedShaderSourceCollection["fragmentShader"]
+    if (serializedShaderSourceCollection.contains("FragmentShader") &&
+        !serializedShaderSourceCollection["FragmentShader"]
            .get<std::string>()
            .empty())
     {
       UUID fragmentShaderId =
-        UUID(serializedShaderSourceCollection["fragmentShader"]);
+        UUID(serializedShaderSourceCollection["FragmentShader"]);
 
       shaderSources.emplace_back(
         m_AssetDatabase.get()->Retrieve(fragmentShaderId));
     }
 
-    if (serializedShaderSourceCollection.contains("geometryShader") &&
-        !serializedShaderSourceCollection["geometryShader"]
+    if (serializedShaderSourceCollection.contains("GeometryShader") &&
+        !serializedShaderSourceCollection["GeometryShader"]
            .get<std::string>()
            .empty())
     {
       UUID geometryShaderId =
-        UUID(serializedShaderSourceCollection["geometryShader"]);
+        UUID(serializedShaderSourceCollection["GeometryShader"]);
 
       shaderSources.emplace_back(
         m_AssetDatabase.get()->Retrieve(geometryShaderId));
     }
 
     if (serializedShaderSourceCollection.contains(
-          "tessellationControlShader") &&
-        !serializedShaderSourceCollection["tessellationControlShader"]
+          "TessellationControlShader") &&
+        !serializedShaderSourceCollection["TessellationControlShader"]
            .get<std::string>()
            .empty())
     {
       UUID tessellationControlShaderId =
-        UUID(serializedShaderSourceCollection["tessellationControlShader"]);
+        UUID(serializedShaderSourceCollection["TessellationControlShader"]);
 
       shaderSources.emplace_back(
         m_AssetDatabase.get()->Retrieve(tessellationControlShaderId));
     }
 
     if (serializedShaderSourceCollection.contains(
-          "tessellationEvaluationShader") &&
-        !serializedShaderSourceCollection["tessellationEvaluationShader"]
+          "TessellationEvaluationShader") &&
+        !serializedShaderSourceCollection["TessellationEvaluationShader"]
            .get<std::string>()
            .empty())
     {
       UUID tessellationEvaluationShaderId =
-        UUID(serializedShaderSourceCollection["tessellationEvaluationShader"]);
+        UUID(serializedShaderSourceCollection["TessellationEvaluationShader"]);
 
       shaderSources.emplace_back(
         m_AssetDatabase.get()->Retrieve(tessellationEvaluationShaderId));

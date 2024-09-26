@@ -61,35 +61,50 @@ namespace Dwarf
           using T = std::decay_t<decltype(arg)>;
           if constexpr (std::is_same_v<T, bool>)
           {
-            serialized[pair.first] = arg;
+            serialized[pair.first]["type"] = "boolean";
+            serialized[pair.first]["value"] = arg;
           }
           else if constexpr (std::is_same_v<T, int>)
           {
-            serialized[pair.first] = arg;
+            serialized[pair.first]["type"] = "integer";
+            serialized[pair.first]["value"] = arg;
           }
           else if constexpr (std::is_same_v<T, unsigned int>)
           {
-            serialized[pair.first] = arg;
+            serialized[pair.first]["type"] = "unsigned integer";
+            serialized[pair.first]["value"] = arg;
           }
           else if constexpr (std::is_same_v<T, float>)
           {
-            serialized[pair.first] = arg;
+            serialized[pair.first]["type"] = "float";
+            serialized[pair.first]["value"] = arg;
           }
           else if constexpr (std::is_same_v<T, glm::vec2>)
           {
-            serialized[pair.first] = { arg.x, arg.y };
+            serialized[pair.first]["type"] = "vec2";
+            serialized[pair.first]["value"]["x"] = arg.x;
+            serialized[pair.first]["value"]["y"] = arg.y;
           }
           else if constexpr (std::is_same_v<T, glm::vec3>)
           {
-            serialized[pair.first] = { arg.x, arg.y, arg.z };
+            serialized[pair.first]["type"] = "vec3";
+            serialized[pair.first]["value"]["x"] = arg.x;
+            serialized[pair.first]["value"]["y"] = arg.y;
+            serialized[pair.first]["value"]["z"] = arg.z;
           }
           else if constexpr (std::is_same_v<T, glm::vec4>)
           {
-            serialized[pair.first] = { arg.x, arg.y, arg.z, arg.w };
+            serialized[pair.first]["type"] = "vec4";
+            serialized[pair.first]["value"]["x"] = arg.x;
+            serialized[pair.first]["value"]["y"] = arg.y;
+            serialized[pair.first]["value"]["z"] = arg.z;
+            serialized[pair.first]["value"]["w"] = arg.w;
           }
           else if constexpr (std::is_same_v<T, Texture2DAssetValue>)
           {
-            serialized[pair.first] = arg->ToString();
+            serialized[pair.first]["type"] = "tex2d";
+            serialized[pair.first]["value"] =
+              arg.has_value() ? arg->ToString() : "";
           }
         },
         pair.second);

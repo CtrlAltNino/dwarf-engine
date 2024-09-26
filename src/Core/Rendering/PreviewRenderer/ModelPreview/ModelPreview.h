@@ -19,7 +19,8 @@ namespace Dwarf
     ModelPreview(std::shared_ptr<IFramebufferFactory> framebufferFactory,
                  std::shared_ptr<ICameraFactory>      cameraFactory,
                  std::shared_ptr<IRendererApiFactory> rendererApiFactory,
-                 std::shared_ptr<IMaterialFactory>    materialFactory);
+                 std::shared_ptr<IMaterialFactory>    materialFactory,
+                 std::shared_ptr<IEditorStats>        editorStats);
 
     void
     RenderModelPreview(IAssetReference& modelAsset) override;

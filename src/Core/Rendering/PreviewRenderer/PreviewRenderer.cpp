@@ -5,10 +5,12 @@ namespace Dwarf
   PreviewRenderer::PreviewRenderer(
     std::shared_ptr<IFramebufferFactory> framebufferFactory,
     std::shared_ptr<ICamera>             camera,
-    std::shared_ptr<IRendererApiFactory> rendererApiFactory)
+    std::shared_ptr<IRendererApiFactory> rendererApiFactory,
+    std::shared_ptr<IEditorStats>        editorStats)
     : m_FramebufferFactory(framebufferFactory)
     , m_Camera(camera)
     , m_RendererApi(rendererApiFactory->Create())
+    , m_EditorStats(editorStats)
   {
   }
 
@@ -26,16 +28,37 @@ namespace Dwarf
   void
   PreviewRenderer::UpdateRotation(glm::vec2 deltaMousePos)
   {
-    m_Properties.ModelRotationTarget.x +=
-      deltaMousePos.y * m_Properties.RotationSpeed;
-    m_Properties.ModelRotationTarget.y +=
-      deltaMousePos.x * m_Properties.RotationSpeed;
+    // m_Properties.ModelRotationTarget.x += deltaMousePos.y *
+    //                                       m_Properties.RotationSpeed *
+    //                                       m_EditorStats->GetDeltaTime();
+    // m_Properties.ModelRotationTarget.y += deltaMousePos.x *
+    //                                       m_Properties.RotationSpeed *
+    //                                       m_EditorStats->GetDeltaTime();
 
-    m_Properties.ModelRotation.x = EaseInOutQuad(m_Properties.ModelRotation.x);
-    m_Properties.ModelRotation.y = EaseInOutQuad(m_Properties.ModelRotation.y);
+    // m_Properties.ModelRotation.x =
+    //   EaseInOutQuad(m_Properties.ModelRotationTarget.x);
+    // m_Properties.ModelRotation.y =
+    //   EaseInOutQuad(m_Properties.ModelRotationTarget.y);
 
+    // m_Properties.ModelRotationQuat =
+    //   glm::quat(glm::radians(m_Properties.ModelRotationTarget));
+    m_Properties.ModelRotationTarget = {
+      std::max(
+        -90.0f,
+        std::min(90.0f, m_Properties.ModelRotationTarget.x - deltaMousePos.y)),
+      fmodf(m_Properties.ModelRotationTarget.y + deltaMousePos.x, 360.0f),
+      0
+    };
+    m_Properties.ModelRotation =
+      InterpolateVectors(m_Properties.ModelRotation,
+                         m_Properties.ModelRotationTarget,
+                         m_Properties.RotationSpeed);
     m_Properties.ModelRotationQuat =
-      glm::quat(glm::radians(m_Properties.ModelRotation));
+      glm::rotate(glm::rotate(glm::quat({ 0, 0, 0 }),
+                              m_Properties.ModelRotation.x * DEG_2_RAD,
+                              { 1, 0, 0 }),
+                  m_Properties.ModelRotation.y * DEG_2_RAD,
+                  { 0, 1, 0 });
   }
 
   float

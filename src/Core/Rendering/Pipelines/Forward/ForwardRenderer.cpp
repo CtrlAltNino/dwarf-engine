@@ -47,8 +47,7 @@ namespace Dwarf
 
           IMaterial& material = materialAsset.GetMaterial();
 
-          if (material.GetShader() != nullptr &&
-              material.GetShader()->IsCompiled())
+          if (material.GetShader().IsCompiled())
           {
             m_RendererApi->RenderIndexed(model.Meshes().at(i),
                                          material,

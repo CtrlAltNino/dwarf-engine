@@ -61,7 +61,7 @@ namespace Dwarf
     GLint maxColorSamples, maxDepthSamples;
     glGetIntegerv(GL_MAX_SAMPLES, &maxColorSamples);
     glGetIntegerv(GL_MAX_DEPTH_TEXTURE_SAMPLES, &maxDepthSamples);
-    OpenGLUtilities::CheckOpenGLError("Init() End", m_Logger);
+    OpenGLUtilities::CheckOpenGLError("Init() End", "OpenGLContext", m_Logger);
   }
 
   void

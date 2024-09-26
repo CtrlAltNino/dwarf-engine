@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Logging/IDwarfLogger.h"
+#include <filesystem>
 #include <glad/glad.h>
 
 namespace Dwarf
@@ -10,6 +11,7 @@ namespace Dwarf
   public:
     static void
     CheckOpenGLError(const std::string&            functionName,
+                     const std::string&            scope,
                      std::shared_ptr<IDwarfLogger> logger)
     {
       GLenum errorCode;
@@ -28,10 +30,21 @@ namespace Dwarf
             error = "INVALID_FRAMEBUFFER_OPERATION";
             break;
         }
-        logger->LogError(
-          Log(fmt::format("OpenGL Error ({}): {}", error, functionName),
-              "OpenGLFramebuffer"));
+        logger->LogError(Log(
+          fmt::format("OpenGL Error ({}): {}", error, functionName), scope));
       }
+    }
+
+    static std::filesystem::path
+    GetDefaultShaderPath()
+    {
+      return std::filesystem::path("data/engine/shaders/default/opengl");
+    }
+
+    static std::filesystem::path
+    GetErrorShaderPath()
+    {
+      return std::filesystem::path("data/engine/shaders/error/opengl");
     }
   };
 }

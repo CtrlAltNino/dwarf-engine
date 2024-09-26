@@ -20,5 +20,8 @@ namespace Dwarf
 
     virtual void
     SetMeshType(MaterialPreviewMeshType meshType) = 0;
+
+    virtual MaterialPreviewMeshType
+    GetMeshType() const = 0;
   };
 }

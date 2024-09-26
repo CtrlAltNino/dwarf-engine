@@ -8,10 +8,12 @@ namespace Dwarf
     std::shared_ptr<IFramebufferFactory> framebufferFactory,
     std::shared_ptr<ICameraFactory>      cameraFactory,
     std::shared_ptr<IRendererApiFactory> rendererApiFactory,
-    std::shared_ptr<IMaterialFactory>    materialFactory)
+    std::shared_ptr<IMaterialFactory>    materialFactory,
+    std::shared_ptr<IEditorStats>        editorStats)
     : PreviewRenderer(framebufferFactory,
                       cameraFactory->Create(),
-                      rendererApiFactory)
+                      rendererApiFactory,
+                      editorStats)
     , m_MaterialFactory(materialFactory)
   {
     FramebufferSpecification spec = { 512, 512 };

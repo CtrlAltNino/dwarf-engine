@@ -21,16 +21,20 @@ namespace Dwarf
     UpdateMesh();
 
   public:
-    MaterialPreview(std::shared_ptr<IDwarfLogger> logger,
+    MaterialPreview(std::shared_ptr<IDwarfLogger>        logger,
                     std::shared_ptr<IFramebufferFactory> framebufferFactory,
                     std::shared_ptr<ICameraFactory>      cameraFactory,
                     std::shared_ptr<IRendererApiFactory> rendererApiFactory,
-                    std::shared_ptr<IMeshFactory>        meshFactory);
+                    std::shared_ptr<IMeshFactory>        meshFactory,
+                    std::shared_ptr<IEditorStats>        editorStats);
 
     void
     RenderMaterialPreview(IMaterial& materialAsset) override;
 
     void
     SetMeshType(MaterialPreviewMeshType meshType) override;
+
+    MaterialPreviewMeshType
+    GetMeshType() const override;
   };
 }

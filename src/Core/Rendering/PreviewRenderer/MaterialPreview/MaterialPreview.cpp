@@ -1,5 +1,6 @@
 #include "MaterialPreview.h"
 #include "Core/Rendering/Framebuffer/IFramebufferFactory.h"
+#include "Editor/Stats/IEditorStats.h"
 
 namespace Dwarf
 {
@@ -8,10 +9,12 @@ namespace Dwarf
     std::shared_ptr<IFramebufferFactory> framebufferFactory,
     std::shared_ptr<ICameraFactory>      cameraFactory,
     std::shared_ptr<IRendererApiFactory> rendererApiFactory,
-    std::shared_ptr<IMeshFactory>        meshFactory)
+    std::shared_ptr<IMeshFactory>        meshFactory,
+    std::shared_ptr<IEditorStats>        editorStats)
     : PreviewRenderer(framebufferFactory,
                       cameraFactory->Create(),
-                      rendererApiFactory)
+                      rendererApiFactory,
+                      editorStats)
     , m_Logger(logger)
     , m_MeshFactory(meshFactory)
   {
@@ -47,7 +50,7 @@ namespace Dwarf
                                0,
                                m_Framebuffer->GetSpecification().Width,
                                m_Framebuffer->GetSpecification().Height);
-    m_RendererApi->SetClearColor({ 1.0f, 0.0f, 0.0f, 1.0f });
+    m_RendererApi->SetClearColor({ 59 / 255.0f, 66 / 255.0f, 82 / 255.0f, 1 });
     m_RendererApi->Clear();
 
     m_RendererApi->RenderIndexed(m_Mesh,
@@ -72,7 +75,7 @@ namespace Dwarf
     switch (m_MeshType)
     {
       case MaterialPreviewMeshType::Sphere:
-        m_Mesh = m_MeshFactory->CreateUnitSphere(20, 20);
+        m_Mesh = m_MeshFactory->CreateUnitSphere(200, 200);
         break;
       case MaterialPreviewMeshType::Cube:
         m_Mesh = m_MeshFactory->CreateUnitCube();
@@ -82,5 +85,11 @@ namespace Dwarf
         break;
     }
     m_Mesh->SetupMesh();
+  }
+
+  MaterialPreviewMeshType
+  MaterialPreview::GetMeshType() const
+  {
+    return m_MeshType;
   }
 }

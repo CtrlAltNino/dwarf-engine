@@ -47,17 +47,22 @@ public:
 // Testing if the default shader is initialized correctly
 TEST(MaterialTests, DefaultShaderInitialization)
 {
-  auto            shader = std::make_shared<MockIShader>();
-  Dwarf::Material material(shader, Dwarf::MaterialProperties(), nullptr);
-  ASSERT_EQ(material.GetShader(), shader);
+  std::unique_ptr<MockIShader> shader = std::make_unique<MockIShader>();
+
+  // Expect a Compile call on the shader
+  EXPECT_CALL(*shader, Compile()).Times(1);
+
+  Dwarf::Material material(
+    std::move(shader), Dwarf::MaterialProperties(), nullptr);
 }
 
 // Testing if the default material properties are initialized correctly
 TEST(MaterialTests, DefaultMaterialProperties)
 {
-  auto            shader = std::make_shared<MockIShader>();
-  Dwarf::Material material(shader, Dwarf::MaterialProperties(), nullptr);
-  auto            properties = material.GetMaterialProperties();
+  auto            shader = std::make_unique<MockIShader>();
+  Dwarf::Material material(
+    std::move(shader), Dwarf::MaterialProperties(), nullptr);
+  auto properties = material.GetMaterialProperties();
   ASSERT_FALSE(properties.IsTransparent);
   ASSERT_FALSE(properties.IsDoubleSided);
   ASSERT_FALSE(properties.IsUnlit);
@@ -67,10 +72,10 @@ TEST(MaterialTests, DefaultMaterialProperties)
 // Testing if the custom material properties are initialized correctly
 TEST(MaterialTests, CustomMaterialProperties)
 {
-  auto                      shader = std::make_shared<MockIShader>();
+  auto                      shader = std::make_unique<MockIShader>();
   Dwarf::MaterialProperties sourceProperties(false, true, true, false);
-  Dwarf::Material           material(shader, sourceProperties, nullptr);
-  auto                      properties = material.GetMaterialProperties();
+  Dwarf::Material material(std::move(shader), sourceProperties, nullptr);
+  auto            properties = material.GetMaterialProperties();
   ASSERT_FALSE(properties.IsTransparent);
   ASSERT_TRUE(properties.IsDoubleSided);
   ASSERT_TRUE(properties.IsUnlit);
@@ -80,11 +85,12 @@ TEST(MaterialTests, CustomMaterialProperties)
 // Testing serialization of the material
 TEST(MaterialTests, MaterialSerialization)
 {
-  auto shader = std::make_shared<MockIShader>();
+  auto shader = std::make_unique<MockIShader>();
   auto shaderParameters = std::make_unique<MockIShaderParameterCollection>();
-  Dwarf::Material material(
-    shader, Dwarf::MaterialProperties(), std::move(shaderParameters));
-  auto serialized = material.Serialize();
+  Dwarf::Material material(std::move(shader),
+                           Dwarf::MaterialProperties(),
+                           std::move(shaderParameters));
+  auto            serialized = material.Serialize();
   ASSERT_FALSE(serialized.empty());
   ASSERT_TRUE(serialized.contains("Shader"));
   ASSERT_TRUE(serialized.contains("Properties"));

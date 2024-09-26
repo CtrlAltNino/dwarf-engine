@@ -1,5 +1,6 @@
 #include "MaterialAssetInspector.h"
 #include <imgui.h>
+#include <stdexcept>
 #include "Core/Rendering/PreviewRenderer/MaterialPreview/IMaterialPreview.h"
 #include "Platform/OpenGL/OpenGLShader.h"
 #include "UI/DwarfUI.h"
@@ -20,7 +21,7 @@ namespace Dwarf
     , m_InputManager(inputManager)
     , m_MaterialIO(materialIO)
   {
-    m_MaterialPreview->SetMeshType(MaterialPreviewMeshType::Cube);
+    m_MaterialPreview->SetMeshType(MaterialPreviewMeshType::Sphere);
   }
 
   struct RenderShaderParameterVisitor
@@ -175,6 +176,13 @@ namespace Dwarf
     ImGui::Checkbox("Transparent",
                     &material.GetMaterialProperties().IsTransparent);
 
+    ImGui::Checkbox("Double Sided",
+                    &material.GetMaterialProperties().IsDoubleSided);
+
+    ImGui::Checkbox("Unlit", &material.GetMaterialProperties().IsUnlit);
+
+    ImGui::Checkbox("Wireframe", &material.GetMaterialProperties().IsWireframe);
+
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + COMPONENT_PANEL_PADDING);
 
     if (ImGui::CollapsingHeader("Shader"))
@@ -183,28 +191,31 @@ namespace Dwarf
       switch (m_GraphicsApi)
       {
         using enum GraphicsApi;
+        case None: std::runtime_error("No graphics API selected"); break;
 #ifdef _WIN32
         case D3D12: break;
         case Metal: break;
         case OpenGL:
           {
-            auto shader = (OpenGLShader*)material.GetShader().get();
+            IShader&      shader = material.GetShader();
+            OpenGLShader& oglShader = dynamic_cast<OpenGLShader&>(shader);
             ImGui::TextWrapped("Vertex Shader");
             ImGui::SameLine();
             ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
+            std::cout << "VertexShaderAsset" << std::endl;
             DwarfUI::AssetInput<VertexShaderAsset>(
               m_AssetDatabase,
-              shader->GetVertexShaderAsset(),
+              oglShader.GetVertexShaderAsset(),
               "##vertexShader");
             ImGui::PopItemWidth();
 
-            if (!shader->GetShaderLogs().m_VertexShaderLog.empty())
+            if (!oglShader.GetShaderLogs().m_VertexShaderLog.empty())
             {
               ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
               if (ImGui::CollapsingHeader("Vertex Shader Error Log##vert"))
               {
                 ImGui::TextWrapped(
-                  "%s", shader->GetShaderLogs().m_VertexShaderLog.c_str());
+                  "%s", oglShader.GetShaderLogs().m_VertexShaderLog.c_str());
               }
               ImGui::PopItemWidth();
             }
@@ -214,18 +225,19 @@ namespace Dwarf
             ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
             DwarfUI::AssetInput<TessellationControlShaderAsset>(
               m_AssetDatabase,
-              shader->GetTessellationControlShaderAsset(),
+              oglShader.GetTessellationControlShaderAsset(),
               "##tessellationControlShader");
             ImGui::PopItemWidth();
 
-            if (!shader->GetShaderLogs().m_TessellationControlShaderLog.empty())
+            if (!oglShader.GetShaderLogs()
+                   .m_TessellationControlShaderLog.empty())
             {
               ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
               if (ImGui::CollapsingHeader(
                     "Tessellation Control Shader Error Log##tesc"))
               {
                 ImGui::TextWrapped("%s",
-                                   shader->GetShaderLogs()
+                                   oglShader.GetShaderLogs()
                                      .m_TessellationControlShaderLog.c_str());
               }
               ImGui::PopItemWidth();
@@ -236,11 +248,11 @@ namespace Dwarf
             ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
             DwarfUI::AssetInput<TessellationEvaluationShaderAsset>(
               m_AssetDatabase,
-              shader->GetTessellationEvaluationShaderAsset(),
+              oglShader.GetTessellationEvaluationShaderAsset(),
               "##tessellationEvaluationShader");
             ImGui::PopItemWidth();
 
-            if (!shader->GetShaderLogs()
+            if (!oglShader.GetShaderLogs()
                    .m_TessellationEvaluationShaderLog.empty())
             {
               ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
@@ -249,7 +261,7 @@ namespace Dwarf
               {
                 ImGui::TextWrapped(
                   "%s",
-                  shader->GetShaderLogs()
+                  oglShader.GetShaderLogs()
                     .m_TessellationEvaluationShaderLog.c_str());
               }
               ImGui::PopItemWidth();
@@ -260,17 +272,17 @@ namespace Dwarf
             ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
             DwarfUI::AssetInput<GeometryShaderAsset>(
               m_AssetDatabase,
-              shader->GetGeometryShaderAsset(),
+              oglShader.GetGeometryShaderAsset(),
               "##geometryShader");
             ImGui::PopItemWidth();
 
-            if (!shader->GetShaderLogs().m_GeometryShaderLog.empty())
+            if (!oglShader.GetShaderLogs().m_GeometryShaderLog.empty())
             {
               ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
               if (ImGui::CollapsingHeader("Geometry Shader Error Log##geom"))
               {
                 ImGui::TextWrapped(
-                  "%s", shader->GetShaderLogs().m_GeometryShaderLog.c_str());
+                  "%s", oglShader.GetShaderLogs().m_GeometryShaderLog.c_str());
               }
               ImGui::PopItemWidth();
             }
@@ -280,17 +292,17 @@ namespace Dwarf
             ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
             DwarfUI::AssetInput<FragmentShaderAsset>(
               m_AssetDatabase,
-              shader->GetFragmentShaderAsset(),
+              oglShader.GetFragmentShaderAsset(),
               "##fragmentShader");
             ImGui::PopItemWidth();
 
-            if (!shader->GetShaderLogs().m_FragmentShaderLog.empty())
+            if (!oglShader.GetShaderLogs().m_FragmentShaderLog.empty())
             {
               ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
               if (ImGui::CollapsingHeader("Fragment Shader Error Log##frag"))
               {
                 ImGui::TextWrapped(
-                  "%s", shader->GetShaderLogs().m_FragmentShaderLog.c_str());
+                  "%s", oglShader.GetShaderLogs().m_FragmentShaderLog.c_str());
               }
               ImGui::PopItemWidth();
             }
@@ -423,12 +435,12 @@ namespace Dwarf
 
       if (ImGui::Button("Compile", ImVec2(60, 25)))
       {
-        material.GetShader()->Compile();
+        material.GetShader().Compile();
       }
 
       ImGui::SameLine();
 
-      ImGui::TextWrapped(material.GetShader()->IsCompiled()
+      ImGui::TextWrapped(material.GetShader().IsCompiled()
                            ? "Successfully Compiled"
                            : "Couldn't compile");
       ImGui::Unindent(15.0f);
@@ -699,19 +711,38 @@ namespace Dwarf
     if (ImGui::Button("Generate parameters",
                       ImVec2(ImGui::GetContentRegionAvail().x, 50)))
     {
-      material.GenerateShaderParameters();
-      material.GetShader()->Compile();
+      if (material.GetShader().IsCompiled())
+      {
+        material.GenerateShaderParameters();
+      }
+      // material.GetShader().Compile();
     }
 
     ImGui::Text("Preview:");
 
-    // PreviewRenderer::Resize(
-    //   { ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().x
-    //   });
-    // PreviewRenderer::RenderMaterialPreview(asset);
     m_MaterialPreview->Resize(
       { ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().x });
     m_MaterialPreview->RenderMaterialPreview(material);
+
+    // Dropdown for mesh type
+    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
+    ImGui::Text("Mesh Type:");
+    ImGui::SameLine();
+    ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
+    const char* meshTypeNames[] = { "Sphere", "Cube", "Plane" };
+    if (ImGui::BeginCombo("##meshType",
+                          meshTypeNames[(int)m_MaterialPreview->GetMeshType()]))
+    {
+      for (int i = 0; i < 3; i++)
+      {
+        if (ImGui::Selectable(meshTypeNames[i],
+                              (int)m_MaterialPreview->GetMeshType() == i))
+        {
+          m_MaterialPreview->SetMeshType((MaterialPreviewMeshType)i);
+        }
+      }
+      ImGui::EndCombo();
+    }
 
     ImVec2 minRect = ImGui::GetCursorScreenPos();
     ImVec2 maxRect(
@@ -726,17 +757,20 @@ namespace Dwarf
             ImGui::GetCursorScreenPos().y + ImGui::GetContentRegionAvail().x }))
     {
       isRotating = true;
+      std::cout << "Start Rotating" << std::endl;
     }
 
     if (isRotating &&
         m_InputManager->GetMouseButtonUp(Dwarf::MOUSE_BUTTON::LEFT))
     {
       isRotating = false;
+      std::cout << "Stopped rotating" << std::endl;
     }
 
     if (isRotating)
     {
       // PreviewRenderer::UpdateRotation(InputManager::GetDeltaMousePos());
+      std::cout << "Rotating" << std::endl;
       m_MaterialPreview->UpdateRotation(m_InputManager->GetMouseDelta());
     }
 

@@ -58,8 +58,8 @@ namespace Dwarf
                                        m_ModelImporter->Import(path));
         break;
       case ASSET_TYPE::MATERIAL:
-        m_Registry.emplace<MaterialAsset>(m_AssetHandle,
-                                          m_MaterialIO->LoadMaterial(path));
+        m_Registry.emplace<MaterialAsset>(
+          m_AssetHandle, std::move(m_MaterialIO->LoadMaterial(path)));
         break;
       case ASSET_TYPE::UNKNOWN:
         m_Registry.emplace<UnknownAsset>(m_AssetHandle,

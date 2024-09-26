@@ -13,41 +13,75 @@ namespace Dwarf
       tjhandle jpegDecompressor = tjInitDecompress();
       if (!jpegDecompressor)
       {
-        // DWARF_CORE_ERROR("Failed to initialize JPEG decompressor");
+        std::cerr << "Failed to initialize JPEG decompressor: "
+                  << tjGetErrorStr() << std::endl;
         return nullptr;
       }
 
       std::ifstream file(path.string().c_str(), std::ios::binary);
       if (!file)
       {
-        // DWARF_CORE_ERROR("Failed to open file: {0}", path.string());
+        std::cerr << "Failed to open file: " << path.string() << std::endl;
         tjDestroy(jpegDecompressor);
         return nullptr;
       }
 
-      std::vector<unsigned char> jpegData(
+      std::vector<unsigned char> compressed(
         (std::istreambuf_iterator<char>(file)),
         std::istreambuf_iterator<char>());
-      file.close();
 
-      int width, height;
-      tjDecompressHeader2(jpegDecompressor,
-                          jpegData.data(),
-                          jpegData.size(),
-                          &width,
-                          &height,
-                          nullptr);
+      if (compressed.empty())
+      {
+        std::cerr << "Failed to read JPEG file: " << path.string() << std::endl;
+        tjDestroy(jpegDecompressor);
+        return nullptr;
+      }
 
-      unsigned char* imageData = new unsigned char[width * height * 3];
-      tjDecompress2(jpegDecompressor,
-                    jpegData.data(),
-                    jpegData.size(),
-                    imageData,
-                    width,
-                    0,
-                    height,
-                    TJPF_RGB,
-                    TJFLAG_FASTDCT);
+      // Check file size
+      std::cerr << "JPEG file size: " << compressed.size() << " bytes"
+                << std::endl;
+
+      // Print first few bytes of the JPEG data
+      std::cerr << "First few bytes of JPEG data: ";
+      for (size_t i = 0; i < std::min(compressed.size(), size_t(10)); ++i)
+      {
+        std::cerr << std::hex << static_cast<int>(compressed[i]) << " ";
+      }
+      std::cerr << std::dec << std::endl;
+
+      int jpegSubsamp = 0;
+      int width = 0;
+      int height = 0;
+      if (tjDecompressHeader2(jpegDecompressor,
+                              compressed.data(),
+                              compressed.size(),
+                              &width,
+                              &height,
+                              &jpegSubsamp) == -1)
+      {
+        std::cerr << "Failed to read JPEG header: " << tjGetErrorStr()
+                  << std::endl;
+        tjDestroy(jpegDecompressor);
+        return nullptr;
+      }
+
+      unsigned char* decompressed = new unsigned char[width * height * 3];
+      if (tjDecompress2(jpegDecompressor,
+                        compressed.data(),
+                        compressed.size(),
+                        decompressed,
+                        width,
+                        0,
+                        height,
+                        TJPF_RGB,
+                        TJFLAG_FASTDCT) == -1)
+      {
+        std::cerr << "Failed to decompress JPEG image: " << tjGetErrorStr()
+                  << std::endl;
+        delete[] decompressed;
+        tjDestroy(jpegDecompressor);
+        return nullptr;
+      }
 
       tjDestroy(jpegDecompressor);
 
@@ -57,8 +91,9 @@ namespace Dwarf
       textureData->Format = TextureFormat::RGB;
       textureData->Type = TextureType::TEXTURE_2D;
       textureData->DataType = TextureDataType::UNSIGNED_BYTE;
-      textureData->ImageData = imageData;
+      textureData->ImageData = decompressed;
 
+      file.close();
       return textureData;
     }
   };

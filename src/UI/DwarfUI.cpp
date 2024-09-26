@@ -1,25 +1,30 @@
 #include "DwarfUI.h"
+#include "Core/Asset/Database/AssetComponents.h"
+#include "Platform/OpenGL/OpenGLUtilities.h"
 
 namespace Dwarf
 {
   template<>
   void
   DwarfUI::AssetInput<VertexShaderAsset>(
-    std::shared_ptr<IAssetDatabase>                    assetDatabase,
-    std::optional<IAssetReference<VertexShaderAsset>>& asset,
-    const char*                                        imguiID)
+    std::shared_ptr<IAssetDatabase>                  assetDatabase,
+    std::optional<std::unique_ptr<IAssetReference>>& assetRef,
+    const char*                                      imguiID)
   {
+    // TODO: Make more efficient
     std::vector<entt::entity> availableAssets;
     int                       selectedAsset = -1;
     auto                      view = assetDatabase->GetRegistry()
                   .view<IDComponent, NameComponent, VertexShaderAsset>();
 
     int count = 0;
+    // Compile list of available assets
     for (auto entity : view)
     {
       availableAssets.push_back(entity);
-      if (asset &&
-          (view.template get<IDComponent>(entity).GetID() == asset->GetUID()))
+      // Check if assetRef is set, and if so, set selectedAsset
+      if (assetRef && (view.template get<IDComponent>(entity).GetID() ==
+                       assetRef.value()->GetUID()))
       {
         selectedAsset = count;
       }
@@ -27,20 +32,11 @@ namespace Dwarf
     }
 
     const char* preview =
-      (selectedAsset == -1)
-        ? "Default"
-        : view.template get<NameComponent>(availableAssets[selectedAsset])
-            .Name.c_str();
+      view.template get<NameComponent>(availableAssets[selectedAsset])
+        .Name.c_str();
 
     if (ImGui::BeginCombo(imguiID, preview))
     {
-      if (ImGui::Selectable(
-            "Default", selectedAsset == -1, 0, ImVec2(0, 16 + 10)))
-      {
-        selectedAsset = -1;
-        asset = std::nullopt;
-      }
-
       for (int i = 0; i < availableAssets.size(); i++)
       {
         const bool is_selected = (selectedAsset == i);
@@ -51,7 +47,7 @@ namespace Dwarf
               ImVec2(0, 16 + 10)))
         {
           selectedAsset = i;
-          asset = assetDatabase->Retrieve<VertexShaderAsset>(
+          assetRef = assetDatabase->Retrieve(
             view.template get<IDComponent>(availableAssets[i]).GetID());
         }
       }
@@ -63,21 +59,24 @@ namespace Dwarf
   template<>
   void
   DwarfUI::AssetInput<FragmentShaderAsset>(
-    std::shared_ptr<IAssetDatabase>                      assetDatabase,
-    std::optional<IAssetReference<FragmentShaderAsset>>& asset,
-    const char*                                          imguiID)
+    std::shared_ptr<IAssetDatabase>                  assetDatabase,
+    std::optional<std::unique_ptr<IAssetReference>>& assetRef,
+    const char*                                      imguiID)
   {
+    // TODO: Make more efficient
     std::vector<entt::entity> availableAssets;
     int                       selectedAsset = -1;
     auto                      view = assetDatabase->GetRegistry()
                   .view<IDComponent, NameComponent, FragmentShaderAsset>();
 
     int count = 0;
+    // Compile list of available assets
     for (auto entity : view)
     {
       availableAssets.push_back(entity);
-      if (asset &&
-          (view.template get<IDComponent>(entity).GetID() == asset->GetUID()))
+      // Check if assetRef is set, and if so, set selectedAsset
+      if (assetRef && (view.template get<IDComponent>(entity).GetID() ==
+                       assetRef.value()->GetUID()))
       {
         selectedAsset = count;
       }
@@ -85,20 +84,11 @@ namespace Dwarf
     }
 
     const char* preview =
-      (selectedAsset == -1)
-        ? "Default"
-        : view.template get<NameComponent>(availableAssets[selectedAsset])
-            .Name.c_str();
+      view.template get<NameComponent>(availableAssets[selectedAsset])
+        .Name.c_str();
 
     if (ImGui::BeginCombo(imguiID, preview))
     {
-      if (ImGui::Selectable(
-            "Default", selectedAsset == -1, 0, ImVec2(0, 16 + 10)))
-      {
-        selectedAsset = -1;
-        asset = std::nullopt;
-      }
-
       for (int i = 0; i < availableAssets.size(); i++)
       {
         const bool is_selected = (selectedAsset == i);
@@ -109,7 +99,7 @@ namespace Dwarf
               ImVec2(0, 16 + 10)))
         {
           selectedAsset = i;
-          asset = assetDatabase->Retrieve<FragmentShaderAsset>(
+          assetRef = assetDatabase->Retrieve(
             view.template get<IDComponent>(availableAssets[i]).GetID());
         }
       }

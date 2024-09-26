@@ -43,7 +43,7 @@ namespace Dwarf
       else if (serializedShaderParameterCollection[parameter.key()]["type"] ==
                "tex2d")
       {
-        if (int(parameter.value()["value"]) != -1)
+        if (parameter.value()["value"] != "")
         {
           parameterCollection->SetParameter(
             parameter.key(),

@@ -129,8 +129,8 @@ namespace Dwarf
   void
   OpenGLFramebuffer::Invalidate()
   {
-    OpenGLUtilities::CheckOpenGLError("Before OpenGLFramebuffer Invalidate",
-                                      m_Logger);
+    OpenGLUtilities::CheckOpenGLError(
+      "Before OpenGLFramebuffer Invalidate", "OpenGLFramebuffer", m_Logger);
     // If the renderer ID is not 0, delete the framebuffer and its attachments
     if (m_RendererID)
     {
@@ -142,11 +142,13 @@ namespace Dwarf
 
     // Create the framebuffer
     glCreateFramebuffers(1, &m_RendererID);
-    OpenGLUtilities::CheckOpenGLError("glCreateFramebuffer", m_Logger);
+    OpenGLUtilities::CheckOpenGLError(
+      "glCreateFramebuffer", "OpenGLFramebuffer", m_Logger);
 
     // Bind the framebuffer
     glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
-    OpenGLUtilities::CheckOpenGLError("glBindFramebuffer", m_Logger);
+    OpenGLUtilities::CheckOpenGLError(
+      "glBindFramebuffer", "OpenGLFramebuffer", m_Logger);
 
     // Create the color attachments
     if (m_ColorAttachmentSpecifications.size())
@@ -209,7 +211,9 @@ namespace Dwarf
           m_ColorAttachments[i]->GetTextureID(),
           0);
         OpenGLUtilities::CheckOpenGLError(
-          "glFramebufferTexture2D color attachment", m_Logger);
+          "glFramebufferTexture2D color attachment",
+          "OpenGLFramebuffer",
+          m_Logger);
       }
     }
 
@@ -255,7 +259,9 @@ namespace Dwarf
                              0);
 
       OpenGLUtilities::CheckOpenGLError(
-        "glFramebufferTexture2D depth attachment", m_Logger);
+        "glFramebufferTexture2D depth attachment",
+        "OpenGLFramebuffer",
+        m_Logger);
     }
 
     // Check if the framebuffer is complete
@@ -267,7 +273,8 @@ namespace Dwarf
                                         GL_COLOR_ATTACHMENT2,
                                         GL_COLOR_ATTACHMENT3 };
       glDrawBuffers(buffers.size(), buffers.data());
-      OpenGLUtilities::CheckOpenGLError("glDrawBuffers", m_Logger);
+      OpenGLUtilities::CheckOpenGLError(
+        "glDrawBuffers", "OpenGLFramebuffer", m_Logger);
     }
     else if (m_ColorAttachments.empty())
     {
@@ -289,27 +296,33 @@ namespace Dwarf
 
     // Unbind the framebuffer
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    OpenGLUtilities::CheckOpenGLError("glBindFramebuffer Invalidate() end", m_Logger);
+    OpenGLUtilities::CheckOpenGLError(
+      "glBindFramebuffer Invalidate() end", "OpenGLFramebuffer", m_Logger);
   }
 
   // @brief: Binds the framebuffer
   void
   OpenGLFramebuffer::Bind()
   {
-    OpenGLUtilities::CheckOpenGLError("Before Bind()", m_Logger);
+    OpenGLUtilities::CheckOpenGLError(
+      "Before Bind()", "OpenGLFramebuffer", m_Logger);
     glBindFramebuffer(GL_FRAMEBUFFER, m_RendererID);
-    OpenGLUtilities::CheckOpenGLError("glBindFramebuffer Bind()", m_Logger);
+    OpenGLUtilities::CheckOpenGLError(
+      "glBindFramebuffer Bind()", "OpenGLFramebuffer", m_Logger);
     glViewport(0, 0, m_Specification.Width, m_Specification.Height);
-    OpenGLUtilities::CheckOpenGLError("glViewport", m_Logger);
+    OpenGLUtilities::CheckOpenGLError(
+      "glViewport", "OpenGLFramebuffer", m_Logger);
   }
 
   // @brief: Unbinds the framebuffer
   void
   OpenGLFramebuffer::Unbind()
   {
-    OpenGLUtilities::CheckOpenGLError("Before Unbind()", m_Logger);
+    OpenGLUtilities::CheckOpenGLError(
+      "Before Unbind()", "OpenGLFramebuffer", m_Logger);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    OpenGLUtilities::CheckOpenGLError("glBindFramebuffer Unbind()", m_Logger);
+    OpenGLUtilities::CheckOpenGLError(
+      "glBindFramebuffer Unbind()", "OpenGLFramebuffer", m_Logger);
   }
 
   // @brief: Resizes the framebuffer
@@ -335,7 +348,8 @@ namespace Dwarf
     glm::ivec2 convertedCoords =
       Utils::ConvertToOpenGLCoords({ x, y }, m_Specification.Height);
     glReadBuffer(GL_COLOR_ATTACHMENT0);
-    OpenGLUtilities::CheckOpenGLError("glReadBuffer", m_Logger);
+    OpenGLUtilities::CheckOpenGLError(
+      "glReadBuffer", "OpenGLFramebuffer", m_Logger);
 
     GLuint pixel;
     glReadPixels(convertedCoords.x,
@@ -345,7 +359,8 @@ namespace Dwarf
                  GL_RED_INTEGER,
                  GL_UNSIGNED_INT,
                  &pixel);
-    OpenGLUtilities::CheckOpenGLError("glReadPixels", m_Logger);
+    OpenGLUtilities::CheckOpenGLError(
+      "glReadPixels", "OpenGLFramebuffer", m_Logger);
 
     Unbind();
     return pixel;
@@ -361,7 +376,8 @@ namespace Dwarf
                     Utils::DwarfFBTextureFormatToGL(spec.TextureFormat),
                     GL_INT,
                     &value);
-    OpenGLUtilities::CheckOpenGLError("glClearTexImage", m_Logger);
+    OpenGLUtilities::CheckOpenGLError(
+      "glClearTexImage", "OpenGLFramebuffer", m_Logger);
   }
 
   const std::optional<std::reference_wrapper<ITexture>>
@@ -386,7 +402,7 @@ namespace Dwarf
   {
     Bind();
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    OpenGLUtilities::CheckOpenGLError("glClear", m_Logger);
+    OpenGLUtilities::CheckOpenGLError("glClear", "OpenGLFramebuffer", m_Logger);
     Unbind();
   }
 
@@ -397,7 +413,7 @@ namespace Dwarf
     Bind();
     glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    OpenGLUtilities::CheckOpenGLError("glClear", m_Logger);
+    OpenGLUtilities::CheckOpenGLError("glClear", "OpenGLFramebuffer", m_Logger);
     Unbind();
   }
 
@@ -406,7 +422,8 @@ namespace Dwarf
   {
     m_Logger->LogInfo(Log("Deleting framebuffer", "OpenGLFramebuffer"));
     glDeleteFramebuffers(1, &m_RendererID);
-    OpenGLUtilities::CheckOpenGLError("glDeleteFramebuffers", m_Logger);
+    OpenGLUtilities::CheckOpenGLError(
+      "glDeleteFramebuffers", "OpenGLFramebuffer", m_Logger);
     m_ColorAttachments.clear();
     m_DepthAttachment = nullptr;
   }
