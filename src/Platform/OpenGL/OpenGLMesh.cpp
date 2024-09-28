@@ -15,6 +15,7 @@ namespace Dwarf
   {
     m_Logger->LogInfo(Log("OpenGLMesh created.", "OpenGLMesh"));
   }
+
   OpenGLMesh::~OpenGLMesh()
   {
     m_Logger->LogInfo(Log("OpenGLMesh destroyed.", "OpenGLMesh"));

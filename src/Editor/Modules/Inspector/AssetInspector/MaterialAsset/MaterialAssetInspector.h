@@ -6,7 +6,6 @@
 #include "Core/Rendering/Material/IO/IMaterialIO.h"
 #include "Core/Rendering/PreviewRenderer/MaterialPreview/IMaterialPreview.h"
 #include "Editor/Modules/Inspector/AssetInspector/MaterialAsset/IMaterialAssetInspector.h"
-#include "Editor/Selection/IEditorSelection.h"
 #include "Input/IInputManager.h"
 
 namespace Dwarf

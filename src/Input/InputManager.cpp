@@ -96,11 +96,17 @@ namespace Dwarf
     return m_CurrentMousePos;
   }
 
-  // void
-  // InputManager::SetDeltaMousePos(float x, float y)
-  // {
-  //   m_DeltaMousePos = { x, y };
-  // }
+  void
+  InputManager::SetDeltaMousePos(float x, float y)
+  {
+    m_DeltaMousePos = { x, y };
+  }
+
+  void
+  InputManager::SetDeltaMouseScroll(float x, float y)
+  {
+    m_DeltaScroll = { x, y };
+  }
 
   glm::vec2
   InputManager::GetMouseDelta() const
@@ -183,7 +189,10 @@ namespace Dwarf
     switch (event.wheel.type)
     {
       case SDL_MOUSEWHEEL:
-        m_DeltaScroll = { event.wheel.x, event.wheel.y };
+        {
+          std::cout << "Scrolling: " << event.wheel.y << std::endl;
+          m_DeltaScroll = { event.wheel.x, event.wheel.y };
+        }
         break;
 
       default: break;

@@ -11,6 +11,7 @@ namespace Dwarf
     , m_MeshFactory(meshFactory)
   {
   }
+
   // @brief Imports a model.
   /// @param path Path to the model.
   /// @return List of the imported meshes of a model.
@@ -30,37 +31,86 @@ namespace Dwarf
       return std::vector<std::unique_ptr<IMesh>>();
     }
 
-    return ModelImporter::ProcessNode(scene->mRootNode, scene);
-  }
+    aiMatrix4x4 modelTransform; // Create a matrix for transformation
 
-  std::vector<std::unique_ptr<IMesh>>
-  ModelImporter::ProcessNode(const aiNode* node, const aiScene* scene)
-  {
+    if (scene->mMetaData)
+    {
+      aiString upAxis;
+      scene->mMetaData->Get("UpAxis", upAxis);
+
+      std::cout << "Has metadata" << std::endl;
+      std::cout << "UpAxis: " << upAxis.C_Str() << std::endl;
+
+      if (upAxis == aiString("Z"))
+      {
+        // Rotate by -90 degrees on the X-axis if the model is Z-up
+        aiMatrix4x4::RotationX(-AI_MATH_PI / 2, modelTransform);
+      }
+      else if (upAxis == aiString("X"))
+      {
+        // Rotate accordingly for X-up models
+        aiMatrix4x4::RotationZ(AI_MATH_PI / 2, modelTransform);
+      }
+      // Apply modelTransform to the scene or node’s transform here.
+    }
+
+    // Print the rotation matrix of the root node
+    std::cout << "Root node rotation matrix: " << std::endl;
+    for (int i = 0; i < 4; i++)
+    {
+      for (int j = 0; j < 4; j++)
+      {
+        std::cout << scene->mRootNode->mTransformation[i][j] << " ";
+      }
+      std::cout << std::endl;
+    }
+
     std::vector<std::unique_ptr<IMesh>> meshes;
 
-    // process all the node's meshes (if any)
-    for (unsigned int i = 0; i < node->mNumMeshes; i++)
-    {
-      const aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
-      meshes.push_back(ProcessMesh(mesh, scene));
-    }
-    // then do the same for each of its children
-    for (unsigned int i = 0; i < node->mNumChildren; i++)
-    {
-      std::vector<std::unique_ptr<IMesh>> recursedMeshes =
-        ProcessNode(node->mChildren[i], scene);
-      // join the meshes
-      // TODO: Check if this is the correct way to join the meshes
-      meshes.insert(meshes.end(),
-                    std::make_move_iterator(recursedMeshes.begin()),
-                    std::make_move_iterator(recursedMeshes.end()));
-    }
+    // Rotate scene->mRootNode->mTransformation to match the coordinate system
+    // of the engine
+
+    /*aiMatrix4x4 mat;
+    aiMatrix4x4::RotationX(-glm::half_pi<float>(),
+                           mat); // Rotate 90 degrees around the X-axis
+
+    scene->mRootNode->mTransformation = mat *
+    scene->mRootNode->mTransformation;*/
+
+    ModelImporter::ProcessNode(scene->mRootNode, scene, meshes);
 
     return meshes;
   }
 
-  std::unique_ptr<IMesh>
-  ModelImporter::ProcessMesh(const aiMesh* mesh, const aiScene* scene)
+  void
+  ModelImporter::ProcessNode(const aiNode*                        node,
+                             const aiScene*                       scene,
+                             std::vector<std::unique_ptr<IMesh>>& meshes)
+  {
+    // process all the node's meshes (if any)
+    for (unsigned int i = 0; i < node->mNumMeshes; i++)
+    {
+      const aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
+      // meshes.push_back(ProcessMesh(mesh, scene));
+      ProcessMesh(mesh, scene, meshes);
+    }
+    // then do the same for each of its children
+    for (unsigned int i = 0; i < node->mNumChildren; i++)
+    {
+      // std::vector<std::unique_ptr<IMesh>> recursedMeshes =
+      ProcessNode(node->mChildren[i], scene, meshes);
+      // join the meshes
+      // TODO: Check if this is the correct way to join the meshes
+      // meshes.insert(meshes.end(),
+      //              std::make_move_iterator(recursedMeshes.begin()),
+      //              std::make_move_iterator(recursedMeshes.end()));
+    }
+  }
+
+  void
+  ModelImporter::ProcessMesh(const aiMesh*                        mesh,
+                             const aiScene*                       scene,
+                             std::vector<std::unique_ptr<IMesh>>& meshes)
   {
     std::vector<Vertex>       vertices;
     std::vector<unsigned int> indices;
@@ -104,6 +154,10 @@ namespace Dwarf
         indices.push_back(face.mIndices[j]);
     }
 
-    return m_MeshFactory->CreateMesh(vertices, indices, materialIndex);
+    meshes.push_back(
+      std::move(m_MeshFactory->CreateMesh(vertices, indices, materialIndex)));
+
+    // return std::move(
+    //   m_MeshFactory->CreateMesh(vertices, indices, materialIndex));
   }
 }

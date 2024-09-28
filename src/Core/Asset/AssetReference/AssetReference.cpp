@@ -54,8 +54,11 @@ namespace Dwarf
                                          m_TextureFactory->FromPath(path));
         break;
       case ASSET_TYPE::MODEL:
-        m_Registry.emplace<ModelAsset>(m_AssetHandle,
-                                       m_ModelImporter->Import(path));
+        {
+          ModelAsset& modelAsset = m_Registry.emplace<ModelAsset>(
+            m_AssetHandle, std::move(m_ModelImporter->Import(path)));
+          modelAsset.LoadIntoGpu();
+        }
         break;
       case ASSET_TYPE::MATERIAL:
         m_Registry.emplace<MaterialAsset>(
@@ -96,7 +99,6 @@ namespace Dwarf
       case ASSET_TYPE::HLSL_SHADER:
         m_Registry.emplace<HlslShaderAsset>(m_AssetHandle,
                                             m_FileHandler->ReadFile(path));
-        break;
         break;
     }
   }
@@ -153,6 +155,7 @@ namespace Dwarf
         return m_Registry.get<ComputeShaderAsset>(m_AssetHandle);
       case ASSET_TYPE::HLSL_SHADER:
         return m_Registry.get<HlslShaderAsset>(m_AssetHandle);
+      default: return m_Registry.get<UnknownAsset>(m_AssetHandle);
     }
   }
 

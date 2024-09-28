@@ -26,7 +26,8 @@ namespace Dwarf
   {
   protected:
     std::shared_ptr<IFramebufferFactory> m_FramebufferFactory;
-    std::shared_ptr<IFramebuffer>        m_Framebuffer;
+    std::shared_ptr<IFramebuffer>        m_RenderFramebuffer;
+    std::shared_ptr<IFramebuffer>        m_PreviewFramebuffer;
     std::shared_ptr<ICamera>             m_Camera;
     PreviewRendererProperties            m_Properties;
     std::shared_ptr<IRendererApi>        m_RendererApi;

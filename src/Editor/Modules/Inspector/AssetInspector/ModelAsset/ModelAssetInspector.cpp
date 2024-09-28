@@ -2,6 +2,7 @@
 #include "Core/Asset/AssetReference/IAssetReference.h"
 #include "Core/Asset/Database/AssetComponents.h"
 #include "UI/DwarfUI.h"
+#include <iostream>
 
 namespace Dwarf
 {
@@ -48,7 +49,6 @@ namespace Dwarf
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
     if (ImGui::Button("Reimport"))
     {
-      // m_AssetDatabase->Reimport(asset->GetPath());
       m_AssetReimporter->QueueReimport(asset.GetPath());
     }
 
@@ -73,10 +73,6 @@ namespace Dwarf
 
     ImGui::Text("Preview:");
 
-    // PreviewRenderer::Resize(
-    //   { ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().x
-    //   });
-    // PreviewRenderer::RenderModelPreview(asset);
     m_ModelPreview->Resize(
       { ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().x });
     m_ModelPreview->RenderModelPreview(asset);
@@ -97,12 +93,14 @@ namespace Dwarf
         isRotating = true;
       }
 
-      m_ModelPreview->SetScrollDistance(
+      float scrollDistance =
         std::max(0.0f,
                  std::min(1.0f,
-                          m_ModelPreview->GetScrollDistance() +
+                          m_ModelPreview->GetScrollDistance() -
                             m_InputManager->GetMouseScrollDelta().y *
-                              (float)m_EditorStats->GetDeltaTime() * 1.7f)));
+                              (float)m_EditorStats->GetDeltaTime() * 8.0f));
+
+      m_ModelPreview->SetScrollDistance(scrollDistance);
     }
 
     if (isRotating &&
@@ -116,11 +114,7 @@ namespace Dwarf
       m_ModelPreview->UpdateRotation(m_InputManager->GetMouseDelta());
     }
 
-    draw_list->AddImage(m_ModelPreview->GetTextureId(),
-                        minRect,
-                        maxRect,
-                        ImVec2(0, 1),
-                        ImVec2(1, 0));
+    draw_list->AddImage(m_ModelPreview->GetTextureId(), minRect, maxRect);
 
     draw_list->ChannelsSetCurrent(0);
 

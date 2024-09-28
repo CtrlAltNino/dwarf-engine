@@ -41,6 +41,11 @@ namespace Dwarf
     GetMouseScrollDelta() const = 0;
 
     virtual void
+    SetDeltaMousePos(float x, float y) = 0;
+    virtual void
+    SetDeltaMouseScroll(float x, float y) = 0;
+
+    virtual void
     ProcessKeyDown(SDL_Scancode keyCode) = 0;
     virtual void
     ProcessKeyUp(SDL_Scancode keyCode) = 0;

@@ -3,7 +3,7 @@
 
 namespace Dwarf
 {
-  WindowsWindow::WindowsWindow(const WindowProps&             props,
+  WindowsWindow::WindowsWindow(const WindowProps&       props,
                                IDwarfLogger&            logger,
                                IGraphicsContextFactory& contextFactory,
                                IImGuiLayerFactory&      imguiLayerFactory,
@@ -160,6 +160,10 @@ namespace Dwarf
   WindowsWindow::NewFrame()
   {
     SDL_Event event;
+
+    m_InputManager.SetDeltaMousePos(0, 0);
+    m_InputManager.SetDeltaMouseScroll(0, 0);
+
     while (SDL_PollEvent(&event))
     {
       m_ImGuiLayer->HandleSDLEvent(&event);

@@ -412,7 +412,7 @@ namespace Dwarf
         if (ImGui::MenuItem("Mesh"))
         {
           Entity newMesh = m_LoadedScene->GetScene().CreateEntity("New Mesh");
-          // newMesh.AddComponent<MeshRendererComponent>();
+          newMesh.AddComponent<MeshRendererComponent>();
           m_EditorSelection->SelectEntity(newMesh);
         }
 

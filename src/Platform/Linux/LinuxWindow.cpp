@@ -161,6 +161,10 @@ namespace Dwarf
   LinuxWindow::NewFrame()
   {
     SDL_Event event;
+
+    m_InputManager->SetDeltaMousePos(0, 0);
+    m_InputManager->SetDeltaMouseScroll(0, 0);
+
     while (SDL_PollEvent(&event))
     {
       m_ImGuiLayer->HandleSDLEvent(&event);

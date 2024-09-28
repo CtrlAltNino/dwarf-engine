@@ -12,10 +12,10 @@ namespace Dwarf
     /**
      * Saved position of the current mouse position
      */
-    glm::ivec2 m_CurrentMousePos;
-    glm::ivec2 m_LastMousePos;
-    glm::ivec2 m_DeltaMousePos;
-    glm::ivec2 m_DeltaScroll;
+    glm::ivec2 m_CurrentMousePos = glm::ivec2(0);
+    glm::ivec2 m_LastMousePos = glm::ivec2(0);
+    glm::ivec2 m_DeltaMousePos = glm::ivec2(0);
+    glm::ivec2 m_DeltaScroll = glm::ivec2(0);
 
     /**
      * State of the mouse buttons
@@ -91,6 +91,11 @@ namespace Dwarf
 
     glm::vec2
     GetMouseScrollDelta() const override;
+
+    void
+    SetDeltaMousePos(float x, float y) override;
+    void
+    SetDeltaMouseScroll(float x, float y) override;
 
     /**
      * Updates the states of the input states.

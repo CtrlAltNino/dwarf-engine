@@ -777,9 +777,6 @@ namespace Dwarf
     // std::cout << m_MaterialPreview->GetTextureId() << std::endl;
 
     draw_list->AddImage(m_MaterialPreview->GetTextureId(), minRect, maxRect);
-    ImGui::Image((ImTextureID)1,
-                 ImVec2(ImGui::GetContentRegionAvail().x,
-                        ImGui::GetContentRegionAvail().x));
 
     float endY = maxRect.y;
     ImGui::EndChild();

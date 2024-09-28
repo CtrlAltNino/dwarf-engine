@@ -260,10 +260,11 @@ namespace Dwarf
     glUniformMatrix4fv(pmID, 1, GL_FALSE, &projectionMatrix[0][0]);
     OpenGLUtilities::CheckOpenGLError(
       "glUniformMatrix4fv projectionMatrix", "OpenGLRendererApi", m_Logger);
+
     oglMesh->Bind();
 
     glDrawElements(
-      GL_TRIANGLES, oglMesh->GetIndices().size(), GL_UNSIGNED_INT, nullptr);
+      GL_TRIANGLES, oglMesh->GetIndices().size(), GL_UNSIGNED_INT, 0);
     OpenGLUtilities::CheckOpenGLError(
       "glDrawElements", "OpenGLRendererApi", m_Logger);
 

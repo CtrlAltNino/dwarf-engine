@@ -22,10 +22,14 @@ namespace Dwarf
     std::shared_ptr<IAssetMetadata> m_AssetMetadata;
     std::shared_ptr<IMeshFactory>   m_MeshFactory;
 
-    std::vector<std::unique_ptr<IMesh>>
-    ProcessNode(const aiNode* node, const aiScene* scene);
+    void
+    ProcessNode(const aiNode*                        node,
+                const aiScene*                       scene,
+                std::vector<std::unique_ptr<IMesh>>& meshes);
 
-    std::unique_ptr<IMesh>
-    ProcessMesh(const aiMesh* mesh, const aiScene* scene);
+    void
+    ProcessMesh(const aiMesh*                        mesh,
+                const aiScene*                       scene,
+                std::vector<std::unique_ptr<IMesh>>& meshes);
   };
 }

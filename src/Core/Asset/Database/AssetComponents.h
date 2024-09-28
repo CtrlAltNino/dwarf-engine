@@ -18,17 +18,15 @@ namespace Dwarf
   {
   private:
     /// @brief Vector of submeshes.
-    std::vector<std::unique_ptr<IMesh>> m_Meshes = {};
+    std::vector<std::unique_ptr<IMesh>> m_Meshes =
+      std::vector<std::unique_ptr<IMesh>>();
 
   public:
     ModelAsset() {}
-    ModelAsset(std::vector<std::unique_ptr<IMesh>> meshes)
+
+    ModelAsset(std::vector<std::unique_ptr<IMesh>>&& meshes)
       : m_Meshes(std::move(meshes))
     {
-      for (auto& mesh : m_Meshes)
-      {
-        mesh->SetupMesh();
-      }
     }
 
     // copy constructors using the clone function
@@ -55,6 +53,15 @@ namespace Dwarf
       }
 
       return *this;
+    }
+
+    void
+    LoadIntoGpu()
+    {
+      for (auto& mesh : m_Meshes)
+      {
+        mesh->SetupMesh();
+      }
     }
 
     std::vector<std::unique_ptr<IMesh>>&

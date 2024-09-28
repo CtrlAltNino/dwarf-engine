@@ -17,31 +17,25 @@ namespace Dwarf
   void
   PreviewRenderer::Resize(glm::ivec2 size)
   {
-    if ((m_Framebuffer->GetSpecification().Width != size.x) &&
-        (m_Framebuffer->GetSpecification().Height != size.y))
+    if ((m_RenderFramebuffer->GetSpecification().Width != size.x) &&
+        (m_RenderFramebuffer->GetSpecification().Height != size.y))
     {
       m_Camera->GetProperties().AspectRatio = (float)size.y / (float)size.x;
-      m_Framebuffer->Resize(size.x, size.y);
+      m_RenderFramebuffer->Resize(size.x, size.y);
+      m_PreviewFramebuffer->Resize(size.x, size.y);
     }
   }
 
   void
   PreviewRenderer::UpdateRotation(glm::vec2 deltaMousePos)
   {
-    // m_Properties.ModelRotationTarget.x += deltaMousePos.y *
-    //                                       m_Properties.RotationSpeed *
-    //                                       m_EditorStats->GetDeltaTime();
-    // m_Properties.ModelRotationTarget.y += deltaMousePos.x *
-    //                                       m_Properties.RotationSpeed *
-    //                                       m_EditorStats->GetDeltaTime();
-
-    // m_Properties.ModelRotation.x =
-    //   EaseInOutQuad(m_Properties.ModelRotationTarget.x);
-    // m_Properties.ModelRotation.y =
-    //   EaseInOutQuad(m_Properties.ModelRotationTarget.y);
-
-    // m_Properties.ModelRotationQuat =
-    //   glm::quat(glm::radians(m_Properties.ModelRotationTarget));
+    std::cout << "UpdateRotation: y" << m_Properties.ModelRotationTarget.y
+              << std::endl;
+    std::cout << "deltaMousePos.x" << deltaMousePos.x << std::endl;
+    std::cout << "Calculated new y: "
+              << fmodf(m_Properties.ModelRotationTarget.y + deltaMousePos.x,
+                       360.0f)
+              << std::endl;
     m_Properties.ModelRotationTarget = {
       std::max(
         -90.0f,
@@ -49,16 +43,6 @@ namespace Dwarf
       fmodf(m_Properties.ModelRotationTarget.y + deltaMousePos.x, 360.0f),
       0
     };
-    m_Properties.ModelRotation =
-      InterpolateVectors(m_Properties.ModelRotation,
-                         m_Properties.ModelRotationTarget,
-                         m_Properties.RotationSpeed);
-    m_Properties.ModelRotationQuat =
-      glm::rotate(glm::rotate(glm::quat({ 0, 0, 0 }),
-                              m_Properties.ModelRotation.x * DEG_2_RAD,
-                              { 1, 0, 0 }),
-                  m_Properties.ModelRotation.y * DEG_2_RAD,
-                  { 0, 1, 0 });
   }
 
   float
@@ -70,6 +54,7 @@ namespace Dwarf
   void
   PreviewRenderer::SetScrollDistance(float distance)
   {
+    std::cout << "SetScrollDistance: " << distance << std::endl;
     m_Properties.Distance = distance;
   }
 
@@ -78,9 +63,9 @@ namespace Dwarf
   {
     ImTextureID textureId = 0;
 
-    if (m_Framebuffer->GetColorAttachment(0))
+    if (m_PreviewFramebuffer->GetColorAttachment(0))
     {
-      textureId = (ImTextureID)m_Framebuffer->GetColorAttachment(0)
+      textureId = (ImTextureID)m_PreviewFramebuffer->GetColorAttachment(0)
                     .value()
                     .get()
                     .GetTextureID();

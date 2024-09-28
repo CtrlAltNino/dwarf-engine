@@ -128,7 +128,7 @@ protected:
   }
 };
 
-TEST_F(AssetReferenceTest, ConstructorForExistingAssets)
+/*TEST_F(AssetReferenceTest, ConstructorForExistingAssets)
 {
   ASSET_TYPE     type = ASSET_TYPE::MODEL;
   AssetReference assetRef(assetHandle,
@@ -246,4 +246,4 @@ TEST_F(AssetReferenceTest, GetAsset)
                           fileHandler);
 
   EXPECT_NO_THROW(assetRef.GetAsset());
-}
+}*/

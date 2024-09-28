@@ -18,13 +18,20 @@ namespace Dwarf
     , m_Logger(logger)
     , m_MeshFactory(meshFactory)
   {
-    FramebufferSpecification spec = { 512, 512 };
-    spec.Samples = 1;
-    spec.Attachments = FramebufferAttachmentSpecification{
+    FramebufferSpecification renderSpec = { 512, 512 };
+    renderSpec.Samples = 8;
+    renderSpec.Attachments = FramebufferAttachmentSpecification{
       FramebufferTextureSpecification{ FramebufferTextureFormat::RGBA8 },
       FramebufferTextureSpecification{ FramebufferTextureFormat::DEPTH }
     };
-    m_Framebuffer = m_FramebufferFactory->Create(spec);
+    m_RenderFramebuffer = m_FramebufferFactory->Create(renderSpec);
+
+    FramebufferSpecification previewSpec = { 512, 512 };
+    previewSpec.Samples = 1;
+    previewSpec.Attachments = FramebufferAttachmentSpecification{
+      FramebufferTextureSpecification{ FramebufferTextureFormat::RGBA8 }
+    };
+    m_PreviewFramebuffer = m_FramebufferFactory->Create(previewSpec);
 
     m_Camera->GetProperties().Fov = 50.0f;
     m_Camera->GetProperties().NearPlane = 0.1f;
@@ -45,11 +52,22 @@ namespace Dwarf
     m_Camera->GetProperties().NearPlane = 0.1f;
     m_Camera->GetProperties().FarPlane = 4;
 
-    m_Framebuffer->Bind();
+    m_Properties.ModelRotation =
+      InterpolateVectors(m_Properties.ModelRotation,
+                         m_Properties.ModelRotationTarget,
+                         m_Properties.RotationSpeed);
+    m_Properties.ModelRotationQuat =
+      glm::rotate(glm::rotate(glm::quat({ 0, 0, 0 }),
+                              m_Properties.ModelRotation.x * DEG_2_RAD,
+                              { 1, 0, 0 }),
+                  m_Properties.ModelRotation.y * DEG_2_RAD,
+                  { 0, 1, 0 });
+
+    m_RenderFramebuffer->Bind();
     m_RendererApi->SetViewport(0,
                                0,
-                               m_Framebuffer->GetSpecification().Width,
-                               m_Framebuffer->GetSpecification().Height);
+                               m_RenderFramebuffer->GetSpecification().Width,
+                               m_RenderFramebuffer->GetSpecification().Height);
     m_RendererApi->SetClearColor({ 59 / 255.0f, 66 / 255.0f, 82 / 255.0f, 1 });
     m_RendererApi->Clear();
 
@@ -58,7 +76,14 @@ namespace Dwarf
                                  glm::toMat4(m_Properties.ModelRotationQuat),
                                  m_Camera->GetViewMatrix(),
                                  m_Camera->GetProjectionMatrix());
-    m_Framebuffer->Unbind();
+    m_RenderFramebuffer->Unbind();
+
+    m_RendererApi->Blit(m_RenderFramebuffer,
+                        m_PreviewFramebuffer,
+                        0,
+                        0,
+                        m_RenderFramebuffer->GetSpecification().Width,
+                        m_RenderFramebuffer->GetSpecification().Height);
   }
 
   void
