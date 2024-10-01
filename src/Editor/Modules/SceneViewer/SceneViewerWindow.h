@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Core/Rendering/RendererApi/IRendererApi.h"
+#include "Core/Rendering/RendererApi/IRendererApiFactory.h"
 #include "pch.h"
 #include "Core/Rendering/Framebuffer/IFramebuffer.h"
 #include "Core/Rendering/Framebuffer/IFramebufferFactory.h"
@@ -15,6 +17,7 @@
 #include <glm/vec3.hpp>
 #include <imgui_internal.h>
 #include <ImGuizmo.h>
+#include <memory>
 
 #include "Editor/Modules/IGuiModule.h"
 #include "Core/Rendering/Pipelines/IRenderingPipelineFactory.h"
@@ -69,20 +72,22 @@ namespace Dwarf
     // Maintaining important dependencies
 
     /// @brief The render texture for this scene viewer.
-    std::shared_ptr<IFramebuffer> m_Framebuffer;
-    std::shared_ptr<IFramebuffer> m_IdBuffer;
-    std::shared_ptr<IFramebuffer> m_OutlineBuffer;
-    std::shared_ptr<IFramebuffer> m_PresentationBuffer;
-    std::shared_ptr<ICamera>      m_Camera;
+    std::shared_ptr<IFramebuffer>       m_Framebuffer;
+    std::shared_ptr<IFramebuffer>       m_IdBuffer;
+    std::shared_ptr<IFramebuffer>       m_OutlineBuffer;
+    std::shared_ptr<IFramebuffer>       m_PresentationBuffer;
+    std::shared_ptr<ICamera>            m_Camera;
+    std::shared_ptr<IRenderingPipeline> m_RenderingPipeline;
+    std::shared_ptr<IRendererApi>       m_RendererApi;
 
     std::shared_ptr<IInputManager>             m_InputManager;
     std::shared_ptr<IEditorStats>              m_EditorStats;
     std::shared_ptr<ILoadedScene>              m_LoadedScene;
     std::shared_ptr<IEditorSelection>          m_EditorSelection;
     std::shared_ptr<IRenderingPipelineFactory> m_RenderingPipelineFactory;
-    std::shared_ptr<IRenderingPipeline>        m_RenderingPipeline;
     std::shared_ptr<IFramebufferFactory>       m_FramebufferFactory;
     std::shared_ptr<ICameraFactory>            m_CameraFactory;
+    std::shared_ptr<IRendererApiFactory>       m_RendererApiFactory;
 
     /// @brief Calculates the cutout of the available resolution based on the
     /// given aspect ratio.
@@ -120,7 +125,8 @@ namespace Dwarf
       std::shared_ptr<IInputManager>             inputManager,
       std::shared_ptr<ILoadedScene>              loadedScene,
       std::shared_ptr<IEditorSelection>          editorSelection,
-      std::shared_ptr<IRenderingPipelineFactory> renderingPipelineFactory);
+      std::shared_ptr<IRenderingPipelineFactory> renderingPipelineFactory,
+      std::shared_ptr<IRendererApiFactory>       rendererApiFactory);
 
     SceneViewerWindow(
       SerializedModule                           serializedModule,
@@ -130,7 +136,8 @@ namespace Dwarf
       std::shared_ptr<IInputManager>             inputManager,
       std::shared_ptr<ILoadedScene>              loadedScene,
       std::shared_ptr<IEditorSelection>          editorSelection,
-      std::shared_ptr<IRenderingPipelineFactory> renderingPipelineFactory);
+      std::shared_ptr<IRenderingPipelineFactory> renderingPipelineFactory,
+      std::shared_ptr<IRendererApiFactory>       rendererApiFactory);
 
     void
     OnUpdate() override;

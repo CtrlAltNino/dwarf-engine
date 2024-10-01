@@ -29,13 +29,6 @@ namespace Dwarf
   void
   PreviewRenderer::UpdateRotation(glm::vec2 deltaMousePos)
   {
-    std::cout << "UpdateRotation: y" << m_Properties.ModelRotationTarget.y
-              << std::endl;
-    std::cout << "deltaMousePos.x" << deltaMousePos.x << std::endl;
-    std::cout << "Calculated new y: "
-              << fmodf(m_Properties.ModelRotationTarget.y + deltaMousePos.x,
-                       360.0f)
-              << std::endl;
     m_Properties.ModelRotationTarget = {
       std::max(
         -90.0f,

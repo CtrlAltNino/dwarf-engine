@@ -32,11 +32,11 @@ namespace Dwarf
                        uint32_t                        sourceAttachment,
                        uint32_t destinationAttachment) = 0;
     virtual void
-    Blit(std::shared_ptr<IFramebuffer> source,
-         std::shared_ptr<IFramebuffer> destination,
-         uint32_t                      sourceAttachment,
-         uint32_t                      destinationAttachment,
-         uint32_t                      width,
-         uint32_t                      height) = 0;
+    Blit(IFramebuffer& source,
+         IFramebuffer& destination,
+         uint32_t      sourceAttachment,
+         uint32_t      destinationAttachment,
+         uint32_t      width,
+         uint32_t      height) = 0;
   };
 }

@@ -32,8 +32,8 @@ namespace Dwarf
     virtual std::unique_ptr<IMaterial>
     CreateDefaultMaterial() const override;
 
-    // virtual std::unique_ptr<IMaterial>
-    // CreateMaterial(std::shared_ptr<IShader> shader) const override;
+    virtual std::unique_ptr<IMaterial>
+    CreateMaterial(std::unique_ptr<IShader> shader) const override;
 
     virtual std::unique_ptr<IMaterial>
     FromSerialized(const nlohmann::json& serializedMaterial) const override;

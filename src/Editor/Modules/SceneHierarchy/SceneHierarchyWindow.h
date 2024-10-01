@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Asset/Database/IAssetDatabase.h"
 #include "Editor/IEditor.h"
 #include "Editor/Selection/IEditorSelection.h"
 #include "Editor/LoadedScene/ILoadedScene.h"
@@ -17,6 +18,7 @@ namespace Dwarf
     std::shared_ptr<ILoadedScene>     m_LoadedScene;
     std::shared_ptr<IEditorSelection> m_EditorSelection;
     std::shared_ptr<IInputManager>    m_InputManager;
+    std::shared_ptr<IAssetDatabase>   m_AssetDatabase;
     /// @brief List of graph instruction. Used as a buffer, executed at the end
     /// of a frame.
     std::vector<std::shared_ptr<GraphInstruction>> m_Instructions;
@@ -35,11 +37,13 @@ namespace Dwarf
   public:
     SceneHierarchyWindow(std::shared_ptr<ILoadedScene>     loadedScene,
                          std::shared_ptr<IEditorSelection> editorSelection,
-                         std::shared_ptr<IInputManager>    inputManager);
+                         std::shared_ptr<IInputManager>    inputManager,
+                         std::shared_ptr<IAssetDatabase>   assetDatabase);
 
     SceneHierarchyWindow(std::shared_ptr<ILoadedScene>     loadedScene,
                          std::shared_ptr<IEditorSelection> editorSelection,
                          std::shared_ptr<IInputManager>    inputManager,
+                         std::shared_ptr<IAssetDatabase>   assetDatabase,
                          SerializedModule                  serializedModule);
 
     /// @brief Renders the module window.

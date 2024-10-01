@@ -14,4 +14,4 @@ namespace Dwarf
     virtual std::unique_ptr<SceneViewerWindow>
     Create(SerializedModule serializedModule) const = 0;
   };
-} // namespace Dwarf
+}

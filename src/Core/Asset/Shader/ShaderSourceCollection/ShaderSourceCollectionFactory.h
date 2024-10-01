@@ -28,6 +28,9 @@ namespace Dwarf
     CreateErrorShaderSourceCollection() override;
 
     std::unique_ptr<IShaderSourceCollection>
+    CreateIdShaderSourceCollection() override;
+
+    std::unique_ptr<IShaderSourceCollection>
     CreateShaderSourceCollection(
       const nlohmann::json& serializedShaderSourceCollection) override;
   };

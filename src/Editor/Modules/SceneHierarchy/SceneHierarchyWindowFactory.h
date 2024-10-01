@@ -11,12 +11,14 @@ namespace Dwarf
     std::shared_ptr<ILoadedScene>     m_LoadedScene;
     std::shared_ptr<IEditorSelection> m_EditorSelection;
     std::shared_ptr<IInputManager>    m_InputManager;
+    std::shared_ptr<IAssetDatabase>   m_AssetDatabase;
 
   public:
     BOOST_DI_INJECT(SceneHierarchyWindowFactory,
                     std::shared_ptr<ILoadedScene>     loadedScene,
                     std::shared_ptr<IEditorSelection> editorSelection,
-                    std::shared_ptr<IInputManager>    inputManager);
+                    std::shared_ptr<IInputManager>    inputManager,
+                    std::shared_ptr<IAssetDatabase>   assetDatabase);
     ~SceneHierarchyWindowFactory() override = default;
     std::unique_ptr<SceneHierarchyWindow>
     Create() const override;

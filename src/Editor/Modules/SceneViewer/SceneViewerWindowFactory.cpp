@@ -9,42 +9,43 @@ namespace Dwarf
     std::shared_ptr<IInputManager>             inputManager,
     std::shared_ptr<ILoadedScene>              loadedScene,
     std::shared_ptr<IEditorSelection>          editorSelection,
-    std::shared_ptr<IRenderingPipelineFactory> renderingPipelineFactory)
-    : m_InjectorFactory(
-        [&cameraFactory,
-         &framebufferFactory,
-         &editorStats,
-         &inputManager,
-         &loadedScene,
-         &editorSelection,
-         &renderingPipelineFactory]()
-        {
-          return boost::di::make_injector(
-            boost::di::bind<ICameraFactory>.to(cameraFactory),
-            boost::di::bind<IFramebufferFactory>.to(framebufferFactory),
-            boost::di::bind<IEditorStats>.to(editorStats),
-            boost::di::bind<IInputManager>.to(inputManager),
-            boost::di::bind<ILoadedScene>.to(loadedScene),
-            boost::di::bind<IEditorSelection>.to(editorSelection),
-            boost::di::bind<IRenderingPipelineFactory>.to(
-              renderingPipelineFactory));
-        })
+    std::shared_ptr<IRenderingPipelineFactory> renderingPipelineFactory,
+    std::shared_ptr<IRendererApiFactory>       rendererApiFactory)
+    : m_CameraFactory(cameraFactory)
+    , m_FramebufferFactory(framebufferFactory)
+    , m_EditorStats(editorStats)
+    , m_InputManager(inputManager)
+    , m_LoadedScene(loadedScene)
+    , m_EditorSelection(editorSelection)
+    , m_RenderingPipelineFactory(renderingPipelineFactory)
+    , m_RendererApiFactory(rendererApiFactory)
   {
   }
 
   std::unique_ptr<SceneViewerWindow>
   SceneViewerWindowFactory::Create() const
   {
-    return m_InjectorFactory().create<std::unique_ptr<SceneViewerWindow>>();
+    return std::make_unique<SceneViewerWindow>(m_CameraFactory,
+                                               m_FramebufferFactory,
+                                               m_EditorStats,
+                                               m_InputManager,
+                                               m_LoadedScene,
+                                               m_EditorSelection,
+                                               m_RenderingPipelineFactory,
+                                               m_RendererApiFactory);
   }
 
   std::unique_ptr<SceneViewerWindow>
   SceneViewerWindowFactory::Create(SerializedModule serializedModule) const
   {
-    auto injector = boost::di::make_injector(
-      m_InjectorFactory(),
-      boost::di::bind<SerializedModule>.to(serializedModule));
-
-    return injector.create<std::unique_ptr<SceneViewerWindow>>();
+    return std::make_unique<SceneViewerWindow>(serializedModule,
+                                               m_CameraFactory,
+                                               m_FramebufferFactory,
+                                               m_EditorStats,
+                                               m_InputManager,
+                                               m_LoadedScene,
+                                               m_EditorSelection,
+                                               m_RenderingPipelineFactory,
+                                               m_RendererApiFactory);
   }
 } // namespace Dwarf

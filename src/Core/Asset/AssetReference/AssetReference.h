@@ -71,5 +71,8 @@ namespace Dwarf
 
     ASSET_TYPE
     GetType() const override;
+
+    std::unique_ptr<IAssetReference>
+    Clone() const override;
   };
 }

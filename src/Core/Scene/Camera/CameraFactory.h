@@ -1,13 +1,17 @@
 #pragma once
 
 #include "ICameraFactory.h"
+#include "Input/IInputManager.h"
 
 namespace Dwarf
 {
   class CameraFactory : public ICameraFactory
   {
+  private:
+    std::shared_ptr<IInputManager> m_InputManager;
+
   public:
-    CameraFactory() = default;
+    CameraFactory(std::shared_ptr<IInputManager> inputManager);
     ~CameraFactory() override = default;
     std::shared_ptr<ICamera>
     Create() override;

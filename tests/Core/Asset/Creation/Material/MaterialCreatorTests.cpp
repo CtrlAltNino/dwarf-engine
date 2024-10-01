@@ -41,6 +41,10 @@ public:
               FromSerialized,
               (const nlohmann::json& serializedMaterial),
               (const, override));
+  MOCK_METHOD(std::unique_ptr<IMaterial>,
+              CreateMaterial,
+              (std::unique_ptr<IShader> shader),
+              (const, override));
 };
 
 class MockMaterialIO : public IMaterialIO

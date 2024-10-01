@@ -1,4 +1,6 @@
 #include "Editor/Modules/SceneViewer/SceneViewerWindow.h"
+#include "Core/Rendering/RendererApi/IRendererApiFactory.h"
+#include <iostream>
 
 #define MIN_RESOLUTION_WIDTH 10
 #define MIN_RESOLUTION_HEIGHT 10
@@ -14,7 +16,8 @@ namespace Dwarf
     std::shared_ptr<IInputManager>             inputManager,
     std::shared_ptr<ILoadedScene>              loadedScene,
     std::shared_ptr<IEditorSelection>          editorSelection,
-    std::shared_ptr<IRenderingPipelineFactory> renderingPipelineFactory)
+    std::shared_ptr<IRenderingPipelineFactory> renderingPipelineFactory,
+    std::shared_ptr<IRendererApiFactory>       rendererApiFactory)
     : IGuiModule(ModuleLabel("Scene Viewer"),
                  ModuleType(MODULE_TYPE::SCENE_VIEWER),
                  ModuleID(std::make_shared<UUID>()))
@@ -25,24 +28,58 @@ namespace Dwarf
     , m_LoadedScene(loadedScene)
     , m_EditorSelection(editorSelection)
     , m_RenderingPipelineFactory(renderingPipelineFactory)
+    , m_RendererApiFactory(rendererApiFactory)
   {
-    /*m_Framebuffer = Renderer::Get()->CreateFramebuffer({ 512, 512 });
-    m_IdBuffer = Renderer::Get()->CreateIDFramebuffer({ 512, 512 });
-    m_Camera = std::make_shared<Camera>();
+    // m_Framebuffer = Renderer::Get()->CreateFramebuffer({ 512, 512 });
+    // m_IdBuffer = Renderer::Get()->CreateIDFramebuffer({ 512, 512 });
+    // m_Camera = std::make_shared<Camera>();
 
-    FramebufferSpecification outlineSpec;
-    outlineSpec.Attachments = FramebufferAttachmentSpecification{
-      FramebufferTextureSpecification{ FramebufferTextureFormat::RGBA8 },
-      FramebufferTextureSpecification{ FramebufferTextureFormat::RGBA8 },
-      FramebufferTextureSpecification{ FramebufferTextureFormat::DEPTH }
-    };
-    m_OutlineBuffer = Framebuffer::Create(outlineSpec);
+    // FramebufferSpecification outlineSpec;
+    // outlineSpec.Attachments = FramebufferAttachmentSpecification{
+    //   FramebufferTextureSpecification{ FramebufferTextureFormat::RGBA8 },
+    //   FramebufferTextureSpecification{ FramebufferTextureFormat::RGBA8 },
+    //   FramebufferTextureSpecification{ FramebufferTextureFormat::DEPTH }
+    // };
+    // m_OutlineBuffer = Framebuffer::Create(outlineSpec);
 
+    // FramebufferSpecification presentationSpec;
+    // presentationSpec.Attachments = FramebufferAttachmentSpecification{
+    //   FramebufferTextureSpecification{ FramebufferTextureFormat::RGBA8 }
+    // };
+    // m_PresentationBuffer = Framebuffer::Create(presentationSpec);
+
+    m_RendererApi = m_RendererApiFactory->Create();
+
+    // Create rendering pipeline
+    m_RenderingPipeline =
+      m_RenderingPipelineFactory->Create(PipelineType::Forward);
+
+    // Setup rendering framebuffer according to the pipeline specification
+    m_Framebuffer =
+      m_FramebufferFactory->Create(m_RenderingPipeline->GetSpecification());
+
+    // Setup framebuffer for presentation
     FramebufferSpecification presentationSpec;
     presentationSpec.Attachments = FramebufferAttachmentSpecification{
       FramebufferTextureSpecification{ FramebufferTextureFormat::RGBA8 }
     };
-    m_PresentationBuffer = Framebuffer::Create(presentationSpec);*/
+
+    m_PresentationBuffer = m_FramebufferFactory->Create(presentationSpec);
+
+    // Setup frame buffer for rendering ids
+    FramebufferSpecification idSpec;
+    idSpec.Attachments = FramebufferAttachmentSpecification{
+      FramebufferTextureSpecification{ FramebufferTextureFormat::RED_INTEGER },
+      FramebufferTextureSpecification{ FramebufferTextureFormat::DEPTH }
+    };
+    idSpec.Width = 512;
+    idSpec.Height = 512;
+    m_IdBuffer = std::move(m_FramebufferFactory->Create(idSpec));
+
+    // Setup outline buffer
+
+    // Setup camera
+    m_Camera = m_CameraFactory->Create();
   }
 
   SceneViewerWindow::SceneViewerWindow(
@@ -53,7 +90,8 @@ namespace Dwarf
     std::shared_ptr<IInputManager>             inputManager,
     std::shared_ptr<ILoadedScene>              loadedScene,
     std::shared_ptr<IEditorSelection>          editorSelection,
-    std::shared_ptr<IRenderingPipelineFactory> renderingPipelineFactory)
+    std::shared_ptr<IRenderingPipelineFactory> renderingPipelineFactory,
+    std::shared_ptr<IRendererApiFactory>       rendererApiFactory)
     : IGuiModule(ModuleLabel("Scene Viewer"),
                  ModuleType(MODULE_TYPE::SCENE_VIEWER),
                  ModuleID(std::make_shared<UUID>(
@@ -65,6 +103,7 @@ namespace Dwarf
     , m_LoadedScene(loadedScene)
     , m_EditorSelection(editorSelection)
     , m_RenderingPipelineFactory(renderingPipelineFactory)
+    , m_RendererApiFactory(rendererApiFactory)
   {
     // FIX: Warning telling me this may be dangerous
     Deserialize(serializedModule.t);
@@ -91,7 +130,7 @@ namespace Dwarf
   void
   SceneViewerWindow::OnUpdate()
   {
-    /*if (m_Settings.CameraMovement &&
+    if (m_Settings.CameraMovement &&
         m_InputManager->GetMouseButton(MOUSE_BUTTON::RIGHT))
     {
       m_Camera->OnUpdate(m_EditorStats->GetDeltaTime());
@@ -99,21 +138,22 @@ namespace Dwarf
 
     // Render scene to the framebuffer with the camera
     m_Framebuffer->Bind();
-    Renderer::Get()->RenderScene(m_Editor->GetScene(),
-                                 m_Camera,
-                                 { m_Framebuffer->GetSpecification().Width,
-                                   m_Framebuffer->GetSpecification().Height },
-                                 m_Settings.RenderGrid);
+    m_RenderingPipeline->RenderScene(
+      m_LoadedScene->GetScene(),
+      *m_Camera,
+      { m_Framebuffer->GetSpecification().Width,
+        m_Framebuffer->GetSpecification().Height },
+      m_Settings.RenderGrid);
     m_Framebuffer->Unbind();
 
     m_IdBuffer->Bind();
-    Renderer::Get()->RenderIds(m_Editor->GetScene(),
-                               m_Camera,
-                               { m_IdBuffer->GetSpecification().Width,
-                                 m_IdBuffer->GetSpecification().Height });
+    m_RenderingPipeline->RenderIds(m_LoadedScene->GetScene(),
+                                   *m_Camera,
+                                   { m_IdBuffer->GetSpecification().Width,
+                                     m_IdBuffer->GetSpecification().Height });
     m_IdBuffer->Unbind();
 
-    if (m_Model->GetSelection().GetSelectedEntities().size() > 0)
+    /*if (m_Model->GetSelection().GetSelectedEntities().size() > 0)
     {
       m_OutlineBuffer->Clear(glm::vec4(0));
       m_OutlineBuffer->Bind();
@@ -133,21 +173,20 @@ namespace Dwarf
       //  ComputeShader::s_PropagationShader, m_OutlineBuffer, 0, 1);
 
       m_OutlineBuffer->Unbind();
-    }
+    }*/
 
-    Renderer::Get()->GetRendererApi()->Blit(
-      m_Framebuffer,
-      m_PresentationBuffer,
-      0,
-      0,
-      m_Framebuffer->GetSpecification().Width,
-      m_Framebuffer->GetSpecification().Height);*/
+    m_RendererApi->Blit(*m_Framebuffer,
+                        *m_PresentationBuffer,
+                        0,
+                        0,
+                        m_Framebuffer->GetSpecification().Width,
+                        m_Framebuffer->GetSpecification().Height);
   }
 
   void
   SceneViewerWindow::OnImGuiRender()
   {
-    /*ImGuiWindowFlags window_flags = 0;
+    ImGuiWindowFlags window_flags = 0;
     window_flags |= ImGuiWindowFlags_NoCollapse;
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(800, 500));
@@ -313,7 +352,7 @@ namespace Dwarf
     glm::vec2 minRectGlm = { minRect.x, minRect.y };
     glm::vec2 maxRectGlm = { maxRect.x, maxRect.y };
 
-    if (InputManager::GetMouseDown(MOUSE_BUTTON::LEFT) &&
+    if (m_InputManager->GetMouseButtonDown(MOUSE_BUTTON::LEFT) &&
         mousePos.x > minRectGlm.x && mousePos.x < maxRectGlm.x &&
         mousePos.y > minRectGlm.y && mousePos.y < maxRectGlm.y)
     {
@@ -336,23 +375,22 @@ namespace Dwarf
 
     if (!m_Settings.CameraMovement &&
         ImGui::IsMouseHoveringRect(hoverRectMin, hoverRectMax) &&
-        InputManager::GetMouse(MOUSE_BUTTON::RIGHT))
+        m_InputManager->GetMouseButton(MOUSE_BUTTON::RIGHT))
     {
       m_Settings.CameraMovement = true;
       ImGui::FocusWindow(ImGui::GetCurrentWindow());
     }
     else if (m_Settings.CameraMovement &&
-             !InputManager::GetMouse(MOUSE_BUTTON::RIGHT))
+             !m_InputManager->GetMouseButton(MOUSE_BUTTON::RIGHT))
     {
       m_Settings.CameraMovement = false;
     }
 
-    if (m_Model->GetSelection().GetSelectedEntities().size() == 1)
+    if (m_EditorSelection->GetSelectedEntities().size() == 1)
     {
       RenderGizmos(minRect, maxRect);
     }
     ImGui::End();
-    */
   }
 
   ImTextureID
@@ -497,7 +535,7 @@ namespace Dwarf
     {
       m_Framebuffer->Resize(desiredResolution.x, desiredResolution.y);
       m_IdBuffer->Resize(desiredResolution.x, desiredResolution.y);
-      m_OutlineBuffer->Resize(desiredResolution.x, desiredResolution.y);
+      // m_OutlineBuffer->Resize(desiredResolution.x, desiredResolution.y);
       m_PresentationBuffer->Resize(desiredResolution.x, desiredResolution.y);
       m_Camera->GetProperties().AspectRatio =
         (float)desiredResolution.x / (float)desiredResolution.y;

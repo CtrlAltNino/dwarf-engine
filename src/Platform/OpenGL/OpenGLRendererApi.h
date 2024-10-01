@@ -52,11 +52,11 @@ namespace Dwarf
                        uint32_t destinationAttachment) override;
 
     void
-    Blit(std::shared_ptr<IFramebuffer> source,
-         std::shared_ptr<IFramebuffer> destination,
-         uint32_t                      sourceAttachment,
-         uint32_t                      destinationAttachment,
-         uint32_t                      width,
-         uint32_t                      height) override;
+    Blit(IFramebuffer& source,
+         IFramebuffer& destination,
+         uint32_t      sourceAttachment,
+         uint32_t      destinationAttachment,
+         uint32_t      width,
+         uint32_t      height) override;
   };
 }

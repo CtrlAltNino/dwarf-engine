@@ -4,16 +4,21 @@
 
 namespace Dwarf
 {
+  CameraFactory::CameraFactory(std::shared_ptr<IInputManager> inputManager)
+    : m_InputManager(inputManager)
+  {
+  }
+
   std::shared_ptr<ICamera>
   CameraFactory::Create()
   {
-    return std::make_shared<Camera>(nullptr);
+    return std::make_shared<Camera>(m_InputManager);
   }
 
   std::shared_ptr<ICamera>
   CameraFactory::Create(glm::vec3 position, glm::vec3 rotation)
   {
-    return std::make_shared<Camera>(nullptr,
+    return std::make_shared<Camera>(m_InputManager,
                                     CameraProperties({ position, rotation }));
   }
 

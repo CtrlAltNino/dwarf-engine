@@ -48,7 +48,7 @@ namespace Dwarf
       case GraphicsApi::D3D12: break;
       case GraphicsApi::Metal: break;
       case GraphicsApi::OpenGL:
-        return std::make_shared<OpenGLFramebuffer>(
+        return std::make_unique<OpenGLFramebuffer>(
           m_Logger, spec, m_TextureFactory);
         break;
       case GraphicsApi::Vulkan: break;

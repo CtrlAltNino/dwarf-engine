@@ -315,8 +315,8 @@ namespace Dwarf
   public:
     MeshRendererComponent() = default;
     MeshRendererComponent(
-      std::unique_ptr<IAssetReference>&&             modelAsset,
-      std::vector<std::unique_ptr<IAssetReference>>& materials)
+      std::unique_ptr<IAssetReference>              modelAsset,
+      std::vector<std::unique_ptr<IAssetReference>> materials)
       : modelAsset(std::move(modelAsset))
     {
       materialAssets.clear();
@@ -324,6 +324,22 @@ namespace Dwarf
       for (auto& material : materialAssets)
       {
         materialAssets.push_back(std::move(material));
+      }
+    }
+
+    // Copy constructor
+    MeshRendererComponent(const MeshRendererComponent& other)
+    {
+      if (other.modelAsset)
+      {
+        // copy unique pointer
+        modelAsset = std::move(other.modelAsset->Clone());
+      }
+      materialAssets.clear();
+      materialAssets.reserve(other.materialAssets.size());
+      for (auto& material : other.materialAssets)
+      {
+        materialAssets.push_back(std::move(material->Clone()));
       }
     }
 

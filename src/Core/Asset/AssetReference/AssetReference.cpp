@@ -164,4 +164,16 @@ namespace Dwarf
   {
     return m_Type;
   }
+
+  std::unique_ptr<IAssetReference>
+  AssetReference::Clone() const
+  {
+    return std::make_unique<AssetReference>(m_AssetHandle,
+                                            m_Registry,
+                                            m_Type,
+                                            m_ModelImporter,
+                                            m_TextureFactory,
+                                            m_MaterialIO,
+                                            m_FileHandler);
+  }
 }

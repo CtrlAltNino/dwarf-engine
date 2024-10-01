@@ -3,6 +3,7 @@
 #include "OpenGLFramebuffer.h"
 
 #include "Platform/OpenGL/OpenGLRendererApi.h"
+#include "Platform/OpenGL/OpenGLFramebuffer.h"
 #include "Platform/OpenGL/OpenGLMesh.h"
 #include "Platform/OpenGL/OpenGLShader.h"
 #include "Platform/OpenGL/OpenGLComputeShader.h"
@@ -317,19 +318,19 @@ namespace Dwarf
   }
 
   void
-  OpenGLRendererApi::Blit(std::shared_ptr<IFramebuffer> source,
-                          std::shared_ptr<IFramebuffer> destination,
-                          uint32_t                      sourceAttachment,
-                          uint32_t                      destinationAttachment,
-                          uint32_t                      width,
-                          uint32_t                      height)
+  OpenGLRendererApi::Blit(IFramebuffer& source,
+                          IFramebuffer& destination,
+                          uint32_t      sourceAttachment,
+                          uint32_t      destinationAttachment,
+                          uint32_t      width,
+                          uint32_t      height)
   {
+    OpenGLFramebuffer* sourceFB = (OpenGLFramebuffer*)&source;
+    OpenGLFramebuffer* destinationFB = (OpenGLFramebuffer*)&destination;
     glBindFramebuffer(GL_READ_FRAMEBUFFER,
-                      std::dynamic_pointer_cast<OpenGLFramebuffer>(source)
-                        ->GetFramebufferRendererID());
+                      sourceFB->GetFramebufferRendererID());
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER,
-                      std::dynamic_pointer_cast<OpenGLFramebuffer>(destination)
-                        ->GetFramebufferRendererID());
+                      destinationFB->GetFramebufferRendererID());
     glBlitFramebuffer(0,
                       0,
                       width,

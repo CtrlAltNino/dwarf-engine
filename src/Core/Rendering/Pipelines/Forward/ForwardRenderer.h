@@ -1,22 +1,35 @@
 #pragma once
 
 #include "Core/Asset/Database/IAssetDatabase.h"
+#include "Core/Asset/Shader/ShaderSourceCollection/IShaderSourceCollectionFactory.h"
+#include "Core/Rendering/Framebuffer/IFramebuffer.h"
+#include "Core/Rendering/Material/IMaterialFactory.h"
 #include "Core/Rendering/Pipelines/IRenderingPipeline.h"
 #include "Core/Rendering/RendererApi/IRendererApi.h"
+#include "Core/Rendering/Shader/IShaderFactory.h"
+#include <memory>
 
 namespace Dwarf
 {
   class ForwardRenderer : public IRenderingPipeline
   {
   private:
-    std::shared_ptr<IRendererApi>   m_RendererApi;
-    std::shared_ptr<IAssetDatabase> m_AssetDatabase;
+    std::unique_ptr<IMaterial>        m_IdMaterial;
+    std::shared_ptr<IRendererApi>     m_RendererApi;
+    std::shared_ptr<IMaterialFactory> m_MaterialFactory;
+    std::shared_ptr<IShaderFactory>   m_ShaderFactory;
+    std::shared_ptr<IShaderSourceCollectionFactory>
+      m_ShaderSourceCollectionFactory;
 
     void
     Setup(glm::ivec2 viewportSize);
 
   public:
-    ForwardRenderer(std::shared_ptr<IRendererApi> rendererApi);
+    ForwardRenderer(std::shared_ptr<IRendererApi>     rendererApi,
+                    std::shared_ptr<IMaterialFactory> materialFactory,
+                    std::shared_ptr<IShaderFactory>   shaderFactory,
+                    std::shared_ptr<IShaderSourceCollectionFactory>
+                      shaderSourceCollectionFactory);
     ~ForwardRenderer();
 
     void
@@ -28,10 +41,12 @@ namespace Dwarf
                 ICamera&   camera,
                 glm::ivec2 viewportSize,
                 bool       renderGrid) override;
-    // void
-    // RenderIds(std::shared_ptr<Scene>  scene,
-    //           std::shared_ptr<Camera> camera,
-    //           glm::ivec2              viewportSize) override;
+
+    FramebufferSpecification
+    GetSpecification() override;
+
+    void
+    RenderIds(IScene& scene, ICamera& camera, glm::ivec2 viewportSize) override;
     // void
     // RenderModelPreview(std::shared_ptr<AssetReference<ModelAsset>>
     // modelAsset,

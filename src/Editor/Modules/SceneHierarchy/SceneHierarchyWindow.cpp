@@ -1,3 +1,4 @@
+#include "Core/Asset/AssetReference/IAssetReference.h"
 #include "pch.h"
 
 #include "Editor/Modules/SceneHierarchy/SceneHierarchyWindow.h"
@@ -11,13 +12,15 @@ namespace Dwarf
   SceneHierarchyWindow::SceneHierarchyWindow(
     std::shared_ptr<ILoadedScene>     loadedScene,
     std::shared_ptr<IEditorSelection> editorSelection,
-    std::shared_ptr<IInputManager>    inputManager)
+    std::shared_ptr<IInputManager>    inputManager,
+    std::shared_ptr<IAssetDatabase>   assetDatabase)
     : IGuiModule(ModuleLabel("Scene Hierarchy"),
                  ModuleType(MODULE_TYPE::SCENE_GRAPH),
                  ModuleID(std::make_shared<UUID>()))
     , m_LoadedScene(loadedScene)
     , m_EditorSelection(editorSelection)
     , m_InputManager(inputManager)
+    , m_AssetDatabase(assetDatabase)
   {
   }
 
@@ -25,6 +28,7 @@ namespace Dwarf
     std::shared_ptr<ILoadedScene>     loadedScene,
     std::shared_ptr<IEditorSelection> editorSelection,
     std::shared_ptr<IInputManager>    inputManager,
+    std::shared_ptr<IAssetDatabase>   assetDatabase,
     SerializedModule                  serializedModule)
     : IGuiModule(ModuleLabel("Performance"),
                  ModuleType(MODULE_TYPE::PERFORMANCE),
@@ -33,6 +37,7 @@ namespace Dwarf
     , m_LoadedScene(loadedScene)
     , m_EditorSelection(editorSelection)
     , m_InputManager(inputManager)
+    , m_AssetDatabase(assetDatabase)
   {
     Deserialize(serializedModule.t);
   }
@@ -107,7 +112,7 @@ namespace Dwarf
         if (ImGui::MenuItem("Mesh"))
         {
           Entity newMesh = scene.CreateEntity("New Mesh");
-          // newMesh.AddComponent<MeshRendererComponent>();
+          newMesh.AddComponent<MeshRendererComponent>();
           ent.AddChild(newMesh.GetHandle());
           m_EditorSelection->SelectEntity(newMesh);
         }
@@ -158,8 +163,24 @@ namespace Dwarf
 
             if (selectedEntity.HasComponent<MeshRendererComponent>())
             {
-              // copy.AddComponent<MeshRendererComponent>(
-              //   selectedEntity.GetComponent<MeshRendererComponent>());
+              std::unique_ptr<IAssetReference> copiedMesh =
+                selectedEntity.GetComponent<MeshRendererComponent>()
+                      .GetModelAsset() != nullptr
+                  ? m_AssetDatabase->Retrieve(selectedEntity.GetUID())
+                  : nullptr;
+
+              std::vector<std::unique_ptr<IAssetReference>> copiedMaterials;
+
+              for (auto& material :
+                   selectedEntity.GetComponent<MeshRendererComponent>()
+                     .GetMaterialAssets())
+              {
+                copiedMaterials.push_back(
+                  m_AssetDatabase->Retrieve(material->GetUID()));
+              }
+
+              copy.AddComponent<MeshRendererComponent>(MeshRendererComponent(
+                std::move(copiedMesh), std::move(copiedMaterials)));
             }
           }
         }
@@ -188,8 +209,24 @@ namespace Dwarf
 
           if (selectedEntity.HasComponent<MeshRendererComponent>())
           {
-            // copy.AddComponent<MeshRendererComponent>(
-            //   selectedEntity.GetComponent<MeshRendererComponent>());
+            std::unique_ptr<IAssetReference> copiedMesh =
+              selectedEntity.GetComponent<MeshRendererComponent>()
+                    .GetModelAsset() != nullptr
+                ? m_AssetDatabase->Retrieve(selectedEntity.GetUID())
+                : nullptr;
+
+            std::vector<std::unique_ptr<IAssetReference>> copiedMaterials;
+
+            for (auto& material :
+                 selectedEntity.GetComponent<MeshRendererComponent>()
+                   .GetMaterialAssets())
+            {
+              copiedMaterials.push_back(
+                m_AssetDatabase->Retrieve(material->GetUID()));
+            }
+
+            copy.AddComponent<MeshRendererComponent>(
+              std::move(copiedMesh), std::move(copiedMaterials));
           }
         }
       }
@@ -448,8 +485,24 @@ namespace Dwarf
 
           if (selectedEntity.HasComponent<MeshRendererComponent>())
           {
-            // copy.AddComponent<MeshRendererComponent>(
-            //   selectedEntity.GetComponent<MeshRendererComponent>());
+            std::unique_ptr<IAssetReference> copiedMesh =
+              selectedEntity.GetComponent<MeshRendererComponent>()
+                    .GetModelAsset() != nullptr
+                ? m_AssetDatabase->Retrieve(selectedEntity.GetUID())
+                : nullptr;
+
+            std::vector<std::unique_ptr<IAssetReference>> copiedMaterials;
+
+            for (auto& material :
+                 selectedEntity.GetComponent<MeshRendererComponent>()
+                   .GetMaterialAssets())
+            {
+              copiedMaterials.push_back(
+                m_AssetDatabase->Retrieve(material->GetUID()));
+            }
+
+            copy.AddComponent<MeshRendererComponent>(
+              std::move(copiedMesh), std::move(copiedMaterials));
           }
         }
       }

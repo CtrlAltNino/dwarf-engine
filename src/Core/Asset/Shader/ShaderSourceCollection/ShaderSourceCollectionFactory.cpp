@@ -65,6 +65,29 @@ namespace Dwarf
   }
 
   std::unique_ptr<IShaderSourceCollection>
+  ShaderSourceCollectionFactory::CreateIdShaderSourceCollection()
+  {
+    std::vector<std::unique_ptr<IAssetReference>> shaderSources = {};
+
+    switch (m_GraphicsApi)
+    {
+      case GraphicsApi::OpenGL:
+        shaderSources.emplace_back(m_AssetDatabase.get()->Retrieve(
+          OpenGLUtilities::GetIdShaderPath() / "id.vert"));
+        shaderSources.emplace_back(m_AssetDatabase.get()->Retrieve(
+          OpenGLUtilities::GetIdShaderPath() / "id.frag"));
+        break;
+      case GraphicsApi::Vulkan:
+      case GraphicsApi::D3D12:
+      case GraphicsApi::Metal:
+        throw std::runtime_error("Graphics API not supported yet.");
+      default: throw std::runtime_error("Unsupported Graphics API.");
+    }
+
+    return std::make_unique<ShaderSourceCollection>(shaderSources);
+  }
+
+  std::unique_ptr<IShaderSourceCollection>
   ShaderSourceCollectionFactory::CreateShaderSourceCollection(
     const nlohmann::json& serializedShaderSourceCollection)
   {

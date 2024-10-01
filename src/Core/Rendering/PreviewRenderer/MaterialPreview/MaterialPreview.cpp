@@ -78,8 +78,8 @@ namespace Dwarf
                                  m_Camera->GetProjectionMatrix());
     m_RenderFramebuffer->Unbind();
 
-    m_RendererApi->Blit(m_RenderFramebuffer,
-                        m_PreviewFramebuffer,
+    m_RendererApi->Blit(*m_RenderFramebuffer,
+                        *m_PreviewFramebuffer,
                         0,
                         0,
                         m_RenderFramebuffer->GetSpecification().Width,

@@ -194,8 +194,8 @@ namespace Dwarf
     ImGui::SameLine();
     ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
                          COMPONENT_PANEL_PADDING);
-    // DwarfUI::AssetInput<ModelAsset>(
-    //   m_AssetDatabase, component.GetModelAsset(), "##modelAsset");
+    DwarfUI::AssetInput<ModelAsset>(
+      m_AssetDatabase, component.GetModelAsset(), "##modelAsset");
     ImGui::PopItemWidth();
 
     if (component.GetModelAsset() != nullptr)

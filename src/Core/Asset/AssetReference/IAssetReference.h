@@ -28,5 +28,8 @@ namespace Dwarf
 
     virtual ASSET_TYPE
     GetType() const = 0;
+
+    virtual std::unique_ptr<IAssetReference>
+    Clone() const = 0;
   };
 }
