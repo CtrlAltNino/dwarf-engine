@@ -44,10 +44,10 @@ namespace Dwarf
 
   struct ProjectSettingsData
   {
-    std::string         ProjectName;
-    time_t              LastOpenedDate;
-    GraphicsApi         GraphicsApi;
-    std::optional<UUID> LastOpenedScene;
+    std::string         ProjectName = "";
+    time_t              LastOpenedDate = 0;
+    GraphicsApi         GraphicsApi = GraphicsApi::None;
+    std::optional<UUID> LastOpenedScene = std::nullopt;
     nlohmann::json      SerializedView;
   };
 

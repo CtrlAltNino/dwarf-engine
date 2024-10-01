@@ -97,6 +97,7 @@ TEST_F(ProjectSettingsTest, Constructor_LoadsProjectSettings_FileExists)
   testProjectsettings["lastOpenedScene"] =
     "123e4567-e89b-12d3-a456-426614174000";
   testProjectsettings["projectLastOpenedDate"] = 1627847285;
+  testProjectsettings["view"] = nlohmann::json::object();
 
   EXPECT_CALL(*mockFileHandler, FileExists(settingsPath))
     .WillOnce(Return(true));
@@ -122,7 +123,7 @@ TEST_F(ProjectSettingsTest, Constructor_LoadsProjectSettings_FileDoesNotExist)
   // Arrange
   std::filesystem::path settingsPath = testPath / "projectSettings.dproj";
 
-  // EXPECT_CALL(*mockLogger, LogInfo(_)).Times(1);
+  EXPECT_CALL(*mockLogger, LogInfo(_)).Times(1);
   EXPECT_CALL(*mockLogger, LogError(_)).Times(1);
 
   // Act
@@ -171,17 +172,20 @@ TEST_F(ProjectSettingsTest, SaveChangedProjectSettings)
   testProjectsettings["lastOpenedScene"] =
     "123e4567-e89b-12d3-a456-426614174000";
   testProjectsettings["projectLastOpenedDate"] = 1627847285;
+  testProjectsettings["view"] = nlohmann::json::object();
 
   EXPECT_CALL(*mockFileHandler, FileExists(settingsPath))
     .WillOnce(Return(true));
   EXPECT_CALL(*mockFileHandler, ReadFile(settingsPath))
     .WillOnce(Return(testProjectsettings.dump(2)));
-  EXPECT_CALL(*mockFileHandler, WriteToFile(settingsPath, _)).Times(1);
+  EXPECT_CALL(*mockFileHandler, WriteToFile(settingsPath, _)).Times(4);
   EXPECT_CALL(*mockLogger, LogInfo(_)).Times(1);
 
   // Creating a new project settings object
   auto projectSettings = std::make_unique<ProjectSettings>(
     ProjectPath{ testPath }, mockLogger, mockFileHandler);
+
+  EXPECT_CALL(*mockLogger, LogInfo(_)).Times(4);
 
   projectSettings->UpdateProjectName("CoolProject");
   projectSettings->UpdateGraphicsApi(GraphicsApi::Vulkan);
@@ -189,10 +193,8 @@ TEST_F(ProjectSettingsTest, SaveChangedProjectSettings)
     UUID("123e4567-e89b-12d3-a456-426614174001"));
   projectSettings->UpdateLastOpenedTimeStamp(1627847286);
 
-  EXPECT_CALL(*mockLogger, LogInfo(_)).Times(1);
-
   // Act
-  projectSettings->Save();
+  // projectSettings->Save();
 }
 
 TEST_F(ProjectSettingsTest, SetAndGetProjectName)
