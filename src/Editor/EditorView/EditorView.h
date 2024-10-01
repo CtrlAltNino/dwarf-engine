@@ -1,5 +1,6 @@
 #pragma once
 #include "Core/Scene/ISceneFactory.h"
+#include "Logging/IDwarfLogger.h"
 #include "pch.h"
 #include "Core/Asset/Creation/Material/IMaterialCreator.h"
 #include "Core/Base.h"
@@ -19,8 +20,8 @@ namespace Dwarf
   class EditorView : public IEditorView
   {
   private:
-    // std::unique_ptr<IEditorModel>& m_Model;
     GraphicsApi                        m_GraphicsApi;
+    std::shared_ptr<IDwarfLogger>      m_Logger;
     std::shared_ptr<IWindow>           m_Window;
     std::shared_ptr<IGuiModuleFactory> m_GuiModuleFactory;
     std::shared_ptr<ISceneIO>          m_SceneIO;
@@ -56,8 +57,8 @@ namespace Dwarf
 
   public:
     explicit EditorView(GraphicsApi                        graphicsApi,
+                        std::shared_ptr<IDwarfLogger>      logger,
                         std::shared_ptr<IProjectSettings>  projectSettings,
-                        SerializedView                     serializedView,
                         std::shared_ptr<ILoadedScene>      loadedScene,
                         std::shared_ptr<IWindow>           window,
                         std::shared_ptr<IGuiModuleFactory> guiModuleFactory,
@@ -66,10 +67,6 @@ namespace Dwarf
                         std::shared_ptr<IAssetDatabase>    assetDatabase,
                         std::shared_ptr<IMaterialCreator>  materialCreator,
                         std::shared_ptr<IEditorStats>      editorStats);
-
-    /// @brief Initializes the view.
-    // void
-    // Init();
 
     /// @brief Executes all pre frame tasks.
     void

@@ -89,7 +89,12 @@ namespace Dwarf
   nlohmann::json
   PerformanceWindow::Serialize() const
   {
-    // TODO: Implement serialization
-    return "";
+    nlohmann::json serializedModule;
+
+    serializedModule["id"] = GetUuid()->ToString();
+    serializedModule["type"] = static_cast<int>(GetModuleType());
+    serializedModule["label"] = GetModuleName();
+
+    return serializedModule;
   }
 }

@@ -101,8 +101,5 @@ namespace Dwarf
     /// @brief Renders the module window.
     virtual void
     OnImGuiRender() = 0;
-
-    virtual void
-    Deserialize(nlohmann::json moduleData) = 0;
   };
 }

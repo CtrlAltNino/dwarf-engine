@@ -33,7 +33,8 @@ namespace Dwarf
 
     if (projectSettings.contains(PROJECT_NAME_KEY))
     {
-      m_Name = projectSettings.at(PROJECT_NAME_KEY).get<std::string>();
+      m_Data.ProjectName =
+        projectSettings.at(PROJECT_NAME_KEY).get<std::string>();
     }
     else
     {
@@ -44,7 +45,8 @@ namespace Dwarf
 
     if (projectSettings.contains(GRAPHICS_API_KEY))
     {
-      m_GraphicsApi = projectSettings.at(GRAPHICS_API_KEY).get<GraphicsApi>();
+      m_Data.GraphicsApi =
+        projectSettings.at(GRAPHICS_API_KEY).get<GraphicsApi>();
     }
     else
     {
@@ -54,9 +56,10 @@ namespace Dwarf
       m_LoadStatus.addMissingField(GRAPHICS_API_KEY);
     }
 
-    if (projectSettings.contains(LAST_OPENED_SCENE_KEY))
+    if (projectSettings.contains(LAST_OPENED_SCENE_KEY) &&
+        !projectSettings.at(LAST_OPENED_SCENE_KEY).get<std::string>().empty())
     {
-      m_LastOpenedScene =
+      m_Data.LastOpenedScene =
         UUID(projectSettings.at(LAST_OPENED_SCENE_KEY).get<std::string>());
     }
     else
@@ -64,12 +67,12 @@ namespace Dwarf
       m_Logger->LogError(
         Log(std::format("Missing required field: %s", LAST_OPENED_SCENE_KEY),
             "ProjectSettings"));
-      m_LastOpenedScene = std::nullopt; // or some default value
+      m_Data.LastOpenedScene = std::nullopt; // or some default value
     }
 
     if (projectSettings.contains(PROJECT_LAST_OPENED_DATE_KEY))
     {
-      m_LastOpenedTimeStamp =
+      m_Data.LastOpenedDate =
         projectSettings.at(PROJECT_LAST_OPENED_DATE_KEY).get<time_t>();
     }
     else
@@ -77,7 +80,20 @@ namespace Dwarf
       m_Logger->LogError(Log(
         std::format("Missing required field: %s", PROJECT_LAST_OPENED_DATE_KEY),
         "ProjectSettings"));
-      m_LastOpenedTimeStamp = 0; // or some default value
+      m_Data.LastOpenedDate = 0; // or some default value
+    }
+
+    // Check if layout key is present, if so, load into m_Data.Layout
+    if (projectSettings.contains(VIEW_KEY))
+    {
+      m_Data.SerializedView = projectSettings.at(VIEW_KEY);
+    }
+    else
+    {
+      m_Logger->LogError(
+        Log(std::format("Missing required field: %s", VIEW_KEY),
+            "ProjectSettings"));
+      m_LoadStatus.addMissingField(VIEW_KEY);
     }
   }
 
@@ -86,60 +102,79 @@ namespace Dwarf
   {
     m_Logger->LogInfo(Log("Saving project settings...", "ProjectSettings"));
     nlohmann::json projectSettings;
-    projectSettings[PROJECT_NAME_KEY] = m_Name;
-    projectSettings[GRAPHICS_API_KEY] = m_GraphicsApi;
+    projectSettings[PROJECT_NAME_KEY] = m_Data.ProjectName;
+    projectSettings[GRAPHICS_API_KEY] = m_Data.GraphicsApi;
     projectSettings[LAST_OPENED_SCENE_KEY] =
-      m_LastOpenedScene.has_value() ? m_LastOpenedScene->ToString() : "";
-    projectSettings[PROJECT_LAST_OPENED_DATE_KEY] = m_LastOpenedTimeStamp;
+      m_Data.LastOpenedScene.has_value() ? m_Data.LastOpenedScene->ToString()
+                                         : "";
+    projectSettings[PROJECT_LAST_OPENED_DATE_KEY] = m_Data.LastOpenedDate;
+    projectSettings[VIEW_KEY] = m_Data.SerializedView;
 
     m_FileHandler->WriteToFile(m_ProjectSettingsPath, projectSettings.dump(2));
   }
 
   void
-  ProjectSettings::SetProjectName(const std::string& projectName)
+  ProjectSettings::UpdateProjectName(const std::string& projectName)
   {
-    m_Name = projectName;
+    m_Data.ProjectName = projectName;
+    Save();
   }
 
   std::string
   ProjectSettings::GetProjectName() const
   {
-    return m_Name;
+    return m_Data.ProjectName;
   }
 
   void
-  ProjectSettings::SetGraphicsApi(const GraphicsApi& graphicsAPI)
+  ProjectSettings::UpdateGraphicsApi(const GraphicsApi& graphicsAPI)
   {
-    m_GraphicsApi = graphicsAPI;
+    m_Data.GraphicsApi = graphicsAPI;
+    Save();
   }
 
   const GraphicsApi&
   ProjectSettings::GetGraphicsApi() const
   {
-    return m_GraphicsApi;
+    return m_Data.GraphicsApi;
   }
 
   void
-  ProjectSettings::SetLastOpenedScene(const UUID& sceneGUID)
+  ProjectSettings::UpdateLastOpenedScene(const UUID& sceneGUID)
   {
-    m_LastOpenedScene = sceneGUID;
+    m_Data.LastOpenedScene = sceneGUID;
+    Save();
   }
 
   const std::optional<UUID>&
   ProjectSettings::GetLastOpenedScene() const
   {
-    return m_LastOpenedScene;
+    return m_Data.LastOpenedScene;
   }
 
   void
-  ProjectSettings::SetLastOpenedTimeStamp(const time_t& timeStamp)
+  ProjectSettings::UpdateLastOpenedTimeStamp(const time_t& timeStamp)
   {
-    m_LastOpenedTimeStamp = timeStamp;
+    m_Data.LastOpenedDate = timeStamp;
+    Save();
   }
 
   const time_t&
   ProjectSettings::GetLastOpenedTimeStamp() const
   {
-    return m_LastOpenedTimeStamp;
+    return m_Data.LastOpenedDate;
+  }
+
+  void
+  ProjectSettings::UpdateSerializedView(const nlohmann::json& serializedView)
+  {
+    m_Data.SerializedView = serializedView;
+    Save();
+  }
+
+  nlohmann::json
+  ProjectSettings::GetSerializedView() const
+  {
+    return m_Data.SerializedView;
   }
 }

@@ -15,8 +15,8 @@
 namespace Dwarf
 {
   EditorView::EditorView(GraphicsApi                        graphicsApi,
+                         std::shared_ptr<IDwarfLogger>      logger,
                          std::shared_ptr<IProjectSettings>  projectSettings,
-                         SerializedView                     serializedView,
                          std::shared_ptr<ILoadedScene>      loadedScene,
                          std::shared_ptr<IWindow>           window,
                          std::shared_ptr<IGuiModuleFactory> guiModuleFactory,
@@ -26,6 +26,7 @@ namespace Dwarf
                          std::shared_ptr<IMaterialCreator>  materialCreator,
                          std::shared_ptr<IEditorStats>      editorStats)
     : m_GraphicsApi(graphicsApi)
+    , m_Logger(logger)
     , m_ProjectSettings(projectSettings)
     , m_LoadedScene(loadedScene)
     , m_Window(window)
@@ -36,16 +37,23 @@ namespace Dwarf
     , m_MaterialCreator(materialCreator)
     , m_EditorStats(editorStats)
   {
-    // using enum MODULE_TYPE;
-    // AddWindow(SCENE_GRAPH);
-    // AddWindow(INSPECTOR);
-    // AddWindow(ASSET_BROWSER);
-    // AddWindow(SCENE_VIEWER);
-    if (serializedView.t)
+    m_Logger->LogInfo(Log("Creating EditorView", "EditorView"));
+
+    nlohmann::json serializedView = m_ProjectSettings->GetSerializedView();
+    m_Logger->LogInfo(
+      Log(fmt::format("Deserializing EditorView:\n{}", serializedView.dump(2)),
+          "EditorView"));
+
+    if (serializedView.contains("modules"))
     {
-      for (auto& module : serializedView.t.value()["guiModules"])
+      m_Logger->LogInfo(Log("Module key found", "EditorView"));
+      for (auto module : serializedView.at("modules"))
       {
-        m_GuiModules.push_back(m_GuiModuleFactory->CreateGuiModule(module));
+        m_Logger->LogInfo(
+          Log(fmt::format("Deserializing module:\n{}", module.dump(2)),
+              "EditorView"));
+        m_GuiModules.push_back(std::move(
+          m_GuiModuleFactory->CreateGuiModule(SerializedModule(module))));
       }
     }
   }
@@ -319,41 +327,11 @@ namespace Dwarf
   {
     std::unique_ptr<IGuiModule> guiModule =
       m_GuiModuleFactory->CreateGuiModule(moduleType);
-    // std::shared_ptr<IGuiModule> guiModule;
-    //  switch (moduleType)
-    //  {
-    //    using enum MODULE_TYPE;
-    //    case PERFORMANCE:
-    //      guiModule = std::make_shared<PerformanceWindow>(this->m_Model,
-    //                                                      m_GuiModuleIDCount++);
-    //      break;
-    //    case SCENE_GRAPH:
-    //      guiModule = std::make_shared<SceneHierarchyWindow>(
-    //        this->m_Model, m_GuiModuleIDCount++);
-    //      break;
-    //    case SCENE_VIEWER:
-    //      guiModule = std::make_shared<SceneViewerWindow>(this->m_Model,
-    //                                                      m_GuiModuleIDCount++);
-    //      break;
-    //    case ASSET_BROWSER:
-    //      guiModule = std::make_shared<AssetBrowserWindow>(this->m_Model,
-    //                                                       m_GuiModuleIDCount++);
-    //      break;
-    //    case INSPECTOR:
-    //      guiModule = std::make_shared<InspectorWindow>(this->m_Model,
-    //                                                    m_GuiModuleIDCount++);
-    //      break;
-    //    case DEBUG:
-    //      guiModule =
-    //        std::make_shared<DebugWindow>(this->m_Model,
-    //        m_GuiModuleIDCount++);
-    //      break;
-    //    case CONSOLE: break;
-    //  }
 
     if (guiModule)
     {
       m_GuiModules.push_back(std::move(guiModule));
+      m_ProjectSettings->UpdateSerializedView(Serialize());
     }
   }
 
@@ -367,6 +345,7 @@ namespace Dwarf
         m_GuiModules.erase(m_GuiModules.begin() + i);
       }
     }
+    m_ProjectSettings->UpdateSerializedView(Serialize());
   }
 
   void
@@ -389,10 +368,10 @@ namespace Dwarf
   EditorView::Serialize() const
   {
     nlohmann::json j;
-    j["guiModules"] = nlohmann::json::array();
+    j["modules"] = nlohmann::json::array();
     for (int i = 0; i < m_GuiModules.size(); i++)
     {
-      j["guiModules"].push_back(m_GuiModules.at(i)->Serialize());
+      j["modules"].push_back(m_GuiModules.at(i)->Serialize());
     }
     return j;
   }

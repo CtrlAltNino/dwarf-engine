@@ -30,8 +30,8 @@ namespace Dwarf
     std::shared_ptr<IInputManager>    inputManager,
     std::shared_ptr<IAssetDatabase>   assetDatabase,
     SerializedModule                  serializedModule)
-    : IGuiModule(ModuleLabel("Performance"),
-                 ModuleType(MODULE_TYPE::PERFORMANCE),
+    : IGuiModule(ModuleLabel("SceneHierarchy"),
+                 ModuleType(MODULE_TYPE::SCENE_GRAPH),
                  ModuleID(std::make_shared<UUID>(
                    serializedModule.t["id"].get<std::string>())))
     , m_LoadedScene(loadedScene)
@@ -551,6 +551,12 @@ namespace Dwarf
   nlohmann::json
   SceneHierarchyWindow::Serialize() const
   {
-    return "";
+    nlohmann::json serializedModule;
+
+    serializedModule["id"] = GetUuid()->ToString();
+    serializedModule["type"] = static_cast<int>(GetModuleType());
+    serializedModule["label"] = GetModuleName();
+
+    return serializedModule;
   }
 }

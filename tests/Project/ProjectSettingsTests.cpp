@@ -183,11 +183,11 @@ TEST_F(ProjectSettingsTest, SaveChangedProjectSettings)
   auto projectSettings = std::make_unique<ProjectSettings>(
     ProjectPath{ testPath }, mockLogger, mockFileHandler);
 
-  projectSettings->SetProjectName("CoolProject");
-  projectSettings->SetGraphicsApi(GraphicsApi::Vulkan);
-  projectSettings->SetLastOpenedScene(
+  projectSettings->UpdateProjectName("CoolProject");
+  projectSettings->UpdateGraphicsApi(GraphicsApi::Vulkan);
+  projectSettings->UpdateLastOpenedScene(
     UUID("123e4567-e89b-12d3-a456-426614174001"));
-  projectSettings->SetLastOpenedTimeStamp(1627847286);
+  projectSettings->UpdateLastOpenedTimeStamp(1627847286);
 
   EXPECT_CALL(*mockLogger, LogInfo(_)).Times(1);
 
@@ -202,7 +202,7 @@ TEST_F(ProjectSettingsTest, SetAndGetProjectName)
     ProjectPath{ testPath }, mockLogger, mockFileHandler);
 
   // Act
-  projectSettings->SetProjectName("TestProject");
+  projectSettings->UpdateProjectName("TestProject");
 
   // Assert
   EXPECT_EQ(projectSettings->GetProjectName(), "TestProject");
@@ -215,7 +215,7 @@ TEST_F(ProjectSettingsTest, SetAndGetGraphicsApi)
     ProjectPath{ testPath }, mockLogger, mockFileHandler);
 
   // Act
-  projectSettings->SetGraphicsApi(GraphicsApi::Vulkan);
+  projectSettings->UpdateGraphicsApi(GraphicsApi::Vulkan);
 
   // Assert
   EXPECT_EQ(projectSettings->GetGraphicsApi(), GraphicsApi::Vulkan);
@@ -229,7 +229,7 @@ TEST_F(ProjectSettingsTest, SetAndGetLastOpenedScene)
 
   // Act
   UUID sceneUUID("123e4567-e89b-12d3-a456-426614174000");
-  projectSettings->SetLastOpenedScene(sceneUUID);
+  projectSettings->UpdateLastOpenedScene(sceneUUID);
 
   // Assert
   EXPECT_EQ(projectSettings->GetLastOpenedScene()->ToString(),
@@ -244,7 +244,7 @@ TEST_F(ProjectSettingsTest, SetAndGetLastOpenedTimeStamp)
 
   // Act
   time_t timeStamp = 1627847285;
-  projectSettings->SetLastOpenedTimeStamp(timeStamp);
+  projectSettings->UpdateLastOpenedTimeStamp(timeStamp);
 
   // Assert
   EXPECT_EQ(projectSettings->GetLastOpenedTimeStamp(), timeStamp);

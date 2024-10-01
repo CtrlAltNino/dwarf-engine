@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Editor/Modules/IGuiModule.h"
 #include "Utilities/FileHandler/IFileHandler.h"
 #include "pch.h"
 #include "Core/Base.h"
@@ -14,6 +15,7 @@ namespace Dwarf
 #define LAST_OPENED_SCENE_KEY "lastOpenedScene"
 #define PROJECT_LAST_OPENED_DATE_KEY "projectLastOpenedDate"
 #define PROJECT_NAME_KEY "projectName"
+#define VIEW_KEY "view"
 
   class LoadStatus
   {
@@ -40,18 +42,24 @@ namespace Dwarf
     }
   };
 
+  struct ProjectSettingsData
+  {
+    std::string         ProjectName;
+    time_t              LastOpenedDate;
+    GraphicsApi         GraphicsApi;
+    std::optional<UUID> LastOpenedScene;
+    nlohmann::json      SerializedView;
+  };
+
   class ProjectSettings : public IProjectSettings
   {
   private:
     // Data
-    std::filesystem::path         m_ProjectSettingsPath = "";
-    std::string                   m_Name = "";
-    time_t                        m_LastOpenedTimeStamp = 0;
-    GraphicsApi                   m_GraphicsApi = GraphicsApi::None;
-    std::optional<UUID>           m_LastOpenedScene = std::nullopt;
     std::shared_ptr<IDwarfLogger> m_Logger;
     std::shared_ptr<IFileHandler> m_FileHandler;
     LoadStatus                    m_LoadStatus;
+    std::filesystem::path         m_ProjectSettingsPath = "";
+    ProjectSettingsData           m_Data;
 
     void
     Load();
@@ -67,27 +75,33 @@ namespace Dwarf
     Save() override;
 
     void
-    SetProjectName(const std::string& projectName) override;
+    UpdateProjectName(const std::string& projectName) override;
 
     std::string
     GetProjectName() const override;
 
     void
-    SetLastOpenedTimeStamp(const time_t& projectLastOpenedDate) override;
+    UpdateLastOpenedTimeStamp(const time_t& projectLastOpenedDate) override;
 
     const time_t&
     GetLastOpenedTimeStamp() const override;
 
     void
-    SetGraphicsApi(const GraphicsApi& graphicsApi) override;
+    UpdateGraphicsApi(const GraphicsApi& graphicsApi) override;
 
     const GraphicsApi&
     GetGraphicsApi() const override;
 
     void
-    SetLastOpenedScene(const UUID& lastOpenedScene) override;
+    UpdateLastOpenedScene(const UUID& lastOpenedScene) override;
 
     const std::optional<UUID>&
     GetLastOpenedScene() const override;
+
+    void
+    UpdateSerializedView(const nlohmann::json& serializedView) override;
+
+    nlohmann::json
+    GetSerializedView() const override;
   };
 }

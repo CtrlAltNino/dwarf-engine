@@ -33,7 +33,6 @@ namespace Dwarf
     , m_AssetInspector(assetInspector)
     , m_EntityInspector(entityInspector)
   {
-    Deserialize(serializedModule.t);
   }
 
   void
@@ -56,18 +55,11 @@ namespace Dwarf
     {
       case CURRENT_SELECTION_TYPE::ASSET:
         {
-          // TODO: Render Asset data
           m_AssetInspector->Render();
           break;
         }
       case CURRENT_SELECTION_TYPE::ENTITY:
         {
-          // std::vector<Entity>& selectedEntities =
-          //   m_Selection->GetSelectedEntities();
-          // if (selectedEntities.size() == 1)
-          // {
-          //   RenderComponents(selectedEntities.at(0));
-          // }
           m_EntityInspector->Render(m_Selection->GetSelectedEntities());
           break;
         }
@@ -85,16 +77,15 @@ namespace Dwarf
     // Place Update code here (Before rendering)
   }
 
-  void
-  InspectorWindow::Deserialize(nlohmann::json moduleData)
-  {
-    // Deserialize the saved data
-  }
-
   nlohmann::json
   InspectorWindow::Serialize() const
   {
-    // TODO:: Serialize the data
-    return "";
+    nlohmann::json serializedModule;
+
+    serializedModule["id"] = GetUuid()->ToString();
+    serializedModule["type"] = static_cast<int>(GetModuleType());
+    serializedModule["label"] = GetModuleName();
+
+    return serializedModule;
   }
 }

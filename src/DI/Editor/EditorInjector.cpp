@@ -107,7 +107,6 @@ namespace Dwarf
           boost::di::bind<ProjectPath>.to(ProjectPath(selectedProject.path)),
           boost::di::bind<IFileHandler>.to<FileHandler>().in(boost::di::extension::shared),
           boost::di::bind<IProjectSettings>.to<ProjectSettings>().in(boost::di::extension::shared),
-          boost::di::bind<SerializedView>.to(SerializedView(std::nullopt)) ,
           boost::di::bind<ICameraFactory>.to<CameraFactory>().in(
           boost::di::extension::shared),
           boost::di::bind<IEditorStats>.to<EditorStats>().in(

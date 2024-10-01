@@ -37,6 +37,12 @@ namespace Dwarf
       return uuid_ != other.uuid_;
     }
 
+    bool
+    operator<(const UUID& other) const
+    {
+      return uuid_ < other.uuid_;
+    }
+
     nlohmann::json
     Serialize() const override
     {

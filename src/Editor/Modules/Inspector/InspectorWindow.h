@@ -42,8 +42,5 @@ namespace Dwarf
 
     nlohmann::json
     Serialize() const override;
-
-    void
-    Deserialize(nlohmann::json moduleData) override;
   };
 }

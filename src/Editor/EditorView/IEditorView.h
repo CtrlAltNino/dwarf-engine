@@ -5,7 +5,7 @@
 
 namespace Dwarf
 {
-  BOOST_STRONG_TYPEDEF(std::optional<nlohmann::json>, SerializedView);
+  // BOOST_STRONG_TYPEDEF(std::optional<nlohmann::json>, SerializedView);
   /// @brief View part of the editor's MVC structure.
   class IEditorView : public ISerializable
   {

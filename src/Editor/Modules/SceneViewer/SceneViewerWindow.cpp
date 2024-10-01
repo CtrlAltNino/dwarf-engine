@@ -30,24 +30,6 @@ namespace Dwarf
     , m_RenderingPipelineFactory(renderingPipelineFactory)
     , m_RendererApiFactory(rendererApiFactory)
   {
-    // m_Framebuffer = Renderer::Get()->CreateFramebuffer({ 512, 512 });
-    // m_IdBuffer = Renderer::Get()->CreateIDFramebuffer({ 512, 512 });
-    // m_Camera = std::make_shared<Camera>();
-
-    // FramebufferSpecification outlineSpec;
-    // outlineSpec.Attachments = FramebufferAttachmentSpecification{
-    //   FramebufferTextureSpecification{ FramebufferTextureFormat::RGBA8 },
-    //   FramebufferTextureSpecification{ FramebufferTextureFormat::RGBA8 },
-    //   FramebufferTextureSpecification{ FramebufferTextureFormat::DEPTH }
-    // };
-    // m_OutlineBuffer = Framebuffer::Create(outlineSpec);
-
-    // FramebufferSpecification presentationSpec;
-    // presentationSpec.Attachments = FramebufferAttachmentSpecification{
-    //   FramebufferTextureSpecification{ FramebufferTextureFormat::RGBA8 }
-    // };
-    // m_PresentationBuffer = Framebuffer::Create(presentationSpec);
-
     m_RendererApi = m_RendererApiFactory->Create();
 
     // Create rendering pipeline
@@ -105,26 +87,38 @@ namespace Dwarf
     , m_RenderingPipelineFactory(renderingPipelineFactory)
     , m_RendererApiFactory(rendererApiFactory)
   {
-    // FIX: Warning telling me this may be dangerous
-    Deserialize(serializedModule.t);
+    m_RendererApi = m_RendererApiFactory->Create();
 
-    /*m_Framebuffer = Renderer::Get()->CreateFramebuffer({ 512, 512 });
-    m_IdBuffer = Renderer::Get()->CreateIDFramebuffer({ 512, 512 });
-    m_Camera = std::make_shared<Camera>();
+    // Create rendering pipeline
+    m_RenderingPipeline =
+      m_RenderingPipelineFactory->Create(PipelineType::Forward);
 
-    FramebufferSpecification outlineSpec;
-    outlineSpec.Attachments = FramebufferAttachmentSpecification{
-      FramebufferTextureSpecification{ FramebufferTextureFormat::RGBA8 },
-      FramebufferTextureSpecification{ FramebufferTextureFormat::RGBA8 },
-      FramebufferTextureSpecification{ FramebufferTextureFormat::DEPTH }
-    };
-    m_OutlineBuffer = Framebuffer::Create(outlineSpec);
+    // Setup rendering framebuffer according to the pipeline specification
+    m_Framebuffer =
+      m_FramebufferFactory->Create(m_RenderingPipeline->GetSpecification());
 
+    // Setup framebuffer for presentation
     FramebufferSpecification presentationSpec;
     presentationSpec.Attachments = FramebufferAttachmentSpecification{
       FramebufferTextureSpecification{ FramebufferTextureFormat::RGBA8 }
     };
-    m_PresentationBuffer = Framebuffer::Create(presentationSpec);*/
+
+    m_PresentationBuffer = m_FramebufferFactory->Create(presentationSpec);
+
+    // Setup frame buffer for rendering ids
+    FramebufferSpecification idSpec;
+    idSpec.Attachments = FramebufferAttachmentSpecification{
+      FramebufferTextureSpecification{ FramebufferTextureFormat::RED_INTEGER },
+      FramebufferTextureSpecification{ FramebufferTextureFormat::DEPTH }
+    };
+    idSpec.Width = 512;
+    idSpec.Height = 512;
+    m_IdBuffer = std::move(m_FramebufferFactory->Create(idSpec));
+
+    // Setup outline buffer
+
+    // Setup camera
+    m_Camera = m_CameraFactory->Create();
   }
 
   void
@@ -582,37 +576,46 @@ namespace Dwarf
   nlohmann::json
   SceneViewerWindow::Serialize() const
   {
-    nlohmann::json state;
+    nlohmann::json serializedModule;
 
-    state["camera"]["position"]["x"] =
+    serializedModule["camera"]["position"]["x"] =
       m_Camera->GetProperties().Transform.GetPosition().x;
-    state["camera"]["position"]["y"] =
+    serializedModule["camera"]["position"]["y"] =
       m_Camera->GetProperties().Transform.GetPosition().y;
-    state["camera"]["position"]["z"] =
+    serializedModule["camera"]["position"]["z"] =
       m_Camera->GetProperties().Transform.GetPosition().z;
 
-    state["camera"]["rotation"]["x"] =
+    serializedModule["camera"]["rotation"]["x"] =
       m_Camera->GetProperties().Transform.GetEulerAngles().x;
-    state["camera"]["rotation"]["y"] =
+    serializedModule["camera"]["rotation"]["y"] =
       m_Camera->GetProperties().Transform.GetEulerAngles().y;
-    state["camera"]["rotation"]["z"] =
+    serializedModule["camera"]["rotation"]["z"] =
       m_Camera->GetProperties().Transform.GetEulerAngles().z;
 
-    state["camera"]["fov"] = m_Camera->GetProperties().Fov;
-    state["camera"]["near"] = m_Camera->GetProperties().NearPlane;
-    state["camera"]["far"] = m_Camera->GetProperties().FarPlane;
+    serializedModule["camera"]["fov"] = m_Camera->GetProperties().Fov;
+    serializedModule["camera"]["near"] = m_Camera->GetProperties().NearPlane;
+    serializedModule["camera"]["far"] = m_Camera->GetProperties().FarPlane;
 
-    state["settings"]["aspectRatioConstraint"]["x"] = m_Settings.AspectRatio[0];
-    state["settings"]["aspectRatioConstraint"]["y"] = m_Settings.AspectRatio[1];
+    serializedModule["settings"]["aspectRatioConstraint"]["x"] =
+      m_Settings.AspectRatio[0];
+    serializedModule["settings"]["aspectRatioConstraint"]["y"] =
+      m_Settings.AspectRatio[1];
 
-    state["settings"]["resolutionConstraint"]["x"] = m_Settings.Resolution[0];
-    state["settings"]["resolutionConstraint"]["y"] = m_Settings.Resolution[1];
+    serializedModule["settings"]["resolutionConstraint"]["x"] =
+      m_Settings.Resolution[0];
+    serializedModule["settings"]["resolutionConstraint"]["y"] =
+      m_Settings.Resolution[1];
 
-    state["settings"]["constraintType"] = m_Settings.RenderingConstraint;
+    serializedModule["settings"]["constraintType"] =
+      m_Settings.RenderingConstraint;
 
-    state["settings"]["renderGrid"] = m_Settings.RenderGrid;
+    serializedModule["settings"]["renderGrid"] = m_Settings.RenderGrid;
 
-    return state.dump(4);
+    serializedModule["id"] = GetUuid()->ToString();
+    serializedModule["type"] = static_cast<int>(GetModuleType());
+    serializedModule["label"] = GetModuleName();
+
+    return serializedModule;
   }
 
   void

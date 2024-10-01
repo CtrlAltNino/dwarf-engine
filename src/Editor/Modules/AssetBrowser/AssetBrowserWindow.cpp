@@ -690,11 +690,14 @@ namespace Dwarf
   nlohmann::json
   AssetBrowserWindow::Serialize() const
   {
-    nlohmann::json moduleData;
+    nlohmann::json serializedModule;
 
-    moduleData["openedPath"] = m_CurrentDirectory;
+    serializedModule["openedPath"] = m_CurrentDirectory;
+    serializedModule["id"] = GetUuid()->ToString();
+    serializedModule["type"] = static_cast<int>(GetModuleType());
+    serializedModule["label"] = GetModuleName();
 
-    return moduleData;
+    return serializedModule;
   }
 
   void
