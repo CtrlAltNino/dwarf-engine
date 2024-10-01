@@ -24,7 +24,7 @@ namespace Dwarf
            nlohmann::json                 json,
            CameraProperties               properties = CameraProperties());
 
-    ~Camera() override{};
+    ~Camera() override {};
 
     /// @brief Returns the view matrix of the camera.
     /// @return 4x4 view matrix.
@@ -44,7 +44,7 @@ namespace Dwarf
     OnUpdate(double deltaTime) override;
 
     nlohmann::json
-    Serialize() const override;
+    Serialize() override;
 
     glm::vec3
     ScreenToWorld(glm::vec2 const& screenPosition,

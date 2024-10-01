@@ -8,17 +8,22 @@ namespace Dwarf
     m_GlobalLightSettings =
       GlobalLightSettings(serializedSettings["GlobalLightSettings"]);
     m_SkyboxMaterial =
-      std::make_shared<UUID>(serializedSettings["SkyboxMaterial"]);
+      serializedSettings.contains("SkyboxMaterial") &&
+          serializedSettings.at("SkyboxMaterial") != ""
+        ? std::optional<UUID>(
+            UUID(serializedSettings.at("SkyboxMaterial").get<std::string>()))
+        : std::nullopt;
   }
 
   nlohmann::json
-  SceneSettings::Serialize() const
+  SceneSettings::Serialize()
   {
     nlohmann::json serializedSettings;
     serializedSettings["FogSettings"] = m_FogSettings.Serialize();
     serializedSettings["GlobalLightSettings"] =
       m_GlobalLightSettings.Serialize();
-    serializedSettings["SkyboxMaterial"] = m_SkyboxMaterial->ToString();
+    serializedSettings["SkyboxMaterial"] =
+      m_SkyboxMaterial.has_value() ? m_SkyboxMaterial->ToString() : "";
     return serializedSettings;
   }
 
@@ -34,15 +39,9 @@ namespace Dwarf
     return m_GlobalLightSettings;
   }
 
-  std::shared_ptr<UUID>
-  SceneSettings::GetSkyboxMaterial() const
+  std::optional<UUID>&
+  SceneSettings::GetSkyboxMaterial()
   {
     return m_SkyboxMaterial;
-  }
-
-  void
-  SceneSettings::SetSkyboxMaterial(std::shared_ptr<UUID> skyboxMaterial)
-  {
-    m_SkyboxMaterial = skyboxMaterial;
   }
 }

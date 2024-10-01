@@ -284,7 +284,7 @@ namespace Dwarf
   }
 
   nlohmann::json
-  DebugWindow::Serialize() const
+  DebugWindow::Serialize()
   {
     nlohmann::json serializedModule;
 

@@ -65,7 +65,7 @@ namespace Dwarf
     }
 
     nlohmann::json
-    Serialize() const override
+    Serialize() override
     {
       nlohmann::json jsonObject;
       jsonObject["projectInformation"]["name"] = name;

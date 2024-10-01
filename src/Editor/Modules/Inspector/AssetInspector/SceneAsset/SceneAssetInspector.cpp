@@ -72,8 +72,7 @@ namespace Dwarf
     if (ImGui::Button("Load scene") &&
         m_FileHandler->FileExists(asset.GetPath()))
     {
-      std::unique_ptr<IScene> loadedScene = m_SceneIO->LoadScene(asset);
-      m_LoadedScene->SetScene(std::move(loadedScene));
+      m_LoadedScene->SetScene(m_SceneIO->LoadScene(asset));
     }
 
     draw_list->ChannelsSetCurrent(0);

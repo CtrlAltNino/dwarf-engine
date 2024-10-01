@@ -549,7 +549,7 @@ namespace Dwarf
   }
 
   nlohmann::json
-  SceneHierarchyWindow::Serialize() const
+  SceneHierarchyWindow::Serialize()
   {
     nlohmann::json serializedModule;
 

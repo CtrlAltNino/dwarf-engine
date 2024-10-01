@@ -141,7 +141,7 @@ namespace Dwarf
   }
 
   nlohmann::json
-  Camera::Serialize() const
+  Camera::Serialize()
   {
     nlohmann::json j;
     j["transform"] = m_Properties.Transform.Serialize();

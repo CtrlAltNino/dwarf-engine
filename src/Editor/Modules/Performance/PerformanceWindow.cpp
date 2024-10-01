@@ -87,7 +87,7 @@ namespace Dwarf
   }
 
   nlohmann::json
-  PerformanceWindow::Serialize() const
+  PerformanceWindow::Serialize()
   {
     nlohmann::json serializedModule;
 

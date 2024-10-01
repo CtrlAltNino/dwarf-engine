@@ -80,6 +80,6 @@ namespace Dwarf
     DockWindowToFocused() override;
 
     nlohmann::json
-    Serialize() const override;
+    Serialize() override;
   };
 }

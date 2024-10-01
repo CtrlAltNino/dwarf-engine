@@ -17,5 +17,10 @@ namespace Dwarf
   LoadedScene::SetScene(std::unique_ptr<IScene> scene)
   {
     m_Scene = std::move(scene);
+    if (m_Scene->GetProperties().GetAssetID().has_value())
+    {
+      m_ProjectSettings->UpdateLastOpenedScene(
+        m_Scene->GetProperties().GetAssetID().value());
+    }
   }
 }

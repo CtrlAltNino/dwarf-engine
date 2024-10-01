@@ -29,7 +29,7 @@ public:
   MOCK_METHOD(void, RemoveParameter, (std::string const& name), (override));
   MOCK_METHOD(bool, HasParameter, (std::string const& name), (const, override));
   MOCK_METHOD(void, ClearParameters, (), (override));
-  MOCK_METHOD(nlohmann::json, Serialize, (), (const, override));
+  MOCK_METHOD(nlohmann::json, Serialize, (), (override));
 };
 
 class MockIShader : public Dwarf::IShader
@@ -41,7 +41,7 @@ public:
               CreateParameters,
               (),
               (override));
-  MOCK_METHOD(nlohmann::json, Serialize, (), (const, override));
+  MOCK_METHOD(nlohmann::json, Serialize, (), (override));
 };
 
 // Testing if the default shader is initialized correctly

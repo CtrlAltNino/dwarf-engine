@@ -16,7 +16,7 @@ public:
               CreateParameters,
               (),
               (override));
-  MOCK_METHOD(nlohmann::json, Serialize, (), (const, override));
+  MOCK_METHOD(nlohmann::json, Serialize, (), (override));
 };
 
 class ShaderRecompilerTest : public Test

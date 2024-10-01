@@ -32,7 +32,7 @@ namespace Dwarf
     }
 
     nlohmann::json
-    Serialize() const override
+    Serialize() override
     {
       return {
         { "IsTransparent", IsTransparent },
@@ -93,6 +93,6 @@ namespace Dwarf
      * @return The serialized material.
      */
     virtual nlohmann::json
-    Serialize() const = 0;
+    Serialize() = 0;
   };
 }

@@ -101,7 +101,6 @@ namespace Dwarf
     {
       if (meshRenderer.GetModelAsset() != nullptr)
       {
-        std::cout << "Rendering entity: " << (int)entity << std::endl;
         Entity e(entity, scene.GetRegistry());
         RenderEntity(e, viewMatrix, projectionMatrix);
       }

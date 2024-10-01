@@ -51,6 +51,6 @@ namespace Dwarf
     GenerateShaderParameters() override;
 
     nlohmann::json
-    Serialize() const override;
+    Serialize() override;
   };
 }

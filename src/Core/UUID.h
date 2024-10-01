@@ -44,7 +44,7 @@ namespace Dwarf
     }
 
     nlohmann::json
-    Serialize() const override
+    Serialize() override
     {
       return boost::uuids::to_string(uuid_);
     }

@@ -65,7 +65,7 @@ namespace Dwarf
      */
 
     virtual nlohmann::json
-    Serialize() const override = 0;
+    Serialize() override = 0;
 
     std::map<ShaderParameterType, std::function<void(std::string_view)>>
       m_DefaultValueAdders = {

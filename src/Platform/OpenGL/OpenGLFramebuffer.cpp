@@ -195,12 +195,12 @@ namespace Dwarf
         //   { m_Specification.Width, m_Specification.Height },
         //   m_Specification.Samples));
 
-        m_ColorAttachments.push_back(std::move(m_TextureFactory->Empty(
-          TextureType::TEXTURE_2D,
-          TextureFormat::RGBA,
-          TextureDataType::UNSIGNED_BYTE,
-          glm::ivec2(m_Specification.Width, m_Specification.Height),
-          m_Specification.Samples)));
+        m_ColorAttachments.push_back(
+          std::move(m_TextureFactory->Empty(textureData->Type,
+                                            textureData->Format,
+                                            textureData->DataType,
+                                            textureData->Size,
+                                            textureData->Samples)));
 
         glFramebufferTexture2D(
           GL_FRAMEBUFFER,

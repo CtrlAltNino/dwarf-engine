@@ -56,7 +56,7 @@ namespace Dwarf
     };
     idSpec.Width = 512;
     idSpec.Height = 512;
-    m_IdBuffer = std::move(m_FramebufferFactory->Create(idSpec));
+    m_IdBuffer = m_FramebufferFactory->Create(idSpec);
 
     // Setup outline buffer
 
@@ -113,7 +113,7 @@ namespace Dwarf
     };
     idSpec.Width = 512;
     idSpec.Height = 512;
-    m_IdBuffer = std::move(m_FramebufferFactory->Create(idSpec));
+    m_IdBuffer = m_FramebufferFactory->Create(idSpec);
 
     // Setup outline buffer
 
@@ -141,6 +141,7 @@ namespace Dwarf
     m_Framebuffer->Unbind();
 
     m_IdBuffer->Bind();
+    m_IdBuffer->ClearAttachment(0, 0);
     m_RenderingPipeline->RenderIds(m_LoadedScene->GetScene(),
                                    *m_Camera,
                                    { m_IdBuffer->GetSpecification().Width,
@@ -574,7 +575,7 @@ namespace Dwarf
   }
 
   nlohmann::json
-  SceneViewerWindow::Serialize() const
+  SceneViewerWindow::Serialize()
   {
     nlohmann::json serializedModule;
 
@@ -625,11 +626,13 @@ namespace Dwarf
     unsigned int handle =
       m_IdBuffer->ReadPixel(0, mousePosition.x, mousePosition.y);
 
+    std::cout << "Clicked on entity with handle: " << handle << std::endl;
+
     if (handle > 0)
     {
-      entt::entity entity = static_cast<entt::entity>(handle);
-      m_EditorSelection->SelectEntity(
-        Entity(entity, m_LoadedScene->GetScene().GetRegistry()));
+      // entt::entity entity = static_cast<entt::entity>(handle);
+      //  m_EditorSelection->SelectEntity(
+      //    Entity(entity, m_LoadedScene->GetScene().GetRegistry()));
     }
     else
     {

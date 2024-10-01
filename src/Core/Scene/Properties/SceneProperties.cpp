@@ -12,13 +12,9 @@ namespace Dwarf
   }
 
   nlohmann::json
-  SceneProperties::Serialize() const
+  SceneProperties::Serialize()
   {
-    nlohmann::json json;
-
-    json["Settings"] = m_Settings->Serialize();
-
-    return json;
+    return m_Settings->Serialize();
   }
 
   std::string

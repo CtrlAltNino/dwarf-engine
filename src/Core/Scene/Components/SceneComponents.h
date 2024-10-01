@@ -6,6 +6,7 @@
 
 #include <entt/entt.hpp>
 #include <memory>
+#include <nlohmann/json_fwd.hpp>
 #include <string>
 #include "Core/UUID.h"
 
@@ -48,13 +49,13 @@ namespace Dwarf
 
     TransformComponent(const nlohmann::json& json)
     {
-      Position = { json["position"][0],
-                   json["position"][1],
-                   json["position"][2] };
-      Rotation = { json["rotation"][0],
-                   json["rotation"][1],
-                   json["rotation"][2] };
-      Scale = { json["scale"][0], json["scale"][1], json["scale"][2] };
+      Position = { json["Position"][0],
+                   json["Position"][1],
+                   json["Position"][2] };
+      Rotation = { json["Rotation"][0],
+                   json["Rotation"][1],
+                   json["Rotation"][2] };
+      Scale = { json["Scale"][0], json["Scale"][1], json["Scale"][2] };
       // parent = json["parent"];
       // children = json["children"];
     }
@@ -191,15 +192,23 @@ namespace Dwarf
     }
 
     nlohmann::json
-    Serialize() const override
+    Serialize() override
     {
-      nlohmann::json j;
-      j["position"] = { Position.x, Position.y, Position.z };
-      j["rotation"] = { Rotation.x, Rotation.y, Rotation.z };
-      j["scale"] = { Scale.x, Scale.y, Scale.z };
+      nlohmann::json serializedTransformComponent;
+      serializedTransformComponent["Position"]["x"] = Position.x;
+      serializedTransformComponent["Position"]["y"] = Position.y;
+      serializedTransformComponent["Position"]["z"] = Position.z;
+
+      serializedTransformComponent["Rotation"]["x"] = Rotation.x;
+      serializedTransformComponent["Rotation"]["y"] = Rotation.y;
+      serializedTransformComponent["Rotation"]["z"] = Rotation.z;
+
+      serializedTransformComponent["Scale"]["x"] = Scale.x;
+      serializedTransformComponent["Scale"]["y"] = Scale.y;
+      serializedTransformComponent["Scale"]["z"] = Scale.z;
       // j["parent"] = parent;
       // j["children"] = children;
-      return j;
+      return serializedTransformComponent;
     }
   };
 
@@ -238,11 +247,11 @@ namespace Dwarf
     LightComponent() = default;
 
     LightComponent(const nlohmann::json& json)
-      : Type(static_cast<LIGHT_TYPE>(json["type"]))
-      , Color({ json["color"][0], json["color"][1], json["color"][2] })
-      , Attenuation(json["attenuation"])
-      , Radius(json["radius"])
-      , OpeningAngle(json["openingAngle"])
+      : Type(static_cast<LIGHT_TYPE>(json["Type"]))
+      , Color({ json["Color"][0], json["Color"][1], json["Color"][2] })
+      , Attenuation(json["Attenuation"])
+      , Radius(json["Radius"])
+      , OpeningAngle(json["OpeningAngle"])
     {
     }
 
@@ -287,15 +296,22 @@ namespace Dwarf
     }
 
     nlohmann::json
-    Serialize() const override
+    Serialize() override
     {
-      nlohmann::json j;
-      j["type"] = static_cast<int>(Type);
-      j["color"] = { Color.x, Color.y, Color.z };
-      j["attenuation"] = Attenuation;
-      j["radius"] = Radius;
-      j["openingAngle"] = OpeningAngle;
-      return j;
+      nlohmann::json serializedLightComponent;
+      serializedLightComponent["Type"] = (int)Type;
+
+      serializedLightComponent["LightColor"]["r"] = (int)Color.r;
+      serializedLightComponent["LightColor"]["g"] = (int)Color.g;
+      serializedLightComponent["LightColor"]["b"] = (int)Color.b;
+
+      serializedLightComponent["Attenuation"] = (int)Attenuation;
+
+      serializedLightComponent["Radius"] = (int)Radius;
+
+      serializedLightComponent["OpeningAngle"] = (int)OpeningAngle;
+
+      return serializedLightComponent;
     }
   };
 
@@ -318,13 +334,8 @@ namespace Dwarf
       std::unique_ptr<IAssetReference>              modelAsset,
       std::vector<std::unique_ptr<IAssetReference>> materials)
       : modelAsset(std::move(modelAsset))
+      , materialAssets(std::move(materials))
     {
-      materialAssets.clear();
-      materialAssets.reserve(materials.size());
-      for (auto& material : materialAssets)
-      {
-        materialAssets.push_back(std::move(material));
-      }
     }
 
     // Copy constructor
@@ -335,8 +346,7 @@ namespace Dwarf
         // copy unique pointer
         modelAsset = std::move(other.modelAsset->Clone());
       }
-      materialAssets.clear();
-      materialAssets.reserve(other.materialAssets.size());
+
       for (auto& material : other.materialAssets)
       {
         materialAssets.push_back(std::move(material->Clone()));
@@ -372,24 +382,31 @@ namespace Dwarf
     }
 
     nlohmann::json
-    Serialize() const override
+    Serialize() override
     {
-      nlohmann::json j;
-      j["modelAsset"] = modelAsset ? modelAsset->GetUID().ToString() : "-1";
-      j["materialAssets"] = nlohmann::json::array();
+      nlohmann::json serializedMeshRendererComponent;
+      if (modelAsset)
+      {
+        serializedMeshRendererComponent["Model"] =
+          modelAsset->GetUID().ToString();
+      }
+      else
+      {
+        serializedMeshRendererComponent["Model"] = "";
+      }
+
+      int materialCount = 0;
 
       for (auto& material : materialAssets)
       {
-        if (material)
-        {
-          j["materialAssets"].push_back(material->GetUID().ToString());
-        }
-        else
-        {
-          j["materialAssets"].push_back("");
-        }
+        serializedMeshRendererComponent["Materials"][materialCount] =
+          material ? material->GetUID().ToString() : "";
+        materialCount++;
       }
-      return j;
+
+      // serializedMeshRendererComponent["canCastShadows"] = canCastShadow;
+
+      return serializedMeshRendererComponent;
     }
   };
 }

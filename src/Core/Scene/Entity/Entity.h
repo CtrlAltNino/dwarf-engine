@@ -1,4 +1,5 @@
 #pragma once
+#include "Utilities/ISerializable.h"
 #include "pch.h"
 
 #include <entt/entt.hpp>
@@ -12,7 +13,7 @@ namespace Dwarf
 
   /// @brief Class wrapping around an entity, providing gameobject
   /// functionality.
-  class Entity
+  class Entity : ISerializable
   {
   public:
     Entity(entt::entity handle, entt::registry& registry);
@@ -215,6 +216,41 @@ namespace Dwarf
     GetHandle() const
     {
       return m_EntityHandle;
+    }
+
+    nlohmann::json
+    Serialize() override
+    {
+      nlohmann::json serializedEntity;
+
+      serializedEntity["guid"] = GetComponent<IDComponent>().GetID().ToString();
+      serializedEntity["name"] = GetComponent<NameComponent>().Name;
+
+      serializedEntity["TransformComponent"] =
+        GetComponent<TransformComponent>().Serialize();
+
+      if (HasComponent<LightComponent>())
+      {
+        serializedEntity["LightComponent"] =
+          GetComponent<LightComponent>().Serialize();
+      }
+
+      if (HasComponent<MeshRendererComponent>())
+      {
+        serializedEntity["MeshRendererComponent"] =
+          GetComponent<MeshRendererComponent>().Serialize();
+      }
+
+      int childCount = 0;
+
+      for (auto& child : GetChildren())
+      {
+        serializedEntity["children"][childCount] =
+          Entity(child, m_Registry).Serialize();
+        childCount++;
+      }
+
+      return serializedEntity;
     }
 
   private:

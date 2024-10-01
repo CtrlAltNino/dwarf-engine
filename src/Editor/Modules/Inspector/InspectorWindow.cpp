@@ -78,7 +78,7 @@ namespace Dwarf
   }
 
   nlohmann::json
-  InspectorWindow::Serialize() const
+  InspectorWindow::Serialize()
   {
     nlohmann::json serializedModule;
 

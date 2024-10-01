@@ -5,17 +5,23 @@
 #include "Core/Scene/Properties/ISceneProperties.h"
 #include "Core/Scene/Entity/Entity.h"
 #include "Core/Scene/Components/SceneComponents.h"
+#include <boost/serialization/strong_typedef.hpp>
 #include <memory>
 
 namespace Dwarf
 {
+  BOOST_STRONG_TYPEDEF(nlohmann::json, SerializedGraph)
   /// @brief Class that represents a Dwarf Engine scene.
   class Scene : public IScene
   {
   public:
-    Scene(const nlohmann::json&             serializedSceneGraph,
+    Scene(std::unique_ptr<ISceneProperties> properties,
+          std::shared_ptr<IAssetDatabase>   assetDatabase);
+
+    Scene(SerializedGraph                   serializedScene,
           std::unique_ptr<ISceneProperties> properties,
           std::shared_ptr<IAssetDatabase>   assetDatabase);
+
     ~Scene();
 
     /// @brief Retrieves the asset reference of the scene.
@@ -48,11 +54,11 @@ namespace Dwarf
     /// @brief Serializes the scene to a JSON object.
     /// @return The JSON object.
     nlohmann::json
-    Serialize() const override;
+    Serialize() override;
 
   private:
     /// @brief The registry that holds all entities and components.
-    entt::registry                  m_Registry = entt::registry();
+    entt::registry                  m_Registry;
     std::shared_ptr<IAssetDatabase> m_AssetDatabase;
 
     /// @brief The root entity in the scene graph.

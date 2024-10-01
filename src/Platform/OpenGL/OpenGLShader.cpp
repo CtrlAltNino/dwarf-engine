@@ -452,7 +452,7 @@ namespace Dwarf
   }
 
   nlohmann::json
-  OpenGLShader::Serialize() const
+  OpenGLShader::Serialize()
   {
     nlohmann::json serializedShader;
     serializedShader["VertexShader"] =

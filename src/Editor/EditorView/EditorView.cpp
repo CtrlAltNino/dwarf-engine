@@ -365,7 +365,7 @@ namespace Dwarf
   }
 
   nlohmann::json
-  EditorView::Serialize() const
+  EditorView::Serialize()
   {
     nlohmann::json j;
     j["modules"] = nlohmann::json::array();

@@ -6,6 +6,6 @@ namespace Dwarf
   {
   public:
     virtual nlohmann::json
-    Serialize() const = 0;
+    Serialize() = 0;
   };
 }

@@ -16,8 +16,8 @@ namespace Dwarf
   {
     return std::make_unique<SceneProperties>(
       sceneAsset.GetUID(),
-      serializedProperties["Name"],
-      m_sceneSettingsFactory->Create(serializedProperties["Settings"]));
+      sceneAsset.GetPath().stem().string(),
+      m_sceneSettingsFactory->Create(serializedProperties));
   }
 
   std::unique_ptr<ISceneProperties>

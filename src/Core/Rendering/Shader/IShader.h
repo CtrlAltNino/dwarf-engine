@@ -28,6 +28,6 @@ namespace Dwarf
     CreateParameters() = 0;
 
     virtual nlohmann::json
-    Serialize() const = 0;
+    Serialize() = 0;
   };
 }

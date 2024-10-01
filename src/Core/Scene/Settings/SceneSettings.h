@@ -6,9 +6,9 @@ namespace Dwarf
   class SceneSettings : public ISceneSettings
   {
   private:
-    FogSettings           m_FogSettings;
-    GlobalLightSettings   m_GlobalLightSettings;
-    std::shared_ptr<UUID> m_SkyboxMaterial;
+    FogSettings         m_FogSettings;
+    GlobalLightSettings m_GlobalLightSettings;
+    std::optional<UUID> m_SkyboxMaterial;
 
   public:
     SceneSettings() = default;
@@ -16,7 +16,7 @@ namespace Dwarf
 
     /// @copydoc ISerializable::Serialize
     nlohmann::json
-    Serialize() const override;
+    Serialize() override;
 
     /// @copydoc ISceneSettings::GetFogSettings
     FogSettings&
@@ -27,11 +27,7 @@ namespace Dwarf
     GetGlobalLightSettings() override;
 
     /// @copydoc ISceneSettings::GetSkyboxMaterial
-    std::shared_ptr<UUID>
-    GetSkyboxMaterial() const override;
-
-    /// @copydoc ISceneSettings::SetSkyboxMaterial
-    void
-    SetSkyboxMaterial(std::shared_ptr<UUID> skyboxMaterial) override;
+    std::optional<UUID>&
+    GetSkyboxMaterial() override;
   };
 } // namespace Dwarf

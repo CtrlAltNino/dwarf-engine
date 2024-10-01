@@ -18,7 +18,7 @@ namespace Dwarf
 
     /// @copydoc ISerializable::Serialize
     nlohmann::json
-    Serialize() const override;
+    Serialize() override;
 
     /// @copydoc ISceneProperties::GetName
     std::string

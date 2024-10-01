@@ -19,10 +19,10 @@ namespace Dwarf
   {
     nlohmann::json serializedScene =
       nlohmann::json::parse(m_FileHandler->ReadFile(sceneAsset.GetPath()));
-    return std::make_unique<Scene>(serializedScene["Graph"],
-                                   m_ScenePropertiesFactory->Create(
-                                     sceneAsset, serializedScene["Properties"]),
-                                   m_AssetDatabase);
+    return std::make_unique<Scene>(
+      SerializedGraph(serializedScene["Graph"]),
+      m_ScenePropertiesFactory->Create(sceneAsset, serializedScene["Settings"]),
+      m_AssetDatabase);
   }
 
   // TODO: Create default scene here
@@ -30,8 +30,6 @@ namespace Dwarf
   SceneFactory::CreateDefaultScene()
   {
     return std::make_unique<Scene>(
-      nlohmann::json(""),
-      m_ScenePropertiesFactory->Create("Unnamed Scene"),
-      m_AssetDatabase);
+      m_ScenePropertiesFactory->Create("Unnamed Scene"), m_AssetDatabase);
   }
 } // namespace Dwarf

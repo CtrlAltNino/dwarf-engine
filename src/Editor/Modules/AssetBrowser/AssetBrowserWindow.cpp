@@ -688,7 +688,7 @@ namespace Dwarf
   }
 
   nlohmann::json
-  AssetBrowserWindow::Serialize() const
+  AssetBrowserWindow::Serialize()
   {
     nlohmann::json serializedModule;
 

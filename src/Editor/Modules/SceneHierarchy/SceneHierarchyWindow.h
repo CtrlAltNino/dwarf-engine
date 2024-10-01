@@ -54,7 +54,7 @@ namespace Dwarf
     OnUpdate() override;
 
     nlohmann::json
-    Serialize() const override;
+    Serialize() override;
 
     void
     Deserialize(nlohmann::json moduleData);

@@ -1,8 +1,8 @@
 #pragma once
+#include "pch.h"
 
 #include "Core/Rendering/RendererApi/IRendererApi.h"
 #include "Core/Rendering/RendererApi/IRendererApiFactory.h"
-#include "pch.h"
 #include "Core/Rendering/Framebuffer/IFramebuffer.h"
 #include "Core/Rendering/Framebuffer/IFramebufferFactory.h"
 #include "Core/Rendering/Pipelines/IRenderingPipeline.h"
@@ -152,7 +152,7 @@ namespace Dwarf
     GetFrameBufferForImGui();
 
     nlohmann::json
-    Serialize() const override;
+    Serialize() override;
 
     void
     Deserialize(nlohmann::json moduleData);

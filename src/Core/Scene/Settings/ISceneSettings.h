@@ -42,7 +42,7 @@ namespace Dwarf
 
     /// @copydoc ISerializable::Serialize
     nlohmann::json
-    Serialize() const override
+    Serialize() override
     {
       nlohmann::json json;
       json["FogColor"] = { fogColor.r, fogColor.g, fogColor.b };
@@ -76,7 +76,7 @@ namespace Dwarf
 
     /// @copydoc ISerializable::Serialize
     nlohmann::json
-    Serialize() const override
+    Serialize() override
     {
       nlohmann::json json;
       json["GlobalLightColor"] = { color.r, color.g, color.b };
@@ -104,12 +104,7 @@ namespace Dwarf
 
     /// @brief Returns the UID of the skybox material.
     /// @return The UID of the skybox material.
-    virtual std::shared_ptr<UUID>
-    GetSkyboxMaterial() const = 0;
-
-    /// @brief Sets the UID of the skybox material.
-    /// @param skyboxMaterial The UID of the skybox material.
-    virtual void
-    SetSkyboxMaterial(std::shared_ptr<UUID> skyboxMaterial) = 0;
+    virtual std::optional<UUID>&
+    GetSkyboxMaterial() = 0;
   };
 } // namespace Dwarf
