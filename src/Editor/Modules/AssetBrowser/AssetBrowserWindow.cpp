@@ -413,7 +413,10 @@ namespace Dwarf
           }
           else if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
           {
-            m_EditorSelection->SelectAsset(m_AssetDatabase->Retrieve(path));
+            if (!directoryEntry.is_directory() && m_AssetDatabase->Exists(path))
+            {
+              m_EditorSelection->SelectAsset(m_AssetDatabase->Retrieve(path));
+            }
           }
 
           // TODO: Drag Asset
