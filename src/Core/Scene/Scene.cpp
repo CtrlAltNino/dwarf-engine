@@ -116,8 +116,14 @@ namespace Dwarf
             : nullptr);
       }
 
-      newEntity.AddComponent<MeshRendererComponent>(std::move(modelAsset),
-                                                    std::move(materialAssets));
+      MeshRendererComponent& comp =
+        newEntity.AddComponent<MeshRendererComponent>(
+          std::move(modelAsset), std::move(materialAssets));
+
+      if (serializedEntity["MeshRendererComponent"].contains("Hidden"))
+      {
+        comp.IsHidden() = serializedEntity["MeshRendererComponent"]["Hidden"];
+      }
     }
 
     if (serializedEntity.contains("Children"))

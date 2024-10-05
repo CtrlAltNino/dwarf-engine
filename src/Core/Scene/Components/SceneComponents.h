@@ -411,7 +411,7 @@ namespace Dwarf
         materialCount++;
       }
 
-      // serializedMeshRendererComponent["canCastShadows"] = canCastShadow;
+      serializedMeshRendererComponent["Hidden"] = isHidden;
 
       return serializedMeshRendererComponent;
     }
