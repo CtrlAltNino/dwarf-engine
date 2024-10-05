@@ -1,5 +1,58 @@
 {
-    "graphicsApi": 2,
-    "lastOpenedScene": 5031561088998297457,
-    "projectName": "Sponza Example"
+  "graphicsApi": 0,
+  "lastOpenedScene": "82e36ba5-d58f-485b-b9e1-d18cf768cc16",
+  "projectLastOpenedDate": 0,
+  "projectName": "",
+  "view": {
+    "modules": [
+      {
+        "camera": {
+          "far": 1000.0,
+          "fov": 90.0,
+          "near": 0.10000000149011612,
+          "position": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          },
+          "rotation": {
+            "x": 0.0,
+            "y": 0.0,
+            "z": 0.0
+          }
+        },
+        "id": "b20d99f0-b5d1-4c68-9169-e0cab89341f8",
+        "label": "Scene Viewer",
+        "settings": {
+          "aspectRatioConstraint": {
+            "x": 16,
+            "y": 9
+          },
+          "constraintType": 0,
+          "renderGrid": true,
+          "resolutionConstraint": {
+            "x": 1024,
+            "y": 1024
+          }
+        },
+        "type": 3
+      },
+      {
+        "id": "4979fcc7-ce84-454a-bfce-d7f4ec2ea110",
+        "label": "Scene Hierarchy",
+        "type": 1
+      },
+      {
+        "id": "0f99b439-5b59-4b84-8284-c1bf55e0b8e4",
+        "label": "Asset Browser",
+        "openedPath": "C:\\Users\\ninom\\Desktop\\Sponza\\Assets",
+        "type": 4
+      },
+      {
+        "id": "7535f910-8b2a-4a68-973f-262b50c871dc",
+        "label": "Inspector",
+        "type": 5
+      }
+    ]
+  }
 }
