@@ -86,13 +86,12 @@ namespace Dwarf
       m_Window->EndFrame();
 
       // m_Logger->LogInfo(Log("Editor loop end", "Editor"));
-      //  while (TimeUtilities::GetDifferenceInSeconds(
-      //           TimeUtilities::GetCurrent(), m_Stats->GetCurrentTimeStamp())
-      //           <
-      //         (1.0 / 60.0))
-      //  {
-      //    // TODO: Update this when implementing multi threading
-      //  }
+      while (TimeUtilities::GetDifferenceInSeconds(
+               TimeUtilities::GetCurrent(),
+               m_EditorStats->GetCurrentTimeStamp()) < (1.0 / 60.0))
+      {
+        // TODO: Update this when implementing multi threading
+      }
     }
 
     m_Logger->LogInfo(Log("Exiting editor loop", "Editor"));

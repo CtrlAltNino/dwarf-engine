@@ -294,6 +294,26 @@ namespace Dwarf
     }
   }
 
+  const void*
+  GetPixelPointer(const TextureContainer& data)
+  {
+    switch (data.DataType)
+    {
+      case TextureDataType::UNSIGNED_BYTE:
+        return std::get<std::vector<unsigned char>>(data.ImageData).data();
+      case TextureDataType::UNSIGNED_SHORT:
+        return std::get<std::vector<unsigned short>>(data.ImageData).data();
+      case TextureDataType::INT:
+        return std::get<std::vector<int>>(data.ImageData).data();
+      case TextureDataType::UNSIGNED_INT:
+        return std::get<std::vector<unsigned int>>(data.ImageData).data();
+      case TextureDataType::FLOAT:
+        return std::get<std::vector<float>>(data.ImageData).data();
+    }
+
+    return nullptr;
+  }
+
   // A map that maps
   // Constructor without meta data
   OpenGLTexture::OpenGLTexture(std::shared_ptr<TextureContainer>  data,
@@ -349,18 +369,15 @@ namespace Dwarf
           glTextureStorage1D(m_Id, 1, internalFormat, size.x);
           OpenGLUtilities::CheckOpenGLError(
             "glTextureStorage1D", "OpenGLTexture", m_Logger);
-          if (data->ImageData)
-          {
-            glTextureSubImage1D(m_Id,
-                                0,
-                                0,
-                                std::get<glm::ivec1>(data->Size).x,
-                                textureFormat,
-                                textureDataType,
-                                data->ImageData);
-            OpenGLUtilities::CheckOpenGLError(
-              "glTextureSubImage1D", "OpenGLTexture", m_Logger);
-          }
+          glTextureSubImage1D(m_Id,
+                              0,
+                              0,
+                              size.x,
+                              textureFormat,
+                              textureDataType,
+                              GetPixelPointer(*data));
+          OpenGLUtilities::CheckOpenGLError(
+            "glTextureSubImage1D", "OpenGLTexture", m_Logger);
           break;
         }
       case TextureType::TEXTURE_2D:
@@ -388,20 +405,17 @@ namespace Dwarf
               "glTextureStorage2D", "OpenGLTexture", m_Logger);
           }
 
-          if (data->ImageData)
-          {
-            glTextureSubImage2D(m_Id,
-                                0,
-                                0,
-                                0,
-                                size.x,
-                                size.y,
-                                textureFormat,
-                                textureDataType,
-                                data->ImageData);
-            OpenGLUtilities::CheckOpenGLError(
-              "glTextureSubImage2D", "OpenGLTexture", m_Logger);
-          }
+          glTextureSubImage2D(m_Id,
+                              0,
+                              0,
+                              0,
+                              size.x,
+                              size.y,
+                              textureFormat,
+                              textureDataType,
+                              GetPixelPointer(*data));
+          OpenGLUtilities::CheckOpenGLError(
+            "glTextureSubImage2D", "OpenGLTexture", m_Logger);
           break;
         }
       case TextureType::TEXTURE_3D:
@@ -414,20 +428,17 @@ namespace Dwarf
 
           glTextureStorage3D(m_Id, 1, internalFormat, size.x, size.y, size.z);
 
-          if (data->ImageData)
-          {
-            glTextureSubImage3D(m_Id,
-                                0,
-                                0,
-                                0,
-                                0,
-                                size.x,
-                                size.y,
-                                size.z,
-                                textureFormat,
-                                textureDataType,
-                                data->ImageData);
-          }
+          glTextureSubImage3D(m_Id,
+                              0,
+                              0,
+                              0,
+                              0,
+                              size.x,
+                              size.y,
+                              size.z,
+                              textureFormat,
+                              textureDataType,
+                              GetPixelPointer(*data));
           break;
         }
       case TextureType::TEXTURE_CUBE_MAP:

@@ -30,7 +30,14 @@ namespace Dwarf
       m_Logger.LogInfo(
         Log(fmt::format("Reimporting asset: {}", assetPath.string()),
             "AssetReimporter"));
-      m_AssetDatabase.get()->Reimport(assetPath);
+      if (m_AssetDatabase.get()->Exists(assetPath))
+      {
+        m_AssetDatabase.get()->Reimport(assetPath);
+      }
+      else
+      {
+        m_AssetDatabase.get()->Import(assetPath);
+      }
     }
 
     m_ReimportQueue.clear();

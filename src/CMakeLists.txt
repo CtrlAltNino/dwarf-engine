@@ -75,6 +75,9 @@ target_link_libraries(${libname} PUBLIC protobuf::libprotoc protobuf::libprotobu
 find_package(spdlog CONFIG REQUIRED)
 target_link_libraries(${libname} PUBLIC spdlog::spdlog)
 
+find_package(freeimage CONFIG REQUIRED)
+target_link_libraries(${libname} PRIVATE freeimage::FreeImage freeimage::FreeImagePlus)
+
 find_package(TIFF REQUIRED)
 target_link_libraries(${libname} PUBLIC TIFF::TIFF)
 

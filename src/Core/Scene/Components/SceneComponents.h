@@ -400,7 +400,7 @@ namespace Dwarf
       for (auto& material : materialAssets)
       {
         serializedMeshRendererComponent["Materials"][materialCount] =
-          material ? material->GetUID().ToString() : "";
+          material ? material->GetUID().ToString() : "0";
         materialCount++;
       }
 

@@ -184,8 +184,47 @@ namespace Dwarf
 
     // Reserve space for the texture data
     // textureData->ImageData->resize(dataSize);
-    textureData->ImageData =
-      calloc(GetPixelCount(size, type), GetBytesPerPixel(format, dataType));
+    // textureData->ImageData =
+    //  calloc(GetPixelCount(size, type), GetBytesPerPixel(format, dataType));
+
+    switch (dataType)
+    {
+      case TextureDataType::UNSIGNED_BYTE:
+        {
+          std::vector<unsigned char> data;
+          data.resize(dataSize);
+          textureData->ImageData = data;
+          break;
+        }
+      case TextureDataType::UNSIGNED_SHORT:
+        {
+          std::vector<unsigned short> data;
+          data.resize(dataSize);
+          textureData->ImageData = data;
+          break;
+        }
+      case TextureDataType::INT:
+        {
+          std::vector<int> data;
+          data.resize(dataSize);
+          textureData->ImageData = data;
+          break;
+        }
+      case TextureDataType::UNSIGNED_INT:
+        {
+          std::vector<unsigned int> data;
+          data.resize(dataSize);
+          textureData->ImageData = data;
+          break;
+        }
+      case TextureDataType::FLOAT:
+        {
+          std::vector<float> data;
+          data.resize(dataSize);
+          textureData->ImageData = data;
+          break;
+        }
+    }
 
     return LoadTexture(textureData);
   }

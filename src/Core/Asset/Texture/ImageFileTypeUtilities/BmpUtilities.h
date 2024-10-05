@@ -27,7 +27,8 @@ namespace Dwarf
       textureData->DataType = TextureDataType::UNSIGNED_BYTE;
 
       // copy content from data into textureData->ImageData
-      textureData->ImageData = data;
+      textureData->ImageData =
+        std::vector<unsigned char>(data, data + (width * height * channels));
 
       return textureData;
     }

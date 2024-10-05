@@ -413,8 +413,8 @@ namespace Dwarf
       std::filesystem::path(dir) / std::filesystem::path(filename);
     if (!m_AssetMetadata->IsMetadataPath(path))
     {
-      // m_AssetReimporter->QueueReimport(path);
-      Import(path);
+      m_AssetReimporter->QueueReimport(path);
+      // Import(path);
     }
   }
 

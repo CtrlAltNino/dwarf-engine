@@ -29,7 +29,7 @@ namespace Dwarf
   Scene::~Scene()
   {
     // TODO: Clear registry
-    m_Registry.clear();
+    // m_Registry.clear();
   }
 
   void
@@ -111,7 +111,7 @@ namespace Dwarf
            serializedEntity["MeshRendererComponent"]["Materials"])
       {
         materialAssets.push_back(
-          element.get<std::string>() != ""
+          element.get<std::string>() != "0"
             ? m_AssetDatabase->Retrieve(UUID(element.get<std::string>()))
             : nullptr);
       }

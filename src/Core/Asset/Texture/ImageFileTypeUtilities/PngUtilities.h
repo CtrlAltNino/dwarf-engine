@@ -54,8 +54,13 @@ namespace Dwarf
                                 ? TextureDataType::UNSIGNED_BYTE
                                 : TextureDataType::UNSIGNED_SHORT;
       // Copy data from the vector to the unique_ptr<void[]>
-      textureData->ImageData = calloc(imageData.size(), sizeof(unsigned char));
-      std::memcpy(textureData->ImageData, imageData.data(), imageData.size());
+
+      // 11textureData->ImageData = calloc(imageData.size(), sizeof(unsigned
+      // char));
+      // std::memcpy(textureData->ImageData, imageData.data(),
+      // imageData.size());
+
+      textureData->ImageData = imageData;
 
       spng_ctx_free(png);
       file.close();

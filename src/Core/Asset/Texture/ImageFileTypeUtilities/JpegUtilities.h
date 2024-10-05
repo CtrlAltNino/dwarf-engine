@@ -91,7 +91,8 @@ namespace Dwarf
       textureData->Format = TextureFormat::RGB;
       textureData->Type = TextureType::TEXTURE_2D;
       textureData->DataType = TextureDataType::UNSIGNED_BYTE;
-      textureData->ImageData = decompressed;
+      textureData->ImageData = std::vector<unsigned char>(
+        decompressed, decompressed + (width * height * 3));
 
       file.close();
       return textureData;

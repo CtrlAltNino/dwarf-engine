@@ -27,10 +27,22 @@ namespace Dwarf
     {
       // TODO: Add error handling and logging.
       nlohmann::json sceneJson = scene.Serialize();
-      WriteSceneToFile(
-        m_AssetDatabase->Retrieve(scene.GetProperties().GetAssetID().value())
-          ->GetPath(),
-        sceneJson);
+      if (m_AssetDatabase->Exists(scene.GetProperties().GetAssetID().value()))
+      {
+        std::filesystem::path path =
+          m_AssetDatabase->Retrieve(scene.GetProperties().GetAssetID().value())
+            ->GetPath();
+        m_Logger->LogInfo(
+          Log(fmt::format("Saving serialized scene:\n{}", sceneJson.dump(2)),
+              "SceneIO"));
+        m_Logger->LogInfo(Log(
+          fmt::format("Writing scene to file: {}", path.string()), "SceneIO"));
+        WriteSceneToFile(sceneJson, path);
+      }
+      else
+      {
+        m_Logger->LogError(Log("Asset ID not found", "SceneIO"));
+      }
     }
     else
     {
@@ -158,6 +170,6 @@ namespace Dwarf
     std::unique_ptr<IScene> scene = m_SceneFactory->CreateDefaultScene();
     nlohmann::json          sceneJson = scene->Serialize();
     std::string             name = CreateNewSceneName(directory);
-    WriteSceneToFile(directory / name, sceneJson);
+    WriteSceneToFile(sceneJson, directory / name);
   }
 }

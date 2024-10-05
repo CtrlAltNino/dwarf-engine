@@ -73,7 +73,12 @@ namespace Dwarf
     TextureDataType   DataType = TextureDataType::UNSIGNED_BYTE;
     TextureResolution Size = glm::ivec2(0);
     TextureParameters Parameters;
-    void*             ImageData = nullptr;
-    int               Samples = 1;
+    std::variant<std::vector<unsigned char>,
+                 std::vector<unsigned short>,
+                 std::vector<int>,
+                 std::vector<unsigned int>,
+                 std::vector<float>>
+        ImageData;
+    int Samples = 1;
   };
 } // namespace Dwarf
