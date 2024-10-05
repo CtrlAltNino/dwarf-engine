@@ -20,9 +20,7 @@ namespace Dwarf
     Camera(std::shared_ptr<IInputManager> inputManager,
            CameraProperties               properties = CameraProperties());
 
-    Camera(std::shared_ptr<IInputManager> inputManager,
-           nlohmann::json                 json,
-           CameraProperties               properties = CameraProperties());
+    Camera(std::shared_ptr<IInputManager> inputManager, nlohmann::json json);
 
     ~Camera() override {};
 

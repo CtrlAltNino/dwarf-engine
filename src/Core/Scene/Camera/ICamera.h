@@ -25,7 +25,7 @@ namespace Dwarf
 
     float MovementSpeed = 4.0f;
   };
-  class ICamera : ISerializable
+  class ICamera : public ISerializable
   {
   public:
     virtual ~ICamera() = default;
@@ -50,5 +50,8 @@ namespace Dwarf
     virtual glm::vec3
     ScreenToWorld(glm::vec2 const& screenPosition,
                   glm::vec2 const& viewport) const = 0;
+
+    virtual nlohmann::json
+    Serialize() = 0;
   };
 }

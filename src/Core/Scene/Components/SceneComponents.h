@@ -49,13 +49,13 @@ namespace Dwarf
 
     TransformComponent(const nlohmann::json& json)
     {
-      Position = { json["Position"][0],
-                   json["Position"][1],
-                   json["Position"][2] };
-      Rotation = { json["Rotation"][0],
-                   json["Rotation"][1],
-                   json["Rotation"][2] };
-      Scale = { json["Scale"][0], json["Scale"][1], json["Scale"][2] };
+      Position = { json["Position"]["x"],
+                   json["Position"]["y"],
+                   json["Position"]["z"] };
+      Rotation = { json["Rotation"]["x"],
+                   json["Rotation"]["y"],
+                   json["Rotation"]["z"] };
+      Scale = { json["Scale"]["x"], json["Scale"]["y"], json["Scale"]["z"] };
       // parent = json["parent"];
       // children = json["children"];
     }
@@ -320,6 +320,7 @@ namespace Dwarf
   struct MeshRendererComponent : public ISerializable
   {
   private:
+    bool isHidden = false;
     /// @brief ID of the mesh asset.
     std::unique_ptr<IAssetReference> modelAsset = nullptr;
 
@@ -379,6 +380,12 @@ namespace Dwarf
     GetMaterialAssets() const
     {
       return materialAssets;
+    }
+
+    bool&
+    IsHidden()
+    {
+      return isHidden;
     }
 
     nlohmann::json

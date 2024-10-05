@@ -8,8 +8,7 @@ namespace Dwarf
   class PerformanceWindowFactory : public IPerformanceWindowFactory
   {
   private:
-    std::function<boost::di::injector<std::unique_ptr<PerformanceWindow>>()>
-      m_InjectorFactory;
+    std::shared_ptr<IEditorStats> m_EditorStats;
 
   public:
     BOOST_DI_INJECT(PerformanceWindowFactory,

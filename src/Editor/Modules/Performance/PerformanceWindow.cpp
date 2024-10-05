@@ -1,4 +1,5 @@
 #include "Editor/Modules/Performance/PerformanceWindow.h"
+#include <fmt/format.h>
 
 namespace Dwarf
 {
@@ -48,34 +49,38 @@ namespace Dwarf
     ImGui::Text("Renderer information");
     // ImGui::PopFont();
 
-    // ImGui::Text((std::string("Vendor name: ") +
-    // IWindowManager::vendorName).c_str()); ImGui::Text((std::string("Renderer
-    // name: ") + IWindowManager::rendererName).c_str());
-    // ImGui::Text((std::string("API version: ") +
-    // IWindowManager::apiVersion).c_str());
+    // Get delta time, add to array, and plot imgui lines
+    static std::vector<float> values = { 0 };
+    // static int    values_offset = 0;
+    values.push_back((float)m_EditorStats->GetDeltaTime());
 
-    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 15);
+    if (values.size() > 100)
+    {
+      values.erase(values.begin());
+    }
 
-    // ImGui::PushFont(IWindowManager::fonts["smallHeaderFont"]);
-    ImGui::Text("Statistics");
-    // ImGui::PopFont();
+    float max = 0.0f;
+    for (int i = 0; i < values.size(); i++)
+    {
+      if (values[i] > max)
+      {
+        max = values[i];
+      }
+    }
 
-    ImGui::Text("%s",
-                std::format("Frames per second: {}",
-                            std::to_string(1.0 / m_EditorStats->GetDeltaTime()))
-                  .c_str());
-    ImGui::Text(
-      "%s",
-      std::format("Frametime: {}{}",
-                  std::to_string(m_EditorStats->GetDeltaTime() * 1000.0),
-                  " ms")
-        .c_str());
-    // ImGui::Text(
-    //   "%s",
-    //   std::format("Render time: {}{}",
-    //               std::to_string(m_EditorStats->GetDeltaTime() * 1000.0),
-    //               " ms")
-    //     .c_str());
+    std::string overlay =
+      fmt::format("Frame time: {:.3f} ms", values[values.size() - 1] * 1000.0f);
+
+    ImGui::PlotLines("Frame time",
+                     values.data(),
+                     values.size(),
+                     0,
+                     overlay.c_str(),
+                     0.0f,
+                     max,
+                     ImVec2(0, 80));
+
+    ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
 
     ImGui::End();
   }

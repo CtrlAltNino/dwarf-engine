@@ -19,5 +19,7 @@ namespace Dwarf
            float     nearPlane,
            float     farPlane,
            float     aspectRatio) = 0;
+    virtual std::shared_ptr<ICamera>
+    Create(nlohmann::json json) = 0;
   };
 }

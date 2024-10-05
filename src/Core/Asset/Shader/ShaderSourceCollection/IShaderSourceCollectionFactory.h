@@ -19,6 +19,9 @@ namespace Dwarf
     CreateIdShaderSourceCollection() = 0;
 
     virtual std::unique_ptr<IShaderSourceCollection>
+    CreateGridShaderSourceCollection() = 0;
+
+    virtual std::unique_ptr<IShaderSourceCollection>
     CreateShaderSourceCollection(
       const nlohmann::json& serializedShaderSourceCollection) = 0;
   };

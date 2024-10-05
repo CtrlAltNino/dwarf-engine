@@ -4,6 +4,7 @@
 #include "Core/Asset/Shader/ShaderSourceCollection/IShaderSourceCollectionFactory.h"
 #include "Core/Rendering/Framebuffer/IFramebuffer.h"
 #include "Core/Rendering/Material/IMaterialFactory.h"
+#include "Core/Rendering/Mesh/IMeshFactory.h"
 #include "Core/Rendering/Pipelines/IRenderingPipeline.h"
 #include "Core/Rendering/RendererApi/IRendererApi.h"
 #include "Core/Rendering/Shader/IShaderFactory.h"
@@ -15,11 +16,15 @@ namespace Dwarf
   {
   private:
     std::unique_ptr<IMaterial>        m_IdMaterial;
+    std::unique_ptr<IMaterial>        m_GridMaterial;
+    std::unique_ptr<IMesh>            m_GridMesh;
+    glm::mat4                         m_GridModelMatrix;
     std::shared_ptr<IRendererApi>     m_RendererApi;
     std::shared_ptr<IMaterialFactory> m_MaterialFactory;
     std::shared_ptr<IShaderFactory>   m_ShaderFactory;
     std::shared_ptr<IShaderSourceCollectionFactory>
-      m_ShaderSourceCollectionFactory;
+                                  m_ShaderSourceCollectionFactory;
+    std::shared_ptr<IMeshFactory> m_MeshFactory;
 
     void
     Setup(glm::ivec2 viewportSize);
@@ -29,7 +34,8 @@ namespace Dwarf
                     std::shared_ptr<IMaterialFactory> materialFactory,
                     std::shared_ptr<IShaderFactory>   shaderFactory,
                     std::shared_ptr<IShaderSourceCollectionFactory>
-                      shaderSourceCollectionFactory);
+                                                  shaderSourceCollectionFactory,
+                    std::shared_ptr<IMeshFactory> meshFactory);
     ~ForwardRenderer();
 
     void
@@ -47,16 +53,5 @@ namespace Dwarf
 
     void
     RenderIds(IScene& scene, ICamera& camera, glm::ivec2 viewportSize) override;
-    // void
-    // RenderModelPreview(std::shared_ptr<AssetReference<ModelAsset>>
-    // modelAsset,
-    //                    std::shared_ptr<Camera>                     camera,
-    //                    glm::ivec2 viewportSize, glm::quat rotation) override;
-    // void
-    // RenderMaterialPreview(
-    //   std::shared_ptr<AssetReference<MaterialAsset>> materialAsset,
-    //   std::shared_ptr<Camera>                        camera,
-    //   glm::ivec2                                     viewportSize,
-    //   glm::quat                                      rotation) override;
   };
 }

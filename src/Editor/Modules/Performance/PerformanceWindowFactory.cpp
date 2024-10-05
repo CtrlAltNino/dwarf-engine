@@ -4,28 +4,19 @@ namespace Dwarf
 {
   PerformanceWindowFactory::PerformanceWindowFactory(
     std::shared_ptr<IEditorStats> editorStats)
-    : m_InjectorFactory(
-        [&editorStats]()
-        {
-          return boost::di::make_injector(
-            boost::di::bind<IEditorStats>.to(editorStats));
-        })
+    : m_EditorStats(editorStats)
   {
   }
 
   std::unique_ptr<PerformanceWindow>
   PerformanceWindowFactory::Create() const
   {
-    return m_InjectorFactory().create<std::unique_ptr<PerformanceWindow>>();
+    return std::make_unique<PerformanceWindow>(m_EditorStats);
   }
 
   std::unique_ptr<PerformanceWindow>
   PerformanceWindowFactory::Create(SerializedModule serializedModule) const
   {
-    auto injector = boost::di::make_injector(
-      m_InjectorFactory(),
-      boost::di::bind<SerializedModule>.to(serializedModule));
-
-    return injector.create<std::unique_ptr<PerformanceWindow>>();
+    return std::make_unique<PerformanceWindow>(serializedModule, m_EditorStats);
   }
 } // namespace Dwarf

@@ -118,7 +118,9 @@ namespace Dwarf
     // Setup outline buffer
 
     // Setup camera
-    m_Camera = m_CameraFactory->Create();
+    m_Camera = m_CameraFactory->Create(serializedModule.t["camera"]);
+
+    Deserialize(serializedModule.t);
   }
 
   void
@@ -540,24 +542,6 @@ namespace Dwarf
   void
   SceneViewerWindow::Deserialize(nlohmann::json moduleData)
   {
-
-    m_Camera->GetProperties().Transform.GetPosition() = {
-      moduleData["camera"]["position"]["x"],
-      moduleData["camera"]["position"]["y"],
-      moduleData["camera"]["position"]["z"]
-    };
-
-    m_Camera->GetProperties().Transform.GetEulerAngles() = {
-      moduleData["camera"]["rotation"]["x"],
-      moduleData["camera"]["rotation"]["y"],
-      moduleData["camera"]["rotation"]["z"]
-    };
-
-    m_Camera->GetProperties().Fov = moduleData["camera"]["fov"];
-
-    m_Camera->GetProperties().NearPlane = moduleData["camera"]["near"];
-    m_Camera->GetProperties().FarPlane = moduleData["camera"]["far"];
-
     m_Settings.AspectRatio[0] =
       moduleData["settings"]["aspectRatioConstraint"]["x"];
     m_Settings.AspectRatio[1] =
@@ -579,23 +563,7 @@ namespace Dwarf
   {
     nlohmann::json serializedModule;
 
-    serializedModule["camera"]["position"]["x"] =
-      m_Camera->GetProperties().Transform.GetPosition().x;
-    serializedModule["camera"]["position"]["y"] =
-      m_Camera->GetProperties().Transform.GetPosition().y;
-    serializedModule["camera"]["position"]["z"] =
-      m_Camera->GetProperties().Transform.GetPosition().z;
-
-    serializedModule["camera"]["rotation"]["x"] =
-      m_Camera->GetProperties().Transform.GetEulerAngles().x;
-    serializedModule["camera"]["rotation"]["y"] =
-      m_Camera->GetProperties().Transform.GetEulerAngles().y;
-    serializedModule["camera"]["rotation"]["z"] =
-      m_Camera->GetProperties().Transform.GetEulerAngles().z;
-
-    serializedModule["camera"]["fov"] = m_Camera->GetProperties().Fov;
-    serializedModule["camera"]["near"] = m_Camera->GetProperties().NearPlane;
-    serializedModule["camera"]["far"] = m_Camera->GetProperties().FarPlane;
+    serializedModule["camera"] = m_Camera->Serialize();
 
     serializedModule["settings"]["aspectRatioConstraint"]["x"] =
       m_Settings.AspectRatio[0];

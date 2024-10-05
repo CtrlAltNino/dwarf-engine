@@ -1,6 +1,7 @@
 #include "Core/Rendering/Material/IMaterial.h"
 #include "Core/Scene/Components/SceneComponents.h"
 #include "pch.h"
+#include <glm/fwd.hpp>
 #include "ForwardRenderer.h"
 
 namespace Dwarf
@@ -10,20 +11,36 @@ namespace Dwarf
     std::shared_ptr<IMaterialFactory> materialFactory,
     std::shared_ptr<IShaderFactory>   shaderFactory,
     std::shared_ptr<IShaderSourceCollectionFactory>
-      shaderSourceCollectionFactory)
+                                  shaderSourceCollectionFactory,
+    std::shared_ptr<IMeshFactory> meshFactory)
     : m_RendererApi(rendererApi)
     , m_MaterialFactory(materialFactory)
     , m_ShaderFactory(shaderFactory)
     , m_ShaderSourceCollectionFactory(shaderSourceCollectionFactory)
   {
-    // m_RendererApi = RendererApi::Create();
-    // m_RendererApi->Init();
-    // m_RendererApi->SetClearColor(glm::vec4(0.065f, 0.07f, 0.085, 1.0f));
+    m_RendererApi->SetClearColor(glm::vec4(0.065f, 0.07f, 0.085, 1.0f));
+
     m_IdMaterial =
       m_MaterialFactory->CreateMaterial(m_ShaderFactory->CreateShader(
         m_ShaderSourceCollectionFactory->CreateIdShaderSourceCollection()));
     m_IdMaterial->GetShader().Compile();
+
+    m_GridMaterial =
+      m_MaterialFactory->CreateMaterial(m_ShaderFactory->CreateShader(
+        m_ShaderSourceCollectionFactory->CreateGridShaderSourceCollection()));
+    m_GridMaterial->GetShader().Compile();
+    m_GridMaterial->GetMaterialProperties().IsDoubleSided = true;
+    m_GridMaterial->GetMaterialProperties().IsTransparent = true;
+
+    m_GridMesh = meshFactory->CreateUnitQuad();
+    m_GridMesh->SetupMesh();
+
+    m_GridModelMatrix = glm::mat4(1.0f);
+    m_GridModelMatrix = glm::scale(m_GridModelMatrix, glm::vec3(3000.0f));
+    m_GridModelMatrix = glm::rotate(
+      m_GridModelMatrix, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
   }
+
   ForwardRenderer::~ForwardRenderer() = default;
 
   void
@@ -57,25 +74,11 @@ namespace Dwarf
               .at(model.Meshes().at(i)->GetMaterialIndex() - 1)
               ->GetAsset();
 
-          IMaterial& material = materialAsset.GetMaterial();
-
-          if (material.GetShader().IsCompiled())
-          {
-            m_RendererApi->RenderIndexed(model.Meshes().at(i),
-                                         material,
-                                         modelMatrix,
-                                         viewMatrix,
-                                         projectionMatrix);
-          }
-          else
-          {
-            // TODO: Reimplement error material
-            // m_RendererApi->RenderIndexed(model->m_Meshes.at(i),
-            //                              Material::s_ErrorMaterial,
-            //                              modelMatrix,
-            //                              viewMatrix,
-            //                              projectionMatrix);
-          }
+          m_RendererApi->RenderIndexed(model.Meshes().at(i),
+                                       materialAsset.GetMaterial(),
+                                       modelMatrix,
+                                       viewMatrix,
+                                       projectionMatrix);
         }
       }
     }
@@ -99,7 +102,7 @@ namespace Dwarf
                        .view<TransformComponent, MeshRendererComponent>();
          auto [entity, transform, meshRenderer] : view.each())
     {
-      if (meshRenderer.GetModelAsset() != nullptr)
+      if (meshRenderer.GetModelAsset() != nullptr && !meshRenderer.IsHidden())
       {
         Entity e(entity, scene.GetRegistry());
         RenderEntity(e, viewMatrix, projectionMatrix);
@@ -109,12 +112,19 @@ namespace Dwarf
     // Render grid
     if (renderGrid)
     {
-      // TODO: Reimplement grid
-      // m_RendererApi->RenderIndexed(Mesh::s_GridMesh,
-      //                              Material::s_GridMaterial,
-      //                              glm::mat4(1.0f),
-      //                              camera->GetViewMatrix(),
-      //                              camera->GetProjectionMatrix());
+      // TODO: Ignore depth testing for grid
+      glm::mat4 translatedGridModelMatrix =
+        glm::translate(
+          glm::mat4(1.0f),
+          glm::vec3(camera.GetProperties().Transform.GetPosition().x,
+                    0.0f,
+                    camera.GetProperties().Transform.GetPosition().z)) *
+        m_GridModelMatrix;
+      m_RendererApi->RenderIndexed(m_GridMesh,
+                                   *m_GridMaterial,
+                                   translatedGridModelMatrix,
+                                   camera.GetViewMatrix(),
+                                   camera.GetProjectionMatrix());
     }
   }
 
@@ -128,7 +138,7 @@ namespace Dwarf
     };
     fbSpec.Width = 512;
     fbSpec.Height = 512;
-    fbSpec.Samples = 1;
+    fbSpec.Samples = 4;
 
     return fbSpec;
   }

@@ -117,6 +117,8 @@ namespace Dwarf
       SDL_Quit();
     }
 
+    SDL_GL_SetSwapInterval(0);
+
     m_Logger.LogInfo(Log("Graphics Context created", "WindowsWindow"));
 
     m_Logger.LogInfo(Log("Initializing Graphics Context...", "WindowsWindow"));

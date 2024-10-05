@@ -69,8 +69,12 @@ namespace Dwarf
                                          m_FileHandler->ReadFile(path));
         break;
       case ASSET_TYPE::SCENE:
-        m_Registry.emplace<SceneAsset>(
-          m_AssetHandle, nlohmann::json::parse(m_FileHandler->ReadFile(path)));
+        if (m_FileHandler->FileExists(path))
+        {
+          m_Registry.emplace<SceneAsset>(
+            m_AssetHandle,
+            nlohmann::json::parse(m_FileHandler->ReadFile(path)));
+        }
         break;
       case ASSET_TYPE::VERTEX_SHADER:
         m_Registry.emplace<VertexShaderAsset>(m_AssetHandle,

@@ -52,5 +52,11 @@ namespace Dwarf
     {
       return std::filesystem::path("data/engine/shaders/id/opengl");
     }
+
+    static std::filesystem::path
+    GetGridShaderPath()
+    {
+      return std::filesystem::path("data/engine/shaders/grid/opengl");
+    }
   };
 }

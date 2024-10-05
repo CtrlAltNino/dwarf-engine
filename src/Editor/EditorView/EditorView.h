@@ -31,6 +31,9 @@ namespace Dwarf
     std::shared_ptr<IProjectSettings>  m_ProjectSettings;
     std::shared_ptr<ILoadedScene>      m_LoadedScene;
     std::shared_ptr<IEditorStats>      m_EditorStats;
+    // Thread for saving the view
+    std::thread       m_ViewSaveThread;
+    std::atomic<bool> m_RunViewSaveThread = true;
 
     /// @brief ID counter for GUI modules.
     int m_GuiModuleIDCount = 0;
@@ -67,6 +70,8 @@ namespace Dwarf
                         std::shared_ptr<IAssetDatabase>    assetDatabase,
                         std::shared_ptr<IMaterialCreator>  materialCreator,
                         std::shared_ptr<IEditorStats>      editorStats);
+
+    ~EditorView() override;
 
     /// @brief Executes all pre frame tasks.
     void

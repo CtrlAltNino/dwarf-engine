@@ -190,6 +190,7 @@ namespace Dwarf
   {
     // TODO: Slot for a mesh asset
     ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
+    ImGui::Checkbox("Hidden", &component.IsHidden());
     ImGui::TextWrapped("Model Asset");
     ImGui::SameLine();
     ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -

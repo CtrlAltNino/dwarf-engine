@@ -19,6 +19,7 @@ namespace Dwarf
     ShaderSourceCollectionFactory(
       boost::di::extension::lazy<std::shared_ptr<IAssetDatabase>> assetDatabase,
       GraphicsApi                                                 graphicsApi);
+
     ~ShaderSourceCollectionFactory() override = default;
 
     std::unique_ptr<IShaderSourceCollection>
@@ -29,6 +30,9 @@ namespace Dwarf
 
     std::unique_ptr<IShaderSourceCollection>
     CreateIdShaderSourceCollection() override;
+
+    std::unique_ptr<IShaderSourceCollection>
+    CreateGridShaderSourceCollection() override;
 
     std::unique_ptr<IShaderSourceCollection>
     CreateShaderSourceCollection(

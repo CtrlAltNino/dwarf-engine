@@ -35,4 +35,10 @@ namespace Dwarf
       CameraProperties(
         { position, rotation }, fov, nearPlane, farPlane, aspectRatio));
   }
+
+  std::shared_ptr<ICamera>
+  CameraFactory::Create(nlohmann::json json)
+  {
+    return std::make_shared<Camera>(m_InputManager, json);
+  }
 }

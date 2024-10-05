@@ -56,6 +56,25 @@ namespace Dwarf
           m_GuiModuleFactory->CreateGuiModule(SerializedModule(module))));
       }
     }
+
+    // Start a thread that saves the view every 5 seconds
+    m_ViewSaveThread = std::thread(
+      [this]()
+      {
+        while (m_RunViewSaveThread)
+        {
+          std::this_thread::sleep_for(std::chrono::seconds(5));
+          m_ProjectSettings->UpdateSerializedView(Serialize());
+        }
+      });
+  }
+
+  EditorView::~EditorView()
+  {
+    m_Logger->LogInfo(Log("Destroying EditorView", "EditorView"));
+    m_RunViewSaveThread = false;
+    m_ViewSaveThread.join();
+    m_Logger->LogInfo(Log("EditorView destroyed", "EditorView"));
   }
 
   void

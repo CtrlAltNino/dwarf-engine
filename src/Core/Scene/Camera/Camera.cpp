@@ -1,4 +1,5 @@
 #include "Camera.h"
+#include "Core/Scene/Camera/ICamera.h"
 
 namespace Dwarf
 {
@@ -17,10 +18,9 @@ namespace Dwarf
   }
 
   Camera::Camera(std::shared_ptr<IInputManager> inputManager,
-                 nlohmann::json                 json,
-                 CameraProperties               properties)
+                 nlohmann::json                 json)
     : m_InputManager(inputManager)
-    , m_Properties(properties)
+    , m_Properties(CameraProperties())
   {
     m_Properties.Transform = TransformComponent(json["transform"]);
     m_Properties.Fov = json["fov"];
