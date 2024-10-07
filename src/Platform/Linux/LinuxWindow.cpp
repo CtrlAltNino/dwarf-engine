@@ -123,6 +123,7 @@ namespace Dwarf
     m_Logger->LogDebug(Log("Initializing Graphics Context...", "LinuxWindow"));
     m_Context->Init();
     m_Logger->LogDebug(Log("Graphics Context initialized", "LinuxWindow"));
+    SDL_GL_SetSwapInterval(0);
 
     m_Logger->LogDebug(Log("Creating ImGui Layer...", "LinuxWindow"));
     m_ImGuiLayer = m_ImguiLayerFactory->Create();

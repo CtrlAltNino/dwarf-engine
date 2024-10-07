@@ -314,23 +314,24 @@ namespace Dwarf
         case Metal: break;
         case OpenGL:
           {
-            auto shader = (OpenGLShader*)material.GetShader().get();
+            IShader&      shader = material.GetShader();
+            OpenGLShader& oglShader = dynamic_cast<OpenGLShader&>(shader);
             ImGui::TextWrapped("Vertex Shader");
             ImGui::SameLine();
             ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
             DwarfUI::AssetInput<VertexShaderAsset>(
               m_AssetDatabase,
-              shader->GetVertexShaderAsset(),
+              oglShader.GetVertexShaderAsset(),
               "##vertexShader");
             ImGui::PopItemWidth();
 
-            if (!shader->GetShaderLogs().m_VertexShaderLog.empty())
+            if (!oglShader.GetShaderLogs().m_VertexShaderLog.empty())
             {
               ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
               if (ImGui::CollapsingHeader("Vertex Shader Error Log##vert"))
               {
                 ImGui::TextWrapped(
-                  "%s", shader->GetShaderLogs().m_VertexShaderLog.c_str());
+                  "%s", oglShader.GetShaderLogs().m_VertexShaderLog.c_str());
               }
               ImGui::PopItemWidth();
             }
@@ -340,18 +341,19 @@ namespace Dwarf
             ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
             DwarfUI::AssetInput<TessellationControlShaderAsset>(
               m_AssetDatabase,
-              shader->GetTessellationControlShaderAsset(),
+              oglShader.GetTessellationControlShaderAsset(),
               "##tessellationControlShader");
             ImGui::PopItemWidth();
 
-            if (!shader->GetShaderLogs().m_TessellationControlShaderLog.empty())
+            if (!oglShader.GetShaderLogs()
+                   .m_TessellationControlShaderLog.empty())
             {
               ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
               if (ImGui::CollapsingHeader(
                     "Tessellation Control Shader Error Log##tesc"))
               {
                 ImGui::TextWrapped("%s",
-                                   shader->GetShaderLogs()
+                                   oglShader.GetShaderLogs()
                                      .m_TessellationControlShaderLog.c_str());
               }
               ImGui::PopItemWidth();
@@ -362,11 +364,11 @@ namespace Dwarf
             ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
             DwarfUI::AssetInput<TessellationEvaluationShaderAsset>(
               m_AssetDatabase,
-              shader->GetTessellationEvaluationShaderAsset(),
+              oglShader.GetTessellationEvaluationShaderAsset(),
               "##tessellationEvaluationShader");
             ImGui::PopItemWidth();
 
-            if (!shader->GetShaderLogs()
+            if (!oglShader.GetShaderLogs()
                    .m_TessellationEvaluationShaderLog.empty())
             {
               ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
@@ -375,7 +377,7 @@ namespace Dwarf
               {
                 ImGui::TextWrapped(
                   "%s",
-                  shader->GetShaderLogs()
+                  oglShader.GetShaderLogs()
                     .m_TessellationEvaluationShaderLog.c_str());
               }
               ImGui::PopItemWidth();
@@ -386,17 +388,17 @@ namespace Dwarf
             ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
             DwarfUI::AssetInput<GeometryShaderAsset>(
               m_AssetDatabase,
-              shader->GetGeometryShaderAsset(),
+              oglShader.GetGeometryShaderAsset(),
               "##geometryShader");
             ImGui::PopItemWidth();
 
-            if (!shader->GetShaderLogs().m_GeometryShaderLog.empty())
+            if (!oglShader.GetShaderLogs().m_GeometryShaderLog.empty())
             {
               ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
               if (ImGui::CollapsingHeader("Geometry Shader Error Log##geom"))
               {
                 ImGui::TextWrapped(
-                  "%s", shader->GetShaderLogs().m_GeometryShaderLog.c_str());
+                  "%s", oglShader.GetShaderLogs().m_GeometryShaderLog.c_str());
               }
               ImGui::PopItemWidth();
             }
@@ -406,17 +408,17 @@ namespace Dwarf
             ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
             DwarfUI::AssetInput<FragmentShaderAsset>(
               m_AssetDatabase,
-              shader->GetFragmentShaderAsset(),
+              oglShader.GetFragmentShaderAsset(),
               "##fragmentShader");
             ImGui::PopItemWidth();
 
-            if (!shader->GetShaderLogs().m_FragmentShaderLog.empty())
+            if (!oglShader.GetShaderLogs().m_FragmentShaderLog.empty())
             {
               ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
               if (ImGui::CollapsingHeader("Fragment Shader Error Log##frag"))
               {
                 ImGui::TextWrapped(
-                  "%s", shader->GetShaderLogs().m_FragmentShaderLog.c_str());
+                  "%s", oglShader.GetShaderLogs().m_FragmentShaderLog.c_str());
               }
               ImGui::PopItemWidth();
             }
