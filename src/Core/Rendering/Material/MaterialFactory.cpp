@@ -12,19 +12,19 @@ namespace Dwarf
     , m_ShaderFactory(shaderFactory)
     , m_ShaderParameterCollectionFactory(shaderParameterCollectionFactory)
   {
-    m_Logger->LogInfo(Log("MaterialFactory created", "MaterialFactory"));
+    m_Logger->LogDebug(Log("MaterialFactory created", "MaterialFactory"));
   }
 
   MaterialFactory::~MaterialFactory()
   {
-    m_Logger->LogInfo(Log("MaterialFactory destroyed", "MaterialFactory"));
+    m_Logger->LogDebug(Log("MaterialFactory destroyed", "MaterialFactory"));
   }
 
   std::unique_ptr<IMaterial>
   MaterialFactory::CreateDefaultMaterial() const
   {
     // TODO: Use default shader
-    m_Logger->LogInfo(Log("Creating default material", "MaterialFactory"));
+    m_Logger->LogDebug(Log("Creating default material", "MaterialFactory"));
     return std::make_unique<Material>(
       m_ShaderFactory->CreateDefaultShader(),
       MaterialProperties(),
@@ -34,7 +34,7 @@ namespace Dwarf
   std::unique_ptr<IMaterial>
   MaterialFactory::CreateMaterial(std::unique_ptr<IShader> shader) const
   {
-    m_Logger->LogInfo(Log("Creating material", "MaterialFactory"));
+    m_Logger->LogDebug(Log("Creating material", "MaterialFactory"));
     return std::make_unique<Material>(
       std::move(shader),
       MaterialProperties(),
@@ -45,7 +45,7 @@ namespace Dwarf
   MaterialFactory::FromSerialized(
     const nlohmann::json& serializedMaterial) const
   {
-    m_Logger->LogInfo(
+    m_Logger->LogDebug(
       Log("Creating material from serialized data", "MaterialFactory"));
     return std::make_unique<Material>(
       serializedMaterial.contains("Shader")

@@ -22,13 +22,13 @@ namespace Dwarf
     , m_Api(api)
     , m_TextureFactory(textureFactory)
   {
-    m_Logger->LogInfo(Log("FramebufferFactory created", "FramebufferFactory"));
+    m_Logger->LogDebug(Log("FramebufferFactory created", "FramebufferFactory"));
   }
 
   std::shared_ptr<IFramebuffer>
   FramebufferFactory::Create(const FramebufferSpecification& spec)
   {
-    m_Logger->LogInfo(Log("Creating framebuffer", "FramebufferFactory"));
+    m_Logger->LogDebug(Log("Creating framebuffer", "FramebufferFactory"));
 
     switch (m_Api)
     {

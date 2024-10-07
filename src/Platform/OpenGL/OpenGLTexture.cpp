@@ -331,16 +331,16 @@ namespace Dwarf
     GLuint textureMagFilter = GetTextureMagFilter(parameters->MagFilter);
     GLuint internalFormat = GetInternalFormat(data->Format, data->DataType);
 
-    m_Logger->LogInfo(Log("Creating OpenGL texture", "OpenGLTexture"));
-    m_Logger->LogInfo(
+    m_Logger->LogDebug(Log("Creating OpenGL texture", "OpenGLTexture"));
+    m_Logger->LogDebug(
       Log("Texture type: " + GLenumToString(textureType), "OpenGLTexture"));
-    m_Logger->LogInfo(
+    m_Logger->LogDebug(
       Log("Texture data type: " + GLenumToString(textureDataType),
           "OpenGLTexture"));
-    m_Logger->LogInfo(
+    m_Logger->LogDebug(
       Log("Texture format: " + GLenumToString(textureFormat), "OpenGLTexture"));
-    m_Logger->LogInfo(Log("Internal format: " + GLenumToString(internalFormat),
-                          "OpenGLTexture"));
+    m_Logger->LogDebug(Log("Internal format: " + GLenumToString(internalFormat),
+                           "OpenGLTexture"));
 
     OpenGLUtilities::CheckOpenGLError(
       "Before creating texture", "OpenGLTexture", m_Logger);
@@ -360,7 +360,7 @@ namespace Dwarf
     {
       case TextureType::TEXTURE_1D:
         {
-          m_Logger->LogInfo(Log("Creating 1D texture", "OpenGLTexture"));
+          m_Logger->LogDebug(Log("Creating 1D texture", "OpenGLTexture"));
           glm::ivec1 size = std::get<glm::ivec1>(data->Size);
           glTextureParameteri(m_Id, GL_TEXTURE_WRAP_S, textureWrapS);
           OpenGLUtilities::CheckOpenGLError(
@@ -382,7 +382,7 @@ namespace Dwarf
         }
       case TextureType::TEXTURE_2D:
         {
-          m_Logger->LogInfo(Log("Creating 2D texture", "OpenGLTexture"));
+          m_Logger->LogDebug(Log("Creating 2D texture", "OpenGLTexture"));
           glm::ivec2 size = std::get<glm::ivec2>(data->Size);
           glTextureParameteri(m_Id, GL_TEXTURE_WRAP_S, textureWrapS);
           OpenGLUtilities::CheckOpenGLError(
@@ -420,7 +420,7 @@ namespace Dwarf
         }
       case TextureType::TEXTURE_3D:
         {
-          m_Logger->LogInfo(Log("Creating 3D texture", "OpenGLTexture"));
+          m_Logger->LogDebug(Log("Creating 3D texture", "OpenGLTexture"));
           glm::ivec3 size = std::get<glm::ivec3>(data->Size);
           glTextureParameteri(m_Id, GL_TEXTURE_WRAP_S, textureWrapS);
           glTextureParameteri(m_Id, GL_TEXTURE_WRAP_T, textureWrapT);
@@ -443,7 +443,7 @@ namespace Dwarf
         }
       case TextureType::TEXTURE_CUBE_MAP:
         {
-          m_Logger->LogInfo(Log("Creating cube map texture", "OpenGLTexture"));
+          m_Logger->LogDebug(Log("Creating cube map texture", "OpenGLTexture"));
           glTextureParameteri(m_Id, GL_TEXTURE_WRAP_S, textureWrapS);
           glTextureParameteri(m_Id, GL_TEXTURE_WRAP_T, textureWrapT);
           glTextureParameteri(m_Id, GL_TEXTURE_WRAP_R, textureWrapR);
@@ -457,14 +457,14 @@ namespace Dwarf
     OpenGLUtilities::CheckOpenGLError(
       "glGenerateTextureMipmap", "OpenGLTexture", m_Logger);
 
-    m_Logger->LogInfo(Log("OpenGL texture created", "OpenGLTexture"));
-    m_Logger->LogInfo(
+    m_Logger->LogDebug(Log("OpenGL texture created", "OpenGLTexture"));
+    m_Logger->LogDebug(
       Log("Texture ID: " + std::to_string(m_Id), "OpenGLTexture"));
   }
 
   OpenGLTexture::~OpenGLTexture()
   {
-    m_Logger->LogInfo(Log("Deleting OpenGL texture", "OpenGLTexture"));
+    m_Logger->LogDebug(Log("Deleting OpenGL texture", "OpenGLTexture"));
     OpenGLUtilities::CheckOpenGLError(
       "Before deleting texture", "OpenGLTexture", m_Logger);
     glDeleteTextures(1, &m_Id);

@@ -19,10 +19,10 @@ namespace Dwarf
                            const std::filesystem::path& path) const
   {
     // Save the material to a file (Overwrite if it already exists)
-    m_Logger->LogInfo(Log(
+    m_Logger->LogDebug(Log(
       fmt::format("Saving material to file: {}", path.string()), "MaterialIO"));
     std::string serializedMaterial = material.Serialize().dump(2);
-    m_Logger->LogInfo(
+    m_Logger->LogDebug(
       Log(fmt::format("Serialized material: {}", serializedMaterial),
           "MaterialIO"));
     m_FileHandler->WriteToFile(path, serializedMaterial);
@@ -31,7 +31,7 @@ namespace Dwarf
   std::unique_ptr<IMaterial>
   MaterialIO::LoadMaterial(const std::filesystem::path& path) const
   {
-    m_Logger->LogInfo(
+    m_Logger->LogDebug(
       Log(fmt::format("Loading material from file: {}", path.string()),
           "MaterialIO"));
 
@@ -44,7 +44,7 @@ namespace Dwarf
     }
 
     std::string serializedMaterial = m_FileHandler->ReadFile(path);
-    m_Logger->LogInfo(
+    m_Logger->LogDebug(
       Log(fmt::format("Serialized material: {}", serializedMaterial),
           "MaterialIO"));
 

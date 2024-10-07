@@ -18,18 +18,19 @@ namespace Dwarf
     : m_Logger(logger)
     , m_Api(api)
   {
-    m_Logger->LogInfo(Log("ImGuiLayerFactory created.", "ImGuiLayerFactory"));
+    m_Logger->LogDebug(Log("ImGuiLayerFactory created.", "ImGuiLayerFactory"));
   }
 
   ImGuiLayerFactory::~ImGuiLayerFactory()
   {
-    m_Logger->LogInfo(Log("ImGuiLayerFactory destroyed.", "ImGuiLayerFactory"));
+    m_Logger->LogDebug(
+      Log("ImGuiLayerFactory destroyed.", "ImGuiLayerFactory"));
   }
 
   std::unique_ptr<IImGuiLayer>
   ImGuiLayerFactory::Create() const
   {
-    m_Logger->LogInfo(Log("Creating ImGuiLayer...", "ImGuiLayerFactory"));
+    m_Logger->LogDebug(Log("Creating ImGuiLayer...", "ImGuiLayerFactory"));
     switch (m_Api)
     {
       using enum GraphicsApi;
@@ -45,7 +46,7 @@ namespace Dwarf
         break;
       case OpenGL:
         {
-          m_Logger->LogInfo(
+          m_Logger->LogDebug(
             Log("Creating OpenGLImGuiLayer...", "ImGuiLayerFactory"));
           return std::make_unique<OpenGLImGuiLayer>(m_Logger);
           break;
@@ -64,7 +65,7 @@ namespace Dwarf
         break;
       case OpenGL:
         {
-          m_Logger->LogInfo(
+          m_Logger->LogDebug(
             Log("Creating OpenGLImGuiLayer...", "ImGuiLayerFactory"));
           return std::make_unique<OpenGLImGuiLayer>(m_Logger);
           break;

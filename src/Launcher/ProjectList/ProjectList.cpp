@@ -16,13 +16,13 @@ namespace Dwarf
     m_ProjectList = m_ProjectListIO.LoadProjectList();
     m_Logger.LogInfo(Log("ProjectList loaded.", "ProjectList"));
 
-    m_Logger.LogInfo(Log("Sorting ProjectList...", "ProjectList"));
+    m_Logger.LogDebug(Log("Sorting ProjectList...", "ProjectList"));
     m_ProjectListSorter.SortProjectList(m_ProjectList);
-    m_Logger.LogInfo(Log("ProjectList sorted.", "ProjectList"));
+    m_Logger.LogDebug(Log("ProjectList sorted.", "ProjectList"));
 
-    m_Logger.LogInfo(Log("ProjectList created.", "ProjectList"));
+    m_Logger.LogDebug(Log("ProjectList created.", "ProjectList"));
     NFD_Init();
-    m_Logger.LogInfo(Log("Native File Dialog initialized.", "ProjectList"));
+    m_Logger.LogDebug(Log("Native File Dialog initialized.", "ProjectList"));
   }
 
   ProjectList::~ProjectList()
@@ -35,14 +35,14 @@ namespace Dwarf
   void
   ProjectList::AddProject(const std::filesystem::path& path)
   {
-    m_Logger.LogInfo(Log("Adding project...", "ProjectList"));
+    m_Logger.LogDebug(Log("Adding project...", "ProjectList"));
     ProjectInformation info;
     info.path = path;
     info.name = path.filename().string();
     info.lastOpened = 0;
     info.graphicsApi = GraphicsApi::OpenGL;
     m_ProjectList.push_back(info);
-    m_Logger.LogInfo(Log("Project added.", "ProjectList"));
+    m_Logger.LogDebug(Log("Project added.", "ProjectList"));
   }
 
   void
@@ -86,10 +86,10 @@ namespace Dwarf
             Log("Project added to project list.", "ProjectList"));
 
           m_ProjectListSorter.SortProjectList(m_ProjectList);
-          m_Logger.LogInfo(Log("Project list sorted.", "ProjectList"));
+          m_Logger.LogDebug(Log("Project list sorted.", "ProjectList"));
 
           m_ProjectListIO.SaveProjectList(m_ProjectList);
-          m_Logger.LogInfo(Log("Project list saved.", "ProjectList"));
+          m_Logger.LogDebug(Log("Project list saved.", "ProjectList"));
         }
         else
         {
@@ -110,12 +110,10 @@ namespace Dwarf
     }
     else if (result == NFD_CANCEL)
     {
-      // puts("User pressed cancel.");
       m_Logger.LogInfo(Log("User pressed cancel.", "ProjectList"));
     }
     else
     {
-      // printf("Error: %s\n", NFD_GetError());
       m_Logger.LogError(Log(
         fmt::format("Error: {}", std::string(NFD_GetError())), "ProjectList"));
     }
@@ -145,7 +143,7 @@ namespace Dwarf
   ProjectList::ChangeGraphicsApi(const std::filesystem::path& path,
                                  GraphicsApi                  api)
   {
-    m_Logger.LogInfo(Log("Changing graphics API...", "ProjectList"));
+    m_Logger.LogDebug(Log("Changing graphics API...", "ProjectList"));
     for (auto& project : m_ProjectList)
     {
       if (project.path == path)
@@ -154,7 +152,7 @@ namespace Dwarf
         m_Logger.LogInfo(Log("Graphics API changed.", "ProjectList"));
         m_ProjectListSorter.SortProjectList(m_ProjectList);
         m_ProjectListIO.SaveProjectList(m_ProjectList);
-        m_Logger.LogInfo(Log("Project list saved.", "ProjectList"));
+        m_Logger.LogDebug(Log("Project list saved.", "ProjectList"));
         break;
       }
 

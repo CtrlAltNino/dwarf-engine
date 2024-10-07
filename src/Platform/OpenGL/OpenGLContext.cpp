@@ -29,12 +29,12 @@ namespace Dwarf
     : m_Logger(logger)
     , m_WindowHandle(windowHandle)
   {
-    m_Logger->LogInfo(Log("OpenGLContext created.", "OpenGLContext"));
+    m_Logger->LogDebug(Log("OpenGLContext created.", "OpenGLContext"));
   }
 
   OpenGLContext::~OpenGLContext()
   {
-    m_Logger->LogInfo(Log("OpenGLContext destroyed.", "OpenGLContext"));
+    m_Logger->LogDebug(Log("OpenGLContext destroyed.", "OpenGLContext"));
     if (m_Context) SDL_GL_DeleteContext(m_Context);
   }
 

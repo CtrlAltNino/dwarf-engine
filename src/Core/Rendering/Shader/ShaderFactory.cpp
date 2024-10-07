@@ -26,18 +26,18 @@ namespace Dwarf
     , m_ShaderSourceCollectionFactory(shaderSourceCollectionFactory)
     , m_ShaderParameterCollectionFactory(shaderParameterCollectionFactory)
   {
-    m_Logger->LogInfo(Log("ShaderFactory created", "ShaderFactory"));
+    m_Logger->LogDebug(Log("ShaderFactory created", "ShaderFactory"));
   }
 
   ShaderFactory::~ShaderFactory()
   {
-    m_Logger->LogInfo(Log("ShaderFactory destroyed", "ShaderFactory"));
+    m_Logger->LogDebug(Log("ShaderFactory destroyed", "ShaderFactory"));
   }
 
   std::unique_ptr<IShader>
   ShaderFactory::CreateDefaultShader()
   {
-    m_Logger->LogInfo(Log("Creating default shader", "ShaderFactory"));
+    m_Logger->LogDebug(Log("Creating default shader", "ShaderFactory"));
     // TODO: Implement the default shader creation.
     return CreateShader(
       m_ShaderSourceCollectionFactory->CreateDefaultShaderSourceCollection());
@@ -46,7 +46,7 @@ namespace Dwarf
   std::unique_ptr<IShader>
   ShaderFactory::CreateErrorShader()
   {
-    m_Logger->LogInfo(Log("Creating error shader", "ShaderFactory"));
+    m_Logger->LogDebug(Log("Creating error shader", "ShaderFactory"));
     return CreateShader(
       m_ShaderSourceCollectionFactory->CreateErrorShaderSourceCollection());
   }
@@ -54,7 +54,7 @@ namespace Dwarf
   std::unique_ptr<IShader>
   ShaderFactory::CreateShader(const nlohmann::json& shaderJson)
   {
-    m_Logger->LogInfo(
+    m_Logger->LogDebug(
       Log(fmt::format("Creating shader from JSON:\n{}", shaderJson.dump(2)),
           "ShaderFactory"));
 
@@ -68,7 +68,7 @@ namespace Dwarf
   ShaderFactory::CreateShader(
     std::unique_ptr<IShaderSourceCollection> shaderSources)
   {
-    m_Logger->LogInfo(Log("Creating shader from sources", "ShaderFactory"));
+    m_Logger->LogDebug(Log("Creating shader from sources", "ShaderFactory"));
     // Creating a shader based on the graphics API.
     switch (m_GraphicsApi)
     {

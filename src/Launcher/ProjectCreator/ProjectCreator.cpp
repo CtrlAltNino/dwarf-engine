@@ -11,12 +11,12 @@ namespace Dwarf
     , m_ProjectList(projectList)
     , m_FileHandler(fileHandler)
   {
-    m_Logger.LogInfo(Log("ProjectCreator created", "ProjectCreator"));
+    m_Logger.LogDebug(Log("ProjectCreator created", "ProjectCreator"));
   }
 
   ProjectCreator::~ProjectCreator()
   {
-    m_Logger.LogInfo(Log("ProjectCreator destroyed", "ProjectCreator"));
+    m_Logger.LogDebug(Log("ProjectCreator destroyed", "ProjectCreator"));
   }
 
   void
@@ -37,7 +37,7 @@ namespace Dwarf
         projectPath / projectName / "projectSettings.dproj";
       if (!m_FileHandler->FileExists(projectSettingsPath))
       {
-        m_Logger.LogInfo(
+        m_Logger.LogDebug(
           Log("Creating project directory at: " + projectDirectory.string(),
               "ProjectCreator"));
         m_FileHandler->CreateDirectoryAt(projectDirectory);
@@ -54,9 +54,9 @@ namespace Dwarf
 
           std::string fileContent = jsonObject.dump(4);
           m_FileHandler->WriteToFile(projectSettingsPath, fileContent);
-          m_Logger.LogInfo(Log("Project settings file created at: " +
-                                 projectSettingsPath.string(),
-                               "ProjectCreator"));
+          m_Logger.LogDebug(Log("Project settings file created at: " +
+                                  projectSettingsPath.string(),
+                                "ProjectCreator"));
         }
         else
         {
@@ -99,9 +99,9 @@ namespace Dwarf
 #endif
           system(copyCommand.c_str());
 
-          m_Logger.LogInfo(Log("Project template copied to: " +
-                                 (projectPath / projectName).string(),
-                               "ProjectCreator"));
+          m_Logger.LogDebug(Log("Project template copied to: " +
+                                  (projectPath / projectName).string(),
+                                "ProjectCreator"));
 
           // Update the projectSettings.dproj "projectName" entry
           std::filesystem::path templateProjectSettingsDirectory =
@@ -116,9 +116,9 @@ namespace Dwarf
             std::string newFileContent = jsonObject.dump(4);
             m_FileHandler->WriteToFile(projectSettingsPath.c_str(),
                                        newFileContent);
-            m_Logger.LogInfo(Log("Project settings file updated at: " +
-                                   projectSettingsPath.string(),
-                                 "ProjectCreator"));
+            m_Logger.LogDebug(Log("Project settings file updated at: " +
+                                    projectSettingsPath.string(),
+                                  "ProjectCreator"));
           }
           else
           {
@@ -129,7 +129,7 @@ namespace Dwarf
         }
 
         m_ProjectList.AddProject(projectDirectory);
-        m_Logger.LogInfo(
+        m_Logger.LogDebug(
           Log("Newly created project added to project list", "ProjectCreator"));
       }
       else

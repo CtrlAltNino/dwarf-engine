@@ -13,12 +13,12 @@ namespace Dwarf
     , m_MaterialIndex(materialIndex)
     , m_Logger(logger)
   {
-    m_Logger->LogInfo(Log("OpenGLMesh created.", "OpenGLMesh"));
+    m_Logger->LogDebug(Log("OpenGLMesh created.", "OpenGLMesh"));
   }
 
   OpenGLMesh::~OpenGLMesh()
   {
-    m_Logger->LogInfo(Log("OpenGLMesh destroyed.", "OpenGLMesh"));
+    m_Logger->LogDebug(Log("OpenGLMesh destroyed.", "OpenGLMesh"));
     Unbind();
     glDeleteVertexArrays(1, &VAO);
     OpenGLUtilities::CheckOpenGLError(

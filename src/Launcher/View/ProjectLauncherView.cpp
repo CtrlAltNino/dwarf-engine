@@ -40,7 +40,7 @@ namespace Dwarf
     , m_Logger(logger)
     , m_FileHandler(fileHandler)
   {
-    m_Logger.LogInfo(
+    m_Logger.LogDebug(
       Log("Initializing project launcher view", "ProjectLauncherView"));
 
     ImGuiIO io = ImGui::GetIO();
@@ -51,22 +51,22 @@ namespace Dwarf
     m_TextFont = std::shared_ptr<ImFont>(
       io.Fonts->AddFontFromFileTTF(FONT_ROBOTO_REGULAR_PATH, 15),
       no_op_deleter);
-    m_Logger.LogInfo(Log("Fonts loaded", "ProjectLauncherView"));
+    m_Logger.LogDebug(Log("Fonts loaded", "ProjectLauncherView"));
 
     m_GithubIcon =
       m_TextureFactory.FromPath(std::filesystem::path(GITHUB_PNG_ICON_PATH));
     m_PatreonIcon =
       m_TextureFactory.FromPath(std::filesystem::path(PATREON_PNG_ICON_PATH));
     m_XIcon = m_TextureFactory.FromPath(std::filesystem::path(X_PNG_ICON_PATH));
-    m_Logger.LogInfo(Log("Icons loaded", "ProjectLauncherView"));
+    m_Logger.LogDebug(Log("Icons loaded", "ProjectLauncherView"));
 
-    m_Logger.LogInfo(
+    m_Logger.LogDebug(
       Log("Project launcher view initialized", "ProjectLauncherView"));
   }
 
   ProjectLauncherView::~ProjectLauncherView()
   {
-    m_Logger.LogInfo(
+    m_Logger.LogDebug(
       Log("Destroying project launcher view", "ProjectLauncherView"));
   }
 

@@ -5,12 +5,12 @@ namespace Dwarf
   ProjectListSorter::ProjectListSorter(IDwarfLogger& logger)
     : m_Logger(logger)
   {
-    m_Logger.LogInfo(Log("ProjectListSorter created", "ProjectListSorter"));
+    m_Logger.LogDebug(Log("ProjectListSorter created", "ProjectListSorter"));
   }
 
   ProjectListSorter::~ProjectListSorter()
   {
-    m_Logger.LogInfo(Log("ProjectListSorter destroyed", "ProjectListSorter"));
+    m_Logger.LogDebug(Log("ProjectListSorter destroyed", "ProjectListSorter"));
   }
 
   /// @brief Converts a string to lower case.

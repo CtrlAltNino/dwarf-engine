@@ -19,14 +19,15 @@ namespace Dwarf
     , m_ShaderFactory(shaderFactory)
     , m_Logger(logger)
   {
-    m_Logger->LogInfo(Log("OpenGLRendererApi created.", "OpenGLRendererApi"));
+    m_Logger->LogDebug(Log("OpenGLRendererApi created.", "OpenGLRendererApi"));
     m_ErrorShader = m_ShaderFactory->CreateErrorShader();
     m_ErrorShader->Compile();
   }
 
   OpenGLRendererApi::~OpenGLRendererApi()
   {
-    m_Logger->LogInfo(Log("OpenGLRendererApi destroyed.", "OpenGLRendererApi"));
+    m_Logger->LogDebug(
+      Log("OpenGLRendererApi destroyed.", "OpenGLRendererApi"));
   }
 
   struct SetShaderParameterVisitor

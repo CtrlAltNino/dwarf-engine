@@ -32,10 +32,10 @@ namespace Dwarf
         std::filesystem::path path =
           m_AssetDatabase->Retrieve(scene.GetProperties().GetAssetID().value())
             ->GetPath();
-        m_Logger->LogInfo(
+        m_Logger->LogDebug(
           Log(fmt::format("Saving serialized scene:\n{}", sceneJson.dump(2)),
               "SceneIO"));
-        m_Logger->LogInfo(Log(
+        m_Logger->LogDebug(Log(
           fmt::format("Writing scene to file: {}", path.string()), "SceneIO"));
         WriteSceneToFile(sceneJson, path);
       }
@@ -64,7 +64,7 @@ namespace Dwarf
     nfdresult_t    result = NFD_SaveDialogU8_With(&savePath, &args);
     nlohmann::json sceneJson = scene.Serialize();
 
-    m_Logger->LogInfo(
+    m_Logger->LogDebug(
       Log(fmt::format("Saving serialized scene: {}", sceneJson.dump(2)),
           "SceneIO"));
 
@@ -98,9 +98,9 @@ namespace Dwarf
   {
     if (m_FileHandler->FileExists(sceneAsset.GetPath()))
     {
-      m_Logger->LogInfo(Log(fmt::format("Loading scene from asset: {}",
-                                        sceneAsset.GetPath().string()),
-                            "SceneIO"));
+      m_Logger->LogDebug(Log(fmt::format("Loading scene from asset: {}",
+                                         sceneAsset.GetPath().string()),
+                             "SceneIO"));
       return m_SceneFactory->FromAsset(sceneAsset);
     }
     else

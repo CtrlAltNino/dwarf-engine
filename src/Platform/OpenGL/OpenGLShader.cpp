@@ -138,7 +138,7 @@ namespace Dwarf
       }
       else
       {
-        m_Logger->LogInfo(
+        m_Logger->LogDebug(
           Log("Vertex shader compiled successfully", "OpenGLShader"));
       }
 
@@ -177,7 +177,7 @@ namespace Dwarf
       }
       else
       {
-        m_Logger->LogInfo(
+        m_Logger->LogDebug(
           Log("Fragment shader compiled successfully", "OpenGLShader"));
       }
 

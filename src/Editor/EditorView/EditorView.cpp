@@ -37,19 +37,19 @@ namespace Dwarf
     , m_MaterialCreator(materialCreator)
     , m_EditorStats(editorStats)
   {
-    m_Logger->LogInfo(Log("Creating EditorView", "EditorView"));
+    m_Logger->LogDebug(Log("Creating EditorView", "EditorView"));
 
     nlohmann::json serializedView = m_ProjectSettings->GetSerializedView();
-    m_Logger->LogInfo(
+    m_Logger->LogDebug(
       Log(fmt::format("Deserializing EditorView:\n{}", serializedView.dump(2)),
           "EditorView"));
 
     if (serializedView.contains("modules"))
     {
-      m_Logger->LogInfo(Log("Module key found", "EditorView"));
+      m_Logger->LogDebug(Log("Module key found", "EditorView"));
       for (auto module : serializedView.at("modules"))
       {
-        m_Logger->LogInfo(
+        m_Logger->LogDebug(
           Log(fmt::format("Deserializing module:\n{}", module.dump(2)),
               "EditorView"));
         m_GuiModules.push_back(std::move(
@@ -71,10 +71,10 @@ namespace Dwarf
 
   EditorView::~EditorView()
   {
-    m_Logger->LogInfo(Log("Destroying EditorView", "EditorView"));
+    m_Logger->LogDebug(Log("Destroying EditorView", "EditorView"));
     m_RunViewSaveThread = false;
     m_ViewSaveThread.join();
-    m_Logger->LogInfo(Log("EditorView destroyed", "EditorView"));
+    m_Logger->LogDebug(Log("EditorView destroyed", "EditorView"));
   }
 
   void

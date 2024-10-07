@@ -17,20 +17,20 @@ namespace Dwarf
     : m_Logger(logger)
     , m_Api(api)
   {
-    m_Logger->LogInfo(
+    m_Logger->LogDebug(
       Log("GraphicsContextFactory created.", "GraphicsContext"));
   }
 
   GraphicsContextFactory::~GraphicsContextFactory()
   {
-    m_Logger->LogInfo(
+    m_Logger->LogDebug(
       Log("GraphicsContextFactory destroyed.", "GraphicsContext"));
   }
 
   std::unique_ptr<IGraphicsContext>
   GraphicsContextFactory::Create(SDL_Window* window) const
   {
-    m_Logger->LogInfo(Log("Creating GraphicsContext...", "GraphicsContext"));
+    m_Logger->LogDebug(Log("Creating GraphicsContext...", "GraphicsContext"));
     switch (m_Api)
     {
 #if _WIN32
@@ -42,7 +42,7 @@ namespace Dwarf
         break;
       case GraphicsApi::OpenGL:
         {
-          m_Logger->LogInfo(
+          m_Logger->LogDebug(
             Log("Creating OpenGLContext...", "GraphicsContext"));
           return std::make_unique<OpenGLContext>(m_Logger, window);
           break;
@@ -59,7 +59,8 @@ namespace Dwarf
         break;
       case GraphicsApi::OpenGL:
         {
-          m_Logger.LogInfo(Log("Creating OpenGLContext...", "GraphicsContext"));
+          m_Logger.LogDebug(
+            Log("Creating OpenGLContext...", "GraphicsContext"));
           return std::make_unique<OpenGLContext>(window);
           break;
         }

@@ -14,34 +14,34 @@ namespace Dwarf
     , m_InputManager(inputManager)
     , m_Logger(logger)
   {
-    m_Logger->LogInfo(Log("Creating Linux Window...", "LinuxWindow"));
+    m_Logger->LogDebug(Log("Creating Linux Window...", "LinuxWindow"));
     Init(props);
-    m_Logger->LogInfo(Log("Linux Window created", "LinuxWindow"));
+    m_Logger->LogDebug(Log("Linux Window created", "LinuxWindow"));
   }
 
   LinuxWindow::~LinuxWindow()
   {
-    m_Logger->LogInfo(Log("Destroying Linux Window...", "LinuxWindow"));
+    m_Logger->LogDebug(Log("Destroying Linux Window...", "LinuxWindow"));
 
-    m_Logger->LogInfo(Log("Detaching ImGui Layer...", "LinuxWindow"));
+    m_Logger->LogDebug(Log("Detaching ImGui Layer...", "LinuxWindow"));
     m_ImGuiLayer->OnDetach();
-    m_Logger->LogInfo(Log("ImGui Layer detached", "LinuxWindow"));
+    m_Logger->LogDebug(Log("ImGui Layer detached", "LinuxWindow"));
 
-    m_Logger->LogInfo(Log("Destroying SDL Window...", "LinuxWindow"));
+    m_Logger->LogDebug(Log("Destroying SDL Window...", "LinuxWindow"));
     SDL_DestroyWindow(m_Window);
-    m_Logger->LogInfo(Log("SDL Window destroyed", "LinuxWindow"));
+    m_Logger->LogDebug(Log("SDL Window destroyed", "LinuxWindow"));
 
-    m_Logger->LogInfo(Log("Quitting SDL...", "LinuxWindow"));
+    m_Logger->LogDebug(Log("Quitting SDL...", "LinuxWindow"));
     SDL_Quit();
-    m_Logger->LogInfo(Log("SDL Quit", "LinuxWindow"));
+    m_Logger->LogDebug(Log("SDL Quit", "LinuxWindow"));
 
-    m_Logger->LogInfo(Log("Linux Window destroyed", "LinuxWindow"));
+    m_Logger->LogDebug(Log("Linux Window destroyed", "LinuxWindow"));
   }
 
   void
   LinuxWindow::Init(const WindowProps& props)
   {
-    m_Logger->LogInfo(Log("Initializing Linux Window...", "LinuxWindow"));
+    m_Logger->LogDebug(Log("Initializing Linux Window...", "LinuxWindow"));
     // SDL Setup
     int result = SDL_Init(SDL_INIT_VIDEO);
 
@@ -97,7 +97,7 @@ namespace Dwarf
       return;
     }
 
-    m_Logger->LogInfo(Log("Window created", "LinuxWindow"));
+    m_Logger->LogDebug(Log("Window created", "LinuxWindow"));
 
     SDL_DisplayMode mode;
     SDL_GetDesktopDisplayMode(SDL_GetWindowDisplayIndex(m_Window), &mode);
@@ -107,7 +107,7 @@ namespace Dwarf
                           mode.w / 2 - (props.Width / 2),
                           mode.h / 2 - (props.Height / 2));
 
-    m_Logger->LogInfo(Log("Creating Graphics Context...", "LinuxWindow"));
+    m_Logger->LogDebug(Log("Creating Graphics Context...", "LinuxWindow"));
     m_Context = m_ContextFactory->Create(m_Window);
 
     if (m_Context == nullptr)
@@ -118,13 +118,13 @@ namespace Dwarf
       SDL_Quit();
     }
 
-    m_Logger->LogInfo(Log("Graphics Context created", "LinuxWindow"));
+    m_Logger->LogDebug(Log("Graphics Context created", "LinuxWindow"));
 
-    m_Logger->LogInfo(Log("Initializing Graphics Context...", "LinuxWindow"));
+    m_Logger->LogDebug(Log("Initializing Graphics Context...", "LinuxWindow"));
     m_Context->Init();
-    m_Logger->LogInfo(Log("Graphics Context initialized", "LinuxWindow"));
+    m_Logger->LogDebug(Log("Graphics Context initialized", "LinuxWindow"));
 
-    m_Logger->LogInfo(Log("Creating ImGui Layer...", "LinuxWindow"));
+    m_Logger->LogDebug(Log("Creating ImGui Layer...", "LinuxWindow"));
     m_ImGuiLayer = m_ImguiLayerFactory->Create();
 
     if (m_ImGuiLayer == nullptr)
@@ -134,13 +134,13 @@ namespace Dwarf
       SDL_Quit();
     }
 
-    m_Logger->LogInfo(Log("ImGui Layer created", "LinuxWindow"));
+    m_Logger->LogDebug(Log("ImGui Layer created", "LinuxWindow"));
 
-    m_Logger->LogInfo(Log("Attaching ImGui Layer...", "LinuxWindow"));
+    m_Logger->LogDebug(Log("Attaching ImGui Layer...", "LinuxWindow"));
     m_ImGuiLayer->OnAttach(m_Window);
 
-    m_Logger->LogInfo(Log("ImGui Layer attached", "LinuxWindow"));
-    m_Logger->LogInfo(Log("Linux Window initialized", "LinuxWindow"));
+    m_Logger->LogDebug(Log("ImGui Layer attached", "LinuxWindow"));
+    m_Logger->LogDebug(Log("Linux Window initialized", "LinuxWindow"));
   }
 
   void

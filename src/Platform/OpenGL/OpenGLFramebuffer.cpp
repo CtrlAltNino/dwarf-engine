@@ -103,7 +103,7 @@ namespace Dwarf
     , m_Specification(spec)
     , m_TextureFactory(textureFactory)
   {
-    m_Logger->LogInfo(Log("OpenGLFramebuffer created.", "OpenGLFramebuffer"));
+    m_Logger->LogDebug(Log("OpenGLFramebuffer created.", "OpenGLFramebuffer"));
     for (auto attachments : m_Specification.Attachments.Attachments)
     {
       if (!Utils::IsDepthFormat(attachments.TextureFormat))
@@ -420,7 +420,7 @@ namespace Dwarf
   void
   OpenGLFramebuffer::DeleteFramebuffer()
   {
-    m_Logger->LogInfo(Log("Deleting framebuffer", "OpenGLFramebuffer"));
+    m_Logger->LogDebug(Log("Deleting framebuffer", "OpenGLFramebuffer"));
     glDeleteFramebuffers(1, &m_RendererID);
     OpenGLUtilities::CheckOpenGLError(
       "glDeleteFramebuffers", "OpenGLFramebuffer", m_Logger);

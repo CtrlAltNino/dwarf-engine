@@ -7,13 +7,13 @@ namespace Dwarf
     , m_State()
     , m_SelectedProject()
   {
-    m_Logger.LogInfo(
+    m_Logger.LogDebug(
       Log("ProjectLauncherData created.", "ProjectLauncherData"));
   }
 
   ProjectLauncherData::~ProjectLauncherData()
   {
-    m_Logger.LogInfo(
+    m_Logger.LogDebug(
       Log("ProjectLauncherData destroyed.", "ProjectLauncherData"));
   }
 
@@ -42,7 +42,7 @@ namespace Dwarf
         break;
       case ProjectChooserState::Cancelled: stateString = "Cancelled"; break;
     }
-    m_Logger.LogInfo(
+    m_Logger.LogDebug(
       Log(fmt::format("Setting project launcher state to: {}", stateString),
           "ProjectLauncherData"));
     m_State = state;

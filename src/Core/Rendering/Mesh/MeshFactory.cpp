@@ -15,12 +15,12 @@ namespace Dwarf
     : m_GraphicsApi(graphicsApi)
     , m_Logger(logger)
   {
-    m_Logger->LogInfo(Log("MeshFactory created.", "MeshFactory"));
+    m_Logger->LogDebug(Log("MeshFactory created.", "MeshFactory"));
   }
 
   MeshFactory::~MeshFactory()
   {
-    m_Logger->LogInfo(Log("MeshFactory destroyed.", "MeshFactory"));
+    m_Logger->LogDebug(Log("MeshFactory destroyed.", "MeshFactory"));
   }
 
   std::unique_ptr<IMesh>
@@ -28,7 +28,7 @@ namespace Dwarf
                           const std::vector<unsigned int>& indices,
                           unsigned int                     materialIndex)
   {
-    m_Logger->LogInfo(Log("Creating mesh.", "MeshFactory"));
+    m_Logger->LogDebug(Log("Creating mesh.", "MeshFactory"));
     // Creating a shader based on the graphics API.
     switch (m_GraphicsApi)
     {

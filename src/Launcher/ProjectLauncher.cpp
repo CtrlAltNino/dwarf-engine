@@ -13,12 +13,12 @@ namespace Dwarf
     , m_Logger(logger)
     , m_ProjectList(projectList)
   {
-    m_Logger.LogInfo(Log("Creating ProjectLauncher", "ProjectLauncher"));
+    m_Logger.LogDebug(Log("Creating ProjectLauncher", "ProjectLauncher"));
   }
 
   ProjectLauncher::~ProjectLauncher()
   {
-    m_Logger.LogInfo(Log("Destroying ProjectLauncher", "ProjectLauncher"));
+    m_Logger.LogDebug(Log("Destroying ProjectLauncher", "ProjectLauncher"));
   }
 
   ProjectInformation
@@ -27,7 +27,6 @@ namespace Dwarf
     m_Logger.LogInfo(Log("Running project launcher...", "ProjectLauncher"));
 
     m_Logger.LogInfo(Log("Showing window...", "ProjectLauncher"));
-    // m_Window->ShowWindow();
     m_View->Show();
 
     m_Logger.LogInfo(Log("Starting main loop...", "ProjectLauncher"));
@@ -36,12 +35,7 @@ namespace Dwarf
     {
       TimeStamp currentTimeStamp = TimeUtilities::GetCurrent();
 
-      // m_Window->NewFrame();
-
       m_View->Render();
-      // m_Data.SetState(ProjectChooserState::Done);
-
-      // m_Window->EndFrame();
 
       // TODO: Fps lock
       while (TimeUtilities::GetDifferenceInSeconds(

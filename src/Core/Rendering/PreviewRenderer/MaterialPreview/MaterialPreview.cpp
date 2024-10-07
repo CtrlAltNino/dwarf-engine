@@ -40,7 +40,7 @@ namespace Dwarf
     m_Camera->GetProperties().Transform.GetPosition() = { 0.0f, 0.0f, 0.0f };
     m_Camera->GetProperties().Transform.GetEulerAngles() = { 0, 0, 0 };
 
-    m_Logger->LogInfo(Log("MaterialPreview created", "MaterialPreview"));
+    m_Logger->LogDebug(Log("MaterialPreview created", "MaterialPreview"));
   }
 
   void
@@ -89,7 +89,7 @@ namespace Dwarf
   void
   MaterialPreview::SetMeshType(MaterialPreviewMeshType meshType)
   {
-    m_Logger->LogInfo(Log("Updating preview mesh", "MaterialPreview"));
+    m_Logger->LogDebug(Log("Updating preview mesh", "MaterialPreview"));
     m_MeshType = meshType;
     UpdateMesh();
   }

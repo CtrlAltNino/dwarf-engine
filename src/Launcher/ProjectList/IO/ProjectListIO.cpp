@@ -7,12 +7,12 @@ namespace Dwarf
     : m_Logger(logger)
     , m_FileHandler(fileHandler)
   {
-    m_Logger.LogInfo(Log("ProjectListIO created", "ProjectListIO"));
+    m_Logger.LogDebug(Log("ProjectListIO created", "ProjectListIO"));
   }
 
   ProjectListIO::~ProjectListIO()
   {
-    m_Logger.LogInfo(Log("ProjectListIO destroyed", "ProjectListIO"));
+    m_Logger.LogDebug(Log("ProjectListIO destroyed", "ProjectListIO"));
   }
 
   std::vector<ProjectInformation>
@@ -31,7 +31,7 @@ namespace Dwarf
     {
       nlohmann::json jsonObject = nlohmann::json::parse(fileContent);
 
-      m_Logger.LogInfo(Log("Parsing project list", "ProjectListIO"));
+      m_Logger.LogDebug(Log("Parsing project list", "ProjectListIO"));
 
       if (jsonObject.contains("projects"))
       {

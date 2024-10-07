@@ -39,12 +39,12 @@ namespace Dwarf
   InputManager::InputManager(std::shared_ptr<IDwarfLogger> logger)
     : m_Logger(logger)
   {
-    m_Logger->LogInfo(Log("InputManager created.", "InputManager"));
+    m_Logger->LogDebug(Log("InputManager created.", "InputManager"));
   }
 
   InputManager::~InputManager()
   {
-    m_Logger->LogInfo(Log("InputManager destroyed.", "InputManager"));
+    m_Logger->LogDebug(Log("InputManager destroyed.", "InputManager"));
   }
 
   bool
@@ -190,7 +190,6 @@ namespace Dwarf
     {
       case SDL_MOUSEWHEEL:
         {
-          std::cout << "Scrolling: " << event.wheel.y << std::endl;
           m_DeltaScroll = { event.wheel.x, event.wheel.y };
         }
         break;

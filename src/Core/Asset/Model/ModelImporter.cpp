@@ -156,8 +156,5 @@ namespace Dwarf
 
     meshes.push_back(
       std::move(m_MeshFactory->CreateMesh(vertices, indices, materialIndex)));
-
-    // return std::move(
-    //   m_MeshFactory->CreateMesh(vertices, indices, materialIndex));
   }
 }
