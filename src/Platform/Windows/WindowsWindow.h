@@ -75,11 +75,11 @@ namespace Dwarf
 
     struct WindowData
     {
-      std::string  Title;
-      unsigned int Width;
-      unsigned int Height;
-      bool         VSync;
-      bool         ShouldClose;
+      std::string  Title = "";
+      unsigned int Width = 0;
+      unsigned int Height = 0;
+      bool         VSync = false;
+      bool         ShouldClose = false;
     };
 
     WindowData m_Data;
