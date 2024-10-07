@@ -4,9 +4,10 @@
 namespace Dwarf
 {
 
-  NewParentInstruction::NewParentInstruction(IScene&             scene,
-                                             std::vector<Entity> sourceEntities,
-                                             entt::entity        newParent)
+  NewParentInstruction::NewParentInstruction(
+    IScene&                   scene,
+    std::vector<entt::entity> sourceEntities,
+    entt::entity              newParent)
     : m_Scene(scene)
     , m_SourceEntities(sourceEntities)
     , m_NewParent(newParent)
@@ -17,13 +18,14 @@ namespace Dwarf
   NewParentInstruction::PerformInstruction()
   {
     auto p = Entity(m_NewParent, m_Scene.GetRegistry());
-    for (Entity ent : m_SourceEntities)
+    for (auto& ent : m_SourceEntities)
     {
+      Entity entity(ent, m_Scene.GetRegistry());
       if ((p.GetComponent<TransformComponent>().GetParent() !=
-           ent.GetHandle()) &&
-          (ent.GetHandle() != m_NewParent))
+           entity.GetHandle()) &&
+          (entity.GetHandle() != m_NewParent))
       {
-        ent.SetParent(m_NewParent);
+        entity.SetParent(m_NewParent);
       }
     }
   }

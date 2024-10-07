@@ -16,13 +16,13 @@ namespace Dwarf
     virtual ~IEditorSelection() = default;
 
     virtual void
-    SelectEntity(const Entity& entity) = 0;
+    SelectEntity(const entt::entity& entity) = 0;
 
     virtual void
     SelectAsset(std::unique_ptr<IAssetReference> assetPath) = 0;
 
     virtual void
-    AddEntityToSelection(const Entity& entity) = 0;
+    AddEntityToSelection(const entt::entity& entity) = 0;
 
     virtual void
     ClearEntitySelection() = 0;
@@ -31,15 +31,15 @@ namespace Dwarf
     ClearAssetSelection() = 0;
 
     virtual void
-    RemoveEntityFromSelection(const Entity& entity) = 0;
+    RemoveEntityFromSelection(const entt::entity& entity) = 0;
 
     virtual bool
-    IsEntitySelected(const Entity& entity) = 0;
+    IsEntitySelected(const entt::entity& entity) = 0;
 
     virtual bool
     IsAssetSelected(const std::filesystem::path& assetPath) = 0;
 
-    virtual std::vector<Entity>&
+    virtual std::vector<entt::entity>&
     GetSelectedEntities() = 0;
 
     virtual IAssetReference&

@@ -15,7 +15,7 @@ namespace Dwarf
     IScene& m_Scene;
 
     /// @brief The entities to process the instruction on.
-    std::vector<Entity> m_SourceEntities;
+    std::vector<entt::entity> m_SourceEntities;
 
     /// @brief The entity to be the new parent of the source entities.
     entt::entity m_NewParent;
@@ -24,8 +24,8 @@ namespace Dwarf
     /// @brief Executes the instruction.
     void
     PerformInstruction() override;
-    NewParentInstruction(IScene&             scene,
-                         std::vector<Entity> sourceEntities,
-                         entt::entity        newParent);
+    NewParentInstruction(IScene&                   scene,
+                         std::vector<entt::entity> sourceEntities,
+                         entt::entity              newParent);
   };
 }

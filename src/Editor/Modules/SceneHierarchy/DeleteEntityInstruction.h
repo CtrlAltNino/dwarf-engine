@@ -14,12 +14,13 @@ namespace Dwarf
     IScene& m_Scene;
 
     /// @brief The entities to delete.
-    std::vector<Entity> m_SourceEntities;
+    std::vector<entt::entity> m_SourceEntities;
 
   public:
     /// @brief Executes the instruction.
     void
     PerformInstruction() override;
-    DeleteEntityInstruction(IScene& scene, std::vector<Entity> sourceEntities);
+    DeleteEntityInstruction(IScene&                   scene,
+                            std::vector<entt::entity> sourceEntities);
   };
 }

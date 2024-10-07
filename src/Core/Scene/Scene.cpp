@@ -105,15 +105,23 @@ namespace Dwarf
         UUID(serializedEntity["MeshRendererComponent"]["Model"]
                .get<std::string>()));
 
-      std::vector<std::unique_ptr<IAssetReference>> materialAssets;
+      std::map<int, std::unique_ptr<IAssetReference>> materialAssets;
 
-      for (auto const& element :
-           serializedEntity["MeshRendererComponent"]["Materials"])
+      for (auto it =
+             serializedEntity["MeshRendererComponent"]["Materials"].begin();
+           it != serializedEntity["MeshRendererComponent"]["Materials"].end();
+           ++it)
       {
-        materialAssets.push_back(
-          element.get<std::string>() != "0"
-            ? m_AssetDatabase->Retrieve(UUID(element.get<std::string>()))
-            : nullptr);
+        int index = std::stoi(it.key());
+        if (it.value().get<std::string>() != "null")
+        {
+          materialAssets[index] =
+            m_AssetDatabase->Retrieve(UUID(it.value().get<std::string>()));
+        }
+        else
+        {
+          materialAssets[index] = nullptr;
+        }
       }
 
       MeshRendererComponent& comp =

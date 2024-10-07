@@ -5,16 +5,13 @@
 
 namespace Dwarf
 {
-  EditorSelection::EditorSelection(
-    std::shared_ptr<ILoadedScene>                               loadedScene,
-    boost::di::extension::lazy<std::shared_ptr<IAssetDatabase>> assetDatabase)
+  EditorSelection::EditorSelection(std::shared_ptr<ILoadedScene> loadedScene)
     : m_LoadedScene(loadedScene)
-  //, m_AssetDatabase(assetDatabase)
   {
   }
 
   void
-  EditorSelection::SelectEntity(const Entity& entity)
+  EditorSelection::SelectEntity(const entt::entity& entity)
   {
     ClearEntitySelection();
     AddEntityToSelection(entity);
@@ -29,8 +26,14 @@ namespace Dwarf
   }
 
   void
-  EditorSelection::AddEntityToSelection(const Entity& entity)
+  EditorSelection::AddEntityToSelection(const entt::entity& entity)
   {
+    if (!m_LoadedScene->GetScene().GetRegistry().valid(entity))
+    {
+      std::cout << "Entity with handle " << (int)entity << " is not valid."
+                << std::endl;
+      return;
+    }
     std::string index = GetTreeIndex(entity);
 
     auto        cursor = m_SelectedEntities.begin();
@@ -72,7 +75,7 @@ namespace Dwarf
   }
 
   void
-  EditorSelection::RemoveEntityFromSelection(const Entity& entity)
+  EditorSelection::RemoveEntityFromSelection(const entt::entity& entity)
   {
     m_SelectedEntities.erase(
       std::find(m_SelectedEntities.begin(), m_SelectedEntities.end(), entity));
@@ -84,7 +87,7 @@ namespace Dwarf
   }
 
   bool
-  EditorSelection::IsEntitySelected(const Entity& entity)
+  EditorSelection::IsEntitySelected(const entt::entity& entity)
   {
     return std::find(m_SelectedEntities.begin(),
                      m_SelectedEntities.end(),
@@ -98,24 +101,22 @@ namespace Dwarf
   }
 
   std::string
-  EditorSelection::GetTreeIndex(const Entity& entity) const
+  EditorSelection::GetTreeIndex(const entt::entity& entity) const
   {
-    std::string index = "";
-    Entity      cursor = entity;
+    std::string  index = "";
+    entt::entity cursor = entity;
 
-    while (cursor.GetHandle() !=
-           m_LoadedScene->GetScene().GetRootEntity().GetHandle())
+    while (cursor != m_LoadedScene->GetScene().GetRootEntity().GetHandle())
     {
-      index =
-        std::format("{}{}", std::to_string(cursor.GetChildIndex()), index);
-      cursor =
-        Entity(cursor.GetParent(), m_LoadedScene->GetScene().GetRegistry());
+      Entity ent(cursor, m_LoadedScene->GetScene().GetRegistry());
+      index = std::format("{}{}", std::to_string(ent.GetChildIndex()), index);
+      cursor = ent.GetParent();
     }
 
     return index;
   }
 
-  std::vector<Entity>&
+  std::vector<entt::entity>&
   EditorSelection::GetSelectedEntities()
   {
     return m_SelectedEntities;

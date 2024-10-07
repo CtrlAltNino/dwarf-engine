@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Asset/Database/IAssetDatabase.h"
+#include "Editor/LoadedScene/ILoadedScene.h"
 #include "Editor/Modules/Inspector/EntityInspector/IEntityInspector.h"
 
 namespace Dwarf
@@ -9,10 +10,12 @@ namespace Dwarf
   {
   private:
     std::shared_ptr<IAssetDatabase> m_AssetDatabase;
+    std::shared_ptr<ILoadedScene>   m_LoadedScene;
+
     /// @brief Renders the components of an entity.
     /// @param entity Entity to render in the inspector.
     void
-    RenderComponents(Entity entity);
+    RenderComponents(entt::entity entity);
 
     void
     BeginComponent(const char* componentHeader) const;
@@ -25,10 +28,11 @@ namespace Dwarf
     RenderComponent(T& component);
 
   public:
-    EntityInspector(std::shared_ptr<IAssetDatabase> assetDatabase);
+    EntityInspector(std::shared_ptr<IAssetDatabase> assetDatabase,
+                    std::shared_ptr<ILoadedScene>   loadedScene);
     ~EntityInspector() override = default;
 
     void
-    Render(std::vector<Entity>& entities) override;
+    Render(std::vector<entt::entity>& entities) override;
   };
 }

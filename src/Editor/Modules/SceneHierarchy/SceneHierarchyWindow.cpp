@@ -1,4 +1,5 @@
 #include "Core/Asset/AssetReference/IAssetReference.h"
+#include "Core/Scene/Entity/Entity.h"
 #include "pch.h"
 
 #include "Editor/Modules/SceneHierarchy/SceneHierarchyWindow.h"
@@ -81,13 +82,13 @@ namespace Dwarf
     if (ImGui::IsItemClicked(ImGuiMouseButton_Left) ||
         ImGui::IsItemClicked(ImGuiMouseButton_Right))
     {
-      if (m_EditorSelection->IsEntitySelected(ent))
+      if (m_EditorSelection->IsEntitySelected(entity))
       {
         // Set to selected object
         if (m_InputManager->GetKey(KEYCODE::LEFT_CONTROL) &&
             ImGui::IsItemClicked(ImGuiMouseButton_Left))
         {
-          m_EditorSelection->RemoveEntityFromSelection(ent);
+          m_EditorSelection->RemoveEntityFromSelection(entity);
         }
       }
       else
@@ -95,12 +96,12 @@ namespace Dwarf
         // Set to selected object
         if (m_InputManager->GetKey(KEYCODE::LEFT_CONTROL))
         {
-          m_EditorSelection->AddEntityToSelection(ent);
+          m_EditorSelection->AddEntityToSelection(entity);
         }
         else if (ImGui::IsItemClicked(ImGuiMouseButton_Left) ||
                  m_EditorSelection->GetSelectedEntities().size() < 2)
         {
-          m_EditorSelection->SelectEntity(ent);
+          m_EditorSelection->SelectEntity(entity);
         }
       }
     }
@@ -114,7 +115,7 @@ namespace Dwarf
           Entity newMesh = scene.CreateEntity("New Mesh");
           newMesh.AddComponent<MeshRendererComponent>();
           ent.AddChild(newMesh.GetHandle());
-          m_EditorSelection->SelectEntity(newMesh);
+          m_EditorSelection->SelectEntity(newMesh.GetHandle());
         }
 
         if (ImGui::MenuItem("Light"))
@@ -122,14 +123,14 @@ namespace Dwarf
           Entity newLight = scene.CreateEntity("New Light");
           newLight.AddComponent<LightComponent>();
           ent.AddChild(newLight.GetHandle());
-          m_EditorSelection->SelectEntity(newLight);
+          m_EditorSelection->SelectEntity(newLight.GetHandle());
         }
 
         if (ImGui::MenuItem("Group"))
         {
           Entity newGroup = scene.CreateEntity("New Group");
           ent.AddChild(newGroup.GetHandle());
-          m_EditorSelection->SelectEntity(newGroup);
+          m_EditorSelection->SelectEntity(newGroup.GetHandle());
         }
 
         ImGui::EndMenu();
@@ -143,40 +144,40 @@ namespace Dwarf
              CURRENT_SELECTION_TYPE::ENTITY) &&
             !m_EditorSelection->GetSelectedEntities().empty())
         {
-          int index = m_EditorSelection
-                        ->GetSelectedEntities()
-                          [m_EditorSelection->GetSelectedEntities().size() - 1]
-                        .GetChildIndex() +
-                      1;
-          for (Entity selectedEntity : m_EditorSelection->GetSelectedEntities())
+          Entity entity(m_EditorSelection->GetSelectedEntities().at(
+                          m_EditorSelection->GetSelectedEntities().size() - 1),
+                        scene.GetRegistry());
+          int    index = entity.GetChildIndex() + 1;
+          for (entt::entity selectedEntity :
+               m_EditorSelection->GetSelectedEntities())
           {
+            Entity source = Entity(selectedEntity, scene.GetRegistry());
             Entity copy = scene.CreateEntity(
-              selectedEntity.GetComponent<NameComponent>().Name + " Copy");
-            copy.SetParent(selectedEntity.GetParent());
+              source.GetComponent<NameComponent>().Name + " Copy");
+            copy.SetParent(source.GetParent());
             copy.SetChildIndex(index++);
 
-            if (selectedEntity.HasComponent<LightComponent>())
+            if (source.HasComponent<LightComponent>())
             {
               copy.AddComponent<LightComponent>(
-                selectedEntity.GetComponent<LightComponent>());
+                source.GetComponent<LightComponent>());
             }
 
-            if (selectedEntity.HasComponent<MeshRendererComponent>())
+            if (source.HasComponent<MeshRendererComponent>())
             {
               std::unique_ptr<IAssetReference> copiedMesh =
-                selectedEntity.GetComponent<MeshRendererComponent>()
-                      .GetModelAsset() != nullptr
-                  ? m_AssetDatabase->Retrieve(selectedEntity.GetUID())
+                source.GetComponent<MeshRendererComponent>().GetModelAsset() !=
+                    nullptr
+                  ? m_AssetDatabase->Retrieve(source.GetUID())
                   : nullptr;
 
-              std::vector<std::unique_ptr<IAssetReference>> copiedMaterials;
+              std::map<int, std::unique_ptr<IAssetReference>> copiedMaterials;
 
-              for (auto& material :
-                   selectedEntity.GetComponent<MeshRendererComponent>()
-                     .GetMaterialAssets())
+              for (auto& material : source.GetComponent<MeshRendererComponent>()
+                                      .GetMaterialAssets())
               {
-                copiedMaterials.push_back(
-                  m_AssetDatabase->Retrieve(material->GetUID()));
+                copiedMaterials.at(material.first) =
+                  m_AssetDatabase->Retrieve(material.second->GetUID());
               }
 
               copy.AddComponent<MeshRendererComponent>(MeshRendererComponent(
@@ -189,40 +190,40 @@ namespace Dwarf
       if (ImGui::MenuItem("Copy"))
       {
         m_CopyBuffer =
-          std::vector<Entity>(m_EditorSelection->GetSelectedEntities());
+          std::vector<entt::entity>(m_EditorSelection->GetSelectedEntities());
       }
 
       if (ImGui::MenuItem("Paste"))
       {
         // TODO: Implement pasting of deleted entities
-        for (Entity selectedEntity : m_CopyBuffer)
+        for (entt::entity selectedEntity : m_CopyBuffer)
         {
+          Entity source = Entity(selectedEntity, scene.GetRegistry());
           Entity copy = scene.CreateEntity(
-            selectedEntity.GetComponent<NameComponent>().Name + " Copy");
+            source.GetComponent<NameComponent>().Name + " Copy");
           copy.SetParent(entity);
 
-          if (selectedEntity.HasComponent<LightComponent>())
+          if (source.HasComponent<LightComponent>())
           {
             copy.AddComponent<LightComponent>(
-              selectedEntity.GetComponent<LightComponent>());
+              source.GetComponent<LightComponent>());
           }
 
-          if (selectedEntity.HasComponent<MeshRendererComponent>())
+          if (source.HasComponent<MeshRendererComponent>())
           {
             std::unique_ptr<IAssetReference> copiedMesh =
-              selectedEntity.GetComponent<MeshRendererComponent>()
-                    .GetModelAsset() != nullptr
-                ? m_AssetDatabase->Retrieve(selectedEntity.GetUID())
+              source.GetComponent<MeshRendererComponent>().GetModelAsset() !=
+                  nullptr
+                ? m_AssetDatabase->Retrieve(source.GetUID())
                 : nullptr;
 
-            std::vector<std::unique_ptr<IAssetReference>> copiedMaterials;
+            std::map<int, std::unique_ptr<IAssetReference>> copiedMaterials;
 
-            for (auto& material :
-                 selectedEntity.GetComponent<MeshRendererComponent>()
-                   .GetMaterialAssets())
+            for (auto& material : source.GetComponent<MeshRendererComponent>()
+                                    .GetMaterialAssets())
             {
-              copiedMaterials.push_back(
-                m_AssetDatabase->Retrieve(material->GetUID()));
+              copiedMaterials.at(material.first) =
+                m_AssetDatabase->Retrieve(material.second->GetUID());
             }
 
             copy.AddComponent<MeshRendererComponent>(
@@ -245,15 +246,15 @@ namespace Dwarf
     // If this node is being dragged
     if (ImGui::BeginDragDropSource(ImGuiDragDropFlags_AcceptBeforeDelivery))
     {
-      if (!m_EditorSelection->IsEntitySelected(ent))
+      if (!m_EditorSelection->IsEntitySelected(entity))
       {
         if (m_InputManager->GetKey(KEYCODE::LEFT_CONTROL))
         {
-          m_EditorSelection->AddEntityToSelection(ent);
+          m_EditorSelection->AddEntityToSelection(entity);
         }
         else
         {
-          m_EditorSelection->SelectEntity(ent);
+          m_EditorSelection->SelectEntity(entity);
         }
       }
       // Set payload to carry the index of our item (could be anything)
@@ -327,8 +328,8 @@ namespace Dwarf
                   (sizeof(m_EditorSelection->GetSelectedEntities().at(0)) *
                    m_EditorSelection->GetSelectedEntities().size()));
 
-        std::vector<Entity> payload_e =
-          *(std::vector<Entity>*)acceptedPayload->Data;
+        std::vector<entt::entity> payload_e =
+          *(std::vector<entt::entity>*)acceptedPayload->Data;
 
         if (heightFrac < 0.33f)
         {
@@ -368,7 +369,7 @@ namespace Dwarf
       draw_list->AddRectFilled(
         ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), rectCol, 5.0f);
     }
-    else if (m_EditorSelection->IsEntitySelected(ent))
+    else if (m_EditorSelection->IsEntitySelected(entity))
     {
       draw_list->ChannelsSetCurrent(0);
       draw_list->AddRectFilled(ImGui::GetItemRectMin(),
@@ -450,20 +451,20 @@ namespace Dwarf
         {
           Entity newMesh = m_LoadedScene->GetScene().CreateEntity("New Mesh");
           newMesh.AddComponent<MeshRendererComponent>();
-          m_EditorSelection->SelectEntity(newMesh);
+          m_EditorSelection->SelectEntity(newMesh.GetHandle());
         }
 
         if (ImGui::MenuItem("Light"))
         {
           Entity newLight = m_LoadedScene->GetScene().CreateEntity("New Light");
           newLight.AddComponent<LightComponent>();
-          m_EditorSelection->SelectEntity(newLight);
+          m_EditorSelection->SelectEntity(newLight.GetHandle());
         }
 
         if (ImGui::MenuItem("Group"))
         {
           Entity newGroup = m_LoadedScene->GetScene().CreateEntity("New Group");
-          m_EditorSelection->SelectEntity(newGroup);
+          m_EditorSelection->SelectEntity(newGroup.GetHandle());
         }
         ImGui::EndPopup();
       }
@@ -472,33 +473,34 @@ namespace Dwarf
       {
         // TODO: Implement pasting deleted entities
         Entity& rootEntity = m_LoadedScene->GetScene().GetRootEntity();
-        for (Entity selectedEntity : m_CopyBuffer)
+        for (entt::entity selectedEntity : m_CopyBuffer)
         {
+          Entity source =
+            Entity(selectedEntity, m_LoadedScene->GetScene().GetRegistry());
           Entity copy = m_LoadedScene->GetScene().CreateEntity(
-            selectedEntity.GetComponent<NameComponent>().Name + " Copy");
+            source.GetComponent<NameComponent>().Name + " Copy");
 
-          if (selectedEntity.HasComponent<LightComponent>())
+          if (source.HasComponent<LightComponent>())
           {
             copy.AddComponent<LightComponent>(
-              selectedEntity.GetComponent<LightComponent>());
+              source.GetComponent<LightComponent>());
           }
 
-          if (selectedEntity.HasComponent<MeshRendererComponent>())
+          if (source.HasComponent<MeshRendererComponent>())
           {
             std::unique_ptr<IAssetReference> copiedMesh =
-              selectedEntity.GetComponent<MeshRendererComponent>()
-                    .GetModelAsset() != nullptr
-                ? m_AssetDatabase->Retrieve(selectedEntity.GetUID())
+              source.GetComponent<MeshRendererComponent>().GetModelAsset() !=
+                  nullptr
+                ? m_AssetDatabase->Retrieve(source.GetUID())
                 : nullptr;
 
-            std::vector<std::unique_ptr<IAssetReference>> copiedMaterials;
+            std::map<int, std::unique_ptr<IAssetReference>> copiedMaterials;
 
-            for (auto& material :
-                 selectedEntity.GetComponent<MeshRendererComponent>()
-                   .GetMaterialAssets())
+            for (auto& material : source.GetComponent<MeshRendererComponent>()
+                                    .GetMaterialAssets())
             {
-              copiedMaterials.push_back(
-                m_AssetDatabase->Retrieve(material->GetUID()));
+              copiedMaterials.at(material.first) =
+                m_AssetDatabase->Retrieve(material.second->GetUID());
             }
 
             copy.AddComponent<MeshRendererComponent>(
@@ -520,8 +522,8 @@ namespace Dwarf
                   (sizeof(m_EditorSelection->GetSelectedEntities().at(0)) *
                    m_EditorSelection->GetSelectedEntities().size()));
 
-        std::vector<Entity> payload_e =
-          *(const std::vector<Entity>*)payload->Data;
+        std::vector<entt::entity> payload_e =
+          *(const std::vector<entt::entity>*)payload->Data;
         m_Instructions.push_back(std::make_shared<NewParentInstruction>(
           m_LoadedScene->GetScene(),
           payload_e,

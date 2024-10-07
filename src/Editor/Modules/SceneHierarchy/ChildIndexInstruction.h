@@ -14,7 +14,7 @@ namespace Dwarf
     IScene& m_Scene;
 
     /// @brief The entities to process.
-    std::vector<Entity> m_SourceEntities;
+    std::vector<entt::entity> m_SourceEntities;
 
     /// @brief Index to change the entities child index to.
     int m_Index;
@@ -23,8 +23,8 @@ namespace Dwarf
     /// @brief Executes the instruction.
     void
     PerformInstruction() override;
-    ChildIndexInstruction(IScene&                    scene,
-                          std::vector<Entity> const& sourceEntities,
-                          int                        index);
+    ChildIndexInstruction(IScene&                          scene,
+                          std::vector<entt::entity> const& sourceEntities,
+                          int                              index);
   };
 }

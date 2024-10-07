@@ -23,7 +23,7 @@ namespace Dwarf
     /// of a frame.
     std::vector<std::shared_ptr<GraphInstruction>> m_Instructions;
 
-    std::vector<Entity> m_CopyBuffer;
+    std::vector<entt::entity> m_CopyBuffer;
 
     /// @brief Draws a graph node for an entity.
     /// @param entity The entity to draw the node of.

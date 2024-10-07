@@ -327,13 +327,17 @@ namespace Dwarf
     /// @brief The materials with which the model is to be rendered. The list
     /// index of the materials corresponds to the material index of the
     /// submeshes.
-    std::vector<std::unique_ptr<IAssetReference>> materialAssets = {};
+    std::map<int, std::unique_ptr<IAssetReference>> materialAssets;
+
+    /// @brief Flag that decides if this model should be used in the shadow cast
+    /// pass.
+    bool canCastShadow;
 
   public:
     MeshRendererComponent() = default;
     MeshRendererComponent(
-      std::unique_ptr<IAssetReference>              modelAsset,
-      std::vector<std::unique_ptr<IAssetReference>> materials)
+      std::unique_ptr<IAssetReference>                modelAsset,
+      std::map<int, std::unique_ptr<IAssetReference>> materials)
       : modelAsset(std::move(modelAsset))
       , materialAssets(std::move(materials))
     {
@@ -350,13 +354,10 @@ namespace Dwarf
 
       for (auto& material : other.materialAssets)
       {
-        materialAssets.push_back(std::move(material->Clone()));
+        materialAssets[material.first] =
+          material.second ? std::move(material.second->Clone()) : nullptr;
       }
     }
-
-    /// @brief Flag that decides if this model should be used in the shadow cast
-    /// pass.
-    bool canCastShadow;
 
     std::unique_ptr<IAssetReference>&
     GetModelAsset()
@@ -370,13 +371,13 @@ namespace Dwarf
       return modelAsset;
     }
 
-    std::vector<std::unique_ptr<IAssetReference>>&
+    std::map<int, std::unique_ptr<IAssetReference>>&
     MaterialAssets()
     {
       return materialAssets;
     }
 
-    const std::vector<std::unique_ptr<IAssetReference>>&
+    const std::map<int, std::unique_ptr<IAssetReference>>&
     GetMaterialAssets() const
     {
       return materialAssets;
@@ -404,11 +405,10 @@ namespace Dwarf
 
       int materialCount = 0;
 
-      for (auto& material : materialAssets)
+      for (const auto& [index, material] : materialAssets)
       {
-        serializedMeshRendererComponent["Materials"][materialCount] =
-          material ? material->GetUID().ToString() : "0";
-        materialCount++;
+        serializedMeshRendererComponent["Materials"][std::to_string(index)] =
+          material ? material->GetUID().ToString() : "null";
       }
 
       serializedMeshRendererComponent["Hidden"] = isHidden;

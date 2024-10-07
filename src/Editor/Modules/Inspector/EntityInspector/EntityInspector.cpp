@@ -11,16 +11,21 @@
 namespace Dwarf
 {
   EntityInspector::EntityInspector(
-    std::shared_ptr<IAssetDatabase> assetDatabase)
+    std::shared_ptr<IAssetDatabase> assetDatabase,
+    std::shared_ptr<ILoadedScene>   loadedScene)
     : m_AssetDatabase(assetDatabase)
+    , m_LoadedScene(loadedScene)
   {
   }
 
   void
-  EntityInspector::Render(std::vector<Entity>& entities)
+  EntityInspector::Render(std::vector<entt::entity>& entities)
   {
     // Render the entities
-    RenderComponents(entities.at(0));
+    if (entities.size() > 0)
+    {
+      RenderComponents(entities.at(0));
+    }
   }
 
   void
@@ -201,80 +206,81 @@ namespace Dwarf
 
     if (component.GetModelAsset() != nullptr)
     {
-      int                                  numMaterials = 0;
+      static UUID memory = component.GetModelAsset()->GetUID();
+
+      if (component.GetModelAsset()->GetUID() != memory)
+      {
+        memory = component.GetModelAsset()->GetUID();
+        component.MaterialAssets().clear();
+        for (auto& mesh :
+             ((ModelAsset&)component.GetModelAsset()->GetAsset()).Meshes())
+        {
+          component.MaterialAssets()[mesh->GetMaterialIndex()] = nullptr;
+        }
+      }
+
       std::vector<std::unique_ptr<IMesh>>& meshes =
         ((ModelAsset&)component.GetModelAsset()->GetAsset()).Meshes();
 
-      for (int i = 0; i < meshes.size(); i++)
-      {
-        if (meshes[i]->GetMaterialIndex() > numMaterials)
-        {
-          numMaterials = meshes[i]->GetMaterialIndex();
-        }
-      }
       ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
       ImGui::TextWrapped("Materials");
 
-      if (component.MaterialAssets().size() != numMaterials)
-      {
-        component.MaterialAssets().resize(numMaterials);
-      }
-
       ImGui::Indent(16.0f);
-      for (int i = 0; i < numMaterials; i++)
+      for (auto& mat : component.MaterialAssets())
       {
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
-        ImGui::TextWrapped("%s", std::to_string(i).c_str());
+        ImGui::TextWrapped("%s", std::to_string(mat.first).c_str());
         ImGui::SameLine();
         ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
                              COMPONENT_PANEL_PADDING);
         DwarfUI::AssetInput<MaterialAsset>(
           m_AssetDatabase,
-          component.MaterialAssets().at(i),
-          std::format("##materialAsset{}", std::to_string(i)).c_str());
+          mat.second,
+          std::format("##materialAsset{}", std::to_string(mat.first)).c_str());
         ImGui::PopItemWidth();
       }
     }
   }
 
   void
-  EntityInspector::RenderComponents(Entity entity)
+  EntityInspector::RenderComponents(entt::entity entity)
   {
     ImDrawList* draw_list = ImGui::GetWindowDrawList();
     draw_list->ChannelsSplit(2);
+    Entity ent(entity, m_LoadedScene->GetScene().GetRegistry());
 
-    if (entity.HasComponent<NameComponent>())
+    if (ent.HasComponent<NameComponent>())
     {
       draw_list->ChannelsSetCurrent(1);
       BeginComponent("Name");
-      RenderComponent(entity.GetComponent<NameComponent>());
+      RenderComponent(ent.GetComponent<NameComponent>());
       draw_list->ChannelsSetCurrent(0);
       EndComponent();
     }
 
-    if (entity.HasComponent<TransformComponent>())
+    if (ent.HasComponent<TransformComponent>())
     {
       draw_list->ChannelsSetCurrent(1);
       BeginComponent("Transform");
-      RenderComponent(entity.GetComponent<TransformComponent>());
+      RenderComponent(ent.GetComponent<TransformComponent>());
       draw_list->ChannelsSetCurrent(0);
       EndComponent();
     }
 
-    if (entity.HasComponent<LightComponent>())
+    if (ent.HasComponent<LightComponent>())
     {
       draw_list->ChannelsSetCurrent(1);
       BeginComponent("Light");
-      RenderComponent(entity.GetComponent<LightComponent>());
+      RenderComponent(ent.GetComponent<LightComponent>());
       draw_list->ChannelsSetCurrent(0);
       EndComponent();
     }
 
-    if (entity.HasComponent<MeshRendererComponent>())
+    if (ent.HasComponent<MeshRendererComponent>())
     {
       draw_list->ChannelsSetCurrent(1);
       BeginComponent("Mesh Renderer");
-      RenderComponent(entity.GetComponent<MeshRendererComponent>());
+      RenderComponent(ent.GetComponent<MeshRendererComponent>());
       draw_list->ChannelsSetCurrent(0);
       EndComponent();
     }

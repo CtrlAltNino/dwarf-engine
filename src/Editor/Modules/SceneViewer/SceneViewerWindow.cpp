@@ -1,5 +1,6 @@
 #include "Editor/Modules/SceneViewer/SceneViewerWindow.h"
 #include "Core/Rendering/RendererApi/IRendererApiFactory.h"
+#include "Core/Scene/Entity/Entity.h"
 #include <iostream>
 
 #define MIN_RESOLUTION_WIDTH 10
@@ -383,7 +384,7 @@ namespace Dwarf
       m_Settings.CameraMovement = false;
     }
 
-    if (m_EditorSelection->GetSelectedEntities().size() == 1)
+    if (!m_EditorSelection->GetSelectedEntities().empty())
     {
       RenderGizmos(minRect, maxRect);
     }
@@ -431,10 +432,10 @@ namespace Dwarf
     ImGuizmo::SetRect(
       minRect.x, minRect.y, maxRect.x - minRect.x, maxRect.y - minRect.y);
 
-    TransformComponent& tc = m_EditorSelection->GetSelectedEntities()
-                               .at(0)
-                               .GetComponent<TransformComponent>();
-    glm::mat4 transform = tc.GetModelMatrix();
+    Entity              entity(m_EditorSelection->GetSelectedEntities().at(0),
+                  m_LoadedScene->GetScene().GetRegistry());
+    TransformComponent& tc = entity.GetComponent<TransformComponent>();
+    glm::mat4           transform = tc.GetModelMatrix();
 
     ImGuizmo::Manipulate(glm::value_ptr(m_Camera->GetViewMatrix()),
                          glm::value_ptr(m_Camera->GetProjectionMatrix()),
@@ -487,7 +488,8 @@ namespace Dwarf
 
     for (auto entity : m_EditorSelection->GetSelectedEntities())
     {
-      center += entity.GetComponent<TransformComponent>().GetPosition();
+      Entity e(entity, m_LoadedScene->GetScene().GetRegistry());
+      center += e.GetComponent<TransformComponent>().GetPosition();
     }
 
     return center / (float)m_EditorSelection->GetSelectedEntities().size();
@@ -594,13 +596,10 @@ namespace Dwarf
     unsigned int handle =
       m_IdBuffer->ReadPixel(0, mousePosition.x, mousePosition.y);
 
-    std::cout << "Clicked on entity with handle: " << handle << std::endl;
-
     if (handle > 0)
     {
-      // entt::entity entity = static_cast<entt::entity>(handle);
-      //  m_EditorSelection->SelectEntity(
-      //    Entity(entity, m_LoadedScene->GetScene().GetRegistry()));
+      entt::entity entity = static_cast<entt::entity>(handle);
+      m_EditorSelection->SelectEntity(entity);
     }
     else
     {

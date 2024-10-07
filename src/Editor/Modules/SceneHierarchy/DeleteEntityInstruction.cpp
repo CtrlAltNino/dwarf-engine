@@ -5,8 +5,8 @@ namespace Dwarf
 {
 
   DeleteEntityInstruction::DeleteEntityInstruction(
-    IScene&             scene,
-    std::vector<Entity> sourceEntities)
+    IScene&                   scene,
+    std::vector<entt::entity> sourceEntities)
     : m_Scene(scene)
     , m_SourceEntities(sourceEntities)
   {
@@ -15,9 +15,10 @@ namespace Dwarf
   void
   DeleteEntityInstruction::PerformInstruction()
   {
-    for (Entity ent : m_SourceEntities)
+    for (auto& ent : m_SourceEntities)
     {
-      m_Scene.DeleteEntity(ent);
+      Entity entity(ent, m_Scene.GetRegistry());
+      m_Scene.DeleteEntity(entity);
     }
   }
 }

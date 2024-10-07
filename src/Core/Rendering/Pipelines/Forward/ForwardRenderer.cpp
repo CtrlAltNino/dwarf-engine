@@ -2,6 +2,7 @@
 #include "Core/Scene/Components/SceneComponents.h"
 #include "pch.h"
 #include <glm/fwd.hpp>
+#include <iostream>
 #include "ForwardRenderer.h"
 
 namespace Dwarf
@@ -63,15 +64,15 @@ namespace Dwarf
 
     for (int i = 0; i < model.Meshes().size(); i++)
     {
-      if (model.Meshes().at(i)->GetMaterialIndex() - 1 <
+      if (model.Meshes().at(i)->GetMaterialIndex() <=
           meshRenderer.MaterialAssets().size())
       {
         if (meshRenderer.MaterialAssets().at(
-              model.Meshes().at(i)->GetMaterialIndex() - 1))
+              model.Meshes().at(i)->GetMaterialIndex()))
         {
           MaterialAsset& materialAsset =
             (MaterialAsset&)meshRenderer.MaterialAssets()
-              .at(model.Meshes().at(i)->GetMaterialIndex() - 1)
+              .at(model.Meshes().at(i)->GetMaterialIndex())
               ->GetAsset();
 
           m_RendererApi->RenderIndexed(model.Meshes().at(i),
@@ -102,7 +103,7 @@ namespace Dwarf
                        .view<TransformComponent, MeshRendererComponent>();
          auto [entity, transform, meshRenderer] : view.each())
     {
-      if (meshRenderer.GetModelAsset() != nullptr && !meshRenderer.IsHidden())
+      if (meshRenderer.GetModelAsset() && !meshRenderer.IsHidden())
       {
         Entity e(entity, scene.GetRegistry());
         RenderEntity(e, viewMatrix, projectionMatrix);
@@ -156,7 +157,7 @@ namespace Dwarf
                        .view<TransformComponent, MeshRendererComponent>();
          auto [entity, transform, meshRenderer] : view.each())
     {
-      if (meshRenderer.GetModelAsset() != nullptr)
+      if (meshRenderer.GetModelAsset() && !meshRenderer.IsHidden())
       {
         ModelAsset& model =
           (ModelAsset&)meshRenderer.GetModelAsset()->GetAsset();

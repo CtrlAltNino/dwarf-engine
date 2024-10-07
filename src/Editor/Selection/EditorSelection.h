@@ -13,30 +13,26 @@ namespace Dwarf
     std::shared_ptr<ILoadedScene> m_LoadedScene;
     CURRENT_SELECTION_TYPE m_SelectionType = CURRENT_SELECTION_TYPE::NONE;
     std::unique_ptr<IAssetReference> m_SelectedAsset;
-    std::vector<Entity>              m_SelectedEntities;
-    // boost::di::extension::lazy<std::shared_ptr<IAssetDatabase>>
-    // m_AssetDatabase;
+    std::vector<entt::entity>        m_SelectedEntities;
 
     /// @brief Returns the tree index of a given entity. Used for sorting based
     /// on their graph positions.
     /// @param entity Entity instance.
     /// @return The full tree index.
     std::string
-    GetTreeIndex(const Entity& entity) const;
+    GetTreeIndex(const entt::entity& entity) const;
 
   public:
-    EditorSelection(std::shared_ptr<ILoadedScene> loadedScene,
-                    boost::di::extension::lazy<std::shared_ptr<IAssetDatabase>>
-                      assetDatabase);
+    EditorSelection(std::shared_ptr<ILoadedScene> loadedScene);
 
     void
-    SelectEntity(const Entity& entity) override;
+    SelectEntity(const entt::entity& entity) override;
 
     void
     SelectAsset(std::unique_ptr<IAssetReference> assetPath) override;
 
     void
-    AddEntityToSelection(const Entity& entity) override;
+    AddEntityToSelection(const entt::entity& entity) override;
 
     void
     ClearEntitySelection() override;
@@ -45,15 +41,15 @@ namespace Dwarf
     ClearAssetSelection() override;
 
     void
-    RemoveEntityFromSelection(const Entity& entity) override;
+    RemoveEntityFromSelection(const entt::entity& entity) override;
 
     bool
-    IsEntitySelected(const Entity& entity) override;
+    IsEntitySelected(const entt::entity& entity) override;
 
     bool
     IsAssetSelected(const std::filesystem::path& assetPath) override;
 
-    std::vector<Entity>&
+    std::vector<entt::entity>&
     GetSelectedEntities() override;
 
     CURRENT_SELECTION_TYPE

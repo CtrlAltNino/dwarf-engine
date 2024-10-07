@@ -9,6 +9,6 @@ namespace Dwarf
     virtual ~IEntityInspector() = default;
 
     virtual void
-    Render(std::vector<Entity>&) = 0;
+    Render(std::vector<entt::entity>&) = 0;
   };
 }

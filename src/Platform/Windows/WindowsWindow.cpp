@@ -13,28 +13,28 @@ namespace Dwarf
     , m_InputManager(inputManager)
     , m_Logger(logger)
   {
-    m_Logger.LogInfo(Log("Creating Windows Window", "WindowsWindow"));
+    m_Logger.LogDebug(Log("Creating Windows Window", "WindowsWindow"));
     Init(props);
-    m_Logger.LogInfo(Log("Windows Window created", "WindowsWindow"));
+    m_Logger.LogDebug(Log("Windows Window created", "WindowsWindow"));
   }
 
   WindowsWindow::~WindowsWindow()
   {
-    m_Logger.LogInfo(Log("Destroying Windows Window", "WindowsWindow"));
+    m_Logger.LogDebug(Log("Destroying Windows Window", "WindowsWindow"));
 
-    m_Logger.LogInfo(Log("Detaching ImGui Layer", "WindowsWindow"));
+    m_Logger.LogDebug(Log("Detaching ImGui Layer", "WindowsWindow"));
     m_ImGuiLayer->OnDetach();
-    m_Logger.LogInfo(Log("ImGui Layer detached", "WindowsWindow"));
+    m_Logger.LogDebug(Log("ImGui Layer detached", "WindowsWindow"));
 
-    m_Logger.LogInfo(Log("Destroying SDL Window", "WindowsWindow"));
+    m_Logger.LogDebug(Log("Destroying SDL Window", "WindowsWindow"));
     SDL_DestroyWindow(m_Window);
-    m_Logger.LogInfo(Log("SDL Window destroyed", "WindowsWindow"));
+    m_Logger.LogDebug(Log("SDL Window destroyed", "WindowsWindow"));
 
-    m_Logger.LogInfo(Log("Quitting SDL", "WindowsWindow"));
+    m_Logger.LogDebug(Log("Quitting SDL", "WindowsWindow"));
     SDL_Quit();
-    m_Logger.LogInfo(Log("SDL Quit", "WindowsWindow"));
+    m_Logger.LogDebug(Log("SDL Quit", "WindowsWindow"));
 
-    m_Logger.LogInfo(Log("Windows Window destroyed", "WindowsWindow"));
+    m_Logger.LogDebug(Log("Windows Window destroyed", "WindowsWindow"));
   }
 
   void
@@ -106,7 +106,7 @@ namespace Dwarf
                           mode.w / 2 - (props.Width / 2),
                           mode.h / 2 - (props.Height / 2));
 
-    m_Logger.LogInfo(Log("Creating Graphics Context...", "WindowsWindow"));
+    m_Logger.LogDebug(Log("Creating Graphics Context...", "WindowsWindow"));
     m_Context = std::move(m_ContextFactory.Create(m_Window));
 
     if (m_Context == nullptr)
@@ -117,15 +117,14 @@ namespace Dwarf
       SDL_Quit();
     }
 
+    m_Logger.LogDebug(Log("Graphics Context created", "WindowsWindow"));
+
+    m_Logger.LogDebug(Log("Initializing Graphics Context...", "WindowsWindow"));
+    m_Context->Init();
+    m_Logger.LogDebug(Log("Graphics Context initialized", "WindowsWindow"));
     SDL_GL_SetSwapInterval(0);
 
-    m_Logger.LogInfo(Log("Graphics Context created", "WindowsWindow"));
-
-    m_Logger.LogInfo(Log("Initializing Graphics Context...", "WindowsWindow"));
-    m_Context->Init();
-    m_Logger.LogInfo(Log("Graphics Context initialized", "WindowsWindow"));
-
-    m_Logger.LogInfo(Log("Creating ImGui Layer...", "WindowsWindow"));
+    m_Logger.LogDebug(Log("Creating ImGui Layer...", "WindowsWindow"));
     m_ImGuiLayer = std::move(m_ImguiLayerFactory.Create());
 
     if (m_ImGuiLayer == nullptr)
@@ -135,12 +134,12 @@ namespace Dwarf
       SDL_Quit();
     }
 
-    m_Logger.LogInfo(Log("ImGui Layer created", "WindowsWindow"));
+    m_Logger.LogDebug(Log("ImGui Layer created", "WindowsWindow"));
 
-    m_Logger.LogInfo(Log("Attaching ImGui Layer...", "WindowsWindow"));
+    m_Logger.LogDebug(Log("Attaching ImGui Layer...", "WindowsWindow"));
     m_ImGuiLayer->OnAttach(m_Window);
 
-    m_Logger.LogInfo(Log("ImGui Layer attached", "WindowsWindow"));
+    m_Logger.LogDebug(Log("ImGui Layer attached", "WindowsWindow"));
     m_Logger.LogInfo(Log("Windows Window initialized", "WindowsWindow"));
   }
 
