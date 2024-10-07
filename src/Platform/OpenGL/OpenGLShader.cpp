@@ -59,10 +59,11 @@ namespace Dwarf
       "glDeleteProgram", "OpenGLShader", m_Logger);
   }
 
-  const std::array<std::string, 3> OpenGLShader::ReservedUniformNames = {
+  const std::array<std::string, 4> OpenGLShader::ReservedUniformNames = {
     "modelMatrix",
     "viewMatrix",
     "projectionMatrix",
+    "_Time"
   };
 
   const std::map<GLenum, ShaderParameterType> glTypeToDwarfShaderType = {

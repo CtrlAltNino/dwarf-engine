@@ -75,6 +75,8 @@ namespace Dwarf
       //  ===== Time related stuff
       m_EditorStats->SetLastTimeStamp(m_EditorStats->GetCurrentTimeStamp());
       m_EditorStats->SetCurrentTimeStamp(TimeUtilities::GetCurrent());
+      m_EditorStats->SetTimeSinceStart(m_EditorStats->GetTimeSinceStart() +
+                                       m_EditorStats->GetDeltaTime());
 
       m_Window->NewFrame();
       m_InputManager->OnUpdate();

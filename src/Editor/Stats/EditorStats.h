@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Editor/Stats/IEditorStats.h"
+#include "Utilities/TimeUtilities.h"
 
 namespace Dwarf
 {
@@ -9,6 +10,7 @@ namespace Dwarf
   private:
     TimeStamp m_CurrentTimeStamp;
     TimeStamp m_LastTimeStamp;
+    double    m_TimeSinceStart = 0.0;
     bool      m_ReturnToLauncher = false;
     bool      m_CloseSignal = false;
 
@@ -42,5 +44,11 @@ namespace Dwarf
 
     bool
     GetCloseSignal() const override;
+
+    void
+    SetTimeSinceStart(const double& timeStamp) override;
+
+    const double&
+    GetTimeSinceStart() const override;
   };
 }

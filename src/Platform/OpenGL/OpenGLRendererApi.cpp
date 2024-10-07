@@ -14,10 +14,12 @@ namespace Dwarf
   OpenGLRendererApi::OpenGLRendererApi(
     std::shared_ptr<IAssetDatabase> assetDatabase,
     std::shared_ptr<IShaderFactory> shaderFactory,
-    std::shared_ptr<IDwarfLogger>   logger)
+    std::shared_ptr<IDwarfLogger>   logger,
+    std::shared_ptr<IEditorStats>   editorStats)
     : m_AssetDatabase(assetDatabase)
     , m_ShaderFactory(shaderFactory)
     , m_Logger(logger)
+    , m_EditorStats(editorStats)
   {
     m_Logger->LogDebug(Log("OpenGLRendererApi created.", "OpenGLRendererApi"));
     m_ErrorShader = m_ShaderFactory->CreateErrorShader();
@@ -252,6 +254,9 @@ namespace Dwarf
     GLuint pmID = glGetUniformLocation(shader.GetID(), "projectionMatrix");
     OpenGLUtilities::CheckOpenGLError(
       "glGetUniformLocation projectionMatrix", "OpenGLRendererApi", m_Logger);
+    GLuint timeID = glGetUniformLocation(shader.GetID(), "_Time");
+    OpenGLUtilities::CheckOpenGLError(
+      "glGetUniformLocation time", "OpenGLRendererApi", m_Logger);
 
     glUniformMatrix4fv(mmID, 1, GL_FALSE, &modelMatrix[0][0]);
     OpenGLUtilities::CheckOpenGLError(
@@ -262,6 +267,9 @@ namespace Dwarf
     glUniformMatrix4fv(pmID, 1, GL_FALSE, &projectionMatrix[0][0]);
     OpenGLUtilities::CheckOpenGLError(
       "glUniformMatrix4fv projectionMatrix", "OpenGLRendererApi", m_Logger);
+    glUniform1f(timeID, (float)m_EditorStats->GetTimeSinceStart());
+    OpenGLUtilities::CheckOpenGLError(
+      "glUniform1f time", "OpenGLRendererApi", m_Logger);
 
     oglMesh->Bind();
 
