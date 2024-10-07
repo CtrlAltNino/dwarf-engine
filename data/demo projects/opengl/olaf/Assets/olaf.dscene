@@ -1,0 +1,53 @@
+{
+  "Graph": [
+    {
+      "MeshRendererComponent": {
+        "Hidden": false,
+        "Materials": {
+          "0": "2936a7a1-b6b2-486f-b9cc-19629d1ba018"
+        },
+        "Model": "932c922b-d3f2-4c2e-894e-4f871e25c445"
+      },
+      "TransformComponent": {
+        "Position": {
+          "x": 0.0,
+          "y": 4.0,
+          "z": 0.0
+        },
+        "Rotation": {
+          "x": 3.1414999961853027,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "Scale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        }
+      },
+      "guid": "18363070-3790-4c8c-963e-d436b10bf0bb",
+      "name": "Olaf"
+    }
+  ],
+  "Settings": {
+    "FogSettings": {
+      "FogColor": [
+        0.30000001192092896,
+        0.30000001192092896,
+        0.30000001192092896
+      ],
+      "FogEnd": 50.0,
+      "FogStart": 20.0,
+      "FogType": 0
+    },
+    "GlobalLightSettings": {
+      "GlobalLightColor": [
+        0.800000011920929,
+        0.6000000238418579,
+        0.6000000238418579
+      ],
+      "GlobalLightIntensity": 0.20000000298023224
+    },
+    "SkyboxMaterial": ""
+  }
+}

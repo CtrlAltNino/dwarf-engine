@@ -1157,7 +1157,7 @@ namespace Dwarf
                              ImGui::GetContentRegionAvail().x - 150);
 
         // Setting up combo
-        std::vector<std::string> templates = { "Blank", "Sponza" };
+        std::vector<std::string> templates = { "Blank", "Olaf", "Sponza" };
 
         ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
         ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 4);
@@ -1187,7 +1187,7 @@ namespace Dwarf
           ImDrawList* draw_list = ImGui::GetWindowDrawList();
 
           // Looping through all the combo entries
-          for (int n = 0; n < 2; n++)
+          for (int n = 0; n < templates.size(); n++)
           {
             const bool is_selected = (currentTemplateIndex == n);
 
@@ -1270,7 +1270,7 @@ namespace Dwarf
       ImGui::Separator();
       ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
 
-      static int currentApiIndex = 2;
+      static int currentApiIndex = 3;
       // ==================== Graphics API Selection Dropdown
       // ====================
       {

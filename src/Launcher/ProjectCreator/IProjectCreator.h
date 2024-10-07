@@ -7,6 +7,7 @@ namespace Dwarf
   enum class ProjectTemplate
   {
     Blank,
+    Olaf,
     Sponza
   };
 
