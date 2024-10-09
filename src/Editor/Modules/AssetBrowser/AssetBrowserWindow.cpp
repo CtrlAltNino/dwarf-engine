@@ -53,10 +53,7 @@ namespace Dwarf
                  ModuleID(std::make_shared<UUID>(
                    serializedModule.t["id"].get<std::string>())))
     , m_AssetDirectoryPath(assetDirectoryPath)
-    , m_CurrentDirectory(
-        serializedModule.t.contains("openedPath")
-          ? serializedModule.t["openedPath"].get<std::filesystem::path>()
-          : assetDirectoryPath.t)
+    , m_CurrentDirectory(assetDirectoryPath)
     , m_TextureFactory(textureFactory)
     , m_AssetDatabase(assetDatabase)
     , m_InputManager(inputManager)

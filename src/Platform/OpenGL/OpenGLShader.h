@@ -67,7 +67,7 @@ namespace Dwarf
     std::optional<std::unique_ptr<IAssetReference>>&
     GetTessellationEvaluationShaderAsset();
 
-    static const std::array<std::string, 3> ReservedUniformNames;
+    static const std::array<std::string, 4> ReservedUniformNames;
 
     nlohmann::json
     Serialize() override;

@@ -1,5 +1,6 @@
 #pragma once
 #include "Core/Rendering/Shader/IShaderFactory.h"
+#include "Editor/Stats/IEditorStats.h"
 #include "Logging/IDwarfLogger.h"
 #include "pch.h"
 
@@ -14,13 +15,15 @@ namespace Dwarf
     std::shared_ptr<IAssetDatabase> m_AssetDatabase;
     std::shared_ptr<IShaderFactory> m_ShaderFactory;
     std::shared_ptr<IDwarfLogger>   m_Logger;
+    std::shared_ptr<IEditorStats>   m_EditorStats;
 
     std::unique_ptr<IShader> m_ErrorShader;
 
   public:
     OpenGLRendererApi(std::shared_ptr<IAssetDatabase> assetDatabase,
                       std::shared_ptr<IShaderFactory> shaderFactory,
-                      std::shared_ptr<IDwarfLogger>   logger);
+                      std::shared_ptr<IDwarfLogger>   logger,
+                      std::shared_ptr<IEditorStats>   editorStats);
     ~OpenGLRendererApi() override;
 
     void

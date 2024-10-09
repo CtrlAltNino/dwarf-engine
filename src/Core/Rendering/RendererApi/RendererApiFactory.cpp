@@ -16,11 +16,13 @@ namespace Dwarf
     std::shared_ptr<IDwarfLogger>   logger,
     GraphicsApi                     api,
     std::shared_ptr<IAssetDatabase> assetDatabase,
-    std::shared_ptr<IShaderFactory> shaderFactory)
+    std::shared_ptr<IShaderFactory> shaderFactory,
+    std::shared_ptr<IEditorStats>   editorStats)
     : m_GraphicsApi(api)
     , m_AssetDatabase(assetDatabase)
     , m_ShaderFactory(shaderFactory)
     , m_Logger(logger)
+    , m_EditorStats(editorStats)
   {
   }
 
@@ -35,7 +37,7 @@ namespace Dwarf
         break;
       case GraphicsApi::OpenGL:
         return std::make_shared<OpenGLRendererApi>(
-          m_AssetDatabase, m_ShaderFactory, m_Logger);
+          m_AssetDatabase, m_ShaderFactory, m_Logger, m_EditorStats);
         break;
       case GraphicsApi::Metal: break;
       case GraphicsApi::Vulkan:
@@ -45,7 +47,7 @@ namespace Dwarf
       case GraphicsApi::D3D12: break;
       case GraphicsApi::OpenGL:
         return std::make_shared<OpenGLRendererApi>(
-          m_AssetDatabase, m_ShaderFactory, m_Logger);
+          m_AssetDatabase, m_ShaderFactory, m_Logger, m_EditorStats);
         break;
       case GraphicsApi::Metal: break;
       case GraphicsApi::Vulkan:

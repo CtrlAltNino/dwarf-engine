@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Editor/Stats/IEditorStats.h"
+#include "Utilities/TimeUtilities.h"
 
 namespace Dwarf
 {
@@ -12,6 +13,11 @@ namespace Dwarf
     std::string m_DeviceInfo = "";
     bool        m_ReturnToLauncher = false;
     bool        m_CloseSignal = false;
+    TimeStamp m_CurrentTimeStamp;
+    TimeStamp m_LastTimeStamp;
+    double    m_TimeSinceStart = 0.0;
+    bool      m_ReturnToLauncher = false;
+    bool      m_CloseSignal = false;
 
   public:
     EditorStats() = default;
@@ -49,5 +55,11 @@ namespace Dwarf
 
     const std::string&
     GetDeviceInfo() const override;
+
+    void
+    SetTimeSinceStart(const double& timeStamp) override;
+
+    const double&
+    GetTimeSinceStart() const override;
   };
 }

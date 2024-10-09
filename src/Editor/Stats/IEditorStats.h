@@ -41,5 +41,11 @@ namespace Dwarf
 
     virtual const std::string&
     GetDeviceInfo() const = 0;
+
+    virtual void
+    SetTimeSinceStart(const double& timeStamp) = 0;
+
+    virtual const double&
+    GetTimeSinceStart() const = 0;
   };
 }

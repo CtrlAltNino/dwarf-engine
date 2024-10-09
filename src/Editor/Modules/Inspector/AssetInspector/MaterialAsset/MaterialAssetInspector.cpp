@@ -202,7 +202,6 @@ namespace Dwarf
             ImGui::TextWrapped("Vertex Shader");
             ImGui::SameLine();
             ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
-            std::cout << "VertexShaderAsset" << std::endl;
             DwarfUI::AssetInput<VertexShaderAsset>(
               m_AssetDatabase,
               oglShader.GetVertexShaderAsset(),

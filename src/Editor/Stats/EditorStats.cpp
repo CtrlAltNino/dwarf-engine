@@ -70,4 +70,16 @@ namespace Dwarf
   {
     return m_DeviceInfo;
   }
+
+  void
+  EditorStats::SetTimeSinceStart(const double& timeStamp)
+  {
+    m_TimeSinceStart = timeStamp;
+  }
+
+  const double&
+  EditorStats::GetTimeSinceStart() const
+  {
+    return m_TimeSinceStart;
+  }
 }
