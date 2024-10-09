@@ -8,11 +8,13 @@ namespace Dwarf
     std::shared_ptr<IGraphicsContextFactory> contextFactory,
     std::shared_ptr<IImGuiLayerFactory>      imguiLayerFactory,
     std::shared_ptr<IInputManager>           inputManager,
-    std::shared_ptr<IDwarfLogger>            logger)
+    std::shared_ptr<IDwarfLogger>            logger,
+    std::shared_ptr<IEditorStats>            editorStats)
     : m_ContextFactory(contextFactory)
     , m_ImguiLayerFactory(imguiLayerFactory)
     , m_InputManager(inputManager)
     , m_Logger(logger)
+    , m_EditorStats(editorStats)
   {
     m_Logger->LogDebug(Log("Creating Linux Window...", "LinuxWindow"));
     Init(props);
@@ -124,6 +126,10 @@ namespace Dwarf
     m_Context->Init();
     m_Logger->LogDebug(Log("Graphics Context initialized", "LinuxWindow"));
     SDL_GL_SetSwapInterval(0);
+
+    std::string deviceInfo = "";
+
+    m_EditorStats->SetDeviceInfo(deviceInfo);
 
     m_Logger->LogDebug(Log("Creating ImGui Layer...", "LinuxWindow"));
     m_ImGuiLayer = m_ImguiLayerFactory->Create();

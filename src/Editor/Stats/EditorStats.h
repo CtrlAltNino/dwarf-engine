@@ -8,6 +8,11 @@ namespace Dwarf
   class EditorStats : public IEditorStats
   {
   private:
+    TimeStamp   m_CurrentTimeStamp;
+    TimeStamp   m_LastTimeStamp;
+    std::string m_DeviceInfo = "";
+    bool        m_ReturnToLauncher = false;
+    bool        m_CloseSignal = false;
     TimeStamp m_CurrentTimeStamp;
     TimeStamp m_LastTimeStamp;
     double    m_TimeSinceStart = 0.0;
@@ -44,6 +49,12 @@ namespace Dwarf
 
     bool
     GetCloseSignal() const override;
+
+    void
+    SetDeviceInfo(const std::string& deviceInfo) override;
+
+    const std::string&
+    GetDeviceInfo() const override;
 
     void
     SetTimeSinceStart(const double& timeStamp) override;

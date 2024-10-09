@@ -60,6 +60,18 @@ namespace Dwarf
   }
 
   void
+  EditorStats::SetDeviceInfo(const std::string& deviceInfo)
+  {
+    m_DeviceInfo = deviceInfo;
+  }
+
+  const std::string&
+  EditorStats::GetDeviceInfo() const
+  {
+    return m_DeviceInfo;
+  }
+
+  void
   EditorStats::SetTimeSinceStart(const double& timeStamp)
   {
     m_TimeSinceStart = timeStamp;
