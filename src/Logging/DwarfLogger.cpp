@@ -9,6 +9,7 @@ namespace Dwarf
   DwarfLogger::DwarfLogger(LogName logName)
     : m_Logger(spdlog::stdout_color_mt(logName.t))
   {
+    m_Logger->set_level(spdlog::level::trace);
     m_Logger->log(spdlog::level::info,
                   fmt::format("[{}] {}", "DwarfLogger", "Logger initialized."));
   }
