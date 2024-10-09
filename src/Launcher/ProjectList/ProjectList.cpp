@@ -125,18 +125,15 @@ namespace Dwarf
     m_Logger.LogInfo(Log("Removing project...", "ProjectList"));
     for (auto it = m_ProjectList.begin(); it != m_ProjectList.end(); ++it)
     {
-      if (it->path == path)
+      if (it->path.t == path)
       {
-        m_ProjectList.erase(it);
         m_Logger.LogInfo(Log("Project removed.", "ProjectList"));
-        break;
-      }
-
-      if (it == m_ProjectList.end())
-      {
-        m_Logger.LogWarn(Log("Project to remove not found.", "ProjectList"));
+        m_ProjectList.erase(it);
+        return;
       }
     }
+
+    m_Logger.LogWarn(Log("Project to remove not found.", "ProjectList"));
   }
 
   void

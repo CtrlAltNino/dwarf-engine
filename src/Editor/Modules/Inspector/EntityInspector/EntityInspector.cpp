@@ -200,6 +200,9 @@ namespace Dwarf
     ImGui::SameLine();
     ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
                          COMPONENT_PANEL_PADDING);
+
+    static bool wasNull = component.GetModelAsset() == nullptr;
+
     DwarfUI::AssetInput<ModelAsset>(
       m_AssetDatabase, component.GetModelAsset(), "##modelAsset");
     ImGui::PopItemWidth();
@@ -208,13 +211,15 @@ namespace Dwarf
     {
       static UUID memory = component.GetModelAsset()->GetUID();
 
-      if (component.GetModelAsset()->GetUID() != memory)
+      if ((component.GetModelAsset()->GetUID() != memory) || wasNull)
       {
+        wasNull = false;
         memory = component.GetModelAsset()->GetUID();
         component.MaterialAssets().clear();
         for (auto& mesh :
              ((ModelAsset&)component.GetModelAsset()->GetAsset()).Meshes())
         {
+          std::cout << "Adding material asset" << std::endl;
           component.MaterialAssets()[mesh->GetMaterialIndex()] = nullptr;
         }
       }
@@ -239,6 +244,10 @@ namespace Dwarf
           std::format("##materialAsset{}", std::to_string(mat.first)).c_str());
         ImGui::PopItemWidth();
       }
+    }
+    else
+    {
+      wasNull = true;
     }
   }
 

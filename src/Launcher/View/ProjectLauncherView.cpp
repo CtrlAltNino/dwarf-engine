@@ -119,7 +119,7 @@ namespace Dwarf
   void
   ProjectLauncherView::RenderProjectList(glm::ivec2 windowSize)
   {
-    const std::vector<ProjectInformation>& projectList =
+    const std::vector<ProjectInformation> projectList =
       m_ProjectList.GetProjectList();
     ImGuiWindowFlags window_flags = 0;
     window_flags |= ImGuiWindowFlags_NoMove;

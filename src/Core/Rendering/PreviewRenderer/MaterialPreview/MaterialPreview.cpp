@@ -73,9 +73,8 @@ namespace Dwarf
 
     m_RendererApi->RenderIndexed(m_Mesh,
                                  materialAsset,
-                                 glm::toMat4(m_Properties.ModelRotationQuat),
-                                 m_Camera->GetViewMatrix(),
-                                 m_Camera->GetProjectionMatrix());
+                                 *m_Camera,
+                                 glm::toMat4(m_Properties.ModelRotationQuat));
     m_RenderFramebuffer->Unbind();
 
     m_RendererApi->Blit(*m_RenderFramebuffer,

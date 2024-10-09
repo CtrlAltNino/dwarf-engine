@@ -15,7 +15,7 @@
   "ShaderParameters": {
     "albedoMap": {
       "type": "tex2d",
-      "value": "3baa1a4c-f356-41ed-97c2-69258df52c39"
+      "value": "2fa9a635-4cc7-4177-88e9-0d98fbd43610"
     },
     "color": {
       "type": "vec4",

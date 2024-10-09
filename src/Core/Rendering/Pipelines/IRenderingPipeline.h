@@ -20,9 +20,7 @@ namespace Dwarf
 
     // TODO: Maybe pass framebuffer?
     virtual void
-    RenderEntity(Entity&   entity,
-                 glm::mat4 viewMatrix,
-                 glm::mat4 projectionMatrix) = 0;
+    RenderEntity(Entity& entity, ICamera& camera) = 0;
 
     virtual void
     RenderScene(IScene&    scene,

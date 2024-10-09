@@ -192,9 +192,8 @@ namespace Dwarf
   void
   OpenGLRendererApi::RenderIndexed(std::unique_ptr<IMesh>& mesh,
                                    IMaterial&              material,
-                                   glm::mat4               modelMatrix,
-                                   glm::mat4               viewMatrix,
-                                   glm::mat4               projectionMatrix)
+                                   ICamera&                camera,
+                                   glm::mat4               modelMatrix)
   {
     OpenGLUtilities::CheckOpenGLError(
       "Before rendering", "OpenGLRendererApi", m_Logger);
@@ -257,19 +256,28 @@ namespace Dwarf
     GLuint timeID = glGetUniformLocation(shader.GetID(), "_Time");
     OpenGLUtilities::CheckOpenGLError(
       "glGetUniformLocation time", "OpenGLRendererApi", m_Logger);
+    GLuint vpID = glGetUniformLocation(shader.GetID(), "viewPosition");
+    OpenGLUtilities::CheckOpenGLError(
+      "glGetUniformLocation viewPosition", "OpenGLRendererApi", m_Logger);
 
     glUniformMatrix4fv(mmID, 1, GL_FALSE, &modelMatrix[0][0]);
     OpenGLUtilities::CheckOpenGLError(
       "glUniformMatrix4fv modelMatrix", "OpenGLRendererApi", m_Logger);
-    glUniformMatrix4fv(vmID, 1, GL_FALSE, &viewMatrix[0][0]);
+    glUniformMatrix4fv(vmID, 1, GL_FALSE, &camera.GetViewMatrix()[0][0]);
     OpenGLUtilities::CheckOpenGLError(
       "glUniformMatrix4fv viewMatrix", "OpenGLRendererApi", m_Logger);
-    glUniformMatrix4fv(pmID, 1, GL_FALSE, &projectionMatrix[0][0]);
+    glUniformMatrix4fv(pmID, 1, GL_FALSE, &camera.GetProjectionMatrix()[0][0]);
     OpenGLUtilities::CheckOpenGLError(
       "glUniformMatrix4fv projectionMatrix", "OpenGLRendererApi", m_Logger);
     glUniform1f(timeID, (float)m_EditorStats->GetTimeSinceStart());
     OpenGLUtilities::CheckOpenGLError(
       "glUniform1f time", "OpenGLRendererApi", m_Logger);
+    glUniform3f(vpID,
+                camera.GetProperties().Transform.GetPosition().x,
+                camera.GetProperties().Transform.GetPosition().y,
+                camera.GetProperties().Transform.GetPosition().z);
+    OpenGLUtilities::CheckOpenGLError(
+      "glUniform3f viewPosition", "OpenGLRendererApi", m_Logger);
 
     oglMesh->Bind();
 

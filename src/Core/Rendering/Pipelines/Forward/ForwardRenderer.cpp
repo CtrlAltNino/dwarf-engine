@@ -52,9 +52,7 @@ namespace Dwarf
   }
 
   void
-  ForwardRenderer::RenderEntity(Entity&   entity,
-                                glm::mat4 viewMatrix,
-                                glm::mat4 projectionMatrix)
+  ForwardRenderer::RenderEntity(Entity& entity, ICamera& camera)
   {
     TransformComponent& transform = entity.GetComponent<TransformComponent>();
     MeshRendererComponent& meshRenderer =
@@ -77,9 +75,8 @@ namespace Dwarf
 
           m_RendererApi->RenderIndexed(model.Meshes().at(i),
                                        materialAsset.GetMaterial(),
-                                       modelMatrix,
-                                       viewMatrix,
-                                       projectionMatrix);
+                                       camera,
+                                       modelMatrix);
         }
       }
     }
@@ -106,7 +103,7 @@ namespace Dwarf
       if (meshRenderer.GetModelAsset() && !meshRenderer.IsHidden())
       {
         Entity e(entity, scene.GetRegistry());
-        RenderEntity(e, viewMatrix, projectionMatrix);
+        RenderEntity(e, camera);
       }
     }
 
@@ -121,11 +118,8 @@ namespace Dwarf
                     0.0f,
                     camera.GetProperties().Transform.GetPosition().z)) *
         m_GridModelMatrix;
-      m_RendererApi->RenderIndexed(m_GridMesh,
-                                   *m_GridMaterial,
-                                   translatedGridModelMatrix,
-                                   camera.GetViewMatrix(),
-                                   camera.GetProjectionMatrix());
+      m_RendererApi->RenderIndexed(
+        m_GridMesh, *m_GridMaterial, camera, translatedGridModelMatrix);
     }
   }
 
@@ -167,11 +161,8 @@ namespace Dwarf
 
         for (int i = 0; i < model.Meshes().size(); i++)
         {
-          m_RendererApi->RenderIndexed(model.Meshes().at(i),
-                                       *m_IdMaterial,
-                                       modelMatrix,
-                                       camera.GetViewMatrix(),
-                                       camera.GetProjectionMatrix());
+          m_RendererApi->RenderIndexed(
+            model.Meshes().at(i), *m_IdMaterial, camera, modelMatrix);
         }
       }
     }

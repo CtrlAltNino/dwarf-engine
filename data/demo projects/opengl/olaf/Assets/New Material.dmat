@@ -26,9 +26,29 @@
         "z": 1.0
       }
     },
+    "normalMap": {
+      "type": "tex2d",
+      "value": ""
+    },
+    "shininess": {
+      "type": "float",
+      "value": 16.0
+    },
     "useAlbedoMap": {
       "type": "boolean",
       "value": true
+    },
+    "useNormalMap": {
+      "type": "boolean",
+      "value": false
+    },
+    "viewPosition": {
+      "type": "vec3",
+      "value": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      }
     }
   }
 }

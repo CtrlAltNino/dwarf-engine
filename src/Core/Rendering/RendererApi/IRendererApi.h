@@ -4,6 +4,7 @@
 #include "Core/Rendering/Material/IMaterial.h"
 #include "Core/Rendering/Mesh/IMesh.h"
 #include "Core/Rendering/Shader/IComputeShader.h"
+#include "Core/Scene/Camera/ICamera.h"
 namespace Dwarf
 {
   class IRendererApi
@@ -23,9 +24,8 @@ namespace Dwarf
     virtual void
     RenderIndexed(std::unique_ptr<IMesh>& mesh,
                   IMaterial&              material,
-                  glm::mat4               modelMatrix,
-                  glm::mat4               viewMatrix,
-                  glm::mat4               projectionMatrix) = 0;
+                  ICamera&                camera,
+                  glm::mat4               modelMatrix) = 0;
     virtual void
     ApplyComputeShader(std::shared_ptr<IComputeShader> computeShader,
                        std::shared_ptr<IFramebuffer>   fb,

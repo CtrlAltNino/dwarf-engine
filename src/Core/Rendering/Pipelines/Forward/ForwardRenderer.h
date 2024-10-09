@@ -39,9 +39,7 @@ namespace Dwarf
     ~ForwardRenderer();
 
     void
-    RenderEntity(Entity&   entity,
-                 glm::mat4 viewMatrix,
-                 glm::mat4 projectionMatrix) override;
+    RenderEntity(Entity& entity, ICamera& camera) override;
     void
     RenderScene(IScene&    scene,
                 ICamera&   camera,
