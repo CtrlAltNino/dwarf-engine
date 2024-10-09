@@ -1,4 +1,5 @@
 #include "DI/ProjectLauncher/ProjectLauncherInjector.h"
+#include "Editor/Stats/EditorStats.h"
 #include "Logging/DwarfLogger.h"
 #include "Launcher/ProjectLauncherData.h"
 #include "Core/Asset/Texture/IImageFileLoader.h"
@@ -47,6 +48,8 @@ namespace Dwarf
       boost::di::bind<IFileHandler>.to<FileHandler>().in(
         boost::di::extension::shared),
       boost::di::bind<IImGuiLayerFactory>.to<ImGuiLayerFactory>().in(
+        boost::di::extension::shared),
+      boost::di::bind<IEditorStats>.to<EditorStats>().in(
         boost::di::extension::shared),
       boost::di::bind<WindowProps>.to(WindowProps(
         "Dwarf Engine - Project Launcher", 1100, 600, GraphicsApi::OpenGL)),

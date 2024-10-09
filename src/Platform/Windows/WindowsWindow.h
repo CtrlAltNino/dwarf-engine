@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Editor/Stats/IEditorStats.h"
 #include "Logging/IDwarfLogger.h"
 #include "Window/IWindow.h"
 #include "Core/Rendering/GraphicsContext/IGraphicsContextFactory.h"
@@ -13,11 +14,12 @@ namespace Dwarf
   class WindowsWindow : public IWindow
   {
   public:
-    explicit WindowsWindow(const WindowProps&       props,
-                           IDwarfLogger&            logger,
-                           IGraphicsContextFactory& contextFactory,
-                           IImGuiLayerFactory&      imguiLayerFactory,
-                           IInputManager&           inputManager);
+    explicit WindowsWindow(const WindowProps&            props,
+                           IGraphicsContextFactory&      contextFactory,
+                           IImGuiLayerFactory&           imguiLayerFactory,
+                           IInputManager&                inputManager,
+                           std::shared_ptr<IDwarfLogger> logger,
+                           std::shared_ptr<IEditorStats> editorStats);
     ~WindowsWindow() override;
 
     void
@@ -68,10 +70,11 @@ namespace Dwarf
     SDL_Window*                       m_Window;
     std::unique_ptr<IGraphicsContext> m_Context;
     std::unique_ptr<IImGuiLayer>      m_ImGuiLayer;
-    IDwarfLogger&                     m_Logger;
     IGraphicsContextFactory&          m_ContextFactory;
     IImGuiLayerFactory&               m_ImguiLayerFactory;
     IInputManager&                    m_InputManager;
+    std::shared_ptr<IDwarfLogger>     m_Logger;
+    std::shared_ptr<IEditorStats>     m_EditorStats;
 
     struct WindowData
     {

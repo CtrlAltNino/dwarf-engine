@@ -13,11 +13,7 @@ namespace Dwarf
     std::string m_DeviceInfo = "";
     bool        m_ReturnToLauncher = false;
     bool        m_CloseSignal = false;
-    TimeStamp m_CurrentTimeStamp;
-    TimeStamp m_LastTimeStamp;
-    double    m_TimeSinceStart = 0.0;
-    bool      m_ReturnToLauncher = false;
-    bool      m_CloseSignal = false;
+    double      m_TimeSinceStart = 0.0;
 
   public:
     EditorStats() = default;

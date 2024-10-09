@@ -58,5 +58,24 @@ namespace Dwarf
     {
       return std::filesystem::path("data/engine/shaders/grid/opengl");
     }
+
+    static std::string
+    GetDeviceInfo()
+    {
+      std::string deviceInfo = "";
+      deviceInfo +=
+        "Vendor: " +
+        std::string(reinterpret_cast<const char*>(glGetString(GL_VENDOR))) +
+        "\n";
+      deviceInfo +=
+        "Renderer: " +
+        std::string(reinterpret_cast<const char*>(glGetString(GL_RENDERER))) +
+        "\n";
+      deviceInfo +=
+        "API and Driver Version: " +
+        std::string(reinterpret_cast<const char*>(glGetString(GL_VERSION))) +
+        "\n";
+      return deviceInfo;
+    }
   };
 }

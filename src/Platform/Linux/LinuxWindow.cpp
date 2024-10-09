@@ -1,4 +1,5 @@
 #include "pch.h"
+#include "Platform/OpenGL/OpenGLUtilities.h"
 #include "Platform/Linux/LinuxWindow.h"
 
 namespace Dwarf
@@ -128,6 +129,15 @@ namespace Dwarf
     SDL_GL_SetSwapInterval(0);
 
     std::string deviceInfo = "";
+
+    switch (props.Api)
+    {
+      using enum GraphicsApi;
+      case D3D12: break;
+      case OpenGL: deviceInfo = OpenGLUtilities::GetDeviceInfo(); break;
+      case Vulkan: break;
+      case Metal: break;
+    }
 
     m_EditorStats->SetDeviceInfo(deviceInfo);
 
