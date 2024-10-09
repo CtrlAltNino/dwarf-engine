@@ -82,6 +82,9 @@ namespace Dwarf
 
     ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
 
+    ImGui::Text("Device information:\n%s",
+                m_EditorStats->GetDeviceInfo().c_str());
+
     ImGui::End();
   }
 

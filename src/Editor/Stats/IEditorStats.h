@@ -35,5 +35,11 @@ namespace Dwarf
 
     virtual bool
     GetCloseSignal() const = 0;
+
+    virtual void
+    SetDeviceInfo(const std::string& deviceInfo) = 0;
+
+    virtual const std::string&
+    GetDeviceInfo() const = 0;
   };
 }

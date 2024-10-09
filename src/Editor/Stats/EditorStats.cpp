@@ -58,4 +58,16 @@ namespace Dwarf
   {
     return m_CloseSignal;
   }
+
+  void
+  EditorStats::SetDeviceInfo(const std::string& deviceInfo)
+  {
+    m_DeviceInfo = deviceInfo;
+  }
+
+  const std::string&
+  EditorStats::GetDeviceInfo() const
+  {
+    return m_DeviceInfo;
+  }
 }
