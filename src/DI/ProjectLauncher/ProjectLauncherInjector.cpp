@@ -26,6 +26,8 @@
 #include "Launcher/ProjectList/Sorter/ProjectListSorter.h"
 #include "Launcher/ProjectCreator/IProjectCreator.h"
 #include "Launcher/ProjectCreator/ProjectCreator.h"
+#include "Core/Rendering/VramTracker/IVramTracker.h"
+#include "Core/Rendering/VramTracker/VramTracker.h"
 #include <boost/di.hpp>
 #include <boost/di/extension/scopes/shared.hpp>
 
@@ -48,6 +50,8 @@ namespace Dwarf
       boost::di::bind<IFileHandler>.to<FileHandler>().in(
         boost::di::extension::shared),
       boost::di::bind<IImGuiLayerFactory>.to<ImGuiLayerFactory>().in(
+        boost::di::extension::shared),
+      boost::di::bind<IVramTracker>.to<VramTracker>().in(
         boost::di::extension::shared),
       boost::di::bind<IEditorStats>.to<EditorStats>().in(
         boost::di::extension::shared),

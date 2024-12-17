@@ -5,7 +5,10 @@
   "dependencies": [
     {
       "name": "glad",
-      "platform": "(windows & x64 & static) | (linux & x64)"
+      "platform": "(windows & x64 & static) | (linux & x64)",
+      "features": [
+        "extensions"
+      ]
     },
     "glm",
     {
@@ -64,7 +67,8 @@
     "spdlog",
     "boost",
     "protobuf",
-    "freeimage"
+    "freeimage",
+    "implot"
   ],
   "overrides": [
     {

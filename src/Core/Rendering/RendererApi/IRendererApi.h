@@ -7,6 +7,11 @@
 #include "Core/Scene/Camera/ICamera.h"
 namespace Dwarf
 {
+  struct VRAMUsageBuffer
+  {
+    int totalMemoryMb;
+    int usedMemoryMb;
+  };
   class IRendererApi
   {
   public:
@@ -38,5 +43,8 @@ namespace Dwarf
          uint32_t      destinationAttachment,
          uint32_t      width,
          uint32_t      height) = 0;
+
+    virtual VRAMUsageBuffer
+    QueryVRAMUsage() = 0;
   };
 }

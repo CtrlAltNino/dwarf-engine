@@ -60,5 +60,8 @@ namespace Dwarf
          uint32_t      destinationAttachment,
          uint32_t      width,
          uint32_t      height) override;
+
+    VRAMUsageBuffer
+    QueryVRAMUsage() override;
   };
 }

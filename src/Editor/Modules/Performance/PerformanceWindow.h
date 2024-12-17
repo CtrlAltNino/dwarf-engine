@@ -1,8 +1,10 @@
 #pragma once
+#include "Core/Rendering/RendererApi/IRendererApi.h"
 #include "pch.h"
 #include "Editor/Modules/IGuiModule.h"
 #include "Editor/Stats/IEditorStats.h"
 #include <boost/serialization/strong_typedef.hpp>
+#include "Core/Rendering/VramTracker/IVramTracker.h"
 
 namespace Dwarf
 {
@@ -11,12 +13,18 @@ namespace Dwarf
   {
   private:
     std::shared_ptr<IEditorStats> m_EditorStats;
+    std::shared_ptr<IRendererApi> m_RendererApi;
+    std::shared_ptr<IVramTracker> m_VramTracker;
 
   public:
-    PerformanceWindow(std::shared_ptr<IEditorStats> editorStats);
+    PerformanceWindow(std::shared_ptr<IEditorStats> editorStats,
+                      std::shared_ptr<IRendererApi> rendererApi,
+                      std::shared_ptr<IVramTracker> vramTracker);
 
     PerformanceWindow(SerializedModule              serializedModule,
-                      std::shared_ptr<IEditorStats> editorStats);
+                      std::shared_ptr<IEditorStats> editorStats,
+                      std::shared_ptr<IRendererApi> rendererApi,
+                      std::shared_ptr<IVramTracker> vramTracker);
 
     /// @brief Renders the module window.
     void

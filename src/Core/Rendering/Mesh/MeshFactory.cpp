@@ -1,4 +1,5 @@
 #include "MeshFactory.h"
+#include "Core/Rendering/VramTracker/IVramTracker.h"
 
 #if _WIN32
 #include "Platform/OpenGL/OpenGLMesh.h"
@@ -11,9 +12,11 @@
 namespace Dwarf
 {
   MeshFactory::MeshFactory(GraphicsApi                   graphicsApi,
-                           std::shared_ptr<IDwarfLogger> logger)
+                           std::shared_ptr<IDwarfLogger> logger,
+                           std::shared_ptr<IVramTracker> vramTracker)
     : m_GraphicsApi(graphicsApi)
     , m_Logger(logger)
+    , m_VramTracker(vramTracker)
   {
     m_Logger->LogDebug(Log("MeshFactory created.", "MeshFactory"));
   }
@@ -38,7 +41,7 @@ namespace Dwarf
         break;
       case GraphicsApi::OpenGL:
         return std::make_unique<OpenGLMesh>(
-          vertices, indices, materialIndex, m_Logger);
+          vertices, indices, materialIndex, m_Logger, m_VramTracker);
         break;
       case GraphicsApi::Metal: break;
       case GraphicsApi::Vulkan:
@@ -48,7 +51,7 @@ namespace Dwarf
       case GraphicsApi::D3D12: break;
       case GraphicsApi::OpenGL:
         return std::make_unique<OpenGLMesh>(
-          vertices, indices, materialIndex, m_Logger);
+          vertices, indices, materialIndex, m_Logger, m_VramTracker);
         break;
       case GraphicsApi::Metal: break;
       case GraphicsApi::Vulkan:

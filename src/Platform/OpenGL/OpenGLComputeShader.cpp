@@ -1,5 +1,6 @@
 #include "Core/Asset/Database/AssetComponents.h"
 #include "Core/Base.h"
+#include "Core/Rendering/VramTracker/IVramTracker.h"
 #include "OpenGLComputeShader.h"
 
 #define GL_SHADER_LOG_LENGTH (1024)
@@ -9,14 +10,19 @@ namespace Dwarf
   OpenGLComputeShader::OpenGLComputeShader(
     std::unique_ptr<IAssetReference>& computeShaderAsset,
     std::shared_ptr<IShaderParameterCollectionFactory>
-      shaderParameterCollectionFactory)
+                                  shaderParameterCollectionFactory,
+    std::shared_ptr<IVramTracker> vramTracker)
     : m_ComputeShaderAsset(std::move(computeShaderAsset))
     , m_ShaderParameterCollectionFactory(shaderParameterCollectionFactory)
+    , m_VramTracker(vramTracker)
   {
   }
 
   OpenGLComputeShader::~OpenGLComputeShader()
   {
+    GLint binaryLength = 0;
+    glGetProgramiv(m_ID, GL_PROGRAM_BINARY_LENGTH, &binaryLength);
+    m_VramTracker->RemoveComputeMemory(binaryLength);
     glDeleteProgram(m_ID);
   }
 
@@ -73,6 +79,9 @@ namespace Dwarf
       glDeleteShader(shader);
 
       m_SuccessfullyCompiled = true;
+      GLint binaryLength = 0;
+      glGetProgramiv(m_ID, GL_PROGRAM_BINARY_LENGTH, &binaryLength);
+      m_VramTracker->AddComputeMemory(binaryLength);
     }
     else
     {

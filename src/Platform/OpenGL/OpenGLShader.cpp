@@ -20,9 +20,11 @@ namespace Dwarf
     std::unique_ptr<IShaderSourceCollection> shaderSources,
     std::shared_ptr<IShaderParameterCollectionFactory>
                                   shaderParameterCollectionFactory,
-    std::shared_ptr<IDwarfLogger> logger)
+    std::shared_ptr<IDwarfLogger> logger,
+    std::shared_ptr<IVramTracker> vramTracker)
     : m_ShaderParameterCollectionFactory(shaderParameterCollectionFactory)
     , m_Logger(logger)
+    , m_VramTracker(vramTracker)
   {
     for (std::unique_ptr<IAssetReference>& shaderSource :
          shaderSources->GetShaderSources())
@@ -52,6 +54,9 @@ namespace Dwarf
 
   OpenGLShader::~OpenGLShader()
   {
+    GLint binaryLength = 0;
+    glGetProgramiv(m_ID, GL_PROGRAM_BINARY_LENGTH, &binaryLength);
+    m_VramTracker->RemoveShaderMemory(binaryLength);
     OpenGLUtilities::CheckOpenGLError(
       "Errors before deleting shader", "OpenGLShader", m_Logger);
     glDeleteProgram(m_ID);
@@ -279,6 +284,9 @@ namespace Dwarf
       }
 
       m_SuccessfullyCompiled = true;
+      GLint binaryLength = 0;
+      glGetProgramiv(m_ID, GL_PROGRAM_BINARY_LENGTH, &binaryLength);
+      m_VramTracker->AddShaderMemory(binaryLength);
     }
     else
     {

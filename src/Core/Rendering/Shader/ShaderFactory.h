@@ -4,6 +4,7 @@
 #include "Core/Base.h"
 #include "Core/Rendering/Shader/ShaderParameterCollection/IShaderParameterCollectionFactory.h"
 #include "Core/Rendering/Shader/IShader.h"
+#include "Core/Rendering/VramTracker/IVramTracker.h"
 #include "IShaderFactory.h"
 #include "Logging/IDwarfLogger.h"
 
@@ -17,7 +18,8 @@ namespace Dwarf
     std::shared_ptr<IShaderSourceCollectionFactory>
       m_ShaderSourceCollectionFactory;
     std::shared_ptr<IShaderParameterCollectionFactory>
-      m_ShaderParameterCollectionFactory;
+                                  m_ShaderParameterCollectionFactory;
+    std::shared_ptr<IVramTracker> m_VramTracker;
 
   public:
     ShaderFactory(GraphicsApi                   graphicsApi,
@@ -25,7 +27,8 @@ namespace Dwarf
                   std::shared_ptr<IShaderSourceCollectionFactory>
                     shaderSourceCollectionFactory,
                   std::shared_ptr<IShaderParameterCollectionFactory>
-                    shaderParameterCollectionFactory);
+                    shaderParameterCollectionFactory,
+                  std::shared_ptr<IVramTracker> vramTracker);
     ~ShaderFactory() override;
 
     std::unique_ptr<IShader>

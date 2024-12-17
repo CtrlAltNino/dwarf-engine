@@ -14,10 +14,12 @@ namespace Dwarf
 {
   TextureFactory::TextureFactory(GraphicsApi                       api,
                                  std::shared_ptr<IImageFileLoader> loader,
-                                 std::shared_ptr<IDwarfLogger>     logger)
+                                 std::shared_ptr<IDwarfLogger>     logger,
+                                 std::shared_ptr<IVramTracker>     vramTracker)
     : m_Api(api)
     , m_ImageFileLoader(loader)
     , m_Logger(logger)
+    , m_VramTracker(vramTracker)
   {
     m_Logger->LogDebug(Log("TextureFactory created.", "TextureFactory"));
   }
@@ -101,7 +103,8 @@ namespace Dwarf
       case GraphicsApi::OpenGL:
         {
           m_Logger->LogInfo(Log("Created OpenGL texture", "TextureFactory"));
-          return std::make_unique<OpenGLTexture>(textureData, m_Logger);
+          return std::make_unique<OpenGLTexture>(
+            textureData, m_Logger, m_VramTracker);
           break;
         }
       case GraphicsApi::Metal:

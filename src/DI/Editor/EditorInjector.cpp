@@ -85,6 +85,8 @@
 #include "Editor/Modules/Inspector/EntityInspector/EntityInspector.h"
 #include "Editor/Selection/EditorSelection.h"
 #include "Core/Scene/Settings/SceneSettingsFactory.h"
+#include "Core/Rendering/VramTracker/IVramTracker.h"
+#include "Core/Rendering/VramTracker/VramTracker.h"
 #include <boost/di.hpp>
 #include <boost/di/extension/scopes/shared.hpp>
 
@@ -110,6 +112,8 @@ namespace Dwarf
           boost::di::bind<ICameraFactory>.to<CameraFactory>().in(
           boost::di::extension::shared),
           boost::di::bind<IEditorStats>.to<EditorStats>().in(
+          boost::di::extension::shared),
+          boost::di::bind<IVramTracker>.to<VramTracker>().in(
           boost::di::extension::shared),
           boost::di::bind<IInputManager>.to<InputManager>().in(
           boost::di::extension::shared),

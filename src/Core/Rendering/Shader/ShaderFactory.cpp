@@ -1,4 +1,5 @@
 #include "ShaderFactory.h"
+#include "Core/Rendering/VramTracker/IVramTracker.h"
 #include <fmt/format.h>
 #include <memory>
 #include <stdexcept>
@@ -20,11 +21,13 @@ namespace Dwarf
     std::shared_ptr<IShaderSourceCollectionFactory>
       shaderSourceCollectionFactory,
     std::shared_ptr<IShaderParameterCollectionFactory>
-      shaderParameterCollectionFactory)
+                                  shaderParameterCollectionFactory,
+    std::shared_ptr<IVramTracker> vramTracker)
     : m_GraphicsApi(graphicsApi)
     , m_Logger(logger)
     , m_ShaderSourceCollectionFactory(shaderSourceCollectionFactory)
     , m_ShaderParameterCollectionFactory(shaderParameterCollectionFactory)
+    , m_VramTracker(vramTracker)
   {
     m_Logger->LogDebug(Log("ShaderFactory created", "ShaderFactory"));
   }
@@ -80,7 +83,8 @@ namespace Dwarf
         return std::make_unique<OpenGLShader>(
           std::move(shaderSources),
           m_ShaderParameterCollectionFactory,
-          m_Logger);
+          m_Logger,
+          m_VramTracker);
         break;
       case GraphicsApi::Metal: break;
       case GraphicsApi::Vulkan:
@@ -92,7 +96,8 @@ namespace Dwarf
         return std::make_unique<OpenGLShader>(
           std::move(shaderSources),
           m_ShaderParameterCollectionFactory,
-          m_Logger);
+          m_Logger,
+          m_VramTracker);
         break;
       case GraphicsApi::Metal: break;
       case GraphicsApi::Vulkan:

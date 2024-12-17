@@ -2,6 +2,7 @@
 
 #include "Core/Rendering/Framebuffer/IFramebuffer.h"
 #include "Core/Rendering/Texture/ITextureFactory.h"
+#include "Core/Rendering/VramTracker/IVramTracker.h"
 #include "Logging/IDwarfLogger.h"
 
 namespace Dwarf
@@ -20,11 +21,14 @@ namespace Dwarf
     std::vector<std::unique_ptr<ITexture>> m_ColorAttachments;
     std::unique_ptr<ITexture>              m_DepthAttachment = 0;
     std::shared_ptr<ITextureFactory>       m_TextureFactory;
+    std::shared_ptr<IVramTracker>          m_VramTracker;
+    size_t                                 m_CurrentVramMemory = 0;
 
   public:
     explicit OpenGLFramebuffer(std::shared_ptr<IDwarfLogger>    logger,
                                const FramebufferSpecification&  spec,
-                               std::shared_ptr<ITextureFactory> textureFactory);
+                               std::shared_ptr<ITextureFactory> textureFactory,
+                               std::shared_ptr<IVramTracker>    vramTracker);
     ~OpenGLFramebuffer() override;
 
     uint32_t

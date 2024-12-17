@@ -7,11 +7,13 @@ namespace Dwarf
   OpenGLMesh::OpenGLMesh(const std::vector<Vertex>&       vertices,
                          const std::vector<unsigned int>& indices,
                          unsigned int                     materialIndex,
-                         std::shared_ptr<IDwarfLogger>    logger)
+                         std::shared_ptr<IDwarfLogger>    logger,
+                         std::shared_ptr<IVramTracker>    vramTracker)
     : m_Vertices(vertices)
     , m_Indices(indices)
     , m_MaterialIndex(materialIndex)
     , m_Logger(logger)
+    , m_VramTracker(vramTracker)
   {
     m_Logger->LogDebug(Log("OpenGLMesh created.", "OpenGLMesh"));
   }
@@ -29,6 +31,7 @@ namespace Dwarf
     glDeleteBuffers(1, &EBO);
     OpenGLUtilities::CheckOpenGLError(
       "glDeleteBuffers", "OpenGLMesh", m_Logger);
+    m_VramTracker->RemoveBufferMemory(m_VramMemory);
   }
 
   void
@@ -85,6 +88,8 @@ namespace Dwarf
     OpenGLUtilities::CheckOpenGLError(
       "glBufferData VBO", "OpenGLMesh", m_Logger);
 
+    m_VramMemory += GetVertices().size() * sizeof(Vertex);
+
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     OpenGLUtilities::CheckOpenGLError(
       "glBindBuffer EBO", "OpenGLMesh", m_Logger);
@@ -94,6 +99,8 @@ namespace Dwarf
                  GL_STATIC_DRAW);
     OpenGLUtilities::CheckOpenGLError(
       "glBufferData EBO", "OpenGLMesh", m_Logger);
+
+    m_VramMemory += GetIndices().size() * sizeof(unsigned int);
 
     // vertex positions
     glEnableVertexAttribArray(0);
@@ -147,6 +154,7 @@ namespace Dwarf
     OpenGLUtilities::CheckOpenGLError(
       "glVertexAttribPointer 4", "OpenGLMesh", m_Logger);
 
+    m_VramTracker->AddBufferMemory(m_VramMemory);
     Unbind();
   }
 
@@ -172,6 +180,6 @@ namespace Dwarf
   OpenGLMesh::Clone() const
   {
     return std::make_unique<OpenGLMesh>(
-      m_Vertices, m_Indices, m_MaterialIndex, m_Logger);
+      m_Vertices, m_Indices, m_MaterialIndex, m_Logger, m_VramTracker);
   }
 }

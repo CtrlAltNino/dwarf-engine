@@ -17,10 +17,12 @@ namespace Dwarf
   FramebufferFactory::FramebufferFactory(
     std::shared_ptr<IDwarfLogger>    logger,
     GraphicsApi                      api,
-    std::shared_ptr<ITextureFactory> textureFactory)
+    std::shared_ptr<ITextureFactory> textureFactory,
+    std::shared_ptr<IVramTracker>    vramTracker)
     : m_Logger(logger)
     , m_Api(api)
     , m_TextureFactory(textureFactory)
+    , m_VramTracker(vramTracker)
   {
     m_Logger->LogDebug(Log("FramebufferFactory created", "FramebufferFactory"));
   }
@@ -39,7 +41,7 @@ namespace Dwarf
       case GraphicsApi::Metal: break;
       case GraphicsApi::OpenGL:
         return std::make_shared<OpenGLFramebuffer>(
-          m_Logger, spec, m_TextureFactory);
+          m_Logger, spec, m_TextureFactory, m_VramTracker);
         break;
       case GraphicsApi::Vulkan:
         // return std::make_shared<VulkanFramebuffer>(spec);
@@ -49,7 +51,7 @@ namespace Dwarf
       case GraphicsApi::Metal: break;
       case GraphicsApi::OpenGL:
         return std::make_unique<OpenGLFramebuffer>(
-          m_Logger, spec, m_TextureFactory);
+          m_Logger, spec, m_TextureFactory, m_VramTracker);
         break;
       case GraphicsApi::Vulkan: break;
 #elif __APPLE__

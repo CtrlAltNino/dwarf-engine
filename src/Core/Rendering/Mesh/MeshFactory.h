@@ -2,6 +2,7 @@
 
 #include "Core/Base.h"
 #include "Core/Rendering/Mesh/IMeshFactory.h"
+#include "Core/Rendering/VramTracker/IVramTracker.h"
 #include "Logging/IDwarfLogger.h"
 namespace Dwarf
 {
@@ -10,9 +11,12 @@ namespace Dwarf
   private:
     GraphicsApi                   m_GraphicsApi;
     std::shared_ptr<IDwarfLogger> m_Logger;
+    std::shared_ptr<IVramTracker> m_VramTracker;
 
   public:
-    MeshFactory(GraphicsApi graphicsApi, std::shared_ptr<IDwarfLogger> logger);
+    MeshFactory(GraphicsApi                   graphicsApi,
+                std::shared_ptr<IDwarfLogger> logger,
+                std::shared_ptr<IVramTracker> vramTracker);
     ~MeshFactory() override;
 
     std::unique_ptr<IMesh>

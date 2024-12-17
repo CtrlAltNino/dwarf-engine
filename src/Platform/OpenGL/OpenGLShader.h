@@ -1,4 +1,5 @@
 #pragma once
+#include "Core/Rendering/VramTracker/IVramTracker.h"
 #include "pch.h"
 
 #include "Logging/IDwarfLogger.h"
@@ -35,7 +36,8 @@ namespace Dwarf
                     std::unique_ptr<IShaderSourceCollection> shaderSources,
                     std::shared_ptr<IShaderParameterCollectionFactory>
                       shaderParameterCollectionFactory,
-                    std::shared_ptr<IDwarfLogger> logger);
+                    std::shared_ptr<IDwarfLogger> logger,
+                    std::shared_ptr<IVramTracker> vramTracker);
     ~OpenGLShader() override;
     GLuint
     GetID() const;
@@ -79,6 +81,7 @@ namespace Dwarf
     bool m_SuccessfullyCompiled;
     // Map of parameters that the shader uses.
     std::shared_ptr<IDwarfLogger> m_Logger;
+    std::shared_ptr<IVramTracker> m_VramTracker;
     std::shared_ptr<IShaderParameterCollectionFactory>
       m_ShaderParameterCollectionFactory;
 

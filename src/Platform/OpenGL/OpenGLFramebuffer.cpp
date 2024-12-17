@@ -1,3 +1,4 @@
+#include "Core/Rendering/VramTracker/IVramTracker.h"
 #include "OpenGLUtilities.h"
 #include "pch.h"
 #include "Platform/OpenGL/OpenGLFramebuffer.h"
@@ -98,10 +99,12 @@ namespace Dwarf
   OpenGLFramebuffer::OpenGLFramebuffer(
     std::shared_ptr<IDwarfLogger>    logger,
     const FramebufferSpecification&  spec,
-    std::shared_ptr<ITextureFactory> textureFactory)
+    std::shared_ptr<ITextureFactory> textureFactory,
+    std::shared_ptr<IVramTracker>    vramTracker)
     : m_Logger(logger)
     , m_Specification(spec)
     , m_TextureFactory(textureFactory)
+    , m_VramTracker(vramTracker)
   {
     m_Logger->LogDebug(Log("OpenGLFramebuffer created.", "OpenGLFramebuffer"));
     for (auto attachments : m_Specification.Attachments.Attachments)
@@ -290,6 +293,8 @@ namespace Dwarf
     else
     {
       std::cout << "Framebuffer is complete!" << std::endl;
+      m_CurrentVramMemory =
+        m_VramTracker->AddFramebufferMemory(m_Specification);
     }
 
     std::cout << "Framebuffer ID: " << m_RendererID << std::endl;
@@ -426,5 +431,6 @@ namespace Dwarf
       "glDeleteFramebuffers", "OpenGLFramebuffer", m_Logger);
     m_ColorAttachments.clear();
     m_DepthAttachment = nullptr;
+    m_VramTracker->RemoveFramebufferMemory(m_CurrentVramMemory);
   }
 }

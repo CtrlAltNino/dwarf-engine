@@ -19,7 +19,7 @@ namespace Dwarf
     , m_MeshFactory(meshFactory)
   {
     FramebufferSpecification renderSpec = { 512, 512 };
-    renderSpec.Samples = 8;
+    renderSpec.Samples = 4;
     renderSpec.Attachments = FramebufferAttachmentSpecification{
       FramebufferTextureSpecification{ FramebufferTextureFormat::RGBA8 },
       FramebufferTextureSpecification{ FramebufferTextureFormat::DEPTH }

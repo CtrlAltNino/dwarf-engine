@@ -1,4 +1,5 @@
 #include "OpenGLTexture.h"
+#include "Core/Rendering/VramTracker/IVramTracker.h"
 #include "Platform/OpenGL/OpenGLUtilities.h"
 #include "Utilities/ImageUtilities/TextureCommon.h"
 #include "Platform/OpenGL/OpenGLTexture.h"
@@ -318,8 +319,10 @@ namespace Dwarf
   // Constructor without meta data
   OpenGLTexture::OpenGLTexture(std::shared_ptr<TextureContainer>  data,
                                std::shared_ptr<IDwarfLogger>      logger,
+                               std::shared_ptr<IVramTracker>      vramTracker,
                                std::shared_ptr<TextureParameters> parameters)
     : m_Logger(logger)
+    , m_VramTracker(vramTracker)
   {
     GLuint textureType = GetTextureType(data->Type, data->Samples);
     GLuint textureDataType = GetTextureDataType(data->DataType);
@@ -454,6 +457,7 @@ namespace Dwarf
     }
 
     glGenerateTextureMipmap(m_Id);
+    m_VramMemory = m_VramTracker->AddTextureMemory(data);
     OpenGLUtilities::CheckOpenGLError(
       "glGenerateTextureMipmap", "OpenGLTexture", m_Logger);
 
@@ -470,6 +474,7 @@ namespace Dwarf
     glDeleteTextures(1, &m_Id);
     OpenGLUtilities::CheckOpenGLError(
       "glDeleteTextures", "OpenGLTexture", m_Logger);
+    m_VramTracker->RemoveTextureMemory(m_VramMemory);
   }
 
   uintptr_t

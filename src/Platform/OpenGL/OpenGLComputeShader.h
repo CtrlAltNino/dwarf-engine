@@ -6,6 +6,7 @@
 #include "Core/Rendering/Shader/ShaderTypes.h"
 #include "Core/Asset/AssetReference/IAssetReference.h"
 #include "Core/Asset/Database/IAssetDatabase.h"
+#include "Core/Rendering/VramTracker/IVramTracker.h"
 #include <glad/glad.h>
 #include <memory>
 #include <boost/di.hpp>
@@ -22,12 +23,14 @@ namespace Dwarf
     std::shared_ptr<IShaderParameterCollectionFactory>
                                      m_ShaderParameterCollectionFactory;
     std::unique_ptr<IAssetReference> m_ComputeShaderAsset;
+    std::shared_ptr<IVramTracker>    m_VramTracker;
 
   public:
     BOOST_DI_INJECT(OpenGLComputeShader,
                     std::unique_ptr<IAssetReference>& computeShaderAsset,
                     std::shared_ptr<IShaderParameterCollectionFactory>
-                      shaderParameterCollectionFactory);
+                      shaderParameterCollectionFactory,
+                    std::shared_ptr<IVramTracker> vramTracker);
     ~OpenGLComputeShader() override;
 
     GLuint

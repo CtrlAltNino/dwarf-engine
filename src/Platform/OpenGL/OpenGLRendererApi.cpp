@@ -1,5 +1,6 @@
 #include <glad/glad.h>
 #include "Core/Asset/Database/IAssetDatabase.h"
+#include "Core/Rendering/RendererApi/IRendererApi.h"
 #include "OpenGLFramebuffer.h"
 
 #include "Platform/OpenGL/OpenGLRendererApi.h"
@@ -38,6 +39,7 @@ namespace Dwarf
     std::string                     m_ParameterName;
     std::shared_ptr<IAssetDatabase> m_AssetDatabase;
     std::shared_ptr<IDwarfLogger>   m_Logger;
+    int&                            m_TextureCount;
 
     void
     operator()(bool& parameter)
@@ -77,7 +79,7 @@ namespace Dwarf
       if (parameter.has_value() && m_AssetDatabase->Exists(parameter.value()))
       {
         // TODO: This needs to count the number of textures and bind them
-        glActiveTexture(GL_TEXTURE0);
+        glActiveTexture(GL_TEXTURE0 + m_TextureCount);
         OpenGLUtilities::CheckOpenGLError(
           "glActiveTexture", "OpenGLRendererApi", m_Logger);
         TextureAsset& textureAsset =
@@ -86,9 +88,10 @@ namespace Dwarf
         OpenGLUtilities::CheckOpenGLError(
           "glBindTexture", "OpenGLRendererApi", m_Logger);
         glUniform1i(glGetUniformLocation(m_ShaderID, m_ParameterName.c_str()),
-                    0);
+                    m_TextureCount);
         OpenGLUtilities::CheckOpenGLError(
           "glUniform1i", "OpenGLRendererApi", m_Logger);
+        m_TextureCount++;
       }
     }
     void
@@ -230,6 +233,7 @@ namespace Dwarf
     glDepthFunc(GL_LESS);
 
     // TODO: Move this to OpenGLShader.cpp
+    int textureCount = 0;
     for (auto const& identifier :
          material.GetShaderParameters()->GetParameterIdentifiers())
     {
@@ -239,7 +243,9 @@ namespace Dwarf
           material.GetShaderParameters()->GetParameter(identifier);
         std::visit(SetShaderParameterVisitor{ shader.GetID(),
                                               identifier,
-                                              m_AssetDatabase },
+                                              m_AssetDatabase,
+                                              m_Logger,
+                                              textureCount },
                    shaderParameterValue);
       }
     }
@@ -359,5 +365,33 @@ namespace Dwarf
                       GL_COLOR_BUFFER_BIT,
                       GL_NEAREST);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  }
+
+  VRAMUsageBuffer
+  OpenGLRendererApi::QueryVRAMUsage()
+  {
+    VRAMUsageBuffer result;
+
+    if (GLAD_GL_NVX_gpu_memory_info)
+    {
+      GLint totalMemoryKb = 0, availableMemoryKb = 0;
+      glGetIntegerv(GL_GPU_MEMORY_INFO_TOTAL_AVAILABLE_MEMORY_NVX,
+                    &totalMemoryKb);
+      glGetIntegerv(GL_GPU_MEMORY_INFO_CURRENT_AVAILABLE_VIDMEM_NVX,
+                    &availableMemoryKb);
+
+      GLint usedMemoryKb = totalMemoryKb - availableMemoryKb;
+      // std::cout << "NVIDIA VRAM Usage:\n";
+      // std::cout << "  Total VRAM: " << totalMemoryKb / 1024 << " MB\n";
+      // std::cout << "  Used VRAM: " << usedMemoryKb / 1024 << " MB\n";
+      result.totalMemoryMb = totalMemoryKb / 1024;
+      result.usedMemoryMb = (totalMemoryKb - availableMemoryKb) / 1024;
+    }
+    else
+    {
+      // std::cout << "GL_NVX_gpu_memory_info extension not supported.\n";
+    }
+
+    return result;
   }
 }
