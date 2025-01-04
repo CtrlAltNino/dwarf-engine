@@ -11,6 +11,6 @@ namespace Dwarf
   {
   public:
     static boost::di::injector<std::shared_ptr<Editor>>
-    CreateInjector(ProjectInformation selectedProject);
+    CreateInjector(SavedProject selectedProject);
   };
 }

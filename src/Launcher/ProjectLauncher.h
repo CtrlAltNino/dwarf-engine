@@ -3,7 +3,7 @@
 #include "pch.h"
 #include "IProjectLauncherData.h"
 #include "Launcher/IProjectLauncher.h"
-#include "Launcher/ProjectList/IProjectList.h"
+#include "Launcher/SavedProjects/ISavedProjects.h"
 #include "Logging/IDwarfLogger.h"
 #include "Launcher/View/IProjectLauncherView.h"
 
@@ -13,19 +13,19 @@ namespace Dwarf
   {
   private:
     std::unique_ptr<IProjectLauncherView> m_View;
-    IProjectLauncherData&                 m_Data;
-    IProjectList&                         m_ProjectList;
-    IDwarfLogger&                         m_Logger;
+    std::shared_ptr<IProjectLauncherData> m_Data;
+    std::shared_ptr<ISavedProjects>       m_SavedProjects;
+    std::shared_ptr<IDwarfLogger>         m_Logger;
 
   public:
-    ProjectLauncher(IDwarfLogger&                         logger,
+    ProjectLauncher(std::shared_ptr<IDwarfLogger>         logger,
                     std::unique_ptr<IProjectLauncherView> view,
-                    IProjectLauncherData&                 data,
-                    IProjectList&                         projectList);
+                    std::shared_ptr<IProjectLauncherData> data,
+                    std::shared_ptr<ISavedProjects>       projectList);
 
     ~ProjectLauncher() override;
 
-    ProjectInformation
+    std::optional<SavedProject>
     Run() override;
   };
 }

@@ -2,18 +2,19 @@
 
 #include "Launcher/IProjectLauncherData.h"
 #include "Logging/IDwarfLogger.h"
+#include "SavedProjects/ISavedProjects.h"
 
 namespace Dwarf
 {
   class ProjectLauncherData : public IProjectLauncherData
   {
   private:
-    IDwarfLogger&       m_Logger;
-    ProjectChooserState m_State;
-    ProjectInformation  m_SelectedProject;
+    std::shared_ptr<IDwarfLogger> m_Logger;
+    ProjectChooserState           m_State;
+    std::optional<SavedProject>   m_SelectedProject;
 
   public:
-    ProjectLauncherData(IDwarfLogger& logger);
+    ProjectLauncherData(std::shared_ptr<IDwarfLogger> logger);
     ~ProjectLauncherData() override;
 
     ProjectChooserState
@@ -23,9 +24,9 @@ namespace Dwarf
     SetState(ProjectChooserState state) override;
 
     void
-    SetSelectedProject(const ProjectInformation& project) override;
+    SetSelectedProject(std::optional<SavedProject> project) override;
 
-    const ProjectInformation&
+    const std::optional<SavedProject>&
     GetSelectedProject() const override;
   };
 }

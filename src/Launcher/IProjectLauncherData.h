@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Launcher/IProjectLauncher.h"
+#include "SavedProjects/ISavedProjects.h"
 namespace Dwarf
 {
   class IProjectLauncherData
@@ -15,9 +16,9 @@ namespace Dwarf
     SetState(ProjectChooserState state) = 0;
 
     virtual void
-    SetSelectedProject(const ProjectInformation& project) = 0;
+    SetSelectedProject(std::optional<SavedProject> project) = 0;
 
-    virtual const ProjectInformation&
+    virtual const std::optional<SavedProject>&
     GetSelectedProject() const = 0;
   };
 } // namespace Dwarf

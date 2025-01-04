@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Launcher/IProjectLauncher.h"
-#include "Launcher/ProjectList/IProjectList.h"
+#include "Launcher/SavedProjects/ISavedProjects.h"
 namespace Dwarf
 {
 #define NAME_COLUMN_INDEX (0)
@@ -20,15 +20,15 @@ namespace Dwarf
     ApiReverse
   };
 
-  class IProjectListSorter
+  class ISavedProjectsSorter
   {
   public:
-    virtual ~IProjectListSorter() = default;
+    virtual ~ISavedProjectsSorter() = default;
 
     virtual void
     UpdateSortOrder(ProjectListColumn columnId) = 0;
 
     virtual void
-    SortProjectList(std::vector<ProjectInformation>& projectList) = 0;
+    SortSavedProjects(std::vector<SavedProject>& savedProjects) = 0;
   };
 }

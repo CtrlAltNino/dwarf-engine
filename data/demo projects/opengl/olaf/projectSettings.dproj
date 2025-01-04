@@ -1,7 +1,6 @@
 {
-  "graphicsApi": 0,
+  "graphicsApi": 3,
   "lastOpenedScene": "c14cd4c3-f124-4b46-851a-1b780eb92f65",
-  "projectLastOpenedDate": 0,
   "projectName": "",
   "view": {
     "modules": [
@@ -22,7 +21,7 @@
       },
       {
         "camera": {
-          "aspectRatio": 0.4394785761833191,
+          "aspectRatio": 1.2621564865112305,
           "farPlane": 1000.0,
           "fov": 90.0,
           "movementSpeed": 4.0,
@@ -35,8 +34,8 @@
               "z": 9.525208473205566
             },
             "Rotation": {
-              "x": 29.549800872802734,
-              "y": 29.100757598876953,
+              "x": 26.849790573120117,
+              "y": 23.55076789855957,
               "z": 0.0
             },
             "Scale": {

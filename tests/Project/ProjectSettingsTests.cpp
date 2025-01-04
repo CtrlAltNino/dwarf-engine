@@ -1,5 +1,6 @@
 #include <gtest/gtest.h>
 #include <gmock/gmock.h>
+#include "Project/IProjectSettingsIO.h"
 #include "Project/ProjectSettings.h"
 #include "Logging/IDwarfLogger.h"
 #include "Core/UUID.h"
@@ -25,7 +26,7 @@ class MockFileHandler : public IFileHandler
 {
 public:
   MOCK_METHOD(std::filesystem::path, GetDocumentsPath, (), (override));
-  MOCK_METHOD(std::filesystem::path, GetProjectSettingsPath, (), (override));
+  MOCK_METHOD(std::filesystem::path, GetEngineSettingsPath, (), (override));
   MOCK_METHOD(bool,
               FileExists,
               (const std::filesystem::path& filePath),
@@ -65,12 +66,26 @@ public:
   MOCK_METHOD(void, Delete, (const std::filesystem::path& path), (override));
 };
 
+class MockProjectSettingsIO : public IProjectSettingsIO
+{
+  MOCK_METHOD(std::optional<ProjectSettingsData>,
+              LoadProjectSettings,
+              (std::filesystem::path projectSettingsPath),
+              (override));
+  MOCK_METHOD(void,
+              SaveProjectSettings,
+              (ProjectSettingsData   projectSettingsData,
+               std::filesystem::path projectSettingsPath),
+              (override));
+};
+
 class ProjectSettingsTest : public ::testing::Test
 {
 protected:
-  std::shared_ptr<MockLogger>      mockLogger;
-  std::shared_ptr<MockFileHandler> mockFileHandler;
-  std::filesystem::path            testPath;
+  std::shared_ptr<MockLogger>            mockLogger;
+  std::shared_ptr<MockFileHandler>       mockFileHandler;
+  std::shared_ptr<MockProjectSettingsIO> mockProjectSettingsIO;
+  std::filesystem::path                  testPath;
 
   void
   SetUp() override
@@ -107,15 +122,17 @@ TEST_F(ProjectSettingsTest, Constructor_LoadsProjectSettings_FileExists)
   EXPECT_CALL(*mockLogger, LogError(_)).Times(0);
 
   // Act
-  auto projectSettings = std::make_unique<ProjectSettings>(
-    ProjectPath{ testPath }, mockLogger, mockFileHandler);
+  auto projectSettings =
+    std::make_unique<ProjectSettings>(ProjectPath{ testPath },
+                                      mockLogger,
+                                      mockFileHandler,
+                                      mockProjectSettingsIO);
 
   // Assert
   EXPECT_EQ(projectSettings->GetProjectName(), "TestProject");
   EXPECT_EQ(projectSettings->GetGraphicsApi(), GraphicsApi::OpenGL);
   EXPECT_EQ(projectSettings->GetLastOpenedScene()->ToString(),
             "123e4567-e89b-12d3-a456-426614174000");
-  EXPECT_EQ(projectSettings->GetLastOpenedTimeStamp(), 1627847285);
 }
 
 TEST_F(ProjectSettingsTest, Constructor_LoadsProjectSettings_FileDoesNotExist)
@@ -127,14 +144,16 @@ TEST_F(ProjectSettingsTest, Constructor_LoadsProjectSettings_FileDoesNotExist)
   EXPECT_CALL(*mockLogger, LogError(_)).Times(1);
 
   // Act
-  auto projectSettings = std::make_unique<ProjectSettings>(
-    ProjectPath{ testPath }, mockLogger, mockFileHandler);
+  auto projectSettings =
+    std::make_unique<ProjectSettings>(ProjectPath{ testPath },
+                                      mockLogger,
+                                      mockFileHandler,
+                                      mockProjectSettingsIO);
 
   // Assert
   EXPECT_EQ(projectSettings->GetProjectName(), "");
   EXPECT_EQ(projectSettings->GetGraphicsApi(), GraphicsApi::None);
   EXPECT_EQ(projectSettings->GetLastOpenedScene(), std::nullopt);
-  EXPECT_EQ(projectSettings->GetLastOpenedTimeStamp(), 0);
 }
 
 TEST_F(ProjectSettingsTest, SaveUnchangedProjectSettings)
@@ -155,8 +174,11 @@ TEST_F(ProjectSettingsTest, SaveUnchangedProjectSettings)
   EXPECT_CALL(*mockFileHandler, WriteToFile(settingsPath, _)).Times(1);
 
   // Creating a new project settings object
-  auto projectSettings = std::make_unique<ProjectSettings>(
-    ProjectPath{ testPath }, mockLogger, mockFileHandler);
+  auto projectSettings =
+    std::make_unique<ProjectSettings>(ProjectPath{ testPath },
+                                      mockLogger,
+                                      mockFileHandler,
+                                      mockProjectSettingsIO);
 
   // Directly saving the project settings
   projectSettings->Save();
@@ -182,8 +204,11 @@ TEST_F(ProjectSettingsTest, SaveChangedProjectSettings)
   EXPECT_CALL(*mockLogger, LogInfo(_)).Times(1);
 
   // Creating a new project settings object
-  auto projectSettings = std::make_unique<ProjectSettings>(
-    ProjectPath{ testPath }, mockLogger, mockFileHandler);
+  auto projectSettings =
+    std::make_unique<ProjectSettings>(ProjectPath{ testPath },
+                                      mockLogger,
+                                      mockFileHandler,
+                                      mockProjectSettingsIO);
 
   EXPECT_CALL(*mockLogger, LogInfo(_)).Times(4);
 
@@ -191,7 +216,6 @@ TEST_F(ProjectSettingsTest, SaveChangedProjectSettings)
   projectSettings->UpdateGraphicsApi(GraphicsApi::Vulkan);
   projectSettings->UpdateLastOpenedScene(
     UUID("123e4567-e89b-12d3-a456-426614174001"));
-  projectSettings->UpdateLastOpenedTimeStamp(1627847286);
 
   // Act
   // projectSettings->Save();
@@ -200,8 +224,11 @@ TEST_F(ProjectSettingsTest, SaveChangedProjectSettings)
 TEST_F(ProjectSettingsTest, SetAndGetProjectName)
 {
   // Arrange
-  auto projectSettings = std::make_unique<ProjectSettings>(
-    ProjectPath{ testPath }, mockLogger, mockFileHandler);
+  auto projectSettings =
+    std::make_unique<ProjectSettings>(ProjectPath{ testPath },
+                                      mockLogger,
+                                      mockFileHandler,
+                                      mockProjectSettingsIO);
 
   // Act
   projectSettings->UpdateProjectName("TestProject");
@@ -213,8 +240,11 @@ TEST_F(ProjectSettingsTest, SetAndGetProjectName)
 TEST_F(ProjectSettingsTest, SetAndGetGraphicsApi)
 {
   // Arrange
-  auto projectSettings = std::make_unique<ProjectSettings>(
-    ProjectPath{ testPath }, mockLogger, mockFileHandler);
+  auto projectSettings =
+    std::make_unique<ProjectSettings>(ProjectPath{ testPath },
+                                      mockLogger,
+                                      mockFileHandler,
+                                      mockProjectSettingsIO);
 
   // Act
   projectSettings->UpdateGraphicsApi(GraphicsApi::Vulkan);
@@ -226,8 +256,11 @@ TEST_F(ProjectSettingsTest, SetAndGetGraphicsApi)
 TEST_F(ProjectSettingsTest, SetAndGetLastOpenedScene)
 {
   // Arrange
-  auto projectSettings = std::make_unique<ProjectSettings>(
-    ProjectPath{ testPath }, mockLogger, mockFileHandler);
+  auto projectSettings =
+    std::make_unique<ProjectSettings>(ProjectPath{ testPath },
+                                      mockLogger,
+                                      mockFileHandler,
+                                      mockProjectSettingsIO);
 
   // Act
   UUID sceneUUID("123e4567-e89b-12d3-a456-426614174000");
@@ -236,18 +269,4 @@ TEST_F(ProjectSettingsTest, SetAndGetLastOpenedScene)
   // Assert
   EXPECT_EQ(projectSettings->GetLastOpenedScene()->ToString(),
             "123e4567-e89b-12d3-a456-426614174000");
-}
-
-TEST_F(ProjectSettingsTest, SetAndGetLastOpenedTimeStamp)
-{
-  // Arrange
-  auto projectSettings = std::make_unique<ProjectSettings>(
-    ProjectPath{ testPath }, mockLogger, mockFileHandler);
-
-  // Act
-  time_t timeStamp = 1627847285;
-  projectSettings->UpdateLastOpenedTimeStamp(timeStamp);
-
-  // Assert
-  EXPECT_EQ(projectSettings->GetLastOpenedTimeStamp(), timeStamp);
 }

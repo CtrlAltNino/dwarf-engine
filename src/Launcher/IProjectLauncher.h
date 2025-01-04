@@ -1,5 +1,7 @@
 #pragma once
+#include "Project/IProjectSettings.h"
 #include "Project/ProjectTypes.h"
+#include "SavedProjects/ISavedProjects.h"
 #include "Utilities/ISerializable.h"
 #include "pch.h"
 #include "Core/Base.h"
@@ -28,61 +30,12 @@ namespace Dwarf
     Cancelled
   };
 
-  /// @brief Structure holding information about a project.
-  struct ProjectInformation : public ISerializable
-  {
-    std::string name;
-    ProjectPath path;
-    int         lastOpened;
-    GraphicsApi graphicsApi;
-
-    /// @brief Default constructor.
-    ProjectInformation()
-      : name("")
-      , path("")
-      , lastOpened(-1)
-      , graphicsApi(GraphicsApi::OpenGL)
-    {
-    }
-
-    /// @brief Deserialization constructor.
-    /// @param jsonObject The JSON object to deserialize.
-    ProjectInformation(const nlohmann::json& jsonObject)
-    {
-      name = jsonObject["projectInformation"]["name"];
-      path = ProjectPath(jsonObject["projectInformation"]["path"]);
-      lastOpened = jsonObject["projectInformation"]["lastOpened"];
-      graphicsApi =
-        (GraphicsApi)jsonObject["projectInformation"]["graphicsApi"];
-    }
-
-    // Equality operator for ProjectInformation.
-    bool
-    operator==(const ProjectInformation& other) const
-    {
-      return name == other.name && path == other.path &&
-             lastOpened == other.lastOpened && graphicsApi == other.graphicsApi;
-    }
-
-    nlohmann::json
-    Serialize() override
-    {
-      nlohmann::json jsonObject;
-      jsonObject["projectInformation"]["name"] = name;
-      jsonObject["projectInformation"]["path"] = path.t.string();
-      jsonObject["projectInformation"]["lastOpened"] = lastOpened;
-      jsonObject["projectInformation"]["graphicsApi"] = (int)graphicsApi;
-
-      return jsonObject;
-    }
-  };
-
   class IProjectLauncher
   {
   public:
     virtual ~IProjectLauncher() = default;
 
-    virtual ProjectInformation
+    virtual std::optional<SavedProject>
     Run() = 0;
   };
 }

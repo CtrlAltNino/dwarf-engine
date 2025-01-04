@@ -14,10 +14,10 @@ namespace Dwarf
     virtual std::filesystem::path
     GetDocumentsPath() = 0;
 
-    /// @brief Returns the path to the project settings file.
+    /// @brief Returns the path to the engine settings directory.
     /// @return An absolute path.
     virtual std::filesystem::path
-    GetProjectSettingsPath() = 0;
+    GetEngineSettingsPath() = 0;
 
     /// @brief Checks if a file is present at a given path.
     /// @param filePath Absolute path to a file.

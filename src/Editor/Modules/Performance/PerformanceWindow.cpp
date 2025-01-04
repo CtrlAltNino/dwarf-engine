@@ -109,7 +109,7 @@ namespace Dwarf
 
     ImGui::ProgressBar(progress_saturated, ImVec2(0.f, 0.f), buf);
     ImGui::SameLine();
-    ImGui::Text("System VRAM Usage");
+    ImGui::Text("VRAM Usage");
 
     std::string textureMemoryString =
       fmt::format("{:.2f} Mb",

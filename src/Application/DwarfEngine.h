@@ -1,6 +1,6 @@
 #pragma once
 #include "Logging/DwarfLogger.h"
-#include "Launcher/IProjectLauncher.h"
+#include "Launcher/SavedProjects/ISavedProjects.h"
 
 namespace Dwarf
 {
@@ -12,11 +12,11 @@ namespace Dwarf
   private:
     std::shared_ptr<DwarfLogger> m_Logger;
 
-    ProjectInformation
+    std::optional<SavedProject>
     RunLauncher();
 
     bool
-    RunEditor(ProjectInformation projectInformation);
+    RunEditor(SavedProject savedProject);
 
   public:
     DwarfEngine();

@@ -64,6 +64,7 @@
 #include "Project/ProjectSettings.h"
 #include "Core/Asset/Texture/IImageFileLoader.h"
 #include "Core/Asset/Texture/ImageFileLoader.h"
+#include "Project/ProjectSettingsIO.h"
 #include "UI/IImGuiLayerFactory.h"
 #include "UI/ImGuiLayerFactory.h"
 #include "Core/Base.h"
@@ -99,15 +100,16 @@
 namespace Dwarf
 {
   boost::di::injector<std::shared_ptr<Editor>>
-  EditorInjector::CreateInjector(ProjectInformation selectedProject)
+  EditorInjector::CreateInjector(SavedProject selectedProject)
   {
     return boost::di::make_injector<boost::di::extension::shared_config>(
           boost::di::bind<LogName>.to(LogName("Editor")),
           boost::di::bind<IDwarfLogger>.to<DwarfLogger>().in(boost::di::extension::shared),
-          boost::di::bind<GraphicsApi>.to(selectedProject.graphicsApi),
-          boost::di::bind<AssetDirectoryPath>.to(AssetDirectoryPath(selectedProject.path.t / "Assets")),
-          boost::di::bind<ProjectPath>.to(ProjectPath(selectedProject.path)),
+          boost::di::bind<GraphicsApi>.to(selectedProject.GraphicsApi),
+          boost::di::bind<AssetDirectoryPath>.to(AssetDirectoryPath(selectedProject.Path / "Assets")),
+          boost::di::bind<ProjectPath>.to(ProjectPath(selectedProject.Path)),
           boost::di::bind<IFileHandler>.to<FileHandler>().in(boost::di::extension::shared),
+          boost::di::bind<IProjectSettingsIO>.to<ProjectSettingsIO>().in(boost::di::extension::shared),
           boost::di::bind<IProjectSettings>.to<ProjectSettings>().in(boost::di::extension::shared),
           boost::di::bind<ICameraFactory>.to<CameraFactory>().in(
           boost::di::extension::shared),
@@ -129,7 +131,7 @@ namespace Dwarf
           boost::di::extension::shared),
           boost::di::bind<IImGuiLayerFactory>.to<ImGuiLayerFactory>().in(boost::di::extension::shared),
           boost::di::bind<WindowProps>.to(WindowProps(
-          "Dwarf Engine", 1100, 600, selectedProject.graphicsApi)),
+          "Dwarf Engine", 1100, 600, selectedProject.GraphicsApi)),
 #ifdef _WIN32
           boost::di::bind<IWindow>.to<WindowsWindow>().in(boost::di::extension::shared),
 #elif __linux__

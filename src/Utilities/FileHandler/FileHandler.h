@@ -12,8 +12,8 @@ namespace Dwarf
     /// @brief Path to the documents directory.
     std::filesystem::path m_DocumentsPath;
 
-    /// @brief Path to the project settings.
-    std::filesystem::path m_ProjectSettingsPath;
+    /// @brief Path to the project settings directory.
+    std::filesystem::path m_EngineSettingsPath;
 
     /// @brief Creates the platform depending path to the documents directory.
     /// @return Absolute path to the documents directory.
@@ -23,7 +23,7 @@ namespace Dwarf
     /// @brief Creates the path to the project settings.
     /// @return Absolute path to where the project settings file is located.
     std::filesystem::path
-    CreateProjectSettingsPath();
+    CreateEngineSettingsPath();
 
   public:
     FileHandler();
@@ -36,7 +36,7 @@ namespace Dwarf
     /// @brief Returns the path to the project settings file.
     /// @return An absolute path.
     std::filesystem::path
-    GetProjectSettingsPath() override;
+    GetEngineSettingsPath() override;
 
     /// @brief Checks if a file is present at a given path.
     /// @param filePath Absolute path to a file.

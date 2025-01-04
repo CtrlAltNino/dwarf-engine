@@ -64,7 +64,7 @@ class MockFileHandler : public IFileHandler
 {
 public:
   MOCK_METHOD(std::filesystem::path, GetDocumentsPath, (), (override));
-  MOCK_METHOD(std::filesystem::path, GetProjectSettingsPath, (), (override));
+  MOCK_METHOD(std::filesystem::path, GetEngineSettingsPath, (), (override));
   MOCK_METHOD(bool,
               FileExists,
               (const std::filesystem::path& filePath),

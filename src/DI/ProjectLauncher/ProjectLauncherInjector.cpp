@@ -4,6 +4,7 @@
 #include "Launcher/ProjectLauncherData.h"
 #include "Core/Asset/Texture/IImageFileLoader.h"
 #include "Core/Asset/Texture/ImageFileLoader.h"
+#include "Project/ProjectSettingsIO.h"
 #include "UI/IImGuiLayerFactory.h"
 #include "UI/ImGuiLayerFactory.h"
 #include "Core/Base.h"
@@ -18,12 +19,12 @@
 #include "Launcher/View/ProjectLauncherView.h"
 #include "Utilities/FileHandler/FileHandler.h"
 #include "Window/IWindow.h"
-#include "Launcher/ProjectList/IProjectList.h"
-#include "Launcher/ProjectList/ProjectList.h"
-#include "Launcher/ProjectList/IO/IProjectListIO.h"
-#include "Launcher/ProjectList/IO/ProjectListIO.h"
-#include "Launcher/ProjectList/Sorter/IProjectListSorter.h"
-#include "Launcher/ProjectList/Sorter/ProjectListSorter.h"
+#include "Launcher/SavedProjects/ISavedProjects.h"
+#include "Launcher/SavedProjects/SavedProjects.h"
+#include "Launcher/SavedProjects/IO/ISavedProjectsIO.h"
+#include "Launcher/SavedProjects/IO/SavedProjectsIO.h"
+#include "Launcher/SavedProjects/Sorter/ISavedProjectsSorter.h"
+#include "Launcher/SavedProjects/Sorter/SavedProjectsSorter.h"
 #include "Launcher/ProjectCreator/IProjectCreator.h"
 #include "Launcher/ProjectCreator/ProjectCreator.h"
 #include "Core/Rendering/VramTracker/IVramTracker.h"
@@ -48,6 +49,8 @@ namespace Dwarf
         boost::di::extension::shared),
       boost::di::bind<GraphicsApi>.to(GraphicsApi::OpenGL),
       boost::di::bind<IFileHandler>.to<FileHandler>().in(
+        boost::di::extension::shared),
+      boost::di::bind<IProjectSettingsIO>.to<ProjectSettingsIO>().in(
         boost::di::extension::shared),
       boost::di::bind<IImGuiLayerFactory>.to<ImGuiLayerFactory>().in(
         boost::di::extension::shared),
@@ -76,11 +79,11 @@ namespace Dwarf
         boost::di::extension::shared),
       boost::di::bind<IImageFileLoader>.to<ImageFileLoader>().in(
         boost::di::extension::shared),
-      boost::di::bind<IProjectList>.to<ProjectList>().in(
+      boost::di::bind<ISavedProjects>.to<SavedProjects>().in(
         boost::di::extension::shared),
-      boost::di::bind<IProjectListIO>.to<ProjectListIO>().in(
+      boost::di::bind<ISavedProjectsIO>.to<SavedProjectsIO>().in(
         boost::di::extension::shared),
-      boost::di::bind<IProjectListSorter>.to<ProjectListSorter>().in(
+      boost::di::bind<ISavedProjectsSorter>.to<SavedProjectsSorter>().in(
         boost::di::extension::shared),
       boost::di::bind<IProjectCreator>.to<ProjectCreator>().in(
         boost::di::extension::shared));

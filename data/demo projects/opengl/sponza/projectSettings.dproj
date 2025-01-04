@@ -1,13 +1,12 @@
 {
-  "graphicsApi": 0,
+  "graphicsApi": 3,
   "lastOpenedScene": "52eaf576-ef2f-4e49-a22a-7d0d434c81ca",
-  "projectLastOpenedDate": 0,
   "projectName": "",
   "view": {
     "modules": [
       {
         "camera": {
-          "aspectRatio": 1.2579281330108643,
+          "aspectRatio": 1.2610993385314941,
           "farPlane": 1000.0,
           "fov": 90.0,
           "movementSpeed": 4.0,
@@ -20,8 +19,8 @@
               "z": -2.987597703933716
             },
             "Rotation": {
-              "x": -6.600225925445557,
-              "y": 254.85118103027344,
+              "x": -7.350226402282715,
+              "y": 249.0011749267578,
               "z": 0.0
             },
             "Scale": {
@@ -55,7 +54,6 @@
       {
         "id": "0f99b439-5b59-4b84-8284-c1bf55e0b8e4",
         "label": "Asset Browser",
-        "openedPath": "C:\\Users\\ninom\\Desktop\\Test2\\Assets",
         "type": 4
       },
       {

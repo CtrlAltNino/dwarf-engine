@@ -1,16 +1,19 @@
-#include "ProjectListSorter.h"
+#include "SavedProjectsSorter.h"
+#include "Launcher/SavedProjects/ISavedProjects.h"
 
 namespace Dwarf
 {
-  ProjectListSorter::ProjectListSorter(IDwarfLogger& logger)
+  SavedProjectsSorter::SavedProjectsSorter(std::shared_ptr<IDwarfLogger> logger)
     : m_Logger(logger)
   {
-    m_Logger.LogDebug(Log("ProjectListSorter created", "ProjectListSorter"));
+    m_Logger->LogDebug(
+      Log("SavedProjectsSorter created", "SavedProjectsSorter"));
   }
 
-  ProjectListSorter::~ProjectListSorter()
+  SavedProjectsSorter::~SavedProjectsSorter()
   {
-    m_Logger.LogDebug(Log("ProjectListSorter destroyed", "ProjectListSorter"));
+    m_Logger->LogDebug(
+      Log("SavedProjectsSorter destroyed", "SavedProjectsSorter"));
   }
 
   /// @brief Converts a string to lower case.
@@ -31,9 +34,9 @@ namespace Dwarf
   /// @param p2 Right project.
   /// @return Comparison result.
   bool
-  ProjectNameComparator(ProjectInformation p1, ProjectInformation p2)
+  ProjectNameComparator(SavedProject p1, SavedProject p2)
   {
-    return ToLowerCase(p1.name) < ToLowerCase(p2.name);
+    return ToLowerCase(p1.ProjectName) < ToLowerCase(p2.ProjectName);
   }
 
   /// @brief Name comparator for reverse name sort order.
@@ -41,9 +44,9 @@ namespace Dwarf
   /// @param p2 Right project.
   /// @return Comparison result.
   bool
-  ProjectNameReverseComparator(ProjectInformation p1, ProjectInformation p2)
+  ProjectNameReverseComparator(SavedProject p1, SavedProject p2)
   {
-    return ToLowerCase(p1.name) > ToLowerCase(p2.name);
+    return ToLowerCase(p1.ProjectName) > ToLowerCase(p2.ProjectName);
   }
 
   /// @brief Date comparator for regular date sort order.
@@ -51,11 +54,11 @@ namespace Dwarf
   /// @param p2 Right project.
   /// @return Comparison result.
   bool
-  ProjectDateComparator(ProjectInformation p1, ProjectInformation p2)
+  ProjectDateComparator(SavedProject p1, SavedProject p2)
   {
     // Accomodating for never opened projects having "-1" as a value
-    int a = p1.lastOpened == -1 ? INT_MAX : p1.lastOpened;
-    int b = p2.lastOpened == -1 ? INT_MAX : p2.lastOpened;
+    int a = p1.LastOpened == -1 ? INT_MAX : p1.LastOpened;
+    int b = p2.LastOpened == -1 ? INT_MAX : p2.LastOpened;
 
     // Sorting by project name as fallback
     return a == b ? ProjectNameComparator(p1, p2) : (a > b);
@@ -66,11 +69,11 @@ namespace Dwarf
   /// @param p2 Right project.
   /// @return Comparison result.
   bool
-  ProjectDateReverseComparator(ProjectInformation p1, ProjectInformation p2)
+  ProjectDateReverseComparator(SavedProject p1, SavedProject p2)
   {
     // Accomodating for never opened projects having "-1" as a value
-    int a = p1.lastOpened == -1 ? INT_MAX : p1.lastOpened;
-    int b = p2.lastOpened == -1 ? INT_MAX : p2.lastOpened;
+    int a = p1.LastOpened == -1 ? INT_MAX : p1.LastOpened;
+    int b = p2.LastOpened == -1 ? INT_MAX : p2.LastOpened;
 
     // Sorting by project name as fallback
     return a == b ? ProjectNameComparator(p1, p2) : (a < b);
@@ -81,9 +84,9 @@ namespace Dwarf
   /// @param p2 Right project.
   /// @return Comparison result.
   bool
-  ProjectApiComparator(ProjectInformation p1, ProjectInformation p2)
+  ProjectApiComparator(SavedProject p1, SavedProject p2)
   {
-    return p1.graphicsApi > p2.graphicsApi;
+    return p1.GraphicsApi > p2.GraphicsApi;
   }
 
   /// @brief API comparator for reverse API sort order.
@@ -91,15 +94,15 @@ namespace Dwarf
   /// @param p2
   /// @return
   bool
-  ProjectApiReverseComparator(ProjectInformation p1, ProjectInformation p2)
+  ProjectApiReverseComparator(SavedProject p1, SavedProject p2)
   {
-    return p1.graphicsApi < p2.graphicsApi;
+    return p1.GraphicsApi < p2.GraphicsApi;
   }
 
   void
-  ProjectListSorter::UpdateSortOrder(ProjectListColumn columnId)
+  SavedProjectsSorter::UpdateSortOrder(ProjectListColumn columnId)
   {
-    m_Logger.LogInfo(Log("Updating sort order", "ProjectListSorter"));
+    m_Logger->LogInfo(Log("Updating sort order", "SavedProjectsSorter"));
 
     switch (columnId)
     {
@@ -112,7 +115,6 @@ namespace Dwarf
         {
           m_SortOrder = ProjectSortOrder::Name;
         }
-        // SortProjectList();
         break;
       case PATH_COLUMN_INDEX: break;
       case DATE_COLUMN_INDEX:
@@ -124,7 +126,6 @@ namespace Dwarf
         {
           m_SortOrder = ProjectSortOrder::Date;
         }
-        // SortProjectList();
         break;
       case API_COLUMN_INDEX:
         if (m_SortOrder == ProjectSortOrder::Api)
@@ -140,35 +141,39 @@ namespace Dwarf
   }
 
   void
-  ProjectListSorter::SortProjectList(
-    std::vector<ProjectInformation>& projectList)
+  SavedProjectsSorter::SortSavedProjects(
+    std::vector<SavedProject>& savedProjects)
   {
-    m_Logger.LogInfo(Log("Sorting project list", "ProjectListSorter"));
+    m_Logger->LogInfo(Log("Sorting project list", "SavedProjectsSorter"));
 
     switch (m_SortOrder)
     {
       case ProjectSortOrder::Name:
         std::sort(
-          projectList.begin(), projectList.end(), ProjectNameComparator);
+          savedProjects.begin(), savedProjects.end(), ProjectNameComparator);
         break;
       case ProjectSortOrder::NameReverse:
-        std::sort(
-          projectList.begin(), projectList.end(), ProjectNameReverseComparator);
+        std::sort(savedProjects.begin(),
+                  savedProjects.end(),
+                  ProjectNameReverseComparator);
         break;
       case ProjectSortOrder::Date:
         std::sort(
-          projectList.begin(), projectList.end(), ProjectDateComparator);
+          savedProjects.begin(), savedProjects.end(), ProjectDateComparator);
         break;
       case ProjectSortOrder::DateReverse:
-        std::sort(
-          projectList.begin(), projectList.end(), ProjectDateReverseComparator);
+        std::sort(savedProjects.begin(),
+                  savedProjects.end(),
+                  ProjectDateReverseComparator);
         break;
       case ProjectSortOrder::Api:
-        std::sort(projectList.begin(), projectList.end(), ProjectApiComparator);
+        std::sort(
+          savedProjects.begin(), savedProjects.end(), ProjectApiComparator);
         break;
       case ProjectSortOrder::ApiReverse:
-        std::sort(
-          projectList.begin(), projectList.end(), ProjectApiReverseComparator);
+        std::sort(savedProjects.begin(),
+                  savedProjects.end(),
+                  ProjectApiReverseComparator);
         break;
     }
   }

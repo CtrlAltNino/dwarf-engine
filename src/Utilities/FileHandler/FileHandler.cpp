@@ -19,7 +19,7 @@ namespace Dwarf
 {
   FileHandler::FileHandler()
     : m_DocumentsPath(CreateDocumentsFolderPath())
-    , m_ProjectSettingsPath(CreateProjectSettingsPath())
+    , m_EngineSettingsPath(CreateEngineSettingsPath())
   {
   }
 
@@ -70,7 +70,7 @@ namespace Dwarf
   /// @brief Creates the path to the project settings.
   /// @return Absolute path to where the project settings file is located.
   std::filesystem::path
-  FileHandler::CreateProjectSettingsPath()
+  FileHandler::CreateEngineSettingsPath()
   {
     std::filesystem::path path = "";
     std::filesystem::path subpath = "Dwarf Engine/settings";
@@ -94,9 +94,9 @@ namespace Dwarf
   /// @brief Returns the path to the project settings file.
   /// @return An absolute path.
   std::filesystem::path
-  FileHandler::GetProjectSettingsPath()
+  FileHandler::GetEngineSettingsPath()
   {
-    return m_ProjectSettingsPath;
+    return m_EngineSettingsPath;
   }
 
   /// @brief Checks if a file is present at a given path.

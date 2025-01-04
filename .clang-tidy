@@ -1,0 +1,1 @@
+HeaderFileExtensions: ['h', 'hpp', 'hh']  # Ensure your header file extensions are listed

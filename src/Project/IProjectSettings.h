@@ -8,6 +8,22 @@
 
 namespace Dwarf
 {
+  struct ProjectSettingsData
+  {
+    std::string         ProjectName = "";
+    GraphicsApi         GraphicsApi = GraphicsApi::None;
+    std::optional<UUID> LastOpenedScene = std::nullopt;
+    nlohmann::json      SerializedView;
+
+    // Equality operator for ProjectInformation.
+    bool
+    operator==(const ProjectSettingsData& other) const
+    {
+      return ProjectName == other.ProjectName &&
+             GraphicsApi == other.GraphicsApi;
+    }
+  };
+
   class IProjectSettings
   {
   public:
@@ -21,12 +37,6 @@ namespace Dwarf
 
     virtual std::string
     GetProjectName() const = 0;
-
-    virtual void
-    UpdateLastOpenedTimeStamp(const time_t& projectLastOpenedDate) = 0;
-
-    virtual const time_t&
-    GetLastOpenedTimeStamp() const = 0;
 
     virtual void
     UpdateGraphicsApi(const GraphicsApi& graphicsApi) = 0;

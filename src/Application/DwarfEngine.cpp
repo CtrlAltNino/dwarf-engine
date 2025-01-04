@@ -17,16 +17,16 @@ namespace Dwarf
   void
   DwarfEngine::Run()
   {
-    bool               returnToLauncher = true;
-    ProjectInformation selectedProject = ProjectInformation();
+    bool                        returnToLauncher = true;
+    std::optional<SavedProject> selectedProject = std::nullopt;
 
     while (returnToLauncher)
     {
       selectedProject = RunLauncher();
 
-      if (!selectedProject.path.t.empty())
+      if (selectedProject)
       {
-        returnToLauncher = RunEditor(selectedProject);
+        returnToLauncher = RunEditor(selectedProject.value());
         m_Logger->LogInfo(Log("Editor finished running.", "DwarfEngine"));
 
         if (returnToLauncher)
@@ -47,10 +47,10 @@ namespace Dwarf
     }
   }
 
-  ProjectInformation
+  std::optional<SavedProject>
   DwarfEngine::RunLauncher()
   {
-    ProjectInformation selectedProject = ProjectInformation();
+    std::optional<SavedProject> selectedProject = std::nullopt;
 
     m_Logger->LogDebug(Log("Creating injector...", "DwarfEngine"));
     auto launcherInjector = ProjectLauncherInjector::CreateInjector();
@@ -67,10 +67,10 @@ namespace Dwarf
   }
 
   bool
-  DwarfEngine::RunEditor(ProjectInformation selectedProject)
+  DwarfEngine::RunEditor(SavedProject selectedProject)
   {
     m_Logger->LogDebug(Log(
-      "Opening project at: " + selectedProject.path.t.string(), "DwarfEngine"));
+      "Opening project at: " + selectedProject.Path.string(), "DwarfEngine"));
     m_Logger->LogDebug(Log("Creating editor...", "DwarfEngine"));
 
     auto editorInjector = EditorInjector::CreateInjector(selectedProject);

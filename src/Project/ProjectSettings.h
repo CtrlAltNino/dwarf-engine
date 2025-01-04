@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Editor/Modules/IGuiModule.h"
+#include "IProjectSettingsIO.h"
 #include "Utilities/FileHandler/IFileHandler.h"
 #include "pch.h"
 #include "Core/Base.h"
@@ -11,12 +12,6 @@
 
 namespace Dwarf
 {
-#define GRAPHICS_API_KEY "graphicsApi"
-#define LAST_OPENED_SCENE_KEY "lastOpenedScene"
-#define PROJECT_LAST_OPENED_DATE_KEY "projectLastOpenedDate"
-#define PROJECT_NAME_KEY "projectName"
-#define VIEW_KEY "view"
-
   class LoadStatus
   {
   public:
@@ -42,33 +37,23 @@ namespace Dwarf
     }
   };
 
-  struct ProjectSettingsData
-  {
-    std::string         ProjectName = "";
-    time_t              LastOpenedDate = 0;
-    GraphicsApi         GraphicsApi = GraphicsApi::None;
-    std::optional<UUID> LastOpenedScene = std::nullopt;
-    nlohmann::json      SerializedView;
-  };
-
   class ProjectSettings : public IProjectSettings
   {
   private:
     // Data
-    std::shared_ptr<IDwarfLogger> m_Logger;
-    std::shared_ptr<IFileHandler> m_FileHandler;
-    LoadStatus                    m_LoadStatus;
-    std::filesystem::path         m_ProjectSettingsPath = "";
-    ProjectSettingsData           m_Data;
-
-    void
-    Load();
+    std::shared_ptr<IDwarfLogger>       m_Logger;
+    std::shared_ptr<IFileHandler>       m_FileHandler;
+    std::shared_ptr<IProjectSettingsIO> m_ProjectSettingsIO;
+    LoadStatus                          m_LoadStatus;
+    std::filesystem::path               m_ProjectPath = "";
+    ProjectSettingsData                 m_Data;
 
   public:
     BOOST_DI_INJECT(ProjectSettings,
-                    ProjectPath                   path,
-                    std::shared_ptr<IDwarfLogger> logger,
-                    std::shared_ptr<IFileHandler> fileHandler);
+                    ProjectPath                         path,
+                    std::shared_ptr<IDwarfLogger>       logger,
+                    std::shared_ptr<IFileHandler>       fileHandler,
+                    std::shared_ptr<IProjectSettingsIO> projectSettingsIO);
     ~ProjectSettings() override = default;
 
     void
@@ -79,12 +64,6 @@ namespace Dwarf
 
     std::string
     GetProjectName() const override;
-
-    void
-    UpdateLastOpenedTimeStamp(const time_t& projectLastOpenedDate) override;
-
-    const time_t&
-    GetLastOpenedTimeStamp() const override;
 
     void
     UpdateGraphicsApi(const GraphicsApi& graphicsApi) override;
