@@ -381,9 +381,6 @@ namespace Dwarf
                     &availableMemoryKb);
 
       GLint usedMemoryKb = totalMemoryKb - availableMemoryKb;
-      // std::cout << "NVIDIA VRAM Usage:\n";
-      // std::cout << "  Total VRAM: " << totalMemoryKb / 1024 << " MB\n";
-      // std::cout << "  Used VRAM: " << usedMemoryKb / 1024 << " MB\n";
       result.totalMemoryMb = totalMemoryKb / 1024;
       result.usedMemoryMb = (totalMemoryKb - availableMemoryKb) / 1024;
     }

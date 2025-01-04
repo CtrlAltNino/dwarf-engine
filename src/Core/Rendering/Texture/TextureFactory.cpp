@@ -120,7 +120,8 @@ namespace Dwarf
       case GraphicsApi::OpenGL:
         {
           m_Logger->LogDebug(Log("Created OpenGL texture", "TextureFactory"));
-          return std::make_unique<OpenGLTexture>(textureData, m_Logger);
+          return std::make_unique<OpenGLTexture>(
+            textureData, m_Logger, m_VramTracker);
           break;
         }
       case GraphicsApi::Metal:
