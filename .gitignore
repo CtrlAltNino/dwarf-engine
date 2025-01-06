@@ -11,7 +11,7 @@ imgui.ini
 docs/html
 docs/latex
 Testing/
-VSCodeCounter/
+.VSCodeCounter/
 
 # User-specific files
 *.rsuser
