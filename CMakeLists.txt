@@ -56,7 +56,9 @@ project(Dwarf\ Engine VERSION 0.0.1 LANGUAGES C CXX)
 
 add_executable(${targetName} "")
 include_directories(src)
+include_directories(include)
 add_subdirectory(src)
+add_subdirectory(include/ADLX/SDK/ADLXHelper/Windows/Cpp)
 target_sources(${targetName} PRIVATE ${EXECUTABLE_ADDITIONAL_SETTINGS})
 target_link_libraries(${targetName} PRIVATE ${libname})
 
