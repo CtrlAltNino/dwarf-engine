@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Rendering/GpuInfo/IGpuInfoFactory.h"
 #include "Core/Rendering/RendererApi/IRendererApiFactory.h"
 #include "Editor/Modules/Performance/IPerformanceWindowFactory.h"
 #include <boost/di.hpp>
@@ -18,7 +19,8 @@ namespace Dwarf
     BOOST_DI_INJECT(PerformanceWindowFactory,
                     std::shared_ptr<IEditorStats>        editorStats,
                     std::shared_ptr<IRendererApiFactory> rendererApiFactory,
-                    std::shared_ptr<IVramTracker>        vramTracker);
+                    std::shared_ptr<IVramTracker>        vramTracker,
+                    std::shared_ptr<IGpuInfoFactory>     gpuInfoFactory);
 
     ~PerformanceWindowFactory() override = default;
     std::unique_ptr<PerformanceWindow>

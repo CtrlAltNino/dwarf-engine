@@ -11,13 +11,15 @@ namespace Dwarf
   PerformanceWindow::PerformanceWindow(
     std::shared_ptr<IEditorStats> editorStats,
     std::shared_ptr<IRendererApi> rendererApi,
-    std::shared_ptr<IVramTracker> vramTracker)
+    std::shared_ptr<IVramTracker> vramTracker,
+    std::shared_ptr<IGpuInfo>     gpuInfo)
     : IGuiModule(ModuleLabel("Performance"),
                  ModuleType(MODULE_TYPE::PERFORMANCE),
                  ModuleID(std::make_shared<UUID>()))
     , m_EditorStats(editorStats)
     , m_RendererApi(rendererApi)
     , m_VramTracker(vramTracker)
+    , m_GpuInfo(gpuInfo)
   {
   }
 
@@ -25,7 +27,8 @@ namespace Dwarf
     SerializedModule              serializedModule,
     std::shared_ptr<IEditorStats> editorStats,
     std::shared_ptr<IRendererApi> rendererApi,
-    std::shared_ptr<IVramTracker> vramTracker)
+    std::shared_ptr<IVramTracker> vramTracker,
+    std::shared_ptr<IGpuInfo>     gpuInfo)
     : IGuiModule(ModuleLabel("Performance"),
                  ModuleType(MODULE_TYPE::PERFORMANCE),
                  ModuleID(std::make_shared<UUID>(
@@ -33,6 +36,7 @@ namespace Dwarf
     , m_EditorStats(editorStats)
     , m_RendererApi(rendererApi)
     , m_VramTracker(vramTracker)
+    , m_GpuInfo(gpuInfo)
   {
     Deserialize(serializedModule.t);
   }
@@ -110,6 +114,23 @@ namespace Dwarf
     ImGui::ProgressBar(progress_saturated, ImVec2(0.f, 0.f), buf);
     ImGui::SameLine();
     ImGui::Text("VRAM Usage");
+
+    if (m_GpuInfo)
+    {
+      float progress_saturated = std::clamp(
+        (float)m_GpuInfo->GetUsedVramMb() / (float)m_GpuInfo->GetTotalVramMb(),
+        0.0f,
+        1.0f);
+      char buf[64];
+      sprintf(buf,
+              "%d Mb / %zu Mb",
+              (int)(progress_saturated * m_GpuInfo->GetTotalVramMb()),
+              m_GpuInfo->GetTotalVramMb());
+
+      ImGui::ProgressBar(progress_saturated, ImVec2(0.f, 0.f), buf);
+      ImGui::SameLine();
+      ImGui::Text("VRAM Usage AMD");
+    }
 
     std::string textureMemoryString =
       fmt::format("{:.2f} Mb",

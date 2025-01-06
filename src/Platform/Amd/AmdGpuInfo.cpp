@@ -32,6 +32,7 @@ namespace Dwarf
             // MainMenu();
             // Get and execute the choice
             // MenuControl(perfMonitoringService, oneGPU);
+            m_Gpu->TotalVRAM(m_TotalVram);
           }
           else
             std::cout << "\\tGet particular GPU failed" << std::endl;
@@ -53,70 +54,36 @@ namespace Dwarf
   size_t
   AmdGpuInfo::GetUsedVramMb()
   {
-    // Get system metrics support
-    IADLXSystemMetricsSupportPtr systemMetricsSupport;
-    ADLX_RESULT                  res2 =
-      m_PerformanceMonitoringServices->GetSupportedSystemMetrics(
-        &systemMetricsSupport);
-    // Get GPU metrics support
     IADLXGPUMetricsSupportPtr gpuMetricsSupport;
-    res2 = m_PerformanceMonitoringServices->GetSupportedGPUMetrics(
-      m_Gpu, &gpuMetricsSupport);
+    IADLXGPUMetricsPtr        gpuMetrics;
+    m_PerformanceMonitoringServices->GetCurrentGPUMetrics(m_Gpu, &gpuMetrics);
 
-    // Loop 10 time to accumulate data and show the current metrics in each loop
-    IADLXAllMetricsPtr    allMetrics;
-    IADLXSystemMetricsPtr systemMetrics;
-    IADLXGPUMetricsPtr    gpuMetrics;
-    IADLXFPSPtr           oneFPS;
-
-    // Get current All metrics
-    ADLX_RESULT res1 =
-      m_PerformanceMonitoringServices->GetCurrentAllMetrics(&allMetrics);
-
-    // m_Gpu->QueryInterface(const wchar_t* interfaceId, void** ppInterface)
-
-    // adlx::IADLXGPUMemoryPtr gpuMemory;
-    if (m_Gpu->QueryInterface(adlxIID_IADLXGPUInfo(), (void**)&gpuMemory) !=
-          ADLX_OK ||
-        !gpuMemory)
+    adlx_bool supported = false;
+    adlx_int  VRAM = 0;
+    // Display GPU VRAM support status
+    ADLX_RESULT res = gpuMetricsSupport->IsSupportedGPUVRAM(&supported);
+    if (ADLX_SUCCEEDED(res))
     {
-      std::cerr << "Failed to retrieve GPU memory information." << std::endl;
-      adlxHelper.Terminate();
-      return
-
-        if (ADLX_SUCCEEDED(res1))
+      std::cout << "GPU VRAM support status: " << supported << std::endl;
+      if (supported)
       {
-        std::cout << "The current all metrics: " << std::endl;
-        // Get current system metrics.
-        res1 = allMetrics->GetSystemMetrics(&systemMetrics);
-        // Get current GPU metrics
-        res1 = allMetrics->GetGPUMetrics(m_Gpu, &gpuMetrics);
-        // Show timestamp and GPU metrics
-        if (ADLX_SUCCEEDED(res1) && ADLX_SUCCEEDED(res2))
-        {
-          std::cout << std::boolalpha; // display bool variable as true of false
-
-          adlx_bool supported = false;
-          // Get if the GPU VRAM is supported
-          ADLX_RESULT res = gpuMetricsSupport->IsSupportedGPUVRAM(&supported);
-          if (ADLX_SUCCEEDED(res))
-          {
-            std::cout << "Get if the GPU VRAM is supported: " << supported
-                      << std::endl;
-            if (supported)
-            {
-              adlx_int VRAM = 0;
-              res = gpuMetrics->GPUVRAM(&VRAM);
-              if (ADLX_SUCCEEDED(res)) return VRAM;
-            }
-          }
-
-          std::cout << std::noboolalpha;
-        }
+        res = gpuMetrics->GPUVRAM(&VRAM);
+        if (ADLX_SUCCEEDED(res))
+          std::cout << "The GPU VRAM is: " << VRAM << "MB" << std::endl;
       }
-
-      return 0;
     }
 
-    size_t AmdGpuInfo::GetTotalVramMb() {}
+    return VRAM;
   }
+
+  size_t
+  AmdGpuInfo::GetTotalVramMb()
+  {
+    if (m_TotalVram != nullptr)
+    {
+      return *m_TotalVram;
+    }
+
+    return 0;
+  }
+}

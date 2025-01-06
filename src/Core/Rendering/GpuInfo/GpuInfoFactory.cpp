@@ -16,6 +16,7 @@ namespace Dwarf
     switch (m_GraphicsApi)
     {
       using enum GraphicsApi;
+      case None: break;
       case D3D12: break;
       case Metal: break;
       case OpenGL:
@@ -30,5 +31,7 @@ namespace Dwarf
         }
       case Vulkan: break;
     }
+
+    return nullptr;
   }
 }

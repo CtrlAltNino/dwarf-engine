@@ -4,6 +4,8 @@
 #include "Core/Asset/AssetReference/IAssetReferenceFactory.h"
 #include "Core/Asset/AssetReimporter/AssetReimporter.h"
 #include "Core/Asset/AssetReimporter/IAssetReimporter.h"
+#include "Core/Rendering/GpuInfo/GpuInfoFactory.h"
+#include "Core/Rendering/GpuInfo/IGpuInfoFactory.h"
 #include "Editor/Modules/Inspector/AssetInspector/MaterialAsset/IMaterialAssetInspector.h"
 #include "Editor/Modules/Inspector/AssetInspector/MaterialAsset/MaterialAssetInspector.h"
 #include "Editor/Modules/Inspector/AssetInspector/ModelAsset/IModelAssetInspector.h"
@@ -106,6 +108,7 @@ namespace Dwarf
           boost::di::bind<LogName>.to(LogName("Editor")),
           boost::di::bind<IDwarfLogger>.to<DwarfLogger>().in(boost::di::extension::shared),
           boost::di::bind<GraphicsApi>.to(selectedProject.GraphicsApi),
+          boost::di::bind<IGpuInfoFactory>.to<GpuInfoFactory>().in(boost::di::extension::shared),
           boost::di::bind<AssetDirectoryPath>.to(AssetDirectoryPath(selectedProject.Path / "Assets")),
           boost::di::bind<ProjectPath>.to(ProjectPath(selectedProject.Path)),
           boost::di::bind<IFileHandler>.to<FileHandler>().in(boost::di::extension::shared),

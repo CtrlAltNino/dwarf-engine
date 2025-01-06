@@ -16,7 +16,9 @@ namespace Dwarf
   private:
     ADLXHelper                            m_AdlxHelper;
     IADLXPerformanceMonitoringServicesPtr m_PerformanceMonitoringServices;
+    IADLXGPUMetricsPtr                    m_GpuMetrics;
     IADLXGPUPtr                           m_Gpu;
+    unsigned int*                         m_TotalVram = nullptr;
 
   public:
     AmdGpuInfo();
