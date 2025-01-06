@@ -1,12 +1,15 @@
 #include "GpuInfoFactory.h"
 #include "Core/Base.h"
+#include "Logging/IDwarfLogger.h"
 #include "Platform/OpenGL/OpenGLUtilities.h"
 #include "Platform/Amd/AmdGpuInfo.h"
 
 namespace Dwarf
 {
-  GpuInfoFactory::GpuInfoFactory(GraphicsApi graphicsApi)
+  GpuInfoFactory::GpuInfoFactory(GraphicsApi                   graphicsApi,
+                                 std::shared_ptr<IDwarfLogger> logger)
     : m_GraphicsApi(graphicsApi)
+    , m_Logger(logger)
   {
   }
 
@@ -25,7 +28,7 @@ namespace Dwarf
           if (deviceInfo.find("ATI") != std::string::npos ||
               deviceInfo.find("AMD") != std::string::npos)
           {
-            return std::unique_ptr<AmdGpuInfo>();
+            return std::make_unique<AmdGpuInfo>(m_Logger);
           }
           break;
         }

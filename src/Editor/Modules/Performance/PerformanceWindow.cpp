@@ -12,14 +12,14 @@ namespace Dwarf
     std::shared_ptr<IEditorStats> editorStats,
     std::shared_ptr<IRendererApi> rendererApi,
     std::shared_ptr<IVramTracker> vramTracker,
-    std::shared_ptr<IGpuInfo>     gpuInfo)
+    std::unique_ptr<IGpuInfo>     gpuInfo)
     : IGuiModule(ModuleLabel("Performance"),
                  ModuleType(MODULE_TYPE::PERFORMANCE),
                  ModuleID(std::make_shared<UUID>()))
     , m_EditorStats(editorStats)
     , m_RendererApi(rendererApi)
     , m_VramTracker(vramTracker)
-    , m_GpuInfo(gpuInfo)
+    , m_GpuInfo(std::move(gpuInfo))
   {
   }
 
@@ -28,7 +28,7 @@ namespace Dwarf
     std::shared_ptr<IEditorStats> editorStats,
     std::shared_ptr<IRendererApi> rendererApi,
     std::shared_ptr<IVramTracker> vramTracker,
-    std::shared_ptr<IGpuInfo>     gpuInfo)
+    std::unique_ptr<IGpuInfo>     gpuInfo)
     : IGuiModule(ModuleLabel("Performance"),
                  ModuleType(MODULE_TYPE::PERFORMANCE),
                  ModuleID(std::make_shared<UUID>(
@@ -36,7 +36,7 @@ namespace Dwarf
     , m_EditorStats(editorStats)
     , m_RendererApi(rendererApi)
     , m_VramTracker(vramTracker)
-    , m_GpuInfo(gpuInfo)
+    , m_GpuInfo(std::move(gpuInfo))
   {
     Deserialize(serializedModule.t);
   }

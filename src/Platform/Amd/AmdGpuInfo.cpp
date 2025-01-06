@@ -1,48 +1,85 @@
 #include "AmdGpuInfo.h"
+#include "Logging/IDwarfLogger.h"
 #include <iostream>
 
 namespace Dwarf
 {
-  AmdGpuInfo::AmdGpuInfo()
+  AmdGpuInfo::AmdGpuInfo(std::shared_ptr<IDwarfLogger> logger)
+    : m_Logger(logger)
   {
+    m_Logger->LogDebug(Log("Creating AmdGpuInfo", "AmdGpuInfo"));
     ADLX_RESULT res = ADLX_FAIL;
 
     // Initialize ADLX
     res = m_AdlxHelper.Initialize();
+    m_Logger->LogDebug(Log("Initializing ADLX", "AmdGpuInfo"));
 
     if (ADLX_SUCCEEDED(res))
     {
+      m_Logger->LogDebug(Log("Successfully initialized ADLX", "AmdGpuInfo"));
       // Get Performance Monitoring services
       ADLX_RESULT res =
         m_AdlxHelper.GetSystemServices()->GetPerformanceMonitoringServices(
           &m_PerformanceMonitoringServices);
       if (ADLX_SUCCEEDED(res))
       {
+        m_Logger->LogDebug(
+          Log("Successfully retrieved performance monitoring services",
+              "AmdGpuInfo"));
         IADLXGPUListPtr gpus;
         // Get GPU list
         res = m_AdlxHelper.GetSystemServices()->GetGPUs(&gpus);
         if (ADLX_SUCCEEDED(res))
         {
+          m_Logger->LogDebug(
+            Log("Successfully retrieved ADLX GPU List", "AmdGpuInfo"));
           // Use the first GPU in the list
-          IADLXGPUPtr oneGPU;
-          res = gpus->At(gpus->Begin(), &oneGPU);
+          // IADLXGPUPtr oneGPU;
+          res = gpus->At(gpus->Begin(), &m_Gpu);
           if (ADLX_SUCCEEDED(res))
           {
+            m_Logger->LogDebug(
+              Log("Successfully retrieved first GPU", "AmdGpuInfo"));
             // Display main menu options
             // MainMenu();
             // Get and execute the choice
             // MenuControl(perfMonitoringService, oneGPU);
-            m_Gpu->TotalVRAM(m_TotalVram);
+            ADLX_RESULT resy = m_Gpu->TotalVRAM(m_TotalVram);
+            if (ADLX_SUCCEEDED(resy))
+            {
+              m_Logger->LogDebug(
+                Log("Successfully retrieved total VRAM pointer", "AmdGpuInfo"));
+
+              m_Logger->LogDebug(
+                Log(fmt::format("Total VRAM: %d", *m_TotalVram), "AmdGpuInfo"));
+            }
+            else
+            {
+              m_Logger->LogDebug(Log(
+                "Failed to retrieve first total VRAM pointer", "AmdGpuInfo"));
+            }
           }
           else
-            std::cout << "\\tGet particular GPU failed" << std::endl;
+          {
+            m_Logger->LogDebug(
+              Log("Failed to retrieve first GPU", "AmdGpuInfo"));
+          }
         }
         else
-          std::cout << "\\tGet GPU list failed" << std::endl;
+        {
+          m_Logger->LogDebug(
+            Log("Failed to retrieve ADLX GPU List", "AmdGpuInfo"));
+        }
       }
       else
-        std::cout << "\\tGet performance monitoring services failed"
-                  << std::endl;
+      {
+        m_Logger->LogDebug(Log(
+          "Failed to retrieve performance monitoring services", "AmdGpuInfo"));
+      }
+    }
+    else
+    {
+      m_Logger->LogDebug(Log("Failed to initialize ADLX", "AmdGpuInfo"));
     }
   }
 
@@ -57,6 +94,8 @@ namespace Dwarf
     IADLXGPUMetricsSupportPtr gpuMetricsSupport;
     IADLXGPUMetricsPtr        gpuMetrics;
     m_PerformanceMonitoringServices->GetCurrentGPUMetrics(m_Gpu, &gpuMetrics);
+    m_PerformanceMonitoringServices->GetSupportedGPUMetrics(m_Gpu,
+                                                            &gpuMetricsSupport);
 
     adlx_bool supported = false;
     adlx_int  VRAM = 0;
@@ -64,12 +103,9 @@ namespace Dwarf
     ADLX_RESULT res = gpuMetricsSupport->IsSupportedGPUVRAM(&supported);
     if (ADLX_SUCCEEDED(res))
     {
-      std::cout << "GPU VRAM support status: " << supported << std::endl;
       if (supported)
       {
         res = gpuMetrics->GPUVRAM(&VRAM);
-        if (ADLX_SUCCEEDED(res))
-          std::cout << "The GPU VRAM is: " << VRAM << "MB" << std::endl;
       }
     }
 

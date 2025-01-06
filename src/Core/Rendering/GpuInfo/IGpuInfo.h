@@ -6,7 +6,7 @@ namespace Dwarf
   class IGpuInfo
   {
   public:
-    virtual ~IGpuInfo() = 0;
+    virtual ~IGpuInfo() = default;
 
     virtual size_t
     GetUsedVramMb() = 0;

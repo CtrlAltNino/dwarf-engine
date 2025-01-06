@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Rendering/GpuInfo/IGpuInfo.h"
+#include "Logging/IDwarfLogger.h"
 #include <ADLX/SDK/Include/ADLX.h>
 #include <ADLX/SDK/Include/ADLXDefines.h>
 #include <ADLX/SDK/Include/ADLXStructures.h>
@@ -14,6 +15,7 @@ namespace Dwarf
   class AmdGpuInfo : public IGpuInfo
   {
   private:
+    std::shared_ptr<IDwarfLogger>         m_Logger;
     ADLXHelper                            m_AdlxHelper;
     IADLXPerformanceMonitoringServicesPtr m_PerformanceMonitoringServices;
     IADLXGPUMetricsPtr                    m_GpuMetrics;
@@ -21,7 +23,7 @@ namespace Dwarf
     unsigned int*                         m_TotalVram = nullptr;
 
   public:
-    AmdGpuInfo();
+    AmdGpuInfo(std::shared_ptr<IDwarfLogger> logger);
     ~AmdGpuInfo() override;
 
     size_t
