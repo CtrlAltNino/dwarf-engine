@@ -12,6 +12,7 @@ namespace Dwarf
     std::shared_ptr<IEditorStats>        m_EditorStats;
     std::shared_ptr<IRendererApiFactory> m_RendererApiFactory;
     std::shared_ptr<IVramTracker>        m_VramTracker;
+    std::shared_ptr<IGpuInfoFactory>     m_GpuInfoFactory;
 
   public:
     BOOST_DI_INJECT(PerformanceWindowFactory,
