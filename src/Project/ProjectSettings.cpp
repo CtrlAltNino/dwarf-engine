@@ -32,7 +32,6 @@ namespace Dwarf
   ProjectSettings::UpdateProjectName(const std::string& projectName)
   {
     m_Data.ProjectName = projectName;
-    Save();
   }
 
   std::string
@@ -45,7 +44,6 @@ namespace Dwarf
   ProjectSettings::UpdateGraphicsApi(const GraphicsApi& graphicsAPI)
   {
     m_Data.GraphicsApi = graphicsAPI;
-    Save();
   }
 
   const GraphicsApi&
@@ -58,7 +56,6 @@ namespace Dwarf
   ProjectSettings::UpdateLastOpenedScene(const UUID& sceneGUID)
   {
     m_Data.LastOpenedScene = sceneGUID;
-    Save();
   }
 
   const std::optional<UUID>&
@@ -72,7 +69,6 @@ namespace Dwarf
   {
     m_Logger->LogInfo(Log(serializedView.dump(2), "ProjectSettings"));
     m_Data.SerializedView = serializedView;
-    Save();
   }
 
   nlohmann::json

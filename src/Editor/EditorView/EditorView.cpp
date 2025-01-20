@@ -65,6 +65,7 @@ namespace Dwarf
         {
           std::this_thread::sleep_for(std::chrono::seconds(5));
           m_ProjectSettings->UpdateSerializedView(Serialize());
+          m_ProjectSettings->Save();
         }
       });
   }
@@ -351,6 +352,7 @@ namespace Dwarf
     {
       m_GuiModules.push_back(std::move(guiModule));
       m_ProjectSettings->UpdateSerializedView(Serialize());
+      m_ProjectSettings->Save();
     }
   }
 
@@ -365,6 +367,7 @@ namespace Dwarf
       }
     }
     m_ProjectSettings->UpdateSerializedView(Serialize());
+    m_ProjectSettings->Save();
   }
 
   void

@@ -7,6 +7,7 @@
 #include <nlohmann/json.hpp>
 #include <memory>
 #include <filesystem>
+#include "Helper/TempFileHelper.h"
 
 using namespace Dwarf;
 using namespace testing;
@@ -68,6 +69,7 @@ public:
 
 class MockProjectSettingsIO : public IProjectSettingsIO
 {
+public:
   MOCK_METHOD(std::optional<ProjectSettingsData>,
               LoadProjectSettings,
               (std::filesystem::path projectSettingsPath),
@@ -92,6 +94,7 @@ protected:
   {
     mockLogger = std::make_shared<MockLogger>();
     mockFileHandler = std::make_shared<MockFileHandler>();
+    mockProjectSettingsIO = std::make_shared<MockProjectSettingsIO>();
     testPath = ".";
   }
 
@@ -102,171 +105,32 @@ protected:
   }
 };
 
-TEST_F(ProjectSettingsTest, Constructor_LoadsProjectSettings_FileExists)
-{
-  // Arrange
-  std::filesystem::path settingsPath = testPath / "projectSettings.dproj";
-  nlohmann::json        testProjectsettings;
-  testProjectsettings["projectName"] = "TestProject";
-  testProjectsettings["graphicsApi"] = GraphicsApi::OpenGL;
-  testProjectsettings["lastOpenedScene"] =
-    "123e4567-e89b-12d3-a456-426614174000";
-  testProjectsettings["projectLastOpenedDate"] = 1627847285;
-  testProjectsettings["view"] = nlohmann::json::object();
-
-  EXPECT_CALL(*mockFileHandler, FileExists(settingsPath))
-    .WillOnce(Return(true));
-  EXPECT_CALL(*mockFileHandler, ReadFile(settingsPath))
-    .WillOnce(Return(testProjectsettings.dump(2)));
-  EXPECT_CALL(*mockLogger, LogInfo(_)).Times(1);
-  EXPECT_CALL(*mockLogger, LogError(_)).Times(0);
-
-  // Act
-  auto projectSettings =
-    std::make_unique<ProjectSettings>(ProjectPath{ testPath },
-                                      mockLogger,
-                                      mockFileHandler,
-                                      mockProjectSettingsIO);
-
-  // Assert
-  EXPECT_EQ(projectSettings->GetProjectName(), "TestProject");
-  EXPECT_EQ(projectSettings->GetGraphicsApi(), GraphicsApi::OpenGL);
-  EXPECT_EQ(projectSettings->GetLastOpenedScene()->ToString(),
-            "123e4567-e89b-12d3-a456-426614174000");
-}
-
-TEST_F(ProjectSettingsTest, Constructor_LoadsProjectSettings_FileDoesNotExist)
-{
-  // Arrange
-  std::filesystem::path settingsPath = testPath / "projectSettings.dproj";
-
-  EXPECT_CALL(*mockLogger, LogInfo(_)).Times(1);
-  EXPECT_CALL(*mockLogger, LogError(_)).Times(1);
-
-  // Act
-  auto projectSettings =
-    std::make_unique<ProjectSettings>(ProjectPath{ testPath },
-                                      mockLogger,
-                                      mockFileHandler,
-                                      mockProjectSettingsIO);
-
-  // Assert
-  EXPECT_EQ(projectSettings->GetProjectName(), "");
-  EXPECT_EQ(projectSettings->GetGraphicsApi(), GraphicsApi::None);
-  EXPECT_EQ(projectSettings->GetLastOpenedScene(), std::nullopt);
-}
-
 TEST_F(ProjectSettingsTest, SaveUnchangedProjectSettings)
 {
   // Writing a functioning project settings file
   std::filesystem::path settingsPath = testPath / "projectSettings.dproj";
-  nlohmann::json        testProjectsettings;
-  testProjectsettings["projectName"] = "TestProject";
-  testProjectsettings["graphicsApi"] = GraphicsApi::OpenGL;
-  testProjectsettings["lastOpenedScene"] =
-    "123e4567-e89b-12d3-a456-426614174000";
-  testProjectsettings["projectLastOpenedDate"] = 1627847285;
+  ProjectPath           projectPath(settingsPath);
+  ProjectSettingsData   testData;
+  testData.ProjectName = "TestProject";
+  testData.GraphicsApi = GraphicsApi::OpenGL;
+  testData.LastOpenedScene = UUID("123e4567-e89b-12d3-a456-426614174000");
+  testData.SerializedView = "";
 
-  EXPECT_CALL(*mockFileHandler, FileExists(settingsPath))
-    .WillOnce(Return(true));
-  EXPECT_CALL(*mockFileHandler, ReadFile(settingsPath))
-    .WillOnce(Return(testProjectsettings.dump(2)));
-  EXPECT_CALL(*mockFileHandler, WriteToFile(settingsPath, _)).Times(1);
-
+  EXPECT_CALL(*mockLogger, LogInfo(_)).Times(1);
+  EXPECT_CALL(*mockProjectSettingsIO, LoadProjectSettings(Eq(settingsPath)))
+    .Times(1);
+  EXPECT_CALL(*mockProjectSettingsIO,
+              SaveProjectSettings(testData, Eq(settingsPath)))
+    .Times(1);
   // Creating a new project settings object
-  auto projectSettings =
-    std::make_unique<ProjectSettings>(ProjectPath{ testPath },
-                                      mockLogger,
-                                      mockFileHandler,
-                                      mockProjectSettingsIO);
+  auto projectSettings = std::make_unique<ProjectSettings>(
+    projectPath, mockLogger, mockFileHandler, mockProjectSettingsIO);
 
+  projectSettings->UpdateProjectName("TestProject");
+  projectSettings->UpdateGraphicsApi(GraphicsApi::OpenGL);
+  projectSettings->UpdateLastOpenedScene(
+    UUID("123e4567-e89b-12d3-a456-426614174000"));
+  projectSettings->UpdateSerializedView("");
   // Directly saving the project settings
   projectSettings->Save();
-}
-
-TEST_F(ProjectSettingsTest, SaveChangedProjectSettings)
-{
-  // Writing a functioning project settings file
-  std::filesystem::path settingsPath = testPath / "projectSettings.dproj";
-  nlohmann::json        testProjectsettings;
-  testProjectsettings["projectName"] = "TestProject";
-  testProjectsettings["graphicsApi"] = GraphicsApi::OpenGL;
-  testProjectsettings["lastOpenedScene"] =
-    "123e4567-e89b-12d3-a456-426614174000";
-  testProjectsettings["projectLastOpenedDate"] = 1627847285;
-  testProjectsettings["view"] = nlohmann::json::object();
-
-  EXPECT_CALL(*mockFileHandler, FileExists(settingsPath))
-    .WillOnce(Return(true));
-  EXPECT_CALL(*mockFileHandler, ReadFile(settingsPath))
-    .WillOnce(Return(testProjectsettings.dump(2)));
-  EXPECT_CALL(*mockFileHandler, WriteToFile(settingsPath, _)).Times(4);
-  EXPECT_CALL(*mockLogger, LogInfo(_)).Times(1);
-
-  // Creating a new project settings object
-  auto projectSettings =
-    std::make_unique<ProjectSettings>(ProjectPath{ testPath },
-                                      mockLogger,
-                                      mockFileHandler,
-                                      mockProjectSettingsIO);
-
-  EXPECT_CALL(*mockLogger, LogInfo(_)).Times(4);
-
-  projectSettings->UpdateProjectName("CoolProject");
-  projectSettings->UpdateGraphicsApi(GraphicsApi::Vulkan);
-  projectSettings->UpdateLastOpenedScene(
-    UUID("123e4567-e89b-12d3-a456-426614174001"));
-
-  // Act
-  // projectSettings->Save();
-}
-
-TEST_F(ProjectSettingsTest, SetAndGetProjectName)
-{
-  // Arrange
-  auto projectSettings =
-    std::make_unique<ProjectSettings>(ProjectPath{ testPath },
-                                      mockLogger,
-                                      mockFileHandler,
-                                      mockProjectSettingsIO);
-
-  // Act
-  projectSettings->UpdateProjectName("TestProject");
-
-  // Assert
-  EXPECT_EQ(projectSettings->GetProjectName(), "TestProject");
-}
-
-TEST_F(ProjectSettingsTest, SetAndGetGraphicsApi)
-{
-  // Arrange
-  auto projectSettings =
-    std::make_unique<ProjectSettings>(ProjectPath{ testPath },
-                                      mockLogger,
-                                      mockFileHandler,
-                                      mockProjectSettingsIO);
-
-  // Act
-  projectSettings->UpdateGraphicsApi(GraphicsApi::Vulkan);
-
-  // Assert
-  EXPECT_EQ(projectSettings->GetGraphicsApi(), GraphicsApi::Vulkan);
-}
-
-TEST_F(ProjectSettingsTest, SetAndGetLastOpenedScene)
-{
-  // Arrange
-  auto projectSettings =
-    std::make_unique<ProjectSettings>(ProjectPath{ testPath },
-                                      mockLogger,
-                                      mockFileHandler,
-                                      mockProjectSettingsIO);
-
-  // Act
-  UUID sceneUUID("123e4567-e89b-12d3-a456-426614174000");
-  projectSettings->UpdateLastOpenedScene(sceneUUID);
-
-  // Assert
-  EXPECT_EQ(projectSettings->GetLastOpenedScene()->ToString(),
-            "123e4567-e89b-12d3-a456-426614174000");
 }

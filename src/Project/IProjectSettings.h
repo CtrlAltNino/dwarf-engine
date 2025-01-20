@@ -20,7 +20,9 @@ namespace Dwarf
     operator==(const ProjectSettingsData& other) const
     {
       return ProjectName == other.ProjectName &&
-             GraphicsApi == other.GraphicsApi;
+             GraphicsApi == other.GraphicsApi &&
+             LastOpenedScene == other.LastOpenedScene &&
+             SerializedView == other.SerializedView;
     }
   };
 
