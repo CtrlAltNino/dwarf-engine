@@ -1,14 +1,20 @@
 #pragma once
 
 #include "Editor/Modules/IGuiModule.h"
+#include "Utilities/ISerializable.h"
 #include "pch.h"
 #include "Core/Base.h"
 #include "Core/UUID.h"
 #include <nlohmann/json_fwd.hpp>
 
+#define GRAPHICS_API_KEY "graphicsApi"
+#define LAST_OPENED_SCENE_KEY "lastOpenedScene"
+#define PROJECT_NAME_KEY "projectName"
+#define VIEW_KEY "view"
+
 namespace Dwarf
 {
-  struct ProjectSettingsData
+  struct ProjectSettingsData : ISerializable
   {
     std::string         ProjectName = "";
     GraphicsApi         GraphicsApi = GraphicsApi::None;
@@ -23,6 +29,19 @@ namespace Dwarf
              GraphicsApi == other.GraphicsApi &&
              LastOpenedScene == other.LastOpenedScene &&
              SerializedView == other.SerializedView;
+    }
+
+    nlohmann::json
+    Serialize()
+    {
+      nlohmann::json projectSettings;
+      projectSettings[PROJECT_NAME_KEY] = ProjectName;
+      projectSettings[GRAPHICS_API_KEY] = GraphicsApi;
+      projectSettings[LAST_OPENED_SCENE_KEY] =
+        LastOpenedScene.has_value() ? LastOpenedScene->ToString() : "";
+      projectSettings[VIEW_KEY] = SerializedView;
+
+      return projectSettings;
     }
   };
 

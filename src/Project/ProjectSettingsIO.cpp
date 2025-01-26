@@ -2,11 +2,6 @@
 #include "IProjectSettings.h"
 #include <optional>
 
-#define GRAPHICS_API_KEY "graphicsApi"
-#define LAST_OPENED_SCENE_KEY "lastOpenedScene"
-#define PROJECT_NAME_KEY "projectName"
-#define VIEW_KEY "view"
-
 namespace Dwarf
 {
   ProjectSettingsIO::ProjectSettingsIO(
@@ -100,14 +95,7 @@ namespace Dwarf
     std::filesystem::path projectPath)
   {
     m_Logger->LogInfo(Log("Saving project settings...", "ProjectSettings"));
-    nlohmann::json projectSettings;
-    projectSettings[PROJECT_NAME_KEY] = projectSettingsData.ProjectName;
-    projectSettings[GRAPHICS_API_KEY] = projectSettingsData.GraphicsApi;
-    projectSettings[LAST_OPENED_SCENE_KEY] =
-      projectSettingsData.LastOpenedScene.has_value()
-        ? projectSettingsData.LastOpenedScene->ToString()
-        : "";
-    projectSettings[VIEW_KEY] = projectSettingsData.SerializedView;
+    nlohmann::json projectSettings = projectSettingsData.Serialize();
 
     m_FileHandler->WriteToFile(projectPath / "projectSettings.dproj",
                                projectSettings.dump(2));
