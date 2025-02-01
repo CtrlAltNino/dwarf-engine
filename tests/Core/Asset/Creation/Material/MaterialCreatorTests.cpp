@@ -78,7 +78,7 @@ public:
               (const std::filesystem::path& filePath, std::string_view content),
               (override));
   MOCK_METHOD(bool,
-              DirectoyExists,
+              DirectoryExists,
               (const std::filesystem::path& path),
               (override));
   MOCK_METHOD(void,

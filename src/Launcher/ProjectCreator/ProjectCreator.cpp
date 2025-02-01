@@ -36,7 +36,7 @@ namespace Dwarf
                           "ProjectCreator"));
     // Create Project
     std::filesystem::path projectDirectory = projectPath / projectName;
-    if (!m_FileHandler->DirectoyExists(projectDirectory))
+    if (!m_FileHandler->DirectoryExists(projectDirectory))
     {
       if (!m_FileHandler->FileExists(projectDirectory /
                                      "projectSettings.dproj"))

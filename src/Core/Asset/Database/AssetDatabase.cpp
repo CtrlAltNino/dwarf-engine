@@ -42,7 +42,7 @@ namespace Dwarf
     , m_FileHandler(fileHandler)
     , m_Registry(entt::registry())
   {
-    if (!m_FileHandler->DirectoyExists(m_AssetDirectoryPath.t))
+    if (!m_FileHandler->DirectoryExists(m_AssetDirectoryPath.t))
     {
       m_FileHandler->CreateDirectoryAt(m_AssetDirectoryPath.t);
     }

@@ -61,7 +61,7 @@ namespace Dwarf
     /// @param path Path to a directory.
     /// @return True if directory is present, false if not.
     bool
-    DirectoyExists(std::filesystem::path const& path) override;
+    DirectoryExists(std::filesystem::path const& path) override;
 
     /// @brief Creates a directory at a given path.
     /// @param path Path to a directory.

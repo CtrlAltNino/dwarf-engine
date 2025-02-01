@@ -163,7 +163,7 @@ namespace Dwarf
   /// @param path Path to a directory.
   /// @return True if directory is present, false if not.
   bool
-  FileHandler::DirectoyExists(std::filesystem::path const& path)
+  FileHandler::DirectoryExists(std::filesystem::path const& path)
   {
     return std::filesystem::exists(path);
   }

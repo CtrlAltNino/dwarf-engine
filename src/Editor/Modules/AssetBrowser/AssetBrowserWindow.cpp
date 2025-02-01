@@ -721,7 +721,7 @@ namespace Dwarf
         RENAME_BUFFER_SIZE - 1);
 #endif
     }
-    else if (m_FileHandler->DirectoyExists(path))
+    else if (m_FileHandler->DirectoryExists(path))
     {
       // TODO: test this
 #ifdef _MSC_VER

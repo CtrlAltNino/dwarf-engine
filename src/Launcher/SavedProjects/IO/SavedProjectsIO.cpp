@@ -33,10 +33,10 @@ namespace Dwarf
     m_Logger->LogInfo(Log(
       fmt::format("Loading project list from {}", savedProjectsPath.string()),
       "SavedProjectsIO"));
-    std::string fileContent = m_FileHandler->ReadFile(savedProjectsPath);
 
-    if (!fileContent.empty())
+    if (m_FileHandler->FileExists(savedProjectsPath))
     {
+      std::string    fileContent = m_FileHandler->ReadFile(savedProjectsPath);
       nlohmann::json jsonObject = nlohmann::json::parse(fileContent);
 
       m_Logger->LogDebug(Log("Parsing project list", "SavedProjectsIO"));
@@ -97,7 +97,7 @@ namespace Dwarf
 
     std::string           fileContent = jsonObject.dump(4);
     std::filesystem::path settingsPath = m_FileHandler->GetEngineSettingsPath();
-    if (!m_FileHandler->DirectoyExists(settingsPath))
+    if (!m_FileHandler->DirectoryExists(settingsPath))
     {
       m_FileHandler->CreateDirectoryAt(settingsPath);
     }
