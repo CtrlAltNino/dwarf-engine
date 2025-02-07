@@ -1,26 +1,30 @@
-#include "dpch.h"
-
-#include <utility>
-
+#include "Core/Asset/Database/AssetComponents.h"
+#include "Core/Base.h"
+#include "Core/Rendering/VramTracker/IVramTracker.h"
 #include "OpenGLComputeShader.h"
-#include "Utilities/FileHandler.h"
-#include "Core/Asset/AssetDatabase.h"
-#include "Core/Asset/AssetComponents.h"
-#include <Core/Rendering/Shader Parameters/Tex2DShaderParameter.h>
-#include <Core/Rendering/Shader Parameters/BooleanShaderParameter.h>
-#include <Core/Rendering/Shader Parameters/IntegerShaderParameter.h>
-#include <Core/Rendering/Shader Parameters/UnsignedIntegerShaderParameter.h>
-#include <Core/Rendering/Shader Parameters/FloatShaderParameter.h>
-#include <Core/Rendering/Shader Parameters/Vec4ShaderParameter.h>
-#include <Core/Rendering/Shader Parameters/Vec2ShaderParameter.h>
-#include <Core/Rendering/Shader Parameters/Vec3ShaderParameter.h>
 
 #define GL_SHADER_LOG_LENGTH (1024)
 
 namespace Dwarf
 {
-  OpenGLComputeShader::OpenGLComputeShader() = default;
-  OpenGLComputeShader::~OpenGLComputeShader() = default;
+  OpenGLComputeShader::OpenGLComputeShader(
+    std::unique_ptr<IAssetReference>& computeShaderAsset,
+    std::shared_ptr<IShaderParameterCollectionFactory>
+                                  shaderParameterCollectionFactory,
+    std::shared_ptr<IVramTracker> vramTracker)
+    : m_ComputeShaderAsset(std::move(computeShaderAsset))
+    , m_ShaderParameterCollectionFactory(shaderParameterCollectionFactory)
+    , m_VramTracker(vramTracker)
+  {
+  }
+
+  OpenGLComputeShader::~OpenGLComputeShader()
+  {
+    GLint binaryLength = 0;
+    glGetProgramiv(m_ID, GL_PROGRAM_BINARY_LENGTH, &binaryLength);
+    m_VramTracker->RemoveComputeMemory(binaryLength);
+    glDeleteProgram(m_ID);
+  }
 
   const std::map<GLenum, ShaderParameterType> glTypeToDwarfShaderType = {
     { GL_BOOL, ShaderParameterType::BOOLEAN },
@@ -35,30 +39,14 @@ namespace Dwarf
   void
   OpenGLComputeShader::Compile()
   {
-    SetIsCompiled(false);
+    m_SuccessfullyCompiled = false;
 
-    std::string shaderSource;
+    ComputeShaderAsset& computeShaderAsset =
+      (ComputeShaderAsset&)m_ComputeShaderAsset->GetAsset();
 
-    if (m_ComputeShaderAsset != nullptr &&
-        AssetDatabase::Exists(m_ComputeShaderAsset))
+    if (computeShaderAsset.GetFileContent().length() > 0)
     {
-      std::filesystem::path shaderPath =
-        AssetDatabase::Retrieve<ComputeShaderAsset>(m_ComputeShaderAsset)
-          ->GetAsset()
-          ->m_Path;
-      shaderSource = FileHandler::ReadFile(shaderPath);
-      // TODO: This needs to move somewhere else
-      // AssetDatabase::AddShaderWatch(shaderPath,
-      // std::make_shared<ComputeShader>(*this));
-    }
-    else
-    {
-      shaderSource = m_ComputeShaderSource;
-    }
-
-    if (shaderSource.length() > 0)
-    {
-      const char* shadercstr = shaderSource.c_str();
+      const char* shadercstr = computeShaderAsset.GetFileContent().c_str();
 
       GLsizei log_length = 0;
       GLchar  message[1024] = "";
@@ -90,9 +78,10 @@ namespace Dwarf
 
       glDeleteShader(shader);
 
-      SetIsCompiled(true);
-
-      SetParameters(GetParameters());
+      m_SuccessfullyCompiled = true;
+      GLint binaryLength = 0;
+      glGetProgramiv(m_ID, GL_PROGRAM_BINARY_LENGTH, &binaryLength);
+      m_VramTracker->AddComputeMemory(binaryLength);
     }
     else
     {
@@ -100,18 +89,10 @@ namespace Dwarf
     }
   }
 
-  void
-  OpenGLComputeShader::SetComputeShader(std::shared_ptr<UID> computeShader)
+  bool
+  OpenGLComputeShader::IsCompiled() const
   {
-    m_ComputeShaderAsset = computeShader;
-    m_ComputeShaderSource = "";
-  }
-
-  void
-  OpenGLComputeShader::SetComputeShader(std::string_view computeShader)
-  {
-    m_ComputeShaderAsset = nullptr;
-    m_ComputeShaderSource = computeShader;
+    return m_SuccessfullyCompiled;
   }
 
   GLuint
@@ -120,33 +101,21 @@ namespace Dwarf
     return m_ID;
   }
 
-  std::shared_ptr<OpenGLComputeShader>
-  OpenGLComputeShader::CreatePropagationShader()
+  const std::string&
+  OpenGLComputeShader::GetLog() const
   {
-    std::shared_ptr<OpenGLComputeShader> compShader =
-      std::make_shared<OpenGLComputeShader>();
-    compShader->SetComputeShader(FileHandler::ReadFile(
-      ComputeShader::GetOutlineShaderPath() / "propagation.comp"));
-    compShader->Compile();
-    return compShader;
+    return m_ComputeShaderLog;
   }
 
-  std::shared_ptr<OpenGLComputeShader>
-  OpenGLComputeShader::CreateFinalizationShader()
-  {
-    std::shared_ptr<OpenGLComputeShader> compShader =
-      std::make_shared<OpenGLComputeShader>();
-    compShader->SetComputeShader(FileHandler::ReadFile(
-      ComputeShader::GetOutlineShaderPath() / "finalization.comp"));
-    compShader->Compile();
-    return compShader;
-  }
-
-  std::map<std::string, std::shared_ptr<IShaderParameter>, std::less<>>
+  std::shared_ptr<IShaderParameterCollection>
   OpenGLComputeShader::GetParameters()
   {
-    auto parameters =
-      std::map<std::string, std::shared_ptr<IShaderParameter>, std::less<>>();
+    if (!m_SuccessfullyCompiled)
+    {
+      return nullptr;
+    }
+    std::shared_ptr<IShaderParameterCollection> parameters =
+      m_ShaderParameterCollectionFactory->CreateShaderParameterCollection();
     GLint i;
     GLint count;
 
@@ -162,110 +131,10 @@ namespace Dwarf
     for (i = 0; i < count; i++)
     {
       glGetActiveUniform(m_ID, (GLuint)i, bufSize, &length, &size, &type, name);
-
-      parameters[std::string(name)] =
-        ComputeShader::CreateComputeShaderParameter(
-          glTypeToDwarfShaderType.find(type)->second);
+      parameters->m_DefaultValueAdders.at(glTypeToDwarfShaderType.at(type))(
+        name);
     }
 
     return parameters;
-  }
-
-  void
-  OpenGLComputeShader::UpdateParameters()
-  {
-    for (auto const& [key, val] : GetParameters())
-    {
-      switch (val->GetType())
-      {
-        case ShaderParameterType::BOOLEAN:
-          {
-            bool value =
-              std::dynamic_pointer_cast<BooleanShaderParameter>(val)->m_Value;
-            glUniform1i(glGetUniformLocation(m_ID, key.c_str()), value);
-          }
-          break;
-        case ShaderParameterType::INTEGER:
-          {
-            int value =
-              std::dynamic_pointer_cast<IntegerShaderParameter>(val)->m_Value;
-            glUniform1i(glGetUniformLocation(m_ID, key.c_str()), value);
-          }
-          break;
-        case ShaderParameterType::UNSIGNED_INTEGER:
-          {
-            int value =
-              std::dynamic_pointer_cast<UnsignedIntegerShaderParameter>(val)
-                ->m_Value;
-            glUniform1ui(glGetUniformLocation(m_ID, key.c_str()), value);
-          }
-          break;
-        case ShaderParameterType::FLOAT:
-          {
-            float value =
-              std::dynamic_pointer_cast<FloatShaderParameter>(val)->m_Value;
-            glUniform1f(glGetUniformLocation(m_ID, key.c_str()), value);
-          }
-          break;
-        case ShaderParameterType::VEC2:
-          {
-            glm::vec2 value =
-              std::dynamic_pointer_cast<Vec2ShaderParameter>(val)->m_Value;
-            glUniform2f(
-              glGetUniformLocation(m_ID, key.c_str()), value.x, value.y);
-          }
-          break;
-        case ShaderParameterType::VEC3:
-          {
-            glm::vec3 value =
-              std::dynamic_pointer_cast<Vec3ShaderParameter>(val)->m_Value;
-            glUniform3f(glGetUniformLocation(m_ID, key.c_str()),
-                        value.x,
-                        value.y,
-                        value.z);
-          }
-          break;
-        case ShaderParameterType::VEC4:
-          {
-            glm::vec4 value =
-              std::dynamic_pointer_cast<Vec4ShaderParameter>(val)->m_Value;
-            glUniform4f(glGetUniformLocation(m_ID, key.c_str()),
-                        value.x,
-                        value.y,
-                        value.z,
-                        value.w);
-          }
-          break;
-        case ShaderParameterType::TEX2D:
-          {
-            std::shared_ptr<UID> parameter =
-              std::dynamic_pointer_cast<Tex2DShaderParameter>(val)->m_Value;
-            if (parameter)
-            {
-              glActiveTexture(GL_TEXTURE0 + 0);
-              glBindTexture(GL_TEXTURE_2D,
-                            AssetDatabase::Retrieve<TextureAsset>(parameter)
-                              ->GetAsset()
-                              ->m_Texture->GetTextureID());
-
-              GLuint uniformID = glGetUniformLocation(m_ID, key.c_str());
-              glUniform1i(uniformID, 0);
-            }
-          }
-          break;
-      }
-    }
-  }
-
-  const std::string&
-  OpenGLComputeShader::GetLog() const
-  {
-    return m_ComputeShaderLog;
-  }
-
-  std::shared_ptr<UID>&
-  OpenGLComputeShader::GetAsset()
-  {
-    return m_ComputeShaderAsset;
   }
 }

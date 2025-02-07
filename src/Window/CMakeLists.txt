@@ -1,4 +1,3 @@
-target_sources(${targetName}
+target_sources(${libname}
     PRIVATE
-    Window.cpp
 )

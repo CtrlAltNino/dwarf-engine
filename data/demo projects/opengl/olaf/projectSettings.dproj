@@ -1,0 +1,71 @@
+{
+  "graphicsApi": 3,
+  "lastOpenedScene": "c14cd4c3-f124-4b46-851a-1b780eb92f65",
+  "projectName": "",
+  "view": {
+    "modules": [
+      {
+        "id": "c451d357-acce-4b49-8401-c2f16986e883",
+        "label": "Asset Browser",
+        "type": 4
+      },
+      {
+        "id": "d79f3bb1-d5bc-4f05-9161-ac0d8ed4cfa8",
+        "label": "SceneHierarchy",
+        "type": 1
+      },
+      {
+        "id": "3d78386c-7751-4f0f-ac57-d2c5ddbe0139",
+        "label": "Inspector",
+        "type": 5
+      },
+      {
+        "camera": {
+          "aspectRatio": 1.2621564865112305,
+          "farPlane": 1000.0,
+          "fov": 90.0,
+          "movementSpeed": 4.0,
+          "nearPlane": 0.10000000149011612,
+          "sensitivity": 0.15000000596046448,
+          "transform": {
+            "Position": {
+              "x": -5.3717875480651855,
+              "y": 11.72824478149414,
+              "z": 9.525208473205566
+            },
+            "Rotation": {
+              "x": 26.849790573120117,
+              "y": 23.55076789855957,
+              "z": 0.0
+            },
+            "Scale": {
+              "x": 1.0,
+              "y": 1.0,
+              "z": 1.0
+            }
+          }
+        },
+        "id": "ff785bda-748d-410e-b674-678b72432587",
+        "label": "Scene Viewer",
+        "settings": {
+          "aspectRatioConstraint": {
+            "x": 16,
+            "y": 9
+          },
+          "constraintType": 0,
+          "renderGrid": true,
+          "resolutionConstraint": {
+            "x": 1024,
+            "y": 1024
+          }
+        },
+        "type": 3
+      },
+      {
+        "id": "02fbb456-1f17-43bf-bd69-e467d452475c",
+        "label": "Performance",
+        "type": 0
+      }
+    ]
+  }
+}

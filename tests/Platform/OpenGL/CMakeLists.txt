@@ -1,0 +1,11 @@
+target_sources(${testTarget}
+    PRIVATE
+    OpenGLComputeShaderTests.cpp
+    OpenGLContextTests.cpp
+    OpenGLFramebufferTests.cpp
+    OpenGLImGuiLayerTests.cpp
+    OpenGLMeshTests.cpp
+    OpenGLRendererApiTests.cpp
+    OpenGLShaderTests.cpp
+    OpenGLTextureTests.cpp
+)

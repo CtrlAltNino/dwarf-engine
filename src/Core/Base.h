@@ -1,14 +1,14 @@
 #pragma once
-
-#include <memory>
 #include <array>
 #include <string>
+#include <string_view>
 
 namespace Dwarf
 {
   /// @brief Enum containing the different API's
   enum class GraphicsApi
   {
+    None,
     D3D12,
     Metal,
     OpenGL,
@@ -39,6 +39,8 @@ namespace Dwarf
 
   inline constexpr auto graphicsApiNames = make_graphics_api_names();
 
+#define GRAPHICS_API_STRING(api) std::string(graphicsApiNames[(int)api - 1])
+
   enum class ShaderParameterType
   {
     BOOLEAN,
@@ -60,22 +62,22 @@ namespace Dwarf
     "fogStart", "fogEnd",      "fogColor"
   };
 
-#ifdef WIN32
-  constexpr std::array<bool, 4> apiAvailability = {
+#ifdef _WIN32
+  constexpr std::array<bool, 5> apiAvailability = {
     true,
     false,
     true,
     true,
   };
 #elif __linux__
-  constexpr std::array<bool, 4> apiAvailability = {
+  constexpr std::array<bool, 5> apiAvailability = {
     false,
     false,
     true,
     true,
   };
 #elif __APPLE__
-  constexpr std::array<bool, 4> apiAvailability = {
+  constexpr std::array<bool, 5> apiAvailability = {
     false,
     true,
     false,

@@ -1,79 +1,63 @@
-#include "dpch.h"
 #include "Launcher/ProjectLauncher.h"
-#include "Launcher/ProjectListHandler.h"
+#include "SavedProjects/ISavedProjects.h"
 #include "Utilities/TimeUtilities.h"
+#include "Core/Base.h"
+#include <optional>
 
 namespace Dwarf
 {
-
-  ProjectLauncher* ProjectLauncher::s_Instance = nullptr;
-
-  ProjectLauncher*
-  CreateLauncher()
+  ProjectLauncher::ProjectLauncher(std::shared_ptr<IDwarfLogger>         logger,
+                                   std::unique_ptr<IProjectLauncherView> view,
+                                   std::shared_ptr<IProjectLauncherData> data,
+                                   std::shared_ptr<ISavedProjects> projectList)
+    : m_View(std::move(view))
+    , m_Data(data)
+    , m_Logger(logger)
+    , m_SavedProjects(projectList)
   {
-    return new ProjectLauncher();
+    m_Logger->LogDebug(Log("Creating ProjectLauncher", "ProjectLauncher"));
   }
 
-  ProjectLauncher::ProjectLauncher()
+  ProjectLauncher::~ProjectLauncher()
   {
-    s_Instance = this;
+    m_Logger->LogDebug(Log("Destroying ProjectLauncher", "ProjectLauncher"));
   }
 
-  std::filesystem::path
+  std::optional<SavedProject>
   ProjectLauncher::Run()
   {
-    // Initializing the project launcher model (e.g. loading the project list)
-    WindowProps props("Dwarf Engine", 1100, 600);
+    m_Logger->LogInfo(Log("Running project launcher...", "ProjectLauncher"));
 
-#if defined(_WIN32) || defined(__linux__)
-    props.Api = GraphicsApi::OpenGL;
-#endif
+    m_Logger->LogInfo(Log("Showing window...", "ProjectLauncher"));
+    m_View->Show();
 
-    m_Window = Window::Create(props);
-
-    m_Model = std::make_unique<ProjectLauncherModel>(ProjectLauncherModel());
-    m_Model->Init();
-
-    // Initializing the view
-    m_View =
-      std::make_unique<ProjectLauncherView>(ProjectLauncherView(m_Model));
-
-    m_Window->ShowWindow();
-
-    while (((m_Model->GetState() != ProjectChooserState::Done) &&
-            (m_Model->GetState() != ProjectChooserState::Canceled)) &&
-           !m_Window->ShouldClose())
+    m_Logger->LogInfo(Log("Starting main loop...", "ProjectLauncher"));
+    while ((m_Data->GetState() != ProjectChooserState::Done) &&
+           (m_Data->GetState() != ProjectChooserState::Cancelled))
     {
-      TimeStamp currentFrameStamp = TimeUtilities::GetCurrent();
-
-      m_Window->NewFrame();
+      TimeStamp currentTimeStamp = TimeUtilities::GetCurrent();
 
       m_View->Render();
 
-      m_Window->EndFrame();
-
       // TODO: Fps lock
       while (TimeUtilities::GetDifferenceInSeconds(
-               TimeUtilities::GetCurrent(), currentFrameStamp) < (1.0 / 144.0))
+               TimeUtilities::GetCurrent(), currentTimeStamp) < (1.0 / 60.0))
       {
         // TODO: Update this when implementing multi threading
       }
     }
 
-    int                   selectedProjectId = m_Model->GetSelectedProjectID();
-    std::filesystem::path projectPath;
-
-    if (m_Model->GetState() == ProjectChooserState::Done)
+    m_Logger->LogInfo(Log("Project launcher finished", "ProjectLauncher"));
+    if (m_Data->GetState() == ProjectChooserState::Done)
     {
-      ProjectInformation projectInformation =
-        ProjectListHandler::GetProjectInformation(selectedProjectId);
-      if (projectInformation.name != "")
+      if (m_Data->GetSelectedProject())
       {
-        projectPath = projectInformation.path;
-        ProjectListHandler::RegisterProjectOpening(selectedProjectId);
+        m_SavedProjects->RegisterProjectOpening(
+          m_Data->GetSelectedProject()->Path);
       }
+      return m_Data->GetSelectedProject();
     }
 
-    return projectPath;
+    return std::nullopt;
   }
 }

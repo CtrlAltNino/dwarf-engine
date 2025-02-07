@@ -1,17 +1,16 @@
-#include "dpch.h"
 #include "Input/InputManager.h"
-#include <array>
+#include <imgui_impl_sdl2.h>
 
 namespace Dwarf
 {
 
-  glm::ivec2 InputManager::s_CurrentMousePos = glm::ivec2(0);
-  glm::ivec2 InputManager::s_LastMousePos = glm::ivec2(0);
-  glm::ivec2 InputManager::s_DeltaMousePos = glm::ivec2(0);
-  glm::ivec2 InputManager::s_DeltaScroll = glm::ivec2(0);
+  // glm::ivec2 InputManager::m_CurrentMousePos = glm::ivec2(0);
+  // glm::ivec2 InputManager::m_LastMousePos = glm::ivec2(0);
+  // glm::ivec2 InputManager::m_DeltaMousePos = glm::ivec2(0);
+  // glm::ivec2 InputManager::m_DeltaScroll = glm::ivec2(0);
 
-  std::map<MOUSE_BUTTON, int> InputManager::s_MouseButtonStates =
-    std::map<MOUSE_BUTTON, int>();
+  // std::map<MOUSE_BUTTON, int> InputManager::m_MouseButtonStates =
+  //   std::map<MOUSE_BUTTON, int>();
 
   std::map<SDL_Scancode, KEYCODE> InputManager::s_KeyCodeMap = {
     { SDL_SCANCODE_W, KEYCODE::W },
@@ -25,9 +24,9 @@ namespace Dwarf
     { SDL_SCANCODE_LCTRL, KEYCODE::LEFT_CONTROL }
   };
 
-  std::set<KEYCODE> InputManager::s_KeysDown;
-  std::set<KEYCODE> InputManager::s_KeysRepeat;
-  std::set<KEYCODE> InputManager::s_KeysUp;
+  // std::set<KEYCODE> InputManager::m_KeysDown;
+  // std::set<KEYCODE> InputManager::m_KeysRepeat;
+  // std::set<KEYCODE> InputManager::m_KeysUp;
 
   std::map<MOUSE_BUTTON, int> InputManager::s_MouseCodeMap = {
     { MOUSE_BUTTON::LEFT, 1 },
@@ -37,40 +36,51 @@ namespace Dwarf
     { MOUSE_BUTTON::MOUSE_BUTTON_5, 5 }
   };
 
-  bool
-  InputManager::GetKey(KEYCODE key)
+  InputManager::InputManager(std::shared_ptr<IDwarfLogger> logger)
+    : m_Logger(logger)
   {
-    return s_KeysDown.contains(key) || s_KeysRepeat.contains(key);
+    m_Logger->LogDebug(Log("InputManager created.", "InputManager"));
+  }
+
+  InputManager::~InputManager()
+  {
+    m_Logger->LogDebug(Log("InputManager destroyed.", "InputManager"));
   }
 
   bool
-  InputManager::GetKeyDown(KEYCODE key)
+  InputManager::GetKey(KEYCODE key) const
   {
-    return s_KeysDown.contains(key);
+    return m_KeysDown.contains(key) || m_KeysRepeat.contains(key);
   }
 
   bool
-  InputManager::GetKeyUp(KEYCODE key)
+  InputManager::GetKeyDown(KEYCODE key) const
   {
-    return s_KeysUp.contains(key);
+    return m_KeysDown.contains(key);
   }
 
   bool
-  InputManager::GetMouse(MOUSE_BUTTON mButton)
+  InputManager::GetKeyUp(KEYCODE key) const
   {
-    return s_MouseButtonStates[mButton] > 0;
+    return m_KeysUp.contains(key);
   }
 
   bool
-  InputManager::GetMouseDown(MOUSE_BUTTON mButton)
+  InputManager::GetMouseButton(MOUSE_BUTTON button) const
   {
-    return s_MouseButtonStates[mButton] == 1;
+    return m_MouseButtonStates.at(button) > 0;
   }
 
   bool
-  InputManager::GetMouseUp(MOUSE_BUTTON mButton)
+  InputManager::GetMouseButtonDown(MOUSE_BUTTON button) const
   {
-    return s_MouseButtonStates[mButton] == 0;
+    return m_MouseButtonStates.at(button) == 1;
+  }
+
+  bool
+  InputManager::GetMouseButtonUp(MOUSE_BUTTON button) const
+  {
+    return m_MouseButtonStates.at(button) == 0;
   }
 
   void
@@ -81,21 +91,27 @@ namespace Dwarf
   }
 
   glm::vec2
-  InputManager::GetMousePos()
+  InputManager::GetMousePosition() const
   {
-    return s_CurrentMousePos;
+    return m_CurrentMousePos;
   }
 
   void
   InputManager::SetDeltaMousePos(float x, float y)
   {
-    s_DeltaMousePos = { x, y };
+    m_DeltaMousePos = { x, y };
+  }
+
+  void
+  InputManager::SetDeltaMouseScroll(float x, float y)
+  {
+    m_DeltaScroll = { x, y };
   }
 
   glm::vec2
-  InputManager::GetDeltaMousePos()
+  InputManager::GetMouseDelta() const
   {
-    return s_DeltaMousePos;
+    return m_DeltaMousePos;
   }
 
   void
@@ -103,27 +119,27 @@ namespace Dwarf
   {
     using enum MOUSE_BUTTON;
     std::array<MOUSE_BUTTON, 5> mArr = MOUSE_BUTTON_INITIALIZER;
-    s_LastMousePos = s_CurrentMousePos;
+    m_LastMousePos = m_CurrentMousePos;
     Uint32 mouseButtonMask =
-      SDL_GetMouseState(&s_CurrentMousePos.x, &s_CurrentMousePos.y);
+      SDL_GetMouseState(&m_CurrentMousePos.x, &m_CurrentMousePos.y);
 
     for (const MOUSE_BUTTON& mCode : mArr)
     {
       if (mouseButtonMask & SDL_BUTTON(s_MouseCodeMap[mCode]))
       {
         // mousePressSet.insert(mCode);
-        if (s_MouseButtonStates[mCode] < 2)
+        if (m_MouseButtonStates[mCode] < 2)
         {
-          s_MouseButtonStates[mCode]++;
+          m_MouseButtonStates[mCode]++;
         }
       }
       else
       {
-        s_MouseButtonStates[mCode] = 0;
+        m_MouseButtonStates[mCode] = 0;
       }
     }
 
-    SDL_GetRelativeMouseState(&s_DeltaMousePos.x, &s_DeltaMousePos.y);
+    SDL_GetRelativeMouseState(&m_DeltaMousePos.x, &m_DeltaMousePos.y);
   }
 
   void
@@ -131,14 +147,14 @@ namespace Dwarf
   {
     KEYCODE keycode = s_KeyCodeMap[key];
 
-    if (s_KeysDown.contains(keycode))
+    if (m_KeysDown.contains(keycode))
     {
-      s_KeysDown.erase(keycode);
-      s_KeysRepeat.emplace(keycode);
+      m_KeysDown.erase(keycode);
+      m_KeysRepeat.emplace(keycode);
     }
     else
     {
-      s_KeysDown.emplace(keycode);
+      m_KeysDown.emplace(keycode);
     }
   }
 
@@ -147,23 +163,23 @@ namespace Dwarf
   {
     KEYCODE keycode = s_KeyCodeMap[key];
 
-    if (s_KeysDown.contains(keycode))
+    if (m_KeysDown.contains(keycode))
     {
-      s_KeysDown.erase(keycode);
+      m_KeysDown.erase(keycode);
     }
 
-    if (s_KeysRepeat.contains(keycode))
+    if (m_KeysRepeat.contains(keycode))
     {
-      s_KeysRepeat.erase(keycode);
+      m_KeysRepeat.erase(keycode);
     }
 
-    s_KeysUp.emplace(keycode);
+    m_KeysUp.emplace(keycode);
   }
 
   glm::vec2
-  InputManager::GetDeltaScroll()
+  InputManager::GetMouseScrollDelta() const
   {
-    return s_DeltaScroll;
+    return m_DeltaScroll;
   }
 
   void
@@ -173,7 +189,9 @@ namespace Dwarf
     switch (event.wheel.type)
     {
       case SDL_MOUSEWHEEL:
-        s_DeltaScroll = { event.wheel.x, event.wheel.y };
+        {
+          m_DeltaScroll = { event.wheel.x, event.wheel.y };
+        }
         break;
 
       default: break;

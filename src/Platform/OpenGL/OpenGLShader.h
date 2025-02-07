@@ -1,12 +1,18 @@
 #pragma once
+#include "Core/Rendering/VramTracker/IVramTracker.h"
+#include "pch.h"
 
-#include "Core/Rendering/Shader.h"
-#include "Core/Base.h"
-
-#include <string_view>
+#include "Logging/IDwarfLogger.h"
+#include "Core/Asset/Database/AssetComponents.h"
+#include "Core/Asset/Shader/ShaderSourceCollection/IShaderSourceCollection.h"
+#include "Core/Rendering/Shader/ShaderParameterCollection/IShaderParameterCollectionFactory.h"
 
 #include <glad/glad.h>
-#include <Core/Rendering/IShaderParameter.h>
+#include <boost/di.hpp>
+#include <boost/serialization/strong_typedef.hpp>
+#include <boost/optional.hpp>
+#include "Core/Rendering/Shader/IShader.h"
+#include "Core/Asset/AssetReference/IAssetReference.h"
 
 namespace Dwarf
 {
@@ -19,102 +25,72 @@ namespace Dwarf
     std::string m_FragmentShaderLog;
   };
 
-  struct ShaderSources
+  class OpenGLShader : public IShader
   {
-    std::string m_VertexShaderSource;
-    std::string m_TessellationControlShaderSource;
-    std::string m_TessellationEvaluationShaderSource;
-    std::string m_GeometryShaderSource;
-    std::string m_FragmentShaderSource;
-  };
 
-  struct ShaderAssets
-  {
-    std::shared_ptr<UID> m_VertexShaderAsset;
-    std::shared_ptr<UID> m_TessellationControlShaderAsset;
-    std::shared_ptr<UID> m_TessellationEvaluationShaderAsset;
-    std::shared_ptr<UID> m_GeometryShaderAsset;
-    std::shared_ptr<UID> m_FragmentShaderAsset;
-  };
-
-  class OpenGLShader : public Shader
-  {
-  private:
-    GLuint        m_ID = -1;
-    ShaderSources m_ShaderSources;
-    ShaderAssets  m_ShaderAssets;
-    ShaderLogs    m_ShaderLogs;
+    struct HandleShaderSourceVisitor;
+    friend struct HandleShaderSourceVisitor;
 
   public:
-    OpenGLShader();
+    BOOST_DI_INJECT(OpenGLShader,
+                    std::unique_ptr<IShaderSourceCollection> shaderSources,
+                    std::shared_ptr<IShaderParameterCollectionFactory>
+                      shaderParameterCollectionFactory,
+                    std::shared_ptr<IDwarfLogger> logger,
+                    std::shared_ptr<IVramTracker> vramTracker);
     ~OpenGLShader() override;
-
-    void
-    SetVertexShader(std::shared_ptr<UID> vertexShader);
-    void
-    SetVertexShader(std::string_view vertexShader);
-
-    void
-    SetTesselaltionControlShader(
-      std::shared_ptr<UID> tessellationControlShader);
-    void
-    SetTesselaltionControlShader(std::string_view tessellationControlShader);
-
-    void
-    SetTesselaltionEvaluationShader(
-      std::shared_ptr<UID> tessellationEvaluationShader);
-    void
-    SetTesselaltionEvaluationShader(
-      std::string_view tessellationEvaluationShader);
-
-    void
-    SetGeometryShader(std::shared_ptr<UID> geometryShader);
-    void
-    SetGeometryShader(std::string_view geometryShader);
-
-    void
-    SetFragmentShader(std::shared_ptr<UID> fragmentShader);
-    void
-    SetFragmentShader(std::string_view fragmentShader);
-
-    std::shared_ptr<UID>
-    GetVertexShader() const;
-    std::shared_ptr<UID>
-    GetFragmentShader() const;
-    std::shared_ptr<UID>
-    GetTesselaltionControlShader() const;
-    std::shared_ptr<UID>
-    GetTesselaltionEvaluationShader() const;
-    std::shared_ptr<UID>
-    GetGeometryShader() const;
-
     GLuint
     GetID() const;
 
     void
     Compile() override;
 
-    std::map<std::string, std::shared_ptr<IShaderParameter>, std::less<>>
-    GetParameters() override;
+    bool
+    IsCompiled() const override;
 
-    static std::shared_ptr<OpenGLShader>
-    CreateDefaultShader();
-    static std::shared_ptr<OpenGLShader>
-    CreateErrorShader();
-    static std::shared_ptr<OpenGLShader>
-    CreateGridShader();
-    static std::shared_ptr<OpenGLShader>
-    CreatePreviewShader();
-    static std::shared_ptr<OpenGLShader>
-    CreateIdShader();
-    static std::shared_ptr<OpenGLShader>
-    CreateWhiteShader();
+    std::unique_ptr<IShaderParameterCollection>
+    CreateParameters() override;
 
     const ShaderLogs&
     GetShaderLogs() const;
-    ShaderAssets&
-    GetShaderAssets();
 
-    static const std::array<std::string, 3> ReservedUniformNames;
+    std::optional<std::unique_ptr<IAssetReference>>&
+    GetVertexShaderAsset();
+
+    std::optional<std::unique_ptr<IAssetReference>>&
+    GetFragmentShaderAsset();
+
+    std::optional<std::unique_ptr<IAssetReference>>&
+    GetGeometryShaderAsset();
+
+    std::optional<std::unique_ptr<IAssetReference>>&
+    GetTessellationControlShaderAsset();
+
+    std::optional<std::unique_ptr<IAssetReference>>&
+    GetTessellationEvaluationShaderAsset();
+
+    static const std::array<std::string, 4> ReservedUniformNames;
+
+    nlohmann::json
+    Serialize() override;
+
+  private:
+    GLuint     m_ID = -1;
+    ShaderLogs m_ShaderLogs;
+    // Flag to determine if the shader has been successfully compiled.
+    bool m_SuccessfullyCompiled;
+    // Map of parameters that the shader uses.
+    std::shared_ptr<IDwarfLogger> m_Logger;
+    std::shared_ptr<IVramTracker> m_VramTracker;
+    std::shared_ptr<IShaderParameterCollectionFactory>
+      m_ShaderParameterCollectionFactory;
+
+    std::optional<std::unique_ptr<IAssetReference>> m_VertexShaderAsset;
+    std::optional<std::unique_ptr<IAssetReference>> m_GeometryShaderAsset;
+    std::optional<std::unique_ptr<IAssetReference>>
+      m_TessellationControlShaderAsset;
+    std::optional<std::unique_ptr<IAssetReference>>
+      m_TessellationEvaluationShaderAsset;
+    std::optional<std::unique_ptr<IAssetReference>> m_FragmentShaderAsset;
   };
 }

@@ -1,48 +1,34 @@
 #pragma once
-
-#include <imgui_impl_sdl2.h>
-#include <SDL2/SDL.h>
-#include <glm/vec2.hpp>
-
-#include "Core/Base.h"
+#include "Logging/IDwarfLogger.h"
+#include "pch.h"
+#include "Input/IInputManager.h"
 
 namespace Dwarf
 {
-
-#define KEYCODE_INITIALIZER                                                    \
-  {                                                                            \
-    W, A, S, D, E, Q, R, LEFT_SHIFT, LEFT_CONTROL                              \
-  }
-#define MOUSE_BUTTON_INITIALIZER                                               \
-  {                                                                            \
-    LEFT, RIGHT, MIDDLE, MOUSE_BUTTON_4, MOUSE_BUTTON_5                        \
-  }
-  enum class KEYCODE      KEYCODE_INITIALIZER;
-  enum class MOUSE_BUTTON MOUSE_BUTTON_INITIALIZER;
-
-  class InputManager
+  class InputManager : public IInputManager
   {
   private:
+    std::shared_ptr<IDwarfLogger> m_Logger;
     /**
      * Saved position of the current mouse position
      */
-    static glm::ivec2 s_CurrentMousePos;
-    static glm::ivec2 s_LastMousePos;
-    static glm::ivec2 s_DeltaMousePos;
-    static glm::ivec2 s_DeltaScroll;
+    glm::ivec2 m_CurrentMousePos = glm::ivec2(0);
+    glm::ivec2 m_LastMousePos = glm::ivec2(0);
+    glm::ivec2 m_DeltaMousePos = glm::ivec2(0);
+    glm::ivec2 m_DeltaScroll = glm::ivec2(0);
 
     /**
      * State of the mouse buttons
      */
-    static std::map<MOUSE_BUTTON, int> s_MouseButtonStates;
+    std::map<MOUSE_BUTTON, int> m_MouseButtonStates;
 
     /**
      * Mapping the engine specific key codes to the SDL2 codes
      */
     static std::map<SDL_Scancode, KEYCODE> s_KeyCodeMap;
-    static std::set<KEYCODE>               s_KeysDown;
-    static std::set<KEYCODE>               s_KeysRepeat;
-    static std::set<KEYCODE>               s_KeysUp;
+    std::set<KEYCODE>                      m_KeysDown;
+    std::set<KEYCODE>                      m_KeysRepeat;
+    std::set<KEYCODE>                      m_KeysUp;
 
     /**
      * Mapping the engine specific key codes to the SDL2 codes
@@ -50,75 +36,82 @@ namespace Dwarf
     static std::map<MOUSE_BUTTON, int> s_MouseCodeMap;
 
   public:
+    InputManager(std::shared_ptr<IDwarfLogger> logger);
+    ~InputManager() override;
     /**
      * Returns true while the specified key is being pressed
      */
-    static bool
-    GetKey(KEYCODE key);
+    bool
+    GetKey(KEYCODE key) const override;
     /**
      * Returns true during the frame the specified key starts being pressed
      */
-    static bool
-    GetKeyDown(KEYCODE key);
+    bool
+    GetKeyDown(KEYCODE key) const override;
     /**
      * Return true during the frame the specified key is being released
      */
-    static bool
-    GetKeyUp(KEYCODE key);
+    bool
+    GetKeyUp(KEYCODE key) const override;
 
     /**
      * Returns true while the specified mouse button is being pressed
      */
-    static bool
-    GetMouse(MOUSE_BUTTON mButton);
+    bool
+    GetMouseButton(MOUSE_BUTTON button) const override;
     /**
      * Returns true during the frame the specified mouse button starts being
      * pressed
      */
-    static bool
-    GetMouseDown(MOUSE_BUTTON mButton);
+    bool
+    GetMouseButtonDown(MOUSE_BUTTON button) const override;
     /**
      * Return true during the frame the specified mouse button is being released
      */
-    static bool
-    GetMouseUp(MOUSE_BUTTON mButton);
+    bool
+    GetMouseButtonUp(MOUSE_BUTTON button) const override;
 
     /**
      * Toggles the visibility of the cursor
      */
-    static void
-    SetMouseVisibility(bool visibilityState);
+    void
+    SetMouseVisibility(bool visibilityState) override;
 
     /**
      * Returns the current position of the cursor in a vector
      */
-    static glm::vec2
-    GetMousePos();
+    glm::vec2
+    GetMousePosition() const override;
 
-    static void
-    SetDeltaMousePos(float x, float y);
+    // void
+    // SetDeltaMousePos(float x, float y);
 
-    static glm::vec2
-    GetDeltaMousePos();
+    glm::vec2
+    GetMouseDelta() const override;
 
-    static glm::vec2
-    GetDeltaScroll();
+    glm::vec2
+    GetMouseScrollDelta() const override;
+
+    void
+    SetDeltaMousePos(float x, float y) override;
+    void
+    SetDeltaMouseScroll(float x, float y) override;
 
     /**
      * Updates the states of the input states.
      * Call this every frame
      */
 
-    static void
-    OnUpdate();
+    void
+    OnUpdate() override;
 
-    static void
-    ProcessKeyDown(SDL_Scancode key);
+    void
+    ProcessKeyDown(SDL_Scancode key) override;
 
-    static void
-    ProcessKeyUp(SDL_Scancode key);
+    void
+    ProcessKeyUp(SDL_Scancode key) override;
 
-    static void
-    ProcessScroll(SDL_Event const& event);
+    void
+    ProcessScroll(SDL_Event const& event) override;
   };
 }

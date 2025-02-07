@@ -1,22 +1,26 @@
 #pragma once
 
-// system
-#include <iostream>
-
-// SDL
-#include <SDL2/SDL.h>
-
-#include "Window/Window.h"
-#include "Core/Rendering/GraphicsContext.h"
-#include "Core/UI/ImGuiLayer.h"
+#include "Editor/Stats/IEditorStats.h"
+#include "Logging/IDwarfLogger.h"
+#include "Window/IWindow.h"
+#include "Core/Rendering/GraphicsContext/IGraphicsContextFactory.h"
+#include "UI/IImGuiLayerFactory.h"
+#include "Core/Rendering/GraphicsContext/IGraphicsContext.h"
+#include "UI/IImGuiLayer.h"
+#include "Input/IInputManager.h"
 
 namespace Dwarf
 {
-
-  class LinuxWindow : public Window
+  class LinuxWindow : public IWindow
   {
   public:
-    explicit LinuxWindow(GraphicsApi api);
+    explicit LinuxWindow(
+      const WindowProps&                       props,
+      std::shared_ptr<IGraphicsContextFactory> contextFactory,
+      std::shared_ptr<IImGuiLayerFactory>      imguiLayerFactory,
+      std::shared_ptr<IInputManager>           inputManager,
+      std::shared_ptr<IDwarfLogger>            logger,
+      std::shared_ptr<IEditorStats>            editorStats);
     ~LinuxWindow() override;
 
     void
@@ -40,7 +44,6 @@ namespace Dwarf
     void
     HideWindow() override;
 
-    // Window attributes
     void
     SetVSync(bool enabled) override;
     bool
@@ -58,19 +61,21 @@ namespace Dwarf
       return m_Window;
     }
 
-    GraphicsApi
-    GetApi() override;
-
     void
     MaximizeWindow() override;
 
   private:
     void
-                                     Init(const WindowProps& props) override;
-    SDL_Window*                      m_Window;
-    std::unique_ptr<GraphicsContext> m_Context;
-    GraphicsApi                      m_Api;
-    std::shared_ptr<ImGuiLayer>      m_ImguiLayer;
+    Init(const WindowProps& props);
+
+    SDL_Window*                              m_Window;
+    std::shared_ptr<IGraphicsContext>        m_Context;
+    std::shared_ptr<IImGuiLayer>             m_ImGuiLayer;
+    std::shared_ptr<IGraphicsContextFactory> m_ContextFactory;
+    std::shared_ptr<IImGuiLayerFactory>      m_ImguiLayerFactory;
+    std::shared_ptr<IInputManager>           m_InputManager;
+    std::shared_ptr<IDwarfLogger>            m_Logger;
+    std::shared_ptr<IEditorStats>            m_EditorStats;
 
     struct WindowData
     {

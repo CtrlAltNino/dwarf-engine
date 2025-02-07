@@ -27,6 +27,7 @@ uniform float shininess;
 uniform float fogStart;
 uniform float fogEnd;
 uniform vec4 fogColor;
+uniform vec3 viewPosition;
 
 //uniform vec4 cameraPos;
 //uniform float _Time;
@@ -36,7 +37,7 @@ float scrollSpeed = 2;
 vec3 lightDir = vec3(-0.8, -0.7, -0.3);
 vec3 lightColor = vec3(0.9, 0.9, 0.8);
 float lightIntensity = 1;
-float ambientStrength = 0.05f;
+float ambientStrength = 0.2f;
 
 float remap(float value, float min1, float max1, float min2, float max2) {
   return min2 + (value - min1) * (max2 - min2) / (max1 - min1);
@@ -44,7 +45,11 @@ float remap(float value, float min1, float max1, float min2, float max2) {
 
 void main(){
 	vec4 objectColor = color;
+
+	// Normalize inputs
 	vec3 normal = normalize(normalWorld);
+	vec3 lightDirection = normalize(-lightDir);
+	vec3 viewDirection = normalize(viewPosition - worldPos);
 
 	if(useNormalMap){
 		normal = texture(normalMap, texCoord).rgb;
@@ -52,24 +57,26 @@ void main(){
 		normal = normalize(tbn * normal);
 	}
 
-	vec3 cameraPos = (inverse(viewMatrix) * vec4(0,0,0,1)).xyz;
-	vec3 viewDir = normalize(cameraPos.xyz - worldPos);
-	vec3 halfwayDir = normalize(-lightDir + viewDir);
-
-	float spec = pow(max(dot(normal, halfwayDir), 0.0), shininess);
+	// Calculate diffuse shading
 	float diff = max(0, dot(normal, -lightDir));
-
-	vec3 ambientColor = ambientStrength * lightColor;
 	vec3 diffuseColor = diff * lightColor * lightIntensity;
+
+	// Calculate specular shading
+	vec3 reflectDirection = reflect(-lightDirection, normal);
+	float spec = pow(max(dot(viewDirection, reflectDirection), 0.0), shininess);
 	vec3 specularColor = spec * lightColor * lightIntensity;
+
 	if(useSpecularMap){
-		specularColor = specularColor * texture(specularMap, texCoord).rgb;
+		//specularColor = specularColor * texture(specularMap, texCoord).rgb;
 	}
 
 	if(useAlbedoMap){
 		objectColor = objectColor * texture(albedoMap, texCoord);
 	}
 
-	FragColor = vec4((ambientColor + diffuseColor + specularColor) * objectColor.rgb, objectColor.a);
+	vec3 ambientColor = ambientStrength * lightColor;
+
+	//FragColor = vec4((ambientColor + diffuseColor + specularColor) * objectColor.rgb, objectColor.a);
+	FragColor = vec4((diffuseColor + specularColor + ambientColor) * objectColor.rgb, objectColor.a);
 	//APPLY_FOG(FragColor)
 }

@@ -1,5 +1,6 @@
 #pragma once
 
+#include <variant>
 namespace Dwarf
 {
   enum class TextureFormat
@@ -54,17 +55,7 @@ namespace Dwarf
     FLOAT
   };
 
-  struct TextureContainer
-  {
-    TextureType     Type = TextureType::TEXTURE_2D;
-    TextureFormat   Format = TextureFormat::RGBA;
-    TextureDataType DataType = TextureDataType::UNSIGNED_BYTE;
-    int             Width = 0;
-    int             Height = 0;
-    int             Depth = 0;
-    void*           ImageData = nullptr;
-    int             Samples = 1;
-  };
+  using TextureResolution = std::variant<glm::ivec1, glm::ivec2, glm::ivec3>;
 
   struct TextureParameters
   {
@@ -73,5 +64,21 @@ namespace Dwarf
     TextureWrap      WrapR = TextureWrap::REPEAT;
     TextureMinFilter MinFilter = TextureMinFilter::LINEAR;
     TextureMagFilter MagFilter = TextureMagFilter::LINEAR;
+  };
+
+  struct TextureContainer
+  {
+    TextureType       Type = TextureType::TEXTURE_2D;
+    TextureFormat     Format = TextureFormat::RGBA;
+    TextureDataType   DataType = TextureDataType::UNSIGNED_BYTE;
+    TextureResolution Size = glm::ivec2(0);
+    TextureParameters Parameters;
+    std::variant<std::vector<unsigned char>,
+                 std::vector<unsigned short>,
+                 std::vector<int>,
+                 std::vector<unsigned int>,
+                 std::vector<float>>
+        ImageData;
+    int Samples = 1;
   };
 } // namespace Dwarf

@@ -1,11 +1,9 @@
-#include "dpch.h"
 #include "Application/DwarfEngine.h"
 
 int
 main()
 {
-  auto engine = Dwarf::Create();
-  engine->Run();
-
+  Dwarf::DwarfEngine engine = Dwarf::DwarfEngine();
+  engine.Run();
   return 0;
 }

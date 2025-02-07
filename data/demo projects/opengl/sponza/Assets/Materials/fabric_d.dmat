@@ -1,58 +1,54 @@
 {
-    "parameters": {
-        "albedoMap": {
-            "type": "tex2d",
-            "value": 12870486416808946178
-        },
-        "color": {
-            "type": "vec4",
-            "value": {
-                "w": 1.0,
-                "x": 1.0,
-                "y": 1.0,
-                "z": 1.0
-            }
-        },
-        "modelMatrix": {
-            "type": "boolean",
-            "value": false
-        },
-        "normalMap": {
-            "type": "tex2d",
-            "value": -1
-        },
-        "projectionMatrix": {
-            "type": "boolean",
-            "value": false
-        },
-        "shininess": {
-            "type": "float",
-            "value": 5.0
-        },
-        "specularMap": {
-            "type": "tex2d",
-            "value": -1
-        },
-        "useAlbedoMap": {
-            "type": "boolean",
-            "value": true
-        },
-        "useNormalMap": {
-            "type": "boolean",
-            "value": false
-        },
-        "useSpecularMap": {
-            "type": "boolean",
-            "value": false
-        },
-        "viewMatrix": {
-            "type": "boolean",
-            "value": false
-        }
+  "Properties": {
+    "IsDoubleSided": false,
+    "IsTransparent": false,
+    "IsUnlit": false,
+    "IsWireframe": false
+  },
+  "Shader": {
+    "FragmentShader": "8e56a0f0-88a2-4207-b45b-fdf005296f53",
+    "GeometryShader": "",
+    "TessellationControlShader": "",
+    "TessellationEvaluationShader": "",
+    "VertexShader": "98f30f43-d057-49a1-aeab-a662277bfb38"
+  },
+  "ShaderParameters": {
+    "albedoMap": {
+      "type": "tex2d",
+      "value": "accab39d-9251-4995-9d1f-aa49c8a76ffb"
     },
-    "shader": {
-        "fragmentShader": "default",
-        "vertexShader": "default"
+    "color": {
+      "type": "vec4",
+      "value": {
+        "w": 1.0,
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
     },
-    "transparent": false
+    "normalMap": {
+      "type": "tex2d",
+      "value": ""
+    },
+    "shininess": {
+      "type": "float",
+      "value": 1.0
+    },
+    "specularMap": {
+      "type": "tex2d",
+      "value": ""
+    },
+    "useAlbedoMap": {
+      "type": "boolean",
+      "value": true
+    },
+    "useNormalMap": {
+      "type": "boolean",
+      "value": false
+    },
+    "useSpecularMap": {
+      "type": "boolean",
+      "value": false
+    }
+  }
 }

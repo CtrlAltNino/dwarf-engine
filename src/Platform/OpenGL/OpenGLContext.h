@@ -1,14 +1,16 @@
 #pragma once
 
-#include "Core/Rendering/GraphicsContext.h"
+#include "Core/Rendering/GraphicsContext/IGraphicsContext.h"
+#include "Logging/IDwarfLogger.h"
 #include <SDL2/SDL.h>
 
 namespace Dwarf
 {
-  class OpenGLContext : public GraphicsContext
+  class OpenGLContext : public IGraphicsContext
   {
   public:
-    explicit OpenGLContext(SDL_Window* windowHandle);
+    explicit OpenGLContext(std::shared_ptr<IDwarfLogger> logger,
+                           SDL_Window*                   windowHandle);
     ~OpenGLContext() override;
 
     void
@@ -17,7 +19,8 @@ namespace Dwarf
     SwapBuffers() override;
 
   private:
-    SDL_Window*   m_WindowHandle;
-    SDL_GLContext m_Context;
+    std::shared_ptr<IDwarfLogger> m_Logger;
+    SDL_Window*                   m_WindowHandle;
+    SDL_GLContext                 m_Context;
   };
 }

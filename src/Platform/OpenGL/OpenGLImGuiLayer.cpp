@@ -1,5 +1,4 @@
-#include "dpch.h"
-
+#include "pch.h"
 #include "Platform/OpenGL/OpenGLImGuiLayer.h"
 #include <SDL2/SDL.h>
 #include <SDL2/SDL_opengl.h>
@@ -10,6 +9,22 @@
 
 namespace Dwarf
 {
+  OpenGLImGuiLayer::OpenGLImGuiLayer(std::shared_ptr<IDwarfLogger> logger)
+    : m_Logger(logger)
+  {
+    m_Logger->LogDebug(Log("Creating OpenGLImGuiLayer", "OpenGLImGuiLayer"));
+  }
+
+  OpenGLImGuiLayer::~OpenGLImGuiLayer()
+  {
+    m_Logger->LogDebug(Log("Destroying OpenGLImGuiLayer", "OpenGLImGuiLayer"));
+    if (m_Window && ImGui::GetCurrentContext())
+    {
+      ImGui_ImplOpenGL3_Shutdown();
+      ImGui_ImplSDL2_Shutdown();
+      ImGui::DestroyContext();
+    }
+  }
   void
   OpenGLImGuiLayer::OnAttach(SDL_Window* window)
   {
@@ -17,6 +32,7 @@ namespace Dwarf
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
+    io.IniFilename = "data/imgui.ini";
     (void)io;
     io.ConfigFlags |=
       ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls

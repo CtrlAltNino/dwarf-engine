@@ -1,33 +1,149 @@
-#include "OpenGLFramebuffer.h"
-#include "dpch.h"
-#include "Platform/OpenGL/OpenGLRendererApi.h"
-#include "Core/Asset/AssetDatabase.h"
-#include "Platform/OpenGL/OpenGLComputeShader.h"
-
 #include <glad/glad.h>
-#include <Core/Rendering/Shader Parameters/Tex2DShaderParameter.h>
-#include <Core/Rendering/Shader Parameters/BooleanShaderParameter.h>
-#include <Core/Rendering/Shader Parameters/IntegerShaderParameter.h>
-#include <Core/Rendering/Shader Parameters/UnsignedIntegerShaderParameter.h>
-#include <Core/Rendering/Shader Parameters/FloatShaderParameter.h>
-#include <Core/Rendering/Shader Parameters/Vec4ShaderParameter.h>
-#include <Core/Rendering/Shader Parameters/Vec2ShaderParameter.h>
-#include <Core/Rendering/Shader Parameters/Vec3ShaderParameter.h>
-#include <memory>
+#include "Core/Asset/Database/IAssetDatabase.h"
+#include "Core/Rendering/RendererApi/IRendererApi.h"
+#include "OpenGLFramebuffer.h"
+
+#include "Platform/OpenGL/OpenGLRendererApi.h"
+#include "Platform/OpenGL/OpenGLFramebuffer.h"
+#include "Platform/OpenGL/OpenGLMesh.h"
+#include "Platform/OpenGL/OpenGLShader.h"
+#include "Platform/OpenGL/OpenGLComputeShader.h"
+#include "Platform/OpenGL/OpenGLUtilities.h"
 
 namespace Dwarf
 {
-  OpenGLRendererApi::OpenGLRendererApi() = default;
-  OpenGLRendererApi::~OpenGLRendererApi() = default;
+  OpenGLRendererApi::OpenGLRendererApi(
+    std::shared_ptr<IAssetDatabase> assetDatabase,
+    std::shared_ptr<IShaderFactory> shaderFactory,
+    std::shared_ptr<IDwarfLogger>   logger,
+    std::shared_ptr<IEditorStats>   editorStats)
+    : m_AssetDatabase(assetDatabase)
+    , m_ShaderFactory(shaderFactory)
+    , m_Logger(logger)
+    , m_EditorStats(editorStats)
+  {
+    m_Logger->LogDebug(Log("OpenGLRendererApi created.", "OpenGLRendererApi"));
+    m_ErrorShader = m_ShaderFactory->CreateErrorShader();
+    m_ErrorShader->Compile();
+  }
+
+  OpenGLRendererApi::~OpenGLRendererApi()
+  {
+    m_Logger->LogDebug(
+      Log("OpenGLRendererApi destroyed.", "OpenGLRendererApi"));
+  }
+
+  struct SetShaderParameterVisitor
+  {
+    GLuint                          m_ShaderID;
+    std::string                     m_ParameterName;
+    std::shared_ptr<IAssetDatabase> m_AssetDatabase;
+    std::shared_ptr<IDwarfLogger>   m_Logger;
+    int&                            m_TextureCount;
+
+    void
+    operator()(bool& parameter)
+    {
+      glUniform1f(glGetUniformLocation(m_ShaderID, m_ParameterName.c_str()),
+                  parameter);
+      OpenGLUtilities::CheckOpenGLError(
+        "glUniform1f", "OpenGLRendererApi", m_Logger);
+    }
+    void
+    operator()(int& parameter)
+    {
+      glUniform1i(glGetUniformLocation(m_ShaderID, m_ParameterName.c_str()),
+                  parameter);
+      OpenGLUtilities::CheckOpenGLError(
+        "glUniform1i", "OpenGLRendererApi", m_Logger);
+    }
+    void
+    operator()(unsigned int& parameter)
+    {
+      glUniform1ui(glGetUniformLocation(m_ShaderID, m_ParameterName.c_str()),
+                   parameter);
+      OpenGLUtilities::CheckOpenGLError(
+        "glUniform1ui", "OpenGLRendererApi", m_Logger);
+    }
+    void
+    operator()(float& parameter)
+    {
+      glUniform1f(glGetUniformLocation(m_ShaderID, m_ParameterName.c_str()),
+                  parameter);
+      OpenGLUtilities::CheckOpenGLError(
+        "glUniform1f", "OpenGLRendererApi", m_Logger);
+    }
+    void
+    operator()(Texture2DAssetValue& parameter)
+    {
+      if (parameter.has_value() && m_AssetDatabase->Exists(parameter.value()))
+      {
+        // TODO: This needs to count the number of textures and bind them
+        glActiveTexture(GL_TEXTURE0 + m_TextureCount);
+        OpenGLUtilities::CheckOpenGLError(
+          "glActiveTexture", "OpenGLRendererApi", m_Logger);
+        TextureAsset& textureAsset =
+          (TextureAsset&)m_AssetDatabase->Retrieve(*parameter)->GetAsset();
+        glBindTexture(GL_TEXTURE_2D, textureAsset.GetTexture().GetTextureID());
+        OpenGLUtilities::CheckOpenGLError(
+          "glBindTexture", "OpenGLRendererApi", m_Logger);
+        glUniform1i(glGetUniformLocation(m_ShaderID, m_ParameterName.c_str()),
+                    m_TextureCount);
+        OpenGLUtilities::CheckOpenGLError(
+          "glUniform1i", "OpenGLRendererApi", m_Logger);
+        m_TextureCount++;
+      }
+    }
+    void
+    operator()(glm::vec2& parameter)
+    {
+      glUniform2f(glGetUniformLocation(m_ShaderID, m_ParameterName.c_str()),
+                  parameter.x,
+                  parameter.y);
+      OpenGLUtilities::CheckOpenGLError(
+        "glUniform2f", "OpenGLRendererApi", m_Logger);
+    }
+    void
+    operator()(glm::vec3& parameter)
+    {
+      glUniform3f(glGetUniformLocation(m_ShaderID, m_ParameterName.c_str()),
+                  parameter.x,
+                  parameter.y,
+                  parameter.z);
+      OpenGLUtilities::CheckOpenGLError(
+        "glUniform3f", "OpenGLRendererApi", m_Logger);
+    }
+    void
+    operator()(glm::vec4& parameter)
+    {
+      glUniform4f(glGetUniformLocation(m_ShaderID, m_ParameterName.c_str()),
+                  parameter.x,
+                  parameter.y,
+                  parameter.z,
+                  parameter.w);
+      OpenGLUtilities::CheckOpenGLError(
+        "glUniform4f", "OpenGLRendererApi", m_Logger);
+    }
+  };
 
   void
   OpenGLRendererApi::Init()
   {
+    OpenGLUtilities::CheckOpenGLError(
+      "Before OpenGLRendererApi::Init", "OpenGLRendererApi", m_Logger);
     glEnable(GL_BLEND);
+    OpenGLUtilities::CheckOpenGLError(
+      "glEnable GL_BLEND", "OpenGLRendererApi", m_Logger);
     glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    OpenGLUtilities::CheckOpenGLError(
+      "glBlendFunc", "OpenGLRendererApi", m_Logger);
 
     glEnable(GL_DEPTH_TEST);
+    OpenGLUtilities::CheckOpenGLError(
+      "glEnable GL_DEPTH_TEST", "OpenGLRendererApi", m_Logger);
     glEnable(GL_LINE_SMOOTH);
+    OpenGLUtilities::CheckOpenGLError(
+      "glEnable GL_LINE_SMOOTH", "OpenGLRendererApi", m_Logger);
     SetViewport(0, 0, 512, 512);
   }
 
@@ -37,181 +153,186 @@ namespace Dwarf
                                  uint32_t width,
                                  uint32_t height)
   {
+    OpenGLUtilities::CheckOpenGLError(
+      "Before setting viewport", "OpenGLRendererApi", m_Logger);
     glViewport(x, y, width, height);
+    OpenGLUtilities::CheckOpenGLError(
+      "glViewport", "OpenGLRendererApi", m_Logger);
   }
 
   void
   OpenGLRendererApi::SetClearColor(const glm::vec4& color)
   {
+    OpenGLUtilities::CheckOpenGLError(
+      "Before setting clear color", "OpenGLRendererApi", m_Logger);
     glClearColor(color.r, color.g, color.b, color.a);
+    OpenGLUtilities::CheckOpenGLError(
+      "glClearColor", "OpenGLRendererApi", m_Logger);
   }
 
   void
   OpenGLRendererApi::Clear()
   {
+    OpenGLUtilities::CheckOpenGLError(
+      "Before clearing", "OpenGLRendererApi", m_Logger);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    OpenGLUtilities::CheckOpenGLError("glClear", "OpenGLRendererApi", m_Logger);
   }
 
   void
   OpenGLRendererApi::Clear(unsigned int value)
   {
+    OpenGLUtilities::CheckOpenGLError(
+      "Before clearing", "OpenGLRendererApi", m_Logger);
     glClearBufferuiv(
       GL_COLOR, 0, &value); // Use glClearBufferuiv for integer types
+    OpenGLUtilities::CheckOpenGLError(
+      "glClearBufferuiv", "OpenGLRendererApi", m_Logger);
     glClear(GL_DEPTH_BUFFER_BIT);
+    OpenGLUtilities::CheckOpenGLError("glClear", "OpenGLRendererApi", m_Logger);
   }
 
   void
-  OpenGLRendererApi::RenderIndexed(std::shared_ptr<Mesh>     mesh,
-                                   std::shared_ptr<Material> material,
-                                   glm::mat4                 modelMatrix,
-                                   glm::mat4                 viewMatrix,
-                                   glm::mat4                 projectionMatrix)
+  OpenGLRendererApi::RenderIndexed(std::unique_ptr<IMesh>& mesh,
+                                   IMaterial&              material,
+                                   ICamera&                camera,
+                                   glm::mat4               modelMatrix)
   {
-    std::shared_ptr<OpenGLMesh> oglMesh =
-      std::dynamic_pointer_cast<OpenGLMesh>(mesh);
-    std::shared_ptr<OpenGLShader> shader =
-      std::dynamic_pointer_cast<OpenGLShader>(material->GetShader());
-    char textureInputCounter = 0;
+    OpenGLUtilities::CheckOpenGLError(
+      "Before rendering", "OpenGLRendererApi", m_Logger);
+    OpenGLMesh*   oglMesh = (OpenGLMesh*)mesh.get();
+    IShader&      baseShader = material.GetShader();
+    OpenGLShader& shader = baseShader.IsCompiled()
+                             ? dynamic_cast<OpenGLShader&>(baseShader)
+                             : dynamic_cast<OpenGLShader&>(*m_ErrorShader);
+    char          textureInputCounter = 0;
 
-    glUseProgram(shader->GetID());
+    glUseProgram(shader.GetID());
+    OpenGLUtilities::CheckOpenGLError(
+      "glUseProgram", "OpenGLRendererApi", m_Logger);
 
-    if (material->IsTransparent())
+    if (material.GetMaterialProperties().IsTransparent)
     {
       glEnable(GL_BLEND);
+      OpenGLUtilities::CheckOpenGLError(
+        "glEnable GL_BLEND", "OpenGLRendererApi", m_Logger);
       glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+      OpenGLUtilities::CheckOpenGLError(
+        "glBlendFunc", "OpenGLRendererApi", m_Logger);
     }
 
     glEnable(GL_CULL_FACE);
-    glCullFace(GL_BACK);
+    OpenGLUtilities::CheckOpenGLError(
+      "glEnable GL_CULL_FACE", "OpenGLRendererApi", m_Logger);
+    material.GetMaterialProperties().IsDoubleSided ? glDisable(GL_CULL_FACE)
+                                                   : glCullFace(GL_BACK);
+    OpenGLUtilities::CheckOpenGLError(
+      "glCullFace", "OpenGLRendererApi", m_Logger);
+
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
 
     // TODO: Move this to OpenGLShader.cpp
-    for (auto const& [key, val] : material->m_Parameters)
+    int textureCount = 0;
+    for (auto const& identifier :
+         material.GetShaderParameters()->GetParameterIdentifiers())
     {
-      if (val)
+      if (material.GetShaderParameters()->HasParameter(identifier))
       {
-        switch ((*val).GetType())
-        {
-          using enum ShaderParameterType;
-          case BOOLEAN:
-            glUniform1f(
-              glGetUniformLocation(shader->GetID(), key.c_str()),
-              (float)std::dynamic_pointer_cast<BooleanShaderParameter>(val)
-                ->m_Value);
-            break;
-          case INTEGER:
-            glUniform1i(
-              glGetUniformLocation(shader->GetID(), key.c_str()),
-              std::dynamic_pointer_cast<IntegerShaderParameter>(val)->m_Value);
-            break;
-          case UNSIGNED_INTEGER:
-            glUniform1ui(
-              glGetUniformLocation(shader->GetID(), key.c_str()),
-              std::dynamic_pointer_cast<UnsignedIntegerShaderParameter>(val)
-                ->m_Value);
-            break;
-          case FLOAT:
-            glUniform1f(
-              glGetUniformLocation(shader->GetID(), key.c_str()),
-              std::dynamic_pointer_cast<FloatShaderParameter>(val)->m_Value);
-            break;
-          case TEX2D:
-            {
-              std::shared_ptr<UID> parameter =
-                std::dynamic_pointer_cast<Tex2DShaderParameter>(val)->m_Value;
-              if (parameter)
-              {
-                glActiveTexture(GL_TEXTURE0 + textureInputCounter);
-                glBindTexture(GL_TEXTURE_2D,
-                              AssetDatabase::Retrieve<TextureAsset>(parameter)
-                                ->GetAsset()
-                                ->m_Texture->GetTextureID());
-
-                GLuint uniformID =
-                  glGetUniformLocation(shader->GetID(), key.c_str());
-                glUniform1i(uniformID, textureInputCounter);
-              }
-
-              textureInputCounter++;
-            }
-            break;
-          case VEC2:
-            {
-              glm::vec2 parameter =
-                std::dynamic_pointer_cast<Vec2ShaderParameter>(val)->m_Value;
-              glUniform2f(glGetUniformLocation(shader->GetID(), key.c_str()),
-                          parameter.x,
-                          parameter.y);
-            }
-            break;
-          case VEC3:
-            {
-              glm::vec3 parameter =
-                std::dynamic_pointer_cast<Vec3ShaderParameter>(val)->m_Value;
-              glUniform3f(glGetUniformLocation(shader->GetID(), key.c_str()),
-                          parameter.x,
-                          parameter.y,
-                          parameter.z);
-            }
-            break;
-          case VEC4:
-            {
-              glm::vec4 parameter =
-                std::dynamic_pointer_cast<Vec4ShaderParameter>(val)->m_Value;
-              glUniform4f(glGetUniformLocation(shader->GetID(), key.c_str()),
-                          parameter.x,
-                          parameter.y,
-                          parameter.z,
-                          parameter.w);
-            }
-            break;
-        }
+        ParameterValue& shaderParameterValue =
+          material.GetShaderParameters()->GetParameter(identifier);
+        std::visit(SetShaderParameterVisitor{ shader.GetID(),
+                                              identifier,
+                                              m_AssetDatabase,
+                                              m_Logger,
+                                              textureCount },
+                   shaderParameterValue);
       }
     }
 
-    GLuint mmID = glGetUniformLocation(shader->GetID(), "modelMatrix");
-    GLuint vmID = glGetUniformLocation(shader->GetID(), "viewMatrix");
-    GLuint pmID = glGetUniformLocation(shader->GetID(), "projectionMatrix");
+    GLuint mmID = glGetUniformLocation(shader.GetID(), "modelMatrix");
+    OpenGLUtilities::CheckOpenGLError(
+      "glGetUniformLocation modelMatrix", "OpenGLRendererApi", m_Logger);
+    GLuint vmID = glGetUniformLocation(shader.GetID(), "viewMatrix");
+    OpenGLUtilities::CheckOpenGLError(
+      "glGetUniformLocation viewMatrix", "OpenGLRendererApi", m_Logger);
+    GLuint pmID = glGetUniformLocation(shader.GetID(), "projectionMatrix");
+    OpenGLUtilities::CheckOpenGLError(
+      "glGetUniformLocation projectionMatrix", "OpenGLRendererApi", m_Logger);
+    GLuint timeID = glGetUniformLocation(shader.GetID(), "_Time");
+    OpenGLUtilities::CheckOpenGLError(
+      "glGetUniformLocation time", "OpenGLRendererApi", m_Logger);
+    GLuint vpID = glGetUniformLocation(shader.GetID(), "viewPosition");
+    OpenGLUtilities::CheckOpenGLError(
+      "glGetUniformLocation viewPosition", "OpenGLRendererApi", m_Logger);
 
     glUniformMatrix4fv(mmID, 1, GL_FALSE, &modelMatrix[0][0]);
-    glUniformMatrix4fv(vmID, 1, GL_FALSE, &viewMatrix[0][0]);
-    glUniformMatrix4fv(pmID, 1, GL_FALSE, &projectionMatrix[0][0]);
+    OpenGLUtilities::CheckOpenGLError(
+      "glUniformMatrix4fv modelMatrix", "OpenGLRendererApi", m_Logger);
+    glUniformMatrix4fv(vmID, 1, GL_FALSE, &camera.GetViewMatrix()[0][0]);
+    OpenGLUtilities::CheckOpenGLError(
+      "glUniformMatrix4fv viewMatrix", "OpenGLRendererApi", m_Logger);
+    glUniformMatrix4fv(pmID, 1, GL_FALSE, &camera.GetProjectionMatrix()[0][0]);
+    OpenGLUtilities::CheckOpenGLError(
+      "glUniformMatrix4fv projectionMatrix", "OpenGLRendererApi", m_Logger);
+    glUniform1f(timeID, (float)m_EditorStats->GetTimeSinceStart());
+    OpenGLUtilities::CheckOpenGLError(
+      "glUniform1f time", "OpenGLRendererApi", m_Logger);
+    glUniform3f(vpID,
+                camera.GetProperties().Transform.GetPosition().x,
+                camera.GetProperties().Transform.GetPosition().y,
+                camera.GetProperties().Transform.GetPosition().z);
+    OpenGLUtilities::CheckOpenGLError(
+      "glUniform3f viewPosition", "OpenGLRendererApi", m_Logger);
+
     oglMesh->Bind();
 
     glDrawElements(
-      GL_TRIANGLES, oglMesh->GetIndices().size(), GL_UNSIGNED_INT, nullptr);
+      GL_TRIANGLES, oglMesh->GetIndices().size(), GL_UNSIGNED_INT, 0);
+    OpenGLUtilities::CheckOpenGLError(
+      "glDrawElements", "OpenGLRendererApi", m_Logger);
 
     oglMesh->Unbind();
 
     glDisable(GL_BLEND);
+    OpenGLUtilities::CheckOpenGLError(
+      "glDisable GL_BLEND", "OpenGLRendererApi", m_Logger);
     glDisable(GL_CULL_FACE);
+    OpenGLUtilities::CheckOpenGLError(
+      "glDisable GL_CULL_FACE", "OpenGLRendererApi", m_Logger);
     glUseProgram(0);
+    OpenGLUtilities::CheckOpenGLError(
+      "glUseProgram 0", "OpenGLRendererApi", m_Logger);
   }
 
   void
   OpenGLRendererApi::ApplyComputeShader(
-    std::shared_ptr<ComputeShader> computeShader,
-    std::shared_ptr<Framebuffer>   fb,
-    uint32_t                       sourceAttachment,
-    uint32_t                       destinationAttachment)
+    std::shared_ptr<IComputeShader> computeShader,
+    std::shared_ptr<IFramebuffer>   fb,
+    uint32_t                        sourceAttachment,
+    uint32_t                        destinationAttachment)
   {
     std::shared_ptr<OpenGLComputeShader> shader =
       std::dynamic_pointer_cast<OpenGLComputeShader>(computeShader);
     glUseProgram(shader->GetID());
-    glBindImageTexture(0,
-                       fb->GetColorAttachment(sourceAttachment)->GetTextureID(),
-                       0,
-                       GL_FALSE,
-                       0,
-                       GL_READ_ONLY,
-                       GL_RGBA8);
     glBindImageTexture(
-      1,
-      fb->GetColorAttachment(destinationAttachment)->GetTextureID(),
+      0,
+      fb->GetColorAttachment(sourceAttachment).value().get().GetTextureID(),
       0,
       GL_FALSE,
       0,
-      GL_WRITE_ONLY,
+      GL_READ_ONLY,
       GL_RGBA8);
+    glBindImageTexture(1,
+                       fb->GetColorAttachment(destinationAttachment)
+                         .value()
+                         .get()
+                         .GetTextureID(),
+                       0,
+                       GL_FALSE,
+                       0,
+                       GL_WRITE_ONLY,
+                       GL_RGBA8);
 
     glDispatchCompute(
       fb->GetSpecification().Width / 16, fb->GetSpecification().Height / 16, 1);
@@ -220,19 +341,19 @@ namespace Dwarf
   }
 
   void
-  OpenGLRendererApi::Blit(std::shared_ptr<Framebuffer> source,
-                          std::shared_ptr<Framebuffer> destination,
-                          uint32_t                     sourceAttachment,
-                          uint32_t                     destinationAttachment,
-                          uint32_t                     width,
-                          uint32_t                     height)
+  OpenGLRendererApi::Blit(IFramebuffer& source,
+                          IFramebuffer& destination,
+                          uint32_t      sourceAttachment,
+                          uint32_t      destinationAttachment,
+                          uint32_t      width,
+                          uint32_t      height)
   {
+    OpenGLFramebuffer* sourceFB = (OpenGLFramebuffer*)&source;
+    OpenGLFramebuffer* destinationFB = (OpenGLFramebuffer*)&destination;
     glBindFramebuffer(GL_READ_FRAMEBUFFER,
-                      std::dynamic_pointer_cast<OpenGLFramebuffer>(source)
-                        ->GetFramebufferRendererID());
+                      sourceFB->GetFramebufferRendererID());
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER,
-                      std::dynamic_pointer_cast<OpenGLFramebuffer>(destination)
-                        ->GetFramebufferRendererID());
+                      destinationFB->GetFramebufferRendererID());
     glBlitFramebuffer(0,
                       0,
                       width,
@@ -244,5 +365,30 @@ namespace Dwarf
                       GL_COLOR_BUFFER_BIT,
                       GL_NEAREST);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+  }
+
+  VRAMUsageBuffer
+  OpenGLRendererApi::QueryVRAMUsage()
+  {
+    VRAMUsageBuffer result;
+
+    if (GLAD_GL_NVX_gpu_memory_info)
+    {
+      GLint totalMemoryKb = 0, availableMemoryKb = 0;
+      glGetIntegerv(GL_GPU_MEMORY_INFO_TOTAL_AVAILABLE_MEMORY_NVX,
+                    &totalMemoryKb);
+      glGetIntegerv(GL_GPU_MEMORY_INFO_CURRENT_AVAILABLE_VIDMEM_NVX,
+                    &availableMemoryKb);
+
+      GLint usedMemoryKb = totalMemoryKb - availableMemoryKb;
+      result.totalMemoryMb = totalMemoryKb / 1024;
+      result.usedMemoryMb = (totalMemoryKb - availableMemoryKb) / 1024;
+    }
+    else
+    {
+      // std::cout << "GL_NVX_gpu_memory_info extension not supported.\n";
+    }
+
+    return result;
   }
 }

@@ -1,14 +1,18 @@
 #pragma once
 
-#include "Core/UI/ImGuiLayer.h"
+#include "Logging/IDwarfLogger.h"
+#include "UI/IImGuiLayer.h"
 
 namespace Dwarf
 {
-  class OpenGLImGuiLayer : public ImGuiLayer
+  class OpenGLImGuiLayer : public IImGuiLayer
   {
+  private:
+    std::shared_ptr<IDwarfLogger> m_Logger;
+
   public:
-    OpenGLImGuiLayer() = default;
-    ~OpenGLImGuiLayer() override = default;
+    OpenGLImGuiLayer(std::shared_ptr<IDwarfLogger> logger);
+    ~OpenGLImGuiLayer() override;
 
     void
     OnAttach(SDL_Window* window) override;

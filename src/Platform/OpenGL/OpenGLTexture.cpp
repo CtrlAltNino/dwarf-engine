@@ -1,13 +1,10 @@
-#include "Core/Rendering/Texture.h"
 #include "OpenGLTexture.h"
+#include "Core/Rendering/VramTracker/IVramTracker.h"
+#include "Platform/OpenGL/OpenGLUtilities.h"
 #include "Utilities/ImageUtilities/TextureCommon.h"
-#include "dpch.h"
-
-#include "Core/Asset/AssetMetaData.h"
 #include "Platform/OpenGL/OpenGLTexture.h"
-#include "Utilities/FileHandler.h"
-#include <SDL_opengl.h>
-#include <iostream>
+#include <SDL2/SDL_opengl.h>
+#include <glm/fwd.hpp>
 
 namespace Dwarf
 {
@@ -150,6 +147,8 @@ namespace Dwarf
           case TextureDataType::FLOAT: return GL_DEPTH_STENCIL;
         }
     }
+
+    return GL_NONE;
   }
 
   // A mapping function that maps TextureWrap to OpenGL wrap
@@ -296,10 +295,34 @@ namespace Dwarf
     }
   }
 
+  const void*
+  GetPixelPointer(const TextureContainer& data)
+  {
+    switch (data.DataType)
+    {
+      case TextureDataType::UNSIGNED_BYTE:
+        return std::get<std::vector<unsigned char>>(data.ImageData).data();
+      case TextureDataType::UNSIGNED_SHORT:
+        return std::get<std::vector<unsigned short>>(data.ImageData).data();
+      case TextureDataType::INT:
+        return std::get<std::vector<int>>(data.ImageData).data();
+      case TextureDataType::UNSIGNED_INT:
+        return std::get<std::vector<unsigned int>>(data.ImageData).data();
+      case TextureDataType::FLOAT:
+        return std::get<std::vector<float>>(data.ImageData).data();
+    }
+
+    return nullptr;
+  }
+
   // A map that maps
   // Constructor without meta data
   OpenGLTexture::OpenGLTexture(std::shared_ptr<TextureContainer>  data,
+                               std::shared_ptr<IDwarfLogger>      logger,
+                               std::shared_ptr<IVramTracker>      vramTracker,
                                std::shared_ptr<TextureParameters> parameters)
+    : m_Logger(logger)
+    , m_VramTracker(vramTracker)
   {
     GLuint textureType = GetTextureType(data->Type, data->Samples);
     GLuint textureDataType = GetTextureDataType(data->DataType);
@@ -311,103 +334,158 @@ namespace Dwarf
     GLuint textureMagFilter = GetTextureMagFilter(parameters->MagFilter);
     GLuint internalFormat = GetInternalFormat(data->Format, data->DataType);
 
-    SetSize(glm::ivec3(data->Width, data->Height, 0));
+    m_Logger->LogDebug(Log("Creating OpenGL texture", "OpenGLTexture"));
+    m_Logger->LogDebug(
+      Log("Texture type: " + GLenumToString(textureType), "OpenGLTexture"));
+    m_Logger->LogDebug(
+      Log("Texture data type: " + GLenumToString(textureDataType),
+          "OpenGLTexture"));
+    m_Logger->LogDebug(
+      Log("Texture format: " + GLenumToString(textureFormat), "OpenGLTexture"));
+    m_Logger->LogDebug(Log("Internal format: " + GLenumToString(internalFormat),
+                           "OpenGLTexture"));
+
+    OpenGLUtilities::CheckOpenGLError(
+      "Before creating texture", "OpenGLTexture", m_Logger);
     glCreateTextures(textureType, 1, &m_Id);
+    OpenGLUtilities::CheckOpenGLError(
+      "glCreateTextures", "OpenGLTexture", m_Logger);
 
     glTextureParameteri(m_Id, GL_TEXTURE_MIN_FILTER, textureMinFilter);
+    OpenGLUtilities::CheckOpenGLError(
+      "glTextureParameteri MIN FILTER", "OpenGLTexture", m_Logger);
+
     glTextureParameteri(m_Id, GL_TEXTURE_MAG_FILTER, textureMagFilter);
+    OpenGLUtilities::CheckOpenGLError(
+      "glTextureParameteri MAG FILTER", "OpenGLTexture", m_Logger);
 
     switch (data->Type)
     {
       case TextureType::TEXTURE_1D:
-        glTextureParameteri(m_Id, GL_TEXTURE_WRAP_S, textureWrapS);
-        glTextureStorage1D(m_Id, 1, internalFormat, data->Width);
-        if (data->ImageData)
         {
+          m_Logger->LogDebug(Log("Creating 1D texture", "OpenGLTexture"));
+          glm::ivec1 size = std::get<glm::ivec1>(data->Size);
+          glTextureParameteri(m_Id, GL_TEXTURE_WRAP_S, textureWrapS);
+          OpenGLUtilities::CheckOpenGLError(
+            "glTextureParameteri WRAP S", "OpenGLTexture", m_Logger);
+
+          glTextureStorage1D(m_Id, 1, internalFormat, size.x);
+          OpenGLUtilities::CheckOpenGLError(
+            "glTextureStorage1D", "OpenGLTexture", m_Logger);
           glTextureSubImage1D(m_Id,
                               0,
                               0,
-                              data->Width,
+                              size.x,
                               textureFormat,
                               textureDataType,
-                              data->ImageData);
+                              GetPixelPointer(*data));
+          OpenGLUtilities::CheckOpenGLError(
+            "glTextureSubImage1D", "OpenGLTexture", m_Logger);
+          break;
         }
-        break;
       case TextureType::TEXTURE_2D:
-        glTextureParameteri(m_Id, GL_TEXTURE_WRAP_S, textureWrapS);
-        glTextureParameteri(m_Id, GL_TEXTURE_WRAP_T, textureWrapT);
+        {
+          m_Logger->LogDebug(Log("Creating 2D texture", "OpenGLTexture"));
+          glm::ivec2 size = std::get<glm::ivec2>(data->Size);
+          glTextureParameteri(m_Id, GL_TEXTURE_WRAP_S, textureWrapS);
+          OpenGLUtilities::CheckOpenGLError(
+            "glTextureParameteri WRAP S", "OpenGLTexture", m_Logger);
+          glTextureParameteri(m_Id, GL_TEXTURE_WRAP_T, textureWrapT);
+          OpenGLUtilities::CheckOpenGLError(
+            "glTextureParameteri WRAP T", "OpenGLTexture", m_Logger);
 
-        if (data->Samples > 1)
-        {
-          glTextureStorage2DMultisample(m_Id,
-                                        data->Samples,
-                                        internalFormat,
-                                        data->Width,
-                                        data->Height,
-                                        GL_FALSE);
-        }
-        else
-        {
-          glTextureStorage2D(
-            m_Id, 1, internalFormat, data->Width, data->Height);
-        }
+          if (data->Samples > 1)
+          {
+            glTextureStorage2DMultisample(
+              m_Id, data->Samples, internalFormat, size.x, size.y, GL_FALSE);
+            OpenGLUtilities::CheckOpenGLError(
+              "glTextureStorage2DMultisample", "OpenGLTexture", m_Logger);
+          }
+          else
+          {
+            glTextureStorage2D(m_Id, 1, internalFormat, size.x, size.y);
+            OpenGLUtilities::CheckOpenGLError(
+              "glTextureStorage2D", "OpenGLTexture", m_Logger);
+          }
 
-        if (data->ImageData)
-        {
           glTextureSubImage2D(m_Id,
                               0,
                               0,
                               0,
-                              data->Width,
-                              data->Height,
+                              size.x,
+                              size.y,
                               textureFormat,
                               textureDataType,
-                              data->ImageData);
+                              GetPixelPointer(*data));
+          OpenGLUtilities::CheckOpenGLError(
+            "glTextureSubImage2D", "OpenGLTexture", m_Logger);
+          break;
         }
-        break;
       case TextureType::TEXTURE_3D:
-        glTextureParameteri(m_Id, GL_TEXTURE_WRAP_S, textureWrapS);
-        glTextureParameteri(m_Id, GL_TEXTURE_WRAP_T, textureWrapT);
-        glTextureParameteri(m_Id, GL_TEXTURE_WRAP_R, textureWrapR);
-
-        glTextureStorage3D(
-          m_Id, 1, internalFormat, data->Width, data->Height, data->Depth);
-
-        if (data->ImageData)
         {
+          m_Logger->LogDebug(Log("Creating 3D texture", "OpenGLTexture"));
+          glm::ivec3 size = std::get<glm::ivec3>(data->Size);
+          glTextureParameteri(m_Id, GL_TEXTURE_WRAP_S, textureWrapS);
+          glTextureParameteri(m_Id, GL_TEXTURE_WRAP_T, textureWrapT);
+          glTextureParameteri(m_Id, GL_TEXTURE_WRAP_R, textureWrapR);
+
+          glTextureStorage3D(m_Id, 1, internalFormat, size.x, size.y, size.z);
+
           glTextureSubImage3D(m_Id,
                               0,
                               0,
                               0,
                               0,
-                              data->Width,
-                              data->Height,
-                              data->Depth,
+                              size.x,
+                              size.y,
+                              size.z,
                               textureFormat,
                               textureDataType,
-                              data->ImageData);
+                              GetPixelPointer(*data));
+          break;
         }
-        break;
       case TextureType::TEXTURE_CUBE_MAP:
-        glTextureParameteri(m_Id, GL_TEXTURE_WRAP_S, textureWrapS);
-        glTextureParameteri(m_Id, GL_TEXTURE_WRAP_T, textureWrapT);
-        glTextureParameteri(m_Id, GL_TEXTURE_WRAP_R, textureWrapR);
+        {
+          m_Logger->LogDebug(Log("Creating cube map texture", "OpenGLTexture"));
+          glTextureParameteri(m_Id, GL_TEXTURE_WRAP_S, textureWrapS);
+          glTextureParameteri(m_Id, GL_TEXTURE_WRAP_T, textureWrapT);
+          glTextureParameteri(m_Id, GL_TEXTURE_WRAP_R, textureWrapR);
 
-        // TODO: Implement cube map texture
-        break;
+          // TODO: Implement cube map texture
+          break;
+        }
     }
 
     glGenerateTextureMipmap(m_Id);
+    m_VramMemory = m_VramTracker->AddTextureMemory(data);
+    OpenGLUtilities::CheckOpenGLError(
+      "glGenerateTextureMipmap", "OpenGLTexture", m_Logger);
+
+    m_Logger->LogDebug(Log("OpenGL texture created", "OpenGLTexture"));
+    m_Logger->LogDebug(
+      Log("Texture ID: " + std::to_string(m_Id), "OpenGLTexture"));
   }
 
   OpenGLTexture::~OpenGLTexture()
   {
+    m_Logger->LogDebug(Log("Deleting OpenGL texture", "OpenGLTexture"));
+    OpenGLUtilities::CheckOpenGLError(
+      "Before deleting texture", "OpenGLTexture", m_Logger);
     glDeleteTextures(1, &m_Id);
+    OpenGLUtilities::CheckOpenGLError(
+      "glDeleteTextures", "OpenGLTexture", m_Logger);
+    m_VramTracker->RemoveTextureMemory(m_VramMemory);
   }
 
   uintptr_t
-  OpenGLTexture::GetTextureID()
+  OpenGLTexture::GetTextureID() const
   {
     return m_Id;
+  }
+
+  TextureResolution
+  OpenGLTexture::GetSize() const
+  {
+    return m_Size;
   }
 }

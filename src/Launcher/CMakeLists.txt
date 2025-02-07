@@ -1,8 +1,7 @@
-target_sources(${targetName}
-    PRIVATE
+smtg_add_subdirectories()
 
-    # ProjectLauncher.cpp
+target_sources(${libname}
+    PRIVATE
     ProjectLauncher.cpp
-    ProjectLauncherModel.cpp
-    ProjectLauncherView.cpp
+    ProjectLauncherData.cpp
 )

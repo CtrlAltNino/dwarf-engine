@@ -1,12 +1,11 @@
 smtg_add_subdirectories()
-target_sources(${targetName}
+target_sources(${libname}
     PRIVATE
     stb.cpp
-    FileHandler.cpp
 )
 
 if(APPLE)
-    target_sources(${targetName}
+    target_sources(${libname}
         PRIVATE
         metal.cpp
     )

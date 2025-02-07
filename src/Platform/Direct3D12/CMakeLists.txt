@@ -1,5 +1,5 @@
 IF(WIN32)
-    target_sources(${targetName}
+    target_sources(${libname}
         PRIVATE
         D3D12RendererApi.cpp
     )

@@ -1,173 +1,101 @@
-#include "dpch.h"
-
 #include "Editor/Editor.h"
 
-#include "Core/Scene/SceneUtilities.h"
-#include "Core/Asset/AssetDatabase.h"
-#include "Editor/Modules/GuiModule.h"
-#include "Input/InputManager.h"
+#include "Core/Asset/Database/AssetComponents.h"
+#include "Core/Asset/Database/IAssetDatabase.h"
+#include "Core/Scene/IScene.h"
+#include "Input/IInputManager.h"
 #include "Utilities/TimeUtilities.h"
-#include "Core/Rendering/Renderer.h"
 
 namespace Dwarf
 {
+  Editor::Editor(std::shared_ptr<IDwarfLogger>      logger,
+                 std::shared_ptr<IEditorStats>      stats,
+                 std::shared_ptr<IInputManager>     inputManager,
+                 std::shared_ptr<IProjectSettings>  projectSettings,
+                 std::shared_ptr<ILoadedScene>      loadedScene,
+                 std::shared_ptr<IWindow>           window,
+                 std::shared_ptr<ISceneIO>          sceneIO,
+                 std::shared_ptr<ISceneFactory>     sceneFactory,
+                 std::shared_ptr<IEditorView>       view,
+                 std::shared_ptr<IAssetDatabase>    assetDatabase,
+                 std::shared_ptr<IShaderRecompiler> shaderRecompiler,
+                 std::shared_ptr<IAssetReimporter>  assetReimporter)
+    : m_Logger(logger)
+    , m_EditorStats(stats)
+    , m_InputManager(inputManager)
+    , m_View(view)
+    , m_Window(window)
+    , m_SceneIO(sceneIO)
+    , m_SceneFactory(sceneFactory)
+    , m_ProjectSettings(projectSettings)
+    , m_LoadedScene(loadedScene)
+    , m_AssetDatabase(assetDatabase)
+    , m_ShaderRecompiler(shaderRecompiler)
+    , m_AssetReimporter(assetReimporter)
 
-  std::shared_ptr<Editor> Editor::s_Instance = nullptr;
-
-  std::shared_ptr<Editor>
-  CreateEditor()
   {
-    return std::make_shared<Editor>();
-  }
-
-  Editor::Editor()
-  {
-    s_Instance = std::make_shared<Editor>(*this);
-  }
-
-  Editor::~Editor() = default;
-
-  void
-  Editor::UpdateWindowTitle() const
-  {
-    std::string windowTitle = "Dwarf Engine Editor - ";
-    windowTitle.append(s_Instance->m_Model->GetName());
-    windowTitle.append(" - ");
-    windowTitle.append(s_Instance->m_Model->GetScene()->GetName());
-    windowTitle.append(" <");
-    windowTitle.append(graphicsApiNames[(int)s_Instance->m_Window->GetApi()]);
-    windowTitle.append(">");
-
-    std::cout << "[EDITOR] Updating window title" << std::endl;
-
-    s_Instance->m_Window->SetWindowTitle(windowTitle);
-  }
-
-  void
-  Editor::Init(std::filesystem::path const& projectPath)
-  {
-    // s_Instance = this;
-
-    // ========== Load .dproj file ==========
-    std::cout
-      << "[EDITOR INIT] Initializing dwarf engine editor for project at ["
-      << projectPath << "]" << std::endl;
-    std::filesystem::path projectSettingsPath = projectPath;
-    projectSettingsPath.append("projectSettings.dproj");
-    std::cout << "[EDITOR INIT] Loading .dproj project file at ["
-              << projectSettingsPath << "]" << std::endl;
-    nlohmann::json projectSettings = nlohmann::json::parse(
-      FileHandler::ReadFile(projectSettingsPath))["projectInformation"];
-
-    WindowProps props("Dwarf Engine Editor", 1280, 720);
-
-    props.Api = (GraphicsApi)projectSettings["graphicsApi"];
-
-    // TODO: Create error popup for invalid project
-
-    // ========== Create window ==========
-    std::cout << "[EDITOR INIT] Creating editor window" << std::endl;
-    s_Instance->m_Window = Window::Create(props);
-
-    // ========== Create renderer ==========
-    Renderer::Create(props.Api, Renderer::RendererType::Forward);
-
-    // ========== Initialize Asset Database ==========
-    std::cout << "[EDITOR INIT] Loading asset database" << std::endl;
-    AssetDatabase::Init(projectPath);
-
-    // ========== Initialize Editor model
-    std::cout << "[EDITOR INIT] Initializing editor model" << std::endl;
-
-    s_Instance->m_Model = std::make_shared<EditorModel>(
-      projectSettings["projectName"].get<std::string_view>(), projectPath);
-
-    if (projectSettings.contains("lastOpenedScene"))
-    {
-      std::shared_ptr<AssetReference<SceneAsset>> lastOpenedSceneAsset =
-        AssetDatabase::Retrieve<SceneAsset>(
-          std::make_shared<UID>(projectSettings["lastOpenedScene"]));
-      if (lastOpenedSceneAsset)
-      {
-        std::cout << "[EDITOR INIT] Loading last opened scene" << std::endl;
-        s_Instance->m_Model->SetScene(
-          SceneUtilities::LoadScene(lastOpenedSceneAsset->GetAsset()->m_Path));
-      }
-      else
-      {
-        std::cout
-          << "[EDITOR INIT] No last opened scene found. Loading default scene"
-          << std::endl;
-        s_Instance->m_Model->SetScene(SceneUtilities::LoadDefaultScene());
-      }
-    }
-    else
-    {
-      std::cout
-        << "[EDITOR INIT] No last opened scene found. Loading default scene"
-        << std::endl;
-      s_Instance->m_Model->SetScene(SceneUtilities::LoadDefaultScene());
-    }
-
-    // ========== Initialize Editor view ==========
-    s_Instance->m_View = std::make_shared<EditorView>(s_Instance->m_Model);
-
-    // Get monitor variables
-
-    // Initialize view
-    std::cout << "[EDITOR INIT] Setting up view" << std::endl;
-
-    // ========== Set window title ======
-    UpdateWindowTitle();
-
-    // ========== Set window icon ==========
-
-    // ========== Set window size ==========
-
-    // ========== Set window to be maximized ==========
-    s_Instance->m_Window->MaximizeWindow();
-    s_Instance->m_View->Init();
-
-    // ========== Set window size constraints ==========
-
-    // ========== Show window ==========
-    std::cout << "[EDITOR INIT] Making window visible" << std::endl;
-    s_Instance->m_Window->ShowWindow();
-    std::cout << "[EDITOR INIT] Editor initialization done" << std::endl;
   }
 
   bool
-  Editor::Run(std::filesystem::path const& projectPath)
+  Editor::Run()
   {
-    Init(projectPath);
+    m_EditorStats->SetCurrentTimeStamp(TimeUtilities::GetCurrent());
+    m_EditorStats->SetLastTimeStamp(TimeUtilities::GetCurrent());
 
-    TimeStamp currentFrameStamp = TimeUtilities::GetCurrent();
-    TimeStamp lastFrameStamp = TimeUtilities::GetCurrent();
+    m_Logger->LogInfo(Log("Starting the editor", "Editor"));
 
-    // TODO: abstract the close condition
-    while (!s_Instance->m_Window->ShouldClose() &&
-           !s_Instance->m_Model->GetCloseSignal())
+    m_AssetDatabase->ReimportAll();
+
+    // Either load the last opened scene or the default scene
+    if (m_ProjectSettings->GetLastOpenedScene().has_value() &&
+        m_AssetDatabase->Exists(*m_ProjectSettings->GetLastOpenedScene()))
     {
-      // ===== Time related stuff
-      lastFrameStamp = currentFrameStamp;
-      currentFrameStamp = TimeUtilities::GetCurrent();
-      s_Instance->m_Model->SetDeltaTime(TimeUtilities::GetDifferenceInSeconds(
-        currentFrameStamp, lastFrameStamp));
+      std::unique_ptr<IAssetReference> lastOpenedScene =
+        m_AssetDatabase->Retrieve(*m_ProjectSettings->GetLastOpenedScene());
 
-      s_Instance->m_Window->NewFrame();
-      InputManager::OnUpdate();
-      AssetDatabase::RecompileShaders();
-      s_Instance->m_View->OnUpdate(s_Instance->m_Model->GetDeltaTime());
-      s_Instance->m_View->OnImGuiRender();
-      s_Instance->m_Window->EndFrame();
-
-      while (TimeUtilities::GetDifferenceInSeconds(
-               TimeUtilities::GetCurrent(), currentFrameStamp) < (1.0 / 60.0))
-      {
-        // TODO: Update this when implementing multi threading
-      }
+      std::unique_ptr<IScene> scene = m_SceneIO->LoadScene(*lastOpenedScene);
+      m_LoadedScene->SetScene(std::move(scene));
+    }
+    else
+    {
+      std::unique_ptr<IScene> defaultScene =
+        m_SceneFactory->CreateDefaultScene();
+      m_LoadedScene->SetScene(std::move(defaultScene));
     }
 
-    return s_Instance->m_Model->GetReturnToLauncher();
+    m_Logger->LogInfo(Log("Showing window", "Editor"));
+    m_Window->ShowWindow();
+
+    m_Logger->LogInfo(Log("Entering editor loop", "Editor"));
+    m_Logger->LogWarn(
+      Log("There is currently no fps cap implemented", "Editor"));
+
+    while (!m_Window->ShouldClose() && !m_EditorStats->GetCloseSignal())
+    {
+      //  ===== Time related stuff
+      m_EditorStats->SetLastTimeStamp(m_EditorStats->GetCurrentTimeStamp());
+      m_EditorStats->SetCurrentTimeStamp(TimeUtilities::GetCurrent());
+      m_EditorStats->SetTimeSinceStart(m_EditorStats->GetTimeSinceStart() +
+                                       m_EditorStats->GetDeltaTime());
+
+      m_Window->NewFrame();
+      m_InputManager->OnUpdate();
+      m_AssetReimporter->ReimportQueuedAssets();
+      m_ShaderRecompiler->Recompile();
+      m_View->OnUpdate();
+      m_View->OnImGuiRender();
+      m_Window->EndFrame();
+
+      /*while (TimeUtilities::GetDifferenceInSeconds(
+               TimeUtilities::GetCurrent(),
+               m_EditorStats->GetCurrentTimeStamp()) < (1.0 / 60.0))
+      {
+        // TODO: Update this when implementing multi threading
+      }*/
+    }
+
+    m_Logger->LogInfo(Log("Exiting editor loop", "Editor"));
+
+    return m_EditorStats->GetReturnToLauncher();
   }
 }

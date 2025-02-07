@@ -1,7 +1,7 @@
-target_sources(${targetName}
+smtg_add_subdirectories()
+
+target_sources(${libname}
     PRIVATE
-    Entity.cpp
-    Camera.cpp
     Scene.cpp
-    SceneUtilities.cpp
+    SceneFactory.cpp
 )

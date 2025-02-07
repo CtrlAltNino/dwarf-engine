@@ -1,39 +1,31 @@
 #pragma once
 
-#include "Core/Base.h"
-#include "Launcher/ProjectLauncherModel.h"
-#include "Launcher/ProjectLauncherView.h"
-
-#include "Window/Window.h"
+#include "pch.h"
+#include "IProjectLauncherData.h"
+#include "Launcher/IProjectLauncher.h"
+#include "Launcher/SavedProjects/ISavedProjects.h"
+#include "Logging/IDwarfLogger.h"
+#include "Launcher/View/IProjectLauncherView.h"
 
 namespace Dwarf
 {
-
-  class ProjectLauncher
+  class ProjectLauncher : public IProjectLauncher
   {
   private:
-    std::shared_ptr<ProjectLauncherModel> m_Model;
-    std::shared_ptr<ProjectLauncherView>  m_View;
-    std::shared_ptr<Window>               m_Window;
-
-    static ProjectLauncher* s_Instance;
+    std::unique_ptr<IProjectLauncherView> m_View;
+    std::shared_ptr<IProjectLauncherData> m_Data;
+    std::shared_ptr<ISavedProjects>       m_SavedProjects;
+    std::shared_ptr<IDwarfLogger>         m_Logger;
 
   public:
-    ProjectLauncher();
-    std::filesystem::path
-    Run();
-    static ProjectLauncher*
-    Get()
-    {
-      return s_Instance;
-    }
-    Window*
-    GetWindow()
-    {
-      return m_Window.get();
-    }
-  };
+    ProjectLauncher(std::shared_ptr<IDwarfLogger>         logger,
+                    std::unique_ptr<IProjectLauncherView> view,
+                    std::shared_ptr<IProjectLauncherData> data,
+                    std::shared_ptr<ISavedProjects>       projectList);
 
-  ProjectLauncher*
-  CreateLauncher();
+    ~ProjectLauncher() override;
+
+    std::optional<SavedProject>
+    Run() override;
+  };
 }

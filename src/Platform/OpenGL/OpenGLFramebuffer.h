@@ -1,25 +1,34 @@
 #pragma once
 
-#include "Core/Rendering/Framebuffer.h"
-#include <cstdint>
+#include "Core/Rendering/Framebuffer/IFramebuffer.h"
+#include "Core/Rendering/Texture/ITextureFactory.h"
+#include "Core/Rendering/VramTracker/IVramTracker.h"
+#include "Logging/IDwarfLogger.h"
 
 namespace Dwarf
 {
-  class OpenGLFramebuffer : public Framebuffer
+  class OpenGLFramebuffer : public IFramebuffer
   {
   private:
-    uint32_t                 m_RendererID = 0;
-    FramebufferSpecification m_Specification;
+    std::shared_ptr<IDwarfLogger> m_Logger;
+    uint32_t                      m_RendererID = 0;
+    FramebufferSpecification      m_Specification;
     std::vector<FramebufferTextureSpecification>
                                     m_ColorAttachmentSpecifications;
     FramebufferTextureSpecification m_DepthAttachmentSpecification{
       FramebufferTextureFormat::None
     };
-    std::vector<std::shared_ptr<Texture>> m_ColorAttachments;
-    std::shared_ptr<Texture>              m_DepthAttachment = 0;
+    std::vector<std::unique_ptr<ITexture>> m_ColorAttachments;
+    std::unique_ptr<ITexture>              m_DepthAttachment = 0;
+    std::shared_ptr<ITextureFactory>       m_TextureFactory;
+    std::shared_ptr<IVramTracker>          m_VramTracker;
+    size_t                                 m_CurrentVramMemory = 0;
 
   public:
-    explicit OpenGLFramebuffer(const FramebufferSpecification& spec);
+    explicit OpenGLFramebuffer(std::shared_ptr<IDwarfLogger>    logger,
+                               const FramebufferSpecification&  spec,
+                               std::shared_ptr<ITextureFactory> textureFactory,
+                               std::shared_ptr<IVramTracker>    vramTracker);
     ~OpenGLFramebuffer() override;
 
     uint32_t
@@ -46,7 +55,7 @@ namespace Dwarf
     void
     ClearAttachment(uint32_t attachmentIndex, int value) override;
 
-    const std::shared_ptr<Texture>
+    const std::optional<std::reference_wrapper<ITexture>>
     GetColorAttachment(uint32_t index) const override;
 
     void

@@ -1,36 +1,46 @@
 #pragma once
-
-#include "Core/Base.h"
-#include "Editor/EditorModel.h"
-#include "Editor/Modules/GuiModule.h"
+#include "Core/Rendering/GpuInfo/IGpuInfo.h"
+#include "Core/Rendering/RendererApi/IRendererApi.h"
+#include "pch.h"
+#include "Editor/Modules/IGuiModule.h"
+#include "Editor/Stats/IEditorStats.h"
+#include <boost/serialization/strong_typedef.hpp>
+#include "Core/Rendering/VramTracker/IVramTracker.h"
 
 namespace Dwarf
 {
-
   /// @brief Module to render a window that displays performance statistics.
-  class PerformanceWindow : public GuiModule
+  class PerformanceWindow : public IGuiModule
   {
   private:
-    /// @brief Pointer to the frame time.
-    std::shared_ptr<double> m_Frametime = nullptr;
-
-    /// @brief Pointer to the render time.
-    std::shared_ptr<double> m_RenderTime = nullptr;
+    std::shared_ptr<IEditorStats> m_EditorStats;
+    std::shared_ptr<IRendererApi> m_RendererApi;
+    std::shared_ptr<IVramTracker> m_VramTracker;
+    std::unique_ptr<IGpuInfo>     m_GpuInfo;
 
   public:
-    PerformanceWindow(std::shared_ptr<EditorModel> model, int id);
+    PerformanceWindow(std::shared_ptr<IEditorStats> editorStats,
+                      std::shared_ptr<IRendererApi> rendererApi,
+                      std::shared_ptr<IVramTracker> vramTracker,
+                      std::unique_ptr<IGpuInfo>     gpuInfo);
+
+    PerformanceWindow(SerializedModule              serializedModule,
+                      std::shared_ptr<IEditorStats> editorStats,
+                      std::shared_ptr<IRendererApi> rendererApi,
+                      std::shared_ptr<IVramTracker> vramTracker,
+                      std::unique_ptr<IGpuInfo>     gpuInfo);
 
     /// @brief Renders the module window.
     void
     OnImGuiRender() override;
 
     void
-    OnUpdate(double deltaTime) override;
+    OnUpdate() override;
 
-    std::string
+    nlohmann::json
     Serialize() override;
 
     void
-    Deserialize(nlohmann::json moduleData) override;
+    Deserialize(nlohmann::json moduleData);
   };
 }

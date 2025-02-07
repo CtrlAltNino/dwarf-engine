@@ -1,53 +1,46 @@
 #pragma once
-
-#include "Core/Scene/Scene.h"
-#include "Editor/EditorModel.h"
-#include "Editor/Modules/GuiModule.h"
-#include "Core/UI/DwarfUI.h"
-
-#define _USE_MATH_DEFINES
-#include <cmath>
+#include "pch.h"
+#include "Editor/Modules/IGuiModule.h"
+#include "AssetInspector/IAssetInspector.h"
+#include "Core/Asset/Database/IAssetDatabase.h"
+#include "Editor/IEditor.h"
+#include "Editor/Selection/IEditorSelection.h"
+#include "EntityInspector/IEntityInspector.h"
+#include <boost/serialization/strong_typedef.hpp>
 
 namespace Dwarf
 {
-
   /// @brief Module that renders a window, containing information of selected
   /// objects or assets.
-  class InspectorWindow : public GuiModule
+  class InspectorWindow : public IGuiModule
   {
   private:
     /// @brief Pointer to the currently opened scene instance.
-    std::shared_ptr<Scene> m_Scene;
-
-    /// @brief Renders the components of an entity.
-    /// @param entity Entity to render in the inspector.
-    void
-    RenderComponents(Entity entity);
-
-    void
-    BeginComponent(const char* componentHeader) const;
-
-    void
-    EndComponent() const;
-
-    template<typename T>
-    void
-    RenderComponent(T& component);
+    std::shared_ptr<IEditorSelection> m_Selection;
+    std::shared_ptr<IAssetDatabase>   m_AssetDatabase;
+    std::shared_ptr<IAssetInspector>  m_AssetInspector;
+    std::shared_ptr<IEntityInspector> m_EntityInspector;
 
   public:
-    InspectorWindow(std::shared_ptr<EditorModel> listener, int id);
+    InspectorWindow(std::shared_ptr<IEditorSelection> selection,
+                    std::shared_ptr<IAssetDatabase>   assetDatabase,
+                    std::shared_ptr<IAssetInspector>  assetInspector,
+                    std::shared_ptr<IEntityInspector> entityInspector);
+
+    InspectorWindow(std::shared_ptr<IEditorSelection> selection,
+                    std::shared_ptr<IAssetDatabase>   assetDatabase,
+                    std::shared_ptr<IAssetInspector>  assetInspector,
+                    std::shared_ptr<IEntityInspector> entityInspector,
+                    SerializedModule                  serializedModule);
 
     /// @brief Renders the module window.
     void
     OnImGuiRender() override;
 
     void
-    OnUpdate(double deltaTime) override;
+    OnUpdate() override;
 
-    std::string
+    nlohmann::json
     Serialize() override;
-
-    void
-    Deserialize(nlohmann::json moduleData) override;
   };
 }

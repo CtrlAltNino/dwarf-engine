@@ -1,6 +1,7 @@
-target_sources(${targetName}
+smtg_add_subdirectories()
+
+target_sources(${libname}
     PRIVATE
     InspectorWindow.cpp
-    AssetInspectorRenderer.cpp
-    PreviewRenderer.cpp
+    InspectorWindowFactory.cpp
 )

@@ -10,6 +10,8 @@ imgui.ini
 .vscode/
 docs/html
 docs/latex
+Testing/
+.VSCodeCounter/
 
 # User-specific files
 *.rsuser
