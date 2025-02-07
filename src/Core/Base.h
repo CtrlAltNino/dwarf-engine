@@ -39,6 +39,8 @@ namespace Dwarf
 
   inline constexpr auto graphicsApiNames = make_graphics_api_names();
 
+#define GRAPHICS_API_STRING(api) std::string(graphicsApiNames[(int)api - 1])
+
   enum class ShaderParameterType
   {
     BOOLEAN,

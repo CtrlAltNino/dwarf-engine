@@ -1,5 +1,19 @@
 #include "DI/ProjectLauncher/ProjectLauncherInjector.h"
 #include "Editor/Stats/EditorStats.h"
+#include "Launcher/LauncherAssets/ILauncherAssets.h"
+#include "Launcher/LauncherAssets/LauncherAssets.h"
+#include "Launcher/View/ButtonsView/ButtonsView.h"
+#include "Launcher/View/ButtonsView/IButtonsView.h"
+#include "Launcher/View/ChangeGraphicsApiModal/ChangeGraphicsApiModal.h"
+#include "Launcher/View/ChangeGraphicsApiModal/IChangeGraphicsApiModal.h"
+#include "Launcher/View/CreateNewProjectModal/CreateNewProjectModal.h"
+#include "Launcher/View/CreateNewProjectModal/ICreateNewProjectModal.h"
+#include "Launcher/View/FooterView/FooterView.h"
+#include "Launcher/View/FooterView/IFooterView.h"
+#include "Launcher/View/ProjectListView/IProjectListView.h"
+#include "Launcher/View/ProjectListView/ProjectListView.h"
+#include "Launcher/View/ProjectNotFoundModal/IProjectNotFoundModal.h"
+#include "Launcher/View/ProjectNotFoundModal/ProjectNotFoundModal.h"
 #include "Logging/DwarfLogger.h"
 #include "Launcher/ProjectLauncherData.h"
 #include "Core/Asset/Texture/IImageFileLoader.h"
@@ -72,6 +86,20 @@ namespace Dwarf
       boost::di::bind<IGraphicsContextFactory>.to<GraphicsContextFactory>().in(
         boost::di::extension::shared),
       boost::di::bind<IInputManager>.to<InputManager>().in(
+        boost::di::extension::shared),
+      boost::di::bind<IButtonsView>.to<ButtonsView>().in(
+        boost::di::extension::shared),
+      boost::di::bind<IChangeGraphicsApiModal>.to<ChangeGraphicsApiModal>().in(
+        boost::di::extension::shared),
+      boost::di::bind<ICreateNewProjectModal>.to<CreateNewProjectModal>().in(
+        boost::di::extension::shared),
+      boost::di::bind<IFooterView>.to<FooterView>().in(
+        boost::di::extension::shared),
+      boost::di::bind<IProjectListView>.to<ProjectListView>().in(
+        boost::di::extension::shared),
+      boost::di::bind<IProjectNotFoundModal>.to<ProjectNotFoundModal>().in(
+        boost::di::extension::shared),
+      boost::di::bind<ILauncherAssets>.to<LauncherAssets>().in(
         boost::di::extension::shared),
       boost::di::bind<IProjectLauncherView>.to<ProjectLauncherView>().in(
         boost::di::unique),
