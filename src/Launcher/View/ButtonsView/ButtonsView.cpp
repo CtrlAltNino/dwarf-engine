@@ -1,5 +1,4 @@
 #include "ButtonsView.h"
-#include "Launcher/IProjectLauncherData.h"
 #include <imgui.h>
 
 namespace Dwarf
@@ -7,9 +6,9 @@ namespace Dwarf
 #define PROJECT_BUTTON_WINDOW_WIDTH (200)
 #define PROJECT_INFORMATION_HEIGHT (30)
 
-  ButtonsView::ButtonsView(std::shared_ptr<IProjectLauncherData> data,
-                           std::shared_ptr<ISavedProjects>       savedProjects,
-                           std::shared_ptr<ILauncherAssets>      launcherAssets)
+  ButtonsView::ButtonsView(std::shared_ptr<ILauncherData>   data,
+                           std::shared_ptr<ISavedProjects>  savedProjects,
+                           std::shared_ptr<ILauncherAssets> launcherAssets)
     : m_Data(data)
     , m_SavedProjects(savedProjects)
     , m_LauncherAssets(launcherAssets)

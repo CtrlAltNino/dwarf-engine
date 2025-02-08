@@ -20,7 +20,7 @@ namespace Dwarf
   ProjectLauncherView::ProjectLauncherView(
     std::shared_ptr<IDwarfLogger>            logger,
     std::shared_ptr<IWindow>                 window,
-    std::shared_ptr<IProjectLauncherData>    data,
+    std::shared_ptr<ILauncherData>           data,
     std::shared_ptr<ISavedProjects>          savedProjects,
     std::shared_ptr<ISavedProjectsIO>        savedProjectsIO,
     std::shared_ptr<ISavedProjectsSorter>    savedProjectsSorter,

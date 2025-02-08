@@ -1,5 +1,4 @@
 #include "CreateNewProjectModal.h"
-#include "Launcher/IProjectLauncherData.h"
 #include <imgui.h>
 #include <nfd.h>
 
@@ -9,9 +8,9 @@ namespace Dwarf
 #define PROJECT_INFORMATION_HEIGHT (30)
 
   CreateNewProjectModal::CreateNewProjectModal(
-    std::shared_ptr<IProjectLauncherData> data,
-    std::shared_ptr<IProjectCreator>      projectCreator,
-    std::shared_ptr<ILauncherAssets>      launcherAssets)
+    std::shared_ptr<ILauncherData>   data,
+    std::shared_ptr<IProjectCreator> projectCreator,
+    std::shared_ptr<ILauncherAssets> launcherAssets)
     : m_Data(data)
     , m_ProjectCreator(projectCreator)
     , m_LauncherAssets(launcherAssets)

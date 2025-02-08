@@ -1,5 +1,4 @@
 #include "FooterView.h"
-#include "Launcher/IProjectLauncherData.h"
 #include "Utilities/BrowserLinkOpener.h"
 #include <imgui.h>
 
@@ -8,8 +7,8 @@ namespace Dwarf
 #define PROJECT_BUTTON_WINDOW_WIDTH (200)
 #define PROJECT_INFORMATION_HEIGHT (30)
 
-  FooterView::FooterView(std::shared_ptr<IProjectLauncherData> data,
-                         std::shared_ptr<ILauncherAssets>      launcherAssets)
+  FooterView::FooterView(std::shared_ptr<ILauncherData>   data,
+                         std::shared_ptr<ILauncherAssets> launcherAssets)
     : m_Data(data)
     , m_LauncherAssets(launcherAssets)
   {

@@ -1,5 +1,4 @@
 #include "ProjectListView.h"
-#include "Launcher/IProjectLauncherData.h"
 #include <imgui.h>
 #include "Utilities/TimeUtilities.h"
 
@@ -9,7 +8,7 @@ namespace Dwarf
 #define PROJECT_INFORMATION_HEIGHT (30)
 
   ProjectListView::ProjectListView(
-    std::shared_ptr<IProjectLauncherData> data,
+    std::shared_ptr<ILauncherData>        data,
     std::shared_ptr<ISavedProjects>       savedProjects,
     std::shared_ptr<ISavedProjectsSorter> savedProjectsSorter,
     std::shared_ptr<IFileHandler>         fileHandler,

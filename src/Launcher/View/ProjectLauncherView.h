@@ -1,11 +1,11 @@
 #pragma once
 #include "pch.h"
 
+#include "Launcher/LauncherData/ILauncherData.h"
 #include "ButtonsView/IButtonsView.h"
 #include "ChangeGraphicsApiModal/IChangeGraphicsApiModal.h"
 #include "CreateNewProjectModal/ICreateNewProjectModal.h"
 #include "FooterView/IFooterView.h"
-#include "Launcher/IProjectLauncherData.h"
 #include "Launcher/ProjectCreator/IProjectCreator.h"
 #include "Launcher/SavedProjects/ISavedProjects.h"
 #include "Launcher/SavedProjects/IO/ISavedProjectsIO.h"
@@ -34,7 +34,7 @@ namespace Dwarf
     /// @brief Window to render the project launcher in
     std::shared_ptr<IDwarfLogger>            m_Logger;
     std::shared_ptr<IWindow>                 m_Window;
-    std::shared_ptr<IProjectLauncherData>    m_Data;
+    std::shared_ptr<ILauncherData>           m_Data;
     std::shared_ptr<ISavedProjects>          m_SavedProjects;
     std::shared_ptr<ISavedProjectsIO>        m_SavedProjectsIO;
     std::shared_ptr<ISavedProjectsSorter>    m_SavedProjectsSorter;
@@ -52,7 +52,7 @@ namespace Dwarf
     ProjectLauncherView(
       std::shared_ptr<IDwarfLogger>            logger,
       std::shared_ptr<IWindow>                 window,
-      std::shared_ptr<IProjectLauncherData>    data,
+      std::shared_ptr<ILauncherData>           data,
       std::shared_ptr<ISavedProjects>          savedProjects,
       std::shared_ptr<ISavedProjectsIO>        savedProjectsIO,
       std::shared_ptr<ISavedProjectsSorter>    savedProjectsSorter,

@@ -1,5 +1,4 @@
 #include "ProjectNotFoundModal.h"
-#include "Launcher/IProjectLauncherData.h"
 #include "Launcher/LauncherAssets/ILauncherAssets.h"
 #include <imgui.h>
 
@@ -9,9 +8,9 @@ namespace Dwarf
 #define PROJECT_INFORMATION_HEIGHT (30)
 
   ProjectNotFoundModal::ProjectNotFoundModal(
-    std::shared_ptr<IProjectLauncherData> data,
-    std::shared_ptr<ISavedProjects>       savedProjects,
-    std::shared_ptr<ILauncherAssets>      launcherAssets)
+    std::shared_ptr<ILauncherData>   data,
+    std::shared_ptr<ISavedProjects>  savedProjects,
+    std::shared_ptr<ILauncherAssets> launcherAssets)
     : m_Data(data)
     , m_SavedProjects(savedProjects)
     , m_LauncherAssets(launcherAssets)

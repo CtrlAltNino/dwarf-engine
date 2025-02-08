@@ -1,13 +1,13 @@
 #pragma once
 
 #include "Launcher/IProjectLauncher.h"
-#include "SavedProjects/ISavedProjects.h"
+#include "Launcher/SavedProjects/ISavedProjects.h"
 namespace Dwarf
 {
-  class IProjectLauncherData
+  class ILauncherData
   {
   public:
-    virtual ~IProjectLauncherData() = default;
+    virtual ~ILauncherData() = default;
 
     virtual ProjectChooserState
     GetState() const = 0;

@@ -8,7 +8,7 @@ namespace Dwarf
 {
   ProjectLauncher::ProjectLauncher(std::shared_ptr<IDwarfLogger>         logger,
                                    std::unique_ptr<IProjectLauncherView> view,
-                                   std::shared_ptr<IProjectLauncherData> data,
+                                   std::shared_ptr<ILauncherData>        data,
                                    std::shared_ptr<ISavedProjects> projectList)
     : m_View(std::move(view))
     , m_Data(data)

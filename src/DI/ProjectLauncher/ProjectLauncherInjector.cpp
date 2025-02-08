@@ -15,7 +15,7 @@
 #include "Launcher/View/ProjectNotFoundModal/IProjectNotFoundModal.h"
 #include "Launcher/View/ProjectNotFoundModal/ProjectNotFoundModal.h"
 #include "Logging/DwarfLogger.h"
-#include "Launcher/ProjectLauncherData.h"
+#include "Launcher/LauncherData/LauncherData.h"
 #include "Core/Asset/Texture/IImageFileLoader.h"
 #include "Core/Asset/Texture/ImageFileLoader.h"
 #include "Project/ProjectSettingsIO.h"
@@ -74,7 +74,7 @@ namespace Dwarf
         boost::di::extension::shared),
       boost::di::bind<WindowProps>.to(WindowProps(
         "Dwarf Engine - Project Launcher", 1100, 600, GraphicsApi::OpenGL)),
-      boost::di::bind<IProjectLauncherData>.to<ProjectLauncherData>().in(
+      boost::di::bind<ILauncherData>.to<LauncherData>().in(
         boost::di::extension::shared),
 #ifdef _WIN32
       boost::di::bind<IWindow>.to<WindowsWindow>().in(
