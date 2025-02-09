@@ -85,7 +85,29 @@ namespace Dwarf
 
   AmdGpuInfo::~AmdGpuInfo()
   {
+    m_Logger->LogDebug(Log("Destroying AmdGpuInfo", "AmdGpuInfo"));
+
+    if (m_PerformanceMonitoringServices)
+    {
+      m_PerformanceMonitoringServices.Release();
+      m_PerformanceMonitoringServices = nullptr;
+    }
+
+    if (m_Gpu)
+    {
+      m_Gpu.Release();
+      m_Gpu = nullptr;
+    }
+
+    if (m_GpuMetrics)
+    {
+      m_Gpu->Release();
+      m_Gpu = nullptr;
+    }
+
     m_AdlxHelper.Terminate();
+
+    m_Logger->LogDebug(Log("Successfully destroyed AmdGpuInfo", "AmdGpuInfo"));
   }
 
   size_t

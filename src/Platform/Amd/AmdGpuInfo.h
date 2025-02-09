@@ -16,10 +16,10 @@ namespace Dwarf
   {
   private:
     std::shared_ptr<IDwarfLogger>         m_Logger;
-    ADLXHelper                            m_AdlxHelper;
     IADLXPerformanceMonitoringServicesPtr m_PerformanceMonitoringServices;
     IADLXGPUMetricsPtr                    m_GpuMetrics;
     IADLXGPUPtr                           m_Gpu;
+    ADLXHelper                            m_AdlxHelper;
     unsigned int*                         m_TotalVram = nullptr;
 
   public:
