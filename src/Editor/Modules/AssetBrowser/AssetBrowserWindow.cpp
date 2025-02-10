@@ -3,6 +3,7 @@
 // #include "Core/Scene/SceneUtilities.h"
 #include <cstring>
 #include <memory>
+#include <boost/algorithm/string.hpp>
 
 namespace Dwarf
 {
@@ -489,57 +490,59 @@ namespace Dwarf
         {
           if (directoryEntry.path().has_extension())
           {
-            if (directoryEntry.path().extension() == ".fbx")
+            std::string extension = boost::algorithm::to_lower_copy(
+              directoryEntry.path().extension().string());
+            if (extension == ".fbx")
             {
               texID = (ImTextureID)m_FBXIcon->GetTextureID();
             }
-            else if (directoryEntry.path().extension() == ".obj")
+            else if (extension == ".obj")
             {
               texID = (ImTextureID)m_OBJIcon->GetTextureID();
             }
-            else if (directoryEntry.path().extension() == ".jpg")
+            else if (extension == ".jpg")
             {
               texID = (ImTextureID)m_JPGIcon->GetTextureID();
             }
-            else if (directoryEntry.path().extension() == ".png")
+            else if (extension == ".png")
             {
               texID = (ImTextureID)m_PNGIcon->GetTextureID();
             }
-            else if (directoryEntry.path().extension() == ".vert")
+            else if (extension == ".vert")
             {
               texID = (ImTextureID)m_VertexShaderIcon->GetTextureID();
             }
-            else if (directoryEntry.path().extension() == ".tesc")
+            else if (extension == ".tesc")
             {
               texID =
                 (ImTextureID)m_TessellationControlShaderIcon->GetTextureID();
             }
-            else if (directoryEntry.path().extension() == ".tese")
+            else if (extension == ".tese")
             {
               texID =
                 (ImTextureID)m_TessellationEvaluationShaderIcon->GetTextureID();
             }
-            else if (directoryEntry.path().extension() == ".geom")
+            else if (extension == ".geom")
             {
               texID = (ImTextureID)m_GeometryShaderIcon->GetTextureID();
             }
-            else if (directoryEntry.path().extension() == ".frag")
+            else if (extension == ".frag")
             {
               texID = (ImTextureID)m_FragmentShaderIcon->GetTextureID();
             }
-            else if (directoryEntry.path().extension() == ".comp")
+            else if (extension == ".comp")
             {
               texID = (ImTextureID)m_ComputeShaderIcon->GetTextureID();
             }
-            else if (directoryEntry.path().extension() == ".hlsl")
+            else if (extension == ".hlsl")
             {
               texID = (ImTextureID)m_HLSLShaderIcon->GetTextureID();
             }
-            else if (directoryEntry.path().extension() == ".dscene")
+            else if (extension == ".dscene")
             {
               texID = (ImTextureID)m_SceneIcon->GetTextureID();
             }
-            else if (directoryEntry.path().extension() == ".dmat")
+            else if (extension == ".dmat")
             {
               texID = (ImTextureID)m_MaterialIcon->GetTextureID();
             }

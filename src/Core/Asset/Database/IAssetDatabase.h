@@ -5,6 +5,7 @@
 #include "Core/UUID.h"
 // #include "Core/Asset/Database/AssetReference.h"
 #include "Core/Asset/AssetReference/IAssetReference.h"
+#include <boost/algorithm/string/case_conv.hpp>
 #include <entt/entity/fwd.hpp>
 #include <filesystem>
 #include <typeindex>
@@ -116,7 +117,8 @@ namespace Dwarf
     static ASSET_TYPE
     GetAssetType(const std::string& extension)
     {
-      auto it = extensionToAssetType.find(extension);
+      auto it =
+        extensionToAssetType.find(boost::algorithm::to_lower_copy(extension));
       if (it != extensionToAssetType.end())
       {
         return it->second;
