@@ -28,7 +28,7 @@
     },
     "normalMap": {
       "type": "tex2d",
-      "value": ""
+      "value": "e6121c92-d6b0-43d4-abb6-bc97b766702d"
     },
     "shininess": {
       "type": "float",
@@ -44,7 +44,7 @@
     },
     "useNormalMap": {
       "type": "boolean",
-      "value": false
+      "value": true
     },
     "useSpecularMap": {
       "type": "boolean",

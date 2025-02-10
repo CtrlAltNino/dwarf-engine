@@ -28,7 +28,7 @@
     },
     "normalMap": {
       "type": "tex2d",
-      "value": ""
+      "value": "35f95e16-3844-4190-93ce-ea66b16bbdfd"
     },
     "shininess": {
       "type": "float",
@@ -40,7 +40,7 @@
     },
     "useNormalMap": {
       "type": "boolean",
-      "value": false
+      "value": true
     },
     "viewPosition": {
       "type": "vec3",

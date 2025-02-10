@@ -15,7 +15,7 @@
   "ShaderParameters": {
     "albedoMap": {
       "type": "tex2d",
-      "value": "e2eec565-75bc-4b5f-967b-006152a01765"
+      "value": "47677be9-77a6-4ec1-8248-c0aecc4c79bb"
     },
     "color": {
       "type": "vec4",
@@ -28,7 +28,7 @@
     },
     "normalMap": {
       "type": "tex2d",
-      "value": ""
+      "value": "ad9b937b-63f9-45c3-ae15-c6daaa9c1c99"
     },
     "shininess": {
       "type": "float",
@@ -44,7 +44,7 @@
     },
     "useNormalMap": {
       "type": "boolean",
-      "value": false
+      "value": true
     },
     "useSpecularMap": {
       "type": "boolean",
