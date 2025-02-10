@@ -3,6 +3,7 @@
 #include <assimp/scene.h>
 #include "Core/Asset/Metadata/IAssetMetadata.h"
 #include "Core/Rendering/Mesh/IMeshFactory.h"
+#include "Logging/IDwarfLogger.h"
 
 namespace Dwarf
 {
@@ -10,7 +11,8 @@ namespace Dwarf
   class ModelImporter : public IModelImporter
   {
   public:
-    ModelImporter(std::shared_ptr<IAssetMetadata> assetMetadata,
+    ModelImporter(std::shared_ptr<IDwarfLogger>   logger,
+                  std::shared_ptr<IAssetMetadata> assetMetadata,
                   std::shared_ptr<IMeshFactory>   meshFactory);
     // @brief Imports a model.
     /// @param path Path to the model.
@@ -19,6 +21,7 @@ namespace Dwarf
     Import(const std::filesystem::path& path) override;
 
   private:
+    std::shared_ptr<IDwarfLogger>   m_Logger;
     std::shared_ptr<IAssetMetadata> m_AssetMetadata;
     std::shared_ptr<IMeshFactory>   m_MeshFactory;
 

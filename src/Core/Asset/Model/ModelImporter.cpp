@@ -5,11 +5,14 @@
 
 namespace Dwarf
 {
-  ModelImporter::ModelImporter(std::shared_ptr<IAssetMetadata> assetMetadata,
+  ModelImporter::ModelImporter(std::shared_ptr<IDwarfLogger>   logger,
+                               std::shared_ptr<IAssetMetadata> assetMetadata,
                                std::shared_ptr<IMeshFactory>   meshFactory)
-    : m_AssetMetadata(assetMetadata)
+    : m_Logger(logger)
+    , m_AssetMetadata(assetMetadata)
     , m_MeshFactory(meshFactory)
   {
+    m_Logger->LogDebug(Log("Creating ModelImporter", "ModelImporter"));
   }
 
   // @brief Imports a model.
@@ -18,7 +21,12 @@ namespace Dwarf
   std::vector<std::unique_ptr<IMesh>>
   ModelImporter::Import(const std::filesystem::path& path)
   {
+    m_Logger->LogDebug(Log(
+      fmt::format("Importing model from {}", path.string()), "ModelImporter"));
     nlohmann::json metaData = m_AssetMetadata->GetMetadata(path);
+
+    m_Logger->LogDebug(
+      Log(fmt::format("Metadata:\n{}", metaData.dump(2)), "ModelImporter"));
 
     Assimp::Importer importer;
     const aiScene*   scene = importer.ReadFile(
@@ -27,7 +35,9 @@ namespace Dwarf
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE ||
         !scene->mRootNode)
     {
-      std::cout << "ERROR::ASSIMP::" << importer.GetErrorString() << std::endl;
+      m_Logger->LogError(
+        Log(fmt::format("Assimp Error: {}", importer.GetErrorString()),
+            "ModelImporter"));
       return std::vector<std::unique_ptr<IMesh>>();
     }
 
