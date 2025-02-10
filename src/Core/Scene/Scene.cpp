@@ -101,26 +101,36 @@ namespace Dwarf
 
     if (serializedEntity.contains("MeshRendererComponent"))
     {
-      std::unique_ptr<IAssetReference> modelAsset = m_AssetDatabase->Retrieve(
-        UUID(serializedEntity["MeshRendererComponent"]["Model"]
-               .get<std::string>()));
+      std::unique_ptr<IAssetReference> modelAsset = nullptr;
+
+      if (!serializedEntity["MeshRendererComponent"]["Model"]
+             .get<std::string>()
+             .empty())
+      {
+        modelAsset = m_AssetDatabase->Retrieve(
+          UUID(serializedEntity["MeshRendererComponent"]["Model"]
+                 .get<std::string>()));
+      }
 
       std::map<int, std::unique_ptr<IAssetReference>> materialAssets;
 
-      for (auto it =
-             serializedEntity["MeshRendererComponent"]["Materials"].begin();
-           it != serializedEntity["MeshRendererComponent"]["Materials"].end();
-           ++it)
+      if (serializedEntity["MeshRendererComponent"].contains("Materials"))
       {
-        int index = std::stoi(it.key());
-        if (it.value().get<std::string>() != "null")
+        for (auto it =
+               serializedEntity["MeshRendererComponent"]["Materials"].begin();
+             it != serializedEntity["MeshRendererComponent"]["Materials"].end();
+             ++it)
         {
-          materialAssets[index] =
-            m_AssetDatabase->Retrieve(UUID(it.value().get<std::string>()));
-        }
-        else
-        {
-          materialAssets[index] = nullptr;
+          int index = std::stoi(it.key());
+          if (!it.value().get<std::string>().empty())
+          {
+            materialAssets[index] =
+              m_AssetDatabase->Retrieve(UUID(it.value().get<std::string>()));
+          }
+          else
+          {
+            materialAssets[index] = nullptr;
+          }
         }
       }
 
