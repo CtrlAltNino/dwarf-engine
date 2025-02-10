@@ -37,10 +37,9 @@ namespace Dwarf
     (void)io;
 
     io.IniFilename = m_IniFilePath.c_str();
-    // m_Logger->LogDebug(
-    //   Log(fmt::format("imgui.ini path set to: {}",
-    //                  (m_IniFilePath.t / "imgui.ini").string().c_str()),
-    //      "OpenGLImGuiLayer"));
+    m_Logger->LogDebug(
+      Log(fmt::format("imgui.ini path set to: {}", m_IniFilePath),
+          "OpenGLImGuiLayer"));
     io.ConfigFlags |=
       ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
     // io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable
