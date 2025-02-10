@@ -2,9 +2,11 @@
 
 #include "Core/Base.h"
 #include <SDL2/SDL.h>
+#include <boost/serialization/strong_typedef.hpp>
 
 namespace Dwarf
 {
+  BOOST_STRONG_TYPEDEF(std::filesystem::path, ImGuiIniFilePath)
   class IImGuiLayer
   {
   protected:

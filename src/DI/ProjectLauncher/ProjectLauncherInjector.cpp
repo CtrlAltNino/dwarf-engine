@@ -66,6 +66,7 @@ namespace Dwarf
         boost::di::extension::shared),
       boost::di::bind<IProjectSettingsIO>.to<ProjectSettingsIO>().in(
         boost::di::extension::shared),
+      boost::di::bind<ImGuiIniFilePath>.to(ImGuiIniFilePath("./data")),
       boost::di::bind<IImGuiLayerFactory>.to<ImGuiLayerFactory>().in(
         boost::di::extension::shared),
       boost::di::bind<IVramTracker>.to<VramTracker>().in(

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "UI/IImGuiLayer.h"
+#include <boost/serialization/strong_typedef.hpp>
 
 namespace Dwarf
 {

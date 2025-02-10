@@ -14,9 +14,11 @@
 namespace Dwarf
 {
   ImGuiLayerFactory::ImGuiLayerFactory(std::shared_ptr<IDwarfLogger> logger,
-                                       GraphicsApi                   api)
+                                       GraphicsApi                   api,
+                                       ImGuiIniFilePath iniFilePath)
     : m_Logger(logger)
     , m_Api(api)
+    , m_IniFilePath(iniFilePath)
   {
     m_Logger->LogDebug(Log("ImGuiLayerFactory created.", "ImGuiLayerFactory"));
   }
@@ -34,6 +36,7 @@ namespace Dwarf
     switch (m_Api)
     {
       using enum GraphicsApi;
+      case None: throw std::runtime_error("Invalid API."); break;
 #if _WIN32
 
       case D3D12:
@@ -48,7 +51,7 @@ namespace Dwarf
         {
           m_Logger->LogDebug(
             Log("Creating OpenGLImGuiLayer...", "ImGuiLayerFactory"));
-          return std::make_unique<OpenGLImGuiLayer>(m_Logger);
+          return std::make_unique<OpenGLImGuiLayer>(m_Logger, m_IniFilePath);
           break;
         }
       case Vulkan:
@@ -67,7 +70,7 @@ namespace Dwarf
         {
           m_Logger->LogDebug(
             Log("Creating OpenGLImGuiLayer...", "ImGuiLayerFactory"));
-          return std::make_unique<OpenGLImGuiLayer>(m_Logger);
+          return std::make_unique<OpenGLImGuiLayer>(m_Logger, m_IniFilePath);
           break;
         }
       case Vulkan:

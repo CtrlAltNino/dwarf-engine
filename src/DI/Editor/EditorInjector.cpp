@@ -111,6 +111,7 @@ namespace Dwarf
           boost::di::bind<IGpuInfoFactory>.to<GpuInfoFactory>().in(boost::di::extension::shared),
           boost::di::bind<AssetDirectoryPath>.to(AssetDirectoryPath(selectedProject.Path / "Assets")),
           boost::di::bind<ProjectPath>.to(ProjectPath(selectedProject.Path)),
+          boost::di::bind<ImGuiIniFilePath>.to(ImGuiIniFilePath(selectedProject.Path)),
           boost::di::bind<IFileHandler>.to<FileHandler>().in(boost::di::extension::shared),
           boost::di::bind<IProjectSettingsIO>.to<ProjectSettingsIO>().in(boost::di::extension::shared),
           boost::di::bind<IProjectSettings>.to<ProjectSettings>().in(boost::di::extension::shared),

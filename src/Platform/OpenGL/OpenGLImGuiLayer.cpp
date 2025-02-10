@@ -9,8 +9,10 @@
 
 namespace Dwarf
 {
-  OpenGLImGuiLayer::OpenGLImGuiLayer(std::shared_ptr<IDwarfLogger> logger)
+  OpenGLImGuiLayer::OpenGLImGuiLayer(std::shared_ptr<IDwarfLogger> logger,
+                                     ImGuiIniFilePath              iniFilePath)
     : m_Logger(logger)
+    , m_IniFilePath((iniFilePath.t / "imgui.ini").string())
   {
     m_Logger->LogDebug(Log("Creating OpenGLImGuiLayer", "OpenGLImGuiLayer"));
   }
@@ -32,8 +34,13 @@ namespace Dwarf
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
-    io.IniFilename = "data/imgui.ini";
     (void)io;
+
+    io.IniFilename = m_IniFilePath.c_str();
+    // m_Logger->LogDebug(
+    //   Log(fmt::format("imgui.ini path set to: {}",
+    //                  (m_IniFilePath.t / "imgui.ini").string().c_str()),
+    //      "OpenGLImGuiLayer"));
     io.ConfigFlags |=
       ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
     // io.ConfigFlags |= ImGuiConfigFlags_NavEnableGamepad;      // Enable
