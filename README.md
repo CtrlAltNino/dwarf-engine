@@ -1,10 +1,12 @@
-![dwarf-engine-banner](https://github.com/CtrlAltNino/dwarf-engine/blob/48a726511e9f49cb88681a106bb3afe30eb4cc5c/Dwarf%20Engine%20Banner.png)
+![dwarf-engine-banner](https://github.com/CtrlAltNino/dwarf-engine/blob/main/doc/images/Dwarf%20Engine%20Banner.png)
 
 # Dwarf Engine
 
 ## Description
 
 Dwarf Engine, or just Dwarf, is a cross-platform engine written in C++ that is able to utilize different graphics API's to render 3D Objects and Scenes. It's main purpose is to be a simple, transparent and robust foundation to experiment with graphics features, rendering pipelines and shaders. Through its modular nature, you are able to create your own rendering pipelines or post processing effects in the form of plugins, alter the source code itself to implement your own graphics features, or just learn and experiment with shaders in different graphics API's.
+
+![dwarf-engine-banner](https://github.com/CtrlAltNino/dwarf-engine/blob/main/doc/images/Dwarf%20Engine%20Screenshot%203.png)
 
 ## Project Goals
 
