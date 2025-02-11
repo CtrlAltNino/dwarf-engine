@@ -1,4 +1,6 @@
-target_sources(${libname}
-    PRIVATE
-    ADLXHelper.cpp
-)
+IF(WIN32)
+    target_sources(${libname}
+        PRIVATE
+        ADLXHelper.cpp
+    )
+ENDIF()
