@@ -31,6 +31,8 @@ All the functionality that Dwarf harbors, is completely modular by nature. So yo
 
 To evaluate those experiments, Dwarf contains a performance logger, showing you exactly how well the performance of the current scene is. It breaks down which steps take place and how long they take (measured in ms). These logs can be viewed at runtime or recorded and exported to a .csv file for later assessment.
 
+![dwarf-engine-banner](https://github.com/CtrlAltNino/dwarf-engine/blob/main/doc/images/Dwarf%20Engine%20Screenshot.png)
+
 ---
 
 ### 3. To be extendable
@@ -52,6 +54,8 @@ In Dwarf, you will never be forced to use an abstract layer to access functional
 - Create your own data structure to manage scene objects, for example as an octree based on your own conditions
 - Implement your own texture loading and unloading algorithms
 - Write your own class for Materials
+
+![dwarf-engine-banner](https://github.com/CtrlAltNino/dwarf-engine/blob/main/doc/images/Dwarf%20Engine%20Screenshot%202.png)
 
 ---
 
