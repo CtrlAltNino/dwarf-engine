@@ -8,7 +8,8 @@ namespace Dwarf
   {
     Blank,
     Olaf,
-    Sponza
+    Sponza,
+    DamagedHelmet
   };
 
   /// @brief Interface for the project creator.

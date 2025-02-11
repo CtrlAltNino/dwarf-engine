@@ -1,0 +1,65 @@
+{
+  "graphicsApi": 3,
+  "projectName": "Damaged Helmet",
+  "view": {
+    "modules": [
+      {
+        "id": "fcea4ec9-cf1a-4b4b-9f8c-546d91af65b8",
+        "label": "SceneHierarchy",
+        "type": 1
+      },
+      {
+        "id": "b4deeb98-6ce6-49d3-a824-d18050ed3035",
+        "label": "Inspector",
+        "type": 5
+      },
+      {
+        "id": "cbd77573-4a2c-4d0a-9486-85da1e984df7",
+        "label": "Asset Browser",
+        "type": 4
+      },
+      {
+        "camera": {
+          "aspectRatio": 1.1448203325271606,
+          "farPlane": 1000.0,
+          "fov": 90.0,
+          "movementSpeed": 4.0,
+          "nearPlane": 0.10000000149011612,
+          "sensitivity": 0.15000000596046448,
+          "transform": {
+            "Position": {
+              "x": 1.7851423025131226,
+              "y": 2.2895967960357666,
+              "z": 0.9131479859352112
+            },
+            "Rotation": {
+              "x": 31.349885940551758,
+              "y": -55.05010986328125,
+              "z": 0.0
+            },
+            "Scale": {
+              "x": 1.0,
+              "y": 1.0,
+              "z": 1.0
+            }
+          }
+        },
+        "id": "a8bf8c61-5c64-46d2-bf1a-9c1664e1d290",
+        "label": "Scene Viewer",
+        "settings": {
+          "aspectRatioConstraint": {
+            "x": 16,
+            "y": 9
+          },
+          "constraintType": 0,
+          "renderGrid": true,
+          "resolutionConstraint": {
+            "x": 256,
+            "y": 256
+          }
+        },
+        "type": 3
+      }
+    ]
+  }
+}

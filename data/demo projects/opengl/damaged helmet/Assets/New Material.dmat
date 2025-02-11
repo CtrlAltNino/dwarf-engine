@@ -1,0 +1,45 @@
+{
+  "Properties": {
+    "IsDoubleSided": false,
+    "IsTransparent": false,
+    "IsUnlit": false,
+    "IsWireframe": false
+  },
+  "Shader": {
+    "FragmentShader": "f6fcd468-7800-4028-abc0-d66f5cb61008",
+    "GeometryShader": "",
+    "TessellationControlShader": "",
+    "TessellationEvaluationShader": "",
+    "VertexShader": "9ecaff3b-7f94-4f85-b73b-d4e48d081991"
+  },
+  "ShaderParameters": {
+    "albedoMap": {
+      "type": "tex2d",
+      "value": "4e0624bd-8950-4308-ada1-bb3542125c25"
+    },
+    "aoMap": {
+      "type": "tex2d",
+      "value": "5138a68b-755e-4332-9f87-7cf954d1d217"
+    },
+    "emissiveMap": {
+      "type": "tex2d",
+      "value": "8cdefdef-e862-424e-a0fd-63678450a7c5"
+    },
+    "metalRoughnessMap": {
+      "type": "tex2d",
+      "value": "5007f893-2e98-444d-9a9e-a5e9c3150f24"
+    },
+    "normalMap": {
+      "type": "tex2d",
+      "value": "64c9df44-3a5b-4547-b0de-b13474fc3f83"
+    },
+    "viewPosition": {
+      "type": "vec3",
+      "value": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      }
+    }
+  }
+}

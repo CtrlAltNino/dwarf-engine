@@ -99,7 +99,7 @@ namespace Dwarf
     switch (m_MeshType)
     {
       case MaterialPreviewMeshType::Sphere:
-        m_Mesh = m_MeshFactory->CreateUnitSphere(200, 200);
+        m_Mesh = m_MeshFactory->CreateUnitSphere(50, 50);
         break;
       case MaterialPreviewMeshType::Cube:
         m_Mesh = m_MeshFactory->CreateUnitCube();

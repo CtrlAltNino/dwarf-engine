@@ -191,7 +191,9 @@ namespace Dwarf
                              ImGui::GetContentRegionAvail().x - 150);
 
         // Setting up combo
-        std::vector<std::string> templates = { "Blank", "Olaf", "Sponza" };
+        std::vector<std::string> templates = {
+          "Blank", "Olaf", "Sponza", "Damaged Helmet"
+        };
 
         ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
         ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 4);

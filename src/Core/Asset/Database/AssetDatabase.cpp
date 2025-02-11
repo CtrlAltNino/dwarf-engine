@@ -609,6 +609,18 @@ namespace Dwarf
         Import(directoryEntry.path());
       }
     }
+
+    std::filesystem::path pbrShaderDir = shaderDir / "pbr" / graphicsApiDir;
+
+    for (auto& directoryEntry :
+         std::filesystem::directory_iterator(pbrShaderDir))
+    {
+      if (directoryEntry.is_regular_file() &&
+          directoryEntry.path().extension() != ".dmeta")
+      {
+        Import(directoryEntry.path());
+      }
+    }
   }
 
   void

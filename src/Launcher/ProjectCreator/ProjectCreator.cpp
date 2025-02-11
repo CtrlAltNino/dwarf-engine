@@ -1,4 +1,5 @@
 #include "ProjectCreator.h"
+#include "Launcher/ProjectCreator/IProjectCreator.h"
 #include "Launcher/SavedProjects/ISavedProjects.h"
 #include "Logging/IDwarfLogger.h"
 #include "Project/IProjectSettings.h"
@@ -72,6 +73,8 @@ namespace Dwarf
             case ProjectTemplate::Sponza:
               templateProjectDirectory = "sponza";
               break;
+            case Dwarf::ProjectTemplate::DamagedHelmet:
+              templateProjectDirectory = "damaged helmet";
             case ProjectTemplate::Blank: break;
           }
 
