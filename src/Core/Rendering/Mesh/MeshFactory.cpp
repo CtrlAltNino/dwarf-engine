@@ -88,8 +88,22 @@ namespace Dwarf
         float y = std::cos(phi);
         float z = std::sin(phi) * std::sin(theta);
 
+        // Compute the tangent (derivative of position with respect to theta)
+        float     tx = -std::sin(phi) * std::sin(theta);
+        float     ty = 0.0f;
+        float     tz = std::sin(phi) * std::cos(theta);
+        glm::vec3 tangent = glm::normalize(glm::vec3(tx, ty, tz));
+
+        // Compute the bitangent (derivative of position with respect to phi)
+        float     bx = std::cos(phi) * std::cos(theta);
+        float     by = -std::sin(phi);
+        float     bz = std::cos(phi) * std::sin(theta);
+        glm::vec3 bitangent = glm::normalize(glm::vec3(bx, by, bz));
+
         Vertex vert({ x, y, z },
-                    { x, y, z },
+                    glm::normalize(glm::vec3(x, y, z)),
+                    tangent,
+                    bitangent,
                     { static_cast<float>(j) / static_cast<float>(slices),
                       static_cast<float>(i) / static_cast<float>(stacks) });
 
