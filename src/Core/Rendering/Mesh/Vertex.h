@@ -8,19 +8,19 @@ namespace Dwarf
   struct Vertex
   {
     /// @brief Position of the vertex.
-    glm::vec3 Position;
+    glm::vec3 Position = glm::vec3(0, 0, 0);
 
     /// @brief Normal of the vertex.
-    glm::vec3 Normal;
+    glm::vec3 Normal = glm::vec3(0, 0, 0);
 
     /// @brief Tangent of the vertex.
-    glm::vec3 Tangent;
+    glm::vec3 Tangent = glm::vec3(0, 0, 0);
 
     /// @brief Bi-Tangent of the vertex.
-    glm::vec3 BiTangent;
+    glm::vec3 BiTangent = glm::vec3(0, 0, 0);
 
     /// @brief The UV of the vertex.
-    glm::vec2 UV;
+    glm::vec2 UV = glm::vec3(0, 0, 0);
 
     Vertex(glm::vec3 position,
            glm::vec3 normal,

@@ -21,10 +21,11 @@ void main(){
 	gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(vertex.x, vertex.y, vertex.z, 1.0);
 	texCoord = uvCoord;
 	normalLocal = normal;
-	normalWorld = mat3(transpose(inverse(modelMatrix))) * normal;
 	worldPos = vec3(modelMatrix * vec4(vertex, 1.0));
-	vec3 T = normalize(vec3(modelMatrix * vec4(tangent,   0.0)));
-	vec3 B = normalize(vec3(modelMatrix * vec4(biTangent, 0.0)));
-	vec3 N = normalize(vec3(modelMatrix * vec4(normal,    0.0)));
-	tbn = mat3(T, B, N);
+
+	normalWorld = normalize(mat3(transpose(inverse(modelMatrix))) * normal);
+	vec3 T = normalize(mat3(modelMatrix) * tangent);
+	vec3 B = normalize(mat3(modelMatrix) * biTangent);
+
+	tbn = mat3(T, B, normalWorld);
 }

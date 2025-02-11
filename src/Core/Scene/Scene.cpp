@@ -122,7 +122,8 @@ namespace Dwarf
              ++it)
         {
           int index = std::stoi(it.key());
-          if (!it.value().get<std::string>().empty())
+          if (!it.value().get<std::string>().empty() &&
+              (it.value().get<std::string>() != "null"))
           {
             materialAssets[index] =
               m_AssetDatabase->Retrieve(UUID(it.value().get<std::string>()));
