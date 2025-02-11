@@ -67,7 +67,7 @@ void main(){
 	vec3 specularColor = spec * lightColor * lightIntensity;
 
 	if(useSpecularMap){
-		//specularColor = specularColor * texture(specularMap, texCoord).rgb;
+		specularColor = specularColor * texture(specularMap, texCoord).rgb;
 	}
 
 	if(useAlbedoMap){
@@ -76,7 +76,6 @@ void main(){
 
 	vec3 ambientColor = ambientStrength * lightColor;
 
-	//FragColor = vec4((ambientColor + diffuseColor + specularColor) * objectColor.rgb, objectColor.a);
 	FragColor = vec4((diffuseColor + specularColor + ambientColor) * objectColor.rgb, objectColor.a);
 	//APPLY_FOG(FragColor)
 }

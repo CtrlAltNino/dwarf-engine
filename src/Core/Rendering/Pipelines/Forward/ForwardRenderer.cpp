@@ -91,8 +91,6 @@ namespace Dwarf
     m_RendererApi->SetClearColor(glm::vec4(0.065f, 0.07f, 0.085, 1.0f));
     m_RendererApi->Clear();
     m_RendererApi->SetViewport(0, 0, viewportSize.x, viewportSize.y);
-    glm::mat4 viewMatrix = camera.GetViewMatrix();
-    glm::mat4 projectionMatrix = camera.GetProjectionMatrix();
 
     // Rendering skybox first???
 

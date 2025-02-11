@@ -57,9 +57,9 @@ namespace Dwarf
     "Boolean", "Integer", "Float", "2D Texture", "Vector2", "Vector3", "Vector4"
   };
 
-  inline const std::array<std::string, 7> reservedParameterNames = {
+  inline const std::array<std::string, 8> reservedParameterNames = {
     "_Time",    "modelMatrix", "viewMatrix", "projectionMatrix",
-    "fogStart", "fogEnd",      "fogColor"
+    "fogStart", "fogEnd",      "fogColor",   "viewPosition"
   };
 
 #ifdef _WIN32

@@ -39,7 +39,7 @@ namespace Dwarf
     std::string                     m_ParameterName;
     std::shared_ptr<IAssetDatabase> m_AssetDatabase;
     std::shared_ptr<IDwarfLogger>   m_Logger;
-    int&                            m_TextureCount;
+    unsigned int&                   m_TextureCount;
 
     void
     operator()(bool& parameter)
@@ -76,8 +76,16 @@ namespace Dwarf
     void
     operator()(Texture2DAssetValue& parameter)
     {
+      // m_Logger->LogDebug(
+      //   Log(fmt::format("Trying to bind texture to {}", m_ParameterName),
+      //       "OpenGLRendererApi"));
       if (parameter.has_value() && m_AssetDatabase->Exists(parameter.value()))
       {
+        // m_Logger->LogDebug(Log("Texture found", "OpenGLRendererApi"));
+        // m_Logger->LogDebug(Log(fmt::format("Texture count: {}",
+        // m_TextureCount),
+        //                        "OpenGLRendererApi"));
+
         // TODO: This needs to count the number of textures and bind them
         glActiveTexture(GL_TEXTURE0 + m_TextureCount);
         OpenGLUtilities::CheckOpenGLError(
@@ -85,13 +93,30 @@ namespace Dwarf
         TextureAsset& textureAsset =
           (TextureAsset&)m_AssetDatabase->Retrieve(*parameter)->GetAsset();
         glBindTexture(GL_TEXTURE_2D, textureAsset.GetTexture().GetTextureID());
+        // m_Logger->LogDebug(
+        //   Log(fmt::format("Texture id: {}",
+        //                   textureAsset.GetTexture().GetTextureID()),
+        //       "OpenGLRendererApi"));
         OpenGLUtilities::CheckOpenGLError(
           "glBindTexture", "OpenGLRendererApi", m_Logger);
-        glUniform1i(glGetUniformLocation(m_ShaderID, m_ParameterName.c_str()),
-                    m_TextureCount);
+        GLint location =
+          glGetUniformLocation(m_ShaderID, m_ParameterName.c_str());
         OpenGLUtilities::CheckOpenGLError(
-          "glUniform1i", "OpenGLRendererApi", m_Logger);
-        m_TextureCount++;
+          "glGetUniformLocation", "OpenGLRendererApi", m_Logger);
+        if (location == -1)
+        {
+          m_Logger->LogError(
+            Log(fmt::format("Uniform location <{}> not found in shader program",
+                            m_ParameterName),
+                "OpenGLRendererApi"));
+        }
+        else
+        {
+          glUniform1i(location, static_cast<GLint>(m_TextureCount));
+          OpenGLUtilities::CheckOpenGLError(
+            "glUniform1i", "OpenGLRendererApi", m_Logger);
+          m_TextureCount++;
+        }
       }
     }
     void
@@ -205,7 +230,7 @@ namespace Dwarf
     OpenGLShader& shader = baseShader.IsCompiled()
                              ? dynamic_cast<OpenGLShader&>(baseShader)
                              : dynamic_cast<OpenGLShader&>(*m_ErrorShader);
-    char          textureInputCounter = 0;
+    int           textureInputCounter = 0;
 
     glUseProgram(shader.GetID());
     OpenGLUtilities::CheckOpenGLError(
@@ -233,7 +258,7 @@ namespace Dwarf
     glDepthFunc(GL_LESS);
 
     // TODO: Move this to OpenGLShader.cpp
-    int textureCount = 0;
+    unsigned int textureCount = 0;
     for (auto const& identifier :
          material.GetShaderParameters()->GetParameterIdentifiers())
     {
@@ -380,7 +405,6 @@ namespace Dwarf
       glGetIntegerv(GL_GPU_MEMORY_INFO_CURRENT_AVAILABLE_VIDMEM_NVX,
                     &availableMemoryKb);
 
-      GLint usedMemoryKb = totalMemoryKb - availableMemoryKb;
       result.totalMemoryMb = totalMemoryKb / 1024;
       result.usedMemoryMb = (totalMemoryKb - availableMemoryKb) / 1024;
     }
