@@ -2,7 +2,10 @@
 #include "Core/Base.h"
 #include "Logging/IDwarfLogger.h"
 #include "Platform/OpenGL/OpenGLUtilities.h"
+
+#if _WIN32
 #include "Platform/Amd/AmdGpuInfo.h"
+#endif
 
 namespace Dwarf
 {
@@ -19,6 +22,7 @@ namespace Dwarf
     switch (m_GraphicsApi)
     {
       using enum GraphicsApi;
+#if _WIN32
       case None: break;
       case D3D12: break;
       case Metal: break;
@@ -33,6 +37,24 @@ namespace Dwarf
           break;
         }
       case Vulkan: break;
+#elif __linux__
+      case GraphicsApi::D3D12:
+        std::runtime_error("Vulkan API has not been implemented yet.");
+        break;
+      case GraphicsApi::Metal:
+        std::runtime_error("Vulkan API has not been implemented yet.");
+        break;
+      case GraphicsApi::OpenGL: break;
+      case GraphicsApi::Vulkan:
+        std::runtime_error("Vulkan API has not been implemented yet.");
+        break;
+#elif __APPLE__
+      case None: break;
+      case D3D12: break;
+      case Metal: break;
+      case OpenGL: break;
+      case Vulkan: break;
+#endif
     }
 
     return nullptr;
