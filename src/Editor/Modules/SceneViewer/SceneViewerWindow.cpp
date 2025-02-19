@@ -32,6 +32,7 @@ namespace Dwarf
     , m_RendererApiFactory(rendererApiFactory)
   {
     m_RendererApi = m_RendererApiFactory->Create();
+    m_Settings.MaxSamples = m_RendererApi->GetMaxSamples();
 
     // Create rendering pipeline
     m_RenderingPipeline =
@@ -89,6 +90,7 @@ namespace Dwarf
     , m_RendererApiFactory(rendererApiFactory)
   {
     m_RendererApi = m_RendererApiFactory->Create();
+    m_Settings.MaxSamples = m_RendererApi->GetMaxSamples();
 
     // Create rendering pipeline
     m_RenderingPipeline =
@@ -300,6 +302,15 @@ namespace Dwarf
     ImGui::SameLine(0, 5);
 
     ImGui::Checkbox("Render Grid", &m_Settings.RenderGrid);
+
+    ImGui::SameLine(0, 5);
+
+    ImGui::SliderInt("MSAA Samples",
+                     &m_Settings.Samples,
+                     1,
+                     m_Settings.MaxSamples,
+                     "%d",
+                     ImGuiSliderFlags_None);
 
     ImGui::PopStyleVar();
     ImGui::PopItemWidth();
@@ -538,6 +549,11 @@ namespace Dwarf
       m_PresentationBuffer->Resize(desiredResolution.x, desiredResolution.y);
       m_Camera->GetProperties().AspectRatio =
         (float)desiredResolution.x / (float)desiredResolution.y;
+    }
+
+    if (m_Framebuffer->GetSpecification().Samples != m_Settings.Samples)
+    {
+      m_Framebuffer->SetSamples(m_Settings.Samples);
     }
   }
 

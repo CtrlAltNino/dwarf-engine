@@ -345,6 +345,21 @@ namespace Dwarf
     Invalidate();
   }
 
+  void
+  OpenGLFramebuffer::SetSamples(uint32_t samples)
+  {
+    GLint maxSamples = 0;
+    glGetIntegerv(GL_MAX_SAMPLES, &maxSamples);
+
+    if ((samples <= 0) || (samples > maxSamples))
+    {
+      return;
+    }
+
+    m_Specification.Samples = samples;
+    Invalidate();
+  }
+
   // @brief: Reads a pixel from the framebuffer
   unsigned int
   OpenGLFramebuffer::ReadPixel(uint32_t attachmentIndex, int x, int y)

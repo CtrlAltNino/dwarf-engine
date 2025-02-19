@@ -51,6 +51,10 @@ namespace Dwarf
     /// @brief Stored resolution constraint.
     std::array<int, 2> Resolution = { 1024, 1024 };
 
+    int32_t MaxSamples = 1;
+
+    int32_t Samples = 1;
+
     /// @brief Aspect ratio to use for the target.
     float targetAspectRatio;
 

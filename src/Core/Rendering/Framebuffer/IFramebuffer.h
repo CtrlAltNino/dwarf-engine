@@ -63,6 +63,9 @@ namespace Dwarf
 
     virtual void
     Resize(uint32_t width, uint32_t height) = 0;
+
+    virtual void
+    SetSamples(uint32_t samples) = 0;
     virtual unsigned int
     ReadPixel(uint32_t attachmentIndex, int x, int y) = 0;
 

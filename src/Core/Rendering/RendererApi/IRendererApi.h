@@ -46,5 +46,8 @@ namespace Dwarf
 
     virtual VRAMUsageBuffer
     QueryVRAMUsage() = 0;
+
+    virtual int32_t
+    GetMaxSamples() = 0;
   };
 }

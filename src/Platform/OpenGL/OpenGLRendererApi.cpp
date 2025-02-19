@@ -415,4 +415,13 @@ namespace Dwarf
 
     return result;
   }
+
+  int32_t
+  OpenGLRendererApi::GetMaxSamples()
+  {
+    GLint maxSamples = 0;
+    glGetIntegerv(GL_MAX_SAMPLES, &maxSamples);
+
+    return maxSamples;
+  }
 }

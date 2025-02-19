@@ -63,5 +63,8 @@ namespace Dwarf
 
     VRAMUsageBuffer
     QueryVRAMUsage() override;
+
+    int32_t
+    GetMaxSamples() override;
   };
 }

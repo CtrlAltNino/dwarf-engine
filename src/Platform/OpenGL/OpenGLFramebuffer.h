@@ -49,6 +49,9 @@ namespace Dwarf
     void
     Resize(uint32_t width, uint32_t height) override;
 
+    void
+    SetSamples(uint32_t samples) override;
+
     unsigned int
     ReadPixel(uint32_t attachmentIndex, int x, int y) override;
 
