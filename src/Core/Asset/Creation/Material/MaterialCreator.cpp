@@ -34,6 +34,8 @@ namespace Dwarf
 
       assetPath =
         path / ("New Material (" + std::to_string(counter) + ").dmat");
+
+      counter++;
     }
 
     m_MaterialIO->SaveMaterial(*newMaterial, assetPath);
