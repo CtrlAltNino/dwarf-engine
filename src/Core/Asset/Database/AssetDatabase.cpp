@@ -411,7 +411,8 @@ namespace Dwarf
   {
     std::filesystem::path path =
       std::filesystem::path(dir) / std::filesystem::path(filename);
-    if (!m_AssetMetadata->IsMetadataPath(path))
+    if (!m_AssetMetadata->IsMetadataPath(path) &&
+        std::filesystem::is_regular_file(path))
     {
       m_AssetReimporter->QueueReimport(path);
       // Import(path);
@@ -433,7 +434,8 @@ namespace Dwarf
   {
     std::filesystem::path path =
       std::filesystem::path(dir) / std::filesystem::path(filename);
-    if (!m_AssetMetadata->IsMetadataPath(path))
+    if (!m_AssetMetadata->IsMetadataPath(path) &&
+        std::filesystem::is_regular_file(path))
     {
       m_AssetReimporter->QueueReimport(path);
       switch (IAssetDatabase::GetAssetType(path.extension().string()))
