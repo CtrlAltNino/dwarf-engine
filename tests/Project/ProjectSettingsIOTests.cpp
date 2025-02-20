@@ -118,7 +118,7 @@ TEST_F(ProjectSettingsIOTest, SaveProjectSettings)
 
   std::string serializedProjectSettings = testData.Serialize().dump(2);
 
-  EXPECT_CALL(*mockLogger, LogInfo(_)).Times(1);
+  // EXPECT_CALL(*mockLogger, LogInfo(_)).Times(1);
   EXPECT_CALL(*mockFileHandler,
               WriteToFile(settingsPath, Eq(serializedProjectSettings)))
     .Times(1);

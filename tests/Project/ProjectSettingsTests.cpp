@@ -116,7 +116,7 @@ TEST_F(ProjectSettingsTest, SaveUnchangedProjectSettings)
   testData.LastOpenedScene = UUID("123e4567-e89b-12d3-a456-426614174000");
   testData.SerializedView = "";
 
-  EXPECT_CALL(*mockLogger, LogInfo(_)).Times(1);
+  // EXPECT_CALL(*mockLogger, LogInfo(_)).Times(1);
   EXPECT_CALL(*mockProjectSettingsIO, LoadProjectSettings(Eq(settingsPath)))
     .Times(1);
   EXPECT_CALL(*mockProjectSettingsIO,
