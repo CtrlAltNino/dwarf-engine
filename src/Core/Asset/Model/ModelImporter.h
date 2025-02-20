@@ -28,11 +28,13 @@ namespace Dwarf
     void
     ProcessNode(const aiNode*                        node,
                 const aiScene*                       scene,
-                std::vector<std::unique_ptr<IMesh>>& meshes);
+                std::vector<std::unique_ptr<IMesh>>& meshes,
+                glm::mat4                            parentTransform);
 
     void
     ProcessMesh(const aiMesh*                        mesh,
                 const aiScene*                       scene,
-                std::vector<std::unique_ptr<IMesh>>& meshes);
+                std::vector<std::unique_ptr<IMesh>>& meshes,
+                glm::mat4                            transform);
   };
 }
