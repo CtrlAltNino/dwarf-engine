@@ -94,7 +94,6 @@ namespace Dwarf
     ProjectSettingsData   projectSettingsData,
     std::filesystem::path projectPath)
   {
-    m_Logger->LogInfo(Log("Saving project settings...", "ProjectSettings"));
     nlohmann::json projectSettings = projectSettingsData.Serialize();
 
     m_FileHandler->WriteToFile(projectPath / "projectSettings.dproj",
