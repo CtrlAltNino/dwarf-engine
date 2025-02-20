@@ -67,7 +67,6 @@ namespace Dwarf
   void
   ProjectSettings::UpdateSerializedView(const nlohmann::json& serializedView)
   {
-    m_Logger->LogInfo(Log(serializedView.dump(2), "ProjectSettings"));
     m_Data.SerializedView = serializedView;
   }
 
