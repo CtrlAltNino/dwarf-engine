@@ -1,4 +1,5 @@
 #include "DI/ProjectLauncher/ProjectLauncherInjector.h"
+#include "Core/Asset/Texture/TextureWorker/TextureLoadingWorker.h"
 #include "Editor/Stats/EditorStats.h"
 #include "Launcher/LauncherAssets/ILauncherAssets.h"
 #include "Launcher/LauncherAssets/LauncherAssets.h"
@@ -107,6 +108,8 @@ namespace Dwarf
       boost::di::bind<ITextureFactory>.to<TextureFactory>().in(
         boost::di::extension::shared),
       boost::di::bind<IImageFileLoader>.to<ImageFileLoader>().in(
+        boost::di::extension::shared),
+      boost::di::bind<ITextureLoadingWorker>.to<TextureLoadingWorker>().in(
         boost::di::extension::shared),
       boost::di::bind<ISavedProjects>.to<SavedProjects>().in(
         boost::di::extension::shared),

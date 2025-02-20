@@ -90,6 +90,7 @@
 #include "Core/Scene/Settings/SceneSettingsFactory.h"
 #include "Core/Rendering/VramTracker/IVramTracker.h"
 #include "Core/Rendering/VramTracker/VramTracker.h"
+#include "Core/Asset/Texture/TextureWorker/TextureLoadingWorker.h"
 #include <boost/di.hpp>
 #include <boost/di/extension/scopes/shared.hpp>
 
@@ -164,6 +165,8 @@ namespace Dwarf
           boost::di::bind<IAssetDirectoryListener>.to<AssetDirectoryListener>().in(boost::di::extension::shared),
           boost::di::bind<IAssetReferenceFactory>.to<AssetReferenceFactory>().in(boost::di::extension::shared),
           boost::di::bind<IAssetDatabase>.to<AssetDatabase>().in(
+          boost::di::extension::shared),
+          boost::di::bind<ITextureLoadingWorker>.to<TextureLoadingWorker>().in(
           boost::di::extension::shared),
           boost::di::bind<IAssetReimporter>.to<AssetReimporter>().in(
           boost::di::extension::shared),

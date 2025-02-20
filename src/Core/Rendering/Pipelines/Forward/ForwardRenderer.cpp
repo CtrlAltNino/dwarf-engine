@@ -131,7 +131,7 @@ namespace Dwarf
     };
     fbSpec.Width = 512;
     fbSpec.Height = 512;
-    fbSpec.Samples = 4;
+    fbSpec.Samples = 1;
 
     return fbSpec;
   }

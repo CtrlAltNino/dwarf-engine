@@ -243,17 +243,31 @@ namespace Dwarf
   private:
     /// @brief Imported texture.
     std::unique_ptr<ITexture> m_Texture;
+    std::shared_ptr<ITexture> m_Placeholder;
 
   public:
-    explicit TextureAsset(std::unique_ptr<ITexture>&& texture)
+    explicit TextureAsset(std::unique_ptr<ITexture>&& texture,
+                          std::shared_ptr<ITexture>   placeholder)
       : m_Texture(std::move(texture))
+      , m_Placeholder(placeholder)
     {
     }
 
     const ITexture&
     GetTexture() const
     {
+      if (!m_Texture)
+      {
+        return *m_Placeholder;
+      }
+
       return *m_Texture;
+    }
+
+    void
+    SetTexture(std::unique_ptr<ITexture>&& texture)
+    {
+      m_Texture = std::move(texture);
     }
   };
 

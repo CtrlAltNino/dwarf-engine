@@ -104,6 +104,7 @@ public:
                const TextureResolution& size,
                int                      samples),
               (override));
+  MOCK_METHOD(std::shared_ptr<ITexture>, GetPlaceholderTexture, (), (override));
 };
 
 class MockMaterialIO : public IMaterialIO
@@ -119,16 +120,32 @@ public:
               (const, override));
 };
 
+class MockTextureLoadingWorker : public ITextureLoadingWorker
+{
+public:
+  MOCK_METHOD(void,
+              RequestTextureLoad,
+              (TextureLoadRequest request),
+              (override));
+  MOCK_METHOD(void,
+              RequestTextureUpload,
+              (TextureUploadRequest request),
+              (override));
+  MOCK_METHOD(void, ProcessTextureLoadRequests, (), (override));
+  MOCK_METHOD(void, ProcessTextureJobs, (), (override));
+};
+
 class AssetReferenceFactoryTest : public ::testing::Test
 {
 protected:
-  std::shared_ptr<MockLogger>         logger;
-  std::shared_ptr<MockModelImporter>  modelImporter;
-  std::shared_ptr<MockTextureFactory> textureFactory;
-  std::shared_ptr<MockMaterialIO>     materialIO;
-  std::shared_ptr<MockFileHandler>    fileHandler;
-  entt::registry                      registry;
-  entt::entity                        assetHandle;
+  std::shared_ptr<MockLogger>               logger;
+  std::shared_ptr<MockModelImporter>        modelImporter;
+  std::shared_ptr<MockTextureFactory>       textureFactory;
+  std::shared_ptr<MockMaterialIO>           materialIO;
+  std::shared_ptr<MockFileHandler>          fileHandler;
+  std::shared_ptr<MockTextureLoadingWorker> textureLoadingWorker;
+  entt::registry                            registry;
+  entt::entity                              assetHandle;
 
   void
   SetUp() override
@@ -138,23 +155,32 @@ protected:
     textureFactory = std::make_shared<MockTextureFactory>();
     materialIO = std::make_shared<MockMaterialIO>();
     fileHandler = std::make_shared<MockFileHandler>();
+    textureLoadingWorker = std::make_shared<MockTextureLoadingWorker>();
     assetHandle = registry.create();
   }
 };
 
 TEST_F(AssetReferenceFactoryTest, Constructor)
 {
-  AssetReferenceFactory factory(
-    logger, modelImporter, textureFactory, materialIO, fileHandler);
+  AssetReferenceFactory factory(logger,
+                                modelImporter,
+                                textureFactory,
+                                materialIO,
+                                fileHandler,
+                                textureLoadingWorker);
   EXPECT_NE(&factory, nullptr);
 }
 
 TEST_F(AssetReferenceFactoryTest, Create)
 {
-  AssetReferenceFactory factory(
-    logger, modelImporter, textureFactory, materialIO, fileHandler);
-  ASSET_TYPE type = ASSET_TYPE::MODEL;
-  auto       assetRef = factory.Create(assetHandle, registry, type);
+  AssetReferenceFactory factory(logger,
+                                modelImporter,
+                                textureFactory,
+                                materialIO,
+                                fileHandler,
+                                textureLoadingWorker);
+  ASSET_TYPE            type = ASSET_TYPE::MODEL;
+  auto                  assetRef = factory.Create(assetHandle, registry, type);
 
   EXPECT_NE(assetRef, nullptr);
   EXPECT_EQ(assetRef->GetHandle(), assetHandle);
@@ -163,8 +189,12 @@ TEST_F(AssetReferenceFactoryTest, Create)
 
 TEST_F(AssetReferenceFactoryTest, CreateNew)
 {
-  AssetReferenceFactory factory(
-    logger, modelImporter, textureFactory, materialIO, fileHandler);
+  AssetReferenceFactory factory(logger,
+                                modelImporter,
+                                textureFactory,
+                                materialIO,
+                                fileHandler,
+                                textureLoadingWorker);
   UUID                  uid;
   std::filesystem::path path = "test_path";
   std::string           name = "test_name";
