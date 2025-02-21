@@ -8,18 +8,19 @@
 
 namespace Dwarf
 {
-  Editor::Editor(std::shared_ptr<IDwarfLogger>      logger,
-                 std::shared_ptr<IEditorStats>      stats,
-                 std::shared_ptr<IInputManager>     inputManager,
-                 std::shared_ptr<IProjectSettings>  projectSettings,
-                 std::shared_ptr<ILoadedScene>      loadedScene,
-                 std::shared_ptr<IWindow>           window,
-                 std::shared_ptr<ISceneIO>          sceneIO,
-                 std::shared_ptr<ISceneFactory>     sceneFactory,
-                 std::shared_ptr<IEditorView>       view,
-                 std::shared_ptr<IAssetDatabase>    assetDatabase,
-                 std::shared_ptr<IShaderRecompiler> shaderRecompiler,
-                 std::shared_ptr<IAssetReimporter>  assetReimporter)
+  Editor::Editor(std::shared_ptr<IDwarfLogger>          logger,
+                 std::shared_ptr<IEditorStats>          stats,
+                 std::shared_ptr<IInputManager>         inputManager,
+                 std::shared_ptr<IProjectSettings>      projectSettings,
+                 std::shared_ptr<ILoadedScene>          loadedScene,
+                 std::shared_ptr<IWindow>               window,
+                 std::shared_ptr<ISceneIO>              sceneIO,
+                 std::shared_ptr<ISceneFactory>         sceneFactory,
+                 std::shared_ptr<IEditorView>           view,
+                 std::shared_ptr<IAssetDatabase>        assetDatabase,
+                 std::shared_ptr<IShaderRecompiler>     shaderRecompiler,
+                 std::shared_ptr<IAssetReimporter>      assetReimporter,
+                 std::shared_ptr<ITextureLoadingWorker> textureLoadingWorker)
     : m_Logger(logger)
     , m_EditorStats(stats)
     , m_InputManager(inputManager)
@@ -32,7 +33,7 @@ namespace Dwarf
     , m_AssetDatabase(assetDatabase)
     , m_ShaderRecompiler(shaderRecompiler)
     , m_AssetReimporter(assetReimporter)
-
+    , m_TextureLoadingWorker(textureLoadingWorker)
   {
   }
 
@@ -82,6 +83,7 @@ namespace Dwarf
       m_InputManager->OnUpdate();
       m_AssetReimporter->ReimportQueuedAssets();
       m_ShaderRecompiler->Recompile();
+      m_TextureLoadingWorker->ProcessTextureJobs();
       m_View->OnUpdate();
       m_View->OnImGuiRender();
       m_Window->EndFrame();

@@ -16,7 +16,6 @@ namespace Dwarf
     std::shared_ptr<IDwarfLogger>     m_Logger;
     std::shared_ptr<IImageFileLoader> m_ImageFileLoader;
     std::shared_ptr<ITextureFactory>  m_TextureFactory;
-    std::shared_ptr<IAssetDatabase>   m_AssetDatabase;
 
     std::queue<TextureLoadRequest> m_TextureLoadRequestQueue;
     std::mutex                     m_LoadMutex;
@@ -25,13 +24,16 @@ namespace Dwarf
     std::mutex                       m_UploadMutex;
 
     std::condition_variable queueCondition;
-    bool                    stopWorker = false;
+    std::atomic<bool>       stopWorker = false;
+
+    std::thread m_TextureWorker;
 
   public:
     TextureLoadingWorker(std::shared_ptr<IDwarfLogger>     logger,
                          std::shared_ptr<IImageFileLoader> imageFileLoader,
-                         std::shared_ptr<ITextureFactory>  textureFactory,
-                         std::shared_ptr<IAssetDatabase>   assetDatabase);
+                         std::shared_ptr<ITextureFactory>  textureFactory);
+
+    ~TextureLoadingWorker() override;
 
     void
     RequestTextureLoad(TextureLoadRequest request) override;

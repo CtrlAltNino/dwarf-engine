@@ -54,11 +54,13 @@ namespace Dwarf
     switch (m_Type)
     {
       case ASSET_TYPE::TEXTURE:
-        TextureAsset& texAsset = m_Registry.emplace<TextureAsset>(
-          m_AssetHandle, nullptr, m_TextureFactory->GetPlaceholderTexture());
+        {
+          TextureAsset& texAsset = m_Registry.emplace<TextureAsset>(
+            m_AssetHandle, nullptr, m_TextureFactory->GetPlaceholderTexture());
 
-        m_TextureLoadingWorker->RequestTextureLoad({ texAsset, path });
-        break;
+          m_TextureLoadingWorker->RequestTextureLoad({ &texAsset, path });
+          break;
+        }
       case ASSET_TYPE::MODEL:
         {
           ModelAsset& modelAsset = m_Registry.emplace<ModelAsset>(

@@ -8,19 +8,20 @@ namespace Dwarf
 {
   struct TextureLoadRequest
   {
-    std::weak_ptr<TextureAsset> Asset;
-    std::filesystem::path       TexturePath;
+    TextureAsset*         Asset;
+    std::filesystem::path TexturePath;
   };
 
   struct TextureUploadRequest
   {
-    std::weak_ptr<TextureAsset>       Asset;
+    TextureAsset*                     Asset;
     std::shared_ptr<TextureContainer> TextureContainer;
   };
 
   class ITextureLoadingWorker
   {
   public:
+    virtual ~ITextureLoadingWorker() = default;
     virtual void
     RequestTextureLoad(TextureLoadRequest request) = 0;
 
