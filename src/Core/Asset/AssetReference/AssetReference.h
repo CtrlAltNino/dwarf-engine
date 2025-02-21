@@ -7,6 +7,7 @@
 #include "Core/Rendering/Material/IO/IMaterialIO.h"
 #include "Core/Rendering/Texture/ITextureFactory.h"
 #include "Utilities/FileHandler/IFileHandler.h"
+#include "Core/Asset/Texture/TextureWorker/ITextureLoadingWorker.h"
 
 namespace Dwarf
 {
@@ -17,31 +18,34 @@ namespace Dwarf
     entt::registry& m_Registry;
     ASSET_TYPE      m_Type;
 
-    std::shared_ptr<IModelImporter>  m_ModelImporter;
-    std::shared_ptr<ITextureFactory> m_TextureFactory;
-    std::shared_ptr<IMaterialIO>     m_MaterialIO;
-    std::shared_ptr<IFileHandler>    m_FileHandler;
+    std::shared_ptr<IModelImporter>        m_ModelImporter;
+    std::shared_ptr<ITextureFactory>       m_TextureFactory;
+    std::shared_ptr<IMaterialIO>           m_MaterialIO;
+    std::shared_ptr<IFileHandler>          m_FileHandler;
+    std::shared_ptr<ITextureLoadingWorker> m_TextureLoadingWorker;
 
   public:
     // Used for existing assets
-    AssetReference(entt::entity                     assetHandle,
-                   entt::registry&                  registry,
-                   ASSET_TYPE                       type,
-                   std::shared_ptr<IModelImporter>  modelImporter,
-                   std::shared_ptr<ITextureFactory> textureFactory,
-                   std::shared_ptr<IMaterialIO>     materialIO,
-                   std::shared_ptr<IFileHandler>    fileHandler);
+    AssetReference(entt::entity                           assetHandle,
+                   entt::registry&                        registry,
+                   ASSET_TYPE                             type,
+                   std::shared_ptr<IModelImporter>        modelImporter,
+                   std::shared_ptr<ITextureFactory>       textureFactory,
+                   std::shared_ptr<IMaterialIO>           materialIO,
+                   std::shared_ptr<IFileHandler>          fileHandler,
+                   std::shared_ptr<ITextureLoadingWorker> textureLoadingWorker);
 
     // Used for new assets
-    AssetReference(entt::entity                     assetHandle,
-                   entt::registry&                  registry,
-                   UUID                             uid,
-                   std::filesystem::path            path,
-                   std::string                      name,
-                   std::shared_ptr<IModelImporter>  modelImporter,
-                   std::shared_ptr<ITextureFactory> textureFactory,
-                   std::shared_ptr<IMaterialIO>     materialIO,
-                   std::shared_ptr<IFileHandler>    fileHandler);
+    AssetReference(entt::entity                           assetHandle,
+                   entt::registry&                        registry,
+                   UUID                                   uid,
+                   std::filesystem::path                  path,
+                   std::string                            name,
+                   std::shared_ptr<IModelImporter>        modelImporter,
+                   std::shared_ptr<ITextureFactory>       textureFactory,
+                   std::shared_ptr<IMaterialIO>           materialIO,
+                   std::shared_ptr<IFileHandler>          fileHandler,
+                   std::shared_ptr<ITextureLoadingWorker> textureLoadingWorker);
 
     ~AssetReference() override = default;
 

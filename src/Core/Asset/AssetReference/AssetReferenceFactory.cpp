@@ -5,16 +5,18 @@
 namespace Dwarf
 {
   AssetReferenceFactory::AssetReferenceFactory(
-    std::shared_ptr<IDwarfLogger>    logger,
-    std::shared_ptr<IModelImporter>  modelImporter,
-    std::shared_ptr<ITextureFactory> textureFactory,
-    std::shared_ptr<IMaterialIO>     materialIO,
-    std::shared_ptr<IFileHandler>    fileHandler)
+    std::shared_ptr<IDwarfLogger>          logger,
+    std::shared_ptr<IModelImporter>        modelImporter,
+    std::shared_ptr<ITextureFactory>       textureFactory,
+    std::shared_ptr<IMaterialIO>           materialIO,
+    std::shared_ptr<IFileHandler>          fileHandler,
+    std::shared_ptr<ITextureLoadingWorker> textureLoadingWorker)
     : m_Logger(logger)
     , m_ModelImporter(modelImporter)
     , m_TextureFactory(textureFactory)
     , m_MaterialIO(materialIO)
     , m_FileHandler(fileHandler)
+    , m_TextureLoadingWorker(textureLoadingWorker)
   {
     m_Logger->LogDebug(
       Log("AssetReferenceFactory created", "AssetReferenceFactory"));
@@ -31,7 +33,8 @@ namespace Dwarf
                                             m_ModelImporter,
                                             m_TextureFactory,
                                             m_MaterialIO,
-                                            m_FileHandler);
+                                            m_FileHandler,
+                                            m_TextureLoadingWorker);
   }
 
   std::unique_ptr<IAssetReference>
@@ -49,6 +52,7 @@ namespace Dwarf
                                             m_ModelImporter,
                                             m_TextureFactory,
                                             m_MaterialIO,
-                                            m_FileHandler);
+                                            m_FileHandler,
+                                            m_TextureLoadingWorker);
   }
 }

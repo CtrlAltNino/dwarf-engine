@@ -8,24 +8,29 @@
 #include "Core/Rendering/Texture/ITextureFactory.h"
 #include "Logging/IDwarfLogger.h"
 #include "Utilities/FileHandler/IFileHandler.h"
+#include "Core/Asset/Texture/TextureWorker/ITextureLoadingWorker.h"
+#include <memory>
 
 namespace Dwarf
 {
   class AssetReferenceFactory : public IAssetReferenceFactory
   {
   private:
-    std::shared_ptr<IDwarfLogger>    m_Logger;
-    std::shared_ptr<IModelImporter>  m_ModelImporter;
-    std::shared_ptr<ITextureFactory> m_TextureFactory;
-    std::shared_ptr<IMaterialIO>     m_MaterialIO;
-    std::shared_ptr<IFileHandler>    m_FileHandler;
+    std::shared_ptr<IDwarfLogger>          m_Logger;
+    std::shared_ptr<IModelImporter>        m_ModelImporter;
+    std::shared_ptr<ITextureFactory>       m_TextureFactory;
+    std::shared_ptr<IMaterialIO>           m_MaterialIO;
+    std::shared_ptr<IFileHandler>          m_FileHandler;
+    std::shared_ptr<ITextureLoadingWorker> m_TextureLoadingWorker;
 
   public:
-    AssetReferenceFactory(std::shared_ptr<IDwarfLogger>    logger,
-                          std::shared_ptr<IModelImporter>  modelImporter,
-                          std::shared_ptr<ITextureFactory> textureFactory,
-                          std::shared_ptr<IMaterialIO>     materialIO,
-                          std::shared_ptr<IFileHandler>    fileHandler);
+    AssetReferenceFactory(
+      std::shared_ptr<IDwarfLogger>          logger,
+      std::shared_ptr<IModelImporter>        modelImporter,
+      std::shared_ptr<ITextureFactory>       textureFactory,
+      std::shared_ptr<IMaterialIO>           materialIO,
+      std::shared_ptr<IFileHandler>          fileHandler,
+      std::shared_ptr<ITextureLoadingWorker> textureLoadingWorker);
     ~AssetReferenceFactory() override = default;
 
     std::unique_ptr<IAssetReference>

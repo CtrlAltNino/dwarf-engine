@@ -96,6 +96,9 @@ namespace Dwarf
     m_Logger->LogDebug(Log("Creating texture", "TextureFactory"));
     switch (m_Api)
     {
+      case GraphicsApi::None:
+        std::runtime_error("Error: No API selected.");
+        break;
 #if _WIN32
       case GraphicsApi::D3D12:
         std::runtime_error("D3D12 API has not been implemented yet.");
@@ -243,5 +246,17 @@ namespace Dwarf
     m_Logger->LogDebug(Log("Creating empty texture", "TextureFactory"));
     TextureParameters parameters;
     return Empty(type, format, dataType, size, parameters, samples);
+  }
+
+  std::shared_ptr<ITexture>
+  TextureFactory::GetPlaceholderTexture()
+  {
+    if (!m_PlaceholderTexture)
+    {
+      m_PlaceholderTexture =
+        FromPath("data/engine/img/textures/placeholder.png");
+    }
+
+    return m_PlaceholderTexture;
   }
 } // namespace Dwarf

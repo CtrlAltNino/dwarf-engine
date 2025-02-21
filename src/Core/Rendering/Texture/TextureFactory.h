@@ -17,6 +17,7 @@ namespace Dwarf
     std::shared_ptr<IImageFileLoader> m_ImageFileLoader;
     std::shared_ptr<IDwarfLogger>     m_Logger;
     std::shared_ptr<IVramTracker>     m_VramTracker;
+    std::shared_ptr<ITexture>         m_PlaceholderTexture;
 
     uint64_t
     GetPixelCount(const TextureResolution& size, const TextureType& type);
@@ -56,5 +57,8 @@ namespace Dwarf
           const TextureDataType&   dataType,
           const TextureResolution& size,
           int                      samples = 1) override;
+
+    std::shared_ptr<ITexture>
+    GetPlaceholderTexture() override;
   };
 } // namespace Dwarf

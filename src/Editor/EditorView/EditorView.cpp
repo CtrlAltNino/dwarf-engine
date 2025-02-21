@@ -61,9 +61,15 @@ namespace Dwarf
     m_ViewSaveThread = std::thread(
       [this]()
       {
-        while (m_RunViewSaveThread)
+        while (m_RunViewSaveThread.load())
         {
-          std::this_thread::sleep_for(std::chrono::seconds(5));
+          {
+            std::unique_lock<std::mutex> lock(m_ThreadMutex);
+            m_ThreadCondition.wait_for(lock,
+                                       std::chrono::seconds(5),
+                                       [this]
+                                       { return m_RunViewSaveThread.load(); });
+          }
           m_ProjectSettings->UpdateSerializedView(Serialize());
           m_ProjectSettings->Save();
         }
@@ -73,8 +79,14 @@ namespace Dwarf
   EditorView::~EditorView()
   {
     m_Logger->LogDebug(Log("Destroying EditorView", "EditorView"));
-    m_RunViewSaveThread = false;
+
+    {
+      std::lock_guard<std::mutex> lock(m_ThreadMutex);
+      m_RunViewSaveThread.store(false);
+    }
+    m_ThreadCondition.notify_one();
     m_ViewSaveThread.join();
+
     m_Logger->LogDebug(Log("EditorView destroyed", "EditorView"));
   }
 

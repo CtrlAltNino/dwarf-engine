@@ -31,5 +31,8 @@ namespace Dwarf
           const TextureDataType&   dataType,
           const TextureResolution& size,
           int                      samples = 1) = 0;
+
+    virtual std::shared_ptr<ITexture>
+    GetPlaceholderTexture() = 0;
   };
 } // namespace Dwarf

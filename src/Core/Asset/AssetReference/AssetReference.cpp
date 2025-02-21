@@ -7,13 +7,14 @@ namespace Dwarf
 {
   // Assuming already emplaced components
   AssetReference::AssetReference(
-    entt::entity                     assetHandle,
-    entt::registry&                  registry,
-    ASSET_TYPE                       type,
-    std::shared_ptr<IModelImporter>  modelImporter,
-    std::shared_ptr<ITextureFactory> textureFactory,
-    std::shared_ptr<IMaterialIO>     materialIO,
-    std::shared_ptr<IFileHandler>    fileHandler)
+    entt::entity                           assetHandle,
+    entt::registry&                        registry,
+    ASSET_TYPE                             type,
+    std::shared_ptr<IModelImporter>        modelImporter,
+    std::shared_ptr<ITextureFactory>       textureFactory,
+    std::shared_ptr<IMaterialIO>           materialIO,
+    std::shared_ptr<IFileHandler>          fileHandler,
+    std::shared_ptr<ITextureLoadingWorker> textureLoadingWorker)
     : m_AssetHandle(assetHandle)
     , m_Registry(registry)
     , m_Type(type)
@@ -21,20 +22,22 @@ namespace Dwarf
     , m_TextureFactory(textureFactory)
     , m_MaterialIO(materialIO)
     , m_FileHandler(fileHandler)
+    , m_TextureLoadingWorker(textureLoadingWorker)
   {
   }
 
   // Assuming no components have been emplaced
   AssetReference::AssetReference(
-    entt::entity                     assetHandle,
-    entt::registry&                  registry,
-    UUID                             uid,
-    std::filesystem::path            path,
-    std::string                      name,
-    std::shared_ptr<IModelImporter>  modelImporter,
-    std::shared_ptr<ITextureFactory> textureFactory,
-    std::shared_ptr<IMaterialIO>     materialIO,
-    std::shared_ptr<IFileHandler>    fileHandler)
+    entt::entity                           assetHandle,
+    entt::registry&                        registry,
+    UUID                                   uid,
+    std::filesystem::path                  path,
+    std::string                            name,
+    std::shared_ptr<IModelImporter>        modelImporter,
+    std::shared_ptr<ITextureFactory>       textureFactory,
+    std::shared_ptr<IMaterialIO>           materialIO,
+    std::shared_ptr<IFileHandler>          fileHandler,
+    std::shared_ptr<ITextureLoadingWorker> textureLoadingWorker)
     : m_AssetHandle(assetHandle)
     , m_Registry(registry)
     , m_Type(IAssetDatabase::GetAssetType(path.extension().string()))
@@ -42,6 +45,7 @@ namespace Dwarf
     , m_TextureFactory(textureFactory)
     , m_MaterialIO(materialIO)
     , m_FileHandler(fileHandler)
+    , m_TextureLoadingWorker(textureLoadingWorker)
   {
     m_Registry.emplace<IDComponent>(m_AssetHandle, uid);
     m_Registry.emplace<PathComponent>(m_AssetHandle, path);
@@ -50,9 +54,13 @@ namespace Dwarf
     switch (m_Type)
     {
       case ASSET_TYPE::TEXTURE:
-        m_Registry.emplace<TextureAsset>(m_AssetHandle,
-                                         m_TextureFactory->FromPath(path));
-        break;
+        {
+          TextureAsset& texAsset = m_Registry.emplace<TextureAsset>(
+            m_AssetHandle, nullptr, m_TextureFactory->GetPlaceholderTexture());
+
+          m_TextureLoadingWorker->RequestTextureLoad({ &texAsset, path });
+          break;
+        }
       case ASSET_TYPE::MODEL:
         {
           ModelAsset& modelAsset = m_Registry.emplace<ModelAsset>(
@@ -178,6 +186,7 @@ namespace Dwarf
                                             m_ModelImporter,
                                             m_TextureFactory,
                                             m_MaterialIO,
-                                            m_FileHandler);
+                                            m_FileHandler,
+                                            m_TextureLoadingWorker);
   }
 }
