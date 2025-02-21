@@ -13,6 +13,7 @@
 #include "Project/IProjectSettings.h"
 #include "Window/IWindow.h"
 #include "Editor/Modules/IGuiModuleFactory.h"
+#include <condition_variable>
 
 namespace Dwarf
 {
@@ -32,8 +33,10 @@ namespace Dwarf
     std::shared_ptr<ILoadedScene>      m_LoadedScene;
     std::shared_ptr<IEditorStats>      m_EditorStats;
     // Thread for saving the view
-    std::thread       m_ViewSaveThread;
-    std::atomic<bool> m_RunViewSaveThread = true;
+    std::thread             m_ViewSaveThread;
+    std::atomic<bool>       m_RunViewSaveThread = true;
+    std::condition_variable m_ThreadCondition;
+    std::mutex              m_ThreadMutex;
 
     /// @brief ID counter for GUI modules.
     int m_GuiModuleIDCount = 0;
