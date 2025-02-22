@@ -25,6 +25,8 @@ namespace Dwarf
     m_Logger->LogDebug(Log("OpenGLRendererApi created.", "OpenGLRendererApi"));
     m_ErrorShader = m_ShaderFactory->CreateErrorShader();
     m_ErrorShader->Compile();
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
   }
 
   OpenGLRendererApi::~OpenGLRendererApi()
@@ -232,30 +234,56 @@ namespace Dwarf
                              : dynamic_cast<OpenGLShader&>(*m_ErrorShader);
     int           textureInputCounter = 0;
 
-    glUseProgram(shader.GetID());
-    OpenGLUtilities::CheckOpenGLError(
-      "glUseProgram", "OpenGLRendererApi", m_Logger);
+    static GLuint currentShaderId = -1;
 
-    if (material.GetMaterialProperties().IsTransparent)
+    if (currentShaderId != shader.GetID())
     {
-      glEnable(GL_BLEND);
+      currentShaderId = shader.GetID();
+      glUseProgram(currentShaderId);
       OpenGLUtilities::CheckOpenGLError(
-        "glEnable GL_BLEND", "OpenGLRendererApi", m_Logger);
-      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-      OpenGLUtilities::CheckOpenGLError(
-        "glBlendFunc", "OpenGLRendererApi", m_Logger);
+        "glUseProgram", "OpenGLRendererApi", m_Logger);
     }
 
-    glEnable(GL_CULL_FACE);
-    OpenGLUtilities::CheckOpenGLError(
-      "glEnable GL_CULL_FACE", "OpenGLRendererApi", m_Logger);
-    material.GetMaterialProperties().IsDoubleSided ? glDisable(GL_CULL_FACE)
-                                                   : glCullFace(GL_BACK);
-    OpenGLUtilities::CheckOpenGLError(
-      "glCullFace", "OpenGLRendererApi", m_Logger);
+    static bool transparentFlag = false;
 
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LESS);
+    if (transparentFlag != material.GetMaterialProperties().IsTransparent)
+    {
+      transparentFlag = material.GetMaterialProperties().IsTransparent;
+      if (transparentFlag)
+      {
+        glEnable(GL_BLEND);
+        OpenGLUtilities::CheckOpenGLError(
+          "glEnable GL_BLEND", "OpenGLRendererApi", m_Logger);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        OpenGLUtilities::CheckOpenGLError(
+          "glBlendFunc", "OpenGLRendererApi", m_Logger);
+      }
+      else
+      {
+        glDisable(GL_BLEND);
+        OpenGLUtilities::CheckOpenGLError(
+          "glEnable GL_BLEND", "OpenGLRendererApi", m_Logger);
+      }
+    }
+
+    static bool cullFaceFlag = true;
+
+    if (cullFaceFlag != !material.GetMaterialProperties().IsDoubleSided)
+    {
+      cullFaceFlag = !material.GetMaterialProperties().IsDoubleSided;
+
+      if (cullFaceFlag)
+      {
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
+        OpenGLUtilities::CheckOpenGLError(
+          "glCullFace", "OpenGLRendererApi", m_Logger);
+      }
+      else
+      {
+        glDisable(GL_CULL_FACE);
+      }
+    }
 
     // TODO: Move this to OpenGLShader.cpp
     unsigned int textureCount = 0;
@@ -325,9 +353,9 @@ namespace Dwarf
     glDisable(GL_CULL_FACE);
     OpenGLUtilities::CheckOpenGLError(
       "glDisable GL_CULL_FACE", "OpenGLRendererApi", m_Logger);
-    glUseProgram(0);
-    OpenGLUtilities::CheckOpenGLError(
-      "glUseProgram 0", "OpenGLRendererApi", m_Logger);
+    // glUseProgram(0);
+    // OpenGLUtilities::CheckOpenGLError(
+    //  "glUseProgram 0", "OpenGLRendererApi", m_Logger);
   }
 
   void

@@ -76,7 +76,6 @@
 #include "Core/Rendering/Texture/TextureFactory.h"
 #include "Input/IInputManager.h"
 #include "Input/InputManager.h"
-#include "Launcher/IProjectLauncher.h"
 #include "Editor/Editor.h"
 #include "Editor/Stats/EditorStats.h"
 #include "Project/ProjectTypes.h"
@@ -93,6 +92,7 @@
 #include "Core/Asset/Texture/TextureWorker/TextureLoadingWorker.h"
 #include <boost/di.hpp>
 #include <boost/di/extension/scopes/shared.hpp>
+#include "Core/Rendering/Shader/ShaderRegistry/ShaderRegistry.h"
 
 #ifdef _WIN32
 #include "Platform/Windows/WindowsWindow.h"
@@ -160,6 +160,7 @@ namespace Dwarf
           boost::di::bind<IShaderParameterCollectionFactory>.to<ShaderParameterCollectionFactory>().in(boost::di::extension::shared),
           boost::di::bind<IShaderSourceCollectionFactory>.to<ShaderSourceCollectionFactory>().in(boost::di::extension::shared),
           boost::di::bind<IShaderFactory>.to<ShaderFactory>().in(boost::di::extension::shared),
+          boost::di::bind<IShaderRegistry>.to<ShaderRegistry>().in(boost::di::extension::shared),
           boost::di::bind<IMaterialFactory>.to<MaterialFactory>().in(boost::di::extension::shared),
           boost::di::bind<IMaterialIO>.to<MaterialIO>().in(boost::di::extension::shared),
           boost::di::bind<IAssetDirectoryListener>.to<AssetDirectoryListener>().in(boost::di::extension::shared),

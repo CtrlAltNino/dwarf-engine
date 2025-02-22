@@ -31,17 +31,14 @@ namespace Dwarf
                   std::shared_ptr<IVramTracker> vramTracker);
     ~ShaderFactory() override;
 
-    std::unique_ptr<IShader>
+    std::shared_ptr<IShader>
     CreateDefaultShader() override;
 
-    std::unique_ptr<IShader>
+    std::shared_ptr<IShader>
     CreateErrorShader() override;
 
-    std::unique_ptr<IShader>
+    std::shared_ptr<IShader>
     CreateShader(
       std::unique_ptr<IShaderSourceCollection> shaderSources) override;
-
-    std::unique_ptr<IShader>
-    CreateShader(const nlohmann::json& serializedShader) override;
   };
 } // namespace Dwarf

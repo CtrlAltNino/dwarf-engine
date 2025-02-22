@@ -38,10 +38,10 @@ namespace Dwarf
   // }
 
   Material::Material(
-    std::unique_ptr<IShader>&&                  shader,
+    std::shared_ptr<IShader>                    shader,
     MaterialProperties                          materialProperties,
     std::unique_ptr<IShaderParameterCollection> shaderParameters)
-    : m_Shader(std::move(shader))
+    : m_Shader(shader)
     , m_MaterialProperties(materialProperties)
     , m_ShaderParameters(std::move(shaderParameters))
   {
@@ -63,9 +63,9 @@ namespace Dwarf
   }
 
   void
-  Material::SetShader(std::unique_ptr<IShader>&& shader)
+  Material::SetShader(std::shared_ptr<IShader> shader)
   {
-    m_Shader = std::move(shader);
+    m_Shader = shader;
   }
 
   const std::unique_ptr<IShaderParameterCollection>&
