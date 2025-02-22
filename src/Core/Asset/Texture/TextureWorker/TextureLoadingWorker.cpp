@@ -43,6 +43,7 @@ namespace Dwarf
       m_TextureLoadRequestQueue.push({ request });
     }
     queueCondition.notify_one(); // Wake up the worker thread
+    m_CurrentlyProcessing.insert(request.TexturePath);
   }
 
   void
@@ -65,11 +66,10 @@ namespace Dwarf
 
       { // Lock the queue and wait for work
         std::unique_lock<std::mutex> lock(m_LoadMutex);
-        queueCondition.wait(lock,
-                            [this] {
-                              return !m_TextureLoadRequestQueue.empty() ||
-                                     stopWorker.load();
-                            });
+        queueCondition.wait(
+          lock,
+          [this]
+          { return !m_TextureLoadRequestQueue.empty() || stopWorker.load(); });
 
         if (stopWorker.load()) return;
 
@@ -87,6 +87,7 @@ namespace Dwarf
           Log(fmt::format("Error loading texture from path: {}",
                           request.TexturePath.string()),
               "TextureLoadingWorker"));
+        m_CurrentlyProcessing.erase(request.TexturePath);
         continue;
       }
 
@@ -95,7 +96,8 @@ namespace Dwarf
         m_Logger->LogDebug(
           Log("Texture loaded, creating upload job", "TextureLoadingWorker"));
         std::lock_guard<std::mutex> lock(m_UploadMutex);
-        m_TextureUploadRequestQueue.push({ request.Asset, textureData });
+        m_TextureUploadRequestQueue.push(
+          { request.Asset, textureData, request.TexturePath });
       }
     }
   }
@@ -115,6 +117,13 @@ namespace Dwarf
         m_TextureFactory->FromData(job.TextureContainer);
 
       job.Asset->SetTexture(std::move(texture));
+      m_CurrentlyProcessing.erase(job.TexturePath);
     }
+  }
+
+  bool
+  TextureLoadingWorker::IsRequested(std::filesystem::path path) const
+  {
+    return m_CurrentlyProcessing.contains(path);
   }
 }

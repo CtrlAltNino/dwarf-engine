@@ -55,10 +55,10 @@ namespace Dwarf
     {
       case ASSET_TYPE::TEXTURE:
         {
-          TextureAsset& texAsset = m_Registry.emplace<TextureAsset>(
+          m_Registry.emplace<TextureAsset>(
             m_AssetHandle, nullptr, m_TextureFactory->GetPlaceholderTexture());
 
-          m_TextureLoadingWorker->RequestTextureLoad({ &texAsset, path });
+          // m_TextureLoadingWorker->RequestTextureLoad({ &texAsset, path });
           break;
         }
       case ASSET_TYPE::MODEL:
@@ -146,7 +146,18 @@ namespace Dwarf
     switch (m_Type)
     {
       case ASSET_TYPE::TEXTURE:
-        return m_Registry.get<TextureAsset>(m_AssetHandle);
+        {
+          TextureAsset& asset = m_Registry.get<TextureAsset>(m_AssetHandle);
+          std::filesystem::path path =
+            m_Registry.get<PathComponent>(m_AssetHandle).GetPath();
+
+          if (!asset.IsLoaded() && !m_TextureLoadingWorker->IsRequested(path))
+          {
+            m_TextureLoadingWorker->RequestTextureLoad({ &asset, path });
+          }
+
+          return asset;
+        }
       case ASSET_TYPE::MODEL: return m_Registry.get<ModelAsset>(m_AssetHandle);
       case ASSET_TYPE::MATERIAL:
         return m_Registry.get<MaterialAsset>(m_AssetHandle);

@@ -359,6 +359,13 @@ namespace Dwarf
     OpenGLUtilities::CheckOpenGLError(
       "glTextureParameteri MAG FILTER", "OpenGLTexture", m_Logger);
 
+    if (GLAD_GL_EXT_texture_filter_anisotropic)
+    {
+      GLfloat maxAniso = 0.0f;
+      glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAniso);
+      glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, maxAniso);
+    }
+
     switch (data->Type)
     {
       case TextureType::TEXTURE_1D:

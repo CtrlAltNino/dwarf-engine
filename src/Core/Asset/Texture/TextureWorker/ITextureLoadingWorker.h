@@ -16,6 +16,7 @@ namespace Dwarf
   {
     TextureAsset*                     Asset;
     std::shared_ptr<TextureContainer> TextureContainer;
+    std::filesystem::path             TexturePath;
   };
 
   class ITextureLoadingWorker
@@ -33,5 +34,8 @@ namespace Dwarf
 
     virtual void
     ProcessTextureJobs() = 0;
+
+    virtual bool
+    IsRequested(std::filesystem::path path) const = 0;
   };
 }
