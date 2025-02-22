@@ -72,6 +72,7 @@ void main() {
     float ao = hasAoMap ? texture(aoMap, TexCoords).r : 1.0;
 
     vec3 tangentNormal = texture(normalMap, TexCoords).rgb * 2.0 - 1.0;
+    tangentNormal.y *= -1.0;
     tangentNormal.xy *= 0.3;
     vec3 N = hasNormalMap ? normalize(TBN * tangentNormal) : TBN[2]; // Use the TBN matrix to transform tangent-space normal to world-space
 
