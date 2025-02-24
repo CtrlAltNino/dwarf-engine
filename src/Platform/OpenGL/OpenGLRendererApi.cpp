@@ -37,7 +37,7 @@ namespace Dwarf
 
   struct SetShaderParameterVisitor
   {
-    GLuint                          m_ShaderID;
+    OpenGLShader&                   m_Shader;
     std::string                     m_ParameterName;
     std::shared_ptr<IAssetDatabase> m_AssetDatabase;
     std::shared_ptr<IDwarfLogger>   m_Logger;
@@ -46,110 +46,47 @@ namespace Dwarf
     void
     operator()(bool& parameter)
     {
-      glUniform1f(glGetUniformLocation(m_ShaderID, m_ParameterName.c_str()),
-                  parameter);
-      OpenGLUtilities::CheckOpenGLError(
-        "glUniform1f", "OpenGLRendererApi", m_Logger);
+      m_Shader.SetUniform(m_ParameterName, parameter);
     }
     void
     operator()(int& parameter)
     {
-      glUniform1i(glGetUniformLocation(m_ShaderID, m_ParameterName.c_str()),
-                  parameter);
-      OpenGLUtilities::CheckOpenGLError(
-        "glUniform1i", "OpenGLRendererApi", m_Logger);
+      m_Shader.SetUniform(m_ParameterName, parameter);
     }
     void
     operator()(unsigned int& parameter)
     {
-      glUniform1ui(glGetUniformLocation(m_ShaderID, m_ParameterName.c_str()),
-                   parameter);
-      OpenGLUtilities::CheckOpenGLError(
-        "glUniform1ui", "OpenGLRendererApi", m_Logger);
+      m_Shader.SetUniform(m_ParameterName, parameter);
     }
     void
     operator()(float& parameter)
     {
-      glUniform1f(glGetUniformLocation(m_ShaderID, m_ParameterName.c_str()),
-                  parameter);
-      OpenGLUtilities::CheckOpenGLError(
-        "glUniform1f", "OpenGLRendererApi", m_Logger);
+      m_Shader.SetUniform(m_ParameterName, parameter);
     }
     void
     operator()(Texture2DAssetValue& parameter)
     {
-      // m_Logger->LogDebug(
-      //   Log(fmt::format("Trying to bind texture to {}", m_ParameterName),
-      //       "OpenGLRendererApi"));
       if (parameter.has_value() && m_AssetDatabase->Exists(parameter.value()))
       {
-        // m_Logger->LogDebug(Log("Texture found", "OpenGLRendererApi"));
-        // m_Logger->LogDebug(Log(fmt::format("Texture count: {}",
-        // m_TextureCount),
-        //                        "OpenGLRendererApi"));
-
-        // TODO: This needs to count the number of textures and bind them
-        glActiveTexture(GL_TEXTURE0 + m_TextureCount);
-        OpenGLUtilities::CheckOpenGLError(
-          "glActiveTexture", "OpenGLRendererApi", m_Logger);
         TextureAsset& textureAsset =
           (TextureAsset&)m_AssetDatabase->Retrieve(*parameter)->GetAsset();
-        glBindTexture(GL_TEXTURE_2D, textureAsset.GetTexture().GetTextureID());
-        // m_Logger->LogDebug(
-        //   Log(fmt::format("Texture id: {}",
-        //                   textureAsset.GetTexture().GetTextureID()),
-        //       "OpenGLRendererApi"));
-        OpenGLUtilities::CheckOpenGLError(
-          "glBindTexture", "OpenGLRendererApi", m_Logger);
-        GLint location =
-          glGetUniformLocation(m_ShaderID, m_ParameterName.c_str());
-        OpenGLUtilities::CheckOpenGLError(
-          "glGetUniformLocation", "OpenGLRendererApi", m_Logger);
-        if (location == -1)
-        {
-          m_Logger->LogError(
-            Log(fmt::format("Uniform location <{}> not found in shader program",
-                            m_ParameterName),
-                "OpenGLRendererApi"));
-        }
-        else
-        {
-          glUniform1i(location, static_cast<GLint>(m_TextureCount));
-          OpenGLUtilities::CheckOpenGLError(
-            "glUniform1i", "OpenGLRendererApi", m_Logger);
-          m_TextureCount++;
-        }
+        m_Shader.SetUniform(m_ParameterName, textureAsset, m_TextureCount++);
       }
     }
     void
     operator()(glm::vec2& parameter)
     {
-      glUniform2f(glGetUniformLocation(m_ShaderID, m_ParameterName.c_str()),
-                  parameter.x,
-                  parameter.y);
-      OpenGLUtilities::CheckOpenGLError(
-        "glUniform2f", "OpenGLRendererApi", m_Logger);
+      m_Shader.SetUniform(m_ParameterName, parameter);
     }
     void
     operator()(glm::vec3& parameter)
     {
-      glUniform3f(glGetUniformLocation(m_ShaderID, m_ParameterName.c_str()),
-                  parameter.x,
-                  parameter.y,
-                  parameter.z);
-      OpenGLUtilities::CheckOpenGLError(
-        "glUniform3f", "OpenGLRendererApi", m_Logger);
+      m_Shader.SetUniform(m_ParameterName, parameter);
     }
     void
     operator()(glm::vec4& parameter)
     {
-      glUniform4f(glGetUniformLocation(m_ShaderID, m_ParameterName.c_str()),
-                  parameter.x,
-                  parameter.y,
-                  parameter.z,
-                  parameter.w);
-      OpenGLUtilities::CheckOpenGLError(
-        "glUniform4f", "OpenGLRendererApi", m_Logger);
+      m_Shader.SetUniform(m_ParameterName, parameter);
     }
   };
 
@@ -294,12 +231,10 @@ namespace Dwarf
       {
         ParameterValue& shaderParameterValue =
           material.GetShaderParameters()->GetParameter(identifier);
-        std::visit(SetShaderParameterVisitor{ shader.GetID(),
-                                              identifier,
-                                              m_AssetDatabase,
-                                              m_Logger,
-                                              textureCount },
-                   shaderParameterValue);
+        std::visit(
+          SetShaderParameterVisitor{
+            shader, identifier, m_AssetDatabase, m_Logger, textureCount },
+          shaderParameterValue);
       }
     }
 

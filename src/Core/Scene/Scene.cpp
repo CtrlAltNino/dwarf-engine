@@ -61,11 +61,8 @@ namespace Dwarf
 
     // std::shared_ptr<Scene> deserializedScene =
     //   std::make_shared<Scene>(path, settings);
-    std::cout << "serialized graph:\n"
-              << serializedSceneGraph.dump(2) << std::endl;
     for (auto const& element : serializedSceneGraph)
     {
-      std::cout << "Deserializing entity" << std::endl;
       Entity newEntity = DeserializeEntity(element);
       newEntity.SetParent(m_RootEntity.GetHandle());
     }

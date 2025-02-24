@@ -65,8 +65,7 @@ namespace Dwarf
 
     if (m_Window == nullptr)
     {
-      std::cout << "[WINDOW CREATION] Error: Failed to create window"
-                << std::endl;
+
       SDL_Quit();
     }
 

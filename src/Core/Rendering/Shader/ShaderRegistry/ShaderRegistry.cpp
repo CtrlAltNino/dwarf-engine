@@ -53,12 +53,7 @@ namespace Dwarf
       combinedSource += sourceString;
     }
 
-    m_Logger->LogDebug(Log(fmt::format("Combined source:\n{}", combinedSource),
-                           "ShaderRegistry"));
-
     size_t hash = hasher(combinedSource);
-
-    m_Logger->LogDebug(Log(fmt::format("Hashed: {}", hash), "ShaderRegistry"));
 
     auto it = m_Shaders.find(hash);
     if (it != m_Shaders.end())

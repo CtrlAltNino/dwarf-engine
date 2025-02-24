@@ -393,8 +393,6 @@ namespace Dwarf
     windowTitle.append(graphicsApiNames[(int)m_GraphicsApi]);
     windowTitle.append(">");
 
-    std::cout << "[EDITOR] Updating window title" << std::endl;
-
     m_Window->SetWindowTitle(windowTitle);
   }
 

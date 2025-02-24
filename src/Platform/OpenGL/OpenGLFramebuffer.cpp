@@ -288,16 +288,15 @@ namespace Dwarf
     // Check if framebuffer is complete
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
     {
-      std::cerr << "Framebuffer is not complete!" << std::endl;
+      m_Logger->LogError(
+        Log("Framebuffer is not complete!", "OpenGLFramebuffer"));
     }
     else
     {
-      std::cout << "Framebuffer is complete!" << std::endl;
+      m_Logger->LogDebug(Log("Framebuffer is complete!", "OpenGLFramebuffer"));
       m_CurrentVramMemory =
         m_VramTracker->AddFramebufferMemory(m_Specification);
     }
-
-    std::cout << "Framebuffer ID: " << m_RendererID << std::endl;
 
     // Unbind the framebuffer
     glBindFramebuffer(GL_FRAMEBUFFER, 0);

@@ -219,7 +219,6 @@ namespace Dwarf
         for (auto& mesh :
              ((ModelAsset&)component.GetModelAsset()->GetAsset()).Meshes())
         {
-          std::cout << "Adding material asset" << std::endl;
           component.MaterialAssets()[mesh->GetMaterialIndex()] = nullptr;
         }
       }

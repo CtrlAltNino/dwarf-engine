@@ -56,7 +56,8 @@ namespace Dwarf
     std::regex  patternLine("XDG_DOCUMENTS.*");
     std::regex  patternPath("/.*(?=\")");
     std::smatch match;
-    std::cout << std::regex_search(userDirMap, match, patternLine) << std::endl;
+    // std::cout << std::regex_search(userDirMap, match, patternLine) <<
+    // std::endl;
     std::string line = match[0];
     std::regex_search(line, match, patternPath);
     std::string path = match[0];
