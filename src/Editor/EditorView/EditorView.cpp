@@ -68,7 +68,7 @@ namespace Dwarf
             m_ThreadCondition.wait_for(lock,
                                        std::chrono::seconds(5),
                                        [this]
-                                       { return m_RunViewSaveThread.load(); });
+                                       { return !m_RunViewSaveThread.load(); });
           }
           m_ProjectSettings->UpdateSerializedView(Serialize());
           m_ProjectSettings->Save();
