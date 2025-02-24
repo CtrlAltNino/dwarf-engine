@@ -7,6 +7,7 @@
 #include "Logging/IDwarfLogger.h"
 #include <mutex>
 #include <queue>
+#include <condition_variable>
 
 namespace Dwarf
 {
