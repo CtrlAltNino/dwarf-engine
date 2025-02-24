@@ -1,4 +1,5 @@
 #pragma once
+#include "Logging/IDwarfLogger.h"
 #include "pch.h"
 #include "IFileHandler.h"
 
@@ -9,6 +10,7 @@ namespace Dwarf
   class FileHandler : public IFileHandler
   {
   private:
+    std::shared_ptr<IDwarfLogger> m_Logger;
     /// @brief Path to the documents directory.
     std::filesystem::path m_DocumentsPath;
 
@@ -26,7 +28,7 @@ namespace Dwarf
     CreateEngineSettingsPath();
 
   public:
-    FileHandler();
+    FileHandler(std::shared_ptr<IDwarfLogger> logger);
     ~FileHandler() = default;
     /// @brief Returns the path to the document directory.
     /// @return An absolute path.
