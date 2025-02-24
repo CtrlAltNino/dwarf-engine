@@ -18,11 +18,9 @@ namespace Dwarf
     size_t                        m_VramMemory;
 
   public:
-    explicit OpenGLTexture(std::shared_ptr<TextureContainer>  data,
-                           std::shared_ptr<IDwarfLogger>      logger,
-                           std::shared_ptr<IVramTracker>      vramTracker,
-                           std::shared_ptr<TextureParameters> parameters =
-                             std::make_shared<TextureParameters>());
+    explicit OpenGLTexture(std::shared_ptr<TextureContainer> data,
+                           std::shared_ptr<IDwarfLogger>     logger,
+                           std::shared_ptr<IVramTracker>     vramTracker);
     ~OpenGLTexture() override;
 
     TextureResolution

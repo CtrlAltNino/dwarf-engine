@@ -111,6 +111,10 @@ namespace Dwarf
       TextureUploadRequest job = m_TextureUploadRequestQueue.front();
       m_TextureUploadRequestQueue.pop();
 
+      job.TextureContainer->Parameters.MinFilter =
+        TextureMinFilter::LINEAR_MIPMAP_LINEAR;
+      job.TextureContainer->Parameters.MipMapped = true;
+
       m_Logger->LogInfo(Log("Loading texture async", "TextureLoadingWorker"));
 
       std::unique_ptr<ITexture> texture =

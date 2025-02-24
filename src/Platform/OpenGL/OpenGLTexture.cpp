@@ -165,20 +165,20 @@ namespace Dwarf
   }
 
   GLenum
-  GetTextureMinFilter(TextureMinFilter filter)
+  GetTextureMinFilter(TextureMinFilter filter, bool mipMapped)
   {
     switch (filter)
     {
       case TextureMinFilter::NEAREST: return GL_NEAREST;
       case TextureMinFilter::LINEAR: return GL_LINEAR;
       case TextureMinFilter::NEAREST_MIPMAP_NEAREST:
-        return GL_NEAREST_MIPMAP_NEAREST;
+        return mipMapped ? GL_NEAREST_MIPMAP_NEAREST : GL_NEAREST;
       case TextureMinFilter::LINEAR_MIPMAP_NEAREST:
-        return GL_LINEAR_MIPMAP_NEAREST;
+        return mipMapped ? GL_LINEAR_MIPMAP_NEAREST : GL_LINEAR;
       case TextureMinFilter::NEAREST_MIPMAP_LINEAR:
-        return GL_NEAREST_MIPMAP_LINEAR;
+        return mipMapped ? GL_NEAREST_MIPMAP_LINEAR : GL_NEAREST;
       case TextureMinFilter::LINEAR_MIPMAP_LINEAR:
-        return GL_LINEAR_MIPMAP_LINEAR;
+        return mipMapped ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR;
     }
   }
 
@@ -317,21 +317,21 @@ namespace Dwarf
 
   // A map that maps
   // Constructor without meta data
-  OpenGLTexture::OpenGLTexture(std::shared_ptr<TextureContainer>  data,
-                               std::shared_ptr<IDwarfLogger>      logger,
-                               std::shared_ptr<IVramTracker>      vramTracker,
-                               std::shared_ptr<TextureParameters> parameters)
+  OpenGLTexture::OpenGLTexture(std::shared_ptr<TextureContainer> data,
+                               std::shared_ptr<IDwarfLogger>     logger,
+                               std::shared_ptr<IVramTracker>     vramTracker)
     : m_Logger(logger)
     , m_VramTracker(vramTracker)
   {
     GLuint textureType = GetTextureType(data->Type, data->Samples);
     GLuint textureDataType = GetTextureDataType(data->DataType);
     GLuint textureFormat = GetTextureFormat(data->Format, data->DataType);
-    GLuint textureWrapS = GetTextureWrap(parameters->WrapS);
-    GLuint textureWrapT = GetTextureWrap(parameters->WrapT);
-    GLuint textureWrapR = GetTextureWrap(parameters->WrapR);
-    GLuint textureMinFilter = GetTextureMinFilter(parameters->MinFilter);
-    GLuint textureMagFilter = GetTextureMagFilter(parameters->MagFilter);
+    GLuint textureWrapS = GetTextureWrap(data->Parameters.WrapS);
+    GLuint textureWrapT = GetTextureWrap(data->Parameters.WrapT);
+    GLuint textureWrapR = GetTextureWrap(data->Parameters.WrapR);
+    GLuint textureMinFilter = GetTextureMinFilter(data->Parameters.MinFilter,
+                                                  data->Parameters.MipMapped);
+    GLuint textureMagFilter = GetTextureMagFilter(data->Parameters.MagFilter);
     GLuint internalFormat = GetInternalFormat(data->Format, data->DataType);
 
     m_Logger->LogDebug(Log("Creating OpenGL texture", "OpenGLTexture"));
@@ -410,7 +410,11 @@ namespace Dwarf
           }
           else
           {
-            glTextureStorage2D(m_Id, 1, internalFormat, size.x, size.y);
+            int mipLevels =
+              data->Parameters.MipMapped
+                ? std::floor(std::log2(std::max(size.x, size.y))) + 1
+                : 1;
+            glTextureStorage2D(m_Id, mipLevels, internalFormat, size.x, size.y);
             OpenGLUtilities::CheckOpenGLError(
               "glTextureStorage2D", "OpenGLTexture", m_Logger);
           }
@@ -463,10 +467,14 @@ namespace Dwarf
         }
     }
 
-    glGenerateTextureMipmap(m_Id);
+    if (data->Parameters.MipMapped)
+    {
+      glGenerateTextureMipmap(m_Id);
+      OpenGLUtilities::CheckOpenGLError(
+        "glGenerateTextureMipmap", "OpenGLTexture", m_Logger);
+    }
+
     m_VramMemory = m_VramTracker->AddTextureMemory(data);
-    OpenGLUtilities::CheckOpenGLError(
-      "glGenerateTextureMipmap", "OpenGLTexture", m_Logger);
 
     m_Logger->LogDebug(Log("OpenGL texture created", "OpenGLTexture"));
     m_Logger->LogDebug(

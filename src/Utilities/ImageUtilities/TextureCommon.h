@@ -64,6 +64,7 @@ namespace Dwarf
     TextureWrap      WrapR = TextureWrap::REPEAT;
     TextureMinFilter MinFilter = TextureMinFilter::LINEAR;
     TextureMagFilter MagFilter = TextureMagFilter::LINEAR;
+    bool             MipMapped = false;
   };
 
   struct TextureContainer
