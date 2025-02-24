@@ -4,6 +4,7 @@
 #include "Core/Rendering/Mesh/IMeshFactory.h"
 #include "Core/Rendering/VramTracker/IVramTracker.h"
 #include "Logging/IDwarfLogger.h"
+#include <cstdint>
 namespace Dwarf
 {
   class MeshFactory : public IMeshFactory
@@ -20,9 +21,9 @@ namespace Dwarf
     ~MeshFactory() override;
 
     std::unique_ptr<IMesh>
-    CreateMesh(const std::vector<Vertex>&       vertices,
-               const std::vector<unsigned int>& indices,
-               unsigned int                     materialIndex) override;
+    CreateMesh(const std::vector<Vertex>&   vertices,
+               const std::vector<uint32_t>& indices,
+               unsigned int                 materialIndex) override;
 
     std::unique_ptr<IMesh>
     CreateUnitSphere(int stacks, int slices) override;
@@ -32,5 +33,8 @@ namespace Dwarf
 
     std::unique_ptr<IMesh>
     CreateUnitQuad() override;
+
+    std::unique_ptr<IMesh>
+    MergeMeshes(const std::vector<std::unique_ptr<IMesh>>& meshes) override;
   };
 }

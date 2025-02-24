@@ -323,6 +323,7 @@ namespace Dwarf
     bool isHidden = false;
     /// @brief ID of the mesh asset.
     std::unique_ptr<IAssetReference> modelAsset = nullptr;
+    std::unique_ptr<IMesh>           idMesh = nullptr;
 
     /// @brief The materials with which the model is to be rendered. The list
     /// index of the materials corresponds to the material index of the
@@ -387,6 +388,12 @@ namespace Dwarf
     IsHidden()
     {
       return isHidden;
+    }
+
+    std::unique_ptr<IMesh>&
+    IdMesh()
+    {
+      return idMesh;
     }
 
     nlohmann::json

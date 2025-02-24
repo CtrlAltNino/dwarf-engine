@@ -18,6 +18,7 @@ namespace Dwarf
     , m_MaterialFactory(materialFactory)
     , m_ShaderFactory(shaderFactory)
     , m_ShaderSourceCollectionFactory(shaderSourceCollectionFactory)
+    , m_MeshFactory(meshFactory)
   {
     m_RendererApi->SetClearColor(glm::vec4(0.065f, 0.07f, 0.085, 1.0f));
 
@@ -151,17 +152,19 @@ namespace Dwarf
     {
       if (meshRenderer.GetModelAsset() && !meshRenderer.IsHidden())
       {
-        ModelAsset& model =
-          (ModelAsset&)meshRenderer.GetModelAsset()->GetAsset();
+        if (!meshRenderer.IdMesh())
+        {
+          ModelAsset& model =
+            (ModelAsset&)meshRenderer.GetModelAsset()->GetAsset();
+          meshRenderer.IdMesh() =
+            std::move(m_MeshFactory->MergeMeshes(model.Meshes()));
+        }
+
         glm::mat4    modelMatrix = transform.GetModelMatrix();
         unsigned int id = (unsigned int)entity;
         m_IdMaterial->GetShaderParameters()->SetParameter("objectId", id);
-
-        for (int i = 0; i < model.Meshes().size(); i++)
-        {
-          m_RendererApi->RenderIndexed(
-            model.Meshes().at(i), *m_IdMaterial, camera, modelMatrix);
-        }
+        m_RendererApi->RenderIndexed(
+          meshRenderer.IdMesh(), *m_IdMaterial, camera, modelMatrix);
       }
     }
   }
