@@ -133,6 +133,7 @@ public:
               (override));
   MOCK_METHOD(void, ProcessTextureLoadRequests, (), (override));
   MOCK_METHOD(void, ProcessTextureJobs, (), (override));
+  MOCK_METHOD(bool, IsRequested, (std::filesystem::path), (const, override));
 };
 
 class AssetReferenceFactoryTest : public ::testing::Test

@@ -25,6 +25,8 @@ namespace Dwarf
     m_Logger->LogDebug(Log("OpenGLRendererApi created.", "OpenGLRendererApi"));
     m_ErrorShader = m_ShaderFactory->CreateErrorShader();
     m_ErrorShader->Compile();
+    glEnable(GL_DEPTH_TEST);
+    glDepthFunc(GL_LESS);
   }
 
   OpenGLRendererApi::~OpenGLRendererApi()
@@ -35,7 +37,7 @@ namespace Dwarf
 
   struct SetShaderParameterVisitor
   {
-    GLuint                          m_ShaderID;
+    OpenGLShader&                   m_Shader;
     std::string                     m_ParameterName;
     std::shared_ptr<IAssetDatabase> m_AssetDatabase;
     std::shared_ptr<IDwarfLogger>   m_Logger;
@@ -44,110 +46,47 @@ namespace Dwarf
     void
     operator()(bool& parameter)
     {
-      glUniform1f(glGetUniformLocation(m_ShaderID, m_ParameterName.c_str()),
-                  parameter);
-      OpenGLUtilities::CheckOpenGLError(
-        "glUniform1f", "OpenGLRendererApi", m_Logger);
+      m_Shader.SetUniform(m_ParameterName, parameter);
     }
     void
     operator()(int& parameter)
     {
-      glUniform1i(glGetUniformLocation(m_ShaderID, m_ParameterName.c_str()),
-                  parameter);
-      OpenGLUtilities::CheckOpenGLError(
-        "glUniform1i", "OpenGLRendererApi", m_Logger);
+      m_Shader.SetUniform(m_ParameterName, parameter);
     }
     void
     operator()(unsigned int& parameter)
     {
-      glUniform1ui(glGetUniformLocation(m_ShaderID, m_ParameterName.c_str()),
-                   parameter);
-      OpenGLUtilities::CheckOpenGLError(
-        "glUniform1ui", "OpenGLRendererApi", m_Logger);
+      m_Shader.SetUniform(m_ParameterName, parameter);
     }
     void
     operator()(float& parameter)
     {
-      glUniform1f(glGetUniformLocation(m_ShaderID, m_ParameterName.c_str()),
-                  parameter);
-      OpenGLUtilities::CheckOpenGLError(
-        "glUniform1f", "OpenGLRendererApi", m_Logger);
+      m_Shader.SetUniform(m_ParameterName, parameter);
     }
     void
     operator()(Texture2DAssetValue& parameter)
     {
-      // m_Logger->LogDebug(
-      //   Log(fmt::format("Trying to bind texture to {}", m_ParameterName),
-      //       "OpenGLRendererApi"));
       if (parameter.has_value() && m_AssetDatabase->Exists(parameter.value()))
       {
-        // m_Logger->LogDebug(Log("Texture found", "OpenGLRendererApi"));
-        // m_Logger->LogDebug(Log(fmt::format("Texture count: {}",
-        // m_TextureCount),
-        //                        "OpenGLRendererApi"));
-
-        // TODO: This needs to count the number of textures and bind them
-        glActiveTexture(GL_TEXTURE0 + m_TextureCount);
-        OpenGLUtilities::CheckOpenGLError(
-          "glActiveTexture", "OpenGLRendererApi", m_Logger);
         TextureAsset& textureAsset =
           (TextureAsset&)m_AssetDatabase->Retrieve(*parameter)->GetAsset();
-        glBindTexture(GL_TEXTURE_2D, textureAsset.GetTexture().GetTextureID());
-        // m_Logger->LogDebug(
-        //   Log(fmt::format("Texture id: {}",
-        //                   textureAsset.GetTexture().GetTextureID()),
-        //       "OpenGLRendererApi"));
-        OpenGLUtilities::CheckOpenGLError(
-          "glBindTexture", "OpenGLRendererApi", m_Logger);
-        GLint location =
-          glGetUniformLocation(m_ShaderID, m_ParameterName.c_str());
-        OpenGLUtilities::CheckOpenGLError(
-          "glGetUniformLocation", "OpenGLRendererApi", m_Logger);
-        if (location == -1)
-        {
-          m_Logger->LogError(
-            Log(fmt::format("Uniform location <{}> not found in shader program",
-                            m_ParameterName),
-                "OpenGLRendererApi"));
-        }
-        else
-        {
-          glUniform1i(location, static_cast<GLint>(m_TextureCount));
-          OpenGLUtilities::CheckOpenGLError(
-            "glUniform1i", "OpenGLRendererApi", m_Logger);
-          m_TextureCount++;
-        }
+        m_Shader.SetUniform(m_ParameterName, textureAsset, m_TextureCount++);
       }
     }
     void
     operator()(glm::vec2& parameter)
     {
-      glUniform2f(glGetUniformLocation(m_ShaderID, m_ParameterName.c_str()),
-                  parameter.x,
-                  parameter.y);
-      OpenGLUtilities::CheckOpenGLError(
-        "glUniform2f", "OpenGLRendererApi", m_Logger);
+      m_Shader.SetUniform(m_ParameterName, parameter);
     }
     void
     operator()(glm::vec3& parameter)
     {
-      glUniform3f(glGetUniformLocation(m_ShaderID, m_ParameterName.c_str()),
-                  parameter.x,
-                  parameter.y,
-                  parameter.z);
-      OpenGLUtilities::CheckOpenGLError(
-        "glUniform3f", "OpenGLRendererApi", m_Logger);
+      m_Shader.SetUniform(m_ParameterName, parameter);
     }
     void
     operator()(glm::vec4& parameter)
     {
-      glUniform4f(glGetUniformLocation(m_ShaderID, m_ParameterName.c_str()),
-                  parameter.x,
-                  parameter.y,
-                  parameter.z,
-                  parameter.w);
-      OpenGLUtilities::CheckOpenGLError(
-        "glUniform4f", "OpenGLRendererApi", m_Logger);
+      m_Shader.SetUniform(m_ParameterName, parameter);
     }
   };
 
@@ -232,30 +171,56 @@ namespace Dwarf
                              : dynamic_cast<OpenGLShader&>(*m_ErrorShader);
     int           textureInputCounter = 0;
 
-    glUseProgram(shader.GetID());
-    OpenGLUtilities::CheckOpenGLError(
-      "glUseProgram", "OpenGLRendererApi", m_Logger);
+    static GLuint currentShaderId = -1;
 
-    if (material.GetMaterialProperties().IsTransparent)
+    if (currentShaderId != shader.GetID())
     {
-      glEnable(GL_BLEND);
+      currentShaderId = shader.GetID();
+      glUseProgram(currentShaderId);
       OpenGLUtilities::CheckOpenGLError(
-        "glEnable GL_BLEND", "OpenGLRendererApi", m_Logger);
-      glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-      OpenGLUtilities::CheckOpenGLError(
-        "glBlendFunc", "OpenGLRendererApi", m_Logger);
+        "glUseProgram", "OpenGLRendererApi", m_Logger);
     }
 
-    glEnable(GL_CULL_FACE);
-    OpenGLUtilities::CheckOpenGLError(
-      "glEnable GL_CULL_FACE", "OpenGLRendererApi", m_Logger);
-    material.GetMaterialProperties().IsDoubleSided ? glDisable(GL_CULL_FACE)
-                                                   : glCullFace(GL_BACK);
-    OpenGLUtilities::CheckOpenGLError(
-      "glCullFace", "OpenGLRendererApi", m_Logger);
+    static bool transparentFlag = false;
 
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LESS);
+    if (transparentFlag != material.GetMaterialProperties().IsTransparent)
+    {
+      transparentFlag = material.GetMaterialProperties().IsTransparent;
+      if (transparentFlag)
+      {
+        glEnable(GL_BLEND);
+        OpenGLUtilities::CheckOpenGLError(
+          "glEnable GL_BLEND", "OpenGLRendererApi", m_Logger);
+        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+        OpenGLUtilities::CheckOpenGLError(
+          "glBlendFunc", "OpenGLRendererApi", m_Logger);
+      }
+      else
+      {
+        glDisable(GL_BLEND);
+        OpenGLUtilities::CheckOpenGLError(
+          "glEnable GL_BLEND", "OpenGLRendererApi", m_Logger);
+      }
+    }
+
+    static bool cullFaceFlag = true;
+
+    if (cullFaceFlag != !material.GetMaterialProperties().IsDoubleSided)
+    {
+      cullFaceFlag = !material.GetMaterialProperties().IsDoubleSided;
+
+      if (cullFaceFlag)
+      {
+        glEnable(GL_CULL_FACE);
+        glCullFace(GL_BACK);
+        OpenGLUtilities::CheckOpenGLError(
+          "glCullFace", "OpenGLRendererApi", m_Logger);
+      }
+      else
+      {
+        glDisable(GL_CULL_FACE);
+      }
+    }
 
     // TODO: Move this to OpenGLShader.cpp
     unsigned int textureCount = 0;
@@ -266,12 +231,10 @@ namespace Dwarf
       {
         ParameterValue& shaderParameterValue =
           material.GetShaderParameters()->GetParameter(identifier);
-        std::visit(SetShaderParameterVisitor{ shader.GetID(),
-                                              identifier,
-                                              m_AssetDatabase,
-                                              m_Logger,
-                                              textureCount },
-                   shaderParameterValue);
+        std::visit(
+          SetShaderParameterVisitor{
+            shader, identifier, m_AssetDatabase, m_Logger, textureCount },
+          shaderParameterValue);
       }
     }
 
@@ -325,9 +288,9 @@ namespace Dwarf
     glDisable(GL_CULL_FACE);
     OpenGLUtilities::CheckOpenGLError(
       "glDisable GL_CULL_FACE", "OpenGLRendererApi", m_Logger);
-    glUseProgram(0);
-    OpenGLUtilities::CheckOpenGLError(
-      "glUseProgram 0", "OpenGLRendererApi", m_Logger);
+    // glUseProgram(0);
+    // OpenGLUtilities::CheckOpenGLError(
+    //  "glUseProgram 0", "OpenGLRendererApi", m_Logger);
   }
 
   void

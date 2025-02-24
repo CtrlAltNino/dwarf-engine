@@ -13,15 +13,22 @@ uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
 
 // Uniforms for textures
+uniform vec4 tint;
 uniform sampler2D albedoMap;
+uniform bool hasAlbedoMap;
 uniform sampler2D normalMap;
+uniform bool hasNormalMap;
 uniform sampler2D metalRoughnessMap; // Metalness (R) and Roughness (G)
+uniform bool hasMetalRoughnessMap;
 uniform sampler2D emissiveMap;
+uniform bool hasEmissiveMap;
 uniform sampler2D aoMap; // Ambient Occlusion
+uniform bool hasAoMap;
+uniform float normalStrength;
 
 // Uniforms for lighting
 vec3 lightDir = vec3(-0.8, -0.7, -0.3);
-vec3 lightColor = vec3(0.9, 0.9, 0.8);
+vec3 lightColor = vec3(0.9, 0.9, 0.8) * 4;
 uniform vec3 viewPosition;
 
 // Constants
@@ -60,14 +67,16 @@ float geometrySmith(vec3 N, vec3 V, vec3 L, float roughness) {
 
 void main() {
     // Texture samples
-    vec3 albedo = texture(albedoMap, TexCoords).rgb;
-    vec3 emissive = texture(emissiveMap, TexCoords).rgb;
-    float ao = texture(aoMap, TexCoords).r;
+    vec4 albedo = (hasAlbedoMap ? texture(albedoMap, TexCoords) : vec4(1.0)) * tint;
+    vec3 emissive = hasEmissiveMap ? texture(emissiveMap, TexCoords).rgb : vec3(0.0);
+    float ao = hasAoMap ? texture(aoMap, TexCoords).r : 1.0;
 
     vec3 tangentNormal = texture(normalMap, TexCoords).rgb * 2.0 - 1.0;
-    vec3 N = normalize(TBN * tangentNormal); // Use the TBN matrix to transform tangent-space normal to world-space
+    tangentNormal.y *= -1.0;
+    tangentNormal.xy *= 0.3;
+    vec3 N = hasNormalMap ? normalize(TBN * tangentNormal) : TBN[2]; // Use the TBN matrix to transform tangent-space normal to world-space
 
-    vec3 metalRoughness = texture(metalRoughnessMap, TexCoords).rgb;
+    vec3 metalRoughness = hasMetalRoughnessMap ? texture(metalRoughnessMap, TexCoords).rgb : vec3(0.0, 0.5, 0.0);
     float metalness = metalRoughness.r;
     float roughness = clamp(metalRoughness.g, 0.05, 1.0); // Prevent 0 roughness for stability
 
@@ -80,7 +89,7 @@ void main() {
     float NdotV = max(dot(N, V), 0.0);
 
     // Fresnel equation (Schlick's approximation)
-    vec3 F0 = mix(vec3(0.04), albedo, metalness); // Dielectrics have F0 ~ 0.04
+    vec3 F0 = mix(vec3(0.04), albedo.rgb, metalness); // Dielectrics have F0 ~ 0.04
     vec3 F = fresnelSchlick(max(dot(H, V), 0.0), F0);
 
     // Normal distribution function (GGX)
@@ -97,7 +106,7 @@ void main() {
     // Diffuse contribution (Lambertian)
     vec3 kD = vec3(1.0) - F;
     kD *= 1.0 - metalness; // Only non-metals have diffuse lighting
-    vec3 diffuse = kD * albedo / PI;
+    vec3 diffuse = kD * albedo.rgb / PI;
 
     // Combine contributions
     vec3 radiance = lightColor * NdotL;
@@ -110,5 +119,5 @@ void main() {
     vec3 color = lighting + emissive;
 
     // Output final color
-    FragColor = vec4(color, 1.0);
+    FragColor = vec4(color, albedo.a);
 }

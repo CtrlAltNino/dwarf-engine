@@ -574,6 +574,14 @@ namespace Dwarf
       (RENDERING_CONSTRAINT)moduleData["settings"]["constraintType"];
 
     m_Settings.RenderGrid = moduleData["settings"]["renderGrid"];
+
+    if (moduleData.contains("settings") &&
+        moduleData["settings"].contains("samples"))
+    {
+      m_Settings.Samples =
+        std::min(moduleData["settings"]["samples"].get<int32_t>(),
+                 m_Settings.MaxSamples);
+    }
   }
 
   nlohmann::json
@@ -597,6 +605,8 @@ namespace Dwarf
       m_Settings.RenderingConstraint;
 
     serializedModule["settings"]["renderGrid"] = m_Settings.RenderGrid;
+
+    serializedModule["settings"]["samples"] = m_Settings.Samples;
 
     serializedModule["id"] = GetUuid()->ToString();
     serializedModule["type"] = static_cast<int>(GetModuleType());

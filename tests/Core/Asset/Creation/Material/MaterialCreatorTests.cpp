@@ -16,7 +16,7 @@ public:
   MOCK_METHOD(Dwarf::IShader&, GetShader, (), (override));
   MOCK_METHOD(void,
               SetShader,
-              (std::unique_ptr<Dwarf::IShader> && shader),
+              (std::shared_ptr<Dwarf::IShader> shader),
               (override));
   MOCK_METHOD(const std::unique_ptr<Dwarf::IShaderParameterCollection>&,
               GetShaderParameters,
@@ -43,7 +43,7 @@ public:
               (const, override));
   MOCK_METHOD(std::unique_ptr<IMaterial>,
               CreateMaterial,
-              (std::unique_ptr<IShader> shader),
+              (std::shared_ptr<IShader> shader),
               (const, override));
 };
 

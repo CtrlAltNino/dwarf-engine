@@ -46,8 +46,6 @@ namespace Dwarf
     m_Material->GetShaderParameters()->SetParameter("color",
                                                     glm::vec4(1, 1, 1, 1));
     m_Material->GetShaderParameters()->SetParameter("shininess", 32.0f);
-    std::cout << "IsCompiled: " << m_Material->GetShader().IsCompiled()
-              << std::endl;
   }
 
   void
@@ -62,7 +60,6 @@ namespace Dwarf
       m_Properties.ModelRotation = { -15, 200, 0 };
       m_Properties.ModelRotationTarget = { -15, 200, 0 };
       UpdateRotation({ 0, 0 });
-      std::cout << "ModelPreview::RenderModelPreview setup" << std::endl;
       m_Properties.Distance = 1.0f;
     }
 

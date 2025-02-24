@@ -8,6 +8,7 @@
 #include <mutex>
 #include <queue>
 #include <condition_variable>
+#include <unordered_set>
 
 namespace Dwarf
 {
@@ -29,6 +30,8 @@ namespace Dwarf
 
     std::thread m_TextureWorker;
 
+    std::unordered_set<std::filesystem::path> m_CurrentlyProcessing;
+
   public:
     TextureLoadingWorker(std::shared_ptr<IDwarfLogger>     logger,
                          std::shared_ptr<IImageFileLoader> imageFileLoader,
@@ -47,5 +50,8 @@ namespace Dwarf
 
     void
     ProcessTextureJobs() override;
+
+    bool
+    IsRequested(std::filesystem::path path) const override;
   };
 }

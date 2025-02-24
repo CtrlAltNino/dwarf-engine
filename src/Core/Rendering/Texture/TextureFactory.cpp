@@ -1,4 +1,5 @@
 #include "TextureFactory.h"
+#include "Utilities/ImageUtilities/TextureCommon.h"
 #include <cstdint>
 #include <stdexcept>
 
@@ -157,6 +158,9 @@ namespace Dwarf
     std::shared_ptr<TextureParameters> parameters = GetParameters(texturePath);
     std::shared_ptr<TextureContainer>  textureData =
       m_ImageFileLoader->LoadTexture(texturePath);
+
+    textureData->Parameters.MinFilter = TextureMinFilter::LINEAR_MIPMAP_LINEAR;
+    textureData->Parameters.MipMapped = true;
 
     return LoadTexture(textureData);
   }

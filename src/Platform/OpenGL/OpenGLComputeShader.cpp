@@ -62,7 +62,6 @@ namespace Dwarf
       if (log_length > 0)
       {
         m_ComputeShaderLog = std::string(message);
-        std::cout << "Initial shader log: " << m_ComputeShaderLog << "\n";
       }
       if (compiled != GL_TRUE)
       {

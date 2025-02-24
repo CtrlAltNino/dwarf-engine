@@ -73,9 +73,6 @@ protected:
     // Create the factory using the inj>ector
     factory = injector.create<std::shared_ptr<ShaderSourceCollectionFactory>>();
     mockAssetDatabase = injector.create<std::shared_ptr<MockAssetDatabase>>();
-
-    // Log the setup
-    std::cout << "Setup complete" << std::endl;
   }
 
   void

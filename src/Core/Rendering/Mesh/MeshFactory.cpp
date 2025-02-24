@@ -287,4 +287,34 @@ namespace Dwarf
                       { 0, 1, 2, 2, 3, 0 },
                       0);
   }
+
+  std::unique_ptr<IMesh>
+  MeshFactory::MergeMeshes(const std::vector<std::unique_ptr<IMesh>>& meshes)
+  {
+    std::vector<Vertex>       mergedVertices;
+    std::vector<unsigned int> mergedIndices;
+    uint32_t indexOffset = 0; // Tracks index shifting due to merged vertices
+
+    for (auto& mesh : meshes)
+    {
+      for (auto vert : mesh->GetVertices())
+      {
+        mergedVertices.push_back(vert);
+      }
+
+      for (auto index : mesh->GetIndices())
+      {
+        mergedIndices.push_back(index + indexOffset);
+      }
+
+      indexOffset += mesh->GetVertices().size();
+    }
+
+    std::unique_ptr<IMesh> mergedMesh =
+      CreateMesh(mergedVertices, mergedIndices, 0);
+
+    mergedMesh->SetupMesh();
+
+    return std::move(mergedMesh);
+  }
 }

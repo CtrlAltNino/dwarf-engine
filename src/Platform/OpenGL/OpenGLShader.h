@@ -1,4 +1,5 @@
 #pragma once
+#include "Core/Rendering/Shader/ShaderParameterCollection/IShaderParameterCollection.h"
 #include "Core/Rendering/VramTracker/IVramTracker.h"
 #include "pch.h"
 
@@ -69,6 +70,28 @@ namespace Dwarf
     std::optional<std::unique_ptr<IAssetReference>>&
     GetTessellationEvaluationShaderAsset();
 
+    void
+    SetUniform(std::string uniformName, bool value);
+    void
+    SetUniform(std::string uniformName, int value);
+    void
+    SetUniform(std::string uniformName, unsigned int value);
+    void
+    SetUniform(std::string uniformName, float value);
+    void
+    SetUniform(std::string   uniformName,
+               TextureAsset& value,
+               unsigned int  textureCount);
+    void
+    SetUniform(std::string uniformName, glm::vec2 value);
+    void
+    SetUniform(std::string uniformName, glm::vec3 value);
+    void
+    SetUniform(std::string uniformName, glm::vec4 value);
+
+    GLuint
+    GetUniformLocation(std::string uniformName);
+
     static const std::array<std::string, 4> ReservedUniformNames;
 
     nlohmann::json
@@ -84,6 +107,8 @@ namespace Dwarf
     std::shared_ptr<IVramTracker> m_VramTracker;
     std::shared_ptr<IShaderParameterCollectionFactory>
       m_ShaderParameterCollectionFactory;
+
+    std::map<std::string, GLuint> m_UniformLocations;
 
     std::optional<std::unique_ptr<IAssetReference>> m_VertexShaderAsset;
     std::optional<std::unique_ptr<IAssetReference>> m_GeometryShaderAsset;

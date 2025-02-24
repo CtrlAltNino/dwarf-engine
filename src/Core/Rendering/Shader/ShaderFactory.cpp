@@ -37,7 +37,7 @@ namespace Dwarf
     m_Logger->LogDebug(Log("ShaderFactory destroyed", "ShaderFactory"));
   }
 
-  std::unique_ptr<IShader>
+  std::shared_ptr<IShader>
   ShaderFactory::CreateDefaultShader()
   {
     m_Logger->LogDebug(Log("Creating default shader", "ShaderFactory"));
@@ -46,7 +46,7 @@ namespace Dwarf
       m_ShaderSourceCollectionFactory->CreateDefaultShaderSourceCollection());
   }
 
-  std::unique_ptr<IShader>
+  std::shared_ptr<IShader>
   ShaderFactory::CreateErrorShader()
   {
     m_Logger->LogDebug(Log("Creating error shader", "ShaderFactory"));
@@ -54,20 +54,7 @@ namespace Dwarf
       m_ShaderSourceCollectionFactory->CreateErrorShaderSourceCollection());
   }
 
-  std::unique_ptr<IShader>
-  ShaderFactory::CreateShader(const nlohmann::json& shaderJson)
-  {
-    m_Logger->LogDebug(
-      Log(fmt::format("Creating shader from JSON:\n{}", shaderJson.dump(2)),
-          "ShaderFactory"));
-
-    // Calling the CreateShader method that takes a ShaderSourceCollection.
-    return CreateShader(
-      m_ShaderSourceCollectionFactory->CreateShaderSourceCollection(
-        shaderJson));
-  }
-
-  std::unique_ptr<IShader>
+  std::shared_ptr<IShader>
   ShaderFactory::CreateShader(
     std::unique_ptr<IShaderSourceCollection> shaderSources)
   {
@@ -80,7 +67,7 @@ namespace Dwarf
         // return std::make_shared<D3D12Shader>();
         break;
       case GraphicsApi::OpenGL:
-        return std::make_unique<OpenGLShader>(
+        return std::make_shared<OpenGLShader>(
           std::move(shaderSources),
           m_ShaderParameterCollectionFactory,
           m_Logger,
@@ -93,7 +80,7 @@ namespace Dwarf
 #elif __linux__
       case GraphicsApi::D3D12: break;
       case GraphicsApi::OpenGL:
-        return std::make_unique<OpenGLShader>(
+        return std::make_shared<OpenGLShader>(
           std::move(shaderSources),
           m_ShaderParameterCollectionFactory,
           m_Logger,

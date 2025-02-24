@@ -38,10 +38,6 @@ namespace Dwarf
       int height = FreeImage_GetHeight(bitmap);
       int channels = FreeImage_GetBPP(bitmap) / 8;
 
-      std::cout << "Loading TGA file: " << path << std::endl;
-      std::cout << "Width: " << width << " Height: " << height
-                << " Channels: " << channels << std::endl;
-
       // Convert the image to 32-bit (RGBA) if necessary
       FIBITMAP* convertedBitmap = bitmap;
 

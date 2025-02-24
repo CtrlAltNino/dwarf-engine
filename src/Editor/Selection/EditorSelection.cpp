@@ -28,12 +28,6 @@ namespace Dwarf
   void
   EditorSelection::AddEntityToSelection(const entt::entity& entity)
   {
-    if (!m_LoadedScene->GetScene().GetRegistry().valid(entity))
-    {
-      std::cout << "Entity with handle " << (int)entity << " is not valid."
-                << std::endl;
-      return;
-    }
     std::string index = GetTreeIndex(entity);
 
     auto        cursor = m_SelectedEntities.begin();

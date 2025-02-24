@@ -17,7 +17,7 @@ namespace Dwarf
     std::shared_ptr<IDwarfLogger>   m_Logger;
     std::shared_ptr<IEditorStats>   m_EditorStats;
 
-    std::unique_ptr<IShader> m_ErrorShader;
+    std::shared_ptr<IShader> m_ErrorShader;
 
   public:
     OpenGLRendererApi(std::shared_ptr<IAssetDatabase> assetDatabase,

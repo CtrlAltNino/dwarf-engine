@@ -4,6 +4,7 @@
 #include "Core/Rendering/Shader/ShaderParameterCollection/IShaderParameterCollectionFactory.h"
 #include "IMaterialFactory.h"
 #include "Core/Rendering/Shader/IShaderFactory.h"
+#include "Core/Rendering/Shader/ShaderRegistry/IShaderRegistry.h"
 #include "Logging/IDwarfLogger.h"
 #include <boost/di.hpp>
 
@@ -15,7 +16,8 @@ namespace Dwarf
     std::shared_ptr<IDwarfLogger>   m_Logger;
     std::shared_ptr<IShaderFactory> m_ShaderFactory;
     std::shared_ptr<IShaderParameterCollectionFactory>
-      m_ShaderParameterCollectionFactory;
+                                     m_ShaderParameterCollectionFactory;
+    std::shared_ptr<IShaderRegistry> m_ShaderRegistry;
 
   public:
     // Constructor
@@ -23,7 +25,8 @@ namespace Dwarf
                     std::shared_ptr<IDwarfLogger>   logger,
                     std::shared_ptr<IShaderFactory> shaderFactory,
                     std::shared_ptr<IShaderParameterCollectionFactory>
-                      shaderParameterCollectionFactory);
+                      shaderParameterCollectionFactory,
+                    std::shared_ptr<IShaderRegistry> shaderRegistry);
 
     // Destructor
     ~MaterialFactory();
@@ -33,7 +36,7 @@ namespace Dwarf
     CreateDefaultMaterial() const override;
 
     virtual std::unique_ptr<IMaterial>
-    CreateMaterial(std::unique_ptr<IShader> shader) const override;
+    CreateMaterial(std::shared_ptr<IShader> shader) const override;
 
     virtual std::unique_ptr<IMaterial>
     FromSerialized(const nlohmann::json& serializedMaterial) const override;

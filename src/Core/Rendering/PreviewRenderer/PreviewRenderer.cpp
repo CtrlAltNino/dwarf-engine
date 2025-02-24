@@ -47,7 +47,6 @@ namespace Dwarf
   void
   PreviewRenderer::SetScrollDistance(float distance)
   {
-    std::cout << "SetScrollDistance: " << distance << std::endl;
     m_Properties.Distance = distance;
   }
 

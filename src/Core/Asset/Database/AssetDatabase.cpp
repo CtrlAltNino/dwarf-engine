@@ -453,7 +453,8 @@ namespace Dwarf
           {
             if (m_ShaderAssetMap.contains(path))
             {
-              std::cout << "A shader asset has been updated!" << std::endl;
+              m_Logger->LogInfo(
+                Log("A shader asset has been updated!", "AssetDatabase"));
               m_ShaderRecompiler->MarkForRecompilation(m_ShaderAssetMap[path]);
               // AssetDatabase::AddShaderToRecompilationQueue(path);
             }
@@ -461,7 +462,8 @@ namespace Dwarf
           }
         case ASSET_TYPE::MATERIAL:
           {
-            std::cout << "A material asset has been updated!" << std::endl;
+            m_Logger->LogInfo(
+              Log("A material asset has been updated!", "AssetDatabase"));
             // if (AssetDatabase::Exists(path))
             // {
             //   MaterialAsset& mat =
@@ -474,25 +476,29 @@ namespace Dwarf
         case ASSET_TYPE::MODEL:
           {
             // TODO: REIMPORT MODEL FILE
-            std::cout << "A model asset has been updated!" << std::endl;
+            m_Logger->LogInfo(
+              Log("A model asset has been updated!", "AssetDatabase"));
             break;
           }
         case ASSET_TYPE::TEXTURE:
           {
             // TODO: REIMPORT TEXTURE
-            std::cout << "A texture asset has been updated!" << std::endl;
+            m_Logger->LogInfo(
+              Log("A texture asset has been updated!", "AssetDatabase"));
             break;
           }
         case ASSET_TYPE::SCENE:
           {
             // TODO: IF ITS THE CURRENTLY OPEN SCENE, MODAL TO ASK IF IT
             // SHOULD BE RELOADED
-            std::cout << "A scene asset has been updated!" << std::endl;
+            m_Logger->LogInfo(
+              Log("A scene asset has been updated!", "AssetDatabase"));
             break;
           }
         case ASSET_TYPE::UNKNOWN:
           {
-            std::cout << "An unsupported asset has been updated!" << std::endl;
+            m_Logger->LogInfo(
+              Log("An unsupported asset has been updated!", "AssetDatabase"));
             break;
           }
       }

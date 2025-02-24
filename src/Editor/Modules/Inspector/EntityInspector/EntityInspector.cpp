@@ -216,10 +216,10 @@ namespace Dwarf
         wasNull = false;
         memory = component.GetModelAsset()->GetUID();
         component.MaterialAssets().clear();
+        component.IdMesh() = nullptr;
         for (auto& mesh :
              ((ModelAsset&)component.GetModelAsset()->GetAsset()).Meshes())
         {
-          std::cout << "Adding material asset" << std::endl;
           component.MaterialAssets()[mesh->GetMaterialIndex()] = nullptr;
         }
       }

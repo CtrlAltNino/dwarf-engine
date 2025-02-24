@@ -62,7 +62,7 @@ namespace Dwarf
      * @param shader The shader to set.
      */
     virtual void
-    SetShader(std::unique_ptr<IShader>&& shader) = 0;
+    SetShader(std::shared_ptr<IShader> shader) = 0;
 
     /**
      * @brief Get the shader parameters for this material.

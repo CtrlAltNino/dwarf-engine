@@ -244,6 +244,7 @@ namespace Dwarf
     /// @brief Imported texture.
     std::unique_ptr<ITexture> m_Texture;
     std::shared_ptr<ITexture> m_Placeholder;
+    bool                      m_IsCurrentlyLoading;
 
   public:
     explicit TextureAsset(std::unique_ptr<ITexture>&& texture,
@@ -251,6 +252,12 @@ namespace Dwarf
       : m_Texture(std::move(texture))
       , m_Placeholder(placeholder)
     {
+    }
+
+    bool
+    IsLoaded() const
+    {
+      return m_Texture != nullptr;
     }
 
     const ITexture&

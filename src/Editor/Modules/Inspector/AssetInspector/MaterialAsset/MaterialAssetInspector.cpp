@@ -758,20 +758,17 @@ namespace Dwarf
             ImGui::GetCursorScreenPos().y + ImGui::GetContentRegionAvail().x }))
     {
       isRotating = true;
-      std::cout << "Start Rotating" << std::endl;
     }
 
     if (isRotating &&
         m_InputManager->GetMouseButtonUp(Dwarf::MOUSE_BUTTON::LEFT))
     {
       isRotating = false;
-      std::cout << "Stopped rotating" << std::endl;
     }
 
     if (isRotating)
     {
       // PreviewRenderer::UpdateRotation(InputManager::GetDeltaMousePos());
-      std::cout << "Rotating" << std::endl;
       m_MaterialPreview->UpdateRotation(m_InputManager->GetMouseDelta());
     }
 

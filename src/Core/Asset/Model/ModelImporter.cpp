@@ -87,17 +87,6 @@ namespace Dwarf
       // Apply modelTransform to the scene or node’s transform here.
     }
 
-    // Print the rotation matrix of the root node
-    // std::cout << "Root node rotation matrix: " << std::endl;
-    for (int i = 0; i < 4; i++)
-    {
-      for (int j = 0; j < 4; j++)
-      {
-        std::cout << scene->mRootNode->mTransformation[i][j] << " ";
-      }
-      std::cout << std::endl;
-    }
-
     std::vector<std::unique_ptr<IMesh>> meshes;
 
     // Rotate scene->mRootNode->mTransformation to match the coordinate system
