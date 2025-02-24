@@ -460,6 +460,92 @@ namespace Dwarf
     return m_ShaderLogs;
   }
 
+  void
+  OpenGLShader::SetUniform(std::string uniformName, bool value)
+  {
+    glUniform1f(GetUniformLocation(uniformName), value);
+    OpenGLUtilities::CheckOpenGLError(
+      "glUniform1f", "OpenGLRendererApi", m_Logger);
+  }
+  void
+  OpenGLShader::SetUniform(std::string uniformName, int value)
+  {
+    glUniform1i(GetUniformLocation(uniformName), value);
+    OpenGLUtilities::CheckOpenGLError(
+      "glUniform1i", "OpenGLRendererApi", m_Logger);
+  }
+  void
+  OpenGLShader::SetUniform(std::string uniformName, unsigned int value)
+  {
+    glUniform1ui(GetUniformLocation(uniformName), value);
+    OpenGLUtilities::CheckOpenGLError(
+      "glUniform1ui", "OpenGLRendererApi", m_Logger);
+  }
+  void
+  OpenGLShader::SetUniform(std::string uniformName, float value)
+  {
+    glUniform1f(GetUniformLocation(uniformName), value);
+    OpenGLUtilities::CheckOpenGLError(
+      "glUniform1f", "OpenGLRendererApi", m_Logger);
+  }
+  void
+  OpenGLShader::SetUniform(std::string   uniformName,
+                           TextureAsset& value,
+                           unsigned int  textureCount)
+  {
+    // TODO: This needs to count the number of textures and bind them
+    glActiveTexture(GL_TEXTURE0 + textureCount);
+    OpenGLUtilities::CheckOpenGLError(
+      "glActiveTexture", "OpenGLRendererApi", m_Logger);
+    glBindTexture(GL_TEXTURE_2D, value.GetTexture().GetTextureID());
+    // m_Logger->LogDebug(
+    //   Log(fmt::format("Texture id: {}",
+    //                   textureAsset.GetTexture().GetTextureID()),
+    //       "OpenGLRendererApi"));
+    OpenGLUtilities::CheckOpenGLError(
+      "glBindTexture", "OpenGLRendererApi", m_Logger);
+    GLuint location = GetUniformLocation(uniformName);
+    OpenGLUtilities::CheckOpenGLError(
+      "glGetUniformLocation", "OpenGLRendererApi", m_Logger);
+    glUniform1i(location, static_cast<GLint>(textureCount));
+    OpenGLUtilities::CheckOpenGLError(
+      "glUniform1i", "OpenGLRendererApi", m_Logger);
+  }
+  void
+  OpenGLShader::SetUniform(std::string uniformName, glm::vec2 value)
+  {
+    glUniform2f(GetUniformLocation(uniformName), value.x, value.y);
+    OpenGLUtilities::CheckOpenGLError(
+      "glUniform2f", "OpenGLRendererApi", m_Logger);
+  }
+  void
+  OpenGLShader::SetUniform(std::string uniformName, glm::vec3 value)
+  {
+    glUniform3f(GetUniformLocation(uniformName), value.x, value.y, value.z);
+    OpenGLUtilities::CheckOpenGLError(
+      "glUniform3f", "OpenGLRendererApi", m_Logger);
+  }
+  void
+  OpenGLShader::SetUniform(std::string uniformName, glm::vec4 value)
+  {
+    glUniform4f(
+      GetUniformLocation(uniformName), value.x, value.y, value.z, value.w);
+    OpenGLUtilities::CheckOpenGLError(
+      "glUniform4f", "OpenGLRendererApi", m_Logger);
+  }
+
+  GLuint
+  OpenGLShader::GetUniformLocation(std::string uniformName)
+  {
+    if (!m_UniformLocations.contains(uniformName))
+    {
+      m_UniformLocations[uniformName] =
+        glGetUniformLocation(m_ID, uniformName.c_str());
+    }
+
+    return m_UniformLocations[uniformName];
+  }
+
   nlohmann::json
   OpenGLShader::Serialize()
   {
