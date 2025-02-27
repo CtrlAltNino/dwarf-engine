@@ -13,20 +13,26 @@
 namespace Dwarf
 {
   OpenGLRendererApi::OpenGLRendererApi(
-    std::shared_ptr<IAssetDatabase> assetDatabase,
-    std::shared_ptr<IShaderFactory> shaderFactory,
-    std::shared_ptr<IDwarfLogger>   logger,
-    std::shared_ptr<IEditorStats>   editorStats)
+    std::shared_ptr<IAssetDatabase>      assetDatabase,
+    std::shared_ptr<IShaderFactory>      shaderFactory,
+    std::shared_ptr<IDwarfLogger>        logger,
+    std::shared_ptr<IEditorStats>        editorStats,
+    std::shared_ptr<IOpenGLStateTracker> stateTracker)
     : m_AssetDatabase(assetDatabase)
     , m_ShaderFactory(shaderFactory)
     , m_Logger(logger)
     , m_EditorStats(editorStats)
+    , m_StateTracker(stateTracker)
   {
     m_Logger->LogDebug(Log("OpenGLRendererApi created.", "OpenGLRendererApi"));
     m_ErrorShader = m_ShaderFactory->CreateErrorShader();
     m_ErrorShader->Compile();
-    glEnable(GL_DEPTH_TEST);
-    glDepthFunc(GL_LESS);
+
+    m_StateTracker->SetDepthTest(true);
+    m_StateTracker->SetDepthFunction(GL_LESS);
+    glEnable(GL_LINE_SMOOTH);
+    OpenGLUtilities::CheckOpenGLError(
+      "glEnable GL_LINE_SMOOTH", "OpenGLRendererApi", m_Logger);
   }
 
   OpenGLRendererApi::~OpenGLRendererApi()
@@ -91,47 +97,18 @@ namespace Dwarf
   };
 
   void
-  OpenGLRendererApi::Init()
-  {
-    OpenGLUtilities::CheckOpenGLError(
-      "Before OpenGLRendererApi::Init", "OpenGLRendererApi", m_Logger);
-    glEnable(GL_BLEND);
-    OpenGLUtilities::CheckOpenGLError(
-      "glEnable GL_BLEND", "OpenGLRendererApi", m_Logger);
-    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-    OpenGLUtilities::CheckOpenGLError(
-      "glBlendFunc", "OpenGLRendererApi", m_Logger);
-
-    glEnable(GL_DEPTH_TEST);
-    OpenGLUtilities::CheckOpenGLError(
-      "glEnable GL_DEPTH_TEST", "OpenGLRendererApi", m_Logger);
-    glEnable(GL_LINE_SMOOTH);
-    OpenGLUtilities::CheckOpenGLError(
-      "glEnable GL_LINE_SMOOTH", "OpenGLRendererApi", m_Logger);
-    SetViewport(0, 0, 512, 512);
-  }
-
-  void
   OpenGLRendererApi::SetViewport(uint32_t x,
                                  uint32_t y,
                                  uint32_t width,
                                  uint32_t height)
   {
-    OpenGLUtilities::CheckOpenGLError(
-      "Before setting viewport", "OpenGLRendererApi", m_Logger);
-    glViewport(x, y, width, height);
-    OpenGLUtilities::CheckOpenGLError(
-      "glViewport", "OpenGLRendererApi", m_Logger);
+    m_StateTracker->SetViewport(x, y, width, height);
   }
 
   void
   OpenGLRendererApi::SetClearColor(const glm::vec4& color)
   {
-    OpenGLUtilities::CheckOpenGLError(
-      "Before setting clear color", "OpenGLRendererApi", m_Logger);
-    glClearColor(color.r, color.g, color.b, color.a);
-    OpenGLUtilities::CheckOpenGLError(
-      "glClearColor", "OpenGLRendererApi", m_Logger);
+    m_StateTracker->SetClearColor(color);
   }
 
   void
@@ -171,56 +148,16 @@ namespace Dwarf
                              : dynamic_cast<OpenGLShader&>(*m_ErrorShader);
     int           textureInputCounter = 0;
 
-    static GLuint currentShaderId = -1;
+    m_StateTracker->SetShaderProgram(shader.GetID());
 
-    if (currentShaderId != shader.GetID())
-    {
-      currentShaderId = shader.GetID();
-      glUseProgram(currentShaderId);
-      OpenGLUtilities::CheckOpenGLError(
-        "glUseProgram", "OpenGLRendererApi", m_Logger);
-    }
+    m_StateTracker->SetBlendMode(
+      material.GetMaterialProperties().IsTransparent);
 
-    static bool transparentFlag = false;
+    m_StateTracker->SetBlendFunction(GL_SRC0_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    if (transparentFlag != material.GetMaterialProperties().IsTransparent)
-    {
-      transparentFlag = material.GetMaterialProperties().IsTransparent;
-      if (transparentFlag)
-      {
-        glEnable(GL_BLEND);
-        OpenGLUtilities::CheckOpenGLError(
-          "glEnable GL_BLEND", "OpenGLRendererApi", m_Logger);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-        OpenGLUtilities::CheckOpenGLError(
-          "glBlendFunc", "OpenGLRendererApi", m_Logger);
-      }
-      else
-      {
-        glDisable(GL_BLEND);
-        OpenGLUtilities::CheckOpenGLError(
-          "glEnable GL_BLEND", "OpenGLRendererApi", m_Logger);
-      }
-    }
-
-    static bool cullFaceFlag = true;
-
-    if (cullFaceFlag != !material.GetMaterialProperties().IsDoubleSided)
-    {
-      cullFaceFlag = !material.GetMaterialProperties().IsDoubleSided;
-
-      if (cullFaceFlag)
-      {
-        glEnable(GL_CULL_FACE);
-        glCullFace(GL_BACK);
-        OpenGLUtilities::CheckOpenGLError(
-          "glCullFace", "OpenGLRendererApi", m_Logger);
-      }
-      else
-      {
-        glDisable(GL_CULL_FACE);
-      }
-    }
+    m_StateTracker->SetCullMode(
+      !material.GetMaterialProperties().IsDoubleSided);
+    m_StateTracker->SetCullFace(GL_BACK);
 
     // TODO: Move this to OpenGLShader.cpp
     unsigned int textureCount = 0;
@@ -238,7 +175,14 @@ namespace Dwarf
       }
     }
 
-    GLuint mmID = glGetUniformLocation(shader.GetID(), "modelMatrix");
+    shader.SetUniform("modelMatrix", modelMatrix);
+    shader.SetUniform("viewMatrix", camera.GetViewMatrix());
+    shader.SetUniform("projectionMatrix", camera.GetProjectionMatrix());
+    shader.SetUniform("_Time", (float)m_EditorStats->GetTimeSinceStart());
+    shader.SetUniform("viewPosition",
+                      camera.GetProperties().Transform.GetPosition());
+
+    /*GLuint mmID = glGetUniformLocation(shader.GetID(), "modelMatrix");
     OpenGLUtilities::CheckOpenGLError(
       "glGetUniformLocation modelMatrix", "OpenGLRendererApi", m_Logger);
     GLuint vmID = glGetUniformLocation(shader.GetID(), "viewMatrix");
@@ -271,7 +215,7 @@ namespace Dwarf
                 camera.GetProperties().Transform.GetPosition().y,
                 camera.GetProperties().Transform.GetPosition().z);
     OpenGLUtilities::CheckOpenGLError(
-      "glUniform3f viewPosition", "OpenGLRendererApi", m_Logger);
+      "glUniform3f viewPosition", "OpenGLRendererApi", m_Logger);*/
 
     oglMesh->Bind();
 
@@ -279,18 +223,6 @@ namespace Dwarf
       GL_TRIANGLES, oglMesh->GetIndices().size(), GL_UNSIGNED_INT, 0);
     OpenGLUtilities::CheckOpenGLError(
       "glDrawElements", "OpenGLRendererApi", m_Logger);
-
-    oglMesh->Unbind();
-
-    glDisable(GL_BLEND);
-    OpenGLUtilities::CheckOpenGLError(
-      "glDisable GL_BLEND", "OpenGLRendererApi", m_Logger);
-    glDisable(GL_CULL_FACE);
-    OpenGLUtilities::CheckOpenGLError(
-      "glDisable GL_CULL_FACE", "OpenGLRendererApi", m_Logger);
-    // glUseProgram(0);
-    // OpenGLUtilities::CheckOpenGLError(
-    //  "glUseProgram 0", "OpenGLRendererApi", m_Logger);
   }
 
   void

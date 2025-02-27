@@ -8,6 +8,7 @@
 #include "Core/Asset/Shader/ShaderSourceCollection/IShaderSourceCollection.h"
 #include "Core/Rendering/Shader/ShaderParameterCollection/IShaderParameterCollectionFactory.h"
 
+#include <cstdint>
 #include <glad/glad.h>
 #include <boost/di.hpp>
 #include <boost/serialization/strong_typedef.hpp>
@@ -75,7 +76,7 @@ namespace Dwarf
     void
     SetUniform(std::string uniformName, int value);
     void
-    SetUniform(std::string uniformName, unsigned int value);
+    SetUniform(std::string uniformName, uint32_t value);
     void
     SetUniform(std::string uniformName, float value);
     void
@@ -88,6 +89,8 @@ namespace Dwarf
     SetUniform(std::string uniformName, glm::vec3 value);
     void
     SetUniform(std::string uniformName, glm::vec4 value);
+    void
+    SetUniform(std::string uniformName, glm::mat4 value);
 
     GLuint
     GetUniformLocation(std::string uniformName);
@@ -109,6 +112,17 @@ namespace Dwarf
       m_ShaderParameterCollectionFactory;
 
     std::map<std::string, GLuint> m_UniformLocations;
+    std::map<std::string,
+             std::variant<bool,
+                          int,
+                          uint32_t,
+                          float,
+                          glm::vec2,
+                          glm::vec3,
+                          glm::vec4,
+                          glm::mat3,
+                          glm::mat4>>
+      m_UniformStates;
 
     std::optional<std::unique_ptr<IAssetReference>> m_VertexShaderAsset;
     std::optional<std::unique_ptr<IAssetReference>> m_GeometryShaderAsset;

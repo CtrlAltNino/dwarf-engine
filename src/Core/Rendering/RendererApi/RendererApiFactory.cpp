@@ -4,8 +4,10 @@
 // Including the shader header files of the graphics API.
 #if _WIN32
 #include "Platform/OpenGL/OpenGLRendererApi.h"
+#include "Platform/OpenGL/OpenGLStateTracker.h"
 #elif __linux__
 #include "Platform/OpenGL/OpenGLRendererApi.h"
+#include "Platform/OpenGL/OpenGLStateTracker.h"
 #elif __APPLE__
 // #include "Platform/Metal/MetalRendererApi.h"
 #endif
@@ -13,16 +15,18 @@
 namespace Dwarf
 {
   RendererApiFactory::RendererApiFactory(
-    std::shared_ptr<IDwarfLogger>   logger,
-    GraphicsApi                     api,
-    std::shared_ptr<IAssetDatabase> assetDatabase,
-    std::shared_ptr<IShaderFactory> shaderFactory,
-    std::shared_ptr<IEditorStats>   editorStats)
+    std::shared_ptr<IDwarfLogger>        logger,
+    GraphicsApi                          api,
+    std::shared_ptr<IAssetDatabase>      assetDatabase,
+    std::shared_ptr<IShaderFactory>      shaderFactory,
+    std::shared_ptr<IEditorStats>        editorStats,
+    std::shared_ptr<IOpenGLStateTracker> stateTracker)
     : m_GraphicsApi(api)
     , m_AssetDatabase(assetDatabase)
     , m_ShaderFactory(shaderFactory)
     , m_Logger(logger)
     , m_EditorStats(editorStats)
+    , m_StateTracker(stateTracker)
   {
   }
 
@@ -36,8 +40,11 @@ namespace Dwarf
         // return std::make_shared<D3D12Shader>();
         break;
       case GraphicsApi::OpenGL:
-        return std::make_shared<OpenGLRendererApi>(
-          m_AssetDatabase, m_ShaderFactory, m_Logger, m_EditorStats);
+        return std::make_shared<OpenGLRendererApi>(m_AssetDatabase,
+                                                   m_ShaderFactory,
+                                                   m_Logger,
+                                                   m_EditorStats,
+                                                   m_StateTracker);
         break;
       case GraphicsApi::Metal: break;
       case GraphicsApi::Vulkan:
@@ -46,8 +53,11 @@ namespace Dwarf
 #elif __linux__
       case GraphicsApi::D3D12: break;
       case GraphicsApi::OpenGL:
-        return std::make_shared<OpenGLRendererApi>(
-          m_AssetDatabase, m_ShaderFactory, m_Logger, m_EditorStats);
+        return std::make_shared<OpenGLRendererApi>(m_AssetDatabase,
+                                                   m_ShaderFactory,
+                                                   m_Logger,
+                                                   m_EditorStats,
+                                                   m_StateTracker);
         break;
       case GraphicsApi::Metal: break;
       case GraphicsApi::Vulkan:

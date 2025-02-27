@@ -63,6 +63,8 @@
 #include "Editor/EditorView/IEditorView.h"
 #include "Editor/Selection/IEditorSelection.h"
 #include "Editor/Modules/Inspector/AssetInspector/IAssetInspector.h"
+#include "Platform/OpenGL/IOpenGLStateTracker.h"
+#include "Platform/OpenGL/OpenGLStateTracker.h"
 #include "Project/ProjectSettings.h"
 #include "Core/Asset/Texture/IImageFileLoader.h"
 #include "Core/Asset/Texture/ImageFileLoader.h"
@@ -119,6 +121,8 @@ namespace Dwarf
           boost::di::bind<ICameraFactory>.to<CameraFactory>().in(
           boost::di::extension::shared),
           boost::di::bind<IEditorStats>.to<EditorStats>().in(
+          boost::di::extension::shared),
+          boost::di::bind<IOpenGLStateTracker>.to<OpenGLStateTracker>().in(
           boost::di::extension::shared),
           boost::di::bind<IVramTracker>.to<VramTracker>().in(
           boost::di::extension::shared),

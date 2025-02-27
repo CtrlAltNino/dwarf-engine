@@ -6,28 +6,28 @@
 
 #include "Core/Asset/Database/IAssetDatabase.h"
 #include "Core/Rendering/RendererApi/IRendererApi.h"
+#include "Platform/OpenGL/IOpenGLStateTracker.h"
 
 namespace Dwarf
 {
   class OpenGLRendererApi : public IRendererApi
   {
   private:
-    std::shared_ptr<IAssetDatabase> m_AssetDatabase;
-    std::shared_ptr<IShaderFactory> m_ShaderFactory;
-    std::shared_ptr<IDwarfLogger>   m_Logger;
-    std::shared_ptr<IEditorStats>   m_EditorStats;
+    std::shared_ptr<IAssetDatabase>      m_AssetDatabase;
+    std::shared_ptr<IShaderFactory>      m_ShaderFactory;
+    std::shared_ptr<IDwarfLogger>        m_Logger;
+    std::shared_ptr<IEditorStats>        m_EditorStats;
+    std::shared_ptr<IOpenGLStateTracker> m_StateTracker;
 
     std::shared_ptr<IShader> m_ErrorShader;
 
   public:
-    OpenGLRendererApi(std::shared_ptr<IAssetDatabase> assetDatabase,
-                      std::shared_ptr<IShaderFactory> shaderFactory,
-                      std::shared_ptr<IDwarfLogger>   logger,
-                      std::shared_ptr<IEditorStats>   editorStats);
+    OpenGLRendererApi(std::shared_ptr<IAssetDatabase>      assetDatabase,
+                      std::shared_ptr<IShaderFactory>      shaderFactory,
+                      std::shared_ptr<IDwarfLogger>        logger,
+                      std::shared_ptr<IEditorStats>        editorStats,
+                      std::shared_ptr<IOpenGLStateTracker> stateTracker);
     ~OpenGLRendererApi() override;
-
-    void
-    Init() override;
 
     void
     SetViewport(uint32_t x,

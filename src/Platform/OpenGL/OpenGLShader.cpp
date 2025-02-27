@@ -463,31 +463,63 @@ namespace Dwarf
   void
   OpenGLShader::SetUniform(std::string uniformName, bool value)
   {
+    if (m_UniformStates.contains(uniformName) &&
+        (std::get<bool>(m_UniformStates[uniformName]) == value))
+    {
+      return;
+    }
+
     glUniform1f(GetUniformLocation(uniformName), value);
     OpenGLUtilities::CheckOpenGLError(
       "glUniform1f", "OpenGLRendererApi", m_Logger);
+    m_UniformStates[uniformName] = value;
   }
+
   void
   OpenGLShader::SetUniform(std::string uniformName, int value)
   {
+    if (m_UniformStates.contains(uniformName) &&
+        (std::get<int>(m_UniformStates[uniformName]) == value))
+    {
+      return;
+    }
+
     glUniform1i(GetUniformLocation(uniformName), value);
     OpenGLUtilities::CheckOpenGLError(
       "glUniform1i", "OpenGLRendererApi", m_Logger);
+    m_UniformStates[uniformName] = value;
   }
+
   void
-  OpenGLShader::SetUniform(std::string uniformName, unsigned int value)
+  OpenGLShader::SetUniform(std::string uniformName, uint32_t value)
   {
+    if (m_UniformStates.contains(uniformName) &&
+        (std::get<uint32_t>(m_UniformStates[uniformName]) == value))
+    {
+      return;
+    }
+
     glUniform1ui(GetUniformLocation(uniformName), value);
     OpenGLUtilities::CheckOpenGLError(
       "glUniform1ui", "OpenGLRendererApi", m_Logger);
+    m_UniformStates[uniformName] = value;
   }
+
   void
   OpenGLShader::SetUniform(std::string uniformName, float value)
   {
+    if (m_UniformStates.contains(uniformName) &&
+        (std::get<float>(m_UniformStates[uniformName]) == value))
+    {
+      return;
+    }
+
     glUniform1f(GetUniformLocation(uniformName), value);
     OpenGLUtilities::CheckOpenGLError(
       "glUniform1f", "OpenGLRendererApi", m_Logger);
+    m_UniformStates[uniformName] = value;
   }
+
   void
   OpenGLShader::SetUniform(std::string   uniformName,
                            TextureAsset& value,
@@ -511,27 +543,67 @@ namespace Dwarf
     OpenGLUtilities::CheckOpenGLError(
       "glUniform1i", "OpenGLRendererApi", m_Logger);
   }
+
   void
   OpenGLShader::SetUniform(std::string uniformName, glm::vec2 value)
   {
+    if (m_UniformStates.contains(uniformName) &&
+        (std::get<glm::vec2>(m_UniformStates[uniformName]) == value))
+    {
+      return;
+    }
+
     glUniform2f(GetUniformLocation(uniformName), value.x, value.y);
     OpenGLUtilities::CheckOpenGLError(
       "glUniform2f", "OpenGLRendererApi", m_Logger);
+    m_UniformStates[uniformName] = value;
   }
+
   void
   OpenGLShader::SetUniform(std::string uniformName, glm::vec3 value)
   {
+    if (m_UniformStates.contains(uniformName) &&
+        (std::get<glm::vec3>(m_UniformStates[uniformName]) == value))
+    {
+      return;
+    }
+
     glUniform3f(GetUniformLocation(uniformName), value.x, value.y, value.z);
     OpenGLUtilities::CheckOpenGLError(
       "glUniform3f", "OpenGLRendererApi", m_Logger);
+    m_UniformStates[uniformName] = value;
   }
+
   void
   OpenGLShader::SetUniform(std::string uniformName, glm::vec4 value)
   {
+    if (m_UniformStates.contains(uniformName) &&
+        (std::get<glm::vec4>(m_UniformStates[uniformName]) == value))
+    {
+      return;
+    }
+
     glUniform4f(
       GetUniformLocation(uniformName), value.x, value.y, value.z, value.w);
     OpenGLUtilities::CheckOpenGLError(
       "glUniform4f", "OpenGLRendererApi", m_Logger);
+    m_UniformStates[uniformName] = value;
+  }
+
+  void
+  OpenGLShader::SetUniform(std::string uniformName, glm::mat4 value)
+  {
+    if (m_UniformStates.contains(uniformName) &&
+        (std::get<glm::mat4>(m_UniformStates[uniformName]) == value))
+    {
+      return;
+    }
+
+    glUniformMatrix4fv(
+      GetUniformLocation(uniformName), 1, GL_FALSE, &value[0][0]);
+    OpenGLUtilities::CheckOpenGLError(
+      "glUniformMatrix4fv", "OpenGLRendererApi", m_Logger);
+    m_UniformStates[uniformName] = value;
   }
 
   GLuint

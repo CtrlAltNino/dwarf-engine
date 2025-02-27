@@ -9,5 +9,6 @@ IF(WIN32 OR(UNIX AND NOT APPLE))
         OpenGLTexture.cpp
         OpenGLRendererApi.cpp
         OpenGLComputeShader.cpp
+        OpenGLStateTracker.cpp
     )
 ENDIF()
