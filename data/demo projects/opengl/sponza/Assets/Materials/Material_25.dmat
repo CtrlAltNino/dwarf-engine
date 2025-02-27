@@ -41,14 +41,6 @@
     "useNormalMap": {
       "type": "boolean",
       "value": true
-    },
-    "viewPosition": {
-      "type": "vec3",
-      "value": {
-        "x": 0.0,
-        "y": 0.0,
-        "z": 0.0
-      }
     }
   }
 }

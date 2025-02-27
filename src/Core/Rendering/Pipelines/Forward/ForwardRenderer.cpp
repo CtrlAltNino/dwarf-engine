@@ -12,13 +12,15 @@ namespace Dwarf
     std::shared_ptr<IMaterialFactory> materialFactory,
     std::shared_ptr<IShaderFactory>   shaderFactory,
     std::shared_ptr<IShaderSourceCollectionFactory>
-                                  shaderSourceCollectionFactory,
-    std::shared_ptr<IMeshFactory> meshFactory)
+                                   shaderSourceCollectionFactory,
+    std::shared_ptr<IMeshFactory>  meshFactory,
+    std::shared_ptr<IDrawCallList> drawCallList)
     : m_RendererApi(rendererApi)
     , m_MaterialFactory(materialFactory)
     , m_ShaderFactory(shaderFactory)
     , m_ShaderSourceCollectionFactory(shaderSourceCollectionFactory)
     , m_MeshFactory(meshFactory)
+    , m_DrawCallList(drawCallList)
   {
     m_RendererApi->SetClearColor(glm::vec4(0.065f, 0.07f, 0.085, 1.0f));
 
@@ -55,7 +57,7 @@ namespace Dwarf
   void
   ForwardRenderer::RenderEntity(Entity& entity, ICamera& camera)
   {
-    TransformComponent& transform = entity.GetComponent<TransformComponent>();
+    /*TransformComponent& transform = entity.GetComponent<TransformComponent>();
     MeshRendererComponent& meshRenderer =
       entity.GetComponent<MeshRendererComponent>();
     ModelAsset& model = (ModelAsset&)meshRenderer.GetModelAsset()->GetAsset();
@@ -80,7 +82,7 @@ namespace Dwarf
                                        modelMatrix);
         }
       }
-    }
+    }*/
   }
 
   void
@@ -95,7 +97,7 @@ namespace Dwarf
 
     // Rendering skybox first???
 
-    for (auto view = scene.GetRegistry()
+    /*for (auto view = scene.GetRegistry()
                        .view<TransformComponent, MeshRendererComponent>();
          auto [entity, transform, meshRenderer] : view.each())
     {
@@ -104,6 +106,14 @@ namespace Dwarf
         Entity e(entity, scene.GetRegistry());
         RenderEntity(e, camera);
       }
+    }*/
+
+    for (auto& drawCall : m_DrawCallList->GetDrawCalls())
+    {
+      m_RendererApi->RenderIndexed(drawCall->GetMesh(),
+                                   drawCall->GetMaterial(),
+                                   camera,
+                                   drawCall->GetModelMatrix());
     }
 
     // Render grid
@@ -118,7 +128,7 @@ namespace Dwarf
                     camera.GetProperties().Transform.GetPosition().z)) *
         m_GridModelMatrix;
       m_RendererApi->RenderIndexed(
-        m_GridMesh, *m_GridMaterial, camera, translatedGridModelMatrix);
+        *m_GridMesh, *m_GridMaterial, camera, translatedGridModelMatrix);
     }
   }
 
@@ -164,7 +174,7 @@ namespace Dwarf
         unsigned int id = (unsigned int)entity;
         m_IdMaterial->GetShaderParameters()->SetParameter("objectId", id);
         m_RendererApi->RenderIndexed(
-          meshRenderer.IdMesh(), *m_IdMaterial, camera, modelMatrix);
+          *meshRenderer.IdMesh(), *m_IdMaterial, camera, modelMatrix);
       }
     }
   }

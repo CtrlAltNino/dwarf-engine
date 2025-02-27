@@ -64,11 +64,12 @@ namespace Dwarf
       "glDeleteProgram", "OpenGLShader", m_Logger);
   }
 
-  const std::array<std::string, 4> OpenGLShader::ReservedUniformNames = {
+  const std::array<std::string, 5> OpenGLShader::ReservedUniformNames = {
     "modelMatrix",
     "viewMatrix",
     "projectionMatrix",
-    "_Time"
+    "_Time",
+    "viewPosition"
   };
 
   const std::map<GLenum, ShaderParameterType> glTypeToDwarfShaderType = {
@@ -525,23 +526,36 @@ namespace Dwarf
                            TextureAsset& value,
                            unsigned int  textureCount)
   {
-    // TODO: This needs to count the number of textures and bind them
-    glActiveTexture(GL_TEXTURE0 + textureCount);
-    OpenGLUtilities::CheckOpenGLError(
-      "glActiveTexture", "OpenGLRendererApi", m_Logger);
-    glBindTexture(GL_TEXTURE_2D, value.GetTexture().GetTextureID());
-    // m_Logger->LogDebug(
-    //   Log(fmt::format("Texture id: {}",
-    //                   textureAsset.GetTexture().GetTextureID()),
-    //       "OpenGLRendererApi"));
-    OpenGLUtilities::CheckOpenGLError(
-      "glBindTexture", "OpenGLRendererApi", m_Logger);
-    GLuint location = GetUniformLocation(uniformName);
-    OpenGLUtilities::CheckOpenGLError(
-      "glGetUniformLocation", "OpenGLRendererApi", m_Logger);
-    glUniform1i(location, static_cast<GLint>(textureCount));
+    if (m_TextureStates.contains(textureCount) &&
+        (m_TextureStates[textureCount] == value.GetTexture().GetTextureID()))
+    {
+      // return;
+    }
+    else
+    {
+      glActiveTexture(GL_TEXTURE0 + textureCount);
+      OpenGLUtilities::CheckOpenGLError(
+        "glActiveTexture", "OpenGLRendererApi", m_Logger);
+      glBindTexture(GL_TEXTURE_2D, value.GetTexture().GetTextureID());
+      m_TextureStates[textureCount] = value.GetTexture().GetTextureID();
+    }
+
+    if (m_UniformStates.contains(uniformName) &&
+        (std::get<int>(m_UniformStates[uniformName]) ==
+         static_cast<GLint>(textureCount)))
+    {
+      return;
+    }
+
+    glUniform1i(GetUniformLocation(uniformName),
+                static_cast<GLint>(textureCount));
     OpenGLUtilities::CheckOpenGLError(
       "glUniform1i", "OpenGLRendererApi", m_Logger);
+    glUniform1i(GetUniformLocation(uniformName),
+                static_cast<GLint>(textureCount));
+    OpenGLUtilities::CheckOpenGLError(
+      "glUniform1i", "OpenGLRendererApi", m_Logger);
+    m_UniformStates[uniformName] = static_cast<GLint>(textureCount);
   }
 
   void
@@ -648,5 +662,12 @@ namespace Dwarf
         : "";
 
     return serializedShader;
+  }
+
+  bool
+  OpenGLShader::CompareTo(const IShader& other) const
+  {
+    const OpenGLShader* otherShader = dynamic_cast<const OpenGLShader*>(&other);
+    return m_ID < otherShader->GetID();
   }
 }

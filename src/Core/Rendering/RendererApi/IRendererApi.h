@@ -25,10 +25,10 @@ namespace Dwarf
     virtual void
     Clear(unsigned int value) = 0;
     virtual void
-    RenderIndexed(std::unique_ptr<IMesh>& mesh,
-                  IMaterial&              material,
-                  ICamera&                camera,
-                  glm::mat4               modelMatrix) = 0;
+    RenderIndexed(IMesh&     mesh,
+                  IMaterial& material,
+                  ICamera&   camera,
+                  glm::mat4  modelMatrix) = 0;
     virtual void
     ApplyComputeShader(std::shared_ptr<IComputeShader> computeShader,
                        std::shared_ptr<IFramebuffer>   fb,

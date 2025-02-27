@@ -43,10 +43,10 @@ namespace Dwarf
     Clear() override;
 
     void
-    RenderIndexed(std::unique_ptr<IMesh>& mesh,
-                  IMaterial&              material,
-                  ICamera&                camera,
-                  glm::mat4               modelMatrix) override;
+    RenderIndexed(IMesh&     mesh,
+                  IMaterial& material,
+                  ICamera&   camera,
+                  glm::mat4  modelMatrix) override;
     void
     ApplyComputeShader(std::shared_ptr<IComputeShader> computeShader,
                        std::shared_ptr<IFramebuffer>   fb,

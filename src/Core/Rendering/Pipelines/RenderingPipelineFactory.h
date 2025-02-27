@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Asset/Shader/ShaderSourceCollection/IShaderSourceCollectionFactory.h"
+#include "Core/Rendering/DrawCall/IDrawCallList.h"
 #include "Core/Rendering/Material/IMaterialFactory.h"
 #include "Core/Rendering/Mesh/IMeshFactory.h"
 #include "Core/Rendering/RendererApi/IRendererApi.h"
@@ -17,8 +18,9 @@ namespace Dwarf
     std::shared_ptr<IMaterialFactory> m_MaterialFactory;
     std::shared_ptr<IShaderFactory>   m_ShaderFactory;
     std::shared_ptr<IShaderSourceCollectionFactory>
-                                  m_ShaderSourceCollectionFactory;
-    std::shared_ptr<IMeshFactory> m_MeshFactory;
+                                   m_ShaderSourceCollectionFactory;
+    std::shared_ptr<IMeshFactory>  m_MeshFactory;
+    std::shared_ptr<IDrawCallList> m_DrawCallList;
 
   public:
     RenderingPipelineFactory(
@@ -26,8 +28,9 @@ namespace Dwarf
       std::shared_ptr<IMaterialFactory>    materialFactory,
       std::shared_ptr<IShaderFactory>      shaderFactory,
       std::shared_ptr<IShaderSourceCollectionFactory>
-                                    shaderSourceCollectionFactory,
-      std::shared_ptr<IMeshFactory> meshFactory);
+                                     shaderSourceCollectionFactory,
+      std::shared_ptr<IMeshFactory>  meshFactory,
+      std::shared_ptr<IDrawCallList> drawCallList);
 
     virtual ~RenderingPipelineFactory() = default;
 

@@ -100,7 +100,7 @@ namespace Dwarf
 
     for (int i = 0; i < modelAssetRef.Meshes().size(); i++)
     {
-      m_RendererApi->RenderIndexed(modelAssetRef.Meshes().at(i),
+      m_RendererApi->RenderIndexed(*modelAssetRef.Meshes().at(i),
                                    *m_Material,
                                    *m_Camera,
                                    glm::toMat4(m_Properties.ModelRotationQuat));

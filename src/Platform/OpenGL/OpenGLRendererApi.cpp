@@ -134,14 +134,14 @@ namespace Dwarf
   }
 
   void
-  OpenGLRendererApi::RenderIndexed(std::unique_ptr<IMesh>& mesh,
-                                   IMaterial&              material,
-                                   ICamera&                camera,
-                                   glm::mat4               modelMatrix)
+  OpenGLRendererApi::RenderIndexed(IMesh&     mesh,
+                                   IMaterial& material,
+                                   ICamera&   camera,
+                                   glm::mat4  modelMatrix)
   {
     OpenGLUtilities::CheckOpenGLError(
       "Before rendering", "OpenGLRendererApi", m_Logger);
-    OpenGLMesh*   oglMesh = (OpenGLMesh*)mesh.get();
+    OpenGLMesh&   oglMesh = (OpenGLMesh&)mesh;
     IShader&      baseShader = material.GetShader();
     OpenGLShader& shader = baseShader.IsCompiled()
                              ? dynamic_cast<OpenGLShader&>(baseShader)
@@ -182,45 +182,10 @@ namespace Dwarf
     shader.SetUniform("viewPosition",
                       camera.GetProperties().Transform.GetPosition());
 
-    /*GLuint mmID = glGetUniformLocation(shader.GetID(), "modelMatrix");
-    OpenGLUtilities::CheckOpenGLError(
-      "glGetUniformLocation modelMatrix", "OpenGLRendererApi", m_Logger);
-    GLuint vmID = glGetUniformLocation(shader.GetID(), "viewMatrix");
-    OpenGLUtilities::CheckOpenGLError(
-      "glGetUniformLocation viewMatrix", "OpenGLRendererApi", m_Logger);
-    GLuint pmID = glGetUniformLocation(shader.GetID(), "projectionMatrix");
-    OpenGLUtilities::CheckOpenGLError(
-      "glGetUniformLocation projectionMatrix", "OpenGLRendererApi", m_Logger);
-    GLuint timeID = glGetUniformLocation(shader.GetID(), "_Time");
-    OpenGLUtilities::CheckOpenGLError(
-      "glGetUniformLocation time", "OpenGLRendererApi", m_Logger);
-    GLuint vpID = glGetUniformLocation(shader.GetID(), "viewPosition");
-    OpenGLUtilities::CheckOpenGLError(
-      "glGetUniformLocation viewPosition", "OpenGLRendererApi", m_Logger);
-
-    glUniformMatrix4fv(mmID, 1, GL_FALSE, &modelMatrix[0][0]);
-    OpenGLUtilities::CheckOpenGLError(
-      "glUniformMatrix4fv modelMatrix", "OpenGLRendererApi", m_Logger);
-    glUniformMatrix4fv(vmID, 1, GL_FALSE, &camera.GetViewMatrix()[0][0]);
-    OpenGLUtilities::CheckOpenGLError(
-      "glUniformMatrix4fv viewMatrix", "OpenGLRendererApi", m_Logger);
-    glUniformMatrix4fv(pmID, 1, GL_FALSE, &camera.GetProjectionMatrix()[0][0]);
-    OpenGLUtilities::CheckOpenGLError(
-      "glUniformMatrix4fv projectionMatrix", "OpenGLRendererApi", m_Logger);
-    glUniform1f(timeID, (float)m_EditorStats->GetTimeSinceStart());
-    OpenGLUtilities::CheckOpenGLError(
-      "glUniform1f time", "OpenGLRendererApi", m_Logger);
-    glUniform3f(vpID,
-                camera.GetProperties().Transform.GetPosition().x,
-                camera.GetProperties().Transform.GetPosition().y,
-                camera.GetProperties().Transform.GetPosition().z);
-    OpenGLUtilities::CheckOpenGLError(
-      "glUniform3f viewPosition", "OpenGLRendererApi", m_Logger);*/
-
-    oglMesh->Bind();
+    oglMesh.Bind();
 
     glDrawElements(
-      GL_TRIANGLES, oglMesh->GetIndices().size(), GL_UNSIGNED_INT, 0);
+      GL_TRIANGLES, oglMesh.GetIndices().size(), GL_UNSIGNED_INT, 0);
     OpenGLUtilities::CheckOpenGLError(
       "glDrawElements", "OpenGLRendererApi", m_Logger);
   }

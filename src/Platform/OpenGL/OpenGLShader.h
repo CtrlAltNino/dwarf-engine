@@ -9,6 +9,7 @@
 #include "Core/Rendering/Shader/ShaderParameterCollection/IShaderParameterCollectionFactory.h"
 
 #include <cstdint>
+#include <fmt/format.h>
 #include <glad/glad.h>
 #include <boost/di.hpp>
 #include <boost/serialization/strong_typedef.hpp>
@@ -95,10 +96,19 @@ namespace Dwarf
     GLuint
     GetUniformLocation(std::string uniformName);
 
-    static const std::array<std::string, 4> ReservedUniformNames;
+    static const std::array<std::string, 5> ReservedUniformNames;
 
     nlohmann::json
     Serialize() override;
+
+    bool
+    CompareTo(const IShader& other) const;
+
+    bool
+    operator<(const IShader& other) const override
+    {
+      return CompareTo(other);
+    }
 
   private:
     GLuint     m_ID = -1;
@@ -123,6 +133,8 @@ namespace Dwarf
                           glm::mat3,
                           glm::mat4>>
       m_UniformStates;
+
+    std::map<int, uintptr_t> m_TextureStates;
 
     std::optional<std::unique_ptr<IAssetReference>> m_VertexShaderAsset;
     std::optional<std::unique_ptr<IAssetReference>> m_GeometryShaderAsset;

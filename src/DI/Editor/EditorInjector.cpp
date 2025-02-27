@@ -4,6 +4,9 @@
 #include "Core/Asset/AssetReference/IAssetReferenceFactory.h"
 #include "Core/Asset/AssetReimporter/AssetReimporter.h"
 #include "Core/Asset/AssetReimporter/IAssetReimporter.h"
+#include "Core/Rendering/DrawCall/DrawCallList.h"
+#include "Core/Rendering/DrawCall/DrawCallWorker.h"
+#include "Core/Rendering/DrawCall/IDrawCallWorker.h"
 #include "Core/Rendering/GpuInfo/GpuInfoFactory.h"
 #include "Core/Rendering/GpuInfo/IGpuInfoFactory.h"
 #include "Editor/Modules/Inspector/AssetInspector/MaterialAsset/IMaterialAssetInspector.h"
@@ -95,6 +98,7 @@
 #include <boost/di.hpp>
 #include <boost/di/extension/scopes/shared.hpp>
 #include "Core/Rendering/Shader/ShaderRegistry/ShaderRegistry.h"
+#include "Core/Rendering/DrawCall/DrawCallFactory.h"
 
 #ifdef _WIN32
 #include "Platform/Windows/WindowsWindow.h"
@@ -123,6 +127,10 @@ namespace Dwarf
           boost::di::bind<IEditorStats>.to<EditorStats>().in(
           boost::di::extension::shared),
           boost::di::bind<IOpenGLStateTracker>.to<OpenGLStateTracker>().in(
+          boost::di::extension::shared),
+          boost::di::bind<IDrawCallFactory>.to<DrawCallFactory>().in(
+          boost::di::extension::shared),
+          boost::di::bind<IDrawCallWorker>.to<DrawCallWorker>().in(
           boost::di::extension::shared),
           boost::di::bind<IVramTracker>.to<VramTracker>().in(
           boost::di::extension::shared),
@@ -157,6 +165,8 @@ namespace Dwarf
           boost::di::bind<ISceneFactory>.to<SceneFactory>().in(
           boost::di::extension::shared),
           boost::di::bind<ILoadedScene>.to<LoadedScene>().in(
+          boost::di::extension::shared),
+          boost::di::bind<IDrawCallList>.to<DrawCallList>().in(
           boost::di::extension::shared),
           boost::di::bind<IEditorSelection>.to<EditorSelection>().in(
           boost::di::extension::shared),

@@ -71,7 +71,7 @@ namespace Dwarf
     m_RendererApi->SetClearColor({ 59 / 255.0f, 66 / 255.0f, 82 / 255.0f, 1 });
     m_RendererApi->Clear();
 
-    m_RendererApi->RenderIndexed(m_Mesh,
+    m_RendererApi->RenderIndexed(*m_Mesh,
                                  materialAsset,
                                  *m_Camera,
                                  glm::toMat4(m_Properties.ModelRotationQuat));

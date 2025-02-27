@@ -29,5 +29,8 @@ namespace Dwarf
 
     virtual nlohmann::json
     Serialize() = 0;
+
+    virtual bool
+    operator<(const IShader& other) const = 0;
   };
 }

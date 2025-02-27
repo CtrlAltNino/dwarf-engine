@@ -42,6 +42,12 @@ public:
               (),
               (override));
   MOCK_METHOD(nlohmann::json, Serialize, (), (override));
+  MOCK_METHOD(bool, CompareTo, (const IShader& other), (const));
+  bool
+  operator<(const IShader& other) const override
+  {
+    return CompareTo(other);
+  }
 };
 
 // Testing if the default shader is initialized correctly
