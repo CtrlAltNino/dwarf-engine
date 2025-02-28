@@ -1,46 +1,38 @@
 #pragma once
 
 #include <glad/glad.h>
-#include "Core/Rendering/Mesh/IMesh.h"
+#include "Core/Rendering/Mesh/Vertex.h"
+#include "Core/Rendering/MeshBuffer/IMeshBuffer.h"
 #include "Core/Rendering/VramTracker/IVramTracker.h"
 #include "Logging/IDwarfLogger.h"
 
 namespace Dwarf
 {
-
-  class OpenGLMesh : public IMesh
+  class OpenGLMesh : public IMeshBuffer
   {
   private:
     std::shared_ptr<IDwarfLogger> m_Logger;
-    std::vector<Vertex>           m_Vertices = std::vector<Vertex>();
-    std::vector<unsigned int>     m_Indices = std::vector<unsigned int>();
-    unsigned int                  m_MaterialIndex = 0;
     std::shared_ptr<IVramTracker> m_VramTracker;
     size_t                        m_VramMemory = 0;
+    uint32_t                      m_VertexCount = 0;
+    uint32_t                      m_IndexCount = 0;
 
   public:
     OpenGLMesh(const std::vector<Vertex>&       vertices,
                const std::vector<unsigned int>& indices,
-               unsigned int                     materialIndex,
                std::shared_ptr<IDwarfLogger>    logger,
                std::shared_ptr<IVramTracker>    vramTracker);
     ~OpenGLMesh() override;
-    void
-    SetupMesh() override;
     void
     Bind() const;
     void
     Unbind() const;
 
-    int
-    GetMaterialIndex() const override;
-    std::vector<Vertex>
-    GetVertices() const override;
-    std::vector<unsigned int>
-    GetIndices() const override;
+    uint32_t
+    GetVertexCount() override;
 
-    std::unique_ptr<IMesh>
-    Clone() const override;
+    uint32_t
+    GetIndexCount() override;
 
   private:
     GLuint VAO;

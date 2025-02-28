@@ -1,26 +1,22 @@
 #include "DrawCall.h"
+#include "Core/Scene/Components/SceneComponents.h"
 #include "IDrawCall.h"
 
 namespace Dwarf
 {
-  DrawCall::DrawCall(IMesh& mesh, IMaterial& material, glm::mat4 modelMatrix)
-    : m_Mesh(mesh)
+  DrawCall::DrawCall(std::unique_ptr<IMeshBuffer>&& meshBuffer,
+                     IMaterial&                     material,
+                     TransformComponent&            transform)
+    : m_MeshBuffer(std::move(meshBuffer))
     , m_Material(material)
-    , m_ModelMatrix(modelMatrix)
+    , m_Transform(transform)
   {
   }
 
-  DrawCall::DrawCall(IDrawCall& other)
-    : m_Mesh(other.GetMesh())
-    , m_Material(other.GetMaterial())
-    , m_ModelMatrix(other.GetModelMatrix())
+  IMeshBuffer&
+  DrawCall::GetMeshBuffer()
   {
-  }
-
-  IMesh&
-  DrawCall::GetMesh()
-  {
-    return m_Mesh;
+    return *m_MeshBuffer;
   }
 
   IMaterial&
@@ -29,9 +25,9 @@ namespace Dwarf
     return m_Material;
   }
 
-  glm::mat4&
-  DrawCall::GetModelMatrix()
+  TransformComponent&
+  DrawCall::GetTransform()
   {
-    return m_ModelMatrix;
+    return m_Transform;
   }
 }

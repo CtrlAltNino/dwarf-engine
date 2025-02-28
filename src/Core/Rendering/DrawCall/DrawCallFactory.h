@@ -10,6 +10,8 @@ namespace Dwarf
     ~DrawCallFactory() override = default;
 
     std::unique_ptr<IDrawCall>
-    Create(IMesh& mesh, IMaterial& material, glm::mat4 modelMatrix) override;
+    Create(std::unique_ptr<IMeshBuffer>&& mesh,
+           IMaterial&                     material,
+           TransformComponent&            transform) override;
   };
 }

@@ -1,6 +1,7 @@
 #pragma once
 #include "Core/Asset/AssetReference/IAssetReference.h"
 #include "Core/Asset/Database/AssetComponents.h"
+#include "Core/Rendering/MeshBuffer/IMeshBuffer.h"
 #include "Utilities/ISerializable.h"
 #include "pch.h"
 
@@ -323,7 +324,7 @@ namespace Dwarf
     bool isHidden = false;
     /// @brief ID of the mesh asset.
     std::unique_ptr<IAssetReference> modelAsset = nullptr;
-    std::unique_ptr<IMesh>           idMesh = nullptr;
+    std::unique_ptr<IMeshBuffer>     idMeshBuffer = nullptr;
 
     /// @brief The materials with which the model is to be rendered. The list
     /// index of the materials corresponds to the material index of the
@@ -390,10 +391,10 @@ namespace Dwarf
       return isHidden;
     }
 
-    std::unique_ptr<IMesh>&
+    std::unique_ptr<IMeshBuffer>&
     IdMesh()
     {
-      return idMesh;
+      return idMeshBuffer;
     }
 
     nlohmann::json

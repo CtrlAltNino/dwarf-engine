@@ -134,10 +134,10 @@ namespace Dwarf
   }
 
   void
-  OpenGLRendererApi::RenderIndexed(IMesh&     mesh,
-                                   IMaterial& material,
-                                   ICamera&   camera,
-                                   glm::mat4  modelMatrix)
+  OpenGLRendererApi::RenderIndexed(IMeshBuffer& mesh,
+                                   IMaterial&   material,
+                                   ICamera&     camera,
+                                   glm::mat4    modelMatrix)
   {
     OpenGLUtilities::CheckOpenGLError(
       "Before rendering", "OpenGLRendererApi", m_Logger);
@@ -184,8 +184,7 @@ namespace Dwarf
 
     oglMesh.Bind();
 
-    glDrawElements(
-      GL_TRIANGLES, oglMesh.GetIndices().size(), GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, oglMesh.GetIndexCount(), GL_UNSIGNED_INT, 0);
     OpenGLUtilities::CheckOpenGLError(
       "glDrawElements", "OpenGLRendererApi", m_Logger);
   }

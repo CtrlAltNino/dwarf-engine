@@ -1,73 +1,19 @@
 #include "MeshFactory.h"
-#include "Core/Rendering/VramTracker/IVramTracker.h"
-
-#if _WIN32
-#include "Platform/OpenGL/OpenGLMesh.h"
-#elif __linux__
-#include "Platform/OpenGL/OpenGLMesh.h"
-#elif __APPLE__
-// #include "Platform/Metal/MetalShader.h"
-#endif
+#include "Logging/IDwarfLogger.h"
+#include "Mesh.h"
 
 namespace Dwarf
 {
-  MeshFactory::MeshFactory(GraphicsApi                   graphicsApi,
-                           std::shared_ptr<IDwarfLogger> logger,
-                           std::shared_ptr<IVramTracker> vramTracker)
-    : m_GraphicsApi(graphicsApi)
-    , m_Logger(logger)
-    , m_VramTracker(vramTracker)
+  MeshFactory::MeshFactory(std::shared_ptr<IDwarfLogger> logger)
+    : m_Logger(logger)
   {
-    m_Logger->LogDebug(Log("MeshFactory created.", "MeshFactory"));
   }
-
-  MeshFactory::~MeshFactory()
-  {
-    m_Logger->LogDebug(Log("MeshFactory destroyed.", "MeshFactory"));
-  }
-
   std::unique_ptr<IMesh>
-  MeshFactory::CreateMesh(const std::vector<Vertex>&       vertices,
-                          const std::vector<unsigned int>& indices,
-                          unsigned int                     materialIndex)
+  MeshFactory::Create(const std::vector<Vertex>&      vertices,
+                      const std::vector<unsigned int> indices,
+                      unsigned int                    materialIndex)
   {
-    m_Logger->LogDebug(Log("Creating mesh.", "MeshFactory"));
-    // Creating a shader based on the graphics API.
-    switch (m_GraphicsApi)
-    {
-#if _WIN32
-      case GraphicsApi::D3D12:
-        // return std::make_shared<D3D12Shader>();
-        break;
-      case GraphicsApi::OpenGL:
-        return std::make_unique<OpenGLMesh>(
-          vertices, indices, materialIndex, m_Logger, m_VramTracker);
-        break;
-      case GraphicsApi::Metal: break;
-      case GraphicsApi::Vulkan:
-        // return std::make_shared<VulkanShader>();
-        break;
-#elif __linux__
-      case GraphicsApi::D3D12: break;
-      case GraphicsApi::OpenGL:
-        return std::make_unique<OpenGLMesh>(
-          vertices, indices, materialIndex, m_Logger, m_VramTracker);
-        break;
-      case GraphicsApi::Metal: break;
-      case GraphicsApi::Vulkan:
-        // return std::make_shared<VulkanShader>();
-        break;
-#elif __APPLE__
-      case GraphicsApi::D3D12: break;
-      case GraphicsApi::OpenGL: break;
-      case GraphicsApi::Metal:
-        // return std::make_shared<MetalShader>();
-        break;
-      case GraphicsApi::Vulkan: break;
-#endif
-    }
-
-    return nullptr;
+    return std::make_unique<Mesh>(vertices, indices, materialIndex, m_Logger);
   }
 
   std::unique_ptr<IMesh>
@@ -130,7 +76,7 @@ namespace Dwarf
       }
     }
 
-    return CreateMesh(vertices, indices, 0);
+    return Create(vertices, indices, 0);
   }
 
   std::unique_ptr<IMesh>
@@ -266,26 +212,26 @@ namespace Dwarf
                                           23,
                                           20
     };
-    return CreateMesh(vertices, indices, 0);
+    return Create(vertices, indices, 0);
   }
 
   std::unique_ptr<IMesh>
   MeshFactory::CreateUnitQuad()
   {
-    return CreateMesh({ Vertex(glm::vec3(-0.5f, -0.5f, 0.0f),
-                               glm::vec3(0.0f, 0.0f, 1.0f),
-                               glm::vec2(0.0f, 0.0f)), // Bottom-left
-                        Vertex(glm::vec3(0.5f, -0.5f, 0.0f),
-                               glm::vec3(0.0f, 0.0f, 1.0f),
-                               glm::vec2(1.0f, 0.0f)), // Bottom-right
-                        Vertex(glm::vec3(0.5f, 0.5f, 0.0f),
-                               glm::vec3(0.0f, 0.0f, 1.0f),
-                               glm::vec2(1.0f, 1.0f)), // Top-right
-                        Vertex(glm::vec3(-0.5f, 0.5f, 0.0f),
-                               glm::vec3(0.0f, 0.0f, 1.0f),
-                               glm::vec2(0.0f, 1.0f)) },
-                      { 0, 1, 2, 2, 3, 0 },
-                      0);
+    return Create({ Vertex(glm::vec3(-0.5f, -0.5f, 0.0f),
+                           glm::vec3(0.0f, 0.0f, 1.0f),
+                           glm::vec2(0.0f, 0.0f)), // Bottom-left
+                    Vertex(glm::vec3(0.5f, -0.5f, 0.0f),
+                           glm::vec3(0.0f, 0.0f, 1.0f),
+                           glm::vec2(1.0f, 0.0f)), // Bottom-right
+                    Vertex(glm::vec3(0.5f, 0.5f, 0.0f),
+                           glm::vec3(0.0f, 0.0f, 1.0f),
+                           glm::vec2(1.0f, 1.0f)), // Top-right
+                    Vertex(glm::vec3(-0.5f, 0.5f, 0.0f),
+                           glm::vec3(0.0f, 0.0f, 1.0f),
+                           glm::vec2(0.0f, 1.0f)) },
+                  { 0, 1, 2, 2, 3, 0 },
+                  0);
   }
 
   std::unique_ptr<IMesh>
@@ -311,9 +257,36 @@ namespace Dwarf
     }
 
     std::unique_ptr<IMesh> mergedMesh =
-      CreateMesh(mergedVertices, mergedIndices, 0);
+      Create(mergedVertices, mergedIndices, 0);
 
-    mergedMesh->SetupMesh();
+    return std::move(mergedMesh);
+  }
+
+  std::unique_ptr<IMesh>
+  MeshFactory::MergeMeshes(
+    const std::vector<std::reference_wrapper<IMesh>>& meshes)
+  {
+    std::vector<Vertex>       mergedVertices;
+    std::vector<unsigned int> mergedIndices;
+    uint32_t indexOffset = 0; // Tracks index shifting due to merged vertices
+
+    for (auto& mesh : meshes)
+    {
+      for (auto vert : mesh.get().GetVertices())
+      {
+        mergedVertices.push_back(vert);
+      }
+
+      for (auto index : mesh.get().GetIndices())
+      {
+        mergedIndices.push_back(index + indexOffset);
+      }
+
+      indexOffset += mesh.get().GetVertices().size();
+    }
+
+    std::unique_ptr<IMesh> mergedMesh =
+      Create(mergedVertices, mergedIndices, 0);
 
     return std::move(mergedMesh);
   }

@@ -1,7 +1,8 @@
 #pragma once
 
 #include "Core/Rendering/Material/IMaterial.h"
-#include "Core/Rendering/Mesh/IMesh.h"
+#include "Core/Rendering/MeshBuffer/IMeshBuffer.h"
+#include "Core/Scene/Components/SceneComponents.h"
 #include <glm/fwd.hpp>
 namespace Dwarf
 {
@@ -10,13 +11,13 @@ namespace Dwarf
   public:
     virtual ~IDrawCall() = default;
 
-    virtual IMesh&
-    GetMesh() = 0;
+    virtual IMeshBuffer&
+    GetMeshBuffer() = 0;
 
     virtual IMaterial&
     GetMaterial() = 0;
 
-    virtual glm::mat4&
-    GetModelMatrix() = 0;
+    virtual TransformComponent&
+    GetTransform() = 0;
   };
 }

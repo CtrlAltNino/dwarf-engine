@@ -12,14 +12,16 @@ namespace Dwarf
     std::shared_ptr<IMaterialFactory> materialFactory,
     std::shared_ptr<IShaderFactory>   shaderFactory,
     std::shared_ptr<IShaderSourceCollectionFactory>
-                                   shaderSourceCollectionFactory,
-    std::shared_ptr<IMeshFactory>  meshFactory,
-    std::shared_ptr<IDrawCallList> drawCallList)
+                                        shaderSourceCollectionFactory,
+    std::shared_ptr<IMeshFactory>       meshFactory,
+    std::shared_ptr<IMeshBufferFactory> meshBufferFactory,
+    std::shared_ptr<IDrawCallList>      drawCallList)
     : m_RendererApi(rendererApi)
     , m_MaterialFactory(materialFactory)
     , m_ShaderFactory(shaderFactory)
     , m_ShaderSourceCollectionFactory(shaderSourceCollectionFactory)
     , m_MeshFactory(meshFactory)
+    , m_MeshBufferFactory(meshBufferFactory)
     , m_DrawCallList(drawCallList)
   {
     m_RendererApi->SetClearColor(glm::vec4(0.065f, 0.07f, 0.085, 1.0f));
@@ -36,8 +38,9 @@ namespace Dwarf
     m_GridMaterial->GetMaterialProperties().IsDoubleSided = true;
     m_GridMaterial->GetMaterialProperties().IsTransparent = true;
 
-    m_GridMesh = meshFactory->CreateUnitQuad();
-    m_GridMesh->SetupMesh();
+    m_GridMeshBuffer =
+      std::move(m_MeshBufferFactory->Create(*meshFactory->CreateUnitQuad()));
+    // m_GridMeshBuffer->Upload();
 
     m_GridModelMatrix = glm::mat4(1.0f);
     m_GridModelMatrix = glm::scale(m_GridModelMatrix, glm::vec3(3000.0f));
@@ -110,10 +113,10 @@ namespace Dwarf
 
     for (auto& drawCall : m_DrawCallList->GetDrawCalls())
     {
-      m_RendererApi->RenderIndexed(drawCall->GetMesh(),
+      m_RendererApi->RenderIndexed(drawCall->GetMeshBuffer(),
                                    drawCall->GetMaterial(),
                                    camera,
-                                   drawCall->GetModelMatrix());
+                                   drawCall->GetTransform().GetModelMatrix());
     }
 
     // Render grid
@@ -128,7 +131,7 @@ namespace Dwarf
                     camera.GetProperties().Transform.GetPosition().z)) *
         m_GridModelMatrix;
       m_RendererApi->RenderIndexed(
-        *m_GridMesh, *m_GridMaterial, camera, translatedGridModelMatrix);
+        *m_GridMeshBuffer, *m_GridMaterial, camera, translatedGridModelMatrix);
     }
   }
 
@@ -166,8 +169,8 @@ namespace Dwarf
         {
           ModelAsset& model =
             (ModelAsset&)meshRenderer.GetModelAsset()->GetAsset();
-          meshRenderer.IdMesh() =
-            std::move(m_MeshFactory->MergeMeshes(model.Meshes()));
+          meshRenderer.IdMesh() = std::move(m_MeshBufferFactory->Create(
+            *m_MeshFactory->MergeMeshes(model.Meshes())));
         }
 
         glm::mat4    modelMatrix = transform.GetModelMatrix();

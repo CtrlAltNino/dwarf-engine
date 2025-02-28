@@ -1,6 +1,7 @@
 #pragma once
 
-#include "Core/Rendering/Mesh/IMesh.h"
+#include "IMesh.h"
+
 namespace Dwarf
 {
   class IMeshFactory
@@ -9,9 +10,9 @@ namespace Dwarf
     virtual ~IMeshFactory() = default;
 
     virtual std::unique_ptr<IMesh>
-    CreateMesh(const std::vector<Vertex>&       vertices,
-               const std::vector<unsigned int>& indices,
-               unsigned int                     materialIndex) = 0;
+    Create(const std::vector<Vertex>&      vertices,
+           const std::vector<unsigned int> indices,
+           unsigned int                    materialIndex) = 0;
 
     virtual std::unique_ptr<IMesh>
     CreateUnitSphere(int stacks, int slices) = 0;
@@ -24,5 +25,8 @@ namespace Dwarf
 
     virtual std::unique_ptr<IMesh>
     MergeMeshes(const std::vector<std::unique_ptr<IMesh>>& meshes) = 0;
+
+    virtual std::unique_ptr<IMesh>
+    MergeMeshes(const std::vector<std::reference_wrapper<IMesh>>& meshes) = 0;
   };
 }

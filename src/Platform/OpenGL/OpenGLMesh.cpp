@@ -6,63 +6,12 @@ namespace Dwarf
 {
   OpenGLMesh::OpenGLMesh(const std::vector<Vertex>&       vertices,
                          const std::vector<unsigned int>& indices,
-                         unsigned int                     materialIndex,
                          std::shared_ptr<IDwarfLogger>    logger,
                          std::shared_ptr<IVramTracker>    vramTracker)
-    : m_Vertices(vertices)
-    , m_Indices(indices)
-    , m_MaterialIndex(materialIndex)
-    , m_Logger(logger)
+    : m_Logger(logger)
     , m_VramTracker(vramTracker)
   {
     m_Logger->LogDebug(Log("OpenGLMesh created.", "OpenGLMesh"));
-  }
-
-  OpenGLMesh::~OpenGLMesh()
-  {
-    m_Logger->LogDebug(Log("OpenGLMesh destroyed.", "OpenGLMesh"));
-    Unbind();
-    glDeleteVertexArrays(1, &VAO);
-    OpenGLUtilities::CheckOpenGLError(
-      "glDeleteVertexArrays", "OpenGLMesh", m_Logger);
-    glDeleteBuffers(1, &VBO);
-    OpenGLUtilities::CheckOpenGLError(
-      "glDeleteBuffers", "OpenGLMesh", m_Logger);
-    glDeleteBuffers(1, &EBO);
-    OpenGLUtilities::CheckOpenGLError(
-      "glDeleteBuffers", "OpenGLMesh", m_Logger);
-    m_VramTracker->RemoveBufferMemory(m_VramMemory);
-  }
-
-  void
-  OpenGLMesh::Bind() const
-  {
-    OpenGLUtilities::CheckOpenGLError(
-      "Before binding mesh", "OpenGLMesh", m_Logger);
-    glBindVertexArray(VAO);
-    OpenGLUtilities::CheckOpenGLError(
-      "glBindVertexArray", "OpenGLMesh", m_Logger);
-  }
-
-  void
-  OpenGLMesh::Unbind() const
-  {
-    OpenGLUtilities::CheckOpenGLError(
-      "Before unbinding mesh", "OpenGLMesh", m_Logger);
-    glBindVertexArray(0);
-    OpenGLUtilities::CheckOpenGLError(
-      "glBindVertexArray 0", "OpenGLMesh", m_Logger);
-    glBindBuffer(GL_ARRAY_BUFFER, 0);
-    OpenGLUtilities::CheckOpenGLError(
-      "glBindBuffer GL_ARRAY_BUFFER 0", "OpenGLMesh", m_Logger);
-    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-    OpenGLUtilities::CheckOpenGLError(
-      "glBindBuffer GL_ELEMENT_ARRAY_BUFFER 0", "OpenGLMesh", m_Logger);
-  }
-
-  void
-  OpenGLMesh::SetupMesh()
-  {
     OpenGLUtilities::CheckOpenGLError(
       "Before creating mesh", "OpenGLMesh", m_Logger);
     glGenVertexArrays(1, &VAO);
@@ -82,25 +31,25 @@ namespace Dwarf
     OpenGLUtilities::CheckOpenGLError(
       "glBindBuffer VBO", "OpenGLMesh", m_Logger);
     glBufferData(GL_ARRAY_BUFFER,
-                 GetVertices().size() * sizeof(Vertex),
-                 &(GetVertices()[0]),
+                 vertices.size() * sizeof(Vertex),
+                 &(vertices[0]),
                  GL_STATIC_DRAW);
     OpenGLUtilities::CheckOpenGLError(
       "glBufferData VBO", "OpenGLMesh", m_Logger);
 
-    m_VramMemory += GetVertices().size() * sizeof(Vertex);
+    m_VramMemory += vertices.size() * sizeof(Vertex);
 
     glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
     OpenGLUtilities::CheckOpenGLError(
       "glBindBuffer EBO", "OpenGLMesh", m_Logger);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER,
-                 GetIndices().size() * sizeof(unsigned int),
-                 &(GetIndices()[0]),
+                 indices.size() * sizeof(unsigned int),
+                 &(indices[0]),
                  GL_STATIC_DRAW);
     OpenGLUtilities::CheckOpenGLError(
       "glBufferData EBO", "OpenGLMesh", m_Logger);
 
-    m_VramMemory += GetIndices().size() * sizeof(unsigned int);
+    m_VramMemory += indices.size() * sizeof(unsigned int);
 
     // vertex positions
     glEnableVertexAttribArray(0);
@@ -156,30 +105,62 @@ namespace Dwarf
 
     m_VramTracker->AddBufferMemory(m_VramMemory);
     Unbind();
+
+    m_VertexCount = vertices.size();
+    m_IndexCount = indices.size();
   }
 
-  int
-  OpenGLMesh::GetMaterialIndex() const
+  OpenGLMesh::~OpenGLMesh()
   {
-    return m_MaterialIndex;
+    m_Logger->LogDebug(Log("OpenGLMesh destroyed.", "OpenGLMesh"));
+    Unbind();
+    glDeleteVertexArrays(1, &VAO);
+    OpenGLUtilities::CheckOpenGLError(
+      "glDeleteVertexArrays", "OpenGLMesh", m_Logger);
+    glDeleteBuffers(1, &VBO);
+    OpenGLUtilities::CheckOpenGLError(
+      "glDeleteBuffers", "OpenGLMesh", m_Logger);
+    glDeleteBuffers(1, &EBO);
+    OpenGLUtilities::CheckOpenGLError(
+      "glDeleteBuffers", "OpenGLMesh", m_Logger);
+    m_VramTracker->RemoveBufferMemory(m_VramMemory);
   }
 
-  std::vector<Vertex>
-  OpenGLMesh::GetVertices() const
+  void
+  OpenGLMesh::Bind() const
   {
-    return m_Vertices;
+    OpenGLUtilities::CheckOpenGLError(
+      "Before binding mesh", "OpenGLMesh", m_Logger);
+    glBindVertexArray(VAO);
+    OpenGLUtilities::CheckOpenGLError(
+      "glBindVertexArray", "OpenGLMesh", m_Logger);
   }
 
-  std::vector<unsigned int>
-  OpenGLMesh::GetIndices() const
+  void
+  OpenGLMesh::Unbind() const
   {
-    return m_Indices;
+    OpenGLUtilities::CheckOpenGLError(
+      "Before unbinding mesh", "OpenGLMesh", m_Logger);
+    glBindVertexArray(0);
+    OpenGLUtilities::CheckOpenGLError(
+      "glBindVertexArray 0", "OpenGLMesh", m_Logger);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    OpenGLUtilities::CheckOpenGLError(
+      "glBindBuffer GL_ARRAY_BUFFER 0", "OpenGLMesh", m_Logger);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    OpenGLUtilities::CheckOpenGLError(
+      "glBindBuffer GL_ELEMENT_ARRAY_BUFFER 0", "OpenGLMesh", m_Logger);
   }
 
-  std::unique_ptr<IMesh>
-  OpenGLMesh::Clone() const
+  uint32_t
+  OpenGLMesh::GetVertexCount()
   {
-    return std::make_unique<OpenGLMesh>(
-      m_Vertices, m_Indices, m_MaterialIndex, m_Logger, m_VramTracker);
+    return m_VertexCount;
+  }
+
+  uint32_t
+  OpenGLMesh::GetIndexCount()
+  {
+    return m_IndexCount;
   }
 }

@@ -9,6 +9,7 @@
 #include "Core/Rendering/DrawCall/IDrawCallWorker.h"
 #include "Core/Rendering/GpuInfo/GpuInfoFactory.h"
 #include "Core/Rendering/GpuInfo/IGpuInfoFactory.h"
+#include "Core/Rendering/Mesh/MeshFactory.h"
 #include "Editor/Modules/Inspector/AssetInspector/MaterialAsset/IMaterialAssetInspector.h"
 #include "Editor/Modules/Inspector/AssetInspector/MaterialAsset/MaterialAssetInspector.h"
 #include "Editor/Modules/Inspector/AssetInspector/ModelAsset/IModelAssetInspector.h"
@@ -46,7 +47,7 @@
 #include "Core/Rendering/Framebuffer/FramebufferFactory.h"
 #include "Core/Rendering/Material/IO/MaterialIO.h"
 #include "Core/Rendering/Material/MaterialFactory.h"
-#include "Core/Rendering/Mesh/MeshFactory.h"
+#include "Core/Rendering/MeshBuffer/MeshBufferFactory.h"
 #include "Editor/Modules/IGuiModuleFactory.h"
 #include "Editor/Modules/GuiModuleFactory.h"
 #include "Core/Rendering/Pipelines/RenderingPipelineFactory.h"
@@ -130,8 +131,6 @@ namespace Dwarf
           boost::di::extension::shared),
           boost::di::bind<IDrawCallFactory>.to<DrawCallFactory>().in(
           boost::di::extension::shared),
-          boost::di::bind<IDrawCallWorker>.to<DrawCallWorker>().in(
-          boost::di::extension::shared),
           boost::di::bind<IVramTracker>.to<VramTracker>().in(
           boost::di::extension::shared),
           boost::di::bind<IInputManager>.to<InputManager>().in(
@@ -140,7 +139,11 @@ namespace Dwarf
           boost::di::extension::shared),
           boost::di::bind<IAssetMetadata>.to<AssetMetadata>().in(
           boost::di::extension::shared),
+          boost::di::bind<IMeshBufferFactory>.to<MeshBufferFactory>().in(
+          boost::di::extension::shared),
           boost::di::bind<IMeshFactory>.to<MeshFactory>().in(
+          boost::di::extension::shared),
+          boost::di::bind<IDrawCallWorker>.to<DrawCallWorker>().in(
           boost::di::extension::shared),
           boost::di::bind<IModelImporter>.to<ModelImporter>().in(
           boost::di::extension::shared),

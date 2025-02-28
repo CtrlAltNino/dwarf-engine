@@ -105,7 +105,7 @@ namespace Dwarf
       meshes,
       AssimpToGlmMatrix(scene->mRootNode->mTransformation));
 
-    return meshes;
+    return std::move(meshes);
   }
 
   void
@@ -127,7 +127,7 @@ namespace Dwarf
     // then do the same for each of its children
     for (unsigned int i = 0; i < node->mNumChildren; i++)
     {
-      // std::vector<std::unique_ptr<IMesh>> recursedMeshes =
+      // std::vector<std::unique_ptr<IMeshBuffer>> recursedMeshes =
       ProcessNode(node->mChildren[i], scene, meshes, globalTransform);
       // join the meshes
       // TODO: Check if this is the correct way to join the meshes
@@ -213,6 +213,6 @@ namespace Dwarf
     }
 
     meshes.push_back(
-      std::move(m_MeshFactory->CreateMesh(vertices, indices, materialIndex)));
+      std::move(m_MeshFactory->Create(vertices, indices, materialIndex)));
   }
 }

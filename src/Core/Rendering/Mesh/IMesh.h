@@ -1,16 +1,12 @@
 #pragma once
 
 #include "Core/Rendering/Mesh/Vertex.h"
-
 namespace Dwarf
 {
   class IMesh
   {
   public:
     virtual ~IMesh() = default;
-
-    virtual void
-    SetupMesh() = 0;
 
     virtual int
     GetMaterialIndex() const = 0;

@@ -65,7 +65,6 @@ namespace Dwarf
         {
           ModelAsset& modelAsset = m_Registry.emplace<ModelAsset>(
             m_AssetHandle, std::move(m_ModelImporter->Import(path)));
-          modelAsset.LoadIntoGpu();
         }
         break;
       case ASSET_TYPE::MATERIAL:

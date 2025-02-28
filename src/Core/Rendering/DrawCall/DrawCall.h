@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Scene/Components/SceneComponents.h"
 #include "IDrawCall.h"
 
 namespace Dwarf
@@ -7,23 +8,24 @@ namespace Dwarf
   class DrawCall : public IDrawCall
   {
   private:
-    IMesh&     m_Mesh;
-    IMaterial& m_Material;
-    glm::mat4  m_ModelMatrix;
+    std::unique_ptr<IMeshBuffer> m_MeshBuffer;
+    IMaterial&                   m_Material;
+    TransformComponent&          m_Transform;
 
   public:
-    DrawCall(IMesh& mesh, IMaterial& material, glm::mat4 modelMatrix);
-    DrawCall(IDrawCall& other);
+    DrawCall(std::unique_ptr<IMeshBuffer>&& meshBuffer,
+             IMaterial&                     material,
+             TransformComponent&            transform);
 
     ~DrawCall() override = default;
 
-    IMesh&
-    GetMesh() override;
+    IMeshBuffer&
+    GetMeshBuffer() override;
 
     IMaterial&
     GetMaterial() override;
 
-    glm::mat4&
-    GetModelMatrix() override;
+    TransformComponent&
+    GetTransform() override;
   };
 }

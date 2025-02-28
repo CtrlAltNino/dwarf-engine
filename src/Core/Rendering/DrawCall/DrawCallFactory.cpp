@@ -4,10 +4,10 @@
 namespace Dwarf
 {
   std::unique_ptr<IDrawCall>
-  DrawCallFactory::Create(IMesh&     mesh,
-                          IMaterial& material,
-                          glm::mat4  modelMatrix)
+  DrawCallFactory::Create(std::unique_ptr<IMeshBuffer>&& mesh,
+                          IMaterial&                     material,
+                          TransformComponent&            transform)
   {
-    return std::make_unique<DrawCall>(mesh, material, modelMatrix);
+    return std::make_unique<DrawCall>(std::move(mesh), material, transform);
   }
 }

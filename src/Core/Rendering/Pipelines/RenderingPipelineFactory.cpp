@@ -10,14 +10,16 @@ namespace Dwarf
     std::shared_ptr<IMaterialFactory>    materialFactory,
     std::shared_ptr<IShaderFactory>      shaderFactory,
     std::shared_ptr<IShaderSourceCollectionFactory>
-                                   shaderSourceCollectionFactory,
-    std::shared_ptr<IMeshFactory>  meshFactory,
-    std::shared_ptr<IDrawCallList> drawCallList)
+                                        shaderSourceCollectionFactory,
+    std::shared_ptr<IMeshFactory>       meshFactory,
+    std::shared_ptr<IMeshBufferFactory> meshBufferFactory,
+    std::shared_ptr<IDrawCallList>      drawCallList)
     : m_RendererApi(rendererApiFactory->Create())
     , m_MaterialFactory(materialFactory)
     , m_ShaderFactory(shaderFactory)
     , m_ShaderSourceCollectionFactory(shaderSourceCollectionFactory)
     , m_MeshFactory(meshFactory)
+    , m_MeshBufferFactory(meshBufferFactory)
     , m_DrawCallList(drawCallList)
   {
   }
@@ -34,6 +36,7 @@ namespace Dwarf
           m_ShaderFactory,
           m_ShaderSourceCollectionFactory,
           m_MeshFactory,
+          m_MeshBufferFactory,
           m_DrawCallList);
       // case PipelineType::Deferred: return
       // std::make_shared<DeferredRenderer>();

@@ -2,7 +2,7 @@
 
 #include "Core/Rendering/Framebuffer/IFramebuffer.h"
 #include "Core/Rendering/Material/IMaterial.h"
-#include "Core/Rendering/Mesh/IMesh.h"
+#include "Core/Rendering/MeshBuffer/IMeshBuffer.h"
 #include "Core/Rendering/Shader/IComputeShader.h"
 #include "Core/Scene/Camera/ICamera.h"
 namespace Dwarf
@@ -25,10 +25,10 @@ namespace Dwarf
     virtual void
     Clear(unsigned int value) = 0;
     virtual void
-    RenderIndexed(IMesh&     mesh,
-                  IMaterial& material,
-                  ICamera&   camera,
-                  glm::mat4  modelMatrix) = 0;
+    RenderIndexed(IMeshBuffer& mesh,
+                  IMaterial&   material,
+                  ICamera&     camera,
+                  glm::mat4    modelMatrix) = 0;
     virtual void
     ApplyComputeShader(std::shared_ptr<IComputeShader> computeShader,
                        std::shared_ptr<IFramebuffer>   fb,
