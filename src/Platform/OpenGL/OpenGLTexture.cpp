@@ -363,7 +363,15 @@ namespace Dwarf
     {
       GLfloat maxAniso = 0.0f;
       glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAniso);
+      OpenGLUtilities::CheckOpenGLError(
+        "glGetFloatv GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT",
+        "OpenGLTexture",
+        m_Logger);
       glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, maxAniso);
+      OpenGLUtilities::CheckOpenGLError(
+        "glTexParameterf GL_TEXTURE_MAX_ANISOTROPY_EXT",
+        "OpenGLTexture",
+        m_Logger);
     }
 
     switch (data->Type)
@@ -437,10 +445,18 @@ namespace Dwarf
           m_Logger->LogDebug(Log("Creating 3D texture", "OpenGLTexture"));
           glm::ivec3 size = std::get<glm::ivec3>(data->Size);
           glTextureParameteri(m_Id, GL_TEXTURE_WRAP_S, textureWrapS);
+          OpenGLUtilities::CheckOpenGLError(
+            "glTextureParameteri GL_TEXTURE_WRAP_S", "OpenGLTexture", m_Logger);
           glTextureParameteri(m_Id, GL_TEXTURE_WRAP_T, textureWrapT);
+          OpenGLUtilities::CheckOpenGLError(
+            "glTextureParameteri GL_TEXTURE_WRAP_T", "OpenGLTexture", m_Logger);
           glTextureParameteri(m_Id, GL_TEXTURE_WRAP_R, textureWrapR);
+          OpenGLUtilities::CheckOpenGLError(
+            "glTextureParameteri GL_TEXTURE_WRAP_R", "OpenGLTexture", m_Logger);
 
           glTextureStorage3D(m_Id, 1, internalFormat, size.x, size.y, size.z);
+          OpenGLUtilities::CheckOpenGLError(
+            "glTextureStorage3D", "OpenGLTexture", m_Logger);
 
           glTextureSubImage3D(m_Id,
                               0,
@@ -453,14 +469,22 @@ namespace Dwarf
                               textureFormat,
                               textureDataType,
                               GetPixelPointer(*data));
+          OpenGLUtilities::CheckOpenGLError(
+            "glTextureSubImage3D", "OpenGLTexture", m_Logger);
           break;
         }
       case TextureType::TEXTURE_CUBE_MAP:
         {
           m_Logger->LogDebug(Log("Creating cube map texture", "OpenGLTexture"));
           glTextureParameteri(m_Id, GL_TEXTURE_WRAP_S, textureWrapS);
+          OpenGLUtilities::CheckOpenGLError(
+            "glTextureParameteri GL_TEXTURE_WRAP_S", "OpenGLTexture", m_Logger);
           glTextureParameteri(m_Id, GL_TEXTURE_WRAP_T, textureWrapT);
+          OpenGLUtilities::CheckOpenGLError(
+            "glTextureParameteri GL_TEXTURE_WRAP_T", "OpenGLTexture", m_Logger);
           glTextureParameteri(m_Id, GL_TEXTURE_WRAP_R, textureWrapR);
+          OpenGLUtilities::CheckOpenGLError(
+            "glTextureParameteri GL_TEXTURE_WRAP_R", "OpenGLTexture", m_Logger);
 
           // TODO: Implement cube map texture
           break;

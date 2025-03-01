@@ -236,8 +236,12 @@ namespace Dwarf
     OpenGLFramebuffer* destinationFB = (OpenGLFramebuffer*)&destination;
     glBindFramebuffer(GL_READ_FRAMEBUFFER,
                       sourceFB->GetFramebufferRendererID());
+    OpenGLUtilities::CheckOpenGLError(
+      "glBindFramebuffer GL_READ_FRAMEBUFFER", "OpenGLRendererApi", m_Logger);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER,
                       destinationFB->GetFramebufferRendererID());
+    OpenGLUtilities::CheckOpenGLError(
+      "glBindFramebuffer GL_DRAW_FRAMEBUFFER", "OpenGLRendererApi", m_Logger);
     glBlitFramebuffer(0,
                       0,
                       width,
@@ -248,7 +252,11 @@ namespace Dwarf
                       height,
                       GL_COLOR_BUFFER_BIT,
                       GL_NEAREST);
+    OpenGLUtilities::CheckOpenGLError(
+      "glBlitFramebuffer", "OpenGLRendererApi", m_Logger);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    OpenGLUtilities::CheckOpenGLError(
+      "glBindFramebuffer Unbind", "OpenGLRendererApi", m_Logger);
   }
 
   VRAMUsageBuffer
