@@ -103,6 +103,8 @@ namespace Dwarf
       }*/
     }
 
+    m_LoadedScene->SetScene(nullptr);
+
     m_Logger->LogInfo(Log("Exiting editor loop", "Editor"));
 
     return m_EditorStats->GetReturnToLauncher();

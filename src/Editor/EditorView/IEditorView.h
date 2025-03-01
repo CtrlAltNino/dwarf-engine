@@ -23,5 +23,8 @@ namespace Dwarf
 
     virtual void
     DockWindowToFocused() = 0;
+
+    virtual void
+    Shutdown() = 0;
   };
 }
