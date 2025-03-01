@@ -7,6 +7,7 @@ namespace Dwarf
   class IMeshBuffer
   {
   public:
+    IMeshBuffer() = default;
     virtual ~IMeshBuffer() = default;
 
     virtual uint32_t
@@ -14,5 +15,9 @@ namespace Dwarf
 
     virtual uint32_t
     GetIndexCount() = 0;
+
+    IMeshBuffer(const IMeshBuffer&) = delete; // Delete copy constructor
+    IMeshBuffer&
+    operator=(const IMeshBuffer&) = delete; // Delete copy assignment operator
   };
 }

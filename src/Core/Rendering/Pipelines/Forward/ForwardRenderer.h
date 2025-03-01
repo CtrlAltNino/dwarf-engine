@@ -44,7 +44,7 @@ namespace Dwarf
                     std::shared_ptr<IMeshFactory> meshFactory,
                     std::shared_ptr<IMeshBufferFactory> meshBufferFactory,
                     std::shared_ptr<IDrawCallList>      drawCallList);
-    ~ForwardRenderer();
+    ~ForwardRenderer() override;
 
     void
     RenderEntity(Entity& entity, ICamera& camera) override;

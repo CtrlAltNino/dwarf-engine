@@ -40,7 +40,6 @@ namespace Dwarf
 
     std::unique_ptr<IMesh> gridMesh = meshFactory->CreateUnitQuad();
     m_GridMeshBuffer = std::move(m_MeshBufferFactory->Create(gridMesh));
-    // m_GridMeshBuffer->Upload();
 
     m_GridModelMatrix = glm::mat4(1.0f);
     m_GridModelMatrix = glm::scale(m_GridModelMatrix, glm::vec3(3000.0f));
@@ -48,7 +47,10 @@ namespace Dwarf
       m_GridModelMatrix, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
   }
 
-  ForwardRenderer::~ForwardRenderer() = default;
+  ForwardRenderer::~ForwardRenderer()
+  {
+    m_DrawCallList->Clear();
+  }
 
   void
   ForwardRenderer::Setup(glm::ivec2 viewportSize)
@@ -111,14 +113,18 @@ namespace Dwarf
       }
     }*/
 
-    for (auto& drawCall : m_DrawCallList->GetDrawCalls())
     {
-      if (drawCall->GetMeshBuffer())
+      std::lock_guard<std::mutex> lock(m_DrawCallList->GetMutex());
+      for (auto& drawCall : m_DrawCallList->GetDrawCalls())
       {
-        m_RendererApi->RenderIndexed(*drawCall->GetMeshBuffer(),
-                                     drawCall->GetMaterial(),
-                                     camera,
-                                     drawCall->GetTransform().GetModelMatrix());
+        if (drawCall->GetMeshBuffer())
+        {
+          m_RendererApi->RenderIndexed(
+            *drawCall->GetMeshBuffer(),
+            drawCall->GetMaterial(),
+            camera,
+            drawCall->GetTransform().GetModelMatrix());
+        }
       }
     }
 

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Rendering/DrawCall/IDrawCall.h"
+#include <mutex>
 namespace Dwarf
 {
   class IDrawCallList
@@ -13,5 +14,11 @@ namespace Dwarf
 
     virtual std::vector<std::unique_ptr<IDrawCall>>&
     GetDrawCalls() = 0;
+
+    virtual std::mutex&
+    GetMutex() = 0;
+
+    virtual void
+    Clear() = 0;
   };
 }
