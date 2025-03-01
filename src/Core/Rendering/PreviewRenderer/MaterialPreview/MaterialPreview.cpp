@@ -101,16 +101,22 @@ namespace Dwarf
     switch (m_MeshType)
     {
       case MaterialPreviewMeshType::Sphere:
-        m_MeshBuffer =
-          m_MeshBufferFactory->Create(*m_MeshFactory->CreateUnitSphere(50, 50));
-        break;
+        {
+          std::unique_ptr<IMesh> mesh = m_MeshFactory->CreateUnitSphere(50, 50);
+          m_MeshBuffer = m_MeshBufferFactory->Create(mesh);
+          break;
+        }
       case MaterialPreviewMeshType::Cube:
-        m_MeshBuffer =
-          m_MeshBufferFactory->Create(*m_MeshFactory->CreateUnitCube());
+        {
+          std::unique_ptr<IMesh> mesh = m_MeshFactory->CreateUnitCube();
+          m_MeshBuffer = m_MeshBufferFactory->Create(mesh);
+        }
         break;
       case MaterialPreviewMeshType::Plane:
-        m_MeshBuffer =
-          m_MeshBufferFactory->Create(*m_MeshFactory->CreateUnitQuad());
+        {
+          std::unique_ptr<IMesh> mesh = m_MeshFactory->CreateUnitQuad();
+          m_MeshBuffer = m_MeshBufferFactory->Create(mesh);
+        }
         break;
     }
   }

@@ -96,17 +96,7 @@ namespace Dwarf
     glm::mat4
     GetRotationMatrix() const
     {
-      glm::mat4 rotationMatrix(1.0f); // Identity matrix
-
-      // Apply pitch, yaw, and roll in the specified order
-      rotationMatrix = glm::rotate(
-        rotationMatrix, glm::radians(Rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-      rotationMatrix = glm::rotate(
-        rotationMatrix, glm::radians(Rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-      rotationMatrix = glm::rotate(
-        rotationMatrix, glm::radians(Rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
-
-      return glm::toMat4(glm::quat(Rotation));
+      return glm::toMat4(glm::quat(DEG_2_RAD * Rotation));
     }
 
     /// @brief Returns the scale of the entity.

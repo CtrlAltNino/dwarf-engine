@@ -10,6 +10,6 @@ namespace Dwarf
     virtual ~IMeshBufferFactory() = default;
 
     virtual std::unique_ptr<IMeshBuffer>
-    Create(IMesh& mesh) = 0;
+    Create(std::unique_ptr<IMesh>& mesh) = 0;
   };
 }

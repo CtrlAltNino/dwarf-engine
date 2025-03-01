@@ -3,22 +3,24 @@
 #include "IDrawCall.h"
 #include "IDrawCallFactory.h"
 #include <functional>
+#include <algorithm>
+#include <memory>
 
 namespace Dwarf
 {
   DrawCallWorker::DrawCallWorker(
-    std::shared_ptr<IDwarfLogger>       logger,
-    std::shared_ptr<ILoadedScene>       loadedScene,
-    std::shared_ptr<IDrawCallFactory>   drawCallFactory,
-    std::shared_ptr<IDrawCallList>      drawCallList,
-    std::shared_ptr<IMeshFactory>       meshFactory,
-    std::shared_ptr<IMeshBufferFactory> meshBufferFactory)
+    std::shared_ptr<IDwarfLogger>      logger,
+    std::shared_ptr<ILoadedScene>      loadedScene,
+    std::shared_ptr<IDrawCallFactory>  drawCallFactory,
+    std::shared_ptr<IDrawCallList>     drawCallList,
+    std::shared_ptr<IMeshFactory>      meshFactory,
+    std::shared_ptr<IMeshBufferWorker> meshBufferWorker)
     : m_Logger(logger)
     , m_LoadedScene(loadedScene)
     , m_DrawCallFactory(drawCallFactory)
     , m_DrawCallList(drawCallList)
     , m_MeshFactory(meshFactory)
-    , m_MeshBufferFactory(meshBufferFactory)
+    , m_MeshBufferWorker(meshBufferWorker)
   {
     m_Logger->LogDebug(Log("DrawCallWorker created!", "DrawCallWorker"));
     m_WorkerThread = std::thread([this]() { WorkerThread(); });
@@ -69,34 +71,25 @@ namespace Dwarf
         if (m_StopWorker.load())
         {
           m_Logger->LogDebug(Log("Stop flag set", "DrawCallWorker"));
-          return;
         }
       }
 
-      // Generating the draw calls
-      GenerateDrawCalls();
+      if (!m_StopWorker.load())
+      {
+        // Generating the draw calls
+        GenerateDrawCalls();
 
-      m_Invalidate.store(false);
+        m_Invalidate.store(false);
+      }
     }
-  }
-
-  bool
-  DrawCallSorter(TempDrawCall& a, TempDrawCall& b)
-  {
-    if (a.Material.GetMaterialProperties().IsTransparent !=
-        b.Material.GetMaterialProperties().IsTransparent)
-    {
-      return !a.Material.GetMaterialProperties()
-                .IsTransparent; // false before true
-    }
-    return &a.Material < &b.Material; // Sort by value if both are not special
   }
 
   void
   DrawCallWorker::GenerateDrawCalls()
   {
     m_Logger->LogDebug(Log("Generating draw calls", "DrawCallWorker"));
-    // std::vector<TempDrawCall>               tempDrawCalls;
+    std::vector<TempDrawCall>               opagueTemps;
+    std::vector<TempDrawCall>               transparentTemps;
     std::vector<std::unique_ptr<IDrawCall>> drawCalls;
 
     IScene& scene = m_LoadedScene->GetScene();
@@ -128,16 +121,23 @@ namespace Dwarf
                   .at(model.Meshes().at(i)->GetMaterialIndex())
                   ->GetAsset();
 
-              // tempDrawCalls.push_back({ *model.Meshes().at(i),
-              //                           materialAsset.GetMaterial(),
-              //                           transform });
+              if (materialAsset.GetMaterial()
+                    .GetMaterialProperties()
+                    .IsTransparent)
+              {
+                transparentTemps.push_back({ *model.Meshes().at(i),
+                                             materialAsset.GetMaterial(),
+                                             transform });
+              }
+              else
+              {
+                opagueTemps.push_back({ *model.Meshes().at(i),
+                                        materialAsset.GetMaterial(),
+                                        transform });
+              }
 
-              drawCalls.push_back(m_DrawCallFactory->Create(
-                m_MeshBufferFactory->Create(*model.Meshes().at(i)),
-                materialAsset.GetMaterial(),
-                transform));
               // drawCalls.push_back(m_DrawCallFactory->Create(
-              //   *model.Meshes().at(i), materialAsset.GetMaterial(),
+              //   model.Meshes().at(i), materialAsset.GetMaterial(),
               //   transform));
             }
           }
@@ -146,42 +146,71 @@ namespace Dwarf
     }
 
     // Sorting the draw calls
-    // std::sort(tempDrawCalls.begin(), tempDrawCalls.end(), DrawCallSorter);
+    std::stable_sort(opagueTemps.begin(),
+                     opagueTemps.end(),
+                     [](const TempDrawCall& a, const TempDrawCall& b)
+                     {
+                       return std::uintptr_t(std::addressof(a.Material.get())) <
+                              std::uintptr_t(std::addressof(b.Material.get()));
+                     });
+    std::stable_sort(transparentTemps.begin(),
+                     transparentTemps.end(),
+                     [](const TempDrawCall& a, const TempDrawCall& b)
+                     {
+                       return std::uintptr_t(std::addressof(a.Material.get())) <
+                              std::uintptr_t(std::addressof(b.Material.get()));
+                     });
 
-    // TempDrawCall& first = tempDrawCalls[0];
-
-    // IMaterial&                                 currentMaterial =
-    // first.Material; std::vector<std::reference_wrapper<IMesh>> currentBatch;
-    //  Batch per Material and upload geometry
-    // for (auto& tempDrawCall : tempDrawCalls)
-    //{
-    // drawCalls.push_back(m_DrawCallFactory->Create(
-    //   std::move(m_MeshBufferFactory->Create(tempDrawCall.Mesh)),
-    //   tempDrawCall.Material,
-    //   tempDrawCall.Transform));
-    // Merge when still on the same material
-    /*if ((&tempDrawCall.Material == &currentMaterial) &&
-        !currentMaterial.GetMaterialProperties().IsTransparent)
+    std::vector<std::unique_ptr<Batch>> batches;
+    std::unique_ptr<Batch>              currentBatch;
+    // Batch per Material and upload geometry
+    for (auto& tempDrawCall : opagueTemps)
     {
-      currentBatch.push_back(tempDrawCall.Mesh);
+      std::cout << &tempDrawCall.Material << std::endl;
+      if (!currentBatch)
+      {
+        currentBatch = std::make_unique<Batch>(tempDrawCall.Material.get(),
+                                               tempDrawCall.Transform.get());
+        currentBatch->Meshes.push_back(tempDrawCall.Mesh.get().Clone());
+      }
+      else
+      {
+        if ((std::addressof(currentBatch->Material) !=
+             std::addressof(tempDrawCall.Material.get())) ||
+            currentBatch->Material.GetMaterialProperties().IsTransparent)
+        {
+          batches.push_back(std::move(currentBatch));
+          currentBatch = std::make_unique<Batch>(tempDrawCall.Material,
+                                                 tempDrawCall.Transform);
+          currentBatch->Meshes.push_back(tempDrawCall.Mesh.get().Clone());
+        }
+        else
+        {
+          currentBatch->Meshes.push_back(tempDrawCall.Mesh.get().Clone());
+        }
+      }
     }
-    else
+
+    if (currentBatch)
+    {
+      batches.push_back(std::move(currentBatch));
+    }
+
+    for (auto& batch : batches)
     {
       std::unique_ptr<IMesh> mergedMesh =
-        std::move(m_MeshFactory->MergeMeshes(currentBatch));
+        m_MeshFactory->MergeMeshes(batch->Meshes);
 
-      std::unique_ptr<IMeshBuffer> meshBuffer =
-        m_MeshBufferFactory->Create(*mergedMesh);
+      drawCalls.push_back(m_DrawCallFactory->Create(
+        mergedMesh, batch->Material, batch->Transform));
+    }
 
-      drawCalls.push_back(m_DrawCallFactory->Create(std::move(meshBuffer),
-                                                    tempDrawCall.Material,
-                                                    tempDrawCall.Transform));
-
-      currentMaterial = tempDrawCall.Material;
-      currentBatch.clear();
-      currentBatch.push_back(tempDrawCall.Mesh);
-    }*/
-    //}
+    for (auto& transparentCall : transparentTemps)
+    {
+      std::unique_ptr<IMesh> mesh = transparentCall.Mesh.get().Clone();
+      drawCalls.push_back(m_DrawCallFactory->Create(
+        mesh, transparentCall.Material, transparentCall.Transform));
+    }
 
     m_DrawCallList->SubmitDrawCalls(std::move(drawCalls));
   }

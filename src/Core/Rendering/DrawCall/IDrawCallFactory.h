@@ -10,8 +10,8 @@ namespace Dwarf
     virtual ~IDrawCallFactory() = default;
 
     virtual std::unique_ptr<IDrawCall>
-    Create(std::unique_ptr<IMeshBuffer>&& mesh,
-           IMaterial&                     material,
-           TransformComponent&            transform) = 0;
+    Create(std::unique_ptr<IMesh>& mesh,
+           IMaterial&              material,
+           TransformComponent&     transform) = 0;
   };
 }

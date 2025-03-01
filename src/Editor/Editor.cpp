@@ -21,7 +21,8 @@ namespace Dwarf
                  std::shared_ptr<IShaderRecompiler>     shaderRecompiler,
                  std::shared_ptr<IAssetReimporter>      assetReimporter,
                  std::shared_ptr<ITextureLoadingWorker> textureLoadingWorker,
-                 std::shared_ptr<IDrawCallWorker>       drawCallWorker)
+                 std::shared_ptr<IDrawCallWorker>       drawCallWorker,
+                 std::shared_ptr<IMeshBufferWorker>     meshBufferWorker)
     : m_Logger(logger)
     , m_EditorStats(stats)
     , m_InputManager(inputManager)
@@ -36,6 +37,7 @@ namespace Dwarf
     , m_AssetReimporter(assetReimporter)
     , m_TextureLoadingWorker(textureLoadingWorker)
     , m_DrawCallWorker(drawCallWorker)
+    , m_MeshBufferWorker(meshBufferWorker)
   {
   }
 
@@ -88,6 +90,7 @@ namespace Dwarf
       m_AssetReimporter->ReimportQueuedAssets();
       m_ShaderRecompiler->Recompile();
       m_TextureLoadingWorker->ProcessTextureJobs();
+      m_MeshBufferWorker->ProcessRequests();
       m_View->OnUpdate();
       m_View->OnImGuiRender();
       m_Window->EndFrame();

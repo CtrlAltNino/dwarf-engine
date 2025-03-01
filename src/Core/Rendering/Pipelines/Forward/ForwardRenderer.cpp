@@ -38,8 +38,8 @@ namespace Dwarf
     m_GridMaterial->GetMaterialProperties().IsDoubleSided = true;
     m_GridMaterial->GetMaterialProperties().IsTransparent = true;
 
-    m_GridMeshBuffer =
-      std::move(m_MeshBufferFactory->Create(*meshFactory->CreateUnitQuad()));
+    std::unique_ptr<IMesh> gridMesh = meshFactory->CreateUnitQuad();
+    m_GridMeshBuffer = std::move(m_MeshBufferFactory->Create(gridMesh));
     // m_GridMeshBuffer->Upload();
 
     m_GridModelMatrix = glm::mat4(1.0f);
@@ -113,10 +113,13 @@ namespace Dwarf
 
     for (auto& drawCall : m_DrawCallList->GetDrawCalls())
     {
-      m_RendererApi->RenderIndexed(drawCall->GetMeshBuffer(),
-                                   drawCall->GetMaterial(),
-                                   camera,
-                                   drawCall->GetTransform().GetModelMatrix());
+      if (drawCall->GetMeshBuffer())
+      {
+        m_RendererApi->RenderIndexed(*drawCall->GetMeshBuffer(),
+                                     drawCall->GetMaterial(),
+                                     camera,
+                                     drawCall->GetTransform().GetModelMatrix());
+      }
     }
 
     // Render grid
@@ -169,8 +172,10 @@ namespace Dwarf
         {
           ModelAsset& model =
             (ModelAsset&)meshRenderer.GetModelAsset()->GetAsset();
-          meshRenderer.IdMesh() = std::move(m_MeshBufferFactory->Create(
-            *m_MeshFactory->MergeMeshes(model.Meshes())));
+          std::unique_ptr<IMesh> mergedMesh =
+            m_MeshFactory->MergeMeshes(model.Meshes());
+          meshRenderer.IdMesh() =
+            std::move(m_MeshBufferFactory->Create(mergedMesh));
         }
 
         glm::mat4    modelMatrix = transform.GetModelMatrix();

@@ -19,7 +19,7 @@ namespace Dwarf
 
     ~DrawCall() override = default;
 
-    IMeshBuffer&
+    std::unique_ptr<IMeshBuffer>&
     GetMeshBuffer() override;
 
     IMaterial&

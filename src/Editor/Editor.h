@@ -3,6 +3,8 @@
 #include "Core/Asset/Shader/IShaderRecompiler.h"
 #include "Core/Asset/Texture/TextureWorker/ITextureLoadingWorker.h"
 #include "Core/Rendering/DrawCall/IDrawCallWorker.h"
+#include "Core/Rendering/Mesh/IMesh.h"
+#include "Core/Rendering/MeshBuffer/MeshBufferWorker/IMeshBufferWorker.h"
 #include "Core/Scene/IScene.h"
 #include "Core/Scene/IO/ISceneIO.h"
 #include "Core/Scene/ISceneFactory.h"
@@ -37,6 +39,7 @@ namespace Dwarf
     std::shared_ptr<IAssetReimporter>      m_AssetReimporter;
     std::shared_ptr<ITextureLoadingWorker> m_TextureLoadingWorker;
     std::shared_ptr<IDrawCallWorker>       m_DrawCallWorker;
+    std::shared_ptr<IMeshBufferWorker>     m_MeshBufferWorker;
 
   public:
     Editor(std::shared_ptr<IDwarfLogger>          logger,
@@ -52,7 +55,8 @@ namespace Dwarf
            std::shared_ptr<IShaderRecompiler>     shaderRecompiler,
            std::shared_ptr<IAssetReimporter>      assetReimporter,
            std::shared_ptr<ITextureLoadingWorker> textureLoadingWorker,
-           std::shared_ptr<IDrawCallWorker>       drawCallWorker);
+           std::shared_ptr<IDrawCallWorker>       drawCallWorker,
+           std::shared_ptr<IMeshBufferWorker>     meshBufferWorker);
 
     ~Editor() override = default;
 

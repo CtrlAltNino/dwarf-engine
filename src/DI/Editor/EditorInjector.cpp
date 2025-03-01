@@ -9,7 +9,9 @@
 #include "Core/Rendering/DrawCall/IDrawCallWorker.h"
 #include "Core/Rendering/GpuInfo/GpuInfoFactory.h"
 #include "Core/Rendering/GpuInfo/IGpuInfoFactory.h"
+#include "Core/Rendering/Mesh/IMesh.h"
 #include "Core/Rendering/Mesh/MeshFactory.h"
+#include "Core/Rendering/MeshBuffer/MeshBufferWorker/MeshBufferWorker.h"
 #include "Editor/Modules/Inspector/AssetInspector/MaterialAsset/IMaterialAssetInspector.h"
 #include "Editor/Modules/Inspector/AssetInspector/MaterialAsset/MaterialAssetInspector.h"
 #include "Editor/Modules/Inspector/AssetInspector/ModelAsset/IModelAssetInspector.h"
@@ -140,6 +142,8 @@ namespace Dwarf
           boost::di::bind<IAssetMetadata>.to<AssetMetadata>().in(
           boost::di::extension::shared),
           boost::di::bind<IMeshBufferFactory>.to<MeshBufferFactory>().in(
+          boost::di::extension::shared),
+          boost::di::bind<IMeshBufferWorker>.to<MeshBufferWorker>().in(
           boost::di::extension::shared),
           boost::di::bind<IMeshFactory>.to<MeshFactory>().in(
           boost::di::extension::shared),

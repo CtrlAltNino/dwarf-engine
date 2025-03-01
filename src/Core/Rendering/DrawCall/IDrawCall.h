@@ -11,7 +11,7 @@ namespace Dwarf
   public:
     virtual ~IDrawCall() = default;
 
-    virtual IMeshBuffer&
+    virtual std::unique_ptr<IMeshBuffer>&
     GetMeshBuffer() = 0;
 
     virtual IMaterial&

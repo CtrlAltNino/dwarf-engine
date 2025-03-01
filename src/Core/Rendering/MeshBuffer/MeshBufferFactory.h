@@ -21,6 +21,6 @@ namespace Dwarf
     ~MeshBufferFactory() override;
 
     std::unique_ptr<IMeshBuffer>
-    Create(IMesh& mesh) override;
+    Create(std::unique_ptr<IMesh>& mesh) override;
   };
 }

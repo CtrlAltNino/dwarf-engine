@@ -13,10 +13,10 @@ namespace Dwarf
   {
   }
 
-  IMeshBuffer&
+  std::unique_ptr<IMeshBuffer>&
   DrawCall::GetMeshBuffer()
   {
-    return *m_MeshBuffer;
+    return m_MeshBuffer;
   }
 
   IMaterial&

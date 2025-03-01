@@ -1,5 +1,6 @@
 #include "Editor/Modules/SceneViewer/SceneViewerWindow.h"
 #include "Core/Rendering/RendererApi/IRendererApiFactory.h"
+#include "Core/Scene/Components/SceneComponents.h"
 #include "Core/Scene/Entity/Entity.h"
 #include <iostream>
 
@@ -454,20 +455,26 @@ namespace Dwarf
                          m_Settings.GizmoMode,
                          glm::value_ptr(transform));
 
-    if (ImGuizmo::IsUsing())
-    {
-      tc.GetPosition() = glm::vec3(transform[3]);
-      glm::vec3 rotation;
+    // if (ImGuizmo::IsUsing())
+    //{
+    tc.GetPosition() = glm::vec3(transform[3]);
+    tc.GetScale() = glm::vec3(glm::length(glm::vec3(transform[0])),
+                              glm::length(glm::vec3(transform[1])),
+                              glm::length(glm::vec3(transform[2])));
 
-      ImGuizmo::DecomposeMatrixToComponents(glm::value_ptr(transform),
-                                            glm::value_ptr(tc.GetPosition()),
-                                            glm::value_ptr(rotation),
-                                            glm::value_ptr(tc.GetScale()));
+    glm::mat3 rotationMatrix =
+      glm::mat3(transform); // Remove translation from matrix
+    rotationMatrix = glm::mat3(glm::normalize(rotationMatrix[0]),
+                               glm::normalize(rotationMatrix[1]),
+                               glm::normalize(rotationMatrix[2]));
 
-      glm::vec3 deltaRotation = rotation - tc.GetEulerAngles();
+    // Convert rotation matrix to Euler angles (in radians)
+    glm::quat rotationQuat(rotationMatrix);
+    tc.GetEulerAngles() = glm::degrees(
+      glm::eulerAngles(rotationQuat)); // Convert to Euler angles in degrees
 
-      tc.GetEulerAngles() += deltaRotation;
-    }
+    // tc.GetEulerAngles() = glm::degrees(glm::eulerAngles(rotation));
+    //}
   }
 
   void

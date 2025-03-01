@@ -29,7 +29,7 @@ namespace Dwarf
   }
 
   std::unique_ptr<IMeshBuffer>
-  MeshBufferFactory::Create(IMesh& mesh)
+  MeshBufferFactory::Create(std::unique_ptr<IMesh>& mesh)
   {
     m_Logger->LogDebug(Log("Creating mesh.", "MeshBufferFactory"));
     // Creating a shader based on the graphics API.
@@ -41,7 +41,7 @@ namespace Dwarf
         break;
       case GraphicsApi::OpenGL:
         return std::make_unique<OpenGLMesh>(
-          mesh.GetVertices(), mesh.GetIndices(), m_Logger, m_VramTracker);
+          mesh->GetVertices(), mesh->GetIndices(), m_Logger, m_VramTracker);
         break;
       case GraphicsApi::Metal: break;
       case GraphicsApi::Vulkan:

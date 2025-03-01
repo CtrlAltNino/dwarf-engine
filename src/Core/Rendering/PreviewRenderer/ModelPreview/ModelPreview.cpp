@@ -66,9 +66,9 @@ namespace Dwarf
       m_Properties.ModelRotationTarget = { -15, 200, 0 };
       UpdateRotation({ 0, 0 });
       m_Properties.Distance = 1.0f;
-      m_PreviewMeshBuffer =
-        std::move(m_MeshBufferFactory->Create(*m_MeshFactory->MergeMeshes(
-          ((ModelAsset&)modelAsset.GetAsset()).Meshes())));
+      std::unique_ptr<IMesh> mesh = m_MeshFactory->MergeMeshes(
+        ((ModelAsset&)modelAsset.GetAsset()).Meshes());
+      m_PreviewMeshBuffer = std::move(m_MeshBufferFactory->Create(mesh));
     }
 
     m_Properties.ModelRotation =
