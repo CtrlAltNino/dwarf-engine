@@ -455,26 +455,24 @@ namespace Dwarf
                          m_Settings.GizmoMode,
                          glm::value_ptr(transform));
 
-    // if (ImGuizmo::IsUsing())
-    //{
-    tc.GetPosition() = glm::vec3(transform[3]);
-    tc.GetScale() = glm::vec3(glm::length(glm::vec3(transform[0])),
-                              glm::length(glm::vec3(transform[1])),
-                              glm::length(glm::vec3(transform[2])));
+    if (ImGuizmo::IsUsing())
+    {
+      tc.GetPosition() = glm::vec3(transform[3]);
+      tc.GetScale() = glm::vec3(glm::length(glm::vec3(transform[0])),
+                                glm::length(glm::vec3(transform[1])),
+                                glm::length(glm::vec3(transform[2])));
 
-    glm::mat3 rotationMatrix =
-      glm::mat3(transform); // Remove translation from matrix
-    rotationMatrix = glm::mat3(glm::normalize(rotationMatrix[0]),
-                               glm::normalize(rotationMatrix[1]),
-                               glm::normalize(rotationMatrix[2]));
+      glm::mat3 rotationMatrix =
+        glm::mat3(transform); // Remove translation from matrix
+      rotationMatrix = glm::mat3(glm::normalize(rotationMatrix[0]),
+                                 glm::normalize(rotationMatrix[1]),
+                                 glm::normalize(rotationMatrix[2]));
 
-    // Convert rotation matrix to Euler angles (in radians)
-    glm::quat rotationQuat(rotationMatrix);
-    tc.GetEulerAngles() = glm::degrees(
-      glm::eulerAngles(rotationQuat)); // Convert to Euler angles in degrees
-
-    // tc.GetEulerAngles() = glm::degrees(glm::eulerAngles(rotation));
-    //}
+      // Convert rotation matrix to Euler angles (in radians)
+      glm::quat rotationQuat(rotationMatrix);
+      tc.GetEulerAngles() = glm::degrees(
+        glm::eulerAngles(rotationQuat)); // Convert to Euler angles in degrees
+    }
   }
 
   void
