@@ -51,7 +51,7 @@ namespace Dwarf
       case GraphicsApi::D3D12: break;
       case GraphicsApi::OpenGL:
         return std::make_unique<OpenGLMesh>(
-          mesh.GetVertices(), mesh.GetIndices(), m_Logger, m_VramTracker);
+          mesh->GetVertices(), mesh->GetIndices(), m_Logger, m_VramTracker);
         break;
       case GraphicsApi::Metal: break;
       case GraphicsApi::Vulkan:
