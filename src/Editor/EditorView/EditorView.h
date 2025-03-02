@@ -89,5 +89,8 @@ namespace Dwarf
 
     nlohmann::json
     Serialize() override;
+
+    void
+    Shutdown() override;
   };
 }

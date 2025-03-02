@@ -18,17 +18,22 @@ namespace Dwarf
     std::shared_ptr<IDwarfLogger>        logger,
     GraphicsApi                          api,
     std::shared_ptr<IAssetDatabase>      assetDatabase,
-    std::shared_ptr<IShaderFactory>      shaderFactory,
+    std::shared_ptr<IShaderRegistry>     shaderRegistry,
     std::shared_ptr<IEditorStats>        editorStats,
-    std::shared_ptr<IOpenGLStateTracker> stateTracker)
+    std::shared_ptr<IOpenGLStateTracker> stateTracker,
+    std::shared_ptr<IShaderSourceCollectionFactory>
+      shaderSourceCollectionFactory)
     : m_GraphicsApi(api)
     , m_AssetDatabase(assetDatabase)
-    , m_ShaderFactory(shaderFactory)
+    , m_ShaderRegistry(shaderRegistry)
     , m_Logger(logger)
     , m_EditorStats(editorStats)
     , m_StateTracker(stateTracker)
+    , m_ShaderSourceCollectionFactory(shaderSourceCollectionFactory)
   {
   }
+
+  RendererApiFactory::~RendererApiFactory() {}
 
   std::shared_ptr<IRendererApi>
   RendererApiFactory::Create()
@@ -40,11 +45,13 @@ namespace Dwarf
         // return std::make_shared<D3D12Shader>();
         break;
       case GraphicsApi::OpenGL:
-        return std::make_shared<OpenGLRendererApi>(m_AssetDatabase,
-                                                   m_ShaderFactory,
-                                                   m_Logger,
-                                                   m_EditorStats,
-                                                   m_StateTracker);
+        return std::make_shared<OpenGLRendererApi>(
+          m_AssetDatabase,
+          m_ShaderRegistry,
+          m_Logger,
+          m_EditorStats,
+          m_StateTracker,
+          m_ShaderSourceCollectionFactory);
         break;
       case GraphicsApi::Metal: break;
       case GraphicsApi::Vulkan:
@@ -53,11 +60,13 @@ namespace Dwarf
 #elif __linux__
       case GraphicsApi::D3D12: break;
       case GraphicsApi::OpenGL:
-        return std::make_shared<OpenGLRendererApi>(m_AssetDatabase,
-                                                   m_ShaderFactory,
-                                                   m_Logger,
-                                                   m_EditorStats,
-                                                   m_StateTracker);
+        return std::make_shared<OpenGLRendererApi>(
+          m_AssetDatabase,
+          m_ShaderRegistry,
+          m_Logger,
+          m_EditorStats,
+          m_StateTracker,
+          m_ShaderSourceCollectionFactory);
         break;
       case GraphicsApi::Metal: break;
       case GraphicsApi::Vulkan:

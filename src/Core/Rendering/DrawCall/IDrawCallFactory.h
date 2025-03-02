@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Scene/Components/SceneComponents.h"
 #include "IDrawCall.h"
 namespace Dwarf
 {
@@ -9,6 +10,8 @@ namespace Dwarf
     virtual ~IDrawCallFactory() = default;
 
     virtual std::unique_ptr<IDrawCall>
-    Create(IMesh& mesh, IMaterial& material, glm::mat4 modelMatrix) = 0;
+    Create(std::unique_ptr<IMesh>& mesh,
+           IMaterial&              material,
+           TransformComponent&     transform) = 0;
   };
 }

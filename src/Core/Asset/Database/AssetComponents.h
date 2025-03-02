@@ -55,15 +55,6 @@ namespace Dwarf
       return *this;
     }
 
-    void
-    LoadIntoGpu()
-    {
-      for (auto& mesh : m_Meshes)
-      {
-        mesh->SetupMesh();
-      }
-    }
-
     std::vector<std::unique_ptr<IMesh>>&
     Meshes()
     {

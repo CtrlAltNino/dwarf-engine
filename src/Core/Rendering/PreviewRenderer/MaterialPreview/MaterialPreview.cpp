@@ -9,6 +9,7 @@ namespace Dwarf
     std::shared_ptr<IFramebufferFactory> framebufferFactory,
     std::shared_ptr<ICameraFactory>      cameraFactory,
     std::shared_ptr<IRendererApiFactory> rendererApiFactory,
+    std::shared_ptr<IMeshBufferFactory>  meshBufferFactory,
     std::shared_ptr<IMeshFactory>        meshFactory,
     std::shared_ptr<IEditorStats>        editorStats)
     : PreviewRenderer(framebufferFactory,
@@ -17,6 +18,7 @@ namespace Dwarf
                       editorStats)
     , m_Logger(logger)
     , m_MeshFactory(meshFactory)
+    , m_MeshBufferFactory(meshBufferFactory)
   {
     FramebufferSpecification renderSpec = { 512, 512 };
     renderSpec.Samples = 4;
@@ -71,7 +73,7 @@ namespace Dwarf
     m_RendererApi->SetClearColor({ 59 / 255.0f, 66 / 255.0f, 82 / 255.0f, 1 });
     m_RendererApi->Clear();
 
-    m_RendererApi->RenderIndexed(*m_Mesh,
+    m_RendererApi->RenderIndexed(*m_MeshBuffer,
                                  materialAsset,
                                  *m_Camera,
                                  glm::toMat4(m_Properties.ModelRotationQuat));
@@ -99,16 +101,24 @@ namespace Dwarf
     switch (m_MeshType)
     {
       case MaterialPreviewMeshType::Sphere:
-        m_Mesh = m_MeshFactory->CreateUnitSphere(50, 50);
-        break;
+        {
+          std::unique_ptr<IMesh> mesh = m_MeshFactory->CreateUnitSphere(50, 50);
+          m_MeshBuffer = m_MeshBufferFactory->Create(mesh);
+          break;
+        }
       case MaterialPreviewMeshType::Cube:
-        m_Mesh = m_MeshFactory->CreateUnitCube();
+        {
+          std::unique_ptr<IMesh> mesh = m_MeshFactory->CreateUnitCube();
+          m_MeshBuffer = m_MeshBufferFactory->Create(mesh);
+        }
         break;
       case MaterialPreviewMeshType::Plane:
-        m_Mesh = m_MeshFactory->CreateUnitQuad();
+        {
+          std::unique_ptr<IMesh> mesh = m_MeshFactory->CreateUnitQuad();
+          m_MeshBuffer = m_MeshBufferFactory->Create(mesh);
+        }
         break;
     }
-    m_Mesh->SetupMesh();
   }
 
   MaterialPreviewMeshType

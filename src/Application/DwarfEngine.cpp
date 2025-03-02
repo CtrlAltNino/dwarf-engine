@@ -80,7 +80,7 @@ namespace Dwarf
 
     m_Logger->LogDebug(Log("Editor finished running.", "DwarfEngine"));
     m_Logger->LogDebug(
-      Log("Return to launcheer: " + std::to_string(returnToLauncher),
+      Log("Return to launcher: " + std::to_string(returnToLauncher),
           "DwarfEngine"));
 
     return returnToLauncher;

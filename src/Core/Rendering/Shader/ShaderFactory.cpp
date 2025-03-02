@@ -38,23 +38,6 @@ namespace Dwarf
   }
 
   std::shared_ptr<IShader>
-  ShaderFactory::CreateDefaultShader()
-  {
-    m_Logger->LogDebug(Log("Creating default shader", "ShaderFactory"));
-    // TODO: Implement the default shader creation.
-    return CreateShader(
-      m_ShaderSourceCollectionFactory->CreateDefaultShaderSourceCollection());
-  }
-
-  std::shared_ptr<IShader>
-  ShaderFactory::CreateErrorShader()
-  {
-    m_Logger->LogDebug(Log("Creating error shader", "ShaderFactory"));
-    return CreateShader(
-      m_ShaderSourceCollectionFactory->CreateErrorShaderSourceCollection());
-  }
-
-  std::shared_ptr<IShader>
   ShaderFactory::CreateShader(
     std::unique_ptr<IShaderSourceCollection> shaderSources)
   {

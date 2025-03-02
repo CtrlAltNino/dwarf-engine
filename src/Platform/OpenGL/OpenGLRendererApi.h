@@ -1,8 +1,10 @@
 #pragma once
-#include "Core/Rendering/Shader/IShaderFactory.h"
+#include "pch.h"
+#include "Core/Asset/Shader/ShaderSourceCollection/IShaderSourceCollectionFactory.h"
+#include "Core/Rendering/Shader/IShader.h"
+#include "Core/Rendering/Shader/ShaderRegistry/IShaderRegistry.h"
 #include "Editor/Stats/IEditorStats.h"
 #include "Logging/IDwarfLogger.h"
-#include "pch.h"
 
 #include "Core/Asset/Database/IAssetDatabase.h"
 #include "Core/Rendering/RendererApi/IRendererApi.h"
@@ -14,19 +16,23 @@ namespace Dwarf
   {
   private:
     std::shared_ptr<IAssetDatabase>      m_AssetDatabase;
-    std::shared_ptr<IShaderFactory>      m_ShaderFactory;
+    std::shared_ptr<IShaderRegistry>     m_ShaderRegistry;
     std::shared_ptr<IDwarfLogger>        m_Logger;
     std::shared_ptr<IEditorStats>        m_EditorStats;
     std::shared_ptr<IOpenGLStateTracker> m_StateTracker;
+    std::shared_ptr<IShaderSourceCollectionFactory>
+      m_ShaderSourceCollectionFactory;
 
     std::shared_ptr<IShader> m_ErrorShader;
 
   public:
     OpenGLRendererApi(std::shared_ptr<IAssetDatabase>      assetDatabase,
-                      std::shared_ptr<IShaderFactory>      shaderFactory,
+                      std::shared_ptr<IShaderRegistry>     shaderRegistry,
                       std::shared_ptr<IDwarfLogger>        logger,
                       std::shared_ptr<IEditorStats>        editorStats,
-                      std::shared_ptr<IOpenGLStateTracker> stateTracker);
+                      std::shared_ptr<IOpenGLStateTracker> stateTracker,
+                      std::shared_ptr<IShaderSourceCollectionFactory>
+                        shaderSourceCollectionFactory);
     ~OpenGLRendererApi() override;
 
     void
@@ -43,10 +49,10 @@ namespace Dwarf
     Clear() override;
 
     void
-    RenderIndexed(IMesh&     mesh,
-                  IMaterial& material,
-                  ICamera&   camera,
-                  glm::mat4  modelMatrix) override;
+    RenderIndexed(IMeshBuffer& mesh,
+                  IMaterial&   material,
+                  ICamera&     camera,
+                  glm::mat4    modelMatrix) override;
     void
     ApplyComputeShader(std::shared_ptr<IComputeShader> computeShader,
                        std::shared_ptr<IFramebuffer>   fb,

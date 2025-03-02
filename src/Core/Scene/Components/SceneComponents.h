@@ -1,6 +1,7 @@
 #pragma once
 #include "Core/Asset/AssetReference/IAssetReference.h"
 #include "Core/Asset/Database/AssetComponents.h"
+#include "Core/Rendering/MeshBuffer/IMeshBuffer.h"
 #include "Utilities/ISerializable.h"
 #include "pch.h"
 
@@ -95,17 +96,7 @@ namespace Dwarf
     glm::mat4
     GetRotationMatrix() const
     {
-      glm::mat4 rotationMatrix(1.0f); // Identity matrix
-
-      // Apply pitch, yaw, and roll in the specified order
-      rotationMatrix = glm::rotate(
-        rotationMatrix, glm::radians(Rotation.x), glm::vec3(1.0f, 0.0f, 0.0f));
-      rotationMatrix = glm::rotate(
-        rotationMatrix, glm::radians(Rotation.y), glm::vec3(0.0f, 1.0f, 0.0f));
-      rotationMatrix = glm::rotate(
-        rotationMatrix, glm::radians(Rotation.z), glm::vec3(0.0f, 0.0f, 1.0f));
-
-      return glm::toMat4(glm::quat(Rotation));
+      return glm::toMat4(glm::quat(DEG_2_RAD * Rotation));
     }
 
     /// @brief Returns the scale of the entity.
@@ -323,7 +314,7 @@ namespace Dwarf
     bool isHidden = false;
     /// @brief ID of the mesh asset.
     std::unique_ptr<IAssetReference> modelAsset = nullptr;
-    std::unique_ptr<IMesh>           idMesh = nullptr;
+    std::unique_ptr<IMeshBuffer>     idMeshBuffer = nullptr;
 
     /// @brief The materials with which the model is to be rendered. The list
     /// index of the materials corresponds to the material index of the
@@ -342,22 +333,6 @@ namespace Dwarf
       : modelAsset(std::move(modelAsset))
       , materialAssets(std::move(materials))
     {
-    }
-
-    // Copy constructor
-    MeshRendererComponent(const MeshRendererComponent& other)
-    {
-      if (other.modelAsset)
-      {
-        // copy unique pointer
-        modelAsset = std::move(other.modelAsset->Clone());
-      }
-
-      for (auto& material : other.materialAssets)
-      {
-        materialAssets[material.first] =
-          material.second ? std::move(material.second->Clone()) : nullptr;
-      }
     }
 
     std::unique_ptr<IAssetReference>&
@@ -390,10 +365,10 @@ namespace Dwarf
       return isHidden;
     }
 
-    std::unique_ptr<IMesh>&
+    std::unique_ptr<IMeshBuffer>&
     IdMesh()
     {
-      return idMesh;
+      return idMeshBuffer;
     }
 
     nlohmann::json

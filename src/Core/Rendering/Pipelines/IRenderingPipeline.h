@@ -1,10 +1,7 @@
 #pragma once
 
-#include "Core/Rendering/DrawCall/IDrawCall.h"
 #include "Core/Rendering/Framebuffer/IFramebuffer.h"
-#include "Core/Rendering/Material/IMaterial.h"
 #include "Core/Scene/Camera/ICamera.h"
-#include "Core/Scene/Entity/Entity.h"
 #include "Core/Scene/IScene.h"
 
 namespace Dwarf
@@ -18,10 +15,6 @@ namespace Dwarf
   {
   public:
     virtual ~IRenderingPipeline() = default;
-
-    // TODO: Maybe pass framebuffer?
-    virtual void
-    RenderEntity(Entity& entity, ICamera& camera) = 0;
 
     virtual void
     RenderScene(IScene&    scene,

@@ -14,18 +14,22 @@ namespace Dwarf
 {
   OpenGLRendererApi::OpenGLRendererApi(
     std::shared_ptr<IAssetDatabase>      assetDatabase,
-    std::shared_ptr<IShaderFactory>      shaderFactory,
+    std::shared_ptr<IShaderRegistry>     shaderRegistry,
     std::shared_ptr<IDwarfLogger>        logger,
     std::shared_ptr<IEditorStats>        editorStats,
-    std::shared_ptr<IOpenGLStateTracker> stateTracker)
+    std::shared_ptr<IOpenGLStateTracker> stateTracker,
+    std::shared_ptr<IShaderSourceCollectionFactory>
+      shaderSourceCollectionFactory)
     : m_AssetDatabase(assetDatabase)
-    , m_ShaderFactory(shaderFactory)
+    , m_ShaderRegistry(shaderRegistry)
     , m_Logger(logger)
     , m_EditorStats(editorStats)
     , m_StateTracker(stateTracker)
+    , m_ShaderSourceCollectionFactory(shaderSourceCollectionFactory)
   {
     m_Logger->LogDebug(Log("OpenGLRendererApi created.", "OpenGLRendererApi"));
-    m_ErrorShader = m_ShaderFactory->CreateErrorShader();
+    m_ErrorShader = m_ShaderRegistry->GetOrCreate(
+      m_ShaderSourceCollectionFactory->CreateErrorShaderSourceCollection());
     m_ErrorShader->Compile();
 
     m_StateTracker->SetDepthTest(true);
@@ -134,10 +138,10 @@ namespace Dwarf
   }
 
   void
-  OpenGLRendererApi::RenderIndexed(IMesh&     mesh,
-                                   IMaterial& material,
-                                   ICamera&   camera,
-                                   glm::mat4  modelMatrix)
+  OpenGLRendererApi::RenderIndexed(IMeshBuffer& mesh,
+                                   IMaterial&   material,
+                                   ICamera&     camera,
+                                   glm::mat4    modelMatrix)
   {
     OpenGLUtilities::CheckOpenGLError(
       "Before rendering", "OpenGLRendererApi", m_Logger);
@@ -184,8 +188,7 @@ namespace Dwarf
 
     oglMesh.Bind();
 
-    glDrawElements(
-      GL_TRIANGLES, oglMesh.GetIndices().size(), GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, oglMesh.GetIndexCount(), GL_UNSIGNED_INT, 0);
     OpenGLUtilities::CheckOpenGLError(
       "glDrawElements", "OpenGLRendererApi", m_Logger);
   }
@@ -237,8 +240,12 @@ namespace Dwarf
     OpenGLFramebuffer* destinationFB = (OpenGLFramebuffer*)&destination;
     glBindFramebuffer(GL_READ_FRAMEBUFFER,
                       sourceFB->GetFramebufferRendererID());
+    OpenGLUtilities::CheckOpenGLError(
+      "glBindFramebuffer GL_READ_FRAMEBUFFER", "OpenGLRendererApi", m_Logger);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER,
                       destinationFB->GetFramebufferRendererID());
+    OpenGLUtilities::CheckOpenGLError(
+      "glBindFramebuffer GL_DRAW_FRAMEBUFFER", "OpenGLRendererApi", m_Logger);
     glBlitFramebuffer(0,
                       0,
                       width,
@@ -249,7 +256,11 @@ namespace Dwarf
                       height,
                       GL_COLOR_BUFFER_BIT,
                       GL_NEAREST);
+    OpenGLUtilities::CheckOpenGLError(
+      "glBlitFramebuffer", "OpenGLRendererApi", m_Logger);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    OpenGLUtilities::CheckOpenGLError(
+      "glBindFramebuffer Unbind", "OpenGLRendererApi", m_Logger);
   }
 
   VRAMUsageBuffer

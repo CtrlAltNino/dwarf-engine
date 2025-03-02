@@ -69,9 +69,9 @@ namespace Dwarf
                                        std::chrono::seconds(5),
                                        [this]
                                        { return !m_RunViewSaveThread.load(); });
+            m_ProjectSettings->UpdateSerializedView(Serialize());
+            m_ProjectSettings->Save();
           }
-          m_ProjectSettings->UpdateSerializedView(Serialize());
-          m_ProjectSettings->Save();
         }
       });
   }
@@ -80,12 +80,15 @@ namespace Dwarf
   {
     m_Logger->LogDebug(Log("Destroying EditorView", "EditorView"));
 
+    if (m_RunViewSaveThread)
     {
-      std::lock_guard<std::mutex> lock(m_ThreadMutex);
-      m_RunViewSaveThread.store(false);
+      {
+        std::lock_guard<std::mutex> lock(m_ThreadMutex);
+        m_RunViewSaveThread.store(false);
+      }
+      m_ThreadCondition.notify_one();
+      m_ViewSaveThread.join();
     }
-    m_ThreadCondition.notify_one();
-    m_ViewSaveThread.join();
 
     m_Logger->LogDebug(Log("EditorView destroyed", "EditorView"));
   }
@@ -276,9 +279,13 @@ namespace Dwarf
   void
   EditorView::OnUpdate()
   {
-    for (int i = 0; i < m_GuiModules.size(); i++)
+
     {
-      m_GuiModules.at(i)->OnUpdate();
+      std::unique_lock<std::mutex> lock(m_ThreadMutex);
+      for (int i = 0; i < m_GuiModules.size(); i++)
+      {
+        m_GuiModules.at(i)->OnUpdate();
+      }
     }
   }
 
@@ -406,5 +413,20 @@ namespace Dwarf
       j["modules"].push_back(m_GuiModules.at(i)->Serialize());
     }
     return j;
+  }
+
+  void
+  EditorView::Shutdown()
+  {
+    if (m_RunViewSaveThread)
+    {
+      {
+        std::lock_guard<std::mutex> lock(m_ThreadMutex);
+        m_RunViewSaveThread.store(false);
+        m_GuiModules.clear();
+      }
+      m_ThreadCondition.notify_one();
+      m_ViewSaveThread.join();
+    }
   }
 }

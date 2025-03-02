@@ -216,13 +216,23 @@ namespace Dwarf
         GLchar  geom_message[1024] = "";
 
         geometryShader = glCreateShader(GL_GEOMETRY_SHADER);
+        OpenGLUtilities::CheckOpenGLError(
+          "glCreateShader GL_GEOMETRY_SHADER", "OpenGLShader", m_Logger);
         glShaderSource(geometryShader, 1, &geometrySource, nullptr);
+        OpenGLUtilities::CheckOpenGLError(
+          "glShaderSource", "OpenGLShader", m_Logger);
         glCompileShader(geometryShader);
+        OpenGLUtilities::CheckOpenGLError(
+          "glCompileShader", "OpenGLShader", m_Logger);
 
         GLint geometry_compiled;
         glGetShaderiv(geometryShader, GL_COMPILE_STATUS, &geometry_compiled);
+        OpenGLUtilities::CheckOpenGLError(
+          "glGetShaderiv", "OpenGLShader", m_Logger);
         glGetShaderInfoLog(
           geometryShader, 1024, &geom_log_length, geom_message);
+        OpenGLUtilities::CheckOpenGLError(
+          "glGetShaderInfoLog", "OpenGLShader", m_Logger);
 
         if (geom_log_length > 0)
         {
@@ -232,8 +242,14 @@ namespace Dwarf
         if (geometry_compiled != GL_TRUE)
         {
           glDeleteShader(vertexShader);
+          OpenGLUtilities::CheckOpenGLError(
+            "glDeleteShader vertexShader", "OpenGLShader", m_Logger);
           glDeleteShader(fragmentShader);
+          OpenGLUtilities::CheckOpenGLError(
+            "glDeleteShader fragmentShader", "OpenGLShader", m_Logger);
           glDeleteShader(geometryShader);
+          OpenGLUtilities::CheckOpenGLError(
+            "glDeleteShader geometryShader", "OpenGLShader", m_Logger);
           return;
         }
       }
@@ -287,6 +303,8 @@ namespace Dwarf
       m_SuccessfullyCompiled = true;
       GLint binaryLength = 0;
       glGetProgramiv(m_ID, GL_PROGRAM_BINARY_LENGTH, &binaryLength);
+      OpenGLUtilities::CheckOpenGLError(
+        "glGetProgramiv", "OpenGLShader", m_Logger);
       m_VramTracker->AddShaderMemory(binaryLength);
     }
     else
@@ -306,86 +324,6 @@ namespace Dwarf
   {
     return m_ID;
   }
-
-  // std::shared_ptr<OpenGLShader>
-  // OpenGLShader::CreateDefaultShader()
-  // {
-  //   std::shared_ptr<OpenGLShader> defaultShader =
-  //     std::make_shared<OpenGLShader>();
-  //   defaultShader->SetVertexShader(
-  //     FileHandler::ReadFile(Shader::GetDefaultShaderPath() /
-  //     "default.vert"));
-  //   defaultShader->SetFragmentShader(
-  //     FileHandler::ReadFile(Shader::GetDefaultShaderPath() /
-  //     "default.frag"));
-  //   defaultShader->Compile();
-  //   return defaultShader;
-  // }
-
-  // std::shared_ptr<OpenGLShader>
-  // OpenGLShader::CreateErrorShader()
-  // {
-  //   std::shared_ptr<OpenGLShader> errorShader =
-  //     std::make_shared<OpenGLShader>();
-  //   errorShader->SetVertexShader(
-  //     FileHandler::ReadFile(Shader::GetErrorShaderPath() / "error.vert"));
-  //   errorShader->SetFragmentShader(
-  //     FileHandler::ReadFile(Shader::GetErrorShaderPath() / "error.frag"));
-  //   errorShader->Compile();
-  //   return errorShader;
-  // }
-
-  // std::shared_ptr<OpenGLShader>
-  // OpenGLShader::CreateGridShader()
-  // {
-  //   std::shared_ptr<OpenGLShader> gridShader =
-  //   std::make_shared<OpenGLShader>(); gridShader->SetVertexShader(
-  //     FileHandler::ReadFile(Shader::GetGridShaderPath() / "grid.vert"));
-  //   gridShader->SetFragmentShader(
-  //     FileHandler::ReadFile(Shader::GetGridShaderPath() / "grid.frag"));
-  //   gridShader->Compile();
-  //   return gridShader;
-  // }
-
-  // std::shared_ptr<OpenGLShader>
-  // OpenGLShader::CreatePreviewShader()
-  // {
-  //   std::shared_ptr<OpenGLShader> previewShader =
-  //     std::make_shared<OpenGLShader>();
-  //   previewShader->SetVertexShader(
-  //     FileHandler::ReadFile(Shader::GetPreviewShaderPath() /
-  //     "preview.vert"));
-  //   previewShader->SetFragmentShader(
-  //     FileHandler::ReadFile(Shader::GetPreviewShaderPath() /
-  //     "preview.frag"));
-  //   previewShader->Compile();
-  //   return previewShader;
-  // }
-
-  // std::shared_ptr<OpenGLShader>
-  // OpenGLShader::CreateIdShader()
-  // {
-  //   std::shared_ptr<OpenGLShader> idShader =
-  //   std::make_shared<OpenGLShader>(); idShader->SetVertexShader(
-  //     FileHandler::ReadFile(Shader::GetIdShaderPath() / "id.vert"));
-  //   idShader->SetFragmentShader(
-  //     FileHandler::ReadFile(Shader::GetIdShaderPath() / "id.frag"));
-  //   idShader->Compile();
-  //   return idShader;
-  // }
-
-  // std::shared_ptr<OpenGLShader>
-  // OpenGLShader::CreateWhiteShader()
-  // {
-  //   std::shared_ptr<OpenGLShader> whiteShader =
-  //     std::make_shared<OpenGLShader>();
-  //   whiteShader->SetVertexShader(
-  //     FileHandler::ReadFile(Shader::GetOutlineShaderPath() / "white.vert"));
-  //   whiteShader->SetFragmentShader(
-  //     FileHandler::ReadFile(Shader::GetOutlineShaderPath() / "white.frag"));
-  //   whiteShader->Compile();
-  //   return whiteShader;
-  // }
 
   std::unique_ptr<IShaderParameterCollection>
   OpenGLShader::CreateParameters()
@@ -408,10 +346,14 @@ namespace Dwarf
     GLsizei       length;        // name length
 
     glGetProgramiv(m_ID, GL_ACTIVE_UNIFORMS, &count);
+    OpenGLUtilities::CheckOpenGLError(
+      "glGetProgramiv GL_ACTIVE_UNIFORMS", "OpenGLShader", m_Logger);
 
     for (i = 0; i < count; i++)
     {
       glGetActiveUniform(m_ID, (GLuint)i, bufSize, &length, &size, &type, name);
+      OpenGLUtilities::CheckOpenGLError(
+        "glGetActiveUniform", "OpenGLShader", m_Logger);
 
       if (std::find(ReservedUniformNames.begin(),
                     ReservedUniformNames.end(),
@@ -537,6 +479,8 @@ namespace Dwarf
       OpenGLUtilities::CheckOpenGLError(
         "glActiveTexture", "OpenGLRendererApi", m_Logger);
       glBindTexture(GL_TEXTURE_2D, value.GetTexture().GetTextureID());
+      OpenGLUtilities::CheckOpenGLError(
+        "glBindTexture", "OpenGLShader", m_Logger);
       m_TextureStates[textureCount] = value.GetTexture().GetTextureID();
     }
 
@@ -627,6 +571,8 @@ namespace Dwarf
     {
       m_UniformLocations[uniformName] =
         glGetUniformLocation(m_ID, uniformName.c_str());
+      OpenGLUtilities::CheckOpenGLError(
+        "glGetUniformLocation", "OpenGLShader", m_Logger);
     }
 
     return m_UniformLocations[uniformName];

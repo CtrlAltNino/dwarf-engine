@@ -12,12 +12,18 @@ namespace Dwarf
     std::vector<std::unique_ptr<IDrawCall>> m_DrawCalls;
 
   public:
-    ~DrawCallList() override = default;
+    ~DrawCallList() override;
 
     void
     SubmitDrawCalls(std::vector<std::unique_ptr<IDrawCall>> drawCalls) override;
 
     std::vector<std::unique_ptr<IDrawCall>>&
     GetDrawCalls() override;
+
+    std::mutex&
+    GetMutex() override;
+
+    void
+    Clear() override;
   };
 }

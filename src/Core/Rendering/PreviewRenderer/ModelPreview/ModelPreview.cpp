@@ -1,5 +1,6 @@
 #include "ModelPreview.h"
 #include "Core/Rendering/Framebuffer/IFramebufferFactory.h"
+#include "Core/Rendering/MeshBuffer/IMeshBufferFactory.h"
 #include <entt/entity/fwd.hpp>
 
 namespace Dwarf
@@ -10,13 +11,17 @@ namespace Dwarf
     std::shared_ptr<IRendererApiFactory> rendererApiFactory,
     std::shared_ptr<IMaterialFactory>    materialFactory,
     std::shared_ptr<IEditorStats>        editorStats,
-    std::shared_ptr<IInputManager>       inputManager)
+    std::shared_ptr<IInputManager>       inputManager,
+    std::shared_ptr<IMeshFactory>        meshFactory,
+    std::shared_ptr<IMeshBufferFactory>  meshBufferFactory)
     : PreviewRenderer(framebufferFactory,
                       cameraFactory->Create(),
                       rendererApiFactory,
                       editorStats)
     , m_MaterialFactory(materialFactory)
     , m_InputManager(inputManager)
+    , m_MeshFactory(meshFactory)
+    , m_MeshBufferFactory(meshBufferFactory)
   {
     FramebufferSpecification renderSpec = { 512, 512 };
     renderSpec.Samples = 8;
@@ -61,6 +66,9 @@ namespace Dwarf
       m_Properties.ModelRotationTarget = { -15, 200, 0 };
       UpdateRotation({ 0, 0 });
       m_Properties.Distance = 1.0f;
+      std::unique_ptr<IMesh> mesh = m_MeshFactory->MergeMeshes(
+        ((ModelAsset&)modelAsset.GetAsset()).Meshes());
+      m_PreviewMeshBuffer = std::move(m_MeshBufferFactory->Create(mesh));
     }
 
     m_Properties.ModelRotation =
@@ -98,13 +106,21 @@ namespace Dwarf
     m_RendererApi->SetClearColor({ 59 / 255.0f, 66 / 255.0f, 82 / 255.0f, 1 });
     m_RendererApi->Clear();
 
-    for (int i = 0; i < modelAssetRef.Meshes().size(); i++)
+    if (m_PreviewMeshBuffer)
     {
-      m_RendererApi->RenderIndexed(*modelAssetRef.Meshes().at(i),
+      m_RendererApi->RenderIndexed(*m_PreviewMeshBuffer,
                                    *m_Material,
                                    *m_Camera,
                                    glm::toMat4(m_Properties.ModelRotationQuat));
     }
+
+    // for (int i = 0; i < modelAssetRef.Meshes().size(); i++)
+    // {
+    //   m_RendererApi->RenderIndexed(*modelAssetRef.Meshes().at(i),
+    //                                *m_Material,
+    //                                *m_Camera,
+    //                                glm::toMat4(m_Properties.ModelRotationQuat));
+    // }
     m_RenderFramebuffer->Unbind();
 
     m_RendererApi->Blit(*m_RenderFramebuffer,

@@ -5,15 +5,16 @@
 namespace Dwarf
 {
   MaterialFactory::MaterialFactory(
-    std::shared_ptr<IDwarfLogger>   logger,
-    std::shared_ptr<IShaderFactory> shaderFactory,
+    std::shared_ptr<IDwarfLogger> logger,
     std::shared_ptr<IShaderParameterCollectionFactory>
                                      shaderParameterCollectionFactory,
-    std::shared_ptr<IShaderRegistry> shaderRegistry)
+    std::shared_ptr<IShaderRegistry> shaderRegistry,
+    std::shared_ptr<IShaderSourceCollectionFactory>
+      shaderSourceCollectionFactory)
     : m_Logger(logger)
-    , m_ShaderFactory(shaderFactory)
     , m_ShaderParameterCollectionFactory(shaderParameterCollectionFactory)
     , m_ShaderRegistry(shaderRegistry)
+    , m_ShaderSourceCollectionFactory(shaderSourceCollectionFactory)
   {
     m_Logger->LogDebug(Log("MaterialFactory created", "MaterialFactory"));
   }
@@ -29,7 +30,8 @@ namespace Dwarf
     // TODO: Use default shader
     m_Logger->LogDebug(Log("Creating default material", "MaterialFactory"));
     return std::make_unique<Material>(
-      m_ShaderFactory->CreateDefaultShader(),
+      m_ShaderRegistry->GetOrCreate(
+        m_ShaderSourceCollectionFactory->CreateDefaultShaderSourceCollection()),
       MaterialProperties(),
       m_ShaderParameterCollectionFactory->CreateShaderParameterCollection());
   }
@@ -52,8 +54,12 @@ namespace Dwarf
       Log("Creating material from serialized data", "MaterialFactory"));
     return std::make_unique<Material>(
       serializedMaterial.contains("Shader")
-        ? m_ShaderRegistry->GetOrCreate(serializedMaterial["Shader"])
-        : m_ShaderFactory->CreateDefaultShader(),
+        ? m_ShaderRegistry->GetOrCreate(
+            m_ShaderSourceCollectionFactory->CreateShaderSourceCollection(
+              serializedMaterial["Shader"]))
+        : m_ShaderRegistry->GetOrCreate(
+            m_ShaderSourceCollectionFactory
+              ->CreateDefaultShaderSourceCollection()),
       serializedMaterial["Properties"],
       m_ShaderParameterCollectionFactory->CreateShaderParameterCollection(
         serializedMaterial["ShaderParameters"]));

@@ -4,14 +4,18 @@
 namespace Dwarf
 {
   ShaderRegistry::ShaderRegistry(std::shared_ptr<IDwarfLogger>   logger,
-                                 std::shared_ptr<IShaderFactory> shaderFactory,
-                                 std::shared_ptr<IShaderSourceCollectionFactory>
-                                   shaderSourceCollectionFactory)
+                                 std::shared_ptr<IShaderFactory> shaderFactory)
     : m_Logger(logger)
     , m_ShaderFactory(shaderFactory)
-    , m_ShaderSourceCollectionFactory(shaderSourceCollectionFactory)
   {
+    m_Logger->LogDebug(Log("ShaderRegistry created", "ShaderRegistry"));
   }
+
+  ShaderRegistry::~ShaderRegistry()
+  {
+    m_Logger->LogDebug(Log("ShaderRegistry destroyed", "ShaderRegistry"));
+  }
+
   std::shared_ptr<IShader>
   ShaderRegistry::GetOrCreate(
     std::unique_ptr<IShaderSourceCollection> shaderSources)
@@ -72,13 +76,5 @@ namespace Dwarf
     m_Shaders[hash] = m_ShaderFactory->CreateShader(std::move(shaderSources));
 
     return m_Shaders[hash];
-  }
-
-  std::shared_ptr<IShader>
-  ShaderRegistry::GetOrCreate(const nlohmann::json& serializedShader)
-  {
-    return GetOrCreate(
-      m_ShaderSourceCollectionFactory->CreateShaderSourceCollection(
-        serializedShader));
   }
 }
