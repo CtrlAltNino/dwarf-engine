@@ -28,7 +28,9 @@ namespace Dwarf
     std::condition_variable queueCondition;
     std::atomic<bool>       stopWorker = false;
 
-    std::thread m_TextureWorker;
+    std::vector<std::thread> m_TextureWorkers;
+
+    int m_NumWorkerThreads = 4;
 
     std::unordered_set<std::filesystem::path> m_CurrentlyProcessing;
 

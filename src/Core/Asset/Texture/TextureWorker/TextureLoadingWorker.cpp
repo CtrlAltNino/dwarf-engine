@@ -15,7 +15,11 @@ namespace Dwarf
     , m_ImageFileLoader(imageFileLoader)
     , m_TextureFactory(textureFactory)
   {
-    m_TextureWorker = std::thread([this]() { ProcessTextureLoadRequests(); });
+    for (int i = 0; i < m_NumWorkerThreads; i++)
+    {
+      m_TextureWorkers.push_back(
+        std::thread([this]() { ProcessTextureLoadRequests(); }));
+    }
     m_Logger->LogDebug(
       Log("TextureLoadingWorker created.", "TextureLoadingWorker"));
   }
@@ -28,10 +32,13 @@ namespace Dwarf
       std::lock_guard<std::mutex> lock(m_LoadMutex);
       stopWorker.store(true);
     }
-    queueCondition.notify_one();
-    if (m_TextureWorker.joinable())
+    queueCondition.notify_all();
+    for (auto& thread : m_TextureWorkers)
     {
-      m_TextureWorker.join();
+      if (thread.joinable())
+      {
+        thread.join();
+      }
     }
     m_Logger->LogDebug(
       Log("TextureLoadingWorker destroyed.", "TextureLoadingWorker"));
