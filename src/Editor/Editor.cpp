@@ -39,6 +39,12 @@ namespace Dwarf
     , m_DrawCallWorker(drawCallWorker)
     , m_MeshBufferWorker(meshBufferWorker)
   {
+    m_Logger->LogDebug(Log("Editor created", "Editor"));
+  }
+
+  Editor::~Editor()
+  {
+    m_Logger->LogDebug(Log("Editor destroyed", "Editor"));
   }
 
   bool

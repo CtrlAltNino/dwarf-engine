@@ -58,7 +58,7 @@ namespace Dwarf
            std::shared_ptr<IDrawCallWorker>       drawCallWorker,
            std::shared_ptr<IMeshBufferWorker>     meshBufferWorker);
 
-    ~Editor() override = default;
+    ~Editor() override;
 
     bool
     Run() override;

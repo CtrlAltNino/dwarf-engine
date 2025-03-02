@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Core/Asset/Database/IAssetDatabase.h"
 #include "Core/Asset/Shader/ShaderSourceCollection/IShaderSourceCollectionFactory.h"
 #include "Core/Rendering/DrawCall/IDrawCallList.h"
 #include "Core/Rendering/Framebuffer/IFramebuffer.h"
@@ -9,10 +8,8 @@
 #include "Core/Rendering/MeshBuffer/IMeshBufferFactory.h"
 #include "Core/Rendering/Pipelines/IRenderingPipeline.h"
 #include "Core/Rendering/RendererApi/IRendererApi.h"
-#include "Core/Rendering/Shader/IShaderFactory.h"
-#include "Core/Rendering/DrawCall/IDrawCall.h"
+#include "Core/Rendering/Shader/ShaderRegistry/IShaderRegistry.h"
 #include <memory>
-#include <mutex>
 
 namespace Dwarf
 {
@@ -25,7 +22,7 @@ namespace Dwarf
     glm::mat4                         m_GridModelMatrix;
     std::shared_ptr<IRendererApi>     m_RendererApi;
     std::shared_ptr<IMaterialFactory> m_MaterialFactory;
-    std::shared_ptr<IShaderFactory>   m_ShaderFactory;
+    std::shared_ptr<IShaderRegistry>  m_ShaderRegistry;
     std::shared_ptr<IShaderSourceCollectionFactory>
                                         m_ShaderSourceCollectionFactory;
     std::shared_ptr<IMeshFactory>       m_MeshFactory;
@@ -38,7 +35,7 @@ namespace Dwarf
   public:
     ForwardRenderer(std::shared_ptr<IRendererApi>     rendererApi,
                     std::shared_ptr<IMaterialFactory> materialFactory,
-                    std::shared_ptr<IShaderFactory>   shaderFactory,
+                    std::shared_ptr<IShaderRegistry>  shaderRegistry,
                     std::shared_ptr<IShaderSourceCollectionFactory>
                                                   shaderSourceCollectionFactory,
                     std::shared_ptr<IMeshFactory> meshFactory,
@@ -46,8 +43,6 @@ namespace Dwarf
                     std::shared_ptr<IDrawCallList>      drawCallList);
     ~ForwardRenderer() override;
 
-    void
-    RenderEntity(Entity& entity, ICamera& camera) override;
     void
     RenderScene(IScene&    scene,
                 ICamera&   camera,

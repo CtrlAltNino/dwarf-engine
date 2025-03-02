@@ -32,12 +32,6 @@ namespace Dwarf
     ~ShaderFactory() override;
 
     std::shared_ptr<IShader>
-    CreateDefaultShader() override;
-
-    std::shared_ptr<IShader>
-    CreateErrorShader() override;
-
-    std::shared_ptr<IShader>
     CreateShader(
       std::unique_ptr<IShaderSourceCollection> shaderSources) override;
   };

@@ -335,22 +335,6 @@ namespace Dwarf
     {
     }
 
-    // Copy constructor
-    MeshRendererComponent(const MeshRendererComponent& other)
-    {
-      if (other.modelAsset)
-      {
-        // copy unique pointer
-        modelAsset = std::move(other.modelAsset->Clone());
-      }
-
-      for (auto& material : other.materialAssets)
-      {
-        materialAssets[material.first] =
-          material.second ? std::move(material.second->Clone()) : nullptr;
-      }
-    }
-
     std::unique_ptr<IAssetReference>&
     GetModelAsset()
     {

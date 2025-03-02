@@ -3,6 +3,7 @@
 #include "Core/Asset/Texture/IImageFileLoader.h"
 #include "Core/Rendering/Texture/ITextureFactory.h"
 #include "ITextureLoadingWorker.h"
+#include <functional>
 
 namespace Dwarf
 {
@@ -28,7 +29,10 @@ namespace Dwarf
       stopWorker.store(true);
     }
     queueCondition.notify_one();
-    m_TextureWorker.join();
+    if (m_TextureWorker.joinable())
+    {
+      m_TextureWorker.join();
+    }
     m_Logger->LogDebug(
       Log("TextureLoadingWorker destroyed.", "TextureLoadingWorker"));
   }

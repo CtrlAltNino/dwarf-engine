@@ -31,7 +31,7 @@ namespace Dwarf
       std::shared_ptr<IMaterialIO>           materialIO,
       std::shared_ptr<IFileHandler>          fileHandler,
       std::shared_ptr<ITextureLoadingWorker> textureLoadingWorker);
-    ~AssetReferenceFactory() override = default;
+    ~AssetReferenceFactory() override;
 
     std::unique_ptr<IAssetReference>
     Create(entt::entity    assetHandle,

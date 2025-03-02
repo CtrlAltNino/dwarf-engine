@@ -22,19 +22,19 @@ namespace Dwarf
       Log("AssetReferenceFactory created", "AssetReferenceFactory"));
   }
 
+  AssetReferenceFactory::~AssetReferenceFactory()
+  {
+    m_Logger->LogDebug(
+      Log("AssetReferenceFactory destroyed", "AssetReferenceFactory"));
+  }
+
   std::unique_ptr<IAssetReference>
   AssetReferenceFactory::Create(entt::entity    assetHandle,
                                 entt::registry& registry,
                                 ASSET_TYPE      type)
   {
-    return std::make_unique<AssetReference>(assetHandle,
-                                            registry,
-                                            type,
-                                            m_ModelImporter,
-                                            m_TextureFactory,
-                                            m_MaterialIO,
-                                            m_FileHandler,
-                                            m_TextureLoadingWorker);
+    return std::make_unique<AssetReference>(
+      assetHandle, registry, type, m_TextureLoadingWorker, m_Logger);
   }
 
   std::unique_ptr<IAssetReference>
@@ -49,6 +49,7 @@ namespace Dwarf
                                             uid,
                                             path,
                                             name,
+                                            m_Logger,
                                             m_ModelImporter,
                                             m_TextureFactory,
                                             m_MaterialIO,

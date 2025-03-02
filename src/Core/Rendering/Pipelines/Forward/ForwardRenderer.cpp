@@ -10,7 +10,7 @@ namespace Dwarf
   ForwardRenderer::ForwardRenderer(
     std::shared_ptr<IRendererApi>     rendererApi,
     std::shared_ptr<IMaterialFactory> materialFactory,
-    std::shared_ptr<IShaderFactory>   shaderFactory,
+    std::shared_ptr<IShaderRegistry>  shaderRegistry,
     std::shared_ptr<IShaderSourceCollectionFactory>
                                         shaderSourceCollectionFactory,
     std::shared_ptr<IMeshFactory>       meshFactory,
@@ -18,7 +18,7 @@ namespace Dwarf
     std::shared_ptr<IDrawCallList>      drawCallList)
     : m_RendererApi(rendererApi)
     , m_MaterialFactory(materialFactory)
-    , m_ShaderFactory(shaderFactory)
+    , m_ShaderRegistry(shaderRegistry)
     , m_ShaderSourceCollectionFactory(shaderSourceCollectionFactory)
     , m_MeshFactory(meshFactory)
     , m_MeshBufferFactory(meshBufferFactory)
@@ -27,12 +27,12 @@ namespace Dwarf
     m_RendererApi->SetClearColor(glm::vec4(0.065f, 0.07f, 0.085, 1.0f));
 
     m_IdMaterial =
-      m_MaterialFactory->CreateMaterial(m_ShaderFactory->CreateShader(
+      m_MaterialFactory->CreateMaterial(m_ShaderRegistry->GetOrCreate(
         m_ShaderSourceCollectionFactory->CreateIdShaderSourceCollection()));
     m_IdMaterial->GetShader().Compile();
 
     m_GridMaterial =
-      m_MaterialFactory->CreateMaterial(m_ShaderFactory->CreateShader(
+      m_MaterialFactory->CreateMaterial(m_ShaderRegistry->GetOrCreate(
         m_ShaderSourceCollectionFactory->CreateGridShaderSourceCollection()));
     m_GridMaterial->GetShader().Compile();
     m_GridMaterial->GetMaterialProperties().IsDoubleSided = true;
@@ -57,37 +57,6 @@ namespace Dwarf
   {
     m_RendererApi->SetViewport(0, 0, viewportSize.x, viewportSize.y);
     // TODO: Create framebuffers etc.
-  }
-
-  void
-  ForwardRenderer::RenderEntity(Entity& entity, ICamera& camera)
-  {
-    /*TransformComponent& transform = entity.GetComponent<TransformComponent>();
-    MeshRendererComponent& meshRenderer =
-      entity.GetComponent<MeshRendererComponent>();
-    ModelAsset& model = (ModelAsset&)meshRenderer.GetModelAsset()->GetAsset();
-    glm::mat4   modelMatrix = transform.GetModelMatrix();
-
-    for (int i = 0; i < model.Meshes().size(); i++)
-    {
-      if (model.Meshes().at(i)->GetMaterialIndex() <=
-          meshRenderer.MaterialAssets().size())
-      {
-        if (meshRenderer.MaterialAssets().at(
-              model.Meshes().at(i)->GetMaterialIndex()))
-        {
-          MaterialAsset& materialAsset =
-            (MaterialAsset&)meshRenderer.MaterialAssets()
-              .at(model.Meshes().at(i)->GetMaterialIndex())
-              ->GetAsset();
-
-          m_RendererApi->RenderIndexed(model.Meshes().at(i),
-                                       materialAsset.GetMaterial(),
-                                       camera,
-                                       modelMatrix);
-        }
-      }
-    }*/
   }
 
   void

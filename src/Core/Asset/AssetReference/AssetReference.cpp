@@ -1,6 +1,7 @@
 #include "AssetReference.h"
 #include "Core/Asset/Database/AssetComponents.h"
 #include "Core/Asset/Database/IAssetDatabase.h"
+#include "Core/Asset/Texture/TextureWorker/ITextureLoadingWorker.h"
 #include "Core/GenericComponents.h"
 
 namespace Dwarf
@@ -10,18 +11,12 @@ namespace Dwarf
     entt::entity                           assetHandle,
     entt::registry&                        registry,
     ASSET_TYPE                             type,
-    std::shared_ptr<IModelImporter>        modelImporter,
-    std::shared_ptr<ITextureFactory>       textureFactory,
-    std::shared_ptr<IMaterialIO>           materialIO,
-    std::shared_ptr<IFileHandler>          fileHandler,
-    std::shared_ptr<ITextureLoadingWorker> textureLoadingWorker)
+    std::shared_ptr<ITextureLoadingWorker> textureLoadingWorker,
+    std::shared_ptr<IDwarfLogger>          logger)
     : m_AssetHandle(assetHandle)
     , m_Registry(registry)
     , m_Type(type)
-    , m_ModelImporter(modelImporter)
-    , m_TextureFactory(textureFactory)
-    , m_MaterialIO(materialIO)
-    , m_FileHandler(fileHandler)
+    , m_Logger(logger)
     , m_TextureLoadingWorker(textureLoadingWorker)
   {
   }
@@ -33,6 +28,7 @@ namespace Dwarf
     UUID                                   uid,
     std::filesystem::path                  path,
     std::string                            name,
+    std::shared_ptr<IDwarfLogger>          logger,
     std::shared_ptr<IModelImporter>        modelImporter,
     std::shared_ptr<ITextureFactory>       textureFactory,
     std::shared_ptr<IMaterialIO>           materialIO,
@@ -41,10 +37,7 @@ namespace Dwarf
     : m_AssetHandle(assetHandle)
     , m_Registry(registry)
     , m_Type(IAssetDatabase::GetAssetType(path.extension().string()))
-    , m_ModelImporter(modelImporter)
-    , m_TextureFactory(textureFactory)
-    , m_MaterialIO(materialIO)
-    , m_FileHandler(fileHandler)
+    , m_Logger(logger)
     , m_TextureLoadingWorker(textureLoadingWorker)
   {
     m_Registry.emplace<IDComponent>(m_AssetHandle, uid);
@@ -56,60 +49,57 @@ namespace Dwarf
       case ASSET_TYPE::TEXTURE:
         {
           m_Registry.emplace<TextureAsset>(
-            m_AssetHandle, nullptr, m_TextureFactory->GetPlaceholderTexture());
-
-          // m_TextureLoadingWorker->RequestTextureLoad({ &texAsset, path });
+            m_AssetHandle, nullptr, textureFactory->GetPlaceholderTexture());
           break;
         }
       case ASSET_TYPE::MODEL:
         {
           ModelAsset& modelAsset = m_Registry.emplace<ModelAsset>(
-            m_AssetHandle, std::move(m_ModelImporter->Import(path)));
+            m_AssetHandle, std::move(modelImporter->Import(path)));
         }
         break;
       case ASSET_TYPE::MATERIAL:
         m_Registry.emplace<MaterialAsset>(
-          m_AssetHandle, std::move(m_MaterialIO->LoadMaterial(path)));
+          m_AssetHandle, std::move(materialIO->LoadMaterial(path)));
         break;
       case ASSET_TYPE::UNKNOWN:
         m_Registry.emplace<UnknownAsset>(m_AssetHandle,
-                                         m_FileHandler->ReadFile(path));
+                                         fileHandler->ReadFile(path));
         break;
       case ASSET_TYPE::SCENE:
-        if (m_FileHandler->FileExists(path))
+        if (fileHandler->FileExists(path))
         {
           m_Registry.emplace<SceneAsset>(
-            m_AssetHandle,
-            nlohmann::json::parse(m_FileHandler->ReadFile(path)));
+            m_AssetHandle, nlohmann::json::parse(fileHandler->ReadFile(path)));
         }
         break;
       case ASSET_TYPE::VERTEX_SHADER:
         m_Registry.emplace<VertexShaderAsset>(m_AssetHandle,
-                                              m_FileHandler->ReadFile(path));
+                                              fileHandler->ReadFile(path));
         break;
       case ASSET_TYPE::TESC_SHADER:
         m_Registry.emplace<TessellationControlShaderAsset>(
-          m_AssetHandle, m_FileHandler->ReadFile(path));
+          m_AssetHandle, fileHandler->ReadFile(path));
         break;
       case ASSET_TYPE::TESE_SHADER:
         m_Registry.emplace<TessellationEvaluationShaderAsset>(
-          m_AssetHandle, m_FileHandler->ReadFile(path));
+          m_AssetHandle, fileHandler->ReadFile(path));
         break;
       case ASSET_TYPE::GEOMETRY_SHADER:
         m_Registry.emplace<GeometryShaderAsset>(m_AssetHandle,
-                                                m_FileHandler->ReadFile(path));
+                                                fileHandler->ReadFile(path));
         break;
       case ASSET_TYPE::FRAGMENT_SHADER:
         m_Registry.emplace<FragmentShaderAsset>(m_AssetHandle,
-                                                m_FileHandler->ReadFile(path));
+                                                fileHandler->ReadFile(path));
         break;
       case ASSET_TYPE::COMPUTE_SHADER:
         m_Registry.emplace<ComputeShaderAsset>(m_AssetHandle,
-                                               m_FileHandler->ReadFile(path));
+                                               fileHandler->ReadFile(path));
         break;
       case ASSET_TYPE::HLSL_SHADER:
         m_Registry.emplace<HlslShaderAsset>(m_AssetHandle,
-                                            m_FileHandler->ReadFile(path));
+                                            fileHandler->ReadFile(path));
         break;
     }
   }
@@ -185,18 +175,5 @@ namespace Dwarf
   AssetReference::GetType() const
   {
     return m_Type;
-  }
-
-  std::unique_ptr<IAssetReference>
-  AssetReference::Clone() const
-  {
-    return std::make_unique<AssetReference>(m_AssetHandle,
-                                            m_Registry,
-                                            m_Type,
-                                            m_ModelImporter,
-                                            m_TextureFactory,
-                                            m_MaterialIO,
-                                            m_FileHandler,
-                                            m_TextureLoadingWorker);
   }
 }
