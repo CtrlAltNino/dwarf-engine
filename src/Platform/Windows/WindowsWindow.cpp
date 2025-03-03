@@ -69,6 +69,7 @@ namespace Dwarf
     switch (props.Api)
     {
       using enum GraphicsApi;
+      case None: break;
       case D3D12: break;
       case OpenGL:
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
@@ -134,6 +135,7 @@ namespace Dwarf
     switch (props.Api)
     {
       using enum GraphicsApi;
+      case None: break;
       case D3D12: break;
       case OpenGL: deviceInfo = OpenGLUtilities::GetDeviceInfo(); break;
       case Vulkan: break;
