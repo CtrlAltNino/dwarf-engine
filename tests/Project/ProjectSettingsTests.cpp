@@ -65,6 +65,10 @@ public:
               (override));
   MOCK_METHOD(void, Duplicate, (const std::filesystem::path& path), (override));
   MOCK_METHOD(void, Delete, (const std::filesystem::path& path), (override));
+  MOCK_METHOD(std::vector<unsigned char>,
+              ReadBinaryFileUnbuffered,
+              (std::filesystem::path const& path),
+              (override));
 };
 
 class MockProjectSettingsIO : public IProjectSettingsIO

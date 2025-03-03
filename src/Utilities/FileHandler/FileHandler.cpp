@@ -291,4 +291,91 @@ namespace Dwarf
     m_Logger->LogDebug(Log("Delete", "FileHandler"));
     std::filesystem::remove(path);
   }
+
+  std::vector<unsigned char>
+  FileHandler::ReadBinaryFileUnbuffered(std::filesystem::path const& path)
+  {
+#ifdef _WIN32
+    HANDLE hFile =
+      CreateFileA(path.string().c_str(),
+                  GENERIC_READ,
+                  FILE_SHARE_READ,
+                  NULL,
+                  OPEN_EXISTING,
+                  FILE_FLAG_NO_BUFFERING | FILE_FLAG_SEQUENTIAL_SCAN,
+                  NULL);
+
+    if (hFile == INVALID_HANDLE_VALUE)
+    {
+      std::cerr << "Error opening file: " << path << " (" << GetLastError()
+                << ")" << std::endl;
+      return {};
+    }
+
+    // Get file size
+    LARGE_INTEGER fileSize;
+    if (!GetFileSizeEx(hFile, &fileSize))
+    {
+      std::cerr << "Error getting file size: " << GetLastError() << std::endl;
+      CloseHandle(hFile);
+      return {};
+    }
+
+    constexpr size_t SECTOR_SIZE = 4096; // Adjust based on system
+    size_t           alignedSize =
+      (fileSize.QuadPart + SECTOR_SIZE - 1) & ~(SECTOR_SIZE - 1);
+
+    // Allocate sector-aligned memory
+    void* rawBuffer = _aligned_malloc(alignedSize, SECTOR_SIZE);
+    if (!rawBuffer)
+    {
+      std::cerr << "Memory allocation failed" << std::endl;
+      CloseHandle(hFile);
+      return {};
+    }
+
+    DWORD bytesRead;
+    if (!::ReadFile(
+          hFile, rawBuffer, static_cast<DWORD>(alignedSize), &bytesRead, NULL))
+    {
+      std::cerr << "Error reading file: " << GetLastError() << std::endl;
+      _aligned_free(rawBuffer);
+      CloseHandle(hFile);
+      return {};
+    }
+
+    CloseHandle(hFile);
+
+    // Copy only the actual file size
+    std::vector<unsigned char> buffer(static_cast<unsigned char*>(rawBuffer),
+                                      static_cast<unsigned char*>(rawBuffer) +
+                                        fileSize.QuadPart);
+    _aligned_free(rawBuffer);
+
+    return buffer;
+#elif __linux__
+    int fd = open(path.string().c_str(), O_RDONLY);
+    if (fd == -1)
+    {
+      perror("open failed");
+      return {};
+    }
+
+    // Get file size
+    off_t fileSize = lseek(fd, 0, SEEK_END);
+    lseek(fd, 0, SEEK_SET);
+
+    std::vector<unsigned char> buffer(fileSize);
+    ssize_t                    bytesRead = read(fd, buffer.data(), fileSize);
+    close(fd);
+
+    if (bytesRead != fileSize)
+    {
+      std::cerr << "Error reading file: " << filename << std::endl;
+      return {};
+    }
+
+    return buffer;
+#endif
+  }
 }

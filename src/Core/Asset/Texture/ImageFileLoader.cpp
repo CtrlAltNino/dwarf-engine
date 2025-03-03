@@ -9,8 +9,10 @@
 
 namespace Dwarf
 {
-  ImageFileLoader::ImageFileLoader(std::shared_ptr<IDwarfLogger> logger)
+  ImageFileLoader::ImageFileLoader(std::shared_ptr<IDwarfLogger> logger,
+                                   std::shared_ptr<IFileHandler> fileHandler)
     : m_Logger(logger)
+    , m_FileHandler(fileHandler)
   {
     m_Logger->LogDebug(Log("ImageFileLoader created", "ImageFileLoader"));
   }
@@ -37,7 +39,7 @@ namespace Dwarf
     else if (ext == ".png")
     {
       m_Logger->LogDebug(Log("Loading png image file", "ImageFileLoader"));
-      textureData = PngUtilities::LoadPng(texturePath);
+      textureData = PngUtilities::LoadPng(m_Logger, m_FileHandler, texturePath);
     }
     else if (ext == ".bmp")
     {

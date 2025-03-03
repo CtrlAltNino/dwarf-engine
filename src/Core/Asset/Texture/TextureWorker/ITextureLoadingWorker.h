@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Core/Asset/Database/AssetComponents.h"
-#include "Core/UUID.h"
 #include "Utilities/ImageUtilities/TextureCommon.h"
 #include <entt/entity/fwd.hpp>
 namespace Dwarf
@@ -15,7 +14,7 @@ namespace Dwarf
   struct TextureUploadRequest
   {
     TextureAsset*                     Asset;
-    std::shared_ptr<TextureContainer> TextureContainer;
+    std::shared_ptr<TextureContainer> Container;
     std::filesystem::path             TexturePath;
   };
 
@@ -36,6 +35,6 @@ namespace Dwarf
     ProcessTextureJobs() = 0;
 
     virtual bool
-    IsRequested(std::filesystem::path path) const = 0;
+    IsRequested(std::filesystem::path path) = 0;
   };
 }

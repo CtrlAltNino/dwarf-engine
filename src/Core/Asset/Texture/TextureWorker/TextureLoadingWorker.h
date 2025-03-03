@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Core/Asset/Database/IAssetDatabase.h"
 #include "Core/Asset/Texture/IImageFileLoader.h"
 #include "Core/Rendering/Texture/ITextureFactory.h"
 #include "ITextureLoadingWorker.h"
@@ -9,6 +8,7 @@
 #include <queue>
 #include <condition_variable>
 #include <unordered_set>
+#include <boost/lockfree/queue.hpp>
 
 namespace Dwarf
 {
@@ -19,19 +19,29 @@ namespace Dwarf
     std::shared_ptr<IImageFileLoader> m_ImageFileLoader;
     std::shared_ptr<ITextureFactory>  m_TextureFactory;
 
+    // Queue for loading requests per thread
+    std::mutex                     m_LoadingMutex;
     std::queue<TextureLoadRequest> m_TextureLoadRequestQueue;
-    std::mutex                     m_LoadMutex;
 
-    std::queue<TextureUploadRequest> m_TextureUploadRequestQueue;
-    std::mutex                       m_UploadMutex;
+    // Queue for uploading to the gpu
+    std::mutex m_UploadMutex;
+    std::queue<std::unique_ptr<TextureUploadRequest>>
+      m_TextureUploadRequestQueue;
 
+    // Condition for waiting
     std::condition_variable queueCondition;
-    std::atomic<bool>       stopWorker = false;
 
+    // Flag to stop the threads
+    std::atomic<bool> stopWorker = false;
+
+    // Worker threads for loading textures into memory
     std::vector<std::thread> m_TextureWorkers;
 
-    int m_NumWorkerThreads = 4;
+    // number of threads
+    int m_NumWorkerThreads = 1;
 
+    // Keeping track of which textures are currently being processed
+    std::mutex                                m_CurrentlyProcessingMutex;
     std::unordered_set<std::filesystem::path> m_CurrentlyProcessing;
 
   public:
@@ -54,6 +64,6 @@ namespace Dwarf
     ProcessTextureJobs() override;
 
     bool
-    IsRequested(std::filesystem::path path) const override;
+    IsRequested(std::filesystem::path path) override;
   };
 }

@@ -70,5 +70,8 @@ namespace Dwarf
 
     virtual void
     Delete(std::filesystem::path const& path) = 0;
+
+    virtual std::vector<unsigned char>
+    ReadBinaryFileUnbuffered(std::filesystem::path const& path) = 0;
   };
 }

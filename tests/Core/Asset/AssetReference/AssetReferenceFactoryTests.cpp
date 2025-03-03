@@ -56,6 +56,10 @@ public:
               (override));
   MOCK_METHOD(void, Duplicate, (const std::filesystem::path& path), (override));
   MOCK_METHOD(void, Delete, (const std::filesystem::path& path), (override));
+  MOCK_METHOD(std::vector<unsigned char>,
+              ReadBinaryFileUnbuffered,
+              (std::filesystem::path const& path),
+              (override));
 };
 
 class MockLogger : public IDwarfLogger
@@ -133,7 +137,7 @@ public:
               (override));
   MOCK_METHOD(void, ProcessTextureLoadRequests, (), (override));
   MOCK_METHOD(void, ProcessTextureJobs, (), (override));
-  MOCK_METHOD(bool, IsRequested, (std::filesystem::path), (const, override));
+  MOCK_METHOD(bool, IsRequested, (std::filesystem::path), (override));
 };
 
 class AssetReferenceFactoryTest : public ::testing::Test

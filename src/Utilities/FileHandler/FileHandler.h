@@ -91,5 +91,8 @@ namespace Dwarf
 
     void
     Delete(std::filesystem::path const& path) override;
+
+    std::vector<unsigned char>
+    ReadBinaryFileUnbuffered(std::filesystem::path const& path) override;
   };
 }
