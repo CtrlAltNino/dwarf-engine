@@ -63,6 +63,9 @@ namespace Dwarf
     void
     MaximizeWindow() override;
 
+    bool
+    IsWindowMaximized() override;
+
   private:
     void
     Init(const WindowProps& props);

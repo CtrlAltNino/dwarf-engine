@@ -44,6 +44,11 @@ namespace Dwarf
       Log(fmt::format("Deserializing EditorView:\n{}", serializedView.dump(2)),
           "EditorView"));
 
+    if (serializedView.contains("windowMaximized"))
+    {
+      m_Window->MaximizeWindow();
+    }
+
     if (serializedView.contains("modules"))
     {
       m_Logger->LogDebug(Log("Module key found", "EditorView"));
@@ -407,6 +412,7 @@ namespace Dwarf
   EditorView::Serialize()
   {
     nlohmann::json j;
+    j["windowMaximized"] = m_Window->IsWindowMaximized();
     j["modules"] = nlohmann::json::array();
     for (int i = 0; i < m_GuiModules.size(); i++)
     {

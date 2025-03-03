@@ -1,5 +1,6 @@
 #include "Platform/OpenGL/OpenGLUtilities.h"
 #include "pch.h"
+#include <SDL_video.h>
 #include "Platform/Windows/WindowsWindow.h"
 
 namespace Dwarf
@@ -247,5 +248,11 @@ namespace Dwarf
   {
     m_Logger->LogInfo(Log("Maximizing window", "WindowsWindow"));
     SDL_MaximizeWindow(m_Window);
+  }
+
+  bool
+  WindowsWindow::IsWindowMaximized()
+  {
+    return SDL_GetWindowFlags(m_Window) & SDL_WINDOW_MAXIMIZED;
   }
 }

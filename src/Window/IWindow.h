@@ -5,12 +5,14 @@
 
 namespace Dwarf
 {
+  // TODO: This struct looks like sh*t
   struct WindowProps
   {
-    std::string Title;
-    uint32_t    Width;
-    uint32_t    Height;
-    GraphicsApi Api;
+    std::string Title = "";
+    uint32_t    Width = 0;
+    uint32_t    Height = 0;
+    GraphicsApi Api = GraphicsApi::None;
+    bool        Maximized = false;
 
     WindowProps(const std::string& title = "Dwarf Engine",
                 uint32_t           width = 1600,
@@ -60,5 +62,8 @@ namespace Dwarf
 
     virtual void
     SetWindowTitle(std::string_view windowTitle) = 0;
+
+    virtual bool
+    IsWindowMaximized() = 0;
   };
 }
