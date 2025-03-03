@@ -13,6 +13,8 @@
 #ifdef __linux__
 #include <unistd.h>
 #include <sys/wait.h>
+#include <iostream>
+#include <fcntl.h>
 #endif
 
 namespace Dwarf
@@ -371,7 +373,7 @@ namespace Dwarf
 
     if (bytesRead != fileSize)
     {
-      std::cerr << "Error reading file: " << filename << std::endl;
+      std::cerr << "Error reading file: " << path << std::endl;
       return {};
     }
 
