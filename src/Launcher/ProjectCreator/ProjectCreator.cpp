@@ -1,4 +1,5 @@
 #include "ProjectCreator.h"
+#include "Core/Base.h"
 #include "Launcher/ProjectCreator/IProjectCreator.h"
 #include "Launcher/SavedProjects/ISavedProjects.h"
 #include "Logging/IDwarfLogger.h"
@@ -80,10 +81,15 @@ namespace Dwarf
 
           switch (graphicsApi)
           {
-            case GraphicsApi::D3D12: templateApiDirectory = "dx12"; break;
-            case GraphicsApi::Metal: templateApiDirectory = "metal"; break;
-            case GraphicsApi::OpenGL: templateApiDirectory = "opengl"; break;
-            case GraphicsApi::Vulkan: templateApiDirectory = "vulkan"; break;
+            using enum GraphicsApi;
+            case None:
+              std::runtime_error(
+                "No Graphics API selected for creating a project");
+              break;
+            case D3D12: templateApiDirectory = "dx12"; break;
+            case Metal: templateApiDirectory = "metal"; break;
+            case OpenGL: templateApiDirectory = "opengl"; break;
+            case Vulkan: templateApiDirectory = "vulkan"; break;
           }
 
           templateProjectDirectory =

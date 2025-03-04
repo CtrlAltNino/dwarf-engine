@@ -65,7 +65,9 @@
     "libjpeg-turbo",
     "gtest",
     "spdlog",
-    "boost",
+    "boost-uuid",
+    "boost-algorithm",
+    "boost-serialization",
     "protobuf",
     "freeimage",
     "implot"

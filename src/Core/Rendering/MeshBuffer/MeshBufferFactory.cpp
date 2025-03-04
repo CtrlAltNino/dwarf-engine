@@ -35,35 +35,37 @@ namespace Dwarf
     // Creating a shader based on the graphics API.
     switch (m_GraphicsApi)
     {
+      using enum GraphicsApi;
+      case None: break;
 #if _WIN32
-      case GraphicsApi::D3D12:
+      case D3D12:
         // return std::make_shared<D3D12Shader>();
         break;
-      case GraphicsApi::OpenGL:
+      case OpenGL:
         return std::make_unique<OpenGLMesh>(
           mesh->GetVertices(), mesh->GetIndices(), m_Logger, m_VramTracker);
         break;
-      case GraphicsApi::Metal: break;
-      case GraphicsApi::Vulkan:
+      case Metal: break;
+      case Vulkan:
         // return std::make_shared<VulkanShader>();
         break;
 #elif __linux__
-      case GraphicsApi::D3D12: break;
-      case GraphicsApi::OpenGL:
+      case D3D12: break;
+      case OpenGL:
         return std::make_unique<OpenGLMesh>(
           mesh->GetVertices(), mesh->GetIndices(), m_Logger, m_VramTracker);
         break;
-      case GraphicsApi::Metal: break;
-      case GraphicsApi::Vulkan:
+      case Metal: break;
+      case Vulkan:
         // return std::make_shared<VulkanShader>();
         break;
 #elif __APPLE__
-      case GraphicsApi::D3D12: break;
-      case GraphicsApi::OpenGL: break;
-      case GraphicsApi::Metal:
+      case D3D12: break;
+      case OpenGL: break;
+      case Metal:
         // return std::make_shared<MetalShader>();
         break;
-      case GraphicsApi::Vulkan: break;
+      case Vulkan: break;
 #endif
     }
 

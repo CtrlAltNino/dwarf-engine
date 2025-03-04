@@ -53,11 +53,12 @@ namespace Dwarf
 
     switch (dataType)
     {
-      case Dwarf::TextureDataType::UNSIGNED_BYTE: bytesPerComponent = 1; break;
-      case Dwarf::TextureDataType::UNSIGNED_SHORT: bytesPerComponent = 2; break;
-      case Dwarf::TextureDataType::FLOAT:
-      case Dwarf::TextureDataType::UNSIGNED_INT:
-      case Dwarf::TextureDataType::INT: bytesPerComponent = 4; break;
+      using enum TextureDataType;
+      case UNSIGNED_BYTE: bytesPerComponent = 1; break;
+      case UNSIGNED_SHORT: bytesPerComponent = 2; break;
+      case FLOAT:
+      case UNSIGNED_INT:
+      case INT: bytesPerComponent = 4; break;
     }
 
     size_t memory =
@@ -77,13 +78,13 @@ namespace Dwarf
 
       switch (attachment.TextureFormat)
       {
-        case Dwarf::FramebufferTextureFormat::RED_INTEGER:
-        case Dwarf::FramebufferTextureFormat::RGBA8:
-        case Dwarf::FramebufferTextureFormat::DEPTH:
-        case Dwarf::FramebufferTextureFormat::STENCIL:
-        case Dwarf::FramebufferTextureFormat::DEPTH24STENCIL8:
-          bytesPerPixel = 4;
-          break;
+        using enum FramebufferTextureFormat;
+        case None: break;
+        case RED_INTEGER:
+        case RGBA8:
+        case DEPTH:
+        case STENCIL:
+        case DEPTH24STENCIL8: bytesPerPixel = 4; break;
       }
 
       memory += bytesPerPixel * specification.Height * specification.Width *

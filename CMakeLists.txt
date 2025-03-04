@@ -15,6 +15,7 @@ set(testTarget dwarf-test)
 
 set(CMAKE_PCH_INSTANTIATE_TEMPLATES ON)
 set(VCPKG_MAX_CONCURRENCY 8)
+add_compile_options(-Wno-unused-command-line-argument)
 
 # Platform dependant settings
 IF(WIN32)

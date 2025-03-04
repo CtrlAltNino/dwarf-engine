@@ -8,7 +8,6 @@
 #include <queue>
 #include <condition_variable>
 #include <unordered_set>
-#include <boost/lockfree/queue.hpp>
 
 namespace Dwarf
 {

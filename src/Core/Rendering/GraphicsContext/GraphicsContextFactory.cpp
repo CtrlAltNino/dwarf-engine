@@ -33,49 +33,51 @@ namespace Dwarf
     m_Logger->LogDebug(Log("Creating GraphicsContext...", "GraphicsContext"));
     switch (m_Api)
     {
+      using enum GraphicsApi;
+      case None: break;
 #if _WIN32
-      case GraphicsApi::D3D12:
+      case D3D12:
         std::runtime_error("Vulkan API has not been implemented yet.");
         break;
-      case GraphicsApi::Metal:
+      case Metal:
         std::runtime_error("Vulkan API has not been implemented yet.");
         break;
-      case GraphicsApi::OpenGL:
+      case OpenGL:
         {
           m_Logger->LogDebug(
             Log("Creating OpenGLContext...", "GraphicsContext"));
           return std::make_unique<OpenGLContext>(m_Logger, window);
           break;
         }
-      case GraphicsApi::Vulkan:
+      case Vulkan:
         std::runtime_error("Vulkan API has not been implemented yet.");
         break;
 #elif __linux__
-      case GraphicsApi::D3D12:
+      case D3D12:
         std::runtime_error("Vulkan API has not been implemented yet.");
         break;
-      case GraphicsApi::Metal:
+      case Metal:
         std::runtime_error("Vulkan API has not been implemented yet.");
         break;
-      case GraphicsApi::OpenGL:
+      case OpenGL:
         {
           m_Logger->LogDebug(
             Log("Creating OpenGLContext...", "GraphicsContext"));
           return std::make_unique<OpenGLContext>(m_Logger, window);
           break;
         }
-      case GraphicsApi::Vulkan:
+      case Vulkan:
         std::runtime_error("Vulkan API has not been implemented yet.");
         break;
 #elif __APPLE__
-      case GraphicsApi::D3D12: break;
-      case GraphicsApi::Metal:
+      case D3D12: break;
+      case Metal:
         // return
         // std::make_unique<MetalContext>(static_cast<SDL_Window*>(window)); -
         // NOT SUPPORTED YET
         break;
-      case GraphicsApi::OpenGL: break;
-      case GraphicsApi::Vulkan: break;
+      case OpenGL: break;
+      case Vulkan: break;
 #endif
     }
 

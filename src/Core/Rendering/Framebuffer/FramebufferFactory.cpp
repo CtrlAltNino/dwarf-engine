@@ -1,4 +1,5 @@
 #include "FramebufferFactory.h"
+#include "Core/Base.h"
 #include <memory>
 
 #ifdef _WIN32
@@ -34,33 +35,35 @@ namespace Dwarf
 
     switch (m_Api)
     {
+      using enum GraphicsApi;
+      case None: break;
 #ifdef _WIN32
-      case GraphicsApi::D3D12:
+      case D3D12:
         // return std::make_shared<D3D12Framebuffer>(spec);
         break;
-      case GraphicsApi::Metal: break;
-      case GraphicsApi::OpenGL:
+      case Metal: break;
+      case OpenGL:
         return std::make_shared<OpenGLFramebuffer>(
           m_Logger, spec, m_TextureFactory, m_VramTracker);
         break;
-      case GraphicsApi::Vulkan:
+      case Vulkan:
         // return std::make_shared<VulkanFramebuffer>(spec);
         break;
 #elif __linux__
-      case GraphicsApi::D3D12: break;
-      case GraphicsApi::Metal: break;
-      case GraphicsApi::OpenGL:
+      case D3D12: break;
+      case Metal: break;
+      case OpenGL:
         return std::make_unique<OpenGLFramebuffer>(
           m_Logger, spec, m_TextureFactory, m_VramTracker);
         break;
-      case GraphicsApi::Vulkan: break;
+      case Vulkan: break;
 #elif __APPLE__
-      case GraphicsApi::D3D12: break;
-      case GraphicsApi::Metal:
+      case D3D12: break;
+      case Metal:
         // return std::make_shared<MetalFramebuffer>(spec);
         break;
-      case GraphicsApi::OpenGL: break;
-      case GraphicsApi::Vulkan: break;
+      case OpenGL: break;
+      case Vulkan: break;
 #endif
     }
     return nullptr;
