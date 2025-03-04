@@ -66,6 +66,9 @@ namespace Dwarf
     bool
     IsWindowMaximized() override;
 
+    void
+    SetShowWindowMaximized(bool maximized) override;
+
   private:
     void
     Init(const WindowProps& props);
@@ -86,6 +89,7 @@ namespace Dwarf
       unsigned int Height = 0;
       bool         VSync = false;
       bool         ShouldClose = false;
+      bool         ShowMaximized = false;
     };
 
     WindowData m_Data;

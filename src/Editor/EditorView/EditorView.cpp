@@ -46,7 +46,8 @@ namespace Dwarf
 
     if (serializedView.contains("windowMaximized"))
     {
-      m_Window->MaximizeWindow();
+      m_Window->SetShowWindowMaximized(
+        serializedView["windowMaximized"].get<bool>());
     }
 
     if (serializedView.contains("modules"))

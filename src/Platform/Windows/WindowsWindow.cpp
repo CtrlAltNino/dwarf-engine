@@ -167,7 +167,14 @@ namespace Dwarf
   WindowsWindow::ShowWindow()
   {
     m_Logger->LogInfo(Log("Showing window", "WindowsWindow"));
-    SDL_ShowWindow(m_Window);
+    if (m_Data.ShowMaximized)
+    {
+      MaximizeWindow();
+    }
+    else
+    {
+      SDL_ShowWindow(m_Window);
+    }
   }
 
   void
@@ -256,5 +263,11 @@ namespace Dwarf
   WindowsWindow::IsWindowMaximized()
   {
     return SDL_GetWindowFlags(m_Window) & SDL_WINDOW_MAXIMIZED;
+  }
+
+  void
+  WindowsWindow::SetShowWindowMaximized(bool maximized)
+  {
+    m_Data.ShowMaximized = maximized;
   }
 }

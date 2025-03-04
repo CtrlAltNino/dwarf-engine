@@ -65,5 +65,8 @@ namespace Dwarf
 
     virtual bool
     IsWindowMaximized() = 0;
+
+    virtual void
+    SetShowWindowMaximized(bool maximized) = 0;
   };
 }
