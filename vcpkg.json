@@ -17,9 +17,7 @@
       "features": [
         "docking-experimental",
         "sdl2-binding",
-        "dx12-binding",
-        "opengl3-binding",
-        "vulkan-binding"
+        "opengl3-binding"
       ],
       "platform": "windows & x64 & static"
     },
@@ -29,8 +27,7 @@
       "features": [
         "docking-experimental",
         "sdl2-binding",
-        "opengl3-binding",
-        "vulkan-binding"
+        "opengl3-binding"
       ],
       "platform": "linux & x64"
     },
