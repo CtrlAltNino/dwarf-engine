@@ -86,16 +86,3 @@ target_link_libraries(${libname} PUBLIC xxHash::xxhash)
 
 find_package(Threads REQUIRED)
 target_link_libraries(${libname} PUBLIC Threads::Threads)
-
-IF(APPLE)
-    find_library(METAL Metal)
-    find_library(FOUNDATION Foundation)
-    find_library(QUARTZCORE QuartzCore)
-
-    target_link_libraries(${libname} PUBLIC ${METAL})
-    target_link_libraries(${libname} PUBLIC ${FOUNDATION})
-    target_link_libraries(${libname} PUBLIC ${QUARTZCORE})
-
-    # target_include_directories(${libname} PRIVATE "lib/metal-cpp/")
-    target_include_directories(${libname} PUBLIC ${CMAKE_SOURCE_DIR}/include/metal-cpp)
-ENDIF()

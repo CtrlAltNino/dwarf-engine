@@ -1,7 +1,7 @@
 {
   "name": "dwarf-engine",
   "version-string": "0.0.1",
-  "supports": "(windows & x64 & static) | (linux & x64) | (osx & x64)",
+  "supports": "(windows & x64 & static) | (linux & x64)",
   "dependencies": [
     {
       "name": "glad",
@@ -38,7 +38,7 @@
         "docking-experimental",
         "sdl2-binding"
       ],
-      "platform": "osx & x64"
+      "platform": "x64"
     },
     "assimp",
     "stb",

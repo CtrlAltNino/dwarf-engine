@@ -36,18 +36,11 @@ IF(WIN32)
     # Maybe move to windows only, need to test
     ADD_DEFINITIONS(-DUNICODE)
     ADD_DEFINITIONS(-D_UNICODE)
-ELSEIF(UNIX AND NOT APPLE)
+ELSEIF(UNIX)
     # ~/.vcpkg/vcpkg.path.txt
     file(READ "$ENV{HOME}/.vcpkg/vcpkg.path.txt" VCPKG_PATH)
     set(CMAKE_TOOLCHAIN_FILE "${VCPKG_PATH}/scripts/buildsystems/vcpkg.cmake")
     set(VCPKG_TARGET_TRIPLET "x64-linux")
-
-ELSEIF(APPLE)
-    # ~/.vcpkg/vcpkg.path.txt
-    file(READ "$ENV{HOME}/.vcpkg/vcpkg.path.txt" VCPKG_PATH)
-    set(CMAKE_TOOLCHAIN_FILE "${VCPKG_PATH}/scripts/buildsystems/vcpkg.cmake")
-    set(VCPKG_TARGET_TRIPLET "x64-osx")
-    enable_language(OBJC OBJCXX)
 ENDIF()
 
 enable_testing()
