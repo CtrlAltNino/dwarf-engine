@@ -69,6 +69,7 @@ namespace Dwarf
     switch (props.Api)
     {
       using enum GraphicsApi;
+      case None: break;
       case D3D12: break;
       case OpenGL:
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
@@ -133,6 +134,7 @@ namespace Dwarf
     switch (props.Api)
     {
       using enum GraphicsApi;
+      case None: break;
       case D3D12: break;
       case OpenGL: deviceInfo = OpenGLUtilities::GetDeviceInfo(); break;
       case Vulkan: break;
@@ -246,6 +248,25 @@ namespace Dwarf
   LinuxWindow::MaximizeWindow()
   {
     m_Logger->LogInfo(Log("Maximizing Window...", "LinuxWindow"));
-    SDL_MaximizeWindow(m_Window);
+    if (m_Data.ShowMaximized)
+    {
+      MaximizeWindow();
+    }
+    else
+    {
+      SDL_ShowWindow(m_Window);
+    }
+  }
+
+  bool
+  LinuxWindow::IsWindowMaximized()
+  {
+    return SDL_GetWindowFlags(m_Window) & SDL_WINDOW_MAXIMIZED;
+  }
+
+  void
+  LinuxWindow::SetShowWindowMaximized(bool maximized)
+  {
+    m_Data.ShowMaximized = maximized;
   }
 }

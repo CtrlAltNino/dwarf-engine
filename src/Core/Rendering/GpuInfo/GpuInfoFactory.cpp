@@ -22,8 +22,8 @@ namespace Dwarf
     switch (m_GraphicsApi)
     {
       using enum GraphicsApi;
-#if _WIN32
       case None: break;
+#if _WIN32
       case D3D12: break;
       case Metal: break;
       case OpenGL:
@@ -49,7 +49,6 @@ namespace Dwarf
         std::runtime_error("Vulkan API has not been implemented yet.");
         break;
 #elif __APPLE__
-      case None: break;
       case D3D12: break;
       case Metal: break;
       case OpenGL: break;
