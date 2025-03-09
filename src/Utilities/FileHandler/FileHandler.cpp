@@ -152,7 +152,6 @@ namespace Dwarf
   FileHandler::WriteToFile(std::filesystem::path const& filePath,
                            std::string_view             content)
   {
-    m_Logger->LogDebug(Log("WriteToFile", "FileHandler"));
     // opening a file in writing mode which is default.
     std::ofstream file;
     file.open(filePath);

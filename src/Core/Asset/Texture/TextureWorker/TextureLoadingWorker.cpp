@@ -99,7 +99,7 @@ namespace Dwarf
       }
       // Load texture from disk (background thread)
       std::shared_ptr<TextureContainer> textureData =
-        m_ImageFileLoader->LoadTexture(request.TexturePath);
+        m_ImageFileLoader->LoadImageFile(request.TexturePath);
 
       if (!textureData)
       {

@@ -157,7 +157,7 @@ namespace Dwarf
     std::string                        ext = texturePath.extension().string();
     std::shared_ptr<TextureParameters> parameters = GetParameters(texturePath);
     std::shared_ptr<TextureContainer>  textureData =
-      m_ImageFileLoader->LoadTexture(texturePath);
+      m_ImageFileLoader->LoadImageFile(texturePath);
 
     textureData->Parameters.MinFilter = TextureMinFilter::LINEAR_MIPMAP_LINEAR;
     textureData->Parameters.MipMapped = true;

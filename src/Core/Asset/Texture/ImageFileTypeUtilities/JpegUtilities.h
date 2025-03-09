@@ -8,7 +8,7 @@ namespace Dwarf
   {
   public:
     static std::shared_ptr<TextureContainer>
-    LoadJpeg(std::filesystem::path const& path)
+    LoadJpeg(std::filesystem::path const& path, nlohmann::json& metadata)
     {
       tjhandle jpegDecompressor = tjInitDecompress();
       if (!jpegDecompressor)

@@ -225,7 +225,7 @@ namespace Dwarf
   }
 
   GLenum
-  GetInternalFormat(TextureFormat format, TextureDataType dataType)
+  GetInternalFormat(TextureFormat format, TextureDataType dataType, bool srgb)
   {
     switch (format)
     {
@@ -250,7 +250,7 @@ namespace Dwarf
       case TextureFormat::RGB:
         switch (dataType)
         {
-          case TextureDataType::UNSIGNED_BYTE: return GL_RGB8;
+          case TextureDataType::UNSIGNED_BYTE: return srgb ? GL_SRGB8 : GL_RGB8;
           case TextureDataType::UNSIGNED_SHORT: return GL_RGB16UI;
           case TextureDataType::INT: return GL_RGB32I;
           case TextureDataType::UNSIGNED_INT: return GL_RGB32UI;
@@ -259,7 +259,8 @@ namespace Dwarf
       case TextureFormat::RGBA:
         switch (dataType)
         {
-          case TextureDataType::UNSIGNED_BYTE: return GL_RGBA8;
+          case TextureDataType::UNSIGNED_BYTE:
+            return srgb ? GL_SRGB8_ALPHA8 : GL_RGBA8;
           case TextureDataType::UNSIGNED_SHORT: return GL_RGBA16UI;
           case TextureDataType::INT: return GL_RGBA32I;
           case TextureDataType::UNSIGNED_INT: return GL_RGBA32UI;
@@ -332,7 +333,8 @@ namespace Dwarf
     GLuint textureMinFilter = GetTextureMinFilter(data->Parameters.MinFilter,
                                                   data->Parameters.MipMapped);
     GLuint textureMagFilter = GetTextureMagFilter(data->Parameters.MagFilter);
-    GLuint internalFormat = GetInternalFormat(data->Format, data->DataType);
+    GLuint internalFormat =
+      GetInternalFormat(data->Format, data->DataType, data->Parameters.IsSRGB);
 
     m_Logger->LogDebug(Log("Creating OpenGL texture", "OpenGLTexture"));
     m_Logger->LogDebug(

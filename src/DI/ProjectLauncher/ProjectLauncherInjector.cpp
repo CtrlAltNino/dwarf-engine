@@ -1,4 +1,5 @@
 #include "DI/ProjectLauncher/ProjectLauncherInjector.h"
+#include "Core/Asset/Metadata/AssetMetadata.h"
 #include "Core/Asset/Texture/TextureWorker/TextureLoadingWorker.h"
 #include "Editor/Stats/EditorStats.h"
 #include "Launcher/LauncherAssets/ILauncherAssets.h"
@@ -64,6 +65,8 @@ namespace Dwarf
         boost::di::extension::shared),
       boost::di::bind<GraphicsApi>.to(GraphicsApi::OpenGL),
       boost::di::bind<IFileHandler>.to<FileHandler>().in(
+        boost::di::extension::shared),
+      boost::di::bind<IAssetMetadata>.to<AssetMetadata>().in(
         boost::di::extension::shared),
       boost::di::bind<IProjectSettingsIO>.to<ProjectSettingsIO>().in(
         boost::di::extension::shared),

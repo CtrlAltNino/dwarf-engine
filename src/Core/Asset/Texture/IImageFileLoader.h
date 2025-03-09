@@ -10,6 +10,6 @@ namespace Dwarf
     virtual ~IImageFileLoader() = default;
 
     virtual std::shared_ptr<TextureContainer>
-    LoadTexture(std::filesystem::path texturePath) = 0;
+    LoadImageFile(std::filesystem::path texturePath) = 0;
   };
 } // namespace Dwarf

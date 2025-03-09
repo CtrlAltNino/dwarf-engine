@@ -152,10 +152,13 @@ namespace Dwarf
           }
         case ASSET_TYPE::TEXTURE:
           {
-            m_Registry.emplace_or_replace<TextureAsset>(
-              asset->GetHandle(),
-              m_TextureFactory->FromPath(assetPath),
-              m_TextureFactory->GetPlaceholderTexture());
+            // m_Registry.replace<TextureAsset>(
+            //   asset->GetHandle(),
+            //   m_TextureFactory->FromPath(assetPath),
+            //   m_TextureFactory->GetPlaceholderTexture());
+
+            m_Registry.get<TextureAsset>(asset->GetHandle())
+              .SetTexture(nullptr);
             break;
           }
         case ASSET_TYPE::MATERIAL:
