@@ -468,21 +468,21 @@ namespace Dwarf
                            TextureAsset& value,
                            unsigned int  textureCount)
   {
-    if (m_TextureStates.contains(textureCount) &&
-        (m_TextureStates[textureCount] == value.GetTexture().GetTextureID()))
-    {
-      // return;
-    }
-    else
-    {
-      glActiveTexture(GL_TEXTURE0 + textureCount);
-      OpenGLUtilities::CheckOpenGLError(
-        "glActiveTexture", "OpenGLRendererApi", m_Logger);
-      glBindTexture(GL_TEXTURE_2D, value.GetTexture().GetTextureID());
-      OpenGLUtilities::CheckOpenGLError(
-        "glBindTexture", "OpenGLShader", m_Logger);
-      m_TextureStates[textureCount] = value.GetTexture().GetTextureID();
-    }
+    // if (m_TextureStates.contains(textureCount) &&
+    //     (m_TextureStates[textureCount] == value.GetTexture().GetTextureID()))
+    // {
+    //   // return;
+    // }
+    // else
+    // {
+    glActiveTexture(GL_TEXTURE0 + textureCount);
+    OpenGLUtilities::CheckOpenGLError(
+      "glActiveTexture", "OpenGLRendererApi", m_Logger);
+    glBindTexture(GL_TEXTURE_2D, value.GetTexture().GetTextureID());
+    OpenGLUtilities::CheckOpenGLError(
+      "glBindTexture", "OpenGLShader", m_Logger);
+    m_TextureStates[textureCount] = value.GetTexture().GetTextureID();
+    //}
 
     if (m_UniformStates.contains(uniformName) &&
         (std::get<int>(m_UniformStates[uniformName]) ==
