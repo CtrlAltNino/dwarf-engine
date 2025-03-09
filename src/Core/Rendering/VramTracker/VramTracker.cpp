@@ -80,6 +80,7 @@ namespace Dwarf
       {
         using enum FramebufferTextureFormat;
         case None: break;
+        case RGBA16F: bytesPerPixel = 8; break;
         case RED_INTEGER:
         case RGBA8:
         case DEPTH:

@@ -1,4 +1,6 @@
 #pragma once
+#include "Core/Asset/Shader/ShaderSourceCollection/IShaderSourceCollectionFactory.h"
+#include "Core/Rendering/Shader/ShaderRegistry/IShaderRegistry.h"
 #include "pch.h"
 
 #include "Core/Rendering/RendererApi/IRendererApi.h"
@@ -83,6 +85,7 @@ namespace Dwarf
     std::shared_ptr<ICamera>            m_Camera;
     std::shared_ptr<IRenderingPipeline> m_RenderingPipeline;
     std::shared_ptr<IRendererApi>       m_RendererApi;
+    std::shared_ptr<IShader>            m_AgxTonemapShader;
 
     std::shared_ptr<IInputManager>             m_InputManager;
     std::shared_ptr<IEditorStats>              m_EditorStats;
@@ -92,6 +95,9 @@ namespace Dwarf
     std::shared_ptr<IFramebufferFactory>       m_FramebufferFactory;
     std::shared_ptr<ICameraFactory>            m_CameraFactory;
     std::shared_ptr<IRendererApiFactory>       m_RendererApiFactory;
+    std::shared_ptr<IShaderRegistry>           m_ShaderRegistry;
+    std::shared_ptr<IShaderSourceCollectionFactory>
+      m_ShaderSourceCollectionFactory;
 
     /// @brief Calculates the cutout of the available resolution based on the
     /// given aspect ratio.
@@ -130,7 +136,10 @@ namespace Dwarf
       std::shared_ptr<ILoadedScene>              loadedScene,
       std::shared_ptr<IEditorSelection>          editorSelection,
       std::shared_ptr<IRenderingPipelineFactory> renderingPipelineFactory,
-      std::shared_ptr<IRendererApiFactory>       rendererApiFactory);
+      std::shared_ptr<IRendererApiFactory>       rendererApiFactory,
+      std::shared_ptr<IShaderRegistry>           shaderRegistry,
+      std::shared_ptr<IShaderSourceCollectionFactory>
+        shaderSourceCollectionFactory);
 
     SceneViewerWindow(
       SerializedModule                           serializedModule,
@@ -141,7 +150,10 @@ namespace Dwarf
       std::shared_ptr<ILoadedScene>              loadedScene,
       std::shared_ptr<IEditorSelection>          editorSelection,
       std::shared_ptr<IRenderingPipelineFactory> renderingPipelineFactory,
-      std::shared_ptr<IRendererApiFactory>       rendererApiFactory);
+      std::shared_ptr<IRendererApiFactory>       rendererApiFactory,
+      std::shared_ptr<IShaderRegistry>           shaderRegistry,
+      std::shared_ptr<IShaderSourceCollectionFactory>
+        shaderSourceCollectionFactory);
 
     void
     OnUpdate() override;

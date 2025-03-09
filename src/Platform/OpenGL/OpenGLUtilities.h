@@ -59,6 +59,19 @@ namespace Dwarf
       return std::filesystem::path("data/engine/shaders/grid/opengl");
     }
 
+    static std::filesystem::path
+    GetFullScreenQuadShaderPath()
+    {
+      return std::filesystem::path(
+        "data/engine/shaders/fullscreen_quad/opengl");
+    }
+
+    static std::filesystem::path
+    GetAgxTonemapShaderPath()
+    {
+      return std::filesystem::path("data/engine/shaders/agx_tonemap/opengl");
+    }
+
     static std::string
     GetDeviceInfo()
     {

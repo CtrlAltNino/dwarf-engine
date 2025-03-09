@@ -118,7 +118,7 @@ namespace Dwarf
   {
     FramebufferSpecification fbSpec;
     fbSpec.Attachments = FramebufferAttachmentSpecification{
-      FramebufferTextureSpecification{ FramebufferTextureFormat::RGBA8 },
+      FramebufferTextureSpecification{ FramebufferTextureFormat::RGBA16F },
       FramebufferTextureSpecification{ FramebufferTextureFormat::DEPTH }
     };
     fbSpec.Width = 512;

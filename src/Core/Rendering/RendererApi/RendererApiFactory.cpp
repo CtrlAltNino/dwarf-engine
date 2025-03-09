@@ -22,7 +22,9 @@ namespace Dwarf
     std::shared_ptr<IEditorStats>        editorStats,
     std::shared_ptr<IOpenGLStateTracker> stateTracker,
     std::shared_ptr<IShaderSourceCollectionFactory>
-      shaderSourceCollectionFactory)
+                                        shaderSourceCollectionFactory,
+    std::shared_ptr<IMeshFactory>       meshFactory,
+    std::shared_ptr<IMeshBufferFactory> meshBufferFactory)
     : m_GraphicsApi(api)
     , m_AssetDatabase(assetDatabase)
     , m_ShaderRegistry(shaderRegistry)
@@ -30,6 +32,8 @@ namespace Dwarf
     , m_EditorStats(editorStats)
     , m_StateTracker(stateTracker)
     , m_ShaderSourceCollectionFactory(shaderSourceCollectionFactory)
+    , m_MeshFactory(meshFactory)
+    , m_MeshBufferFactory(meshBufferFactory)
   {
   }
 
@@ -51,7 +55,9 @@ namespace Dwarf
           m_Logger,
           m_EditorStats,
           m_StateTracker,
-          m_ShaderSourceCollectionFactory);
+          m_ShaderSourceCollectionFactory,
+          m_MeshFactory,
+          m_MeshBufferFactory);
         break;
       case GraphicsApi::Metal: break;
       case GraphicsApi::Vulkan:
@@ -66,7 +72,9 @@ namespace Dwarf
           m_Logger,
           m_EditorStats,
           m_StateTracker,
-          m_ShaderSourceCollectionFactory);
+          m_ShaderSourceCollectionFactory,
+          m_MeshFactory,
+          m_MeshBufferFactory);
         break;
       case GraphicsApi::Metal: break;
       case GraphicsApi::Vulkan:

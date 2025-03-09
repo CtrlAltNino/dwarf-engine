@@ -18,6 +18,9 @@ namespace Dwarf
     std::shared_ptr<IEditorSelection>          m_EditorSelection;
     std::shared_ptr<IRenderingPipelineFactory> m_RenderingPipelineFactory;
     std::shared_ptr<IRendererApiFactory>       m_RendererApiFactory;
+    std::shared_ptr<IShaderRegistry>           m_ShaderRegistry;
+    std::shared_ptr<IShaderSourceCollectionFactory>
+      m_ShaderSourceCollectionFactory;
 
   public:
     BOOST_DI_INJECT(
@@ -29,7 +32,10 @@ namespace Dwarf
       std::shared_ptr<ILoadedScene>              loadedScene,
       std::shared_ptr<IEditorSelection>          editorSelection,
       std::shared_ptr<IRenderingPipelineFactory> renderingPipelineFactory,
-      std::shared_ptr<IRendererApiFactory>       rendererApiFactory);
+      std::shared_ptr<IRendererApiFactory>       rendererApiFactory,
+      std::shared_ptr<IShaderRegistry>           shaderRegistry,
+      std::shared_ptr<IShaderSourceCollectionFactory>
+        shaderSourceCollectionFactory);
 
     ~SceneViewerWindowFactory() override = default;
 

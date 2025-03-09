@@ -1,3 +1,4 @@
+#include "Core/Rendering/Framebuffer/IFramebuffer.h"
 #include "Core/Rendering/VramTracker/IVramTracker.h"
 #include "OpenGLUtilities.h"
 #include "pch.h"
@@ -28,6 +29,7 @@ namespace Dwarf
       {
         using enum FramebufferTextureFormat;
         case RGBA8: return "RGBA8";
+        case RGBA16F: return "RGBA16F";
         case RED_INTEGER: return "RED_INTEGER";
         case DEPTH24STENCIL8: return "DEPTH24STENCIL8";
         case DEPTH: return "DEPTH";
@@ -47,6 +49,7 @@ namespace Dwarf
         using enum FramebufferTextureFormat;
         case DEPTH: return true;
         case DEPTH24STENCIL8: return true;
+        case RGBA16F: return false;
         case RGBA8: return false;
         case RED_INTEGER: return false;
         case STENCIL: return false;
@@ -64,6 +67,7 @@ namespace Dwarf
         using enum FramebufferTextureFormat;
         case FramebufferTextureFormat::RED_INTEGER: return GL_COLOR_ATTACHMENT0;
         case FramebufferTextureFormat::RGBA8: return GL_COLOR_ATTACHMENT0;
+        case FramebufferTextureFormat::RGBA16F: return GL_COLOR_ATTACHMENT0;
         case FramebufferTextureFormat::DEPTH24STENCIL8:
           return GL_DEPTH_STENCIL_ATTACHMENT;
         case FramebufferTextureFormat::DEPTH: return GL_DEPTH_ATTACHMENT;
@@ -83,6 +87,7 @@ namespace Dwarf
       {
         using enum FramebufferTextureFormat;
         case FramebufferTextureFormat::RGBA8: return GL_RGBA8;
+        case FramebufferTextureFormat::RGBA16F: return GL_RGBA16F;
         case FramebufferTextureFormat::RED_INTEGER: return GL_RED_INTEGER;
         case FramebufferTextureFormat::DEPTH24STENCIL8:
           return GL_DEPTH24_STENCIL8;
@@ -177,6 +182,10 @@ namespace Dwarf
         {
           using enum FramebufferTextureFormat;
           case RGBA8: textureData->Format = TextureFormat::RGBA; break;
+          case RGBA16F:
+            textureData->Format = TextureFormat::RGBA;
+            textureData->DataType = TextureDataType::FLOAT;
+            break;
           case RED_INTEGER:
             textureData->Format = TextureFormat::RED;
             textureData->DataType = TextureDataType::UNSIGNED_INT;

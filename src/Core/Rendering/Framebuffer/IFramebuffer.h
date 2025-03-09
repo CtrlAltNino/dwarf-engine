@@ -11,11 +11,12 @@ namespace Dwarf
     None = 0,
     // Color
     RGBA8 = 1,
-    RED_INTEGER = 2,
+    RGBA16F = 2,
+    RED_INTEGER = 3,
     // Depth/stencil
-    DEPTH24STENCIL8 = 3,
-    DEPTH = 4,
-    STENCIL = 5
+    DEPTH24STENCIL8 = 4,
+    DEPTH = 5,
+    STENCIL = 6
   };
 
   struct FramebufferTextureSpecification

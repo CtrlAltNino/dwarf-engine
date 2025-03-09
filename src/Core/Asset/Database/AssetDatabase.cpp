@@ -634,6 +634,15 @@ namespace Dwarf
         Import(directoryEntry.path());
       }
     }
+
+    std::filesystem::path fullscreenQuadShaderPath =
+      shaderDir / "fullscreen_quad" / graphicsApiDir / "fullscreen_quad.vert";
+
+    Import(fullscreenQuadShaderPath);
+
+    std::filesystem::path agxShaderPath =
+      shaderDir / "agx_tonemap" / graphicsApiDir / "agx_tonemap.frag";
+    Import(agxShaderPath);
   }
 
   void

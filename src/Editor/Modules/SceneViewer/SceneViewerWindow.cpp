@@ -19,7 +19,10 @@ namespace Dwarf
     std::shared_ptr<ILoadedScene>              loadedScene,
     std::shared_ptr<IEditorSelection>          editorSelection,
     std::shared_ptr<IRenderingPipelineFactory> renderingPipelineFactory,
-    std::shared_ptr<IRendererApiFactory>       rendererApiFactory)
+    std::shared_ptr<IRendererApiFactory>       rendererApiFactory,
+    std::shared_ptr<IShaderRegistry>           shaderRegistry,
+    std::shared_ptr<IShaderSourceCollectionFactory>
+      shaderSourceCollectionFactory)
     : IGuiModule(ModuleLabel("Scene Viewer"),
                  ModuleType(MODULE_TYPE::SCENE_VIEWER),
                  ModuleID(std::make_shared<UUID>()))
@@ -31,6 +34,8 @@ namespace Dwarf
     , m_EditorSelection(editorSelection)
     , m_RenderingPipelineFactory(renderingPipelineFactory)
     , m_RendererApiFactory(rendererApiFactory)
+    , m_ShaderRegistry(shaderRegistry)
+    , m_ShaderSourceCollectionFactory(shaderSourceCollectionFactory)
   {
     m_RendererApi = m_RendererApiFactory->Create();
     m_Settings.MaxSamples = m_RendererApi->GetMaxSamples();
@@ -38,6 +43,11 @@ namespace Dwarf
     // Create rendering pipeline
     m_RenderingPipeline =
       m_RenderingPipelineFactory->Create(PipelineType::Forward);
+
+    m_AgxTonemapShader = m_ShaderRegistry->GetOrCreate(
+      m_ShaderSourceCollectionFactory
+        ->CreateAgxTonemapShaderSourceCollection());
+    m_AgxTonemapShader->Compile();
 
     // Setup rendering framebuffer according to the pipeline specification
     m_Framebuffer =
@@ -76,7 +86,10 @@ namespace Dwarf
     std::shared_ptr<ILoadedScene>              loadedScene,
     std::shared_ptr<IEditorSelection>          editorSelection,
     std::shared_ptr<IRenderingPipelineFactory> renderingPipelineFactory,
-    std::shared_ptr<IRendererApiFactory>       rendererApiFactory)
+    std::shared_ptr<IRendererApiFactory>       rendererApiFactory,
+    std::shared_ptr<IShaderRegistry>           shaderRegistry,
+    std::shared_ptr<IShaderSourceCollectionFactory>
+      shaderSourceCollectionFactory)
     : IGuiModule(ModuleLabel("Scene Viewer"),
                  ModuleType(MODULE_TYPE::SCENE_VIEWER),
                  ModuleID(std::make_shared<UUID>(
@@ -89,6 +102,8 @@ namespace Dwarf
     , m_EditorSelection(editorSelection)
     , m_RenderingPipelineFactory(renderingPipelineFactory)
     , m_RendererApiFactory(rendererApiFactory)
+    , m_ShaderRegistry(shaderRegistry)
+    , m_ShaderSourceCollectionFactory(shaderSourceCollectionFactory)
   {
     m_RendererApi = m_RendererApiFactory->Create();
     m_Settings.MaxSamples = m_RendererApi->GetMaxSamples();
@@ -96,6 +111,11 @@ namespace Dwarf
     // Create rendering pipeline
     m_RenderingPipeline =
       m_RenderingPipelineFactory->Create(PipelineType::Forward);
+
+    m_AgxTonemapShader = m_ShaderRegistry->GetOrCreate(
+      m_ShaderSourceCollectionFactory
+        ->CreateAgxTonemapShaderSourceCollection());
+    m_AgxTonemapShader->Compile();
 
     // Setup rendering framebuffer according to the pipeline specification
     m_Framebuffer =
@@ -176,12 +196,15 @@ namespace Dwarf
       m_OutlineBuffer->Unbind();
     }*/
 
-    m_RendererApi->Blit(*m_Framebuffer,
-                        *m_PresentationBuffer,
-                        0,
-                        0,
-                        m_Framebuffer->GetSpecification().Width,
-                        m_Framebuffer->GetSpecification().Height);
+    // m_RendererApi->Blit(*m_Framebuffer,
+    //                     *m_PresentationBuffer,
+    //                     0,
+    //                     0,
+    //                     m_Framebuffer->GetSpecification().Width,
+    //                     m_Framebuffer->GetSpecification().Height);
+
+    m_RendererApi->CustomBlit(
+      *m_Framebuffer, *m_PresentationBuffer, 0, 0, m_AgxTonemapShader);
   }
 
   void

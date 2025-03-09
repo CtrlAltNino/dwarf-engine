@@ -218,20 +218,42 @@ namespace Dwarf
   std::unique_ptr<IMesh>
   MeshFactory::CreateUnitQuad()
   {
-    return Create({ Vertex(glm::vec3(-0.5f, -0.5f, 0.0f),
-                           glm::vec3(0.0f, 0.0f, 1.0f),
-                           glm::vec2(0.0f, 0.0f)), // Bottom-left
-                    Vertex(glm::vec3(0.5f, -0.5f, 0.0f),
-                           glm::vec3(0.0f, 0.0f, 1.0f),
-                           glm::vec2(1.0f, 0.0f)), // Bottom-right
-                    Vertex(glm::vec3(0.5f, 0.5f, 0.0f),
-                           glm::vec3(0.0f, 0.0f, 1.0f),
-                           glm::vec2(1.0f, 1.0f)), // Top-right
-                    Vertex(glm::vec3(-0.5f, 0.5f, 0.0f),
-                           glm::vec3(0.0f, 0.0f, 1.0f),
-                           glm::vec2(0.0f, 1.0f)) },
-                  { 0, 1, 2, 2, 3, 0 },
-                  0);
+    return Create(
+      {
+        { glm::vec3(-1.0f, 1.0f, 0.0f),
+          glm::vec3(0.0f, 0.0f, 1.0f),
+          glm::vec2(0.0f, 1.0f) }, // 0
+        { glm::vec3(-1.0f, -1.0f, 0.0f),
+          glm::vec3(0.0f, 0.0f, 1.0f),
+          glm::vec2(0.0f, 0.0f) }, // 1
+        { glm::vec3(1.0f, -1.0f, 0.0f),
+          glm::vec3(0.0f, 0.0f, 1.0f),
+          glm::vec2(1.0f, 0.0f) }, // 2
+        { glm::vec3(1.0f, 1.0f, 0.0f),
+          glm::vec3(0.0f, 0.0f, 1.0f),
+          glm::vec2(1.0f, 1.0f) } // 3
+      },
+      {
+        0,
+        1,
+        2, // First Triangle
+        0,
+        2,
+        3 // Second Triangle
+      },
+      0);
+  }
+
+  std::unique_ptr<IMesh>
+  MeshFactory::CreateFullscreenQuad()
+  {
+    return Create(
+      { { { -1.0f, -1.0f, 0.0f }, { 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f } },
+        { { 1.0f, -1.0f, 0.0f }, { 0.0f, 0.0f, 1.0f }, { 1.0f, 0.0f } },
+        { { 1.0f, 1.0f, 0.0f }, { 0.0f, 0.0f, 1.0f }, { 1.0f, 1.0f } },
+        { { -1.0f, 1.0f, 0.0f }, { 0.0f, 0.0f, 1.0f }, { 0.0f, 1.0f } } },
+      { 0, 1, 2, 2, 3, 0 },
+      0);
   }
 
   std::unique_ptr<IMesh>

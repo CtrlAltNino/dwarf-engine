@@ -28,7 +28,7 @@ uniform float normalStrength;
 
 // Uniforms for lighting
 vec3 lightDir = vec3(-0.8, -0.7, -0.3);
-vec3 lightColor = vec3(0.9, 0.9, 0.8) * 4;
+vec3 lightColor = vec3(0.9, 0.9, 0.8) * 7;
 uniform vec3 viewPosition;
 
 // Constants

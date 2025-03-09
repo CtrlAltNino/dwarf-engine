@@ -15,7 +15,10 @@ out vec3 FragPos;
 out mat3 TBN;
 
 void main(){
+	vec4 worldPos = modelMatrix * vec4(vertex, 1.0);
+    FragPos = worldPos.xyz;  // Store world space position
 	gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(vertex.x, vertex.y, vertex.z, 1.0);
+
 	TexCoords = uvCoord;
 
 	vec3 N = normalize(mat3(transpose(inverse(modelMatrix))) * normal);

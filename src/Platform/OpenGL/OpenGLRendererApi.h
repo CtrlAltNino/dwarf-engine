@@ -1,4 +1,6 @@
 #pragma once
+#include "Core/Rendering/Mesh/IMeshFactory.h"
+#include "Core/Rendering/MeshBuffer/IMeshBufferFactory.h"
 #include "pch.h"
 #include "Core/Asset/Shader/ShaderSourceCollection/IShaderSourceCollectionFactory.h"
 #include "Core/Rendering/Shader/IShader.h"
@@ -21,9 +23,12 @@ namespace Dwarf
     std::shared_ptr<IEditorStats>        m_EditorStats;
     std::shared_ptr<IOpenGLStateTracker> m_StateTracker;
     std::shared_ptr<IShaderSourceCollectionFactory>
-      m_ShaderSourceCollectionFactory;
+                                        m_ShaderSourceCollectionFactory;
+    std::shared_ptr<IMeshFactory>       m_MeshFactory;
+    std::shared_ptr<IMeshBufferFactory> m_MeshBufferFactory;
 
-    std::shared_ptr<IShader> m_ErrorShader;
+    std::shared_ptr<IShader>     m_ErrorShader;
+    std::shared_ptr<IMeshBuffer> m_ScreenQuad;
 
   public:
     OpenGLRendererApi(std::shared_ptr<IAssetDatabase>      assetDatabase,
@@ -32,7 +37,9 @@ namespace Dwarf
                       std::shared_ptr<IEditorStats>        editorStats,
                       std::shared_ptr<IOpenGLStateTracker> stateTracker,
                       std::shared_ptr<IShaderSourceCollectionFactory>
-                        shaderSourceCollectionFactory);
+                        shaderSourceCollectionFactory,
+                      std::shared_ptr<IMeshFactory>       meshFactory,
+                      std::shared_ptr<IMeshBufferFactory> meshBufferFactory);
     ~OpenGLRendererApi() override;
 
     void
@@ -66,6 +73,13 @@ namespace Dwarf
          uint32_t      destinationAttachment,
          uint32_t      width,
          uint32_t      height) override;
+
+    void
+    CustomBlit(IFramebuffer&            source,
+               IFramebuffer&            destination,
+               uint32_t                 sourceAttachment,
+               uint32_t                 destinationAttachment,
+               std::shared_ptr<IShader> shader) override;
 
     VRAMUsageBuffer
     QueryVRAMUsage() override;

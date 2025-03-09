@@ -19,18 +19,25 @@ namespace Dwarf
     std::shared_ptr<IEditorStats>        editorStats,
     std::shared_ptr<IOpenGLStateTracker> stateTracker,
     std::shared_ptr<IShaderSourceCollectionFactory>
-      shaderSourceCollectionFactory)
+                                        shaderSourceCollectionFactory,
+    std::shared_ptr<IMeshFactory>       meshFactory,
+    std::shared_ptr<IMeshBufferFactory> meshBufferFactory)
     : m_AssetDatabase(assetDatabase)
     , m_ShaderRegistry(shaderRegistry)
     , m_Logger(logger)
     , m_EditorStats(editorStats)
     , m_StateTracker(stateTracker)
     , m_ShaderSourceCollectionFactory(shaderSourceCollectionFactory)
+    , m_MeshFactory(meshFactory)
+    , m_MeshBufferFactory(meshBufferFactory)
   {
     m_Logger->LogDebug(Log("OpenGLRendererApi created.", "OpenGLRendererApi"));
     m_ErrorShader = m_ShaderRegistry->GetOrCreate(
       m_ShaderSourceCollectionFactory->CreateErrorShaderSourceCollection());
     m_ErrorShader->Compile();
+
+    std::unique_ptr<IMesh> screenQuad = m_MeshFactory->CreateFullscreenQuad();
+    m_ScreenQuad = m_MeshBufferFactory->Create(screenQuad);
 
     m_StateTracker->SetDepthTest(true);
     m_StateTracker->SetDepthFunction(GL_LESS);
@@ -261,6 +268,68 @@ namespace Dwarf
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     OpenGLUtilities::CheckOpenGLError(
       "glBindFramebuffer Unbind", "OpenGLRendererApi", m_Logger);
+  }
+
+  void
+  OpenGLRendererApi::CustomBlit(IFramebuffer&            source,
+                                IFramebuffer&            destination,
+                                uint32_t                 sourceAttachment,
+                                uint32_t                 destinationAttachment,
+                                std::shared_ptr<IShader> shader)
+  {
+    // glBindVertexArray(quadVAO);
+    // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
+    // glBindVertexArray(0);
+    OpenGLMesh& oglMesh = (OpenGLMesh&)*m_ScreenQuad;
+
+    source.Bind();
+    GLint srcTexture = 0;
+    glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER,
+                                          GL_COLOR_ATTACHMENT0 +
+                                            sourceAttachment,
+                                          GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME,
+                                          &srcTexture);
+
+    OpenGLUtilities::CheckOpenGLError(
+      "glGetFramebufferAttachmentParameteriv", "OpenGLRendererApi", m_Logger);
+
+    // m_StateTracker->SetDepthTest(false);
+    // m_StateTracker->SetCullMode(false);
+
+    destination.Bind();
+    m_StateTracker->SetViewport(0,
+                                0,
+                                destination.GetSpecification().Width,
+                                destination.GetSpecification().Height);
+    glClear(GL_COLOR_BUFFER_BIT);
+
+    OpenGLUtilities::CheckOpenGLError("glClear", "OpenGLRendererApi", m_Logger);
+
+    OpenGLShader& oglShader = shader->IsCompiled()
+                                ? dynamic_cast<OpenGLShader&>(*shader)
+                                : dynamic_cast<OpenGLShader&>(*m_ErrorShader);
+    glUseProgram(oglShader.GetID());
+    OpenGLUtilities::CheckOpenGLError(
+      "glUseProgram", "OpenGLRendererApi", m_Logger);
+    glActiveTexture(GL_TEXTURE0);
+    OpenGLUtilities::CheckOpenGLError(
+      "glActiveTexture", "OpenGLRendererApi", m_Logger);
+    glBindTexture(GL_TEXTURE_2D, static_cast<GLuint>(srcTexture));
+    OpenGLUtilities::CheckOpenGLError(
+      "glBindTexture", "OpenGLRendererApi", m_Logger);
+    glUniform1i(oglShader.GetUniformLocation("hdrTexture"), 0);
+    OpenGLUtilities::CheckOpenGLError(
+      "glUniform1i", "OpenGLRendererApi", m_Logger);
+
+    // glBindVertexArray(quadVAO);
+    oglMesh.Bind();
+    glDrawElements(GL_TRIANGLES, oglMesh.GetIndexCount(), GL_UNSIGNED_INT, 0);
+    OpenGLUtilities::CheckOpenGLError(
+      "glDrawElements", "OpenGLRendererApi", m_Logger);
+    oglMesh.Unbind();
+    destination.Unbind();
+
+    // glBindFramebuffer(GL_FRAMEBUFFER, 0); // Back to default
   }
 
   VRAMUsageBuffer

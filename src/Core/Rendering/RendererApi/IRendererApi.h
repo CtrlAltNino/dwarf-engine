@@ -42,6 +42,13 @@ namespace Dwarf
          uint32_t      width,
          uint32_t      height) = 0;
 
+    virtual void
+    CustomBlit(IFramebuffer&            source,
+               IFramebuffer&            destination,
+               uint32_t                 sourceAttachment,
+               uint32_t                 destinationAttachment,
+               std::shared_ptr<IShader> shader) = 0;
+
     virtual VRAMUsageBuffer
     QueryVRAMUsage() = 0;
 

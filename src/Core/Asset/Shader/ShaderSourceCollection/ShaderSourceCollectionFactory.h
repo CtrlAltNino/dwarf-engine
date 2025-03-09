@@ -35,6 +35,9 @@ namespace Dwarf
     CreateGridShaderSourceCollection() override;
 
     std::unique_ptr<IShaderSourceCollection>
+    CreateAgxTonemapShaderSourceCollection() override;
+
+    std::unique_ptr<IShaderSourceCollection>
     CreateShaderSourceCollection(
       const nlohmann::json& serializedShaderSourceCollection) override;
   };

@@ -3,6 +3,8 @@
 #include "Core/Asset/Database/IAssetDatabase.h"
 #include "Core/Asset/Shader/ShaderSourceCollection/IShaderSourceCollectionFactory.h"
 #include "Core/Base.h"
+#include "Core/Rendering/Mesh/IMeshFactory.h"
+#include "Core/Rendering/MeshBuffer/IMeshBufferFactory.h"
 #include "Core/Rendering/RendererApi/IRendererApiFactory.h"
 #include "Core/Rendering/Shader/ShaderRegistry/IShaderRegistry.h"
 #include "Editor/Stats/IEditorStats.h"
@@ -22,7 +24,9 @@ namespace Dwarf
     std::shared_ptr<IEditorStats>        m_EditorStats;
     std::shared_ptr<IOpenGLStateTracker> m_StateTracker;
     std::shared_ptr<IShaderSourceCollectionFactory>
-      m_ShaderSourceCollectionFactory;
+                                        m_ShaderSourceCollectionFactory;
+    std::shared_ptr<IMeshFactory>       m_MeshFactory;
+    std::shared_ptr<IMeshBufferFactory> m_MeshBufferFactory;
 
   public:
     RendererApiFactory(std::shared_ptr<IDwarfLogger>        logger,
@@ -32,7 +36,9 @@ namespace Dwarf
                        std::shared_ptr<IEditorStats>        editorStats,
                        std::shared_ptr<IOpenGLStateTracker> stateTracker,
                        std::shared_ptr<IShaderSourceCollectionFactory>
-                         shaderSourceCollectionFactory);
+                         shaderSourceCollectionFactory,
+                       std::shared_ptr<IMeshFactory>       meshFactory,
+                       std::shared_ptr<IMeshBufferFactory> meshBufferFactory);
     ~RendererApiFactory() override;
     std::shared_ptr<IRendererApi>
     Create() override;

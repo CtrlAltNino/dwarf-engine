@@ -29,6 +29,9 @@ namespace Dwarf
     CreateUnitQuad() override;
 
     std::unique_ptr<IMesh>
+    CreateFullscreenQuad() override;
+
+    std::unique_ptr<IMesh>
     MergeMeshes(const std::vector<std::unique_ptr<IMesh>>& meshes) override;
 
     std::unique_ptr<IMesh>
