@@ -5,6 +5,7 @@
 #include "Logging/IDwarfLogger.h"
 #include "Project/IProjectSettings.h"
 #include <filesystem>
+#include <fmt/format.h>
 
 namespace Dwarf
 {

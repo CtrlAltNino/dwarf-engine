@@ -1,11 +1,12 @@
 #include "pch.h"
 #include "Platform/OpenGL/OpenGLImGuiLayer.h"
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_opengl.h>
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_opengl.h>
 #include <imgui.h>
 #include <imgui_internal.h>
 #include <imgui_impl_opengl3.h>
-#include <imgui_impl_sdl2.h>
+#include <imgui_impl_sdl3.h>
+#include <fmt/format.h>
 
 namespace Dwarf
 {
@@ -23,7 +24,7 @@ namespace Dwarf
     if (m_Window && ImGui::GetCurrentContext())
     {
       ImGui_ImplOpenGL3_Shutdown();
-      ImGui_ImplSDL2_Shutdown();
+      ImGui_ImplSDL3_Shutdown();
       ImGui::DestroyContext();
     }
   }
@@ -66,7 +67,7 @@ namespace Dwarf
 
     ImGui::StyleColorsDark();
 
-    ImGui_ImplSDL2_InitForOpenGL(m_Window, SDL_GL_CreateContext(m_Window));
+    ImGui_ImplSDL3_InitForOpenGL(m_Window, SDL_GL_CreateContext(m_Window));
     ImGui_ImplOpenGL3_Init("#version 410");
   }
 
@@ -74,7 +75,7 @@ namespace Dwarf
   OpenGLImGuiLayer::OnDetach()
   {
     ImGui_ImplOpenGL3_Shutdown();
-    ImGui_ImplSDL2_Shutdown();
+    ImGui_ImplSDL3_Shutdown();
     ImGui::DestroyContext();
   }
 
@@ -82,7 +83,7 @@ namespace Dwarf
   OpenGLImGuiLayer::Begin()
   {
     ImGui_ImplOpenGL3_NewFrame();
-    ImGui_ImplSDL2_NewFrame();
+    ImGui_ImplSDL3_NewFrame();
     ImGui::NewFrame();
   }
 
@@ -102,6 +103,6 @@ namespace Dwarf
   void
   OpenGLImGuiLayer::HandleSDLEvent(SDL_Event* event)
   {
-    ImGui_ImplSDL2_ProcessEvent(event);
+    ImGui_ImplSDL3_ProcessEvent(event);
   }
 }

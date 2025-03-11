@@ -3,7 +3,7 @@
 #include "Platform/OpenGL/OpenGLUtilities.h"
 #include "Utilities/ImageUtilities/TextureCommon.h"
 #include "Platform/OpenGL/OpenGLTexture.h"
-#include <SDL2/SDL_opengl.h>
+#include <SDL3/SDL_opengl.h>
 #include <glm/fwd.hpp>
 
 namespace Dwarf

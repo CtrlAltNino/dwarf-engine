@@ -16,7 +16,7 @@
       "default-features": false,
       "features": [
         "docking-experimental",
-        "sdl2-binding",
+        "sdl3-binding",
         "opengl3-binding"
       ],
       "platform": "windows & x64 & static"
@@ -26,19 +26,10 @@
       "default-features": false,
       "features": [
         "docking-experimental",
-        "sdl2-binding",
+        "sdl3-binding",
         "opengl3-binding"
       ],
       "platform": "linux & x64"
-    },
-    {
-      "name": "imgui",
-      "default-features": false,
-      "features": [
-        "docking-experimental",
-        "sdl2-binding"
-      ],
-      "platform": "x64"
     },
     "assimp",
     "stb",
@@ -54,7 +45,7 @@
     "efsw",
     "imguizmo",
     "entt",
-    "sdl2",
+    "sdl3",
     "xxhash",
     "platform-folders",
     "tiff",
@@ -65,9 +56,9 @@
     "boost-uuid",
     "boost-algorithm",
     "boost-serialization",
-    "protobuf",
     "freeimage",
-    "implot"
+    "implot",
+    "fmt"
   ],
   "overrides": [
     {
@@ -80,15 +71,15 @@
     },
     {
       "name": "imgui",
-      "version": "1.91.0"
+      "version": "1.91.8#4"
     },
     {
       "name": "assimp",
-      "version": "5.4.2"
+      "version": "5.4.3"
     },
     {
       "name": "stb",
-      "version": "2023-04-11"
+      "version": "2024-07-29#1"
     },
     {
       "name": "nlohmann-json",
@@ -96,7 +87,7 @@
     },
     {
       "name": "nativefiledialog-extended",
-      "version": "1.2.0"
+      "version": "1.2.1"
     },
     {
       "name": "bext-di",
@@ -104,23 +95,23 @@
     },
     {
       "name": "efsw",
-      "version": "1.4.0"
+      "version": "1.4.1"
     },
     {
       "name": "imguizmo",
-      "version": "2024-05-29"
+      "version": "2024-05-29#1"
     },
     {
       "name": "entt",
-      "version": "3.13.2"
+      "version": "3.14.0"
     },
     {
-      "name": "sdl2",
-      "version": "2.30.6#1"
+      "name": "sdl3",
+      "version": "3.2.6"
     },
     {
       "name": "tiff",
-      "version": "4.6.0#4"
+      "version": "4.7.0#0"
     },
     {
       "name": "libspng",
@@ -128,12 +119,12 @@
     },
     {
       "name": "libjpeg-turbo",
-      "version": "3.0.3"
+      "version": "3.1.0#1"
     },
     {
       "name": "freeimage",
       "version": "3.18.0#27"
     }
   ],
-  "builtin-baseline": "1f65d84539cba5a0b7581299dcaee92eee5d2b71"
+  "builtin-baseline": "e40d24cb149dd138e7c11d490834fa2c81298b32"
 }

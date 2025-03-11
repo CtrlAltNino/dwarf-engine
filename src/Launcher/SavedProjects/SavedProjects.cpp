@@ -3,7 +3,7 @@
 #include "ISavedProjects.h"
 #include "Project/IProjectSettings.h"
 #include <nfd.h>
-#include <nfd_sdl2.h>
+#include <fmt/format.h>
 
 namespace Dwarf
 {

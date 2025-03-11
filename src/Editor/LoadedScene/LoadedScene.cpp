@@ -1,4 +1,5 @@
 #include "Editor/LoadedScene/LoadedScene.h"
+#include <fmt/format.h>
 
 namespace Dwarf
 {

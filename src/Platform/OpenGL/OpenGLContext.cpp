@@ -1,8 +1,8 @@
-#include "Platform/OpenGL/OpenGLUtilities.h"
 #include "pch.h"
+#include "Platform/OpenGL/OpenGLUtilities.h"
 #include "Platform/OpenGL/OpenGLContext.h"
 #include <glad/glad.h>
-#include <SDL2/SDL_opengl.h>
+#include <SDL3/SDL_opengl.h>
 #include <iostream>
 
 namespace Dwarf
@@ -35,7 +35,7 @@ namespace Dwarf
   OpenGLContext::~OpenGLContext()
   {
     m_Logger->LogDebug(Log("OpenGLContext destroyed.", "OpenGLContext"));
-    if (m_Context) SDL_GL_DeleteContext(m_Context);
+    if (m_Context) SDL_GL_DestroyContext(m_Context);
   }
 
   void

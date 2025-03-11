@@ -1,5 +1,6 @@
 #include "ShaderRegistry.h"
 #include "Core/Asset/Database/AssetComponents.h"
+#include <fmt/format.h>
 
 namespace Dwarf
 {

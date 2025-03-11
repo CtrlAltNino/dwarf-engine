@@ -1,7 +1,7 @@
 #include "pch.h"
 #include "Platform/Metal/MetalImGuiLayer.h"
-#include <SDL2/SDL.h>
-#include <SDL2/SDL_metal.h>
+#include <SDL3/SDL.h>
+#include <SDL3/SDL_metal.h>
 #include <imgui.h>
 #include <imgui_internal.h>
 #include <imgui_impl_metal.h>
@@ -73,7 +73,7 @@ namespace Dwarf
       (__bridge CAMetalLayer*)SDL_RenderGetMetalLayer(renderer);
     layer.pixelFormat = MTLPixelFormatBGRA8Unorm;
     ImGui_ImplMetal_Init(layer.device);
-    ImGui_ImplSDL2_InitForMetal(m_Window);
+    ImGui_ImplSDL3_InitForMetal(m_Window);
 
     // id<MTLCommandQueue> commandQueue = [layer.device newCommandQueue];
     // MTLRenderPassDescriptor *renderPassDescriptor = [MTLRenderPassDescriptor
@@ -84,7 +84,7 @@ namespace Dwarf
   MetalImGuiLayer::OnDetach()
   {
     ImGui_ImplMetal_Shutdown();
-    ImGui_ImplSDL2_Shutdown();
+    ImGui_ImplSDL3_Shutdown();
     ImGui::DestroyContext();
   }
 
@@ -92,8 +92,8 @@ namespace Dwarf
   MetalImGuiLayer::Begin()
   {
     ImGui_ImplMetal_NewFrame();
-    // ImGui_ImplSDL2_NewFrame(window); ?????
-    ImGui_ImplSDL2_NewFrame();
+    // ImGui_ImplSDL3_NewFrame(window); ?????
+    ImGui_ImplSDL3_NewFrame();
     ImGui::NewFrame();
   }
 
@@ -117,6 +117,6 @@ namespace Dwarf
   void
   MetalImGuiLayer::HandleSDLEvent(SDL_Event* event)
   {
-    ImGui_ImplSDL2_ProcessEvent(event);
+    ImGui_ImplSDL3_ProcessEvent(event);
   }
 }

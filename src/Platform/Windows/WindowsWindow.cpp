@@ -1,6 +1,6 @@
 #include "Platform/OpenGL/OpenGLUtilities.h"
 #include "pch.h"
-#include <SDL_video.h>
+#include <SDL3/SDL_video.h>
 #include "Platform/Windows/WindowsWindow.h"
 
 namespace Dwarf
@@ -45,13 +45,11 @@ namespace Dwarf
   WindowsWindow::Init(const WindowProps& props)
   {
     m_Logger->LogInfo(Log("Initializing Windows Window", "WindowsWindow"));
-    // SDL Setup
-    int result = SDL_Init(SDL_INIT_VIDEO);
 
-    if (result != 0)
+    // SDL Setup
+    if (!SDL_Init(SDL_INIT_VIDEO))
     {
-      m_Logger->LogError(
-        Log("Failed to initialize SDL", "WindowsWindow", fmt::color::red));
+      m_Logger->LogError(Log("Failed to initialize SDL", "WindowsWindow"));
       SDL_Quit();
       return;
     }
@@ -86,30 +84,24 @@ namespace Dwarf
         break;
     }
 
-    m_Window = SDL_CreateWindow(m_Data.Title.c_str(),
-                                0,
-                                0,
-                                (int)m_Data.Width,
-                                (int)m_Data.Height,
-                                WindowFlags);
+    m_Window = SDL_CreateWindow(
+      m_Data.Title.c_str(), (int)m_Data.Width, (int)m_Data.Height, WindowFlags);
 
     if (m_Window == nullptr)
     {
-      m_Logger->LogError(
-        Log("Failed to create window", "WindowsWindow", fmt::color::red));
+      m_Logger->LogError(Log("Failed to create window", "WindowsWindow"));
       SDL_Quit();
       return;
     }
 
     m_Logger->LogInfo(Log("Window created", "WindowsWindow"));
 
-    SDL_DisplayMode mode;
-    SDL_GetDesktopDisplayMode(SDL_GetWindowDisplayIndex(m_Window), &mode);
+    auto mode = SDL_GetDesktopDisplayMode(SDL_GetDisplayForWindow(m_Window));
 
     SDL_SetWindowMinimumSize(m_Window, props.Width, props.Height);
     SDL_SetWindowPosition(m_Window,
-                          mode.w / 2 - (props.Width / 2),
-                          mode.h / 2 - (props.Height / 2));
+                          mode->w / 2 - (props.Width / 2),
+                          mode->h / 2 - (props.Height / 2));
 
     m_Logger->LogDebug(Log("Creating Graphics Context...", "WindowsWindow"));
     m_Context = std::move(m_ContextFactory.Create(m_Window));
@@ -170,6 +162,7 @@ namespace Dwarf
     if (m_Data.ShowMaximized)
     {
       MaximizeWindow();
+      SDL_ShowWindow(m_Window);
     }
     else
     {
@@ -198,14 +191,14 @@ namespace Dwarf
 
       switch (event.type)
       {
-        case SDL_QUIT: m_Data.ShouldClose = true; break;
-        case SDL_KEYDOWN:
-          m_InputManager.ProcessKeyDown(event.key.keysym.scancode);
+        case SDL_EVENT_QUIT: m_Data.ShouldClose = true; break;
+        case SDL_EVENT_KEY_DOWN:
+          m_InputManager.ProcessKeyDown(event.key.scancode);
           break;
-        case SDL_KEYUP:
-          m_InputManager.ProcessKeyUp(event.key.keysym.scancode);
+        case SDL_EVENT_KEY_UP:
+          m_InputManager.ProcessKeyUp(event.key.scancode);
           break;
-        case SDL_MOUSEWHEEL: m_InputManager.ProcessScroll(event); break;
+        case SDL_EVENT_MOUSE_WHEEL: m_InputManager.ProcessScroll(event); break;
         default: break;
       }
     }

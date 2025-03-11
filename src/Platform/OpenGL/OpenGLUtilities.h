@@ -3,6 +3,7 @@
 #include "Logging/IDwarfLogger.h"
 #include <filesystem>
 #include <glad/glad.h>
+#include <fmt/format.h>
 
 namespace Dwarf
 {

@@ -1,5 +1,6 @@
 #include "SavedProjectsIO.h"
 #include "Launcher/SavedProjects/ISavedProjects.h"
+#include <fmt/format.h>
 
 #define SAVED_PROJECTS_FILE_NAME "savedProjects.json"
 #define SAVED_PROJECTS_KEY "projects"

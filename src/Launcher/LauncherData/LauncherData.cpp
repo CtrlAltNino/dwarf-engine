@@ -1,4 +1,5 @@
 #include "LauncherData.h"
+#include <fmt/format.h>
 
 namespace Dwarf
 {

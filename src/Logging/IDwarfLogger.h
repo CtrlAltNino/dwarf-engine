@@ -1,21 +1,21 @@
 #pragma once
-#include <fmt/color.h>
+// #include <fmt/color.h>
 #include <optional>
 
 namespace Dwarf
 {
   struct Log
   {
-    const std::string               Message;
-    const std::string               Scope;
-    const std::optional<fmt::color> Color;
+    const std::string Message;
+    const std::string Scope;
+    // const std::optional<fmt::color> Color;
 
-    Log(const std::string&        message,
-        const std::string&        scope,
-        std::optional<fmt::color> color = std::nullopt)
+    Log(const std::string& message, const std::string& scope
+        //,std::optional<fmt::color> color = std::nullopt
+        )
       : Message(message)
       , Scope(scope)
-      , Color(color)
+    //, Color(color)
     {
     }
 
@@ -23,8 +23,9 @@ namespace Dwarf
     bool
     operator==(const Log& other) const
     {
-      return Message == other.Message && Scope == other.Scope &&
-             Color == other.Color;
+      return Message == other.Message && Scope == other.Scope
+        //&&Color == other.Color
+        ;
     }
   };
 

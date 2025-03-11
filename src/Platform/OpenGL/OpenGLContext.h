@@ -2,7 +2,7 @@
 
 #include "Core/Rendering/GraphicsContext/IGraphicsContext.h"
 #include "Logging/IDwarfLogger.h"
-#include <SDL2/SDL.h>
+#include <SDL3/SDL.h>
 
 namespace Dwarf
 {

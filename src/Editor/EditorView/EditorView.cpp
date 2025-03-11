@@ -1,16 +1,14 @@
+#include "pch.h"
+#include "EditorView.h"
 #include "Core/Asset/Creation/Material/IMaterialCreator.h"
 #include "Core/Base.h"
 #include "Core/Scene/ISceneFactory.h"
 #include "Editor/Modules/IGuiModuleFactory.h"
-#include "pch.h"
+#include "UI/DwarfUI.h"
 #include <memory>
 #include <nfd.h>
 #include <nlohmann/json_fwd.hpp>
-
-#include "EditorView.h"
-
-#include "Core/Asset/Database/AssetDatabase.h"
-#include "UI/DwarfUI.h"
+#include <fmt/format.h>
 
 namespace Dwarf
 {

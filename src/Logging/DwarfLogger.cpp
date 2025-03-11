@@ -54,11 +54,13 @@ namespace Dwarf
   DwarfLogger::LogMessage(spdlog::level::level_enum log_level,
                           const Log&                log) const
   {
-    m_Logger->log(
-      log_level,
-      log.Color.has_value()
-        ? fmt::format(
-            fg(fmt::color::red), "[{}] {}", log.Scope.c_str(), log.Message)
-        : fmt::format("[{}] {}", log.Scope.c_str(), log.Message));
+    m_Logger->log(log_level,
+                  fmt::format("[{}] {}", log.Scope.c_str(), log.Message));
+    // m_Logger->log(
+    //   log_level,
+    //   log.Color.has_value()
+    //     ? fmt::format(
+    //         fg(fmt::color::red), "[{}] {}", log.Scope.c_str(), log.Message)
+    //     : fmt::format("[{}] {}", log.Scope.c_str(), log.Message));
   }
 }

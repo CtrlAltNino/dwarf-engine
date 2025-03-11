@@ -43,18 +43,17 @@ target_link_libraries(${libname} PUBLIC EnTT::EnTT)
 find_package(glm CONFIG REQUIRED)
 target_link_libraries(${libname} PUBLIC glm::glm)
 
-find_package(SDL2 CONFIG REQUIRED)
+find_package(fmt CONFIG REQUIRED)
+target_link_libraries(${libname} PRIVATE fmt::fmt)
 
-target_link_libraries(${libname}
-    PUBLIC
-    $<TARGET_NAME_IF_EXISTS:SDL2::SDL2main>
-    $<IF:$<TARGET_EXISTS:SDL2::SDL2>,SDL2::SDL2,SDL2::SDL2-static>
-)
+find_package(SDL3 REQUIRED CONFIG REQUIRED COMPONENTS SDL3)
+target_link_libraries(${libname} PRIVATE SDL3::SDL3)
+
 find_package(imgui CONFIG REQUIRED)
 target_link_libraries(${libname} PUBLIC imgui::imgui)
 
-find_package(unofficial-imguizmo CONFIG REQUIRED)
-target_link_libraries(${libname} PUBLIC unofficial::imguizmo::imguizmo)
+find_package(imguizmo CONFIG REQUIRED)
+target_link_libraries(${libname} PRIVATE imguizmo::imguizmo)
 
 find_package(libjpeg-turbo CONFIG REQUIRED)
 target_link_libraries(${libname} PUBLIC libjpeg-turbo::turbojpeg-static)
@@ -70,8 +69,6 @@ target_link_libraries(${libname} PUBLIC nlohmann_json::nlohmann_json)
 find_package(platform_folders CONFIG REQUIRED)
 target_link_libraries(${libname} PUBLIC sago::platform_folders)
 
-find_package(Protobuf CONFIG REQUIRED)
-target_link_libraries(${libname} PUBLIC protobuf::libprotoc protobuf::libprotobuf protobuf::libprotobuf-lite)
 find_package(spdlog CONFIG REQUIRED)
 target_link_libraries(${libname} PUBLIC spdlog::spdlog)
 

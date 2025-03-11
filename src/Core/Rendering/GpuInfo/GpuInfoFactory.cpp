@@ -2,6 +2,7 @@
 #include "Core/Base.h"
 #include "Logging/IDwarfLogger.h"
 #include "Platform/OpenGL/OpenGLUtilities.h"
+#include <fmt/format.h>
 
 #if _WIN32
 #include "Platform/Amd/AmdGpuInfo.h"

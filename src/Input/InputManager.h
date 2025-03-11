@@ -12,10 +12,10 @@ namespace Dwarf
     /**
      * Saved position of the current mouse position
      */
-    glm::ivec2 m_CurrentMousePos = glm::ivec2(0);
-    glm::ivec2 m_LastMousePos = glm::ivec2(0);
-    glm::ivec2 m_DeltaMousePos = glm::ivec2(0);
-    glm::ivec2 m_DeltaScroll = glm::ivec2(0);
+    glm::vec2 m_CurrentMousePos = glm::vec2(0);
+    glm::vec2 m_LastMousePos = glm::vec2(0);
+    glm::vec2 m_DeltaMousePos = glm::vec2(0);
+    glm::vec2 m_DeltaScroll = glm::vec2(0);
 
     /**
      * State of the mouse buttons
@@ -23,7 +23,7 @@ namespace Dwarf
     std::map<MOUSE_BUTTON, int> m_MouseButtonStates;
 
     /**
-     * Mapping the engine specific key codes to the SDL2 codes
+     * Mapping the engine specific key codes to the SDL3 codes
      */
     static std::map<SDL_Scancode, KEYCODE> s_KeyCodeMap;
     std::set<KEYCODE>                      m_KeysDown;
@@ -31,7 +31,7 @@ namespace Dwarf
     std::set<KEYCODE>                      m_KeysUp;
 
     /**
-     * Mapping the engine specific key codes to the SDL2 codes
+     * Mapping the engine specific key codes to the SDL3 codes
      */
     static std::map<MOUSE_BUTTON, int> s_MouseCodeMap;
 

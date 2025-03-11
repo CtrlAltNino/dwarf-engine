@@ -1,5 +1,6 @@
 #include "MaterialIO.h"
 #include <string>
+#include <fmt/format.h>
 
 namespace Dwarf
 {

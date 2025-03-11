@@ -1,19 +1,16 @@
 #pragma once
 
-#include "Core/Rendering/DrawCall/IDrawCallList.h"
+#include "Core/Rendering/DrawCall/DrawCallList/IDrawCallList.h"
+#include "Core/Rendering/DrawCall/IDrawCallFactory.h"
 #include "Core/Rendering/Mesh/IMeshFactory.h"
-#include "Core/Rendering/MeshBuffer/IMeshBuffer.h"
 #include "Core/Rendering/MeshBuffer/MeshBufferWorker/IMeshBufferWorker.h"
-#include "Core/Rendering/Pipelines/IRenderingPipeline.h"
 #include "Core/Scene/Components/SceneComponents.h"
 #include "Editor/LoadedScene/ILoadedScene.h"
-#include "IDrawCallFactory.h"
 #include "IDrawCallWorker.h"
 #include "Logging/IDwarfLogger.h"
 #include <functional>
 #include <thread>
 #include <mutex>
-#include <queue>
 #include <condition_variable>
 
 namespace Dwarf

@@ -1,5 +1,5 @@
 #include "Input/InputManager.h"
-#include <imgui_impl_sdl2.h>
+#include <imgui_impl_sdl3.h>
 
 namespace Dwarf
 {
@@ -125,7 +125,7 @@ namespace Dwarf
 
     for (const MOUSE_BUTTON& mCode : mArr)
     {
-      if (mouseButtonMask & SDL_BUTTON(s_MouseCodeMap[mCode]))
+      if (mouseButtonMask & SDL_BUTTON_MASK(s_MouseCodeMap[mCode]))
       {
         // mousePressSet.insert(mCode);
         if (m_MouseButtonStates[mCode] < 2)
@@ -188,7 +188,7 @@ namespace Dwarf
 
     switch (event.wheel.type)
     {
-      case SDL_MOUSEWHEEL:
+      case SDL_EVENT_MOUSE_WHEEL:
         {
           m_DeltaScroll = { event.wheel.x, event.wheel.y };
         }
