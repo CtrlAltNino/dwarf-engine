@@ -100,12 +100,7 @@
 #include <boost/di/extension/scopes/shared.hpp>
 #include "Core/Rendering/Shader/ShaderRegistry/ShaderRegistry.h"
 #include "Core/Rendering/DrawCall/DrawCallFactory.h"
-
-#ifdef _WIN32
-#include "Platform/Windows/WindowsWindow.h"
-#elif __linux__
-#include "Platform/Linux/LinuxWindow.h"
-#endif
+#include "Window/SDL3Window.h"
 
 namespace Dwarf
 {
@@ -154,11 +149,7 @@ namespace Dwarf
           boost::di::bind<IImGuiLayerFactory>.to<ImGuiLayerFactory>().in(boost::di::extension::shared),
           boost::di::bind<WindowProps>.to(WindowProps(
           "Dwarf Engine", 1100, 600, selectedProject.GraphicsApi)),
-#ifdef _WIN32
-          boost::di::bind<IWindow>.to<WindowsWindow>().in(boost::di::extension::shared),
-#elif __linux__
-          boost::di::bind<IWindow>.to<LinuxWindow>().in(boost::di::extension::shared),
-#endif
+          boost::di::bind<IWindow>.to<SDL3Window>().in(boost::di::extension::shared),
           boost::di::bind<ITextureFactory>.to<TextureFactory>().in(
           boost::di::extension::shared),
           boost::di::bind<IImageFileLoader>.to<ImageFileLoader>().in(

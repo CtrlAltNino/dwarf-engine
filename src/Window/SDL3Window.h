@@ -11,17 +11,16 @@
 
 namespace Dwarf
 {
-  class LinuxWindow : public IWindow
+  class SDL3Window : public IWindow
   {
   public:
-    explicit LinuxWindow(
-      const WindowProps&                       props,
-      std::shared_ptr<IGraphicsContextFactory> contextFactory,
-      std::shared_ptr<IImGuiLayerFactory>      imguiLayerFactory,
-      std::shared_ptr<IInputManager>           inputManager,
-      std::shared_ptr<IDwarfLogger>            logger,
-      std::shared_ptr<IEditorStats>            editorStats);
-    ~LinuxWindow() override;
+    explicit SDL3Window(const WindowProps&            props,
+                        IGraphicsContextFactory&      contextFactory,
+                        IImGuiLayerFactory&           imguiLayerFactory,
+                        IInputManager&                inputManager,
+                        std::shared_ptr<IDwarfLogger> logger,
+                        std::shared_ptr<IEditorStats> editorStats);
+    ~SDL3Window() override;
 
     void
     NewFrame() override;
@@ -74,22 +73,22 @@ namespace Dwarf
     void
     Init(const WindowProps& props);
 
-    SDL_Window*                              m_Window;
-    std::shared_ptr<IGraphicsContext>        m_Context;
-    std::shared_ptr<IImGuiLayer>             m_ImGuiLayer;
-    std::shared_ptr<IGraphicsContextFactory> m_ContextFactory;
-    std::shared_ptr<IImGuiLayerFactory>      m_ImguiLayerFactory;
-    std::shared_ptr<IInputManager>           m_InputManager;
-    std::shared_ptr<IDwarfLogger>            m_Logger;
-    std::shared_ptr<IEditorStats>            m_EditorStats;
+    SDL_Window*                       m_Window;
+    std::unique_ptr<IGraphicsContext> m_Context;
+    std::unique_ptr<IImGuiLayer>      m_ImGuiLayer;
+    IGraphicsContextFactory&          m_ContextFactory;
+    IImGuiLayerFactory&               m_ImguiLayerFactory;
+    IInputManager&                    m_InputManager;
+    std::shared_ptr<IDwarfLogger>     m_Logger;
+    std::shared_ptr<IEditorStats>     m_EditorStats;
 
     struct WindowData
     {
-      std::string  Title;
-      unsigned int Width;
-      unsigned int Height;
-      bool         VSync;
-      bool         ShouldClose;
+      std::string  Title = "";
+      unsigned int Width = 0;
+      unsigned int Height = 0;
+      bool         VSync = false;
+      bool         ShouldClose = false;
       bool         ShowMaximized = false;
     };
 

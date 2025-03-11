@@ -45,14 +45,9 @@
 #include "Launcher/ProjectCreator/ProjectCreator.h"
 #include "Core/Rendering/VramTracker/IVramTracker.h"
 #include "Core/Rendering/VramTracker/VramTracker.h"
+#include "Window/SDL3Window.h"
 #include <boost/di.hpp>
 #include <boost/di/extension/scopes/shared.hpp>
-
-#ifdef _WIN32
-#include "Platform/Windows/WindowsWindow.h"
-#elif __linux__
-#include "Platform/Linux/LinuxWindow.h"
-#endif
 
 namespace Dwarf
 {
@@ -81,13 +76,8 @@ namespace Dwarf
         "Dwarf Engine - Project Launcher", 1100, 600, GraphicsApi::OpenGL)),
       boost::di::bind<ILauncherData>.to<LauncherData>().in(
         boost::di::extension::shared),
-#ifdef _WIN32
-      boost::di::bind<IWindow>.to<WindowsWindow>().in(
+      boost::di::bind<IWindow>.to<SDL3Window>().in(
         boost::di::extension::shared),
-#elif __linux__
-      boost::di::bind<IWindow>.to<LinuxWindow>().in(
-        boost::di::extension::shared),
-#endif
       boost::di::bind<IGraphicsContextFactory>.to<GraphicsContextFactory>().in(
         boost::di::extension::shared),
       boost::di::bind<IInputManager>.to<InputManager>().in(
