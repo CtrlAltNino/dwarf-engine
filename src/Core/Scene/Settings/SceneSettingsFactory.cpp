@@ -8,12 +8,12 @@ namespace Dwarf
   std::unique_ptr<ISceneSettings>
   SceneSettingsFactory::Create(nlohmann::json serializedSettings)
   {
-    return std::make_unique<ISceneSettings>(SceneSettings(serializedSettings));
+    return std::make_unique<SceneSettings>(serializedSettings);
   }
 
   std::unique_ptr<ISceneSettings>
   SceneSettingsFactory::Create()
   {
-    return std::make_unique<ISceneSettings>(SceneSettings());
+    return std::make_unique<SceneSettings>();
   }
 } // namespace Dwarf

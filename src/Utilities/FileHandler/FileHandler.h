@@ -1,6 +1,6 @@
 #pragma once
-#include "Logging/IDwarfLogger.h"
 #include "pch.h"
+#include "Logging/IDwarfLogger.h"
 #include "IFileHandler.h"
 
 namespace Dwarf
