@@ -3,6 +3,7 @@
 #include "Core/Base.h"
 #include "IGpuInfoFactory.h"
 #include "Logging/IDwarfLogger.h"
+#include <memory>
 
 namespace Dwarf
 {

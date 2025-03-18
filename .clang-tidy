@@ -1,1 +1,15 @@
-HeaderFileExtensions: ['h', 'hpp', 'hh']  # Ensure your header file extensions are listed
+HeaderFileExtensions: ['', h', 'hpp', 'hh']  # Ensure your header file extensions are listed
+Checks: >
+  - modernize-use-auto,
+  - modernize-use-nullptr,
+  - readability-identifier-naming,
+  - readability-function-size,
+  - clang-analyzer-core,
+  - performance-inefficient-vector-operation,
+  - performance-unnecessary-value-param,
+  - performance-for-range-copy,
+  - performance-move-const-arg,
+  - bugprone-unused-raii,
+  - misc-unused-parameters,
+  - cppcoreguidelines-pro-type-member-init,
+  - cppcoreguidelines-no-malloc

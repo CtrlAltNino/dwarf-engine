@@ -1,8 +1,7 @@
-#include "Platform/OpenGL/OpenGLUtilities.h"
-#include "SDL3Window.h"
 #include "pch.h"
-#include <SDL3/SDL_video.h>
 #include "Window/SDL3Window.h"
+#include "Platform/OpenGL/OpenGLUtilities.h"
+#include <SDL3/SDL_video.h>
 
 namespace Dwarf
 {

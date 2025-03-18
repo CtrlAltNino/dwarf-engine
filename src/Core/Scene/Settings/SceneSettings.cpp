@@ -1,4 +1,5 @@
 #include "SceneSettings.h"
+#include <nlohmann/json.hpp>
 
 namespace Dwarf
 {
@@ -44,4 +45,4 @@ namespace Dwarf
   {
     return m_SkyboxMaterial;
   }
-}
+} // namespace Dwarf

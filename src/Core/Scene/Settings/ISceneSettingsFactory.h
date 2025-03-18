@@ -1,6 +1,8 @@
 #pragma once
 
 #include "ISceneSettings.h"
+#include <memory>
+#include <nlohmann/json.hpp>
 
 namespace Dwarf
 {

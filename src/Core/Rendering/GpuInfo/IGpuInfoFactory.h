@@ -1,6 +1,7 @@
 #pragma once
 
 #include "IGpuInfo.h"
+#include <memory>
 
 namespace Dwarf
 {

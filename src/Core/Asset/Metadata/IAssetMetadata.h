@@ -1,5 +1,8 @@
 #pragma once
 
+#include <filesystem>
+#include <nlohmann/json.hpp>
+
 namespace Dwarf
 {
   class IAssetMetadata

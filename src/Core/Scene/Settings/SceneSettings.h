@@ -1,4 +1,9 @@
+#pragma once
+
+#include <nlohmann/json.hpp>
+#include <optional>
 #include "ISceneSettings.h"
+#include "Core/UUID.h"
 
 namespace Dwarf
 {

@@ -2,6 +2,8 @@
 
 #include "Core/UUID.h"
 #include "Utilities/ISerializable.h"
+#include <glm/glm.hpp>
+#include <optional>
 
 namespace Dwarf
 {

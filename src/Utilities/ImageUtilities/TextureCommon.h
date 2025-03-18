@@ -2,6 +2,9 @@
 
 #include "Utilities/ISerializable.h"
 #include <variant>
+#include <nlohmann/json.hpp>
+#include <glm/glm.hpp>
+
 namespace Dwarf
 {
   enum class TextureFormat
