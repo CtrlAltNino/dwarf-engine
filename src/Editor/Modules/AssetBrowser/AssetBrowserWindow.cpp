@@ -6,7 +6,6 @@
 #include <cstring>
 #include <memory>
 
-
 namespace Dwarf
 {
   AssetBrowserWindow::AssetBrowserWindow(
@@ -19,7 +18,8 @@ namespace Dwarf
     std::shared_ptr<IMaterialFactory> materialFactory,
     std::shared_ptr<IAssetMetadata>   assetMetadata,
     std::shared_ptr<IMaterialCreator> materialCreator,
-    std::shared_ptr<IFileHandler>     fileHandler)
+    std::shared_ptr<IFileHandler>     fileHandler,
+    std::shared_ptr<ISceneIO>         sceneIO)
     : IGuiModule(ModuleLabel("Asset Browser"),
                  ModuleType(MODULE_TYPE::ASSET_BROWSER),
                  ModuleID(std::make_shared<UUID>()))
@@ -50,6 +50,7 @@ namespace Dwarf
     std::shared_ptr<IAssetMetadata>   assetMetadata,
     std::shared_ptr<IMaterialCreator> materialCreator,
     std::shared_ptr<IFileHandler>     fileHandler,
+    std::shared_ptr<ISceneIO>         sceneIO,
     SerializedModule                  serializedModule)
     : IGuiModule(ModuleLabel("Asset Browser"),
                  ModuleType(MODULE_TYPE::ASSET_BROWSER),
@@ -304,7 +305,11 @@ namespace Dwarf
           ImGui::EndMenu();
         }
 
-        ImGui::MenuItem("Scene");
+        if (ImGui::MenuItem("Scene"))
+        {
+          m_SceneIo->NewSceneAsset(m_CurrentDirectory);
+        }
+
         ImGui::EndMenu();
       }
 

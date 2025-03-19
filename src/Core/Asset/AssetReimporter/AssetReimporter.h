@@ -10,12 +10,12 @@ namespace Dwarf
   class AssetReimporter : public IAssetReimporter
   {
   private:
-    std::vector<std::filesystem::path>                          m_ReimportQueue;
-    IDwarfLogger&                                               m_Logger;
-    boost::di::extension::lazy<std::shared_ptr<IAssetDatabase>> m_AssetDatabase;
+    std::vector<std::filesystem::path>                          mReimportQueue;
+    std::shared_ptr<IDwarfLogger>                               mLogger;
+    boost::di::extension::lazy<std::shared_ptr<IAssetDatabase>> mAssetDatabase;
 
   public:
-    AssetReimporter(IDwarfLogger& logger,
+    AssetReimporter(std::shared_ptr<IDwarfLogger> logger,
                     boost::di::extension::lazy<std::shared_ptr<IAssetDatabase>>
                       assetDatabase);
 

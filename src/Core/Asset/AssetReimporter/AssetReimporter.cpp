@@ -2,44 +2,46 @@
 
 #include <fmt/format.h>
 
+#include <utility>
+
 namespace Dwarf
 {
   AssetReimporter::AssetReimporter(
-    IDwarfLogger&                                               logger,
+    std::shared_ptr<IDwarfLogger>                               logger,
     boost::di::extension::lazy<std::shared_ptr<IAssetDatabase>> assetDatabase)
-    : m_Logger(logger)
-    , m_AssetDatabase(assetDatabase)
+    : mLogger(std::move(logger))
+    , mAssetDatabase(assetDatabase)
   {
-    m_Logger.LogDebug(Log("AssetReimporter created", "AssetReimporter"));
+    mLogger->LogDebug(Log("AssetReimporter created", "AssetReimporter"));
   }
 
   void
   AssetReimporter::QueueReimport(const std::filesystem::path& assetPath)
   {
-    m_Logger.LogDebug(
+    mLogger->LogDebug(
       Log(fmt::format("Queued reimport for asset: {}", assetPath.string()),
           "AssetReimporter"));
-    m_ReimportQueue.push_back(assetPath);
+    mReimportQueue.push_back(assetPath);
   }
 
   void
   AssetReimporter::ReimportQueuedAssets()
   {
-    for (const auto& assetPath : m_ReimportQueue)
+    for (const auto& assetPath : mReimportQueue)
     {
-      m_Logger.LogDebug(
+      mLogger->LogDebug(
         Log(fmt::format("Reimporting asset: {}", assetPath.string()),
             "AssetReimporter"));
-      if (m_AssetDatabase.get()->Exists(assetPath))
+      if (mAssetDatabase.get()->Exists(assetPath))
       {
-        m_AssetDatabase.get()->Reimport(assetPath);
+        mAssetDatabase.get()->Reimport(assetPath);
       }
       else
       {
-        m_AssetDatabase.get()->Import(assetPath);
+        mAssetDatabase.get()->Import(assetPath);
       }
     }
 
-    m_ReimportQueue.clear();
+    mReimportQueue.clear();
   }
 }

@@ -4,6 +4,6 @@ auto
 main() -> int
 {
   Dwarf::DwarfEngine engine = Dwarf::DwarfEngine();
-  engine.run();
+  engine.Run();
   return 0;
 }

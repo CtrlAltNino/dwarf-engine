@@ -1,8 +1,8 @@
 #include "SceneIO.h"
 
 #include "Core/Asset/AssetReference/IAssetReference.h"
-#include <nfd.h>
 #include <fmt/format.h>
+#include <nfd.h>
 
 #include <utility>
 
@@ -54,13 +54,14 @@ namespace Dwarf
   void
   SceneIO::SaveSceneDialog(IScene& scene) const
   {
-    nfdu8char_t*          savePath = nullptr;
-    nfdu8filteritem_t     filters[1] = { { "Dwarf scene", "dscene" } };
-    nfdsavedialogu8args_t args = { 0 };
-    args.filterList = filters;
+    nfdu8char_t*                     savePath = nullptr;
+    std::array<nfdu8filteritem_t, 1> filters = { { "Dwarf scene", "dscene" } };
+    nfdsavedialogu8args_t            args = { 0 };
+    std::string                      assetDirectoryPath =
+      m_AssetDatabase->GetAssetDirectoryPath().string();
+    args.filterList = filters.data();
     args.filterCount = 1;
-    args.defaultPath =
-      m_AssetDatabase->GetAssetDirectoryPath().string().c_str();
+    args.defaultPath = assetDirectoryPath.c_str();
 
     nfdresult_t    result = NFD_SaveDialogU8_With(&savePath, &args);
     nlohmann::json sceneJson = scene.Serialize();
@@ -79,23 +80,24 @@ namespace Dwarf
       }
 
       WriteSceneToFile(sceneJson, path);
-      delete savePath;
+      NFD_FreePathU8(savePath);
     }
     else if (result == NFD_CANCEL)
     {
-      // return false;
-      //  TODO: Add logging.
+      m_Logger->LogDebug(
+        Log("User pressed cancel during File Dialog", "SceneIO"));
     }
     else
     {
-      printf("Error: %s\n", NFD_GetError());
-      // return false;
-      //  TODO: Add logging.
+      m_Logger->LogError(
+        Log(fmt::format("Error during NativeFileDialog: {}", NFD_GetError()),
+            "SceneIO"));
     }
   }
 
-  std::unique_ptr<IScene>
+  auto
   SceneIO::LoadScene(IAssetReference& sceneAsset) const
+    -> std::unique_ptr<IScene>
   {
     if (m_FileHandler->FileExists(sceneAsset.GetPath()))
     {
@@ -104,58 +106,66 @@ namespace Dwarf
                              "SceneIO"));
       return m_SceneFactory->FromAsset(sceneAsset);
     }
-    else
-    {
-      // TODO: Add logging.
-      return nullptr;
-    }
+
+    m_Logger->LogDebug(Log(
+      fmt::format("Asset file at {} not found", sceneAsset.GetPath().string()),
+      "SceneIO"));
+    return nullptr;
   }
 
-  std::unique_ptr<IScene>
-  SceneIO::LoadSceneDialog() const
+  auto
+  SceneIO::LoadSceneDialog() const -> std::unique_ptr<IScene>
   {
-    nfdu8char_t*          savePath = nullptr;
-    nfdu8filteritem_t     filters[1] = { { "Dwarf scene", "dscene" } };
-    nfdopendialogu8args_t args = { 0 };
-    args.filterList = filters;
+    nfdu8char_t*                     savePath = nullptr;
+    std::array<nfdu8filteritem_t, 1> filters = { { "Dwarf scene", "dscene" } };
+    nfdopendialogu8args_t            args = { 0 };
+    std::string                      assetDirectoryPath =
+      m_AssetDatabase->GetAssetDirectoryPath().string();
+    args.filterList = filters.data();
     args.filterCount = 1;
-    args.defaultPath =
-      m_AssetDatabase->GetAssetDirectoryPath().string().c_str();
+    args.defaultPath = assetDirectoryPath.c_str();
 
-    if (nfdresult_t result = NFD_OpenDialogU8_With(&savePath, &args);
-        result == NFD_OKAY)
+    nfdresult_t result = NFD_OpenDialogU8_With(&savePath, &args);
+    if (result == NFD_OKAY)
     {
       std::filesystem::path path(savePath);
-      delete savePath;
+      NFD_FreePathU8(savePath);
       std::unique_ptr<IAssetReference> sceneAsset =
         m_AssetDatabase->Retrieve(path);
       return LoadScene(*sceneAsset);
     }
-    else if (result == NFD_CANCEL)
+
+    if (result == NFD_CANCEL)
     {
-      // TODO: Cancel stuff?
-      return nullptr;
+      m_Logger->LogDebug(
+        Log("User pressed cancel during File Dialog", "SceneIO"));
     }
-    else
+
+    if (result == NFD_ERROR)
     {
-      printf("Error: %s\n", NFD_GetError());
-      return nullptr;
+      m_Logger->LogError(
+        Log(fmt::format("Error during NativeFileDialog: {}", NFD_GetError()),
+            "SceneIO"));
     }
+
+    return nullptr;
   }
 
-  std::string
+  auto
   SceneIO::CreateNewSceneName(const std::filesystem::path& directory)
+    -> std::string
   {
     // Check if "New Scene" already exists, if so, increment the number
     std::string sceneName = "New Scene";
-    int         i = 1;
+    int         sceneNameIndex = 1;
     while (m_FileHandler->FileExists(
-      directory / (sceneName + std::to_string(i) + ".scene")))
+      directory / (sceneName + std::to_string(sceneNameIndex) + ".scene")))
     {
-      i++;
+      sceneNameIndex++;
     }
 
-    return fmt::format("{} ({}).dscene", sceneName, std::to_string(i));
+    return fmt::format(
+      "{} ({}).dscene", sceneName, std::to_string(sceneNameIndex));
   }
 
   void

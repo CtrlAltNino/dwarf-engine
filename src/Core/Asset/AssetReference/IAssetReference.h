@@ -14,22 +14,19 @@ namespace Dwarf
     // IAssetReference() = delete;
     virtual ~IAssetReference() = default;
 
-    virtual entt::entity
-    GetHandle() const = 0;
+    virtual auto
+    GetHandle() const -> entt::entity = 0;
 
-    virtual const UUID&
-    GetUID() const = 0;
+    virtual auto
+    GetUID() const -> const UUID& = 0;
 
-    virtual const std::filesystem::path&
-    GetPath() const = 0;
+    virtual auto
+    GetPath() const -> const std::filesystem::path& = 0;
 
-    virtual IAssetComponent&
-    GetAsset() = 0;
+    virtual auto
+    GetAsset() -> IAssetComponent& = 0;
 
-    virtual ASSET_TYPE
-    GetType() const = 0;
-
-    // virtual std::unique_ptr<IAssetReference>
-    // Clone() const = 0;
+    virtual auto
+    GetType() const -> ASSET_TYPE = 0;
   };
 }
