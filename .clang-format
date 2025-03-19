@@ -13,6 +13,5 @@ IndentCaseBlocks: true
 IndentWidth: 2
 NamespaceIndentation: All
 ObjCBlockIndentWidth: 4
-SortIncludes: false
+SortIncludes: true
 Standard: c++20
-...
