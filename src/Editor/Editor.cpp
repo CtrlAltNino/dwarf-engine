@@ -75,7 +75,7 @@ namespace Dwarf
     }
 
     m_Logger->LogInfo(Log("Showing window", "Editor"));
-    m_Window->ShowWindow();
+    m_Window->showWindow();
 
     m_Logger->LogInfo(Log("Entering editor loop", "Editor"));
     m_Logger->LogWarn(
@@ -83,7 +83,7 @@ namespace Dwarf
 
     m_DrawCallWorker->Invalidate();
 
-    while (!m_Window->ShouldClose() && !m_EditorStats->GetCloseSignal())
+    while (!m_Window->shouldClose() && !m_EditorStats->GetCloseSignal())
     {
       //  ===== Time related stuff
       m_EditorStats->SetLastTimeStamp(m_EditorStats->GetCurrentTimeStamp());
@@ -91,7 +91,7 @@ namespace Dwarf
       m_EditorStats->SetTimeSinceStart(m_EditorStats->GetTimeSinceStart() +
                                        m_EditorStats->GetDeltaTime());
 
-      m_Window->NewFrame();
+      m_Window->newFrame();
       m_InputManager->OnUpdate();
       m_AssetReimporter->ReimportQueuedAssets();
       m_ShaderRecompiler->Recompile();
@@ -99,7 +99,7 @@ namespace Dwarf
       m_MeshBufferWorker->ProcessRequests();
       m_View->OnUpdate();
       m_View->OnImGuiRender();
-      m_Window->EndFrame();
+      m_Window->endFrame();
 
       /*while (TimeUtilities::GetDifferenceInSeconds(
                TimeUtilities::GetCurrent(),

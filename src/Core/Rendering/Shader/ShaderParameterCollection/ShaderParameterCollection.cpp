@@ -104,7 +104,7 @@ namespace Dwarf
           {
             serialized[pair.first]["type"] = "tex2d";
             serialized[pair.first]["value"] =
-              arg.has_value() ? arg->ToString() : "";
+              arg.has_value() ? arg->toString() : "";
           }
         },
         pair.second);

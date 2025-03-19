@@ -1,11 +1,10 @@
 #include "AssetDatabase.h"
 #include "Core/Asset/AssetReference/IAssetReference.h"
+#include "Core/Asset/Database/AssetComponents.h"
 #include "Core/Asset/Metadata/IAssetMetadata.h"
 #include "Core/Base.h"
 #include "Core/GenericComponents.h"
 #include "Core/Rendering/Material/IMaterial.h"
-#include "Core/Asset/Database/AssetComponents.h"
-#include "Core/Asset/Database/AssetComponents.h"
 #include "IAssetDatabase.h"
 #include <cerrno>
 #include <filesystem>
@@ -232,7 +231,7 @@ namespace Dwarf
     auto view = m_Registry.view<IDComponent>();
     for (auto entity : view)
     {
-      if (view.get<IDComponent>(entity).GetID() == uid)
+      if (view.get<IDComponent>(entity).getId() == uid)
       {
         m_Registry.destroy(entity);
       }
@@ -244,7 +243,7 @@ namespace Dwarf
     auto view = m_Registry.view<PathComponent>();
     for (auto entity : view)
     {
-      if (view.get<PathComponent>(entity).GetPath() == path &&
+      if (view.get<PathComponent>(entity).getPath() == path &&
           m_Registry.valid(entity))
       {
         m_Registry.destroy(entity);
@@ -281,7 +280,7 @@ namespace Dwarf
     else
     {
       nlohmann::json metaData;
-      metaData["guid"] = id.ToString();
+      metaData["guid"] = id.toString();
       m_AssetMetadata->SetMetadata(assetPath, metaData);
     }
 
@@ -300,7 +299,7 @@ namespace Dwarf
     auto view = m_Registry.view<IDComponent>();
     for (auto entity : view)
     {
-      if (view.get<IDComponent>(entity).GetID() == uid)
+      if (view.get<IDComponent>(entity).getId() == uid)
       {
         return true;
       }
@@ -315,7 +314,7 @@ namespace Dwarf
     auto view = m_Registry.view<PathComponent>();
     for (auto entity : view)
     {
-      if (view.get<PathComponent>(entity).GetPath() == path)
+      if (view.get<PathComponent>(entity).getPath() == path)
       {
         return true;
       }
@@ -335,13 +334,13 @@ namespace Dwarf
     auto view = m_Registry.view<IDComponent, PathComponent>();
     for (auto entity : view)
     {
-      if (view.get<IDComponent>(entity).GetID() == uid)
+      if (view.get<IDComponent>(entity).getId() == uid)
       {
         return m_AssetReferenceFactory->Create(
           entity,
           m_Registry,
           AssetDatabase::GetAssetType(
-            view.get<PathComponent>(entity).GetPath().extension().string()));
+            view.get<PathComponent>(entity).getPath().extension().string()));
       }
     }
     return nullptr;
@@ -353,7 +352,7 @@ namespace Dwarf
     auto view = m_Registry.view<PathComponent>();
     for (auto entity : view)
     {
-      if (view.get<PathComponent>(entity).GetPath() == path)
+      if (view.get<PathComponent>(entity).getPath() == path)
       {
         return m_AssetReferenceFactory->Create(
           entity,
@@ -373,7 +372,7 @@ namespace Dwarf
     // auto matView = m_Registry->view<MaterialAsset>();
     for (auto entity : view)
     {
-      if (view.get<PathComponent>(entity).GetPath() == from)
+      if (view.get<PathComponent>(entity).getPath() == from)
       {
         m_Registry.remove<PathComponent>(entity);
         m_Registry.remove<NameComponent>(entity);
@@ -398,11 +397,11 @@ namespace Dwarf
     auto view = m_Registry.view<PathComponent>();
     for (auto entity : view)
     {
-      if (view.get<PathComponent>(entity).GetPath().string().find(
+      if (view.get<PathComponent>(entity).getPath().string().find(
             from.string()) != std::string::npos)
       {
         std::filesystem::path newPath = to;
-        newPath.concat(view.get<PathComponent>(entity).GetPath().string().erase(
+        newPath.concat(view.get<PathComponent>(entity).getPath().string().erase(
           0, from.string().length()));
         m_Registry.remove<PathComponent>(entity);
         m_Registry.emplace<PathComponent>(entity, newPath);
@@ -519,7 +518,7 @@ namespace Dwarf
     auto view = m_Registry.view<PathComponent>();
     for (auto entity : view)
     {
-      if (view.get<PathComponent>(entity).GetPath() == path)
+      if (view.get<PathComponent>(entity).getPath() == path)
       {
         m_Registry.remove<PathComponent>(entity);
         m_Registry.emplace<PathComponent>(entity,

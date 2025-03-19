@@ -1,16 +1,16 @@
 #pragma once
 
-#include "Core/Base.h"
-#include <boost/di.hpp>
 #include "Editor/Editor.h"
-#include "Launcher/IProjectLauncher.h"
+#include "Launcher/SavedProjects/ISavedProjects.h"
+#include <boost/di.hpp>
 
 namespace Dwarf
 {
   class EditorInjector
   {
   public:
-    static boost::di::injector<std::shared_ptr<Editor>>
-    CreateInjector(SavedProject selectedProject);
+    static auto
+    createInjector(SavedProject selectedProject)
+      -> boost::di::injector<std::shared_ptr<Editor>>;
   };
 }

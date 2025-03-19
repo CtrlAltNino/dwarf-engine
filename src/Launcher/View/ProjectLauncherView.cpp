@@ -63,20 +63,20 @@ namespace Dwarf
   void
   ProjectLauncherView::Show()
   {
-    m_Window->ShowWindow();
+    m_Window->showWindow();
   }
 
   void
   ProjectLauncherView::Render()
   {
-    if (m_Window->ShouldClose())
+    if (m_Window->shouldClose())
     {
       m_Data->SetState(ProjectChooserState::Cancelled);
     }
 
-    m_Window->NewFrame();
+    m_Window->newFrame();
 
-    glm::ivec2 windowSize = { m_Window->GetWidth(), m_Window->GetHeight() };
+    glm::ivec2 windowSize = { m_Window->getWidth(), m_Window->getHeight() };
 
     m_ProjectListView->RenderProjectList(windowSize);
     m_ButtonsView->RenderButtons(windowSize);
@@ -103,6 +103,6 @@ namespace Dwarf
     m_CreateNewProjectModal->RenderCreateNewProjectModal();
     m_ChangeGraphicsApiModal->RenderChangeGraphicsApiModal();
 
-    m_Window->EndFrame();
+    m_Window->endFrame();
   }
 }

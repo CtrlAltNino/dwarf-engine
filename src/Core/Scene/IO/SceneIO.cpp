@@ -1,9 +1,10 @@
 #include "SceneIO.h"
 
 #include "Core/Asset/AssetReference/IAssetReference.h"
-#include "Core/Asset/Database/AssetComponents.h"
 #include <nfd.h>
 #include <fmt/format.h>
+
+#include <utility>
 
 namespace Dwarf
 {
@@ -12,11 +13,11 @@ namespace Dwarf
                    std::shared_ptr<ISceneFactory>    sceneFactory,
                    std::shared_ptr<IAssetDatabase>   assetDatabase,
                    std::shared_ptr<IFileHandler>     fileHandler)
-    : m_Logger(logger)
-    , m_SceneFactory(sceneFactory)
-    , m_ProjectSettings(projectSettings)
-    , m_AssetDatabase(assetDatabase)
-    , m_FileHandler(fileHandler)
+    : m_Logger(std::move(logger))
+    , m_SceneFactory(std::move(sceneFactory))
+    , m_ProjectSettings(std::move(projectSettings))
+    , m_AssetDatabase(std::move(assetDatabase))
+    , m_FileHandler(std::move(fileHandler))
   {
   }
 

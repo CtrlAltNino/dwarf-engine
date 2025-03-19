@@ -82,7 +82,7 @@ namespace Dwarf
   {
     nlohmann::json serializedModule;
 
-    serializedModule["id"] = GetUuid()->ToString();
+    serializedModule["id"] = GetUuid()->toString();
     serializedModule["type"] = static_cast<int>(GetModuleType());
     serializedModule["label"] = GetModuleName();
 

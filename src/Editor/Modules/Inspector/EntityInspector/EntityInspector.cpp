@@ -69,7 +69,7 @@ namespace Dwarf
   EntityInspector::RenderComponent<IDComponent>(IDComponent& component)
   {
     ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
-    ImGui::TextWrapped("%s", component.GetID().ToString().c_str());
+    ImGui::TextWrapped("%s", component.getId().toString().c_str());
   }
 
   template<>

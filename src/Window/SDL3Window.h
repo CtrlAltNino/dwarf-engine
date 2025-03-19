@@ -1,97 +1,95 @@
 #pragma once
 
-#include "Editor/Stats/IEditorStats.h"
-#include "Logging/IDwarfLogger.h"
-#include "Window/IWindow.h"
-#include "Core/Rendering/GraphicsContext/IGraphicsContextFactory.h"
-#include "UI/IImGuiLayerFactory.h"
 #include "Core/Rendering/GraphicsContext/IGraphicsContext.h"
-#include "UI/IImGuiLayer.h"
+#include "Core/Rendering/GraphicsContext/IGraphicsContextFactory.h"
+#include "Editor/Stats/IEditorStats.h"
 #include "Input/IInputManager.h"
+#include "Logging/IDwarfLogger.h"
+#include "UI/IImGuiLayer.h"
+#include "UI/IImGuiLayerFactory.h"
+#include "Window/IWindow.h"
 
 namespace Dwarf
 {
   class SDL3Window : public IWindow
   {
+    struct WindowData
+    {
+      std::string Title;
+      int         Width = 0;
+      int         Height = 0;
+      bool        VSync = false;
+      bool        ShouldClose = false;
+      bool        ShowMaximized = false;
+    };
+
+  private:
+    SDL_Window*                              m_Window;
+    std::unique_ptr<IGraphicsContext>        m_Context;
+    std::unique_ptr<IImGuiLayer>             m_ImGuiLayer;
+    std::shared_ptr<IGraphicsContextFactory> m_ContextFactory;
+    std::shared_ptr<IImGuiLayerFactory>      m_ImguiLayerFactory;
+    std::shared_ptr<IInputManager>           m_InputManager;
+    std::shared_ptr<IDwarfLogger>            m_Logger;
+    std::shared_ptr<IEditorStats>            m_EditorStats;
+
+    WindowData m_Data;
+
   public:
-    explicit SDL3Window(const WindowProps&            props,
-                        IGraphicsContextFactory&      contextFactory,
-                        IImGuiLayerFactory&           imguiLayerFactory,
-                        IInputManager&                inputManager,
-                        std::shared_ptr<IDwarfLogger> logger,
-                        std::shared_ptr<IEditorStats> editorStats);
+    explicit SDL3Window(const WindowProps&                       props,
+                        std::shared_ptr<IGraphicsContextFactory> contextFactory,
+                        std::shared_ptr<IImGuiLayerFactory> imguiLayerFactory,
+                        std::shared_ptr<IInputManager>      inputManager,
+                        std::shared_ptr<IDwarfLogger>       logger,
+                        std::shared_ptr<IEditorStats>       editorStats);
     ~SDL3Window() override;
 
     void
-    NewFrame() override;
+    newFrame() override;
     void
-    EndFrame() override;
+    endFrame() override;
 
-    unsigned int
-    GetWidth() const override
+    auto
+    getWidth() const -> unsigned int override
     {
       return m_Data.Width;
     }
-    unsigned int
-    GetHeight() const override
+
+    auto
+    getHeight() const -> unsigned int override
     {
       return m_Data.Height;
     }
 
     void
-    ShowWindow() override;
+    showWindow() override;
     void
-    HideWindow() override;
-
-    void
-    SetVSync(bool enabled) override;
-    bool
-    IsVSync() override;
-
-    bool
-    ShouldClose() override;
+    hideWindow() override;
 
     void
-    SetWindowTitle(std::string_view windowTitle) override;
+    setVSync(bool enabled) override;
+    auto
+    isVSync() -> bool override;
 
-    SDL_Window*
-    GetNativeWindow() const override
+    auto
+    shouldClose() -> bool override;
+
+    void
+    setWindowTitle(std::string_view windowTitle) override;
+
+    [[nodiscard]] auto
+    getNativeWindow() const -> SDL_Window* override
     {
       return m_Window;
     }
 
     void
-    MaximizeWindow() override;
+    maximizeWindow() override;
 
-    bool
-    IsWindowMaximized() override;
+    auto
+    isWindowMaximized() -> bool override;
 
     void
-    SetShowWindowMaximized(bool maximized) override;
-
-  private:
-    void
-    Init(const WindowProps& props);
-
-    SDL_Window*                       m_Window;
-    std::unique_ptr<IGraphicsContext> m_Context;
-    std::unique_ptr<IImGuiLayer>      m_ImGuiLayer;
-    IGraphicsContextFactory&          m_ContextFactory;
-    IImGuiLayerFactory&               m_ImguiLayerFactory;
-    IInputManager&                    m_InputManager;
-    std::shared_ptr<IDwarfLogger>     m_Logger;
-    std::shared_ptr<IEditorStats>     m_EditorStats;
-
-    struct WindowData
-    {
-      std::string  Title = "";
-      unsigned int Width = 0;
-      unsigned int Height = 0;
-      bool         VSync = false;
-      bool         ShouldClose = false;
-      bool         ShowMaximized = false;
-    };
-
-    WindowData m_Data;
+    setShowWindowMaximized(bool maximized) override;
   };
 }

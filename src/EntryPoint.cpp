@@ -1,9 +1,9 @@
 #include "Application/DwarfEngine.h"
 
-int
-main()
+auto
+main() -> int
 {
   Dwarf::DwarfEngine engine = Dwarf::DwarfEngine();
-  engine.Run();
+  engine.run();
   return 0;
 }

@@ -1,14 +1,14 @@
-#include "pch.h"
 #include "EditorView.h"
 #include "Core/Asset/Creation/Material/IMaterialCreator.h"
 #include "Core/Base.h"
 #include "Core/Scene/ISceneFactory.h"
 #include "Editor/Modules/IGuiModuleFactory.h"
 #include "UI/DwarfUI.h"
+#include "pch.h"
+#include <fmt/format.h>
 #include <memory>
 #include <nfd.h>
 #include <nlohmann/json_fwd.hpp>
-#include <fmt/format.h>
 
 namespace Dwarf
 {
@@ -44,7 +44,7 @@ namespace Dwarf
 
     if (serializedView.contains("windowMaximized"))
     {
-      m_Window->SetShowWindowMaximized(
+      m_Window->setShowWindowMaximized(
         serializedView["windowMaximized"].get<bool>());
     }
 
@@ -404,14 +404,14 @@ namespace Dwarf
     windowTitle.append(graphicsApiNames[(int)m_GraphicsApi]);
     windowTitle.append(">");
 
-    m_Window->SetWindowTitle(windowTitle);
+    m_Window->setWindowTitle(windowTitle);
   }
 
   nlohmann::json
   EditorView::Serialize()
   {
     nlohmann::json j;
-    j["windowMaximized"] = m_Window->IsWindowMaximized();
+    j["windowMaximized"] = m_Window->isWindowMaximized();
     j["modules"] = nlohmann::json::array();
     for (int i = 0; i < m_GuiModules.size(); i++)
     {

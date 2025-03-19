@@ -1,29 +1,19 @@
 #pragma once
-#include "pch.h"
 #include "Core/Base.h"
 #include <SDL3/SDL.h>
+
+#include <utility>
 
 namespace Dwarf
 {
   // TODO: This struct looks like sh*t
   struct WindowProps
   {
-    std::string Title = "";
-    uint32_t    Width = 0;
-    uint32_t    Height = 0;
-    GraphicsApi Api = GraphicsApi::None;
+    std::string Title = "Dwarf Engine";
+    int         Width = 0;
+    int         Height = 0;
+    GraphicsApi Api = GraphicsApi::OpenGL;
     bool        Maximized = false;
-
-    WindowProps(const std::string& title = "Dwarf Engine",
-                uint32_t           width = 1600,
-                uint32_t           height = 900,
-                GraphicsApi        api = GraphicsApi::OpenGL)
-      : Title(title)
-      , Width(width)
-      , Height(height)
-      , Api(api)
-    {
-    }
   };
 
   class IWindow
@@ -32,41 +22,41 @@ namespace Dwarf
     virtual ~IWindow() = default;
 
     virtual void
-    NewFrame() = 0;
+    newFrame() = 0;
     virtual void
-    EndFrame() = 0;
+    endFrame() = 0;
 
-    virtual uint32_t
-    GetWidth() const = 0;
-    virtual uint32_t
-    GetHeight() const = 0;
-
-    virtual void
-    SetVSync(bool enabled) = 0;
-    virtual bool
-    IsVSync() = 0;
-
-    virtual SDL_Window*
-    GetNativeWindow() const = 0;
+    virtual auto
+    getWidth() const -> uint32_t = 0;
+    virtual auto
+    getHeight() const -> uint32_t = 0;
 
     virtual void
-    ShowWindow() = 0;
-    virtual void
-    HideWindow() = 0;
+    setVSync(bool enabled) = 0;
+    virtual auto
+    isVSync() -> bool = 0;
 
-    virtual bool
-    ShouldClose() = 0;
-
-    virtual void
-    MaximizeWindow() = 0;
+    [[nodiscard]] virtual auto
+    getNativeWindow() const -> SDL_Window* = 0;
 
     virtual void
-    SetWindowTitle(std::string_view windowTitle) = 0;
+    showWindow() = 0;
+    virtual void
+    hideWindow() = 0;
 
-    virtual bool
-    IsWindowMaximized() = 0;
+    virtual auto
+    shouldClose() -> bool = 0;
 
     virtual void
-    SetShowWindowMaximized(bool maximized) = 0;
+    maximizeWindow() = 0;
+
+    virtual void
+    setWindowTitle(std::string_view windowTitle) = 0;
+
+    virtual auto
+    isWindowMaximized() -> bool = 0;
+
+    virtual void
+    setShowWindowMaximized(bool maximized) = 0;
   };
 }
