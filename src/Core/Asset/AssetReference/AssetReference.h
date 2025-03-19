@@ -4,67 +4,67 @@
 #include "Core/Asset/AssetTypes.h"
 #include "Core/Asset/Database/AssetComponents.h"
 #include "Core/Asset/Model/IModelImporter.h"
+#include "Core/Asset/Texture/TextureWorker/ITextureLoadingWorker.h"
 #include "Core/Rendering/Material/IO/IMaterialIO.h"
 #include "Core/Rendering/Texture/ITextureFactory.h"
 #include "Logging/IDwarfLogger.h"
 #include "Utilities/FileHandler/IFileHandler.h"
-#include "Core/Asset/Texture/TextureWorker/ITextureLoadingWorker.h"
 
 namespace Dwarf
 {
   class AssetReference : public IAssetReference
   {
   private:
-    entt::entity                           m_AssetHandle;
-    entt::registry&                        m_Registry;
-    ASSET_TYPE                             m_Type;
-    std::shared_ptr<IDwarfLogger>          m_Logger;
-    std::shared_ptr<ITextureLoadingWorker> m_TextureLoadingWorker;
+    entt::entity                           mAssetHandle;
+    std::reference_wrapper<entt::registry> mRegistry;
+    ASSET_TYPE                             mType;
+    std::shared_ptr<IDwarfLogger>          mLogger;
+    std::shared_ptr<ITextureLoadingWorker> mTextureLoadingWorker;
 
   public:
     // Used for existing assets
     AssetReference(entt::entity                           assetHandle,
                    entt::registry&                        registry,
                    ASSET_TYPE                             type,
-                   std::shared_ptr<ITextureLoadingWorker> textureLoadingWorker,
-                   std::shared_ptr<IDwarfLogger>          logger);
+                   std::shared_ptr<IDwarfLogger>          logger,
+                   std::shared_ptr<ITextureLoadingWorker> textureLoadingWorker);
 
     // Used for new assets
-    AssetReference(entt::entity                           assetHandle,
-                   entt::registry&                        registry,
-                   UUID                                   uid,
-                   std::filesystem::path                  path,
-                   std::string                            name,
-                   std::shared_ptr<IDwarfLogger>          logger,
-                   std::shared_ptr<IModelImporter>        modelImporter,
-                   std::shared_ptr<ITextureFactory>       textureFactory,
-                   std::shared_ptr<IMaterialIO>           materialIO,
-                   std::shared_ptr<IFileHandler>          fileHandler,
-                   std::shared_ptr<ITextureLoadingWorker> textureLoadingWorker);
+    AssetReference(entt::entity                            assetHandle,
+                   entt::registry&                         registry,
+                   UUID                                    uid,
+                   std::filesystem::path                   path,
+                   std::string                             name,
+                   std::shared_ptr<IDwarfLogger>           logger,
+                   std::shared_ptr<ITextureLoadingWorker>  textureLoadingWorker,
+                   const std::shared_ptr<IModelImporter>&  modelImporter,
+                   const std::shared_ptr<ITextureFactory>& textureFactory,
+                   const std::shared_ptr<IMaterialIO>&     materialIO,
+                   const std::shared_ptr<IFileHandler>&    fileHandler);
 
     ~AssetReference() override = default;
 
-    operator bool() const { return (std::uint32_t)m_AssetHandle != 0; }
+    operator bool() const { return (std::uint32_t)mAssetHandle != 0; }
 
-    bool
-    operator==(const AssetReference& b)
+    auto
+    operator==(const AssetReference& other) -> bool
     {
-      return m_AssetHandle == b.m_AssetHandle;
+      return mAssetHandle == other.mAssetHandle;
     }
 
-    entt::entity
-    GetHandle() const override;
+    auto
+    GetHandle() const -> entt::entity override;
 
-    const UUID&
-    GetUID() const override;
+    auto
+    GetUID() const -> const UUID& override;
 
-    const std::filesystem::path&
-    GetPath() const override;
+    auto
+    GetPath() const -> const std::filesystem::path& override;
 
-    IAssetComponent&
-    GetAsset() override;
+    auto
+    GetAsset() -> IAssetComponent& override;
 
-    ASSET_TYPE
-    GetType() const override;
+    auto
+    GetType() const -> ASSET_TYPE override;
   };
 }

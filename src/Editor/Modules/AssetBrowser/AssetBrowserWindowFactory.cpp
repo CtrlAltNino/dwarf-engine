@@ -15,7 +15,8 @@ namespace Dwarf
     std::shared_ptr<IMaterialFactory> materialFactory,
     std::shared_ptr<IAssetMetadata>   assetMetadata,
     std::shared_ptr<IMaterialCreator> materialCreator,
-    std::shared_ptr<IFileHandler>     fileHandler)
+    std::shared_ptr<IFileHandler>     fileHandler,
+    std::shared_ptr<ISceneIO>         sceneIO)
     : m_AssetDirectoryPath(assetDirectoryPath)
     , m_TextureFactory(textureFactory)
     , m_AssetDatabase(assetDatabase)
@@ -26,6 +27,7 @@ namespace Dwarf
     , m_AssetMetadata(assetMetadata)
     , m_MaterialCreator(materialCreator)
     , m_FileHandler(fileHandler)
+    , m_SceneIO(sceneIO)
   {
   }
 
@@ -41,7 +43,8 @@ namespace Dwarf
                                                 m_MaterialFactory,
                                                 m_AssetMetadata,
                                                 m_MaterialCreator,
-                                                m_FileHandler);
+                                                m_FileHandler,
+                                                m_SceneIO);
   }
 
   std::unique_ptr<AssetBrowserWindow>
@@ -57,6 +60,7 @@ namespace Dwarf
                                                 m_AssetMetadata,
                                                 m_MaterialCreator,
                                                 m_FileHandler,
+                                                m_SceneIO,
                                                 serializedModule);
   }
 } // namespace Dwarf

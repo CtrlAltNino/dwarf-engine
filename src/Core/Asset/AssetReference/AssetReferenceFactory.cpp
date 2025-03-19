@@ -1,6 +1,8 @@
 #include "AssetReferenceFactory.h"
+
 #include "AssetReference.h"
 #include "Core/Asset/AssetReference/IAssetReference.h"
+#include <utility>
 
 namespace Dwarf
 {
@@ -11,49 +13,51 @@ namespace Dwarf
     std::shared_ptr<IMaterialIO>           materialIO,
     std::shared_ptr<IFileHandler>          fileHandler,
     std::shared_ptr<ITextureLoadingWorker> textureLoadingWorker)
-    : m_Logger(logger)
-    , m_ModelImporter(modelImporter)
-    , m_TextureFactory(textureFactory)
-    , m_MaterialIO(materialIO)
-    , m_FileHandler(fileHandler)
-    , m_TextureLoadingWorker(textureLoadingWorker)
+    : mLogger(std::move(logger))
+    , mModelImporter(std::move(modelImporter))
+    , mTextureFactory(std::move(textureFactory))
+    , mMaterialIo(std::move(materialIO))
+    , mFileHandler(std::move(fileHandler))
+    , mTextureLoadingWorker(std::move(textureLoadingWorker))
   {
-    m_Logger->LogDebug(
+    mLogger->LogDebug(
       Log("AssetReferenceFactory created", "AssetReferenceFactory"));
   }
 
   AssetReferenceFactory::~AssetReferenceFactory()
   {
-    m_Logger->LogDebug(
+    mLogger->LogDebug(
       Log("AssetReferenceFactory destroyed", "AssetReferenceFactory"));
   }
 
-  std::unique_ptr<IAssetReference>
+  auto
   AssetReferenceFactory::Create(entt::entity    assetHandle,
                                 entt::registry& registry,
                                 ASSET_TYPE      type)
+    -> std::unique_ptr<IAssetReference>
   {
     return std::make_unique<AssetReference>(
-      assetHandle, registry, type, m_TextureLoadingWorker, m_Logger);
+      assetHandle, registry, type, mLogger, mTextureLoadingWorker);
   }
 
-  std::unique_ptr<IAssetReference>
+  auto
   AssetReferenceFactory::CreateNew(entt::entity          assetHandle,
                                    entt::registry&       registry,
                                    const UUID&           uid,
                                    std::filesystem::path path,
                                    std::string           name)
+    -> std::unique_ptr<IAssetReference>
   {
     return std::make_unique<AssetReference>(assetHandle,
                                             registry,
                                             uid,
                                             path,
                                             name,
-                                            m_Logger,
-                                            m_ModelImporter,
-                                            m_TextureFactory,
-                                            m_MaterialIO,
-                                            m_FileHandler,
-                                            m_TextureLoadingWorker);
+                                            mLogger,
+                                            mTextureLoadingWorker,
+                                            mModelImporter,
+                                            mTextureFactory,
+                                            mMaterialIo,
+                                            mFileHandler);
   }
 }

@@ -1,9 +1,9 @@
 #pragma once
 
 #include "Core/Asset/Database/IAssetDatabase.h"
-#include "Core/Scene/ISceneFactory.h"
 #include "Core/Scene/IO/ISceneIO.h"
 #include "Core/Scene/IScene.h"
+#include "Core/Scene/ISceneFactory.h"
 #include "Logging/IDwarfLogger.h"
 #include "Project/IProjectSettings.h"
 #include "Utilities/FileHandler/IFileHandler.h"
@@ -24,8 +24,8 @@ namespace Dwarf
     WriteSceneToFile(const nlohmann::json&        serializedScene,
                      const std::filesystem::path& scenePath) const;
 
-    std::string
-    CreateNewSceneName(const std::filesystem::path& directory);
+    auto
+    CreateNewSceneName(const std::filesystem::path& directory) -> std::string;
 
   public:
     SceneIO(std::shared_ptr<IDwarfLogger>     logger,
@@ -40,16 +40,14 @@ namespace Dwarf
     void
     SaveSceneDialog(IScene& scene) const override;
 
-    std::unique_ptr<IScene>
-    LoadScene(IAssetReference& sceneAsset) const override;
+    auto
+    LoadScene(IAssetReference& sceneAsset) const
+      -> std::unique_ptr<IScene> override;
 
-    std::unique_ptr<IScene>
-    LoadSceneDialog() const override;
+    [[nodiscard]] auto
+    LoadSceneDialog() const -> std::unique_ptr<IScene> override;
 
     void
     NewSceneAsset(const std::filesystem::path& directory) override;
-
-    // void
-    // SetLastOpenedScene(AssetReference<SceneAsset> sceneAsset);
   };
 }

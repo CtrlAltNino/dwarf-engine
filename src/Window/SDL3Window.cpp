@@ -61,7 +61,7 @@ namespace Dwarf
     }
 
     m_Window = SDL_CreateWindow(
-      m_Data.Title.c_str(), (int)m_Data.Width, (int)m_Data.Height, windowFlags);
+      m_Data.Title.c_str(), m_Data.Width, m_Data.Height, windowFlags);
 
     if (m_Window == nullptr)
     {
@@ -77,8 +77,8 @@ namespace Dwarf
 
     SDL_SetWindowMinimumSize(m_Window, props.Width, props.Height);
     SDL_SetWindowPosition(m_Window,
-                          mode->w / 2 - (props.Width / 2),
-                          mode->h / 2 - (props.Height / 2));
+                          (mode->w / 2) - (props.Width / 2),
+                          (mode->h / 2) - (props.Height / 2));
 
     m_Logger->LogDebug(Log("Creating Graphics Context...", "SDL3Window"));
     m_Context = std::move(m_ContextFactory->Create(m_Window));

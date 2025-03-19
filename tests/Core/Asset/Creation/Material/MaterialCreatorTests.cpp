@@ -1,11 +1,12 @@
-#include <gtest/gtest.h>
-#include <gmock/gmock.h>
 #include "Core/Asset/Creation/Material/MaterialCreator.h"
 #include "Core/Rendering/Material/IMaterialFactory.h"
 #include "Core/Rendering/Material/IO/IMaterialIO.h"
 #include "Utilities/FileHandler/IFileHandler.h"
-#include <memory>
 #include <filesystem>
+#include <gmock/gmock.h>
+#include <gtest/gtest.h>
+#include <memory>
+
 
 using namespace Dwarf;
 using namespace testing;

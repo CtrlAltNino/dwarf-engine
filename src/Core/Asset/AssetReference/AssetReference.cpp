@@ -1,4 +1,7 @@
 #include "AssetReference.h"
+
+#include <utility>
+
 #include "Core/Asset/Database/AssetComponents.h"
 #include "Core/Asset/Database/IAssetDatabase.h"
 #include "Core/Asset/Texture/TextureWorker/ITextureLoadingWorker.h"
@@ -11,169 +14,173 @@ namespace Dwarf
     entt::entity                           assetHandle,
     entt::registry&                        registry,
     ASSET_TYPE                             type,
-    std::shared_ptr<ITextureLoadingWorker> textureLoadingWorker,
-    std::shared_ptr<IDwarfLogger>          logger)
-    : m_AssetHandle(assetHandle)
-    , m_Registry(registry)
-    , m_Type(type)
-    , m_Logger(logger)
-    , m_TextureLoadingWorker(textureLoadingWorker)
+    std::shared_ptr<IDwarfLogger>          logger,
+    std::shared_ptr<ITextureLoadingWorker> textureLoadingWorker)
+    : mAssetHandle(assetHandle)
+    , mRegistry(registry)
+    , mType(type)
+    , mLogger(std::move(logger))
+    , mTextureLoadingWorker(std::move(textureLoadingWorker))
   {
   }
 
   // Assuming no components have been emplaced
   AssetReference::AssetReference(
-    entt::entity                           assetHandle,
-    entt::registry&                        registry,
-    UUID                                   uid,
-    std::filesystem::path                  path,
-    std::string                            name,
-    std::shared_ptr<IDwarfLogger>          logger,
-    std::shared_ptr<IModelImporter>        modelImporter,
-    std::shared_ptr<ITextureFactory>       textureFactory,
-    std::shared_ptr<IMaterialIO>           materialIO,
-    std::shared_ptr<IFileHandler>          fileHandler,
-    std::shared_ptr<ITextureLoadingWorker> textureLoadingWorker)
-    : m_AssetHandle(assetHandle)
-    , m_Registry(registry)
-    , m_Type(IAssetDatabase::GetAssetType(path.extension().string()))
-    , m_Logger(logger)
-    , m_TextureLoadingWorker(textureLoadingWorker)
+    entt::entity                            assetHandle,
+    entt::registry&                         registry,
+    UUID                                    uid,
+    std::filesystem::path                   path,
+    std::string                             name,
+    std::shared_ptr<IDwarfLogger>           logger,
+    std::shared_ptr<ITextureLoadingWorker>  textureLoadingWorker,
+    const std::shared_ptr<IModelImporter>&  modelImporter,
+    const std::shared_ptr<ITextureFactory>& textureFactory,
+    const std::shared_ptr<IMaterialIO>&     materialIO,
+    const std::shared_ptr<IFileHandler>&    fileHandler)
+    : mAssetHandle(assetHandle)
+    , mRegistry(registry)
+    , mType(IAssetDatabase::GetAssetType(path.extension().string()))
+    , mLogger(std::move(logger))
+    , mTextureLoadingWorker(std::move(textureLoadingWorker))
   {
-    m_Registry.emplace<IDComponent>(m_AssetHandle, uid);
-    m_Registry.emplace<PathComponent>(m_AssetHandle, path);
-    m_Registry.emplace<NameComponent>(m_AssetHandle, name);
+    mRegistry.get().emplace<IDComponent>(mAssetHandle, uid);
+    mRegistry.get().emplace<PathComponent>(mAssetHandle, path);
+    mRegistry.get().emplace<NameComponent>(mAssetHandle, name);
 
-    switch (m_Type)
+    switch (mType)
     {
       case ASSET_TYPE::TEXTURE:
         {
-          m_Registry.emplace<TextureAsset>(
-            m_AssetHandle, nullptr, textureFactory->GetPlaceholderTexture());
+          mRegistry.get().emplace<TextureAsset>(
+            mAssetHandle, nullptr, textureFactory->GetPlaceholderTexture());
           break;
         }
       case ASSET_TYPE::MODEL:
         {
-          ModelAsset& modelAsset = m_Registry.emplace<ModelAsset>(
-            m_AssetHandle, std::move(modelImporter->Import(path)));
+          ModelAsset& modelAsset = mRegistry.get().emplace<ModelAsset>(
+            mAssetHandle, std::move(modelImporter->Import(path)));
         }
         break;
       case ASSET_TYPE::MATERIAL:
-        m_Registry.emplace<MaterialAsset>(
-          m_AssetHandle, std::move(materialIO->LoadMaterial(path)));
+        mRegistry.get().emplace<MaterialAsset>(
+          mAssetHandle, std::move(materialIO->LoadMaterial(path)));
         break;
       case ASSET_TYPE::UNKNOWN:
-        m_Registry.emplace<UnknownAsset>(m_AssetHandle,
-                                         fileHandler->ReadFile(path));
+        mRegistry.get().emplace<UnknownAsset>(mAssetHandle,
+                                              fileHandler->ReadFile(path));
         break;
       case ASSET_TYPE::SCENE:
         if (fileHandler->FileExists(path))
         {
-          m_Registry.emplace<SceneAsset>(
-            m_AssetHandle, nlohmann::json::parse(fileHandler->ReadFile(path)));
+          mRegistry.get().emplace<SceneAsset>(
+            mAssetHandle, nlohmann::json::parse(fileHandler->ReadFile(path)));
         }
         break;
       case ASSET_TYPE::VERTEX_SHADER:
-        m_Registry.emplace<VertexShaderAsset>(m_AssetHandle,
-                                              fileHandler->ReadFile(path));
+        mRegistry.get().emplace<VertexShaderAsset>(mAssetHandle,
+                                                   fileHandler->ReadFile(path));
         break;
       case ASSET_TYPE::TESC_SHADER:
-        m_Registry.emplace<TessellationControlShaderAsset>(
-          m_AssetHandle, fileHandler->ReadFile(path));
+        mRegistry.get().emplace<TessellationControlShaderAsset>(
+          mAssetHandle, fileHandler->ReadFile(path));
         break;
       case ASSET_TYPE::TESE_SHADER:
-        m_Registry.emplace<TessellationEvaluationShaderAsset>(
-          m_AssetHandle, fileHandler->ReadFile(path));
+        mRegistry.get().emplace<TessellationEvaluationShaderAsset>(
+          mAssetHandle, fileHandler->ReadFile(path));
         break;
       case ASSET_TYPE::GEOMETRY_SHADER:
-        m_Registry.emplace<GeometryShaderAsset>(m_AssetHandle,
-                                                fileHandler->ReadFile(path));
+        mRegistry.get().emplace<GeometryShaderAsset>(
+          mAssetHandle, fileHandler->ReadFile(path));
         break;
       case ASSET_TYPE::FRAGMENT_SHADER:
-        m_Registry.emplace<FragmentShaderAsset>(m_AssetHandle,
-                                                fileHandler->ReadFile(path));
+        mRegistry.get().emplace<FragmentShaderAsset>(
+          mAssetHandle, fileHandler->ReadFile(path));
         break;
       case ASSET_TYPE::COMPUTE_SHADER:
-        m_Registry.emplace<ComputeShaderAsset>(m_AssetHandle,
-                                               fileHandler->ReadFile(path));
+        mRegistry.get().emplace<ComputeShaderAsset>(
+          mAssetHandle, fileHandler->ReadFile(path));
         break;
       case ASSET_TYPE::HLSL_SHADER:
-        m_Registry.emplace<HlslShaderAsset>(m_AssetHandle,
-                                            fileHandler->ReadFile(path));
+        mRegistry.get().emplace<HlslShaderAsset>(mAssetHandle,
+                                                 fileHandler->ReadFile(path));
         break;
     }
   }
 
   /// @brief Retrieves the handle of the asset entity.
   /// @return The handle.
-  entt::entity
-  AssetReference::GetHandle() const
+  auto
+  AssetReference::GetHandle() const -> entt::entity
   {
-    return m_AssetHandle;
+    return mAssetHandle;
   }
 
   /// @brief Returns the UID of the asset.
   /// @return The UID.
-  const UUID&
-  AssetReference::GetUID() const
+  auto
+  AssetReference::GetUID() const -> const UUID&
   {
-    return m_Registry.get<IDComponent>(m_AssetHandle).getId();
+    return mRegistry.get().get<IDComponent>(mAssetHandle).getId();
   }
 
-  const std::filesystem::path&
-  AssetReference::GetPath() const
+  auto
+  AssetReference::GetPath() const -> const std::filesystem::path&
   {
-    return m_Registry.get<PathComponent>(m_AssetHandle).getPath();
+    return mRegistry.get().get<PathComponent>(mAssetHandle).getPath();
   }
 
   /// @brief Retrieves the asset component of the asset, containing the actual
   /// payload.
   /// @return The asset component.
-  IAssetComponent&
-  AssetReference::GetAsset()
+  auto
+  AssetReference::GetAsset() -> IAssetComponent&
   {
-    switch (m_Type)
+    switch (mType)
     {
       case ASSET_TYPE::TEXTURE:
         {
-          TextureAsset& asset = m_Registry.get<TextureAsset>(m_AssetHandle);
+          TextureAsset& asset = mRegistry.get().get<TextureAsset>(mAssetHandle);
           std::filesystem::path path =
-            m_Registry.get<PathComponent>(m_AssetHandle).getPath();
+            mRegistry.get().get<PathComponent>(mAssetHandle).getPath();
 
-          if (!asset.IsLoaded() && !m_TextureLoadingWorker->IsRequested(path))
+          if (!asset.IsLoaded() && !mTextureLoadingWorker->IsRequested(path))
           {
-            m_TextureLoadingWorker->RequestTextureLoad({ &asset, path });
+            mTextureLoadingWorker->RequestTextureLoad({ &asset, path });
           }
 
           return asset;
         }
-      case ASSET_TYPE::MODEL: return m_Registry.get<ModelAsset>(m_AssetHandle);
+      case ASSET_TYPE::MODEL:
+        return mRegistry.get().get<ModelAsset>(mAssetHandle);
       case ASSET_TYPE::MATERIAL:
-        return m_Registry.get<MaterialAsset>(m_AssetHandle);
+        return mRegistry.get().get<MaterialAsset>(mAssetHandle);
       case ASSET_TYPE::UNKNOWN:
-        return m_Registry.get<UnknownAsset>(m_AssetHandle);
-      case ASSET_TYPE::SCENE: return m_Registry.get<SceneAsset>(m_AssetHandle);
+        return mRegistry.get().get<UnknownAsset>(mAssetHandle);
+      case ASSET_TYPE::SCENE:
+        return mRegistry.get().get<SceneAsset>(mAssetHandle);
       case ASSET_TYPE::VERTEX_SHADER:
-        return m_Registry.get<VertexShaderAsset>(m_AssetHandle);
+        return mRegistry.get().get<VertexShaderAsset>(mAssetHandle);
       case ASSET_TYPE::TESC_SHADER:
-        return m_Registry.get<TessellationControlShaderAsset>(m_AssetHandle);
+        return mRegistry.get().get<TessellationControlShaderAsset>(
+          mAssetHandle);
       case ASSET_TYPE::TESE_SHADER:
-        return m_Registry.get<TessellationEvaluationShaderAsset>(m_AssetHandle);
+        return mRegistry.get().get<TessellationEvaluationShaderAsset>(
+          mAssetHandle);
       case ASSET_TYPE::GEOMETRY_SHADER:
-        return m_Registry.get<GeometryShaderAsset>(m_AssetHandle);
+        return mRegistry.get().get<GeometryShaderAsset>(mAssetHandle);
       case ASSET_TYPE::FRAGMENT_SHADER:
-        return m_Registry.get<FragmentShaderAsset>(m_AssetHandle);
+        return mRegistry.get().get<FragmentShaderAsset>(mAssetHandle);
       case ASSET_TYPE::COMPUTE_SHADER:
-        return m_Registry.get<ComputeShaderAsset>(m_AssetHandle);
+        return mRegistry.get().get<ComputeShaderAsset>(mAssetHandle);
       case ASSET_TYPE::HLSL_SHADER:
-        return m_Registry.get<HlslShaderAsset>(m_AssetHandle);
-      default: return m_Registry.get<UnknownAsset>(m_AssetHandle);
+        return mRegistry.get().get<HlslShaderAsset>(mAssetHandle);
+      default: return mRegistry.get().get<UnknownAsset>(mAssetHandle);
     }
   }
 
-  ASSET_TYPE
-  AssetReference::GetType() const
+  auto
+  AssetReference::GetType() const -> ASSET_TYPE
   {
-    return m_Type;
+    return mType;
   }
 }

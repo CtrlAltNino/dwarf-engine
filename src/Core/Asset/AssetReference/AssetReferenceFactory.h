@@ -4,11 +4,11 @@
 #include "Core/Asset/AssetReference/IAssetReferenceFactory.h"
 #include "Core/Asset/AssetTypes.h"
 #include "Core/Asset/Model/IModelImporter.h"
+#include "Core/Asset/Texture/TextureWorker/ITextureLoadingWorker.h"
 #include "Core/Rendering/Material/IO/IMaterialIO.h"
 #include "Core/Rendering/Texture/ITextureFactory.h"
 #include "Logging/IDwarfLogger.h"
 #include "Utilities/FileHandler/IFileHandler.h"
-#include "Core/Asset/Texture/TextureWorker/ITextureLoadingWorker.h"
 #include <memory>
 
 namespace Dwarf
@@ -16,12 +16,12 @@ namespace Dwarf
   class AssetReferenceFactory : public IAssetReferenceFactory
   {
   private:
-    std::shared_ptr<IDwarfLogger>          m_Logger;
-    std::shared_ptr<IModelImporter>        m_ModelImporter;
-    std::shared_ptr<ITextureFactory>       m_TextureFactory;
-    std::shared_ptr<IMaterialIO>           m_MaterialIO;
-    std::shared_ptr<IFileHandler>          m_FileHandler;
-    std::shared_ptr<ITextureLoadingWorker> m_TextureLoadingWorker;
+    std::shared_ptr<IDwarfLogger>          mLogger;
+    std::shared_ptr<IModelImporter>        mModelImporter;
+    std::shared_ptr<ITextureFactory>       mTextureFactory;
+    std::shared_ptr<IMaterialIO>           mMaterialIo;
+    std::shared_ptr<IFileHandler>          mFileHandler;
+    std::shared_ptr<ITextureLoadingWorker> mTextureLoadingWorker;
 
   public:
     AssetReferenceFactory(
@@ -33,16 +33,15 @@ namespace Dwarf
       std::shared_ptr<ITextureLoadingWorker> textureLoadingWorker);
     ~AssetReferenceFactory() override;
 
-    std::unique_ptr<IAssetReference>
-    Create(entt::entity    assetHandle,
-           entt::registry& registry,
-           ASSET_TYPE      type) override;
+    auto
+    Create(entt::entity assetHandle, entt::registry& registry, ASSET_TYPE type)
+      -> std::unique_ptr<IAssetReference> override;
 
-    std::unique_ptr<IAssetReference>
+    auto
     CreateNew(entt::entity          assetHandle,
               entt::registry&       registry,
               const UUID&           uid,
               std::filesystem::path path,
-              std::string           name) override;
+              std::string name) -> std::unique_ptr<IAssetReference> override;
   };
 }
