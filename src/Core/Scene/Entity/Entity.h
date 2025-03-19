@@ -2,11 +2,11 @@
 #include "Utilities/ISerializable.h"
 #include "pch.h"
 
-#include <entt/entt.hpp>
 #include "Core/Base.h"
-#include "Core/UUID.h"
 #include "Core/GenericComponents.h"
 #include "Core/Scene/Components/SceneComponents.h"
+#include "Core/UUID.h"
+#include <entt/entt.hpp>
 
 namespace Dwarf
 {
@@ -81,7 +81,7 @@ namespace Dwarf
     const UUID&
     GetUID() const
     {
-      return m_Registry.get<IDComponent>(m_EntityHandle).GetID();
+      return m_Registry.get<IDComponent>(m_EntityHandle).getId();
     }
 
     operator bool() const { return (std::uint32_t)m_EntityHandle != 0; }
@@ -223,7 +223,7 @@ namespace Dwarf
     {
       nlohmann::json serializedEntity;
 
-      serializedEntity["guid"] = GetComponent<IDComponent>().GetID().ToString();
+      serializedEntity["guid"] = GetComponent<IDComponent>().getId().toString();
       serializedEntity["name"] = GetComponent<NameComponent>().Name;
 
       serializedEntity["TransformComponent"] =

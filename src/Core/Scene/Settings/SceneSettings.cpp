@@ -24,7 +24,7 @@ namespace Dwarf
     serializedSettings["GlobalLightSettings"] =
       m_GlobalLightSettings.Serialize();
     serializedSettings["SkyboxMaterial"] =
-      m_SkyboxMaterial.has_value() ? m_SkyboxMaterial->ToString() : "";
+      m_SkyboxMaterial.has_value() ? m_SkyboxMaterial->toString() : "";
     return serializedSettings;
   }
 

@@ -1,29 +1,24 @@
 #pragma once
 
-#include "Core/Base.h"
 #include "Core/UUID.h"
 #include <filesystem>
+#include <utility>
 
 namespace Dwarf
 {
   struct PathComponent
   {
   private:
-    /// @brief Path to the asset.
     std::filesystem::path Path;
 
   public:
-    PathComponent() = default;
-    PathComponent(const PathComponent&) = default;
-    explicit PathComponent(const std::filesystem::path& path)
-      : Path(path)
+    PathComponent(std::filesystem::path path)
+      : Path(std::move(path))
     {
     }
 
-    /// @brief Retrieves the path to the asset.
-    /// @return The path.
-    const std::filesystem::path&
-    GetPath() const
+    [[nodiscard]] auto
+    getPath() const -> const std::filesystem::path&
     {
       return Path;
     }
@@ -37,17 +32,15 @@ namespace Dwarf
     UUID ID;
 
   public:
-    IDComponent() = default;
-    IDComponent(const IDComponent&) = default;
-    explicit IDComponent(const UUID& other)
-      : ID(other)
+    explicit IDComponent(UUID identifier)
+      : ID(std::move(identifier))
     {
     }
 
     /// @brief Retrieves the UID of the entity.
     /// @return The UID.
-    const UUID&
-    GetID() const
+    [[nodiscard]] auto
+    getId() const -> const UUID&
     {
       return ID;
     }
@@ -59,10 +52,8 @@ namespace Dwarf
     /// @brief The entitie's name.
     std::string Name;
 
-    NameComponent() = default;
-    NameComponent(const NameComponent&) = default;
-    explicit NameComponent(const std::string& name)
-      : Name(name)
+    explicit NameComponent(std::string name)
+      : Name(std::move(name))
     {
     }
   };

@@ -23,7 +23,7 @@ namespace Dwarf
     {
       availableAssets.push_back(entity);
       // Check if assetRef is set, and if so, set selectedAsset
-      if (assetRef && (view.template get<IDComponent>(entity).GetID() ==
+      if (assetRef && (view.template get<IDComponent>(entity).getId() ==
                        assetRef.value()->GetUID()))
       {
         selectedAsset = count;
@@ -48,7 +48,7 @@ namespace Dwarf
         {
           selectedAsset = i;
           assetRef = assetDatabase->Retrieve(
-            view.template get<IDComponent>(availableAssets[i]).GetID());
+            view.template get<IDComponent>(availableAssets[i]).getId());
         }
       }
 
@@ -75,7 +75,7 @@ namespace Dwarf
     {
       availableAssets.push_back(entity);
       // Check if assetRef is set, and if so, set selectedAsset
-      if (assetRef && (view.template get<IDComponent>(entity).GetID() ==
+      if (assetRef && (view.template get<IDComponent>(entity).getId() ==
                        assetRef.value()->GetUID()))
       {
         selectedAsset = count;
@@ -100,7 +100,7 @@ namespace Dwarf
         {
           selectedAsset = i;
           assetRef = assetDatabase->Retrieve(
-            view.template get<IDComponent>(availableAssets[i]).GetID());
+            view.template get<IDComponent>(availableAssets[i]).getId());
         }
       }
 

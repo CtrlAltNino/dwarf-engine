@@ -1,10 +1,11 @@
 #pragma once
-#include "pch.h"
+#include "Core/UUID.h"
 #include "Utilities/ISerializable.h"
+#include "pch.h"
 #include <boost/serialization/strong_typedef.hpp>
 #include <imgui.h>
 #include <imgui_internal.h>
-#include "Core/UUID.h"
+
 
 namespace Dwarf
 {
@@ -78,7 +79,7 @@ namespace Dwarf
     std::string
     GetIdentifier() const
     {
-      return std::format("{}##{}", m_Label, m_Id->ToString());
+      return std::format("{}##{}", m_Label, m_Id->toString());
     }
 
     /// @brief Generates a ImGui ID for the module.

@@ -1,11 +1,12 @@
 #pragma once
 
+#include "Core/Base.h"
+#include "Core/UUID.h"
 #include "Editor/Modules/IGuiModule.h"
 #include "Utilities/ISerializable.h"
 #include "pch.h"
-#include "Core/Base.h"
-#include "Core/UUID.h"
 #include <nlohmann/json_fwd.hpp>
+
 
 #define GRAPHICS_API_KEY "graphicsApi"
 #define LAST_OPENED_SCENE_KEY "lastOpenedScene"
@@ -38,7 +39,7 @@ namespace Dwarf
       projectSettings[PROJECT_NAME_KEY] = ProjectName;
       projectSettings[GRAPHICS_API_KEY] = GraphicsApi;
       projectSettings[LAST_OPENED_SCENE_KEY] =
-        LastOpenedScene.has_value() ? LastOpenedScene->ToString() : "";
+        LastOpenedScene.has_value() ? LastOpenedScene->toString() : "";
       projectSettings[VIEW_KEY] = SerializedView;
 
       return projectSettings;

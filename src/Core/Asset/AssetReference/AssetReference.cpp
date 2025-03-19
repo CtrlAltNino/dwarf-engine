@@ -117,13 +117,13 @@ namespace Dwarf
   const UUID&
   AssetReference::GetUID() const
   {
-    return m_Registry.get<IDComponent>(m_AssetHandle).GetID();
+    return m_Registry.get<IDComponent>(m_AssetHandle).getId();
   }
 
   const std::filesystem::path&
   AssetReference::GetPath() const
   {
-    return m_Registry.get<PathComponent>(m_AssetHandle).GetPath();
+    return m_Registry.get<PathComponent>(m_AssetHandle).getPath();
   }
 
   /// @brief Retrieves the asset component of the asset, containing the actual
@@ -138,7 +138,7 @@ namespace Dwarf
         {
           TextureAsset& asset = m_Registry.get<TextureAsset>(m_AssetHandle);
           std::filesystem::path path =
-            m_Registry.get<PathComponent>(m_AssetHandle).GetPath();
+            m_Registry.get<PathComponent>(m_AssetHandle).getPath();
 
           if (!asset.IsLoaded() && !m_TextureLoadingWorker->IsRequested(path))
           {

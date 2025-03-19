@@ -6,8 +6,8 @@
 #include "Core/Asset/Database/AssetComponents.h"
 #include "Core/GenericComponents.h"
 #include <cstddef>
-#include <imgui.h>
 #include <entt/entt.hpp>
+#include <imgui.h>
 
 #define COL_BLACK IM_COL32(0, 0, 0, 0)
 #define COL_DIM2 IM_COL32(59, 66, 82, 255)
@@ -69,7 +69,7 @@ namespace Dwarf
       for (auto entity : view)
       {
         availableAssets.push_back(entity);
-        if (assetRef && (view.template get<IDComponent>(entity).GetID() ==
+        if (assetRef && (view.template get<IDComponent>(entity).getId() ==
                          assetRef->GetUID()))
         {
           selectedAsset = count;
@@ -104,7 +104,7 @@ namespace Dwarf
           {
             selectedAsset = i;
             assetRef = assetDatabase->Retrieve(
-              view.template get<IDComponent>(availableAssets[i]).GetID());
+              view.template get<IDComponent>(availableAssets[i]).getId());
           }
         }
 
@@ -128,7 +128,7 @@ namespace Dwarf
       {
         availableAssets.push_back(entity);
         if (assetRef.has_value() && assetRef.value() != nullptr &&
-            (view.template get<IDComponent>(entity).GetID() ==
+            (view.template get<IDComponent>(entity).getId() ==
              assetRef.value()->GetUID()))
         {
           selectedAsset = count;
@@ -163,7 +163,7 @@ namespace Dwarf
           {
             selectedAsset = i;
             assetRef = assetDatabase->Retrieve(
-              view.template get<IDComponent>(availableAssets[i]).GetID());
+              view.template get<IDComponent>(availableAssets[i]).getId());
           }
         }
 
@@ -187,7 +187,7 @@ namespace Dwarf
       {
         availableAssets.push_back(entity);
         if (assetRef.has_value() &&
-            (view.template get<IDComponent>(entity).GetID() ==
+            (view.template get<IDComponent>(entity).getId() ==
              assetRef.value()))
         {
           selectedAsset = count;
@@ -222,7 +222,7 @@ namespace Dwarf
           {
             selectedAsset = i;
             assetRef =
-              view.template get<IDComponent>(availableAssets[i]).GetID();
+              view.template get<IDComponent>(availableAssets[i]).getId();
           }
         }
 

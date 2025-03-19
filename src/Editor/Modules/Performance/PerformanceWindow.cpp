@@ -1,9 +1,10 @@
 #include "Editor/Modules/Performance/PerformanceWindow.h"
 #include "Core/Rendering/RendererApi/IRendererApi.h"
 #include <algorithm>
-#include <fmt/format.h>
 #include <cmath>
+#include <fmt/format.h>
 #include <glm/fwd.hpp>
+
 
 namespace Dwarf
 {
@@ -173,7 +174,7 @@ namespace Dwarf
   {
     nlohmann::json serializedModule;
 
-    serializedModule["id"] = GetUuid()->ToString();
+    serializedModule["id"] = GetUuid()->toString();
     serializedModule["type"] = static_cast<int>(GetModuleType());
     serializedModule["label"] = GetModuleName();
 

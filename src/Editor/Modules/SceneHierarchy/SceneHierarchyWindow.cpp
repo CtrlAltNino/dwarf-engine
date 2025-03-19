@@ -2,10 +2,10 @@
 #include "Core/Scene/Entity/Entity.h"
 #include "pch.h"
 
-#include "Editor/Modules/SceneHierarchy/SceneHierarchyWindow.h"
-#include "Editor/Modules/SceneHierarchy/NewParentInstruction.h"
 #include "Editor/Modules/SceneHierarchy/ChildIndexInstruction.h"
 #include "Editor/Modules/SceneHierarchy/DeleteEntityInstruction.h"
+#include "Editor/Modules/SceneHierarchy/NewParentInstruction.h"
+#include "Editor/Modules/SceneHierarchy/SceneHierarchyWindow.h"
 
 namespace Dwarf
 {
@@ -555,7 +555,7 @@ namespace Dwarf
   {
     nlohmann::json serializedModule;
 
-    serializedModule["id"] = GetUuid()->ToString();
+    serializedModule["id"] = GetUuid()->toString();
     serializedModule["type"] = static_cast<int>(GetModuleType());
     serializedModule["label"] = GetModuleName();
 

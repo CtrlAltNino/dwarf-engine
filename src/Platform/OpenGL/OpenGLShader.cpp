@@ -1,5 +1,4 @@
 #include "OpenGLShader.h"
-#include "OpenGLUtilities.h"
 #include "Core/Asset/AssetReference/IAssetReference.h"
 #include "Core/Asset/AssetTypes.h"
 #include "Core/Asset/Database/AssetComponents.h"
@@ -7,10 +6,12 @@
 #include "Core/Rendering/Shader/ShaderParameterCollection/IShaderParameterCollection.h"
 #include "Core/Rendering/Shader/ShaderParameterCollection/IShaderParameterCollectionFactory.h"
 #include "Core/Rendering/Shader/ShaderTypes.h"
+#include "OpenGLUtilities.h"
 #include "Platform/OpenGL/OpenGLUtilities.h"
+#include <fmt/format.h>
 #include <memory>
 #include <variant>
-#include <fmt/format.h>
+
 
 #define GL_SHADER_LOG_LENGTH (1024)
 
@@ -584,27 +585,27 @@ namespace Dwarf
     nlohmann::json serializedShader;
     serializedShader["VertexShader"] =
       m_VertexShaderAsset.has_value()
-        ? m_VertexShaderAsset.value()->GetUID().ToString()
+        ? m_VertexShaderAsset.value()->GetUID().toString()
         : "";
 
     serializedShader["FragmentShader"] =
       m_FragmentShaderAsset.has_value()
-        ? m_FragmentShaderAsset.value()->GetUID().ToString()
+        ? m_FragmentShaderAsset.value()->GetUID().toString()
         : "";
 
     serializedShader["GeometryShader"] =
       m_GeometryShaderAsset.has_value()
-        ? m_GeometryShaderAsset.value()->GetUID().ToString()
+        ? m_GeometryShaderAsset.value()->GetUID().toString()
         : "";
 
     serializedShader["TessellationControlShader"] =
       m_TessellationControlShaderAsset.has_value()
-        ? m_TessellationControlShaderAsset.value()->GetUID().ToString()
+        ? m_TessellationControlShaderAsset.value()->GetUID().toString()
         : "";
 
     serializedShader["TessellationEvaluationShader"] =
       m_TessellationEvaluationShaderAsset.has_value()
-        ? m_TessellationEvaluationShaderAsset.value()->GetUID().ToString()
+        ? m_TessellationEvaluationShaderAsset.value()->GetUID().toString()
         : "";
 
     return serializedShader;

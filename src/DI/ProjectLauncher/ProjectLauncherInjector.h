@@ -1,14 +1,14 @@
 #pragma once
 
-#include <boost/di.hpp>
 #include "Launcher/ProjectLauncher.h"
+#include <boost/di.hpp>
 
 namespace Dwarf
 {
   class ProjectLauncherInjector
   {
   public:
-    static boost::di::injector<std::shared_ptr<ProjectLauncher>>
-    CreateInjector();
+    static auto
+    createInjector() -> boost::di::injector<std::shared_ptr<ProjectLauncher>>;
   };
 }

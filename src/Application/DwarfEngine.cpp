@@ -1,11 +1,11 @@
 #include "pch.h"
 
 #include "Application/DwarfEngine.h"
-#include <boost/di.hpp>
-#include "Launcher/ProjectLauncher.h"
-#include "Editor/Editor.h"
-#include "DI/ProjectLauncher/ProjectLauncherInjector.h"
 #include "DI/Editor/EditorInjector.h"
+#include "DI/ProjectLauncher/ProjectLauncherInjector.h"
+#include "Editor/Editor.h"
+#include "Launcher/ProjectLauncher.h"
+#include <boost/di.hpp>
 
 namespace Dwarf
 {
@@ -15,18 +15,18 @@ namespace Dwarf
   }
 
   void
-  DwarfEngine::Run()
+  DwarfEngine::run()
   {
     bool                        returnToLauncher = true;
     std::optional<SavedProject> selectedProject = std::nullopt;
 
     while (returnToLauncher)
     {
-      selectedProject = RunLauncher();
+      selectedProject = runLauncher();
 
       if (selectedProject)
       {
-        returnToLauncher = RunEditor(selectedProject.value());
+        returnToLauncher = runEditor(selectedProject.value());
         m_Logger->LogInfo(Log("Editor finished running.", "DwarfEngine"));
 
         if (returnToLauncher)
@@ -47,13 +47,13 @@ namespace Dwarf
     }
   }
 
-  std::optional<SavedProject>
-  DwarfEngine::RunLauncher()
+  auto
+  DwarfEngine::runLauncher() -> std::optional<SavedProject>
   {
     std::optional<SavedProject> selectedProject = std::nullopt;
 
     m_Logger->LogDebug(Log("Creating injector...", "DwarfEngine"));
-    auto launcherInjector = ProjectLauncherInjector::CreateInjector();
+    auto launcherInjector = ProjectLauncherInjector::createInjector();
 
     m_Logger->LogDebug(Log("Creating project launcher...", "DwarfEngine"));
     auto launcher = launcherInjector.create<std::shared_ptr<ProjectLauncher>>();
@@ -66,22 +66,22 @@ namespace Dwarf
     return selectedProject;
   }
 
-  bool
-  DwarfEngine::RunEditor(SavedProject selectedProject)
+  auto
+  DwarfEngine::runEditor(const SavedProject& savedProject) -> bool
   {
-    m_Logger->LogDebug(Log(
-      "Opening project at: " + selectedProject.Path.string(), "DwarfEngine"));
+    m_Logger->LogDebug(
+      Log("Opening project at: " + savedProject.Path.string(), "DwarfEngine"));
     m_Logger->LogDebug(Log("Creating editor...", "DwarfEngine"));
 
-    auto editorInjector = EditorInjector::CreateInjector(selectedProject);
+    auto editorInjector = EditorInjector::createInjector(savedProject);
 
     auto editor = editorInjector.create<std::shared_ptr<Dwarf::Editor>>();
     bool returnToLauncher = editor->Run();
 
     m_Logger->LogDebug(Log("Editor finished running.", "DwarfEngine"));
-    m_Logger->LogDebug(
-      Log("Return to launcher: " + std::to_string(returnToLauncher),
-          "DwarfEngine"));
+    m_Logger->LogDebug(Log("Return to launcher: " +
+                             std::to_string(static_cast<int>(returnToLauncher)),
+                           "DwarfEngine"));
 
     return returnToLauncher;
   }

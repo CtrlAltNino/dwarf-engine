@@ -5,11 +5,12 @@
 #include "Utilities/ISerializable.h"
 #include "pch.h"
 
+#include "Core/UUID.h"
 #include <entt/entt.hpp>
 #include <memory>
 #include <nlohmann/json_fwd.hpp>
 #include <string>
-#include "Core/UUID.h"
+
 
 namespace Dwarf
 {
@@ -378,7 +379,7 @@ namespace Dwarf
       if (modelAsset)
       {
         serializedMeshRendererComponent["Model"] =
-          modelAsset->GetUID().ToString();
+          modelAsset->GetUID().toString();
       }
       else
       {
@@ -390,7 +391,7 @@ namespace Dwarf
       for (const auto& [index, material] : materialAssets)
       {
         serializedMeshRendererComponent["Materials"][std::to_string(index)] =
-          material ? material->GetUID().ToString() : "null";
+          material ? material->GetUID().toString() : "null";
       }
 
       serializedMeshRendererComponent["Hidden"] = isHidden;

@@ -1,9 +1,11 @@
-#include "pch.h"
 #include "Editor/Modules/AssetBrowser/AssetBrowserWindow.h"
+#include "pch.h"
+
 // #include "Core/Scene/SceneUtilities.h"
+#include <boost/algorithm/string.hpp>
 #include <cstring>
 #include <memory>
-#include <boost/algorithm/string.hpp>
+
 
 namespace Dwarf
 {
@@ -699,7 +701,7 @@ namespace Dwarf
     nlohmann::json serializedModule;
 
     serializedModule["openedPath"] = m_CurrentDirectory;
-    serializedModule["id"] = GetUuid()->ToString();
+    serializedModule["id"] = GetUuid()->toString();
     serializedModule["type"] = static_cast<int>(GetModuleType());
     serializedModule["label"] = GetModuleName();
 
