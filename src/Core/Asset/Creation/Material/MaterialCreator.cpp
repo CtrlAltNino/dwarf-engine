@@ -10,10 +10,10 @@ namespace Dwarf
     std::shared_ptr<IMaterialFactory> materialFactory,
     std::shared_ptr<IMaterialIO>      materialIO,
     std::shared_ptr<IFileHandler>     fileHandler)
-    : m_AssetDirectoryPath(assetDirectoryPath)
-    , m_MaterialFactory(std::move(materialFactory))
-    , m_MaterialIO(std::move(materialIO))
-    , m_FileHandler(std::move(fileHandler))
+    : mAssetDirectoryPath(assetDirectoryPath)
+    , mMaterialFactory(std::move(materialFactory))
+    , mMaterialIo(std::move(materialIO))
+    , mFileHandler(std::move(fileHandler))
   {
   }
 
@@ -22,15 +22,14 @@ namespace Dwarf
     std::optional<std::filesystem::path> directoryPath)
   {
     std::unique_ptr<IMaterial> newMaterial =
-      m_MaterialFactory->CreateDefaultMaterial();
+      mMaterialFactory->CreateDefaultMaterial();
 
-    std::filesystem::path path = directoryPath.has_value()
-                                   ? directoryPath.value()
-                                   : m_AssetDirectoryPath.t;
+    std::filesystem::path path =
+      directoryPath.has_value() ? directoryPath.value() : mAssetDirectoryPath.t;
 
     std::filesystem::path assetPath = path / "New Material.dmat";
 
-    while (m_FileHandler->FileExists(assetPath))
+    while (mFileHandler->FileExists(assetPath))
     {
       static int counter = 0;
 
@@ -40,6 +39,6 @@ namespace Dwarf
       counter++;
     }
 
-    m_MaterialIO->SaveMaterial(*newMaterial, assetPath);
+    mMaterialIo->SaveMaterial(*newMaterial, assetPath);
   }
 } // namespace Dwarf

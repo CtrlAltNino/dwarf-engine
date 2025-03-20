@@ -1,15 +1,12 @@
 #pragma once
 
-#include "Core/Asset/AssetTypes.h"
-#include "Core/Asset/Database/AssetComponents.h"
-#include "Core/UUID.h"
-// #include "Core/Asset/Database/AssetReference.h"
 #include "Core/Asset/AssetReference/IAssetReference.h"
+#include "Core/Asset/AssetTypes.h"
+#include "Core/UUID.h"
 #include <boost/algorithm/string/case_conv.hpp>
+#include <boost/serialization/strong_typedef.hpp>
 #include <entt/entity/fwd.hpp>
 #include <filesystem>
-#include <typeindex>
-#include <boost/serialization/strong_typedef.hpp>
 
 namespace Dwarf
 {
@@ -29,22 +26,22 @@ namespace Dwarf
      * @brief Imports an asset into the asset database.
      * @param assetPath Path to the asset.
      */
-    virtual UUID
-    Import(std::filesystem::path const& assetPath) = 0;
+    virtual auto
+    Import(std::filesystem::path const& assetPath) -> UUID = 0;
 
     /**
      * @brief Checks if an asset with a given UID exists in the database.
      * @param uid UID of the asset.
      */
-    virtual bool
-    Exists(const UUID& uid) = 0;
+    virtual auto
+    Exists(const UUID& uid) -> bool = 0;
 
     /**
      * @brief Checks if an asset with a given path exists in the database.
      * @param path Path to the asset.
      */
-    virtual bool
-    Exists(const std::filesystem::path& path) = 0;
+    virtual auto
+    Exists(const std::filesystem::path& assetPath) -> bool = 0;
 
     /**
      * @brief Clears the asset database.
@@ -64,7 +61,7 @@ namespace Dwarf
      * @param path Path to the asset.
      */
     virtual void
-    Remove(const std::filesystem::path& path) = 0;
+    Remove(const std::filesystem::path& assetPath) = 0;
 
     /**
      * @brief Reimports all assets in the asset database.
@@ -83,18 +80,19 @@ namespace Dwarf
      * @brief Retrieves an asset from the asset database.
      * @param uid UID of the asset.
      */
-    virtual std::unique_ptr<IAssetReference>
-    Retrieve(const UUID& uid) = 0;
+    virtual auto
+    Retrieve(const UUID& uid) -> std::unique_ptr<IAssetReference> = 0;
 
     /**
      * @brief Retrieves an asset from the asset database.
      * @param path Path to the asset.
      */
-    virtual std::unique_ptr<IAssetReference>
-    Retrieve(const std::filesystem::path& path) = 0;
+    virtual auto
+    Retrieve(const std::filesystem::path& assetPath)
+      -> std::unique_ptr<IAssetReference> = 0;
 
-    virtual entt::registry&
-    GetRegistry() = 0;
+    virtual auto
+    GetRegistry() -> entt::registry& = 0;
 
     /**
      * @brief Renames an asset in the asset database.
@@ -102,8 +100,8 @@ namespace Dwarf
      * @param to New path to the asset.
      */
     virtual void
-    Rename(const std::filesystem::path& from,
-           const std::filesystem::path& to) = 0;
+    Rename(const std::filesystem::path& fromPath,
+           const std::filesystem::path& toPath) = 0;
 
     /**
      * @brief Renames a directory in the asset database.
@@ -111,26 +109,25 @@ namespace Dwarf
      * @param to New path to the directory.
      */
     virtual void
-    RenameDirectory(const std::filesystem::path& from,
-                    const std::filesystem::path& to) = 0;
+    RenameDirectory(const std::filesystem::path& fromPath,
+                    const std::filesystem::path& toPath) = 0;
 
-    static ASSET_TYPE
-    GetAssetType(const std::string& extension)
+    static auto
+    GetAssetType(const std::string& extension) -> ASSET_TYPE
     {
-      auto it =
+      auto extensionIterator =
         extensionToAssetType.find(boost::algorithm::to_lower_copy(extension));
-      if (it != extensionToAssetType.end())
+
+      if (extensionIterator != extensionToAssetType.end())
       {
-        return it->second;
+        return extensionIterator->second;
       }
-      else
-      {
-        return ASSET_TYPE::UNKNOWN;
-      }
+
+      return ASSET_TYPE::UNKNOWN;
     }
 
-    virtual std::filesystem::path
-    GetAssetDirectoryPath() = 0;
+    virtual auto
+    GetAssetDirectoryPath() -> std::filesystem::path = 0;
 
   protected:
     static inline const std::unordered_map<std::string, ASSET_TYPE>

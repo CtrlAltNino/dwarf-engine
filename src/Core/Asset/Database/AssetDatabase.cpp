@@ -4,15 +4,15 @@
 #include "Core/Asset/Metadata/IAssetMetadata.h"
 #include "Core/Base.h"
 #include "Core/GenericComponents.h"
-#include "Core/Rendering/Material/IMaterial.h"
 #include "IAssetDatabase.h"
-#include <cerrno>
+#include <algorithm>
 #include <filesystem>
+#include <utility>
 
 namespace Dwarf
 {
   AssetDatabase::AssetDatabase(
-    AssetDirectoryPath                       assetDirectoryPath,
+    const AssetDirectoryPath&                assetDirectoryPath,
     GraphicsApi                              graphicsApi,
     std::shared_ptr<IDwarfLogger>            logger,
     std::shared_ptr<IAssetDirectoryListener> assetDirectoryListener,
@@ -28,18 +28,17 @@ namespace Dwarf
     std::shared_ptr<IWindow>                 window)
     : m_AssetDirectoryPath(assetDirectoryPath)
     , m_GraphicsApi(graphicsApi)
-    , m_Logger(logger)
-    , m_AssetDirectoryListener(assetDirectoryListener)
-    , m_AssetMetadata(assetMetadata)
-    , m_ModelImporter(modelImporter)
-    , m_ShaderRecompiler(shaderRecompiler)
-    , m_TextureFactory(textureFactory)
-    , m_MaterialFactory(materialFactory)
-    , m_MaterialIO(materialIO)
-    , m_AssetReimporter(assetReimporter)
-    , m_AssetReferenceFactory(assetReferenceFactory)
-    , m_FileHandler(fileHandler)
-    , m_Registry(entt::registry())
+    , m_Logger(std::move(logger))
+    , m_AssetDirectoryListener(std::move(assetDirectoryListener))
+    , m_AssetMetadata(std::move(assetMetadata))
+    , m_ModelImporter(std::move(modelImporter))
+    , m_ShaderRecompiler(std::move(shaderRecompiler))
+    , m_TextureFactory(std::move(textureFactory))
+    , m_MaterialFactory(std::move(materialFactory))
+    , m_MaterialIO(std::move(materialIO))
+    , m_AssetReimporter(std::move(assetReimporter))
+    , m_AssetReferenceFactory(std::move(assetReferenceFactory))
+    , m_FileHandler(std::move(fileHandler))
   {
     if (!m_FileHandler->DirectoryExists(m_AssetDirectoryPath.t))
     {
@@ -83,7 +82,8 @@ namespace Dwarf
     std::vector<std::filesystem::path>& otherPaths)
   {
 
-    for (auto& directoryEntry : std::filesystem::directory_iterator(directory))
+    for (const auto& directoryEntry :
+         std::filesystem::directory_iterator(directory))
     {
       if (directoryEntry.is_directory())
       {
@@ -257,8 +257,8 @@ namespace Dwarf
     m_Registry.clear();
   }
 
-  UUID
-  AssetDatabase::Import(const std::filesystem::path& assetPath)
+  auto
+  AssetDatabase::Import(const std::filesystem::path& assetPath) -> UUID
   {
     std::string           fileName = assetPath.filename().string();
     std::filesystem::path metaDataPath =
@@ -270,17 +270,17 @@ namespace Dwarf
       AssetDatabase::Remove(assetPath);
     }
 
-    auto id = UUID();
+    auto newId = UUID();
     if (m_FileHandler->FileExists(metaDataPath))
     {
       nlohmann::json metaData = m_AssetMetadata->GetMetadata(assetPath);
       std::string    guid = metaData["guid"].get<std::string>();
-      id = UUID(guid);
+      newId = UUID(guid);
     }
     else
     {
       nlohmann::json metaData;
-      metaData["guid"] = id.toString();
+      metaData["guid"] = newId.toString();
       m_AssetMetadata->SetMetadata(assetPath, metaData);
     }
 
@@ -288,48 +288,40 @@ namespace Dwarf
       Log("Importing asset: " + assetPath.string(), "AssetDatabase"));
 
     return m_AssetReferenceFactory
-      ->CreateNew(m_Registry.create(), m_Registry, id, assetPath, fileName)
+      ->CreateNew(m_Registry.create(), m_Registry, newId, assetPath, fileName)
       ->GetUID();
   }
 
-  bool
-  AssetDatabase::Exists(const UUID& uid)
+  auto
+  AssetDatabase::Exists(const UUID& uid) -> bool
   {
     // Retrieve entt::entity with UID component
     auto view = m_Registry.view<IDComponent>();
-    for (auto entity : view)
-    {
-      if (view.get<IDComponent>(entity).getId() == uid)
-      {
-        return true;
-      }
-    }
-    return false;
+    return std::ranges::any_of(
+      view,
+      [view, uid](auto entity)
+      { return view.get<IDComponent>(entity).getId() == uid; });
   }
 
-  bool
-  AssetDatabase::Exists(const std::filesystem::path& path)
+  auto
+  AssetDatabase::Exists(const std::filesystem::path& path) -> bool
   {
     // Retrieve entt::entity with UID component
     auto view = m_Registry.view<PathComponent>();
-    for (auto entity : view)
-    {
-      if (view.get<PathComponent>(entity).getPath() == path)
-      {
-        return true;
-      }
-    }
-    return false;
+    return std::ranges::any_of(
+      view,
+      [view, path](auto entity)
+      { return view.get<PathComponent>(entity).getPath() == path; });
   }
 
-  std::filesystem::path
-  AssetDatabase::GetAssetDirectoryPath()
+  auto
+  AssetDatabase::GetAssetDirectoryPath() -> std::filesystem::path
   {
     return m_AssetDirectoryPath.t;
   }
 
-  std::unique_ptr<IAssetReference>
-  AssetDatabase::Retrieve(const UUID& uid)
+  auto
+  AssetDatabase::Retrieve(const UUID& uid) -> std::unique_ptr<IAssetReference>
   {
     auto view = m_Registry.view<IDComponent, PathComponent>();
     for (auto entity : view)
@@ -346,8 +338,9 @@ namespace Dwarf
     return nullptr;
   }
 
-  std::unique_ptr<IAssetReference>
+  auto
   AssetDatabase::Retrieve(const std::filesystem::path& path)
+    -> std::unique_ptr<IAssetReference>
   {
     auto view = m_Registry.view<PathComponent>();
     for (auto entity : view)
@@ -364,20 +357,20 @@ namespace Dwarf
   }
 
   void
-  AssetDatabase::Rename(const std::filesystem::path& from,
-                        const std::filesystem::path& to)
+  AssetDatabase::Rename(const std::filesystem::path& fromPath,
+                        const std::filesystem::path& toPath)
   {
-    m_AssetMetadata->Rename(from, to);
+    m_AssetMetadata->Rename(fromPath, toPath);
     auto view = m_Registry.view<PathComponent, NameComponent>();
     // auto matView = m_Registry->view<MaterialAsset>();
     for (auto entity : view)
     {
-      if (view.get<PathComponent>(entity).getPath() == from)
+      if (view.get<PathComponent>(entity).getPath() == fromPath)
       {
         m_Registry.remove<PathComponent>(entity);
         m_Registry.remove<NameComponent>(entity);
-        m_Registry.emplace<PathComponent>(entity, to);
-        m_Registry.emplace<NameComponent>(entity, to.stem().string());
+        m_Registry.emplace<PathComponent>(entity, toPath);
+        m_Registry.emplace<NameComponent>(entity, toPath.stem().string());
 
         // if (matView.contains(entity))
         // {
@@ -391,18 +384,18 @@ namespace Dwarf
   }
 
   void
-  AssetDatabase::RenameDirectory(const std::filesystem::path& from,
-                                 const std::filesystem::path& to)
+  AssetDatabase::RenameDirectory(const std::filesystem::path& fromPath,
+                                 const std::filesystem::path& toPath)
   {
     auto view = m_Registry.view<PathComponent>();
     for (auto entity : view)
     {
       if (view.get<PathComponent>(entity).getPath().string().find(
-            from.string()) != std::string::npos)
+            fromPath.string()) != std::string::npos)
       {
-        std::filesystem::path newPath = to;
+        std::filesystem::path newPath = toPath;
         newPath.concat(view.get<PathComponent>(entity).getPath().string().erase(
-          0, from.string().length()));
+          0, fromPath.string().length()));
         m_Registry.remove<PathComponent>(entity);
         m_Registry.emplace<PathComponent>(entity, newPath);
       }
@@ -415,11 +408,10 @@ namespace Dwarf
   {
     std::filesystem::path path =
       std::filesystem::path(dir) / std::filesystem::path(filename);
-    if (!m_AssetMetadata->IsMetadataPath(path) &&
+    if (!IAssetMetadata::IsMetadataPath(path) &&
         std::filesystem::is_regular_file(path))
     {
       m_AssetReimporter->QueueReimport(path);
-      // Import(path);
     }
   }
 
@@ -427,9 +419,9 @@ namespace Dwarf
   AssetDatabase::DeleteAssetCallback(const std::string& dir,
                                      const std::string& filename)
   {
-    std::filesystem::path path =
-      std::filesystem::path(dir) / std::filesystem::path(filename);
-    // TODO: Mark asset as deleted/missing
+    // std::filesystem::path path =
+    //   std::filesystem::path(dir) / std::filesystem::path(filename);
+    //  TODO: Mark asset as deleted/missing
   }
 
   void
@@ -438,7 +430,7 @@ namespace Dwarf
   {
     std::filesystem::path path =
       std::filesystem::path(dir) / std::filesystem::path(filename);
-    if (!m_AssetMetadata->IsMetadataPath(path) &&
+    if (!IAssetMetadata::IsMetadataPath(path) &&
         std::filesystem::is_regular_file(path))
     {
       m_AssetReimporter->QueueReimport(path);
@@ -529,8 +521,8 @@ namespace Dwarf
     }
   }
 
-  entt::registry&
-  AssetDatabase::GetRegistry()
+  auto
+  AssetDatabase::GetRegistry() -> entt::registry&
   {
     return m_Registry;
   }
@@ -563,7 +555,7 @@ namespace Dwarf
     std::filesystem::path defaultShaderDir =
       shaderDir / "default" / graphicsApiDir;
 
-    for (auto& directoryEntry :
+    for (const auto& directoryEntry :
          std::filesystem::directory_iterator(defaultShaderDir.make_preferred()))
     {
       if (directoryEntry.is_regular_file() &&
@@ -575,7 +567,7 @@ namespace Dwarf
 
     std::filesystem::path errorShaderDir = shaderDir / "error" / graphicsApiDir;
 
-    for (auto& directoryEntry :
+    for (const auto& directoryEntry :
          std::filesystem::directory_iterator(errorShaderDir))
     {
       if (directoryEntry.is_regular_file() &&
@@ -587,7 +579,7 @@ namespace Dwarf
 
     std::filesystem::path gridShaderDir = shaderDir / "grid" / graphicsApiDir;
 
-    for (auto& directoryEntry :
+    for (const auto& directoryEntry :
          std::filesystem::directory_iterator(gridShaderDir))
     {
       if (directoryEntry.is_regular_file() &&
@@ -599,7 +591,7 @@ namespace Dwarf
 
     std::filesystem::path idShaderDir = shaderDir / "id" / graphicsApiDir;
 
-    for (auto& directoryEntry :
+    for (const auto& directoryEntry :
          std::filesystem::directory_iterator(idShaderDir))
     {
       if (directoryEntry.is_regular_file() &&
@@ -612,7 +604,7 @@ namespace Dwarf
     std::filesystem::path previewShaderDir =
       shaderDir / "preview" / graphicsApiDir;
 
-    for (auto& directoryEntry :
+    for (const auto& directoryEntry :
          std::filesystem::directory_iterator(previewShaderDir))
     {
       if (directoryEntry.is_regular_file() &&
@@ -624,7 +616,7 @@ namespace Dwarf
 
     std::filesystem::path pbrShaderDir = shaderDir / "pbr" / graphicsApiDir;
 
-    for (auto& directoryEntry :
+    for (const auto& directoryEntry :
          std::filesystem::directory_iterator(pbrShaderDir))
     {
       if (directoryEntry.is_regular_file() &&
