@@ -4,6 +4,7 @@
 #include "Core/Asset/Database/IAssetDatabase.h"
 #include "Logging/IDwarfLogger.h"
 #include <boost/di/extension/injections/lazy.hpp>
+#include <mutex>
 
 namespace Dwarf
 {
@@ -11,6 +12,7 @@ namespace Dwarf
   {
   private:
     std::vector<std::filesystem::path>                          mReimportQueue;
+    std::mutex                                                  mReimportMutex;
     std::shared_ptr<IDwarfLogger>                               mLogger;
     boost::di::extension::lazy<std::shared_ptr<IAssetDatabase>> mAssetDatabase;
 
