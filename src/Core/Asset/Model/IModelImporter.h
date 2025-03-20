@@ -11,7 +11,8 @@ namespace Dwarf
     // @brief Imports a model.
     /// @param path Path to the model.
     /// @return List of the imported meshes of a model.
-    virtual std::vector<std::unique_ptr<IMesh>>
-    Import(const std::filesystem::path& path) = 0;
+    virtual auto
+    Import(const std::filesystem::path& path)
+      -> std::vector<std::unique_ptr<IMesh>> = 0;
   };
 }

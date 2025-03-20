@@ -1,13 +1,15 @@
 #include "ModelImporter.h"
 #include <assimp/Importer.hpp>
-#include <assimp/scene.h>
 #include <assimp/postprocess.h>
+#include <assimp/scene.h>
 #include <fmt/format.h>
+#include <span>
+#include <utility>
 
 namespace Dwarf
 {
-  glm::mat4
-  AssimpToGlmMatrix(const aiMatrix4x4& mat)
+  auto
+  AssimpToGlmMatrix(const aiMatrix4x4& mat) -> glm::mat4
   {
     return glm::mat4(mat.a1,
                      mat.b1,
@@ -30,24 +32,25 @@ namespace Dwarf
   ModelImporter::ModelImporter(std::shared_ptr<IDwarfLogger>   logger,
                                std::shared_ptr<IAssetMetadata> assetMetadata,
                                std::shared_ptr<IMeshFactory>   meshFactory)
-    : m_Logger(logger)
-    , m_AssetMetadata(assetMetadata)
-    , m_MeshFactory(meshFactory)
+    : mLogger(std::move(logger))
+    , mAssetMetadata(std::move(assetMetadata))
+    , mMeshFactory(std::move(meshFactory))
   {
-    m_Logger->LogDebug(Log("Creating ModelImporter", "ModelImporter"));
+    mLogger->LogDebug(Log("Creating ModelImporter", "ModelImporter"));
   }
 
   // @brief Imports a model.
   /// @param path Path to the model.
   /// @return List of the imported meshes of a model.
-  std::vector<std::unique_ptr<IMesh>>
+  auto
   ModelImporter::Import(const std::filesystem::path& path)
+    -> std::vector<std::unique_ptr<IMesh>>
   {
-    m_Logger->LogDebug(Log(
-      fmt::format("Importing model from {}", path.string()), "ModelImporter"));
-    nlohmann::json metaData = m_AssetMetadata->GetMetadata(path);
+    mLogger->LogDebug(Log(fmt::format("Importing model from {}", path.string()),
+                          "ModelImporter"));
+    nlohmann::json metaData = mAssetMetadata->GetMetadata(path);
 
-    m_Logger->LogDebug(
+    mLogger->LogDebug(
       Log(fmt::format("Metadata:\n{}", metaData.dump(2)), "ModelImporter"));
 
     Assimp::Importer importer;
@@ -56,24 +59,22 @@ namespace Dwarf
       aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace |
         aiProcess_GenSmoothNormals);
 
-    if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE ||
-        !scene->mRootNode)
+    if ((scene == nullptr) ||
+        ((scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE) != 0U) ||
+        (scene->mRootNode == nullptr))
     {
-      m_Logger->LogError(
+      mLogger->LogError(
         Log(fmt::format("Assimp Error: {}", importer.GetErrorString()),
             "ModelImporter"));
-      return std::vector<std::unique_ptr<IMesh>>();
+      return {};
     }
 
     aiMatrix4x4 modelTransform; // Create a matrix for transformation
 
-    if (scene->mMetaData)
+    if (scene->mMetaData != nullptr)
     {
       aiString upAxis;
       scene->mMetaData->Get("UpAxis", upAxis);
-
-      // std::cout << "Has metadata" << std::endl;
-      // std::cout << "UpAxis: " << upAxis.C_Str() << std::endl;
 
       if (upAxis == aiString("Z"))
       {
@@ -90,16 +91,6 @@ namespace Dwarf
 
     std::vector<std::unique_ptr<IMesh>> meshes;
 
-    // Rotate scene->mRootNode->mTransformation to match the coordinate system
-    // of the engine
-
-    /*aiMatrix4x4 mat;
-    aiMatrix4x4::RotationX(-glm::half_pi<float>(),
-                           mat); // Rotate 90 degrees around the X-axis
-
-    scene->mRootNode->mTransformation = mat *
-    scene->mRootNode->mTransformation;*/
-
     ModelImporter::ProcessNode(
       scene->mRootNode,
       scene,
@@ -115,48 +106,53 @@ namespace Dwarf
                              std::vector<std::unique_ptr<IMesh>>& meshes,
                              glm::mat4 parentTransform)
   {
-    glm::mat4 nodeTransform = AssimpToGlmMatrix(node->mTransformation);
-    glm::mat4 globalTransform = parentTransform * nodeTransform;
+    glm::mat4          nodeTransform = AssimpToGlmMatrix(node->mTransformation);
+    glm::mat4          globalTransform = parentTransform * nodeTransform;
+    std::span<aiMesh*> meshSpan(scene->mMeshes, scene->mNumMeshes);
+    std::span<unsigned int> nodeMeshesSpan(node->mMeshes, node->mNumMeshes);
 
     // process all the node's meshes (if any)
     for (unsigned int i = 0; i < node->mNumMeshes; i++)
     {
-      const aiMesh* mesh = scene->mMeshes[node->mMeshes[i]];
+      const aiMesh* mesh = meshSpan[nodeMeshesSpan[i]];
       // meshes.push_back(ProcessMesh(mesh, scene));
-      ProcessMesh(mesh, scene, meshes, globalTransform);
+      ProcessMesh(mesh, meshes, globalTransform);
     }
+
+    std::span<aiNode*> nodeChildrenSpan(node->mChildren, node->mNumChildren);
     // then do the same for each of its children
     for (unsigned int i = 0; i < node->mNumChildren; i++)
     {
-      // std::vector<std::unique_ptr<IMeshBuffer>> recursedMeshes =
-      ProcessNode(node->mChildren[i], scene, meshes, globalTransform);
-      // join the meshes
-      // TODO: Check if this is the correct way to join the meshes
-      // meshes.insert(meshes.end(),
-      //              std::make_move_iterator(recursedMeshes.begin()),
-      //              std::make_move_iterator(recursedMeshes.end()));
+      ProcessNode(nodeChildrenSpan[i], scene, meshes, globalTransform);
     }
   }
 
   void
   ModelImporter::ProcessMesh(const aiMesh*                        mesh,
-                             const aiScene*                       scene,
                              std::vector<std::unique_ptr<IMesh>>& meshes,
                              glm::mat4                            transform)
   {
     std::vector<Vertex>       vertices;
     std::vector<unsigned int> indices;
     unsigned int              materialIndex = mesh->mMaterialIndex;
+    std::span<aiVector3D> meshVerticesSpan(mesh->mVertices, mesh->mNumVertices);
+    std::span<aiVector3D> meshNormalsSpan(mesh->mNormals, mesh->mNumVertices);
+    std::span<aiVector3D> meshTangentsSpan(mesh->mTangents, mesh->mNumVertices);
+    std::span<aiVector3D> meshBitangentsSpan(mesh->mBitangents,
+                                             mesh->mNumVertices);
+    std::span<aiVector3D* const, AI_MAX_NUMBER_OF_TEXTURECOORDS>
+                      meshTexCoordsSpan(mesh->mTextureCoords);
+    std::span<aiFace> meshFacesSpan(mesh->mFaces, mesh->mNumFaces);
 
-    for (unsigned int i = 0; i < mesh->mNumVertices; i++)
+    for (unsigned int i = 0; i < meshVerticesSpan.size(); i++)
     {
       Vertex vertex;
 
       // Convert the Assimp vertex position to a GLM vector
-      glm::vec4 position = glm::vec4(mesh->mVertices[i].x,
-                                     mesh->mVertices[i].y,
-                                     mesh->mVertices[i].z,
-                                     1.0f // Homogeneous coordinate
+      glm::vec4 position = glm::vec4(meshVerticesSpan[i].x,
+                                     meshVerticesSpan[i].y,
+                                     meshVerticesSpan[i].z,
+                                     1.0F // Homogeneous coordinate
       );
 
       // Apply the transformation
@@ -167,33 +163,33 @@ namespace Dwarf
 
       if (mesh->HasNormals())
       {
-        glm::vec4 normal = glm::vec4(mesh->mNormals[i].x,
-                                     mesh->mNormals[i].y,
-                                     mesh->mNormals[i].z,
-                                     0.0f // W=0 to ignore translation
+        glm::vec4 normal = glm::vec4(meshNormalsSpan[i].x,
+                                     meshNormalsSpan[i].y,
+                                     meshNormalsSpan[i].z,
+                                     0.0F // W=0 to ignore translation
         );
         normal = transform * normal;
 
         vertex.Normal = glm::normalize(glm::vec3(normal));
       }
 
-      if (mesh->mTextureCoords[0])
+      if (mesh->mTextureCoords[0] != nullptr)
       {
         vertex.UV =
-          glm::vec2(mesh->mTextureCoords[0][i].x, mesh->mTextureCoords[0][i].y);
+          glm::vec2(meshTexCoordsSpan[0][i].x, meshTexCoordsSpan[0][i].y);
       }
 
       if (mesh->HasTangentsAndBitangents())
       {
-        glm::vec4 tangent = glm::vec4(mesh->mTangents[i].x,
-                                      mesh->mTangents[i].y,
-                                      mesh->mTangents[i].z,
-                                      0.0f // W=0 to ignore translation
+        glm::vec4 tangent = glm::vec4(meshTangentsSpan[i].x,
+                                      meshTangentsSpan[i].y,
+                                      meshTangentsSpan[i].z,
+                                      0.0F // W=0 to ignore translation
         );
-        glm::vec4 biTangent = glm::vec4(mesh->mBitangents[i].x,
-                                        mesh->mBitangents[i].y,
-                                        mesh->mBitangents[i].z,
-                                        0.0f // W=0 to ignore translation
+        glm::vec4 biTangent = glm::vec4(meshBitangentsSpan[i].x,
+                                        meshBitangentsSpan[i].y,
+                                        meshBitangentsSpan[i].z,
+                                        0.0F // W=0 to ignore translation
         );
 
         tangent = transform * tangent;
@@ -208,12 +204,15 @@ namespace Dwarf
 
     for (unsigned int i = 0; i < mesh->mNumFaces; i++)
     {
-      aiFace face = mesh->mFaces[i];
+      const aiFace&           face = meshFacesSpan[i];
+      std::span<unsigned int> faceIndicesSpan(face.mIndices, face.mNumIndices);
       for (unsigned int j = 0; j < face.mNumIndices; j++)
-        indices.push_back(face.mIndices[j]);
+      {
+        indices.push_back(faceIndicesSpan[j]);
+      }
     }
 
     meshes.push_back(
-      std::move(m_MeshFactory->Create(vertices, indices, materialIndex)));
+      std::move(mMeshFactory->Create(vertices, indices, materialIndex)));
   }
 }

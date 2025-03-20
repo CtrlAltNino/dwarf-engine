@@ -26,43 +26,43 @@ namespace Dwarf
     std::shared_ptr<IAssetReferenceFactory>  assetReferenceFactory,
     std::shared_ptr<IFileHandler>            fileHandler,
     std::shared_ptr<IWindow>                 window)
-    : m_AssetDirectoryPath(assetDirectoryPath)
-    , m_GraphicsApi(graphicsApi)
-    , m_Logger(std::move(logger))
-    , m_AssetDirectoryListener(std::move(assetDirectoryListener))
-    , m_AssetMetadata(std::move(assetMetadata))
-    , m_ModelImporter(std::move(modelImporter))
-    , m_ShaderRecompiler(std::move(shaderRecompiler))
-    , m_TextureFactory(std::move(textureFactory))
-    , m_MaterialFactory(std::move(materialFactory))
-    , m_MaterialIO(std::move(materialIO))
-    , m_AssetReimporter(std::move(assetReimporter))
-    , m_AssetReferenceFactory(std::move(assetReferenceFactory))
-    , m_FileHandler(std::move(fileHandler))
+    : mAssetDirectoryPath(assetDirectoryPath)
+    , mGraphicsApi(graphicsApi)
+    , mLogger(std::move(logger))
+    , mAssetDirectoryListener(std::move(assetDirectoryListener))
+    , mAssetMetadata(std::move(assetMetadata))
+    , mModelImporter(std::move(modelImporter))
+    , mShaderRecompiler(std::move(shaderRecompiler))
+    , mTextureFactory(std::move(textureFactory))
+    , mMaterialFactory(std::move(materialFactory))
+    , mMaterialIO(std::move(materialIO))
+    , mAssetReimporter(std::move(assetReimporter))
+    , mAssetReferenceFactory(std::move(assetReferenceFactory))
+    , mFileHandler(std::move(fileHandler))
   {
-    if (!m_FileHandler->DirectoryExists(m_AssetDirectoryPath.t))
+    if (!mFileHandler->DirectoryExists(mAssetDirectoryPath.t))
     {
-      m_FileHandler->CreateDirectoryAt(m_AssetDirectoryPath.t);
+      mFileHandler->CreateDirectoryAt(mAssetDirectoryPath.t);
     }
 
     ImportDefaultAssets();
 
-    m_AssetDirectoryListener->registerAddFileCallback(
+    mAssetDirectoryListener->registerAddFileCallback(
       std::bind(&AssetDatabase::AddAssetCallback,
                 this,
                 std::placeholders::_1,
                 std::placeholders::_2));
-    m_AssetDirectoryListener->registerDeleteFileCallback(
+    mAssetDirectoryListener->registerDeleteFileCallback(
       std::bind(&AssetDatabase::DeleteAssetCallback,
                 this,
                 std::placeholders::_1,
                 std::placeholders::_2));
-    m_AssetDirectoryListener->registerModifyFileCallback(
+    mAssetDirectoryListener->registerModifyFileCallback(
       std::bind(&AssetDatabase::ModifyAssetCallback,
                 this,
                 std::placeholders::_1,
                 std::placeholders::_2));
-    m_AssetDirectoryListener->registerMoveFileCallback(
+    mAssetDirectoryListener->registerMoveFileCallback(
       std::bind(&AssetDatabase::MoveAssetCallback,
                 this,
                 std::placeholders::_1,
@@ -119,9 +119,9 @@ namespace Dwarf
     std::vector<std::filesystem::path> otherPaths = {};
 
     // Reimporting all assets from the asset directory
-    // RecursiveImport(m_AssetDirectoryPath.t);
+    // RecursiveImport(mAssetDirectoryPath.t);
 
-    GatherAssetPaths(m_AssetDirectoryPath, materialPaths, otherPaths);
+    GatherAssetPaths(mAssetDirectoryPath, materialPaths, otherPaths);
 
     for (auto& path : otherPaths)
     {
@@ -145,80 +145,79 @@ namespace Dwarf
       {
         case ASSET_TYPE::MODEL:
           {
-            m_Registry.emplace_or_replace<ModelAsset>(
-              asset->GetHandle(), m_ModelImporter->Import(assetPath));
+            mRegistry.emplace_or_replace<ModelAsset>(
+              asset->GetHandle(), mModelImporter->Import(assetPath));
             break;
           }
         case ASSET_TYPE::TEXTURE:
           {
-            // m_Registry.replace<TextureAsset>(
+            // mRegistry.replace<TextureAsset>(
             //   asset->GetHandle(),
-            //   m_TextureFactory->FromPath(assetPath),
-            //   m_TextureFactory->GetPlaceholderTexture());
+            //   mTextureFactory->FromPath(assetPath),
+            //   mTextureFactory->GetPlaceholderTexture());
 
-            m_Registry.get<TextureAsset>(asset->GetHandle())
-              .SetTexture(nullptr);
+            mRegistry.get<TextureAsset>(asset->GetHandle()).SetTexture(nullptr);
             break;
           }
         case ASSET_TYPE::MATERIAL:
           {
-            m_Registry.emplace_or_replace<MaterialAsset>(
-              asset->GetHandle(), m_MaterialIO->LoadMaterial(assetPath));
+            mRegistry.emplace_or_replace<MaterialAsset>(
+              asset->GetHandle(), mMaterialIO->LoadMaterial(assetPath));
             break;
           }
         case ASSET_TYPE::COMPUTE_SHADER:
           {
-            m_Registry.emplace_or_replace<ComputeShaderAsset>(
-              asset->GetHandle(), m_FileHandler->ReadFile(assetPath));
+            mRegistry.emplace_or_replace<ComputeShaderAsset>(
+              asset->GetHandle(), mFileHandler->ReadFile(assetPath));
             break;
           }
         case ASSET_TYPE::FRAGMENT_SHADER:
           {
-            m_Registry.emplace_or_replace<FragmentShaderAsset>(
-              asset->GetHandle(), m_FileHandler->ReadFile(assetPath));
+            mRegistry.emplace_or_replace<FragmentShaderAsset>(
+              asset->GetHandle(), mFileHandler->ReadFile(assetPath));
             break;
           }
         case ASSET_TYPE::GEOMETRY_SHADER:
           {
-            m_Registry.emplace_or_replace<GeometryShaderAsset>(
-              asset->GetHandle(), m_FileHandler->ReadFile(assetPath));
+            mRegistry.emplace_or_replace<GeometryShaderAsset>(
+              asset->GetHandle(), mFileHandler->ReadFile(assetPath));
             break;
           }
         case ASSET_TYPE::HLSL_SHADER:
           {
-            m_Registry.emplace_or_replace<HlslShaderAsset>(
-              asset->GetHandle(), m_FileHandler->ReadFile(assetPath));
+            mRegistry.emplace_or_replace<HlslShaderAsset>(
+              asset->GetHandle(), mFileHandler->ReadFile(assetPath));
             break;
           }
         case ASSET_TYPE::TESC_SHADER:
           {
-            m_Registry.emplace_or_replace<TessellationControlShaderAsset>(
-              asset->GetHandle(), m_FileHandler->ReadFile(assetPath));
+            mRegistry.emplace_or_replace<TessellationControlShaderAsset>(
+              asset->GetHandle(), mFileHandler->ReadFile(assetPath));
             break;
           }
         case ASSET_TYPE::TESE_SHADER:
           {
-            m_Registry.emplace_or_replace<TessellationEvaluationShaderAsset>(
-              asset->GetHandle(), m_FileHandler->ReadFile(assetPath));
+            mRegistry.emplace_or_replace<TessellationEvaluationShaderAsset>(
+              asset->GetHandle(), mFileHandler->ReadFile(assetPath));
             break;
           }
         case ASSET_TYPE::VERTEX_SHADER:
           {
-            m_Registry.emplace_or_replace<VertexShaderAsset>(
-              asset->GetHandle(), m_FileHandler->ReadFile(assetPath));
+            mRegistry.emplace_or_replace<VertexShaderAsset>(
+              asset->GetHandle(), mFileHandler->ReadFile(assetPath));
             break;
           }
         case ASSET_TYPE::SCENE:
           {
-            m_Registry.emplace_or_replace<SceneAsset>(
+            mRegistry.emplace_or_replace<SceneAsset>(
               asset->GetHandle(),
-              nlohmann::json::parse(m_FileHandler->ReadFile(assetPath)));
+              nlohmann::json::parse(mFileHandler->ReadFile(assetPath)));
             break;
           }
         case ASSET_TYPE::UNKNOWN:
           {
-            m_Registry.emplace_or_replace<UnknownAsset>(
-              asset->GetHandle(), m_FileHandler->ReadFile(assetPath));
+            mRegistry.emplace_or_replace<UnknownAsset>(
+              asset->GetHandle(), mFileHandler->ReadFile(assetPath));
             break;
           }
       }
@@ -228,25 +227,25 @@ namespace Dwarf
   void
   AssetDatabase::Remove(const UUID& uid)
   {
-    auto view = m_Registry.view<IDComponent>();
+    auto view = mRegistry.view<IDComponent>();
     for (auto entity : view)
     {
       if (view.get<IDComponent>(entity).getId() == uid)
       {
-        m_Registry.destroy(entity);
+        mRegistry.destroy(entity);
       }
     }
   }
   void
   AssetDatabase::Remove(const std::filesystem::path& path)
   {
-    auto view = m_Registry.view<PathComponent>();
+    auto view = mRegistry.view<PathComponent>();
     for (auto entity : view)
     {
       if (view.get<PathComponent>(entity).getPath() == path &&
-          m_Registry.valid(entity))
+          mRegistry.valid(entity))
       {
-        m_Registry.destroy(entity);
+        mRegistry.destroy(entity);
       }
     }
   }
@@ -254,7 +253,7 @@ namespace Dwarf
   void
   AssetDatabase::Clear()
   {
-    m_Registry.clear();
+    mRegistry.clear();
   }
 
   auto
@@ -271,9 +270,9 @@ namespace Dwarf
     }
 
     auto newId = UUID();
-    if (m_FileHandler->FileExists(metaDataPath))
+    if (mFileHandler->FileExists(metaDataPath))
     {
-      nlohmann::json metaData = m_AssetMetadata->GetMetadata(assetPath);
+      nlohmann::json metaData = mAssetMetadata->GetMetadata(assetPath);
       std::string    guid = metaData["guid"].get<std::string>();
       newId = UUID(guid);
     }
@@ -281,14 +280,14 @@ namespace Dwarf
     {
       nlohmann::json metaData;
       metaData["guid"] = newId.toString();
-      m_AssetMetadata->SetMetadata(assetPath, metaData);
+      mAssetMetadata->SetMetadata(assetPath, metaData);
     }
 
-    m_Logger->LogInfo(
+    mLogger->LogInfo(
       Log("Importing asset: " + assetPath.string(), "AssetDatabase"));
 
-    return m_AssetReferenceFactory
-      ->CreateNew(m_Registry.create(), m_Registry, newId, assetPath, fileName)
+    return mAssetReferenceFactory
+      ->CreateNew(mRegistry.create(), mRegistry, newId, assetPath, fileName)
       ->GetUID();
   }
 
@@ -296,7 +295,7 @@ namespace Dwarf
   AssetDatabase::Exists(const UUID& uid) -> bool
   {
     // Retrieve entt::entity with UID component
-    auto view = m_Registry.view<IDComponent>();
+    auto view = mRegistry.view<IDComponent>();
     return std::ranges::any_of(
       view,
       [view, uid](auto entity)
@@ -307,7 +306,7 @@ namespace Dwarf
   AssetDatabase::Exists(const std::filesystem::path& path) -> bool
   {
     // Retrieve entt::entity with UID component
-    auto view = m_Registry.view<PathComponent>();
+    auto view = mRegistry.view<PathComponent>();
     return std::ranges::any_of(
       view,
       [view, path](auto entity)
@@ -317,20 +316,20 @@ namespace Dwarf
   auto
   AssetDatabase::GetAssetDirectoryPath() -> std::filesystem::path
   {
-    return m_AssetDirectoryPath.t;
+    return mAssetDirectoryPath.t;
   }
 
   auto
   AssetDatabase::Retrieve(const UUID& uid) -> std::unique_ptr<IAssetReference>
   {
-    auto view = m_Registry.view<IDComponent, PathComponent>();
+    auto view = mRegistry.view<IDComponent, PathComponent>();
     for (auto entity : view)
     {
       if (view.get<IDComponent>(entity).getId() == uid)
       {
-        return m_AssetReferenceFactory->Create(
+        return mAssetReferenceFactory->Create(
           entity,
-          m_Registry,
+          mRegistry,
           AssetDatabase::GetAssetType(
             view.get<PathComponent>(entity).getPath().extension().string()));
       }
@@ -342,14 +341,14 @@ namespace Dwarf
   AssetDatabase::Retrieve(const std::filesystem::path& path)
     -> std::unique_ptr<IAssetReference>
   {
-    auto view = m_Registry.view<PathComponent>();
+    auto view = mRegistry.view<PathComponent>();
     for (auto entity : view)
     {
       if (view.get<PathComponent>(entity).getPath() == path)
       {
-        return m_AssetReferenceFactory->Create(
+        return mAssetReferenceFactory->Create(
           entity,
-          m_Registry,
+          mRegistry,
           AssetDatabase::GetAssetType(path.extension().string()));
       }
     }
@@ -360,21 +359,21 @@ namespace Dwarf
   AssetDatabase::Rename(const std::filesystem::path& fromPath,
                         const std::filesystem::path& toPath)
   {
-    m_AssetMetadata->Rename(fromPath, toPath);
-    auto view = m_Registry.view<PathComponent, NameComponent>();
-    // auto matView = m_Registry->view<MaterialAsset>();
+    mAssetMetadata->Rename(fromPath, toPath);
+    auto view = mRegistry.view<PathComponent, NameComponent>();
+    // auto matView = mRegistry->view<MaterialAsset>();
     for (auto entity : view)
     {
       if (view.get<PathComponent>(entity).getPath() == fromPath)
       {
-        m_Registry.remove<PathComponent>(entity);
-        m_Registry.remove<NameComponent>(entity);
-        m_Registry.emplace<PathComponent>(entity, toPath);
-        m_Registry.emplace<NameComponent>(entity, toPath.stem().string());
+        mRegistry.remove<PathComponent>(entity);
+        mRegistry.remove<NameComponent>(entity);
+        mRegistry.emplace<PathComponent>(entity, toPath);
+        mRegistry.emplace<NameComponent>(entity, toPath.stem().string());
 
         // if (matView.contains(entity))
         // {
-        //   matView.get<MaterialAsset>(entity).m_Material->GetProperties()
+        //   matView.get<MaterialAsset>(entity).mMaterial->GetProperties()
         //   =
         //     to.stem().string();
         // }
@@ -387,7 +386,7 @@ namespace Dwarf
   AssetDatabase::RenameDirectory(const std::filesystem::path& fromPath,
                                  const std::filesystem::path& toPath)
   {
-    auto view = m_Registry.view<PathComponent>();
+    auto view = mRegistry.view<PathComponent>();
     for (auto entity : view)
     {
       if (view.get<PathComponent>(entity).getPath().string().find(
@@ -396,8 +395,8 @@ namespace Dwarf
         std::filesystem::path newPath = toPath;
         newPath.concat(view.get<PathComponent>(entity).getPath().string().erase(
           0, fromPath.string().length()));
-        m_Registry.remove<PathComponent>(entity);
-        m_Registry.emplace<PathComponent>(entity, newPath);
+        mRegistry.remove<PathComponent>(entity);
+        mRegistry.emplace<PathComponent>(entity, newPath);
       }
     }
   }
@@ -411,7 +410,7 @@ namespace Dwarf
     if (!IAssetMetadata::IsMetadataPath(path) &&
         std::filesystem::is_regular_file(path))
     {
-      m_AssetReimporter->QueueReimport(path);
+      mAssetReimporter->QueueReimport(path);
     }
   }
 
@@ -433,7 +432,7 @@ namespace Dwarf
     if (!IAssetMetadata::IsMetadataPath(path) &&
         std::filesystem::is_regular_file(path))
     {
-      m_AssetReimporter->QueueReimport(path);
+      mAssetReimporter->QueueReimport(path);
       switch (IAssetDatabase::GetAssetType(path.extension().string()))
       {
         using enum ASSET_TYPE;
@@ -445,24 +444,24 @@ namespace Dwarf
         case TESE_SHADER:
         case VERTEX_SHADER:
           {
-            if (m_ShaderAssetMap.contains(path))
+            if (mShaderAssetMap.contains(path))
             {
-              m_Logger->LogInfo(
+              mLogger->LogInfo(
                 Log("A shader asset has been updated!", "AssetDatabase"));
-              m_ShaderRecompiler->MarkForRecompilation(m_ShaderAssetMap[path]);
+              mShaderRecompiler->MarkForRecompilation(mShaderAssetMap[path]);
               // AssetDatabase::AddShaderToRecompilationQueue(path);
             }
             break;
           }
         case ASSET_TYPE::MATERIAL:
           {
-            m_Logger->LogInfo(
+            mLogger->LogInfo(
               Log("A material asset has been updated!", "AssetDatabase"));
             // if (AssetDatabase::Exists(path))
             // {
             //   MaterialAsset& mat =
             //     (MaterialAsset&)AssetDatabase::Retrieve(path)->GetAsset();
-            //   m_ShaderRecompiler->MarkForRecompilation(
+            //   mShaderRecompiler->MarkForRecompilation(
             //     mat.GetMaterial().GetShader());
             // }
             break;
@@ -470,14 +469,14 @@ namespace Dwarf
         case ASSET_TYPE::MODEL:
           {
             // TODO: REIMPORT MODEL FILE
-            m_Logger->LogInfo(
+            mLogger->LogInfo(
               Log("A model asset has been updated!", "AssetDatabase"));
             break;
           }
         case ASSET_TYPE::TEXTURE:
           {
             // TODO: REIMPORT TEXTURE
-            m_Logger->LogInfo(
+            mLogger->LogInfo(
               Log("A texture asset has been updated!", "AssetDatabase"));
             break;
           }
@@ -485,13 +484,13 @@ namespace Dwarf
           {
             // TODO: IF ITS THE CURRENTLY OPEN SCENE, MODAL TO ASK IF IT
             // SHOULD BE RELOADED
-            m_Logger->LogInfo(
+            mLogger->LogInfo(
               Log("A scene asset has been updated!", "AssetDatabase"));
             break;
           }
         case ASSET_TYPE::UNKNOWN:
           {
-            m_Logger->LogInfo(
+            mLogger->LogInfo(
               Log("An unsupported asset has been updated!", "AssetDatabase"));
             break;
           }
@@ -507,15 +506,15 @@ namespace Dwarf
     std::filesystem::path path =
       std::filesystem::path(dir) / std::filesystem::path(filename);
     // Update PathComponent
-    auto view = m_Registry.view<PathComponent>();
+    auto view = mRegistry.view<PathComponent>();
     for (auto entity : view)
     {
       if (view.get<PathComponent>(entity).getPath() == path)
       {
-        m_Registry.remove<PathComponent>(entity);
-        m_Registry.emplace<PathComponent>(entity,
-                                          std::filesystem::path(dir) /
-                                            std::filesystem::path(oldFilename));
+        mRegistry.remove<PathComponent>(entity);
+        mRegistry.emplace<PathComponent>(entity,
+                                         std::filesystem::path(dir) /
+                                           std::filesystem::path(oldFilename));
         break;
       }
     }
@@ -524,7 +523,7 @@ namespace Dwarf
   auto
   AssetDatabase::GetRegistry() -> entt::registry&
   {
-    return m_Registry;
+    return mRegistry;
   }
 
   void
@@ -543,7 +542,7 @@ namespace Dwarf
 
     std::filesystem::path graphicsApiDir = "";
 
-    switch (m_GraphicsApi)
+    switch (mGraphicsApi)
     {
       case GraphicsApi::OpenGL: graphicsApiDir = "opengl"; break;
       case GraphicsApi::Vulkan: graphicsApiDir = "vulkan"; break;

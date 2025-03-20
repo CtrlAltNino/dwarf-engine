@@ -9,7 +9,7 @@ namespace Dwarf
   class AssetMetadata : public IAssetMetadata
   {
   private:
-    std::shared_ptr<IFileHandler> m_FileHandler;
+    std::shared_ptr<IFileHandler> mFileHandler;
 
   public:
     AssetMetadata(std::shared_ptr<IFileHandler> fileHandler);
@@ -17,8 +17,9 @@ namespace Dwarf
     /// @brief Retrieves the meta data from an asset path.
     /// @param assetPath Path to an asset.
     /// @return Metadata in JSON.
-    nlohmann::json
-    GetMetadata(const std::filesystem::path& assetPath) const override;
+    auto
+    GetMetadata(const std::filesystem::path& assetPath) const
+      -> nlohmann::json override;
 
     /// @brief Writes the given metadata to a path.
     /// @param assetPath Path to write the metadata to.
@@ -33,7 +34,7 @@ namespace Dwarf
     RemoveMetadata(const std::filesystem::path& assetPath) override;
 
     void
-    Rename(const std::filesystem::path& from,
-           const std::filesystem::path& to) override;
+    Rename(const std::filesystem::path& fromPath,
+           const std::filesystem::path& toPath) override;
   };
 }

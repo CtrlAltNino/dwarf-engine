@@ -12,6 +12,11 @@
 
 namespace Dwarf
 {
+  /**
+   * @brief Implementation of the class to interface with the asset database
+   * entries
+   *
+   */
   class AssetReference : public IAssetReference
   {
   private:

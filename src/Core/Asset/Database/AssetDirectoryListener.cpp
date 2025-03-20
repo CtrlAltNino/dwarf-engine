@@ -3,21 +3,19 @@
 namespace Dwarf
 {
   AssetDirectoryListener::AssetDirectoryListener(
-    AssetDirectoryPath assetDirectoryPath)
-    : m_FileWatcher()
+    const AssetDirectoryPath& assetDirectoryPath)
   {
-    m_WatchID =
-      m_FileWatcher.addWatch(assetDirectoryPath.t.string(), this, true);
-    // m_WatchID = m_FileWatcher.addWatch(
+    mWatchID = mFileWatcher.addWatch(assetDirectoryPath.t.string(), this, true);
+    // mWatchID = mFileWatcher.addWatch(
     //   Shader::GetDefaultShaderPath().string(), this, true);
 
     // Start watching asynchronously the directories
-    m_FileWatcher.watch();
+    mFileWatcher.watch();
   }
 
   AssetDirectoryListener::~AssetDirectoryListener()
   {
-    m_FileWatcher.removeWatch(m_WatchID);
+    mFileWatcher.removeWatch(mWatchID);
   }
 
   void
@@ -25,7 +23,7 @@ namespace Dwarf
     std::function<void(const std::string& dir, const std::string& filename)>
       callback)
   {
-    m_AddFileCallbacks.push_back(callback);
+    mAddFileCallbacks.push_back(callback);
   }
 
   void
@@ -33,7 +31,7 @@ namespace Dwarf
     std::function<void(const std::string& dir, const std::string& filename)>
       callback)
   {
-    m_DeleteFileCallbacks.push_back(callback);
+    mDeleteFileCallbacks.push_back(callback);
   }
 
   void
@@ -41,7 +39,7 @@ namespace Dwarf
     std::function<void(const std::string& dir, const std::string& filename)>
       callback)
   {
-    m_ModifyFileCallbacks.push_back(callback);
+    mModifyFileCallbacks.push_back(callback);
   }
 
   void
@@ -50,7 +48,7 @@ namespace Dwarf
                        const std::string& filename,
                        std::string        oldFilename)> callback)
   {
-    m_MoveFileCallbacks.push_back(callback);
+    mMoveFileCallbacks.push_back(callback);
   }
 
   void
@@ -65,39 +63,38 @@ namespace Dwarf
     {
       case efsw::Actions::Add:
         std::cout << "DIR (" << dir << ") FILE (" << filename
-                  << ") has event Added" << std::endl;
+                  << ") has event Added\n";
 
-        for (const auto& callback : m_AddFileCallbacks)
+        for (const auto& callback : mAddFileCallbacks)
         {
           callback(dir, filename);
         }
         break;
       case efsw::Actions::Delete:
         std::cout << "DIR (" << dir << ") FILE (" << filename
-                  << ") has event Delete" << std::endl;
-        for (const auto& callback : m_DeleteFileCallbacks)
+                  << ") has event Delete\n";
+        for (const auto& callback : mDeleteFileCallbacks)
         {
           callback(dir, filename);
         }
         break;
       case efsw::Actions::Modified:
         std::cout << "DIR (" << dir << ") FILE (" << filename
-                  << ") has event Modified" << std::endl;
-        for (const auto& callback : m_ModifyFileCallbacks)
+                  << ") has event Modified\n";
+        for (const auto& callback : mModifyFileCallbacks)
         {
           callback(dir, filename);
         }
         break;
       case efsw::Actions::Moved:
         std::cout << "DIR (" << dir << ") FILE (" << filename
-                  << ") has event Moved from (" << oldFilename << ")"
-                  << std::endl;
-        for (const auto& callback : m_MoveFileCallbacks)
+                  << ") has event Moved from (" << oldFilename << ")\n";
+        for (const auto& callback : mMoveFileCallbacks)
         {
           callback(dir, filename, oldFilename);
         }
         break;
-      default: std::cout << "Should never happen!" << std::endl;
+      default: std::cout << "Should never happen!\n";
     }
   }
 }

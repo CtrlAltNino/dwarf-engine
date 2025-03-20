@@ -14,28 +14,28 @@ namespace Dwarf
   private:
     std::vector<
       std::function<void(const std::string& dir, const std::string& filename)>>
-      m_AddFileCallbacks;
+      mAddFileCallbacks;
     std::vector<
       std::function<void(const std::string& dir, const std::string& filename)>>
-      m_DeleteFileCallbacks;
+      mDeleteFileCallbacks;
     std::vector<
       std::function<void(const std::string& dir, const std::string& filename)>>
-      m_ModifyFileCallbacks;
+      mModifyFileCallbacks;
     std::vector<std::function<void(const std::string& dir,
                                    const std::string& filename,
                                    std::string        oldFilename)>>
-      m_MoveFileCallbacks;
+      mMoveFileCallbacks;
 
-    efsw::FileWatcher m_FileWatcher;
+    efsw::FileWatcher mFileWatcher;
 
     /// @brief Recursive file watcher for the "/Asset" directory.
-    // std::shared_ptr<efsw::FileWatchListener> m_AssetDirectoryListener;
+    // std::shared_ptr<efsw::FileWatchListener> mAssetDirectoryListener;
 
     /// @brief Watch ID for the EFSW file watcher.
-    efsw::WatchID m_WatchID;
+    efsw::WatchID mWatchID;
 
   public:
-    AssetDirectoryListener(AssetDirectoryPath assetDirectoryPath);
+    AssetDirectoryListener(const AssetDirectoryPath& assetDirectoryPath);
     ~AssetDirectoryListener() override;
 
     void

@@ -37,25 +37,25 @@ namespace Dwarf
   {
   private:
     /// @brief Absolute path to the "/Asset" directory.
-    AssetDirectoryPath m_AssetDirectoryPath;
+    AssetDirectoryPath mAssetDirectoryPath;
 
     /// @brief ECS registry containing entities for every asset in the "/Assets"
-    entt::registry m_Registry;
+    entt::registry mRegistry;
 
-    std::map<std::filesystem::path, std::shared_ptr<IShader>> m_ShaderAssetMap;
+    std::map<std::filesystem::path, std::shared_ptr<IShader>> mShaderAssetMap;
 
-    GraphicsApi                              m_GraphicsApi;
-    std::shared_ptr<IDwarfLogger>            m_Logger;
-    std::shared_ptr<IAssetDirectoryListener> m_AssetDirectoryListener;
-    std::shared_ptr<IAssetMetadata>          m_AssetMetadata;
-    std::shared_ptr<IModelImporter>          m_ModelImporter;
-    std::shared_ptr<IShaderRecompiler>       m_ShaderRecompiler;
-    std::shared_ptr<ITextureFactory>         m_TextureFactory;
-    std::shared_ptr<IMaterialFactory>        m_MaterialFactory;
-    std::shared_ptr<IMaterialIO>             m_MaterialIO;
-    std::shared_ptr<IAssetReimporter>        m_AssetReimporter;
-    std::shared_ptr<IAssetReferenceFactory>  m_AssetReferenceFactory;
-    std::shared_ptr<IFileHandler>            m_FileHandler;
+    GraphicsApi                              mGraphicsApi;
+    std::shared_ptr<IDwarfLogger>            mLogger;
+    std::shared_ptr<IAssetDirectoryListener> mAssetDirectoryListener;
+    std::shared_ptr<IAssetMetadata>          mAssetMetadata;
+    std::shared_ptr<IModelImporter>          mModelImporter;
+    std::shared_ptr<IShaderRecompiler>       mShaderRecompiler;
+    std::shared_ptr<ITextureFactory>         mTextureFactory;
+    std::shared_ptr<IMaterialFactory>        mMaterialFactory;
+    std::shared_ptr<IMaterialIO>             mMaterialIO;
+    std::shared_ptr<IAssetReimporter>        mAssetReimporter;
+    std::shared_ptr<IAssetReferenceFactory>  mAssetReferenceFactory;
+    std::shared_ptr<IFileHandler>            mFileHandler;
 
   public:
     /**
