@@ -1,9 +1,9 @@
 #pragma once
 
 #include "Core/Base.h"
+#include "Core/Rendering/Texture/ITextureFactory.h"
 #include "Core/Rendering/VramTracker/IVramTracker.h"
 #include "IFramebufferFactory.h"
-#include "Core/Rendering/Texture/ITextureFactory.h"
 #include "Logging/IDwarfLogger.h"
 
 namespace Dwarf
@@ -11,10 +11,10 @@ namespace Dwarf
   class FramebufferFactory : public IFramebufferFactory
   {
   private:
-    std::shared_ptr<IDwarfLogger>    m_Logger;
-    GraphicsApi                      m_Api;
-    std::shared_ptr<ITextureFactory> m_TextureFactory;
-    std::shared_ptr<IVramTracker>    m_VramTracker;
+    std::shared_ptr<IDwarfLogger>    mLogger;
+    GraphicsApi                      mApi;
+    std::shared_ptr<ITextureFactory> mTextureFactory;
+    std::shared_ptr<IVramTracker>    mVramTracker;
 
   public:
     FramebufferFactory(std::shared_ptr<IDwarfLogger>    logger,

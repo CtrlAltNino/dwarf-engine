@@ -9,8 +9,8 @@ namespace Dwarf
   class GraphicsContextFactory : public IGraphicsContextFactory
   {
   private:
-    std::shared_ptr<IDwarfLogger> m_Logger;
-    GraphicsApi                   m_Api;
+    std::shared_ptr<IDwarfLogger> mLogger;
+    GraphicsApi                   mApi;
 
   public:
     GraphicsContextFactory(std::shared_ptr<IDwarfLogger> logger,

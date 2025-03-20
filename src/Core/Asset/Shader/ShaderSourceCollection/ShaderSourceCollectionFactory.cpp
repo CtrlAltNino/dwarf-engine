@@ -13,8 +13,8 @@ namespace Dwarf
   ShaderSourceCollectionFactory::ShaderSourceCollectionFactory(
     boost::di::extension::lazy<std::shared_ptr<IAssetDatabase>> assetDatabase,
     GraphicsApi                                                 graphicsApi)
-    : m_AssetDatabase(assetDatabase)
-    , m_GraphicsApi(graphicsApi)
+    : mAssetDatabase(assetDatabase)
+    , mGraphicsApi(graphicsApi)
   {
   }
 
@@ -23,12 +23,12 @@ namespace Dwarf
   {
     std::vector<std::unique_ptr<IAssetReference>> shaderSources = {};
 
-    switch (m_GraphicsApi)
+    switch (mGraphicsApi)
     {
       case GraphicsApi::OpenGL:
-        shaderSources.emplace_back(m_AssetDatabase.get()->Retrieve(
+        shaderSources.emplace_back(mAssetDatabase.get()->Retrieve(
           OpenGLUtilities::GetDefaultShaderPath() / "default.vert"));
-        shaderSources.emplace_back(m_AssetDatabase.get()->Retrieve(
+        shaderSources.emplace_back(mAssetDatabase.get()->Retrieve(
           OpenGLUtilities::GetDefaultShaderPath() / "default.frag"));
         break;
       case GraphicsApi::Vulkan:
@@ -46,12 +46,12 @@ namespace Dwarf
   {
     std::vector<std::unique_ptr<IAssetReference>> shaderSources = {};
 
-    switch (m_GraphicsApi)
+    switch (mGraphicsApi)
     {
       case GraphicsApi::OpenGL:
-        shaderSources.emplace_back(m_AssetDatabase.get()->Retrieve(
+        shaderSources.emplace_back(mAssetDatabase.get()->Retrieve(
           OpenGLUtilities::GetErrorShaderPath() / "error.vert"));
-        shaderSources.emplace_back(m_AssetDatabase.get()->Retrieve(
+        shaderSources.emplace_back(mAssetDatabase.get()->Retrieve(
           OpenGLUtilities::GetErrorShaderPath() / "error.frag"));
         break;
       case GraphicsApi::Vulkan:
@@ -69,12 +69,12 @@ namespace Dwarf
   {
     std::vector<std::unique_ptr<IAssetReference>> shaderSources = {};
 
-    switch (m_GraphicsApi)
+    switch (mGraphicsApi)
     {
       case GraphicsApi::OpenGL:
-        shaderSources.emplace_back(m_AssetDatabase.get()->Retrieve(
+        shaderSources.emplace_back(mAssetDatabase.get()->Retrieve(
           OpenGLUtilities::GetIdShaderPath() / "id.vert"));
-        shaderSources.emplace_back(m_AssetDatabase.get()->Retrieve(
+        shaderSources.emplace_back(mAssetDatabase.get()->Retrieve(
           OpenGLUtilities::GetIdShaderPath() / "id.frag"));
         break;
       case GraphicsApi::Vulkan:
@@ -92,12 +92,12 @@ namespace Dwarf
   {
     std::vector<std::unique_ptr<IAssetReference>> shaderSources = {};
 
-    switch (m_GraphicsApi)
+    switch (mGraphicsApi)
     {
       case GraphicsApi::OpenGL:
-        shaderSources.emplace_back(m_AssetDatabase.get()->Retrieve(
+        shaderSources.emplace_back(mAssetDatabase.get()->Retrieve(
           OpenGLUtilities::GetGridShaderPath() / "grid.vert"));
-        shaderSources.emplace_back(m_AssetDatabase.get()->Retrieve(
+        shaderSources.emplace_back(mAssetDatabase.get()->Retrieve(
           OpenGLUtilities::GetGridShaderPath() / "grid.frag"));
         break;
       case GraphicsApi::Vulkan:
@@ -115,13 +115,13 @@ namespace Dwarf
   {
     std::vector<std::unique_ptr<IAssetReference>> shaderSources = {};
 
-    switch (m_GraphicsApi)
+    switch (mGraphicsApi)
     {
       case GraphicsApi::OpenGL:
-        shaderSources.emplace_back(m_AssetDatabase.get()->Retrieve(
+        shaderSources.emplace_back(mAssetDatabase.get()->Retrieve(
           OpenGLUtilities::GetFullScreenQuadShaderPath() /
           "fullscreen_quad.vert"));
-        shaderSources.emplace_back(m_AssetDatabase.get()->Retrieve(
+        shaderSources.emplace_back(mAssetDatabase.get()->Retrieve(
           OpenGLUtilities::GetAgxTonemapShaderPath() / "agx_tonemap.frag"));
         break;
       case GraphicsApi::Vulkan:
@@ -150,7 +150,7 @@ namespace Dwarf
         UUID(serializedShaderSourceCollection["VertexShader"]);
 
       shaderSources.emplace_back(
-        std::move(m_AssetDatabase.get()->Retrieve(vertexShaderId)));
+        std::move(mAssetDatabase.get()->Retrieve(vertexShaderId)));
     }
 
     if (serializedShaderSourceCollection.contains("FragmentShader") &&
@@ -162,7 +162,7 @@ namespace Dwarf
         UUID(serializedShaderSourceCollection["FragmentShader"]);
 
       shaderSources.emplace_back(
-        m_AssetDatabase.get()->Retrieve(fragmentShaderId));
+        mAssetDatabase.get()->Retrieve(fragmentShaderId));
     }
 
     if (serializedShaderSourceCollection.contains("GeometryShader") &&
@@ -174,7 +174,7 @@ namespace Dwarf
         UUID(serializedShaderSourceCollection["GeometryShader"]);
 
       shaderSources.emplace_back(
-        m_AssetDatabase.get()->Retrieve(geometryShaderId));
+        mAssetDatabase.get()->Retrieve(geometryShaderId));
     }
 
     if (serializedShaderSourceCollection.contains(
@@ -187,7 +187,7 @@ namespace Dwarf
         UUID(serializedShaderSourceCollection["TessellationControlShader"]);
 
       shaderSources.emplace_back(
-        m_AssetDatabase.get()->Retrieve(tessellationControlShaderId));
+        mAssetDatabase.get()->Retrieve(tessellationControlShaderId));
     }
 
     if (serializedShaderSourceCollection.contains(
@@ -200,7 +200,7 @@ namespace Dwarf
         UUID(serializedShaderSourceCollection["TessellationEvaluationShader"]);
 
       shaderSources.emplace_back(
-        m_AssetDatabase.get()->Retrieve(tessellationEvaluationShaderId));
+        mAssetDatabase.get()->Retrieve(tessellationEvaluationShaderId));
     }
 
     return std::make_unique<ShaderSourceCollection>(shaderSources);

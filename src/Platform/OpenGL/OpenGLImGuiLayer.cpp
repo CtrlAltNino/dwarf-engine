@@ -1,27 +1,27 @@
-#include "pch.h"
 #include "Platform/OpenGL/OpenGLImGuiLayer.h"
+#include "pch.h"
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_opengl.h>
+#include <fmt/format.h>
 #include <imgui.h>
-#include <imgui_internal.h>
 #include <imgui_impl_opengl3.h>
 #include <imgui_impl_sdl3.h>
-#include <fmt/format.h>
+#include <imgui_internal.h>
 
 namespace Dwarf
 {
   OpenGLImGuiLayer::OpenGLImGuiLayer(std::shared_ptr<IDwarfLogger> logger,
                                      ImGuiIniFilePath              iniFilePath)
-    : m_Logger(logger)
-    , m_IniFilePath((iniFilePath.t / "imgui.ini").string())
+    : mLogger(logger)
+    , mIniFilePath((iniFilePath.t / "imgui.ini").string())
   {
-    m_Logger->LogDebug(Log("Creating OpenGLImGuiLayer", "OpenGLImGuiLayer"));
+    mLogger->LogDebug(Log("Creating OpenGLImGuiLayer", "OpenGLImGuiLayer"));
   }
 
   OpenGLImGuiLayer::~OpenGLImGuiLayer()
   {
-    m_Logger->LogDebug(Log("Destroying OpenGLImGuiLayer", "OpenGLImGuiLayer"));
-    if (m_Window && ImGui::GetCurrentContext())
+    mLogger->LogDebug(Log("Destroying OpenGLImGuiLayer", "OpenGLImGuiLayer"));
+    if (mWindow && ImGui::GetCurrentContext())
     {
       ImGui_ImplOpenGL3_Shutdown();
       ImGui_ImplSDL3_Shutdown();
@@ -31,15 +31,15 @@ namespace Dwarf
   void
   OpenGLImGuiLayer::OnAttach(SDL_Window* window)
   {
-    m_Window = window;
+    mWindow = window;
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
     ImGuiIO& io = ImGui::GetIO();
     (void)io;
 
-    io.IniFilename = m_IniFilePath.c_str();
-    m_Logger->LogDebug(
-      Log(fmt::format("imgui.ini path set to: {}", m_IniFilePath),
+    io.IniFilename = mIniFilePath.c_str();
+    mLogger->LogDebug(
+      Log(fmt::format("imgui.ini path set to: {}", mIniFilePath),
           "OpenGLImGuiLayer"));
     io.ConfigFlags |=
       ImGuiConfigFlags_NavEnableKeyboard; // Enable Keyboard Controls
@@ -67,7 +67,7 @@ namespace Dwarf
 
     ImGui::StyleColorsDark();
 
-    ImGui_ImplSDL3_InitForOpenGL(m_Window, SDL_GL_CreateContext(m_Window));
+    ImGui_ImplSDL3_InitForOpenGL(mWindow, SDL_GL_CreateContext(mWindow));
     ImGui_ImplOpenGL3_Init("#version 410");
   }
 

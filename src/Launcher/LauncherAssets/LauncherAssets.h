@@ -10,24 +10,24 @@ namespace Dwarf
   class LauncherAssets : public ILauncherAssets
   {
   private:
-    std::shared_ptr<IDwarfLogger>    m_Logger;
-    std::shared_ptr<ITextureFactory> m_TextureFactory;
+    std::shared_ptr<IDwarfLogger>    mLogger;
+    std::shared_ptr<ITextureFactory> mTextureFactory;
     /// @brief Font loaded into IMGUI for header text
-    std::shared_ptr<ImFont> m_HeaderFont;
+    std::shared_ptr<ImFont> mHeaderFont;
 
     /// @brief Font loaded into IMGUI for regular text
-    std::shared_ptr<ImFont> m_TextFont;
+    std::shared_ptr<ImFont> mTextFont;
 
     /// @brief Loaded image for the github icon
-    std::shared_ptr<ITexture> m_GithubIcon;
+    std::shared_ptr<ITexture> mGithubIcon;
 
     /// @brief Loaded image for the patreon icon
-    std::shared_ptr<ITexture> m_PatreonIcon;
+    std::shared_ptr<ITexture> mPatreonIcon;
 
     /// @brief Loaded image for the X/Twitter icon
-    std::shared_ptr<ITexture> m_XIcon;
+    std::shared_ptr<ITexture> mXIcon;
 
-    std::shared_ptr<IWindow> m_Window;
+    std::shared_ptr<IWindow> mWindow;
 
   public:
     LauncherAssets(std::shared_ptr<IDwarfLogger>    logger,

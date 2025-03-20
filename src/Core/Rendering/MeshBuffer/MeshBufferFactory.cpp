@@ -15,25 +15,24 @@ namespace Dwarf
     GraphicsApi                   graphicsApi,
     std::shared_ptr<IDwarfLogger> logger,
     std::shared_ptr<IVramTracker> vramTracker)
-    : m_GraphicsApi(graphicsApi)
-    , m_Logger(logger)
-    , m_VramTracker(vramTracker)
+    : mGraphicsApi(graphicsApi)
+    , mLogger(logger)
+    , mVramTracker(vramTracker)
   {
-    m_Logger->LogDebug(Log("MeshBufferFactory created.", "MeshBufferFactory"));
+    mLogger->LogDebug(Log("MeshBufferFactory created.", "MeshBufferFactory"));
   }
 
   MeshBufferFactory::~MeshBufferFactory()
   {
-    m_Logger->LogDebug(
-      Log("MeshBufferFactory destroyed.", "MeshBufferFactory"));
+    mLogger->LogDebug(Log("MeshBufferFactory destroyed.", "MeshBufferFactory"));
   }
 
   std::unique_ptr<IMeshBuffer>
   MeshBufferFactory::Create(std::unique_ptr<IMesh>& mesh)
   {
-    m_Logger->LogDebug(Log("Creating mesh.", "MeshBufferFactory"));
+    mLogger->LogDebug(Log("Creating mesh.", "MeshBufferFactory"));
     // Creating a shader based on the graphics API.
-    switch (m_GraphicsApi)
+    switch (mGraphicsApi)
     {
       using enum GraphicsApi;
       case None: break;
@@ -43,7 +42,7 @@ namespace Dwarf
         break;
       case OpenGL:
         return std::make_unique<OpenGLMesh>(
-          mesh->GetVertices(), mesh->GetIndices(), m_Logger, m_VramTracker);
+          mesh->GetVertices(), mesh->GetIndices(), mLogger, mVramTracker);
         break;
       case Metal: break;
       case Vulkan:
@@ -53,7 +52,7 @@ namespace Dwarf
       case D3D12: break;
       case OpenGL:
         return std::make_unique<OpenGLMesh>(
-          mesh->GetVertices(), mesh->GetIndices(), m_Logger, m_VramTracker);
+          mesh->GetVertices(), mesh->GetIndices(), mLogger, mVramTracker);
         break;
       case Metal: break;
       case Vulkan:

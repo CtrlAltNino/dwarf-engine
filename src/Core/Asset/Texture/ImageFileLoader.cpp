@@ -14,16 +14,16 @@ namespace Dwarf
     std::shared_ptr<IDwarfLogger>   logger,
     std::shared_ptr<IFileHandler>   fileHandler,
     std::shared_ptr<IAssetMetadata> assetMetadata)
-    : m_Logger(logger)
-    , m_FileHandler(fileHandler)
-    , m_AssetMetadata(assetMetadata)
+    : mLogger(logger)
+    , mFileHandler(fileHandler)
+    , mAssetMetadata(assetMetadata)
   {
-    m_Logger->LogDebug(Log("ImageFileLoader created", "ImageFileLoader"));
+    mLogger->LogDebug(Log("ImageFileLoader created", "ImageFileLoader"));
   }
 
   ImageFileLoader::~ImageFileLoader()
   {
-    m_Logger->LogDebug(Log("ImageFileLoader destroyed", "ImageFileLoader"));
+    mLogger->LogDebug(Log("ImageFileLoader destroyed", "ImageFileLoader"));
   }
 
   std::shared_ptr<TextureContainer>
@@ -31,53 +31,52 @@ namespace Dwarf
   {
     std::string                       ext = texturePath.extension().string();
     std::shared_ptr<TextureContainer> textureData = nullptr;
-    nlohmann::json metadata = m_AssetMetadata->GetMetadata(texturePath);
+    nlohmann::json metadata = mAssetMetadata->GetMetadata(texturePath);
     nlohmann::json importSettings = metadata.contains("ImportSettings")
                                       ? metadata["ImportSettings"]
                                       : nlohmann::json();
 
-    m_Logger->LogDebug(
+    mLogger->LogDebug(
       Log("Loading image file: " + texturePath.string(), "ImageFileLoader"));
 
     if (ext == ".jpg" || ext == ".jpeg")
     {
-      m_Logger->LogDebug(Log("Loading jpeg image file", "ImageFileLoader"));
+      mLogger->LogDebug(Log("Loading jpeg image file", "ImageFileLoader"));
       textureData = JpegUtilities::LoadJpeg(texturePath, importSettings);
     }
     else if (ext == ".png")
     {
-      m_Logger->LogDebug(Log("Loading png image file", "ImageFileLoader"));
-      textureData = PngUtilities::LoadPng(m_Logger, m_FileHandler, texturePath);
+      mLogger->LogDebug(Log("Loading png image file", "ImageFileLoader"));
+      textureData = PngUtilities::LoadPng(mLogger, mFileHandler, texturePath);
     }
     else if (ext == ".bmp")
     {
-      m_Logger->LogDebug(Log("Loading bmp image file", "ImageFileLoader"));
+      mLogger->LogDebug(Log("Loading bmp image file", "ImageFileLoader"));
       textureData = BmpUtilities::LoadBmp(texturePath);
     }
     else if (ext == ".tga")
     {
-      m_Logger->LogDebug(Log("Loading tga image file", "ImageFileLoader"));
+      mLogger->LogDebug(Log("Loading tga image file", "ImageFileLoader"));
       textureData = TgaUtilities::LoadTga(texturePath);
     }
     else if (ext == ".tif" || ext == ".tiff")
     {
-      m_Logger->LogDebug(Log("Loading tiff image file", "ImageFileLoader"));
+      mLogger->LogDebug(Log("Loading tiff image file", "ImageFileLoader"));
       textureData = TiffUtilities::LoadTiff(texturePath);
     }
     else if (ext == ".hdr" || ext == ".exr")
     {
-      m_Logger->LogDebug(Log("Loading hdr image file", "ImageFileLoader"));
+      mLogger->LogDebug(Log("Loading hdr image file", "ImageFileLoader"));
       textureData = HdrUtilities::LoadHdr(texturePath);
     }
 
     if (textureData == nullptr)
     {
-      m_Logger->LogError(Log("Failed to load image file", "ImageFileLoader"));
+      mLogger->LogError(Log("Failed to load image file", "ImageFileLoader"));
+      return nullptr;
     }
-    else
-    {
-      m_Logger->LogDebug(Log("Image file loaded", "ImageFileLoader"));
-    }
+
+    mLogger->LogDebug(Log("Image file loaded", "ImageFileLoader"));
 
     if (importSettings.contains("ColorSpace"))
     {

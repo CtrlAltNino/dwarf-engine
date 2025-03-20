@@ -10,9 +10,9 @@ namespace Dwarf
   class ImageFileLoader : public IImageFileLoader
   {
   private:
-    std::shared_ptr<IDwarfLogger>   m_Logger;
-    std::shared_ptr<IFileHandler>   m_FileHandler;
-    std::shared_ptr<IAssetMetadata> m_AssetMetadata;
+    std::shared_ptr<IDwarfLogger>   mLogger;
+    std::shared_ptr<IFileHandler>   mFileHandler;
+    std::shared_ptr<IAssetMetadata> mAssetMetadata;
 
   public:
     ImageFileLoader(std::shared_ptr<IDwarfLogger>   logger,

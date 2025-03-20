@@ -22,20 +22,20 @@ namespace Dwarf
   class AssetInspector : public IAssetInspector
   {
   public:
-    // GraphicsApi                       m_GraphicsApi;
-    // std::shared_ptr<ILoadedScene>     m_LoadedScene;
-    //  std::shared_ptr<ISceneIO>         m_SceneIO;
-    std::shared_ptr<IAssetDatabase> m_AssetDatabase;
-    // std::shared_ptr<IMaterialPreview> m_MaterialPreview;
-    // std::shared_ptr<IModelPreview>    m_ModelPreview;
-    // std::shared_ptr<IInputManager>    m_InputManager;
-    // std::shared_ptr<IEditorStats>     m_EditorStats;
-    // std::shared_ptr<IAssetReimporter> m_AssetReimporter;
-    std::shared_ptr<IMaterialAssetInspector> m_MaterialAssetInspector;
-    std::shared_ptr<ISceneAssetInspector>    m_SceneAssetInspector;
-    std::shared_ptr<IModelAssetInspector>    m_ModelAssetInspector;
-    std::shared_ptr<ITextureAssetInspector>  m_TextureAssetInspector;
-    std::shared_ptr<IEditorSelection>        m_EditorSelection;
+    // GraphicsApi                       mGraphicsApi;
+    // std::shared_ptr<ILoadedScene>     mLoadedScene;
+    //  std::shared_ptr<ISceneIO>         mSceneIO;
+    std::shared_ptr<IAssetDatabase> mAssetDatabase;
+    // std::shared_ptr<IMaterialPreview> mMaterialPreview;
+    // std::shared_ptr<IModelPreview>    mModelPreview;
+    // std::shared_ptr<IInputManager>    mInputManager;
+    // std::shared_ptr<IEditorStats>     mEditorStats;
+    // std::shared_ptr<IAssetReimporter> mAssetReimporter;
+    std::shared_ptr<IMaterialAssetInspector> mMaterialAssetInspector;
+    std::shared_ptr<ISceneAssetInspector>    mSceneAssetInspector;
+    std::shared_ptr<IModelAssetInspector>    mModelAssetInspector;
+    std::shared_ptr<ITextureAssetInspector>  mTextureAssetInspector;
+    std::shared_ptr<IEditorSelection>        mEditorSelection;
 
     AssetInspector(
       std::shared_ptr<IAssetDatabase>          assetDatabase,

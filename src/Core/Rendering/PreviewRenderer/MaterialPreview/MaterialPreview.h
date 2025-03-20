@@ -13,11 +13,11 @@ namespace Dwarf
   class MaterialPreview : public IMaterialPreview
   {
   private:
-    std::shared_ptr<IDwarfLogger> m_Logger;
-    MaterialPreviewMeshType       m_MeshType = MaterialPreviewMeshType::Sphere;
-    std::shared_ptr<IMeshBufferFactory> m_MeshBufferFactory;
-    std::shared_ptr<IMeshFactory>       m_MeshFactory;
-    std::unique_ptr<IMeshBuffer>        m_MeshBuffer;
+    std::shared_ptr<IDwarfLogger> mLogger;
+    MaterialPreviewMeshType       mMeshType = MaterialPreviewMeshType::Sphere;
+    std::shared_ptr<IMeshBufferFactory> mMeshBufferFactory;
+    std::shared_ptr<IMeshFactory>       mMeshFactory;
+    std::unique_ptr<IMeshBuffer>        mMeshBuffer;
 
     void
     UpdateMesh();

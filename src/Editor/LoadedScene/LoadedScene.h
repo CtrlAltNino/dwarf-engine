@@ -9,9 +9,9 @@ namespace Dwarf
   class LoadedScene : public ILoadedScene
   {
   private:
-    std::shared_ptr<IDwarfLogger>     m_Logger;
-    std::unique_ptr<IScene>           m_Scene;
-    std::shared_ptr<IProjectSettings> m_ProjectSettings;
+    std::shared_ptr<IDwarfLogger>     mLogger;
+    std::unique_ptr<IScene>           mScene;
+    std::shared_ptr<IProjectSettings> mProjectSettings;
 
   public:
     LoadedScene(std::shared_ptr<IDwarfLogger>     logger,

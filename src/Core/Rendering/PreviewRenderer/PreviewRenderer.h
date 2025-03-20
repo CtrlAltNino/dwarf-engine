@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Core/Asset/Database/AssetComponents.h"
 #include "Core/Asset/AssetReference/IAssetReference.h"
+#include "Core/Asset/Database/AssetComponents.h"
 #include "Core/Rendering/Framebuffer/IFramebuffer.h"
 #include "Core/Rendering/Framebuffer/IFramebufferFactory.h"
 #include "Core/Rendering/RendererApi/IRendererApi.h"
@@ -25,13 +25,13 @@ namespace Dwarf
   class PreviewRenderer
   {
   protected:
-    std::shared_ptr<IFramebufferFactory> m_FramebufferFactory;
-    std::shared_ptr<IFramebuffer>        m_RenderFramebuffer;
-    std::shared_ptr<IFramebuffer>        m_PreviewFramebuffer;
-    std::shared_ptr<ICamera>             m_Camera;
-    PreviewRendererProperties            m_Properties;
-    std::shared_ptr<IRendererApi>        m_RendererApi;
-    std::shared_ptr<IEditorStats>        m_EditorStats;
+    std::shared_ptr<IFramebufferFactory> mFramebufferFactory;
+    std::shared_ptr<IFramebuffer>        mRenderFramebuffer;
+    std::shared_ptr<IFramebuffer>        mPreviewFramebuffer;
+    std::shared_ptr<ICamera>             mCamera;
+    PreviewRendererProperties            mProperties;
+    std::shared_ptr<IRendererApi>        mRendererApi;
+    std::shared_ptr<IEditorStats>        mEditorStats;
 
   public:
     PreviewRenderer(std::shared_ptr<IFramebufferFactory> framebufferFactory,

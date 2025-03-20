@@ -9,8 +9,8 @@ namespace Dwarf
   class DrawCallFactory : public IDrawCallFactory
   {
   private:
-    std::shared_ptr<IDwarfLogger>      m_Logger;
-    std::shared_ptr<IMeshBufferWorker> m_MeshBufferWorker;
+    std::shared_ptr<IDwarfLogger>      mLogger;
+    std::shared_ptr<IMeshBufferWorker> mMeshBufferWorker;
 
   public:
     DrawCallFactory(std::shared_ptr<IDwarfLogger>      logger,

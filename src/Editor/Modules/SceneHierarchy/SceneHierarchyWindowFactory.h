@@ -8,10 +8,10 @@ namespace Dwarf
   class SceneHierarchyWindowFactory : public ISceneHierarchyWindowFactory
   {
   private:
-    std::shared_ptr<ILoadedScene>     m_LoadedScene;
-    std::shared_ptr<IEditorSelection> m_EditorSelection;
-    std::shared_ptr<IInputManager>    m_InputManager;
-    std::shared_ptr<IAssetDatabase>   m_AssetDatabase;
+    std::shared_ptr<ILoadedScene>     mLoadedScene;
+    std::shared_ptr<IEditorSelection> mEditorSelection;
+    std::shared_ptr<IInputManager>    mInputManager;
+    std::shared_ptr<IAssetDatabase>   mAssetDatabase;
 
   public:
     BOOST_DI_INJECT(SceneHierarchyWindowFactory,

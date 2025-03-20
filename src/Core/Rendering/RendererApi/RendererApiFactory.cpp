@@ -25,15 +25,15 @@ namespace Dwarf
                                         shaderSourceCollectionFactory,
     std::shared_ptr<IMeshFactory>       meshFactory,
     std::shared_ptr<IMeshBufferFactory> meshBufferFactory)
-    : m_GraphicsApi(api)
-    , m_AssetDatabase(assetDatabase)
-    , m_ShaderRegistry(shaderRegistry)
-    , m_Logger(logger)
-    , m_EditorStats(editorStats)
-    , m_StateTracker(stateTracker)
-    , m_ShaderSourceCollectionFactory(shaderSourceCollectionFactory)
-    , m_MeshFactory(meshFactory)
-    , m_MeshBufferFactory(meshBufferFactory)
+    : mGraphicsApi(api)
+    , mAssetDatabase(assetDatabase)
+    , mShaderRegistry(shaderRegistry)
+    , mLogger(logger)
+    , mEditorStats(editorStats)
+    , mStateTracker(stateTracker)
+    , mShaderSourceCollectionFactory(shaderSourceCollectionFactory)
+    , mMeshFactory(meshFactory)
+    , mMeshBufferFactory(meshBufferFactory)
   {
   }
 
@@ -42,7 +42,7 @@ namespace Dwarf
   std::shared_ptr<IRendererApi>
   RendererApiFactory::Create()
   {
-    switch (m_GraphicsApi)
+    switch (mGraphicsApi)
     {
 #if _WIN32
       case GraphicsApi::D3D12:
@@ -50,14 +50,14 @@ namespace Dwarf
         break;
       case GraphicsApi::OpenGL:
         return std::make_shared<OpenGLRendererApi>(
-          m_AssetDatabase,
-          m_ShaderRegistry,
-          m_Logger,
-          m_EditorStats,
-          m_StateTracker,
-          m_ShaderSourceCollectionFactory,
-          m_MeshFactory,
-          m_MeshBufferFactory);
+          mAssetDatabase,
+          mShaderRegistry,
+          mLogger,
+          mEditorStats,
+          mStateTracker,
+          mShaderSourceCollectionFactory,
+          mMeshFactory,
+          mMeshBufferFactory);
         break;
       case GraphicsApi::Metal: break;
       case GraphicsApi::Vulkan:
@@ -67,14 +67,14 @@ namespace Dwarf
       case GraphicsApi::D3D12: break;
       case GraphicsApi::OpenGL:
         return std::make_shared<OpenGLRendererApi>(
-          m_AssetDatabase,
-          m_ShaderRegistry,
-          m_Logger,
-          m_EditorStats,
-          m_StateTracker,
-          m_ShaderSourceCollectionFactory,
-          m_MeshFactory,
-          m_MeshBufferFactory);
+          mAssetDatabase,
+          mShaderRegistry,
+          mLogger,
+          mEditorStats,
+          mStateTracker,
+          mShaderSourceCollectionFactory,
+          mMeshFactory,
+          mMeshBufferFactory);
         break;
       case GraphicsApi::Metal: break;
       case GraphicsApi::Vulkan:

@@ -10,17 +10,17 @@ namespace Dwarf
   class SceneViewerWindowFactory : public ISceneViewerWindowFactory
   {
   private:
-    std::shared_ptr<ICameraFactory>            m_CameraFactory;
-    std::shared_ptr<IFramebufferFactory>       m_FramebufferFactory;
-    std::shared_ptr<IEditorStats>              m_EditorStats;
-    std::shared_ptr<IInputManager>             m_InputManager;
-    std::shared_ptr<ILoadedScene>              m_LoadedScene;
-    std::shared_ptr<IEditorSelection>          m_EditorSelection;
-    std::shared_ptr<IRenderingPipelineFactory> m_RenderingPipelineFactory;
-    std::shared_ptr<IRendererApiFactory>       m_RendererApiFactory;
-    std::shared_ptr<IShaderRegistry>           m_ShaderRegistry;
+    std::shared_ptr<ICameraFactory>            mCameraFactory;
+    std::shared_ptr<IFramebufferFactory>       mFramebufferFactory;
+    std::shared_ptr<IEditorStats>              mEditorStats;
+    std::shared_ptr<IInputManager>             mInputManager;
+    std::shared_ptr<ILoadedScene>              mLoadedScene;
+    std::shared_ptr<IEditorSelection>          mEditorSelection;
+    std::shared_ptr<IRenderingPipelineFactory> mRenderingPipelineFactory;
+    std::shared_ptr<IRendererApiFactory>       mRendererApiFactory;
+    std::shared_ptr<IShaderRegistry>           mShaderRegistry;
     std::shared_ptr<IShaderSourceCollectionFactory>
-      m_ShaderSourceCollectionFactory;
+      mShaderSourceCollectionFactory;
 
   public:
     BOOST_DI_INJECT(

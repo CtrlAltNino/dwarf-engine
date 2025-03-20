@@ -10,21 +10,21 @@ namespace Dwarf
   ShaderParameterCollection::SetParameter(std::string_view identifier,
                                           ParameterValue   parameter)
   {
-    m_Parameters[identifier.data()] = std::move(parameter);
+    mParameters[identifier.data()] = std::move(parameter);
   }
 
   ParameterValue&
   ShaderParameterCollection::GetParameter(const std::string& name)
   {
-    return m_Parameters.at(name);
+    return mParameters.at(name);
   }
 
   const std::vector<std::string>
   ShaderParameterCollection::GetParameterIdentifiers() const
   {
     std::vector<std::string> keys;
-    keys.reserve(m_Parameters.size());
-    for (const auto& pair : m_Parameters)
+    keys.reserve(mParameters.size());
+    for (const auto& pair : mParameters)
     {
       keys.push_back(pair.first);
     }
@@ -34,26 +34,26 @@ namespace Dwarf
   void
   ShaderParameterCollection::RemoveParameter(std::string const& name)
   {
-    m_Parameters.erase(name);
+    mParameters.erase(name);
   }
 
   bool
   ShaderParameterCollection::HasParameter(std::string const& name) const
   {
-    return m_Parameters.find(name) != m_Parameters.end();
+    return mParameters.find(name) != mParameters.end();
   }
 
   void
   ShaderParameterCollection::ClearParameters()
   {
-    m_Parameters.clear();
+    mParameters.clear();
   }
 
   nlohmann::json
   ShaderParameterCollection::Serialize()
   {
     nlohmann::json serialized = nlohmann::json::object();
-    for (const auto& pair : m_Parameters)
+    for (const auto& pair : mParameters)
     {
       std::visit(
         [&serialized, &pair](auto&& arg)

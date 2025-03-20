@@ -1,7 +1,7 @@
-#include <gtest/gtest.h>
-#include <gmock/gmock.h>
 #include "Core/Asset/Shader/ShaderRecompiler.h"
 #include "Core/Rendering/Shader/IShader.h"
+#include <gmock/gmock.h>
+#include <gtest/gtest.h>
 
 using namespace Dwarf;
 using namespace testing;
@@ -51,7 +51,7 @@ TEST_F(ShaderRecompilerTest, MarkForRecompilation)
   recompiler->MarkForRecompilation(mockShader);
 
   // Verify the shader is marked for recompilation
-  // Since m_ShadersToRecompile is private, we can't directly access it.
+  // Since mShadersToRecompile is private, we can't directly access it.
   // We will verify it indirectly by calling Recompile and checking if Compile
   // is called.
   EXPECT_CALL(*mockShader, Compile()).Times(1);
@@ -76,7 +76,7 @@ TEST_F(ShaderRecompilerTest, Recompile)
   recompiler->Recompile();
 
   // Verify that the shaders are recompiled and the list is cleared
-  // Since m_ShadersToRecompile is private, we can't directly access it.
+  // Since mShadersToRecompile is private, we can't directly access it.
   // We will verify it indirectly by calling Recompile again and checking if
   // Compile is not called.
   recompiler->Recompile();

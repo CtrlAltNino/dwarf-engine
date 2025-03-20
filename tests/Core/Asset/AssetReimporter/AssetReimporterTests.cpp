@@ -1,11 +1,11 @@
-#include <gtest/gtest.h>
-#include <gmock/gmock.h>
 #include "Core/Asset/AssetReimporter/AssetReimporter.h"
 #include "Core/Asset/Database/IAssetDatabase.h"
 #include "Logging/IDwarfLogger.h"
 #include <boost/di/extension/injections/lazy.hpp>
-#include <memory>
 #include <filesystem>
+#include <gmock/gmock.h>
+#include <gtest/gtest.h>
+#include <memory>
 
 using namespace Dwarf;
 using namespace testing;
@@ -96,7 +96,7 @@ TEST_F(AssetReimporterTest, QueueReimport)
   assetReimporter->QueueReimport(assetPath);
 
   // Check if the asset path is in the reimport queue
-  // This requires access to the private member m_ReimportQueue, which can be
+  // This requires access to the private member mReimportQueue, which can be
   // done via a friend class or reflection in real scenarios.
 }
 
@@ -125,6 +125,6 @@ TEST_F(AssetReimporterTest, ReimportQueuedAssets)
   assetReimporter->ReimportQueuedAssets();
 
   // Check if the reimport queue is empty
-  // This requires access to the private member m_ReimportQueue, which can be
+  // This requires access to the private member mReimportQueue, which can be
   // done via a friend class or reflection in real scenarios.
 }

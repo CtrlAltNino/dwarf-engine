@@ -17,17 +17,17 @@ namespace Dwarf
                                  std::shared_ptr<IImageFileLoader> loader,
                                  std::shared_ptr<IDwarfLogger>     logger,
                                  std::shared_ptr<IVramTracker>     vramTracker)
-    : m_Api(api)
-    , m_ImageFileLoader(loader)
-    , m_Logger(logger)
-    , m_VramTracker(vramTracker)
+    : mApi(api)
+    , mImageFileLoader(loader)
+    , mLogger(logger)
+    , mVramTracker(vramTracker)
   {
-    m_Logger->LogDebug(Log("TextureFactory created.", "TextureFactory"));
+    mLogger->LogDebug(Log("TextureFactory created.", "TextureFactory"));
   }
 
   TextureFactory::~TextureFactory()
   {
-    m_Logger->LogDebug(Log("TextureFactory destroyed.", "TextureFactory"));
+    mLogger->LogDebug(Log("TextureFactory destroyed.", "TextureFactory"));
   }
 
   uint64_t
@@ -94,8 +94,8 @@ namespace Dwarf
   std::unique_ptr<ITexture>
   TextureFactory::LoadTexture(std::shared_ptr<TextureContainer> textureData)
   {
-    m_Logger->LogDebug(Log("Creating texture", "TextureFactory"));
-    switch (m_Api)
+    mLogger->LogDebug(Log("Creating texture", "TextureFactory"));
+    switch (mApi)
     {
       case GraphicsApi::None:
         std::runtime_error("Error: No API selected.");
@@ -106,9 +106,9 @@ namespace Dwarf
         break;
       case GraphicsApi::OpenGL:
         {
-          m_Logger->LogInfo(Log("Created OpenGL texture", "TextureFactory"));
+          mLogger->LogInfo(Log("Created OpenGL texture", "TextureFactory"));
           return std::make_unique<OpenGLTexture>(
-            textureData, m_Logger, m_VramTracker);
+            textureData, mLogger, mVramTracker);
           break;
         }
       case GraphicsApi::Metal:
@@ -123,9 +123,9 @@ namespace Dwarf
         break;
       case GraphicsApi::OpenGL:
         {
-          m_Logger->LogDebug(Log("Created OpenGL texture", "TextureFactory"));
+          mLogger->LogDebug(Log("Created OpenGL texture", "TextureFactory"));
           return std::make_unique<OpenGLTexture>(
-            textureData, m_Logger, m_VramTracker);
+            textureData, mLogger, mVramTracker);
           break;
         }
       case GraphicsApi::Metal:
@@ -144,7 +144,7 @@ namespace Dwarf
 #endif
     }
 
-    m_Logger->LogError(Log("Failed to create texture", "TextureFactory"));
+    mLogger->LogError(Log("Failed to create texture", "TextureFactory"));
 
     return nullptr;
   }
@@ -152,12 +152,12 @@ namespace Dwarf
   std::unique_ptr<ITexture>
   TextureFactory::FromPath(std::filesystem::path texturePath)
   {
-    m_Logger->LogDebug(Log(
-      "Creating texture from path: " + texturePath.string(), "TextureFactory"));
+    mLogger->LogDebug(Log("Creating texture from path: " + texturePath.string(),
+                          "TextureFactory"));
     std::string                        ext = texturePath.extension().string();
     std::shared_ptr<TextureParameters> parameters = GetParameters(texturePath);
     std::shared_ptr<TextureContainer>  textureData =
-      m_ImageFileLoader->LoadImageFile(texturePath);
+      mImageFileLoader->LoadImageFile(texturePath);
 
     textureData->Parameters.MinFilter = TextureMinFilter::LINEAR_MIPMAP_LINEAR;
     textureData->Parameters.MipMapped = true;
@@ -168,7 +168,7 @@ namespace Dwarf
   std::unique_ptr<ITexture>
   TextureFactory::FromData(const std::shared_ptr<TextureContainer>& textureData)
   {
-    m_Logger->LogDebug(Log("Creating texture from data", "TextureFactory"));
+    mLogger->LogDebug(Log("Creating texture from data", "TextureFactory"));
     return LoadTexture(textureData);
   }
 
@@ -180,7 +180,7 @@ namespace Dwarf
                         const TextureParameters& parameters,
                         int                      samples)
   {
-    m_Logger->LogDebug(Log("Creating empty texture", "TextureFactory"));
+    mLogger->LogDebug(Log("Creating empty texture", "TextureFactory"));
     std::shared_ptr<TextureContainer> textureData =
       std::make_shared<TextureContainer>();
     textureData->Size = size;
@@ -247,7 +247,7 @@ namespace Dwarf
                         const TextureResolution& size,
                         int                      samples)
   {
-    m_Logger->LogDebug(Log("Creating empty texture", "TextureFactory"));
+    mLogger->LogDebug(Log("Creating empty texture", "TextureFactory"));
     TextureParameters parameters;
     return Empty(type, format, dataType, size, parameters, samples);
   }
@@ -255,12 +255,12 @@ namespace Dwarf
   std::shared_ptr<ITexture>
   TextureFactory::GetPlaceholderTexture()
   {
-    if (!m_PlaceholderTexture)
+    if (!mPlaceholderTexture)
     {
-      m_PlaceholderTexture =
+      mPlaceholderTexture =
         FromPath("data/engine/img/textures/placeholder.png");
     }
 
-    return m_PlaceholderTexture;
+    return mPlaceholderTexture;
   }
 } // namespace Dwarf

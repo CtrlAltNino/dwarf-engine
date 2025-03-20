@@ -9,10 +9,10 @@ namespace Dwarf
   class DebugWindowFactory : public IDebugWindowFactory
   {
   private:
-    std::shared_ptr<IAssetDatabase> m_AssetDatabase;
+    std::shared_ptr<IAssetDatabase> mAssetDatabase;
     std::function<boost::di::injector<std::unique_ptr<DebugWindow>>(
       std::shared_ptr<IAssetDatabase>)>
-      m_InjectorFactory;
+      mInjectorFactory;
 
   public:
     BOOST_DI_INJECT(DebugWindowFactory,

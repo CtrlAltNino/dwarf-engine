@@ -6,11 +6,11 @@ namespace Dwarf
   class VramTracker : public IVramTracker
   {
   private:
-    size_t m_TextureMemory = 0;
-    size_t m_BufferMemory = 0;
-    size_t m_FramebufferMemory = 0;
-    size_t m_ShaderMemory = 0;
-    size_t m_ComputeMemory = 0;
+    size_t mTextureMemory = 0;
+    size_t mBufferMemory = 0;
+    size_t mFramebufferMemory = 0;
+    size_t mShaderMemory = 0;
+    size_t mComputeMemory = 0;
 
   public:
     void

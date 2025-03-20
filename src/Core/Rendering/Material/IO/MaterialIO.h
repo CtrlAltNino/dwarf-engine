@@ -1,7 +1,7 @@
 #pragma once
 
-#include "Core/Rendering/Material/IO/IMaterialIO.h"
 #include "Core/Rendering/Material/IMaterialFactory.h"
+#include "Core/Rendering/Material/IO/IMaterialIO.h"
 #include "Logging/IDwarfLogger.h"
 #include "Utilities/FileHandler/IFileHandler.h"
 #include <memory>
@@ -11,9 +11,9 @@ namespace Dwarf
   class MaterialIO : public IMaterialIO
   {
   private:
-    std::shared_ptr<IMaterialFactory> m_MaterialFactory;
-    std::shared_ptr<IDwarfLogger>     m_Logger;
-    std::shared_ptr<IFileHandler>     m_FileHandler;
+    std::shared_ptr<IMaterialFactory> mMaterialFactory;
+    std::shared_ptr<IDwarfLogger>     mLogger;
+    std::shared_ptr<IFileHandler>     mFileHandler;
 
   public:
     // Constructor

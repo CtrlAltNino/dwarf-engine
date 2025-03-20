@@ -1,11 +1,10 @@
 #pragma once
-#include "Core/Rendering/Shader/ShaderParameterCollection/IShaderParameterCollectionFactory.h"
-#include "pch.h"
 #include "Core/Base.h"
-#include "IMaterial.h"
 #include "Core/Rendering/Shader/IShader.h"
+#include "Core/Rendering/Shader/ShaderParameterCollection/IShaderParameterCollectionFactory.h"
 #include "Core/UUID.h"
 #include "IMaterial.h"
+#include "pch.h"
 #include <boost/serialization/strong_typedef.hpp>
 
 namespace Dwarf
@@ -16,13 +15,13 @@ namespace Dwarf
   {
   private:
     /// @brief Material properties.
-    MaterialProperties m_MaterialProperties;
+    MaterialProperties mMaterialProperties;
 
     /// @brief Shader program for this material.
-    std::shared_ptr<IShader> m_Shader;
+    std::shared_ptr<IShader> mShader;
 
     /// @brief Shader parameters for this material.
-    std::unique_ptr<IShaderParameterCollection> m_ShaderParameters;
+    std::unique_ptr<IShaderParameterCollection> mShaderParameters;
 
   public:
     Material(std::shared_ptr<IShader>                    shader,

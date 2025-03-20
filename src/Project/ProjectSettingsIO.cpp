@@ -7,8 +7,8 @@ namespace Dwarf
   ProjectSettingsIO::ProjectSettingsIO(
     std::shared_ptr<IDwarfLogger> logger,
     std::shared_ptr<IFileHandler> fileHandler)
-    : m_Logger(logger)
-    , m_FileHandler(fileHandler)
+    : mLogger(logger)
+    , mFileHandler(fileHandler)
   {
   }
 
@@ -18,21 +18,21 @@ namespace Dwarf
     ProjectSettingsData   projectSettingsData;
     std::filesystem::path projectSettingsPath =
       projectPath / "projectSettings.dproj";
-    m_Logger->LogInfo(Log("Loading project settings from [" +
-                            projectSettingsPath.string() + "]",
-                          "ProjectSettings"));
+    mLogger->LogInfo(Log("Loading project settings from [" +
+                           projectSettingsPath.string() + "]",
+                         "ProjectSettings"));
 
-    if (!m_FileHandler->FileExists(projectSettingsPath))
+    if (!mFileHandler->FileExists(projectSettingsPath))
     {
-      m_Logger->LogError(Log("Project settings file does not exist at [" +
-                               projectSettingsPath.string() + "]",
-                             "ProjectSettings"));
+      mLogger->LogError(Log("Project settings file does not exist at [" +
+                              projectSettingsPath.string() + "]",
+                            "ProjectSettings"));
       return std::nullopt;
     }
 
     // Loading project settings from file
     nlohmann::json projectSettings =
-      nlohmann::json::parse(m_FileHandler->ReadFile(projectSettingsPath));
+      nlohmann::json::parse(mFileHandler->ReadFile(projectSettingsPath));
 
     if (projectSettings.contains(PROJECT_NAME_KEY))
     {
@@ -41,7 +41,7 @@ namespace Dwarf
     }
     else
     {
-      m_Logger->LogError(
+      mLogger->LogError(
         Log("Missing required field: projectName", "ProjectSettings"));
       return std::nullopt;
     }
@@ -53,7 +53,7 @@ namespace Dwarf
     }
     else
     {
-      m_Logger->LogError(
+      mLogger->LogError(
         Log(std::format("Missing required field: %s", GRAPHICS_API_KEY),
             "ProjectSettings"));
       return std::nullopt;
@@ -67,23 +67,22 @@ namespace Dwarf
     }
     else
     {
-      m_Logger->LogError(
+      mLogger->LogError(
         Log(std::format("Missing required field: %s", LAST_OPENED_SCENE_KEY),
             "ProjectSettings"));
       projectSettingsData.LastOpenedScene =
         std::nullopt; // or some default value
     }
 
-    // Check if layout key is present, if so, load into m_Data.Layout
+    // Check if layout key is present, if so, load into mData.Layout
     if (projectSettings.contains(VIEW_KEY))
     {
       projectSettingsData.SerializedView = projectSettings.at(VIEW_KEY);
     }
     else
     {
-      m_Logger->LogError(
-        Log(std::format("Missing required field: %s", VIEW_KEY),
-            "ProjectSettings"));
+      mLogger->LogError(Log(std::format("Missing required field: %s", VIEW_KEY),
+                            "ProjectSettings"));
     }
 
     return projectSettingsData;
@@ -96,7 +95,7 @@ namespace Dwarf
   {
     nlohmann::json projectSettings = projectSettingsData.Serialize();
 
-    m_FileHandler->WriteToFile(projectPath / "projectSettings.dproj",
-                               projectSettings.dump(2));
+    mFileHandler->WriteToFile(projectPath / "projectSettings.dproj",
+                              projectSettings.dump(2));
   }
 }

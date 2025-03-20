@@ -23,58 +23,58 @@ namespace Dwarf
                          std::shared_ptr<IAssetDatabase>    assetDatabase,
                          std::shared_ptr<IMaterialCreator>  materialCreator,
                          std::shared_ptr<IEditorStats>      editorStats)
-    : m_GraphicsApi(graphicsApi)
-    , m_Logger(logger)
-    , m_ProjectSettings(projectSettings)
-    , m_LoadedScene(loadedScene)
-    , m_Window(window)
-    , m_GuiModuleFactory(guiModuleFactory)
-    , m_SceneIO(sceneIO)
-    , m_SceneFactory(sceneFactory)
-    , m_AssetDatabase(assetDatabase)
-    , m_MaterialCreator(materialCreator)
-    , m_EditorStats(editorStats)
+    : mGraphicsApi(graphicsApi)
+    , mLogger(logger)
+    , mProjectSettings(projectSettings)
+    , mLoadedScene(loadedScene)
+    , mWindow(window)
+    , mGuiModuleFactory(guiModuleFactory)
+    , mSceneIO(sceneIO)
+    , mSceneFactory(sceneFactory)
+    , mAssetDatabase(assetDatabase)
+    , mMaterialCreator(materialCreator)
+    , mEditorStats(editorStats)
   {
-    m_Logger->LogDebug(Log("Creating EditorView", "EditorView"));
+    mLogger->LogDebug(Log("Creating EditorView", "EditorView"));
 
-    nlohmann::json serializedView = m_ProjectSettings->GetSerializedView();
-    m_Logger->LogDebug(
+    nlohmann::json serializedView = mProjectSettings->GetSerializedView();
+    mLogger->LogDebug(
       Log(fmt::format("Deserializing EditorView:\n{}", serializedView.dump(2)),
           "EditorView"));
 
     if (serializedView.contains("windowMaximized"))
     {
-      m_Window->setShowWindowMaximized(
+      mWindow->setShowWindowMaximized(
         serializedView["windowMaximized"].get<bool>());
     }
 
     if (serializedView.contains("modules"))
     {
-      m_Logger->LogDebug(Log("Module key found", "EditorView"));
+      mLogger->LogDebug(Log("Module key found", "EditorView"));
       for (auto module : serializedView.at("modules"))
       {
-        m_Logger->LogDebug(
+        mLogger->LogDebug(
           Log(fmt::format("Deserializing module:\n{}", module.dump(2)),
               "EditorView"));
-        m_GuiModules.push_back(std::move(
-          m_GuiModuleFactory->CreateGuiModule(SerializedModule(module))));
+        mGuiModules.push_back(std::move(
+          mGuiModuleFactory->CreateGuiModule(SerializedModule(module))));
       }
     }
 
     // Start a thread that saves the view every 5 seconds
-    m_ViewSaveThread = std::thread(
+    mViewSaveThread = std::thread(
       [this]()
       {
-        while (m_RunViewSaveThread.load())
+        while (mRunViewSaveThread.load())
         {
           {
-            std::unique_lock<std::mutex> lock(m_ThreadMutex);
-            m_ThreadCondition.wait_for(lock,
-                                       std::chrono::seconds(5),
-                                       [this]
-                                       { return !m_RunViewSaveThread.load(); });
-            m_ProjectSettings->UpdateSerializedView(Serialize());
-            m_ProjectSettings->Save();
+            std::unique_lock<std::mutex> lock(mThreadMutex);
+            mThreadCondition.wait_for(lock,
+                                      std::chrono::seconds(5),
+                                      [this]
+                                      { return !mRunViewSaveThread.load(); });
+            mProjectSettings->UpdateSerializedView(Serialize());
+            mProjectSettings->Save();
           }
         }
       });
@@ -82,19 +82,19 @@ namespace Dwarf
 
   EditorView::~EditorView()
   {
-    m_Logger->LogDebug(Log("Destroying EditorView", "EditorView"));
+    mLogger->LogDebug(Log("Destroying EditorView", "EditorView"));
 
-    if (m_RunViewSaveThread)
+    if (mRunViewSaveThread)
     {
       {
-        std::lock_guard<std::mutex> lock(m_ThreadMutex);
-        m_RunViewSaveThread.store(false);
+        std::lock_guard<std::mutex> lock(mThreadMutex);
+        mRunViewSaveThread.store(false);
       }
-      m_ThreadCondition.notify_one();
-      m_ViewSaveThread.join();
+      mThreadCondition.notify_one();
+      mViewSaveThread.join();
     }
 
-    m_Logger->LogDebug(Log("EditorView destroyed", "EditorView"));
+    mLogger->LogDebug(Log("EditorView destroyed", "EditorView"));
   }
 
   void
@@ -167,51 +167,51 @@ namespace Dwarf
         {
           // TODO: check for unsaved changes in scene
           std::unique_ptr<IScene> newScene =
-            m_SceneFactory->CreateDefaultScene();
-          m_LoadedScene->SetScene(std::move(newScene));
+            mSceneFactory->CreateDefaultScene();
+          mLoadedScene->SetScene(std::move(newScene));
         }
         if (ImGui::MenuItem("Save scene"))
         {
-          // if (SceneUtilities::SaveScene(m_Model->GetScene()))
+          // if (SceneUtilities::SaveScene(mModel->GetScene()))
           // {
-          //   AssetDatabase::Import(m_Model->GetScene()->GetPath());
-          //   SceneUtilities::SetLastOpenedScene(m_Model->GetScene()->GetPath());
+          //   AssetDatabase::Import(mModel->GetScene()->GetPath());
+          //   SceneUtilities::SetLastOpenedScene(mModel->GetScene()->GetPath());
           //   UpdateWindowTitle();
           // }
 
-          m_SceneIO->SaveScene(m_LoadedScene->GetScene());
+          mSceneIO->SaveScene(mLoadedScene->GetScene());
         }
         if (ImGui::MenuItem("Save scene as"))
         {
-          // if (SceneUtilities::SaveSceneDialog(m_Model->GetScene()))
+          // if (SceneUtilities::SaveSceneDialog(mModel->GetScene()))
           // {
-          //   AssetDatabase::Import(m_Model->GetScene()->GetPath());
-          //   SceneUtilities::SetLastOpenedScene(m_Model->GetScene()->GetPath());
+          //   AssetDatabase::Import(mModel->GetScene()->GetPath());
+          //   SceneUtilities::SetLastOpenedScene(mModel->GetScene()->GetPath());
           //   UpdateWindowTitle();
           // }
 
-          m_SceneIO->SaveSceneDialog(m_LoadedScene->GetScene());
+          mSceneIO->SaveSceneDialog(mLoadedScene->GetScene());
         }
         if (ImGui::MenuItem("Load scene"))
         {
-          std::unique_ptr<IScene> loadedScene = m_SceneIO->LoadSceneDialog();
+          std::unique_ptr<IScene> loadedScene = mSceneIO->LoadSceneDialog();
           if (loadedScene)
           {
-            m_LoadedScene->SetScene(std::move(loadedScene));
+            mLoadedScene->SetScene(std::move(loadedScene));
             UpdateWindowTitle();
           }
         }
 
         if (ImGui::MenuItem("Return to project launcher"))
         {
-          m_EditorStats->SetCloseSignal(true);
-          m_EditorStats->SetReturnToLauncher(true);
+          mEditorStats->SetCloseSignal(true);
+          mEditorStats->SetReturnToLauncher(true);
         }
 
         if (ImGui::MenuItem("Quit"))
         {
-          m_EditorStats->SetCloseSignal(true);
-          m_EditorStats->SetReturnToLauncher(false);
+          mEditorStats->SetCloseSignal(true);
+          mEditorStats->SetReturnToLauncher(false);
         }
         ImGui::EndMenu();
       }
@@ -219,12 +219,12 @@ namespace Dwarf
       {
         if (ImGui::MenuItem("Create new material"))
         {
-          m_MaterialCreator->CreateMaterialAsset();
+          mMaterialCreator->CreateMaterialAsset();
         }
         ImGui::MenuItem("Import Assets");
         if (ImGui::MenuItem("Reimport Assets"))
         {
-          m_AssetDatabase->ReimportAll();
+          mAssetDatabase->ReimportAll();
         }
         ImGui::EndMenu();
       }
@@ -233,13 +233,12 @@ namespace Dwarf
         if (ImGui::MenuItem("Create empty object"))
         {
           Entity newEntity =
-            m_LoadedScene->GetScene().CreateEntity("New object");
+            mLoadedScene->GetScene().CreateEntity("New object");
           newEntity.AddComponent<MeshRendererComponent>();
         }
         if (ImGui::MenuItem("Create light"))
         {
-          Entity newEntity =
-            m_LoadedScene->GetScene().CreateEntity("New Light");
+          Entity newEntity = mLoadedScene->GetScene().CreateEntity("New Light");
           newEntity.AddComponent<LightComponent>();
         }
         ImGui::EndMenu();
@@ -285,10 +284,10 @@ namespace Dwarf
   {
 
     {
-      std::unique_lock<std::mutex> lock(m_ThreadMutex);
-      for (int i = 0; i < m_GuiModules.size(); i++)
+      std::unique_lock<std::mutex> lock(mThreadMutex);
+      for (int i = 0; i < mGuiModules.size(); i++)
       {
-        m_GuiModules.at(i)->OnUpdate();
+        mGuiModules.at(i)->OnUpdate();
       }
     }
   }
@@ -335,15 +334,15 @@ namespace Dwarf
     // ImGui::ShowDemoWindow();
 
     // Render modules
-    for (int i = 0; i < m_GuiModules.size(); i++)
+    for (int i = 0; i < mGuiModules.size(); i++)
     {
-      if (m_GuiModules.at(i)->GetWindowClose())
+      if (mGuiModules.at(i)->GetWindowClose())
       {
-        RemoveWindow(m_GuiModules.at(i)->GetUuid());
+        RemoveWindow(mGuiModules.at(i)->GetUuid());
       }
       else
       {
-        m_GuiModules.at(i)->OnImGuiRender();
+        mGuiModules.at(i)->OnImGuiRender();
       }
     }
 
@@ -369,53 +368,53 @@ namespace Dwarf
   EditorView::AddWindow(MODULE_TYPE moduleType)
   {
     std::unique_ptr<IGuiModule> guiModule =
-      m_GuiModuleFactory->CreateGuiModule(moduleType);
+      mGuiModuleFactory->CreateGuiModule(moduleType);
 
     if (guiModule)
     {
-      m_GuiModules.push_back(std::move(guiModule));
-      m_ProjectSettings->UpdateSerializedView(Serialize());
-      m_ProjectSettings->Save();
+      mGuiModules.push_back(std::move(guiModule));
+      mProjectSettings->UpdateSerializedView(Serialize());
+      mProjectSettings->Save();
     }
   }
 
   void
   EditorView::RemoveWindow(std::shared_ptr<UUID> uuid)
   {
-    for (int i = 0; i < m_GuiModules.size(); i++)
+    for (int i = 0; i < mGuiModules.size(); i++)
     {
-      if (*m_GuiModules[i]->GetUuid() == *uuid)
+      if (*mGuiModules[i]->GetUuid() == *uuid)
       {
-        m_GuiModules.erase(m_GuiModules.begin() + i);
+        mGuiModules.erase(mGuiModules.begin() + i);
       }
     }
-    m_ProjectSettings->UpdateSerializedView(Serialize());
-    m_ProjectSettings->Save();
+    mProjectSettings->UpdateSerializedView(Serialize());
+    mProjectSettings->Save();
   }
 
   void
   EditorView::UpdateWindowTitle() const
   {
     std::string windowTitle = "Dwarf Engine Editor - ";
-    windowTitle.append(m_ProjectSettings->GetProjectName());
+    windowTitle.append(mProjectSettings->GetProjectName());
     windowTitle.append(" - ");
-    windowTitle.append(m_LoadedScene->GetScene().GetProperties().GetName());
+    windowTitle.append(mLoadedScene->GetScene().GetProperties().GetName());
     windowTitle.append(" <");
-    windowTitle.append(graphicsApiNames[(int)m_GraphicsApi]);
+    windowTitle.append(graphicsApiNames[(int)mGraphicsApi]);
     windowTitle.append(">");
 
-    m_Window->setWindowTitle(windowTitle);
+    mWindow->setWindowTitle(windowTitle);
   }
 
   nlohmann::json
   EditorView::Serialize()
   {
     nlohmann::json j;
-    j["windowMaximized"] = m_Window->isWindowMaximized();
+    j["windowMaximized"] = mWindow->isWindowMaximized();
     j["modules"] = nlohmann::json::array();
-    for (int i = 0; i < m_GuiModules.size(); i++)
+    for (int i = 0; i < mGuiModules.size(); i++)
     {
-      j["modules"].push_back(m_GuiModules.at(i)->Serialize());
+      j["modules"].push_back(mGuiModules.at(i)->Serialize());
     }
     return j;
   }
@@ -423,15 +422,15 @@ namespace Dwarf
   void
   EditorView::Shutdown()
   {
-    if (m_RunViewSaveThread)
+    if (mRunViewSaveThread)
     {
       {
-        std::lock_guard<std::mutex> lock(m_ThreadMutex);
-        m_RunViewSaveThread.store(false);
-        m_GuiModules.clear();
+        std::lock_guard<std::mutex> lock(mThreadMutex);
+        mRunViewSaveThread.store(false);
+        mGuiModules.clear();
       }
-      m_ThreadCondition.notify_one();
-      m_ViewSaveThread.join();
+      mThreadCondition.notify_one();
+      mViewSaveThread.join();
     }
   }
 }

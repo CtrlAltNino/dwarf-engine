@@ -14,11 +14,11 @@ namespace Dwarf
   class SceneIO : public ISceneIO
   {
   private:
-    std::shared_ptr<IDwarfLogger>     m_Logger;
-    std::shared_ptr<ISceneFactory>    m_SceneFactory;
-    std::shared_ptr<IProjectSettings> m_ProjectSettings;
-    std::shared_ptr<IAssetDatabase>   m_AssetDatabase;
-    std::shared_ptr<IFileHandler>     m_FileHandler;
+    std::shared_ptr<IDwarfLogger>     mLogger;
+    std::shared_ptr<ISceneFactory>    mSceneFactory;
+    std::shared_ptr<IProjectSettings> mProjectSettings;
+    std::shared_ptr<IAssetDatabase>   mAssetDatabase;
+    std::shared_ptr<IFileHandler>     mFileHandler;
 
     void
     WriteSceneToFile(const nlohmann::json&        serializedScene,

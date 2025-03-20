@@ -1,9 +1,9 @@
 #pragma once
 
-#include "Editor/Modules/IGuiModuleFactory.h"
 #include "AssetBrowser/IAssetBrowserWindowFactory.h"
 #include "Editor/Modules/AssetBrowser/IAssetBrowserWindowFactory.h"
 #include "Editor/Modules/DebugInformation/IDebugWindowFactory.h"
+#include "Editor/Modules/IGuiModuleFactory.h"
 #include "Editor/Modules/Inspector/IInspectorWindowFactory.h"
 #include "Editor/Modules/Performance/IPerformanceWindowFactory.h"
 #include "Editor/Modules/SceneHierarchy/ISceneHierarchyWindowFactory.h"
@@ -17,12 +17,12 @@ namespace Dwarf
   class GuiModuleFactory : public IGuiModuleFactory
   {
   private:
-    std::shared_ptr<IAssetBrowserWindowFactory>   m_AssetBrowserWindowFactory;
-    std::shared_ptr<IDebugWindowFactory>          m_DebugWindowFactory;
-    std::shared_ptr<IPerformanceWindowFactory>    m_PerformanceWindowFactory;
-    std::shared_ptr<ISceneHierarchyWindowFactory> m_SceneHierarchyWindowFactory;
-    std::shared_ptr<ISceneViewerWindowFactory>    m_SceneViewerWindowFactory;
-    std::shared_ptr<IInspectorWindowFactory>      m_InspectorWindowFactory;
+    std::shared_ptr<IAssetBrowserWindowFactory>   mAssetBrowserWindowFactory;
+    std::shared_ptr<IDebugWindowFactory>          mDebugWindowFactory;
+    std::shared_ptr<IPerformanceWindowFactory>    mPerformanceWindowFactory;
+    std::shared_ptr<ISceneHierarchyWindowFactory> mSceneHierarchyWindowFactory;
+    std::shared_ptr<ISceneViewerWindowFactory>    mSceneViewerWindowFactory;
+    std::shared_ptr<IInspectorWindowFactory>      mInspectorWindowFactory;
 
   public:
     GuiModuleFactory(

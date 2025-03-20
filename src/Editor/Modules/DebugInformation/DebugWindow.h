@@ -1,7 +1,7 @@
 #pragma once
 #include "Core/Asset/Database/IAssetDatabase.h"
-#include "pch.h"
 #include "Editor/Modules/IGuiModule.h"
+#include "pch.h"
 #include <boost/serialization/strong_typedef.hpp>
 
 namespace Dwarf
@@ -10,7 +10,7 @@ namespace Dwarf
   class DebugWindow : public IGuiModule
   {
   private:
-    std::shared_ptr<IAssetDatabase> m_AssetDatabase;
+    std::shared_ptr<IAssetDatabase> mAssetDatabase;
 
   public:
     DebugWindow(std::shared_ptr<IAssetDatabase> assetDatabase);

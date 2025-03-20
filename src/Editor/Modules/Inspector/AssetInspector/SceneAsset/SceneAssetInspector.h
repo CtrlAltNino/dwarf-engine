@@ -15,13 +15,13 @@ namespace Dwarf
   class SceneAssetInspector : public ISceneAssetInspector
   {
   private:
-    GraphicsApi                       m_GraphicsApi;
-    std::shared_ptr<IAssetDatabase>   m_AssetDatabase;
-    std::shared_ptr<IAssetReimporter> m_AssetReimporter;
-    std::shared_ptr<IInputManager>    m_InputManager;
-    std::shared_ptr<ISceneIO>         m_SceneIO;
-    std::shared_ptr<ILoadedScene>     m_LoadedScene;
-    std::shared_ptr<IFileHandler>     m_FileHandler;
+    GraphicsApi                       mGraphicsApi;
+    std::shared_ptr<IAssetDatabase>   mAssetDatabase;
+    std::shared_ptr<IAssetReimporter> mAssetReimporter;
+    std::shared_ptr<IInputManager>    mInputManager;
+    std::shared_ptr<ISceneIO>         mSceneIO;
+    std::shared_ptr<ILoadedScene>     mLoadedScene;
+    std::shared_ptr<IFileHandler>     mFileHandler;
 
   public:
     SceneAssetInspector(GraphicsApi                       graphicsApi,

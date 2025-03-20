@@ -1,7 +1,7 @@
 #pragma once
-#include "pch.h"
-#include "Logging/IDwarfLogger.h"
 #include "IFileHandler.h"
+#include "Logging/IDwarfLogger.h"
+#include "pch.h"
 
 namespace Dwarf
 {
@@ -10,12 +10,12 @@ namespace Dwarf
   class FileHandler : public IFileHandler
   {
   private:
-    std::shared_ptr<IDwarfLogger> m_Logger;
+    std::shared_ptr<IDwarfLogger> mLogger;
     /// @brief Path to the documents directory.
-    std::filesystem::path m_DocumentsPath;
+    std::filesystem::path mDocumentsPath;
 
     /// @brief Path to the project settings directory.
-    std::filesystem::path m_EngineSettingsPath;
+    std::filesystem::path mEngineSettingsPath;
 
     /// @brief Creates the platform depending path to the documents directory.
     /// @return Absolute path to the documents directory.

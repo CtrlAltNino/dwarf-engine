@@ -7,33 +7,33 @@ namespace Dwarf
     std::shared_ptr<ICamera>             camera,
     std::shared_ptr<IRendererApiFactory> rendererApiFactory,
     std::shared_ptr<IEditorStats>        editorStats)
-    : m_FramebufferFactory(framebufferFactory)
-    , m_Camera(camera)
-    , m_RendererApi(rendererApiFactory->Create())
-    , m_EditorStats(editorStats)
+    : mFramebufferFactory(framebufferFactory)
+    , mCamera(camera)
+    , mRendererApi(rendererApiFactory->Create())
+    , mEditorStats(editorStats)
   {
   }
 
   void
   PreviewRenderer::Resize(glm::ivec2 size)
   {
-    if ((m_RenderFramebuffer->GetSpecification().Width != size.x) &&
-        (m_RenderFramebuffer->GetSpecification().Height != size.y))
+    if ((mRenderFramebuffer->GetSpecification().Width != size.x) &&
+        (mRenderFramebuffer->GetSpecification().Height != size.y))
     {
-      m_Camera->GetProperties().AspectRatio = (float)size.y / (float)size.x;
-      m_RenderFramebuffer->Resize(size.x, size.y);
-      m_PreviewFramebuffer->Resize(size.x, size.y);
+      mCamera->GetProperties().AspectRatio = (float)size.y / (float)size.x;
+      mRenderFramebuffer->Resize(size.x, size.y);
+      mPreviewFramebuffer->Resize(size.x, size.y);
     }
   }
 
   void
   PreviewRenderer::UpdateRotation(glm::vec2 deltaMousePos)
   {
-    m_Properties.ModelRotationTarget = {
+    mProperties.ModelRotationTarget = {
       std::max(
         -90.0f,
-        std::min(90.0f, m_Properties.ModelRotationTarget.x - deltaMousePos.y)),
-      fmodf(m_Properties.ModelRotationTarget.y + deltaMousePos.x, 360.0f),
+        std::min(90.0f, mProperties.ModelRotationTarget.x - deltaMousePos.y)),
+      fmodf(mProperties.ModelRotationTarget.y + deltaMousePos.x, 360.0f),
       0
     };
   }
@@ -41,13 +41,13 @@ namespace Dwarf
   float
   PreviewRenderer::GetScrollDistance() const
   {
-    return m_Properties.Distance;
+    return mProperties.Distance;
   }
 
   void
   PreviewRenderer::SetScrollDistance(float distance)
   {
-    m_Properties.Distance = distance;
+    mProperties.Distance = distance;
   }
 
   ImTextureID
@@ -55,9 +55,9 @@ namespace Dwarf
   {
     ImTextureID textureId = 0;
 
-    if (m_PreviewFramebuffer->GetColorAttachment(0))
+    if (mPreviewFramebuffer->GetColorAttachment(0))
     {
-      textureId = (ImTextureID)m_PreviewFramebuffer->GetColorAttachment(0)
+      textureId = (ImTextureID)mPreviewFramebuffer->GetColorAttachment(0)
                     .value()
                     .get()
                     .GetTextureID();

@@ -1,5 +1,5 @@
-#include "pch.h"
 #include "Material.h"
+#include "pch.h"
 
 namespace Dwarf
 {
@@ -32,20 +32,20 @@ namespace Dwarf
   // }
 
   // Material::Material(std::string_view name)
-  //   : m_Name(name)
+  //   : mName(name)
   // {
-  //   m_Shader = Shader::s_DefaultShader;
+  //   mShader = Shader::s_DefaultShader;
   // }
 
   Material::Material(
     std::shared_ptr<IShader>                    shader,
     MaterialProperties                          materialProperties,
     std::unique_ptr<IShaderParameterCollection> shaderParameters)
-    : m_Shader(shader)
-    , m_MaterialProperties(materialProperties)
-    , m_ShaderParameters(std::move(shaderParameters))
+    : mShader(shader)
+    , mMaterialProperties(materialProperties)
+    , mShaderParameters(std::move(shaderParameters))
   {
-    m_Shader->Compile();
+    mShader->Compile();
   }
 
   Material::~Material() {}
@@ -53,46 +53,46 @@ namespace Dwarf
   // void
   // Material::SetShader(std::shared_ptr<IShader> shader)
   // {
-  //   m_Shader = shader;
+  //   mShader = shader;
   // }
 
   IShader&
   Material::GetShader()
   {
-    return *m_Shader;
+    return *mShader;
   }
 
   void
   Material::SetShader(std::shared_ptr<IShader> shader)
   {
-    m_Shader = shader;
+    mShader = shader;
   }
 
   const std::unique_ptr<IShaderParameterCollection>&
   Material::GetShaderParameters() const
   {
-    return m_ShaderParameters;
+    return mShaderParameters;
   }
 
   MaterialProperties&
   Material::GetMaterialProperties()
   {
-    return m_MaterialProperties;
+    return mMaterialProperties;
   }
 
   void
   Material::GenerateShaderParameters()
   {
-    m_ShaderParameters = std::move(m_Shader->CreateParameters());
+    mShaderParameters = std::move(mShader->CreateParameters());
   }
 
   nlohmann::json
   Material::Serialize()
   {
     nlohmann::json serializedMaterial;
-    serializedMaterial["Shader"] = m_Shader->Serialize();
-    serializedMaterial["Properties"] = m_MaterialProperties.Serialize();
-    serializedMaterial["ShaderParameters"] = m_ShaderParameters->Serialize();
+    serializedMaterial["Shader"] = mShader->Serialize();
+    serializedMaterial["Properties"] = mMaterialProperties.Serialize();
+    serializedMaterial["ShaderParameters"] = mShaderParameters->Serialize();
 
     return serializedMaterial;
   }
@@ -100,13 +100,13 @@ namespace Dwarf
   // void
   // Material::SetTransparency(bool transparent)
   // {
-  //   m_Transparent = transparent;
+  //   mTransparent = transparent;
   // }
 
   // bool
   // Material::IsTransparent() const
   // {
-  //   return m_Transparent;
+  //   return mTransparent;
   // }
 
   // void
@@ -115,24 +115,24 @@ namespace Dwarf
   //   // Get all shader inputs from abstract Shader function and put them in
   //   the
   //   // maps
-  //   m_Parameters = m_Shader->GetParameters();
+  //   mParameters = mShader->GetParameters();
   // }
 
   // template<>
   // void
   // Material::SetParameter<bool>(std::string_view identifier, bool value)
   // {
-  //   if (m_Parameters.contains(identifier) &&
-  //       (m_Parameters[std::string(identifier)]->GetType() ==
+  //   if (mParameters.contains(identifier) &&
+  //       (mParameters[std::string(identifier)]->GetType() ==
   //        ShaderParameterType::BOOLEAN))
   //   {
   //     std::dynamic_pointer_cast<BooleanShaderParameter>(
-  //       m_Parameters[std::string(identifier)])
-  //       ->m_Value = value;
+  //       mParameters[std::string(identifier)])
+  //       ->mValue = value;
   //   }
   //   else
   //   {
-  //     m_Parameters[std::string(identifier)] =
+  //     mParameters[std::string(identifier)] =
   //       std::make_shared<BooleanShaderParameter>(value);
   //   }
   // }
@@ -141,17 +141,17 @@ namespace Dwarf
   // void
   // Material::SetParameter<int>(std::string_view identifier, int value)
   // {
-  //   if (m_Parameters.contains(identifier) &&
-  //       (m_Parameters[std::string(identifier)]->GetType() ==
+  //   if (mParameters.contains(identifier) &&
+  //       (mParameters[std::string(identifier)]->GetType() ==
   //        ShaderParameterType::INTEGER))
   //   {
   //     std::dynamic_pointer_cast<IntegerShaderParameter>(
-  //       m_Parameters[std::string(identifier)])
-  //       ->m_Value = value;
+  //       mParameters[std::string(identifier)])
+  //       ->mValue = value;
   //   }
   //   else
   //   {
-  //     m_Parameters[std::string(identifier)] =
+  //     mParameters[std::string(identifier)] =
   //       std::make_shared<IntegerShaderParameter>(value);
   //   }
   // }
@@ -161,17 +161,17 @@ namespace Dwarf
   // Material::SetParameter<unsigned int>(std::string_view identifier,
   //                                      unsigned int     value)
   // {
-  //   if (m_Parameters.contains(identifier) &&
-  //       (m_Parameters[std::string(identifier)]->GetType() ==
+  //   if (mParameters.contains(identifier) &&
+  //       (mParameters[std::string(identifier)]->GetType() ==
   //        ShaderParameterType::UNSIGNED_INTEGER))
   //   {
   //     std::dynamic_pointer_cast<UnsignedIntegerShaderParameter>(
-  //       m_Parameters[std::string(identifier)])
-  //       ->m_Value = value;
+  //       mParameters[std::string(identifier)])
+  //       ->mValue = value;
   //   }
   //   else
   //   {
-  //     m_Parameters[std::string(identifier)] =
+  //     mParameters[std::string(identifier)] =
   //       std::make_shared<UnsignedIntegerShaderParameter>(value);
   //   }
   // }
@@ -180,17 +180,17 @@ namespace Dwarf
   // void
   // Material::SetParameter<float>(std::string_view identifier, float value)
   // {
-  //   if (m_Parameters.contains(identifier) &&
-  //       (m_Parameters.find(identifier)->second->GetType() ==
+  //   if (mParameters.contains(identifier) &&
+  //       (mParameters.find(identifier)->second->GetType() ==
   //        ShaderParameterType::FLOAT))
   //   {
   //     std::dynamic_pointer_cast<FloatShaderParameter>(
-  //       m_Parameters[std::string(identifier)])
-  //       ->m_Value = value;
+  //       mParameters[std::string(identifier)])
+  //       ->mValue = value;
   //   }
   //   else
   //   {
-  //     m_Parameters[std::string(identifier)] =
+  //     mParameters[std::string(identifier)] =
   //       std::make_shared<FloatShaderParameter>(value);
   //   }
   // }
@@ -200,17 +200,17 @@ namespace Dwarf
   // Material::SetParameter<glm::vec2>(std::string_view identifier,
   //                                   glm::vec2        value)
   // {
-  //   if (m_Parameters.contains(identifier) &&
-  //       (m_Parameters[std::string(identifier)]->GetType() ==
+  //   if (mParameters.contains(identifier) &&
+  //       (mParameters[std::string(identifier)]->GetType() ==
   //        ShaderParameterType::VEC2))
   //   {
   //     std::dynamic_pointer_cast<Vec2ShaderParameter>(
-  //       m_Parameters[std::string(identifier)])
-  //       ->m_Value = value;
+  //       mParameters[std::string(identifier)])
+  //       ->mValue = value;
   //   }
   //   else
   //   {
-  //     m_Parameters[std::string(identifier)] =
+  //     mParameters[std::string(identifier)] =
   //       std::make_shared<Vec2ShaderParameter>(value);
   //   }
   // }
@@ -220,17 +220,17 @@ namespace Dwarf
   // Material::SetParameter<glm::vec3>(std::string_view identifier,
   //                                   glm::vec3        value)
   // {
-  //   if (m_Parameters.contains(identifier) &&
-  //       (m_Parameters[std::string(identifier)]->GetType() ==
+  //   if (mParameters.contains(identifier) &&
+  //       (mParameters[std::string(identifier)]->GetType() ==
   //        ShaderParameterType::VEC3))
   //   {
   //     std::dynamic_pointer_cast<Vec3ShaderParameter>(
-  //       m_Parameters[std::string(identifier)])
-  //       ->m_Value = value;
+  //       mParameters[std::string(identifier)])
+  //       ->mValue = value;
   //   }
   //   else
   //   {
-  //     m_Parameters[std::string(identifier)] =
+  //     mParameters[std::string(identifier)] =
   //       std::make_shared<Vec3ShaderParameter>(value);
   //   }
   // }
@@ -240,17 +240,17 @@ namespace Dwarf
   // Material::SetParameter<glm::vec4>(std::string_view identifier,
   //                                   glm::vec4        value)
   // {
-  //   if (m_Parameters.contains(identifier) &&
-  //       (m_Parameters[std::string(identifier)]->GetType() ==
+  //   if (mParameters.contains(identifier) &&
+  //       (mParameters[std::string(identifier)]->GetType() ==
   //        ShaderParameterType::VEC4))
   //   {
   //     std::dynamic_pointer_cast<Vec4ShaderParameter>(
-  //       m_Parameters[std::string(identifier)])
-  //       ->m_Value = value;
+  //       mParameters[std::string(identifier)])
+  //       ->mValue = value;
   //   }
   //   else
   //   {
-  //     m_Parameters[std::string(identifier)] =
+  //     mParameters[std::string(identifier)] =
   //       std::make_shared<Vec4ShaderParameter>(value);
   //   }
   // }
@@ -260,16 +260,16 @@ namespace Dwarf
   //                        std::shared_ptr<UUID> value,
   //                        ShaderParameterType  type)
   // {
-  //   if (m_Parameters.contains(identifier) &&
-  //       (m_Parameters[std::string(identifier)]->GetType() == type))
+  //   if (mParameters.contains(identifier) &&
+  //       (mParameters[std::string(identifier)]->GetType() == type))
   //   {
   //     switch (type)
   //     {
   //       using enum ShaderParameterType;
   //       case TEX2D:
   //         std::dynamic_pointer_cast<Tex2DShaderParameter>(
-  //           m_Parameters[std::string(identifier)])
-  //           ->m_Value = value;
+  //           mParameters[std::string(identifier)])
+  //           ->mValue = value;
   //         break;
   //       case BOOLEAN: break;
   //       case INTEGER: break;
@@ -286,7 +286,7 @@ namespace Dwarf
   //     {
   //       using enum ShaderParameterType;
   //       case TEX2D:
-  //         m_Parameters[std::string(identifier)] =
+  //         mParameters[std::string(identifier)] =
   //           std::make_shared<Tex2DShaderParameter>(value);
   //         break;
   //       case BOOLEAN: break;

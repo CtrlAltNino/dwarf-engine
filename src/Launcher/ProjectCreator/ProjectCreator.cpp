@@ -14,17 +14,17 @@ namespace Dwarf
     std::shared_ptr<ISavedProjects>     savedProjects,
     std::shared_ptr<IFileHandler>       fileHandler,
     std::shared_ptr<IProjectSettingsIO> projectSettingsIO)
-    : m_Logger(logger)
-    , m_SavedProjects(savedProjects)
-    , m_FileHandler(fileHandler)
-    , m_ProjectSettingsIO(projectSettingsIO)
+    : mLogger(logger)
+    , mSavedProjects(savedProjects)
+    , mFileHandler(fileHandler)
+    , mProjectSettingsIO(projectSettingsIO)
   {
-    m_Logger->LogDebug(Log("ProjectCreator created", "ProjectCreator"));
+    mLogger->LogDebug(Log("ProjectCreator created", "ProjectCreator"));
   }
 
   ProjectCreator::~ProjectCreator()
   {
-    m_Logger->LogDebug(Log("ProjectCreator destroyed", "ProjectCreator"));
+    mLogger->LogDebug(Log("ProjectCreator destroyed", "ProjectCreator"));
   }
 
   void
@@ -33,21 +33,20 @@ namespace Dwarf
                                 GraphicsApi           graphicsApi,
                                 ProjectTemplate       projectTemplate)
   {
-    m_Logger->LogInfo(Log(fmt::format("Creating project {} at {} ",
-                                      projectName,
-                                      projectPath.string()),
-                          "ProjectCreator"));
+    mLogger->LogInfo(Log(fmt::format("Creating project {} at {} ",
+                                     projectName,
+                                     projectPath.string()),
+                         "ProjectCreator"));
     // Create Project
     std::filesystem::path projectDirectory = projectPath / projectName;
-    if (!m_FileHandler->DirectoryExists(projectDirectory))
+    if (!mFileHandler->DirectoryExists(projectDirectory))
     {
-      if (!m_FileHandler->FileExists(projectDirectory /
-                                     "projectSettings.dproj"))
+      if (!mFileHandler->FileExists(projectDirectory / "projectSettings.dproj"))
       {
-        m_Logger->LogDebug(
+        mLogger->LogDebug(
           Log("Creating project directory at: " + projectDirectory.string(),
               "ProjectCreator"));
-        m_FileHandler->CreateDirectoryAt(projectDirectory);
+        mFileHandler->CreateDirectoryAt(projectDirectory);
 
         if (projectTemplate == ProjectTemplate::Blank)
         {
@@ -55,12 +54,12 @@ namespace Dwarf
           projectSettingsData.ProjectName = projectName;
           projectSettingsData.GraphicsApi = graphicsApi;
 
-          m_ProjectSettingsIO->SaveProjectSettings(projectSettingsData,
-                                                   projectDirectory);
+          mProjectSettingsIO->SaveProjectSettings(projectSettingsData,
+                                                  projectDirectory);
 
-          m_Logger->LogDebug(Log("Project settings file created at: " +
-                                   projectDirectory.string(),
-                                 "ProjectCreator"));
+          mLogger->LogDebug(Log("Project settings file created at: " +
+                                  projectDirectory.string(),
+                                "ProjectCreator"));
         }
         else
         {
@@ -113,46 +112,46 @@ namespace Dwarf
 #endif
           system(copyCommand.c_str());
 
-          m_Logger->LogDebug(Log("Project template copied to: " +
-                                   (projectPath / projectName).string(),
-                                 "ProjectCreator"));
+          mLogger->LogDebug(Log("Project template copied to: " +
+                                  (projectPath / projectName).string(),
+                                "ProjectCreator"));
 
           std::optional<ProjectSettingsData> projectSettingsData =
-            m_ProjectSettingsIO->LoadProjectSettings(projectDirectory);
+            mProjectSettingsIO->LoadProjectSettings(projectDirectory);
 
           if (projectSettingsData)
           {
             projectSettingsData->ProjectName = projectName;
             projectSettingsData->GraphicsApi = graphicsApi;
 
-            m_ProjectSettingsIO->SaveProjectSettings(
-              projectSettingsData.value(), projectDirectory);
-            m_Logger->LogDebug(Log("Project settings file updated at: " +
-                                     projectDirectory.string(),
-                                   "ProjectCreator"));
+            mProjectSettingsIO->SaveProjectSettings(projectSettingsData.value(),
+                                                    projectDirectory);
+            mLogger->LogDebug(Log("Project settings file updated at: " +
+                                    projectDirectory.string(),
+                                  "ProjectCreator"));
           }
           else
           {
-            m_Logger->LogError(Log(
-              "Failed to find copied project settings file", "ProjectCreator"));
+            mLogger->LogError(Log("Failed to find copied project settings file",
+                                  "ProjectCreator"));
           }
         }
 
-        m_SavedProjects->AddProject(projectDirectory);
-        m_Logger->LogDebug(
+        mSavedProjects->AddProject(projectDirectory);
+        mLogger->LogDebug(
           Log("Newly created project added to project list", "ProjectCreator"));
       }
       else
       {
         // Wtf how
-        m_Logger->LogWarn(Log("Project settings file already exists at: " +
-                                projectDirectory.string(),
-                              "ProjectCreator"));
+        mLogger->LogWarn(Log("Project settings file already exists at: " +
+                               projectDirectory.string(),
+                             "ProjectCreator"));
       }
     }
     else
     {
-      m_Logger->LogWarn(
+      mLogger->LogWarn(
         Log("Project directory already exists at: " + projectDirectory.string(),
             "ProjectCreator"));
     }
@@ -161,6 +160,6 @@ namespace Dwarf
   std::filesystem::path
   ProjectCreator::GetDefaultProjectPath() const
   {
-    return m_FileHandler->GetDocumentsPath();
+    return mFileHandler->GetDocumentsPath();
   }
 }

@@ -11,13 +11,13 @@ namespace Dwarf
   class UUID : public ISerializable
   {
   private:
-    boost::uuids::uuid m_Uuid;
+    boost::uuids::uuid mUuid;
 
   public:
     UUID()
     {
       boost::uuids::random_generator generator;
-      m_Uuid = generator();
+      mUuid = generator();
     }
 
     UUID(const std::string& serializedUUID) { deserialize(serializedUUID); }
@@ -25,37 +25,37 @@ namespace Dwarf
     [[nodiscard]] auto
     toString() const -> std::string
     {
-      return boost::uuids::to_string(m_Uuid);
+      return boost::uuids::to_string(mUuid);
     }
 
     auto
     operator==(const UUID& other) const -> bool
     {
-      return m_Uuid == other.m_Uuid;
+      return mUuid == other.mUuid;
     }
 
     auto
     operator!=(const UUID& other) const -> bool
     {
-      return m_Uuid != other.m_Uuid;
+      return mUuid != other.mUuid;
     }
 
     auto
     operator<(const UUID& other) const -> bool
     {
-      return m_Uuid < other.m_Uuid;
+      return mUuid < other.mUuid;
     }
 
     auto
     Serialize() -> nlohmann::json override
     {
-      return boost::uuids::to_string(m_Uuid);
+      return boost::uuids::to_string(mUuid);
     }
 
     void
     deserialize(const std::string& data)
     {
-      m_Uuid = boost::uuids::string_generator()(data);
+      mUuid = boost::uuids::string_generator()(data);
     }
   };
 }

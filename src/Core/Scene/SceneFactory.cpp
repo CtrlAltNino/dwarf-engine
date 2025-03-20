@@ -1,6 +1,6 @@
 #include "SceneFactory.h"
-#include "Scene.h"
 #include "Core/Asset/Database/IAssetDatabase.h"
+#include "Scene.h"
 
 namespace Dwarf
 {
@@ -8,9 +8,9 @@ namespace Dwarf
     std::shared_ptr<IScenePropertiesFactory> scenePropertiesFactory,
     std::shared_ptr<IAssetDatabase>          assetDatabase,
     std::shared_ptr<IFileHandler>            fileHandler)
-    : m_ScenePropertiesFactory(scenePropertiesFactory)
-    , m_AssetDatabase(assetDatabase)
-    , m_FileHandler(fileHandler)
+    : mScenePropertiesFactory(scenePropertiesFactory)
+    , mAssetDatabase(assetDatabase)
+    , mFileHandler(fileHandler)
   {
   }
 
@@ -18,11 +18,11 @@ namespace Dwarf
   SceneFactory::FromAsset(IAssetReference& sceneAsset)
   {
     nlohmann::json serializedScene =
-      nlohmann::json::parse(m_FileHandler->ReadFile(sceneAsset.GetPath()));
+      nlohmann::json::parse(mFileHandler->ReadFile(sceneAsset.GetPath()));
     return std::make_unique<Scene>(
       SerializedGraph(serializedScene["Graph"]),
-      m_ScenePropertiesFactory->Create(sceneAsset, serializedScene["Settings"]),
-      m_AssetDatabase);
+      mScenePropertiesFactory->Create(sceneAsset, serializedScene["Settings"]),
+      mAssetDatabase);
   }
 
   // TODO: Create default scene here
@@ -30,6 +30,6 @@ namespace Dwarf
   SceneFactory::CreateDefaultScene()
   {
     return std::make_unique<Scene>(
-      m_ScenePropertiesFactory->Create("Unnamed Scene"), m_AssetDatabase);
+      mScenePropertiesFactory->Create("Unnamed Scene"), mAssetDatabase);
   }
 } // namespace Dwarf

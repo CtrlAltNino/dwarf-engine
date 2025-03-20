@@ -1,5 +1,5 @@
-#include "pch.h"
 #include "Editor/Modules/SceneHierarchy/DeleteEntityInstruction.h"
+#include "pch.h"
 
 namespace Dwarf
 {
@@ -7,18 +7,18 @@ namespace Dwarf
   DeleteEntityInstruction::DeleteEntityInstruction(
     IScene&                   scene,
     std::vector<entt::entity> sourceEntities)
-    : m_Scene(scene)
-    , m_SourceEntities(sourceEntities)
+    : mScene(scene)
+    , mSourceEntities(sourceEntities)
   {
   }
 
   void
   DeleteEntityInstruction::PerformInstruction()
   {
-    for (auto& ent : m_SourceEntities)
+    for (auto& ent : mSourceEntities)
     {
-      Entity entity(ent, m_Scene.GetRegistry());
-      m_Scene.DeleteEntity(entity);
+      Entity entity(ent, mScene.GetRegistry());
+      mScene.DeleteEntity(entity);
     }
   }
 }

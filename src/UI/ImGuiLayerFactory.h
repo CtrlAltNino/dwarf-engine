@@ -9,9 +9,9 @@ namespace Dwarf
   class ImGuiLayerFactory : public IImGuiLayerFactory
   {
   private:
-    std::shared_ptr<IDwarfLogger> m_Logger;
-    GraphicsApi                   m_Api;
-    ImGuiIniFilePath              m_IniFilePath;
+    std::shared_ptr<IDwarfLogger> mLogger;
+    GraphicsApi                   mApi;
+    ImGuiIniFilePath              mIniFilePath;
 
   public:
     ImGuiLayerFactory(std::shared_ptr<IDwarfLogger> logger,

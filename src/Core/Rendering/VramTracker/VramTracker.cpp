@@ -6,24 +6,24 @@ namespace Dwarf
 {
   struct TextureResolutionVisitor
   {
-    size_t& m_ResolutionMultiplied;
+    size_t& mResolutionMultiplied;
 
     void
     operator()(const glm::ivec1& parameter)
     {
-      m_ResolutionMultiplied = parameter.x;
+      mResolutionMultiplied = parameter.x;
     }
 
     void
     operator()(const glm::ivec2& parameter)
     {
-      m_ResolutionMultiplied = parameter.x * parameter.y;
+      mResolutionMultiplied = parameter.x * parameter.y;
     }
 
     void
     operator()(const glm::ivec3& parameter)
     {
-      m_ResolutionMultiplied = parameter.x * parameter.y * parameter.z;
+      mResolutionMultiplied = parameter.x * parameter.y * parameter.z;
     }
   };
 
@@ -98,7 +98,7 @@ namespace Dwarf
   void
   VramTracker::AddTextureMemory(size_t bytes)
   {
-    m_TextureMemory += bytes;
+    mTextureMemory += bytes;
   }
 
   size_t
@@ -111,7 +111,7 @@ namespace Dwarf
     size_t memory =
       CalculateTextureMemory(type, format, dataType, size, samples);
 
-    m_TextureMemory += memory;
+    mTextureMemory += memory;
 
     return memory;
   }
@@ -125,7 +125,7 @@ namespace Dwarf
                                            texture->Size,
                                            texture->Samples);
 
-    m_TextureMemory += memory;
+    mTextureMemory += memory;
 
     return memory;
   }
@@ -133,7 +133,7 @@ namespace Dwarf
   void
   VramTracker::RemoveTextureMemory(size_t bytes)
   {
-    m_TextureMemory -= bytes;
+    mTextureMemory -= bytes;
   }
 
   void
@@ -146,7 +146,7 @@ namespace Dwarf
     size_t memory =
       CalculateTextureMemory(type, format, dataType, size, samples);
 
-    m_TextureMemory -= memory;
+    mTextureMemory -= memory;
   }
 
   void
@@ -158,19 +158,19 @@ namespace Dwarf
                                            texture->Size,
                                            texture->Samples);
 
-    m_TextureMemory -= memory;
+    mTextureMemory -= memory;
   }
 
   size_t
   VramTracker::GetTextureMemory() const
   {
-    return m_TextureMemory;
+    return mTextureMemory;
   }
 
   void
   VramTracker::AddBufferMemory(size_t bytes)
   {
-    m_BufferMemory += bytes;
+    mBufferMemory += bytes;
   }
 
   size_t
@@ -178,7 +178,7 @@ namespace Dwarf
   {
     size_t memory = CalculateFramebufferMemory(specification);
 
-    m_FramebufferMemory += memory;
+    mFramebufferMemory += memory;
 
     return memory;
   }
@@ -186,7 +186,7 @@ namespace Dwarf
   void
   VramTracker::RemoveBufferMemory(size_t bytes)
   {
-    m_BufferMemory -= bytes;
+    mBufferMemory -= bytes;
   }
 
   void
@@ -194,73 +194,73 @@ namespace Dwarf
   {
     size_t memory = CalculateFramebufferMemory(specification);
 
-    m_FramebufferMemory -= memory;
+    mFramebufferMemory -= memory;
   }
 
   size_t
   VramTracker::GetBufferMemory() const
   {
-    return m_BufferMemory;
+    return mBufferMemory;
   }
 
   void
   VramTracker::AddFramebufferMemory(size_t bytes)
   {
-    m_FramebufferMemory += bytes;
+    mFramebufferMemory += bytes;
   }
 
   void
   VramTracker::RemoveFramebufferMemory(size_t bytes)
   {
-    m_FramebufferMemory -= bytes;
+    mFramebufferMemory -= bytes;
   }
 
   size_t
   VramTracker::GetFramebufferMemory() const
   {
-    return m_FramebufferMemory;
+    return mFramebufferMemory;
   }
 
   void
   VramTracker::AddShaderMemory(size_t bytes)
   {
-    m_ShaderMemory += bytes;
+    mShaderMemory += bytes;
   }
 
   void
   VramTracker::RemoveShaderMemory(size_t bytes)
   {
-    m_ShaderMemory -= bytes;
+    mShaderMemory -= bytes;
   }
 
   size_t
   VramTracker::GetShaderMemory() const
   {
-    return m_ShaderMemory;
+    return mShaderMemory;
   }
 
   void
   VramTracker::AddComputeMemory(size_t bytes)
   {
-    m_ComputeMemory += bytes;
+    mComputeMemory += bytes;
   }
 
   void
   VramTracker::RemoveComputeMemory(size_t bytes)
   {
-    m_ComputeMemory -= bytes;
+    mComputeMemory -= bytes;
   }
 
   size_t
   VramTracker::GetComputeMemory() const
   {
-    return m_ComputeMemory;
+    return mComputeMemory;
   }
 
   size_t
   VramTracker::GetTotalMemory() const
   {
-    return m_TextureMemory + m_BufferMemory + m_FramebufferMemory +
-           m_ShaderMemory + m_ComputeMemory;
+    return mTextureMemory + mBufferMemory + mFramebufferMemory + mShaderMemory +
+           mComputeMemory;
   }
 }

@@ -8,12 +8,12 @@ namespace Dwarf
   class EditorStats : public IEditorStats
   {
   private:
-    TimeStamp   m_CurrentTimeStamp;
-    TimeStamp   m_LastTimeStamp;
-    std::string m_DeviceInfo = "";
-    bool        m_ReturnToLauncher = false;
-    bool        m_CloseSignal = false;
-    double      m_TimeSinceStart = 0.0;
+    TimeStamp   mCurrentTimeStamp;
+    TimeStamp   mLastTimeStamp;
+    std::string mDeviceInfo = "";
+    bool        mReturnToLauncher = false;
+    bool        mCloseSignal = false;
+    double      mTimeSinceStart = 0.0;
 
   public:
     EditorStats() = default;

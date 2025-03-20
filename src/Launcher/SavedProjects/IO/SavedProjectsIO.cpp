@@ -13,15 +13,15 @@ namespace Dwarf
 {
   SavedProjectsIO::SavedProjectsIO(std::shared_ptr<IDwarfLogger> logger,
                                    std::shared_ptr<IFileHandler> fileHandler)
-    : m_Logger(logger)
-    , m_FileHandler(fileHandler)
+    : mLogger(logger)
+    , mFileHandler(fileHandler)
   {
-    m_Logger->LogDebug(Log("SavedProjectsIO created", "SavedProjectsIO"));
+    mLogger->LogDebug(Log("SavedProjectsIO created", "SavedProjectsIO"));
   }
 
   SavedProjectsIO::~SavedProjectsIO()
   {
-    m_Logger->LogDebug(Log("SavedProjectsIO destroyed", "SavedProjectsIO"));
+    mLogger->LogDebug(Log("SavedProjectsIO destroyed", "SavedProjectsIO"));
   }
 
   std::vector<SavedProject>
@@ -29,18 +29,18 @@ namespace Dwarf
   {
     std::vector<SavedProject> savedProjects;
     std::filesystem::path     savedProjectsPath =
-      m_FileHandler->GetEngineSettingsPath() / SAVED_PROJECTS_FILE_NAME;
+      mFileHandler->GetEngineSettingsPath() / SAVED_PROJECTS_FILE_NAME;
 
-    m_Logger->LogInfo(Log(
+    mLogger->LogInfo(Log(
       fmt::format("Loading project list from {}", savedProjectsPath.string()),
       "SavedProjectsIO"));
 
-    if (m_FileHandler->FileExists(savedProjectsPath))
+    if (mFileHandler->FileExists(savedProjectsPath))
     {
-      std::string    fileContent = m_FileHandler->ReadFile(savedProjectsPath);
+      std::string    fileContent = mFileHandler->ReadFile(savedProjectsPath);
       nlohmann::json jsonObject = nlohmann::json::parse(fileContent);
 
-      m_Logger->LogDebug(Log("Parsing project list", "SavedProjectsIO"));
+      mLogger->LogDebug(Log("Parsing project list", "SavedProjectsIO"));
 
       if (jsonObject.contains(SAVED_PROJECTS_KEY))
       {
@@ -65,14 +65,14 @@ namespace Dwarf
           savedProjects.push_back({ projectToAdd });
         }
 
-        m_Logger->LogInfo(
+        mLogger->LogInfo(
           Log(fmt::format("Loaded {} projects", savedProjects.size()),
               "SavedProjectsIO"));
       }
     }
     else
     {
-      m_Logger->LogInfo(
+      mLogger->LogInfo(
         Log("No projects found in project list", "SavedProjectsIO"));
     }
     return savedProjects;
@@ -83,7 +83,7 @@ namespace Dwarf
     const std::vector<SavedProject>& savedProjects) const
   {
     nlohmann::json jsonObject;
-    m_Logger->LogInfo(Log("Saving project list", "SavedProjectsIO"));
+    mLogger->LogInfo(Log("Saving project list", "SavedProjectsIO"));
     for (int i = 0; i < savedProjects.size(); i++)
     {
       jsonObject[SAVED_PROJECTS_KEY][i][SAVED_PROJECTS_PROJECT_NAME_KEY] =
@@ -97,15 +97,15 @@ namespace Dwarf
     }
 
     std::string           fileContent = jsonObject.dump(4);
-    std::filesystem::path settingsPath = m_FileHandler->GetEngineSettingsPath();
-    if (!m_FileHandler->DirectoryExists(settingsPath))
+    std::filesystem::path settingsPath = mFileHandler->GetEngineSettingsPath();
+    if (!mFileHandler->DirectoryExists(settingsPath))
     {
-      m_FileHandler->CreateDirectoryAt(settingsPath);
+      mFileHandler->CreateDirectoryAt(settingsPath);
     }
     std::filesystem::path savedProjectsPath =
       settingsPath / "savedProjects.json";
-    m_FileHandler->WriteToFile(savedProjectsPath.make_preferred(), fileContent);
+    mFileHandler->WriteToFile(savedProjectsPath.make_preferred(), fileContent);
 
-    m_Logger->LogInfo(Log("Project list saved", "SavedProjectsIO"));
+    mLogger->LogInfo(Log("Project list saved", "SavedProjectsIO"));
   }
 }

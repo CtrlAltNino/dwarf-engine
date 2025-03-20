@@ -10,19 +10,18 @@ namespace Dwarf
   class OpenGLFramebuffer : public IFramebuffer
   {
   private:
-    std::shared_ptr<IDwarfLogger> m_Logger;
-    uint32_t                      m_RendererID = 0;
-    FramebufferSpecification      m_Specification;
-    std::vector<FramebufferTextureSpecification>
-                                    m_ColorAttachmentSpecifications;
-    FramebufferTextureSpecification m_DepthAttachmentSpecification{
+    std::shared_ptr<IDwarfLogger>                mLogger;
+    uint32_t                                     mRendererID = 0;
+    FramebufferSpecification                     mSpecification;
+    std::vector<FramebufferTextureSpecification> mColorAttachmentSpecifications;
+    FramebufferTextureSpecification              mDepthAttachmentSpecification{
       FramebufferTextureFormat::None
     };
-    std::vector<std::unique_ptr<ITexture>> m_ColorAttachments;
-    std::unique_ptr<ITexture>              m_DepthAttachment = 0;
-    std::shared_ptr<ITextureFactory>       m_TextureFactory;
-    std::shared_ptr<IVramTracker>          m_VramTracker;
-    size_t                                 m_CurrentVramMemory = 0;
+    std::vector<std::unique_ptr<ITexture>> mColorAttachments;
+    std::unique_ptr<ITexture>              mDepthAttachment = 0;
+    std::shared_ptr<ITextureFactory>       mTextureFactory;
+    std::shared_ptr<IVramTracker>          mVramTracker;
+    size_t                                 mCurrentVramMemory = 0;
 
   public:
     explicit OpenGLFramebuffer(std::shared_ptr<IDwarfLogger>    logger,
@@ -34,7 +33,7 @@ namespace Dwarf
     uint32_t
     GetFramebufferRendererID() const
     {
-      return m_RendererID;
+      return mRendererID;
     }
 
     void
@@ -70,7 +69,7 @@ namespace Dwarf
     const FramebufferSpecification&
     GetSpecification() const override
     {
-      return m_Specification;
+      return mSpecification;
     }
 
     void

@@ -11,10 +11,10 @@ namespace Dwarf
     : IGuiModule(ModuleLabel("Inspector"),
                  ModuleType(MODULE_TYPE::INSPECTOR),
                  ModuleID(std::make_shared<UUID>()))
-    , m_Selection(selection)
-    , m_AssetDatabase(assetDatabase)
-    , m_AssetInspector(assetInspector)
-    , m_EntityInspector(entityInspector)
+    , mSelection(selection)
+    , mAssetDatabase(assetDatabase)
+    , mAssetInspector(assetInspector)
+    , mEntityInspector(entityInspector)
   {
   }
 
@@ -28,10 +28,10 @@ namespace Dwarf
                  ModuleType(MODULE_TYPE::INSPECTOR),
                  ModuleID(std::make_shared<UUID>(
                    serializedModule.t["id"].get<std::string>())))
-    , m_Selection(selection)
-    , m_AssetDatabase(assetDatabase)
-    , m_AssetInspector(assetInspector)
-    , m_EntityInspector(entityInspector)
+    , mSelection(selection)
+    , mAssetDatabase(assetDatabase)
+    , mAssetInspector(assetInspector)
+    , mEntityInspector(entityInspector)
   {
   }
 
@@ -43,7 +43,7 @@ namespace Dwarf
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(14.0f, 14.0f));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(200.0f, 0));
 
-    if (!ImGui::Begin(GetIdentifier().c_str(), &m_WindowOpened, window_flags))
+    if (!ImGui::Begin(GetIdentifier().c_str(), &mWindowOpened, window_flags))
     {
       // Early out if the window is collapsed, as an optimization.
       ImGui::End();
@@ -51,16 +51,16 @@ namespace Dwarf
       return;
     }
 
-    switch (m_Selection->GetSelectionType())
+    switch (mSelection->GetSelectionType())
     {
       case CURRENT_SELECTION_TYPE::ASSET:
         {
-          m_AssetInspector->Render();
+          mAssetInspector->Render();
           break;
         }
       case CURRENT_SELECTION_TYPE::ENTITY:
         {
-          m_EntityInspector->Render(m_Selection->GetSelectedEntities());
+          mEntityInspector->Render(mSelection->GetSelectedEntities());
           break;
         }
       case CURRENT_SELECTION_TYPE::NONE: break;

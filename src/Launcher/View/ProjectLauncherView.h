@@ -1,25 +1,25 @@
 #pragma once
 #include "pch.h"
 
-#include "Launcher/LauncherData/ILauncherData.h"
 #include "ButtonsView/IButtonsView.h"
 #include "ChangeGraphicsApiModal/IChangeGraphicsApiModal.h"
 #include "CreateNewProjectModal/ICreateNewProjectModal.h"
 #include "FooterView/IFooterView.h"
+#include "Launcher/LauncherAssets/ILauncherAssets.h"
+#include "Launcher/LauncherData/ILauncherData.h"
 #include "Launcher/ProjectCreator/IProjectCreator.h"
-#include "Launcher/SavedProjects/ISavedProjects.h"
 #include "Launcher/SavedProjects/IO/ISavedProjectsIO.h"
+#include "Launcher/SavedProjects/ISavedProjects.h"
 #include "Launcher/SavedProjects/Sorter/ISavedProjectsSorter.h"
+#include "Launcher/View/IProjectLauncherView.h"
 #include "Logging/IDwarfLogger.h"
 #include "ProjectListView/IProjectListView.h"
 #include "ProjectNotFoundModal/IProjectNotFoundModal.h"
 #include "Utilities/FileHandler/IFileHandler.h"
-#include "Launcher/View/IProjectLauncherView.h"
 #include "Window/IWindow.h"
-#include "Launcher/LauncherAssets/ILauncherAssets.h"
 
-#include <imgui.h>
 #include <boost/di/extension/injections/lazy.hpp>
+#include <imgui.h>
 
 namespace Dwarf
 {
@@ -30,23 +30,23 @@ namespace Dwarf
   {
   private:
     /// @brief Model for the project launcher
-    // std::shared_ptr<IProjectLauncherModel> m_Model;
+    // std::shared_ptr<IProjectLauncherModel> mModel;
     /// @brief Window to render the project launcher in
-    std::shared_ptr<IDwarfLogger>            m_Logger;
-    std::shared_ptr<IWindow>                 m_Window;
-    std::shared_ptr<ILauncherData>           m_Data;
-    std::shared_ptr<ISavedProjects>          m_SavedProjects;
-    std::shared_ptr<ISavedProjectsIO>        m_SavedProjectsIO;
-    std::shared_ptr<ISavedProjectsSorter>    m_SavedProjectsSorter;
-    std::shared_ptr<IProjectCreator>         m_ProjectCreator;
-    std::shared_ptr<IFileHandler>            m_FileHandler;
-    std::shared_ptr<ILauncherAssets>         m_LauncherAssets;
-    std::shared_ptr<IButtonsView>            m_ButtonsView;
-    std::shared_ptr<IFooterView>             m_FooterView;
-    std::shared_ptr<IProjectListView>        m_ProjectListView;
-    std::shared_ptr<IChangeGraphicsApiModal> m_ChangeGraphicsApiModal;
-    std::shared_ptr<IProjectNotFoundModal>   m_ProjectNotFoundModal;
-    std::shared_ptr<ICreateNewProjectModal>  m_CreateNewProjectModal;
+    std::shared_ptr<IDwarfLogger>            mLogger;
+    std::shared_ptr<IWindow>                 mWindow;
+    std::shared_ptr<ILauncherData>           mData;
+    std::shared_ptr<ISavedProjects>          mSavedProjects;
+    std::shared_ptr<ISavedProjectsIO>        mSavedProjectsIO;
+    std::shared_ptr<ISavedProjectsSorter>    mSavedProjectsSorter;
+    std::shared_ptr<IProjectCreator>         mProjectCreator;
+    std::shared_ptr<IFileHandler>            mFileHandler;
+    std::shared_ptr<ILauncherAssets>         mLauncherAssets;
+    std::shared_ptr<IButtonsView>            mButtonsView;
+    std::shared_ptr<IFooterView>             mFooterView;
+    std::shared_ptr<IProjectListView>        mProjectListView;
+    std::shared_ptr<IChangeGraphicsApiModal> mChangeGraphicsApiModal;
+    std::shared_ptr<IProjectNotFoundModal>   mProjectNotFoundModal;
+    std::shared_ptr<ICreateNewProjectModal>  mCreateNewProjectModal;
 
   public:
     ProjectLauncherView(

@@ -1,5 +1,5 @@
-#include "pch.h"
 #include "AssetInspector.h"
+#include "pch.h"
 #include <string>
 
 namespace Dwarf
@@ -11,12 +11,12 @@ namespace Dwarf
     std::shared_ptr<IModelAssetInspector>    modelAssetInspector,
     std::shared_ptr<ITextureAssetInspector>  textureAssetInspector,
     std::shared_ptr<IEditorSelection>        editorSelection)
-    : m_AssetDatabase(assetDatabase)
-    , m_MaterialAssetInspector(materialAssetInspector)
-    , m_SceneAssetInspector(sceneAssetInspector)
-    , m_ModelAssetInspector(modelAssetInspector)
-    , m_TextureAssetInspector(textureAssetInspector)
-    , m_EditorSelection(editorSelection)
+    : mAssetDatabase(assetDatabase)
+    , mMaterialAssetInspector(materialAssetInspector)
+    , mSceneAssetInspector(sceneAssetInspector)
+    , mModelAssetInspector(modelAssetInspector)
+    , mTextureAssetInspector(textureAssetInspector)
+    , mEditorSelection(editorSelection)
   {
   }
 
@@ -39,28 +39,28 @@ namespace Dwarf
   void
   AssetInspector::Render()
   {
-    IAssetReference& asset = m_EditorSelection->GetSelectedAsset();
+    IAssetReference& asset = mEditorSelection->GetSelectedAsset();
     switch (asset.GetType())
     {
       using enum ASSET_TYPE;
       case MODEL:
         {
-          m_ModelAssetInspector->Render(asset);
+          mModelAssetInspector->Render(asset);
           break;
         }
       case TEXTURE:
         {
-          m_TextureAssetInspector->Render(asset);
+          mTextureAssetInspector->Render(asset);
           break;
         }
       case SCENE:
         {
-          m_SceneAssetInspector->Render(asset);
+          mSceneAssetInspector->Render(asset);
           break;
         }
       case MATERIAL:
         {
-          m_MaterialAssetInspector->Render(asset);
+          mMaterialAssetInspector->Render(asset);
           break;
         }
       case VERTEX_SHADER:

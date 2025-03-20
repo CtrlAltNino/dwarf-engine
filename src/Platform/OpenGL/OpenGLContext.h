@@ -19,8 +19,8 @@ namespace Dwarf
     SwapBuffers() override;
 
   private:
-    std::shared_ptr<IDwarfLogger> m_Logger;
-    SDL_Window*                   m_WindowHandle;
-    SDL_GLContext                 m_Context;
+    std::shared_ptr<IDwarfLogger> mLogger;
+    SDL_Window*                   mWindowHandle;
+    SDL_GLContext                 mContext;
   };
 }

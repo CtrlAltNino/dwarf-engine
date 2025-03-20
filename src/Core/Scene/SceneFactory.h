@@ -11,9 +11,9 @@ namespace Dwarf
   class SceneFactory : public ISceneFactory
   {
   private:
-    std::shared_ptr<IScenePropertiesFactory> m_ScenePropertiesFactory;
-    std::shared_ptr<IAssetDatabase>          m_AssetDatabase;
-    std::shared_ptr<IFileHandler>            m_FileHandler;
+    std::shared_ptr<IScenePropertiesFactory> mScenePropertiesFactory;
+    std::shared_ptr<IAssetDatabase>          mAssetDatabase;
+    std::shared_ptr<IFileHandler>            mFileHandler;
 
   public:
     SceneFactory(

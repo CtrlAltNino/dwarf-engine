@@ -1,8 +1,8 @@
 #pragma once
 #include "Core/Asset/AssetReference/IAssetReference.h"
 #include "Core/Asset/Database/IAssetDatabase.h"
-#include "Editor/Selection/IEditorSelection.h"
 #include "Editor/LoadedScene/ILoadedScene.h"
+#include "Editor/Selection/IEditorSelection.h"
 #include <boost/di/extension/injections/lazy.hpp>
 
 namespace Dwarf
@@ -10,10 +10,10 @@ namespace Dwarf
   class EditorSelection : public IEditorSelection
   {
   private:
-    std::shared_ptr<ILoadedScene> m_LoadedScene;
-    CURRENT_SELECTION_TYPE m_SelectionType = CURRENT_SELECTION_TYPE::NONE;
-    std::unique_ptr<IAssetReference> m_SelectedAsset;
-    std::vector<entt::entity>        m_SelectedEntities;
+    std::shared_ptr<ILoadedScene> mLoadedScene;
+    CURRENT_SELECTION_TYPE        mSelectionType = CURRENT_SELECTION_TYPE::NONE;
+    std::unique_ptr<IAssetReference> mSelectedAsset;
+    std::vector<entt::entity>        mSelectedEntities;
 
     /// @brief Returns the tree index of a given entity. Used for sorting based
     /// on their graph positions.

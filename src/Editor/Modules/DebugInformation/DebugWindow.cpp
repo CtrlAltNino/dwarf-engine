@@ -13,7 +13,7 @@ namespace Dwarf
     : IGuiModule(ModuleLabel("Debug"),
                  ModuleType(MODULE_TYPE::DEBUG),
                  ModuleID(std::make_shared<UUID>()))
-    , m_AssetDatabase(assetDatabase)
+    , mAssetDatabase(assetDatabase)
   {
   }
 
@@ -23,7 +23,7 @@ namespace Dwarf
                  ModuleType(MODULE_TYPE::DEBUG),
                  ModuleID(std::make_shared<UUID>(
                    serializedModule.t["id"].get<std::string>())))
-    , m_AssetDatabase(assetDatabase)
+    , mAssetDatabase(assetDatabase)
   {
     Deserialize(serializedModule.t);
   }
@@ -39,7 +39,7 @@ namespace Dwarf
   {
     ImGuiWindowFlags window_flags = 0;
     ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(500, 500));
-    if (!ImGui::Begin(GetIdentifier().c_str(), &m_WindowOpened, window_flags))
+    if (!ImGui::Begin(GetIdentifier().c_str(), &mWindowOpened, window_flags))
     {
       // Early out if the window is collapsed, as an optimization.
       ImGui::End();
@@ -50,7 +50,7 @@ namespace Dwarf
     if (ImGui::CollapsingHeader("Asset Database"))
     {
       ImGui::Text("Listing all imported assets and their UID's");
-      entt::registry& registry = m_AssetDatabase->GetRegistry();
+      entt::registry& registry = mAssetDatabase->GetRegistry();
 
       auto materialView =
         registry

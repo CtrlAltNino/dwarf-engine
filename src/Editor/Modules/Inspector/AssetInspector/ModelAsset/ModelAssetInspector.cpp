@@ -13,12 +13,12 @@ namespace Dwarf
     std::shared_ptr<IModelPreview>    modelPreview,
     std::shared_ptr<IInputManager>    inputManager,
     std::shared_ptr<IEditorStats>     editorStats)
-    : m_GraphicsApi(graphicsApi)
-    , m_AssetDatabase(std::move(assetDatabase))
-    , m_AssetReimporter(std::move(assetReimporter))
-    , m_ModelPreview(std::move(modelPreview))
-    , m_InputManager(std::move(inputManager))
-    , m_EditorStats(std::move(editorStats))
+    : mGraphicsApi(graphicsApi)
+    , mAssetDatabase(std::move(assetDatabase))
+    , mAssetReimporter(std::move(assetReimporter))
+    , mModelPreview(std::move(modelPreview))
+    , mInputManager(std::move(inputManager))
+    , mEditorStats(std::move(editorStats))
   {
   }
 
@@ -49,7 +49,7 @@ namespace Dwarf
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
     if (ImGui::Button("Reimport"))
     {
-      m_AssetReimporter->QueueReimport(asset.GetPath());
+      mAssetReimporter->QueueReimport(asset.GetPath());
     }
 
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
@@ -73,9 +73,9 @@ namespace Dwarf
 
     ImGui::Text("Preview:");
 
-    m_ModelPreview->Resize(
+    mModelPreview->Resize(
       { ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().x });
-    m_ModelPreview->RenderModelPreview(asset);
+    mModelPreview->RenderModelPreview(asset);
 
     ImVec2 minRect = ImGui::GetCursorScreenPos();
     ImVec2 maxRect(
@@ -88,7 +88,7 @@ namespace Dwarf
           { ImGui::GetCursorScreenPos().x + ImGui::GetContentRegionAvail().x,
             ImGui::GetCursorScreenPos().y + ImGui::GetContentRegionAvail().x }))
     {
-      if (m_InputManager->GetMouseButtonDown(Dwarf::MOUSE_BUTTON::LEFT))
+      if (mInputManager->GetMouseButtonDown(Dwarf::MOUSE_BUTTON::LEFT))
       {
         isRotating = true;
       }
@@ -96,25 +96,25 @@ namespace Dwarf
       float scrollDistance =
         std::max(0.0f,
                  std::min(1.0f,
-                          m_ModelPreview->GetScrollDistance() -
-                            m_InputManager->GetMouseScrollDelta().y *
-                              (float)m_EditorStats->GetDeltaTime() * 8.0f));
+                          mModelPreview->GetScrollDistance() -
+                            mInputManager->GetMouseScrollDelta().y *
+                              (float)mEditorStats->GetDeltaTime() * 8.0f));
 
-      m_ModelPreview->SetScrollDistance(scrollDistance);
+      mModelPreview->SetScrollDistance(scrollDistance);
     }
 
     if (isRotating &&
-        m_InputManager->GetMouseButtonUp(Dwarf::MOUSE_BUTTON::LEFT))
+        mInputManager->GetMouseButtonUp(Dwarf::MOUSE_BUTTON::LEFT))
     {
       isRotating = false;
     }
 
     if (isRotating)
     {
-      m_ModelPreview->UpdateRotation(m_InputManager->GetMouseDelta());
+      mModelPreview->UpdateRotation(mInputManager->GetMouseDelta());
     }
 
-    draw_list->AddImage(m_ModelPreview->GetTextureId(), minRect, maxRect);
+    draw_list->AddImage(mModelPreview->GetTextureId(), minRect, maxRect);
 
     draw_list->ChannelsSetCurrent(0);
 

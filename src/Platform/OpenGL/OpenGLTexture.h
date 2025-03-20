@@ -1,9 +1,9 @@
 #pragma once
-#include "Core/Rendering/VramTracker/IVramTracker.h"
-#include "pch.h"
-#include "Logging/IDwarfLogger.h"
-#include <glad/glad.h>
 #include "Core/Rendering/Texture/ITexture.h"
+#include "Core/Rendering/VramTracker/IVramTracker.h"
+#include "Logging/IDwarfLogger.h"
+#include "pch.h"
+#include <glad/glad.h>
 
 namespace Dwarf
 {
@@ -11,11 +11,11 @@ namespace Dwarf
   {
   private:
     /// @brief The OpenGL texture handle.
-    GLuint                        m_Id;
-    TextureResolution             m_Size;
-    std::shared_ptr<IDwarfLogger> m_Logger;
-    std::shared_ptr<IVramTracker> m_VramTracker;
-    size_t                        m_VramMemory;
+    GLuint                        mId;
+    TextureResolution             mSize;
+    std::shared_ptr<IDwarfLogger> mLogger;
+    std::shared_ptr<IVramTracker> mVramTracker;
+    size_t                        mVramMemory;
 
   public:
     explicit OpenGLTexture(std::shared_ptr<TextureContainer> data,

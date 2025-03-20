@@ -1,6 +1,6 @@
 #include "DrawCallWorker.h"
-#include <functional>
 #include <algorithm>
+#include <functional>
 #include <memory>
 
 namespace Dwarf
@@ -12,31 +12,31 @@ namespace Dwarf
     std::shared_ptr<IDrawCallList>     drawCallList,
     std::shared_ptr<IMeshFactory>      meshFactory,
     std::shared_ptr<IMeshBufferWorker> meshBufferWorker)
-    : m_Logger(logger)
-    , m_LoadedScene(loadedScene)
-    , m_DrawCallFactory(drawCallFactory)
-    , m_DrawCallList(drawCallList)
-    , m_MeshFactory(meshFactory)
-    , m_MeshBufferWorker(meshBufferWorker)
+    : mLogger(logger)
+    , mLoadedScene(loadedScene)
+    , mDrawCallFactory(drawCallFactory)
+    , mDrawCallList(drawCallList)
+    , mMeshFactory(meshFactory)
+    , mMeshBufferWorker(meshBufferWorker)
   {
-    m_Logger->LogDebug(Log("DrawCallWorker created!", "DrawCallWorker"));
-    m_WorkerThread = std::thread([this]() { WorkerThread(); });
+    mLogger->LogDebug(Log("DrawCallWorker created!", "DrawCallWorker"));
+    mWorkerThread = std::thread([this]() { WorkerThread(); });
   }
 
   DrawCallWorker::~DrawCallWorker()
   {
-    m_Logger->LogDebug(Log("Destroying DrawCallWorker", "DrawCallWorker"));
+    mLogger->LogDebug(Log("Destroying DrawCallWorker", "DrawCallWorker"));
     {
-      std::lock_guard<std::mutex> lock(m_ThreadMutex);
-      m_StopWorker.store(true);
+      std::lock_guard<std::mutex> lock(mThreadMutex);
+      mStopWorker.store(true);
     }
-    m_Condition.notify_one();
+    mCondition.notify_one();
 
-    if (m_WorkerThread.joinable())
+    if (mWorkerThread.joinable())
     {
-      m_Logger->LogDebug(Log("Joining Worker Thread", "DrawCallWorker"));
-      m_WorkerThread.join();
-      m_Logger->LogDebug(Log("Worker Thread joined", "DrawCallWorker"));
+      mLogger->LogDebug(Log("Joining Worker Thread", "DrawCallWorker"));
+      mWorkerThread.join();
+      mLogger->LogDebug(Log("Worker Thread joined", "DrawCallWorker"));
     }
   }
 
@@ -44,39 +44,39 @@ namespace Dwarf
   DrawCallWorker::Invalidate()
   {
     {
-      std::lock_guard<std::mutex> lock(m_ThreadMutex);
-      m_Invalidate.store(true);
+      std::lock_guard<std::mutex> lock(mThreadMutex);
+      mInvalidate.store(true);
     }
-    m_Condition.notify_one();
+    mCondition.notify_one();
   }
 
   void
   DrawCallWorker::WorkerThread()
   {
-    m_Logger->LogDebug(Log("DrawCallWorker started", "DrawCallWorker"));
-    while (!m_StopWorker.load())
+    mLogger->LogDebug(Log("DrawCallWorker started", "DrawCallWorker"));
+    while (!mStopWorker.load())
     {
-      m_Logger->LogDebug(Log("Ready to generate draw calls", "DrawCallWorker"));
+      mLogger->LogDebug(Log("Ready to generate draw calls", "DrawCallWorker"));
       // Waiting until the current draw calls are being invalidated or the
       // worker should be stopped
       {
-        std::unique_lock<std::mutex> lock(m_ThreadMutex);
-        m_Condition.wait(
-          lock, [this] { return m_Invalidate.load() || m_StopWorker.load(); });
+        std::unique_lock<std::mutex> lock(mThreadMutex);
+        mCondition.wait(
+          lock, [this] { return mInvalidate.load() || mStopWorker.load(); });
 
-        m_Logger->LogDebug(Log("Woken up", "DrawCallWorker"));
-        if (m_StopWorker.load())
+        mLogger->LogDebug(Log("Woken up", "DrawCallWorker"));
+        if (mStopWorker.load())
         {
-          m_Logger->LogDebug(Log("Stop flag set", "DrawCallWorker"));
+          mLogger->LogDebug(Log("Stop flag set", "DrawCallWorker"));
         }
       }
 
-      if (!m_StopWorker.load())
+      if (!mStopWorker.load())
       {
         // Generating the draw calls
         GenerateDrawCalls();
 
-        m_Invalidate.store(false);
+        mInvalidate.store(false);
       }
     }
   }
@@ -84,12 +84,12 @@ namespace Dwarf
   void
   DrawCallWorker::GenerateDrawCalls()
   {
-    m_Logger->LogDebug(Log("Generating draw calls", "DrawCallWorker"));
+    mLogger->LogDebug(Log("Generating draw calls", "DrawCallWorker"));
     std::vector<TempDrawCall>               opagueTemps;
     std::vector<TempDrawCall>               transparentTemps;
     std::vector<std::unique_ptr<IDrawCall>> drawCalls;
 
-    IScene& scene = m_LoadedScene->GetScene();
+    IScene& scene = mLoadedScene->GetScene();
 
     for (auto view = scene.GetRegistry()
                        .view<TransformComponent, MeshRendererComponent>();
@@ -133,7 +133,7 @@ namespace Dwarf
                                         transform });
               }
 
-              // drawCalls.push_back(m_DrawCallFactory->Create(
+              // drawCalls.push_back(mDrawCallFactory->Create(
               //   model.Meshes().at(i), materialAsset.GetMaterial(),
               //   transform));
             }
@@ -196,19 +196,19 @@ namespace Dwarf
     for (auto& batch : batches)
     {
       std::unique_ptr<IMesh> mergedMesh =
-        m_MeshFactory->MergeMeshes(batch->Meshes);
+        mMeshFactory->MergeMeshes(batch->Meshes);
 
-      drawCalls.push_back(m_DrawCallFactory->Create(
+      drawCalls.push_back(mDrawCallFactory->Create(
         mergedMesh, batch->Material, batch->Transform));
     }
 
     for (auto& transparentCall : transparentTemps)
     {
       std::unique_ptr<IMesh> mesh = transparentCall.Mesh.get().Clone();
-      drawCalls.push_back(m_DrawCallFactory->Create(
+      drawCalls.push_back(mDrawCallFactory->Create(
         mesh, transparentCall.Material, transparentCall.Transform));
     }
 
-    m_DrawCallList->SubmitDrawCalls(std::move(drawCalls));
+    mDrawCallList->SubmitDrawCalls(std::move(drawCalls));
   }
 }

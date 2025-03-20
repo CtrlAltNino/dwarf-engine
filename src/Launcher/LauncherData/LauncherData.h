@@ -1,17 +1,17 @@
 #pragma once
 
 #include "Launcher/LauncherData/ILauncherData.h"
-#include "Logging/IDwarfLogger.h"
 #include "Launcher/SavedProjects/ISavedProjects.h"
+#include "Logging/IDwarfLogger.h"
 
 namespace Dwarf
 {
   class LauncherData : public ILauncherData
   {
   private:
-    std::shared_ptr<IDwarfLogger> m_Logger;
-    ProjectChooserState           m_State;
-    std::optional<SavedProject>   m_SelectedProject;
+    std::shared_ptr<IDwarfLogger> mLogger;
+    ProjectChooserState           mState;
+    std::optional<SavedProject>   mSelectedProject;
 
   public:
     LauncherData(std::shared_ptr<IDwarfLogger> logger);

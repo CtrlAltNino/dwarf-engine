@@ -15,12 +15,12 @@ namespace Dwarf
   class ModelPreview : public IModelPreview
   {
   private:
-    std::shared_ptr<IMaterialFactory>   m_MaterialFactory;
-    std::unique_ptr<IMaterial>          m_Material;
-    std::shared_ptr<IInputManager>      m_InputManager;
-    std::shared_ptr<IMeshFactory>       m_MeshFactory;
-    std::shared_ptr<IMeshBufferFactory> m_MeshBufferFactory;
-    std::unique_ptr<IMeshBuffer>        m_PreviewMeshBuffer;
+    std::shared_ptr<IMaterialFactory>   mMaterialFactory;
+    std::unique_ptr<IMaterial>          mMaterial;
+    std::shared_ptr<IInputManager>      mInputManager;
+    std::shared_ptr<IMeshFactory>       mMeshFactory;
+    std::shared_ptr<IMeshBufferFactory> mMeshBufferFactory;
+    std::unique_ptr<IMeshBuffer>        mPreviewMeshBuffer;
 
   public:
     ModelPreview(std::shared_ptr<IFramebufferFactory> framebufferFactory,

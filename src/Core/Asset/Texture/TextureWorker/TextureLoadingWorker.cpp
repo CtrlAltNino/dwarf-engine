@@ -3,11 +3,11 @@
 #include "Core/Asset/Texture/IImageFileLoader.h"
 #include "Core/Rendering/Texture/ITextureFactory.h"
 #include "ITextureLoadingWorker.h"
+#include <fmt/format.h>
 #include <glm/common.hpp>
 #include <memory>
 #include <mutex>
 #include <thread>
-#include <fmt/format.h>
 
 namespace Dwarf
 {
@@ -15,34 +15,34 @@ namespace Dwarf
     std::shared_ptr<IDwarfLogger>     logger,
     std::shared_ptr<IImageFileLoader> imageFileLoader,
     std::shared_ptr<ITextureFactory>  textureFactory)
-    : m_Logger(logger)
-    , m_ImageFileLoader(imageFileLoader)
-    , m_TextureFactory(textureFactory)
-    , m_NumWorkerThreads(std::thread::hardware_concurrency() - 1)
+    : mLogger(logger)
+    , mImageFileLoader(imageFileLoader)
+    , mTextureFactory(textureFactory)
+    , mNumWorkerThreads(std::thread::hardware_concurrency() - 1)
   {
-    for (int i = 0; i < m_NumWorkerThreads; i++)
+    for (int i = 0; i < mNumWorkerThreads; i++)
     {
-      m_TextureWorkers.push_back(
+      mTextureWorkers.push_back(
         std::thread([this]() { ProcessTextureLoadRequests(); }));
     }
-    m_Logger->LogDebug(
+    mLogger->LogDebug(
       Log("TextureLoadingWorker created.", "TextureLoadingWorker"));
   }
 
   TextureLoadingWorker::~TextureLoadingWorker()
   {
-    m_Logger->LogDebug(
+    mLogger->LogDebug(
       Log("Joining Texture Worker Thread", "TextureLoadingWorker"));
     stopWorker.store(true);
     queueCondition.notify_all();
-    for (auto& thread : m_TextureWorkers)
+    for (auto& thread : mTextureWorkers)
     {
       if (thread.joinable())
       {
         thread.join();
       }
     }
-    m_Logger->LogDebug(
+    mLogger->LogDebug(
       Log("TextureLoadingWorker destroyed.", "TextureLoadingWorker"));
   }
 
@@ -52,14 +52,14 @@ namespace Dwarf
     std::unique_ptr<TextureLoadRequest> requestPtr = nullptr;
     {
       {
-        std::unique_lock<std::mutex> lock(m_LoadingMutex);
-        m_TextureLoadRequestQueue.push(request);
+        std::unique_lock<std::mutex> lock(mLoadingMutex);
+        mTextureLoadRequestQueue.push(request);
       }
       {
-        std::unique_lock<std::mutex> lock(m_CurrentlyProcessingMutex);
-        m_CurrentlyProcessing.insert(request.TexturePath);
+        std::unique_lock<std::mutex> lock(mCurrentlyProcessingMutex);
+        mCurrentlyProcessing.insert(request.TexturePath);
       }
-      m_Logger->LogDebug(
+      mLogger->LogDebug(
         Log("Added new Texture load request", "TextureLoadingWorker"));
     }
     queueCondition.notify_one(); // Wake up the worker thread
@@ -72,9 +72,9 @@ namespace Dwarf
       std::make_unique<TextureUploadRequest>(
         request.Asset, request.Container, request.TexturePath);
     {
-      std::lock_guard<std::mutex> lock(m_UploadMutex);
-      m_TextureUploadRequestQueue.push(std::move(requestPtr));
-      m_Logger->LogDebug(
+      std::lock_guard<std::mutex> lock(mUploadMutex);
+      mTextureUploadRequestQueue.push(std::move(requestPtr));
+      mLogger->LogDebug(
         Log("Added new Texture Upload request", "TextureLoadingWorker"));
     }
   }
@@ -87,41 +87,40 @@ namespace Dwarf
       TextureLoadRequest request;
 
       { // Lock the queue and wait for work
-        std::unique_lock<std::mutex> lock(m_LoadingMutex);
+        std::unique_lock<std::mutex> lock(mLoadingMutex);
         queueCondition.wait(
           lock,
           [this]
-          { return !m_TextureLoadRequestQueue.empty() || stopWorker.load(); });
+          { return !mTextureLoadRequestQueue.empty() || stopWorker.load(); });
 
         if (stopWorker.load()) return;
 
-        request = m_TextureLoadRequestQueue.front();
-        m_TextureLoadRequestQueue.pop();
+        request = mTextureLoadRequestQueue.front();
+        mTextureLoadRequestQueue.pop();
       }
       // Load texture from disk (background thread)
       std::shared_ptr<TextureContainer> textureData =
-        m_ImageFileLoader->LoadImageFile(request.TexturePath);
+        mImageFileLoader->LoadImageFile(request.TexturePath);
 
       if (!textureData)
       {
-        m_Logger->LogError(
-          Log(fmt::format("Error loading texture from path: {}",
-                          request.TexturePath.string()),
-              "TextureLoadingWorker"));
+        mLogger->LogError(Log(fmt::format("Error loading texture from path: {}",
+                                          request.TexturePath.string()),
+                              "TextureLoadingWorker"));
         {
-          std::unique_lock<std::mutex> lock(m_CurrentlyProcessingMutex);
-          m_CurrentlyProcessing.erase(request.TexturePath);
+          std::unique_lock<std::mutex> lock(mCurrentlyProcessingMutex);
+          mCurrentlyProcessing.erase(request.TexturePath);
         }
         continue;
       }
 
       // Send texture data to the main thread for OpenGL upload
       {
-        std::lock_guard<std::mutex>           lock(m_UploadMutex);
+        std::lock_guard<std::mutex>           lock(mUploadMutex);
         std::unique_ptr<TextureUploadRequest> ptr =
           std::make_unique<TextureUploadRequest>(
             request.Asset, textureData, request.TexturePath);
-        m_TextureUploadRequestQueue.push(std::move(ptr));
+        mTextureUploadRequestQueue.push(std::move(ptr));
       }
     }
   }
@@ -136,14 +135,14 @@ namespace Dwarf
       std::unique_ptr<TextureUploadRequest> job;
 
       {
-        std::unique_lock<std::mutex> lock(m_UploadMutex);
+        std::unique_lock<std::mutex> lock(mUploadMutex);
 
-        if (m_TextureUploadRequestQueue.empty()) return;
-        job = std::move(m_TextureUploadRequestQueue.front());
-        m_TextureUploadRequestQueue.pop();
+        if (mTextureUploadRequestQueue.empty()) return;
+        job = std::move(mTextureUploadRequestQueue.front());
+        mTextureUploadRequestQueue.pop();
         {
-          std::unique_lock<std::mutex> lock(m_CurrentlyProcessingMutex);
-          m_CurrentlyProcessing.erase(job->TexturePath);
+          std::unique_lock<std::mutex> lock(mCurrentlyProcessingMutex);
+          mCurrentlyProcessing.erase(job->TexturePath);
         }
       }
 
@@ -151,11 +150,11 @@ namespace Dwarf
         TextureMinFilter::LINEAR_MIPMAP_LINEAR;
       job->Container->Parameters.MipMapped = true;
 
-      m_Logger->LogInfo(
+      mLogger->LogInfo(
         Log("Uploading texture into GPU", "TextureLoadingWorker"));
 
       std::unique_ptr<ITexture> texture =
-        m_TextureFactory->FromData(job->Container);
+        mTextureFactory->FromData(job->Container);
 
       job->Asset->SetTexture(std::move(texture));
     }
@@ -164,7 +163,7 @@ namespace Dwarf
   bool
   TextureLoadingWorker::IsRequested(std::filesystem::path path)
   {
-    std::unique_lock<std::mutex> lock(m_CurrentlyProcessingMutex);
-    return m_CurrentlyProcessing.contains(path);
+    std::unique_lock<std::mutex> lock(mCurrentlyProcessingMutex);
+    return mCurrentlyProcessing.contains(path);
   }
 }

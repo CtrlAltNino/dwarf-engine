@@ -13,12 +13,12 @@ namespace Dwarf
   class MaterialAssetInspector : public IMaterialAssetInspector
   {
   private:
-    GraphicsApi                       m_GraphicsApi;
-    std::shared_ptr<IAssetDatabase>   m_AssetDatabase;
-    std::shared_ptr<IAssetReimporter> m_AssetReimporter;
-    std::shared_ptr<IMaterialPreview> m_MaterialPreview;
-    std::shared_ptr<IInputManager>    m_InputManager;
-    std::shared_ptr<IMaterialIO>      m_MaterialIO;
+    GraphicsApi                       mGraphicsApi;
+    std::shared_ptr<IAssetDatabase>   mAssetDatabase;
+    std::shared_ptr<IAssetReimporter> mAssetReimporter;
+    std::shared_ptr<IMaterialPreview> mMaterialPreview;
+    std::shared_ptr<IInputManager>    mInputManager;
+    std::shared_ptr<IMaterialIO>      mMaterialIO;
 
   public:
     MaterialAssetInspector(GraphicsApi                       graphicsApi,

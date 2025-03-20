@@ -12,7 +12,6 @@
 #include <memory>
 #include <variant>
 
-
 #define GL_SHADER_LOG_LENGTH (1024)
 
 namespace Dwarf
@@ -23,9 +22,9 @@ namespace Dwarf
                                   shaderParameterCollectionFactory,
     std::shared_ptr<IDwarfLogger> logger,
     std::shared_ptr<IVramTracker> vramTracker)
-    : m_ShaderParameterCollectionFactory(shaderParameterCollectionFactory)
-    , m_Logger(logger)
-    , m_VramTracker(vramTracker)
+    : mShaderParameterCollectionFactory(shaderParameterCollectionFactory)
+    , mLogger(logger)
+    , mVramTracker(vramTracker)
   {
     for (std::unique_ptr<IAssetReference>& shaderSource :
          shaderSources->GetShaderSources())
@@ -34,19 +33,19 @@ namespace Dwarf
       switch (shaderSource->GetType())
       {
         case Dwarf::ASSET_TYPE::VERTEX_SHADER:
-          m_VertexShaderAsset = std::move(shaderSource);
+          mVertexShaderAsset = std::move(shaderSource);
           break;
         case Dwarf::ASSET_TYPE::FRAGMENT_SHADER:
-          m_FragmentShaderAsset = std::move(shaderSource);
+          mFragmentShaderAsset = std::move(shaderSource);
           break;
         case Dwarf::ASSET_TYPE::GEOMETRY_SHADER:
-          m_GeometryShaderAsset = std::move(shaderSource);
+          mGeometryShaderAsset = std::move(shaderSource);
           break;
         case Dwarf::ASSET_TYPE::TESC_SHADER:
-          m_TessellationControlShaderAsset = std::move(shaderSource);
+          mTessellationControlShaderAsset = std::move(shaderSource);
           break;
         case Dwarf::ASSET_TYPE::TESE_SHADER:
-          m_TessellationEvaluationShaderAsset = std::move(shaderSource);
+          mTessellationEvaluationShaderAsset = std::move(shaderSource);
           break;
         default: break;
       }
@@ -56,13 +55,13 @@ namespace Dwarf
   OpenGLShader::~OpenGLShader()
   {
     GLint binaryLength = 0;
-    glGetProgramiv(m_ID, GL_PROGRAM_BINARY_LENGTH, &binaryLength);
-    m_VramTracker->RemoveShaderMemory(binaryLength);
+    glGetProgramiv(mID, GL_PROGRAM_BINARY_LENGTH, &binaryLength);
+    mVramTracker->RemoveShaderMemory(binaryLength);
     OpenGLUtilities::CheckOpenGLError(
-      "Errors before deleting shader", "OpenGLShader", m_Logger);
-    glDeleteProgram(m_ID);
+      "Errors before deleting shader", "OpenGLShader", mLogger);
+    glDeleteProgram(mID);
     OpenGLUtilities::CheckOpenGLError(
-      "glDeleteProgram", "OpenGLShader", m_Logger);
+      "glDeleteProgram", "OpenGLShader", mLogger);
   }
 
   const std::array<std::string, 5> OpenGLShader::ReservedUniformNames = {
@@ -87,18 +86,18 @@ namespace Dwarf
   void
   OpenGLShader::Compile()
   {
-    m_SuccessfullyCompiled = false;
+    mSuccessfullyCompiled = false;
 
-    if (!m_VertexShaderAsset.has_value() || !m_FragmentShaderAsset.has_value())
+    if (!mVertexShaderAsset.has_value() || !mFragmentShaderAsset.has_value())
     {
       return;
     }
 
     VertexShaderAsset& vertexShaderAsset =
-      (VertexShaderAsset&)m_VertexShaderAsset.value()->GetAsset();
+      (VertexShaderAsset&)mVertexShaderAsset.value()->GetAsset();
 
     FragmentShaderAsset& fragmentShaderAsset =
-      (FragmentShaderAsset&)m_FragmentShaderAsset.value()->GetAsset();
+      (FragmentShaderAsset&)mFragmentShaderAsset.value()->GetAsset();
 
     if (vertexShaderAsset.GetFileContent().length() > 0 &&
         fragmentShaderAsset.GetFileContent().length() > 0)
@@ -113,103 +112,103 @@ namespace Dwarf
       GLchar  frag_message[1024] = "";
 
       OpenGLUtilities::CheckOpenGLError(
-        "Errors before compiling shader", "OpenGLShader", m_Logger);
+        "Errors before compiling shader", "OpenGLShader", mLogger);
       GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
       OpenGLUtilities::CheckOpenGLError(
-        "glCreateShader vertex shader", "OpenGLShader", m_Logger);
+        "glCreateShader vertex shader", "OpenGLShader", mLogger);
       glShaderSource(vertexShader, 1, &vertexSource, nullptr);
       OpenGLUtilities::CheckOpenGLError(
-        "glShaderSource vertex shader", "OpenGLShader", m_Logger);
+        "glShaderSource vertex shader", "OpenGLShader", mLogger);
       glCompileShader(vertexShader);
       OpenGLUtilities::CheckOpenGLError(
-        "glCompileShader vertex shader", "OpenGLShader", m_Logger);
+        "glCompileShader vertex shader", "OpenGLShader", mLogger);
 
       GLint vertex_compiled = 33;
       glGetShaderInfoLog(vertexShader, 1024, &vert_log_length, vert_message);
       OpenGLUtilities::CheckOpenGLError(
-        "glGetShaderInfoLog vertex shader", "OpenGLShader", m_Logger);
+        "glGetShaderInfoLog vertex shader", "OpenGLShader", mLogger);
       glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &vertex_compiled);
       OpenGLUtilities::CheckOpenGLError(
-        "glGetShaderiv vertex shader", "OpenGLShader", m_Logger);
+        "glGetShaderiv vertex shader", "OpenGLShader", mLogger);
 
       if (vert_log_length > 0)
       {
-        m_ShaderLogs.m_VertexShaderLog = std::string(vert_message);
+        mShaderLogs.mVertexShaderLog = std::string(vert_message);
       }
 
       if (vertex_compiled != GL_TRUE)
       {
         glDeleteShader(vertexShader);
         OpenGLUtilities::CheckOpenGLError(
-          "glDeleteShader vertex shader", "OpenGLShader", m_Logger);
+          "glDeleteShader vertex shader", "OpenGLShader", mLogger);
         return;
       }
       else
       {
-        m_Logger->LogDebug(
+        mLogger->LogDebug(
           Log("Vertex shader compiled successfully", "OpenGLShader"));
       }
 
       GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
       OpenGLUtilities::CheckOpenGLError(
-        "glCreateShader fragment shader", "OpenGLShader", m_Logger);
+        "glCreateShader fragment shader", "OpenGLShader", mLogger);
       glShaderSource(fragmentShader, 1, &fragmentSource, nullptr);
       OpenGLUtilities::CheckOpenGLError(
-        "glShaderSource fragment shader", "OpenGLShader", m_Logger);
+        "glShaderSource fragment shader", "OpenGLShader", mLogger);
       glCompileShader(fragmentShader);
       OpenGLUtilities::CheckOpenGLError(
-        "glCompileShader fragment shader", "OpenGLShader", m_Logger);
+        "glCompileShader fragment shader", "OpenGLShader", mLogger);
 
       GLint fragment_compiled;
       glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &fragment_compiled);
       OpenGLUtilities::CheckOpenGLError(
-        "glGetShaderiv fragment shader", "OpenGLShader", m_Logger);
+        "glGetShaderiv fragment shader", "OpenGLShader", mLogger);
       glGetShaderInfoLog(fragmentShader, 1024, &frag_log_length, frag_message);
       OpenGLUtilities::CheckOpenGLError(
-        "glGetShaderInfoLog fragment shader", "OpenGLShader", m_Logger);
+        "glGetShaderInfoLog fragment shader", "OpenGLShader", mLogger);
 
       if (frag_log_length > 0)
       {
-        m_ShaderLogs.m_FragmentShaderLog = std::string(frag_message);
+        mShaderLogs.mFragmentShaderLog = std::string(frag_message);
       }
 
       if (fragment_compiled != GL_TRUE)
       {
         glDeleteShader(vertexShader);
         OpenGLUtilities::CheckOpenGLError(
-          "glDeleteShader vertex shader", "OpenGLShader", m_Logger);
+          "glDeleteShader vertex shader", "OpenGLShader", mLogger);
         glDeleteShader(fragmentShader);
         OpenGLUtilities::CheckOpenGLError(
-          "glDeleteShader fragment shader", "OpenGLShader", m_Logger);
+          "glDeleteShader fragment shader", "OpenGLShader", mLogger);
         return;
       }
       else
       {
-        m_Logger->LogDebug(
+        mLogger->LogDebug(
           Log("Fragment shader compiled successfully", "OpenGLShader"));
       }
 
-      m_ID = glCreateProgram();
+      mID = glCreateProgram();
 
       OpenGLUtilities::CheckOpenGLError(
-        "glCreateProgram", "OpenGLShader", m_Logger);
+        "glCreateProgram", "OpenGLShader", mLogger);
 
-      glAttachShader(m_ID, vertexShader);
-
-      OpenGLUtilities::CheckOpenGLError(
-        "glAttachShader vertex shader", "OpenGLShader", m_Logger);
-
-      glAttachShader(m_ID, fragmentShader);
+      glAttachShader(mID, vertexShader);
 
       OpenGLUtilities::CheckOpenGLError(
-        "glAttachShader fragment shader", "OpenGLShader", m_Logger);
+        "glAttachShader vertex shader", "OpenGLShader", mLogger);
+
+      glAttachShader(mID, fragmentShader);
+
+      OpenGLUtilities::CheckOpenGLError(
+        "glAttachShader fragment shader", "OpenGLShader", mLogger);
 
       GLuint geometryShader = -1;
 
-      if (m_GeometryShaderAsset.has_value())
+      if (mGeometryShaderAsset.has_value())
       {
         const char* geometrySource =
-          ((GeometryShaderAsset&)m_GeometryShaderAsset.value()->GetAsset())
+          ((GeometryShaderAsset&)mGeometryShaderAsset.value()->GetAsset())
             .GetFileContent()
             .c_str();
 
@@ -218,95 +217,94 @@ namespace Dwarf
 
         geometryShader = glCreateShader(GL_GEOMETRY_SHADER);
         OpenGLUtilities::CheckOpenGLError(
-          "glCreateShader GL_GEOMETRY_SHADER", "OpenGLShader", m_Logger);
+          "glCreateShader GL_GEOMETRY_SHADER", "OpenGLShader", mLogger);
         glShaderSource(geometryShader, 1, &geometrySource, nullptr);
         OpenGLUtilities::CheckOpenGLError(
-          "glShaderSource", "OpenGLShader", m_Logger);
+          "glShaderSource", "OpenGLShader", mLogger);
         glCompileShader(geometryShader);
         OpenGLUtilities::CheckOpenGLError(
-          "glCompileShader", "OpenGLShader", m_Logger);
+          "glCompileShader", "OpenGLShader", mLogger);
 
         GLint geometry_compiled;
         glGetShaderiv(geometryShader, GL_COMPILE_STATUS, &geometry_compiled);
         OpenGLUtilities::CheckOpenGLError(
-          "glGetShaderiv", "OpenGLShader", m_Logger);
+          "glGetShaderiv", "OpenGLShader", mLogger);
         glGetShaderInfoLog(
           geometryShader, 1024, &geom_log_length, geom_message);
         OpenGLUtilities::CheckOpenGLError(
-          "glGetShaderInfoLog", "OpenGLShader", m_Logger);
+          "glGetShaderInfoLog", "OpenGLShader", mLogger);
 
         if (geom_log_length > 0)
         {
-          m_ShaderLogs.m_GeometryShaderLog = std::string(geom_message);
+          mShaderLogs.mGeometryShaderLog = std::string(geom_message);
         }
 
         if (geometry_compiled != GL_TRUE)
         {
           glDeleteShader(vertexShader);
           OpenGLUtilities::CheckOpenGLError(
-            "glDeleteShader vertexShader", "OpenGLShader", m_Logger);
+            "glDeleteShader vertexShader", "OpenGLShader", mLogger);
           glDeleteShader(fragmentShader);
           OpenGLUtilities::CheckOpenGLError(
-            "glDeleteShader fragmentShader", "OpenGLShader", m_Logger);
+            "glDeleteShader fragmentShader", "OpenGLShader", mLogger);
           glDeleteShader(geometryShader);
           OpenGLUtilities::CheckOpenGLError(
-            "glDeleteShader geometryShader", "OpenGLShader", m_Logger);
+            "glDeleteShader geometryShader", "OpenGLShader", mLogger);
           return;
         }
       }
 
-      glLinkProgram(m_ID);
+      glLinkProgram(mID);
       OpenGLUtilities::CheckOpenGLError(
-        "glLinkProgram", "OpenGLShader", m_Logger);
+        "glLinkProgram", "OpenGLShader", mLogger);
 
       GLint program_linked;
-      glGetProgramiv(m_ID, GL_LINK_STATUS, &program_linked);
+      glGetProgramiv(mID, GL_LINK_STATUS, &program_linked);
 
       OpenGLUtilities::CheckOpenGLError(
-        "glGetProgramiv", "OpenGLShader", m_Logger);
+        "glGetProgramiv", "OpenGLShader", mLogger);
 
       if (program_linked != GL_TRUE)
       {
-        m_Logger->LogError(
-          Log("Shader program failed to link", "OpenGLShader"));
+        mLogger->LogError(Log("Shader program failed to link", "OpenGLShader"));
         glDeleteShader(vertexShader);
         OpenGLUtilities::CheckOpenGLError(
-          "glDeleteShader vertex shader", "OpenGLShader", m_Logger);
+          "glDeleteShader vertex shader", "OpenGLShader", mLogger);
         glDeleteShader(fragmentShader);
         OpenGLUtilities::CheckOpenGLError(
-          "glDeleteShader fragment shader", "OpenGLShader", m_Logger);
+          "glDeleteShader fragment shader", "OpenGLShader", mLogger);
 
         if (geometryShader != -1)
         {
           glDeleteShader(geometryShader);
           OpenGLUtilities::CheckOpenGLError(
-            "glDeleteShader geometry shader", "OpenGLShader", m_Logger);
+            "glDeleteShader geometry shader", "OpenGLShader", mLogger);
         }
-        glDeleteProgram(m_ID);
+        glDeleteProgram(mID);
         OpenGLUtilities::CheckOpenGLError(
-          "glDeleteProgram", "OpenGLShader", m_Logger);
+          "glDeleteProgram", "OpenGLShader", mLogger);
       }
 
       glDeleteShader(vertexShader);
       OpenGLUtilities::CheckOpenGLError(
-        "glDeleteShader vertex shader", "OpenGLShader", m_Logger);
+        "glDeleteShader vertex shader", "OpenGLShader", mLogger);
       glDeleteShader(fragmentShader);
       OpenGLUtilities::CheckOpenGLError(
-        "glDeleteShader fragment shader", "OpenGLShader", m_Logger);
+        "glDeleteShader fragment shader", "OpenGLShader", mLogger);
 
       if (geometryShader != -1)
       {
         glDeleteShader(geometryShader);
         OpenGLUtilities::CheckOpenGLError(
-          "glDeleteShader geometry shader", "OpenGLShader", m_Logger);
+          "glDeleteShader geometry shader", "OpenGLShader", mLogger);
       }
 
-      m_SuccessfullyCompiled = true;
+      mSuccessfullyCompiled = true;
       GLint binaryLength = 0;
-      glGetProgramiv(m_ID, GL_PROGRAM_BINARY_LENGTH, &binaryLength);
+      glGetProgramiv(mID, GL_PROGRAM_BINARY_LENGTH, &binaryLength);
       OpenGLUtilities::CheckOpenGLError(
-        "glGetProgramiv", "OpenGLShader", m_Logger);
-      m_VramTracker->AddShaderMemory(binaryLength);
+        "glGetProgramiv", "OpenGLShader", mLogger);
+      mVramTracker->AddShaderMemory(binaryLength);
     }
     else
     {
@@ -317,25 +315,25 @@ namespace Dwarf
   bool
   OpenGLShader::IsCompiled() const
   {
-    return m_SuccessfullyCompiled;
+    return mSuccessfullyCompiled;
   }
 
   GLuint
   OpenGLShader::GetID() const
   {
-    return m_ID;
+    return mID;
   }
 
   std::unique_ptr<IShaderParameterCollection>
   OpenGLShader::CreateParameters()
   {
-    if (!m_SuccessfullyCompiled)
+    if (!mSuccessfullyCompiled)
     {
       return nullptr;
     }
 
     std::unique_ptr<IShaderParameterCollection> parameters = std::move(
-      m_ShaderParameterCollectionFactory->CreateShaderParameterCollection());
+      mShaderParameterCollectionFactory->CreateShaderParameterCollection());
     GLint i;
     GLint count;
 
@@ -346,21 +344,21 @@ namespace Dwarf
     GLchar        name[bufSize]; // variable name in GLSL
     GLsizei       length;        // name length
 
-    glGetProgramiv(m_ID, GL_ACTIVE_UNIFORMS, &count);
+    glGetProgramiv(mID, GL_ACTIVE_UNIFORMS, &count);
     OpenGLUtilities::CheckOpenGLError(
-      "glGetProgramiv GL_ACTIVE_UNIFORMS", "OpenGLShader", m_Logger);
+      "glGetProgramiv GL_ACTIVE_UNIFORMS", "OpenGLShader", mLogger);
 
     for (i = 0; i < count; i++)
     {
-      glGetActiveUniform(m_ID, (GLuint)i, bufSize, &length, &size, &type, name);
+      glGetActiveUniform(mID, (GLuint)i, bufSize, &length, &size, &type, name);
       OpenGLUtilities::CheckOpenGLError(
-        "glGetActiveUniform", "OpenGLShader", m_Logger);
+        "glGetActiveUniform", "OpenGLShader", mLogger);
 
       if (std::find(ReservedUniformNames.begin(),
                     ReservedUniformNames.end(),
                     name) == ReservedUniformNames.end())
       {
-        parameters->m_DefaultValueAdders.at(glTypeToDwarfShaderType.at(type))(
+        parameters->mDefaultValueAdders.at(glTypeToDwarfShaderType.at(type))(
           name);
       }
     }
@@ -371,97 +369,97 @@ namespace Dwarf
   std::optional<std::unique_ptr<IAssetReference>>&
   OpenGLShader::GetVertexShaderAsset()
   {
-    return m_VertexShaderAsset;
+    return mVertexShaderAsset;
   }
 
   std::optional<std::unique_ptr<IAssetReference>>&
   OpenGLShader::GetFragmentShaderAsset()
   {
-    return m_FragmentShaderAsset;
+    return mFragmentShaderAsset;
   }
 
   std::optional<std::unique_ptr<IAssetReference>>&
   OpenGLShader::GetGeometryShaderAsset()
   {
-    return m_GeometryShaderAsset;
+    return mGeometryShaderAsset;
   }
 
   std::optional<std::unique_ptr<IAssetReference>>&
   OpenGLShader::GetTessellationControlShaderAsset()
   {
-    return m_TessellationControlShaderAsset;
+    return mTessellationControlShaderAsset;
   }
 
   std::optional<std::unique_ptr<IAssetReference>>&
   OpenGLShader::GetTessellationEvaluationShaderAsset()
   {
-    return m_TessellationEvaluationShaderAsset;
+    return mTessellationEvaluationShaderAsset;
   }
 
   const ShaderLogs&
   OpenGLShader::GetShaderLogs() const
   {
-    return m_ShaderLogs;
+    return mShaderLogs;
   }
 
   void
   OpenGLShader::SetUniform(std::string uniformName, bool value)
   {
-    if (m_UniformStates.contains(uniformName) &&
-        (std::get<bool>(m_UniformStates[uniformName]) == value))
+    if (mUniformStates.contains(uniformName) &&
+        (std::get<bool>(mUniformStates[uniformName]) == value))
     {
       return;
     }
 
     glUniform1f(GetUniformLocation(uniformName), value);
     OpenGLUtilities::CheckOpenGLError(
-      "glUniform1f", "OpenGLRendererApi", m_Logger);
-    m_UniformStates[uniformName] = value;
+      "glUniform1f", "OpenGLRendererApi", mLogger);
+    mUniformStates[uniformName] = value;
   }
 
   void
   OpenGLShader::SetUniform(std::string uniformName, int value)
   {
-    if (m_UniformStates.contains(uniformName) &&
-        (std::get<int>(m_UniformStates[uniformName]) == value))
+    if (mUniformStates.contains(uniformName) &&
+        (std::get<int>(mUniformStates[uniformName]) == value))
     {
       return;
     }
 
     glUniform1i(GetUniformLocation(uniformName), value);
     OpenGLUtilities::CheckOpenGLError(
-      "glUniform1i", "OpenGLRendererApi", m_Logger);
-    m_UniformStates[uniformName] = value;
+      "glUniform1i", "OpenGLRendererApi", mLogger);
+    mUniformStates[uniformName] = value;
   }
 
   void
   OpenGLShader::SetUniform(std::string uniformName, uint32_t value)
   {
-    if (m_UniformStates.contains(uniformName) &&
-        (std::get<uint32_t>(m_UniformStates[uniformName]) == value))
+    if (mUniformStates.contains(uniformName) &&
+        (std::get<uint32_t>(mUniformStates[uniformName]) == value))
     {
       return;
     }
 
     glUniform1ui(GetUniformLocation(uniformName), value);
     OpenGLUtilities::CheckOpenGLError(
-      "glUniform1ui", "OpenGLRendererApi", m_Logger);
-    m_UniformStates[uniformName] = value;
+      "glUniform1ui", "OpenGLRendererApi", mLogger);
+    mUniformStates[uniformName] = value;
   }
 
   void
   OpenGLShader::SetUniform(std::string uniformName, float value)
   {
-    if (m_UniformStates.contains(uniformName) &&
-        (std::get<float>(m_UniformStates[uniformName]) == value))
+    if (mUniformStates.contains(uniformName) &&
+        (std::get<float>(mUniformStates[uniformName]) == value))
     {
       return;
     }
 
     glUniform1f(GetUniformLocation(uniformName), value);
     OpenGLUtilities::CheckOpenGLError(
-      "glUniform1f", "OpenGLRendererApi", m_Logger);
-    m_UniformStates[uniformName] = value;
+      "glUniform1f", "OpenGLRendererApi", mLogger);
+    mUniformStates[uniformName] = value;
   }
 
   void
@@ -469,8 +467,8 @@ namespace Dwarf
                            TextureAsset& value,
                            unsigned int  textureCount)
   {
-    // if (m_TextureStates.contains(textureCount) &&
-    //     (m_TextureStates[textureCount] == value.GetTexture().GetTextureID()))
+    // if (mTextureStates.contains(textureCount) &&
+    //     (mTextureStates[textureCount] == value.GetTexture().GetTextureID()))
     // {
     //   // return;
     // }
@@ -478,15 +476,14 @@ namespace Dwarf
     // {
     glActiveTexture(GL_TEXTURE0 + textureCount);
     OpenGLUtilities::CheckOpenGLError(
-      "glActiveTexture", "OpenGLRendererApi", m_Logger);
+      "glActiveTexture", "OpenGLRendererApi", mLogger);
     glBindTexture(GL_TEXTURE_2D, value.GetTexture().GetTextureID());
-    OpenGLUtilities::CheckOpenGLError(
-      "glBindTexture", "OpenGLShader", m_Logger);
-    m_TextureStates[textureCount] = value.GetTexture().GetTextureID();
+    OpenGLUtilities::CheckOpenGLError("glBindTexture", "OpenGLShader", mLogger);
+    mTextureStates[textureCount] = value.GetTexture().GetTextureID();
     //}
 
-    if (m_UniformStates.contains(uniformName) &&
-        (std::get<int>(m_UniformStates[uniformName]) ==
+    if (mUniformStates.contains(uniformName) &&
+        (std::get<int>(mUniformStates[uniformName]) ==
          static_cast<GLint>(textureCount)))
     {
       return;
@@ -495,49 +492,49 @@ namespace Dwarf
     glUniform1i(GetUniformLocation(uniformName),
                 static_cast<GLint>(textureCount));
     OpenGLUtilities::CheckOpenGLError(
-      "glUniform1i", "OpenGLRendererApi", m_Logger);
+      "glUniform1i", "OpenGLRendererApi", mLogger);
     glUniform1i(GetUniformLocation(uniformName),
                 static_cast<GLint>(textureCount));
     OpenGLUtilities::CheckOpenGLError(
-      "glUniform1i", "OpenGLRendererApi", m_Logger);
-    m_UniformStates[uniformName] = static_cast<GLint>(textureCount);
+      "glUniform1i", "OpenGLRendererApi", mLogger);
+    mUniformStates[uniformName] = static_cast<GLint>(textureCount);
   }
 
   void
   OpenGLShader::SetUniform(std::string uniformName, glm::vec2 value)
   {
-    if (m_UniformStates.contains(uniformName) &&
-        (std::get<glm::vec2>(m_UniformStates[uniformName]) == value))
+    if (mUniformStates.contains(uniformName) &&
+        (std::get<glm::vec2>(mUniformStates[uniformName]) == value))
     {
       return;
     }
 
     glUniform2f(GetUniformLocation(uniformName), value.x, value.y);
     OpenGLUtilities::CheckOpenGLError(
-      "glUniform2f", "OpenGLRendererApi", m_Logger);
-    m_UniformStates[uniformName] = value;
+      "glUniform2f", "OpenGLRendererApi", mLogger);
+    mUniformStates[uniformName] = value;
   }
 
   void
   OpenGLShader::SetUniform(std::string uniformName, glm::vec3 value)
   {
-    if (m_UniformStates.contains(uniformName) &&
-        (std::get<glm::vec3>(m_UniformStates[uniformName]) == value))
+    if (mUniformStates.contains(uniformName) &&
+        (std::get<glm::vec3>(mUniformStates[uniformName]) == value))
     {
       return;
     }
 
     glUniform3f(GetUniformLocation(uniformName), value.x, value.y, value.z);
     OpenGLUtilities::CheckOpenGLError(
-      "glUniform3f", "OpenGLRendererApi", m_Logger);
-    m_UniformStates[uniformName] = value;
+      "glUniform3f", "OpenGLRendererApi", mLogger);
+    mUniformStates[uniformName] = value;
   }
 
   void
   OpenGLShader::SetUniform(std::string uniformName, glm::vec4 value)
   {
-    if (m_UniformStates.contains(uniformName) &&
-        (std::get<glm::vec4>(m_UniformStates[uniformName]) == value))
+    if (mUniformStates.contains(uniformName) &&
+        (std::get<glm::vec4>(mUniformStates[uniformName]) == value))
     {
       return;
     }
@@ -545,15 +542,15 @@ namespace Dwarf
     glUniform4f(
       GetUniformLocation(uniformName), value.x, value.y, value.z, value.w);
     OpenGLUtilities::CheckOpenGLError(
-      "glUniform4f", "OpenGLRendererApi", m_Logger);
-    m_UniformStates[uniformName] = value;
+      "glUniform4f", "OpenGLRendererApi", mLogger);
+    mUniformStates[uniformName] = value;
   }
 
   void
   OpenGLShader::SetUniform(std::string uniformName, glm::mat4 value)
   {
-    if (m_UniformStates.contains(uniformName) &&
-        (std::get<glm::mat4>(m_UniformStates[uniformName]) == value))
+    if (mUniformStates.contains(uniformName) &&
+        (std::get<glm::mat4>(mUniformStates[uniformName]) == value))
     {
       return;
     }
@@ -561,22 +558,22 @@ namespace Dwarf
     glUniformMatrix4fv(
       GetUniformLocation(uniformName), 1, GL_FALSE, &value[0][0]);
     OpenGLUtilities::CheckOpenGLError(
-      "glUniformMatrix4fv", "OpenGLRendererApi", m_Logger);
-    m_UniformStates[uniformName] = value;
+      "glUniformMatrix4fv", "OpenGLRendererApi", mLogger);
+    mUniformStates[uniformName] = value;
   }
 
   GLuint
   OpenGLShader::GetUniformLocation(std::string uniformName)
   {
-    if (!m_UniformLocations.contains(uniformName))
+    if (!mUniformLocations.contains(uniformName))
     {
-      m_UniformLocations[uniformName] =
-        glGetUniformLocation(m_ID, uniformName.c_str());
+      mUniformLocations[uniformName] =
+        glGetUniformLocation(mID, uniformName.c_str());
       OpenGLUtilities::CheckOpenGLError(
-        "glGetUniformLocation", "OpenGLShader", m_Logger);
+        "glGetUniformLocation", "OpenGLShader", mLogger);
     }
 
-    return m_UniformLocations[uniformName];
+    return mUniformLocations[uniformName];
   }
 
   nlohmann::json
@@ -584,28 +581,28 @@ namespace Dwarf
   {
     nlohmann::json serializedShader;
     serializedShader["VertexShader"] =
-      m_VertexShaderAsset.has_value()
-        ? m_VertexShaderAsset.value()->GetUID().toString()
+      mVertexShaderAsset.has_value()
+        ? mVertexShaderAsset.value()->GetUID().toString()
         : "";
 
     serializedShader["FragmentShader"] =
-      m_FragmentShaderAsset.has_value()
-        ? m_FragmentShaderAsset.value()->GetUID().toString()
+      mFragmentShaderAsset.has_value()
+        ? mFragmentShaderAsset.value()->GetUID().toString()
         : "";
 
     serializedShader["GeometryShader"] =
-      m_GeometryShaderAsset.has_value()
-        ? m_GeometryShaderAsset.value()->GetUID().toString()
+      mGeometryShaderAsset.has_value()
+        ? mGeometryShaderAsset.value()->GetUID().toString()
         : "";
 
     serializedShader["TessellationControlShader"] =
-      m_TessellationControlShaderAsset.has_value()
-        ? m_TessellationControlShaderAsset.value()->GetUID().toString()
+      mTessellationControlShaderAsset.has_value()
+        ? mTessellationControlShaderAsset.value()->GetUID().toString()
         : "";
 
     serializedShader["TessellationEvaluationShader"] =
-      m_TessellationEvaluationShaderAsset.has_value()
-        ? m_TessellationEvaluationShaderAsset.value()->GetUID().toString()
+      mTessellationEvaluationShaderAsset.has_value()
+        ? mTessellationEvaluationShaderAsset.value()->GetUID().toString()
         : "";
 
     return serializedShader;
@@ -615,6 +612,6 @@ namespace Dwarf
   OpenGLShader::CompareTo(const IShader& other) const
   {
     const OpenGLShader* otherShader = dynamic_cast<const OpenGLShader*>(&other);
-    return m_ID < otherShader->GetID();
+    return mID < otherShader->GetID();
   }
 }

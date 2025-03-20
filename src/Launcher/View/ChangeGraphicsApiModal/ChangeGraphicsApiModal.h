@@ -1,17 +1,17 @@
 #pragma once
 
 #include "IChangeGraphicsApiModal.h"
-#include "Launcher/LauncherData/ILauncherData.h"
 #include "Launcher/LauncherAssets/ILauncherAssets.h"
+#include "Launcher/LauncherData/ILauncherData.h"
 
 namespace Dwarf
 {
   class ChangeGraphicsApiModal : public IChangeGraphicsApiModal
   {
   private:
-    std::shared_ptr<ILauncherData>   m_Data;
-    std::shared_ptr<ISavedProjects>  m_SavedProjects;
-    std::shared_ptr<ILauncherAssets> m_LauncherAssets;
+    std::shared_ptr<ILauncherData>   mData;
+    std::shared_ptr<ISavedProjects>  mSavedProjects;
+    std::shared_ptr<ILauncherAssets> mLauncherAssets;
 
   public:
     ChangeGraphicsApiModal(std::shared_ptr<ILauncherData>   data,

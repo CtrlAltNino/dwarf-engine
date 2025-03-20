@@ -2,8 +2,8 @@
 
 #include "Core/Asset/Shader/ShaderSourceCollection/IShaderSourceCollectionFactory.h"
 #include "Core/Rendering/Shader/ShaderParameterCollection/IShaderParameterCollectionFactory.h"
-#include "IMaterialFactory.h"
 #include "Core/Rendering/Shader/ShaderRegistry/IShaderRegistry.h"
+#include "IMaterialFactory.h"
 #include "Logging/IDwarfLogger.h"
 #include <boost/di.hpp>
 
@@ -12,12 +12,12 @@ namespace Dwarf
   class MaterialFactory : public IMaterialFactory
   {
   private:
-    std::shared_ptr<IDwarfLogger> m_Logger;
+    std::shared_ptr<IDwarfLogger> mLogger;
     std::shared_ptr<IShaderParameterCollectionFactory>
-                                     m_ShaderParameterCollectionFactory;
-    std::shared_ptr<IShaderRegistry> m_ShaderRegistry;
+                                     mShaderParameterCollectionFactory;
+    std::shared_ptr<IShaderRegistry> mShaderRegistry;
     std::shared_ptr<IShaderSourceCollectionFactory>
-      m_ShaderSourceCollectionFactory;
+      mShaderSourceCollectionFactory;
 
   public:
     // Constructor

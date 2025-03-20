@@ -9,8 +9,8 @@ namespace Dwarf
   class OpenGLImGuiLayer : public IImGuiLayer
   {
   private:
-    std::shared_ptr<IDwarfLogger> m_Logger;
-    std::string                   m_IniFilePath;
+    std::shared_ptr<IDwarfLogger> mLogger;
+    std::string                   mIniFilePath;
 
   public:
     OpenGLImGuiLayer(std::shared_ptr<IDwarfLogger> logger,

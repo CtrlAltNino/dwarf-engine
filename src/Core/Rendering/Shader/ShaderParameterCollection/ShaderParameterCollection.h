@@ -6,7 +6,7 @@ namespace Dwarf
   class ShaderParameterCollection : public IShaderParameterCollection
   {
   private:
-    std::map<std::string, ParameterValue> m_Parameters;
+    std::map<std::string, ParameterValue> mParameters;
 
   public:
     ShaderParameterCollection();

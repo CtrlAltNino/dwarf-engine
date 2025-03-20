@@ -7,20 +7,20 @@
 namespace Dwarf
 {
   OpenGLStateTracker::OpenGLStateTracker(std::shared_ptr<IDwarfLogger> logger)
-    : m_Logger(logger)
+    : mLogger(logger)
   {
   }
 
   void
   OpenGLStateTracker::SetShaderProgram(GLuint program)
   {
-    if (m_CurrentShaderProgram != program)
+    if (mCurrentShaderProgram != program)
     {
       glUseProgram(program);
-      m_CurrentShaderProgram = program;
+      mCurrentShaderProgram = program;
 
       OpenGLUtilities::CheckOpenGLError(
-        "glUseProgram", "OpenGLRendererApi", m_Logger);
+        "glUseProgram", "OpenGLRendererApi", mLogger);
     }
   }
 
@@ -42,71 +42,71 @@ namespace Dwarf
   void
   OpenGLStateTracker::SetBlendMode(bool enabled)
   {
-    if (m_BlendMode != enabled)
+    if (mBlendMode != enabled)
     {
       if (enabled)
       {
         glEnable(GL_BLEND);
         OpenGLUtilities::CheckOpenGLError(
-          "glEnable GL_BLEND", "OpenGLRendererApi", m_Logger);
+          "glEnable GL_BLEND", "OpenGLRendererApi", mLogger);
       }
       else
       {
         glDisable(GL_BLEND);
         OpenGLUtilities::CheckOpenGLError(
-          "glDisable GL_BLEND", "OpenGLRendererApi", m_Logger);
+          "glDisable GL_BLEND", "OpenGLRendererApi", mLogger);
       }
 
-      m_BlendMode = enabled;
+      mBlendMode = enabled;
     }
   }
 
   void
   OpenGLStateTracker::SetBlendFunction(GLenum source, GLenum destination)
   {
-    if ((m_BlendSource != source) || (m_BlendDestination != destination))
+    if ((mBlendSource != source) || (mBlendDestination != destination))
     {
       glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
       OpenGLUtilities::CheckOpenGLError(
-        "glBlendFunc", "OpenGLRendererApi", m_Logger);
+        "glBlendFunc", "OpenGLRendererApi", mLogger);
 
-      m_BlendSource = source;
-      m_BlendDestination = destination;
+      mBlendSource = source;
+      mBlendDestination = destination;
     }
   }
 
   void
   OpenGLStateTracker::SetDepthTest(bool enabled)
   {
-    if (enabled != m_DepthMode)
+    if (enabled != mDepthMode)
     {
       if (enabled)
       {
         glEnable(GL_DEPTH_TEST);
         OpenGLUtilities::CheckOpenGLError(
-          "glEnable GL_DEPTH_TEST", "OpenGLRendererApi", m_Logger);
+          "glEnable GL_DEPTH_TEST", "OpenGLRendererApi", mLogger);
       }
       else
       {
         glDisable(GL_DEPTH_TEST);
         OpenGLUtilities::CheckOpenGLError(
-          "glDisable GL_DEPTH_TEST", "OpenGLRendererApi", m_Logger);
+          "glDisable GL_DEPTH_TEST", "OpenGLRendererApi", mLogger);
       }
 
-      m_DepthMode = enabled;
+      mDepthMode = enabled;
     }
   }
 
   void
   OpenGLStateTracker::SetDepthFunction(GLenum depthFunc)
   {
-    if (m_DepthFunc != depthFunc)
+    if (mDepthFunc != depthFunc)
     {
       glDepthFunc(depthFunc);
       OpenGLUtilities::CheckOpenGLError(
-        "glDepthFunc", "OpenGLRendererApi", m_Logger);
+        "glDepthFunc", "OpenGLRendererApi", mLogger);
 
-      m_DepthFunc = depthFunc;
+      mDepthFunc = depthFunc;
     }
   }
 
@@ -118,35 +118,35 @@ namespace Dwarf
   void
   OpenGLStateTracker::SetCullMode(bool enabled)
   {
-    if (m_CullMode != enabled)
+    if (mCullMode != enabled)
     {
       if (enabled)
       {
         glEnable(GL_CULL_FACE);
         OpenGLUtilities::CheckOpenGLError(
-          "glEnable GL_CULL_FACE", "OpenGLRendererApi", m_Logger);
+          "glEnable GL_CULL_FACE", "OpenGLRendererApi", mLogger);
       }
       else
       {
         glDisable(GL_CULL_FACE);
         OpenGLUtilities::CheckOpenGLError(
-          "glDisable GL_CULL_FACE", "OpenGLRendererApi", m_Logger);
+          "glDisable GL_CULL_FACE", "OpenGLRendererApi", mLogger);
       }
 
-      m_CullMode = enabled;
+      mCullMode = enabled;
     }
   }
 
   void
   OpenGLStateTracker::SetCullFace(GLenum face)
   {
-    if (m_CullFace != face)
+    if (mCullFace != face)
     {
       glCullFace(face);
       OpenGLUtilities::CheckOpenGLError(
-        "glCullFace", "OpenGLRendererApi", m_Logger);
+        "glCullFace", "OpenGLRendererApi", mLogger);
 
-      m_CullFace = face;
+      mCullFace = face;
     }
   }
 
@@ -156,29 +156,29 @@ namespace Dwarf
                                   uint32_t width,
                                   uint32_t height)
   {
-    if (m_ViewportState != ViewportState(x, y, width, height))
+    if (mViewportState != ViewportState(x, y, width, height))
     {
       OpenGLUtilities::CheckOpenGLError(
-        "Before setting viewport", "OpenGLRendererApi", m_Logger);
+        "Before setting viewport", "OpenGLRendererApi", mLogger);
       glViewport(x, y, width, height);
       OpenGLUtilities::CheckOpenGLError(
-        "glViewport", "OpenGLRendererApi", m_Logger);
-      m_ViewportState = { x, y, width, height };
+        "glViewport", "OpenGLRendererApi", mLogger);
+      mViewportState = { x, y, width, height };
     }
   }
 
   void
   OpenGLStateTracker::SetClearColor(const glm::vec4& color)
   {
-    if (m_ClearColor != color)
+    if (mClearColor != color)
     {
-      m_ClearColor = color;
+      mClearColor = color;
 
       OpenGLUtilities::CheckOpenGLError(
-        "Before setting clear color", "OpenGLRendererApi", m_Logger);
+        "Before setting clear color", "OpenGLRendererApi", mLogger);
       glClearColor(color.r, color.g, color.b, color.a);
       OpenGLUtilities::CheckOpenGLError(
-        "glClearColor", "OpenGLRendererApi", m_Logger);
+        "glClearColor", "OpenGLRendererApi", mLogger);
     }
   }
 }

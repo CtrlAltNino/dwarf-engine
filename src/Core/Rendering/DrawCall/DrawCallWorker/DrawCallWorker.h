@@ -8,10 +8,10 @@
 #include "Editor/LoadedScene/ILoadedScene.h"
 #include "IDrawCallWorker.h"
 #include "Logging/IDwarfLogger.h"
-#include <functional>
-#include <thread>
-#include <mutex>
 #include <condition_variable>
+#include <functional>
+#include <mutex>
+#include <thread>
 
 namespace Dwarf
 {
@@ -69,17 +69,17 @@ namespace Dwarf
   class DrawCallWorker : public IDrawCallWorker
   {
   private:
-    std::thread                        m_WorkerThread;
-    std::shared_ptr<IDwarfLogger>      m_Logger;
-    std::shared_ptr<ILoadedScene>      m_LoadedScene;
-    std::shared_ptr<IDrawCallFactory>  m_DrawCallFactory;
-    std::shared_ptr<IDrawCallList>     m_DrawCallList;
-    std::shared_ptr<IMeshFactory>      m_MeshFactory;
-    std::shared_ptr<IMeshBufferWorker> m_MeshBufferWorker;
-    std::condition_variable            m_Condition;
-    std::atomic<bool>                  m_StopWorker = false;
-    std::atomic<bool>                  m_Invalidate = false;
-    std::mutex                         m_ThreadMutex;
+    std::thread                        mWorkerThread;
+    std::shared_ptr<IDwarfLogger>      mLogger;
+    std::shared_ptr<ILoadedScene>      mLoadedScene;
+    std::shared_ptr<IDrawCallFactory>  mDrawCallFactory;
+    std::shared_ptr<IDrawCallList>     mDrawCallList;
+    std::shared_ptr<IMeshFactory>      mMeshFactory;
+    std::shared_ptr<IMeshBufferWorker> mMeshBufferWorker;
+    std::condition_variable            mCondition;
+    std::atomic<bool>                  mStopWorker = false;
+    std::atomic<bool>                  mInvalidate = false;
+    std::mutex                         mThreadMutex;
 
   public:
     DrawCallWorker(std::shared_ptr<IDwarfLogger>      logger,

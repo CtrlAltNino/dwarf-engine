@@ -1,11 +1,11 @@
 #pragma once
-#include "pch.h"
-#include "Editor/Modules/IGuiModule.h"
 #include "AssetInspector/IAssetInspector.h"
 #include "Core/Asset/Database/IAssetDatabase.h"
 #include "Editor/IEditor.h"
+#include "Editor/Modules/IGuiModule.h"
 #include "Editor/Selection/IEditorSelection.h"
 #include "EntityInspector/IEntityInspector.h"
+#include "pch.h"
 #include <boost/serialization/strong_typedef.hpp>
 
 namespace Dwarf
@@ -16,10 +16,10 @@ namespace Dwarf
   {
   private:
     /// @brief Pointer to the currently opened scene instance.
-    std::shared_ptr<IEditorSelection> m_Selection;
-    std::shared_ptr<IAssetDatabase>   m_AssetDatabase;
-    std::shared_ptr<IAssetInspector>  m_AssetInspector;
-    std::shared_ptr<IEntityInspector> m_EntityInspector;
+    std::shared_ptr<IEditorSelection> mSelection;
+    std::shared_ptr<IAssetDatabase>   mAssetDatabase;
+    std::shared_ptr<IAssetInspector>  mAssetInspector;
+    std::shared_ptr<IEntityInspector> mEntityInspector;
 
   public:
     InspectorWindow(std::shared_ptr<IEditorSelection> selection,

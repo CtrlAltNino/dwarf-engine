@@ -1,6 +1,6 @@
 #include "ProjectListView.h"
-#include <imgui.h>
 #include "Utilities/TimeUtilities.h"
+#include <imgui.h>
 
 namespace Dwarf
 {
@@ -13,11 +13,11 @@ namespace Dwarf
     std::shared_ptr<ISavedProjectsSorter> savedProjectsSorter,
     std::shared_ptr<IFileHandler>         fileHandler,
     std::shared_ptr<ILauncherAssets>      launcherAssets)
-    : m_Data(data)
-    , m_SavedProjects(savedProjects)
-    , m_SavedProjectsSorter(savedProjectsSorter)
-    , m_FileHandler(fileHandler)
-    , m_LauncherAssets(launcherAssets)
+    : mData(data)
+    , mSavedProjects(savedProjects)
+    , mSavedProjectsSorter(savedProjectsSorter)
+    , mFileHandler(fileHandler)
+    , mLauncherAssets(launcherAssets)
   {
   }
 
@@ -25,7 +25,7 @@ namespace Dwarf
   ProjectListView::RenderProjectList(glm::ivec2 windowSize)
   {
     const std::vector<SavedProject> projectList =
-      m_SavedProjects->GetSavedProjects();
+      mSavedProjects->GetSavedProjects();
     std::vector<std::filesystem::path> projectsToRemove;
 
     ImGuiWindowFlags window_flags = 0;
@@ -49,7 +49,7 @@ namespace Dwarf
     }
 
     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 10));
-    ImGui::PushFont(m_LauncherAssets->GetHeaderFont().get());
+    ImGui::PushFont(mLauncherAssets->GetHeaderFont().get());
     ImGui::Text("Your Projects");
     ImGui::PopFont();
     ImGui::Separator();
@@ -101,7 +101,7 @@ namespace Dwarf
       // Instead of calling TableHeadersRow() we'll submit custom headers
       // ourselves
       ImGui::TableNextRow(ImGuiTableRowFlags_Headers, HEADER_ROW_HEIGHT);
-      ImGui::PushFont(m_LauncherAssets->GetHeaderFont().get());
+      ImGui::PushFont(mLauncherAssets->GetHeaderFont().get());
       ImGui::PushStyleColor(ImGuiCol_HeaderHovered, IM_COL32(76, 86, 106, 255));
       ImGui::PushStyleColor(ImGuiCol_HeaderActive,
                             IM_COL32(129, 161, 193, 255));
@@ -121,9 +121,9 @@ namespace Dwarf
 
         if (ImGui::IsItemClicked())
         {
-          m_SavedProjectsSorter->UpdateSortOrder(ProjectListColumn(column));
-          m_SavedProjectsSorter->SortSavedProjects(
-            m_SavedProjects->GetSavedProjects());
+          mSavedProjectsSorter->UpdateSortOrder(ProjectListColumn(column));
+          mSavedProjectsSorter->SortSavedProjects(
+            mSavedProjects->GetSavedProjects());
         }
 
         ImGui::PopID();
@@ -131,7 +131,7 @@ namespace Dwarf
       ImGui::PopStyleColor(2);
       ImGui::PopFont();
 
-      ImGui::PushFont(m_LauncherAssets->GetTextFont().get());
+      ImGui::PushFont(mLauncherAssets->GetTextFont().get());
       for (auto& project : projectList)
       {
         ImGui::TableNextRow(ImGuiTableRowFlags_None, ROW_HEIGHT);
@@ -178,7 +178,7 @@ namespace Dwarf
             ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0, 0, 0, 0));
             draw_list->ChannelsSetCurrent(1);
             ImGui::Selectable(cellText.c_str(),
-                              m_Data->GetSelectedProject() == project,
+                              mData->GetSelectedProject() == project,
                               ImGuiSelectableFlags_SpanAllColumns,
                               ImVec2(0, ROW_HEIGHT));
             ImGui::PopStyleVar(1);
@@ -186,7 +186,7 @@ namespace Dwarf
 
             if (ImGui::IsItemClicked(1))
             {
-              m_Data->SetSelectedProject(project);
+              mData->SetSelectedProject(project);
             }
 
             {
@@ -202,14 +202,14 @@ namespace Dwarf
               ImGui::PushStyleColor(ImGuiCol_PopupBg,
                                     IM_COL32(76, 86, 106, 255));
               ImGui::SetNextWindowSize(ImVec2(0, 0));
-              if ((m_Data->GetSelectedProject() == project) &&
+              if ((mData->GetSelectedProject() == project) &&
                   ImGui::BeginPopupContextItem(
                     "Project options")) // <-- use last item id as popup id
               {
                 if (ImGui::Button("Open in file browser",
                                   ImVec2(ImGui::GetContentRegionAvail().x, 0)))
                 {
-                  m_FileHandler->OpenPathInFileBrowser(project.Path);
+                  mFileHandler->OpenPathInFileBrowser(project.Path);
                   ImGui::CloseCurrentPopup();
                 }
 
@@ -221,8 +221,8 @@ namespace Dwarf
                 if (ImGui::Button("Change Graphics API",
                                   ImVec2(ImGui::GetContentRegionAvail().x, 0)))
                 {
-                  m_Data->SetState(ProjectChooserState::ChangeGraphicsApi);
-                  m_Data->SetSelectedProject(project);
+                  mData->SetState(ProjectChooserState::ChangeGraphicsApi);
+                  mData->SetSelectedProject(project);
 
                   ImGui::CloseCurrentPopup();
                 }
@@ -233,7 +233,7 @@ namespace Dwarf
                 if (ImGui::Button("Remove project from list",
                                   ImVec2(ImGui::GetContentRegionAvail().x, 0)))
                 {
-                  m_SavedProjects->RemoveProject(project.Path);
+                  mSavedProjects->RemoveProject(project.Path);
                   ImGui::CloseCurrentPopup();
                 }
 
@@ -248,17 +248,17 @@ namespace Dwarf
 
             if (ImGui::IsItemClicked())
             {
-              m_Data->SetSelectedProject(project);
-              if (m_FileHandler->FileExists(project.Path /
-                                            "projectSettings.dproj"))
+              mData->SetSelectedProject(project);
+              if (mFileHandler->FileExists(project.Path /
+                                           "projectSettings.dproj"))
               {
-                m_Data->SetState(ProjectChooserState::Done);
+                mData->SetState(ProjectChooserState::Done);
               }
               else
               {
                 // Error dialog that the project doesn't exist anymore with the
                 // option to remove the entry
-                m_Data->SetState(ProjectChooserState::ProjectNotFound);
+                mData->SetState(ProjectChooserState::ProjectNotFound);
               }
             }
 
@@ -312,7 +312,7 @@ namespace Dwarf
 
     for (auto& path : projectsToRemove)
     {
-      // m_SavedProjects->RemoveProject(path);
+      // mSavedProjects->RemoveProject(path);
     }
 
     projectsToRemove.clear();

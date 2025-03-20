@@ -11,17 +11,17 @@ namespace Dwarf
   class AssetBrowserWindowFactory : public IAssetBrowserWindowFactory
   {
   private:
-    AssetDirectoryPath                m_AssetDirectoryPath;
-    std::shared_ptr<ITextureFactory>  m_TextureFactory;
-    std::shared_ptr<IAssetDatabase>   m_AssetDatabase;
-    std::shared_ptr<IInputManager>    m_InputManager;
-    std::shared_ptr<IEditorSelection> m_EditorSelection;
-    std::shared_ptr<IMaterialIO>      m_MaterialIO;
-    std::shared_ptr<IMaterialFactory> m_MaterialFactory;
-    std::shared_ptr<IAssetMetadata>   m_AssetMetadata;
-    std::shared_ptr<IMaterialCreator> m_MaterialCreator;
-    std::shared_ptr<IFileHandler>     m_FileHandler;
-    std::shared_ptr<ISceneIO>         m_SceneIO;
+    AssetDirectoryPath                mAssetDirectoryPath;
+    std::shared_ptr<ITextureFactory>  mTextureFactory;
+    std::shared_ptr<IAssetDatabase>   mAssetDatabase;
+    std::shared_ptr<IInputManager>    mInputManager;
+    std::shared_ptr<IEditorSelection> mEditorSelection;
+    std::shared_ptr<IMaterialIO>      mMaterialIO;
+    std::shared_ptr<IMaterialFactory> mMaterialFactory;
+    std::shared_ptr<IAssetMetadata>   mAssetMetadata;
+    std::shared_ptr<IMaterialCreator> mMaterialCreator;
+    std::shared_ptr<IFileHandler>     mFileHandler;
+    std::shared_ptr<ISceneIO>         mSceneIO;
 
   public:
     AssetBrowserWindowFactory(AssetDirectoryPath assetDirectoryPath,

@@ -13,8 +13,8 @@ namespace Dwarf
   EntityInspector::EntityInspector(
     std::shared_ptr<IAssetDatabase> assetDatabase,
     std::shared_ptr<ILoadedScene>   loadedScene)
-    : m_AssetDatabase(assetDatabase)
-    , m_LoadedScene(loadedScene)
+    : mAssetDatabase(assetDatabase)
+    , mLoadedScene(loadedScene)
   {
   }
 
@@ -204,7 +204,7 @@ namespace Dwarf
     static bool wasNull = component.GetModelAsset() == nullptr;
 
     DwarfUI::AssetInput<ModelAsset>(
-      m_AssetDatabase, component.GetModelAsset(), "##modelAsset");
+      mAssetDatabase, component.GetModelAsset(), "##modelAsset");
     ImGui::PopItemWidth();
 
     if (component.GetModelAsset() != nullptr)
@@ -239,7 +239,7 @@ namespace Dwarf
         ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
                              COMPONENT_PANEL_PADDING);
         DwarfUI::AssetInput<MaterialAsset>(
-          m_AssetDatabase,
+          mAssetDatabase,
           mat.second,
           std::format("##materialAsset{}", std::to_string(mat.first)).c_str());
         ImGui::PopItemWidth();
@@ -256,7 +256,7 @@ namespace Dwarf
   {
     ImDrawList* draw_list = ImGui::GetWindowDrawList();
     draw_list->ChannelsSplit(2);
-    Entity ent(entity, m_LoadedScene->GetScene().GetRegistry());
+    Entity ent(entity, mLoadedScene->GetScene().GetRegistry());
 
     if (ent.HasComponent<NameComponent>())
     {

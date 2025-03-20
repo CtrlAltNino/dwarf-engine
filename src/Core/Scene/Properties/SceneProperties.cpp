@@ -5,33 +5,33 @@ namespace Dwarf
   SceneProperties::SceneProperties(std::optional<UUID>             assetID,
                                    const std::string&              name,
                                    std::unique_ptr<ISceneSettings> settings)
-    : m_AssetID(assetID)
-    , m_Name(name)
-    , m_Settings(std::move(settings))
+    : mAssetID(assetID)
+    , mName(name)
+    , mSettings(std::move(settings))
   {
   }
 
   nlohmann::json
   SceneProperties::Serialize()
   {
-    return m_Settings->Serialize();
+    return mSettings->Serialize();
   }
 
   std::string
   SceneProperties::GetName() const
   {
-    return m_Name;
+    return mName;
   }
 
   const std::optional<UUID>&
   SceneProperties::GetAssetID() const
   {
-    return m_AssetID;
+    return mAssetID;
   }
 
   ISceneSettings&
   SceneProperties::GetSettings() const
   {
-    return *m_Settings;
+    return *mSettings;
   }
 } // namespace Dwarf
