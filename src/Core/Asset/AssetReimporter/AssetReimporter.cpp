@@ -21,27 +21,34 @@ namespace Dwarf
     mLogger->LogDebug(
       Log(fmt::format("Queued reimport for asset: {}", assetPath.string()),
           "AssetReimporter"));
-    mReimportQueue.push_back(assetPath);
+    {
+      std::unique_lock<std::mutex> lock(mReimportMutex);
+      mReimportQueue.push_back(assetPath);
+    }
   }
 
   void
   AssetReimporter::ReimportQueuedAssets()
   {
-    for (const auto& assetPath : mReimportQueue)
     {
-      mLogger->LogDebug(
-        Log(fmt::format("Reimporting asset: {}", assetPath.string()),
-            "AssetReimporter"));
-      if (mAssetDatabase.get()->Exists(assetPath))
-      {
-        mAssetDatabase.get()->Reimport(assetPath);
-      }
-      else
-      {
-        mAssetDatabase.get()->Import(assetPath);
-      }
-    }
+      std::unique_lock<std::mutex> lock(mReimportMutex);
 
-    mReimportQueue.clear();
+      for (const auto& assetPath : mReimportQueue)
+      {
+        mLogger->LogDebug(
+          Log(fmt::format("Reimporting asset: {}", assetPath.string()),
+              "AssetReimporter"));
+        if (mAssetDatabase.get()->Exists(assetPath))
+        {
+          mAssetDatabase.get()->Reimport(assetPath);
+        }
+        else
+        {
+          mAssetDatabase.get()->Import(assetPath);
+        }
+      }
+
+      mReimportQueue.clear();
+    }
   }
 }
