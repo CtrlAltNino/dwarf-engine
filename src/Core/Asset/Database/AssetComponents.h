@@ -1,9 +1,10 @@
 #pragma once
 
-#include "Core/Rendering/Texture/ITexture.h"
-#include "Core/Rendering/Mesh/IMesh.h"
+#include <utility>
+
 #include "Core/Rendering/Material/IMaterial.h"
-#include <optional>
+#include "Core/Rendering/Mesh/IMesh.h"
+#include "Core/Rendering/Texture/ITexture.h"
 
 namespace Dwarf
 {
@@ -18,53 +19,52 @@ namespace Dwarf
   {
   private:
     /// @brief Vector of submeshes.
-    std::vector<std::unique_ptr<IMesh>> m_Meshes =
-      std::vector<std::unique_ptr<IMesh>>();
+    std::vector<std::unique_ptr<IMesh>> mMeshes;
 
   public:
-    ModelAsset() {}
+    ModelAsset() = default;
 
     ModelAsset(std::vector<std::unique_ptr<IMesh>>&& meshes)
-      : m_Meshes(std::move(meshes))
+      : mMeshes(std::move(meshes))
     {
     }
 
     // copy constructors using the clone function
     ModelAsset(const ModelAsset& other)
     {
-      for (const auto& mesh : other.m_Meshes)
+      for (const auto& mesh : other.mMeshes)
       {
-        m_Meshes.push_back(mesh->Clone());
+        mMeshes.push_back(mesh->Clone());
       }
     }
 
-    ModelAsset&
-    operator=(const ModelAsset& other)
+    auto
+    operator=(const ModelAsset& other) -> ModelAsset&
     {
       if (this == &other)
       {
         return *this;
       }
 
-      m_Meshes.clear();
-      for (const auto& mesh : other.m_Meshes)
+      mMeshes.clear();
+      for (const auto& mesh : other.mMeshes)
       {
-        m_Meshes.push_back(mesh->Clone());
+        mMeshes.push_back(mesh->Clone());
       }
 
       return *this;
     }
 
-    std::vector<std::unique_ptr<IMesh>>&
-    Meshes()
+    auto
+    Meshes() -> std::vector<std::unique_ptr<IMesh>>&
     {
-      return m_Meshes;
+      return mMeshes;
     }
 
-    const std::vector<std::unique_ptr<IMesh>>&
-    Meshes() const
+    auto
+    Meshes() const -> const std::vector<std::unique_ptr<IMesh>>&
     {
-      return m_Meshes;
+      return mMeshes;
     }
   };
 
@@ -73,24 +73,24 @@ namespace Dwarf
   {
   private:
     /// @brief Imported material.
-    std::unique_ptr<IMaterial> m_Material;
+    std::unique_ptr<IMaterial> mMaterial;
 
   public:
     MaterialAsset(std::unique_ptr<IMaterial>&& material)
-      : m_Material(std::move(material))
+      : mMaterial(std::move(material))
     {
     }
 
-    IMaterial&
-    GetMaterial()
+    auto
+    GetMaterial() -> IMaterial&
     {
-      return *m_Material;
+      return *mMaterial;
     }
 
-    const IMaterial&
-    GetMaterial() const
+    auto
+    GetMaterial() const -> const IMaterial&
     {
-      return *m_Material;
+      return *mMaterial;
     }
   };
 
@@ -99,18 +99,18 @@ namespace Dwarf
   {
   private:
     /// @brief The content of the file.
-    std::string m_FileContent;
+    std::string mFileContent;
 
   public:
     explicit VertexShaderAsset(const std::string& fileContent)
-      : m_FileContent(fileContent)
+      : mFileContent(fileContent)
     {
     }
 
-    const std::string&
-    GetFileContent() const
+    auto
+    GetFileContent() const -> const std::string&
     {
-      return m_FileContent;
+      return mFileContent;
     }
   };
 
@@ -118,18 +118,18 @@ namespace Dwarf
   struct FragmentShaderAsset : public IAssetComponent
   {
   private:
-    std::string m_FileContent;
+    std::string mFileContent;
 
   public:
     explicit FragmentShaderAsset(const std::string& fileContent)
-      : m_FileContent(fileContent)
+      : mFileContent(fileContent)
     {
     }
 
-    const std::string&
-    GetFileContent() const
+    auto
+    GetFileContent() const -> const std::string&
     {
-      return m_FileContent;
+      return mFileContent;
     }
   };
 
@@ -137,18 +137,18 @@ namespace Dwarf
   struct GeometryShaderAsset : public IAssetComponent
   {
   private:
-    std::string m_FileContent;
+    std::string mFileContent;
 
   public:
     explicit GeometryShaderAsset(const std::string& fileContent)
-      : m_FileContent(fileContent)
+      : mFileContent(fileContent)
     {
     }
 
-    const std::string&
-    GetFileContent() const
+    auto
+    GetFileContent() const -> const std::string&
     {
-      return m_FileContent;
+      return mFileContent;
     }
   };
 
@@ -156,18 +156,18 @@ namespace Dwarf
   struct TessellationControlShaderAsset : public IAssetComponent
   {
   private:
-    std::string m_FileContent;
+    std::string mFileContent;
 
   public:
     explicit TessellationControlShaderAsset(const std::string& fileContent)
-      : m_FileContent(fileContent)
+      : mFileContent(fileContent)
     {
     }
 
-    const std::string&
-    GetFileContent() const
+    auto
+    GetFileContent() const -> const std::string&
     {
-      return m_FileContent;
+      return mFileContent;
     }
   };
 
@@ -175,18 +175,18 @@ namespace Dwarf
   struct TessellationEvaluationShaderAsset : public IAssetComponent
   {
   private:
-    std::string m_FileContent;
+    std::string mFileContent;
 
   public:
     explicit TessellationEvaluationShaderAsset(const std::string& fileContent)
-      : m_FileContent(fileContent)
+      : mFileContent(fileContent)
     {
     }
 
-    const std::string&
-    GetFileContent() const
+    auto
+    GetFileContent() const -> const std::string&
     {
-      return m_FileContent;
+      return mFileContent;
     }
   };
 
@@ -194,18 +194,18 @@ namespace Dwarf
   struct ComputeShaderAsset : public IAssetComponent
   {
   private:
-    std::string m_FileContent;
+    std::string mFileContent;
 
   public:
-    explicit ComputeShaderAsset(const std::string& fileContent)
-      : m_FileContent(fileContent)
+    explicit ComputeShaderAsset(std::string fileContent)
+      : mFileContent(std::move(fileContent))
     {
     }
 
-    const std::string&
-    GetFileContent() const
+    auto
+    GetFileContent() const -> const std::string&
     {
-      return m_FileContent;
+      return mFileContent;
     }
   };
 
@@ -213,18 +213,18 @@ namespace Dwarf
   struct HlslShaderAsset : public IAssetComponent
   {
   private:
-    std::string m_FileContent;
+    std::string mFileContent;
 
   public:
-    explicit HlslShaderAsset(const std::string& fileContent)
-      : m_FileContent(fileContent)
+    explicit HlslShaderAsset(std::string fileContent)
+      : mFileContent(std::move(fileContent))
     {
     }
 
-    const std::string&
-    GetFileContent() const
+    auto
+    GetFileContent() const -> const std::string&
     {
-      return m_FileContent;
+      return mFileContent;
     }
   };
 
@@ -233,39 +233,39 @@ namespace Dwarf
   {
   private:
     /// @brief Imported texture.
-    std::unique_ptr<ITexture> m_Texture;
-    std::shared_ptr<ITexture> m_Placeholder;
-    bool                      m_IsCurrentlyLoading;
+    std::unique_ptr<ITexture> mTexture;
+    std::shared_ptr<ITexture> mPlaceholder;
+    bool                      mIsCurrentlyLoading = false;
 
   public:
     explicit TextureAsset(std::unique_ptr<ITexture>&& texture,
                           std::shared_ptr<ITexture>   placeholder)
-      : m_Texture(std::move(texture))
-      , m_Placeholder(placeholder)
+      : mTexture(std::move(texture))
+      , mPlaceholder(std::move(placeholder))
     {
     }
 
-    bool
-    IsLoaded() const
+    auto
+    IsLoaded() const -> bool
     {
-      return m_Texture != nullptr;
+      return mTexture != nullptr;
     }
 
-    const ITexture&
-    GetTexture() const
+    auto
+    GetTexture() const -> const ITexture&
     {
-      if (!m_Texture)
+      if (!mTexture)
       {
-        return *m_Placeholder;
+        return *mPlaceholder;
       }
 
-      return *m_Texture;
+      return *mTexture;
     }
 
     void
     SetTexture(std::unique_ptr<ITexture>&& texture)
     {
-      m_Texture = std::move(texture);
+      mTexture = std::move(texture);
     }
   };
 
@@ -273,36 +273,36 @@ namespace Dwarf
   struct SceneAsset : public IAssetComponent
   {
   private:
-    nlohmann::json m_SerializedScene;
+    nlohmann::json mSerializedScene;
 
   public:
-    explicit SceneAsset(const nlohmann::json& serializedScene)
-      : m_SerializedScene(serializedScene)
+    explicit SceneAsset(nlohmann::json serializedScene)
+      : mSerializedScene(std::move(serializedScene))
     {
     }
 
-    const nlohmann::json&
-    GetSerializedScene() const
+    auto
+    GetSerializedScene() const -> const nlohmann::json&
     {
-      return m_SerializedScene;
+      return mSerializedScene;
     }
   };
 
   struct UnknownAsset : public IAssetComponent
   {
   private:
-    std::string m_FileContent;
+    std::string mFileContent;
 
   public:
-    explicit UnknownAsset(const std::string& fileContent)
-      : m_FileContent(fileContent)
+    explicit UnknownAsset(std::string fileContent)
+      : mFileContent(std::move(fileContent))
     {
     }
 
-    const std::string&
-    GetFileContent() const
+    auto
+    GetFileContent() const -> const std::string&
     {
-      return m_FileContent;
+      return mFileContent;
     }
   };
 }

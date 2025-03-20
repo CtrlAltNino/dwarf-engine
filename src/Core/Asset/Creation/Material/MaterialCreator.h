@@ -11,10 +11,10 @@ namespace Dwarf
   class MaterialCreator : public IMaterialCreator
   {
   private:
-    AssetDirectoryPath                m_AssetDirectoryPath;
-    std::shared_ptr<IMaterialFactory> m_MaterialFactory;
-    std::shared_ptr<IMaterialIO>      m_MaterialIO;
-    std::shared_ptr<IFileHandler>     m_FileHandler;
+    AssetDirectoryPath                mAssetDirectoryPath;
+    std::shared_ptr<IMaterialFactory> mMaterialFactory;
+    std::shared_ptr<IMaterialIO>      mMaterialIo;
+    std::shared_ptr<IFileHandler>     mFileHandler;
 
   public:
     MaterialCreator(const AssetDirectoryPath&         assetDirectoryPath,

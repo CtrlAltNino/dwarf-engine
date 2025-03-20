@@ -2,21 +2,19 @@
 
 #include "Core/Asset/AssetReference/IAssetReferenceFactory.h"
 #include "Core/Asset/AssetReimporter/IAssetReimporter.h"
+#include "Core/Asset/Database/IAssetDatabase.h"
+#include "Core/Asset/Database/IAssetDirectoryListener.h"
+#include "Core/Asset/Metadata/IAssetMetadata.h"
+#include "Core/Asset/Model/IModelImporter.h"
+#include "Core/Asset/Shader/IShaderRecompiler.h"
 #include "Core/Base.h"
-#include "Editor/Selection/IEditorSelection.h"
-#include "Utilities/FileHandler/IFileHandler.h"
 #include "Core/Rendering/Material/IMaterialFactory.h"
 #include "Core/Rendering/Material/IO/IMaterialIO.h"
+#include "Core/Rendering/Shader/IShader.h"
 #include "Core/Rendering/Texture/ITextureFactory.h"
 #include "Core/UUID.h"
-#include "Core/Asset/Database/IAssetDatabase.h"
-#include "Core/Asset/Model/IModelImporter.h"
-#include "Core/Asset/Metadata/IAssetMetadata.h"
-#include "Core/Asset/Shader/IShaderRecompiler.h"
-#include "Core/Asset/Database/IAssetDirectoryListener.h"
-
-#include "Core/Rendering/Shader/IShader.h"
 #include "Logging/IDwarfLogger.h"
+#include "Utilities/FileHandler/IFileHandler.h"
 #include "Window/IWindow.h"
 
 #include <entt/entity/fwd.hpp>
@@ -64,7 +62,7 @@ namespace Dwarf
      * @brief Construct a new Asset Database object
      */
     AssetDatabase(
-      AssetDirectoryPath                       assetDirectoryPath,
+      const AssetDirectoryPath&                assetDirectoryPath,
       GraphicsApi                              graphicsApi,
       std::shared_ptr<IDwarfLogger>            logger,
       std::shared_ptr<IAssetDirectoryListener> assetDirectoryListener,
@@ -88,22 +86,22 @@ namespace Dwarf
      * @brief Imports an asset into the asset database.
      * @param assetPath Path to the asset.
      */
-    UUID
-    Import(const std::filesystem::path& assetPath) override;
+    auto
+    Import(const std::filesystem::path& assetPath) -> UUID override;
 
     /**
      * @brief Checks if an asset with a given UID exists in the database.
      * @param uid UID of the asset.
      */
-    bool
-    Exists(const UUID& uid) override;
+    auto
+    Exists(const UUID& uid) -> bool override;
 
     /**
      * @brief Checks if an asset with a given path exists in the database.
      * @param path Path to the asset.
      */
-    bool
-    Exists(const std::filesystem::path& path) override;
+    auto
+    Exists(const std::filesystem::path& assetPath) -> bool override;
 
     /// @brief Clears the asset database.
     /**
@@ -121,10 +119,10 @@ namespace Dwarf
 
     /**
      * @brief Removes an asset from the asset database.
-     * @param path Path to the asset.
+     * @param assetPath Path to the asset.
      */
     void
-    Remove(const std::filesystem::path& path) override;
+    Remove(const std::filesystem::path& assetPath) override;
 
     /**
      * @brief Reimports all assets in the asset database.
@@ -145,8 +143,8 @@ namespace Dwarf
      * @param to New path to the asset.
      */
     void
-    Rename(const std::filesystem::path& from,
-           const std::filesystem::path& to) override;
+    Rename(const std::filesystem::path& fromPath,
+           const std::filesystem::path& toPath) override;
 
     /**
      * @brief Renames a directory in the asset database.
@@ -154,21 +152,22 @@ namespace Dwarf
      * @param to New path to the directory.
      */
     void
-    RenameDirectory(const std::filesystem::path& from,
-                    const std::filesystem::path& to) override;
+    RenameDirectory(const std::filesystem::path& fromPath,
+                    const std::filesystem::path& toPath) override;
 
-    entt::registry&
-    GetRegistry() override;
+    auto
+    GetRegistry() -> entt::registry& override;
 
-    std::unique_ptr<IAssetReference>
-    Retrieve(const UUID& uid) override;
+    auto
+    Retrieve(const UUID& uid) -> std::unique_ptr<IAssetReference> override;
 
-    std::unique_ptr<IAssetReference>
-    Retrieve(const std::filesystem::path& path) override;
+    auto
+    Retrieve(const std::filesystem::path& assetPath)
+      -> std::unique_ptr<IAssetReference> override;
 
   private:
-    std::filesystem::path
-    GetAssetDirectoryPath() override;
+    auto
+    GetAssetDirectoryPath() -> std::filesystem::path override;
 
     void
     AddAssetCallback(const std::string& dir, const std::string& filename);
@@ -187,7 +186,7 @@ namespace Dwarf
     /// @brief Recursively imports all found assets in a given directory.
     /// @param directory Absolute path to a directory.
     void
-    GatherAssetPaths(const std::filesystem::path&        directory,
+    GatherAssetPaths(const std::filesystem::path&        directoryPath,
                      std::vector<std::filesystem::path>& materialPaths,
                      std::vector<std::filesystem::path>& otherPaths);
 
