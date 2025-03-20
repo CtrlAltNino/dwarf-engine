@@ -1,5 +1,5 @@
-#include "pch.h"
 #include "Editor/Modules/SceneHierarchy/ChildIndexInstruction.h"
+#include "pch.h"
 
 namespace Dwarf
 {
@@ -8,19 +8,19 @@ namespace Dwarf
     IScene&                          scene,
     std::vector<entt::entity> const& sourceEntities,
     int                              index)
-    : m_Scene(scene)
-    , m_SourceEntities(sourceEntities)
-    , m_Index(index)
+    : mScene(scene)
+    , mSourceEntities(sourceEntities)
+    , mIndex(index)
   {
   }
 
   void
   ChildIndexInstruction::PerformInstruction()
   {
-    int startIndex = m_Index;
-    for (auto& ent : m_SourceEntities)
+    int startIndex = mIndex;
+    for (auto& ent : mSourceEntities)
     {
-      Entity entity(ent, m_Scene.GetRegistry());
+      Entity entity(ent, mScene.GetRegistry());
       entity.SetChildIndex(startIndex);
       startIndex++;
     }

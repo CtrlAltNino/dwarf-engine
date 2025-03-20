@@ -6,15 +6,15 @@ namespace Dwarf
 {
   ShaderRegistry::ShaderRegistry(std::shared_ptr<IDwarfLogger>   logger,
                                  std::shared_ptr<IShaderFactory> shaderFactory)
-    : m_Logger(logger)
-    , m_ShaderFactory(shaderFactory)
+    : mLogger(logger)
+    , mShaderFactory(shaderFactory)
   {
-    m_Logger->LogDebug(Log("ShaderRegistry created", "ShaderRegistry"));
+    mLogger->LogDebug(Log("ShaderRegistry created", "ShaderRegistry"));
   }
 
   ShaderRegistry::~ShaderRegistry()
   {
-    m_Logger->LogDebug(Log("ShaderRegistry destroyed", "ShaderRegistry"));
+    mLogger->LogDebug(Log("ShaderRegistry destroyed", "ShaderRegistry"));
   }
 
   std::shared_ptr<IShader>
@@ -60,22 +60,22 @@ namespace Dwarf
 
     size_t hash = hasher(combinedSource);
 
-    auto it = m_Shaders.find(hash);
-    if (it != m_Shaders.end())
+    auto it = mShaders.find(hash);
+    if (it != mShaders.end())
     {
 
-      m_Logger->LogDebug(
+      mLogger->LogDebug(
         Log(fmt::format("Shader program already compiled and found"),
             "ShaderRegistry"));
       return it->second; // Return existing shader program
     }
 
-    m_Logger->LogDebug(
+    mLogger->LogDebug(
       Log(fmt::format("Shader program not present yet. Building it now."),
           "ShaderRegistry"));
 
-    m_Shaders[hash] = m_ShaderFactory->CreateShader(std::move(shaderSources));
+    mShaders[hash] = mShaderFactory->CreateShader(std::move(shaderSources));
 
-    return m_Shaders[hash];
+    return mShaders[hash];
   }
 }

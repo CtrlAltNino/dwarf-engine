@@ -8,10 +8,10 @@ namespace Dwarf
   class Mesh : public IMesh
   {
   private:
-    std::shared_ptr<IDwarfLogger> m_Logger;
-    std::vector<Vertex>           m_Vertices = std::vector<Vertex>();
-    std::vector<unsigned int>     m_Indices = std::vector<unsigned int>();
-    unsigned int                  m_MaterialIndex = 0;
+    std::shared_ptr<IDwarfLogger> mLogger;
+    std::vector<Vertex>           mVertices = std::vector<Vertex>();
+    std::vector<unsigned int>     mIndices = std::vector<unsigned int>();
+    unsigned int                  mMaterialIndex = 0;
 
   public:
     Mesh(const std::vector<Vertex>&       vertices,

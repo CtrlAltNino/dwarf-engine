@@ -9,8 +9,8 @@ namespace Dwarf
   class SavedProjectsSorter : public ISavedProjectsSorter
   {
   private:
-    std::shared_ptr<IDwarfLogger> m_Logger;
-    ProjectSortOrder              m_SortOrder = ProjectSortOrder::Date;
+    std::shared_ptr<IDwarfLogger> mLogger;
+    ProjectSortOrder              mSortOrder = ProjectSortOrder::Date;
 
   public:
     SavedProjectsSorter(std::shared_ptr<IDwarfLogger> logger);

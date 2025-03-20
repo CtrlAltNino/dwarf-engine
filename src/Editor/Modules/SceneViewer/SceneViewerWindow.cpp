@@ -26,32 +26,31 @@ namespace Dwarf
     : IGuiModule(ModuleLabel("Scene Viewer"),
                  ModuleType(MODULE_TYPE::SCENE_VIEWER),
                  ModuleID(std::make_shared<UUID>()))
-    , m_CameraFactory(cameraFactory)
-    , m_FramebufferFactory(framebufferFactory)
-    , m_EditorStats(editorStats)
-    , m_InputManager(inputManager)
-    , m_LoadedScene(loadedScene)
-    , m_EditorSelection(editorSelection)
-    , m_RenderingPipelineFactory(renderingPipelineFactory)
-    , m_RendererApiFactory(rendererApiFactory)
-    , m_ShaderRegistry(shaderRegistry)
-    , m_ShaderSourceCollectionFactory(shaderSourceCollectionFactory)
+    , mCameraFactory(cameraFactory)
+    , mFramebufferFactory(framebufferFactory)
+    , mEditorStats(editorStats)
+    , mInputManager(inputManager)
+    , mLoadedScene(loadedScene)
+    , mEditorSelection(editorSelection)
+    , mRenderingPipelineFactory(renderingPipelineFactory)
+    , mRendererApiFactory(rendererApiFactory)
+    , mShaderRegistry(shaderRegistry)
+    , mShaderSourceCollectionFactory(shaderSourceCollectionFactory)
   {
-    m_RendererApi = m_RendererApiFactory->Create();
-    m_Settings.MaxSamples = m_RendererApi->GetMaxSamples();
+    mRendererApi = mRendererApiFactory->Create();
+    mSettings.MaxSamples = mRendererApi->GetMaxSamples();
 
     // Create rendering pipeline
-    m_RenderingPipeline =
-      m_RenderingPipelineFactory->Create(PipelineType::Forward);
+    mRenderingPipeline =
+      mRenderingPipelineFactory->Create(PipelineType::Forward);
 
-    m_AgxTonemapShader = m_ShaderRegistry->GetOrCreate(
-      m_ShaderSourceCollectionFactory
-        ->CreateAgxTonemapShaderSourceCollection());
-    m_AgxTonemapShader->Compile();
+    mAgxTonemapShader = mShaderRegistry->GetOrCreate(
+      mShaderSourceCollectionFactory->CreateAgxTonemapShaderSourceCollection());
+    mAgxTonemapShader->Compile();
 
     // Setup rendering framebuffer according to the pipeline specification
-    m_Framebuffer =
-      m_FramebufferFactory->Create(m_RenderingPipeline->GetSpecification());
+    mFramebuffer =
+      mFramebufferFactory->Create(mRenderingPipeline->GetSpecification());
 
     // Setup framebuffer for presentation
     FramebufferSpecification presentationSpec;
@@ -59,7 +58,7 @@ namespace Dwarf
       FramebufferTextureSpecification{ FramebufferTextureFormat::RGBA8 }
     };
 
-    m_PresentationBuffer = m_FramebufferFactory->Create(presentationSpec);
+    mPresentationBuffer = mFramebufferFactory->Create(presentationSpec);
 
     // Setup frame buffer for rendering ids
     FramebufferSpecification idSpec;
@@ -69,12 +68,12 @@ namespace Dwarf
     };
     idSpec.Width = 512;
     idSpec.Height = 512;
-    m_IdBuffer = m_FramebufferFactory->Create(idSpec);
+    mIdBuffer = mFramebufferFactory->Create(idSpec);
 
     // Setup outline buffer
 
     // Setup camera
-    m_Camera = m_CameraFactory->Create();
+    mCamera = mCameraFactory->Create();
   }
 
   SceneViewerWindow::SceneViewerWindow(
@@ -94,32 +93,31 @@ namespace Dwarf
                  ModuleType(MODULE_TYPE::SCENE_VIEWER),
                  ModuleID(std::make_shared<UUID>(
                    serializedModule.t["id"].get<std::string>())))
-    , m_CameraFactory(cameraFactory)
-    , m_FramebufferFactory(framebufferFactory)
-    , m_EditorStats(editorStats)
-    , m_InputManager(inputManager)
-    , m_LoadedScene(loadedScene)
-    , m_EditorSelection(editorSelection)
-    , m_RenderingPipelineFactory(renderingPipelineFactory)
-    , m_RendererApiFactory(rendererApiFactory)
-    , m_ShaderRegistry(shaderRegistry)
-    , m_ShaderSourceCollectionFactory(shaderSourceCollectionFactory)
+    , mCameraFactory(cameraFactory)
+    , mFramebufferFactory(framebufferFactory)
+    , mEditorStats(editorStats)
+    , mInputManager(inputManager)
+    , mLoadedScene(loadedScene)
+    , mEditorSelection(editorSelection)
+    , mRenderingPipelineFactory(renderingPipelineFactory)
+    , mRendererApiFactory(rendererApiFactory)
+    , mShaderRegistry(shaderRegistry)
+    , mShaderSourceCollectionFactory(shaderSourceCollectionFactory)
   {
-    m_RendererApi = m_RendererApiFactory->Create();
-    m_Settings.MaxSamples = m_RendererApi->GetMaxSamples();
+    mRendererApi = mRendererApiFactory->Create();
+    mSettings.MaxSamples = mRendererApi->GetMaxSamples();
 
     // Create rendering pipeline
-    m_RenderingPipeline =
-      m_RenderingPipelineFactory->Create(PipelineType::Forward);
+    mRenderingPipeline =
+      mRenderingPipelineFactory->Create(PipelineType::Forward);
 
-    m_AgxTonemapShader = m_ShaderRegistry->GetOrCreate(
-      m_ShaderSourceCollectionFactory
-        ->CreateAgxTonemapShaderSourceCollection());
-    m_AgxTonemapShader->Compile();
+    mAgxTonemapShader = mShaderRegistry->GetOrCreate(
+      mShaderSourceCollectionFactory->CreateAgxTonemapShaderSourceCollection());
+    mAgxTonemapShader->Compile();
 
     // Setup rendering framebuffer according to the pipeline specification
-    m_Framebuffer =
-      m_FramebufferFactory->Create(m_RenderingPipeline->GetSpecification());
+    mFramebuffer =
+      mFramebufferFactory->Create(mRenderingPipeline->GetSpecification());
 
     // Setup framebuffer for presentation
     FramebufferSpecification presentationSpec;
@@ -127,7 +125,7 @@ namespace Dwarf
       FramebufferTextureSpecification{ FramebufferTextureFormat::RGBA8 }
     };
 
-    m_PresentationBuffer = m_FramebufferFactory->Create(presentationSpec);
+    mPresentationBuffer = mFramebufferFactory->Create(presentationSpec);
 
     // Setup frame buffer for rendering ids
     FramebufferSpecification idSpec;
@@ -137,12 +135,12 @@ namespace Dwarf
     };
     idSpec.Width = 512;
     idSpec.Height = 512;
-    m_IdBuffer = m_FramebufferFactory->Create(idSpec);
+    mIdBuffer = mFramebufferFactory->Create(idSpec);
 
     // Setup outline buffer
 
     // Setup camera
-    m_Camera = m_CameraFactory->Create(serializedModule.t["camera"]);
+    mCamera = mCameraFactory->Create(serializedModule.t["camera"]);
 
     Deserialize(serializedModule.t);
   }
@@ -150,61 +148,60 @@ namespace Dwarf
   void
   SceneViewerWindow::OnUpdate()
   {
-    if (m_Settings.CameraMovement &&
-        m_InputManager->GetMouseButton(MOUSE_BUTTON::RIGHT))
+    if (mSettings.CameraMovement &&
+        mInputManager->GetMouseButton(MOUSE_BUTTON::RIGHT))
     {
-      m_Camera->OnUpdate(m_EditorStats->GetDeltaTime());
+      mCamera->OnUpdate(mEditorStats->GetDeltaTime());
     }
 
     // Render scene to the framebuffer with the camera
-    m_Framebuffer->Bind();
-    m_RenderingPipeline->RenderScene(
-      m_LoadedScene->GetScene(),
-      *m_Camera,
-      { m_Framebuffer->GetSpecification().Width,
-        m_Framebuffer->GetSpecification().Height },
-      m_Settings.RenderGrid);
-    m_Framebuffer->Unbind();
+    mFramebuffer->Bind();
+    mRenderingPipeline->RenderScene(mLoadedScene->GetScene(),
+                                    *mCamera,
+                                    { mFramebuffer->GetSpecification().Width,
+                                      mFramebuffer->GetSpecification().Height },
+                                    mSettings.RenderGrid);
+    mFramebuffer->Unbind();
 
-    m_IdBuffer->Bind();
-    m_IdBuffer->ClearAttachment(0, 0);
-    m_RenderingPipeline->RenderIds(m_LoadedScene->GetScene(),
-                                   *m_Camera,
-                                   { m_IdBuffer->GetSpecification().Width,
-                                     m_IdBuffer->GetSpecification().Height });
-    m_IdBuffer->Unbind();
+    mIdBuffer->Bind();
+    mIdBuffer->ClearAttachment(0, 0);
+    mRenderingPipeline->RenderIds(mLoadedScene->GetScene(),
+                                  *mCamera,
+                                  { mIdBuffer->GetSpecification().Width,
+                                    mIdBuffer->GetSpecification().Height });
+    mIdBuffer->Unbind();
 
-    /*if (m_Model->GetSelection().GetSelectedEntities().size() > 0)
+    /*if (mModel->GetSelection().GetSelectedEntities().size() > 0)
     {
-      m_OutlineBuffer->Clear(glm::vec4(0));
-      m_OutlineBuffer->Bind();
-      for (auto entity : m_Model->GetSelection().GetSelectedEntities())
+      mOutlineBuffer->Clear(glm::vec4(0));
+      mOutlineBuffer->Bind();
+      for (auto entity : mModel->GetSelection().GetSelectedEntities())
       {
         Renderer::Get()->RenderEntity(entity,
-                                      m_Camera->GetViewMatrix(),
-                                      m_Camera->GetProjectionMatrix(),
+                                      mCamera->GetViewMatrix(),
+                                      mCamera->GetProjectionMatrix(),
                                       Material::s_WhiteMaterial);
       }
 
       // Apply propagation shader
       // ComputeShader::s_PropagationShader->SetParameter("inputTexture",
-      // m_OutlineBuffer->GetColorAttachmentRendererID(),
+      // mOutlineBuffer->GetColorAttachmentRendererID(),
       // ShaderParameterType::TEXTURE);
       // Renderer::Get()->GetRendererApi()->ApplyComputeShader(
-      //  ComputeShader::s_PropagationShader, m_OutlineBuffer, 0, 1);
+      //  ComputeShader::s_PropagationShader, mOutlineBuffer, 0, 1);
 
-      m_OutlineBuffer->Unbind();
+      mOutlineBuffer->Unbind();
     }*/
 
-    // m_RendererApi->Blit(*m_Framebuffer,
-    //                     *m_PresentationBuffer,
+    // mRendererApi->Blit(*mFramebuffer,
+    //                     *mPresentationBuffer,
     //                     0,
     //                     0,
-    //                     m_Framebuffer->GetSpecification().Width,
-    //                     m_Framebuffer->GetSpecification().Height);
+    //                     mFramebuffer->GetSpecification().Width,
+    //                     mFramebuffer->GetSpecification().Height);
 
-    m_RendererApi->CustomBlit(
-      *m_Framebuffer, *m_PresentationBuffer, 0, 0, m_AgxTonemapShader);
+    mRendererApi->CustomBlit(
+      *mFramebuffer, *mPresentationBuffer, 0, 0, mAgxTonemapShader);
   }
 
   void
@@ -215,7 +212,7 @@ namespace Dwarf
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(800, 500));
 
-    ImGui::Begin(GetIdentifier().c_str(), &m_WindowOpened, window_flags);
+    ImGui::Begin(GetIdentifier().c_str(), &mWindowOpened, window_flags);
 
     ImGui::PopStyleVar(2);
     static std::array<std::string, 3> renderingModes = { "Free",
@@ -228,17 +225,17 @@ namespace Dwarf
     // Rendering mode combo
     if (ImGui::BeginCombo(
           "##renderingMode",
-          renderingModes[(int)m_Settings.RenderingConstraint].c_str()))
+          renderingModes[(int)mSettings.RenderingConstraint].c_str()))
     {
       for (int n = 0; n < 3; n++)
       {
-        const bool is_selected = ((int)m_Settings.RenderingConstraint == n);
+        const bool is_selected = ((int)mSettings.RenderingConstraint == n);
 
         // ==================== Graphics Selectable ====================
         if (ImGui::Selectable(
               renderingModes[n].c_str(), is_selected, 0, ImVec2(0, 16 + 10)))
         {
-          m_Settings.RenderingConstraint = (RENDERING_CONSTRAINT)n;
+          mSettings.RenderingConstraint = (RENDERING_CONSTRAINT)n;
         }
 
         // Set the initial focus when opening the combo (scrolling + keyboard
@@ -252,18 +249,18 @@ namespace Dwarf
     ImGui::SameLine(0, 5);
 
     // Guizmo model toggle
-    if (m_Settings.GizmoMode == ImGuizmo::MODE::LOCAL)
+    if (mSettings.GizmoMode == ImGuizmo::MODE::LOCAL)
     {
       if (ImGui::Button("Local"))
       {
-        m_Settings.GizmoMode = ImGuizmo::MODE::WORLD;
+        mSettings.GizmoMode = ImGuizmo::MODE::WORLD;
       }
     }
     else
     {
       if (ImGui::Button("World"))
       {
-        m_Settings.GizmoMode = ImGuizmo::MODE::LOCAL;
+        mSettings.GizmoMode = ImGuizmo::MODE::LOCAL;
       }
     }
 
@@ -272,7 +269,7 @@ namespace Dwarf
     // Guizmo type translate button
     if (ImGui::Button("Translate"))
     {
-      m_Settings.GizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
+      mSettings.GizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
     }
 
     ImGui::SameLine(0, 5);
@@ -280,7 +277,7 @@ namespace Dwarf
     // Guizmo type rotate button
     if (ImGui::Button("Rotate"))
     {
-      m_Settings.GizmoOperation = ImGuizmo::OPERATION::ROTATE;
+      mSettings.GizmoOperation = ImGuizmo::OPERATION::ROTATE;
     }
 
     ImGui::SameLine(0, 5);
@@ -288,51 +285,51 @@ namespace Dwarf
     // Guizmo type scale button
     if (ImGui::Button("Scale"))
     {
-      m_Settings.GizmoOperation = ImGuizmo::OPERATION::SCALE;
+      mSettings.GizmoOperation = ImGuizmo::OPERATION::SCALE;
     }
 
     // Rendering mode specific settings input
 
-    if (m_Settings.RenderingConstraint == RENDERING_CONSTRAINT::ASPECT_RATIO)
+    if (mSettings.RenderingConstraint == RENDERING_CONSTRAINT::ASPECT_RATIO)
     {
       ImGui::SameLine(0, 10);
       ImGui::Text("Aspect ratio");
 
       ImGui::SameLine(0, 10);
-      ImGui::InputInt("##aspectWidth", &(m_Settings.AspectRatio[0]));
+      ImGui::InputInt("##aspectWidth", &(mSettings.AspectRatio[0]));
       ImGui::SameLine(0, 10);
-      ImGui::InputInt("##aspectHeight", &(m_Settings.AspectRatio[1]));
+      ImGui::InputInt("##aspectHeight", &(mSettings.AspectRatio[1]));
 
-      m_Settings.AspectRatio[0] =
-        std::max(1, std::min(MAX_RESOLUTION_WIDTH, m_Settings.AspectRatio[0]));
-      m_Settings.AspectRatio[1] =
-        std::max(1, std::min(MAX_RESOLUTION_HEIGHT, m_Settings.AspectRatio[1]));
+      mSettings.AspectRatio[0] =
+        std::max(1, std::min(MAX_RESOLUTION_WIDTH, mSettings.AspectRatio[0]));
+      mSettings.AspectRatio[1] =
+        std::max(1, std::min(MAX_RESOLUTION_HEIGHT, mSettings.AspectRatio[1]));
     }
-    else if (m_Settings.RenderingConstraint ==
+    else if (mSettings.RenderingConstraint ==
              RENDERING_CONSTRAINT::FIXED_RESOLUTION)
     {
       ImGui::SameLine(0, 10);
       ImGui::Text("Resolution");
       ImGui::SameLine(0, 10);
-      ImGui::InputInt2("", m_Settings.Resolution.data());
-      m_Settings.Resolution[0] =
+      ImGui::InputInt2("", mSettings.Resolution.data());
+      mSettings.Resolution[0] =
         std::max(MIN_RESOLUTION_WIDTH,
-                 std::min(MAX_RESOLUTION_WIDTH, m_Settings.Resolution[0]));
-      m_Settings.Resolution[1] =
+                 std::min(MAX_RESOLUTION_WIDTH, mSettings.Resolution[0]));
+      mSettings.Resolution[1] =
         std::max(MIN_RESOLUTION_WIDTH,
-                 std::min(MAX_RESOLUTION_WIDTH, m_Settings.Resolution[1]));
+                 std::min(MAX_RESOLUTION_WIDTH, mSettings.Resolution[1]));
     }
 
     ImGui::SameLine(0, 5);
 
-    ImGui::Checkbox("Render Grid", &m_Settings.RenderGrid);
+    ImGui::Checkbox("Render Grid", &mSettings.RenderGrid);
 
     ImGui::SameLine(0, 5);
 
     ImGui::SliderInt("MSAA Samples",
-                     &m_Settings.Samples,
+                     &mSettings.Samples,
                      1,
-                     m_Settings.MaxSamples,
+                     mSettings.MaxSamples,
                      "%d",
                      ImGuiSliderFlags_None);
 
@@ -345,30 +342,29 @@ namespace Dwarf
       ImGui::GetCursorScreenPos().x + ImGui::GetContentRegionAvail().x,
       ImGui::GetCursorScreenPos().y + ImGui::GetContentRegionAvail().y);
 
-    m_Settings.ViewportSize = glm::ivec2(ImGui::GetContentRegionAvail().x,
-                                         ImGui::GetContentRegionAvail().y);
+    mSettings.ViewportSize = glm::ivec2(ImGui::GetContentRegionAvail().x,
+                                        ImGui::GetContentRegionAvail().y);
 
     UpdateFramebuffer();
 
-    if (m_Settings.RenderingConstraint != RENDERING_CONSTRAINT::FREE)
+    if (mSettings.RenderingConstraint != RENDERING_CONSTRAINT::FREE)
     {
-      if (((float)m_Settings.ViewportSize.x /
-           (float)m_Settings.ViewportSize.y) < m_Settings.targetAspectRatio)
+      if (((float)mSettings.ViewportSize.x / (float)mSettings.ViewportSize.y) <
+          mSettings.targetAspectRatio)
       {
-        float diff = std::ceil(std::fabs((float)m_Settings.ViewportSize.y -
-                                         (float)m_Settings.ViewportSize.x /
-                                           m_Settings.targetAspectRatio) /
+        float diff = std::ceil(std::fabs((float)mSettings.ViewportSize.y -
+                                         (float)mSettings.ViewportSize.x /
+                                           mSettings.targetAspectRatio) /
                                2.0f);
         minRect.y += diff;
         maxRect.y -= diff;
       }
-      else if (((double)m_Settings.ViewportSize.x /
-                (double)m_Settings.ViewportSize.y) >
-               m_Settings.targetAspectRatio)
+      else if (((double)mSettings.ViewportSize.x /
+                (double)mSettings.ViewportSize.y) > mSettings.targetAspectRatio)
       {
-        float diff = std::ceil(std::fabs((float)m_Settings.ViewportSize.x -
-                                         (float)m_Settings.ViewportSize.y *
-                                           m_Settings.targetAspectRatio) /
+        float diff = std::ceil(std::fabs((float)mSettings.ViewportSize.x -
+                                         (float)mSettings.ViewportSize.y *
+                                           mSettings.targetAspectRatio) /
                                2.0f);
         minRect.x += diff;
         maxRect.x -= diff;
@@ -385,7 +381,7 @@ namespace Dwarf
     glm::vec2 minRectGlm = { minRect.x, minRect.y };
     glm::vec2 maxRectGlm = { maxRect.x, maxRect.y };
 
-    if (m_InputManager->GetMouseButtonDown(MOUSE_BUTTON::LEFT) &&
+    if (mInputManager->GetMouseButtonDown(MOUSE_BUTTON::LEFT) &&
         mousePos.x > minRectGlm.x && mousePos.x < maxRectGlm.x &&
         mousePos.y > minRectGlm.y && mousePos.y < maxRectGlm.y)
     {
@@ -406,20 +402,20 @@ namespace Dwarf
 
     // TODO: Add cursor collision with other windows that may block
 
-    if (!m_Settings.CameraMovement &&
+    if (!mSettings.CameraMovement &&
         ImGui::IsMouseHoveringRect(hoverRectMin, hoverRectMax) &&
-        m_InputManager->GetMouseButton(MOUSE_BUTTON::RIGHT))
+        mInputManager->GetMouseButton(MOUSE_BUTTON::RIGHT))
     {
-      m_Settings.CameraMovement = true;
+      mSettings.CameraMovement = true;
       ImGui::FocusWindow(ImGui::GetCurrentWindow());
     }
-    else if (m_Settings.CameraMovement &&
-             !m_InputManager->GetMouseButton(MOUSE_BUTTON::RIGHT))
+    else if (mSettings.CameraMovement &&
+             !mInputManager->GetMouseButton(MOUSE_BUTTON::RIGHT))
     {
-      m_Settings.CameraMovement = false;
+      mSettings.CameraMovement = false;
     }
 
-    if (!m_EditorSelection->GetSelectedEntities().empty())
+    if (!mEditorSelection->GetSelectedEntities().empty())
     {
       RenderGizmos(minRect, maxRect);
     }
@@ -429,7 +425,7 @@ namespace Dwarf
   ImTextureID
   SceneViewerWindow::GetFrameBufferForImGui()
   {
-    return (ImTextureID)m_PresentationBuffer->GetColorAttachment()
+    return (ImTextureID)mPresentationBuffer->GetColorAttachment()
       .value()
       .get()
       .GetTextureID();
@@ -467,15 +463,15 @@ namespace Dwarf
     ImGuizmo::SetRect(
       minRect.x, minRect.y, maxRect.x - minRect.x, maxRect.y - minRect.y);
 
-    Entity              entity(m_EditorSelection->GetSelectedEntities().at(0),
-                  m_LoadedScene->GetScene().GetRegistry());
+    Entity              entity(mEditorSelection->GetSelectedEntities().at(0),
+                  mLoadedScene->GetScene().GetRegistry());
     TransformComponent& tc = entity.GetComponent<TransformComponent>();
     glm::mat4           transform = tc.GetModelMatrix();
 
-    ImGuizmo::Manipulate(glm::value_ptr(m_Camera->GetViewMatrix()),
-                         glm::value_ptr(m_Camera->GetProjectionMatrix()),
-                         m_Settings.GizmoOperation,
-                         m_Settings.GizmoMode,
+    ImGuizmo::Manipulate(glm::value_ptr(mCamera->GetViewMatrix()),
+                         glm::value_ptr(mCamera->GetProjectionMatrix()),
+                         mSettings.GizmoOperation,
+                         mSettings.GizmoMode,
                          glm::value_ptr(transform));
 
     if (ImGuizmo::IsUsing())
@@ -502,20 +498,20 @@ namespace Dwarf
   SceneViewerWindow::UpdateGizmoType()
   {
     if (ImGui::IsWindowFocused() &&
-        !m_InputManager->GetMouseButton(MOUSE_BUTTON::RIGHT))
+        !mInputManager->GetMouseButton(MOUSE_BUTTON::RIGHT))
     {
       using enum KEYCODE;
-      if (m_InputManager->GetKeyDown(W))
+      if (mInputManager->GetKeyDown(W))
       {
-        m_Settings.GizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
+        mSettings.GizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
       }
-      else if (m_InputManager->GetKeyDown(E))
+      else if (mInputManager->GetKeyDown(E))
       {
-        m_Settings.GizmoOperation = ImGuizmo::OPERATION::ROTATE;
+        mSettings.GizmoOperation = ImGuizmo::OPERATION::ROTATE;
       }
-      else if (m_InputManager->GetKeyDown(R))
+      else if (mInputManager->GetKeyDown(R))
       {
-        m_Settings.GizmoOperation = ImGuizmo::OPERATION::SCALE;
+        mSettings.GizmoOperation = ImGuizmo::OPERATION::SCALE;
       }
     }
   }
@@ -525,13 +521,13 @@ namespace Dwarf
   {
     auto center = glm::vec3(0);
 
-    for (auto entity : m_EditorSelection->GetSelectedEntities())
+    for (auto entity : mEditorSelection->GetSelectedEntities())
     {
-      Entity e(entity, m_LoadedScene->GetScene().GetRegistry());
+      Entity e(entity, mLoadedScene->GetScene().GetRegistry());
       center += e.GetComponent<TransformComponent>().GetPosition();
     }
 
-    return center / (float)m_EditorSelection->GetSelectedEntities().size();
+    return center / (float)mEditorSelection->GetSelectedEntities().size();
   }
 
   void
@@ -539,76 +535,74 @@ namespace Dwarf
   {
     glm::ivec2 desiredResolution;
 
-    switch (m_Settings.RenderingConstraint)
+    switch (mSettings.RenderingConstraint)
     {
       case RENDERING_CONSTRAINT::FREE:
         {
-          desiredResolution = m_Settings.ViewportSize;
-          m_Settings.targetAspectRatio =
+          desiredResolution = mSettings.ViewportSize;
+          mSettings.targetAspectRatio =
             (float)desiredResolution.x / (float)desiredResolution.y;
         }
         break;
       case RENDERING_CONSTRAINT::FIXED_RESOLUTION:
         {
           desiredResolution =
-            glm::ivec2(m_Settings.Resolution[0], m_Settings.Resolution[1]);
-          m_Settings.targetAspectRatio =
-            (float)m_Settings.Resolution[0] / (float)m_Settings.Resolution[1];
+            glm::ivec2(mSettings.Resolution[0], mSettings.Resolution[1]);
+          mSettings.targetAspectRatio =
+            (float)mSettings.Resolution[0] / (float)mSettings.Resolution[1];
         }
         break;
       case RENDERING_CONSTRAINT::ASPECT_RATIO:
         {
-          desiredResolution =
-            CalculateDesiredResolution(m_Settings.ViewportSize,
-                                       (float)m_Settings.AspectRatio[0] /
-                                         (float)m_Settings.AspectRatio[1]);
-          m_Settings.targetAspectRatio =
+          desiredResolution = CalculateDesiredResolution(
+            mSettings.ViewportSize,
+            (float)mSettings.AspectRatio[0] / (float)mSettings.AspectRatio[1]);
+          mSettings.targetAspectRatio =
             (float)desiredResolution.x / (float)desiredResolution.y;
         }
         break;
     }
 
-    if ((m_Framebuffer->GetSpecification().Width != desiredResolution.x) ||
-        (m_Framebuffer->GetSpecification().Height != desiredResolution.y))
+    if ((mFramebuffer->GetSpecification().Width != desiredResolution.x) ||
+        (mFramebuffer->GetSpecification().Height != desiredResolution.y))
     {
-      m_Framebuffer->Resize(desiredResolution.x, desiredResolution.y);
-      m_IdBuffer->Resize(desiredResolution.x, desiredResolution.y);
-      // m_OutlineBuffer->Resize(desiredResolution.x, desiredResolution.y);
-      m_PresentationBuffer->Resize(desiredResolution.x, desiredResolution.y);
-      m_Camera->GetProperties().AspectRatio =
+      mFramebuffer->Resize(desiredResolution.x, desiredResolution.y);
+      mIdBuffer->Resize(desiredResolution.x, desiredResolution.y);
+      // mOutlineBuffer->Resize(desiredResolution.x, desiredResolution.y);
+      mPresentationBuffer->Resize(desiredResolution.x, desiredResolution.y);
+      mCamera->GetProperties().AspectRatio =
         (float)desiredResolution.x / (float)desiredResolution.y;
     }
 
-    if (m_Framebuffer->GetSpecification().Samples != m_Settings.Samples)
+    if (mFramebuffer->GetSpecification().Samples != mSettings.Samples)
     {
-      m_Framebuffer->SetSamples(m_Settings.Samples);
+      mFramebuffer->SetSamples(mSettings.Samples);
     }
   }
 
   void
   SceneViewerWindow::Deserialize(nlohmann::json moduleData)
   {
-    m_Settings.AspectRatio[0] =
+    mSettings.AspectRatio[0] =
       moduleData["settings"]["aspectRatioConstraint"]["x"];
-    m_Settings.AspectRatio[1] =
+    mSettings.AspectRatio[1] =
       moduleData["settings"]["aspectRatioConstraint"]["y"];
 
-    m_Settings.Resolution[0] =
+    mSettings.Resolution[0] =
       moduleData["settings"]["resolutionConstraint"]["x"];
-    m_Settings.Resolution[1] =
+    mSettings.Resolution[1] =
       moduleData["settings"]["resolutionConstraint"]["y"];
 
-    m_Settings.RenderingConstraint =
+    mSettings.RenderingConstraint =
       (RENDERING_CONSTRAINT)moduleData["settings"]["constraintType"];
 
-    m_Settings.RenderGrid = moduleData["settings"]["renderGrid"];
+    mSettings.RenderGrid = moduleData["settings"]["renderGrid"];
 
     if (moduleData.contains("settings") &&
         moduleData["settings"].contains("samples"))
     {
-      m_Settings.Samples =
-        std::min(moduleData["settings"]["samples"].get<int32_t>(),
-                 m_Settings.MaxSamples);
+      mSettings.Samples = std::min(
+        moduleData["settings"]["samples"].get<int32_t>(), mSettings.MaxSamples);
     }
   }
 
@@ -617,24 +611,24 @@ namespace Dwarf
   {
     nlohmann::json serializedModule;
 
-    serializedModule["camera"] = m_Camera->Serialize();
+    serializedModule["camera"] = mCamera->Serialize();
 
     serializedModule["settings"]["aspectRatioConstraint"]["x"] =
-      m_Settings.AspectRatio[0];
+      mSettings.AspectRatio[0];
     serializedModule["settings"]["aspectRatioConstraint"]["y"] =
-      m_Settings.AspectRatio[1];
+      mSettings.AspectRatio[1];
 
     serializedModule["settings"]["resolutionConstraint"]["x"] =
-      m_Settings.Resolution[0];
+      mSettings.Resolution[0];
     serializedModule["settings"]["resolutionConstraint"]["y"] =
-      m_Settings.Resolution[1];
+      mSettings.Resolution[1];
 
     serializedModule["settings"]["constraintType"] =
-      m_Settings.RenderingConstraint;
+      mSettings.RenderingConstraint;
 
-    serializedModule["settings"]["renderGrid"] = m_Settings.RenderGrid;
+    serializedModule["settings"]["renderGrid"] = mSettings.RenderGrid;
 
-    serializedModule["settings"]["samples"] = m_Settings.Samples;
+    serializedModule["settings"]["samples"] = mSettings.Samples;
 
     serializedModule["id"] = GetUuid()->toString();
     serializedModule["type"] = static_cast<int>(GetModuleType());
@@ -648,16 +642,16 @@ namespace Dwarf
                                        glm::vec2 const& viewportSize)
   {
     unsigned int handle =
-      m_IdBuffer->ReadPixel(0, mousePosition.x, mousePosition.y);
+      mIdBuffer->ReadPixel(0, mousePosition.x, mousePosition.y);
 
     if (handle > 0)
     {
       entt::entity entity = static_cast<entt::entity>(handle);
-      m_EditorSelection->SelectEntity(entity);
+      mEditorSelection->SelectEntity(entity);
     }
     else
     {
-      m_EditorSelection->ClearEntitySelection();
+      mEditorSelection->ClearEntitySelection();
     }
   }
 }

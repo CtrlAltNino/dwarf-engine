@@ -16,6 +16,6 @@ namespace Dwarf
     Recompile() override;
 
   private:
-    std::vector<std::shared_ptr<IShader>> m_ShadersToRecompile;
+    std::vector<std::shared_ptr<IShader>> mShadersToRecompile;
   };
 }

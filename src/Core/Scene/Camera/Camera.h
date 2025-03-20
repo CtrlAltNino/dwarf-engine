@@ -1,7 +1,7 @@
 #pragma once
-#include "pch.h"
 #include "ICamera.h"
 #include "Input/IInputManager.h"
+#include "pch.h"
 #include <memory>
 
 namespace Dwarf
@@ -11,8 +11,8 @@ namespace Dwarf
   class Camera : public ICamera
   {
   private:
-    std::shared_ptr<IInputManager> m_InputManager;
-    CameraProperties               m_Properties;
+    std::shared_ptr<IInputManager> mInputManager;
+    CameraProperties               mProperties;
 
   public:
     // ========== Constructors ==========

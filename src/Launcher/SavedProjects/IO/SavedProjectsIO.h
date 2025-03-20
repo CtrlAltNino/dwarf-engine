@@ -10,8 +10,8 @@ namespace Dwarf
   class SavedProjectsIO : public ISavedProjectsIO
   {
   private:
-    std::shared_ptr<IDwarfLogger> m_Logger;
-    std::shared_ptr<IFileHandler> m_FileHandler;
+    std::shared_ptr<IDwarfLogger> mLogger;
+    std::shared_ptr<IFileHandler> mFileHandler;
 
   public:
     SavedProjectsIO(std::shared_ptr<IDwarfLogger> logger,

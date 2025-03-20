@@ -25,17 +25,17 @@ namespace Dwarf
   class OpenGLStateTracker : public IOpenGLStateTracker
   {
   private:
-    std::shared_ptr<IDwarfLogger> m_Logger;
-    GLuint                        m_CurrentShaderProgram = 0;
-    bool                          m_BlendMode = false;
-    GLenum                        m_BlendSource = 0;
-    GLenum                        m_BlendDestination = 0;
-    bool                          m_CullMode = false;
-    GLenum                        m_CullFace = 0;
-    ViewportState                 m_ViewportState = { 0, 0, 0, 0 };
-    glm::vec4                     m_ClearColor = { 0, 0, 0, 0 };
-    bool                          m_DepthMode = false;
-    GLenum                        m_DepthFunc = 0;
+    std::shared_ptr<IDwarfLogger> mLogger;
+    GLuint                        mCurrentShaderProgram = 0;
+    bool                          mBlendMode = false;
+    GLenum                        mBlendSource = 0;
+    GLenum                        mBlendDestination = 0;
+    bool                          mCullMode = false;
+    GLenum                        mCullFace = 0;
+    ViewportState                 mViewportState = { 0, 0, 0, 0 };
+    glm::vec4                     mClearColor = { 0, 0, 0, 0 };
+    bool                          mDepthMode = false;
+    GLenum                        mDepthFunc = 0;
 
   public:
     OpenGLStateTracker(std::shared_ptr<IDwarfLogger> logger);

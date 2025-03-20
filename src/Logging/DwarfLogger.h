@@ -14,7 +14,7 @@ namespace Dwarf
   class DwarfLogger : public IDwarfLogger
   {
   private:
-    std::shared_ptr<spdlog::logger> m_Logger;
+    std::shared_ptr<spdlog::logger> mLogger;
 
     void
     LogMessage(spdlog::level::level_enum log_level, const Log& log) const;

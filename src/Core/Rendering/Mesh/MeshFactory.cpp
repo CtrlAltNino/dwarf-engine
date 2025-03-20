@@ -5,7 +5,7 @@
 namespace Dwarf
 {
   MeshFactory::MeshFactory(std::shared_ptr<IDwarfLogger> logger)
-    : m_Logger(logger)
+    : mLogger(logger)
   {
   }
   std::unique_ptr<IMesh>
@@ -13,7 +13,7 @@ namespace Dwarf
                       const std::vector<unsigned int> indices,
                       unsigned int                    materialIndex)
   {
-    return std::make_unique<Mesh>(vertices, indices, materialIndex, m_Logger);
+    return std::make_unique<Mesh>(vertices, indices, materialIndex, mLogger);
   }
 
   std::unique_ptr<IMesh>

@@ -8,8 +8,8 @@ namespace Dwarf
   class DrawCallList : public IDrawCallList
   {
   private:
-    std::mutex                              m_DrawCallMutex;
-    std::vector<std::unique_ptr<IDrawCall>> m_DrawCalls;
+    std::mutex                              mDrawCallMutex;
+    std::vector<std::unique_ptr<IDrawCall>> mDrawCalls;
 
   public:
     ~DrawCallList() override;

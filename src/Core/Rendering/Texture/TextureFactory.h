@@ -4,7 +4,6 @@
 #include "Core/Base.h"
 #include "Core/Rendering/VramTracker/IVramTracker.h"
 #include "ITextureFactory.h"
-#include "Core/Asset/Texture/IImageFileLoader.h"
 #include "Logging/IDwarfLogger.h"
 #include <cstdint>
 
@@ -13,11 +12,11 @@ namespace Dwarf
   class TextureFactory : public ITextureFactory
   {
   private:
-    GraphicsApi                       m_Api;
-    std::shared_ptr<IImageFileLoader> m_ImageFileLoader;
-    std::shared_ptr<IDwarfLogger>     m_Logger;
-    std::shared_ptr<IVramTracker>     m_VramTracker;
-    std::shared_ptr<ITexture>         m_PlaceholderTexture;
+    GraphicsApi                       mApi;
+    std::shared_ptr<IImageFileLoader> mImageFileLoader;
+    std::shared_ptr<IDwarfLogger>     mLogger;
+    std::shared_ptr<IVramTracker>     mVramTracker;
+    std::shared_ptr<ITexture>         mPlaceholderTexture;
 
     uint64_t
     GetPixelCount(const TextureResolution& size, const TextureType& type);

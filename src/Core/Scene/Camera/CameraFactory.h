@@ -8,7 +8,7 @@ namespace Dwarf
   class CameraFactory : public ICameraFactory
   {
   private:
-    std::shared_ptr<IInputManager> m_InputManager;
+    std::shared_ptr<IInputManager> mInputManager;
 
   public:
     CameraFactory(std::shared_ptr<IInputManager> inputManager);

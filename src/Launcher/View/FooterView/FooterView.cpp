@@ -9,8 +9,8 @@ namespace Dwarf
 
   FooterView::FooterView(std::shared_ptr<ILauncherData>   data,
                          std::shared_ptr<ILauncherAssets> launcherAssets)
-    : m_Data(data)
-    , m_LauncherAssets(launcherAssets)
+    : mData(data)
+    , mLauncherAssets(launcherAssets)
   {
   }
 
@@ -31,7 +31,7 @@ namespace Dwarf
                           ImVec4(59 / 255.0, 66 / 255.0, 82 / 255.0, 1.0));
     ImGui::PushStyleColor(ImGuiCol_Border,
                           ImVec4(59 / 255.0, 66 / 255.0, 82 / 255.0, 0));
-    ImGui::PushFont(m_LauncherAssets->GetTextFont().get());
+    ImGui::PushFont(mLauncherAssets->GetTextFont().get());
 
     if (!ImGui::Begin("Information", NULL, window_flags))
     {
@@ -55,7 +55,7 @@ namespace Dwarf
     {
       ImGui::SetCursorPosY(ImGui::GetCursorPosY() - verticalIconOffset);
       ImTextureID texID =
-        (ImTextureID)m_LauncherAssets->GetGithubIcon()->GetTextureID();
+        (ImTextureID)mLauncherAssets->GetGithubIcon()->GetTextureID();
       ImGui::Image(texID, iconSize);
       if (ImGui::IsItemHovered())
       {
@@ -86,7 +86,7 @@ namespace Dwarf
     {
       ImGui::SetCursorPosY(ImGui::GetCursorPosY() - verticalIconOffset);
       ImTextureID texID =
-        (ImTextureID)m_LauncherAssets->GetPatreonIcon()->GetTextureID();
+        (ImTextureID)mLauncherAssets->GetPatreonIcon()->GetTextureID();
       ImGui::Image(texID, iconSize);
       if (ImGui::IsItemHovered())
       {
@@ -118,7 +118,7 @@ namespace Dwarf
       ImGui::SetCursorPosY(ImGui::GetCursorPosY() - verticalIconOffset);
       // reinterpret_cast
       ImTextureID texID =
-        (ImTextureID)m_LauncherAssets->GetXIcon()->GetTextureID();
+        (ImTextureID)mLauncherAssets->GetXIcon()->GetTextureID();
       ImGui::Image(texID, iconSize);
       if (ImGui::IsItemHovered())
       {

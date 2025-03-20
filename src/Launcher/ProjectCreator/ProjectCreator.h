@@ -11,10 +11,10 @@ namespace Dwarf
   class ProjectCreator : public IProjectCreator
   {
   private:
-    std::shared_ptr<IDwarfLogger>       m_Logger;
-    std::shared_ptr<ISavedProjects>     m_SavedProjects;
-    std::shared_ptr<IFileHandler>       m_FileHandler;
-    std::shared_ptr<IProjectSettingsIO> m_ProjectSettingsIO;
+    std::shared_ptr<IDwarfLogger>       mLogger;
+    std::shared_ptr<ISavedProjects>     mSavedProjects;
+    std::shared_ptr<IFileHandler>       mFileHandler;
+    std::shared_ptr<IProjectSettingsIO> mProjectSettingsIO;
 
   public:
     ProjectCreator(std::shared_ptr<IDwarfLogger>       logger,

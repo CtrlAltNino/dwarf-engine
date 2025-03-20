@@ -1,16 +1,16 @@
 #pragma once
 
 #include "IFooterView.h"
-#include "Launcher/LauncherData/ILauncherData.h"
 #include "Launcher/LauncherAssets/ILauncherAssets.h"
+#include "Launcher/LauncherData/ILauncherData.h"
 
 namespace Dwarf
 {
   class FooterView : public IFooterView
   {
   private:
-    std::shared_ptr<ILauncherData>   m_Data;
-    std::shared_ptr<ILauncherAssets> m_LauncherAssets;
+    std::shared_ptr<ILauncherData>   mData;
+    std::shared_ptr<ILauncherAssets> mLauncherAssets;
 
   public:
     FooterView(std::shared_ptr<ILauncherData>   data,

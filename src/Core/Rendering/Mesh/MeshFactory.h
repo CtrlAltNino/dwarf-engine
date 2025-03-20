@@ -8,7 +8,7 @@ namespace Dwarf
   class MeshFactory : public IMeshFactory
   {
   private:
-    std::shared_ptr<IDwarfLogger> m_Logger;
+    std::shared_ptr<IDwarfLogger> mLogger;
 
   public:
     MeshFactory(std::shared_ptr<IDwarfLogger> logger);

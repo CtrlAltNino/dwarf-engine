@@ -1,14 +1,14 @@
 #pragma once
 
-#include "Utilities/ISerializable.h"
-#include "pch.h"
 #include "Core/Base.h"
 #include "Core/UUID.h"
+#include "Utilities/ISerializable.h"
+#include "pch.h"
 
 #include <fmt/base.h>
 #include <memory>
-#include <variant>
 #include <optional>
+#include <variant>
 
 namespace Dwarf
 {
@@ -68,7 +68,7 @@ namespace Dwarf
     Serialize() override = 0;
 
     std::map<ShaderParameterType, std::function<void(std::string_view)>>
-      m_DefaultValueAdders = {
+      mDefaultValueAdders = {
         { ShaderParameterType::BOOLEAN,
           [this](std::string_view identifier) { AddDefaultBool(identifier); } },
         { ShaderParameterType::INTEGER,

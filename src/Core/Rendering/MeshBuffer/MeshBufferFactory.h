@@ -10,9 +10,9 @@ namespace Dwarf
   class MeshBufferFactory : public IMeshBufferFactory
   {
   private:
-    GraphicsApi                   m_GraphicsApi;
-    std::shared_ptr<IDwarfLogger> m_Logger;
-    std::shared_ptr<IVramTracker> m_VramTracker;
+    GraphicsApi                   mGraphicsApi;
+    std::shared_ptr<IDwarfLogger> mLogger;
+    std::shared_ptr<IVramTracker> mVramTracker;
 
   public:
     MeshBufferFactory(GraphicsApi                   graphicsApi,

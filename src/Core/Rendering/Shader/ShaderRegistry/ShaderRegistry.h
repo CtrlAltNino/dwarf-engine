@@ -8,9 +8,9 @@ namespace Dwarf
   class ShaderRegistry : public IShaderRegistry
   {
   private:
-    std::shared_ptr<IDwarfLogger>                        m_Logger;
-    std::unordered_map<size_t, std::shared_ptr<IShader>> m_Shaders;
-    std::shared_ptr<IShaderFactory>                      m_ShaderFactory;
+    std::shared_ptr<IDwarfLogger>                        mLogger;
+    std::unordered_map<size_t, std::shared_ptr<IShader>> mShaders;
+    std::shared_ptr<IShaderFactory>                      mShaderFactory;
 
   public:
     ShaderRegistry(std::shared_ptr<IDwarfLogger>   logger,

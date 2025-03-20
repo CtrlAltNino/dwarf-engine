@@ -1,7 +1,7 @@
+#include "OpenGLComputeShader.h"
 #include "Core/Asset/Database/AssetComponents.h"
 #include "Core/Base.h"
 #include "Core/Rendering/VramTracker/IVramTracker.h"
-#include "OpenGLComputeShader.h"
 
 #define GL_SHADER_LOG_LENGTH (1024)
 
@@ -12,18 +12,18 @@ namespace Dwarf
     std::shared_ptr<IShaderParameterCollectionFactory>
                                   shaderParameterCollectionFactory,
     std::shared_ptr<IVramTracker> vramTracker)
-    : m_ComputeShaderAsset(std::move(computeShaderAsset))
-    , m_ShaderParameterCollectionFactory(shaderParameterCollectionFactory)
-    , m_VramTracker(vramTracker)
+    : mComputeShaderAsset(std::move(computeShaderAsset))
+    , mShaderParameterCollectionFactory(shaderParameterCollectionFactory)
+    , mVramTracker(vramTracker)
   {
   }
 
   OpenGLComputeShader::~OpenGLComputeShader()
   {
     GLint binaryLength = 0;
-    glGetProgramiv(m_ID, GL_PROGRAM_BINARY_LENGTH, &binaryLength);
-    m_VramTracker->RemoveComputeMemory(binaryLength);
-    glDeleteProgram(m_ID);
+    glGetProgramiv(mID, GL_PROGRAM_BINARY_LENGTH, &binaryLength);
+    mVramTracker->RemoveComputeMemory(binaryLength);
+    glDeleteProgram(mID);
   }
 
   const std::map<GLenum, ShaderParameterType> glTypeToDwarfShaderType = {
@@ -39,10 +39,10 @@ namespace Dwarf
   void
   OpenGLComputeShader::Compile()
   {
-    m_SuccessfullyCompiled = false;
+    mSuccessfullyCompiled = false;
 
     ComputeShaderAsset& computeShaderAsset =
-      (ComputeShaderAsset&)m_ComputeShaderAsset->GetAsset();
+      (ComputeShaderAsset&)mComputeShaderAsset->GetAsset();
 
     if (computeShaderAsset.GetFileContent().length() > 0)
     {
@@ -61,7 +61,7 @@ namespace Dwarf
 
       if (log_length > 0)
       {
-        m_ComputeShaderLog = std::string(message);
+        mComputeShaderLog = std::string(message);
       }
       if (compiled != GL_TRUE)
       {
@@ -69,18 +69,18 @@ namespace Dwarf
         return;
       }
 
-      m_ID = glCreateProgram();
+      mID = glCreateProgram();
 
-      glAttachShader(m_ID, shader);
+      glAttachShader(mID, shader);
 
-      glLinkProgram(m_ID);
+      glLinkProgram(mID);
 
       glDeleteShader(shader);
 
-      m_SuccessfullyCompiled = true;
+      mSuccessfullyCompiled = true;
       GLint binaryLength = 0;
-      glGetProgramiv(m_ID, GL_PROGRAM_BINARY_LENGTH, &binaryLength);
-      m_VramTracker->AddComputeMemory(binaryLength);
+      glGetProgramiv(mID, GL_PROGRAM_BINARY_LENGTH, &binaryLength);
+      mVramTracker->AddComputeMemory(binaryLength);
     }
     else
     {
@@ -91,30 +91,30 @@ namespace Dwarf
   bool
   OpenGLComputeShader::IsCompiled() const
   {
-    return m_SuccessfullyCompiled;
+    return mSuccessfullyCompiled;
   }
 
   GLuint
   OpenGLComputeShader::GetID() const
   {
-    return m_ID;
+    return mID;
   }
 
   const std::string&
   OpenGLComputeShader::GetLog() const
   {
-    return m_ComputeShaderLog;
+    return mComputeShaderLog;
   }
 
   std::shared_ptr<IShaderParameterCollection>
   OpenGLComputeShader::GetParameters()
   {
-    if (!m_SuccessfullyCompiled)
+    if (!mSuccessfullyCompiled)
     {
       return nullptr;
     }
     std::shared_ptr<IShaderParameterCollection> parameters =
-      m_ShaderParameterCollectionFactory->CreateShaderParameterCollection();
+      mShaderParameterCollectionFactory->CreateShaderParameterCollection();
     GLint i;
     GLint count;
 
@@ -125,12 +125,12 @@ namespace Dwarf
     GLchar        name[bufSize]; // variable name in GLSL
     GLsizei       length;        // name length
 
-    glGetProgramiv(m_ID, GL_ACTIVE_UNIFORMS, &count);
+    glGetProgramiv(mID, GL_ACTIVE_UNIFORMS, &count);
 
     for (i = 0; i < count; i++)
     {
-      glGetActiveUniform(m_ID, (GLuint)i, bufSize, &length, &size, &type, name);
-      parameters->m_DefaultValueAdders.at(glTypeToDwarfShaderType.at(type))(
+      glGetActiveUniform(mID, (GLuint)i, bufSize, &length, &size, &type, name);
+      parameters->mDefaultValueAdders.at(glTypeToDwarfShaderType.at(type))(
         name);
     }
 

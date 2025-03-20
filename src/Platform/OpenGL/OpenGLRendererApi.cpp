@@ -1,13 +1,13 @@
-#include <glad/glad.h>
 #include "Core/Asset/Database/IAssetDatabase.h"
 #include "Core/Rendering/RendererApi/IRendererApi.h"
 #include "OpenGLFramebuffer.h"
+#include <glad/glad.h>
 
-#include "Platform/OpenGL/OpenGLRendererApi.h"
+#include "Platform/OpenGL/OpenGLComputeShader.h"
 #include "Platform/OpenGL/OpenGLFramebuffer.h"
 #include "Platform/OpenGL/OpenGLMesh.h"
+#include "Platform/OpenGL/OpenGLRendererApi.h"
 #include "Platform/OpenGL/OpenGLShader.h"
-#include "Platform/OpenGL/OpenGLComputeShader.h"
 #include "Platform/OpenGL/OpenGLUtilities.h"
 
 namespace Dwarf
@@ -22,88 +22,87 @@ namespace Dwarf
                                         shaderSourceCollectionFactory,
     std::shared_ptr<IMeshFactory>       meshFactory,
     std::shared_ptr<IMeshBufferFactory> meshBufferFactory)
-    : m_AssetDatabase(assetDatabase)
-    , m_ShaderRegistry(shaderRegistry)
-    , m_Logger(logger)
-    , m_EditorStats(editorStats)
-    , m_StateTracker(stateTracker)
-    , m_ShaderSourceCollectionFactory(shaderSourceCollectionFactory)
-    , m_MeshFactory(meshFactory)
-    , m_MeshBufferFactory(meshBufferFactory)
+    : mAssetDatabase(assetDatabase)
+    , mShaderRegistry(shaderRegistry)
+    , mLogger(logger)
+    , mEditorStats(editorStats)
+    , mStateTracker(stateTracker)
+    , mShaderSourceCollectionFactory(shaderSourceCollectionFactory)
+    , mMeshFactory(meshFactory)
+    , mMeshBufferFactory(meshBufferFactory)
   {
-    m_Logger->LogDebug(Log("OpenGLRendererApi created.", "OpenGLRendererApi"));
-    m_ErrorShader = m_ShaderRegistry->GetOrCreate(
-      m_ShaderSourceCollectionFactory->CreateErrorShaderSourceCollection());
-    m_ErrorShader->Compile();
+    mLogger->LogDebug(Log("OpenGLRendererApi created.", "OpenGLRendererApi"));
+    mErrorShader = mShaderRegistry->GetOrCreate(
+      mShaderSourceCollectionFactory->CreateErrorShaderSourceCollection());
+    mErrorShader->Compile();
 
-    std::unique_ptr<IMesh> screenQuad = m_MeshFactory->CreateFullscreenQuad();
-    m_ScreenQuad = m_MeshBufferFactory->Create(screenQuad);
+    std::unique_ptr<IMesh> screenQuad = mMeshFactory->CreateFullscreenQuad();
+    mScreenQuad = mMeshBufferFactory->Create(screenQuad);
 
-    m_StateTracker->SetDepthTest(true);
-    m_StateTracker->SetDepthFunction(GL_LESS);
+    mStateTracker->SetDepthTest(true);
+    mStateTracker->SetDepthFunction(GL_LESS);
     glEnable(GL_LINE_SMOOTH);
     OpenGLUtilities::CheckOpenGLError(
-      "glEnable GL_LINE_SMOOTH", "OpenGLRendererApi", m_Logger);
+      "glEnable GL_LINE_SMOOTH", "OpenGLRendererApi", mLogger);
   }
 
   OpenGLRendererApi::~OpenGLRendererApi()
   {
-    m_Logger->LogDebug(
-      Log("OpenGLRendererApi destroyed.", "OpenGLRendererApi"));
+    mLogger->LogDebug(Log("OpenGLRendererApi destroyed.", "OpenGLRendererApi"));
   }
 
   struct SetShaderParameterVisitor
   {
-    OpenGLShader&                   m_Shader;
-    std::string                     m_ParameterName;
-    std::shared_ptr<IAssetDatabase> m_AssetDatabase;
-    std::shared_ptr<IDwarfLogger>   m_Logger;
-    unsigned int&                   m_TextureCount;
+    OpenGLShader&                   mShader;
+    std::string                     mParameterName;
+    std::shared_ptr<IAssetDatabase> mAssetDatabase;
+    std::shared_ptr<IDwarfLogger>   mLogger;
+    unsigned int&                   mTextureCount;
 
     void
     operator()(bool& parameter)
     {
-      m_Shader.SetUniform(m_ParameterName, parameter);
+      mShader.SetUniform(mParameterName, parameter);
     }
     void
     operator()(int& parameter)
     {
-      m_Shader.SetUniform(m_ParameterName, parameter);
+      mShader.SetUniform(mParameterName, parameter);
     }
     void
     operator()(unsigned int& parameter)
     {
-      m_Shader.SetUniform(m_ParameterName, parameter);
+      mShader.SetUniform(mParameterName, parameter);
     }
     void
     operator()(float& parameter)
     {
-      m_Shader.SetUniform(m_ParameterName, parameter);
+      mShader.SetUniform(mParameterName, parameter);
     }
     void
     operator()(Texture2DAssetValue& parameter)
     {
-      if (parameter.has_value() && m_AssetDatabase->Exists(parameter.value()))
+      if (parameter.has_value() && mAssetDatabase->Exists(parameter.value()))
       {
         TextureAsset& textureAsset =
-          (TextureAsset&)m_AssetDatabase->Retrieve(*parameter)->GetAsset();
-        m_Shader.SetUniform(m_ParameterName, textureAsset, m_TextureCount++);
+          (TextureAsset&)mAssetDatabase->Retrieve(*parameter)->GetAsset();
+        mShader.SetUniform(mParameterName, textureAsset, mTextureCount++);
       }
     }
     void
     operator()(glm::vec2& parameter)
     {
-      m_Shader.SetUniform(m_ParameterName, parameter);
+      mShader.SetUniform(mParameterName, parameter);
     }
     void
     operator()(glm::vec3& parameter)
     {
-      m_Shader.SetUniform(m_ParameterName, parameter);
+      mShader.SetUniform(mParameterName, parameter);
     }
     void
     operator()(glm::vec4& parameter)
     {
-      m_Shader.SetUniform(m_ParameterName, parameter);
+      mShader.SetUniform(mParameterName, parameter);
     }
   };
 
@@ -113,35 +112,35 @@ namespace Dwarf
                                  uint32_t width,
                                  uint32_t height)
   {
-    m_StateTracker->SetViewport(x, y, width, height);
+    mStateTracker->SetViewport(x, y, width, height);
   }
 
   void
   OpenGLRendererApi::SetClearColor(const glm::vec4& color)
   {
-    m_StateTracker->SetClearColor(color);
+    mStateTracker->SetClearColor(color);
   }
 
   void
   OpenGLRendererApi::Clear()
   {
     OpenGLUtilities::CheckOpenGLError(
-      "Before clearing", "OpenGLRendererApi", m_Logger);
+      "Before clearing", "OpenGLRendererApi", mLogger);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    OpenGLUtilities::CheckOpenGLError("glClear", "OpenGLRendererApi", m_Logger);
+    OpenGLUtilities::CheckOpenGLError("glClear", "OpenGLRendererApi", mLogger);
   }
 
   void
   OpenGLRendererApi::Clear(unsigned int value)
   {
     OpenGLUtilities::CheckOpenGLError(
-      "Before clearing", "OpenGLRendererApi", m_Logger);
+      "Before clearing", "OpenGLRendererApi", mLogger);
     glClearBufferuiv(
       GL_COLOR, 0, &value); // Use glClearBufferuiv for integer types
     OpenGLUtilities::CheckOpenGLError(
-      "glClearBufferuiv", "OpenGLRendererApi", m_Logger);
+      "glClearBufferuiv", "OpenGLRendererApi", mLogger);
     glClear(GL_DEPTH_BUFFER_BIT);
-    OpenGLUtilities::CheckOpenGLError("glClear", "OpenGLRendererApi", m_Logger);
+    OpenGLUtilities::CheckOpenGLError("glClear", "OpenGLRendererApi", mLogger);
   }
 
   void
@@ -151,24 +150,22 @@ namespace Dwarf
                                    glm::mat4    modelMatrix)
   {
     OpenGLUtilities::CheckOpenGLError(
-      "Before rendering", "OpenGLRendererApi", m_Logger);
+      "Before rendering", "OpenGLRendererApi", mLogger);
     OpenGLMesh&   oglMesh = (OpenGLMesh&)mesh;
     IShader&      baseShader = material.GetShader();
     OpenGLShader& shader = baseShader.IsCompiled()
                              ? dynamic_cast<OpenGLShader&>(baseShader)
-                             : dynamic_cast<OpenGLShader&>(*m_ErrorShader);
+                             : dynamic_cast<OpenGLShader&>(*mErrorShader);
     int           textureInputCounter = 0;
 
-    m_StateTracker->SetShaderProgram(shader.GetID());
+    mStateTracker->SetShaderProgram(shader.GetID());
 
-    m_StateTracker->SetBlendMode(
-      material.GetMaterialProperties().IsTransparent);
+    mStateTracker->SetBlendMode(material.GetMaterialProperties().IsTransparent);
 
-    m_StateTracker->SetBlendFunction(GL_SRC0_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
+    mStateTracker->SetBlendFunction(GL_SRC0_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-    m_StateTracker->SetCullMode(
-      !material.GetMaterialProperties().IsDoubleSided);
-    m_StateTracker->SetCullFace(GL_BACK);
+    mStateTracker->SetCullMode(!material.GetMaterialProperties().IsDoubleSided);
+    mStateTracker->SetCullFace(GL_BACK);
 
     // TODO: Move this to OpenGLShader.cpp
     unsigned int textureCount = 0;
@@ -181,7 +178,7 @@ namespace Dwarf
           material.GetShaderParameters()->GetParameter(identifier);
         std::visit(
           SetShaderParameterVisitor{
-            shader, identifier, m_AssetDatabase, m_Logger, textureCount },
+            shader, identifier, mAssetDatabase, mLogger, textureCount },
           shaderParameterValue);
       }
     }
@@ -189,7 +186,7 @@ namespace Dwarf
     shader.SetUniform("modelMatrix", modelMatrix);
     shader.SetUniform("viewMatrix", camera.GetViewMatrix());
     shader.SetUniform("projectionMatrix", camera.GetProjectionMatrix());
-    shader.SetUniform("_Time", (float)m_EditorStats->GetTimeSinceStart());
+    shader.SetUniform("_Time", (float)mEditorStats->GetTimeSinceStart());
     shader.SetUniform("viewPosition",
                       camera.GetProperties().Transform.GetPosition());
 
@@ -197,7 +194,7 @@ namespace Dwarf
 
     glDrawElements(GL_TRIANGLES, oglMesh.GetIndexCount(), GL_UNSIGNED_INT, 0);
     OpenGLUtilities::CheckOpenGLError(
-      "glDrawElements", "OpenGLRendererApi", m_Logger);
+      "glDrawElements", "OpenGLRendererApi", mLogger);
   }
 
   void
@@ -248,11 +245,11 @@ namespace Dwarf
     glBindFramebuffer(GL_READ_FRAMEBUFFER,
                       sourceFB->GetFramebufferRendererID());
     OpenGLUtilities::CheckOpenGLError(
-      "glBindFramebuffer GL_READ_FRAMEBUFFER", "OpenGLRendererApi", m_Logger);
+      "glBindFramebuffer GL_READ_FRAMEBUFFER", "OpenGLRendererApi", mLogger);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER,
                       destinationFB->GetFramebufferRendererID());
     OpenGLUtilities::CheckOpenGLError(
-      "glBindFramebuffer GL_DRAW_FRAMEBUFFER", "OpenGLRendererApi", m_Logger);
+      "glBindFramebuffer GL_DRAW_FRAMEBUFFER", "OpenGLRendererApi", mLogger);
     glBlitFramebuffer(0,
                       0,
                       width,
@@ -264,10 +261,10 @@ namespace Dwarf
                       GL_COLOR_BUFFER_BIT,
                       GL_NEAREST);
     OpenGLUtilities::CheckOpenGLError(
-      "glBlitFramebuffer", "OpenGLRendererApi", m_Logger);
+      "glBlitFramebuffer", "OpenGLRendererApi", mLogger);
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     OpenGLUtilities::CheckOpenGLError(
-      "glBindFramebuffer Unbind", "OpenGLRendererApi", m_Logger);
+      "glBindFramebuffer Unbind", "OpenGLRendererApi", mLogger);
   }
 
   void
@@ -280,7 +277,7 @@ namespace Dwarf
     // glBindVertexArray(quadVAO);
     // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     // glBindVertexArray(0);
-    OpenGLMesh& oglMesh = (OpenGLMesh&)*m_ScreenQuad;
+    OpenGLMesh& oglMesh = (OpenGLMesh&)*mScreenQuad;
 
     source.Bind();
     GLint srcTexture = 0;
@@ -291,41 +288,41 @@ namespace Dwarf
                                           &srcTexture);
 
     OpenGLUtilities::CheckOpenGLError(
-      "glGetFramebufferAttachmentParameteriv", "OpenGLRendererApi", m_Logger);
+      "glGetFramebufferAttachmentParameteriv", "OpenGLRendererApi", mLogger);
 
-    // m_StateTracker->SetDepthTest(false);
-    // m_StateTracker->SetCullMode(false);
+    // mStateTracker->SetDepthTest(false);
+    // mStateTracker->SetCullMode(false);
 
     destination.Bind();
-    m_StateTracker->SetViewport(0,
-                                0,
-                                destination.GetSpecification().Width,
-                                destination.GetSpecification().Height);
+    mStateTracker->SetViewport(0,
+                               0,
+                               destination.GetSpecification().Width,
+                               destination.GetSpecification().Height);
     glClear(GL_COLOR_BUFFER_BIT);
 
-    OpenGLUtilities::CheckOpenGLError("glClear", "OpenGLRendererApi", m_Logger);
+    OpenGLUtilities::CheckOpenGLError("glClear", "OpenGLRendererApi", mLogger);
 
     OpenGLShader& oglShader = shader->IsCompiled()
                                 ? dynamic_cast<OpenGLShader&>(*shader)
-                                : dynamic_cast<OpenGLShader&>(*m_ErrorShader);
+                                : dynamic_cast<OpenGLShader&>(*mErrorShader);
     glUseProgram(oglShader.GetID());
     OpenGLUtilities::CheckOpenGLError(
-      "glUseProgram", "OpenGLRendererApi", m_Logger);
+      "glUseProgram", "OpenGLRendererApi", mLogger);
     glActiveTexture(GL_TEXTURE0);
     OpenGLUtilities::CheckOpenGLError(
-      "glActiveTexture", "OpenGLRendererApi", m_Logger);
+      "glActiveTexture", "OpenGLRendererApi", mLogger);
     glBindTexture(GL_TEXTURE_2D, static_cast<GLuint>(srcTexture));
     OpenGLUtilities::CheckOpenGLError(
-      "glBindTexture", "OpenGLRendererApi", m_Logger);
+      "glBindTexture", "OpenGLRendererApi", mLogger);
     glUniform1i(oglShader.GetUniformLocation("hdrTexture"), 0);
     OpenGLUtilities::CheckOpenGLError(
-      "glUniform1i", "OpenGLRendererApi", m_Logger);
+      "glUniform1i", "OpenGLRendererApi", mLogger);
 
     // glBindVertexArray(quadVAO);
     oglMesh.Bind();
     glDrawElements(GL_TRIANGLES, oglMesh.GetIndexCount(), GL_UNSIGNED_INT, 0);
     OpenGLUtilities::CheckOpenGLError(
-      "glDrawElements", "OpenGLRendererApi", m_Logger);
+      "glDrawElements", "OpenGLRendererApi", mLogger);
     oglMesh.Unbind();
     destination.Unbind();
 

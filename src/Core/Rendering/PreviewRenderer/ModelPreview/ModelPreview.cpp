@@ -18,10 +18,10 @@ namespace Dwarf
                       cameraFactory->Create(),
                       rendererApiFactory,
                       editorStats)
-    , m_MaterialFactory(materialFactory)
-    , m_InputManager(inputManager)
-    , m_MeshFactory(meshFactory)
-    , m_MeshBufferFactory(meshBufferFactory)
+    , mMaterialFactory(materialFactory)
+    , mInputManager(inputManager)
+    , mMeshFactory(meshFactory)
+    , mMeshBufferFactory(meshBufferFactory)
   {
     FramebufferSpecification renderSpec = { 512, 512 };
     renderSpec.Samples = 8;
@@ -29,28 +29,28 @@ namespace Dwarf
       FramebufferTextureSpecification{ FramebufferTextureFormat::RGBA8 },
       FramebufferTextureSpecification{ FramebufferTextureFormat::DEPTH }
     };
-    m_RenderFramebuffer = m_FramebufferFactory->Create(renderSpec);
+    mRenderFramebuffer = mFramebufferFactory->Create(renderSpec);
 
     FramebufferSpecification previewSpec = { 512, 512 };
     previewSpec.Samples = 1;
     previewSpec.Attachments = FramebufferAttachmentSpecification{
       FramebufferTextureSpecification{ FramebufferTextureFormat::RGBA8 }
     };
-    m_PreviewFramebuffer = m_FramebufferFactory->Create(previewSpec);
+    mPreviewFramebuffer = mFramebufferFactory->Create(previewSpec);
 
-    m_Camera->GetProperties().Fov = 50.0f;
-    m_Camera->GetProperties().NearPlane = 0.1f;
-    m_Camera->GetProperties().FarPlane = 25000.0f;
-    m_Camera->GetProperties().AspectRatio = 1.0f;
-    m_Camera->GetProperties().Transform.GetPosition() = { 0.0f, 0.0f, 0.0f };
-    m_Camera->GetProperties().Transform.GetEulerAngles() = { 0, 0, 0 };
+    mCamera->GetProperties().Fov = 50.0f;
+    mCamera->GetProperties().NearPlane = 0.1f;
+    mCamera->GetProperties().FarPlane = 25000.0f;
+    mCamera->GetProperties().AspectRatio = 1.0f;
+    mCamera->GetProperties().Transform.GetPosition() = { 0.0f, 0.0f, 0.0f };
+    mCamera->GetProperties().Transform.GetEulerAngles() = { 0, 0, 0 };
 
-    m_Material = m_MaterialFactory->CreateDefaultMaterial();
-    m_Material->GetShader().Compile();
-    m_Material->GenerateShaderParameters();
-    m_Material->GetShaderParameters()->SetParameter("color",
-                                                    glm::vec4(1, 1, 1, 1));
-    m_Material->GetShaderParameters()->SetParameter("shininess", 32.0f);
+    mMaterial = mMaterialFactory->CreateDefaultMaterial();
+    mMaterial->GetShader().Compile();
+    mMaterial->GenerateShaderParameters();
+    mMaterial->GetShaderParameters()->SetParameter("color",
+                                                   glm::vec4(1, 1, 1, 1));
+    mMaterial->GetShaderParameters()->SetParameter("shininess", 32.0f);
   }
 
   void
@@ -62,73 +62,73 @@ namespace Dwarf
       // std::cout << "ModelPreview::RenderModelPreview setup" << std::endl;
       FocusModel((ModelAsset&)modelAsset.GetAsset());
       memory = modelAsset.GetHandle();
-      m_Properties.ModelRotation = { -15, 200, 0 };
-      m_Properties.ModelRotationTarget = { -15, 200, 0 };
+      mProperties.ModelRotation = { -15, 200, 0 };
+      mProperties.ModelRotationTarget = { -15, 200, 0 };
       UpdateRotation({ 0, 0 });
-      m_Properties.Distance = 1.0f;
-      std::unique_ptr<IMesh> mesh = m_MeshFactory->MergeMeshes(
+      mProperties.Distance = 1.0f;
+      std::unique_ptr<IMesh> mesh = mMeshFactory->MergeMeshes(
         ((ModelAsset&)modelAsset.GetAsset()).Meshes());
-      m_PreviewMeshBuffer = std::move(m_MeshBufferFactory->Create(mesh));
+      mPreviewMeshBuffer = std::move(mMeshBufferFactory->Create(mesh));
     }
 
-    m_Properties.ModelRotation =
-      InterpolateVectors(m_Properties.ModelRotation,
-                         m_Properties.ModelRotationTarget,
-                         m_Properties.RotationSpeed);
-    m_Properties.ModelRotation = m_Properties.ModelRotationTarget;
-    m_Properties.ModelRotationQuat =
+    mProperties.ModelRotation =
+      InterpolateVectors(mProperties.ModelRotation,
+                         mProperties.ModelRotationTarget,
+                         mProperties.RotationSpeed);
+    mProperties.ModelRotation = mProperties.ModelRotationTarget;
+    mProperties.ModelRotationQuat =
       glm::rotate(glm::rotate(glm::quat({ 0, 0, 0 }),
-                              m_Properties.ModelRotation.x * DEG_2_RAD,
+                              mProperties.ModelRotation.x * DEG_2_RAD,
                               { 1, 0, 0 }),
-                  m_Properties.ModelRotation.y * DEG_2_RAD,
+                  mProperties.ModelRotation.y * DEG_2_RAD,
                   { 0, 1, 0 });
 
-    // m_Properties.ModelRotationQuat = glm::quat({ 0, 0, 0 });
+    // mProperties.ModelRotationQuat = glm::quat({ 0, 0, 0 });
 
     ModelAsset& modelAssetRef = (ModelAsset&)modelAsset.GetAsset();
 
-    m_Camera->GetProperties().Transform.GetPosition() = InterpolateVectors(
-      m_Camera->GetProperties().Transform.GetPosition(),
-      { 0, 0, 1.3 * m_Properties.MaxDistance * m_Properties.Distance },
-      m_Properties.ScrollSpeed);
+    mCamera->GetProperties().Transform.GetPosition() = InterpolateVectors(
+      mCamera->GetProperties().Transform.GetPosition(),
+      { 0, 0, 1.3 * mProperties.MaxDistance * mProperties.Distance },
+      mProperties.ScrollSpeed);
 
-    m_Camera->GetProperties().NearPlane = 0.1f;
-    m_Camera->GetProperties().FarPlane =
-      1.3 * m_Properties.MaxDistance + m_Properties.MaxDistance;
+    mCamera->GetProperties().NearPlane = 0.1f;
+    mCamera->GetProperties().FarPlane =
+      1.3 * mProperties.MaxDistance + mProperties.MaxDistance;
 
-    // m_Camera->GetProperties().Transform.GetPosition() = { 0, 0, 35 };
+    // mCamera->GetProperties().Transform.GetPosition() = { 0, 0, 35 };
 
-    m_RenderFramebuffer->Bind();
-    m_RendererApi->SetViewport(0,
-                               0,
-                               m_RenderFramebuffer->GetSpecification().Width,
-                               m_RenderFramebuffer->GetSpecification().Height);
-    m_RendererApi->SetClearColor({ 59 / 255.0f, 66 / 255.0f, 82 / 255.0f, 1 });
-    m_RendererApi->Clear();
+    mRenderFramebuffer->Bind();
+    mRendererApi->SetViewport(0,
+                              0,
+                              mRenderFramebuffer->GetSpecification().Width,
+                              mRenderFramebuffer->GetSpecification().Height);
+    mRendererApi->SetClearColor({ 59 / 255.0f, 66 / 255.0f, 82 / 255.0f, 1 });
+    mRendererApi->Clear();
 
-    if (m_PreviewMeshBuffer)
+    if (mPreviewMeshBuffer)
     {
-      m_RendererApi->RenderIndexed(*m_PreviewMeshBuffer,
-                                   *m_Material,
-                                   *m_Camera,
-                                   glm::toMat4(m_Properties.ModelRotationQuat));
+      mRendererApi->RenderIndexed(*mPreviewMeshBuffer,
+                                  *mMaterial,
+                                  *mCamera,
+                                  glm::toMat4(mProperties.ModelRotationQuat));
     }
 
     // for (int i = 0; i < modelAssetRef.Meshes().size(); i++)
     // {
-    //   m_RendererApi->RenderIndexed(*modelAssetRef.Meshes().at(i),
-    //                                *m_Material,
-    //                                *m_Camera,
-    //                                glm::toMat4(m_Properties.ModelRotationQuat));
+    //   mRendererApi->RenderIndexed(*modelAssetRef.Meshes().at(i),
+    //                                *mMaterial,
+    //                                *mCamera,
+    //                                glm::toMat4(mProperties.ModelRotationQuat));
     // }
-    m_RenderFramebuffer->Unbind();
+    mRenderFramebuffer->Unbind();
 
-    m_RendererApi->Blit(*m_RenderFramebuffer,
-                        *m_PreviewFramebuffer,
-                        0,
-                        0,
-                        m_RenderFramebuffer->GetSpecification().Width,
-                        m_RenderFramebuffer->GetSpecification().Height);
+    mRendererApi->Blit(*mRenderFramebuffer,
+                       *mPreviewFramebuffer,
+                       0,
+                       0,
+                       mRenderFramebuffer->GetSpecification().Width,
+                       mRenderFramebuffer->GetSpecification().Height);
   }
 
   void
@@ -148,13 +148,13 @@ namespace Dwarf
       }
     }
 
-    m_Properties.MaxDistance =
-      longestDist / (tanf(0.5f * m_Camera->GetProperties().Fov * DEG_2_RAD));
-    m_Camera->GetProperties().Transform.GetPosition() = {
-      0, 0, 1.3 * m_Properties.MaxDistance * m_Properties.Distance
+    mProperties.MaxDistance =
+      longestDist / (tanf(0.5f * mCamera->GetProperties().Fov * DEG_2_RAD));
+    mCamera->GetProperties().Transform.GetPosition() = {
+      0, 0, 1.3 * mProperties.MaxDistance * mProperties.Distance
     };
-    m_Camera->GetProperties().NearPlane = 0.1f;
-    m_Camera->GetProperties().NearPlane =
-      1.3 * m_Properties.MaxDistance + longestDist;
+    mCamera->GetProperties().NearPlane = 0.1f;
+    mCamera->GetProperties().NearPlane =
+      1.3 * mProperties.MaxDistance + longestDist;
   }
 }

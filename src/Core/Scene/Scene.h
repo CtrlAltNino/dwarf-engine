@@ -1,10 +1,10 @@
 #pragma once
 #include "Core/Asset/Database/IAssetDatabase.h"
-#include "pch.h"
+#include "Core/Scene/Components/SceneComponents.h"
+#include "Core/Scene/Entity/Entity.h"
 #include "Core/Scene/IScene.h"
 #include "Core/Scene/Properties/ISceneProperties.h"
-#include "Core/Scene/Entity/Entity.h"
-#include "Core/Scene/Components/SceneComponents.h"
+#include "pch.h"
 #include <boost/serialization/strong_typedef.hpp>
 #include <memory>
 
@@ -58,14 +58,14 @@ namespace Dwarf
 
   private:
     /// @brief The registry that holds all entities and components.
-    entt::registry                  m_Registry;
-    std::shared_ptr<IAssetDatabase> m_AssetDatabase;
+    entt::registry                  mRegistry;
+    std::shared_ptr<IAssetDatabase> mAssetDatabase;
 
     /// @brief The root entity in the scene graph.
-    Entity m_RootEntity;
+    Entity mRootEntity;
 
     /// @brief The settings of the scene.
-    std::unique_ptr<ISceneProperties> m_Properties;
+    std::unique_ptr<ISceneProperties> mProperties;
 
     /// @brief Because of dependency cycle
     // friend class Entity;

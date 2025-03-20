@@ -1,9 +1,9 @@
+#include "ForwardRenderer.h"
 #include "Core/Rendering/Material/IMaterial.h"
 #include "Core/Scene/Components/SceneComponents.h"
 #include "pch.h"
 #include <glm/fwd.hpp>
 #include <iostream>
-#include "ForwardRenderer.h"
 
 namespace Dwarf
 {
@@ -16,46 +16,45 @@ namespace Dwarf
     std::shared_ptr<IMeshFactory>       meshFactory,
     std::shared_ptr<IMeshBufferFactory> meshBufferFactory,
     std::shared_ptr<IDrawCallList>      drawCallList)
-    : m_RendererApi(rendererApi)
-    , m_MaterialFactory(materialFactory)
-    , m_ShaderRegistry(shaderRegistry)
-    , m_ShaderSourceCollectionFactory(shaderSourceCollectionFactory)
-    , m_MeshFactory(meshFactory)
-    , m_MeshBufferFactory(meshBufferFactory)
-    , m_DrawCallList(drawCallList)
+    : mRendererApi(rendererApi)
+    , mMaterialFactory(materialFactory)
+    , mShaderRegistry(shaderRegistry)
+    , mShaderSourceCollectionFactory(shaderSourceCollectionFactory)
+    , mMeshFactory(meshFactory)
+    , mMeshBufferFactory(meshBufferFactory)
+    , mDrawCallList(drawCallList)
   {
-    m_RendererApi->SetClearColor(glm::vec4(0.065f, 0.07f, 0.085, 1.0f));
+    mRendererApi->SetClearColor(glm::vec4(0.065f, 0.07f, 0.085, 1.0f));
 
-    m_IdMaterial =
-      m_MaterialFactory->CreateMaterial(m_ShaderRegistry->GetOrCreate(
-        m_ShaderSourceCollectionFactory->CreateIdShaderSourceCollection()));
-    m_IdMaterial->GetShader().Compile();
+    mIdMaterial = mMaterialFactory->CreateMaterial(mShaderRegistry->GetOrCreate(
+      mShaderSourceCollectionFactory->CreateIdShaderSourceCollection()));
+    mIdMaterial->GetShader().Compile();
 
-    m_GridMaterial =
-      m_MaterialFactory->CreateMaterial(m_ShaderRegistry->GetOrCreate(
-        m_ShaderSourceCollectionFactory->CreateGridShaderSourceCollection()));
-    m_GridMaterial->GetShader().Compile();
-    m_GridMaterial->GetMaterialProperties().IsDoubleSided = true;
-    m_GridMaterial->GetMaterialProperties().IsTransparent = true;
+    mGridMaterial =
+      mMaterialFactory->CreateMaterial(mShaderRegistry->GetOrCreate(
+        mShaderSourceCollectionFactory->CreateGridShaderSourceCollection()));
+    mGridMaterial->GetShader().Compile();
+    mGridMaterial->GetMaterialProperties().IsDoubleSided = true;
+    mGridMaterial->GetMaterialProperties().IsTransparent = true;
 
     std::unique_ptr<IMesh> gridMesh = meshFactory->CreateUnitQuad();
-    m_GridMeshBuffer = std::move(m_MeshBufferFactory->Create(gridMesh));
+    mGridMeshBuffer = std::move(mMeshBufferFactory->Create(gridMesh));
 
-    m_GridModelMatrix = glm::mat4(1.0f);
-    m_GridModelMatrix = glm::scale(m_GridModelMatrix, glm::vec3(3000.0f));
-    m_GridModelMatrix = glm::rotate(
-      m_GridModelMatrix, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+    mGridModelMatrix = glm::mat4(1.0f);
+    mGridModelMatrix = glm::scale(mGridModelMatrix, glm::vec3(3000.0f));
+    mGridModelMatrix = glm::rotate(
+      mGridModelMatrix, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
   }
 
   ForwardRenderer::~ForwardRenderer()
   {
-    m_DrawCallList->Clear();
+    mDrawCallList->Clear();
   }
 
   void
   ForwardRenderer::Setup(glm::ivec2 viewportSize)
   {
-    m_RendererApi->SetViewport(0, 0, viewportSize.x, viewportSize.y);
+    mRendererApi->SetViewport(0, 0, viewportSize.x, viewportSize.y);
     // TODO: Create framebuffers etc.
   }
 
@@ -65,9 +64,9 @@ namespace Dwarf
                                glm::ivec2 viewportSize,
                                bool       renderGrid)
   {
-    m_RendererApi->SetClearColor(glm::vec4(0.065f, 0.07f, 0.085, 1.0f));
-    m_RendererApi->Clear();
-    m_RendererApi->SetViewport(0, 0, viewportSize.x, viewportSize.y);
+    mRendererApi->SetClearColor(glm::vec4(0.065f, 0.07f, 0.085, 1.0f));
+    mRendererApi->Clear();
+    mRendererApi->SetViewport(0, 0, viewportSize.x, viewportSize.y);
 
     // Rendering skybox first???
 
@@ -83,12 +82,12 @@ namespace Dwarf
     }*/
 
     {
-      std::lock_guard<std::mutex> lock(m_DrawCallList->GetMutex());
-      for (auto& drawCall : m_DrawCallList->GetDrawCalls())
+      std::lock_guard<std::mutex> lock(mDrawCallList->GetMutex());
+      for (auto& drawCall : mDrawCallList->GetDrawCalls())
       {
         if (drawCall->GetMeshBuffer())
         {
-          m_RendererApi->RenderIndexed(
+          mRendererApi->RenderIndexed(
             *drawCall->GetMeshBuffer(),
             drawCall->GetMaterial(),
             camera,
@@ -107,9 +106,9 @@ namespace Dwarf
           glm::vec3(camera.GetProperties().Transform.GetPosition().x,
                     0.0f,
                     camera.GetProperties().Transform.GetPosition().z)) *
-        m_GridModelMatrix;
-      m_RendererApi->RenderIndexed(
-        *m_GridMeshBuffer, *m_GridMaterial, camera, translatedGridModelMatrix);
+        mGridModelMatrix;
+      mRendererApi->RenderIndexed(
+        *mGridMeshBuffer, *mGridMaterial, camera, translatedGridModelMatrix);
     }
   }
 
@@ -133,9 +132,9 @@ namespace Dwarf
                              ICamera&   camera,
                              glm::ivec2 viewportSize)
   {
-    m_RendererApi->Clear(0);
+    mRendererApi->Clear(0);
 
-    m_RendererApi->SetViewport(0, 0, viewportSize.x, viewportSize.y);
+    mRendererApi->SetViewport(0, 0, viewportSize.x, viewportSize.y);
 
     for (auto view = scene.GetRegistry()
                        .view<TransformComponent, MeshRendererComponent>();
@@ -148,16 +147,16 @@ namespace Dwarf
           ModelAsset& model =
             (ModelAsset&)meshRenderer.GetModelAsset()->GetAsset();
           std::unique_ptr<IMesh> mergedMesh =
-            m_MeshFactory->MergeMeshes(model.Meshes());
+            mMeshFactory->MergeMeshes(model.Meshes());
           meshRenderer.IdMesh() =
-            std::move(m_MeshBufferFactory->Create(mergedMesh));
+            std::move(mMeshBufferFactory->Create(mergedMesh));
         }
 
         glm::mat4    modelMatrix = transform.GetModelMatrix();
         unsigned int id = (unsigned int)entity;
-        m_IdMaterial->GetShaderParameters()->SetParameter("objectId", id);
-        m_RendererApi->RenderIndexed(
-          *meshRenderer.IdMesh(), *m_IdMaterial, camera, modelMatrix);
+        mIdMaterial->GetShaderParameters()->SetParameter("objectId", id);
+        mRendererApi->RenderIndexed(
+          *meshRenderer.IdMesh(), *mIdMaterial, camera, modelMatrix);
       }
     }
   }

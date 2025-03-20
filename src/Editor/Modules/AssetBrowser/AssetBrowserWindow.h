@@ -22,36 +22,36 @@ namespace Dwarf
   {
   private:
     /// @brief Path to the asset directory of the currently opened project.
-    AssetDirectoryPath                m_AssetDirectoryPath;
-    std::shared_ptr<ITextureFactory>  m_TextureFactory;
-    std::shared_ptr<IAssetDatabase>   m_AssetDatabase;
-    std::shared_ptr<IInputManager>    m_InputManager;
-    std::shared_ptr<IEditorSelection> m_EditorSelection;
-    std::shared_ptr<IMaterialIO>      m_MaterialIO;
-    std::shared_ptr<IMaterialFactory> m_MaterialFactory;
-    std::shared_ptr<IAssetMetadata>   m_AssetMetadata;
-    std::shared_ptr<IMaterialCreator> m_MaterialCreator;
-    std::shared_ptr<IFileHandler>     m_FileHandler;
-    std::shared_ptr<ISceneIO>         m_SceneIo;
+    AssetDirectoryPath                mAssetDirectoryPath;
+    std::shared_ptr<ITextureFactory>  mTextureFactory;
+    std::shared_ptr<IAssetDatabase>   mAssetDatabase;
+    std::shared_ptr<IInputManager>    mInputManager;
+    std::shared_ptr<IEditorSelection> mEditorSelection;
+    std::shared_ptr<IMaterialIO>      mMaterialIO;
+    std::shared_ptr<IMaterialFactory> mMaterialFactory;
+    std::shared_ptr<IAssetMetadata>   mAssetMetadata;
+    std::shared_ptr<IMaterialCreator> mMaterialCreator;
+    std::shared_ptr<IFileHandler>     mFileHandler;
+    std::shared_ptr<ISceneIO>         mSceneIo;
 
     /// @brief Path of the currently navigated directory.
-    std::filesystem::path m_CurrentDirectory;
+    std::filesystem::path mCurrentDirectory;
 
-    std::filesystem::path m_CopyPathBuffer;
+    std::filesystem::path mCopyPathBuffer;
 
-    std::filesystem::path m_RenamePathBuffer;
+    std::filesystem::path mRenamePathBuffer;
 
-    char m_RenameBuffer[RENAME_BUFFER_SIZE] = "";
+    char mRenameBuffer[RENAME_BUFFER_SIZE] = "";
 
-    bool m_OpenRename;
+    bool mOpenRename;
 
     void
     SetRenameBuffer(std::filesystem::path const& path);
 
-    std::vector<std::filesystem::path> m_DirectoryHistory;
+    std::vector<std::filesystem::path> mDirectoryHistory;
 
-    std::filesystem::path m_SelectedAsset;
-    int                   m_HistoryPos = 0;
+    std::filesystem::path mSelectedAsset;
+    int                   mHistoryPos = 0;
     void
     OpenPath(std::filesystem::directory_entry const& directoryEntry);
 
@@ -73,29 +73,29 @@ namespace Dwarf
     void
     RenderDirectory(std::filesystem::path const& path);
 
-    float m_IconScale = 1.0f;
+    float mIconScale = 1.0f;
 
-    std::unique_ptr<ITexture> m_DirectoryIcon;
+    std::unique_ptr<ITexture> mDirectoryIcon;
 
-    std::unique_ptr<ITexture> m_FBXIcon;
-    std::unique_ptr<ITexture> m_OBJIcon;
+    std::unique_ptr<ITexture> mFBXIcon;
+    std::unique_ptr<ITexture> mOBJIcon;
 
-    std::unique_ptr<ITexture> m_JPGIcon;
-    std::unique_ptr<ITexture> m_PNGIcon;
+    std::unique_ptr<ITexture> mJPGIcon;
+    std::unique_ptr<ITexture> mPNGIcon;
 
-    std::unique_ptr<ITexture> m_VertexShaderIcon;
-    std::unique_ptr<ITexture> m_TessellationControlShaderIcon;
-    std::unique_ptr<ITexture> m_TessellationEvaluationShaderIcon;
-    std::unique_ptr<ITexture> m_GeometryShaderIcon;
-    std::unique_ptr<ITexture> m_FragmentShaderIcon;
-    std::unique_ptr<ITexture> m_ComputeShaderIcon;
-    std::unique_ptr<ITexture> m_HLSLShaderIcon;
+    std::unique_ptr<ITexture> mVertexShaderIcon;
+    std::unique_ptr<ITexture> mTessellationControlShaderIcon;
+    std::unique_ptr<ITexture> mTessellationEvaluationShaderIcon;
+    std::unique_ptr<ITexture> mGeometryShaderIcon;
+    std::unique_ptr<ITexture> mFragmentShaderIcon;
+    std::unique_ptr<ITexture> mComputeShaderIcon;
+    std::unique_ptr<ITexture> mHLSLShaderIcon;
 
-    std::unique_ptr<ITexture> m_SceneIcon;
+    std::unique_ptr<ITexture> mSceneIcon;
 
-    std::unique_ptr<ITexture> m_MaterialIcon;
+    std::unique_ptr<ITexture> mMaterialIcon;
 
-    std::unique_ptr<ITexture> m_UnknownFileIcon;
+    std::unique_ptr<ITexture> mUnknownFileIcon;
 
     bool firstFrame = true;
 

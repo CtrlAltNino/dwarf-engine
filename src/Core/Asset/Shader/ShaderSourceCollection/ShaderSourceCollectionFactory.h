@@ -12,8 +12,8 @@ namespace Dwarf
   class ShaderSourceCollectionFactory : public IShaderSourceCollectionFactory
   {
   private:
-    boost::di::extension::lazy<std::shared_ptr<IAssetDatabase>> m_AssetDatabase;
-    GraphicsApi                                                 m_GraphicsApi;
+    boost::di::extension::lazy<std::shared_ptr<IAssetDatabase>> mAssetDatabase;
+    GraphicsApi                                                 mGraphicsApi;
 
   public:
     ShaderSourceCollectionFactory(

@@ -14,24 +14,24 @@ namespace Dwarf
   GraphicsContextFactory::GraphicsContextFactory(
     std::shared_ptr<IDwarfLogger> logger,
     GraphicsApi                   api)
-    : m_Logger(logger)
-    , m_Api(api)
+    : mLogger(logger)
+    , mApi(api)
   {
-    m_Logger->LogDebug(
+    mLogger->LogDebug(
       Log("GraphicsContextFactory created.", "GraphicsContext"));
   }
 
   GraphicsContextFactory::~GraphicsContextFactory()
   {
-    m_Logger->LogDebug(
+    mLogger->LogDebug(
       Log("GraphicsContextFactory destroyed.", "GraphicsContext"));
   }
 
   std::unique_ptr<IGraphicsContext>
   GraphicsContextFactory::Create(SDL_Window* window) const
   {
-    m_Logger->LogDebug(Log("Creating GraphicsContext...", "GraphicsContext"));
-    switch (m_Api)
+    mLogger->LogDebug(Log("Creating GraphicsContext...", "GraphicsContext"));
+    switch (mApi)
     {
       using enum GraphicsApi;
       case None: break;
@@ -44,9 +44,9 @@ namespace Dwarf
         break;
       case OpenGL:
         {
-          m_Logger->LogDebug(
+          mLogger->LogDebug(
             Log("Creating OpenGLContext...", "GraphicsContext"));
-          return std::make_unique<OpenGLContext>(m_Logger, window);
+          return std::make_unique<OpenGLContext>(mLogger, window);
           break;
         }
       case Vulkan:
@@ -61,9 +61,9 @@ namespace Dwarf
         break;
       case OpenGL:
         {
-          m_Logger->LogDebug(
+          mLogger->LogDebug(
             Log("Creating OpenGLContext...", "GraphicsContext"));
-          return std::make_unique<OpenGLContext>(m_Logger, window);
+          return std::make_unique<OpenGLContext>(mLogger, window);
           break;
         }
       case Vulkan:
@@ -81,7 +81,7 @@ namespace Dwarf
 #endif
     }
 
-    m_Logger->LogError(
+    mLogger->LogError(
       Log("Failed to create GraphicsContext.", "GraphicsContext"));
 
     return nullptr;

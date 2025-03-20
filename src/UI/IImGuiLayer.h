@@ -10,7 +10,7 @@ namespace Dwarf
   class IImGuiLayer
   {
   protected:
-    SDL_Window* m_Window;
+    SDL_Window* mWindow;
 
   public:
     virtual ~IImGuiLayer() = default;

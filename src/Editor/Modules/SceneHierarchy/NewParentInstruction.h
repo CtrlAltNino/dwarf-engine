@@ -1,8 +1,8 @@
 #pragma once
 
-#include "Editor/Modules/SceneHierarchy/GraphInstruction.h"
 #include "Core/Scene/Entity/Entity.h"
 #include "Core/Scene/Scene.h"
+#include "Editor/Modules/SceneHierarchy/GraphInstruction.h"
 
 namespace Dwarf
 {
@@ -12,13 +12,13 @@ namespace Dwarf
   {
   private:
     /// @brief Pointer to the currently opened scene.
-    IScene& m_Scene;
+    IScene& mScene;
 
     /// @brief The entities to process the instruction on.
-    std::vector<entt::entity> m_SourceEntities;
+    std::vector<entt::entity> mSourceEntities;
 
     /// @brief The entity to be the new parent of the source entities.
-    entt::entity m_NewParent;
+    entt::entity mNewParent;
 
   public:
     /// @brief Executes the instruction.

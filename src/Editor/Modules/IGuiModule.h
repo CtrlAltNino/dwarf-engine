@@ -6,7 +6,6 @@
 #include <imgui.h>
 #include <imgui_internal.h>
 
-
 namespace Dwarf
 {
 
@@ -32,22 +31,22 @@ namespace Dwarf
   {
   protected:
     /// @brief Name to use for the module.
-    std::string m_Label;
+    std::string mLabel;
 
     /// @brief Enum identification.
-    MODULE_TYPE m_ModuleType;
+    MODULE_TYPE mModuleType;
 
     /// @brief Incremented global GUI module ID.
-    std::shared_ptr<UUID> m_Id;
+    std::shared_ptr<UUID> mId;
 
     /// @brief Flag to check if the window is collapsed or not.
-    bool m_WindowOpened = true;
+    bool mWindowOpened = true;
 
   public:
     IGuiModule(ModuleLabel name, ModuleType type, ModuleID id)
-      : m_Label(name)
-      , m_ModuleType(type)
-      , m_Id(id)
+      : mLabel(name)
+      , mModuleType(type)
+      , mId(id)
     {
     }
 
@@ -58,20 +57,20 @@ namespace Dwarf
     std::string
     GetModuleName() const
     {
-      return m_Label;
+      return mLabel;
     }
 
     /// @brief Returns thhe type of the module.
     /// @return Type of the module.
     MODULE_TYPE
-    GetModuleType() const { return m_ModuleType; }
+    GetModuleType() const { return mModuleType; }
 
     /// @brief Returns the global module index.
     /// @return The module index.
     std::shared_ptr<UUID>
     GetUuid() const
     {
-      return m_Id;
+      return mId;
     }
 
     /// @brief Generates the ImGui window identifier for a module window..
@@ -79,7 +78,7 @@ namespace Dwarf
     std::string
     GetIdentifier() const
     {
-      return std::format("{}##{}", m_Label, m_Id->toString());
+      return std::format("{}##{}", mLabel, mId->toString());
     }
 
     /// @brief Generates a ImGui ID for the module.
@@ -93,7 +92,7 @@ namespace Dwarf
     bool
     GetWindowClose()
     {
-      return !m_WindowOpened;
+      return !mWindowOpened;
     }
 
     virtual void

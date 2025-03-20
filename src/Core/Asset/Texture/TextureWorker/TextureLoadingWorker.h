@@ -4,9 +4,9 @@
 #include "Core/Rendering/Texture/ITextureFactory.h"
 #include "ITextureLoadingWorker.h"
 #include "Logging/IDwarfLogger.h"
+#include <condition_variable>
 #include <mutex>
 #include <queue>
-#include <condition_variable>
 #include <unordered_set>
 
 namespace Dwarf
@@ -14,18 +14,18 @@ namespace Dwarf
   class TextureLoadingWorker : public ITextureLoadingWorker
   {
   private:
-    std::shared_ptr<IDwarfLogger>     m_Logger;
-    std::shared_ptr<IImageFileLoader> m_ImageFileLoader;
-    std::shared_ptr<ITextureFactory>  m_TextureFactory;
+    std::shared_ptr<IDwarfLogger>     mLogger;
+    std::shared_ptr<IImageFileLoader> mImageFileLoader;
+    std::shared_ptr<ITextureFactory>  mTextureFactory;
 
     // Queue for loading requests per thread
-    std::mutex                     m_LoadingMutex;
-    std::queue<TextureLoadRequest> m_TextureLoadRequestQueue;
+    std::mutex                     mLoadingMutex;
+    std::queue<TextureLoadRequest> mTextureLoadRequestQueue;
 
     // Queue for uploading to the gpu
-    std::mutex m_UploadMutex;
+    std::mutex mUploadMutex;
     std::queue<std::unique_ptr<TextureUploadRequest>>
-      m_TextureUploadRequestQueue;
+      mTextureUploadRequestQueue;
 
     // Condition for waiting
     std::condition_variable queueCondition;
@@ -34,14 +34,14 @@ namespace Dwarf
     std::atomic<bool> stopWorker = false;
 
     // Worker threads for loading textures into memory
-    std::vector<std::thread> m_TextureWorkers;
+    std::vector<std::thread> mTextureWorkers;
 
     // number of threads
-    int m_NumWorkerThreads = 1;
+    int mNumWorkerThreads = 1;
 
     // Keeping track of which textures are currently being processed
-    std::mutex                                m_CurrentlyProcessingMutex;
-    std::unordered_set<std::filesystem::path> m_CurrentlyProcessing;
+    std::mutex                                mCurrentlyProcessingMutex;
+    std::unordered_set<std::filesystem::path> mCurrentlyProcessing;
 
   public:
     TextureLoadingWorker(std::shared_ptr<IDwarfLogger>     logger,

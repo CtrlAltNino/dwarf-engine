@@ -23,38 +23,37 @@ namespace Dwarf
     std::shared_ptr<IShaderParameterCollectionFactory>
                                   shaderParameterCollectionFactory,
     std::shared_ptr<IVramTracker> vramTracker)
-    : m_GraphicsApi(graphicsApi)
-    , m_Logger(logger)
-    , m_ShaderSourceCollectionFactory(shaderSourceCollectionFactory)
-    , m_ShaderParameterCollectionFactory(shaderParameterCollectionFactory)
-    , m_VramTracker(vramTracker)
+    : mGraphicsApi(graphicsApi)
+    , mLogger(logger)
+    , mShaderSourceCollectionFactory(shaderSourceCollectionFactory)
+    , mShaderParameterCollectionFactory(shaderParameterCollectionFactory)
+    , mVramTracker(vramTracker)
   {
-    m_Logger->LogDebug(Log("ShaderFactory created", "ShaderFactory"));
+    mLogger->LogDebug(Log("ShaderFactory created", "ShaderFactory"));
   }
 
   ShaderFactory::~ShaderFactory()
   {
-    m_Logger->LogDebug(Log("ShaderFactory destroyed", "ShaderFactory"));
+    mLogger->LogDebug(Log("ShaderFactory destroyed", "ShaderFactory"));
   }
 
   std::shared_ptr<IShader>
   ShaderFactory::CreateShader(
     std::unique_ptr<IShaderSourceCollection> shaderSources)
   {
-    m_Logger->LogDebug(Log("Creating shader from sources", "ShaderFactory"));
+    mLogger->LogDebug(Log("Creating shader from sources", "ShaderFactory"));
     // Creating a shader based on the graphics API.
-    switch (m_GraphicsApi)
+    switch (mGraphicsApi)
     {
 #if _WIN32
       case GraphicsApi::D3D12:
         // return std::make_shared<D3D12Shader>();
         break;
       case GraphicsApi::OpenGL:
-        return std::make_shared<OpenGLShader>(
-          std::move(shaderSources),
-          m_ShaderParameterCollectionFactory,
-          m_Logger,
-          m_VramTracker);
+        return std::make_shared<OpenGLShader>(std::move(shaderSources),
+                                              mShaderParameterCollectionFactory,
+                                              mLogger,
+                                              mVramTracker);
         break;
       case GraphicsApi::Metal: break;
       case GraphicsApi::Vulkan:
@@ -63,11 +62,10 @@ namespace Dwarf
 #elif __linux__
       case GraphicsApi::D3D12: break;
       case GraphicsApi::OpenGL:
-        return std::make_shared<OpenGLShader>(
-          std::move(shaderSources),
-          m_ShaderParameterCollectionFactory,
-          m_Logger,
-          m_VramTracker);
+        return std::make_shared<OpenGLShader>(std::move(shaderSources),
+                                              mShaderParameterCollectionFactory,
+                                              mLogger,
+                                              mVramTracker);
         break;
       case GraphicsApi::Metal: break;
       case GraphicsApi::Vulkan:
@@ -82,7 +80,7 @@ namespace Dwarf
       case GraphicsApi::Vulkan: break;
 #endif
       case GraphicsApi::None:
-        m_Logger->LogError(Log("Graphics API is not set", "ShaderFactory"));
+        mLogger->LogError(Log("Graphics API is not set", "ShaderFactory"));
         std::runtime_error("Graphics API is not set");
         break;
     }

@@ -11,9 +11,9 @@ namespace Dwarf
     std::shared_ptr<ILauncherData>   data,
     std::shared_ptr<IProjectCreator> projectCreator,
     std::shared_ptr<ILauncherAssets> launcherAssets)
-    : m_Data(data)
-    , m_ProjectCreator(projectCreator)
-    , m_LauncherAssets(launcherAssets)
+    : mData(data)
+    , mProjectCreator(projectCreator)
+    , mLauncherAssets(launcherAssets)
   {
   }
 
@@ -25,7 +25,7 @@ namespace Dwarf
     ImGui::SetNextWindowPos(center, ImGuiCond_Always, ImVec2(0.5f, 0.5f));
 
     // Setting the font for the modal window title
-    ImGui::PushFont(m_LauncherAssets->GetHeaderFont().get());
+    ImGui::PushFont(mLauncherAssets->GetHeaderFont().get());
     ImGui::SetNextWindowSize(ImVec2(450, 0));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(10, 10));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 10);
@@ -51,7 +51,7 @@ namespace Dwarf
       {
         ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
         // Title
-        ImGui::PushFont(m_LauncherAssets->GetHeaderFont().get());
+        ImGui::PushFont(mLauncherAssets->GetHeaderFont().get());
         ImGui::Text("Name");
         ImGui::PopFont();
 
@@ -60,7 +60,7 @@ namespace Dwarf
                              ImGui::GetContentRegionAvail().x - 200);
 
         // Text Input
-        ImGui::PushFont(m_LauncherAssets->GetTextFont().get());
+        ImGui::PushFont(mLauncherAssets->GetTextFont().get());
         ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
         ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(5, 5));
         ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5);
@@ -80,12 +80,12 @@ namespace Dwarf
       ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
 
       static std::filesystem::path newProjectPath =
-        m_ProjectCreator->GetDefaultProjectPath();
+        mProjectCreator->GetDefaultProjectPath();
       // ==================== Project Path Selector ====================
       {
         ImDrawList* draw_list = ImGui::GetWindowDrawList();
         // Title
-        ImGui::PushFont(m_LauncherAssets->GetHeaderFont().get());
+        ImGui::PushFont(mLauncherAssets->GetHeaderFont().get());
         ImGui::Text("Path");
         ImGui::PopFont();
 
@@ -97,7 +97,7 @@ namespace Dwarf
         draw_list->ChannelsSplit(2);
         draw_list->ChannelsSetCurrent(1);
         // Path preview
-        ImGui::PushFont(m_LauncherAssets->GetTextFont().get());
+        ImGui::PushFont(mLauncherAssets->GetTextFont().get());
         std::string renderText = newProjectPath.string();
 
         float pathPreviewWidth = ImGui::GetContentRegionAvail().x - 35;
@@ -182,7 +182,7 @@ namespace Dwarf
       // ==================== Project Template Selector ====================
       {
         // Template Title
-        ImGui::PushFont(m_LauncherAssets->GetHeaderFont().get());
+        ImGui::PushFont(mLauncherAssets->GetHeaderFont().get());
         ImGui::Text("Template");
         ImGui::PopFont();
 
@@ -201,7 +201,7 @@ namespace Dwarf
         ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 8));
         ImGui::PushStyleVar(ImGuiStyleVar_SelectableTextAlign,
                             ImVec2(0.5f, 0.5f));
-        ImGui::PushFont(m_LauncherAssets->GetTextFont().get());
+        ImGui::PushFont(mLauncherAssets->GetTextFont().get());
 
         // Coloring the combo preview
         ImGui::PushStyleColor(ImGuiCol_FrameBg, IM_COL32(59, 66, 82, 255));
@@ -311,7 +311,7 @@ namespace Dwarf
       // ====================
       {
         // Graphics Title
-        ImGui::PushFont(m_LauncherAssets->GetHeaderFont().get());
+        ImGui::PushFont(mLauncherAssets->GetHeaderFont().get());
         ImGui::Text("Graphics API");
         ImGui::PopFont();
 
@@ -326,7 +326,7 @@ namespace Dwarf
         ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 8));
         ImGui::PushStyleVar(ImGuiStyleVar_SelectableTextAlign,
                             ImVec2(0.5f, 0.5f));
-        ImGui::PushFont(m_LauncherAssets->GetTextFont().get());
+        ImGui::PushFont(mLauncherAssets->GetTextFont().get());
 
         // Coloring the combo preview
         ImGui::PushStyleColor(ImGuiCol_FrameBg, IM_COL32(59, 66, 82, 255));
@@ -448,7 +448,7 @@ namespace Dwarf
 
       // ==================== Create Button ====================
       {
-        ImGui::PushFont(m_LauncherAssets->GetTextFont().get());
+        ImGui::PushFont(mLauncherAssets->GetTextFont().get());
         if (ImGui::Button("Create",
                           ImVec2(ImGui::GetContentRegionAvail().x / 2 - 8, 40)))
         {
@@ -460,11 +460,10 @@ namespace Dwarf
           // CreateProject(newProjectName, newProjectPath.c_str(),
           // (GraphicsApi)currentApiIndex,
           // (ProjectTemplate)currentTemplateIndex);
-          m_ProjectCreator->CreateProject(
-            newProjectName,
-            newProjectPath,
-            (GraphicsApi)currentApiIndex,
-            (ProjectTemplate)currentTemplateIndex);
+          mProjectCreator->CreateProject(newProjectName,
+                                         newProjectPath,
+                                         (GraphicsApi)currentApiIndex,
+                                         (ProjectTemplate)currentTemplateIndex);
           newProjectName[0] = '\0';
           currentTemplateIndex = 0;
           currentApiIndex = 0;
@@ -483,7 +482,7 @@ namespace Dwarf
       {
         ImGui::SetItemDefaultFocus();
         ImGui::SameLine();
-        ImGui::PushFont(m_LauncherAssets->GetTextFont().get());
+        ImGui::PushFont(mLauncherAssets->GetTextFont().get());
         if (ImGui::Button("Cancel",
                           ImVec2(ImGui::GetContentRegionAvail().x, 40)))
         {

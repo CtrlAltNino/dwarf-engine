@@ -10,8 +10,8 @@ namespace Dwarf
   class ProjectSettingsIO : public IProjectSettingsIO
   {
   private:
-    std::shared_ptr<IDwarfLogger> m_Logger;
-    std::shared_ptr<IFileHandler> m_FileHandler;
+    std::shared_ptr<IDwarfLogger> mLogger;
+    std::shared_ptr<IFileHandler> mFileHandler;
 
   public:
     BOOST_DI_INJECT(ProjectSettingsIO,

@@ -17,16 +17,16 @@ namespace Dwarf
   class RendererApiFactory : public IRendererApiFactory
   {
   private:
-    std::shared_ptr<IDwarfLogger>        m_Logger;
-    GraphicsApi                          m_GraphicsApi;
-    std::shared_ptr<IAssetDatabase>      m_AssetDatabase;
-    std::shared_ptr<IShaderRegistry>     m_ShaderRegistry;
-    std::shared_ptr<IEditorStats>        m_EditorStats;
-    std::shared_ptr<IOpenGLStateTracker> m_StateTracker;
+    std::shared_ptr<IDwarfLogger>        mLogger;
+    GraphicsApi                          mGraphicsApi;
+    std::shared_ptr<IAssetDatabase>      mAssetDatabase;
+    std::shared_ptr<IShaderRegistry>     mShaderRegistry;
+    std::shared_ptr<IEditorStats>        mEditorStats;
+    std::shared_ptr<IOpenGLStateTracker> mStateTracker;
     std::shared_ptr<IShaderSourceCollectionFactory>
-                                        m_ShaderSourceCollectionFactory;
-    std::shared_ptr<IMeshFactory>       m_MeshFactory;
-    std::shared_ptr<IMeshBufferFactory> m_MeshBufferFactory;
+                                        mShaderSourceCollectionFactory;
+    std::shared_ptr<IMeshFactory>       mMeshFactory;
+    std::shared_ptr<IMeshBufferFactory> mMeshBufferFactory;
 
   public:
     RendererApiFactory(std::shared_ptr<IDwarfLogger>        logger,

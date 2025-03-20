@@ -1,18 +1,18 @@
 #pragma once
-#include "Core/Scene/ISceneFactory.h"
-#include "Logging/IDwarfLogger.h"
-#include "pch.h"
 #include "Core/Asset/Creation/Material/IMaterialCreator.h"
-#include "Core/Base.h"
-#include "Editor/EditorView/IEditorView.h"
 #include "Core/Asset/Database/IAssetDatabase.h"
+#include "Core/Base.h"
 #include "Core/Scene/IO/ISceneIO.h"
+#include "Core/Scene/ISceneFactory.h"
+#include "Editor/EditorView/IEditorView.h"
 #include "Editor/LoadedScene/ILoadedScene.h"
 #include "Editor/Modules/IGuiModule.h"
+#include "Editor/Modules/IGuiModuleFactory.h"
 #include "Editor/Stats/IEditorStats.h"
+#include "Logging/IDwarfLogger.h"
 #include "Project/IProjectSettings.h"
 #include "Window/IWindow.h"
-#include "Editor/Modules/IGuiModuleFactory.h"
+#include "pch.h"
 #include <condition_variable>
 
 namespace Dwarf
@@ -21,28 +21,28 @@ namespace Dwarf
   class EditorView : public IEditorView
   {
   private:
-    GraphicsApi                        m_GraphicsApi;
-    std::shared_ptr<IDwarfLogger>      m_Logger;
-    std::shared_ptr<IWindow>           m_Window;
-    std::shared_ptr<IGuiModuleFactory> m_GuiModuleFactory;
-    std::shared_ptr<ISceneIO>          m_SceneIO;
-    std::shared_ptr<ISceneFactory>     m_SceneFactory;
-    std::shared_ptr<IAssetDatabase>    m_AssetDatabase;
-    std::shared_ptr<IMaterialCreator>  m_MaterialCreator;
-    std::shared_ptr<IProjectSettings>  m_ProjectSettings;
-    std::shared_ptr<ILoadedScene>      m_LoadedScene;
-    std::shared_ptr<IEditorStats>      m_EditorStats;
+    GraphicsApi                        mGraphicsApi;
+    std::shared_ptr<IDwarfLogger>      mLogger;
+    std::shared_ptr<IWindow>           mWindow;
+    std::shared_ptr<IGuiModuleFactory> mGuiModuleFactory;
+    std::shared_ptr<ISceneIO>          mSceneIO;
+    std::shared_ptr<ISceneFactory>     mSceneFactory;
+    std::shared_ptr<IAssetDatabase>    mAssetDatabase;
+    std::shared_ptr<IMaterialCreator>  mMaterialCreator;
+    std::shared_ptr<IProjectSettings>  mProjectSettings;
+    std::shared_ptr<ILoadedScene>      mLoadedScene;
+    std::shared_ptr<IEditorStats>      mEditorStats;
     // Thread for saving the view
-    std::thread             m_ViewSaveThread;
-    std::atomic<bool>       m_RunViewSaveThread = true;
-    std::condition_variable m_ThreadCondition;
-    std::mutex              m_ThreadMutex;
+    std::thread             mViewSaveThread;
+    std::atomic<bool>       mRunViewSaveThread = true;
+    std::condition_variable mThreadCondition;
+    std::mutex              mThreadMutex;
 
     /// @brief ID counter for GUI modules.
-    int m_GuiModuleIDCount = 0;
+    int mGuiModuleIDCount = 0;
 
     /// @brief List of GUI modules.
-    std::vector<std::unique_ptr<IGuiModule>> m_GuiModules;
+    std::vector<std::unique_ptr<IGuiModule>> mGuiModules;
 
     /// @brief IMGUI example function to render the base docking layout.
     void

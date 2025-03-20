@@ -4,15 +4,15 @@
 namespace Dwarf
 {
   SavedProjectsSorter::SavedProjectsSorter(std::shared_ptr<IDwarfLogger> logger)
-    : m_Logger(logger)
+    : mLogger(logger)
   {
-    m_Logger->LogDebug(
+    mLogger->LogDebug(
       Log("SavedProjectsSorter created", "SavedProjectsSorter"));
   }
 
   SavedProjectsSorter::~SavedProjectsSorter()
   {
-    m_Logger->LogDebug(
+    mLogger->LogDebug(
       Log("SavedProjectsSorter destroyed", "SavedProjectsSorter"));
   }
 
@@ -102,39 +102,39 @@ namespace Dwarf
   void
   SavedProjectsSorter::UpdateSortOrder(ProjectListColumn columnId)
   {
-    m_Logger->LogInfo(Log("Updating sort order", "SavedProjectsSorter"));
+    mLogger->LogInfo(Log("Updating sort order", "SavedProjectsSorter"));
 
     switch (columnId)
     {
       case NAME_COLUMN_INDEX:
-        if (m_SortOrder == ProjectSortOrder::Name)
+        if (mSortOrder == ProjectSortOrder::Name)
         {
-          m_SortOrder = ProjectSortOrder::NameReverse;
+          mSortOrder = ProjectSortOrder::NameReverse;
         }
         else
         {
-          m_SortOrder = ProjectSortOrder::Name;
+          mSortOrder = ProjectSortOrder::Name;
         }
         break;
       case PATH_COLUMN_INDEX: break;
       case DATE_COLUMN_INDEX:
-        if (m_SortOrder == ProjectSortOrder::Date)
+        if (mSortOrder == ProjectSortOrder::Date)
         {
-          m_SortOrder = ProjectSortOrder::DateReverse;
+          mSortOrder = ProjectSortOrder::DateReverse;
         }
         else
         {
-          m_SortOrder = ProjectSortOrder::Date;
+          mSortOrder = ProjectSortOrder::Date;
         }
         break;
       case API_COLUMN_INDEX:
-        if (m_SortOrder == ProjectSortOrder::Api)
+        if (mSortOrder == ProjectSortOrder::Api)
         {
-          m_SortOrder = ProjectSortOrder::ApiReverse;
+          mSortOrder = ProjectSortOrder::ApiReverse;
         }
         else
         {
-          m_SortOrder = ProjectSortOrder::Api;
+          mSortOrder = ProjectSortOrder::Api;
         }
         break;
     }
@@ -144,9 +144,9 @@ namespace Dwarf
   SavedProjectsSorter::SortSavedProjects(
     std::vector<SavedProject>& savedProjects)
   {
-    m_Logger->LogInfo(Log("Sorting project list", "SavedProjectsSorter"));
+    mLogger->LogInfo(Log("Sorting project list", "SavedProjectsSorter"));
 
-    switch (m_SortOrder)
+    switch (mSortOrder)
     {
       case ProjectSortOrder::Name:
         std::sort(

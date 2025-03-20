@@ -15,14 +15,14 @@ namespace Dwarf
   class TextureAssetInspector : public ITextureAssetInspector
   {
   private:
-    GraphicsApi                       m_GraphicsApi;
-    std::shared_ptr<IAssetDatabase>   m_AssetDatabase;
-    std::shared_ptr<IAssetReimporter> m_AssetReimporter;
-    std::shared_ptr<IInputManager>    m_InputManager;
-    std::shared_ptr<IAssetMetadata>   m_AssetMetadata;
-    std::filesystem::path             m_CurrentTexturePath;
-    nlohmann::json                    m_CurrentMetadata;
-    TextureImportSettings             m_CurrentImportSettings;
+    GraphicsApi                       mGraphicsApi;
+    std::shared_ptr<IAssetDatabase>   mAssetDatabase;
+    std::shared_ptr<IAssetReimporter> mAssetReimporter;
+    std::shared_ptr<IInputManager>    mInputManager;
+    std::shared_ptr<IAssetMetadata>   mAssetMetadata;
+    std::filesystem::path             mCurrentTexturePath;
+    nlohmann::json                    mCurrentMetadata;
+    TextureImportSettings             mCurrentImportSettings;
 
   public:
     TextureAssetInspector(GraphicsApi                       graphicsApi,

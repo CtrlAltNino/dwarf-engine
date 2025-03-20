@@ -1,9 +1,9 @@
 #pragma once
 
+#include "Core/UUID.h"
+#include "ISceneSettings.h"
 #include <nlohmann/json.hpp>
 #include <optional>
-#include "ISceneSettings.h"
-#include "Core/UUID.h"
 
 namespace Dwarf
 {
@@ -11,9 +11,9 @@ namespace Dwarf
   class SceneSettings : public ISceneSettings
   {
   private:
-    FogSettings         m_FogSettings;
-    GlobalLightSettings m_GlobalLightSettings;
-    std::optional<UUID> m_SkyboxMaterial;
+    FogSettings         mFogSettings;
+    GlobalLightSettings mGlobalLightSettings;
+    std::optional<UUID> mSkyboxMaterial;
 
   public:
     SceneSettings() = default;

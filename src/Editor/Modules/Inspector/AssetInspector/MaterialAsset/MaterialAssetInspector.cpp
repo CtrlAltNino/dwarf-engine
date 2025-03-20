@@ -1,9 +1,9 @@
 #include "MaterialAssetInspector.h"
-#include <imgui.h>
-#include <stdexcept>
 #include "Core/Rendering/PreviewRenderer/MaterialPreview/IMaterialPreview.h"
 #include "Platform/OpenGL/OpenGLShader.h"
 #include "UI/DwarfUI.h"
+#include <imgui.h>
+#include <stdexcept>
 
 namespace Dwarf
 {
@@ -14,14 +14,14 @@ namespace Dwarf
     std::shared_ptr<IMaterialPreview> materialPreview,
     std::shared_ptr<IInputManager>    inputManager,
     std::shared_ptr<IMaterialIO>      materialIO)
-    : m_GraphicsApi(graphicsApi)
-    , m_AssetDatabase(assetDatabase)
-    , m_AssetReimporter(assetReimporter)
-    , m_MaterialPreview(materialPreview)
-    , m_InputManager(inputManager)
-    , m_MaterialIO(materialIO)
+    : mGraphicsApi(graphicsApi)
+    , mAssetDatabase(assetDatabase)
+    , mAssetReimporter(assetReimporter)
+    , mMaterialPreview(materialPreview)
+    , mInputManager(inputManager)
+    , mMaterialIO(materialIO)
   {
-    m_MaterialPreview->SetMeshType(MaterialPreviewMeshType::Sphere);
+    mMaterialPreview->SetMeshType(MaterialPreviewMeshType::Sphere);
   }
 
   struct RenderShaderParameterVisitor
@@ -152,8 +152,8 @@ namespace Dwarf
     if (ImGui::Button("Reimport"))
     {
       // TODO: Fix: Crashes when not returned here
-      // m_AssetDatabase->Reimport(asset->GetPath());
-      m_AssetReimporter->QueueReimport(asset.GetPath());
+      // mAssetDatabase->Reimport(asset->GetPath());
+      mAssetReimporter->QueueReimport(asset.GetPath());
       ImGui::EndChild();
       return;
     }
@@ -188,7 +188,7 @@ namespace Dwarf
     if (ImGui::CollapsingHeader("Shader"))
     {
       ImGui::Indent(15.0f);
-      switch (m_GraphicsApi)
+      switch (mGraphicsApi)
       {
         using enum GraphicsApi;
         case None: std::runtime_error("No graphics API selected"); break;
@@ -203,18 +203,18 @@ namespace Dwarf
             ImGui::SameLine();
             ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
             DwarfUI::AssetInput<VertexShaderAsset>(
-              m_AssetDatabase,
+              mAssetDatabase,
               oglShader.GetVertexShaderAsset(),
               "##vertexShader");
             ImGui::PopItemWidth();
 
-            if (!oglShader.GetShaderLogs().m_VertexShaderLog.empty())
+            if (!oglShader.GetShaderLogs().mVertexShaderLog.empty())
             {
               ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
               if (ImGui::CollapsingHeader("Vertex Shader Error Log##vert"))
               {
                 ImGui::TextWrapped(
-                  "%s", oglShader.GetShaderLogs().m_VertexShaderLog.c_str());
+                  "%s", oglShader.GetShaderLogs().mVertexShaderLog.c_str());
               }
               ImGui::PopItemWidth();
             }
@@ -223,13 +223,13 @@ namespace Dwarf
             ImGui::SameLine();
             ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
             DwarfUI::AssetInput<TessellationControlShaderAsset>(
-              m_AssetDatabase,
+              mAssetDatabase,
               oglShader.GetTessellationControlShaderAsset(),
               "##tessellationControlShader");
             ImGui::PopItemWidth();
 
             if (!oglShader.GetShaderLogs()
-                   .m_TessellationControlShaderLog.empty())
+                   .mTessellationControlShaderLog.empty())
             {
               ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
               if (ImGui::CollapsingHeader(
@@ -237,7 +237,7 @@ namespace Dwarf
               {
                 ImGui::TextWrapped("%s",
                                    oglShader.GetShaderLogs()
-                                     .m_TessellationControlShaderLog.c_str());
+                                     .mTessellationControlShaderLog.c_str());
               }
               ImGui::PopItemWidth();
             }
@@ -246,22 +246,21 @@ namespace Dwarf
             ImGui::SameLine();
             ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
             DwarfUI::AssetInput<TessellationEvaluationShaderAsset>(
-              m_AssetDatabase,
+              mAssetDatabase,
               oglShader.GetTessellationEvaluationShaderAsset(),
               "##tessellationEvaluationShader");
             ImGui::PopItemWidth();
 
             if (!oglShader.GetShaderLogs()
-                   .m_TessellationEvaluationShaderLog.empty())
+                   .mTessellationEvaluationShaderLog.empty())
             {
               ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
               if (ImGui::CollapsingHeader(
                     "Tessellation Evaluation Shader Error Log##tese"))
               {
-                ImGui::TextWrapped(
-                  "%s",
-                  oglShader.GetShaderLogs()
-                    .m_TessellationEvaluationShaderLog.c_str());
+                ImGui::TextWrapped("%s",
+                                   oglShader.GetShaderLogs()
+                                     .mTessellationEvaluationShaderLog.c_str());
               }
               ImGui::PopItemWidth();
             }
@@ -270,18 +269,18 @@ namespace Dwarf
             ImGui::SameLine();
             ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
             DwarfUI::AssetInput<GeometryShaderAsset>(
-              m_AssetDatabase,
+              mAssetDatabase,
               oglShader.GetGeometryShaderAsset(),
               "##geometryShader");
             ImGui::PopItemWidth();
 
-            if (!oglShader.GetShaderLogs().m_GeometryShaderLog.empty())
+            if (!oglShader.GetShaderLogs().mGeometryShaderLog.empty())
             {
               ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
               if (ImGui::CollapsingHeader("Geometry Shader Error Log##geom"))
               {
                 ImGui::TextWrapped(
-                  "%s", oglShader.GetShaderLogs().m_GeometryShaderLog.c_str());
+                  "%s", oglShader.GetShaderLogs().mGeometryShaderLog.c_str());
               }
               ImGui::PopItemWidth();
             }
@@ -290,18 +289,18 @@ namespace Dwarf
             ImGui::SameLine();
             ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
             DwarfUI::AssetInput<FragmentShaderAsset>(
-              m_AssetDatabase,
+              mAssetDatabase,
               oglShader.GetFragmentShaderAsset(),
               "##fragmentShader");
             ImGui::PopItemWidth();
 
-            if (!oglShader.GetShaderLogs().m_FragmentShaderLog.empty())
+            if (!oglShader.GetShaderLogs().mFragmentShaderLog.empty())
             {
               ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
               if (ImGui::CollapsingHeader("Fragment Shader Error Log##frag"))
               {
                 ImGui::TextWrapped(
-                  "%s", oglShader.GetShaderLogs().m_FragmentShaderLog.c_str());
+                  "%s", oglShader.GetShaderLogs().mFragmentShaderLog.c_str());
               }
               ImGui::PopItemWidth();
             }
@@ -319,18 +318,18 @@ namespace Dwarf
             ImGui::SameLine();
             ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
             DwarfUI::AssetInput<VertexShaderAsset>(
-              m_AssetDatabase,
+              mAssetDatabase,
               oglShader.GetVertexShaderAsset(),
               "##vertexShader");
             ImGui::PopItemWidth();
 
-            if (!oglShader.GetShaderLogs().m_VertexShaderLog.empty())
+            if (!oglShader.GetShaderLogs().mVertexShaderLog.empty())
             {
               ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
               if (ImGui::CollapsingHeader("Vertex Shader Error Log##vert"))
               {
                 ImGui::TextWrapped(
-                  "%s", oglShader.GetShaderLogs().m_VertexShaderLog.c_str());
+                  "%s", oglShader.GetShaderLogs().mVertexShaderLog.c_str());
               }
               ImGui::PopItemWidth();
             }
@@ -339,13 +338,13 @@ namespace Dwarf
             ImGui::SameLine();
             ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
             DwarfUI::AssetInput<TessellationControlShaderAsset>(
-              m_AssetDatabase,
+              mAssetDatabase,
               oglShader.GetTessellationControlShaderAsset(),
               "##tessellationControlShader");
             ImGui::PopItemWidth();
 
             if (!oglShader.GetShaderLogs()
-                   .m_TessellationControlShaderLog.empty())
+                   .mTessellationControlShaderLog.empty())
             {
               ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
               if (ImGui::CollapsingHeader(
@@ -353,7 +352,7 @@ namespace Dwarf
               {
                 ImGui::TextWrapped("%s",
                                    oglShader.GetShaderLogs()
-                                     .m_TessellationControlShaderLog.c_str());
+                                     .mTessellationControlShaderLog.c_str());
               }
               ImGui::PopItemWidth();
             }
@@ -362,22 +361,21 @@ namespace Dwarf
             ImGui::SameLine();
             ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
             DwarfUI::AssetInput<TessellationEvaluationShaderAsset>(
-              m_AssetDatabase,
+              mAssetDatabase,
               oglShader.GetTessellationEvaluationShaderAsset(),
               "##tessellationEvaluationShader");
             ImGui::PopItemWidth();
 
             if (!oglShader.GetShaderLogs()
-                   .m_TessellationEvaluationShaderLog.empty())
+                   .mTessellationEvaluationShaderLog.empty())
             {
               ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
               if (ImGui::CollapsingHeader(
                     "Tessellation Evaluation Shader Error Log##tese"))
               {
-                ImGui::TextWrapped(
-                  "%s",
-                  oglShader.GetShaderLogs()
-                    .m_TessellationEvaluationShaderLog.c_str());
+                ImGui::TextWrapped("%s",
+                                   oglShader.GetShaderLogs()
+                                     .mTessellationEvaluationShaderLog.c_str());
               }
               ImGui::PopItemWidth();
             }
@@ -386,18 +384,18 @@ namespace Dwarf
             ImGui::SameLine();
             ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
             DwarfUI::AssetInput<GeometryShaderAsset>(
-              m_AssetDatabase,
+              mAssetDatabase,
               oglShader.GetGeometryShaderAsset(),
               "##geometryShader");
             ImGui::PopItemWidth();
 
-            if (!oglShader.GetShaderLogs().m_GeometryShaderLog.empty())
+            if (!oglShader.GetShaderLogs().mGeometryShaderLog.empty())
             {
               ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
               if (ImGui::CollapsingHeader("Geometry Shader Error Log##geom"))
               {
                 ImGui::TextWrapped(
-                  "%s", oglShader.GetShaderLogs().m_GeometryShaderLog.c_str());
+                  "%s", oglShader.GetShaderLogs().mGeometryShaderLog.c_str());
               }
               ImGui::PopItemWidth();
             }
@@ -406,18 +404,18 @@ namespace Dwarf
             ImGui::SameLine();
             ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
             DwarfUI::AssetInput<FragmentShaderAsset>(
-              m_AssetDatabase,
+              mAssetDatabase,
               oglShader.GetFragmentShaderAsset(),
               "##fragmentShader");
             ImGui::PopItemWidth();
 
-            if (!oglShader.GetShaderLogs().m_FragmentShaderLog.empty())
+            if (!oglShader.GetShaderLogs().mFragmentShaderLog.empty())
             {
               ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
               if (ImGui::CollapsingHeader("Fragment Shader Error Log##frag"))
               {
                 ImGui::TextWrapped(
-                  "%s", oglShader.GetShaderLogs().m_FragmentShaderLog.c_str());
+                  "%s", oglShader.GetShaderLogs().mFragmentShaderLog.c_str());
               }
               ImGui::PopItemWidth();
             }
@@ -468,7 +466,7 @@ namespace Dwarf
               material.GetShaderParameters()->GetParameter(paramIdentifier);
             std::visit(
               RenderShaderParameterVisitor{
-                m_AssetDatabase,
+                mAssetDatabase,
                 paramIdentifier,
                 parameter,
                 std::format("##boolean{}", std::to_string(n++)) },
@@ -485,7 +483,7 @@ namespace Dwarf
             //       ImGui::SameLine();
             //       ImGui::Checkbox(
             //         std::format("##boolean{}", std::to_string(n)).c_str(),
-            //         &(parameter->m_Value));
+            //         &(parameter->mValue));
             //       n++;
             //     }
             //     break;
@@ -500,7 +498,7 @@ namespace Dwarf
             //                            UNIFORM_DELETE_BUTTON_WIDTH - 8.0f);
             //       ImGui::InputInt(
             //         std::format("##integer{}", std::to_string(n)).c_str(),
-            //         &(parameter->m_Value));
+            //         &(parameter->mValue));
             //       n++;
             //       ImGui::PopItemWidth();
             //     }
@@ -519,7 +517,7 @@ namespace Dwarf
             //         std::format("##unsignedInteger{}", std::to_string(n))
             //           .c_str(),
             //         ImGuiDataType_U32,
-            //         &(parameter->m_Value));
+            //         &(parameter->mValue));
             //       n++;
             //       ImGui::PopItemWidth();
             //     }
@@ -534,7 +532,7 @@ namespace Dwarf
             //                            UNIFORM_DELETE_BUTTON_WIDTH - 8.0f);
             //       ImGui::InputFloat(
             //         std::format("##float{}", std::to_string(n)).c_str(),
-            //         &(parameter->m_Value));
+            //         &(parameter->mValue));
             //       n++;
             //       ImGui::PopItemWidth();
             //     }
@@ -548,7 +546,7 @@ namespace Dwarf
             //       ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
             //                            UNIFORM_DELETE_BUTTON_WIDTH - 8.0f);
             //       DwarfUI::AssetInput<TextureAsset>(
-            //         parameter->m_Value,
+            //         parameter->mValue,
             //         std::format("##textureAsset{}",
             //         std::to_string(n)).c_str());
             //       n++;
@@ -565,7 +563,7 @@ namespace Dwarf
             //                            UNIFORM_DELETE_BUTTON_WIDTH - 8.0f);
             //       ImGui::InputFloat2(
             //         std::format("##vec2{}", std::to_string(n)).c_str(),
-            //         &(parameter->m_Value.x));
+            //         &(parameter->mValue.x));
             //       n++;
             //       ImGui::PopItemWidth();
             //     }
@@ -580,7 +578,7 @@ namespace Dwarf
             //                            UNIFORM_DELETE_BUTTON_WIDTH - 8.0f);
             //       ImGui::InputFloat3(
             //         std::format("##vec3{}", std::to_string(n)).c_str(),
-            //         &(parameter->m_Value.x));
+            //         &(parameter->mValue.x));
             //       n++;
             //       ImGui::PopItemWidth();
             //     }
@@ -595,7 +593,7 @@ namespace Dwarf
             //                            UNIFORM_DELETE_BUTTON_WIDTH - 8.0f);
             //       ImGui::ColorEdit4(
             //         std::format("##vec4{}", std::to_string(n)).c_str(),
-            //         &(parameter->m_Value.x),
+            //         &(parameter->mValue.x),
             //         ImGuiColorEditFlags_None);
             //       n++;
             //       ImGui::PopItemWidth();
@@ -612,7 +610,7 @@ namespace Dwarf
                 std::format("Delete##{}", std::to_string(n)).c_str(),
                 ImVec2(UNIFORM_DELETE_BUTTON_WIDTH - 15.0f, 0)))
           {
-            // i = mat->m_Parameters.erase(i)--;
+            // i = mat->mParameters.erase(i)--;
             material.GetShaderParameters()->RemoveParameter(paramIdentifier);
           }
           else
@@ -702,7 +700,7 @@ namespace Dwarf
                       ImVec2(ImGui::GetContentRegionAvail().x / 2.0f, 50)))
     {
       // MaterialSerializer::Serialize(*mat, asset->GetPath());
-      m_MaterialIO->SaveMaterial(material, asset.GetPath());
+      mMaterialIO->SaveMaterial(material, asset.GetPath());
       ImGui::EndChild();
       return;
     }
@@ -721,9 +719,9 @@ namespace Dwarf
 
     ImGui::Text("Preview:");
 
-    m_MaterialPreview->Resize(
+    mMaterialPreview->Resize(
       { ImGui::GetContentRegionAvail().x, ImGui::GetContentRegionAvail().x });
-    m_MaterialPreview->RenderMaterialPreview(material);
+    mMaterialPreview->RenderMaterialPreview(material);
 
     // Dropdown for mesh type
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
@@ -732,14 +730,14 @@ namespace Dwarf
     ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);
     const char* meshTypeNames[] = { "Sphere", "Cube", "Plane" };
     if (ImGui::BeginCombo("##meshType",
-                          meshTypeNames[(int)m_MaterialPreview->GetMeshType()]))
+                          meshTypeNames[(int)mMaterialPreview->GetMeshType()]))
     {
       for (int i = 0; i < 3; i++)
       {
         if (ImGui::Selectable(meshTypeNames[i],
-                              (int)m_MaterialPreview->GetMeshType() == i))
+                              (int)mMaterialPreview->GetMeshType() == i))
         {
-          m_MaterialPreview->SetMeshType((MaterialPreviewMeshType)i);
+          mMaterialPreview->SetMeshType((MaterialPreviewMeshType)i);
         }
       }
       ImGui::EndCombo();
@@ -751,7 +749,7 @@ namespace Dwarf
       ImGui::GetCursorScreenPos().y + ImGui::GetContentRegionAvail().x);
 
     static bool isRotating = false;
-    if (m_InputManager->GetMouseButtonDown(Dwarf::MOUSE_BUTTON::LEFT) &&
+    if (mInputManager->GetMouseButtonDown(Dwarf::MOUSE_BUTTON::LEFT) &&
         ImGui::IsMouseHoveringRect(
           { ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y },
           { ImGui::GetCursorScreenPos().x + ImGui::GetContentRegionAvail().x,
@@ -761,7 +759,7 @@ namespace Dwarf
     }
 
     if (isRotating &&
-        m_InputManager->GetMouseButtonUp(Dwarf::MOUSE_BUTTON::LEFT))
+        mInputManager->GetMouseButtonUp(Dwarf::MOUSE_BUTTON::LEFT))
     {
       isRotating = false;
     }
@@ -769,12 +767,12 @@ namespace Dwarf
     if (isRotating)
     {
       // PreviewRenderer::UpdateRotation(InputManager::GetDeltaMousePos());
-      m_MaterialPreview->UpdateRotation(m_InputManager->GetMouseDelta());
+      mMaterialPreview->UpdateRotation(mInputManager->GetMouseDelta());
     }
 
-    // std::cout << m_MaterialPreview->GetTextureId() << std::endl;
+    // std::cout << mMaterialPreview->GetTextureId() << std::endl;
 
-    draw_list->AddImage(m_MaterialPreview->GetTextureId(), minRect, maxRect);
+    draw_list->AddImage(mMaterialPreview->GetTextureId(), minRect, maxRect);
 
     float endY = maxRect.y;
     ImGui::EndChild();

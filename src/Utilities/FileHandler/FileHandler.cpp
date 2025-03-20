@@ -3,26 +3,26 @@
 #include <sago/platform_folders.h>
 
 #ifdef _WIN32
-#include <Windows.h>
 #include <KnownFolders.h>
 #include <ShlObj.h>
-#include <shlwapi.h>
+#include <Windows.h>
 #include <objbase.h>
+#include <shlwapi.h>
 #endif
 
 #ifdef __linux__
-#include <unistd.h>
-#include <sys/wait.h>
-#include <iostream>
 #include <fcntl.h>
+#include <iostream>
+#include <sys/wait.h>
+#include <unistd.h>
 #endif
 
 namespace Dwarf
 {
   FileHandler::FileHandler(std::shared_ptr<IDwarfLogger> logger)
-    : m_Logger(logger)
-    , m_DocumentsPath(CreateDocumentsFolderPath())
-    , m_EngineSettingsPath(CreateEngineSettingsPath())
+    : mLogger(logger)
+    , mDocumentsPath(CreateDocumentsFolderPath())
+    , mEngineSettingsPath(CreateEngineSettingsPath())
   {
   }
 
@@ -31,7 +31,7 @@ namespace Dwarf
   std::filesystem::path
   FileHandler::CreateDocumentsFolderPath()
   {
-    m_Logger->LogDebug(Log("CreateDocumentsFolderPath", "FileHandler"));
+    mLogger->LogDebug(Log("CreateDocumentsFolderPath", "FileHandler"));
     std::filesystem::path defaultProjectPath;
 
 #if _WIN32
@@ -92,8 +92,8 @@ namespace Dwarf
   std::filesystem::path
   FileHandler::GetDocumentsPath()
   {
-    m_Logger->LogDebug(Log("GetDocumentsPath", "FileHandler"));
-    return m_DocumentsPath;
+    mLogger->LogDebug(Log("GetDocumentsPath", "FileHandler"));
+    return mDocumentsPath;
   }
 
   /// @brief Returns the path to the project settings file.
@@ -101,8 +101,8 @@ namespace Dwarf
   std::filesystem::path
   FileHandler::GetEngineSettingsPath()
   {
-    m_Logger->LogDebug(Log("GetEngineSettingsPath", "FileHandler"));
-    return m_EngineSettingsPath;
+    mLogger->LogDebug(Log("GetEngineSettingsPath", "FileHandler"));
+    return mEngineSettingsPath;
   }
 
   /// @brief Checks if a file is present at a given path.
@@ -111,7 +111,7 @@ namespace Dwarf
   bool
   FileHandler::FileExists(std::filesystem::path const& filePath)
   {
-    m_Logger->LogDebug(Log("FileExists", "FileHandler"));
+    mLogger->LogDebug(Log("FileExists", "FileHandler"));
     std::filesystem::path copy = filePath;
     std::ifstream         fileStream(copy.make_preferred(), std::ios::in);
     return fileStream.is_open();
@@ -123,7 +123,7 @@ namespace Dwarf
   std::string
   FileHandler::ReadFile(std::filesystem::path const& filePath)
   {
-    m_Logger->LogDebug(Log("ReadFile", "FileHandler"));
+    mLogger->LogDebug(Log("ReadFile", "FileHandler"));
     std::string   content;
     std::ifstream fileStream(filePath, std::ios::in);
 
@@ -173,7 +173,7 @@ namespace Dwarf
   bool
   FileHandler::DirectoryExists(std::filesystem::path const& path)
   {
-    m_Logger->LogDebug(Log("DirectoryExists", "FileHandler"));
+    mLogger->LogDebug(Log("DirectoryExists", "FileHandler"));
     return std::filesystem::exists(path);
   }
 
@@ -182,7 +182,7 @@ namespace Dwarf
   void
   FileHandler::CreateDirectoryAt(std::filesystem::path const& path)
   {
-    m_Logger->LogDebug(Log("CreateDirectoryAt", "FileHandler"));
+    mLogger->LogDebug(Log("CreateDirectoryAt", "FileHandler"));
     std::filesystem::create_directories(path);
   }
 
@@ -191,7 +191,7 @@ namespace Dwarf
   void
   FileHandler::OpenPathInFileBrowser(std::filesystem::path const& path)
   {
-    m_Logger->LogDebug(Log("OpenPathInFileBrowser", "FileHandler"));
+    mLogger->LogDebug(Log("OpenPathInFileBrowser", "FileHandler"));
 #if _WIN32
     wchar_t* commandStr = new wchar_t[4096];
     wchar_t* argStr = new wchar_t[4096];
@@ -224,7 +224,7 @@ namespace Dwarf
   void
   FileHandler::LaunchFile(std::filesystem::path path)
   {
-    m_Logger->LogDebug(Log("LaunchFile", "FileHandler"));
+    mLogger->LogDebug(Log("LaunchFile", "FileHandler"));
     // Start-Process -FilePath "custom.frag"
 #if _WIN32
     wchar_t* commandStr = new wchar_t[4096];
@@ -261,7 +261,7 @@ namespace Dwarf
   FileHandler::Copy(std::filesystem::path const& from,
                     std::filesystem::path const& to)
   {
-    m_Logger->LogDebug(Log("Copy", "FileHandler"));
+    mLogger->LogDebug(Log("Copy", "FileHandler"));
     std::filesystem::copy(from, to);
   }
 
@@ -269,14 +269,14 @@ namespace Dwarf
   FileHandler::Rename(std::filesystem::path const& oldPath,
                       std::filesystem::path const& newPath)
   {
-    m_Logger->LogDebug(Log("Rename", "FileHandler"));
+    mLogger->LogDebug(Log("Rename", "FileHandler"));
     std::filesystem::rename(oldPath, newPath);
   }
 
   void
   FileHandler::Duplicate(std::filesystem::path const& path)
   {
-    m_Logger->LogDebug(Log("Duplicate", "FileHandler"));
+    mLogger->LogDebug(Log("Duplicate", "FileHandler"));
     std::filesystem::path from = path;
     std::filesystem::path to = path;
     to = to.replace_filename(
@@ -289,7 +289,7 @@ namespace Dwarf
   void
   FileHandler::Delete(std::filesystem::path const& path)
   {
-    m_Logger->LogDebug(Log("Delete", "FileHandler"));
+    mLogger->LogDebug(Log("Delete", "FileHandler"));
     std::filesystem::remove(path);
   }
 

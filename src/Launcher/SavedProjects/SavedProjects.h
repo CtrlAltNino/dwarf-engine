@@ -6,8 +6,8 @@
 #include "Launcher/SavedProjects/ISavedProjects.h"
 #include "Launcher/SavedProjects/Sorter/ISavedProjectsSorter.h"
 #include "Logging/IDwarfLogger.h"
-#include "Utilities/FileHandler/IFileHandler.h"
 #include "Project/IProjectSettingsIO.h"
+#include "Utilities/FileHandler/IFileHandler.h"
 #include <memory>
 
 namespace Dwarf
@@ -15,11 +15,11 @@ namespace Dwarf
   class SavedProjects : public ISavedProjects
   {
   private:
-    std::vector<SavedProject>             m_SavedProjects;
-    std::shared_ptr<IDwarfLogger>         m_Logger;
-    std::shared_ptr<ISavedProjectsIO>     m_SavedProjectsIO;
-    std::shared_ptr<ISavedProjectsSorter> m_SavedProjectsSorter;
-    std::shared_ptr<IProjectSettingsIO>   m_ProjectSettingsIO;
+    std::vector<SavedProject>             mSavedProjects;
+    std::shared_ptr<IDwarfLogger>         mLogger;
+    std::shared_ptr<ISavedProjectsIO>     mSavedProjectsIO;
+    std::shared_ptr<ISavedProjectsSorter> mSavedProjectsSorter;
+    std::shared_ptr<IProjectSettingsIO>   mProjectSettingsIO;
 
   public:
     SavedProjects(std::shared_ptr<IDwarfLogger>         logger,

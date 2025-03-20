@@ -8,7 +8,7 @@ namespace Dwarf
   class ShaderSourceCollection : public IShaderSourceCollection
   {
   private:
-    std::vector<std::unique_ptr<IAssetReference>> m_ShaderSources;
+    std::vector<std::unique_ptr<IAssetReference>> mShaderSources;
 
   public:
     ShaderSourceCollection(

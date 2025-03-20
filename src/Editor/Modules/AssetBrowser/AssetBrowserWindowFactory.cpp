@@ -17,50 +17,50 @@ namespace Dwarf
     std::shared_ptr<IMaterialCreator> materialCreator,
     std::shared_ptr<IFileHandler>     fileHandler,
     std::shared_ptr<ISceneIO>         sceneIO)
-    : m_AssetDirectoryPath(assetDirectoryPath)
-    , m_TextureFactory(textureFactory)
-    , m_AssetDatabase(assetDatabase)
-    , m_InputManager(inputManager)
-    , m_EditorSelection(editorSelection)
-    , m_MaterialIO(materialIO)
-    , m_MaterialFactory(materialFactory)
-    , m_AssetMetadata(assetMetadata)
-    , m_MaterialCreator(materialCreator)
-    , m_FileHandler(fileHandler)
-    , m_SceneIO(sceneIO)
+    : mAssetDirectoryPath(assetDirectoryPath)
+    , mTextureFactory(textureFactory)
+    , mAssetDatabase(assetDatabase)
+    , mInputManager(inputManager)
+    , mEditorSelection(editorSelection)
+    , mMaterialIO(materialIO)
+    , mMaterialFactory(materialFactory)
+    , mAssetMetadata(assetMetadata)
+    , mMaterialCreator(materialCreator)
+    , mFileHandler(fileHandler)
+    , mSceneIO(sceneIO)
   {
   }
 
   std::unique_ptr<AssetBrowserWindow>
   AssetBrowserWindowFactory::Create() const
   {
-    return std::make_unique<AssetBrowserWindow>(m_AssetDirectoryPath,
-                                                m_TextureFactory,
-                                                m_AssetDatabase,
-                                                m_InputManager,
-                                                m_EditorSelection,
-                                                m_MaterialIO,
-                                                m_MaterialFactory,
-                                                m_AssetMetadata,
-                                                m_MaterialCreator,
-                                                m_FileHandler,
-                                                m_SceneIO);
+    return std::make_unique<AssetBrowserWindow>(mAssetDirectoryPath,
+                                                mTextureFactory,
+                                                mAssetDatabase,
+                                                mInputManager,
+                                                mEditorSelection,
+                                                mMaterialIO,
+                                                mMaterialFactory,
+                                                mAssetMetadata,
+                                                mMaterialCreator,
+                                                mFileHandler,
+                                                mSceneIO);
   }
 
   std::unique_ptr<AssetBrowserWindow>
   AssetBrowserWindowFactory::Create(SerializedModule serializedModule) const
   {
-    return std::make_unique<AssetBrowserWindow>(m_AssetDirectoryPath,
-                                                m_TextureFactory,
-                                                m_AssetDatabase,
-                                                m_InputManager,
-                                                m_EditorSelection,
-                                                m_MaterialIO,
-                                                m_MaterialFactory,
-                                                m_AssetMetadata,
-                                                m_MaterialCreator,
-                                                m_FileHandler,
-                                                m_SceneIO,
+    return std::make_unique<AssetBrowserWindow>(mAssetDirectoryPath,
+                                                mTextureFactory,
+                                                mAssetDatabase,
+                                                mInputManager,
+                                                mEditorSelection,
+                                                mMaterialIO,
+                                                mMaterialFactory,
+                                                mAssetMetadata,
+                                                mMaterialCreator,
+                                                mFileHandler,
+                                                mSceneIO,
                                                 serializedModule);
   }
 } // namespace Dwarf

@@ -10,8 +10,8 @@ namespace Dwarf
   class GpuInfoFactory : public IGpuInfoFactory
   {
   private:
-    GraphicsApi                   m_GraphicsApi;
-    std::shared_ptr<IDwarfLogger> m_Logger;
+    GraphicsApi                   mGraphicsApi;
+    std::shared_ptr<IDwarfLogger> mLogger;
 
   public:
     GpuInfoFactory(GraphicsApi                   graphicsApi,

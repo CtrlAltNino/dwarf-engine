@@ -1,13 +1,13 @@
 #pragma once
 
-#include "Editor/Modules/IGuiModule.h"
-#include "IProjectSettingsIO.h"
-#include "Utilities/FileHandler/IFileHandler.h"
-#include "pch.h"
 #include "Core/Base.h"
+#include "Editor/Modules/IGuiModule.h"
 #include "IProjectSettings.h"
+#include "IProjectSettingsIO.h"
 #include "Logging/IDwarfLogger.h"
 #include "ProjectTypes.h"
+#include "Utilities/FileHandler/IFileHandler.h"
+#include "pch.h"
 #include <boost/di.hpp>
 
 namespace Dwarf
@@ -41,12 +41,12 @@ namespace Dwarf
   {
   private:
     // Data
-    std::shared_ptr<IDwarfLogger>       m_Logger;
-    std::shared_ptr<IFileHandler>       m_FileHandler;
-    std::shared_ptr<IProjectSettingsIO> m_ProjectSettingsIO;
-    LoadStatus                          m_LoadStatus;
-    std::filesystem::path               m_ProjectPath = "";
-    ProjectSettingsData                 m_Data;
+    std::shared_ptr<IDwarfLogger>       mLogger;
+    std::shared_ptr<IFileHandler>       mFileHandler;
+    std::shared_ptr<IProjectSettingsIO> mProjectSettingsIO;
+    LoadStatus                          mLoadStatus;
+    std::filesystem::path               mProjectPath = "";
+    ProjectSettingsData                 mData;
 
   public:
     BOOST_DI_INJECT(ProjectSettings,

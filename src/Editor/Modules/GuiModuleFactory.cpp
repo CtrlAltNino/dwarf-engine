@@ -22,12 +22,12 @@ namespace Dwarf
     std::shared_ptr<ISceneHierarchyWindowFactory> sceneHierarchyWindowFactory,
     std::shared_ptr<ISceneViewerWindowFactory>    sceneViewerWindowFactory,
     std::shared_ptr<IInspectorWindowFactory>      inspectorWindowFactory)
-    : m_AssetBrowserWindowFactory(assetBrowserWindowFactory)
-    , m_DebugWindowFactory(debugWindowFactory)
-    , m_PerformanceWindowFactory(performanceWindowFactory)
-    , m_SceneHierarchyWindowFactory(sceneHierarchyWindowFactory)
-    , m_SceneViewerWindowFactory(sceneViewerWindowFactory)
-    , m_InspectorWindowFactory(inspectorWindowFactory)
+    : mAssetBrowserWindowFactory(assetBrowserWindowFactory)
+    , mDebugWindowFactory(debugWindowFactory)
+    , mPerformanceWindowFactory(performanceWindowFactory)
+    , mSceneHierarchyWindowFactory(sceneHierarchyWindowFactory)
+    , mSceneViewerWindowFactory(sceneViewerWindowFactory)
+    , mInspectorWindowFactory(inspectorWindowFactory)
   {
   }
 
@@ -37,12 +37,12 @@ namespace Dwarf
     switch (type)
     {
       using enum MODULE_TYPE;
-      case ASSET_BROWSER: return m_AssetBrowserWindowFactory->Create();
-      case DEBUG: return m_DebugWindowFactory->Create();
-      case PERFORMANCE: return m_PerformanceWindowFactory->Create();
-      case SCENE_GRAPH: return m_SceneHierarchyWindowFactory->Create();
-      case SCENE_VIEWER: return m_SceneViewerWindowFactory->Create();
-      case INSPECTOR: return m_InspectorWindowFactory->Create();
+      case ASSET_BROWSER: return mAssetBrowserWindowFactory->Create();
+      case DEBUG: return mDebugWindowFactory->Create();
+      case PERFORMANCE: return mPerformanceWindowFactory->Create();
+      case SCENE_GRAPH: return mSceneHierarchyWindowFactory->Create();
+      case SCENE_VIEWER: return mSceneViewerWindowFactory->Create();
+      case INSPECTOR: return mInspectorWindowFactory->Create();
       default: return nullptr;
     }
   }
@@ -56,15 +56,15 @@ namespace Dwarf
     {
       using enum MODULE_TYPE;
       case ASSET_BROWSER:
-        return m_AssetBrowserWindowFactory->Create(serializedModule);
-      case DEBUG: return m_DebugWindowFactory->Create(serializedModule);
+        return mAssetBrowserWindowFactory->Create(serializedModule);
+      case DEBUG: return mDebugWindowFactory->Create(serializedModule);
       case PERFORMANCE:
-        return m_PerformanceWindowFactory->Create(serializedModule);
+        return mPerformanceWindowFactory->Create(serializedModule);
       case SCENE_GRAPH:
-        return m_SceneHierarchyWindowFactory->Create(serializedModule);
+        return mSceneHierarchyWindowFactory->Create(serializedModule);
       case SCENE_VIEWER:
-        return m_SceneViewerWindowFactory->Create(serializedModule);
-      case INSPECTOR: return m_InspectorWindowFactory->Create(serializedModule);
+        return mSceneViewerWindowFactory->Create(serializedModule);
+      case INSPECTOR: return mInspectorWindowFactory->Create(serializedModule);
       default: return nullptr;
     }
   }

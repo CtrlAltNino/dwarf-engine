@@ -1,34 +1,34 @@
 #pragma once
+#include "Input/IInputManager.h"
 #include "Logging/IDwarfLogger.h"
 #include "pch.h"
-#include "Input/IInputManager.h"
 
 namespace Dwarf
 {
   class InputManager : public IInputManager
   {
   private:
-    std::shared_ptr<IDwarfLogger> m_Logger;
+    std::shared_ptr<IDwarfLogger> mLogger;
     /**
      * Saved position of the current mouse position
      */
-    glm::vec2 m_CurrentMousePos = glm::vec2(0);
-    glm::vec2 m_LastMousePos = glm::vec2(0);
-    glm::vec2 m_DeltaMousePos = glm::vec2(0);
-    glm::vec2 m_DeltaScroll = glm::vec2(0);
+    glm::vec2 mCurrentMousePos = glm::vec2(0);
+    glm::vec2 mLastMousePos = glm::vec2(0);
+    glm::vec2 mDeltaMousePos = glm::vec2(0);
+    glm::vec2 mDeltaScroll = glm::vec2(0);
 
     /**
      * State of the mouse buttons
      */
-    std::map<MOUSE_BUTTON, int> m_MouseButtonStates;
+    std::map<MOUSE_BUTTON, int> mMouseButtonStates;
 
     /**
      * Mapping the engine specific key codes to the SDL3 codes
      */
     static std::map<SDL_Scancode, KEYCODE> s_KeyCodeMap;
-    std::set<KEYCODE>                      m_KeysDown;
-    std::set<KEYCODE>                      m_KeysRepeat;
-    std::set<KEYCODE>                      m_KeysUp;
+    std::set<KEYCODE>                      mKeysDown;
+    std::set<KEYCODE>                      mKeysRepeat;
+    std::set<KEYCODE>                      mKeysUp;
 
     /**
      * Mapping the engine specific key codes to the SDL3 codes

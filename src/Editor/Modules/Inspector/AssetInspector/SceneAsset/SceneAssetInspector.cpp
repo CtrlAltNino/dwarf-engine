@@ -12,13 +12,13 @@ namespace Dwarf
     std::shared_ptr<ISceneIO>         sceneIO,
     std::shared_ptr<ILoadedScene>     loadedScene,
     std::shared_ptr<IFileHandler>     fileHandler)
-    : m_GraphicsApi(graphicsApi)
-    , m_AssetDatabase(assetDatabase)
-    , m_AssetReimporter(assetReimporter)
-    , m_InputManager(inputManager)
-    , m_SceneIO(sceneIO)
-    , m_LoadedScene(loadedScene)
-    , m_FileHandler(fileHandler)
+    : mGraphicsApi(graphicsApi)
+    , mAssetDatabase(assetDatabase)
+    , mAssetReimporter(assetReimporter)
+    , mInputManager(inputManager)
+    , mSceneIO(sceneIO)
+    , mLoadedScene(loadedScene)
+    , mFileHandler(fileHandler)
   {
   }
 
@@ -49,8 +49,8 @@ namespace Dwarf
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
     if (ImGui::Button("Reimport"))
     {
-      // m_AssetDatabase->Reimport(asset->GetPath());
-      m_AssetReimporter->QueueReimport(asset.GetPath());
+      // mAssetDatabase->Reimport(asset->GetPath());
+      mAssetReimporter->QueueReimport(asset.GetPath());
     }
 
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
@@ -70,9 +70,9 @@ namespace Dwarf
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 20);
 
     if (ImGui::Button("Load scene") &&
-        m_FileHandler->FileExists(asset.GetPath()))
+        mFileHandler->FileExists(asset.GetPath()))
     {
-      m_LoadedScene->SetScene(m_SceneIO->LoadScene(asset));
+      mLoadedScene->SetScene(mSceneIO->LoadScene(asset));
     }
 
     draw_list->ChannelsSetCurrent(0);

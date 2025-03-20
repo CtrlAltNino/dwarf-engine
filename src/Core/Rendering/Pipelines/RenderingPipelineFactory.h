@@ -16,15 +16,15 @@ namespace Dwarf
   class RenderingPipelineFactory : public IRenderingPipelineFactory
   {
   private:
-    std::shared_ptr<IDwarfLogger>     m_Logger;
-    std::shared_ptr<IRendererApi>     m_RendererApi;
-    std::shared_ptr<IMaterialFactory> m_MaterialFactory;
-    std::shared_ptr<IShaderRegistry>  m_ShaderRegistry;
+    std::shared_ptr<IDwarfLogger>     mLogger;
+    std::shared_ptr<IRendererApi>     mRendererApi;
+    std::shared_ptr<IMaterialFactory> mMaterialFactory;
+    std::shared_ptr<IShaderRegistry>  mShaderRegistry;
     std::shared_ptr<IShaderSourceCollectionFactory>
-                                        m_ShaderSourceCollectionFactory;
-    std::shared_ptr<IMeshFactory>       m_MeshFactory;
-    std::shared_ptr<IMeshBufferFactory> m_MeshBufferFactory;
-    std::shared_ptr<IDrawCallList>      m_DrawCallList;
+                                        mShaderSourceCollectionFactory;
+    std::shared_ptr<IMeshFactory>       mMeshFactory;
+    std::shared_ptr<IMeshBufferFactory> mMeshBufferFactory;
+    std::shared_ptr<IDrawCallList>      mDrawCallList;
 
   public:
     RenderingPipelineFactory(

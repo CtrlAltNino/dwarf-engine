@@ -16,24 +16,23 @@ namespace Dwarf
   ImGuiLayerFactory::ImGuiLayerFactory(std::shared_ptr<IDwarfLogger> logger,
                                        GraphicsApi                   api,
                                        ImGuiIniFilePath iniFilePath)
-    : m_Logger(logger)
-    , m_Api(api)
-    , m_IniFilePath(iniFilePath)
+    : mLogger(logger)
+    , mApi(api)
+    , mIniFilePath(iniFilePath)
   {
-    m_Logger->LogDebug(Log("ImGuiLayerFactory created.", "ImGuiLayerFactory"));
+    mLogger->LogDebug(Log("ImGuiLayerFactory created.", "ImGuiLayerFactory"));
   }
 
   ImGuiLayerFactory::~ImGuiLayerFactory()
   {
-    m_Logger->LogDebug(
-      Log("ImGuiLayerFactory destroyed.", "ImGuiLayerFactory"));
+    mLogger->LogDebug(Log("ImGuiLayerFactory destroyed.", "ImGuiLayerFactory"));
   }
 
   std::unique_ptr<IImGuiLayer>
   ImGuiLayerFactory::Create() const
   {
-    m_Logger->LogDebug(Log("Creating ImGuiLayer...", "ImGuiLayerFactory"));
-    switch (m_Api)
+    mLogger->LogDebug(Log("Creating ImGuiLayer...", "ImGuiLayerFactory"));
+    switch (mApi)
     {
       using enum GraphicsApi;
       case None: throw std::runtime_error("Invalid API."); break;
@@ -49,9 +48,9 @@ namespace Dwarf
         break;
       case OpenGL:
         {
-          m_Logger->LogDebug(
+          mLogger->LogDebug(
             Log("Creating OpenGLImGuiLayer...", "ImGuiLayerFactory"));
-          return std::make_unique<OpenGLImGuiLayer>(m_Logger, m_IniFilePath);
+          return std::make_unique<OpenGLImGuiLayer>(mLogger, mIniFilePath);
           break;
         }
       case Vulkan:
@@ -68,9 +67,9 @@ namespace Dwarf
         break;
       case OpenGL:
         {
-          m_Logger->LogDebug(
+          mLogger->LogDebug(
             Log("Creating OpenGLImGuiLayer...", "ImGuiLayerFactory"));
-          return std::make_unique<OpenGLImGuiLayer>(m_Logger, m_IniFilePath);
+          return std::make_unique<OpenGLImGuiLayer>(mLogger, mIniFilePath);
           break;
         }
       case Vulkan:
@@ -93,8 +92,7 @@ namespace Dwarf
 #endif
     }
 
-    m_Logger->LogError(
-      Log("Failed to create ImGuiLayer.", "ImGuiLayerFactory"));
+    mLogger->LogError(Log("Failed to create ImGuiLayer.", "ImGuiLayerFactory"));
     return nullptr;
   }
 } // namespace Dwarf

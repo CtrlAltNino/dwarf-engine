@@ -1,12 +1,12 @@
-#include "Core/Asset/AssetReference/IAssetReference.h"
-#include "pch.h"
-#include "Editor/LoadedScene/ILoadedScene.h"
 #include "Editor/Selection/EditorSelection.h"
+#include "Core/Asset/AssetReference/IAssetReference.h"
+#include "Editor/LoadedScene/ILoadedScene.h"
+#include "pch.h"
 
 namespace Dwarf
 {
   EditorSelection::EditorSelection(std::shared_ptr<ILoadedScene> loadedScene)
-    : m_LoadedScene(loadedScene)
+    : mLoadedScene(loadedScene)
   {
   }
 
@@ -15,14 +15,14 @@ namespace Dwarf
   {
     ClearEntitySelection();
     AddEntityToSelection(entity);
-    m_SelectionType = CURRENT_SELECTION_TYPE::ENTITY;
+    mSelectionType = CURRENT_SELECTION_TYPE::ENTITY;
   }
 
   void
   EditorSelection::SelectAsset(std::unique_ptr<IAssetReference> asset)
   {
-    m_SelectedAsset = std::move(asset);
-    m_SelectionType = CURRENT_SELECTION_TYPE::ASSET;
+    mSelectedAsset = std::move(asset);
+    mSelectionType = CURRENT_SELECTION_TYPE::ASSET;
   }
 
   void
@@ -30,68 +30,67 @@ namespace Dwarf
   {
     std::string index = GetTreeIndex(entity);
 
-    auto        cursor = m_SelectedEntities.begin();
+    auto        cursor = mSelectedEntities.begin();
     std::string cursorIndex;
 
-    while ((cursor != m_SelectedEntities.end()) &&
+    while ((cursor != mSelectedEntities.end()) &&
            ((cursorIndex = GetTreeIndex(*cursor)) < index))
     {
       cursor++;
     }
 
-    if (cursor == m_SelectedEntities.end())
+    if (cursor == mSelectedEntities.end())
     {
-      m_SelectedEntities.push_back(entity);
+      mSelectedEntities.push_back(entity);
     }
     else
     {
-      m_SelectedEntities.insert(cursor, entity);
+      mSelectedEntities.insert(cursor, entity);
     }
 
-    m_SelectionType = CURRENT_SELECTION_TYPE::ENTITY;
+    mSelectionType = CURRENT_SELECTION_TYPE::ENTITY;
   }
 
   void
   EditorSelection::ClearEntitySelection()
   {
-    m_SelectedEntities.clear();
-    m_SelectionType = m_SelectedAsset ? CURRENT_SELECTION_TYPE::ASSET
-                                      : CURRENT_SELECTION_TYPE::NONE;
+    mSelectedEntities.clear();
+    mSelectionType = mSelectedAsset ? CURRENT_SELECTION_TYPE::ASSET
+                                    : CURRENT_SELECTION_TYPE::NONE;
   }
 
   void
   EditorSelection::ClearAssetSelection()
   {
-    m_SelectedAsset.reset();
-    m_SelectionType = m_SelectedEntities.empty()
-                        ? CURRENT_SELECTION_TYPE::NONE
-                        : CURRENT_SELECTION_TYPE::ENTITY;
+    mSelectedAsset.reset();
+    mSelectionType = mSelectedEntities.empty() ? CURRENT_SELECTION_TYPE::NONE
+                                               : CURRENT_SELECTION_TYPE::ENTITY;
   }
 
   void
   EditorSelection::RemoveEntityFromSelection(const entt::entity& entity)
   {
-    m_SelectedEntities.erase(
-      std::find(m_SelectedEntities.begin(), m_SelectedEntities.end(), entity));
-    if (m_SelectedEntities.empty())
+    mSelectedEntities.erase(
+      std::find(mSelectedEntities.begin(), mSelectedEntities.end(), entity));
+    if (mSelectedEntities.empty())
     {
-      m_SelectionType = m_SelectedAsset ? CURRENT_SELECTION_TYPE::ASSET
-                                        : CURRENT_SELECTION_TYPE::NONE;
+      mSelectionType = mSelectedAsset ? CURRENT_SELECTION_TYPE::ASSET
+                                      : CURRENT_SELECTION_TYPE::NONE;
     }
   }
 
   bool
   EditorSelection::IsEntitySelected(const entt::entity& entity)
   {
-    return std::find(m_SelectedEntities.begin(),
-                     m_SelectedEntities.end(),
-                     entity) != m_SelectedEntities.end();
+    return std::find(mSelectedEntities.begin(),
+                     mSelectedEntities.end(),
+                     entity) != mSelectedEntities.end();
   }
 
   bool
   EditorSelection::IsAssetSelected(const std::filesystem::path& assetPath)
   {
-    return m_SelectedAsset && (m_SelectedAsset->GetPath() == assetPath);
+    return mSelectedAsset && (mSelectedAsset->GetPath() == assetPath);
   }
 
   std::string
@@ -100,9 +99,9 @@ namespace Dwarf
     std::string  index = "";
     entt::entity cursor = entity;
 
-    while (cursor != m_LoadedScene->GetScene().GetRootEntity().GetHandle())
+    while (cursor != mLoadedScene->GetScene().GetRootEntity().GetHandle())
     {
-      Entity ent(cursor, m_LoadedScene->GetScene().GetRegistry());
+      Entity ent(cursor, mLoadedScene->GetScene().GetRegistry());
       index = std::format("{}{}", std::to_string(ent.GetChildIndex()), index);
       cursor = ent.GetParent();
     }
@@ -113,18 +112,18 @@ namespace Dwarf
   std::vector<entt::entity>&
   EditorSelection::GetSelectedEntities()
   {
-    return m_SelectedEntities;
+    return mSelectedEntities;
   }
 
   CURRENT_SELECTION_TYPE
   EditorSelection::GetSelectionType() const
   {
-    return m_SelectionType;
+    return mSelectionType;
   }
 
   IAssetReference&
   EditorSelection::GetSelectedAsset() const
   {
-    return *m_SelectedAsset;
+    return *mSelectedAsset;
   }
 }

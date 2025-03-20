@@ -2,10 +2,10 @@
 
 #include "Core/Asset/Database/IAssetDatabase.h"
 #include "Editor/IEditor.h"
-#include "Editor/Selection/IEditorSelection.h"
 #include "Editor/LoadedScene/ILoadedScene.h"
 #include "Editor/Modules/IGuiModule.h"
 #include "Editor/Modules/SceneHierarchy/GraphInstruction.h"
+#include "Editor/Selection/IEditorSelection.h"
 #include "Input/IInputManager.h"
 #include <boost/serialization/strong_typedef.hpp>
 
@@ -15,15 +15,15 @@ namespace Dwarf
   class SceneHierarchyWindow : public IGuiModule
   {
   private:
-    std::shared_ptr<ILoadedScene>     m_LoadedScene;
-    std::shared_ptr<IEditorSelection> m_EditorSelection;
-    std::shared_ptr<IInputManager>    m_InputManager;
-    std::shared_ptr<IAssetDatabase>   m_AssetDatabase;
+    std::shared_ptr<ILoadedScene>     mLoadedScene;
+    std::shared_ptr<IEditorSelection> mEditorSelection;
+    std::shared_ptr<IInputManager>    mInputManager;
+    std::shared_ptr<IAssetDatabase>   mAssetDatabase;
     /// @brief List of graph instruction. Used as a buffer, executed at the end
     /// of a frame.
-    std::vector<std::shared_ptr<GraphInstruction>> m_Instructions;
+    std::vector<std::shared_ptr<GraphInstruction>> mInstructions;
 
-    std::vector<entt::entity> m_CopyBuffer;
+    std::vector<entt::entity> mCopyBuffer;
 
     /// @brief Draws a graph node for an entity.
     /// @param entity The entity to draw the node of.

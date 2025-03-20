@@ -20,20 +20,20 @@ namespace Dwarf
     GraphicsApi                      api,
     std::shared_ptr<ITextureFactory> textureFactory,
     std::shared_ptr<IVramTracker>    vramTracker)
-    : m_Logger(logger)
-    , m_Api(api)
-    , m_TextureFactory(textureFactory)
-    , m_VramTracker(vramTracker)
+    : mLogger(logger)
+    , mApi(api)
+    , mTextureFactory(textureFactory)
+    , mVramTracker(vramTracker)
   {
-    m_Logger->LogDebug(Log("FramebufferFactory created", "FramebufferFactory"));
+    mLogger->LogDebug(Log("FramebufferFactory created", "FramebufferFactory"));
   }
 
   std::shared_ptr<IFramebuffer>
   FramebufferFactory::Create(const FramebufferSpecification& spec)
   {
-    m_Logger->LogDebug(Log("Creating framebuffer", "FramebufferFactory"));
+    mLogger->LogDebug(Log("Creating framebuffer", "FramebufferFactory"));
 
-    switch (m_Api)
+    switch (mApi)
     {
       using enum GraphicsApi;
       case None: break;
@@ -44,7 +44,7 @@ namespace Dwarf
       case Metal: break;
       case OpenGL:
         return std::make_shared<OpenGLFramebuffer>(
-          m_Logger, spec, m_TextureFactory, m_VramTracker);
+          mLogger, spec, mTextureFactory, mVramTracker);
         break;
       case Vulkan:
         // return std::make_shared<VulkanFramebuffer>(spec);
@@ -54,7 +54,7 @@ namespace Dwarf
       case Metal: break;
       case OpenGL:
         return std::make_unique<OpenGLFramebuffer>(
-          m_Logger, spec, m_TextureFactory, m_VramTracker);
+          mLogger, spec, mTextureFactory, mVramTracker);
         break;
       case Vulkan: break;
 #elif __APPLE__

@@ -5,7 +5,6 @@
 #include <fmt/format.h>
 #include <glm/fwd.hpp>
 
-
 namespace Dwarf
 {
 
@@ -17,10 +16,10 @@ namespace Dwarf
     : IGuiModule(ModuleLabel("Performance"),
                  ModuleType(MODULE_TYPE::PERFORMANCE),
                  ModuleID(std::make_shared<UUID>()))
-    , m_EditorStats(editorStats)
-    , m_RendererApi(rendererApi)
-    , m_VramTracker(vramTracker)
-    , m_GpuInfo(std::move(gpuInfo))
+    , mEditorStats(editorStats)
+    , mRendererApi(rendererApi)
+    , mVramTracker(vramTracker)
+    , mGpuInfo(std::move(gpuInfo))
   {
   }
 
@@ -34,10 +33,10 @@ namespace Dwarf
                  ModuleType(MODULE_TYPE::PERFORMANCE),
                  ModuleID(std::make_shared<UUID>(
                    serializedModule.t["id"].get<std::string>())))
-    , m_EditorStats(editorStats)
-    , m_RendererApi(rendererApi)
-    , m_VramTracker(vramTracker)
-    , m_GpuInfo(std::move(gpuInfo))
+    , mEditorStats(editorStats)
+    , mRendererApi(rendererApi)
+    , mVramTracker(vramTracker)
+    , mGpuInfo(std::move(gpuInfo))
   {
     Deserialize(serializedModule.t);
   }
@@ -55,7 +54,7 @@ namespace Dwarf
 
     window_flags |= ImGuiWindowFlags_AlwaysAutoResize;
     window_flags |= ImGuiWindowFlags_NoCollapse;
-    if (!ImGui::Begin(GetIdentifier().c_str(), &m_WindowOpened, window_flags))
+    if (!ImGui::Begin(GetIdentifier().c_str(), &mWindowOpened, window_flags))
     {
       // Early out if the window is collapsed, as an optimization.
       ImGui::End();
@@ -69,7 +68,7 @@ namespace Dwarf
     // Get delta time, add to array, and plot imgui lines
     static std::vector<float> values = { 0 };
     // static int    values_offset = 0;
-    values.push_back((float)m_EditorStats->GetDeltaTime());
+    values.push_back((float)mEditorStats->GetDeltaTime());
 
     if (values.size() > 100)
     {
@@ -99,7 +98,7 @@ namespace Dwarf
 
     ImGui::Text("FPS: %.1f", ImGui::GetIO().Framerate);
 
-    VRAMUsageBuffer currentVRAMUsage = m_RendererApi->QueryVRAMUsage();
+    VRAMUsageBuffer currentVRAMUsage = mRendererApi->QueryVRAMUsage();
 
     float progress_saturated =
       std::clamp((float)currentVRAMUsage.usedMemoryMb /
@@ -116,17 +115,17 @@ namespace Dwarf
     ImGui::SameLine();
     ImGui::Text("VRAM Usage");
 
-    if (m_GpuInfo)
+    if (mGpuInfo)
     {
-      float progress_saturated = std::clamp(
-        (float)m_GpuInfo->GetUsedVramMb() / (float)m_GpuInfo->GetTotalVramMb(),
-        0.0f,
-        1.0f);
-      char buf[64];
+      float progress_saturated = std::clamp((float)mGpuInfo->GetUsedVramMb() /
+                                              (float)mGpuInfo->GetTotalVramMb(),
+                                            0.0f,
+                                            1.0f);
+      char  buf[64];
       sprintf(buf,
               "%d Mb / %zu Mb",
-              (int)(progress_saturated * m_GpuInfo->GetTotalVramMb()),
-              m_GpuInfo->GetTotalVramMb());
+              (int)(progress_saturated * mGpuInfo->GetTotalVramMb()),
+              mGpuInfo->GetTotalVramMb());
 
       ImGui::ProgressBar(progress_saturated, ImVec2(0.f, 0.f), buf);
       ImGui::SameLine();
@@ -135,21 +134,21 @@ namespace Dwarf
 
     std::string textureMemoryString =
       fmt::format("{:.2f} Mb",
-                  (double)(m_VramTracker->GetTextureMemory() -
-                           m_VramTracker->GetFramebufferMemory()) /
+                  (double)(mVramTracker->GetTextureMemory() -
+                           mVramTracker->GetFramebufferMemory()) /
                     1024 / 1024);
 
     std::string framebufferMemoryString = fmt::format(
-      "{:.2f} Mb", (double)m_VramTracker->GetFramebufferMemory() / 1024 / 1024);
+      "{:.2f} Mb", (double)mVramTracker->GetFramebufferMemory() / 1024 / 1024);
 
     std::string bufferMemoryString = fmt::format(
-      "{:.2f} Mb", (double)m_VramTracker->GetBufferMemory() / 1024 / 1024);
+      "{:.2f} Mb", (double)mVramTracker->GetBufferMemory() / 1024 / 1024);
 
     std::string computeShaderMemoryString = fmt::format(
-      "{:.2f} Mb", (double)m_VramTracker->GetComputeMemory() / 1024 / 1024);
+      "{:.2f} Mb", (double)mVramTracker->GetComputeMemory() / 1024 / 1024);
 
     std::string shaderMemoryString = fmt::format(
-      "{:.2f} Mb", (double)m_VramTracker->GetShaderMemory() / 1024 / 1024);
+      "{:.2f} Mb", (double)mVramTracker->GetShaderMemory() / 1024 / 1024);
 
     ImGui::Text("Texture Memory: %s", textureMemoryString.c_str());
     ImGui::Text("Framebuffer Memory: %s", framebufferMemoryString.c_str());
@@ -158,7 +157,7 @@ namespace Dwarf
     ImGui::Text("Shader Memory: %s", shaderMemoryString.c_str());
 
     ImGui::Text("Device information:\n%s",
-                m_EditorStats->GetDeviceInfo().c_str());
+                mEditorStats->GetDeviceInfo().c_str());
 
     ImGui::End();
   }

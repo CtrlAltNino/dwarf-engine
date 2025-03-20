@@ -9,7 +9,7 @@ namespace Dwarf
     : public IShaderParameterCollectionFactory
   {
   private:
-    GraphicsApi m_GraphicsApi;
+    GraphicsApi mGraphicsApi;
 
   public:
     ShaderParameterCollectionFactory(GraphicsApi graphicsApi);

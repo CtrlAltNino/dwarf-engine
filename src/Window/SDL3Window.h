@@ -24,16 +24,16 @@ namespace Dwarf
     };
 
   private:
-    SDL_Window*                              m_Window;
-    std::unique_ptr<IGraphicsContext>        m_Context;
-    std::unique_ptr<IImGuiLayer>             m_ImGuiLayer;
-    std::shared_ptr<IGraphicsContextFactory> m_ContextFactory;
-    std::shared_ptr<IImGuiLayerFactory>      m_ImguiLayerFactory;
-    std::shared_ptr<IInputManager>           m_InputManager;
-    std::shared_ptr<IDwarfLogger>            m_Logger;
-    std::shared_ptr<IEditorStats>            m_EditorStats;
+    SDL_Window*                              mWindow;
+    std::unique_ptr<IGraphicsContext>        mContext;
+    std::unique_ptr<IImGuiLayer>             mImGuiLayer;
+    std::shared_ptr<IGraphicsContextFactory> mContextFactory;
+    std::shared_ptr<IImGuiLayerFactory>      mImguiLayerFactory;
+    std::shared_ptr<IInputManager>           mInputManager;
+    std::shared_ptr<IDwarfLogger>            mLogger;
+    std::shared_ptr<IEditorStats>            mEditorStats;
 
-    WindowData m_Data;
+    WindowData mData;
 
   public:
     explicit SDL3Window(const WindowProps&                       props,
@@ -52,13 +52,13 @@ namespace Dwarf
     auto
     getWidth() const -> unsigned int override
     {
-      return m_Data.Width;
+      return mData.Width;
     }
 
     auto
     getHeight() const -> unsigned int override
     {
-      return m_Data.Height;
+      return mData.Height;
     }
 
     void
@@ -80,7 +80,7 @@ namespace Dwarf
     [[nodiscard]] auto
     getNativeWindow() const -> SDL_Window* override
     {
-      return m_Window;
+      return mWindow;
     }
 
     void

@@ -10,10 +10,10 @@ namespace Dwarf
   class PerformanceWindowFactory : public IPerformanceWindowFactory
   {
   private:
-    std::shared_ptr<IEditorStats>        m_EditorStats;
-    std::shared_ptr<IRendererApiFactory> m_RendererApiFactory;
-    std::shared_ptr<IVramTracker>        m_VramTracker;
-    std::shared_ptr<IGpuInfoFactory>     m_GpuInfoFactory;
+    std::shared_ptr<IEditorStats>        mEditorStats;
+    std::shared_ptr<IRendererApiFactory> mRendererApiFactory;
+    std::shared_ptr<IVramTracker>        mVramTracker;
+    std::shared_ptr<IGpuInfoFactory>     mGpuInfoFactory;
 
   public:
     BOOST_DI_INJECT(PerformanceWindowFactory,

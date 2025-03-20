@@ -16,18 +16,18 @@ namespace Dwarf
   class ForwardRenderer : public IRenderingPipeline
   {
   private:
-    std::unique_ptr<IMaterial>        m_IdMaterial;
-    std::unique_ptr<IMaterial>        m_GridMaterial;
-    std::unique_ptr<IMeshBuffer>      m_GridMeshBuffer;
-    glm::mat4                         m_GridModelMatrix;
-    std::shared_ptr<IRendererApi>     m_RendererApi;
-    std::shared_ptr<IMaterialFactory> m_MaterialFactory;
-    std::shared_ptr<IShaderRegistry>  m_ShaderRegistry;
+    std::unique_ptr<IMaterial>        mIdMaterial;
+    std::unique_ptr<IMaterial>        mGridMaterial;
+    std::unique_ptr<IMeshBuffer>      mGridMeshBuffer;
+    glm::mat4                         mGridModelMatrix;
+    std::shared_ptr<IRendererApi>     mRendererApi;
+    std::shared_ptr<IMaterialFactory> mMaterialFactory;
+    std::shared_ptr<IShaderRegistry>  mShaderRegistry;
     std::shared_ptr<IShaderSourceCollectionFactory>
-                                        m_ShaderSourceCollectionFactory;
-    std::shared_ptr<IMeshFactory>       m_MeshFactory;
-    std::shared_ptr<IMeshBufferFactory> m_MeshBufferFactory;
-    std::shared_ptr<IDrawCallList>      m_DrawCallList;
+                                        mShaderSourceCollectionFactory;
+    std::shared_ptr<IMeshFactory>       mMeshFactory;
+    std::shared_ptr<IMeshBufferFactory> mMeshBufferFactory;
+    std::shared_ptr<IDrawCallList>      mDrawCallList;
 
     void
     Setup(glm::ivec2 viewportSize);

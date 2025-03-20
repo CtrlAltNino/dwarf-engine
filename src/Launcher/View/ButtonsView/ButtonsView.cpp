@@ -9,9 +9,9 @@ namespace Dwarf
   ButtonsView::ButtonsView(std::shared_ptr<ILauncherData>   data,
                            std::shared_ptr<ISavedProjects>  savedProjects,
                            std::shared_ptr<ILauncherAssets> launcherAssets)
-    : m_Data(data)
-    , m_SavedProjects(savedProjects)
-    , m_LauncherAssets(launcherAssets)
+    : mData(data)
+    , mSavedProjects(savedProjects)
+    , mLauncherAssets(launcherAssets)
   {
   }
 
@@ -39,12 +39,12 @@ namespace Dwarf
       return;
     }
 
-    ImGui::PushFont(m_LauncherAssets->GetHeaderFont().get());
+    ImGui::PushFont(mLauncherAssets->GetHeaderFont().get());
     ImGui::Text("Add Project");
     ImGui::PopFont();
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 6);
     ImGui::Separator();
-    ImGui::PushFont(m_LauncherAssets->GetTextFont().get());
+    ImGui::PushFont(mLauncherAssets->GetTextFont().get());
     ImGui::PushStyleColor(ImGuiCol_Button,
                           ImVec4(76 / 255.0, 86 / 255.0, 106 / 255.0, 1));
     ImGui::PushStyleColor(ImGuiCol_ButtonHovered,
@@ -58,7 +58,7 @@ namespace Dwarf
     if (ImGui::Button("Create new project",
                       ImVec2(ImGui::GetContentRegionAvail().x, 75)))
     {
-      m_Data->SetState(ProjectChooserState::CreateNewProject);
+      mData->SetState(ProjectChooserState::CreateNewProject);
     }
 
     if (ImGui::IsItemHovered())
@@ -72,7 +72,7 @@ namespace Dwarf
     if (ImGui::Button("Add existing project",
                       ImVec2(ImGui::GetContentRegionAvail().x, 75)))
     {
-      m_SavedProjects->OpenAddProjectDialog();
+      mSavedProjects->OpenAddProjectDialog();
     }
 
     if (ImGui::IsItemHovered())
@@ -82,7 +82,7 @@ namespace Dwarf
 
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 15);
 
-    ImGui::PushFont(m_LauncherAssets->GetHeaderFont().get());
+    ImGui::PushFont(mLauncherAssets->GetHeaderFont().get());
     ImGui::Text("Options");
     ImGui::PopFont();
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 6);

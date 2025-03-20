@@ -23,19 +23,19 @@ namespace Dwarf
     : IGuiModule(ModuleLabel("Asset Browser"),
                  ModuleType(MODULE_TYPE::ASSET_BROWSER),
                  ModuleID(std::make_shared<UUID>()))
-    , m_AssetDirectoryPath(assetDirectoryPath)
-    , m_CurrentDirectory(assetDirectoryPath)
-    , m_TextureFactory(textureFactory)
-    , m_AssetDatabase(assetDatabase)
-    , m_InputManager(inputManager)
-    , m_EditorSelection(editorSelection)
-    , m_MaterialIO(materialIO)
-    , m_MaterialFactory(materialFactory)
-    , m_AssetMetadata(assetMetadata)
-    , m_MaterialCreator(materialCreator)
-    , m_FileHandler(fileHandler)
+    , mAssetDirectoryPath(assetDirectoryPath)
+    , mCurrentDirectory(assetDirectoryPath)
+    , mTextureFactory(textureFactory)
+    , mAssetDatabase(assetDatabase)
+    , mInputManager(inputManager)
+    , mEditorSelection(editorSelection)
+    , mMaterialIO(materialIO)
+    , mMaterialFactory(materialFactory)
+    , mAssetMetadata(assetMetadata)
+    , mMaterialCreator(materialCreator)
+    , mFileHandler(fileHandler)
   {
-    m_DirectoryHistory.push_back(m_CurrentDirectory);
+    mDirectoryHistory.push_back(mCurrentDirectory);
     LoadIcons();
   }
 
@@ -56,19 +56,19 @@ namespace Dwarf
                  ModuleType(MODULE_TYPE::ASSET_BROWSER),
                  ModuleID(std::make_shared<UUID>(
                    serializedModule.t["id"].get<std::string>())))
-    , m_AssetDirectoryPath(assetDirectoryPath)
-    , m_CurrentDirectory(assetDirectoryPath)
-    , m_TextureFactory(textureFactory)
-    , m_AssetDatabase(assetDatabase)
-    , m_InputManager(inputManager)
-    , m_EditorSelection(editorSelection)
-    , m_MaterialIO(materialIO)
-    , m_MaterialFactory(materialFactory)
-    , m_AssetMetadata(assetMetadata)
-    , m_MaterialCreator(materialCreator)
-    , m_FileHandler(fileHandler)
+    , mAssetDirectoryPath(assetDirectoryPath)
+    , mCurrentDirectory(assetDirectoryPath)
+    , mTextureFactory(textureFactory)
+    , mAssetDatabase(assetDatabase)
+    , mInputManager(inputManager)
+    , mEditorSelection(editorSelection)
+    , mMaterialIO(materialIO)
+    , mMaterialFactory(materialFactory)
+    , mAssetMetadata(assetMetadata)
+    , mMaterialCreator(materialCreator)
+    , mFileHandler(fileHandler)
   {
-    m_DirectoryHistory.push_back(m_CurrentDirectory);
+    mDirectoryHistory.push_back(mCurrentDirectory);
     LoadIcons();
     // Deserialize(serializedModule.t);
   }
@@ -99,11 +99,11 @@ namespace Dwarf
   void
   AssetBrowserWindow::OnUpdate()
   {
-    if (m_InputManager->GetMouseButtonDown(MOUSE_BUTTON::MOUSE_BUTTON_4))
+    if (mInputManager->GetMouseButtonDown(MOUSE_BUTTON::MOUSE_BUTTON_4))
     {
       GoBack();
     }
-    else if (m_InputManager->GetMouseButtonDown(MOUSE_BUTTON::MOUSE_BUTTON_5))
+    else if (mInputManager->GetMouseButtonDown(MOUSE_BUTTON::MOUSE_BUTTON_5))
     {
       GoForward();
     }
@@ -114,36 +114,35 @@ namespace Dwarf
   {
     std::filesystem::path iconPath("data/engine/img/icons/asset browser");
 
-    m_DirectoryIcon =
-      m_TextureFactory->FromPath(iconPath / "directoryIcon.png");
+    mDirectoryIcon = mTextureFactory->FromPath(iconPath / "directoryIcon.png");
 
-    m_FBXIcon = m_TextureFactory->FromPath(iconPath / "fbxIcon.png");
-    m_OBJIcon = m_TextureFactory->FromPath(iconPath / "objIcon.png");
+    mFBXIcon = mTextureFactory->FromPath(iconPath / "fbxIcon.png");
+    mOBJIcon = mTextureFactory->FromPath(iconPath / "objIcon.png");
 
-    m_JPGIcon = m_TextureFactory->FromPath(iconPath / "jpgIcon.png");
-    m_PNGIcon = m_TextureFactory->FromPath(iconPath / "pngIcon.png");
+    mJPGIcon = mTextureFactory->FromPath(iconPath / "jpgIcon.png");
+    mPNGIcon = mTextureFactory->FromPath(iconPath / "pngIcon.png");
 
-    m_VertexShaderIcon =
-      m_TextureFactory->FromPath(iconPath / "vertexShaderIcon.png");
-    m_TessellationControlShaderIcon = m_TextureFactory->FromPath(
-      iconPath / "tessellationControlShaderIcon.png");
-    m_TessellationEvaluationShaderIcon = m_TextureFactory->FromPath(
+    mVertexShaderIcon =
+      mTextureFactory->FromPath(iconPath / "vertexShaderIcon.png");
+    mTessellationControlShaderIcon =
+      mTextureFactory->FromPath(iconPath / "tessellationControlShaderIcon.png");
+    mTessellationEvaluationShaderIcon = mTextureFactory->FromPath(
       iconPath / "tessellationEvaluationShaderIcon.png");
-    m_GeometryShaderIcon =
-      m_TextureFactory->FromPath(iconPath / "geometryShaderIcon.png");
-    m_FragmentShaderIcon =
-      m_TextureFactory->FromPath(iconPath / "fragmentShaderIcon.png");
-    m_ComputeShaderIcon =
-      m_TextureFactory->FromPath(iconPath / "computeShaderIcon.png");
-    m_HLSLShaderIcon =
-      m_TextureFactory->FromPath(iconPath / "hlslShaderIcon.png");
+    mGeometryShaderIcon =
+      mTextureFactory->FromPath(iconPath / "geometryShaderIcon.png");
+    mFragmentShaderIcon =
+      mTextureFactory->FromPath(iconPath / "fragmentShaderIcon.png");
+    mComputeShaderIcon =
+      mTextureFactory->FromPath(iconPath / "computeShaderIcon.png");
+    mHLSLShaderIcon =
+      mTextureFactory->FromPath(iconPath / "hlslShaderIcon.png");
 
-    m_SceneIcon = m_TextureFactory->FromPath(iconPath / "sceneIcon.png");
+    mSceneIcon = mTextureFactory->FromPath(iconPath / "sceneIcon.png");
 
-    m_MaterialIcon = m_TextureFactory->FromPath(iconPath / "materialIcon.png");
+    mMaterialIcon = mTextureFactory->FromPath(iconPath / "materialIcon.png");
 
-    m_UnknownFileIcon =
-      m_TextureFactory->FromPath(iconPath / "unknownFileIcon.png");
+    mUnknownFileIcon =
+      mTextureFactory->FromPath(iconPath / "unknownFileIcon.png");
   }
 
   bool
@@ -158,7 +157,7 @@ namespace Dwarf
   {
     ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(500, 500));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
-    if (!ImGui::Begin(GetIdentifier().c_str(), &m_WindowOpened, 0))
+    if (!ImGui::Begin(GetIdentifier().c_str(), &mWindowOpened, 0))
     {
       // Early out if the window is collapsed, as an optimization.
       ImGui::End();
@@ -203,7 +202,7 @@ namespace Dwarf
 
         if (ImGui::IsItemClicked())
         {
-          m_CurrentDirectory = directoryEntry.path();
+          mCurrentDirectory = directoryEntry.path();
         }
       }
     }
@@ -222,10 +221,10 @@ namespace Dwarf
     {
       if (ImGui::IsItemClicked())
       {
-        m_CurrentDirectory = m_AssetDirectoryPath.t;
+        mCurrentDirectory = mAssetDirectoryPath.t;
       }
       ImGui::Indent(8.0f);
-      RenderDirectoryLevel(m_AssetDirectoryPath.t);
+      RenderDirectoryLevel(mAssetDirectoryPath.t);
       ImGui::Unindent(8.0f);
     }
     ImGui::End();
@@ -252,7 +251,7 @@ namespace Dwarf
       GoForward();
     }
     ImGui::SameLine(0.0f, 5.0f);
-    ImGui::SliderFloat("Size", &m_IconScale, 1.0f, 2.0f);
+    ImGui::SliderFloat("Size", &mIconScale, 1.0f, 2.0f);
     ImGui::End();
     ImGui::PopStyleVar(2);
   }
@@ -278,7 +277,7 @@ namespace Dwarf
           // TODO: Make this moddable
           if (ImGui::MenuItem("Default"))
           {
-            m_MaterialCreator->CreateMaterialAsset(m_CurrentDirectory);
+            mMaterialCreator->CreateMaterialAsset(mCurrentDirectory);
           }
           ImGui::EndMenu();
         }
@@ -290,7 +289,7 @@ namespace Dwarf
             // TODO: Reimplement this
             // FileHandler::Copy(Shader::GetDefaultShaderPath() /
             // "default.vert",
-            //                   m_CurrentDirectory / "New vertex shader.vert");
+            //                   mCurrentDirectory / "New vertex shader.vert");
           }
 
           if (ImGui::MenuItem("Fragment"))
@@ -298,7 +297,7 @@ namespace Dwarf
             // TODO: Reimplement this
             // FileHandler::Copy(Shader::GetDefaultShaderPath() /
             // "default.frag",
-            //                   m_CurrentDirectory / "New fragment
+            //                   mCurrentDirectory / "New fragment
             //                   shader.frag");
           }
 
@@ -307,7 +306,7 @@ namespace Dwarf
 
         if (ImGui::MenuItem("Scene"))
         {
-          m_SceneIo->NewSceneAsset(m_CurrentDirectory);
+          mSceneIo->NewSceneAsset(mCurrentDirectory);
         }
 
         ImGui::EndMenu();
@@ -315,20 +314,20 @@ namespace Dwarf
 
       if (ImGui::MenuItem("Create Folder"))
       {
-        m_FileHandler->CreateDirectoryAt(m_CurrentDirectory / "New Folder");
+        mFileHandler->CreateDirectoryAt(mCurrentDirectory / "New Folder");
       }
 
       if (ImGui::MenuItem("Paste"))
       {
-        if (std::filesystem::exists(m_CopyPathBuffer))
+        if (std::filesystem::exists(mCopyPathBuffer))
         {
-          m_FileHandler->Copy(m_CopyPathBuffer, m_CurrentDirectory);
+          mFileHandler->Copy(mCopyPathBuffer, mCurrentDirectory);
         }
       }
 
       if (ImGui::MenuItem("Open in file browser"))
       {
-        m_FileHandler->OpenPathInFileBrowser(m_CurrentDirectory);
+        mFileHandler->OpenPathInFileBrowser(mCurrentDirectory);
       }
       ImGui::EndPopup();
     }
@@ -342,7 +341,7 @@ namespace Dwarf
 
     // directories.
     for (auto& directoryEntry :
-         std::filesystem::directory_iterator(m_CurrentDirectory))
+         std::filesystem::directory_iterator(mCurrentDirectory))
     {
       if (directoryEntry.is_directory())
       {
@@ -368,15 +367,15 @@ namespace Dwarf
     {
       const auto& path = directoryEntry.path();
       auto        relativePath =
-        std::filesystem::relative(path, m_AssetDirectoryPath.t);
+        std::filesystem::relative(path, mAssetDirectoryPath.t);
 
       if (!(directoryEntry.path().has_extension() &&
             directoryEntry.path().extension() ==
               IAssetMetadata::METADATA_EXTENSION))
       {
-        float padding = 16.0f * m_IconScale;
+        float padding = 16.0f * mIconScale;
         float halfPadding = padding / 2.0f;
-        float cellWidth = 64.0f * m_IconScale;
+        float cellWidth = 64.0f * mIconScale;
         float textWidth = cellWidth - padding;
         float textHeight =
           ImGui::CalcTextSize(
@@ -395,7 +394,7 @@ namespace Dwarf
         ImGui::SetCursorPos(cellMin);
 
         ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.0f);
-        if (m_SelectedAsset == path)
+        if (mSelectedAsset == path)
         {
           ImGui::PushStyleColor(ImGuiCol_Button,
                                 ImVec4(1.0f, 1.0f, 1.0f, 0.2f));
@@ -421,9 +420,9 @@ namespace Dwarf
           }
           else if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
           {
-            if (!directoryEntry.is_directory() && m_AssetDatabase->Exists(path))
+            if (!directoryEntry.is_directory() && mAssetDatabase->Exists(path))
             {
-              m_EditorSelection->SelectAsset(m_AssetDatabase->Retrieve(path));
+              mEditorSelection->SelectAsset(mAssetDatabase->Retrieve(path));
             }
           }
 
@@ -431,7 +430,7 @@ namespace Dwarf
         }
         else
         {
-          if (m_SelectedAsset == directoryEntry.path() &&
+          if (mSelectedAsset == directoryEntry.path() &&
               ImGui::IsWindowHovered() &&
               ImGui::IsMouseClicked(ImGuiMouseButton_Left))
           {
@@ -449,38 +448,38 @@ namespace Dwarf
           }
           else if (ImGui::MenuItem("Copy"))
           {
-            m_CopyPathBuffer = path;
+            mCopyPathBuffer = path;
           }
           else if (ImGui::MenuItem("Duplicate"))
           {
-            m_FileHandler->Duplicate(path);
+            mFileHandler->Duplicate(path);
           }
           else if (ImGui::MenuItem("Rename"))
           {
-            m_RenamePathBuffer = path;
+            mRenamePathBuffer = path;
             SetRenameBuffer(path);
-            m_OpenRename = true;
+            mOpenRename = true;
           }
           if (ImGui::MenuItem("Open in file browser"))
           {
             if (directoryEntry.is_directory())
             {
-              m_FileHandler->OpenPathInFileBrowser(directoryEntry.path());
+              mFileHandler->OpenPathInFileBrowser(directoryEntry.path());
             }
             else
             {
-              m_FileHandler->OpenPathInFileBrowser(m_CurrentDirectory);
+              mFileHandler->OpenPathInFileBrowser(mCurrentDirectory);
             }
           }
           else if (ImGui::MenuItem("Delete"))
           {
             // TODO: Confirmation modal
-            if (m_AssetDatabase->Exists(path))
+            if (mAssetDatabase->Exists(path))
             {
-              m_AssetDatabase->Remove(path);
-              m_AssetMetadata->RemoveMetadata(path);
+              mAssetDatabase->Remove(path);
+              mAssetMetadata->RemoveMetadata(path);
             }
-            m_FileHandler->Delete(path);
+            mFileHandler->Delete(path);
           }
           ImGui::EndPopup();
         }
@@ -491,7 +490,7 @@ namespace Dwarf
         static ImTextureID texID;
         if (directoryEntry.is_directory())
         {
-          texID = (ImTextureID)m_DirectoryIcon->GetTextureID();
+          texID = (ImTextureID)mDirectoryIcon->GetTextureID();
         }
         else if (directoryEntry.is_regular_file())
         {
@@ -501,66 +500,66 @@ namespace Dwarf
               directoryEntry.path().extension().string());
             if (extension == ".fbx")
             {
-              texID = (ImTextureID)m_FBXIcon->GetTextureID();
+              texID = (ImTextureID)mFBXIcon->GetTextureID();
             }
             else if (extension == ".obj")
             {
-              texID = (ImTextureID)m_OBJIcon->GetTextureID();
+              texID = (ImTextureID)mOBJIcon->GetTextureID();
             }
             else if (extension == ".jpg")
             {
-              texID = (ImTextureID)m_JPGIcon->GetTextureID();
+              texID = (ImTextureID)mJPGIcon->GetTextureID();
             }
             else if (extension == ".png")
             {
-              texID = (ImTextureID)m_PNGIcon->GetTextureID();
+              texID = (ImTextureID)mPNGIcon->GetTextureID();
             }
             else if (extension == ".vert")
             {
-              texID = (ImTextureID)m_VertexShaderIcon->GetTextureID();
+              texID = (ImTextureID)mVertexShaderIcon->GetTextureID();
             }
             else if (extension == ".tesc")
             {
               texID =
-                (ImTextureID)m_TessellationControlShaderIcon->GetTextureID();
+                (ImTextureID)mTessellationControlShaderIcon->GetTextureID();
             }
             else if (extension == ".tese")
             {
               texID =
-                (ImTextureID)m_TessellationEvaluationShaderIcon->GetTextureID();
+                (ImTextureID)mTessellationEvaluationShaderIcon->GetTextureID();
             }
             else if (extension == ".geom")
             {
-              texID = (ImTextureID)m_GeometryShaderIcon->GetTextureID();
+              texID = (ImTextureID)mGeometryShaderIcon->GetTextureID();
             }
             else if (extension == ".frag")
             {
-              texID = (ImTextureID)m_FragmentShaderIcon->GetTextureID();
+              texID = (ImTextureID)mFragmentShaderIcon->GetTextureID();
             }
             else if (extension == ".comp")
             {
-              texID = (ImTextureID)m_ComputeShaderIcon->GetTextureID();
+              texID = (ImTextureID)mComputeShaderIcon->GetTextureID();
             }
             else if (extension == ".hlsl")
             {
-              texID = (ImTextureID)m_HLSLShaderIcon->GetTextureID();
+              texID = (ImTextureID)mHLSLShaderIcon->GetTextureID();
             }
             else if (extension == ".dscene")
             {
-              texID = (ImTextureID)m_SceneIcon->GetTextureID();
+              texID = (ImTextureID)mSceneIcon->GetTextureID();
             }
             else if (extension == ".dmat")
             {
-              texID = (ImTextureID)m_MaterialIcon->GetTextureID();
+              texID = (ImTextureID)mMaterialIcon->GetTextureID();
             }
             else
             {
-              texID = (ImTextureID)m_UnknownFileIcon->GetTextureID();
+              texID = (ImTextureID)mUnknownFileIcon->GetTextureID();
             }
           }
           else
           {
-            texID = (ImTextureID)m_UnknownFileIcon->GetTextureID();
+            texID = (ImTextureID)mUnknownFileIcon->GetTextureID();
           }
         }
         ImGui::Image(texID, ImVec2(cellWidth - padding, cellWidth - padding));
@@ -585,31 +584,31 @@ namespace Dwarf
       }
     }
 
-    if (m_OpenRename)
+    if (mOpenRename)
     {
       ImGui::OpenPopup("rename_popup");
-      m_OpenRename = false;
+      mOpenRename = false;
     }
 
     if (ImGui::BeginPopup("rename_popup"))
     {
-      std::filesystem::path old = m_RenamePathBuffer;
+      std::filesystem::path old = mRenamePathBuffer;
 
-      ImGui::InputText("##RenameInput", m_RenameBuffer, 128);
+      ImGui::InputText("##RenameInput", mRenameBuffer, 128);
       if (ImGui::Button("Rename##RenameButton") &&
-          (std::strlen(m_RenameBuffer) > 0))
+          (std::strlen(mRenameBuffer) > 0))
       {
         std::filesystem::path newPath =
-          m_RenamePathBuffer.remove_filename().concat(m_RenameBuffer);
-        if (m_AssetDatabase->Exists(old))
+          mRenamePathBuffer.remove_filename().concat(mRenameBuffer);
+        if (mAssetDatabase->Exists(old))
         {
-          m_AssetDatabase->Rename(old, newPath);
+          mAssetDatabase->Rename(old, newPath);
         }
         else
         {
-          m_AssetDatabase->RenameDirectory(old, newPath);
+          mAssetDatabase->RenameDirectory(old, newPath);
         }
-        m_FileHandler->Rename(old, newPath);
+        mFileHandler->Rename(old, newPath);
         ImGui::CloseCurrentPopup();
       }
 
@@ -628,20 +627,20 @@ namespace Dwarf
   void
   AssetBrowserWindow::GoBack()
   {
-    if (m_HistoryPos > 0)
+    if (mHistoryPos > 0)
     {
-      m_HistoryPos--;
-      m_CurrentDirectory = m_DirectoryHistory[m_HistoryPos];
+      mHistoryPos--;
+      mCurrentDirectory = mDirectoryHistory[mHistoryPos];
     }
   }
 
   void
   AssetBrowserWindow::GoForward()
   {
-    if (m_HistoryPos < (m_DirectoryHistory.size() - 1))
+    if (mHistoryPos < (mDirectoryHistory.size() - 1))
     {
-      m_HistoryPos++;
-      m_CurrentDirectory = m_DirectoryHistory[m_HistoryPos];
+      mHistoryPos++;
+      mCurrentDirectory = mDirectoryHistory[mHistoryPos];
     }
   }
 
@@ -655,29 +654,29 @@ namespace Dwarf
     }
     else if (directoryEntry.path().extension() == ".dscene")
     {
-      // m_Model->SetScene(SceneUtilities::LoadScene(directoryEntry.path()));
+      // mModel->SetScene(SceneUtilities::LoadScene(directoryEntry.path()));
       // TODO: Use SceneIO
     }
     else
     {
       // TODO:s Open file
-      m_FileHandler->LaunchFile(directoryEntry.path());
+      mFileHandler->LaunchFile(directoryEntry.path());
     }
   }
 
   void
   AssetBrowserWindow::EnterDirectory(std::filesystem::path const& path)
   {
-    m_CurrentDirectory /= path.filename();
-    if (m_HistoryPos < (m_DirectoryHistory.size() - 1))
+    mCurrentDirectory /= path.filename();
+    if (mHistoryPos < (mDirectoryHistory.size() - 1))
     {
-      for (int i = 0; i < (m_DirectoryHistory.size() - m_HistoryPos); i++)
+      for (int i = 0; i < (mDirectoryHistory.size() - mHistoryPos); i++)
       {
-        m_DirectoryHistory.pop_back();
+        mDirectoryHistory.pop_back();
       }
     }
-    m_DirectoryHistory.push_back(m_CurrentDirectory);
-    m_HistoryPos = (int)m_DirectoryHistory.size() - 1;
+    mDirectoryHistory.push_back(mCurrentDirectory);
+    mHistoryPos = (int)mDirectoryHistory.size() - 1;
   }
 
   void
@@ -689,14 +688,14 @@ namespace Dwarf
   void
   AssetBrowserWindow::ClearSelection()
   {
-    m_SelectedAsset = "";
-    m_EditorSelection->ClearAssetSelection();
+    mSelectedAsset = "";
+    mEditorSelection->ClearAssetSelection();
   }
 
   void
   AssetBrowserWindow::Deserialize(nlohmann::json moduleData)
   {
-    m_CurrentDirectory =
+    mCurrentDirectory =
       (std::filesystem::path)moduleData["openedPath"].get<std::string>();
   }
 
@@ -705,7 +704,7 @@ namespace Dwarf
   {
     nlohmann::json serializedModule;
 
-    serializedModule["openedPath"] = m_CurrentDirectory;
+    serializedModule["openedPath"] = mCurrentDirectory;
     serializedModule["id"] = GetUuid()->toString();
     serializedModule["type"] = static_cast<int>(GetModuleType());
     serializedModule["label"] = GetModuleName();
@@ -716,32 +715,32 @@ namespace Dwarf
   void
   AssetBrowserWindow::SetRenameBuffer(std::filesystem::path const& path)
   {
-    if (m_FileHandler->FileExists(path))
+    if (mFileHandler->FileExists(path))
     {
       // TODO: test this
 #ifdef _MSC_VER
       strncpy_s(
-        m_RenameBuffer,
-        std::filesystem::path(m_RenamePathBuffer).filename().string().c_str(),
+        mRenameBuffer,
+        std::filesystem::path(mRenamePathBuffer).filename().string().c_str(),
         RENAME_BUFFER_SIZE - 1);
 #else
       strncpy(
-        m_RenameBuffer,
-        std::filesystem::path(m_RenamePathBuffer).filename().string().c_str(),
+        mRenameBuffer,
+        std::filesystem::path(mRenamePathBuffer).filename().string().c_str(),
         RENAME_BUFFER_SIZE - 1);
 #endif
     }
-    else if (m_FileHandler->DirectoryExists(path))
+    else if (mFileHandler->DirectoryExists(path))
     {
       // TODO: test this
 #ifdef _MSC_VER
       strncpy_s(
-        m_RenameBuffer,
-        std::filesystem::path(m_RenamePathBuffer).stem().string().c_str(),
+        mRenameBuffer,
+        std::filesystem::path(mRenamePathBuffer).stem().string().c_str(),
         RENAME_BUFFER_SIZE - 1);
 #else
-      strncpy(m_RenameBuffer,
-              std::filesystem::path(m_RenamePathBuffer).stem().string().c_str(),
+      strncpy(mRenameBuffer,
+              std::filesystem::path(mRenamePathBuffer).stem().string().c_str(),
               RENAME_BUFFER_SIZE - 1);
 #endif
     }

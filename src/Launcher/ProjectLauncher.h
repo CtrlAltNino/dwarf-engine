@@ -1,21 +1,21 @@
 #pragma once
 
-#include "pch.h"
-#include "Launcher/LauncherData/ILauncherData.h"
 #include "Launcher/IProjectLauncher.h"
+#include "Launcher/LauncherData/ILauncherData.h"
 #include "Launcher/SavedProjects/ISavedProjects.h"
-#include "Logging/IDwarfLogger.h"
 #include "Launcher/View/IProjectLauncherView.h"
+#include "Logging/IDwarfLogger.h"
+#include "pch.h"
 
 namespace Dwarf
 {
   class ProjectLauncher : public IProjectLauncher
   {
   private:
-    std::unique_ptr<IProjectLauncherView> m_View;
-    std::shared_ptr<ILauncherData>        m_Data;
-    std::shared_ptr<ISavedProjects>       m_SavedProjects;
-    std::shared_ptr<IDwarfLogger>         m_Logger;
+    std::unique_ptr<IProjectLauncherView> mView;
+    std::shared_ptr<ILauncherData>        mData;
+    std::shared_ptr<ISavedProjects>       mSavedProjects;
+    std::shared_ptr<IDwarfLogger>         mLogger;
 
   public:
     ProjectLauncher(std::shared_ptr<IDwarfLogger>         logger,

@@ -9,8 +9,8 @@ namespace Dwarf
   class EntityInspector : public IEntityInspector
   {
   private:
-    std::shared_ptr<IAssetDatabase> m_AssetDatabase;
-    std::shared_ptr<ILoadedScene>   m_LoadedScene;
+    std::shared_ptr<IAssetDatabase> mAssetDatabase;
+    std::shared_ptr<ILoadedScene>   mLoadedScene;
 
     /// @brief Renders the components of an entity.
     /// @param entity Entity to render in the inspector.

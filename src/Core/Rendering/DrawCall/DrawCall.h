@@ -8,9 +8,9 @@ namespace Dwarf
   class DrawCall : public IDrawCall
   {
   private:
-    std::unique_ptr<IMeshBuffer> m_MeshBuffer;
-    IMaterial&                   m_Material;
-    TransformComponent&          m_Transform;
+    std::unique_ptr<IMeshBuffer> mMeshBuffer;
+    IMaterial&                   mMaterial;
+    TransformComponent&          mTransform;
 
   public:
     DrawCall(std::unique_ptr<IMeshBuffer>&& meshBuffer,

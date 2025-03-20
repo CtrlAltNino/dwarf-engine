@@ -11,9 +11,9 @@ namespace Dwarf
     std::shared_ptr<ILauncherData>   data,
     std::shared_ptr<ISavedProjects>  savedProjects,
     std::shared_ptr<ILauncherAssets> launcherAssets)
-    : m_Data(data)
-    , m_SavedProjects(savedProjects)
-    , m_LauncherAssets(launcherAssets)
+    : mData(data)
+    , mSavedProjects(savedProjects)
+    , mLauncherAssets(launcherAssets)
   {
   }
 
@@ -29,7 +29,7 @@ namespace Dwarf
     style->Colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0, 0, 0, 0.7);
 
     // Setting the font for the modal window title
-    ImGui::PushFont(m_LauncherAssets->GetHeaderFont().get());
+    ImGui::PushFont(mLauncherAssets->GetHeaderFont().get());
     ImGui::SetNextWindowSize(ImVec2(350, 0));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(10, 10));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 10);
@@ -47,11 +47,11 @@ namespace Dwarf
                                ImGuiWindowFlags_AlwaysAutoResize |
                                  ImGuiWindowFlags_NoMove))
     {
-      ImGui::PushFont(m_LauncherAssets->GetTextFont().get());
+      ImGui::PushFont(mLauncherAssets->GetTextFont().get());
       // ==================== Information Text ====================
       float textWidth =
         ImGui::CalcTextSize(
-          m_Data->GetSelectedProject().value().Path.string().c_str(),
+          mData->GetSelectedProject().value().Path.string().c_str(),
           nullptr,
           false)
           .x;
@@ -63,7 +63,7 @@ namespace Dwarf
         ImGui::GetCursorPosX() +
         (ImGui::GetContentRegionAvail().x / 2 - textWidth / 2));
       ImGui::Text("%s",
-                  m_Data->GetSelectedProject().value().Path.string().c_str());
+                  mData->GetSelectedProject().value().Path.string().c_str());
 
       ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 20);
       ImGui::Text("Do you want to remove it from the list?");
@@ -85,8 +85,7 @@ namespace Dwarf
       if (ImGui::Button("Remove",
                         ImVec2(ImGui::GetContentRegionAvail().x / 2 - 10, 0)))
       {
-        m_SavedProjects->RemoveProject(
-          m_Data->GetSelectedProject().value().Path);
+        mSavedProjects->RemoveProject(mData->GetSelectedProject().value().Path);
         ImGui::CloseCurrentPopup();
       }
 

@@ -1,85 +1,85 @@
+#include "EditorStats.h"
 #include "Utilities/TimeUtilities.h"
 #include "pch.h"
-#include "EditorStats.h"
 
 namespace Dwarf
 {
   const TimeStamp&
   EditorStats::GetCurrentTimeStamp() const
   {
-    return m_CurrentTimeStamp;
+    return mCurrentTimeStamp;
   }
 
   void
   EditorStats::SetCurrentTimeStamp(const TimeStamp& timeStamp)
   {
-    m_CurrentTimeStamp = timeStamp;
+    mCurrentTimeStamp = timeStamp;
   }
 
   const TimeStamp&
   EditorStats::GetLastTimeStamp() const
   {
-    return m_LastTimeStamp;
+    return mLastTimeStamp;
   }
 
   void
   EditorStats::SetLastTimeStamp(const TimeStamp& timeStamp)
   {
-    m_LastTimeStamp = timeStamp;
+    mLastTimeStamp = timeStamp;
   }
 
   double
   EditorStats::GetDeltaTime() const
   {
-    return TimeUtilities::GetDifferenceInSeconds(m_CurrentTimeStamp,
-                                                 m_LastTimeStamp);
+    return TimeUtilities::GetDifferenceInSeconds(mCurrentTimeStamp,
+                                                 mLastTimeStamp);
   }
 
   void
   EditorStats::SetReturnToLauncher(bool returnToLauncher)
   {
-    m_ReturnToLauncher = returnToLauncher;
+    mReturnToLauncher = returnToLauncher;
   }
 
   bool
   EditorStats::GetReturnToLauncher() const
   {
-    return m_ReturnToLauncher;
+    return mReturnToLauncher;
   }
 
   void
   EditorStats::SetCloseSignal(bool closeSignal)
   {
-    m_CloseSignal = closeSignal;
+    mCloseSignal = closeSignal;
   }
 
   bool
   EditorStats::GetCloseSignal() const
   {
-    return m_CloseSignal;
+    return mCloseSignal;
   }
 
   void
   EditorStats::SetDeviceInfo(const std::string& deviceInfo)
   {
-    m_DeviceInfo = deviceInfo;
+    mDeviceInfo = deviceInfo;
   }
 
   const std::string&
   EditorStats::GetDeviceInfo() const
   {
-    return m_DeviceInfo;
+    return mDeviceInfo;
   }
 
   void
   EditorStats::SetTimeSinceStart(const double& timeStamp)
   {
-    m_TimeSinceStart = timeStamp;
+    mTimeSinceStart = timeStamp;
   }
 
   const double&
   EditorStats::GetTimeSinceStart() const
   {
-    return m_TimeSinceStart;
+    return mTimeSinceStart;
   }
 }

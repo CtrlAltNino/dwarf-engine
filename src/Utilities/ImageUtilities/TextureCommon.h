@@ -1,9 +1,9 @@
 #pragma once
 
 #include "Utilities/ISerializable.h"
-#include <variant>
-#include <nlohmann/json.hpp>
 #include <glm/glm.hpp>
+#include <nlohmann/json.hpp>
+#include <variant>
 
 namespace Dwarf
 {
@@ -115,13 +115,13 @@ namespace Dwarf
 
   struct TextureImportSettings : public ISerializable
   {
-    TextureFileType m_TextureType = TextureFileType::Default;
-    ColorSpace      m_ColorSpace = ColorSpace::Linear;
-    bool            m_GammaCorrection = false;
-    bool            m_GenerateMipMaps = false;
-    bool            m_FlipY = false;
-    WrapMode        m_WrapMode = WrapMode::Clamp;
-    FilterMode      m_FilterMode = FilterMode::Bilinear;
+    TextureFileType mTextureType = TextureFileType::Default;
+    ColorSpace      mColorSpace = ColorSpace::Linear;
+    bool            mGammaCorrection = false;
+    bool            mGenerateMipMaps = false;
+    bool            mFlipY = false;
+    WrapMode        mWrapMode = WrapMode::Clamp;
+    FilterMode      mFilterMode = FilterMode::Bilinear;
 
     TextureImportSettings() = default;
 
@@ -129,37 +129,37 @@ namespace Dwarf
     {
       if (serializedData.contains("TextureType"))
       {
-        m_TextureType = serializedData["TextureType"].get<TextureFileType>();
+        mTextureType = serializedData["TextureType"].get<TextureFileType>();
       }
 
       if (serializedData.contains("ColorSpace"))
       {
-        m_ColorSpace = serializedData["ColorSpace"].get<ColorSpace>();
+        mColorSpace = serializedData["ColorSpace"].get<ColorSpace>();
       }
 
       if (serializedData.contains("GammaCorrection"))
       {
-        m_GammaCorrection = serializedData["GammaCorrection"].get<bool>();
+        mGammaCorrection = serializedData["GammaCorrection"].get<bool>();
       }
 
       if (serializedData.contains("GenerateMipMaps"))
       {
-        m_GenerateMipMaps = serializedData["GenerateMipMaps"].get<bool>();
+        mGenerateMipMaps = serializedData["GenerateMipMaps"].get<bool>();
       }
 
       if (serializedData.contains("FlipY"))
       {
-        m_FlipY = serializedData["FlipY"].get<bool>();
+        mFlipY = serializedData["FlipY"].get<bool>();
       }
 
       if (serializedData.contains("WrapMode"))
       {
-        m_WrapMode = serializedData["WrapMode"].get<WrapMode>();
+        mWrapMode = serializedData["WrapMode"].get<WrapMode>();
       }
 
       if (serializedData.contains("FilterMode"))
       {
-        m_FilterMode = serializedData["FilterMode"].get<FilterMode>();
+        mFilterMode = serializedData["FilterMode"].get<FilterMode>();
       }
     }
 
@@ -168,19 +168,19 @@ namespace Dwarf
     {
       nlohmann::json serializedData;
 
-      serializedData["TextureType"] = m_TextureType;
+      serializedData["TextureType"] = mTextureType;
 
-      serializedData["ColorSpace"] = m_ColorSpace;
+      serializedData["ColorSpace"] = mColorSpace;
 
-      serializedData["GammaCorrection"] = m_GammaCorrection;
+      serializedData["GammaCorrection"] = mGammaCorrection;
 
-      serializedData["GenerateMipMaps"] = m_GenerateMipMaps;
+      serializedData["GenerateMipMaps"] = mGenerateMipMaps;
 
-      serializedData["FlipY"] = m_FlipY;
+      serializedData["FlipY"] = mFlipY;
 
-      serializedData["WrapMode"] = m_WrapMode;
+      serializedData["WrapMode"] = mWrapMode;
 
-      serializedData["FilterMode"] = m_FilterMode;
+      serializedData["FilterMode"] = mFilterMode;
 
       return serializedData;
     }

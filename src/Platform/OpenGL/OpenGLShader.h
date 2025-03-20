@@ -3,28 +3,28 @@
 #include "Core/Rendering/VramTracker/IVramTracker.h"
 #include "pch.h"
 
-#include "Logging/IDwarfLogger.h"
 #include "Core/Asset/Database/AssetComponents.h"
 #include "Core/Asset/Shader/ShaderSourceCollection/IShaderSourceCollection.h"
 #include "Core/Rendering/Shader/ShaderParameterCollection/IShaderParameterCollectionFactory.h"
+#include "Logging/IDwarfLogger.h"
 
+#include "Core/Asset/AssetReference/IAssetReference.h"
+#include "Core/Rendering/Shader/IShader.h"
+#include <boost/di.hpp>
+#include <boost/serialization/strong_typedef.hpp>
 #include <cstdint>
 #include <fmt/format.h>
 #include <glad/glad.h>
-#include <boost/di.hpp>
-#include <boost/serialization/strong_typedef.hpp>
-#include "Core/Rendering/Shader/IShader.h"
-#include "Core/Asset/AssetReference/IAssetReference.h"
 
 namespace Dwarf
 {
   struct ShaderLogs
   {
-    std::string m_VertexShaderLog;
-    std::string m_TessellationControlShaderLog;
-    std::string m_TessellationEvaluationShaderLog;
-    std::string m_GeometryShaderLog;
-    std::string m_FragmentShaderLog;
+    std::string mVertexShaderLog;
+    std::string mTessellationControlShaderLog;
+    std::string mTessellationEvaluationShaderLog;
+    std::string mGeometryShaderLog;
+    std::string mFragmentShaderLog;
   };
 
   class OpenGLShader : public IShader
@@ -110,17 +110,17 @@ namespace Dwarf
     }
 
   private:
-    GLuint     m_ID = -1;
-    ShaderLogs m_ShaderLogs;
+    GLuint     mID = -1;
+    ShaderLogs mShaderLogs;
     // Flag to determine if the shader has been successfully compiled.
-    bool m_SuccessfullyCompiled;
+    bool mSuccessfullyCompiled;
     // Map of parameters that the shader uses.
-    std::shared_ptr<IDwarfLogger> m_Logger;
-    std::shared_ptr<IVramTracker> m_VramTracker;
+    std::shared_ptr<IDwarfLogger> mLogger;
+    std::shared_ptr<IVramTracker> mVramTracker;
     std::shared_ptr<IShaderParameterCollectionFactory>
-      m_ShaderParameterCollectionFactory;
+      mShaderParameterCollectionFactory;
 
-    std::map<std::string, GLuint> m_UniformLocations;
+    std::map<std::string, GLuint> mUniformLocations;
     std::map<std::string,
              std::variant<bool,
                           int,
@@ -131,16 +131,16 @@ namespace Dwarf
                           glm::vec4,
                           glm::mat3,
                           glm::mat4>>
-      m_UniformStates;
+      mUniformStates;
 
-    std::map<int, uintptr_t> m_TextureStates;
+    std::map<int, uintptr_t> mTextureStates;
 
-    std::optional<std::unique_ptr<IAssetReference>> m_VertexShaderAsset;
-    std::optional<std::unique_ptr<IAssetReference>> m_GeometryShaderAsset;
+    std::optional<std::unique_ptr<IAssetReference>> mVertexShaderAsset;
+    std::optional<std::unique_ptr<IAssetReference>> mGeometryShaderAsset;
     std::optional<std::unique_ptr<IAssetReference>>
-      m_TessellationControlShaderAsset;
+      mTessellationControlShaderAsset;
     std::optional<std::unique_ptr<IAssetReference>>
-      m_TessellationEvaluationShaderAsset;
-    std::optional<std::unique_ptr<IAssetReference>> m_FragmentShaderAsset;
+      mTessellationEvaluationShaderAsset;
+    std::optional<std::unique_ptr<IAssetReference>> mFragmentShaderAsset;
   };
 }

@@ -16,66 +16,65 @@ namespace Dwarf
     std::shared_ptr<IDwarfLogger>    logger,
     std::shared_ptr<ITextureFactory> textureFactory,
     std::shared_ptr<IWindow>         window)
-    : m_Logger(logger)
-    , m_TextureFactory(textureFactory)
-    , m_Window(window)
+    : mLogger(logger)
+    , mTextureFactory(textureFactory)
+    , mWindow(window)
   {
-    m_Logger->LogDebug(
+    mLogger->LogDebug(
       Log("Initializing project launcher assets", "LauncherAssets"));
 
     ImGuiIO io = ImGui::GetIO();
     io.Fonts->AddFontDefault();
     auto no_op_deleter = [](ImFont*) {};
-    m_HeaderFont = std::shared_ptr<ImFont>(
+    mHeaderFont = std::shared_ptr<ImFont>(
       io.Fonts->AddFontFromFileTTF(FONT_ROBOTO_LIGHT_PATH, 26), no_op_deleter);
-    m_TextFont = std::shared_ptr<ImFont>(
+    mTextFont = std::shared_ptr<ImFont>(
       io.Fonts->AddFontFromFileTTF(FONT_ROBOTO_REGULAR_PATH, 15),
       no_op_deleter);
-    m_Logger->LogDebug(Log("Fonts loaded", "LauncherAssets"));
+    mLogger->LogDebug(Log("Fonts loaded", "LauncherAssets"));
 
-    m_GithubIcon =
-      m_TextureFactory->FromPath(std::filesystem::path(GITHUB_PNG_ICON_PATH));
-    m_PatreonIcon =
-      m_TextureFactory->FromPath(std::filesystem::path(PATREON_PNG_ICON_PATH));
-    m_XIcon =
-      m_TextureFactory->FromPath(std::filesystem::path(X_PNG_ICON_PATH));
-    m_Logger->LogDebug(Log("Icons loaded", "LauncherAssets"));
+    mGithubIcon =
+      mTextureFactory->FromPath(std::filesystem::path(GITHUB_PNG_ICON_PATH));
+    mPatreonIcon =
+      mTextureFactory->FromPath(std::filesystem::path(PATREON_PNG_ICON_PATH));
+    mXIcon = mTextureFactory->FromPath(std::filesystem::path(X_PNG_ICON_PATH));
+    mLogger->LogDebug(Log("Icons loaded", "LauncherAssets"));
 
-    m_Logger->LogDebug(
+    mLogger->LogDebug(
       Log("Project launcher assets initialized", "LauncherAssets"));
   }
   /// @brief Font loaded into IMGUI for header text
   std::shared_ptr<ImFont>
   LauncherAssets::GetHeaderFont()
   {
-    return m_HeaderFont;
+    return mHeaderFont;
   }
 
   /// @brief Font loaded into IMGUI for regular text
   std::shared_ptr<ImFont>
   LauncherAssets::GetTextFont()
   {
-    return m_TextFont;
+    return mTextFont;
   }
 
   /// @brief Loaded image for the github icon
   std::shared_ptr<ITexture>
   LauncherAssets::GetGithubIcon()
   {
-    return m_GithubIcon;
+    return mGithubIcon;
   }
 
   /// @brief Loaded image for the patreon icon
   std::shared_ptr<ITexture>
   LauncherAssets::GetPatreonIcon()
   {
-    return m_PatreonIcon;
+    return mPatreonIcon;
   }
 
   /// @brief Loaded image for the X/Twitter icon
   std::shared_ptr<ITexture>
   LauncherAssets::GetXIcon()
   {
-    return m_XIcon;
+    return mXIcon;
   }
 }

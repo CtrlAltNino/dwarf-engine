@@ -13,11 +13,11 @@ namespace Dwarf
                    std::shared_ptr<ISceneFactory>    sceneFactory,
                    std::shared_ptr<IAssetDatabase>   assetDatabase,
                    std::shared_ptr<IFileHandler>     fileHandler)
-    : m_Logger(std::move(logger))
-    , m_SceneFactory(std::move(sceneFactory))
-    , m_ProjectSettings(std::move(projectSettings))
-    , m_AssetDatabase(std::move(assetDatabase))
-    , m_FileHandler(std::move(fileHandler))
+    : mLogger(std::move(logger))
+    , mSceneFactory(std::move(sceneFactory))
+    , mProjectSettings(std::move(projectSettings))
+    , mAssetDatabase(std::move(assetDatabase))
+    , mFileHandler(std::move(fileHandler))
   {
   }
 
@@ -28,21 +28,21 @@ namespace Dwarf
     {
       // TODO: Add error handling and logging.
       nlohmann::json sceneJson = scene.Serialize();
-      if (m_AssetDatabase->Exists(scene.GetProperties().GetAssetID().value()))
+      if (mAssetDatabase->Exists(scene.GetProperties().GetAssetID().value()))
       {
         std::filesystem::path path =
-          m_AssetDatabase->Retrieve(scene.GetProperties().GetAssetID().value())
+          mAssetDatabase->Retrieve(scene.GetProperties().GetAssetID().value())
             ->GetPath();
-        m_Logger->LogDebug(
+        mLogger->LogDebug(
           Log(fmt::format("Saving serialized scene:\n{}", sceneJson.dump(2)),
               "SceneIO"));
-        m_Logger->LogDebug(Log(
+        mLogger->LogDebug(Log(
           fmt::format("Writing scene to file: {}", path.string()), "SceneIO"));
         WriteSceneToFile(sceneJson, path);
       }
       else
       {
-        m_Logger->LogError(Log("Asset ID not found", "SceneIO"));
+        mLogger->LogError(Log("Asset ID not found", "SceneIO"));
       }
     }
     else
@@ -58,7 +58,7 @@ namespace Dwarf
     std::array<nfdu8filteritem_t, 1> filters = { { "Dwarf scene", "dscene" } };
     nfdsavedialogu8args_t            args = { 0 };
     std::string                      assetDirectoryPath =
-      m_AssetDatabase->GetAssetDirectoryPath().string();
+      mAssetDatabase->GetAssetDirectoryPath().string();
     args.filterList = filters.data();
     args.filterCount = 1;
     args.defaultPath = assetDirectoryPath.c_str();
@@ -66,7 +66,7 @@ namespace Dwarf
     nfdresult_t    result = NFD_SaveDialogU8_With(&savePath, &args);
     nlohmann::json sceneJson = scene.Serialize();
 
-    m_Logger->LogDebug(
+    mLogger->LogDebug(
       Log(fmt::format("Saving serialized scene: {}", sceneJson.dump(2)),
           "SceneIO"));
 
@@ -84,12 +84,12 @@ namespace Dwarf
     }
     else if (result == NFD_CANCEL)
     {
-      m_Logger->LogDebug(
+      mLogger->LogDebug(
         Log("User pressed cancel during File Dialog", "SceneIO"));
     }
     else
     {
-      m_Logger->LogError(
+      mLogger->LogError(
         Log(fmt::format("Error during NativeFileDialog: {}", NFD_GetError()),
             "SceneIO"));
     }
@@ -99,15 +99,15 @@ namespace Dwarf
   SceneIO::LoadScene(IAssetReference& sceneAsset) const
     -> std::unique_ptr<IScene>
   {
-    if (m_FileHandler->FileExists(sceneAsset.GetPath()))
+    if (mFileHandler->FileExists(sceneAsset.GetPath()))
     {
-      m_Logger->LogDebug(Log(fmt::format("Loading scene from asset: {}",
-                                         sceneAsset.GetPath().string()),
-                             "SceneIO"));
-      return m_SceneFactory->FromAsset(sceneAsset);
+      mLogger->LogDebug(Log(fmt::format("Loading scene from asset: {}",
+                                        sceneAsset.GetPath().string()),
+                            "SceneIO"));
+      return mSceneFactory->FromAsset(sceneAsset);
     }
 
-    m_Logger->LogDebug(Log(
+    mLogger->LogDebug(Log(
       fmt::format("Asset file at {} not found", sceneAsset.GetPath().string()),
       "SceneIO"));
     return nullptr;
@@ -120,7 +120,7 @@ namespace Dwarf
     std::array<nfdu8filteritem_t, 1> filters = { { "Dwarf scene", "dscene" } };
     nfdopendialogu8args_t            args = { 0 };
     std::string                      assetDirectoryPath =
-      m_AssetDatabase->GetAssetDirectoryPath().string();
+      mAssetDatabase->GetAssetDirectoryPath().string();
     args.filterList = filters.data();
     args.filterCount = 1;
     args.defaultPath = assetDirectoryPath.c_str();
@@ -131,19 +131,19 @@ namespace Dwarf
       std::filesystem::path path(savePath);
       NFD_FreePathU8(savePath);
       std::unique_ptr<IAssetReference> sceneAsset =
-        m_AssetDatabase->Retrieve(path);
+        mAssetDatabase->Retrieve(path);
       return LoadScene(*sceneAsset);
     }
 
     if (result == NFD_CANCEL)
     {
-      m_Logger->LogDebug(
+      mLogger->LogDebug(
         Log("User pressed cancel during File Dialog", "SceneIO"));
     }
 
     if (result == NFD_ERROR)
     {
-      m_Logger->LogError(
+      mLogger->LogError(
         Log(fmt::format("Error during NativeFileDialog: {}", NFD_GetError()),
             "SceneIO"));
     }
@@ -158,7 +158,7 @@ namespace Dwarf
     // Check if "New Scene" already exists, if so, increment the number
     std::string sceneName = "New Scene";
     int         sceneNameIndex = 1;
-    while (m_FileHandler->FileExists(
+    while (mFileHandler->FileExists(
       directory / (sceneName + std::to_string(sceneNameIndex) + ".scene")))
     {
       sceneNameIndex++;
@@ -172,13 +172,13 @@ namespace Dwarf
   SceneIO::WriteSceneToFile(const nlohmann::json&        serializedScene,
                             const std::filesystem::path& scenePath) const
   {
-    m_FileHandler->WriteToFile(scenePath, serializedScene.dump(2));
+    mFileHandler->WriteToFile(scenePath, serializedScene.dump(2));
   }
 
   void
   SceneIO::NewSceneAsset(const std::filesystem::path& directory)
   {
-    std::unique_ptr<IScene> scene = m_SceneFactory->CreateDefaultScene();
+    std::unique_ptr<IScene> scene = mSceneFactory->CreateDefaultScene();
     nlohmann::json          sceneJson = scene->Serialize();
     std::string             name = CreateNewSceneName(directory);
     WriteSceneToFile(sceneJson, directory / name);

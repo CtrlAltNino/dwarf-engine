@@ -1,7 +1,7 @@
 #include "Launcher/ProjectLauncher.h"
+#include "Core/Base.h"
 #include "SavedProjects/ISavedProjects.h"
 #include "Utilities/TimeUtilities.h"
-#include "Core/Base.h"
 #include <optional>
 
 namespace Dwarf
@@ -10,34 +10,34 @@ namespace Dwarf
                                    std::unique_ptr<IProjectLauncherView> view,
                                    std::shared_ptr<ILauncherData>        data,
                                    std::shared_ptr<ISavedProjects> projectList)
-    : m_View(std::move(view))
-    , m_Data(data)
-    , m_Logger(logger)
-    , m_SavedProjects(projectList)
+    : mView(std::move(view))
+    , mData(data)
+    , mLogger(logger)
+    , mSavedProjects(projectList)
   {
-    m_Logger->LogDebug(Log("Creating ProjectLauncher", "ProjectLauncher"));
+    mLogger->LogDebug(Log("Creating ProjectLauncher", "ProjectLauncher"));
   }
 
   ProjectLauncher::~ProjectLauncher()
   {
-    m_Logger->LogDebug(Log("Destroying ProjectLauncher", "ProjectLauncher"));
+    mLogger->LogDebug(Log("Destroying ProjectLauncher", "ProjectLauncher"));
   }
 
   std::optional<SavedProject>
   ProjectLauncher::Run()
   {
-    m_Logger->LogInfo(Log("Running project launcher...", "ProjectLauncher"));
+    mLogger->LogInfo(Log("Running project launcher...", "ProjectLauncher"));
 
-    m_Logger->LogInfo(Log("Showing window...", "ProjectLauncher"));
-    m_View->Show();
+    mLogger->LogInfo(Log("Showing window...", "ProjectLauncher"));
+    mView->Show();
 
-    m_Logger->LogInfo(Log("Starting main loop...", "ProjectLauncher"));
-    while ((m_Data->GetState() != ProjectChooserState::Done) &&
-           (m_Data->GetState() != ProjectChooserState::Cancelled))
+    mLogger->LogInfo(Log("Starting main loop...", "ProjectLauncher"));
+    while ((mData->GetState() != ProjectChooserState::Done) &&
+           (mData->GetState() != ProjectChooserState::Cancelled))
     {
       TimeStamp currentTimeStamp = TimeUtilities::GetCurrent();
 
-      m_View->Render();
+      mView->Render();
 
       // TODO: Fps lock
       while (TimeUtilities::GetDifferenceInSeconds(
@@ -47,15 +47,15 @@ namespace Dwarf
       }
     }
 
-    m_Logger->LogInfo(Log("Project launcher finished", "ProjectLauncher"));
-    if (m_Data->GetState() == ProjectChooserState::Done)
+    mLogger->LogInfo(Log("Project launcher finished", "ProjectLauncher"));
+    if (mData->GetState() == ProjectChooserState::Done)
     {
-      if (m_Data->GetSelectedProject())
+      if (mData->GetSelectedProject())
       {
-        m_SavedProjects->RegisterProjectOpening(
-          m_Data->GetSelectedProject()->Path);
+        mSavedProjects->RegisterProjectOpening(
+          mData->GetSelectedProject()->Path);
       }
-      return m_Data->GetSelectedProject();
+      return mData->GetSelectedProject();
     }
 
     return std::nullopt;

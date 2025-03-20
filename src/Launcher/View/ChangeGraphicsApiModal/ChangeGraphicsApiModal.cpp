@@ -10,9 +10,9 @@ namespace Dwarf
     std::shared_ptr<ILauncherData>   data,
     std::shared_ptr<ISavedProjects>  savedProjects,
     std::shared_ptr<ILauncherAssets> launcherAssets)
-    : m_Data(data)
-    , m_SavedProjects(savedProjects)
-    , m_LauncherAssets(launcherAssets)
+    : mData(data)
+    , mSavedProjects(savedProjects)
+    , mLauncherAssets(launcherAssets)
   {
   }
 
@@ -27,7 +27,7 @@ namespace Dwarf
     style->Colors[ImGuiCol_ModalWindowDimBg] = ImVec4(0, 0, 0, 0.7);
 
     // Setting the font for the modal window title
-    ImGui::PushFont(m_LauncherAssets->GetHeaderFont().get());
+    ImGui::PushFont(mLauncherAssets->GetHeaderFont().get());
     ImGui::SetNextWindowSize(ImVec2(425, 0));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(10, 10));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 10);
@@ -45,7 +45,7 @@ namespace Dwarf
                                ImGuiWindowFlags_AlwaysAutoResize |
                                  ImGuiWindowFlags_NoMove))
     {
-      ImGui::PushFont(m_LauncherAssets->GetTextFont().get());
+      ImGui::PushFont(mLauncherAssets->GetTextFont().get());
       // ==================== Information Text ====================
       ImGui::Text(
         "You are about to change the graphics API of a project.\nThis can break the project.\n\
@@ -64,12 +64,12 @@ namespace Dwarf
       ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
 
       static int currentApiIndex =
-        (int)m_Data->GetSelectedProject()->GraphicsApi;
+        (int)mData->GetSelectedProject()->GraphicsApi;
       // ==================== Graphics API Selection Dropdown
       // ====================
       {
         // Graphics Title
-        ImGui::PushFont(m_LauncherAssets->GetHeaderFont().get());
+        ImGui::PushFont(mLauncherAssets->GetHeaderFont().get());
         ImGui::Text("Graphics API");
         ImGui::PopFont();
 
@@ -84,7 +84,7 @@ namespace Dwarf
         ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(10, 8));
         ImGui::PushStyleVar(ImGuiStyleVar_SelectableTextAlign,
                             ImVec2(0.5f, 0.5f));
-        ImGui::PushFont(m_LauncherAssets->GetTextFont().get());
+        ImGui::PushFont(mLauncherAssets->GetTextFont().get());
 
         // Coloring the combo preview
         ImGui::PushStyleColor(ImGuiCol_FrameBg, IM_COL32(59, 66, 82, 255));
@@ -207,11 +207,11 @@ namespace Dwarf
       if (ImGui::Button("Apply",
                         ImVec2(ImGui::GetContentRegionAvail().x / 2 - 10, 0)))
       {
-        m_SavedProjects->ChangeGraphicsApi(
-          m_Data->GetSelectedProject().value().Path,
+        mSavedProjects->ChangeGraphicsApi(
+          mData->GetSelectedProject().value().Path,
           (GraphicsApi)currentApiIndex);
         ImGui::CloseCurrentPopup();
-        m_Data->SetSelectedProject(std::nullopt);
+        mData->SetSelectedProject(std::nullopt);
       }
 
       if (ImGui::IsItemHovered())
@@ -225,7 +225,7 @@ namespace Dwarf
       if (ImGui::Button("Cancel", ImVec2(ImGui::GetContentRegionAvail().x, 0)))
       {
         ImGui::CloseCurrentPopup();
-        m_Data->SetSelectedProject(std::nullopt);
+        mData->SetSelectedProject(std::nullopt);
       }
 
       if (ImGui::IsItemHovered())

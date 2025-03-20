@@ -3,26 +3,25 @@
 #include "Core/Rendering/Shader/ShaderRegistry/IShaderRegistry.h"
 #include "pch.h"
 
-#include "Core/Rendering/RendererApi/IRendererApi.h"
-#include "Core/Rendering/RendererApi/IRendererApiFactory.h"
 #include "Core/Rendering/Framebuffer/IFramebuffer.h"
 #include "Core/Rendering/Framebuffer/IFramebufferFactory.h"
 #include "Core/Rendering/Pipelines/IRenderingPipeline.h"
+#include "Core/Rendering/RendererApi/IRendererApi.h"
+#include "Core/Rendering/RendererApi/IRendererApiFactory.h"
 #include "Core/Scene/Camera/ICamera.h"
 #include "Core/Scene/Camera/ICameraFactory.h"
-#include "Editor/Selection/IEditorSelection.h"
 #include "Editor/LoadedScene/ILoadedScene.h"
+#include "Editor/Selection/IEditorSelection.h"
 #include "Editor/Stats/IEditorStats.h"
 #include "Input/IInputManager.h"
+#include <ImGuizmo.h>
 #include <boost/serialization/strong_typedef.hpp>
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
-#include <imgui_internal.h>
-#include <ImGuizmo.h>
 #include <memory>
 
-#include "Editor/Modules/IGuiModule.h"
 #include "Core/Rendering/Pipelines/IRenderingPipelineFactory.h"
+#include "Editor/Modules/IGuiModule.h"
 
 namespace Dwarf
 {
@@ -74,30 +73,30 @@ namespace Dwarf
   class SceneViewerWindow : public IGuiModule
   {
   private:
-    SceneViewerSettings m_Settings;
+    SceneViewerSettings mSettings;
     // Maintaining important dependencies
 
     /// @brief The render texture for this scene viewer.
-    std::shared_ptr<IFramebuffer>       m_Framebuffer;
-    std::shared_ptr<IFramebuffer>       m_IdBuffer;
-    std::shared_ptr<IFramebuffer>       m_OutlineBuffer;
-    std::shared_ptr<IFramebuffer>       m_PresentationBuffer;
-    std::shared_ptr<ICamera>            m_Camera;
-    std::shared_ptr<IRenderingPipeline> m_RenderingPipeline;
-    std::shared_ptr<IRendererApi>       m_RendererApi;
-    std::shared_ptr<IShader>            m_AgxTonemapShader;
+    std::shared_ptr<IFramebuffer>       mFramebuffer;
+    std::shared_ptr<IFramebuffer>       mIdBuffer;
+    std::shared_ptr<IFramebuffer>       mOutlineBuffer;
+    std::shared_ptr<IFramebuffer>       mPresentationBuffer;
+    std::shared_ptr<ICamera>            mCamera;
+    std::shared_ptr<IRenderingPipeline> mRenderingPipeline;
+    std::shared_ptr<IRendererApi>       mRendererApi;
+    std::shared_ptr<IShader>            mAgxTonemapShader;
 
-    std::shared_ptr<IInputManager>             m_InputManager;
-    std::shared_ptr<IEditorStats>              m_EditorStats;
-    std::shared_ptr<ILoadedScene>              m_LoadedScene;
-    std::shared_ptr<IEditorSelection>          m_EditorSelection;
-    std::shared_ptr<IRenderingPipelineFactory> m_RenderingPipelineFactory;
-    std::shared_ptr<IFramebufferFactory>       m_FramebufferFactory;
-    std::shared_ptr<ICameraFactory>            m_CameraFactory;
-    std::shared_ptr<IRendererApiFactory>       m_RendererApiFactory;
-    std::shared_ptr<IShaderRegistry>           m_ShaderRegistry;
+    std::shared_ptr<IInputManager>             mInputManager;
+    std::shared_ptr<IEditorStats>              mEditorStats;
+    std::shared_ptr<ILoadedScene>              mLoadedScene;
+    std::shared_ptr<IEditorSelection>          mEditorSelection;
+    std::shared_ptr<IRenderingPipelineFactory> mRenderingPipelineFactory;
+    std::shared_ptr<IFramebufferFactory>       mFramebufferFactory;
+    std::shared_ptr<ICameraFactory>            mCameraFactory;
+    std::shared_ptr<IRendererApiFactory>       mRendererApiFactory;
+    std::shared_ptr<IShaderRegistry>           mShaderRegistry;
     std::shared_ptr<IShaderSourceCollectionFactory>
-      m_ShaderSourceCollectionFactory;
+      mShaderSourceCollectionFactory;
 
     /// @brief Calculates the cutout of the available resolution based on the
     /// given aspect ratio.

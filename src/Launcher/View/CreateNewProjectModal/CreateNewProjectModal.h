@@ -1,8 +1,8 @@
 #pragma once
 
 #include "ICreateNewProjectModal.h"
-#include "Launcher/LauncherData/ILauncherData.h"
 #include "Launcher/LauncherAssets/ILauncherAssets.h"
+#include "Launcher/LauncherData/ILauncherData.h"
 #include "Launcher/ProjectCreator/IProjectCreator.h"
 
 namespace Dwarf
@@ -10,9 +10,9 @@ namespace Dwarf
   class CreateNewProjectModal : public ICreateNewProjectModal
   {
   private:
-    std::shared_ptr<ILauncherData>   m_Data;
-    std::shared_ptr<IProjectCreator> m_ProjectCreator;
-    std::shared_ptr<ILauncherAssets> m_LauncherAssets;
+    std::shared_ptr<ILauncherData>   mData;
+    std::shared_ptr<IProjectCreator> mProjectCreator;
+    std::shared_ptr<ILauncherAssets> mLauncherAssets;
 
   public:
     CreateNewProjectModal(std::shared_ptr<ILauncherData>   data,

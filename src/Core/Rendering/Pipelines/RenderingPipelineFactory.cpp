@@ -15,22 +15,22 @@ namespace Dwarf
     std::shared_ptr<IMeshFactory>       meshFactory,
     std::shared_ptr<IMeshBufferFactory> meshBufferFactory,
     std::shared_ptr<IDrawCallList>      drawCallList)
-    : m_Logger(logger)
-    , m_RendererApi(rendererApiFactory->Create())
-    , m_MaterialFactory(materialFactory)
-    , m_ShaderRegistry(shaderRegistry)
-    , m_ShaderSourceCollectionFactory(shaderSourceCollectionFactory)
-    , m_MeshFactory(meshFactory)
-    , m_MeshBufferFactory(meshBufferFactory)
-    , m_DrawCallList(drawCallList)
+    : mLogger(logger)
+    , mRendererApi(rendererApiFactory->Create())
+    , mMaterialFactory(materialFactory)
+    , mShaderRegistry(shaderRegistry)
+    , mShaderSourceCollectionFactory(shaderSourceCollectionFactory)
+    , mMeshFactory(meshFactory)
+    , mMeshBufferFactory(meshBufferFactory)
+    , mDrawCallList(drawCallList)
   {
-    m_Logger->LogDebug(
+    mLogger->LogDebug(
       Log("RenderingPipelineFactory created", "RenderingPipelineFactory"));
   }
 
   RenderingPipelineFactory::~RenderingPipelineFactory()
   {
-    m_Logger->LogDebug(
+    mLogger->LogDebug(
       Log("RenderingPipelineFactory destroyed", "RenderingPipelineFactory"));
   }
 
@@ -40,14 +40,13 @@ namespace Dwarf
     switch (type)
     {
       case PipelineType::Forward:
-        return std::make_shared<ForwardRenderer>(
-          m_RendererApi,
-          m_MaterialFactory,
-          m_ShaderRegistry,
-          m_ShaderSourceCollectionFactory,
-          m_MeshFactory,
-          m_MeshBufferFactory,
-          m_DrawCallList);
+        return std::make_shared<ForwardRenderer>(mRendererApi,
+                                                 mMaterialFactory,
+                                                 mShaderRegistry,
+                                                 mShaderSourceCollectionFactory,
+                                                 mMeshFactory,
+                                                 mMeshBufferFactory,
+                                                 mDrawCallList);
       // case PipelineType::Deferred: return
       // std::make_shared<DeferredRenderer>();
       default: return nullptr;

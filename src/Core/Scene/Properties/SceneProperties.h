@@ -33,8 +33,8 @@ namespace Dwarf
     GetSettings() const override;
 
   private:
-    std::string                     m_Name;
-    std::optional<UUID>             m_AssetID;
-    std::unique_ptr<ISceneSettings> m_Settings;
+    std::string                     mName;
+    std::optional<UUID>             mAssetID;
+    std::unique_ptr<ISceneSettings> mSettings;
   };
 }

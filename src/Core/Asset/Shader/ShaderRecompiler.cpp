@@ -5,16 +5,16 @@ namespace Dwarf
   void
   ShaderRecompiler::MarkForRecompilation(std::shared_ptr<IShader> shader)
   {
-    m_ShadersToRecompile.push_back(shader);
+    mShadersToRecompile.push_back(shader);
   }
 
   void
   ShaderRecompiler::Recompile()
   {
-    for (const auto& shader : m_ShadersToRecompile)
+    for (const auto& shader : mShadersToRecompile)
     {
       shader->Compile();
     }
-    m_ShadersToRecompile.clear();
+    mShadersToRecompile.clear();
   }
 }

@@ -24,8 +24,8 @@ namespace Dwarf
     Entity&
     operator=(Entity&& other) noexcept
     {
-      m_EntityHandle = other.m_EntityHandle;
-      m_Registry = std::move(other.m_Registry);
+      mEntityHandle = other.mEntityHandle;
+      mRegistry = std::move(other.mRegistry);
       return *this;
     }
 
@@ -39,7 +39,7 @@ namespace Dwarf
     AddComponent(Args&&... args)
     {
       // TODO: Check component requirements
-      return m_Registry.emplace<T>(m_EntityHandle, std::forward<Args>(args)...);
+      return mRegistry.emplace<T>(mEntityHandle, std::forward<Args>(args)...);
     }
 
     /// @brief Retrieves a component of the Entity if present.
@@ -50,7 +50,7 @@ namespace Dwarf
     GetComponent()
     {
       // TODO: Check if component present
-      return m_Registry.get<T>(m_EntityHandle);
+      return mRegistry.get<T>(mEntityHandle);
     }
 
     /// @brief Removes a component from the entity.
@@ -62,7 +62,7 @@ namespace Dwarf
       // TODO: Check if component is present
       if (HasComponent<T>())
       {
-        m_Registry.remove<T>(m_EntityHandle);
+        mRegistry.remove<T>(mEntityHandle);
       }
     }
 
@@ -73,7 +73,7 @@ namespace Dwarf
     bool
     HasComponent()
     {
-      return m_Registry.try_get<T>(m_EntityHandle) != nullptr;
+      return mRegistry.try_get<T>(mEntityHandle) != nullptr;
     }
 
     /// @brief Retrieves the UID of the entity.
@@ -81,14 +81,14 @@ namespace Dwarf
     const UUID&
     GetUID() const
     {
-      return m_Registry.get<IDComponent>(m_EntityHandle).getId();
+      return mRegistry.get<IDComponent>(mEntityHandle).getId();
     }
 
-    operator bool() const { return (std::uint32_t)m_EntityHandle != 0; }
+    operator bool() const { return (std::uint32_t)mEntityHandle != 0; }
     bool
     operator==(const Entity& b)
     {
-      return m_EntityHandle == b.m_EntityHandle;
+      return mEntityHandle == b.mEntityHandle;
     }
 
     /// @brief Sets a new parent for this entity.
@@ -97,18 +97,18 @@ namespace Dwarf
     SetParent(entt::entity entity)
     {
       TransformComponent& transform = GetComponent<TransformComponent>();
-      auto                newParent = Entity(entity, m_Registry);
+      auto                newParent = Entity(entity, mRegistry);
 
       if (transform.GetParent() != entt::null)
       {
-        auto oldParent = Entity(transform.GetParent(), m_Registry);
-        oldParent.RemoveChild(m_EntityHandle);
+        auto oldParent = Entity(transform.GetParent(), mRegistry);
+        oldParent.RemoveChild(mEntityHandle);
       }
 
       transform.GetParent() = entity;
-      if (m_Registry.valid(entity))
+      if (mRegistry.valid(entity))
       {
-        newParent.AddChild(m_EntityHandle);
+        newParent.AddChild(mEntityHandle);
       }
     }
 
@@ -152,21 +152,21 @@ namespace Dwarf
       TransformComponent& transform = GetComponent<TransformComponent>();
 
       std::vector<entt::entity>* siblings =
-        &Entity(transform.GetParent(), m_Registry)
+        &Entity(transform.GetParent(), mRegistry)
            .GetComponent<TransformComponent>()
            .GetChildren();
       auto it =
-        std::ranges::find(siblings->begin(), siblings->end(), m_EntityHandle);
+        std::ranges::find(siblings->begin(), siblings->end(), mEntityHandle);
 
       siblings->erase(it);
 
       if (index >= siblings->size())
       {
-        siblings->push_back(m_EntityHandle);
+        siblings->push_back(mEntityHandle);
       }
       else
       {
-        siblings->insert(siblings->begin() + index, m_EntityHandle);
+        siblings->insert(siblings->begin() + index, mEntityHandle);
       }
     }
 
@@ -181,13 +181,13 @@ namespace Dwarf
       int index = -1;
 
       std::vector<entt::entity> siblings =
-        Entity(transform.GetParent(), m_Registry)
+        Entity(transform.GetParent(), mRegistry)
           .GetComponent<TransformComponent>()
           .GetChildren();
 
       // If element was found
       if (auto it =
-            std::ranges::find(siblings.begin(), siblings.end(), m_EntityHandle);
+            std::ranges::find(siblings.begin(), siblings.end(), mEntityHandle);
           it != siblings.end())
       {
         index = (int)(it - siblings.begin());
@@ -201,7 +201,7 @@ namespace Dwarf
     const entt::entity&
     GetParent() const
     {
-      return m_Registry.get<TransformComponent>(m_EntityHandle).GetParent();
+      return mRegistry.get<TransformComponent>(mEntityHandle).GetParent();
     }
 
     /// @brief Returns the list of this entity's children.
@@ -209,13 +209,13 @@ namespace Dwarf
     const std::vector<entt::entity>&
     GetChildren() const
     {
-      return m_Registry.get<TransformComponent>(m_EntityHandle).GetChildren();
+      return mRegistry.get<TransformComponent>(mEntityHandle).GetChildren();
     }
 
     entt::entity
     GetHandle() const
     {
-      return m_EntityHandle;
+      return mEntityHandle;
     }
 
     nlohmann::json
@@ -246,7 +246,7 @@ namespace Dwarf
       for (auto& child : GetChildren())
       {
         serializedEntity["children"][childCount] =
-          Entity(child, m_Registry).Serialize();
+          Entity(child, mRegistry).Serialize();
         childCount++;
       }
 
@@ -255,9 +255,9 @@ namespace Dwarf
 
   private:
     /// @brief The entity handle of this entity.
-    entt::entity m_EntityHandle{ entt::null };
+    entt::entity mEntityHandle{ entt::null };
 
     /// @brief Pointer to a holder of an ECS registry.
-    entt::registry& m_Registry;
+    entt::registry& mRegistry;
   };
 }
