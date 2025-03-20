@@ -97,6 +97,7 @@
 #include "Project/ProjectTypes.h"
 #include "UI/IImGuiLayerFactory.h"
 #include "UI/ImGuiLayerFactory.h"
+#include "Utilities/FileHandler/FileHandler.h"
 #include "Window/IWindow.h"
 #include "Window/SDL3Window.h"
 #include <boost/di.hpp>
