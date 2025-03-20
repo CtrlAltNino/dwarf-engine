@@ -1,7 +1,5 @@
 #pragma once
 
-#include "Core/Rendering/Material/IMaterial.h"
-
 namespace Dwarf
 {
   class IMaterialCreator
