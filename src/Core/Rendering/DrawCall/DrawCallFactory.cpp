@@ -1,21 +1,24 @@
 #include "DrawCallFactory.h"
+
 #include "Core/Rendering/MeshBuffer/MeshBufferWorker/IMeshBufferWorker.h"
 #include "DrawCall.h"
+#include <utility>
 
 namespace Dwarf
 {
   DrawCallFactory::DrawCallFactory(
     std::shared_ptr<IDwarfLogger>      logger,
     std::shared_ptr<IMeshBufferWorker> meshBufferWorker)
-    : mLogger(logger)
-    , mMeshBufferWorker(meshBufferWorker)
+    : mLogger(std::move(logger))
+    , mMeshBufferWorker(std::move(meshBufferWorker))
   {
   }
 
-  std::unique_ptr<IDrawCall>
+  auto
   DrawCallFactory::Create(std::unique_ptr<IMesh>& mesh,
                           IMaterial&              material,
                           TransformComponent&     transform)
+    -> std::unique_ptr<IDrawCall>
   {
     std::unique_ptr<DrawCall> drawCall =
       std::make_unique<DrawCall>(nullptr, material, transform);

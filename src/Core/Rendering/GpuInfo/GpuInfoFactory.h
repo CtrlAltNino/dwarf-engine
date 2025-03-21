@@ -18,7 +18,7 @@ namespace Dwarf
                    std::shared_ptr<IDwarfLogger> logger);
     ~GpuInfoFactory() override = default;
 
-    std::unique_ptr<IGpuInfo>
-    Create() const override;
+    [[nodiscard]] auto
+    Create() const -> std::unique_ptr<IGpuInfo> override;
   };
 }

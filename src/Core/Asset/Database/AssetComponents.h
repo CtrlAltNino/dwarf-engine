@@ -8,7 +8,7 @@
 
 namespace Dwarf
 {
-  // Abstract struct for asset components
+  /// @brief Virtual base class for asset components
   struct IAssetComponent
   {
     virtual ~IAssetComponent() = default;
@@ -245,12 +245,24 @@ namespace Dwarf
     {
     }
 
+    /**
+     * @brief Return whether the texture asset has been loaded into the GPU
+     *
+     * @return true If the texture is present on the GPU
+     * @return false If the texture is not present on the GPU
+     */
     auto
     IsLoaded() const -> bool
     {
       return mTexture != nullptr;
     }
 
+    /**
+     * @brief Returns a reference to the texture, or if it is not loaded yet, to
+     * the placeholder
+     *
+     * @return Reference to the texture
+     */
     auto
     GetTexture() const -> const ITexture&
     {
@@ -262,6 +274,11 @@ namespace Dwarf
       return *mTexture;
     }
 
+    /**
+     * @brief Sets the texture
+     *
+     * @param texture The texture that should be moved into the asset component
+     */
     void
     SetTexture(std::unique_ptr<ITexture>&& texture)
     {

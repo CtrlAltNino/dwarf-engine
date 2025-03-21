@@ -8,6 +8,7 @@
 #include <memory>
 #include <mutex>
 #include <thread>
+#include <utility>
 
 namespace Dwarf
 {
@@ -15,15 +16,14 @@ namespace Dwarf
     std::shared_ptr<IDwarfLogger>     logger,
     std::shared_ptr<IImageFileLoader> imageFileLoader,
     std::shared_ptr<ITextureFactory>  textureFactory)
-    : mLogger(logger)
-    , mImageFileLoader(imageFileLoader)
-    , mTextureFactory(textureFactory)
+    : mLogger(std::move(logger))
+    , mImageFileLoader(std::move(imageFileLoader))
+    , mTextureFactory(std::move(textureFactory))
     , mNumWorkerThreads(std::thread::hardware_concurrency() - 1)
   {
     for (int i = 0; i < mNumWorkerThreads; i++)
     {
-      mTextureWorkers.push_back(
-        std::thread([this]() { ProcessTextureLoadRequests(); }));
+      mTextureWorkers.emplace_back([this]() { ProcessTextureLoadRequests(); });
     }
     mLogger->LogDebug(
       Log("TextureLoadingWorker created.", "TextureLoadingWorker"));
@@ -93,7 +93,10 @@ namespace Dwarf
           [this]
           { return !mTextureLoadRequestQueue.empty() || stopWorker.load(); });
 
-        if (stopWorker.load()) return;
+        if (stopWorker.load())
+        {
+          return;
+        }
 
         request = mTextureLoadRequestQueue.front();
         mTextureLoadRequestQueue.pop();
@@ -137,7 +140,10 @@ namespace Dwarf
       {
         std::unique_lock<std::mutex> lock(mUploadMutex);
 
-        if (mTextureUploadRequestQueue.empty()) return;
+        if (mTextureUploadRequestQueue.empty())
+        {
+          return;
+        }
         job = std::move(mTextureUploadRequestQueue.front());
         mTextureUploadRequestQueue.pop();
         {

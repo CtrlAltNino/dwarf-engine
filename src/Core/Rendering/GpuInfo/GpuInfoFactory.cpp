@@ -3,8 +3,9 @@
 #include "Logging/IDwarfLogger.h"
 #include "Platform/OpenGL/OpenGLUtilities.h"
 #include <fmt/format.h>
+#include <utility>
 
-#if _WIN32
+#ifdef _WIN32
 #include "Platform/Amd/AmdGpuInfo.h"
 #endif
 
@@ -13,12 +14,12 @@ namespace Dwarf
   GpuInfoFactory::GpuInfoFactory(GraphicsApi                   graphicsApi,
                                  std::shared_ptr<IDwarfLogger> logger)
     : mGraphicsApi(graphicsApi)
-    , mLogger(logger)
+    , mLogger(std::move(logger))
   {
   }
 
-  std::unique_ptr<IGpuInfo>
-  GpuInfoFactory::Create() const
+  auto
+  GpuInfoFactory::Create() const -> std::unique_ptr<IGpuInfo>
   {
     switch (mGraphicsApi)
     {
@@ -45,7 +46,10 @@ namespace Dwarf
       case GraphicsApi::Metal:
         std::runtime_error("Vulkan API has not been implemented yet.");
         break;
-      case GraphicsApi::OpenGL: break;
+      case GraphicsApi::OpenGL:
+        {
+          break;
+        }
       case GraphicsApi::Vulkan:
         std::runtime_error("Vulkan API has not been implemented yet.");
         break;

@@ -37,7 +37,7 @@ namespace Dwarf
     std::vector<std::thread> mTextureWorkers;
 
     // number of threads
-    int mNumWorkerThreads = 1;
+    unsigned int mNumWorkerThreads = 1;
 
     // Keeping track of which textures are currently being processed
     std::mutex                                mCurrentlyProcessingMutex;
@@ -50,19 +50,44 @@ namespace Dwarf
 
     ~TextureLoadingWorker() override;
 
+    /**
+     * @brief Add a request to load a texture from disk into memory
+     *
+     * @param request The request to add
+     */
     void
     RequestTextureLoad(TextureLoadRequest request) override;
 
+    /**
+     * @brief Add a request to load a texture from memory into VRAM
+     *
+     * @param request
+     */
     void
     RequestTextureUpload(TextureUploadRequest request) override;
 
+    /**
+     * @brief Processes texture load requests
+     *
+     */
     void
     ProcessTextureLoadRequests() override;
 
+    /**
+     * @brief Processes texture upload requests
+     *
+     */
     void
     ProcessTextureJobs() override;
 
-    bool
-    IsRequested(std::filesystem::path path) override;
+    /**
+     * @brief Checks if a texture is currently on the way from disk to the GPU
+     *
+     * @param path Path of the image file
+     * @return true If the image file has already been requested
+     * @return false If the image file is not currently being handled
+     */
+    auto
+    IsRequested(std::filesystem::path path) -> bool override;
   };
 }

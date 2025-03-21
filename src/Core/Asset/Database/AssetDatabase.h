@@ -155,29 +155,72 @@ namespace Dwarf
     RenameDirectory(const std::filesystem::path& fromPath,
                     const std::filesystem::path& toPath) override;
 
+    /**
+     * @brief Returns a reference to the underlying entt registry
+     *
+     * @return entt::registry reference
+     */
     auto
     GetRegistry() -> entt::registry& override;
 
+    /**
+     * @brief Retrieves an asset from the asset database.
+     * @param uid UID of the asset.
+     */
     auto
     Retrieve(const UUID& uid) -> std::unique_ptr<IAssetReference> override;
 
+    /**
+     * @brief Retrieves an asset from the asset database.
+     * @param path Path to the asset.
+     */
     auto
     Retrieve(const std::filesystem::path& assetPath)
       -> std::unique_ptr<IAssetReference> override;
 
-  private:
+    /**
+     * @brief Returns the path to the projects asset directory
+     *
+     * @return The path of the asset directory
+     */
     auto
     GetAssetDirectoryPath() -> std::filesystem::path override;
 
+  private:
+    /**
+     * @brief EFSW Callback for when a file is added to the project
+     *
+     * @param dir Directory in which an asset is added to
+     * @param filename File name of the added asset
+     */
     void
     AddAssetCallback(const std::string& dir, const std::string& filename);
 
+    /**
+     * @brief EFSW Callback for when a file in the project is deleted
+     *
+     * @param dir Directory in which the file was removed
+     * @param filename File name of the deleted file
+     */
     void
     DeleteAssetCallback(const std::string& dir, const std::string& filename);
 
+    /**
+     * @brief EFSW Callback for when an asset is modified on disk
+     *
+     * @param dir Directory of the modified file
+     * @param filename File name of the modified file
+     */
     void
     ModifyAssetCallback(const std::string& dir, const std::string& filename);
 
+    /**
+     * @brief EFSW Callback for when an asset is moved
+     *
+     * @param dir New directory of the asset file
+     * @param filename File name of the file
+     * @param oldFilename Old path of the file
+     */
     void
     MoveAssetCallback(const std::string& dir,
                       const std::string& filename,
@@ -190,18 +233,38 @@ namespace Dwarf
                      std::vector<std::filesystem::path>& materialPaths,
                      std::vector<std::filesystem::path>& otherPaths);
 
+    /**
+     * @brief Imports all default assets
+     *
+     */
     void
     ImportDefaultAssets();
 
+    /**
+     * @brief Imports the default shaders
+     *
+     */
     void
     ImportDefaultShaders();
 
+    /**
+     * @brief Imports all default textures
+     *
+     */
     void
     ImportDefaultTextures();
 
+    /**
+     * @brief Imports all default materials
+     *
+     */
     void
     ImportDefaultMaterials();
 
+    /**
+     * @brief Imports all default models
+     *
+     */
     void
     ImportDefaultModels();
   };

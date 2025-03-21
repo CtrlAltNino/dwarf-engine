@@ -4,12 +4,23 @@
 
 namespace Dwarf
 {
+  /**
+   * @brief Factory to create framebuffers depending on the used graphics api
+   *
+   */
   class IFramebufferFactory
   {
   public:
     virtual ~IFramebufferFactory() = default;
 
-    virtual std::shared_ptr<IFramebuffer>
-    Create(const FramebufferSpecification& spec) = 0;
+    /**
+     * @brief Creates a framebuffer according to a given specification
+     *
+     * @param spec Specification of a framebuffer
+     * @return The created framebuffer
+     */
+    virtual auto
+    Create(const FramebufferSpecification& spec)
+      -> std::unique_ptr<IFramebuffer> = 0;
   };
 }

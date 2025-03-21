@@ -261,7 +261,7 @@ namespace Dwarf
   {
     std::string           fileName = assetPath.filename().string();
     std::filesystem::path metaDataPath =
-      IAssetMetadata::GetMetadataPath(assetPath);
+      IAssetMetadata::CreateMetadataPath(assetPath);
 
     // Remove asset if already present
     if (AssetDatabase::Exists(assetPath))

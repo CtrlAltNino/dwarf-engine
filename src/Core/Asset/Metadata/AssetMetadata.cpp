@@ -14,7 +14,7 @@ namespace Dwarf
     -> nlohmann::json
   {
     std::string fileContent =
-      mFileHandler->ReadFile(IAssetMetadata::GetMetadataPath(assetPath));
+      mFileHandler->ReadFile(IAssetMetadata::CreateMetadataPath(assetPath));
     nlohmann::json jsonObject;
 
     if (!fileContent.empty())
@@ -25,9 +25,6 @@ namespace Dwarf
     return jsonObject;
   }
 
-  /// @brief Writes the given metadata to a path.
-  /// @param assetPath Path to write the metadata to.
-  /// @param metaData The metadata in JSON.
   void
   AssetMetadata::SetMetadata(const std::filesystem::path& assetPath,
                              const nlohmann::json&        metaData)
@@ -39,21 +36,20 @@ namespace Dwarf
       mFileHandler->CreateDirectoryAt(assetPath);
     }
 
-    mFileHandler->WriteToFile(GetMetadataPath(assetPath), fileContent);
+    mFileHandler->WriteToFile(CreateMetadataPath(assetPath), fileContent);
   }
 
-  /// @brief Removes the metadata file of an asset.
-  /// @param assetPath Path to an asset.
   void
   AssetMetadata::RemoveMetadata(const std::filesystem::path& assetPath)
   {
-    mFileHandler->Delete(GetMetadataPath(assetPath));
+    mFileHandler->Delete(CreateMetadataPath(assetPath));
   }
 
   void
   AssetMetadata::Rename(const std::filesystem::path& fromPath,
                         const std::filesystem::path& toPath)
   {
-    mFileHandler->Rename(GetMetadataPath(fromPath), GetMetadataPath(toPath));
+    mFileHandler->Rename(CreateMetadataPath(fromPath),
+                         CreateMetadataPath(toPath));
   }
 }

@@ -91,6 +91,11 @@ namespace Dwarf
     Retrieve(const std::filesystem::path& assetPath)
       -> std::unique_ptr<IAssetReference> = 0;
 
+    /**
+     * @brief Returns a reference to the underlying entt registry
+     *
+     * @return entt::registry reference
+     */
     virtual auto
     GetRegistry() -> entt::registry& = 0;
 
@@ -112,6 +117,13 @@ namespace Dwarf
     RenameDirectory(const std::filesystem::path& fromPath,
                     const std::filesystem::path& toPath) = 0;
 
+    /**
+     * @brief Retrieves the asset type enum value corresponding to a file
+     * extension
+     *
+     * @param extension File extensions like ".jpg" or ".png"
+     * @return ASSET_TYPE enum value
+     */
     static auto
     GetAssetType(const std::string& extension) -> ASSET_TYPE
     {
@@ -126,6 +138,11 @@ namespace Dwarf
       return ASSET_TYPE::UNKNOWN;
     }
 
+    /**
+     * @brief Returns the path to the projects asset directory
+     *
+     * @return The path of the asset directory
+     */
     virtual auto
     GetAssetDirectoryPath() -> std::filesystem::path = 0;
 

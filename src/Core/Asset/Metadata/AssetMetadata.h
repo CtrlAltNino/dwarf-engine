@@ -33,6 +33,12 @@ namespace Dwarf
     void
     RemoveMetadata(const std::filesystem::path& assetPath) override;
 
+    /**
+     * @brief Renames/Moves the metadata
+     *
+     * @param fromPath Old metadata path
+     * @param toPath New metadata path
+     */
     void
     Rename(const std::filesystem::path& fromPath,
            const std::filesystem::path& toPath) override;

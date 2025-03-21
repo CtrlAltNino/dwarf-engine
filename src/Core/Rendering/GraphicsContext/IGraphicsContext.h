@@ -1,7 +1,4 @@
 #pragma once
-#include "pch.h"
-#include "Core/Base.h"
-#include "SDL3/SDL.h"
 
 namespace Dwarf
 {
@@ -12,6 +9,7 @@ namespace Dwarf
 
     virtual void
     Init() = 0;
+
     virtual void
     SwapBuffers() = 0;
   };

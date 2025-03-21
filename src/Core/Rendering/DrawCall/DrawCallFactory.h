@@ -17,9 +17,18 @@ namespace Dwarf
                     std::shared_ptr<IMeshBufferWorker> meshBufferWorker);
     ~DrawCallFactory() override = default;
 
-    std::unique_ptr<IDrawCall>
+    /**
+     * @brief Creates a draw call from the needed data.
+     *
+     * @param mesh The mesh data to use for the draw call
+     * @param material The material to use for the draw call
+     * @param transform The transform to use for the draw call
+     * @return Unique pointer to the created draw call
+     */
+    auto
     Create(std::unique_ptr<IMesh>& mesh,
            IMaterial&              material,
-           TransformComponent&     transform) override;
+           TransformComponent&     transform)
+      -> std::unique_ptr<IDrawCall> override;
   };
 }

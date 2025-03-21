@@ -3,7 +3,6 @@
 #include "Core/Asset/Database/IAssetDatabase.h"
 #include "Core/Asset/Shader/ShaderSourceCollection/IShaderSourceCollectionFactory.h"
 #include "Core/Base.h"
-#include "Project/IProjectSettings.h"
 #include <boost/di/extension/injections/lazy.hpp>
 #include <memory>
 
@@ -22,23 +21,65 @@ namespace Dwarf
 
     ~ShaderSourceCollectionFactory() override = default;
 
-    std::unique_ptr<IShaderSourceCollection>
-    CreateDefaultShaderSourceCollection() override;
+    /**
+     * @brief Create a shader source collection containing the shader sources
+     * for the default shader
+     *
+     * @return Unique pointer to the created shader source collection
+     */
+    auto
+    CreateDefaultShaderSourceCollection()
+      -> std::unique_ptr<IShaderSourceCollection> override;
 
-    std::unique_ptr<IShaderSourceCollection>
-    CreateErrorShaderSourceCollection() override;
+    /**
+     * @brief Create a shader source collection containing the shader sources
+     * for the error shader
+     *
+     * @return Unique pointer to the created shader source collection
+     */
+    auto
+    CreateErrorShaderSourceCollection()
+      -> std::unique_ptr<IShaderSourceCollection> override;
 
-    std::unique_ptr<IShaderSourceCollection>
-    CreateIdShaderSourceCollection() override;
+    /**
+     * @brief Create a shader source collection containing the shader sources
+     * for the id shader
+     *
+     * @return Unique pointer to the created shader source collection
+     */
+    auto
+    CreateIdShaderSourceCollection()
+      -> std::unique_ptr<IShaderSourceCollection> override;
 
-    std::unique_ptr<IShaderSourceCollection>
-    CreateGridShaderSourceCollection() override;
+    /**
+     * @brief Create a shader source collection containing the shader sources
+     * for the grid shader
+     *
+     * @return Unique pointer to the created shader source collection
+     */
+    auto
+    CreateGridShaderSourceCollection()
+      -> std::unique_ptr<IShaderSourceCollection> override;
 
-    std::unique_ptr<IShaderSourceCollection>
-    CreateAgxTonemapShaderSourceCollection() override;
+    /**
+     * @brief Create a shader source collection containing the shader sources
+     * for the agx tonemap shader
+     *
+     * @return Unique pointer to the created shader source collection
+     */
+    auto
+    CreateAgxTonemapShaderSourceCollection()
+      -> std::unique_ptr<IShaderSourceCollection> override;
 
-    std::unique_ptr<IShaderSourceCollection>
+    /**
+     * @brief Create a shader source collection containing the shader sources
+     * serialized in a json object
+     *
+     * @return Unique pointer to the created shader source collection
+     */
+    auto
     CreateShaderSourceCollection(
-      const nlohmann::json& serializedShaderSourceCollection) override;
+      const nlohmann::json& serializedShaderSourceCollection)
+      -> std::unique_ptr<IShaderSourceCollection> override;
   };
 }

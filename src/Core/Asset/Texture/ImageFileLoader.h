@@ -19,7 +19,15 @@ namespace Dwarf
                     std::shared_ptr<IFileHandler>   fileHandler,
                     std::shared_ptr<IAssetMetadata> assetMetadata);
     ~ImageFileLoader() override;
-    std::shared_ptr<TextureContainer>
-    LoadImageFile(std::filesystem::path texturePath) override;
+
+    /**
+     * @brief Loads and decodes an image file from disk into memory
+     *
+     * @param imagePath Path to the imagel file
+     * @return The container storing the image data and properties
+     */
+    auto
+    LoadImageFile(std::filesystem::path imagePath)
+      -> std::shared_ptr<TextureContainer> override;
   };
 } // namespace Dwarf

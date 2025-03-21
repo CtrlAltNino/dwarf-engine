@@ -17,7 +17,8 @@ namespace Dwarf
                            GraphicsApi                   api);
     ~GraphicsContextFactory() override;
 
-    virtual std::unique_ptr<IGraphicsContext>
-    Create(SDL_Window* window) const override;
+    auto
+    Create(SDL_Window* window) const
+      -> std::unique_ptr<IGraphicsContext> override;
   };
 } // namespace Dwarf

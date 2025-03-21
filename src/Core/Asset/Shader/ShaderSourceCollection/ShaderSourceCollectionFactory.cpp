@@ -2,7 +2,6 @@
 #include "Core/Asset/AssetReference/IAssetReference.h"
 #include "Core/Asset/Shader/ShaderSourceCollection/IShaderSourceCollection.h"
 #include "Core/Asset/Shader/ShaderSourceCollection/ShaderSourceCollection.h"
-#include <iostream>
 #include <memory>
 #include <vector>
 
@@ -18,8 +17,9 @@ namespace Dwarf
   {
   }
 
-  std::unique_ptr<IShaderSourceCollection>
+  auto
   ShaderSourceCollectionFactory::CreateDefaultShaderSourceCollection()
+    -> std::unique_ptr<IShaderSourceCollection>
   {
     std::vector<std::unique_ptr<IAssetReference>> shaderSources = {};
 
@@ -41,8 +41,9 @@ namespace Dwarf
     return std::make_unique<ShaderSourceCollection>(shaderSources);
   }
 
-  std::unique_ptr<IShaderSourceCollection>
+  auto
   ShaderSourceCollectionFactory::CreateErrorShaderSourceCollection()
+    -> std::unique_ptr<IShaderSourceCollection>
   {
     std::vector<std::unique_ptr<IAssetReference>> shaderSources = {};
 
@@ -64,8 +65,9 @@ namespace Dwarf
     return std::make_unique<ShaderSourceCollection>(shaderSources);
   }
 
-  std::unique_ptr<IShaderSourceCollection>
+  auto
   ShaderSourceCollectionFactory::CreateIdShaderSourceCollection()
+    -> std::unique_ptr<IShaderSourceCollection>
   {
     std::vector<std::unique_ptr<IAssetReference>> shaderSources = {};
 
@@ -87,8 +89,9 @@ namespace Dwarf
     return std::make_unique<ShaderSourceCollection>(shaderSources);
   }
 
-  std::unique_ptr<IShaderSourceCollection>
+  auto
   ShaderSourceCollectionFactory::CreateGridShaderSourceCollection()
+    -> std::unique_ptr<IShaderSourceCollection>
   {
     std::vector<std::unique_ptr<IAssetReference>> shaderSources = {};
 
@@ -110,8 +113,9 @@ namespace Dwarf
     return std::make_unique<ShaderSourceCollection>(shaderSources);
   }
 
-  std::unique_ptr<IShaderSourceCollection>
+  auto
   ShaderSourceCollectionFactory::CreateAgxTonemapShaderSourceCollection()
+    -> std::unique_ptr<IShaderSourceCollection>
   {
     std::vector<std::unique_ptr<IAssetReference>> shaderSources = {};
 
@@ -134,9 +138,10 @@ namespace Dwarf
     return std::make_unique<ShaderSourceCollection>(shaderSources);
   }
 
-  std::unique_ptr<IShaderSourceCollection>
+  auto
   ShaderSourceCollectionFactory::CreateShaderSourceCollection(
     const nlohmann::json& serializedShaderSourceCollection)
+    -> std::unique_ptr<IShaderSourceCollection>
   {
     // Extracting shader sources from the JSON object.
     std::vector<std::unique_ptr<IAssetReference>> shaderSources = {};

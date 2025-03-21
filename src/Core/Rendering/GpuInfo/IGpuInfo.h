@@ -3,15 +3,29 @@
 #include <cstddef>
 namespace Dwarf
 {
+  /**
+   * @brief A class that provides information on the used GPU device
+   *
+   */
   class IGpuInfo
   {
   public:
     virtual ~IGpuInfo() = default;
 
-    virtual size_t
-    GetUsedVramMb() = 0;
+    /**
+     * @brief Get the amount of used VRAM
+     *
+     * @return The amount of used VRAM in MB
+     */
+    virtual auto
+    GetUsedVramMb() -> size_t = 0;
 
-    virtual size_t
-    GetTotalVramMb() = 0;
+    /**
+     * @brief Get the amount of total VRAM
+     *
+     * @return The amount of total VRAM in MB
+     */
+    virtual auto
+    GetTotalVramMb() -> size_t = 0;
   };
 }

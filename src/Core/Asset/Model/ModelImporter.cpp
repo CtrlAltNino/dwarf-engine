@@ -11,22 +11,8 @@ namespace Dwarf
   auto
   AssimpToGlmMatrix(const aiMatrix4x4& mat) -> glm::mat4
   {
-    return glm::mat4(mat.a1,
-                     mat.b1,
-                     mat.c1,
-                     mat.d1,
-                     mat.a2,
-                     mat.b2,
-                     mat.c2,
-                     mat.d2,
-                     mat.a3,
-                     mat.b3,
-                     mat.c3,
-                     mat.d3,
-                     mat.a4,
-                     mat.b4,
-                     mat.c4,
-                     mat.d4);
+    return { mat.a1, mat.b1, mat.c1, mat.d1, mat.a2, mat.b2, mat.c2, mat.d2,
+             mat.a3, mat.b3, mat.c3, mat.d3, mat.a4, mat.b4, mat.c4, mat.d4 };
   }
 
   ModelImporter::ModelImporter(std::shared_ptr<IDwarfLogger>   logger,
@@ -39,9 +25,6 @@ namespace Dwarf
     mLogger->LogDebug(Log("Creating ModelImporter", "ModelImporter"));
   }
 
-  // @brief Imports a model.
-  /// @param path Path to the model.
-  /// @return List of the imported meshes of a model.
   auto
   ModelImporter::Import(const std::filesystem::path& path)
     -> std::vector<std::unique_ptr<IMesh>>
