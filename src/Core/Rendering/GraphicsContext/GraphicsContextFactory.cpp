@@ -1,5 +1,6 @@
 #include "GraphicsContextFactory.h"
 #include <stdexcept>
+#include <utility>
 
 #if _WIN32
 #include "Platform/OpenGL/OpenGLContext.h"
@@ -12,10 +13,11 @@
 namespace Dwarf
 {
   GraphicsContextFactory::GraphicsContextFactory(
-    std::shared_ptr<IDwarfLogger> logger,
-    GraphicsApi                   api)
-    : mLogger(logger)
-    , mApi(api)
+    GraphicsApi                   api,
+    std::shared_ptr<IDwarfLogger> logger)
+    : mApi(api)
+    , mLogger(std::move(logger))
+
   {
     mLogger->LogDebug(
       Log("GraphicsContextFactory created.", "GraphicsContext"));

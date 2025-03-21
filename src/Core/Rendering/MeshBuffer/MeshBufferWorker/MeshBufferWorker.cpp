@@ -1,17 +1,24 @@
 #include "MeshBufferWorker.h"
+
 #include "Core/Rendering/MeshBuffer/IMeshBufferFactory.h"
 #include "IMeshBufferWorker.h"
 #include "Logging/IDwarfLogger.h"
+#include <utility>
 
 namespace Dwarf
 {
   MeshBufferWorker::MeshBufferWorker(
     std::shared_ptr<IDwarfLogger>       logger,
     std::shared_ptr<IMeshBufferFactory> meshBufferFactory)
-    : mLogger(logger)
-    , mMeshBufferFactory(meshBufferFactory)
+    : mLogger(std::move(logger))
+    , mMeshBufferFactory(std::move(meshBufferFactory))
   {
     mLogger->LogDebug(Log("MeshBufferWorker created.", "MeshBufferWorker"));
+  }
+
+  MeshBufferWorker::~MeshBufferWorker()
+  {
+    mLogger->LogDebug(Log("MeshBufferWorker destroyed.", "MeshBufferWorker"));
   }
 
   void
@@ -34,7 +41,7 @@ namespace Dwarf
       std::unique_ptr<MeshBufferRequest>& request =
         mMeshBufferRequestQueue.front();
 
-      request->Destination = mMeshBufferFactory->Create(request->Mesh);
+      request->Destination.get() = mMeshBufferFactory->Create(request->Mesh);
       mMeshBufferRequestQueue.pop();
     }
   }

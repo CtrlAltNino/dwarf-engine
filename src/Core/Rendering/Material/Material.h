@@ -9,7 +9,6 @@
 
 namespace Dwarf
 {
-  BOOST_STRONG_TYPEDEF(nlohmann::json, SerializedMaterial);
   /// @brief Class representing a modular Material.
   class Material : public IMaterial
   {
@@ -27,29 +26,30 @@ namespace Dwarf
     Material(std::shared_ptr<IShader>                    shader,
              MaterialProperties                          materialProperties,
              std::unique_ptr<IShaderParameterCollection> shaderParameters);
-    ~Material() override;
+    ~Material() override = default;
 
     /**
      * @brief Get the shader for this material.
      *
      * @return The shader for this material.
      */
-    IShader&
-    GetShader() override;
+    auto
+    GetShader() -> IShader& override;
 
     void
     SetShader(std::shared_ptr<IShader> shader) override;
 
-    const std::unique_ptr<IShaderParameterCollection>&
-    GetShaderParameters() const override;
+    [[nodiscard]] auto
+    GetShaderParameters() const
+      -> const std::unique_ptr<IShaderParameterCollection>& override;
 
-    MaterialProperties&
-    GetMaterialProperties() override;
+    auto
+    GetMaterialProperties() -> MaterialProperties& override;
 
     void
     GenerateShaderParameters() override;
 
-    nlohmann::json
-    Serialize() override;
+    auto
+    Serialize() -> nlohmann::json override;
   };
 }

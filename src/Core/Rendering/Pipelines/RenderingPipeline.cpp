@@ -1,13 +1,13 @@
-#include "ForwardRenderer.h"
+#include "RenderingPipeline.h"
 #include "Core/Rendering/Material/IMaterial.h"
 #include "Core/Scene/Components/SceneComponents.h"
 #include "pch.h"
 #include <glm/fwd.hpp>
-#include <iostream>
+#include <utility>
 
 namespace Dwarf
 {
-  ForwardRenderer::ForwardRenderer(
+  RenderingPipeline::RenderingPipeline(
     std::shared_ptr<IRendererApi>     rendererApi,
     std::shared_ptr<IMaterialFactory> materialFactory,
     std::shared_ptr<IShaderRegistry>  shaderRegistry,
@@ -16,15 +16,15 @@ namespace Dwarf
     std::shared_ptr<IMeshFactory>       meshFactory,
     std::shared_ptr<IMeshBufferFactory> meshBufferFactory,
     std::shared_ptr<IDrawCallList>      drawCallList)
-    : mRendererApi(rendererApi)
-    , mMaterialFactory(materialFactory)
-    , mShaderRegistry(shaderRegistry)
-    , mShaderSourceCollectionFactory(shaderSourceCollectionFactory)
-    , mMeshFactory(meshFactory)
-    , mMeshBufferFactory(meshBufferFactory)
-    , mDrawCallList(drawCallList)
+    : mRendererApi(std::move(rendererApi))
+    , mMaterialFactory(std::move(materialFactory))
+    , mShaderRegistry(std::move(shaderRegistry))
+    , mShaderSourceCollectionFactory(std::move(shaderSourceCollectionFactory))
+    , mMeshFactory(std::move(meshFactory))
+    , mMeshBufferFactory(std::move(meshBufferFactory))
+    , mDrawCallList(std::move(drawCallList))
   {
-    mRendererApi->SetClearColor(glm::vec4(0.065f, 0.07f, 0.085, 1.0f));
+    mRendererApi->SetClearColor(glm::vec4(0.065F, 0.07F, 0.085F, 1.0F));
 
     mIdMaterial = mMaterialFactory->CreateMaterial(mShaderRegistry->GetOrCreate(
       mShaderSourceCollectionFactory->CreateIdShaderSourceCollection()));
@@ -37,49 +37,37 @@ namespace Dwarf
     mGridMaterial->GetMaterialProperties().IsDoubleSided = true;
     mGridMaterial->GetMaterialProperties().IsTransparent = true;
 
-    std::unique_ptr<IMesh> gridMesh = meshFactory->CreateUnitQuad();
+    std::unique_ptr<IMesh> gridMesh = mMeshFactory->CreateUnitQuad();
     mGridMeshBuffer = std::move(mMeshBufferFactory->Create(gridMesh));
 
-    mGridModelMatrix = glm::mat4(1.0f);
-    mGridModelMatrix = glm::scale(mGridModelMatrix, glm::vec3(3000.0f));
+    mGridModelMatrix = glm::mat4(1.0F);
+    mGridModelMatrix = glm::scale(mGridModelMatrix, glm::vec3(3000.0F));
     mGridModelMatrix = glm::rotate(
-      mGridModelMatrix, glm::radians(-90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+      mGridModelMatrix, glm::radians(-90.0F), glm::vec3(1.0F, 0.0F, 0.0F));
   }
 
-  ForwardRenderer::~ForwardRenderer()
+  RenderingPipeline::~RenderingPipeline()
   {
     mDrawCallList->Clear();
   }
 
   void
-  ForwardRenderer::Setup(glm::ivec2 viewportSize)
+  RenderingPipeline::Setup(glm::ivec2 viewportSize)
   {
     mRendererApi->SetViewport(0, 0, viewportSize.x, viewportSize.y);
     // TODO: Create framebuffers etc.
   }
 
   void
-  ForwardRenderer::RenderScene(IScene&    scene,
-                               ICamera&   camera,
-                               glm::ivec2 viewportSize,
-                               bool       renderGrid)
+  RenderingPipeline::RenderScene(ICamera&   camera,
+                                 glm::ivec2 viewportSize,
+                                 bool       renderGrid)
   {
-    mRendererApi->SetClearColor(glm::vec4(0.065f, 0.07f, 0.085, 1.0f));
+    mRendererApi->SetClearColor(glm::vec4(0.065F, 0.07F, 0.085F, 1.0F));
     mRendererApi->Clear();
     mRendererApi->SetViewport(0, 0, viewportSize.x, viewportSize.y);
 
-    // Rendering skybox first???
-
-    /*for (auto view = scene.GetRegistry()
-                       .view<TransformComponent, MeshRendererComponent>();
-         auto [entity, transform, meshRenderer] : view.each())
-    {
-      if (meshRenderer.GetModelAsset() && !meshRenderer.IsHidden())
-      {
-        Entity e(entity, scene.GetRegistry());
-        RenderEntity(e, camera);
-      }
-    }*/
+    // TODO: Render skybox
 
     {
       std::lock_guard<std::mutex> lock(mDrawCallList->GetMutex());
@@ -102,9 +90,9 @@ namespace Dwarf
       // TODO: Ignore depth testing for grid
       glm::mat4 translatedGridModelMatrix =
         glm::translate(
-          glm::mat4(1.0f),
+          glm::mat4(1.0F),
           glm::vec3(camera.GetProperties().Transform.GetPosition().x,
-                    0.0f,
+                    0.0F,
                     camera.GetProperties().Transform.GetPosition().z)) *
         mGridModelMatrix;
       mRendererApi->RenderIndexed(
@@ -112,8 +100,8 @@ namespace Dwarf
     }
   }
 
-  FramebufferSpecification
-  ForwardRenderer::GetSpecification()
+  auto
+  RenderingPipeline::GetSpecification() const -> FramebufferSpecification
   {
     FramebufferSpecification fbSpec;
     fbSpec.Attachments = FramebufferAttachmentSpecification{
@@ -128,9 +116,9 @@ namespace Dwarf
   }
 
   void
-  ForwardRenderer::RenderIds(IScene&    scene,
-                             ICamera&   camera,
-                             glm::ivec2 viewportSize)
+  RenderingPipeline::RenderIds(IScene&    scene,
+                               ICamera&   camera,
+                               glm::ivec2 viewportSize)
   {
     mRendererApi->Clear(0);
 
@@ -144,17 +132,17 @@ namespace Dwarf
       {
         if (!meshRenderer.IdMesh())
         {
-          ModelAsset& model =
-            (ModelAsset&)meshRenderer.GetModelAsset()->GetAsset();
+          auto& model =
+            dynamic_cast<ModelAsset&>(meshRenderer.GetModelAsset()->GetAsset());
           std::unique_ptr<IMesh> mergedMesh =
             mMeshFactory->MergeMeshes(model.Meshes());
           meshRenderer.IdMesh() =
             std::move(mMeshBufferFactory->Create(mergedMesh));
         }
 
-        glm::mat4    modelMatrix = transform.GetModelMatrix();
-        unsigned int id = (unsigned int)entity;
-        mIdMaterial->GetShaderParameters()->SetParameter("objectId", id);
+        glm::mat4 modelMatrix = transform.GetModelMatrix();
+        auto      entityId = (unsigned int)entity;
+        mIdMaterial->GetShaderParameters()->SetParameter("objectId", entityId);
         mRendererApi->RenderIndexed(
           *meshRenderer.IdMesh(), *mIdMaterial, camera, modelMatrix);
       }

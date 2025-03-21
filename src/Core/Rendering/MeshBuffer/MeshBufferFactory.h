@@ -20,7 +20,14 @@ namespace Dwarf
                       std::shared_ptr<IVramTracker> vramTracker);
     ~MeshBufferFactory() override;
 
-    std::unique_ptr<IMeshBuffer>
-    Create(std::unique_ptr<IMesh>& mesh) override;
+    /**
+     * @brief Creates a mesh buffer on the gpu based on a provided mesh
+     *
+     * @param mesh Mesh to upload to the gpu
+     * @return Unique pointer to the created mesh buffer
+     */
+    [[nodiscard]] auto
+    Create(const std::unique_ptr<IMesh>& mesh) const
+      -> std::unique_ptr<IMeshBuffer> override;
   };
 }

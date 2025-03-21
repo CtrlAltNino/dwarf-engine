@@ -21,8 +21,7 @@ namespace Dwarf
 
   public:
     // Constructor
-    BOOST_DI_INJECT(MaterialFactory,
-                    std::shared_ptr<IDwarfLogger> logger,
+    MaterialFactory(std::shared_ptr<IDwarfLogger> logger,
                     std::shared_ptr<IShaderParameterCollectionFactory>
                       shaderParameterCollectionFactory,
                     std::shared_ptr<IShaderRegistry> shaderRegistry,
@@ -32,14 +31,32 @@ namespace Dwarf
     // Destructor
     ~MaterialFactory() override;
 
-    // Implement the CreateMaterial method
-    virtual std::unique_ptr<IMaterial>
-    CreateDefaultMaterial() const override;
+    /**
+     * @brief Creates a default material
+     *
+     * @return Unique pointer to the created default material
+     */
+    [[nodiscard]] auto
+    CreateDefaultMaterial() const -> std::unique_ptr<IMaterial> override;
 
-    virtual std::unique_ptr<IMaterial>
-    CreateMaterial(std::shared_ptr<IShader> shader) const override;
+    /**
+     * @brief Creates a new material which uses the provided shader
+     *
+     * @param shader Shader to use in the material
+     * @return Unique pointer to the created material
+     */
+    [[nodiscard]] auto
+    CreateMaterial(std::shared_ptr<IShader> shader) const
+      -> std::unique_ptr<IMaterial> override;
 
-    virtual std::unique_ptr<IMaterial>
-    FromSerialized(const nlohmann::json& serializedMaterial) const override;
+    /**
+     * @brief Creates a material instance based on serialized material data
+     *
+     * @param serializedMaterial Serialized material data
+     * @return Unique pointer to the deserialized material
+     */
+    [[nodiscard]] auto
+    FromSerialized(const nlohmann::json& serializedMaterial) const
+      -> std::unique_ptr<IMaterial> override;
   };
 };

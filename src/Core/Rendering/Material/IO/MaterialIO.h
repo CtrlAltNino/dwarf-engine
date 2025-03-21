@@ -24,12 +24,24 @@ namespace Dwarf
     // Destructor
     ~MaterialIO();
 
-    // Implement the SaveMaterial method
-    virtual void
+    /**
+     * @brief Serializes and writes the material instance to a given path
+     *
+     * @param material Material to write
+     * @param path Path to write to
+     */
+    void
     SaveMaterial(IMaterial&                   material,
                  const std::filesystem::path& path) const override;
 
-    virtual std::unique_ptr<IMaterial>
-    LoadMaterial(const std::filesystem::path& path) const override;
+    /**
+     * @brief Loads a material from a material file
+     *
+     * @param path Path to the material file
+     * @return Unique pointer to the loaded material file
+     */
+    [[nodiscard]] auto
+    LoadMaterial(const std::filesystem::path& path) const
+      -> std::unique_ptr<IMaterial> override;
   };
 }; // namespace Dwarf

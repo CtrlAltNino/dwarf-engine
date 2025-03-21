@@ -23,21 +23,38 @@ namespace Dwarf
     UpdateMesh();
 
   public:
-    MaterialPreview(std::shared_ptr<IDwarfLogger>        logger,
-                    std::shared_ptr<IFramebufferFactory> framebufferFactory,
-                    std::shared_ptr<ICameraFactory>      cameraFactory,
-                    std::shared_ptr<IRendererApiFactory> rendererApiFactory,
-                    std::shared_ptr<IMeshBufferFactory>  meshBufferFactory,
-                    std::shared_ptr<IMeshFactory>        meshFactory,
-                    std::shared_ptr<IEditorStats>        editorStats);
+    MaterialPreview(
+      std::shared_ptr<IDwarfLogger>               logger,
+      std::shared_ptr<IFramebufferFactory>        framebufferFactory,
+      const std::shared_ptr<ICameraFactory>&      cameraFactory,
+      const std::shared_ptr<IRendererApiFactory>& rendererApiFactory,
+      std::shared_ptr<IMeshBufferFactory>         meshBufferFactory,
+      std::shared_ptr<IMeshFactory>               meshFactory,
+      std::shared_ptr<IEditorStats>               editorStats);
+    ~MaterialPreview() override;
 
+    /**
+     * @brief Renders a material to preview it
+     *
+     * @param material Material to preview
+     */
     void
-    RenderMaterialPreview(IMaterial& materialAsset) override;
+    RenderMaterialPreview(IMaterial& material) override;
 
+    /**
+     * @brief Sets the desired mesh type to preview a material on
+     *
+     * @param meshType Mesh type
+     */
     void
     SetMeshType(MaterialPreviewMeshType meshType) override;
 
-    MaterialPreviewMeshType
-    GetMeshType() const override;
+    /**
+     * @brief Retrieves the currently used mesh type
+     *
+     * @return Current mesh type
+     */
+    [[nodiscard]] auto
+    GetMeshType() const -> MaterialPreviewMeshType override;
   };
 }

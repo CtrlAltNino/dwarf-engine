@@ -1,11 +1,16 @@
 #include "Utilities/FileHandler/FileHandler.h"
 
+#include "pch.h"
+
 #include <sago/platform_folders.h>
+
+#ifdef _WIN32
+#include <Windows.h>
+#endif
 
 #ifdef _WIN32
 #include <KnownFolders.h>
 #include <ShlObj.h>
-#include <Windows.h>
 #include <objbase.h>
 #include <shlwapi.h>
 #endif

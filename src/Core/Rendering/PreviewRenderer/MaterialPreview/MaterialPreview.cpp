@@ -1,26 +1,30 @@
 #include "MaterialPreview.h"
+
+#include <utility>
+
 #include "Core/Rendering/Framebuffer/IFramebufferFactory.h"
 #include "Editor/Stats/IEditorStats.h"
+#include <utility>
 
 namespace Dwarf
 {
   MaterialPreview::MaterialPreview(
-    std::shared_ptr<IDwarfLogger>        logger,
-    std::shared_ptr<IFramebufferFactory> framebufferFactory,
-    std::shared_ptr<ICameraFactory>      cameraFactory,
-    std::shared_ptr<IRendererApiFactory> rendererApiFactory,
-    std::shared_ptr<IMeshBufferFactory>  meshBufferFactory,
-    std::shared_ptr<IMeshFactory>        meshFactory,
-    std::shared_ptr<IEditorStats>        editorStats)
-    : PreviewRenderer(framebufferFactory,
+    std::shared_ptr<IDwarfLogger>               logger,
+    std::shared_ptr<IFramebufferFactory>        framebufferFactory,
+    const std::shared_ptr<ICameraFactory>&      cameraFactory,
+    const std::shared_ptr<IRendererApiFactory>& rendererApiFactory,
+    std::shared_ptr<IMeshBufferFactory>         meshBufferFactory,
+    std::shared_ptr<IMeshFactory>               meshFactory,
+    std::shared_ptr<IEditorStats>               editorStats)
+    : PreviewRenderer(std::move(framebufferFactory),
                       cameraFactory->Create(),
                       rendererApiFactory,
-                      editorStats)
-    , mLogger(logger)
-    , mMeshFactory(meshFactory)
-    , mMeshBufferFactory(meshBufferFactory)
+                      std::move(editorStats))
+    , mLogger(std::move(logger))
+    , mMeshFactory(std::move(meshFactory))
+    , mMeshBufferFactory(std::move(meshBufferFactory))
   {
-    FramebufferSpecification renderSpec = { 512, 512 };
+    FramebufferSpecification renderSpec = { .Width = 512, .Height = 512 };
     renderSpec.Samples = 4;
     renderSpec.Attachments = FramebufferAttachmentSpecification{
       FramebufferTextureSpecification{ FramebufferTextureFormat::RGBA8 },
@@ -28,30 +32,35 @@ namespace Dwarf
     };
     mRenderFramebuffer = mFramebufferFactory->Create(renderSpec);
 
-    FramebufferSpecification previewSpec = { 512, 512 };
+    FramebufferSpecification previewSpec = { .Width = 512, .Height = 512 };
     previewSpec.Samples = 1;
     previewSpec.Attachments = FramebufferAttachmentSpecification{
       FramebufferTextureSpecification{ FramebufferTextureFormat::RGBA8 }
     };
     mPreviewFramebuffer = mFramebufferFactory->Create(previewSpec);
 
-    mCamera->GetProperties().Fov = 50.0f;
-    mCamera->GetProperties().NearPlane = 0.1f;
-    mCamera->GetProperties().FarPlane = 25000.0f;
-    mCamera->GetProperties().AspectRatio = 1.0f;
-    mCamera->GetProperties().Transform.GetPosition() = { 0.0f, 0.0f, 0.0f };
+    mCamera->GetProperties().Fov = 50.0F;
+    mCamera->GetProperties().NearPlane = 0.1F;
+    mCamera->GetProperties().FarPlane = 25000.0F;
+    mCamera->GetProperties().AspectRatio = 1.0F;
+    mCamera->GetProperties().Transform.GetPosition() = { 0.0F, 0.0F, 0.0F };
     mCamera->GetProperties().Transform.GetEulerAngles() = { 0, 0, 0 };
 
     mLogger->LogDebug(Log("MaterialPreview created", "MaterialPreview"));
   }
 
+  MaterialPreview::~MaterialPreview()
+  {
+    mLogger->LogDebug(Log("MaterialPreview destroyed", "MaterialPreview"));
+  }
+
   void
-  MaterialPreview::RenderMaterialPreview(IMaterial& materialAsset)
+  MaterialPreview::RenderMaterialPreview(IMaterial& material)
   {
     // TODO: Reset sphere rotation when rendering a different material
     mCamera->GetProperties().Transform.GetPosition() = { 0, 0, 3 };
     mCamera->GetProperties().Transform.GetEulerAngles() = { 0, 0, 0 };
-    mCamera->GetProperties().NearPlane = 0.1f;
+    mCamera->GetProperties().NearPlane = 0.1F;
     mCamera->GetProperties().FarPlane = 4;
 
     mProperties.ModelRotation =
@@ -70,11 +79,11 @@ namespace Dwarf
                               0,
                               mRenderFramebuffer->GetSpecification().Width,
                               mRenderFramebuffer->GetSpecification().Height);
-    mRendererApi->SetClearColor({ 59 / 255.0f, 66 / 255.0f, 82 / 255.0f, 1 });
+    mRendererApi->SetClearColor({ 59 / 255.0F, 66 / 255.0F, 82 / 255.0F, 1 });
     mRendererApi->Clear();
 
     mRendererApi->RenderIndexed(*mMeshBuffer,
-                                materialAsset,
+                                material,
                                 *mCamera,
                                 glm::toMat4(mProperties.ModelRotationQuat));
     mRenderFramebuffer->Unbind();
@@ -121,8 +130,8 @@ namespace Dwarf
     }
   }
 
-  MaterialPreviewMeshType
-  MaterialPreview::GetMeshType() const
+  auto
+  MaterialPreview::GetMeshType() const -> MaterialPreviewMeshType
   {
     return mMeshType;
   }

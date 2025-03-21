@@ -1,23 +1,27 @@
 #include "MeshFactory.h"
+
 #include "Logging/IDwarfLogger.h"
 #include "Mesh.h"
+#include <utility>
 
 namespace Dwarf
 {
   MeshFactory::MeshFactory(std::shared_ptr<IDwarfLogger> logger)
-    : mLogger(logger)
+    : mLogger(std::move(logger))
   {
   }
-  std::unique_ptr<IMesh>
-  MeshFactory::Create(const std::vector<Vertex>&      vertices,
-                      const std::vector<unsigned int> indices,
-                      unsigned int                    materialIndex)
+  auto
+  MeshFactory::Create(const std::vector<Vertex>&       vertices,
+                      const std::vector<unsigned int>& indices,
+                      unsigned int                     materialIndex) const
+    -> std::unique_ptr<IMesh>
   {
     return std::make_unique<Mesh>(vertices, indices, materialIndex, mLogger);
   }
 
-  std::unique_ptr<IMesh>
-  MeshFactory::CreateUnitSphere(int stacks, int slices)
+  auto
+  MeshFactory::CreateUnitSphere(int stacks, int slices) const
+    -> std::unique_ptr<IMesh>
   {
     auto vertices = std::vector<Vertex>();
     auto indices = std::vector<unsigned int>();
@@ -27,7 +31,7 @@ namespace Dwarf
         glm::pi<float>() * static_cast<float>(i) / static_cast<float>(stacks);
       for (int j = 0; j <= slices; ++j)
       {
-        float theta = 2.0f * glm::pi<float>() * static_cast<float>(j) /
+        float theta = 2.0F * glm::pi<float>() * static_cast<float>(j) /
                       static_cast<float>(slices);
 
         float x = std::sin(phi) * std::cos(theta);
@@ -36,7 +40,7 @@ namespace Dwarf
 
         // Compute the tangent (derivative of position with respect to theta)
         float     tx = -std::sin(phi) * std::sin(theta);
-        float     ty = 0.0f;
+        float     ty = 0.0F;
         float     tz = std::sin(phi) * std::cos(theta);
         glm::vec3 tangent = glm::normalize(glm::vec3(tx, ty, tz));
 
@@ -61,9 +65,9 @@ namespace Dwarf
     {
       for (int j = 0; j < slices; ++j)
       {
-        int index0 = i * (slices + 1) + j;
+        int index0 = (i * (slices + 1)) + j;
         int index1 = index0 + 1;
-        int index2 = (i + 1) * (slices + 1) + j;
+        int index2 = ((i + 1) * (slices + 1)) + j;
         int index3 = index2 + 1;
 
         indices.push_back(index0);
@@ -79,94 +83,94 @@ namespace Dwarf
     return Create(vertices, indices, 0);
   }
 
-  std::unique_ptr<IMesh>
-  MeshFactory::CreateUnitCube()
+  auto
+  MeshFactory::CreateUnitCube() const -> std::unique_ptr<IMesh>
   {
     std::vector<Vertex> vertices = {
       // Positions          // Normals             // UVs
       // Front face
-      Vertex(glm::vec3(-0.5f, -0.5f, 0.5f),
-             glm::vec3(0.0f, 0.0f, 1.0f),
-             glm::vec2(0.0f, 0.0f)),
-      Vertex(glm::vec3(0.5f, -0.5f, 0.5f),
-             glm::vec3(0.0f, 0.0f, 1.0f),
-             glm::vec2(1.0f, 0.0f)),
-      Vertex(glm::vec3(0.5f, 0.5f, 0.5f),
-             glm::vec3(0.0f, 0.0f, 1.0f),
-             glm::vec2(1.0f, 1.0f)),
-      Vertex(glm::vec3(-0.5f, 0.5f, 0.5f),
-             glm::vec3(0.0f, 0.0f, 1.0f),
-             glm::vec2(0.0f, 1.0f)),
+      Vertex(glm::vec3(-0.5F, -0.5F, 0.5F),
+             glm::vec3(0.0F, 0.0F, 1.0F),
+             glm::vec2(0.0F, 0.0F)),
+      Vertex(glm::vec3(0.5F, -0.5F, 0.5F),
+             glm::vec3(0.0F, 0.0F, 1.0F),
+             glm::vec2(1.0F, 0.0F)),
+      Vertex(glm::vec3(0.5F, 0.5F, 0.5F),
+             glm::vec3(0.0F, 0.0F, 1.0F),
+             glm::vec2(1.0F, 1.0F)),
+      Vertex(glm::vec3(-0.5F, 0.5F, 0.5F),
+             glm::vec3(0.0F, 0.0F, 1.0F),
+             glm::vec2(0.0F, 1.0F)),
 
       // Back face
-      Vertex(glm::vec3(-0.5f, -0.5f, -0.5f),
-             glm::vec3(0.0f, 0.0f, -1.0f),
-             glm::vec2(1.0f, 0.0f)),
-      Vertex(glm::vec3(0.5f, -0.5f, -0.5f),
-             glm::vec3(0.0f, 0.0f, -1.0f),
-             glm::vec2(0.0f, 0.0f)),
-      Vertex(glm::vec3(0.5f, 0.5f, -0.5f),
-             glm::vec3(0.0f, 0.0f, -1.0f),
-             glm::vec2(0.0f, 1.0f)),
-      Vertex(glm::vec3(-0.5f, 0.5f, -0.5f),
-             glm::vec3(0.0f, 0.0f, -1.0f),
-             glm::vec2(1.0f, 1.0f)),
+      Vertex(glm::vec3(-0.5F, -0.5F, -0.5F),
+             glm::vec3(0.0F, 0.0F, -1.0F),
+             glm::vec2(1.0F, 0.0F)),
+      Vertex(glm::vec3(0.5F, -0.5F, -0.5F),
+             glm::vec3(0.0F, 0.0F, -1.0F),
+             glm::vec2(0.0F, 0.0F)),
+      Vertex(glm::vec3(0.5F, 0.5F, -0.5F),
+             glm::vec3(0.0F, 0.0F, -1.0F),
+             glm::vec2(0.0F, 1.0F)),
+      Vertex(glm::vec3(-0.5F, 0.5F, -0.5F),
+             glm::vec3(0.0F, 0.0F, -1.0F),
+             glm::vec2(1.0F, 1.0F)),
 
       // Left face
-      Vertex(glm::vec3(-0.5f, -0.5f, -0.5f),
-             glm::vec3(-1.0f, 0.0f, 0.0f),
-             glm::vec2(0.0f, 0.0f)),
-      Vertex(glm::vec3(-0.5f, -0.5f, 0.5f),
-             glm::vec3(-1.0f, 0.0f, 0.0f),
-             glm::vec2(1.0f, 0.0f)),
-      Vertex(glm::vec3(-0.5f, 0.5f, 0.5f),
-             glm::vec3(-1.0f, 0.0f, 0.0f),
-             glm::vec2(1.0f, 1.0f)),
-      Vertex(glm::vec3(-0.5f, 0.5f, -0.5f),
-             glm::vec3(-1.0f, 0.0f, 0.0f),
-             glm::vec2(0.0f, 1.0f)),
+      Vertex(glm::vec3(-0.5F, -0.5F, -0.5F),
+             glm::vec3(-1.0F, 0.0F, 0.0F),
+             glm::vec2(0.0F, 0.0F)),
+      Vertex(glm::vec3(-0.5F, -0.5F, 0.5F),
+             glm::vec3(-1.0F, 0.0F, 0.0F),
+             glm::vec2(1.0F, 0.0F)),
+      Vertex(glm::vec3(-0.5F, 0.5F, 0.5F),
+             glm::vec3(-1.0F, 0.0F, 0.0F),
+             glm::vec2(1.0F, 1.0F)),
+      Vertex(glm::vec3(-0.5F, 0.5F, -0.5F),
+             glm::vec3(-1.0F, 0.0F, 0.0F),
+             glm::vec2(0.0F, 1.0F)),
 
       // Right face
-      Vertex(glm::vec3(0.5f, -0.5f, -0.5f),
-             glm::vec3(1.0f, 0.0f, 0.0f),
-             glm::vec2(0.0f, 0.0f)),
-      Vertex(glm::vec3(0.5f, -0.5f, 0.5f),
-             glm::vec3(1.0f, 0.0f, 0.0f),
-             glm::vec2(1.0f, 0.0f)),
-      Vertex(glm::vec3(0.5f, 0.5f, 0.5f),
-             glm::vec3(1.0f, 0.0f, 0.0f),
-             glm::vec2(1.0f, 1.0f)),
-      Vertex(glm::vec3(0.5f, 0.5f, -0.5f),
-             glm::vec3(1.0f, 0.0f, 0.0f),
-             glm::vec2(0.0f, 1.0f)),
+      Vertex(glm::vec3(0.5F, -0.5F, -0.5F),
+             glm::vec3(1.0F, 0.0F, 0.0F),
+             glm::vec2(0.0F, 0.0F)),
+      Vertex(glm::vec3(0.5F, -0.5F, 0.5F),
+             glm::vec3(1.0F, 0.0F, 0.0F),
+             glm::vec2(1.0F, 0.0F)),
+      Vertex(glm::vec3(0.5F, 0.5F, 0.5F),
+             glm::vec3(1.0F, 0.0F, 0.0F),
+             glm::vec2(1.0F, 1.0F)),
+      Vertex(glm::vec3(0.5F, 0.5F, -0.5F),
+             glm::vec3(1.0F, 0.0F, 0.0F),
+             glm::vec2(0.0F, 1.0F)),
 
       // Top face
-      Vertex(glm::vec3(-0.5f, 0.5f, -0.5f),
-             glm::vec3(0.0f, 1.0f, 0.0f),
-             glm::vec2(0.0f, 0.0f)),
-      Vertex(glm::vec3(0.5f, 0.5f, -0.5f),
-             glm::vec3(0.0f, 1.0f, 0.0f),
-             glm::vec2(1.0f, 0.0f)),
-      Vertex(glm::vec3(0.5f, 0.5f, 0.5f),
-             glm::vec3(0.0f, 1.0f, 0.0f),
-             glm::vec2(1.0f, 1.0f)),
-      Vertex(glm::vec3(-0.5f, 0.5f, 0.5f),
-             glm::vec3(0.0f, 1.0f, 0.0f),
-             glm::vec2(0.0f, 1.0f)),
+      Vertex(glm::vec3(-0.5F, 0.5F, -0.5F),
+             glm::vec3(0.0F, 1.0F, 0.0F),
+             glm::vec2(0.0F, 0.0F)),
+      Vertex(glm::vec3(0.5F, 0.5F, -0.5F),
+             glm::vec3(0.0F, 1.0F, 0.0F),
+             glm::vec2(1.0F, 0.0F)),
+      Vertex(glm::vec3(0.5F, 0.5F, 0.5F),
+             glm::vec3(0.0F, 1.0F, 0.0F),
+             glm::vec2(1.0F, 1.0F)),
+      Vertex(glm::vec3(-0.5F, 0.5F, 0.5F),
+             glm::vec3(0.0F, 1.0F, 0.0F),
+             glm::vec2(0.0F, 1.0F)),
 
       // Bottom face
-      Vertex(glm::vec3(-0.5f, -0.5f, -0.5f),
-             glm::vec3(0.0f, -1.0f, 0.0f),
-             glm::vec2(1.0f, 0.0f)),
-      Vertex(glm::vec3(0.5f, -0.5f, -0.5f),
-             glm::vec3(0.0f, -1.0f, 0.0f),
-             glm::vec2(0.0f, 0.0f)),
-      Vertex(glm::vec3(0.5f, -0.5f, 0.5f),
-             glm::vec3(0.0f, -1.0f, 0.0f),
-             glm::vec2(0.0f, 1.0f)),
-      Vertex(glm::vec3(-0.5f, -0.5f, 0.5f),
-             glm::vec3(0.0f, -1.0f, 0.0f),
-             glm::vec2(1.0f, 1.0f)),
+      Vertex(glm::vec3(-0.5F, -0.5F, -0.5F),
+             glm::vec3(0.0F, -1.0F, 0.0F),
+             glm::vec2(1.0F, 0.0F)),
+      Vertex(glm::vec3(0.5F, -0.5F, -0.5F),
+             glm::vec3(0.0F, -1.0F, 0.0F),
+             glm::vec2(0.0F, 0.0F)),
+      Vertex(glm::vec3(0.5F, -0.5F, 0.5F),
+             glm::vec3(0.0F, -1.0F, 0.0F),
+             glm::vec2(0.0F, 1.0F)),
+      Vertex(glm::vec3(-0.5F, -0.5F, 0.5F),
+             glm::vec3(0.0F, -1.0F, 0.0F),
+             glm::vec2(1.0F, 1.0F)),
     };
 
     std::vector<unsigned int> indices = { // Front face
@@ -215,23 +219,23 @@ namespace Dwarf
     return Create(vertices, indices, 0);
   }
 
-  std::unique_ptr<IMesh>
-  MeshFactory::CreateUnitQuad()
+  auto
+  MeshFactory::CreateUnitQuad() const -> std::unique_ptr<IMesh>
   {
     return Create(
       {
-        { glm::vec3(-1.0f, 1.0f, 0.0f),
-          glm::vec3(0.0f, 0.0f, 1.0f),
-          glm::vec2(0.0f, 1.0f) }, // 0
-        { glm::vec3(-1.0f, -1.0f, 0.0f),
-          glm::vec3(0.0f, 0.0f, 1.0f),
-          glm::vec2(0.0f, 0.0f) }, // 1
-        { glm::vec3(1.0f, -1.0f, 0.0f),
-          glm::vec3(0.0f, 0.0f, 1.0f),
-          glm::vec2(1.0f, 0.0f) }, // 2
-        { glm::vec3(1.0f, 1.0f, 0.0f),
-          glm::vec3(0.0f, 0.0f, 1.0f),
-          glm::vec2(1.0f, 1.0f) } // 3
+        { glm::vec3(-1.0F, 1.0F, 0.0F),
+          glm::vec3(0.0F, 0.0F, 1.0F),
+          glm::vec2(0.0F, 1.0F) }, // 0
+        { glm::vec3(-1.0F, -1.0F, 0.0F),
+          glm::vec3(0.0F, 0.0F, 1.0F),
+          glm::vec2(0.0F, 0.0F) }, // 1
+        { glm::vec3(1.0F, -1.0F, 0.0F),
+          glm::vec3(0.0F, 0.0F, 1.0F),
+          glm::vec2(1.0F, 0.0F) }, // 2
+        { glm::vec3(1.0F, 1.0F, 0.0F),
+          glm::vec3(0.0F, 0.0F, 1.0F),
+          glm::vec2(1.0F, 1.0F) } // 3
       },
       {
         0,
@@ -244,26 +248,27 @@ namespace Dwarf
       0);
   }
 
-  std::unique_ptr<IMesh>
-  MeshFactory::CreateFullscreenQuad()
+  auto
+  MeshFactory::CreateFullscreenQuad() const -> std::unique_ptr<IMesh>
   {
     return Create(
-      { { { -1.0f, -1.0f, 0.0f }, { 0.0f, 0.0f, 1.0f }, { 0.0f, 0.0f } },
-        { { 1.0f, -1.0f, 0.0f }, { 0.0f, 0.0f, 1.0f }, { 1.0f, 0.0f } },
-        { { 1.0f, 1.0f, 0.0f }, { 0.0f, 0.0f, 1.0f }, { 1.0f, 1.0f } },
-        { { -1.0f, 1.0f, 0.0f }, { 0.0f, 0.0f, 1.0f }, { 0.0f, 1.0f } } },
+      { { { -1.0F, -1.0F, 0.0F }, { 0.0F, 0.0F, 1.0F }, { 0.0F, 0.0F } },
+        { { 1.0F, -1.0F, 0.0F }, { 0.0F, 0.0F, 1.0F }, { 1.0F, 0.0F } },
+        { { 1.0F, 1.0F, 0.0F }, { 0.0F, 0.0F, 1.0F }, { 1.0F, 1.0F } },
+        { { -1.0F, 1.0F, 0.0F }, { 0.0F, 0.0F, 1.0F }, { 0.0F, 1.0F } } },
       { 0, 1, 2, 2, 3, 0 },
       0);
   }
 
-  std::unique_ptr<IMesh>
+  auto
   MeshFactory::MergeMeshes(const std::vector<std::unique_ptr<IMesh>>& meshes)
+    const -> std::unique_ptr<IMesh>
   {
     std::vector<Vertex>       mergedVertices;
     std::vector<unsigned int> mergedIndices;
     uint32_t indexOffset = 0; // Tracks index shifting due to merged vertices
 
-    for (auto& mesh : meshes)
+    for (const auto& mesh : meshes)
     {
       for (auto vert : mesh->GetVertices())
       {
@@ -284,15 +289,16 @@ namespace Dwarf
     return std::move(mergedMesh);
   }
 
-  std::unique_ptr<IMesh>
+  auto
   MeshFactory::MergeMeshes(
-    const std::vector<std::reference_wrapper<IMesh>>& meshes)
+    const std::vector<std::reference_wrapper<IMesh>>& meshes) const
+    -> std::unique_ptr<IMesh>
   {
     std::vector<Vertex>       mergedVertices;
     std::vector<unsigned int> mergedIndices;
     uint32_t indexOffset = 0; // Tracks index shifting due to merged vertices
 
-    for (auto& mesh : meshes)
+    for (const auto& mesh : meshes)
     {
       for (auto vert : mesh.get().GetVertices())
       {
