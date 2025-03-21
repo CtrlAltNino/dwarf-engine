@@ -5,7 +5,9 @@
 #include <climits>
 #include <cmath>
 #include <cstdint>
+#include <cstdlib>
 #include <cstring>
+#include <ctime>
 #include <filesystem>
 #include <format>
 #include <fstream>
@@ -26,12 +28,9 @@
 #include <regex>
 #include <set>
 #include <sstream>
-#include <stdlib.h>
-#include <string.h>
 #include <string>
 #include <string_view>
 #include <thread>
-#include <time.h>
 #include <utility>
 #include <vector>
 

@@ -28,10 +28,10 @@ namespace Dwarf
 
   public:
     RenderingPipelineFactory(
-      std::shared_ptr<IDwarfLogger>        logger,
-      std::shared_ptr<IRendererApiFactory> rendererApiFactory,
-      std::shared_ptr<IMaterialFactory>    materialFactory,
-      std::shared_ptr<IShaderRegistry>     shaderRegistry,
+      std::shared_ptr<IDwarfLogger>               logger,
+      const std::shared_ptr<IRendererApiFactory>& rendererApiFactory,
+      std::shared_ptr<IMaterialFactory>           materialFactory,
+      std::shared_ptr<IShaderRegistry>            shaderRegistry,
       std::shared_ptr<IShaderSourceCollectionFactory>
                                           shaderSourceCollectionFactory,
       std::shared_ptr<IMeshFactory>       meshFactory,
@@ -40,7 +40,12 @@ namespace Dwarf
 
     ~RenderingPipelineFactory() override;
 
-    std::shared_ptr<IRenderingPipeline>
-    Create(PipelineType type) override;
+    /**
+     * @brief Creates a Rendering Pipeline
+     *
+     * @return Unique pointer to the created rendering pipeline instance
+     */
+    [[nodiscard]] auto
+    Create() const -> std::unique_ptr<IRenderingPipeline> override;
   };
 } // namespace Dwarf

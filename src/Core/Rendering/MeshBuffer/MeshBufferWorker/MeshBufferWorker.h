@@ -20,11 +20,20 @@ namespace Dwarf
   public:
     MeshBufferWorker(std::shared_ptr<IDwarfLogger>       logger,
                      std::shared_ptr<IMeshBufferFactory> meshBufferFactory);
-    ~MeshBufferWorker() override = default;
+    ~MeshBufferWorker() override;
 
+    /**
+     * @brief Enqueues a request to create a mesh buffer
+     *
+     * @param request The request data
+     */
     void
     RequestMeshBuffer(std::unique_ptr<MeshBufferRequest>&& request) override;
 
+    /**
+     * @brief Processes all queued requests
+     *
+     */
     void
     ProcessRequests() override;
   };

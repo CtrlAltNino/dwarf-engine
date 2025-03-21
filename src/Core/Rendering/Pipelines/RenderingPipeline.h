@@ -13,13 +13,13 @@
 
 namespace Dwarf
 {
-  class ForwardRenderer : public IRenderingPipeline
+  class RenderingPipeline : public IRenderingPipeline
   {
   private:
     std::unique_ptr<IMaterial>        mIdMaterial;
     std::unique_ptr<IMaterial>        mGridMaterial;
     std::unique_ptr<IMeshBuffer>      mGridMeshBuffer;
-    glm::mat4                         mGridModelMatrix;
+    glm::mat4                         mGridModelMatrix{};
     std::shared_ptr<IRendererApi>     mRendererApi;
     std::shared_ptr<IMaterialFactory> mMaterialFactory;
     std::shared_ptr<IShaderRegistry>  mShaderRegistry;
@@ -33,25 +33,43 @@ namespace Dwarf
     Setup(glm::ivec2 viewportSize);
 
   public:
-    ForwardRenderer(std::shared_ptr<IRendererApi>     rendererApi,
-                    std::shared_ptr<IMaterialFactory> materialFactory,
-                    std::shared_ptr<IShaderRegistry>  shaderRegistry,
-                    std::shared_ptr<IShaderSourceCollectionFactory>
-                                                  shaderSourceCollectionFactory,
-                    std::shared_ptr<IMeshFactory> meshFactory,
-                    std::shared_ptr<IMeshBufferFactory> meshBufferFactory,
-                    std::shared_ptr<IDrawCallList>      drawCallList);
-    ~ForwardRenderer() override;
+    RenderingPipeline(std::shared_ptr<IRendererApi>     rendererApi,
+                      std::shared_ptr<IMaterialFactory> materialFactory,
+                      std::shared_ptr<IShaderRegistry>  shaderRegistry,
+                      std::shared_ptr<IShaderSourceCollectionFactory>
+                        shaderSourceCollectionFactory,
+                      std::shared_ptr<IMeshFactory>       meshFactory,
+                      std::shared_ptr<IMeshBufferFactory> meshBufferFactory,
+                      std::shared_ptr<IDrawCallList>      drawCallList);
+    ~RenderingPipeline() override;
 
+    /**
+     * @brief Renders the current draw calls of the scene
+     *
+     * @param camera Camera to use for rendering
+     * @param viewportSize Viewport to render
+     * @param renderGrid Should the grid be rendered
+     */
     void
-    RenderScene(IScene&    scene,
-                ICamera&   camera,
+    RenderScene(ICamera&   camera,
                 glm::ivec2 viewportSize,
                 bool       renderGrid) override;
 
-    FramebufferSpecification
-    GetSpecification() override;
+    /**
+     * @brief Returns the specification for the framebuffer
+     *
+     * @return Framebuffer specification
+     */
+    [[nodiscard]] auto
+    GetSpecification() const -> FramebufferSpecification override;
 
+    /**
+     * @brief Renders the scene to the ID buffer for mouse picking
+     *
+     * @param scene Scene to render
+     * @param camera Camera to use for rendering
+     * @param viewportSize Viewport to render
+     */
     void
     RenderIds(IScene& scene, ICamera& camera, glm::ivec2 viewportSize) override;
   };

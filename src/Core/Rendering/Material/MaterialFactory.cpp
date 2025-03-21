@@ -1,6 +1,7 @@
 #include "MaterialFactory.h"
 #include "Material.h"
 #include <memory>
+#include <utility>
 
 namespace Dwarf
 {
@@ -11,10 +12,11 @@ namespace Dwarf
     std::shared_ptr<IShaderRegistry> shaderRegistry,
     std::shared_ptr<IShaderSourceCollectionFactory>
       shaderSourceCollectionFactory)
-    : mLogger(logger)
-    , mShaderParameterCollectionFactory(shaderParameterCollectionFactory)
-    , mShaderRegistry(shaderRegistry)
-    , mShaderSourceCollectionFactory(shaderSourceCollectionFactory)
+    : mLogger(std::move(logger))
+    , mShaderParameterCollectionFactory(
+        std::move(shaderParameterCollectionFactory))
+    , mShaderRegistry(std::move(shaderRegistry))
+    , mShaderSourceCollectionFactory(std::move(shaderSourceCollectionFactory))
   {
     mLogger->LogDebug(Log("MaterialFactory created", "MaterialFactory"));
   }
@@ -24,8 +26,8 @@ namespace Dwarf
     mLogger->LogDebug(Log("MaterialFactory destroyed", "MaterialFactory"));
   }
 
-  std::unique_ptr<IMaterial>
-  MaterialFactory::CreateDefaultMaterial() const
+  auto
+  MaterialFactory::CreateDefaultMaterial() const -> std::unique_ptr<IMaterial>
   {
     // TODO: Use default shader
     mLogger->LogDebug(Log("Creating default material", "MaterialFactory"));
@@ -36,8 +38,9 @@ namespace Dwarf
       mShaderParameterCollectionFactory->CreateShaderParameterCollection());
   }
 
-  std::unique_ptr<IMaterial>
+  auto
   MaterialFactory::CreateMaterial(std::shared_ptr<IShader> shader) const
+    -> std::unique_ptr<IMaterial>
   {
     mLogger->LogDebug(Log("Creating material", "MaterialFactory"));
     return std::make_unique<Material>(
@@ -46,9 +49,9 @@ namespace Dwarf
       mShaderParameterCollectionFactory->CreateShaderParameterCollection());
   }
 
-  std::unique_ptr<IMaterial>
-  MaterialFactory::FromSerialized(
-    const nlohmann::json& serializedMaterial) const
+  auto
+  MaterialFactory::FromSerialized(const nlohmann::json& serializedMaterial)
+    const -> std::unique_ptr<IMaterial>
   {
     mLogger->LogDebug(
       Log("Creating material from serialized data", "MaterialFactory"));

@@ -1,19 +1,25 @@
 #include "MaterialIO.h"
 #include <fmt/format.h>
 #include <string>
+#include <utility>
 
 namespace Dwarf
 {
   MaterialIO::MaterialIO(std::shared_ptr<IMaterialFactory> materialFactory,
                          std::shared_ptr<IDwarfLogger>     logger,
                          std::shared_ptr<IFileHandler>     fileHandler)
-    : mMaterialFactory(materialFactory)
-    , mLogger(logger)
-    , mFileHandler(fileHandler)
+    : mMaterialFactory(std::move(materialFactory))
+    , mLogger(std::move(logger))
+    , mFileHandler(std::move(fileHandler))
   {
+
+    mLogger->LogDebug(Log("MaterialIO created", "MaterialIO"));
   }
 
-  MaterialIO::~MaterialIO() {}
+  MaterialIO::~MaterialIO()
+  {
+    mLogger->LogDebug(Log("MaterialIO destroyed", "MaterialIO"));
+  }
 
   void
   MaterialIO::SaveMaterial(IMaterial&                   material,
@@ -29,8 +35,9 @@ namespace Dwarf
     mFileHandler->WriteToFile(path, serializedMaterial);
   }
 
-  std::unique_ptr<IMaterial>
+  auto
   MaterialIO::LoadMaterial(const std::filesystem::path& path) const
+    -> std::unique_ptr<IMaterial>
   {
     mLogger->LogDebug(
       Log(fmt::format("Loading material from file: {}", path.string()),

@@ -1,5 +1,7 @@
 #include "Mesh.h"
 
+#include <utility>
+
 namespace Dwarf
 {
   Mesh::Mesh(const std::vector<Vertex>&       vertices,
@@ -9,7 +11,7 @@ namespace Dwarf
     : mVertices(vertices)
     , mIndices(indices)
     , mMaterialIndex(materialIndex)
-    , mLogger(logger)
+    , mLogger(std::move(logger))
   {
     mLogger->LogDebug(Log("OpenGLMesh created.", "OpenGLMesh"));
   }
@@ -19,26 +21,26 @@ namespace Dwarf
     mLogger->LogDebug(Log("Mesh destroyed.", "OpenGLMesh"));
   }
 
-  int
-  Mesh::GetMaterialIndex() const
+  auto
+  Mesh::GetMaterialIndex() const -> unsigned int
   {
     return mMaterialIndex;
   }
 
-  std::vector<Vertex>
-  Mesh::GetVertices() const
+  auto
+  Mesh::GetVertices() const -> const std::vector<Vertex>&
   {
     return mVertices;
   }
 
-  std::vector<unsigned int>
-  Mesh::GetIndices() const
+  auto
+  Mesh::GetIndices() const -> const std::vector<unsigned int>&
   {
     return mIndices;
   }
 
-  std::unique_ptr<IMesh>
-  Mesh::Clone() const
+  auto
+  Mesh::Clone() const -> std::unique_ptr<IMesh>
   {
     return std::make_unique<Mesh>(mVertices, mIndices, mMaterialIndex, mLogger);
   }

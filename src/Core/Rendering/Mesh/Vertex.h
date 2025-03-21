@@ -26,12 +26,12 @@ namespace Dwarf
            glm::vec3 normal,
            glm::vec3 tangent,
            glm::vec3 biTangent,
-           glm::vec2 uv)
+           glm::vec2 uvCoord)
       : Position(position)
       , Normal(normal)
       , Tangent(tangent)
       , BiTangent(biTangent)
-      , UV(uv)
+      , UV(uvCoord)
     {
     }
 
@@ -42,6 +42,6 @@ namespace Dwarf
     {
     }
 
-    Vertex(){};
+    Vertex() {};
   };
 }

@@ -41,8 +41,7 @@ namespace Dwarf
     mSettings.MaxSamples = mRendererApi->GetMaxSamples();
 
     // Create rendering pipeline
-    mRenderingPipeline =
-      mRenderingPipelineFactory->Create(PipelineType::Forward);
+    mRenderingPipeline = mRenderingPipelineFactory->Create();
 
     mAgxTonemapShader = mShaderRegistry->GetOrCreate(
       mShaderSourceCollectionFactory->CreateAgxTonemapShaderSourceCollection());
@@ -108,8 +107,7 @@ namespace Dwarf
     mSettings.MaxSamples = mRendererApi->GetMaxSamples();
 
     // Create rendering pipeline
-    mRenderingPipeline =
-      mRenderingPipelineFactory->Create(PipelineType::Forward);
+    mRenderingPipeline = mRenderingPipelineFactory->Create();
 
     mAgxTonemapShader = mShaderRegistry->GetOrCreate(
       mShaderSourceCollectionFactory->CreateAgxTonemapShaderSourceCollection());
@@ -156,8 +154,7 @@ namespace Dwarf
 
     // Render scene to the framebuffer with the camera
     mFramebuffer->Bind();
-    mRenderingPipeline->RenderScene(mLoadedScene->GetScene(),
-                                    *mCamera,
+    mRenderingPipeline->RenderScene(*mCamera,
                                     { mFramebuffer->GetSpecification().Width,
                                       mFramebuffer->GetSpecification().Height },
                                     mSettings.RenderGrid);

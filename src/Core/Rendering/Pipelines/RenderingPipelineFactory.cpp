@@ -1,28 +1,31 @@
 #include "RenderingPipelineFactory.h"
 
-#include "Core/Rendering/Pipelines/Forward/ForwardRenderer.h"
-// #include "Core/Rendering/Pipelines/Deferred/DeferredRenderer.h"
+#include <utility>
+
+#include <utility>
+
+#include "Core/Rendering/Pipelines/RenderingPipeline.h"
 
 namespace Dwarf
 {
   RenderingPipelineFactory::RenderingPipelineFactory(
-    std::shared_ptr<IDwarfLogger>        logger,
-    std::shared_ptr<IRendererApiFactory> rendererApiFactory,
-    std::shared_ptr<IMaterialFactory>    materialFactory,
-    std::shared_ptr<IShaderRegistry>     shaderRegistry,
+    std::shared_ptr<IDwarfLogger>               logger,
+    const std::shared_ptr<IRendererApiFactory>& rendererApiFactory,
+    std::shared_ptr<IMaterialFactory>           materialFactory,
+    std::shared_ptr<IShaderRegistry>            shaderRegistry,
     std::shared_ptr<IShaderSourceCollectionFactory>
                                         shaderSourceCollectionFactory,
     std::shared_ptr<IMeshFactory>       meshFactory,
     std::shared_ptr<IMeshBufferFactory> meshBufferFactory,
     std::shared_ptr<IDrawCallList>      drawCallList)
-    : mLogger(logger)
+    : mLogger(std::move(logger))
     , mRendererApi(rendererApiFactory->Create())
-    , mMaterialFactory(materialFactory)
-    , mShaderRegistry(shaderRegistry)
-    , mShaderSourceCollectionFactory(shaderSourceCollectionFactory)
-    , mMeshFactory(meshFactory)
-    , mMeshBufferFactory(meshBufferFactory)
-    , mDrawCallList(drawCallList)
+    , mMaterialFactory(std::move(materialFactory))
+    , mShaderRegistry(std::move(shaderRegistry))
+    , mShaderSourceCollectionFactory(std::move(shaderSourceCollectionFactory))
+    , mMeshFactory(std::move(meshFactory))
+    , mMeshBufferFactory(std::move(meshBufferFactory))
+    , mDrawCallList(std::move(drawCallList))
   {
     mLogger->LogDebug(
       Log("RenderingPipelineFactory created", "RenderingPipelineFactory"));
@@ -34,22 +37,17 @@ namespace Dwarf
       Log("RenderingPipelineFactory destroyed", "RenderingPipelineFactory"));
   }
 
-  std::shared_ptr<IRenderingPipeline>
-  RenderingPipelineFactory::Create(PipelineType type)
+  auto
+  RenderingPipelineFactory::Create() const
+    -> std::unique_ptr<IRenderingPipeline>
   {
-    switch (type)
-    {
-      case PipelineType::Forward:
-        return std::make_shared<ForwardRenderer>(mRendererApi,
-                                                 mMaterialFactory,
-                                                 mShaderRegistry,
-                                                 mShaderSourceCollectionFactory,
-                                                 mMeshFactory,
-                                                 mMeshBufferFactory,
-                                                 mDrawCallList);
-      // case PipelineType::Deferred: return
-      // std::make_shared<DeferredRenderer>();
-      default: return nullptr;
-    }
+
+    return std::make_unique<RenderingPipeline>(mRendererApi,
+                                               mMaterialFactory,
+                                               mShaderRegistry,
+                                               mShaderSourceCollectionFactory,
+                                               mMeshFactory,
+                                               mMeshBufferFactory,
+                                               mDrawCallList);
   }
 } // namespace Dwarf

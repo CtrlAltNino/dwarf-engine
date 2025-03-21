@@ -1,16 +1,20 @@
 #include "PreviewRenderer.h"
 
+#include <utility>
+
+#include <utility>
+
 namespace Dwarf
 {
   PreviewRenderer::PreviewRenderer(
-    std::shared_ptr<IFramebufferFactory> framebufferFactory,
-    std::shared_ptr<ICamera>             camera,
-    std::shared_ptr<IRendererApiFactory> rendererApiFactory,
-    std::shared_ptr<IEditorStats>        editorStats)
-    : mFramebufferFactory(framebufferFactory)
-    , mCamera(camera)
+    std::shared_ptr<IFramebufferFactory>        framebufferFactory,
+    std::shared_ptr<ICamera>                    camera,
+    const std::shared_ptr<IRendererApiFactory>& rendererApiFactory,
+    std::shared_ptr<IEditorStats>               editorStats)
+    : mFramebufferFactory(std::move(framebufferFactory))
+    , mCamera(std::move(camera))
     , mRendererApi(rendererApiFactory->Create())
-    , mEditorStats(editorStats)
+    , mEditorStats(std::move(editorStats))
   {
   }
 
@@ -31,15 +35,15 @@ namespace Dwarf
   {
     mProperties.ModelRotationTarget = {
       std::max(
-        -90.0f,
-        std::min(90.0f, mProperties.ModelRotationTarget.x - deltaMousePos.y)),
-      fmodf(mProperties.ModelRotationTarget.y + deltaMousePos.x, 360.0f),
+        -90.0F,
+        std::min(90.0F, mProperties.ModelRotationTarget.x - deltaMousePos.y)),
+      fmodf(mProperties.ModelRotationTarget.y + deltaMousePos.x, 360.0F),
       0
     };
   }
 
-  float
-  PreviewRenderer::GetScrollDistance() const
+  auto
+  PreviewRenderer::GetScrollDistance() const -> float
   {
     return mProperties.Distance;
   }
@@ -50,8 +54,8 @@ namespace Dwarf
     mProperties.Distance = distance;
   }
 
-  ImTextureID
-  PreviewRenderer::GetTextureId() const
+  auto
+  PreviewRenderer::GetTextureId() const -> ImTextureID
   {
     ImTextureID textureId = 0;
 
@@ -65,27 +69,27 @@ namespace Dwarf
     return textureId;
   }
 
-  float
-  PreviewRenderer::EaseInOutQuad(float t) const
+  auto
+  PreviewRenderer::EaseInOutQuad(float t) const -> float
   {
     return t * t * (3 - 2 * t);
   }
 
-  glm::vec3
+  auto
   PreviewRenderer::InterpolateVectors(const glm::vec3& currentVector,
                                       const glm::vec3& targetVector,
-                                      float            speed) const
+                                      float            speed) const -> glm::vec3
   {
     // Ensure speed is in the range (0, 1] for proper interpolation
-    speed = std::max(0.001f, std::min(speed, 1.0f));
+    speed = std::max(0.001F, std::min(speed, 1.0F));
 
     // Calculate the interpolation factor using the easing function
     float t = EaseInOutQuad(speed);
 
     // Interpolate each component of the vectors
-    float x = currentVector.x + t * (targetVector.x - currentVector.x);
-    float y = currentVector.y + t * (targetVector.y - currentVector.y);
-    float z = currentVector.z + t * (targetVector.z - currentVector.z);
+    float x = currentVector.x + (t * (targetVector.x - currentVector.x));
+    float y = currentVector.y + (t * (targetVector.y - currentVector.y));
+    float z = currentVector.z + (t * (targetVector.z - currentVector.z));
 
     return { x, y, z };
   }

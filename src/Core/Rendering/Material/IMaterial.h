@@ -5,6 +5,11 @@
 
 namespace Dwarf
 {
+  /**
+   * @brief A struct that contains all properties of a material with the ability
+   * to serialize and deserialize them
+   *
+   */
   struct MaterialProperties : public ISerializable
   {
     bool IsTransparent;
@@ -31,8 +36,8 @@ namespace Dwarf
     {
     }
 
-    nlohmann::json
-    Serialize() override
+    auto
+    Serialize() -> nlohmann::json override
     {
       return {
         { "IsTransparent", IsTransparent },
@@ -43,6 +48,10 @@ namespace Dwarf
     }
   };
 
+  /**
+   * @brief A class that represents a material
+   *
+   */
   class IMaterial
   {
   public:
@@ -53,8 +62,8 @@ namespace Dwarf
      *
      * @return The shader for this material.
      */
-    virtual IShader&
-    GetShader() = 0;
+    virtual auto
+    GetShader() -> IShader& = 0;
 
     /**
      * @brief Set the shader for this material.
@@ -69,16 +78,17 @@ namespace Dwarf
      *
      * @return The shader parameters for this material.
      */
-    virtual const std::unique_ptr<IShaderParameterCollection>&
-    GetShaderParameters() const = 0;
+    [[nodiscard]] virtual auto
+    GetShaderParameters() const
+      -> const std::unique_ptr<IShaderParameterCollection>& = 0;
 
     /**
      * @brief Get the properties for this material.
      *
      * @return The material properties for this material.
      */
-    virtual MaterialProperties&
-    GetMaterialProperties() = 0;
+    virtual auto
+    GetMaterialProperties() -> MaterialProperties& = 0;
 
     /**
      * @brief Generate the shader parameters for this material based on the
@@ -92,7 +102,7 @@ namespace Dwarf
      *
      * @return The serialized material.
      */
-    virtual nlohmann::json
-    Serialize() = 0;
+    virtual auto
+    Serialize() -> nlohmann::json = 0;
   };
 }

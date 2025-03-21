@@ -1,5 +1,8 @@
 #include "MeshBufferFactory.h"
+
 #include "Core/Rendering/VramTracker/IVramTracker.h"
+#include <utility>
+
 
 #if _WIN32
 #include "Platform/OpenGL/OpenGLMesh.h"
@@ -16,8 +19,8 @@ namespace Dwarf
     std::shared_ptr<IDwarfLogger> logger,
     std::shared_ptr<IVramTracker> vramTracker)
     : mGraphicsApi(graphicsApi)
-    , mLogger(logger)
-    , mVramTracker(vramTracker)
+    , mLogger(std::move(logger))
+    , mVramTracker(std::move(vramTracker))
   {
     mLogger->LogDebug(Log("MeshBufferFactory created.", "MeshBufferFactory"));
   }
@@ -27,8 +30,9 @@ namespace Dwarf
     mLogger->LogDebug(Log("MeshBufferFactory destroyed.", "MeshBufferFactory"));
   }
 
-  std::unique_ptr<IMeshBuffer>
-  MeshBufferFactory::Create(std::unique_ptr<IMesh>& mesh)
+  auto
+  MeshBufferFactory::Create(const std::unique_ptr<IMesh>& mesh) const
+    -> std::unique_ptr<IMeshBuffer>
   {
     mLogger->LogDebug(Log("Creating mesh.", "MeshBufferFactory"));
     // Creating a shader based on the graphics API.
