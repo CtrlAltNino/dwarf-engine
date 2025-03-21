@@ -8,8 +8,9 @@ namespace Dwarf
   {
   }
 
-  std::vector<std::unique_ptr<IAssetReference>>&
+  auto
   ShaderSourceCollection::GetShaderSources()
+    -> std::vector<std::unique_ptr<IAssetReference>>&
   {
     return mShaderSources;
   }

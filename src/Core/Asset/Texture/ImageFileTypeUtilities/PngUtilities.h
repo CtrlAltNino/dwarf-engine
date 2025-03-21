@@ -4,18 +4,21 @@
 #include "Utilities/FileHandler/IFileHandler.h"
 #include "Utilities/ImageUtilities/TextureCommon.h"
 #include <spng.h>
+
+#include <cstddef>
 namespace Dwarf
 {
   class PngUtilities
   {
   public:
-    static std::shared_ptr<TextureContainer>
-    LoadPng(std::shared_ptr<IDwarfLogger> logger,
-            std::shared_ptr<IFileHandler> fileHandler,
-            std::filesystem::path const&  path)
+    static auto
+    LoadPng(const std::shared_ptr<IDwarfLogger>& logger,
+            const std::shared_ptr<IFileHandler>& fileHandler,
+            const std::filesystem::path&         path)
+      -> std::shared_ptr<TextureContainer>
     {
       spng_ctx* png = spng_ctx_new(0);
-      if (!png)
+      if (png == nullptr)
       {
         // DWARF_CORE_ERROR("Failed to initialize PNG decoder");
         return nullptr;
@@ -31,17 +34,18 @@ namespace Dwarf
       }
 
       int result = spng_set_png_buffer(png, pngData.data(), pngData.size());
-      if (result)
+      if (result != 0)
       {
         spng_ctx_free(png);
         return nullptr;
       }
-      spng_set_chunk_limits(png, 1024 * 1024, 1024 * 1024);
+      spng_set_chunk_limits(
+        png, static_cast<long>(1024) * 1024, static_cast<long>(1024) * 1024);
 
-      spng_ihdr ihdr;
+      spng_ihdr ihdr{};
       spng_get_ihdr(png, &ihdr);
 
-      size_t pngSize = ihdr.width * ihdr.height * 4;
+      size_t pngSize = static_cast<size_t>(ihdr.width * ihdr.height) * 4;
 
       // TODO: Add support for different PNG formats
       std::vector<unsigned char> imageData(pngSize);

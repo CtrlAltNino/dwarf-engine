@@ -8,8 +8,9 @@ namespace Dwarf
   class HdrUtilities
   {
   public:
-    static std::shared_ptr<TextureContainer>
+    static auto
     LoadHdr(std::filesystem::path const& path)
+      -> std::shared_ptr<TextureContainer>
     {
       // int      width;
       // int      height;

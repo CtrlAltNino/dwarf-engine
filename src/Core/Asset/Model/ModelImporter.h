@@ -15,12 +15,27 @@ namespace Dwarf
     std::shared_ptr<IAssetMetadata> mAssetMetadata;
     std::shared_ptr<IMeshFactory>   mMeshFactory;
 
+    /**
+     * @brief Processes an assimp node
+     *
+     * @param node Assimp node to process
+     * @param scene Assimp scene
+     * @param meshes Mesh vector reference to store the found meshes
+     * @param parentTransform Transformation matrix of the parent node
+     */
     void
     ProcessNode(const aiNode*                        node,
                 const aiScene*                       scene,
                 std::vector<std::unique_ptr<IMesh>>& meshes,
                 glm::mat4                            parentTransform);
 
+    /**
+     * @brief Processes an assimp mesh
+     *
+     * @param mesh Assimp mesh to process
+     * @param meshes Mesh vector reference to store the mesh
+     * @param transform Transformation matrix for the mesh
+     */
     void
     ProcessMesh(const aiMesh*                        mesh,
                 std::vector<std::unique_ptr<IMesh>>& meshes,

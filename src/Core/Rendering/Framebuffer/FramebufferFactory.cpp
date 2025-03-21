@@ -1,6 +1,7 @@
 #include "FramebufferFactory.h"
 #include "Core/Base.h"
 #include <memory>
+#include <utility>
 
 #ifdef _WIN32
 // #include "Platform/Direct3D12/D3D12Framebuffer.h"
@@ -16,20 +17,21 @@
 namespace Dwarf
 {
   FramebufferFactory::FramebufferFactory(
-    std::shared_ptr<IDwarfLogger>    logger,
     GraphicsApi                      api,
+    std::shared_ptr<IDwarfLogger>    logger,
     std::shared_ptr<ITextureFactory> textureFactory,
     std::shared_ptr<IVramTracker>    vramTracker)
-    : mLogger(logger)
-    , mApi(api)
-    , mTextureFactory(textureFactory)
-    , mVramTracker(vramTracker)
+    : mApi(api)
+    , mLogger(std::move(logger))
+    , mTextureFactory(std::move(textureFactory))
+    , mVramTracker(std::move(vramTracker))
   {
     mLogger->LogDebug(Log("FramebufferFactory created", "FramebufferFactory"));
   }
 
-  std::shared_ptr<IFramebuffer>
+  auto
   FramebufferFactory::Create(const FramebufferSpecification& spec)
+    -> std::unique_ptr<IFramebuffer>
   {
     mLogger->LogDebug(Log("Creating framebuffer", "FramebufferFactory"));
 
@@ -43,7 +45,7 @@ namespace Dwarf
         break;
       case Metal: break;
       case OpenGL:
-        return std::make_shared<OpenGLFramebuffer>(
+        return std::make_unique<OpenGLFramebuffer>(
           mLogger, spec, mTextureFactory, mVramTracker);
         break;
       case Vulkan:

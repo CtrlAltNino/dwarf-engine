@@ -91,12 +91,24 @@ namespace Dwarf
 
     ~DrawCallWorker() override;
 
+    /**
+     * @brief Signals to rebuild the draw calls
+     *
+     */
     void
     Invalidate() override;
 
+    /**
+     * @brief Worker function that runs in a separate thread to build draw calls
+     *
+     */
     void
     WorkerThread();
 
+    /**
+     * @brief Generates draw calls based on the loaded scene
+     *
+     */
     void
     GenerateDrawCalls();
   };

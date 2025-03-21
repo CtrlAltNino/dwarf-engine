@@ -1,5 +1,6 @@
 #pragma once
 #include "IShaderRecompiler.h"
+#include <mutex>
 
 namespace Dwarf
 {
@@ -17,5 +18,6 @@ namespace Dwarf
 
   private:
     std::vector<std::shared_ptr<IShader>> mShadersToRecompile;
+    std::mutex                            mRecompilationMutex;
   };
 }

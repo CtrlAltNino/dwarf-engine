@@ -26,10 +26,10 @@ namespace Dwarf
     AmdGpuInfo(std::shared_ptr<IDwarfLogger> logger);
     ~AmdGpuInfo() override;
 
-    size_t
-    GetUsedVramMb() override;
+    auto
+    GetUsedVramMb() -> size_t override;
 
-    size_t
-    GetTotalVramMb() override;
+    auto
+    GetTotalVramMb() -> size_t override;
   };
 }

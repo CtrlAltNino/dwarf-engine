@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Core/Asset/AssetReference/IAssetReference.h"
-#include "Core/Asset/Database/AssetComponents.h"
 
 namespace Dwarf
 {
@@ -10,7 +9,13 @@ namespace Dwarf
   public:
     virtual ~IShaderSourceCollection() = default;
 
-    virtual std::vector<std::unique_ptr<IAssetReference>>&
-    GetShaderSources() = 0;
+    /**
+     * @brief Retrieves the list of the shader sources
+     *
+     * @return Reference to the internal vector containing the shader asset
+     * references
+     */
+    virtual auto
+    GetShaderSources() -> std::vector<std::unique_ptr<IAssetReference>>& = 0;
   };
 }

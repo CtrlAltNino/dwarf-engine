@@ -17,13 +17,20 @@ namespace Dwarf
     std::shared_ptr<IVramTracker>    mVramTracker;
 
   public:
-    FramebufferFactory(std::shared_ptr<IDwarfLogger>    logger,
-                       GraphicsApi                      api,
+    FramebufferFactory(GraphicsApi                      api,
+                       std::shared_ptr<IDwarfLogger>    logger,
                        std::shared_ptr<ITextureFactory> textureFactory,
                        std::shared_ptr<IVramTracker>    vramTracker);
     ~FramebufferFactory() override = default;
 
-    virtual std::shared_ptr<IFramebuffer>
-    Create(const FramebufferSpecification& spec) override;
+    /**
+     * @brief Creates a framebuffer according to a given specification
+     *
+     * @param spec Specification of a framebuffer
+     * @return The created framebuffer
+     */
+    auto
+    Create(const FramebufferSpecification& spec)
+      -> std::unique_ptr<IFramebuffer> override;
   };
 }

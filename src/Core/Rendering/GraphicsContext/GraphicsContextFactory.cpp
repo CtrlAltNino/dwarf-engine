@@ -27,8 +27,9 @@ namespace Dwarf
       Log("GraphicsContextFactory destroyed.", "GraphicsContext"));
   }
 
-  std::unique_ptr<IGraphicsContext>
+  auto
   GraphicsContextFactory::Create(SDL_Window* window) const
+    -> std::unique_ptr<IGraphicsContext>
   {
     mLogger->LogDebug(Log("Creating GraphicsContext...", "GraphicsContext"));
     switch (mApi)

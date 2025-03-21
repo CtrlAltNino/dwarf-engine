@@ -1,21 +1,28 @@
 #include "AssetDirectoryListener.h"
+#include <fmt/format.h>
 
 namespace Dwarf
 {
   AssetDirectoryListener::AssetDirectoryListener(
-    const AssetDirectoryPath& assetDirectoryPath)
+    const AssetDirectoryPath&     assetDirectoryPath,
+    std::shared_ptr<IDwarfLogger> logger)
+    : mLogger(std::move(logger))
   {
+    mLogger->LogDebug(
+      Log("Creating AssetDirectoryListener", "AssetDirectoryListener"));
     mWatchID = mFileWatcher.addWatch(assetDirectoryPath.t.string(), this, true);
-    // mWatchID = mFileWatcher.addWatch(
-    //   Shader::GetDefaultShaderPath().string(), this, true);
-
-    // Start watching asynchronously the directories
     mFileWatcher.watch();
+    mLogger->LogDebug(
+      Log("AssetDirectoryListener created", "AssetDirectoryListener"));
   }
 
   AssetDirectoryListener::~AssetDirectoryListener()
   {
+    mLogger->LogDebug(
+      Log("Destroying AssetDirectoryListener", "AssetDirectoryListener"));
     mFileWatcher.removeWatch(mWatchID);
+    mLogger->LogDebug(
+      Log("AssetDirectoryListener destroyed", "AssetDirectoryListener"));
   }
 
   void
@@ -62,39 +69,62 @@ namespace Dwarf
     switch (action)
     {
       case efsw::Actions::Add:
-        std::cout << "DIR (" << dir << ") FILE (" << filename
-                  << ") has event Added\n";
-
-        for (const auto& callback : mAddFileCallbacks)
         {
-          callback(dir, filename);
+          mLogger->LogInfo(
+            Log(fmt::format("File with name {} has been added in directory {}",
+                            filename,
+                            dir),
+                "AssetDirectoryListener"));
+
+          for (const auto& callback : mAddFileCallbacks)
+          {
+            callback(dir, filename);
+          }
         }
         break;
       case efsw::Actions::Delete:
-        std::cout << "DIR (" << dir << ") FILE (" << filename
-                  << ") has event Delete\n";
-        for (const auto& callback : mDeleteFileCallbacks)
         {
-          callback(dir, filename);
+          mLogger->LogInfo(Log(
+            fmt::format("File with name {} has been deleted in directory {}",
+                        filename,
+                        dir),
+            "AssetDirectoryListener"));
+          for (const auto& callback : mDeleteFileCallbacks)
+          {
+            callback(dir, filename);
+          }
         }
         break;
       case efsw::Actions::Modified:
-        std::cout << "DIR (" << dir << ") FILE (" << filename
-                  << ") has event Modified\n";
-        for (const auto& callback : mModifyFileCallbacks)
         {
-          callback(dir, filename);
+          mLogger->LogInfo(Log(
+            fmt::format("File with name {} has been modified in directory {}",
+                        filename,
+                        dir),
+            "AssetDirectoryListener"));
+          for (const auto& callback : mModifyFileCallbacks)
+          {
+            callback(dir, filename);
+          }
         }
         break;
       case efsw::Actions::Moved:
-        std::cout << "DIR (" << dir << ") FILE (" << filename
-                  << ") has event Moved from (" << oldFilename << ")\n";
-        for (const auto& callback : mMoveFileCallbacks)
         {
-          callback(dir, filename, oldFilename);
+          mLogger->LogInfo(
+            Log(fmt::format(
+                  "File with name {} has been moved to directory {} from {}",
+                  filename,
+                  dir,
+                  oldFilename),
+                "AssetDirectoryListener"));
+          for (const auto& callback : mMoveFileCallbacks)
+          {
+            callback(dir, filename, oldFilename);
+          }
         }
         break;
-      default: std::cout << "Should never happen!\n";
+      default:
+        mLogger->LogError(Log("Invalid EFSW case", "AssetDirectoryListener"));
     }
   }
 }

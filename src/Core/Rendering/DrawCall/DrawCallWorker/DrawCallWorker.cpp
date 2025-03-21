@@ -2,6 +2,7 @@
 #include <algorithm>
 #include <functional>
 #include <memory>
+#include <utility>
 
 namespace Dwarf
 {
@@ -12,12 +13,12 @@ namespace Dwarf
     std::shared_ptr<IDrawCallList>     drawCallList,
     std::shared_ptr<IMeshFactory>      meshFactory,
     std::shared_ptr<IMeshBufferWorker> meshBufferWorker)
-    : mLogger(logger)
-    , mLoadedScene(loadedScene)
-    , mDrawCallFactory(drawCallFactory)
-    , mDrawCallList(drawCallList)
-    , mMeshFactory(meshFactory)
-    , mMeshBufferWorker(meshBufferWorker)
+    : mLogger(std::move(logger))
+    , mLoadedScene(std::move(loadedScene))
+    , mDrawCallFactory(std::move(drawCallFactory))
+    , mDrawCallList(std::move(drawCallList))
+    , mMeshFactory(std::move(meshFactory))
+    , mMeshBufferWorker(std::move(meshBufferWorker))
   {
     mLogger->LogDebug(Log("DrawCallWorker created!", "DrawCallWorker"));
     mWorkerThread = std::thread([this]() { WorkerThread(); });
@@ -99,11 +100,10 @@ namespace Dwarf
       {
         Entity e(entity, scene.GetRegistry());
 
-        TransformComponent&    transform = e.GetComponent<TransformComponent>();
-        MeshRendererComponent& meshRenderer =
-          e.GetComponent<MeshRendererComponent>();
-        ModelAsset& model =
-          (ModelAsset&)meshRenderer.GetModelAsset()->GetAsset();
+        auto& transform = e.GetComponent<TransformComponent>();
+        auto& meshRenderer = e.GetComponent<MeshRendererComponent>();
+        auto& model =
+          dynamic_cast<ModelAsset&>(meshRenderer.GetModelAsset()->GetAsset());
 
         for (int i = 0; i < model.Meshes().size(); i++)
         {
@@ -113,29 +113,25 @@ namespace Dwarf
             if (meshRenderer.MaterialAssets().at(
                   model.Meshes().at(i)->GetMaterialIndex()))
             {
-              MaterialAsset& materialAsset =
-                (MaterialAsset&)meshRenderer.MaterialAssets()
+              MaterialAsset& materialAsset = dynamic_cast<MaterialAsset&>(
+                meshRenderer.MaterialAssets()
                   .at(model.Meshes().at(i)->GetMaterialIndex())
-                  ->GetAsset();
+                  ->GetAsset());
 
               if (materialAsset.GetMaterial()
                     .GetMaterialProperties()
                     .IsTransparent)
               {
-                transparentTemps.push_back({ *model.Meshes().at(i),
-                                             materialAsset.GetMaterial(),
-                                             transform });
+                transparentTemps.emplace_back(*model.Meshes().at(i),
+                                              materialAsset.GetMaterial(),
+                                              transform);
               }
               else
               {
-                opagueTemps.push_back({ *model.Meshes().at(i),
-                                        materialAsset.GetMaterial(),
-                                        transform });
+                opagueTemps.emplace_back(*model.Meshes().at(i),
+                                         materialAsset.GetMaterial(),
+                                         transform);
               }
-
-              // drawCalls.push_back(mDrawCallFactory->Create(
-              //   model.Meshes().at(i), materialAsset.GetMaterial(),
-              //   transform));
             }
           }
         }
@@ -143,27 +139,26 @@ namespace Dwarf
     }
 
     // Sorting the draw calls
-    std::stable_sort(opagueTemps.begin(),
-                     opagueTemps.end(),
-                     [](const TempDrawCall& a, const TempDrawCall& b)
-                     {
-                       return std::uintptr_t(std::addressof(a.Material.get())) <
-                              std::uintptr_t(std::addressof(b.Material.get()));
-                     });
-    std::stable_sort(transparentTemps.begin(),
-                     transparentTemps.end(),
-                     [](const TempDrawCall& a, const TempDrawCall& b)
-                     {
-                       return std::uintptr_t(std::addressof(a.Material.get())) <
-                              std::uintptr_t(std::addressof(b.Material.get()));
-                     });
+    std::ranges::stable_sort(
+      opagueTemps,
+      [](const TempDrawCall& a, const TempDrawCall& b)
+      {
+        return std::uintptr_t(std::addressof(a.Material.get())) <
+               std::uintptr_t(std::addressof(b.Material.get()));
+      });
+    std::ranges::stable_sort(
+      transparentTemps,
+      [](const TempDrawCall& a, const TempDrawCall& b)
+      {
+        return std::uintptr_t(std::addressof(a.Material.get())) <
+               std::uintptr_t(std::addressof(b.Material.get()));
+      });
 
     std::vector<std::unique_ptr<Batch>> batches;
     std::unique_ptr<Batch>              currentBatch;
     // Batch per Material and upload geometry
     for (auto& tempDrawCall : opagueTemps)
     {
-      std::cout << &tempDrawCall.Material << std::endl;
       if (!currentBatch)
       {
         currentBatch = std::make_unique<Batch>(tempDrawCall.Material.get(),

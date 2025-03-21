@@ -19,13 +19,28 @@ namespace Dwarf
 
     ~DrawCall() override = default;
 
-    std::unique_ptr<IMeshBuffer>&
-    GetMeshBuffer() override;
+    /**
+     * @brief Retrieves the mesh buffer of the draw call
+     *
+     * @return Reference to the unique pointer to the mesh buffer
+     */
+    auto
+    GetMeshBuffer() -> std::unique_ptr<IMeshBuffer>& override;
 
-    IMaterial&
-    GetMaterial() override;
+    /**
+     * @brief Retrieves the material of the draw call
+     *
+     * @return Reference to the material
+     */
+    auto
+    GetMaterial() -> IMaterial& override;
 
-    TransformComponent&
-    GetTransform() override;
+    /**
+     * @brief Retrieves the transform of the draw call
+     *
+     * @return Reference to the transform component for the draw call
+     */
+    auto
+    GetTransform() -> TransformComponent& override;
   };
 }

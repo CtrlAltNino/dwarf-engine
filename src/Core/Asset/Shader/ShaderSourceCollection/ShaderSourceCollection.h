@@ -16,7 +16,14 @@ namespace Dwarf
 
     ~ShaderSourceCollection() override = default;
 
-    std::vector<std::unique_ptr<IAssetReference>>&
-    GetShaderSources() override;
+    /**
+     * @brief Retrieves the list of the shader sources
+     *
+     * @return Reference to the internal vector containing the shader asset
+     * references
+     */
+    auto
+    GetShaderSources()
+      -> std::vector<std::unique_ptr<IAssetReference>>& override;
   };
 }

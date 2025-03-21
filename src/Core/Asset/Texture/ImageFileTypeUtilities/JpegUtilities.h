@@ -7,21 +7,22 @@ namespace Dwarf
   class JpegUtilities
   {
   public:
-    static std::shared_ptr<TextureContainer>
+    static auto
     LoadJpeg(std::filesystem::path const& path, nlohmann::json& metadata)
+      -> std::shared_ptr<TextureContainer>
     {
       tjhandle jpegDecompressor = tjInitDecompress();
-      if (!jpegDecompressor)
+      if (jpegDecompressor == nullptr)
       {
         std::cerr << "Failed to initialize JPEG decompressor: "
-                  << tjGetErrorStr() << std::endl;
+                  << tjGetErrorStr() << '\n';
         return nullptr;
       }
 
       std::ifstream file(path.string().c_str(), std::ios::binary);
       if (!file)
       {
-        std::cerr << "Failed to open file: " << path.string() << std::endl;
+        std::cerr << "Failed to open file: " << path.string() << '\n';
         tjDestroy(jpegDecompressor);
         return nullptr;
       }
@@ -32,14 +33,13 @@ namespace Dwarf
 
       if (compressed.empty())
       {
-        std::cerr << "Failed to read JPEG file: " << path.string() << std::endl;
+        std::cerr << "Failed to read JPEG file: " << path.string() << '\n';
         tjDestroy(jpegDecompressor);
         return nullptr;
       }
 
       // Check file size
-      std::cerr << "JPEG file size: " << compressed.size() << " bytes"
-                << std::endl;
+      std::cerr << "JPEG file size: " << compressed.size() << " bytes" << '\n';
 
       // Print first few bytes of the JPEG data
       std::cerr << "First few bytes of JPEG data: ";
@@ -47,7 +47,7 @@ namespace Dwarf
       {
         std::cerr << std::hex << static_cast<int>(compressed[i]) << " ";
       }
-      std::cerr << std::dec << std::endl;
+      std::cerr << std::dec << '\n';
 
       int jpegSubsamp = 0;
       int width = 0;
@@ -59,8 +59,7 @@ namespace Dwarf
                               &height,
                               &jpegSubsamp) == -1)
       {
-        std::cerr << "Failed to read JPEG header: " << tjGetErrorStr()
-                  << std::endl;
+        std::cerr << "Failed to read JPEG header: " << tjGetErrorStr() << '\n';
         tjDestroy(jpegDecompressor);
         return nullptr;
       }
@@ -77,8 +76,8 @@ namespace Dwarf
                         TJFLAG_FASTDCT) == -1)
       {
         std::cerr << "Failed to decompress JPEG image: " << tjGetErrorStr()
-                  << std::endl;
-        delete[] decompressed;
+                  << '\n';
+        tjFree(decompressed);
         tjDestroy(jpegDecompressor);
         return nullptr;
       }

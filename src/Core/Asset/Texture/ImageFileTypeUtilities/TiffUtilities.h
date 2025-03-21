@@ -8,13 +8,14 @@ namespace Dwarf
   class TiffUtilities
   {
   public:
-    static std::shared_ptr<TextureContainer>
+    static auto
     LoadTiff(std::filesystem::path const& path)
+      -> std::shared_ptr<TextureContainer>
     {
       // TODO: Remove stbi
-      int      width;
-      int      height;
-      int      channels;
+      int      width = 0;
+      int      height = 0;
+      int      channels = 0;
       stbi_uc* data =
         stbi_load(path.string().c_str(), &width, &height, &channels, 0);
 

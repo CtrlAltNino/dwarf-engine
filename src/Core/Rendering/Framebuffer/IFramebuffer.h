@@ -1,7 +1,7 @@
 #pragma once
-#include "pch.h"
 #include "Core/Base.h"
 #include "Core/Rendering/Texture/ITexture.h"
+#include "pch.h"
 
 namespace Dwarf
 {
@@ -52,6 +52,10 @@ namespace Dwarf
     bool                               SwapChainTarget = false;
   };
 
+  /**
+   * @brief Virtual base class for a framebuffer
+   *
+   */
   class IFramebuffer
   {
   public:
@@ -67,8 +71,9 @@ namespace Dwarf
 
     virtual void
     SetSamples(uint32_t samples) = 0;
-    virtual unsigned int
-    ReadPixel(uint32_t attachmentIndex, int x, int y) = 0;
+    virtual auto
+    ReadPixel(uint32_t attachmentIndex, int xCoord, int yCoord)
+      -> unsigned int = 0;
 
     virtual void
     ClearAttachment(uint32_t attachmentIndex, int value) = 0;
@@ -78,10 +83,11 @@ namespace Dwarf
     virtual void
     Clear(glm::vec4 clearColor) = 0;
 
-    virtual const std::optional<std::reference_wrapper<ITexture>>
-    GetColorAttachment(uint32_t index = 0) const = 0;
+    virtual auto
+    GetColorAttachment(uint32_t index = 0) const
+      -> const std::optional<std::reference_wrapper<ITexture>> = 0;
 
-    virtual const FramebufferSpecification&
-    GetSpecification() const = 0;
+    virtual auto
+    GetSpecification() const -> const FramebufferSpecification& = 0;
   };
 }

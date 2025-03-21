@@ -2,8 +2,8 @@
 
 #include "Utilities/ImageUtilities/TextureCommon.h"
 #include <FreeImage.h>
-#include <iostream>
 #include <filesystem>
+#include <iostream>
 #include <memory>
 
 namespace Dwarf
@@ -11,13 +11,14 @@ namespace Dwarf
   class TgaUtilities
   {
   public:
-    static std::shared_ptr<TextureContainer>
+    static auto
     LoadTga(const std::filesystem::path& path)
+      -> std::shared_ptr<TextureContainer>
     {
       // Ensure the file exists
       if (!std::filesystem::exists(path))
       {
-        std::cerr << "File does not exist: " << path << std::endl;
+        std::cerr << "File does not exist: " << path << '\n';
         return nullptr;
       }
 
@@ -26,17 +27,17 @@ namespace Dwarf
 
       // Load the image
       FIBITMAP* bitmap = FreeImage_Load(FIF_TARGA, path.string().c_str());
-      if (!bitmap)
+      if (bitmap == nullptr)
       {
-        std::cerr << "Failed to load TGA file: " << path << std::endl;
+        std::cerr << "Failed to load TGA file: " << path << '\n';
         FreeImage_DeInitialise();
         return nullptr;
       }
 
       // Get image dimensions and format
-      int width = FreeImage_GetWidth(bitmap);
-      int height = FreeImage_GetHeight(bitmap);
-      int channels = FreeImage_GetBPP(bitmap) / 8;
+      unsigned int width = FreeImage_GetWidth(bitmap);
+      unsigned int height = FreeImage_GetHeight(bitmap);
+      unsigned int channels = FreeImage_GetBPP(bitmap) / 8;
 
       // Convert the image to 32-bit (RGBA) if necessary
       FIBITMAP* convertedBitmap = bitmap;
@@ -73,14 +74,14 @@ namespace Dwarf
       // Swap the channels from BGRA to RGBA
       if (channels == 4)
       {
-        for (int i = 0; i < width * height * channels; i += channels)
+        for (unsigned int i = 0; i < width * height * channels; i += channels)
         {
           std::swap(imageData[i], imageData[i + 2]); // Swap B and R
         }
       }
       else if (channels == 3)
       {
-        for (int i = 0; i < width * height * channels; i += channels)
+        for (unsigned int i = 0; i < width * height * channels; i += channels)
         {
           std::swap(imageData[i], imageData[i + 2]); // Swap B and R
         }

@@ -5,12 +5,16 @@
 
 namespace Dwarf
 {
+  /**
+   * @brief A class that creates a GPU info object based on the vendor
+   *
+   */
   class IGpuInfoFactory
   {
   public:
     virtual ~IGpuInfoFactory() = default;
 
-    virtual std::unique_ptr<IGpuInfo>
-    Create() const = 0;
+    [[nodiscard]] virtual auto
+    Create() const -> std::unique_ptr<IGpuInfo> = 0;
   };
 }

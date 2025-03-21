@@ -4,30 +4,26 @@ namespace Dwarf
 {
   DrawCallList::~DrawCallList()
   {
-    {
-      std::lock_guard<std::mutex> lock(mDrawCallMutex);
-      mDrawCalls.clear();
-    }
+    std::lock_guard<std::mutex> lock(mDrawCallMutex);
+    mDrawCalls.clear();
   }
 
   void
   DrawCallList::SubmitDrawCalls(
     std::vector<std::unique_ptr<IDrawCall>> drawCalls)
   {
-    {
-      std::lock_guard<std::mutex> lock(mDrawCallMutex);
-      mDrawCalls = std::move(drawCalls);
-    }
+    std::lock_guard<std::mutex> lock(mDrawCallMutex);
+    mDrawCalls = std::move(drawCalls);
   }
 
-  std::vector<std::unique_ptr<IDrawCall>>&
-  DrawCallList::GetDrawCalls()
+  auto
+  DrawCallList::GetDrawCalls() -> std::vector<std::unique_ptr<IDrawCall>>&
   {
     return mDrawCalls;
   }
 
-  std::mutex&
-  DrawCallList::GetMutex()
+  auto
+  DrawCallList::GetMutex() -> std::mutex&
   {
     return mDrawCallMutex;
   }
@@ -35,9 +31,7 @@ namespace Dwarf
   void
   DrawCallList::Clear()
   {
-    {
-      std::lock_guard<std::mutex> lock(mDrawCallMutex);
-      mDrawCalls.clear();
-    }
+    std::lock_guard<std::mutex> lock(mDrawCallMutex);
+    mDrawCalls.clear();
   }
 }

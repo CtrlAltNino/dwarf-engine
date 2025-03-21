@@ -3,18 +3,21 @@
 #include "Utilities/ImageUtilities/TextureCommon.h"
 #include <stb_image.h>
 
+#include <cstddef>
+
 namespace Dwarf
 {
   class BmpUtilities
   {
   public:
-    static std::shared_ptr<TextureContainer>
+    static auto
     LoadBmp(std::filesystem::path const& path)
+      -> std::shared_ptr<TextureContainer>
     {
       // TODO: Remove stbi
-      int      width;
-      int      height;
-      int      channels;
+      int      width = 0;
+      int      height = 0;
+      int      channels = 0;
       stbi_uc* data =
         stbi_load(path.string().c_str(), &width, &height, &channels, 0);
 
@@ -27,8 +30,8 @@ namespace Dwarf
       textureData->DataType = TextureDataType::UNSIGNED_BYTE;
 
       // copy content from data into textureData->ImageData
-      textureData->ImageData =
-        std::vector<unsigned char>(data, data + (width * height * channels));
+      textureData->ImageData = std::vector<unsigned char>(
+        data, data + (static_cast<ptrdiff_t>(width * height * channels)));
 
       return textureData;
     }
