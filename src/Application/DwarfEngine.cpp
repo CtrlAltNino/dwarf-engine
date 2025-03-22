@@ -53,7 +53,7 @@ namespace Dwarf
     std::optional<SavedProject> selectedProject = std::nullopt;
 
     mLogger->LogDebug(Log("Creating injector...", "DwarfEngine"));
-    auto launcherInjector = ProjectLauncherInjector::createInjector();
+    auto launcherInjector = ProjectLauncherInjector::CreateInjector();
 
     mLogger->LogDebug(Log("Creating project launcher...", "DwarfEngine"));
     auto launcher = launcherInjector.create<std::shared_ptr<ProjectLauncher>>();
@@ -72,7 +72,7 @@ namespace Dwarf
       Log("Opening project at: " + savedProject.Path.string(), "DwarfEngine"));
     mLogger->LogDebug(Log("Creating editor...", "DwarfEngine"));
 
-    auto editorInjector = EditorInjector::createInjector(savedProject);
+    auto editorInjector = EditorInjector::CreateInjector(savedProject);
 
     auto editor = editorInjector.create<std::shared_ptr<Dwarf::Editor>>();
     bool returnToLauncher = editor->Run();

@@ -1,36 +1,40 @@
 #include "SceneProperties.h"
 
+#include <utility>
+
 namespace Dwarf
 {
+  using std::string;
+
   SceneProperties::SceneProperties(std::optional<UUID>             assetID,
-                                   const std::string&              name,
+                                   std::string_view                name,
                                    std::unique_ptr<ISceneSettings> settings)
-    : mAssetID(assetID)
+    : mAssetID(std::move(assetID))
     , mName(name)
     , mSettings(std::move(settings))
   {
   }
 
-  nlohmann::json
-  SceneProperties::Serialize()
+  auto
+  SceneProperties::Serialize() -> nlohmann::json
   {
     return mSettings->Serialize();
   }
 
-  std::string
-  SceneProperties::GetName() const
+  auto
+  SceneProperties::GetName() const -> std::string
   {
     return mName;
   }
 
-  const std::optional<UUID>&
-  SceneProperties::GetAssetID() const
+  auto
+  SceneProperties::GetAssetID() const -> const std::optional<UUID>&
   {
     return mAssetID;
   }
 
-  ISceneSettings&
-  SceneProperties::GetSettings() const
+  auto
+  SceneProperties::GetSettings() const -> ISceneSettings&
   {
     return *mSettings;
   }

@@ -15,15 +15,16 @@ namespace Dwarf
     /// @brief Exponential fog.
     EXPONENTIAL
   };
+
   /// @brief Struct that represents the fog settings of a scene.
   struct FogSettings : public ISerializable
   {
     /// @brief Color of the fog.
-    glm::vec3 fogColor = { 0.3f, 0.3f, 0.3f };
+    glm::vec3 fogColor = { 0.3F, 0.3F, 0.3F };
     /// @brief Starting distance of the fog.
-    float fogStart = 20.0f;
+    float fogStart = 20.0F;
     /// @brief Ending distance of the fog (only for linear fog).
-    float fogEnd = 50.0f;
+    float fogEnd = 50.0F;
     /// @brief Type of the fog.
     FogType type = FogType::LINEAR;
 
@@ -33,18 +34,18 @@ namespace Dwarf
     /// @brief Constructor.
     /// @param serializedSettings The serialized settings.
     FogSettings(nlohmann::json serializedSettings)
-    {
-      fogColor = { serializedSettings["FogColor"][0],
+      : fogColor({ serializedSettings["FogColor"][0],
                    serializedSettings["FogColor"][1],
-                   serializedSettings["FogColor"][2] };
-      fogStart = serializedSettings["FogStart"];
-      fogEnd = serializedSettings["FogEnd"];
-      type = static_cast<FogType>(serializedSettings["FogType"]);
+                   serializedSettings["FogColor"][2] })
+      , fogStart(serializedSettings["FogStart"])
+      , fogEnd(serializedSettings["FogEnd"])
+      , type(static_cast<FogType>(serializedSettings["FogType"]))
+    {
     }
 
     /// @copydoc ISerializable::Serialize
-    nlohmann::json
-    Serialize() override
+    auto
+    Serialize() -> nlohmann::json override
     {
       nlohmann::json json;
       json["FogColor"] = { fogColor.r, fogColor.g, fogColor.b };
@@ -59,9 +60,9 @@ namespace Dwarf
   struct GlobalLightSettings : public ISerializable
   {
     /// @brief Color of the global light.
-    glm::vec3 color = { 0.8f, 0.6f, 0.6f };
+    glm::vec3 color = { 0.8F, 0.6F, 0.6F };
     /// @brief Intensity of the global light.
-    float intensity = 0.2f;
+    float intensity = 0.2F;
 
     /// @brief Constructor.
     GlobalLightSettings() = default;
@@ -69,16 +70,16 @@ namespace Dwarf
     /// @brief Constructor.
     /// @param serializedSettings The serialized settings.
     GlobalLightSettings(nlohmann::json serializedSettings)
-    {
-      color = { serializedSettings["GlobalLightColor"][0],
+      : color({ serializedSettings["GlobalLightColor"][0],
                 serializedSettings["GlobalLightColor"][1],
-                serializedSettings["GlobalLightColor"][2] };
-      intensity = serializedSettings["GlobalLightIntensity"];
+                serializedSettings["GlobalLightColor"][2] })
+      , intensity(serializedSettings["GlobalLightIntensity"])
+    {
     }
 
     /// @copydoc ISerializable::Serialize
-    nlohmann::json
-    Serialize() override
+    auto
+    Serialize() -> nlohmann::json override
     {
       nlohmann::json json;
       json["GlobalLightColor"] = { color.r, color.g, color.b };
@@ -96,17 +97,17 @@ namespace Dwarf
 
     /// @brief Returns the fog settings of the scene.
     /// @return The fog settings of the scene.
-    virtual FogSettings&
-    GetFogSettings() = 0;
+    virtual auto
+    GetFogSettings() -> FogSettings& = 0;
 
     /// @brief Returns the global light settings of the scene.
     /// @return The global light settings of the scene.
-    virtual GlobalLightSettings&
-    GetGlobalLightSettings() = 0;
+    virtual auto
+    GetGlobalLightSettings() -> GlobalLightSettings& = 0;
 
     /// @brief Returns the UID of the skybox material.
     /// @return The UID of the skybox material.
-    virtual std::optional<UUID>&
-    GetSkyboxMaterial() = 0;
+    virtual auto
+    GetSkyboxMaterial() -> std::optional<UUID>& = 0;
   };
 } // namespace Dwarf

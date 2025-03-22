@@ -52,7 +52,7 @@
 namespace Dwarf
 {
   auto
-  ProjectLauncherInjector::createInjector()
+  ProjectLauncherInjector::CreateInjector()
     -> boost::di::injector<std::shared_ptr<ProjectLauncher>>
   {
     return boost::di::make_injector<boost::di::extension::shared_config>(

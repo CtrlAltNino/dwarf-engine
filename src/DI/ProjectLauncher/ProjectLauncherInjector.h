@@ -9,6 +9,6 @@ namespace Dwarf
   {
   public:
     static auto
-    createInjector() -> boost::di::injector<std::shared_ptr<ProjectLauncher>>;
+    CreateInjector() -> boost::di::injector<std::shared_ptr<ProjectLauncher>>;
   };
 }

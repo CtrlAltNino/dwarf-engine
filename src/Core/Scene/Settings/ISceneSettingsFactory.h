@@ -6,15 +6,31 @@
 
 namespace Dwarf
 {
+  /**
+   * @brief Factory class creating SceneSettings instances
+   *
+   */
   class ISceneSettingsFactory
   {
   public:
     virtual ~ISceneSettingsFactory() = default;
 
-    virtual std::unique_ptr<ISceneSettings>
-    Create(nlohmann::json serializedSettings) = 0;
+    /**
+     * @brief Creates an empty SceneSettings instance
+     *
+     * @return Unique pointer to the created SceneSettings instance
+     */
+    [[nodiscard]] virtual auto
+    Create() const -> std::unique_ptr<ISceneSettings> = 0;
 
-    virtual std::unique_ptr<ISceneSettings>
-    Create() = 0;
+    /**
+     * @brief Creates a SceneSettings instance from a serialized structure
+     *
+     * @param serializedSettings Serializes SceneSettings
+     * @return Unique pointer to the created SceneSettings instance
+     */
+    [[nodiscard]] virtual auto
+    Create(nlohmann::json serializedSettings) const
+      -> std::unique_ptr<ISceneSettings> = 0;
   };
 }

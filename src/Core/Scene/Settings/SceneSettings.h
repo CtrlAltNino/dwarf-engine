@@ -20,19 +20,19 @@ namespace Dwarf
     SceneSettings(nlohmann::json serializedSettings);
 
     /// @copydoc ISerializable::Serialize
-    nlohmann::json
-    Serialize() override;
+    auto
+    Serialize() -> nlohmann::json override;
 
     /// @copydoc ISceneSettings::GetFogSettings
-    FogSettings&
-    GetFogSettings() override;
+    auto
+    GetFogSettings() -> FogSettings& override;
 
     /// @copydoc ISceneSettings::GetGlobalLightSettings
-    GlobalLightSettings&
-    GetGlobalLightSettings() override;
+    auto
+    GetGlobalLightSettings() -> GlobalLightSettings& override;
 
     /// @copydoc ISceneSettings::GetSkyboxMaterial
-    std::optional<UUID>&
-    GetSkyboxMaterial() override;
+    auto
+    GetSkyboxMaterial() -> std::optional<UUID>& override;
   };
 } // namespace Dwarf

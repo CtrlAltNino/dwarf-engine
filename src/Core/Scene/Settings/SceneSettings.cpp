@@ -16,8 +16,8 @@ namespace Dwarf
         : std::nullopt;
   }
 
-  nlohmann::json
-  SceneSettings::Serialize()
+  auto
+  SceneSettings::Serialize() -> nlohmann::json
   {
     nlohmann::json serializedSettings;
     serializedSettings["FogSettings"] = mFogSettings.Serialize();
@@ -28,20 +28,20 @@ namespace Dwarf
     return serializedSettings;
   }
 
-  FogSettings&
-  SceneSettings::GetFogSettings()
+  auto
+  SceneSettings::GetFogSettings() -> FogSettings&
   {
     return mFogSettings;
   }
 
-  GlobalLightSettings&
-  SceneSettings::GetGlobalLightSettings()
+  auto
+  SceneSettings::GetGlobalLightSettings() -> GlobalLightSettings&
   {
     return mGlobalLightSettings;
   }
 
-  std::optional<UUID>&
-  SceneSettings::GetSkyboxMaterial()
+  auto
+  SceneSettings::GetSkyboxMaterial() -> std::optional<UUID>&
   {
     return mSkyboxMaterial;
   }
