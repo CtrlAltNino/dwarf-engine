@@ -1,16 +1,13 @@
 #pragma once
 #include "Core/Asset/AssetReference/IAssetReference.h"
-#include "Core/Asset/Database/AssetComponents.h"
 #include "Core/Rendering/MeshBuffer/IMeshBuffer.h"
 #include "Utilities/ISerializable.h"
-#include "pch.h"
 
 #include "Core/UUID.h"
 #include <entt/entt.hpp>
 #include <memory>
 #include <nlohmann/json_fwd.hpp>
 #include <string>
-
 
 namespace Dwarf
 {
@@ -22,13 +19,13 @@ namespace Dwarf
 #define DEG_2_RAD (std::numbers::pi_v<float> / 180.0f)
 
     /// @brief Position of the entity.
-    glm::vec3 Position = { 0.0f, 0.0f, 0.0f };
+    glm::vec3 Position = { 0.0F, 0.0F, 0.0F };
 
     /// @brief Rotation of the entity as euler angles.
-    glm::vec3 Rotation = { 0.0f, 0.0f, 0.0f };
+    glm::vec3 Rotation = { 0.0F, 0.0F, 0.0F };
 
     /// @brief Scale of the entity.
-    glm::vec3 Scale = { 1.0f, 1.0f, 1.0f };
+    glm::vec3 Scale = { 1.0F, 1.0F, 1.0F };
 
     /// @brief Entity handle of the hierarchical parent entity.
     entt::entity Parent = entt::null;
@@ -66,76 +63,76 @@ namespace Dwarf
 
     /// @brief Returns the position of the entity.
     /// @return The position as a 3D vector.
-    glm::vec3&
-    GetPosition()
+    auto
+    GetPosition() -> glm::vec3&
     {
       return Position;
     }
 
-    const glm::vec3&
-    GetPosition() const
+    [[nodiscard]] auto
+    GetPosition() const -> const glm::vec3&
     {
       return Position;
     }
 
     /// @brief Returns the rotation of the entity as euler angles.
     /// @return The euler angles as a 3D vector.
-    glm::vec3&
-    GetEulerAngles()
+    auto
+    GetEulerAngles() -> glm::vec3&
     {
       return Rotation;
     }
 
-    const glm::vec3&
-    GetEulerAngles() const
+    [[nodiscard]] auto
+    GetEulerAngles() const -> const glm::vec3&
     {
       return Rotation;
     }
 
     /// @brief Returns the rotation of the entity as a matrix.
     /// @return The rotations as a 4x4 matrix.
-    glm::mat4
-    GetRotationMatrix() const
+    [[nodiscard]] auto
+    GetRotationMatrix() const -> glm::mat4
     {
       return glm::toMat4(glm::quat(DEG_2_RAD * Rotation));
     }
 
     /// @brief Returns the scale of the entity.
     /// @return The scale as a 3D vector.
-    glm::vec3&
-    GetScale()
+    auto
+    GetScale() -> glm::vec3&
     {
       return Scale;
     }
 
-    const glm::vec3&
-    GetScale() const
+    [[nodiscard]] auto
+    GetScale() const -> const glm::vec3&
     {
       return Scale;
     }
 
     /// @brief Returns the entity handle of the parent entity.
     /// @return The parent entity handle.
-    entt::entity&
-    GetParent()
+    auto
+    GetParent() -> entt::entity&
     {
       return Parent;
     }
 
-    const entt::entity&
-    GetParent() const
+    [[nodiscard]] auto
+    GetParent() const -> const entt::entity&
     {
       return Parent;
     }
 
-    std::vector<entt::entity>&
-    GetChildren()
+    auto
+    GetChildren() -> std::vector<entt::entity>&
     {
       return Children;
     }
 
-    const std::vector<entt::entity>&
-    GetChildren() const
+    [[nodiscard]] auto
+    GetChildren() const -> const std::vector<entt::entity>&
     {
       return Children;
     }
@@ -143,8 +140,8 @@ namespace Dwarf
     /// @brief Returns the vector that points into the entity's forward
     /// direction.
     /// @return The forward vector as a 3D vector.
-    glm::vec3
-    GetForward() const
+    [[nodiscard]] auto
+    GetForward() const -> glm::vec3
     {
       glm::mat4 rotationMatrix = GetRotationMatrix();
       glm::vec3 forwardVector(
@@ -155,8 +152,8 @@ namespace Dwarf
     /// @brief Returns the vector that points into the entity's upwards
     /// direction.
     /// @return The up vector as a 3D vector.
-    glm::vec3
-    GetUp() const
+    [[nodiscard]] auto
+    GetUp() const -> glm::vec3
     {
       return GetRotationMatrix() * glm::vec4(0, 1, 0, 1);
     }
@@ -164,8 +161,8 @@ namespace Dwarf
     /// @brief Returns the vector that points into the entity's right side
     /// direction.
     /// @return The right vector as a 3D vector.
-    glm::vec3
-    GetRight() const
+    [[nodiscard]] auto
+    GetRight() const -> glm::vec3
     {
       return GetRotationMatrix() * glm::vec4(1, 0, 0, 1);
     }
@@ -173,18 +170,18 @@ namespace Dwarf
     /// @brief Returns the model matrix of the entity. A composite matrix of the
     /// translation, scale and rotation matrices.
     /// @return The model matrix as a 4x4 matrix.
-    glm::mat4x4
-    GetModelMatrix() const
+    [[nodiscard]] auto
+    GetModelMatrix() const -> glm::mat4x4
     {
-      glm::mat4 translationMatrix = glm::translate(glm::mat4(1.0f), Position);
-      glm::mat4 scaleMatrix = glm::scale(glm::mat4(1.0f), Scale);
+      glm::mat4 translationMatrix = glm::translate(glm::mat4(1.0F), Position);
+      glm::mat4 scaleMatrix = glm::scale(glm::mat4(1.0F), Scale);
       glm::mat4 rotationMatrix = GetRotationMatrix();
 
       return translationMatrix * rotationMatrix * scaleMatrix;
     }
 
-    nlohmann::json
-    Serialize() override
+    auto
+    Serialize() -> nlohmann::json override
     {
       nlohmann::json serializedTransformComponent;
       serializedTransformComponent["Position"]["x"] = Position.x;
@@ -224,16 +221,16 @@ namespace Dwarf
     LIGHT_TYPE Type = LIGHT_TYPE::DIRECTIONAL;
 
     /// @brief The color of the light as a 3D vector (R,G,B).
-    glm::vec3 Color = glm::vec3(1.0f);
+    glm::vec3 Color = glm::vec3(1.0F);
 
     /// @brief The attenuation (or intensity) of the light.
-    float Attenuation = 4.0f;
+    float Attenuation = 4.0F;
 
     /// @brief The radius of a point light.
-    float Radius = 15.0f;
+    float Radius = 15.0F;
 
     /// @brief The angle at which the spot light shines.
-    float OpeningAngle = 33;
+    float OpeningAngle = 33.0F;
 
   public:
     LightComponent() = default;
@@ -249,46 +246,46 @@ namespace Dwarf
 
     /// @brief Returns the type of light this component represents.
     /// @return The light type.
-    LIGHT_TYPE&
-    GetType()
+    auto
+    GetType() -> LIGHT_TYPE&
     {
       return Type;
     }
 
     /// @brief Returns the color of the light.
     /// @return The color as a 3D vector.
-    glm::vec3&
-    GetColor()
+    auto
+    GetColor() -> glm::vec3&
     {
       return Color;
     }
 
     /// @brief Returns the attenuation of the light.
     /// @return The attenuation as a float.
-    float&
-    GetAttenuation()
+    auto
+    GetAttenuation() -> float&
     {
       return Attenuation;
     }
 
     /// @brief Returns the radius of the point light.
     /// @return The radius as a float.
-    float&
-    GetRadius()
+    auto
+    GetRadius() -> float&
     {
       return Radius;
     }
 
     /// @brief Returns the opening angle of the spot light.
     /// @return The opening angle as a float.
-    float&
-    GetOpeningAngle()
+    auto
+    GetOpeningAngle() -> float&
     {
       return OpeningAngle;
     }
 
-    nlohmann::json
-    Serialize() override
+    auto
+    Serialize() -> nlohmann::json override
     {
       nlohmann::json serializedLightComponent;
       serializedLightComponent["Type"] = (int)Type;
@@ -324,7 +321,7 @@ namespace Dwarf
 
     /// @brief Flag that decides if this model should be used in the shadow cast
     /// pass.
-    bool canCastShadow;
+    bool canCastShadow = true;
 
   public:
     MeshRendererComponent() = default;
@@ -336,44 +333,45 @@ namespace Dwarf
     {
     }
 
-    std::unique_ptr<IAssetReference>&
-    GetModelAsset()
+    auto
+    GetModelAsset() -> std::unique_ptr<IAssetReference>&
     {
       return modelAsset;
     }
 
-    const std::unique_ptr<IAssetReference>&
-    GetModelAsset() const
+    [[nodiscard]] auto
+    GetModelAsset() const -> const std::unique_ptr<IAssetReference>&
     {
       return modelAsset;
     }
 
-    std::map<int, std::unique_ptr<IAssetReference>>&
-    MaterialAssets()
+    auto
+    MaterialAssets() -> std::map<int, std::unique_ptr<IAssetReference>>&
     {
       return materialAssets;
     }
 
-    const std::map<int, std::unique_ptr<IAssetReference>>&
+    [[nodiscard]] auto
     GetMaterialAssets() const
+      -> const std::map<int, std::unique_ptr<IAssetReference>>&
     {
       return materialAssets;
     }
 
-    bool&
-    IsHidden()
+    auto
+    IsHidden() -> bool&
     {
       return isHidden;
     }
 
-    std::unique_ptr<IMeshBuffer>&
-    IdMesh()
+    auto
+    IdMesh() -> std::unique_ptr<IMeshBuffer>&
     {
       return idMeshBuffer;
     }
 
-    nlohmann::json
-    Serialize() override
+    auto
+    Serialize() -> nlohmann::json override
     {
       nlohmann::json serializedMeshRendererComponent;
       if (modelAsset)

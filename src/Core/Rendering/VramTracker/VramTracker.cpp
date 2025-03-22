@@ -1,38 +1,45 @@
 #include "VramTracker.h"
+
 #include "Core/Rendering/Framebuffer/IFramebuffer.h"
 #include "Utilities/ImageUtilities/TextureCommon.h"
+#include <cstddef>
 
 namespace Dwarf
 {
+  /**
+   * @brief Visitor struct to handle the resolution variants
+   *
+   */
   struct TextureResolutionVisitor
   {
-    size_t& mResolutionMultiplied;
+    std::reference_wrapper<size_t> mResolutionMultiplied;
 
     void
-    operator()(const glm::ivec1& parameter)
+    operator()(const glm::ivec1& parameter) const
     {
-      mResolutionMultiplied = parameter.x;
+      mResolutionMultiplied.get() = parameter.x;
     }
 
     void
-    operator()(const glm::ivec2& parameter)
+    operator()(const glm::ivec2& parameter) const
     {
-      mResolutionMultiplied = parameter.x * parameter.y;
+      mResolutionMultiplied.get() =
+        static_cast<long long>(parameter.x) * parameter.y;
     }
 
     void
-    operator()(const glm::ivec3& parameter)
+    operator()(const glm::ivec3& parameter) const
     {
-      mResolutionMultiplied = parameter.x * parameter.y * parameter.z;
+      mResolutionMultiplied.get() = static_cast<unsigned long long>(
+        parameter.x * parameter.y * parameter.z);
     }
   };
 
-  size_t
-  CalculateTextureMemory(const TextureType&       type,
-                         const TextureFormat&     format,
+  auto
+  CalculateTextureMemory(const TextureFormat&     format,
                          const TextureDataType&   dataType,
                          const TextureResolution& size,
-                         int                      samples)
+                         int                      samples) -> size_t
   {
     size_t resolutionMultiplied = 0;
     size_t numberOfComponents = 0;
@@ -67,8 +74,9 @@ namespace Dwarf
     return memory;
   }
 
-  size_t
+  auto
   CalculateFramebufferMemory(const FramebufferSpecification& specification)
+    -> size_t
   {
     size_t memory = 0;
 
@@ -95,35 +103,41 @@ namespace Dwarf
     return memory;
   }
 
+  VramTracker::VramTracker(std::shared_ptr<IDwarfLogger> logger)
+    : mLogger(std::move(logger))
+  {
+    mLogger->LogDebug(Log("VramTracker created.", "VramTracker"));
+  }
+  VramTracker::~VramTracker()
+  {
+    mLogger->LogDebug(Log("VramTracker destroyed.", "VramTracker"));
+  }
+
   void
   VramTracker::AddTextureMemory(size_t bytes)
   {
     mTextureMemory += bytes;
   }
 
-  size_t
-  VramTracker::AddTextureMemory(const TextureType&       type,
-                                const TextureFormat&     format,
+  auto
+  VramTracker::AddTextureMemory(const TextureFormat&     format,
                                 const TextureDataType&   dataType,
                                 const TextureResolution& size,
-                                int                      samples)
+                                int                      samples) -> size_t
   {
-    size_t memory =
-      CalculateTextureMemory(type, format, dataType, size, samples);
+    size_t memory = CalculateTextureMemory(format, dataType, size, samples);
 
     mTextureMemory += memory;
 
     return memory;
   }
 
-  size_t
+  auto
   VramTracker::AddTextureMemory(std::shared_ptr<TextureContainer> texture)
+    -> size_t
   {
-    size_t memory = CalculateTextureMemory(texture->Type,
-                                           texture->Format,
-                                           texture->DataType,
-                                           texture->Size,
-                                           texture->Samples);
+    size_t memory = CalculateTextureMemory(
+      texture->Format, texture->DataType, texture->Size, texture->Samples);
 
     mTextureMemory += memory;
 
@@ -137,14 +151,12 @@ namespace Dwarf
   }
 
   void
-  VramTracker::RemoveTextureMemory(const TextureType&       type,
-                                   const TextureFormat&     format,
+  VramTracker::RemoveTextureMemory(const TextureFormat&     format,
                                    const TextureDataType&   dataType,
                                    const TextureResolution& size,
                                    int                      samples)
   {
-    size_t memory =
-      CalculateTextureMemory(type, format, dataType, size, samples);
+    size_t memory = CalculateTextureMemory(format, dataType, size, samples);
 
     mTextureMemory -= memory;
   }
@@ -152,17 +164,14 @@ namespace Dwarf
   void
   VramTracker::RemoveTextureMemory(std::shared_ptr<TextureContainer> texture)
   {
-    size_t memory = CalculateTextureMemory(texture->Type,
-                                           texture->Format,
-                                           texture->DataType,
-                                           texture->Size,
-                                           texture->Samples);
+    size_t memory = CalculateTextureMemory(
+      texture->Format, texture->DataType, texture->Size, texture->Samples);
 
     mTextureMemory -= memory;
   }
 
-  size_t
-  VramTracker::GetTextureMemory() const
+  auto
+  VramTracker::GetTextureMemory() const -> size_t
   {
     return mTextureMemory;
   }
@@ -173,8 +182,9 @@ namespace Dwarf
     mBufferMemory += bytes;
   }
 
-  size_t
+  auto
   VramTracker::AddFramebufferMemory(FramebufferSpecification specification)
+    -> size_t
   {
     size_t memory = CalculateFramebufferMemory(specification);
 
@@ -197,8 +207,8 @@ namespace Dwarf
     mFramebufferMemory -= memory;
   }
 
-  size_t
-  VramTracker::GetBufferMemory() const
+  auto
+  VramTracker::GetBufferMemory() const -> size_t
   {
     return mBufferMemory;
   }
@@ -215,8 +225,8 @@ namespace Dwarf
     mFramebufferMemory -= bytes;
   }
 
-  size_t
-  VramTracker::GetFramebufferMemory() const
+  auto
+  VramTracker::GetFramebufferMemory() const -> size_t
   {
     return mFramebufferMemory;
   }
@@ -233,8 +243,8 @@ namespace Dwarf
     mShaderMemory -= bytes;
   }
 
-  size_t
-  VramTracker::GetShaderMemory() const
+  auto
+  VramTracker::GetShaderMemory() const -> size_t
   {
     return mShaderMemory;
   }
@@ -251,14 +261,14 @@ namespace Dwarf
     mComputeMemory -= bytes;
   }
 
-  size_t
-  VramTracker::GetComputeMemory() const
+  auto
+  VramTracker::GetComputeMemory() const -> size_t
   {
     return mComputeMemory;
   }
 
-  size_t
-  VramTracker::GetTotalMemory() const
+  auto
+  VramTracker::GetTotalMemory() const -> size_t
   {
     return mTextureMemory + mBufferMemory + mFramebufferMemory + mShaderMemory +
            mComputeMemory;

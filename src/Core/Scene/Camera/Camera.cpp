@@ -1,5 +1,5 @@
 #include "Camera.h"
-#include "Core/Scene/Camera/ICamera.h"
+#include <utility>
 
 namespace Dwarf
 {
@@ -10,44 +10,56 @@ namespace Dwarf
 #define DEFAULT_CAMERA_ROTATION glm::vec3(30, 0, 0)
 
   // ========== Constructors ==========
-  Camera::Camera(std::shared_ptr<IInputManager> inputManager,
+  Camera::Camera(std::shared_ptr<IDwarfLogger>  logger,
+                 std::shared_ptr<IInputManager> inputManager,
                  CameraProperties               properties)
-    : mInputManager(inputManager)
-    , mProperties(properties)
+    : mLogger(std::move(logger))
+    , mInputManager(std::move(inputManager))
+    , mProperties(std::move(properties))
   {
+    mLogger->LogDebug(Log("Camera created.", "Camera"));
   }
 
-  Camera::Camera(std::shared_ptr<IInputManager> inputManager,
-                 nlohmann::json                 json)
-    : mInputManager(inputManager)
+  Camera::Camera(std::shared_ptr<IDwarfLogger>  logger,
+                 std::shared_ptr<IInputManager> inputManager,
+                 const nlohmann::json&          serializedCameraData)
+    : mLogger(std::move(logger))
+    , mInputManager(std::move(inputManager))
     , mProperties(CameraProperties())
   {
-    mProperties.Transform = TransformComponent(json["transform"]);
-    mProperties.Fov = json["fov"];
-    mProperties.NearPlane = json["nearPlane"];
-    mProperties.FarPlane = json["farPlane"];
-    mProperties.AspectRatio = json["aspectRatio"];
-    mProperties.Sensitivity = json["sensitivity"];
-    mProperties.MovementSpeed = json["movementSpeed"];
+    mProperties.Transform =
+      TransformComponent(serializedCameraData["transform"]);
+    mProperties.Fov = serializedCameraData["fov"];
+    mProperties.NearPlane = serializedCameraData["nearPlane"];
+    mProperties.FarPlane = serializedCameraData["farPlane"];
+    mProperties.AspectRatio = serializedCameraData["aspectRatio"];
+    mProperties.Sensitivity = serializedCameraData["sensitivity"];
+    mProperties.MovementSpeed = serializedCameraData["movementSpeed"];
+    mLogger->LogDebug(Log("Camera created.", "Camera"));
   }
 
-  glm::mat4x4
-  Camera::GetViewMatrix() const
+  Camera::~Camera()
+  {
+    mLogger->LogDebug(Log("Camera destroyed.", "Camera"));
+  }
+
+  auto
+  Camera::GetViewMatrix() const -> glm::mat4x4
   {
     glm::mat4 rot =
-      glm::rotate(glm::mat4(1.0f),
+      glm::rotate(glm::mat4(1.0F),
                   mProperties.Transform.GetEulerAngles().x * DEG_2_RAD,
-                  glm::vec3(1.0f, 0.0f, 0.0f)) *
-      glm::rotate(glm::mat4(1.0f),
+                  glm::vec3(1.0F, 0.0F, 0.0F)) *
+      glm::rotate(glm::mat4(1.0F),
                   mProperties.Transform.GetEulerAngles().y * DEG_2_RAD,
-                  glm::vec3(0.0f, 1.0f, 0.0f));
+                  glm::vec3(0.0F, 1.0F, 0.0F));
 
-    return rot * glm::translate(glm::mat4(1.0f),
+    return rot * glm::translate(glm::mat4(1.0F),
                                 -mProperties.Transform.GetPosition());
   }
 
-  glm::mat4x4
-  Camera::GetProjectionMatrix() const
+  auto
+  Camera::GetProjectionMatrix() const -> glm::mat4x4
   {
     return glm::perspective(glm::radians(mProperties.Fov),
                             mProperties.AspectRatio,
@@ -67,7 +79,7 @@ namespace Dwarf
       float     yAngle = (float)deltaMousePos.x * mProperties.Sensitivity;
       float     xAngle = (float)deltaMousePos.y * mProperties.Sensitivity;
       glm::mat4 mat =
-        glm::rotate(glm::mat4(1.0f), xAngle * DEG_2_RAD, glm::vec3(1, 0, 0));
+        glm::rotate(glm::mat4(1.0F), xAngle * DEG_2_RAD, glm::vec3(1, 0, 0));
 
       glm::vec3 rot;
 
@@ -75,13 +87,13 @@ namespace Dwarf
 
       mProperties.Transform.GetEulerAngles().x += rot.x;
       mProperties.Transform.GetEulerAngles().x = std::min(
-        std::max(mProperties.Transform.GetEulerAngles().x, -90.0f), 90.0f);
+        std::max(mProperties.Transform.GetEulerAngles().x, -90.0F), 90.0F);
 
       mat =
-        glm::rotate(glm::mat4(1.0f), yAngle * DEG_2_RAD, glm::vec3(0, 1, 0));
+        glm::rotate(glm::mat4(1.0F), yAngle * DEG_2_RAD, glm::vec3(0, 1, 0));
       rot.y = RAD_2_DEG *
               atan2f(-mat[0][2],
-                     sqrtf(mat[1][2] * mat[1][2] + mat[2][2] * mat[2][2]));
+                     sqrtf((mat[1][2] * mat[1][2]) + (mat[2][2] * mat[2][2])));
 
       mProperties.Transform.GetEulerAngles().y += rot.y;
     }
@@ -93,12 +105,12 @@ namespace Dwarf
     };
 
     glm::mat4 rotMat =
-      glm::rotate(glm::mat4(1.0f),
+      glm::rotate(glm::mat4(1.0F),
                   mProperties.Transform.GetEulerAngles().x * DEG_2_RAD,
-                  glm::vec3(1.0f, 0.0f, 0.0f)) *
-      glm::rotate(glm::mat4(1.0f),
+                  glm::vec3(1.0F, 0.0F, 0.0F)) *
+      glm::rotate(glm::mat4(1.0F),
                   mProperties.Transform.GetEulerAngles().y * DEG_2_RAD,
-                  glm::vec3(0.0f, 1.0f, 0.0f));
+                  glm::vec3(0.0F, 1.0F, 0.0F));
 
     if (glm::length(movementVector) > 0)
     {
@@ -108,7 +120,7 @@ namespace Dwarf
 
       glm::vec4 deltaVec4 =
         glm::inverse(rotMat) *
-        glm::vec4(movementVector.x, movementVector.y, movementVector.z, 1.0f);
+        glm::vec4(movementVector.x, movementVector.y, movementVector.z, 1.0F);
 
       mProperties.Transform.GetPosition() +=
         glm::vec3(deltaVec4.x, deltaVec4.y, deltaVec4.z);
@@ -117,30 +129,30 @@ namespace Dwarf
     deltaMousePos = glm::vec2(0);
   }
 
-  glm::vec3
+  auto
   Camera::ScreenToWorld(glm::vec2 const& screenPos,
-                        glm::vec2 const& viewport) const
+                        glm::vec2 const& viewport) const -> glm::vec3
   {
-    float     x = (2.0f * screenPos.x) / viewport.x - 1.0f;
-    float     y = 1.0f - (2.0f * screenPos.y) / viewport.y;
-    float     z = 1.0f;
-    glm::vec3 ray_nds = glm::vec3(x, y, z);
-    glm::vec4 ray_clip = glm::vec4(ray_nds.x, ray_nds.y, -1.0, 1.0);
-    glm::vec4 ray_eye = glm::inverse(GetProjectionMatrix()) * ray_clip;
-    ray_eye = glm::vec4(ray_eye.x, ray_eye.y, -1.0, 0.0);
-    glm::vec3 ray_wor = glm::vec3(glm::inverse(GetViewMatrix()) * ray_eye);
-    ray_wor = glm::normalize(ray_wor);
-    return ray_wor;
+    float     x = ((2.0F * screenPos.x) / viewport.x) - 1.0F;
+    float     y = 1.0F - ((2.0F * screenPos.y) / viewport.y);
+    float     z = 1.0F;
+    glm::vec3 rayNds = glm::vec3(x, y, z);
+    glm::vec4 rayClip = glm::vec4(rayNds.x, rayNds.y, -1.0, 1.0);
+    glm::vec4 rayEye = glm::inverse(GetProjectionMatrix()) * rayClip;
+    rayEye = glm::vec4(rayEye.x, rayEye.y, -1.0, 0.0);
+    glm::vec3 rayWor = glm::vec3(glm::inverse(GetViewMatrix()) * rayEye);
+    rayWor = glm::normalize(rayWor);
+    return rayWor;
   }
 
-  CameraProperties&
-  Camera::GetProperties()
+  auto
+  Camera::GetProperties() -> CameraProperties&
   {
     return mProperties;
   }
 
-  nlohmann::json
-  Camera::Serialize()
+  auto
+  Camera::Serialize() -> nlohmann::json
   {
     nlohmann::json j;
     j["transform"] = mProperties.Transform.Serialize();

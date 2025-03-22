@@ -114,7 +114,7 @@ namespace Dwarf
       return nullptr;
     }
     std::shared_ptr<IShaderParameterCollection> parameters =
-      mShaderParameterCollectionFactory->CreateShaderParameterCollection();
+      mShaderParameterCollectionFactory->Create();
     GLint i;
     GLint count;
 

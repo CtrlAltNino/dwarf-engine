@@ -1,6 +1,5 @@
 #pragma once
 #include "Utilities/ISerializable.h"
-#include "pch.h"
 
 #include "Core/Base.h"
 #include "Core/GenericComponents.h"
@@ -15,17 +14,24 @@ namespace Dwarf
   /// functionality.
   class Entity : ISerializable
   {
+  private:
+    /// @brief The entity handle of this entity.
+    entt::entity mEntityHandle{ entt::null };
+
+    /// @brief Pointer to a holder of an ECS registry.
+    std::reference_wrapper<entt::registry> mRegistry;
+
   public:
     Entity(entt::entity handle, entt::registry& registry);
     // Copy constructor
     Entity(const Entity& other) = default;
 
     // Move operator
-    Entity&
-    operator=(Entity&& other) noexcept
+    auto
+    operator=(Entity&& other) noexcept -> Entity&
     {
       mEntityHandle = other.mEntityHandle;
-      mRegistry = std::move(other.mRegistry);
+      mRegistry.get() = std::move(other.mRegistry.get());
       return *this;
     }
 
@@ -35,22 +41,23 @@ namespace Dwarf
     /// @param ...args Components to add.
     /// @return The added component.
     template<typename T, typename... Args>
-    T&
-    AddComponent(Args&&... args)
+    auto
+    AddComponent(Args&&... args) -> T&
     {
       // TODO: Check component requirements
-      return mRegistry.emplace<T>(mEntityHandle, std::forward<Args>(args)...);
+      return mRegistry.get().emplace<T>(mEntityHandle,
+                                        std::forward<Args>(args)...);
     }
 
     /// @brief Retrieves a component of the Entity if present.
     /// @tparam T Type of component.
     /// @return The found component.
     template<typename T>
-    T&
-    GetComponent()
+    auto
+    GetComponent() -> T&
     {
       // TODO: Check if component present
-      return mRegistry.get<T>(mEntityHandle);
+      return mRegistry.get().get<T>(mEntityHandle);
     }
 
     /// @brief Removes a component from the entity.
@@ -62,7 +69,7 @@ namespace Dwarf
       // TODO: Check if component is present
       if (HasComponent<T>())
       {
-        mRegistry.remove<T>(mEntityHandle);
+        mRegistry.get().remove<T>(mEntityHandle);
       }
     }
 
@@ -70,23 +77,23 @@ namespace Dwarf
     /// @tparam T Type of component to check for.
     /// @return True if component is present, false if not.
     template<typename T>
-    bool
-    HasComponent()
+    [[nodiscard]] auto
+    HasComponent() const -> bool
     {
-      return mRegistry.try_get<T>(mEntityHandle) != nullptr;
+      return mRegistry.get().try_get<T>(mEntityHandle) != nullptr;
     }
 
     /// @brief Retrieves the UID of the entity.
     /// @return The UID.
-    const UUID&
-    GetUID() const
+    [[nodiscard]] auto
+    GetUID() const -> const UUID&
     {
-      return mRegistry.get<IDComponent>(mEntityHandle).getId();
+      return mRegistry.get().get<IDComponent>(mEntityHandle).getId();
     }
 
     operator bool() const { return (std::uint32_t)mEntityHandle != 0; }
-    bool
-    operator==(const Entity& b)
+    auto
+    operator==(const Entity& b) -> bool
     {
       return mEntityHandle == b.mEntityHandle;
     }
@@ -96,17 +103,17 @@ namespace Dwarf
     void
     SetParent(entt::entity entity)
     {
-      TransformComponent& transform = GetComponent<TransformComponent>();
-      auto                newParent = Entity(entity, mRegistry);
+      auto& transform = GetComponent<TransformComponent>();
+      auto  newParent = Entity(entity, mRegistry.get());
 
       if (transform.GetParent() != entt::null)
       {
-        auto oldParent = Entity(transform.GetParent(), mRegistry);
+        auto oldParent = Entity(transform.GetParent(), mRegistry.get());
         oldParent.RemoveChild(mEntityHandle);
       }
 
       transform.GetParent() = entity;
-      if (mRegistry.valid(entity))
+      if (mRegistry.get().valid(entity))
       {
         newParent.AddChild(mEntityHandle);
       }
@@ -117,7 +124,7 @@ namespace Dwarf
     void
     AddChild(entt::entity entity)
     {
-      TransformComponent& transform = GetComponent<TransformComponent>();
+      auto& transform = GetComponent<TransformComponent>();
 
       if (transform.GetChildren().empty() ||
           (std::ranges::find(transform.GetChildren().begin(),
@@ -133,13 +140,13 @@ namespace Dwarf
     void
     RemoveChild(entt::entity entity)
     {
-      TransformComponent& transform = GetComponent<TransformComponent>();
+      auto& transform = GetComponent<TransformComponent>();
 
-      auto it = std::ranges::find(
+      auto iterator = std::ranges::find(
         transform.GetChildren().begin(), transform.GetChildren().end(), entity);
-      if (it != transform.GetChildren().end())
+      if (iterator != transform.GetChildren().end())
       {
-        transform.GetChildren().erase(it);
+        transform.GetChildren().erase(iterator);
       }
     }
 
@@ -149,16 +156,16 @@ namespace Dwarf
     void
     SetChildIndex(int index)
     {
-      TransformComponent& transform = GetComponent<TransformComponent>();
+      auto& transform = GetComponent<TransformComponent>();
 
       std::vector<entt::entity>* siblings =
-        &Entity(transform.GetParent(), mRegistry)
+        &Entity(transform.GetParent(), mRegistry.get())
            .GetComponent<TransformComponent>()
            .GetChildren();
-      auto it =
+      auto iterator =
         std::ranges::find(siblings->begin(), siblings->end(), mEntityHandle);
 
-      siblings->erase(it);
+      siblings->erase(iterator);
 
       if (index >= siblings->size())
       {
@@ -173,24 +180,24 @@ namespace Dwarf
     /// @brief Returns the index of this entity in the list of children of this
     /// entity's parent.
     /// @return Index of this entity.
-    int
-    GetChildIndex()
+    auto
+    GetChildIndex() -> int
     {
-      TransformComponent& transform = GetComponent<TransformComponent>();
+      auto& transform = GetComponent<TransformComponent>();
 
       int index = -1;
 
       std::vector<entt::entity> siblings =
-        Entity(transform.GetParent(), mRegistry)
+        Entity(transform.GetParent(), mRegistry.get())
           .GetComponent<TransformComponent>()
           .GetChildren();
 
       // If element was found
-      if (auto it =
+      if (auto iterator =
             std::ranges::find(siblings.begin(), siblings.end(), mEntityHandle);
-          it != siblings.end())
+          iterator != siblings.end())
       {
-        index = (int)(it - siblings.begin());
+        index = (int)(iterator - siblings.begin());
       }
 
       return index;
@@ -198,28 +205,30 @@ namespace Dwarf
 
     /// @brief Returns the entity handle of this entity's parent.
     /// @return Entity handle of the parent.
-    const entt::entity&
-    GetParent() const
+    [[nodiscard]] auto
+    GetParent() const -> const entt::entity&
     {
-      return mRegistry.get<TransformComponent>(mEntityHandle).GetParent();
+      return mRegistry.get().get<TransformComponent>(mEntityHandle).GetParent();
     }
 
     /// @brief Returns the list of this entity's children.
     /// @return Pointer to the list of child entities.
-    const std::vector<entt::entity>&
-    GetChildren() const
+    [[nodiscard]] auto
+    GetChildren() const -> const std::vector<entt::entity>&
     {
-      return mRegistry.get<TransformComponent>(mEntityHandle).GetChildren();
+      return mRegistry.get()
+        .get<TransformComponent>(mEntityHandle)
+        .GetChildren();
     }
 
-    entt::entity
-    GetHandle() const
+    [[nodiscard]] auto
+    GetHandle() const -> entt::entity
     {
       return mEntityHandle;
     }
 
-    nlohmann::json
-    Serialize() override
+    auto
+    Serialize() -> nlohmann::json override
     {
       nlohmann::json serializedEntity;
 
@@ -243,21 +252,14 @@ namespace Dwarf
 
       int childCount = 0;
 
-      for (auto& child : GetChildren())
+      for (const auto& child : GetChildren())
       {
         serializedEntity["children"][childCount] =
-          Entity(child, mRegistry).Serialize();
+          Entity(child, mRegistry.get()).Serialize();
         childCount++;
       }
 
       return serializedEntity;
     }
-
-  private:
-    /// @brief The entity handle of this entity.
-    entt::entity mEntityHandle{ entt::null };
-
-    /// @brief Pointer to a holder of an ECS registry.
-    entt::registry& mRegistry;
   };
 }

@@ -1,21 +1,23 @@
 #pragma once
-#include "ShaderParameterCollection/ShaderParameterCollection.h"
-#include "pch.h"
 
 #include "ShaderParameterCollection/IShaderParameterCollection.h"
-#include "Core/Base.h"
-#include "Core/UUID.h"
-
-#include <memory>
 
 namespace Dwarf
 {
+  /**
+   * @brief Class that represents a compute shader program and provides controls
+   * over it.
+   *
+   */
   class IComputeShader
   {
   public:
     virtual ~IComputeShader() = default;
 
-    // Compiles the shader.
+    /**
+     * @brief Compiles the shader program
+     *
+     */
     virtual void
     Compile() = 0;
 
@@ -24,10 +26,15 @@ namespace Dwarf
      *
      * @return true if the shader has been compiled, false otherwise.
      */
-    virtual bool
-    IsCompiled() const = 0;
+    [[nodiscard]] virtual auto
+    IsCompiled() const -> bool = 0;
 
-    virtual std::shared_ptr<IShaderParameterCollection>
-    GetParameters() = 0;
+    /**
+     * @brief Gets the parameters for the ShaderParameterCollection
+     *
+     * @return Reference to the ShaderParameterCollection
+     */
+    virtual auto
+    GetParameters() -> std::shared_ptr<IShaderParameterCollection> = 0;
   };
 }

@@ -31,8 +31,14 @@ namespace Dwarf
                   std::shared_ptr<IVramTracker> vramTracker);
     ~ShaderFactory() override;
 
-    std::shared_ptr<IShader>
-    CreateShader(
-      std::unique_ptr<IShaderSourceCollection> shaderSources) override;
+    /**
+     * @brief Creates a shader instance bases on provided shader sources
+     *
+     * @param shaderSources Shader sources to create the shader from
+     * @return Shared pointer to the created shader
+     */
+    [[nodiscard]] auto
+    Create(std::unique_ptr<IShaderSourceCollection> shaderSources) const
+      -> std::shared_ptr<IShader> override;
   };
 } // namespace Dwarf

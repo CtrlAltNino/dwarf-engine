@@ -6,33 +6,77 @@
 
 namespace Dwarf
 {
+  /**
+   * @brief Class that constructs textures on the GPU
+   *
+   */
   class ITextureFactory
   {
   public:
     virtual ~ITextureFactory() = default;
 
-    virtual std::unique_ptr<ITexture>
-    FromPath(std::filesystem::path texturePath) = 0;
+    /**
+     * @brief Creates a texture from a given path
+     *
+     * @param texturePath Path to a image file
+     * @return Unique pointer to the created texture
+     */
+    [[nodiscard]] virtual auto
+    FromPath(std::filesystem::path texturePath) const
+      -> std::unique_ptr<ITexture> = 0;
 
-    virtual std::unique_ptr<ITexture>
-    FromData(const std::shared_ptr<TextureContainer>& textureData) = 0;
+    /**
+     * @brief Creates a texture from provided data
+     *
+     * @param textureData Structure containing data and properties of a texture
+     * @return Unique pointer to the created texture
+     */
+    [[nodiscard]] virtual auto
+    FromData(const std::shared_ptr<TextureContainer>& textureData) const
+      -> std::unique_ptr<ITexture> = 0;
 
-    virtual std::unique_ptr<ITexture>
+    /**
+     * @brief Creates an empty texture with given properties
+     *
+     * @param type Dimension of the texture
+     * @param format Format of the texture
+     * @param dataType Data type of the texture
+     * @param size Size of the texture
+     * @param parameters Parameters for the texture
+     * @param samples Amount of samples if the texture should be multi sampled
+     * @return Unique pointer to the created texture
+     */
+    [[nodiscard]] virtual auto
     Empty(const TextureType&       type,
           const TextureFormat&     format,
           const TextureDataType&   dataType,
           const TextureResolution& size,
           const TextureParameters& parameters,
-          int                      samples = 1) = 0;
+          int samples = 1) const -> std::unique_ptr<ITexture> = 0;
 
-    virtual std::unique_ptr<ITexture>
+    /**
+     * @brief Creates an empty texture with given properties
+     *
+     * @param type Dimension of the texture
+     * @param format Format of the texture
+     * @param dataType Data type of the texture
+     * @param size Size of the texture
+     * @param samples Amount of samples if the texture should be multi sampled
+     * @return Unique pointer to the created texture
+     */
+    [[nodiscard]] virtual auto
     Empty(const TextureType&       type,
           const TextureFormat&     format,
           const TextureDataType&   dataType,
           const TextureResolution& size,
-          int                      samples = 1) = 0;
+          int samples = 1) const -> std::unique_ptr<ITexture> = 0;
 
-    virtual std::shared_ptr<ITexture>
-    GetPlaceholderTexture() = 0;
+    /**
+     * @brief Gets the placeholder texture
+     *
+     * @return Shared pointer to the placeholder texture
+     */
+    [[nodiscard]] virtual auto
+    GetPlaceholderTexture() -> ITexture& = 0;
   };
 } // namespace Dwarf

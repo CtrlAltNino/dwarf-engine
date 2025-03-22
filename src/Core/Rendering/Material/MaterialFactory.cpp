@@ -35,7 +35,7 @@ namespace Dwarf
       mShaderRegistry->GetOrCreate(
         mShaderSourceCollectionFactory->CreateDefaultShaderSourceCollection()),
       MaterialProperties(),
-      mShaderParameterCollectionFactory->CreateShaderParameterCollection());
+      mShaderParameterCollectionFactory->Create());
   }
 
   auto
@@ -46,7 +46,7 @@ namespace Dwarf
     return std::make_unique<Material>(
       shader,
       MaterialProperties(),
-      mShaderParameterCollectionFactory->CreateShaderParameterCollection());
+      mShaderParameterCollectionFactory->Create());
   }
 
   auto
@@ -64,7 +64,7 @@ namespace Dwarf
             mShaderSourceCollectionFactory
               ->CreateDefaultShaderSourceCollection()),
       serializedMaterial["Properties"],
-      mShaderParameterCollectionFactory->CreateShaderParameterCollection(
+      mShaderParameterCollectionFactory->FromSerialized(
         serializedMaterial["ShaderParameters"]));
   }
 }

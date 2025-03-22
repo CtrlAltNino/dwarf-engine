@@ -1,12 +1,12 @@
-#include <gtest/gtest.h>
-#include <gmock/gmock.h>
-#include "Core/Asset/Database/IAssetDatabase.h"
 #include "Core/Asset/AssetReference/AssetReference.h"
 #include "Core/Asset/Database/AssetComponents.h"
+#include "Core/Asset/Database/IAssetDatabase.h"
 #include "Core/UUID.h"
 #include <entt/entt.hpp>
-#include <memory>
 #include <filesystem>
+#include <gmock/gmock.h>
+#include <gtest/gtest.h>
+#include <memory>
 
 using namespace Dwarf;
 
@@ -74,11 +74,11 @@ public:
   MOCK_METHOD(std::unique_ptr<ITexture>,
               FromPath,
               (std::filesystem::path texturePath),
-              (override));
+              (const, override));
   MOCK_METHOD(std::unique_ptr<ITexture>,
               FromData,
               (const std::shared_ptr<TextureContainer>& textureData),
-              (override));
+              (const, override));
   MOCK_METHOD(std::unique_ptr<ITexture>,
               Empty,
               (const TextureType&       type,
@@ -87,7 +87,7 @@ public:
                const TextureResolution& size,
                const TextureParameters& parameters,
                int                      samples),
-              (override));
+              (const, override));
   MOCK_METHOD(std::unique_ptr<ITexture>,
               Empty,
               (const TextureType&       type,
@@ -95,8 +95,8 @@ public:
                const TextureDataType&   dataType,
                const TextureResolution& size,
                int                      samples),
-              (override));
-  MOCK_METHOD(std::shared_ptr<ITexture>, GetPlaceholderTexture, (), (override));
+              (const, override));
+  MOCK_METHOD(ITexture&, GetPlaceholderTexture, (), (override));
 };
 
 class MockMaterialIO : public IMaterialIO

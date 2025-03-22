@@ -2,10 +2,6 @@
 
 namespace Dwarf
 {
-  ShaderParameterCollection::ShaderParameterCollection() {}
-
-  ShaderParameterCollection::~ShaderParameterCollection() {}
-
   void
   ShaderParameterCollection::SetParameter(std::string_view identifier,
                                           ParameterValue   parameter)
@@ -13,14 +9,16 @@ namespace Dwarf
     mParameters[identifier.data()] = std::move(parameter);
   }
 
-  ParameterValue&
+  auto
   ShaderParameterCollection::GetParameter(const std::string& name)
+    -> ParameterValue&
   {
     return mParameters.at(name);
   }
 
-  const std::vector<std::string>
+  auto
   ShaderParameterCollection::GetParameterIdentifiers() const
+    -> const std::vector<std::string>
   {
     std::vector<std::string> keys;
     keys.reserve(mParameters.size());
@@ -37,10 +35,10 @@ namespace Dwarf
     mParameters.erase(name);
   }
 
-  bool
-  ShaderParameterCollection::HasParameter(std::string const& name) const
+  auto
+  ShaderParameterCollection::HasParameter(std::string const& name) const -> bool
   {
-    return mParameters.find(name) != mParameters.end();
+    return mParameters.contains(name);
   }
 
   void
@@ -49,8 +47,8 @@ namespace Dwarf
     mParameters.clear();
   }
 
-  nlohmann::json
-  ShaderParameterCollection::Serialize()
+  auto
+  ShaderParameterCollection::Serialize() -> nlohmann::json
   {
     nlohmann::json serialized = nlohmann::json::object();
     for (const auto& pair : mParameters)

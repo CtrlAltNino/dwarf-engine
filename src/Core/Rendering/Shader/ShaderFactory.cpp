@@ -3,6 +3,7 @@
 #include <fmt/format.h>
 #include <memory>
 #include <stdexcept>
+#include <utility>
 
 // Including the shader header files of the graphics API.
 #if _WIN32
@@ -24,10 +25,11 @@ namespace Dwarf
                                   shaderParameterCollectionFactory,
     std::shared_ptr<IVramTracker> vramTracker)
     : mGraphicsApi(graphicsApi)
-    , mLogger(logger)
-    , mShaderSourceCollectionFactory(shaderSourceCollectionFactory)
-    , mShaderParameterCollectionFactory(shaderParameterCollectionFactory)
-    , mVramTracker(vramTracker)
+    , mLogger(std::move(logger))
+    , mShaderSourceCollectionFactory(std::move(shaderSourceCollectionFactory))
+    , mShaderParameterCollectionFactory(
+        std::move(shaderParameterCollectionFactory))
+    , mVramTracker(std::move(vramTracker))
   {
     mLogger->LogDebug(Log("ShaderFactory created", "ShaderFactory"));
   }
@@ -37,9 +39,9 @@ namespace Dwarf
     mLogger->LogDebug(Log("ShaderFactory destroyed", "ShaderFactory"));
   }
 
-  std::shared_ptr<IShader>
-  ShaderFactory::CreateShader(
-    std::unique_ptr<IShaderSourceCollection> shaderSources)
+  auto
+  ShaderFactory::Create(std::unique_ptr<IShaderSourceCollection> shaderSources)
+    const -> std::shared_ptr<IShader>
   {
     mLogger->LogDebug(Log("Creating shader from sources", "ShaderFactory"));
     // Creating a shader based on the graphics API.
@@ -81,7 +83,7 @@ namespace Dwarf
 #endif
       case GraphicsApi::None:
         mLogger->LogError(Log("Graphics API is not set", "ShaderFactory"));
-        std::runtime_error("Graphics API is not set");
+        throw std::runtime_error("Graphics API is not set");
         break;
     }
 

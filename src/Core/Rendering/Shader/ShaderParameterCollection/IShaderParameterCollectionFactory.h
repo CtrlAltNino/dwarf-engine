@@ -4,16 +4,32 @@
 
 namespace Dwarf
 {
+  /**
+   * @brief Class to construct ShaderParameterCollection instances
+   *
+   */
   class IShaderParameterCollectionFactory
   {
   public:
     virtual ~IShaderParameterCollectionFactory() = default;
 
-    virtual std::unique_ptr<IShaderParameterCollection>
-    CreateShaderParameterCollection() = 0;
+    /**
+     * @brief Creates an empty ShaderParameterCollection
+     *
+     * @return Unique pointer to the created ShaderParameterCollection
+     */
+    [[nodiscard]] virtual auto
+    Create() const -> std::unique_ptr<IShaderParameterCollection> = 0;
 
-    virtual std::unique_ptr<IShaderParameterCollection>
-    CreateShaderParameterCollection(
-      const nlohmann::json& serializedShaderParameterCollection) = 0;
+    /**
+     * @brief Creates a ShaderParameterCollection from a serialized structure
+     *
+     * @param serializedShaderParameterCollection Serialized collection of
+     * shader parameters
+     * @return Unique pointer to the created ShaderParameterCollection
+     */
+    [[nodiscard]] virtual auto
+    FromSerialized(const nlohmann::json& serializedShaderParameterCollection)
+      const -> std::unique_ptr<IShaderParameterCollection> = 0;
   };
 } // namespace Dwarf
