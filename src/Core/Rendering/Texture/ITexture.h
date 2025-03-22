@@ -1,18 +1,33 @@
 #pragma once
-#include "pch.h"
 #include "Utilities/ImageUtilities/TextureCommon.h"
+#include "pch.h"
 
 namespace Dwarf
 {
+  /**
+   * @brief Class that abstracts a texture that lives on the GPU
+   *
+   */
   class ITexture
   {
   public:
     virtual ~ITexture() = default;
 
-    virtual TextureResolution
-    GetSize() const = 0;
+    /**
+     * @brief Gets the resolution of the texture. A variadic return type
+     * depending on the dimensions of the texture.
+     *
+     * @return Resolution of the texture
+     */
+    [[nodiscard]] virtual auto
+    GetSize() const -> TextureResolution = 0;
 
-    virtual uintptr_t
-    GetTextureID() const = 0;
+    /**
+     * @brief Gets the id of the texture
+     *
+     * @return Id representing the texture on the GPU
+     */
+    [[nodiscard]] virtual auto
+    GetTextureID() const -> uintptr_t = 0;
   };
 } // namespace Dwarf

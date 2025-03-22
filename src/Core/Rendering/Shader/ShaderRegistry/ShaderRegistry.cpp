@@ -1,13 +1,14 @@
 #include "ShaderRegistry.h"
 #include "Core/Asset/Database/AssetComponents.h"
 #include <fmt/format.h>
+#include <utility>
 
 namespace Dwarf
 {
   ShaderRegistry::ShaderRegistry(std::shared_ptr<IDwarfLogger>   logger,
                                  std::shared_ptr<IShaderFactory> shaderFactory)
-    : mLogger(logger)
-    , mShaderFactory(shaderFactory)
+    : mLogger(std::move(logger))
+    , mShaderFactory(std::move(shaderFactory))
   {
     mLogger->LogDebug(Log("ShaderRegistry created", "ShaderRegistry"));
   }
@@ -17,41 +18,45 @@ namespace Dwarf
     mLogger->LogDebug(Log("ShaderRegistry destroyed", "ShaderRegistry"));
   }
 
-  std::shared_ptr<IShader>
+  auto
   ShaderRegistry::GetOrCreate(
     std::unique_ptr<IShaderSourceCollection> shaderSources)
+    -> std::shared_ptr<IShader>
   {
     // Hashing the shader sources
     std::hash<std::string> hasher;
-    std::string            combinedSource = "";
+    std::string            combinedSource;
 
     for (auto& shaderSource : shaderSources->GetShaderSources())
     {
-      std::string sourceString = "";
+      std::string sourceString;
 
       switch (shaderSource->GetType())
       {
         case Dwarf::ASSET_TYPE::VERTEX_SHADER:
           sourceString =
-            ((VertexShaderAsset&)shaderSource->GetAsset()).GetFileContent();
+            (dynamic_cast<VertexShaderAsset&>(shaderSource->GetAsset()))
+              .GetFileContent();
           break;
         case Dwarf::ASSET_TYPE::FRAGMENT_SHADER:
           sourceString =
-            ((FragmentShaderAsset&)shaderSource->GetAsset()).GetFileContent();
+            (dynamic_cast<FragmentShaderAsset&>(shaderSource->GetAsset()))
+              .GetFileContent();
           break;
         case Dwarf::ASSET_TYPE::GEOMETRY_SHADER:
           sourceString =
-            ((GeometryShaderAsset&)shaderSource->GetAsset()).GetFileContent();
+            (dynamic_cast<GeometryShaderAsset&>(shaderSource->GetAsset()))
+              .GetFileContent();
           break;
         case Dwarf::ASSET_TYPE::TESC_SHADER:
-          sourceString =
-            ((TessellationControlShaderAsset&)shaderSource->GetAsset())
-              .GetFileContent();
+          sourceString = (dynamic_cast<TessellationControlShaderAsset&>(
+                            shaderSource->GetAsset()))
+                           .GetFileContent();
           break;
         case Dwarf::ASSET_TYPE::TESE_SHADER:
-          sourceString =
-            ((TessellationEvaluationShaderAsset&)shaderSource->GetAsset())
-              .GetFileContent();
+          sourceString = (dynamic_cast<TessellationEvaluationShaderAsset&>(
+                            shaderSource->GetAsset()))
+                           .GetFileContent();
           break;
         default: break;
       }
@@ -60,21 +65,21 @@ namespace Dwarf
 
     size_t hash = hasher(combinedSource);
 
-    auto it = mShaders.find(hash);
-    if (it != mShaders.end())
+    auto iterator = mShaders.find(hash);
+    if (iterator != mShaders.end())
     {
 
       mLogger->LogDebug(
         Log(fmt::format("Shader program already compiled and found"),
             "ShaderRegistry"));
-      return it->second; // Return existing shader program
+      return iterator->second; // Return existing shader program
     }
 
     mLogger->LogDebug(
       Log(fmt::format("Shader program not present yet. Building it now."),
           "ShaderRegistry"));
 
-    mShaders[hash] = mShaderFactory->CreateShader(std::move(shaderSources));
+    mShaders[hash] = mShaderFactory->Create(std::move(shaderSources));
 
     return mShaders[hash];
   }

@@ -3,14 +3,15 @@
 #include "Core/Rendering/Shader/IShaderFactory.h"
 #include "IShaderRegistry.h"
 #include "Logging/IDwarfLogger.h"
+
 namespace Dwarf
 {
   class ShaderRegistry : public IShaderRegistry
   {
   private:
     std::shared_ptr<IDwarfLogger>                        mLogger;
-    std::unordered_map<size_t, std::shared_ptr<IShader>> mShaders;
     std::shared_ptr<IShaderFactory>                      mShaderFactory;
+    std::unordered_map<size_t, std::shared_ptr<IShader>> mShaders;
 
   public:
     ShaderRegistry(std::shared_ptr<IDwarfLogger>   logger,
@@ -18,8 +19,14 @@ namespace Dwarf
 
     ~ShaderRegistry() override;
 
-    std::shared_ptr<IShader>
-    GetOrCreate(
-      std::unique_ptr<IShaderSourceCollection> shaderSources) override;
+    /**
+     * @brief Gets or creates a shader program based on source files
+     *
+     * @param shaderSources Source files to create the shader program from
+     * @return A shared pointer to the shader program
+     */
+    auto
+    GetOrCreate(std::unique_ptr<IShaderSourceCollection> shaderSources)
+      -> std::shared_ptr<IShader> override;
   };
 }

@@ -1,11 +1,8 @@
 #pragma once
 
 #include "Core/Asset/AssetReference/IAssetReference.h"
-#include "Core/Asset/Database/AssetComponents.h"
-#include "Core/Asset/Database/IAssetDatabase.h"
 #include "Core/Rendering/Shader/IComputeShader.h"
 #include "Core/Rendering/Shader/ShaderParameterCollection/IShaderParameterCollectionFactory.h"
-#include "Core/Rendering/Shader/ShaderTypes.h"
 #include "Core/Rendering/VramTracker/IVramTracker.h"
 #include <boost/di.hpp>
 #include <glad/glad.h>

@@ -1,44 +1,57 @@
 #include "CameraFactory.h"
-
 #include "Camera.h"
+
+#include <utility>
 
 namespace Dwarf
 {
-  CameraFactory::CameraFactory(std::shared_ptr<IInputManager> inputManager)
-    : mInputManager(inputManager)
+  CameraFactory::CameraFactory(std::shared_ptr<IDwarfLogger>  logger,
+                               std::shared_ptr<IInputManager> inputManager)
+    : mLogger(std::move(logger))
+    , mInputManager(std::move(inputManager))
   {
+    mLogger->LogDebug(Log("CameraFactory created.", "CameraFactory"));
   }
 
-  std::shared_ptr<ICamera>
-  CameraFactory::Create()
+  CameraFactory::~CameraFactory()
   {
-    return std::make_shared<Camera>(mInputManager);
+    mLogger->LogDebug(Log("CameraFactory destroyed.", "CameraFactory"));
   }
 
-  std::shared_ptr<ICamera>
-  CameraFactory::Create(glm::vec3 position, glm::vec3 rotation)
+  auto
+  CameraFactory::Create() const -> std::unique_ptr<ICamera>
   {
-    return std::make_shared<Camera>(mInputManager,
-                                    CameraProperties({ position, rotation }));
+    return std::make_unique<Camera>(mLogger, mInputManager);
   }
 
-  std::shared_ptr<ICamera>
+  auto
+  CameraFactory::Create(glm::vec3 position, glm::vec3 rotation) const
+    -> std::unique_ptr<ICamera>
+  {
+    return std::make_unique<Camera>(
+      mLogger, mInputManager, CameraProperties({ position, rotation }));
+  }
+
+  auto
   CameraFactory::Create(glm::vec3 position,
                         glm::vec3 rotation,
                         float     fov,
                         float     nearPlane,
                         float     farPlane,
-                        float     aspectRatio)
+                        float     aspectRatio) const -> std::unique_ptr<ICamera>
   {
-    return std::make_shared<Camera>(
+    return std::make_unique<Camera>(
+      mLogger,
       nullptr,
       CameraProperties(
         { position, rotation }, fov, nearPlane, farPlane, aspectRatio));
   }
 
-  std::shared_ptr<ICamera>
-  CameraFactory::Create(nlohmann::json json)
+  auto
+  CameraFactory::Create(const nlohmann::json& serializedCameraData) const
+    -> std::unique_ptr<ICamera>
   {
-    return std::make_shared<Camera>(mInputManager, json);
+    return std::make_unique<Camera>(
+      mLogger, mInputManager, serializedCameraData);
   }
 }

@@ -7,12 +7,20 @@
 
 namespace Dwarf
 {
+  /**
+   * @brief Class that represents a shader program and provides controls over
+   * it.
+   *
+   */
   class IShader : public ISerializable
   {
   public:
     virtual ~IShader() = default;
 
-    // Compiles the shader.
+    /**
+     * @brief Compiles the shader program
+     *
+     */
     virtual void
     Compile() = 0;
 
@@ -21,16 +29,22 @@ namespace Dwarf
      *
      * @return true if the shader has been compiled, false otherwise.
      */
-    virtual bool
-    IsCompiled() const = 0;
+    [[nodiscard]] virtual auto
+    IsCompiled() const -> bool = 0;
 
-    virtual std::unique_ptr<IShaderParameterCollection>
-    CreateParameters() = 0;
+    /**
+     * @brief Creates a ShaderParameterCollection that contains all the shader
+     * parameters that the shader uses
+     *
+     * @return Unique pointer to the created ShaderParameterCollection
+     */
+    virtual auto
+    CreateParameters() -> std::unique_ptr<IShaderParameterCollection> = 0;
 
-    virtual nlohmann::json
-    Serialize() = 0;
+    auto
+    Serialize() -> nlohmann::json override = 0;
 
-    virtual bool
-    operator<(const IShader& other) const = 0;
+    virtual auto
+    operator<(const IShader& other) const -> bool = 0;
   };
 }

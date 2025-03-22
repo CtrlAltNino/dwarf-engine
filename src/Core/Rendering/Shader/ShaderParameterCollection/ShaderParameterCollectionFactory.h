@@ -14,11 +14,23 @@ namespace Dwarf
   public:
     ShaderParameterCollectionFactory(GraphicsApi graphicsApi);
 
-    std::unique_ptr<IShaderParameterCollection>
-    CreateShaderParameterCollection() override;
+    /**
+     * @brief Creates an empty ShaderParameterCollection
+     *
+     * @return Unique pointer to the created ShaderParameterCollection
+     */
+    [[nodiscard]] auto
+    Create() const -> std::unique_ptr<IShaderParameterCollection> override;
 
-    std::unique_ptr<IShaderParameterCollection>
-    CreateShaderParameterCollection(
-      const nlohmann::json& serializedShaderParameterCollection) override;
+    /**
+     * @brief Creates a ShaderParameterCollection from a serialized structure
+     *
+     * @param serializedShaderParameterCollection Serialized collection of
+     * shader parameters
+     * @return Unique pointer to the created ShaderParameterCollection
+     */
+    [[nodiscard]] auto
+    FromSerialized(const nlohmann::json& serializedShaderParameterCollection)
+      const -> std::unique_ptr<IShaderParameterCollection> override;
   };
 } // namespace Dwarf

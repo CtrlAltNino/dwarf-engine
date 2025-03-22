@@ -1,13 +1,15 @@
-#include "Core/Rendering/RendererApi/RendererApiFactory.h"
+#include <utility>
+
+#include <utility>
+
 #include "Core/Base.h"
+#include "Core/Rendering/RendererApi/RendererApiFactory.h"
 
 // Including the shader header files of the graphics API.
 #if _WIN32
 #include "Platform/OpenGL/OpenGLRendererApi.h"
-#include "Platform/OpenGL/OpenGLStateTracker.h"
 #elif __linux__
 #include "Platform/OpenGL/OpenGLRendererApi.h"
-#include "Platform/OpenGL/OpenGLStateTracker.h"
 #elif __APPLE__
 // #include "Platform/Metal/MetalRendererApi.h"
 #endif
@@ -26,30 +28,31 @@ namespace Dwarf
     std::shared_ptr<IMeshFactory>       meshFactory,
     std::shared_ptr<IMeshBufferFactory> meshBufferFactory)
     : mGraphicsApi(api)
-    , mAssetDatabase(assetDatabase)
-    , mShaderRegistry(shaderRegistry)
-    , mLogger(logger)
-    , mEditorStats(editorStats)
-    , mStateTracker(stateTracker)
-    , mShaderSourceCollectionFactory(shaderSourceCollectionFactory)
-    , mMeshFactory(meshFactory)
-    , mMeshBufferFactory(meshBufferFactory)
+    , mAssetDatabase(std::move(assetDatabase))
+    , mShaderRegistry(std::move(shaderRegistry))
+    , mLogger(std::move(logger))
+    , mEditorStats(std::move(editorStats))
+    , mStateTracker(std::move(stateTracker))
+    , mShaderSourceCollectionFactory(std::move(shaderSourceCollectionFactory))
+    , mMeshFactory(std::move(meshFactory))
+    , mMeshBufferFactory(std::move(meshBufferFactory))
   {
+    mLogger->LogDebug(Log("RendererApiFactory created.", "RendererApiFactory"));
   }
 
-  RendererApiFactory::~RendererApiFactory() {}
+  RendererApiFactory::~RendererApiFactory()
+  {
+    mLogger->LogDebug(Log("RendererApiFactory created.", "RendererApiFactory"));
+  }
 
-  std::shared_ptr<IRendererApi>
-  RendererApiFactory::Create()
+  auto
+  RendererApiFactory::Create() const -> std::unique_ptr<IRendererApi>
   {
     switch (mGraphicsApi)
     {
 #if _WIN32
-      case GraphicsApi::D3D12:
-        // return std::make_shared<D3D12Shader>();
-        break;
       case GraphicsApi::OpenGL:
-        return std::make_shared<OpenGLRendererApi>(
+        return std::make_unique<OpenGLRendererApi>(
           mAssetDatabase,
           mShaderRegistry,
           mLogger,
@@ -59,14 +62,13 @@ namespace Dwarf
           mMeshFactory,
           mMeshBufferFactory);
         break;
-      case GraphicsApi::Metal: break;
-      case GraphicsApi::Vulkan:
-        // return std::make_shared<VulkanShader>();
-        break;
+      case GraphicsApi::D3D12:
+      case GraphicsApi::Metal:
+      case GraphicsApi::Vulkan: break;
 #elif __linux__
       case GraphicsApi::D3D12: break;
       case GraphicsApi::OpenGL:
-        return std::make_shared<OpenGLRendererApi>(
+        return std::make_unique<OpenGLRendererApi>(
           mAssetDatabase,
           mShaderRegistry,
           mLogger,

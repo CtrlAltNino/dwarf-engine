@@ -5,7 +5,6 @@
 #include "Core/Base.h"
 #include "Core/Rendering/Shader/ShaderParameterCollection/IShaderParameterCollection.h"
 #include "Core/Rendering/Shader/ShaderParameterCollection/IShaderParameterCollectionFactory.h"
-#include "Core/Rendering/Shader/ShaderTypes.h"
 #include "OpenGLUtilities.h"
 #include "Platform/OpenGL/OpenGLUtilities.h"
 #include <fmt/format.h>
@@ -332,8 +331,8 @@ namespace Dwarf
       return nullptr;
     }
 
-    std::unique_ptr<IShaderParameterCollection> parameters = std::move(
-      mShaderParameterCollectionFactory->CreateShaderParameterCollection());
+    std::unique_ptr<IShaderParameterCollection> parameters =
+      std::move(mShaderParameterCollectionFactory->Create());
     GLint i;
     GLint count;
 

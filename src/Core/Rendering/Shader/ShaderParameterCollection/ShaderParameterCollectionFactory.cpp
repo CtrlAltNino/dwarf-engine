@@ -8,15 +8,18 @@ namespace Dwarf
     : mGraphicsApi(graphicsApi)
   {
   }
-  std::unique_ptr<IShaderParameterCollection>
-  ShaderParameterCollectionFactory::CreateShaderParameterCollection()
+
+  auto
+  ShaderParameterCollectionFactory::Create() const
+    -> std::unique_ptr<IShaderParameterCollection>
   {
     return std::make_unique<ShaderParameterCollection>();
   }
 
-  std::unique_ptr<IShaderParameterCollection>
-  ShaderParameterCollectionFactory::CreateShaderParameterCollection(
-    const nlohmann::json& serializedShaderParameterCollection)
+  auto
+  ShaderParameterCollectionFactory::FromSerialized(
+    const nlohmann::json& serializedShaderParameterCollection) const
+    -> std::unique_ptr<IShaderParameterCollection>
   {
     std::unique_ptr<ShaderParameterCollection> parameterCollection =
       std::make_unique<ShaderParameterCollection>();

@@ -40,7 +40,13 @@ namespace Dwarf
                        std::shared_ptr<IMeshFactory>       meshFactory,
                        std::shared_ptr<IMeshBufferFactory> meshBufferFactory);
     ~RendererApiFactory() override;
-    std::shared_ptr<IRendererApi>
-    Create() override;
+
+    /**
+     * @brief Creates a renderer api instance
+     *
+     * @return std::shared_ptr<IRendererApi>
+     */
+    [[nodiscard]] auto
+    Create() const -> std::unique_ptr<IRendererApi> override;
   };
 } // namespace Dwarf
