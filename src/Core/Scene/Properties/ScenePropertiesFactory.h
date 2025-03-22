@@ -2,23 +2,29 @@
 
 #include "Core/Scene/Settings/ISceneSettingsFactory.h"
 #include "IScenePropertiesFactory.h"
+#include "Logging/IDwarfLogger.h"
 
 namespace Dwarf
 {
   class ScenePropertiesFactory : public IScenePropertiesFactory
   {
   private:
-    std::shared_ptr<ISceneSettingsFactory> m_sceneSettingsFactory;
+    std::shared_ptr<IDwarfLogger>          mLogger;
+    std::shared_ptr<ISceneSettingsFactory> mSceneSettingsFactory;
 
   public:
     ScenePropertiesFactory(
+      std::shared_ptr<IDwarfLogger>          logger,
       std::shared_ptr<ISceneSettingsFactory> sceneSettingsFactory);
+    ~ScenePropertiesFactory() override;
 
-    std::unique_ptr<ISceneProperties>
+    [[nodiscard]] auto
     Create(IAssetReference&      sceneAsset,
-           const nlohmann::json& serializedProperties) override;
+           const nlohmann::json& serializedProperties) const
+      -> std::unique_ptr<ISceneProperties> override;
 
-    std::unique_ptr<ISceneProperties>
-    Create(const std::string& name) override;
+    [[nodiscard]] auto
+    Create(const std::string& name) const
+      -> std::unique_ptr<ISceneProperties> override;
   };
 } // namespace Dwarf

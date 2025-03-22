@@ -1,18 +1,35 @@
 #pragma once
 
 #include "ISceneSettingsFactory.h"
+#include "Logging/IDwarfLogger.h"
 
 namespace Dwarf
 {
   class SceneSettingsFactory : public ISceneSettingsFactory
   {
+  private:
+    std::shared_ptr<IDwarfLogger> mLogger;
+
   public:
-    ~SceneSettingsFactory() override = default;
+    SceneSettingsFactory(std::shared_ptr<IDwarfLogger> logger);
+    ~SceneSettingsFactory() override;
 
-    std::unique_ptr<ISceneSettings>
-    Create(nlohmann::json serializedSettings) override;
+    /**
+     * @brief Creates an empty SceneSettings instance
+     *
+     * @return Unique pointer to the created SceneSettings instance
+     */
+    [[nodiscard]] auto
+    Create() const -> std::unique_ptr<ISceneSettings> override;
 
-    std::unique_ptr<ISceneSettings>
-    Create() override;
+    /**
+     * @brief Creates a SceneSettings instance from a serialized structure
+     *
+     * @param serializedSettings Serializes SceneSettings
+     * @return Unique pointer to the created SceneSettings instance
+     */
+    [[nodiscard]] auto
+    Create(nlohmann::json serializedSettings) const
+      -> std::unique_ptr<ISceneSettings> override;
   };
 } // namespace Dwarf

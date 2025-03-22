@@ -8,13 +8,19 @@ namespace Dwarf
   class ISceneFactory
   {
   public:
+    virtual ~ISceneFactory() = default;
     /// @brief Creates a scene from an asset reference.
     /// @param sceneAsset The asset reference of the scene.
     /// @return The created scene.
-    virtual std::unique_ptr<IScene>
-    FromAsset(IAssetReference& sceneAsset) = 0;
+    [[nodiscard]] virtual auto
+    FromAsset(IAssetReference& sceneAsset) const -> std::unique_ptr<IScene> = 0;
 
-    virtual std::unique_ptr<IScene>
-    CreateDefaultScene() = 0;
+    /**
+     * @brief Creates a default scene
+     *
+     * @return Unique pointer to the created scene instance
+     */
+    [[nodiscard]] virtual auto
+    CreateDefaultScene() const -> std::unique_ptr<IScene> = 0;
   };
 } // namespace Dwarf

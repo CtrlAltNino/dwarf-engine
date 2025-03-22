@@ -106,7 +106,7 @@
 namespace Dwarf
 {
   auto
-  EditorInjector::createInjector(SavedProject selectedProject)
+  EditorInjector::CreateInjector(SavedProject selectedProject)
     -> boost::di::injector<std::shared_ptr<Editor>>
   {
     return boost::di::make_injector<boost::di::extension::shared_config>(

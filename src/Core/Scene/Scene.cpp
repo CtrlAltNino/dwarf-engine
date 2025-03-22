@@ -3,6 +3,7 @@
 #include <Core/Asset/Database/AssetDatabase.h>
 #include <entt/entity/fwd.hpp>
 #include <string>
+#include <utility>
 
 namespace Dwarf
 {
@@ -11,17 +12,17 @@ namespace Dwarf
     : mRegistry(entt::registry())
     , mProperties(std::move(properties))
     , mRootEntity(CreateRootEntity())
-    , mAssetDatabase(assetDatabase)
+    , mAssetDatabase(std::move(assetDatabase))
   {
   }
 
-  Scene::Scene(SerializedGraph                   serializedScene,
+  Scene::Scene(const SerializedGraph&            serializedScene,
                std::unique_ptr<ISceneProperties> properties,
                std::shared_ptr<IAssetDatabase>   assetDatabase)
     : mRegistry(entt::registry())
     , mProperties(std::move(properties))
     , mRootEntity(CreateRootEntity())
-    , mAssetDatabase(assetDatabase)
+    , mAssetDatabase(std::move(assetDatabase))
   {
     Deserialize(serializedScene.t);
   }
@@ -35,32 +36,6 @@ namespace Dwarf
   void
   Scene::Deserialize(const nlohmann::json& serializedSceneGraph)
   {
-    // SceneSettings settings;
-
-    // settings.fogSettings.fogColor = { serializedScene["fog"]["color"]["r"],
-    //                                   serializedScene["fog"]["color"]["g"],
-    //                                   serializedScene["fog"]["color"]["b"] };
-    // settings.fogSettings.fogStart = serializedScene["fog"]["fogStart"];
-    // settings.fogSettings.fogEnd = serializedScene["fog"]["fogEnd"];
-    // settings.fogSettings.type = (FogType)serializedScene["fog"]["type"];
-
-    // settings.globalLightSettings.color = {
-    //   serializedScene["globalLight"]["color"]["r"],
-    //   serializedScene["globalLight"]["color"]["g"],
-    //   serializedScene["globalLight"]["color"]["b"]
-    // };
-    // settings.globalLightSettings.intensity =
-    //   serializedScene["globalLight"]["intensity"];
-
-    // if (serializedScene.contains("skyboxMaterial") &&
-    //     serializedScene["skyboxMaterial"] != "null")
-    // {
-    //   settings.skyboxMaterial =
-    //     std::make_shared<UUID>((uint64_t)serializedScene["skyboxMaterial"]);
-    // }
-
-    // std::shared_ptr<Scene> deserializedScene =
-    //   std::make_shared<Scene>(path, settings);
     for (auto const& element : serializedSceneGraph)
     {
       Entity newEntity = DeserializeEntity(element);
@@ -68,27 +43,29 @@ namespace Dwarf
     }
   }
 
-  Entity
-  Scene::DeserializeEntity(const nlohmann::json& serializedEntity)
+  auto
+  Scene::DeserializeEntity(const nlohmann::json& serializedEntity) -> Entity
   {
     Entity newEntity =
       CreateEntityWithUID(UUID(serializedEntity["guid"].get<std::string>()),
                           serializedEntity["name"]);
 
-    TransformComponent& tc = newEntity.GetComponent<TransformComponent>();
-    tc.GetPosition() = {
+    auto& transformComponent = newEntity.GetComponent<TransformComponent>();
+    transformComponent.GetPosition() = {
       serializedEntity["TransformComponent"]["Position"]["x"],
       serializedEntity["TransformComponent"]["Position"]["y"],
       serializedEntity["TransformComponent"]["Position"]["z"]
     };
-    tc.GetEulerAngles() = {
+    transformComponent.GetEulerAngles() = {
       serializedEntity["TransformComponent"]["Rotation"]["x"],
       serializedEntity["TransformComponent"]["Rotation"]["y"],
       serializedEntity["TransformComponent"]["Rotation"]["z"]
     };
-    tc.GetScale() = { serializedEntity["TransformComponent"]["Scale"]["x"],
-                      serializedEntity["TransformComponent"]["Scale"]["y"],
-                      serializedEntity["TransformComponent"]["Scale"]["z"] };
+    transformComponent.GetScale() = {
+      serializedEntity["TransformComponent"]["Scale"]["x"],
+      serializedEntity["TransformComponent"]["Scale"]["y"],
+      serializedEntity["TransformComponent"]["Scale"]["z"]
+    };
 
     if (serializedEntity.contains("LightComponent"))
     {
@@ -132,9 +109,8 @@ namespace Dwarf
         }
       }
 
-      MeshRendererComponent& comp =
-        newEntity.AddComponent<MeshRendererComponent>(
-          std::move(modelAsset), std::move(materialAssets));
+      auto& comp = newEntity.AddComponent<MeshRendererComponent>(
+        std::move(modelAsset), std::move(materialAssets));
 
       if (serializedEntity["MeshRendererComponent"].contains("Hidden"))
       {
@@ -154,8 +130,8 @@ namespace Dwarf
     return newEntity;
   }
 
-  Entity
-  Scene::CreateRootEntity()
+  auto
+  Scene::CreateRootEntity() -> Entity
   {
     Entity mRootEntity(mRegistry.create(), mRegistry);
     mRootEntity.AddComponent<IDComponent>(UUID());
@@ -164,14 +140,14 @@ namespace Dwarf
     return mRootEntity;
   }
 
-  Entity
-  Scene::CreateEntity(const std::string& name)
+  auto
+  Scene::CreateEntity(const std::string& name) -> Entity
   {
     return CreateEntityWithUID(UUID(), name);
   }
 
-  Entity
-  Scene::CreateEntityWithUID(const UUID& uid, const std::string& name)
+  auto
+  Scene::CreateEntityWithUID(const UUID& uid, const std::string& name) -> Entity
   {
     Entity entity(mRegistry.create(), mRegistry);
     entity.AddComponent<IDComponent>(uid);
@@ -184,28 +160,28 @@ namespace Dwarf
     return entity;
   }
 
-  entt::registry&
-  Scene::GetRegistry()
+  auto
+  Scene::GetRegistry() -> entt::registry&
   {
     return mRegistry;
   }
 
-  Entity&
-  Scene::GetRootEntity()
+  auto
+  Scene::GetRootEntity() -> Entity&
   {
     return mRootEntity;
   }
 
-  ISceneProperties&
-  Scene::GetProperties()
+  auto
+  Scene::GetProperties() -> ISceneProperties&
   {
     return *mProperties;
   }
 
-  glm::mat4
-  Scene::GetFullModelMatrix(TransformComponent& transform)
+  auto
+  Scene::GetFullModelMatrix(TransformComponent& transform) -> glm::mat4
   {
-    auto                   parentMat = glm::mat4(1.0f);
+    auto                   parentMat = glm::mat4(1.0F);
     std::vector<glm::mat4> matriceStack;
 
     matriceStack.push_back(transform.GetModelMatrix());
@@ -243,8 +219,8 @@ namespace Dwarf
     }
   }
 
-  nlohmann::json
-  Scene::Serialize()
+  auto
+  Scene::Serialize() -> nlohmann::json
   {
     nlohmann::json serializedScene;
 
@@ -261,96 +237,6 @@ namespace Dwarf
         serializedScene["Graph"].push_back(e.Serialize());
       }
     }
-
-    /*for (entt::entity entity : mRegistry.view<IDComponent>())
-    {
-      Entity entity(entity, scene->GetRegistry());
-
-      serializedArray[entityCount]["guid"] =
-        (uint64_t)(*entity.GetComponent<IDComponent>().ID);
-      serializedArray[entityCount]["name"] =
-        entity.GetComponent<NameComponent>().Name;
-
-      TransformComponent tc = entity.GetComponent<TransformComponent>();
-      serializedArray[entityCount]["transformComponent"]["position"]["x"] =
-        tc.getPosition().x;
-      serializedArray[entityCount]["transformComponent"]["position"]["y"] =
-        tc.getPosition().y;
-      serializedArray[entityCount]["transformComponent"]["position"]["z"] =
-        tc.getPosition().z;
-
-      serializedArray[entityCount]["transformComponent"]["rotation"]["x"] =
-        tc.getEulerAngles().x;
-      serializedArray[entityCount]["transformComponent"]["rotation"]["y"] =
-        tc.getEulerAngles().y;
-      serializedArray[entityCount]["transformComponent"]["rotation"]["z"] =
-        tc.getEulerAngles().z;
-
-      serializedArray[entityCount]["transformComponent"]["scale"]["x"] =
-        tc.getScale().x;
-      serializedArray[entityCount]["transformComponent"]["scale"]["y"] =
-        tc.getScale().y;
-      serializedArray[entityCount]["transformComponent"]["scale"]["z"] =
-        tc.getScale().z;
-
-      if (entity.HasComponent<LightComponent>())
-      {
-        LightComponent lightComponent = entity.GetComponent<LightComponent>();
-        serializedArray[entityCount]["lightComponent"]["type"] =
-          (int)lightComponent.type;
-
-        serializedArray[entityCount]["lightComponent"]["lightColor"]["r"] =
-          (int)lightComponent.lightColor.r;
-        serializedArray[entityCount]["lightComponent"]["lightColor"]["g"] =
-          (int)lightComponent.lightColor.g;
-        serializedArray[entityCount]["lightComponent"]["lightColor"]["b"] =
-          (int)lightComponent.lightColor.b;
-
-        serializedArray[entityCount]["lightComponent"]["attenuation"] =
-          (int)lightComponent.attenuation;
-
-        serializedArray[entityCount]["lightComponent"]["radius"] =
-          (int)lightComponent.radius;
-
-        serializedArray[entityCount]["lightComponent"]["openingAngle"] =
-          (int)lightComponent.openingAngle;
-      }
-
-      if (entity.HasComponent<MeshRendererComponent>())
-      {
-        MeshRendererComponent meshRendererComponent =
-          entity.GetComponent<MeshRendererComponent>();
-        if (meshRendererComponent.meshAsset)
-        {
-          serializedArray[entityCount]["meshRendererComponent"]["mesh"] =
-            (uint64_t)(*meshRendererComponent.meshAsset);
-        }
-        else
-        {
-          serializedArray[entityCount]["meshRendererComponent"]["mesh"] =
-            "null";
-        }
-
-        int materialCount = 0;
-
-        for (std::shared_ptr<UID> materialID :
-             meshRendererComponent.materialAssets)
-        {
-          serializedArray[entityCount]["meshRendererComponent"]["materials"]
-                         [materialCount] =
-                           materialID ? (uint64_t)(*materialID) : -1;
-          materialCount++;
-        }
-
-        serializedArray[entityCount]["meshRendererComponent"]
-                       ["canCastShadows"] = meshRendererComponent.canCastShadow;
-      }
-
-      serializedArray[entityCount]["children"] =
-        SerializeEntities(tc.children, scene);
-
-      entityCount++;
-    }*/
 
     return serializedScene;
   }
