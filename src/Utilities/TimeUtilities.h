@@ -20,14 +20,14 @@ namespace Dwarf
   class TimeUtilities
   {
   public:
-    static TimeStamp
-    GetCurrent()
+    static auto
+    GetCurrent() -> TimeStamp
     {
       return { SDL_GetPerformanceCounter() };
     }
 
-    static double
-    GetDifferenceInSeconds(TimeStamp t1, TimeStamp t2)
+    static auto
+    GetDifferenceInSeconds(TimeStamp t1, TimeStamp t2) -> double
     {
       return (double)(t1.counter - t2.counter) /
              (double)SDL_GetPerformanceFrequency();
@@ -50,10 +50,10 @@ namespace Dwarf
     /// it to a display string.
     /// @param passedTime A time stamp.
     /// @return The time passed formatted as a display string.
-    static std::string
-    CalculateTimePassedSinceNow(time_t passedTime)
+    static auto
+    CalculateTimePassedSinceNow(time_t passedTime) -> std::string
     {
-      std::string timePassed = "";
+      std::string timePassed;
       time_t      currentTime = time(0);
       time_t      timeDifference = currentTime - passedTime;
 
@@ -61,7 +61,7 @@ namespace Dwarf
       {
         timePassed = "a few seconds ago";
       }
-      else if (timeDifference < SECONDS_IN_MINUTE * 2)
+      else if (timeDifference < static_cast<time_t>(2) * SECONDS_IN_MINUTE)
       {
         timePassed = "a minute ago";
       }
@@ -71,7 +71,7 @@ namespace Dwarf
           std::format("{} minutes ago",
                       (long long)floor(timeDifference / SECONDS_IN_MINUTE));
       }
-      else if (timeDifference < SECONDS_IN_HOUR * 2)
+      else if (timeDifference < static_cast<time_t>(2) * SECONDS_IN_HOUR)
       {
         timePassed = "an hour ago";
       }
@@ -80,7 +80,7 @@ namespace Dwarf
         timePassed = std::format(
           "{} hours ago", (long long)floor(timeDifference / SECONDS_IN_HOUR));
       }
-      else if (timeDifference < SECONDS_IN_DAY * 2)
+      else if (timeDifference < static_cast<time_t>(2) * SECONDS_IN_DAY)
       {
         timePassed = "a day ago";
       }
@@ -89,7 +89,7 @@ namespace Dwarf
         timePassed = std::format(
           "{} days ago", (long long)floor(timeDifference / SECONDS_IN_DAY));
       }
-      else if (timeDifference < SECONDS_IN_WEEK * 2)
+      else if (timeDifference < static_cast<time_t>(2) * SECONDS_IN_WEEK)
       {
         timePassed = "a week ago";
       }
@@ -98,7 +98,7 @@ namespace Dwarf
         timePassed = std::format(
           "{} weeks ago", (long long)floor(timeDifference / SECONDS_IN_WEEK));
       }
-      else if (timeDifference < SECONDS_IN_MONTH * 2)
+      else if (timeDifference < static_cast<time_t>(2) * SECONDS_IN_MONTH)
       {
         timePassed = "a month ago";
       }
@@ -107,7 +107,7 @@ namespace Dwarf
         timePassed = std::format(
           "{} months ago", (long long)floor(timeDifference / SECONDS_IN_MONTH));
       }
-      else if (timeDifference < SECONDS_IN_YEAR * 2)
+      else if (timeDifference < static_cast<time_t>(2) * SECONDS_IN_YEAR)
       {
         timePassed = "a year ago";
       }

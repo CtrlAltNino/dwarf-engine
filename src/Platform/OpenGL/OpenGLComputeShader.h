@@ -30,19 +30,19 @@ namespace Dwarf
                     std::shared_ptr<IVramTracker> vramTracker);
     ~OpenGLComputeShader() override;
 
-    GLuint
-    GetID() const;
+    [[nodiscard]] auto
+    GetID() const -> GLuint;
 
     void
     Compile() override;
 
-    bool
-    IsCompiled() const override;
+    [[nodiscard]] auto
+    IsCompiled() const -> bool override;
 
-    const std::string&
-    GetLog() const;
+    [[nodiscard]] auto
+    GetLog() const -> const std::string&;
 
-    std::shared_ptr<IShaderParameterCollection>
-    GetParameters() override;
+    auto
+    GetParameters() -> std::shared_ptr<IShaderParameterCollection> override;
   };
 }

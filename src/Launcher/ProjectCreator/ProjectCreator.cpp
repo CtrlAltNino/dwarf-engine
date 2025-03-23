@@ -6,6 +6,7 @@
 #include "Project/IProjectSettings.h"
 #include <filesystem>
 #include <fmt/format.h>
+#include <utility>
 
 namespace Dwarf
 {
@@ -14,10 +15,10 @@ namespace Dwarf
     std::shared_ptr<ISavedProjects>     savedProjects,
     std::shared_ptr<IFileHandler>       fileHandler,
     std::shared_ptr<IProjectSettingsIO> projectSettingsIO)
-    : mLogger(logger)
-    , mSavedProjects(savedProjects)
-    , mFileHandler(fileHandler)
-    , mProjectSettingsIO(projectSettingsIO)
+    : mLogger(std::move(logger))
+    , mSavedProjects(std::move(savedProjects))
+    , mFileHandler(std::move(fileHandler))
+    , mProjectSettingsIO(std::move(projectSettingsIO))
   {
     mLogger->LogDebug(Log("ProjectCreator created", "ProjectCreator"));
   }
@@ -83,7 +84,7 @@ namespace Dwarf
           {
             using enum GraphicsApi;
             case None:
-              std::runtime_error(
+              throw std::runtime_error(
                 "No Graphics API selected for creating a project");
               break;
             case D3D12: templateApiDirectory = "dx12"; break;
@@ -95,7 +96,7 @@ namespace Dwarf
           templateProjectDirectory =
             std::filesystem::path("data/demo projects") / templateApiDirectory /
             templateProjectDirectory;
-          std::string copyCommand = "";
+          std::string copyCommand;
 
 #ifdef _WIN32
           copyCommand = std::string(
@@ -157,8 +158,8 @@ namespace Dwarf
     }
   }
 
-  std::filesystem::path
-  ProjectCreator::GetDefaultProjectPath() const
+  auto
+  ProjectCreator::GetDefaultProjectPath() const -> std::filesystem::path
   {
     return mFileHandler->GetDocumentsPath();
   }

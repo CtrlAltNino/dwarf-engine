@@ -1,12 +1,13 @@
 #include "LauncherData.h"
 #include <fmt/format.h>
 
+#include <utility>
+
 namespace Dwarf
 {
   LauncherData::LauncherData(std::shared_ptr<IDwarfLogger> logger)
-    : mLogger(logger)
+    : mLogger(std::move(logger))
     , mState()
-    , mSelectedProject()
   {
     mLogger->LogDebug(
       Log("ProjectLauncherData created.", "ProjectLauncherData"));
@@ -18,8 +19,8 @@ namespace Dwarf
       Log("ProjectLauncherData destroyed.", "ProjectLauncherData"));
   }
 
-  ProjectChooserState
-  LauncherData::GetState() const
+  auto
+  LauncherData::GetState() const -> ProjectChooserState
   {
     return mState;
   }
@@ -27,7 +28,7 @@ namespace Dwarf
   void
   LauncherData::SetState(ProjectChooserState state)
   {
-    std::string stateString = "";
+    std::string stateString;
     switch (state)
     {
       case ProjectChooserState::Choosing: stateString = "Choosing"; break;
@@ -55,8 +56,8 @@ namespace Dwarf
     mSelectedProject = project;
   }
 
-  const std::optional<SavedProject>&
-  LauncherData::GetSelectedProject() const
+  auto
+  LauncherData::GetSelectedProject() const -> const std::optional<SavedProject>&
   {
     return mSelectedProject;
   }

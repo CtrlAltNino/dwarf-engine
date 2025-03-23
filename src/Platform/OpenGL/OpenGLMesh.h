@@ -23,16 +23,36 @@ namespace Dwarf
                std::shared_ptr<IDwarfLogger>    logger,
                std::shared_ptr<IVramTracker>    vramTracker);
     ~OpenGLMesh() override;
+
+    /**
+     * @brief Binds the OpenGL mesh
+     *
+     */
     void
     Bind() const;
+
+    /**
+     * @brief Unbinds the OpenGL mesh
+     *
+     */
     void
     Unbind() const;
 
-    uint32_t
-    GetVertexCount() override;
+    /**
+     * @brief Returns the vertex count of the mesh
+     *
+     * @return Vertex count
+     */
+    auto
+    GetVertexCount() -> uint32_t override;
 
-    uint32_t
-    GetIndexCount() override;
+    /**
+     * @brief Returns the index count of the mesh
+     *
+     * @return Index count
+     */
+    auto
+    GetIndexCount() -> uint32_t override;
 
   private:
     GLuint VAO;

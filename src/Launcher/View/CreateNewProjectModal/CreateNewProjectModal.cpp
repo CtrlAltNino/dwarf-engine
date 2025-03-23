@@ -1,6 +1,9 @@
 #include "CreateNewProjectModal.h"
 #include <imgui.h>
+#include <magic_enum/magic_enum.hpp>
 #include <nfd.h>
+#include <utility>
+
 
 namespace Dwarf
 {
@@ -11,9 +14,9 @@ namespace Dwarf
     std::shared_ptr<ILauncherData>   data,
     std::shared_ptr<IProjectCreator> projectCreator,
     std::shared_ptr<ILauncherAssets> launcherAssets)
-    : mData(data)
-    , mProjectCreator(projectCreator)
-    , mLauncherAssets(launcherAssets)
+    : mData(std::move(data))
+    , mProjectCreator(std::move(projectCreator))
+    , mLauncherAssets(std::move(launcherAssets))
   {
   }
 
@@ -46,7 +49,7 @@ namespace Dwarf
     {
       ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(4, 8));
 
-      static char newProjectName[128] = "";
+      static std::array<char, 128> newProjectName;
       // ==================== Name Input ====================
       {
         ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
@@ -67,8 +70,8 @@ namespace Dwarf
         ImGui::PushStyleColor(ImGuiCol_FrameBg, IM_COL32(59, 66, 82, 255));
         ImGui::InputTextWithHint("##projectName",
                                  "Enter name",
-                                 newProjectName,
-                                 IM_ARRAYSIZE(newProjectName));
+                                 newProjectName.data(),
+                                 newProjectName.size());
         ImGui::PopStyleVar(2);
         ImGui::PopStyleColor();
         ImGui::PopItemWidth();
@@ -342,9 +345,10 @@ namespace Dwarf
         // Coloring the combo popup background
         ImGui::PushStyleColor(ImGuiCol_PopupBg, IM_COL32(46, 52, 64, 255));
 
-        if (ImGui::BeginCombo(
-              "##graphicsApi",
-              GRAPHICS_API_STRING((GraphicsApi)currentApiIndex).c_str()))
+        auto apiName = magic_enum::enum_name(
+          magic_enum::enum_value<GraphicsApi>(currentApiIndex));
+
+        if (ImGui::BeginCombo("##graphicsApi", apiName.data()))
         {
           ImDrawList* draw_list = ImGui::GetWindowDrawList();
 
@@ -357,7 +361,7 @@ namespace Dwarf
 
               // Selectable settings
               ImGui::PushStyleVar(ImGuiStyleVar_SelectableTextAlign,
-                                  ImVec2(0.5f, 0.5f));
+                                  ImVec2(0.5F, 0.5F));
               ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0, 0, 0, 0));
               ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0, 0, 0, 0));
               ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(0, 0, 0, 0));
@@ -373,11 +377,12 @@ namespace Dwarf
                 ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
               }
 
+              auto apiName =
+                magic_enum::enum_name(magic_enum::enum_value<GraphicsApi>(n));
+
               // ==================== Rendering Selectable ====================
-              if (ImGui::Selectable(GRAPHICS_API_STRING((GraphicsApi)n).c_str(),
-                                    is_selected,
-                                    0,
-                                    ImVec2(0, 16 + 10)))
+              if (ImGui::Selectable(
+                    apiName.data(), is_selected, 0, ImVec2(0, 16 + 10)))
               {
                 currentApiIndex = n;
               }
@@ -391,31 +396,34 @@ namespace Dwarf
               {
                 ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
                 draw_list->ChannelsSetCurrent(0);
-                ImVec2 p_min = ImGui::GetItemRectMin();
-                ImVec2 p_max = ImGui::GetItemRectMax();
+                ImVec2 pMin = ImGui::GetItemRectMin();
+                ImVec2 pMax = ImGui::GetItemRectMax();
                 ImU32  rectCol = ImGui::IsMouseDown(ImGuiMouseButton_Left)
                                    ? IM_COL32(76, 86, 106, 255)
                                    : IM_COL32(67, 76, 94, 255);
 
                 ImGui::GetWindowDrawList()->AddRectFilled(
-                  p_min, p_max, rectCol, 5);
+                  pMin, pMax, rectCol, 5);
               }
               else if (is_selected)
               {
                 draw_list->ChannelsSetCurrent(0);
-                ImVec2 p_min = ImGui::GetItemRectMin();
-                ImVec2 p_max = ImGui::GetItemRectMax();
+                ImVec2 pMin = ImGui::GetItemRectMin();
+                ImVec2 pMax = ImGui::GetItemRectMax();
                 ImU32  rectCol = IM_COL32(59, 66, 82, 255);
 
                 ImGui::GetWindowDrawList()->AddRectFilled(
-                  p_min, p_max, rectCol, 5);
+                  pMin, pMax, rectCol, 5);
               }
 
               draw_list->ChannelsMerge();
 
               // Set the initial focus when opening the combo (scrolling +
               // keyboard navigation focus)
-              if (is_selected) ImGui::SetItemDefaultFocus();
+              if (is_selected)
+              {
+                ImGui::SetItemDefaultFocus();
+              }
             }
           }
 
@@ -449,8 +457,8 @@ namespace Dwarf
       // ==================== Create Button ====================
       {
         ImGui::PushFont(mLauncherAssets->GetTextFont().get());
-        if (ImGui::Button("Create",
-                          ImVec2(ImGui::GetContentRegionAvail().x / 2 - 8, 40)))
+        if (ImGui::Button(
+              "Create", ImVec2((ImGui::GetContentRegionAvail().x / 2) - 8, 40)))
         {
           // Create folder at the path with the project name
           // Create and fill projectSettings.dproj appropriately
@@ -460,7 +468,7 @@ namespace Dwarf
           // CreateProject(newProjectName, newProjectPath.c_str(),
           // (GraphicsApi)currentApiIndex,
           // (ProjectTemplate)currentTemplateIndex);
-          mProjectCreator->CreateProject(newProjectName,
+          mProjectCreator->CreateProject(newProjectName.data(),
                                          newProjectPath,
                                          (GraphicsApi)currentApiIndex,
                                          (ProjectTemplate)currentTemplateIndex);

@@ -1,19 +1,21 @@
 #include "ProjectSettingsIO.h"
 #include "IProjectSettings.h"
 #include <optional>
+#include <utility>
 
 namespace Dwarf
 {
   ProjectSettingsIO::ProjectSettingsIO(
     std::shared_ptr<IDwarfLogger> logger,
     std::shared_ptr<IFileHandler> fileHandler)
-    : mLogger(logger)
-    , mFileHandler(fileHandler)
+    : mLogger(std::move(logger))
+    , mFileHandler(std::move(fileHandler))
   {
   }
 
-  std::optional<ProjectSettingsData>
+  auto
   ProjectSettingsIO::LoadProjectSettings(std::filesystem::path projectPath)
+    -> std::optional<ProjectSettingsData>
   {
     ProjectSettingsData   projectSettingsData;
     std::filesystem::path projectSettingsPath =

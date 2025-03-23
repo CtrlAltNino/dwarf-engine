@@ -1,6 +1,7 @@
 #include "ProjectListView.h"
 #include "Utilities/TimeUtilities.h"
 #include <imgui.h>
+#include <magic_enum/magic_enum.hpp>
 
 namespace Dwarf
 {
@@ -153,7 +154,9 @@ namespace Dwarf
                         project.LastOpened);
                 break;
               }
-            case 3: cellText = GRAPHICS_API_STRING(project.GraphicsApi); break;
+            case 3:
+              cellText = magic_enum::enum_name(project.GraphicsApi);
+              break;
           }
 
           if (column == 0)

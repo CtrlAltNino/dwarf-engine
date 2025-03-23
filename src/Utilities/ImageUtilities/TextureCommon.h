@@ -1,6 +1,8 @@
 #pragma once
 
 #include "Utilities/ISerializable.h"
+#include <cstdint>
+#include <glm/fwd.hpp>
 #include <glm/glm.hpp>
 #include <nlohmann/json.hpp>
 #include <variant>
@@ -84,8 +86,8 @@ namespace Dwarf
                  std::vector<int>,
                  std::vector<unsigned int>,
                  std::vector<float>>
-        ImageData;
-    int Samples = 1;
+             ImageData;
+    uint32_t Samples = 1;
   };
 
   enum TextureFileType

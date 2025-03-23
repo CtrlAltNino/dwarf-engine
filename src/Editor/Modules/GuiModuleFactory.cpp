@@ -1,38 +1,38 @@
 #include "GuiModuleFactory.h"
-#include "Editor/LoadedScene/ILoadedScene.h"
-#include "Editor/Modules/AssetBrowser/AssetBrowserWindow.h"
-#include "Editor/Modules/DebugInformation/DebugWindow.h"
 #include "Editor/Modules/IGuiModule.h"
-#include "Editor/Modules/Inspector/AssetInspector/IAssetInspector.h"
-#include "Editor/Modules/Inspector/InspectorWindow.h"
-#include "Editor/Modules/Performance/PerformanceWindow.h"
-#include "Editor/Modules/SceneHierarchy/SceneHierarchyWindow.h"
-#include "Editor/Modules/SceneViewer/SceneViewerWindow.h"
-#include "Editor/Stats/IEditorStats.h"
 #include <boost/di.hpp>
 #include <memory>
-#include <optional>
+#include <utility>
 
 namespace Dwarf
 {
   GuiModuleFactory::GuiModuleFactory(
+    std::shared_ptr<IDwarfLogger>                 logger,
     std::shared_ptr<IAssetBrowserWindowFactory>   assetBrowserWindowFactory,
     std::shared_ptr<IDebugWindowFactory>          debugWindowFactory,
     std::shared_ptr<IPerformanceWindowFactory>    performanceWindowFactory,
     std::shared_ptr<ISceneHierarchyWindowFactory> sceneHierarchyWindowFactory,
     std::shared_ptr<ISceneViewerWindowFactory>    sceneViewerWindowFactory,
     std::shared_ptr<IInspectorWindowFactory>      inspectorWindowFactory)
-    : mAssetBrowserWindowFactory(assetBrowserWindowFactory)
-    , mDebugWindowFactory(debugWindowFactory)
-    , mPerformanceWindowFactory(performanceWindowFactory)
-    , mSceneHierarchyWindowFactory(sceneHierarchyWindowFactory)
-    , mSceneViewerWindowFactory(sceneViewerWindowFactory)
-    , mInspectorWindowFactory(inspectorWindowFactory)
+    : mLogger(std::move(logger))
+    , mAssetBrowserWindowFactory(std::move(assetBrowserWindowFactory))
+    , mDebugWindowFactory(std::move(debugWindowFactory))
+    , mPerformanceWindowFactory(std::move(performanceWindowFactory))
+    , mSceneHierarchyWindowFactory(std::move(sceneHierarchyWindowFactory))
+    , mSceneViewerWindowFactory(std::move(sceneViewerWindowFactory))
+    , mInspectorWindowFactory(std::move(inspectorWindowFactory))
   {
+    mLogger->LogDebug(Log("GuiModuleFactory created", "GuiModuleFactory"));
   }
 
-  std::unique_ptr<IGuiModule>
+  GuiModuleFactory::~GuiModuleFactory()
+  {
+    mLogger->LogDebug(Log("GuiModuleFactory destroyed", "GuiModuleFactory"));
+  }
+
+  auto
   GuiModuleFactory::CreateGuiModule(MODULE_TYPE type) const
+    -> std::unique_ptr<IGuiModule>
   {
     switch (type)
     {
@@ -47,8 +47,9 @@ namespace Dwarf
     }
   }
 
-  std::unique_ptr<IGuiModule>
+  auto
   GuiModuleFactory::CreateGuiModule(SerializedModule serializedModule) const
+    -> std::unique_ptr<IGuiModule>
   {
     auto type = serializedModule.t["type"].get<MODULE_TYPE>();
 

@@ -7,7 +7,7 @@ namespace Dwarf
   template<>
   void
   DwarfUI::AssetInput<VertexShaderAsset>(
-    std::shared_ptr<IAssetDatabase>                  assetDatabase,
+    const std::shared_ptr<IAssetDatabase>&           assetDatabase,
     std::optional<std::unique_ptr<IAssetReference>>& assetRef,
     const char*                                      imguiID)
   {
@@ -39,10 +39,10 @@ namespace Dwarf
     {
       for (int i = 0; i < availableAssets.size(); i++)
       {
-        const bool is_selected = (selectedAsset == i);
+        const bool isSelected = (selectedAsset == i);
         if (ImGui::Selectable(
               view.template get<NameComponent>(availableAssets[i]).Name.c_str(),
-              is_selected,
+              isSelected,
               0,
               ImVec2(0, 16 + 10)))
         {
@@ -59,7 +59,7 @@ namespace Dwarf
   template<>
   void
   DwarfUI::AssetInput<FragmentShaderAsset>(
-    std::shared_ptr<IAssetDatabase>                  assetDatabase,
+    const std::shared_ptr<IAssetDatabase>&           assetDatabase,
     std::optional<std::unique_ptr<IAssetReference>>& assetRef,
     const char*                                      imguiID)
   {
@@ -91,10 +91,10 @@ namespace Dwarf
     {
       for (int i = 0; i < availableAssets.size(); i++)
       {
-        const bool is_selected = (selectedAsset == i);
+        const bool isSelected = (selectedAsset == i);
         if (ImGui::Selectable(
               view.template get<NameComponent>(availableAssets[i]).Name.c_str(),
-              is_selected,
+              isSelected,
               0,
               ImVec2(0, 16 + 10)))
         {

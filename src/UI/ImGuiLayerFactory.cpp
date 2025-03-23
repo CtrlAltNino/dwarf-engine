@@ -1,5 +1,7 @@
 #include "ImGuiLayerFactory.h"
 
+#include <utility>
+
 #if _WIN32
 #include "Platform/OpenGL/OpenGLImGuiLayer.h"
 // #include "Platform/Direct3D12/Direct3D12ImGuiLayer.h"
@@ -15,8 +17,8 @@ namespace Dwarf
 {
   ImGuiLayerFactory::ImGuiLayerFactory(std::shared_ptr<IDwarfLogger> logger,
                                        GraphicsApi                   api,
-                                       ImGuiIniFilePath iniFilePath)
-    : mLogger(logger)
+                                       const ImGuiIniFilePath& iniFilePath)
+    : mLogger(std::move(logger))
     , mApi(api)
     , mIniFilePath(iniFilePath)
   {
@@ -28,8 +30,8 @@ namespace Dwarf
     mLogger->LogDebug(Log("ImGuiLayerFactory destroyed.", "ImGuiLayerFactory"));
   }
 
-  std::unique_ptr<IImGuiLayer>
-  ImGuiLayerFactory::Create() const
+  auto
+  ImGuiLayerFactory::Create() const -> std::unique_ptr<IImGuiLayer>
   {
     mLogger->LogDebug(Log("Creating ImGuiLayer...", "ImGuiLayerFactory"));
     switch (mApi)

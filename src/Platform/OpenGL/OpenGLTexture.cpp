@@ -4,12 +4,14 @@
 #include "Platform/OpenGL/OpenGLUtilities.h"
 #include "Utilities/ImageUtilities/TextureCommon.h"
 #include <SDL3/SDL_opengl.h>
+#include <cstdint>
 #include <glm/fwd.hpp>
+#include <utility>
 
 namespace Dwarf
 {
-  std::string
-  GLenumToString(GLenum val)
+  auto
+  GLenumToString(GLenum val) -> std::string
   {
     switch (val)
     {
@@ -78,8 +80,8 @@ namespace Dwarf
     return "UNKNOWN";
   }
   // A mapping function that maps TextureFormat to OpenGL format
-  GLenum
-  GetTextureFormat(TextureFormat format, TextureDataType dataType)
+  auto
+  GetTextureFormat(TextureFormat format, TextureDataType dataType) -> GLenum
   {
     switch (format)
     {
@@ -152,8 +154,8 @@ namespace Dwarf
   }
 
   // A mapping function that maps TextureWrap to OpenGL wrap
-  GLenum
-  GetTextureWrap(TextureWrap wrap)
+  auto
+  GetTextureWrap(TextureWrap wrap) -> GLenum
   {
     switch (wrap)
     {
@@ -164,8 +166,8 @@ namespace Dwarf
     }
   }
 
-  GLenum
-  GetTextureMinFilter(TextureMinFilter filter, bool mipMapped)
+  auto
+  GetTextureMinFilter(TextureMinFilter filter, bool mipMapped) -> GLenum
   {
     switch (filter)
     {
@@ -183,8 +185,8 @@ namespace Dwarf
   }
 
   // A mapping function that maps TextureMagFilter to OpenGL mag filter
-  GLenum
-  GetTextureMagFilter(TextureMagFilter filter)
+  auto
+  GetTextureMagFilter(TextureMagFilter filter) -> GLenum
   {
     switch (filter)
     {
@@ -194,8 +196,8 @@ namespace Dwarf
   }
 
   // A Map that maps TextureType to OpenGL type
-  GLenum
-  GetTextureType(TextureType type, int samples)
+  auto
+  GetTextureType(TextureType type, uint32_t samples) -> GLenum
   {
     switch (type)
     {
@@ -211,8 +213,8 @@ namespace Dwarf
     }
   }
 
-  GLenum
-  GetTextureDataType(TextureDataType type)
+  auto
+  GetTextureDataType(TextureDataType type) -> GLenum
   {
     switch (type)
     {
@@ -224,8 +226,9 @@ namespace Dwarf
     }
   }
 
-  GLenum
+  auto
   GetInternalFormat(TextureFormat format, TextureDataType dataType, bool srgb)
+    -> GLenum
   {
     switch (format)
     {
@@ -278,26 +281,26 @@ namespace Dwarf
       case TextureFormat::STENCIL:
         switch (dataType)
         {
-          case TextureDataType::UNSIGNED_BYTE: return GL_STENCIL_INDEX;
-          case TextureDataType::UNSIGNED_SHORT: return GL_STENCIL_INDEX;
-          case TextureDataType::INT: return GL_STENCIL_INDEX;
-          case TextureDataType::UNSIGNED_INT: return GL_STENCIL_INDEX;
+          case TextureDataType::UNSIGNED_BYTE:
+          case TextureDataType::UNSIGNED_SHORT:
+          case TextureDataType::INT:
+          case TextureDataType::UNSIGNED_INT:
           case TextureDataType::FLOAT: return GL_STENCIL_INDEX;
         }
       case TextureFormat::DEPTH_STENCIL:
         switch (dataType)
         {
-          case TextureDataType::UNSIGNED_BYTE: return GL_DEPTH24_STENCIL8;
-          case TextureDataType::UNSIGNED_SHORT: return GL_DEPTH24_STENCIL8;
-          case TextureDataType::INT: return GL_DEPTH24_STENCIL8;
-          case TextureDataType::UNSIGNED_INT: return GL_DEPTH24_STENCIL8;
+          case TextureDataType::UNSIGNED_BYTE:
+          case TextureDataType::UNSIGNED_SHORT:
+          case TextureDataType::INT:
+          case TextureDataType::UNSIGNED_INT:
           case TextureDataType::FLOAT: return GL_DEPTH24_STENCIL8;
         }
     }
   }
 
-  const void*
-  GetPixelPointer(const TextureContainer& data)
+  auto
+  GetPixelPointer(const TextureContainer& data) -> const void*
   {
     switch (data.DataType)
     {
@@ -318,11 +321,11 @@ namespace Dwarf
 
   // A map that maps
   // Constructor without meta data
-  OpenGLTexture::OpenGLTexture(std::shared_ptr<TextureContainer> data,
-                               std::shared_ptr<IDwarfLogger>     logger,
-                               std::shared_ptr<IVramTracker>     vramTracker)
-    : mLogger(logger)
-    , mVramTracker(vramTracker)
+  OpenGLTexture::OpenGLTexture(const std::shared_ptr<TextureContainer>& data,
+                               std::shared_ptr<IDwarfLogger>            logger,
+                               std::shared_ptr<IVramTracker> vramTracker)
+    : mLogger(std::move(logger))
+    , mVramTracker(std::move(vramTracker))
   {
     GLuint textureType = GetTextureType(data->Type, data->Samples);
     GLuint textureDataType = GetTextureDataType(data->DataType);
@@ -361,7 +364,7 @@ namespace Dwarf
     OpenGLUtilities::CheckOpenGLError(
       "glTextureParameteri MAG FILTER", "OpenGLTexture", mLogger);
 
-    if (GLAD_GL_EXT_texture_filter_anisotropic)
+    if (GLAD_GL_EXT_texture_filter_anisotropic != 0)
     {
       GLfloat maxAniso = 0.0f;
       glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAniso);

@@ -1,6 +1,8 @@
 #include "Input/InputManager.h"
 #include <imgui_impl_sdl3.h>
 
+#include <utility>
+
 namespace Dwarf
 {
 
@@ -12,7 +14,7 @@ namespace Dwarf
   // std::map<MOUSE_BUTTON, int> InputManager::mMouseButtonStates =
   //   std::map<MOUSE_BUTTON, int>();
 
-  std::map<SDL_Scancode, KEYCODE> InputManager::s_KeyCodeMap = {
+  std::map<SDL_Scancode, KEYCODE> InputManager::sKeyCodeMap = {
     { SDL_SCANCODE_W, KEYCODE::W },
     { SDL_SCANCODE_A, KEYCODE::A },
     { SDL_SCANCODE_S, KEYCODE::S },
@@ -28,7 +30,7 @@ namespace Dwarf
   // std::set<KEYCODE> InputManager::mKeysRepeat;
   // std::set<KEYCODE> InputManager::mKeysUp;
 
-  std::map<MOUSE_BUTTON, int> InputManager::s_MouseCodeMap = {
+  std::map<MOUSE_BUTTON, int> InputManager::sMouseCodeMap = {
     { MOUSE_BUTTON::LEFT, 1 },
     { MOUSE_BUTTON::RIGHT, 3 },
     { MOUSE_BUTTON::MIDDLE, 2 },
@@ -37,7 +39,7 @@ namespace Dwarf
   };
 
   InputManager::InputManager(std::shared_ptr<IDwarfLogger> logger)
-    : mLogger(logger)
+    : mLogger(std::move(logger))
   {
     mLogger->LogDebug(Log("InputManager created.", "InputManager"));
   }
@@ -47,38 +49,38 @@ namespace Dwarf
     mLogger->LogDebug(Log("InputManager destroyed.", "InputManager"));
   }
 
-  bool
-  InputManager::GetKey(KEYCODE key) const
+  auto
+  InputManager::GetKey(KEYCODE key) const -> bool
   {
     return mKeysDown.contains(key) || mKeysRepeat.contains(key);
   }
 
-  bool
-  InputManager::GetKeyDown(KEYCODE key) const
+  auto
+  InputManager::GetKeyDown(KEYCODE key) const -> bool
   {
     return mKeysDown.contains(key);
   }
 
-  bool
-  InputManager::GetKeyUp(KEYCODE key) const
+  auto
+  InputManager::GetKeyUp(KEYCODE key) const -> bool
   {
     return mKeysUp.contains(key);
   }
 
-  bool
-  InputManager::GetMouseButton(MOUSE_BUTTON button) const
+  auto
+  InputManager::GetMouseButton(MOUSE_BUTTON button) const -> bool
   {
     return mMouseButtonStates.at(button) > 0;
   }
 
-  bool
-  InputManager::GetMouseButtonDown(MOUSE_BUTTON button) const
+  auto
+  InputManager::GetMouseButtonDown(MOUSE_BUTTON button) const -> bool
   {
     return mMouseButtonStates.at(button) == 1;
   }
 
-  bool
-  InputManager::GetMouseButtonUp(MOUSE_BUTTON button) const
+  auto
+  InputManager::GetMouseButtonUp(MOUSE_BUTTON button) const -> bool
   {
     return mMouseButtonStates.at(button) == 0;
   }
@@ -90,8 +92,8 @@ namespace Dwarf
                                           : ImGuiMouseCursor_None);
   }
 
-  glm::vec2
-  InputManager::GetMousePosition() const
+  auto
+  InputManager::GetMousePosition() const -> glm::vec2
   {
     return mCurrentMousePos;
   }
@@ -108,8 +110,8 @@ namespace Dwarf
     mDeltaScroll = { x, y };
   }
 
-  glm::vec2
-  InputManager::GetMouseDelta() const
+  auto
+  InputManager::GetMouseDelta() const -> glm::vec2
   {
     return mDeltaMousePos;
   }
@@ -125,7 +127,7 @@ namespace Dwarf
 
     for (const MOUSE_BUTTON& mCode : mArr)
     {
-      if (mouseButtonMask & SDL_BUTTON_MASK(s_MouseCodeMap[mCode]))
+      if (mouseButtonMask & SDL_BUTTON_MASK(sMouseCodeMap[mCode]))
       {
         // mousePressSet.insert(mCode);
         if (mMouseButtonStates[mCode] < 2)
@@ -145,7 +147,7 @@ namespace Dwarf
   void
   InputManager::ProcessKeyDown(SDL_Scancode key)
   {
-    KEYCODE keycode = s_KeyCodeMap[key];
+    KEYCODE keycode = sKeyCodeMap[key];
 
     if (mKeysDown.contains(keycode))
     {
@@ -161,7 +163,7 @@ namespace Dwarf
   void
   InputManager::ProcessKeyUp(SDL_Scancode key)
   {
-    KEYCODE keycode = s_KeyCodeMap[key];
+    KEYCODE keycode = sKeyCodeMap[key];
 
     if (mKeysDown.contains(keycode))
     {
@@ -176,8 +178,8 @@ namespace Dwarf
     mKeysUp.emplace(keycode);
   }
 
-  glm::vec2
-  InputManager::GetMouseScrollDelta() const
+  auto
+  InputManager::GetMouseScrollDelta() const -> glm::vec2
   {
     return mDeltaScroll;
   }

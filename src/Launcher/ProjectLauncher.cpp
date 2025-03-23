@@ -1,8 +1,8 @@
 #include "Launcher/ProjectLauncher.h"
-#include "Core/Base.h"
 #include "SavedProjects/ISavedProjects.h"
 #include "Utilities/TimeUtilities.h"
 #include <optional>
+#include <utility>
 
 namespace Dwarf
 {
@@ -11,9 +11,9 @@ namespace Dwarf
                                    std::shared_ptr<ILauncherData>        data,
                                    std::shared_ptr<ISavedProjects> projectList)
     : mView(std::move(view))
-    , mData(data)
-    , mLogger(logger)
-    , mSavedProjects(projectList)
+    , mData(std::move(data))
+    , mLogger(std::move(logger))
+    , mSavedProjects(std::move(projectList))
   {
     mLogger->LogDebug(Log("Creating ProjectLauncher", "ProjectLauncher"));
   }
@@ -23,8 +23,8 @@ namespace Dwarf
     mLogger->LogDebug(Log("Destroying ProjectLauncher", "ProjectLauncher"));
   }
 
-  std::optional<SavedProject>
-  ProjectLauncher::Run()
+  auto
+  ProjectLauncher::Run() -> std::optional<SavedProject>
   {
     mLogger->LogInfo(Log("Running project launcher...", "ProjectLauncher"));
 

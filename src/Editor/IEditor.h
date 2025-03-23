@@ -14,7 +14,7 @@ namespace Dwarf
      * @return True if the user wants to return to the project launcher after
      * closing the editor.
      */
-    virtual bool
-    Run() = 0;
+    virtual auto
+    Run() -> bool = 0;
   };
 }

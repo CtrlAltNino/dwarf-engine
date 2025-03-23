@@ -4,8 +4,10 @@
 #include "OpenGLUtilities.h"
 #include "Utilities/ImageUtilities/TextureCommon.h"
 #include "pch.h"
+#include <cstdint>
 #include <glad/glad.h>
 #include <memory>
+#include <utility>
 
 namespace Dwarf
 {
@@ -13,8 +15,9 @@ namespace Dwarf
 
   namespace Utils
   {
-    static glm::ivec2
-    ConvertToOpenGLCoords(const glm::ivec2& originalCoords, int textureHeight)
+    static auto
+    ConvertToOpenGLCoords(const glm::ivec2& originalCoords,
+                          uint32_t          textureHeight) -> glm::ivec2
     {
       glm::ivec2 openGLCoords;
       openGLCoords.x = originalCoords.x;
@@ -22,8 +25,9 @@ namespace Dwarf
       return openGLCoords;
     }
 
-    static std::string
+    static auto
     FramebufferTextureFormatToString(FramebufferTextureFormat format)
+      -> std::string
     {
       switch (format)
       {
@@ -41,32 +45,32 @@ namespace Dwarf
     }
 
     // @brief: Checks if the given framebuffer texture format is a depth format
-    static bool
-    IsDepthFormat(FramebufferTextureFormat format)
+    static auto
+    IsDepthFormat(FramebufferTextureFormat format) -> bool
     {
       switch (format)
       {
         using enum FramebufferTextureFormat;
-        case DEPTH: return true;
+        case DEPTH:
         case DEPTH24STENCIL8: return true;
-        case RGBA16F: return false;
-        case RGBA8: return false;
-        case RED_INTEGER: return false;
-        case STENCIL: return false;
+        case RGBA16F:
+        case RGBA8:
+        case RED_INTEGER:
+        case STENCIL:
         case None: return false;
       }
 
       return false;
     }
 
-    static GLenum
-    GetFramebufferAttachment(FramebufferTextureFormat format)
+    static auto
+    GetFramebufferAttachment(FramebufferTextureFormat format) -> GLenum
     {
       switch (format)
       {
         using enum FramebufferTextureFormat;
-        case FramebufferTextureFormat::RED_INTEGER: return GL_COLOR_ATTACHMENT0;
-        case FramebufferTextureFormat::RGBA8: return GL_COLOR_ATTACHMENT0;
+        case FramebufferTextureFormat::RED_INTEGER:
+        case FramebufferTextureFormat::RGBA8:
         case FramebufferTextureFormat::RGBA16F: return GL_COLOR_ATTACHMENT0;
         case FramebufferTextureFormat::DEPTH24STENCIL8:
           return GL_DEPTH_STENCIL_ATTACHMENT;
@@ -80,8 +84,8 @@ namespace Dwarf
 
     // @brief: Converts a Dwarf framebuffer texture format to an OpenGL texture
     // format
-    static GLenum
-    DwarfFBTextureFormatToGL(FramebufferTextureFormat format)
+    static auto
+    DwarfFBTextureFormatToGL(FramebufferTextureFormat format) -> GLenum
     {
       switch (format)
       {
@@ -103,13 +107,13 @@ namespace Dwarf
   // @brief: Constructs an OpenGL framebuffer with the given specification
   OpenGLFramebuffer::OpenGLFramebuffer(
     std::shared_ptr<IDwarfLogger>    logger,
-    const FramebufferSpecification&  spec,
+    FramebufferSpecification         spec,
     std::shared_ptr<ITextureFactory> textureFactory,
     std::shared_ptr<IVramTracker>    vramTracker)
-    : mLogger(logger)
-    , mSpecification(spec)
-    , mTextureFactory(textureFactory)
-    , mVramTracker(vramTracker)
+    : mLogger(std::move(logger))
+    , mSpecification(std::move(spec))
+    , mTextureFactory(std::move(textureFactory))
+    , mVramTracker(std::move(vramTracker))
   {
     mLogger->LogDebug(Log("OpenGLFramebuffer created.", "OpenGLFramebuffer"));
     for (auto attachments : mSpecification.Attachments.Attachments)
@@ -140,7 +144,7 @@ namespace Dwarf
     OpenGLUtilities::CheckOpenGLError(
       "Before OpenGLFramebuffer Invalidate", "OpenGLFramebuffer", mLogger);
     // If the renderer ID is not 0, delete the framebuffer and its attachments
-    if (mRendererID)
+    if (mRendererID != 0U)
     {
       DeleteFramebuffer();
     }
@@ -159,7 +163,7 @@ namespace Dwarf
       "glBindFramebuffer", "OpenGLFramebuffer", mLogger);
 
     // Create the color attachments
-    if (mColorAttachmentSpecifications.size())
+    if (mColorAttachmentSpecifications.size() != 0U)
     {
       // Iterate through the color attachments
       for (size_t i = 0; i < mColorAttachmentSpecifications.size(); i++)
@@ -368,8 +372,9 @@ namespace Dwarf
   }
 
   // @brief: Reads a pixel from the framebuffer
-  unsigned int
+  auto
   OpenGLFramebuffer::ReadPixel(uint32_t attachmentIndex, int x, int y)
+    -> unsigned int
   {
     Bind();
     glm::ivec2 convertedCoords =
@@ -378,7 +383,7 @@ namespace Dwarf
     OpenGLUtilities::CheckOpenGLError(
       "glReadBuffer", "OpenGLFramebuffer", mLogger);
 
-    GLuint pixel;
+    GLuint pixel = 0;
     glReadPixels(convertedCoords.x,
                  convertedCoords.y,
                  1,
@@ -407,20 +412,19 @@ namespace Dwarf
       "glClearTexImage", "OpenGLFramebuffer", mLogger);
   }
 
-  const std::optional<std::reference_wrapper<ITexture>>
+  auto
   OpenGLFramebuffer::GetColorAttachment(uint32_t index = 0) const
+    -> std::optional<const std::reference_wrapper<ITexture>>
   {
     if (index < mColorAttachments.size())
     {
       // Return the address of the value at the specified index
       return *mColorAttachments[index];
     }
-    else
-    {
-      // If the index is out of bounds, return nullptr or handle the error
-      // accordingly
-      return std::nullopt;
-    }
+
+    // If the index is out of bounds, return nullptr or handle the error
+    // accordingly
+    return std::nullopt;
   }
 
   // @brief: Clears the framebuffer

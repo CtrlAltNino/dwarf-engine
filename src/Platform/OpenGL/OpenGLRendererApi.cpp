@@ -1,14 +1,14 @@
+#include "Platform/OpenGL/OpenGLRendererApi.h"
 #include "Core/Asset/Database/IAssetDatabase.h"
 #include "Core/Rendering/RendererApi/IRendererApi.h"
 #include "OpenGLFramebuffer.h"
-#include <glad/glad.h>
-
 #include "Platform/OpenGL/OpenGLComputeShader.h"
 #include "Platform/OpenGL/OpenGLFramebuffer.h"
 #include "Platform/OpenGL/OpenGLMesh.h"
-#include "Platform/OpenGL/OpenGLRendererApi.h"
 #include "Platform/OpenGL/OpenGLShader.h"
 #include "Platform/OpenGL/OpenGLUtilities.h"
+#include <functional>
+#include <glad/glad.h>
 
 namespace Dwarf
 {
@@ -22,14 +22,14 @@ namespace Dwarf
                                         shaderSourceCollectionFactory,
     std::shared_ptr<IMeshFactory>       meshFactory,
     std::shared_ptr<IMeshBufferFactory> meshBufferFactory)
-    : mAssetDatabase(assetDatabase)
-    , mShaderRegistry(shaderRegistry)
-    , mLogger(logger)
-    , mEditorStats(editorStats)
-    , mStateTracker(stateTracker)
-    , mShaderSourceCollectionFactory(shaderSourceCollectionFactory)
-    , mMeshFactory(meshFactory)
-    , mMeshBufferFactory(meshBufferFactory)
+    : mAssetDatabase(std::move(assetDatabase))
+    , mShaderRegistry(std::move(shaderRegistry))
+    , mLogger(std::move(logger))
+    , mEditorStats(std::move(editorStats))
+    , mStateTracker(std::move(stateTracker))
+    , mShaderSourceCollectionFactory(std::move(shaderSourceCollectionFactory))
+    , mMeshFactory(std::move(meshFactory))
+    , mMeshBufferFactory(std::move(meshBufferFactory))
   {
     mLogger->LogDebug(Log("OpenGLRendererApi created.", "OpenGLRendererApi"));
     mErrorShader = mShaderRegistry->GetOrCreate(
@@ -53,56 +53,56 @@ namespace Dwarf
 
   struct SetShaderParameterVisitor
   {
-    OpenGLShader&                   mShader;
-    std::string                     mParameterName;
-    std::shared_ptr<IAssetDatabase> mAssetDatabase;
-    std::shared_ptr<IDwarfLogger>   mLogger;
-    unsigned int&                   mTextureCount;
+    std::reference_wrapper<OpenGLShader> mShader;
+    std::string                          mParameterName;
+    std::shared_ptr<IAssetDatabase>      mAssetDatabase;
+    std::shared_ptr<IDwarfLogger>        mLogger;
+    std::reference_wrapper<unsigned int> mTextureCount;
 
     void
-    operator()(bool& parameter)
+    operator()(bool& parameter) const
     {
-      mShader.SetUniform(mParameterName, parameter);
+      mShader.get().SetUniform(mParameterName, parameter);
     }
     void
-    operator()(int& parameter)
+    operator()(int& parameter) const
     {
-      mShader.SetUniform(mParameterName, parameter);
+      mShader.get().SetUniform(mParameterName, parameter);
     }
     void
-    operator()(unsigned int& parameter)
+    operator()(unsigned int& parameter) const
     {
-      mShader.SetUniform(mParameterName, parameter);
+      mShader.get().SetUniform(mParameterName, parameter);
     }
     void
-    operator()(float& parameter)
+    operator()(float& parameter) const
     {
-      mShader.SetUniform(mParameterName, parameter);
+      mShader.get().SetUniform(mParameterName, parameter);
     }
     void
-    operator()(Texture2DAssetValue& parameter)
+    operator()(Texture2DAssetValue& parameter) const
     {
       if (parameter.has_value() && mAssetDatabase->Exists(parameter.value()))
       {
-        TextureAsset& textureAsset =
-          (TextureAsset&)mAssetDatabase->Retrieve(*parameter)->GetAsset();
-        mShader.SetUniform(mParameterName, textureAsset, mTextureCount++);
+        auto& textureAsset = dynamic_cast<TextureAsset&>(
+          mAssetDatabase->Retrieve(*parameter)->GetAsset());
+        mShader.get().SetUniform(mParameterName, textureAsset, mTextureCount++);
       }
     }
     void
-    operator()(glm::vec2& parameter)
+    operator()(glm::vec2& parameter) const
     {
-      mShader.SetUniform(mParameterName, parameter);
+      mShader.get().SetUniform(mParameterName, parameter);
     }
     void
-    operator()(glm::vec3& parameter)
+    operator()(glm::vec3& parameter) const
     {
-      mShader.SetUniform(mParameterName, parameter);
+      mShader.get().SetUniform(mParameterName, parameter);
     }
     void
-    operator()(glm::vec4& parameter)
+    operator()(glm::vec4& parameter) const
     {
-      mShader.SetUniform(mParameterName, parameter);
+      mShader.get().SetUniform(mParameterName, parameter);
     }
   };
 
@@ -151,7 +151,7 @@ namespace Dwarf
   {
     OpenGLUtilities::CheckOpenGLError(
       "Before rendering", "OpenGLRendererApi", mLogger);
-    OpenGLMesh&   oglMesh = (OpenGLMesh&)mesh;
+    auto&         oglMesh = dynamic_cast<OpenGLMesh&>(mesh);
     IShader&      baseShader = material.GetShader();
     OpenGLShader& shader = baseShader.IsCompiled()
                              ? dynamic_cast<OpenGLShader&>(baseShader)
@@ -176,10 +176,12 @@ namespace Dwarf
       {
         ParameterValue& shaderParameterValue =
           material.GetShaderParameters()->GetParameter(identifier);
-        std::visit(
-          SetShaderParameterVisitor{
-            shader, identifier, mAssetDatabase, mLogger, textureCount },
-          shaderParameterValue);
+        std::visit(SetShaderParameterVisitor{ .mShader = shader,
+                                              .mParameterName = identifier,
+                                              .mAssetDatabase = mAssetDatabase,
+                                              .mLogger = mLogger,
+                                              .mTextureCount = textureCount },
+                   shaderParameterValue);
       }
     }
 
@@ -200,23 +202,25 @@ namespace Dwarf
   void
   OpenGLRendererApi::ApplyComputeShader(
     std::shared_ptr<IComputeShader> computeShader,
-    std::shared_ptr<IFramebuffer>   fb,
+    std::shared_ptr<IFramebuffer>   framebuffer,
     uint32_t                        sourceAttachment,
     uint32_t                        destinationAttachment)
   {
     std::shared_ptr<OpenGLComputeShader> shader =
       std::dynamic_pointer_cast<OpenGLComputeShader>(computeShader);
     glUseProgram(shader->GetID());
-    glBindImageTexture(
-      0,
-      fb->GetColorAttachment(sourceAttachment).value().get().GetTextureID(),
-      0,
-      GL_FALSE,
-      0,
-      GL_READ_ONLY,
-      GL_RGBA8);
+    glBindImageTexture(0,
+                       framebuffer->GetColorAttachment(sourceAttachment)
+                         .value()
+                         .get()
+                         .GetTextureID(),
+                       0,
+                       GL_FALSE,
+                       0,
+                       GL_READ_ONLY,
+                       GL_RGBA8);
     glBindImageTexture(1,
-                       fb->GetColorAttachment(destinationAttachment)
+                       framebuffer->GetColorAttachment(destinationAttachment)
                          .value()
                          .get()
                          .GetTextureID(),
@@ -226,8 +230,9 @@ namespace Dwarf
                        GL_WRITE_ONLY,
                        GL_RGBA8);
 
-    glDispatchCompute(
-      fb->GetSpecification().Width / 16, fb->GetSpecification().Height / 16, 1);
+    glDispatchCompute(framebuffer->GetSpecification().Width / 16,
+                      framebuffer->GetSpecification().Height / 16,
+                      1);
     glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
     glUseProgram(0);
   }
@@ -277,7 +282,7 @@ namespace Dwarf
     // glBindVertexArray(quadVAO);
     // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
     // glBindVertexArray(0);
-    OpenGLMesh& oglMesh = (OpenGLMesh&)*mScreenQuad;
+    auto& oglMesh = dynamic_cast<OpenGLMesh&>(*mScreenQuad);
 
     source.Bind();
     GLint srcTexture = 0;
@@ -329,14 +334,15 @@ namespace Dwarf
     // glBindFramebuffer(GL_FRAMEBUFFER, 0); // Back to default
   }
 
-  VRAMUsageBuffer
-  OpenGLRendererApi::QueryVRAMUsage()
+  auto
+  OpenGLRendererApi::QueryVRAMUsage() -> VRAMUsageBuffer
   {
-    VRAMUsageBuffer result;
+    VRAMUsageBuffer result{};
 
-    if (GLAD_GL_NVX_gpu_memory_info)
+    if (GLAD_GL_NVX_gpu_memory_info != 0)
     {
-      GLint totalMemoryKb = 0, availableMemoryKb = 0;
+      GLint totalMemoryKb = 0;
+      GLint availableMemoryKb = 0;
       glGetIntegerv(GL_GPU_MEMORY_INFO_TOTAL_AVAILABLE_MEMORY_NVX,
                     &totalMemoryKb);
       glGetIntegerv(GL_GPU_MEMORY_INFO_CURRENT_AVAILABLE_VIDMEM_NVX,
@@ -353,8 +359,8 @@ namespace Dwarf
     return result;
   }
 
-  int32_t
-  OpenGLRendererApi::GetMaxSamples()
+  auto
+  OpenGLRendererApi::GetMaxSamples() -> int32_t
   {
     GLint maxSamples = 0;
     glGetIntegerv(GL_MAX_SAMPLES, &maxSamples);

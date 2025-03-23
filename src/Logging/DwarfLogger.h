@@ -20,7 +20,7 @@ namespace Dwarf
     LogMessage(spdlog::level::level_enum log_level, const Log& log) const;
 
   public:
-    BOOST_DI_INJECT(DwarfLogger, LogName logName);
+    BOOST_DI_INJECT(DwarfLogger, const LogName& logName);
     ~DwarfLogger() override;
 
     /**
@@ -28,27 +28,27 @@ namespace Dwarf
      * @param message Message to log.
      */
     void
-    LogDebug(const Log logMessage) const override;
+    LogDebug(Log logMessage) const override;
 
     /**
      * @brief Log a message with the info log level.
      * @param message Message to log.
      */
     void
-    LogInfo(const Log logMessage) const override;
+    LogInfo(Log logMessage) const override;
 
     /**
      * @brief Log a message with the warning log level.
      * @param message Message to log.
      */
     void
-    LogWarn(const Log logMessage) const override;
+    LogWarn(Log logMessage) const override;
 
     /**
      * @brief Log a message with the error log level.
      * @param message Message to log.
      */
     void
-    LogError(const Log logMessage) const override;
+    LogError(Log logMessage) const override;
   };
 }

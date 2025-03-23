@@ -35,23 +35,23 @@ namespace Dwarf
                    std::shared_ptr<IWindow>         window);
 
     /// @brief Font loaded into IMGUI for header text
-    std::shared_ptr<ImFont>
-    GetHeaderFont() override;
+    auto
+    GetHeaderFont() -> std::shared_ptr<ImFont> override;
 
     /// @brief Font loaded into IMGUI for regular text
-    std::shared_ptr<ImFont>
-    GetTextFont() override;
+    auto
+    GetTextFont() -> std::shared_ptr<ImFont> override;
 
     /// @brief Loaded image for the github icon
-    std::shared_ptr<ITexture>
-    GetGithubIcon() override;
+    auto
+    GetGithubIcon() -> std::shared_ptr<ITexture> override;
 
     /// @brief Loaded image for the patreon icon
-    std::shared_ptr<ITexture>
-    GetPatreonIcon() override;
+    auto
+    GetPatreonIcon() -> std::shared_ptr<ITexture> override;
 
     /// @brief Loaded image for the X/Twitter icon
-    std::shared_ptr<ITexture>
-    GetXIcon() override;
+    auto
+    GetXIcon() -> std::shared_ptr<ITexture> override;
   };
 }

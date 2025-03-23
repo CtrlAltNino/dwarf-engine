@@ -7,9 +7,10 @@
 #include "Core/Rendering/Shader/ShaderParameterCollection/IShaderParameterCollectionFactory.h"
 #include "OpenGLUtilities.h"
 #include "Platform/OpenGL/OpenGLUtilities.h"
+#include <algorithm>
 #include <fmt/format.h>
 #include <memory>
-#include <variant>
+#include <utility>
 
 #define GL_SHADER_LOG_LENGTH (1024)
 
@@ -21,9 +22,10 @@ namespace Dwarf
                                   shaderParameterCollectionFactory,
     std::shared_ptr<IDwarfLogger> logger,
     std::shared_ptr<IVramTracker> vramTracker)
-    : mShaderParameterCollectionFactory(shaderParameterCollectionFactory)
-    , mLogger(logger)
-    , mVramTracker(vramTracker)
+    : mShaderParameterCollectionFactory(
+        std::move(shaderParameterCollectionFactory))
+    , mLogger(std::move(logger))
+    , mVramTracker(std::move(vramTracker))
   {
     for (std::unique_ptr<IAssetReference>& shaderSource :
          shaderSources->GetShaderSources())
@@ -92,11 +94,11 @@ namespace Dwarf
       return;
     }
 
-    VertexShaderAsset& vertexShaderAsset =
-      (VertexShaderAsset&)mVertexShaderAsset.value()->GetAsset();
+    auto& vertexShaderAsset =
+      dynamic_cast<VertexShaderAsset&>(mVertexShaderAsset.value()->GetAsset());
 
-    FragmentShaderAsset& fragmentShaderAsset =
-      (FragmentShaderAsset&)mFragmentShaderAsset.value()->GetAsset();
+    auto& fragmentShaderAsset = dynamic_cast<FragmentShaderAsset&>(
+      mFragmentShaderAsset.value()->GetAsset());
 
     if (vertexShaderAsset.GetFileContent().length() > 0 &&
         fragmentShaderAsset.GetFileContent().length() > 0)
@@ -104,11 +106,11 @@ namespace Dwarf
       const char* vertexSource = vertexShaderAsset.GetFileContent().c_str();
       const char* fragmentSource = fragmentShaderAsset.GetFileContent().c_str();
 
-      GLsizei vert_log_length = 0;
-      GLchar  vert_message[1024] = "";
+      GLsizei vertLogLength = 0;
+      GLchar  vertMessage[1024] = "";
 
-      GLsizei frag_log_length = 0;
-      GLchar  frag_message[1024] = "";
+      GLsizei fragLogLength = 0;
+      GLchar  fragMessage[1024] = "";
 
       OpenGLUtilities::CheckOpenGLError(
         "Errors before compiling shader", "OpenGLShader", mLogger);
@@ -122,31 +124,29 @@ namespace Dwarf
       OpenGLUtilities::CheckOpenGLError(
         "glCompileShader vertex shader", "OpenGLShader", mLogger);
 
-      GLint vertex_compiled = 33;
-      glGetShaderInfoLog(vertexShader, 1024, &vert_log_length, vert_message);
+      GLint vertexCompiled = 0;
+      glGetShaderInfoLog(vertexShader, 1024, &vertLogLength, vertMessage);
       OpenGLUtilities::CheckOpenGLError(
         "glGetShaderInfoLog vertex shader", "OpenGLShader", mLogger);
-      glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &vertex_compiled);
+      glGetShaderiv(vertexShader, GL_COMPILE_STATUS, &vertexCompiled);
       OpenGLUtilities::CheckOpenGLError(
         "glGetShaderiv vertex shader", "OpenGLShader", mLogger);
 
-      if (vert_log_length > 0)
+      if (vertLogLength > 0)
       {
-        mShaderLogs.mVertexShaderLog = std::string(vert_message);
+        mShaderLogs.mVertexShaderLog = std::string(vertMessage);
       }
 
-      if (vertex_compiled != GL_TRUE)
+      if (vertexCompiled != GL_TRUE)
       {
         glDeleteShader(vertexShader);
         OpenGLUtilities::CheckOpenGLError(
           "glDeleteShader vertex shader", "OpenGLShader", mLogger);
         return;
       }
-      else
-      {
-        mLogger->LogDebug(
-          Log("Vertex shader compiled successfully", "OpenGLShader"));
-      }
+
+      mLogger->LogDebug(
+        Log("Vertex shader compiled successfully", "OpenGLShader"));
 
       GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
       OpenGLUtilities::CheckOpenGLError(
@@ -158,20 +158,20 @@ namespace Dwarf
       OpenGLUtilities::CheckOpenGLError(
         "glCompileShader fragment shader", "OpenGLShader", mLogger);
 
-      GLint fragment_compiled;
-      glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &fragment_compiled);
+      GLint fragmentCompiled = 0;
+      glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &fragmentCompiled);
       OpenGLUtilities::CheckOpenGLError(
         "glGetShaderiv fragment shader", "OpenGLShader", mLogger);
-      glGetShaderInfoLog(fragmentShader, 1024, &frag_log_length, frag_message);
+      glGetShaderInfoLog(fragmentShader, 1024, &fragLogLength, fragMessage);
       OpenGLUtilities::CheckOpenGLError(
         "glGetShaderInfoLog fragment shader", "OpenGLShader", mLogger);
 
-      if (frag_log_length > 0)
+      if (fragLogLength > 0)
       {
-        mShaderLogs.mFragmentShaderLog = std::string(frag_message);
+        mShaderLogs.mFragmentShaderLog = std::string(fragMessage);
       }
 
-      if (fragment_compiled != GL_TRUE)
+      if (fragmentCompiled != GL_TRUE)
       {
         glDeleteShader(vertexShader);
         OpenGLUtilities::CheckOpenGLError(
@@ -181,11 +181,9 @@ namespace Dwarf
           "glDeleteShader fragment shader", "OpenGLShader", mLogger);
         return;
       }
-      else
-      {
-        mLogger->LogDebug(
-          Log("Fragment shader compiled successfully", "OpenGLShader"));
-      }
+
+      mLogger->LogDebug(
+        Log("Fragment shader compiled successfully", "OpenGLShader"));
 
       mID = glCreateProgram();
 
@@ -207,12 +205,13 @@ namespace Dwarf
       if (mGeometryShaderAsset.has_value())
       {
         const char* geometrySource =
-          ((GeometryShaderAsset&)mGeometryShaderAsset.value()->GetAsset())
+          (dynamic_cast<GeometryShaderAsset&>(
+             mGeometryShaderAsset.value()->GetAsset()))
             .GetFileContent()
             .c_str();
 
-        GLsizei geom_log_length = 0;
-        GLchar  geom_message[1024] = "";
+        GLsizei geomLogLength = 0;
+        GLchar  geomMessage[1024] = "";
 
         geometryShader = glCreateShader(GL_GEOMETRY_SHADER);
         OpenGLUtilities::CheckOpenGLError(
@@ -224,18 +223,17 @@ namespace Dwarf
         OpenGLUtilities::CheckOpenGLError(
           "glCompileShader", "OpenGLShader", mLogger);
 
-        GLint geometry_compiled;
+        GLint geometry_compiled = 0;
         glGetShaderiv(geometryShader, GL_COMPILE_STATUS, &geometry_compiled);
         OpenGLUtilities::CheckOpenGLError(
           "glGetShaderiv", "OpenGLShader", mLogger);
-        glGetShaderInfoLog(
-          geometryShader, 1024, &geom_log_length, geom_message);
+        glGetShaderInfoLog(geometryShader, 1024, &geomLogLength, geomMessage);
         OpenGLUtilities::CheckOpenGLError(
           "glGetShaderInfoLog", "OpenGLShader", mLogger);
 
-        if (geom_log_length > 0)
+        if (geomLogLength > 0)
         {
-          mShaderLogs.mGeometryShaderLog = std::string(geom_message);
+          mShaderLogs.mGeometryShaderLog = std::string(geomMessage);
         }
 
         if (geometry_compiled != GL_TRUE)
@@ -257,13 +255,13 @@ namespace Dwarf
       OpenGLUtilities::CheckOpenGLError(
         "glLinkProgram", "OpenGLShader", mLogger);
 
-      GLint program_linked;
-      glGetProgramiv(mID, GL_LINK_STATUS, &program_linked);
+      GLint programLinked = 0;
+      glGetProgramiv(mID, GL_LINK_STATUS, &programLinked);
 
       OpenGLUtilities::CheckOpenGLError(
         "glGetProgramiv", "OpenGLShader", mLogger);
 
-      if (program_linked != GL_TRUE)
+      if (programLinked != GL_TRUE)
       {
         mLogger->LogError(Log("Shader program failed to link", "OpenGLShader"));
         glDeleteShader(vertexShader);
@@ -311,20 +309,21 @@ namespace Dwarf
     }
   }
 
-  bool
-  OpenGLShader::IsCompiled() const
+  auto
+  OpenGLShader::IsCompiled() const -> bool
   {
     return mSuccessfullyCompiled;
   }
 
-  GLuint
-  OpenGLShader::GetID() const
+  auto
+  OpenGLShader::GetID() const -> GLuint
   {
     return mID;
   }
 
-  std::unique_ptr<IShaderParameterCollection>
+  auto
   OpenGLShader::CreateParameters()
+    -> std::unique_ptr<IShaderParameterCollection>
   {
     if (!mSuccessfullyCompiled)
     {
@@ -333,29 +332,29 @@ namespace Dwarf
 
     std::unique_ptr<IShaderParameterCollection> parameters =
       std::move(mShaderParameterCollectionFactory->Create());
-    GLint i;
-    GLint count;
+    GLint parameterIndex = 0;
+    GLint count = 0;
 
-    GLint  size; // size of the variable
-    GLenum type; // type of the variable (float, vec3 or mat4, etc)
+    GLint  size = 0; // size of the variable
+    GLenum type = 0; // type of the variable (float, vec3 or mat4, etc)
 
     const GLsizei bufSize = 64;  // maximum name length
     GLchar        name[bufSize]; // variable name in GLSL
-    GLsizei       length;        // name length
+    GLsizei       length = 0;    // name length
 
     glGetProgramiv(mID, GL_ACTIVE_UNIFORMS, &count);
     OpenGLUtilities::CheckOpenGLError(
       "glGetProgramiv GL_ACTIVE_UNIFORMS", "OpenGLShader", mLogger);
 
-    for (i = 0; i < count; i++)
+    for (parameterIndex = 0; parameterIndex < count; parameterIndex++)
     {
-      glGetActiveUniform(mID, (GLuint)i, bufSize, &length, &size, &type, name);
+      glGetActiveUniform(
+        mID, (GLuint)parameterIndex, bufSize, &length, &size, &type, name);
       OpenGLUtilities::CheckOpenGLError(
         "glGetActiveUniform", "OpenGLShader", mLogger);
 
-      if (std::find(ReservedUniformNames.begin(),
-                    ReservedUniformNames.end(),
-                    name) == ReservedUniformNames.end())
+      if (std::ranges::find(ReservedUniformNames, name) ==
+          ReservedUniformNames.end())
       {
         parameters->mDefaultValueAdders.at(glTypeToDwarfShaderType.at(type))(
           name);
@@ -365,38 +364,43 @@ namespace Dwarf
     return parameters;
   }
 
-  std::optional<std::unique_ptr<IAssetReference>>&
+  auto
   OpenGLShader::GetVertexShaderAsset()
+    -> std::optional<std::unique_ptr<IAssetReference>>&
   {
     return mVertexShaderAsset;
   }
 
-  std::optional<std::unique_ptr<IAssetReference>>&
+  auto
   OpenGLShader::GetFragmentShaderAsset()
+    -> std::optional<std::unique_ptr<IAssetReference>>&
   {
     return mFragmentShaderAsset;
   }
 
-  std::optional<std::unique_ptr<IAssetReference>>&
+  auto
   OpenGLShader::GetGeometryShaderAsset()
+    -> std::optional<std::unique_ptr<IAssetReference>>&
   {
     return mGeometryShaderAsset;
   }
 
-  std::optional<std::unique_ptr<IAssetReference>>&
+  auto
   OpenGLShader::GetTessellationControlShaderAsset()
+    -> std::optional<std::unique_ptr<IAssetReference>>&
   {
     return mTessellationControlShaderAsset;
   }
 
-  std::optional<std::unique_ptr<IAssetReference>>&
+  auto
   OpenGLShader::GetTessellationEvaluationShaderAsset()
+    -> std::optional<std::unique_ptr<IAssetReference>>&
   {
     return mTessellationEvaluationShaderAsset;
   }
 
-  const ShaderLogs&
-  OpenGLShader::GetShaderLogs() const
+  auto
+  OpenGLShader::GetShaderLogs() const -> const ShaderLogs&
   {
     return mShaderLogs;
   }
@@ -410,7 +414,7 @@ namespace Dwarf
       return;
     }
 
-    glUniform1f(GetUniformLocation(uniformName), value);
+    glUniform1f(GetUniformLocation(uniformName), static_cast<GLfloat>(value));
     OpenGLUtilities::CheckOpenGLError(
       "glUniform1f", "OpenGLRendererApi", mLogger);
     mUniformStates[uniformName] = value;
@@ -561,7 +565,7 @@ namespace Dwarf
     mUniformStates[uniformName] = value;
   }
 
-  GLuint
+  GLint
   OpenGLShader::GetUniformLocation(std::string uniformName)
   {
     if (!mUniformLocations.contains(uniformName))

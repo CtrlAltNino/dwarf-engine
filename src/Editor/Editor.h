@@ -58,7 +58,12 @@ namespace Dwarf
 
     ~Editor() override;
 
-    bool
-    Run() override;
+    /*
+     * @brief Starts the editor.
+     * @return True if the user wants to return to the project launcher after
+     * closing the editor.
+     */
+    auto
+    Run() -> bool override;
   };
 }

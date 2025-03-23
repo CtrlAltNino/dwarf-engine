@@ -2,11 +2,8 @@
 
 #include "Core/Base.h"
 #include "Core/UUID.h"
-#include "Editor/Modules/IGuiModule.h"
 #include "Utilities/ISerializable.h"
-#include "pch.h"
 #include <nlohmann/json_fwd.hpp>
-
 
 #define GRAPHICS_API_KEY "graphicsApi"
 #define LAST_OPENED_SCENE_KEY "lastOpenedScene"
@@ -17,14 +14,14 @@ namespace Dwarf
 {
   struct ProjectSettingsData : ISerializable
   {
-    std::string         ProjectName = "";
+    std::string         ProjectName;
     GraphicsApi         GraphicsApi = GraphicsApi::None;
     std::optional<UUID> LastOpenedScene = std::nullopt;
     nlohmann::json      SerializedView;
 
     // Equality operator for ProjectInformation.
-    bool
-    operator==(const ProjectSettingsData& other) const
+    auto
+    operator==(const ProjectSettingsData& other) const -> bool
     {
       return ProjectName == other.ProjectName &&
              GraphicsApi == other.GraphicsApi &&
@@ -32,8 +29,8 @@ namespace Dwarf
              SerializedView == other.SerializedView;
     }
 
-    nlohmann::json
-    Serialize()
+    auto
+    Serialize() -> nlohmann::json override
     {
       nlohmann::json projectSettings;
       projectSettings[PROJECT_NAME_KEY] = ProjectName;
@@ -51,31 +48,76 @@ namespace Dwarf
   public:
     virtual ~IProjectSettings() = default;
 
+    /**
+     * @brief Saves the project settings to disk
+     *
+     */
     virtual void
     Save() = 0;
 
+    /**
+     * @brief Updates the project name
+     *
+     * @param projectName Name of the project
+     */
     virtual void
     UpdateProjectName(const std::string& projectName) = 0;
 
-    virtual std::string
-    GetProjectName() const = 0;
+    /**
+     * @brief Returns the name of the project
+     *
+     * @return Project name
+     */
+    [[nodiscard]] virtual auto
+    GetProjectName() const -> std::string = 0;
 
+    /**
+     * @brief Updates the graphics api used in the project
+     *
+     * @param graphicsApi Graphics api to use
+     */
     virtual void
     UpdateGraphicsApi(const GraphicsApi& graphicsApi) = 0;
 
-    virtual const GraphicsApi&
-    GetGraphicsApi() const = 0;
+    /**
+     * @brief Returns the graphics api used in the project
+     *
+     * @return Enum value of the graphics api
+     */
+    [[nodiscard]] virtual auto
+    GetGraphicsApi() const -> const GraphicsApi& = 0;
 
+    /**
+     * @brief Updates the last opened scene
+     *
+     * @param lastOpenedScene UUID of the scene
+     */
     virtual void
     UpdateLastOpenedScene(const UUID& lastOpenedScene) = 0;
 
-    virtual const std::optional<UUID>&
-    GetLastOpenedScene() const = 0;
+    /**
+     * @brief Get the UUID of the last opened scene
+     *
+     * @return Returns a reference to the loaded UUID of the last opened scene
+     * (Optional)
+     */
+    [[nodiscard]] virtual auto
+    GetLastOpenedScene() const -> const std::optional<UUID>& = 0;
 
+    /**
+     * @brief Updates the serialized view
+     *
+     * @param serializedView The serialized view to update to
+     */
     virtual void
     UpdateSerializedView(const nlohmann::json& serializedView) = 0;
 
-    virtual nlohmann::json
-    GetSerializedView() const = 0;
+    /**
+     * @brief Gets the stored serialized view json
+     *
+     * @return The serialized json view
+     */
+    [[nodiscard]] virtual auto
+    GetSerializedView() const -> nlohmann::json = 0;
   };
 }

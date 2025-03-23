@@ -1,5 +1,9 @@
 #include "ChangeGraphicsApiModal.h"
+#include "Core/Base.h"
 #include <imgui.h>
+#include <magic_enum/magic_enum.hpp>
+#include <utility>
+
 
 namespace Dwarf
 {
@@ -10,9 +14,9 @@ namespace Dwarf
     std::shared_ptr<ILauncherData>   data,
     std::shared_ptr<ISavedProjects>  savedProjects,
     std::shared_ptr<ILauncherAssets> launcherAssets)
-    : mData(data)
-    , mSavedProjects(savedProjects)
-    , mLauncherAssets(launcherAssets)
+    : mData(std::move(data))
+    , mSavedProjects(std::move(savedProjects))
+    , mLauncherAssets(std::move(launcherAssets))
   {
   }
 
@@ -100,16 +104,14 @@ namespace Dwarf
         // Coloring the combo popup background
         ImGui::PushStyleColor(ImGuiCol_PopupBg, IM_COL32(46, 52, 64, 255));
 
-        if (ImGui::BeginCombo(
-              "##graphicsApi",
-              GRAPHICS_API_STRING((GraphicsApi)currentApiIndex).c_str()))
+        auto apiName = magic_enum::enum_name((GraphicsApi)currentApiIndex);
+
+        if (ImGui::BeginCombo("##graphicsApi", apiName.data()))
         {
           ImDrawList* draw_list = ImGui::GetWindowDrawList();
 
           // Looping through all the combo entries
-          for (int n = 0;
-               n < sizeof(graphicsApiNames) / sizeof(graphicsApiNames[0]);
-               n++)
+          for (int n = 0; n < magic_enum::enum_count<GraphicsApi>(); n++)
           {
             if (apiAvailability[n])
             {
@@ -133,11 +135,11 @@ namespace Dwarf
                 ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
               }
 
+              auto apiName =
+                magic_enum::enum_name(magic_enum::enum_value<GraphicsApi>(n));
               // ==================== Graphics Selectable ====================
-              if (ImGui::Selectable(GRAPHICS_API_STRING((GraphicsApi)n).c_str(),
-                                    is_selected,
-                                    0,
-                                    ImVec2(0, 16 + 10)))
+              if (ImGui::Selectable(
+                    apiName.data(), is_selected, 0, ImVec2(0, 16 + 10)))
               {
                 currentApiIndex = n;
               }

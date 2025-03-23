@@ -27,7 +27,7 @@
 
 #define COL_WINDOW_HEADER_FOCUSED IM_COL32(46, 52, 64, 255)
 #define COL_WINDOW_HEADER_UNFOCUSED                                            \
-  IM_COL32(46 * 0.7f, 52 * 0.7f, 64 * 0.7f, 255)
+  IM_COL32(46 * 0.7F, 52 * 0.7F, 64 * 0.7F, 255)
 
 #define COL_TAB IM_COL32(59, 66, 82, 255)
 #define COL_TAB_ACTIVE IM_COL32(76, 86, 106, 255)
@@ -56,9 +56,9 @@ namespace Dwarf
 
     template<typename T>
     static void
-    AssetInput(std::shared_ptr<IAssetDatabase>   assetDatabase,
-               std::unique_ptr<IAssetReference>& assetRef,
-               const char*                       imguiID)
+    AssetInput(const std::shared_ptr<IAssetDatabase>& assetDatabase,
+               std::unique_ptr<IAssetReference>&      assetRef,
+               const char*                            imguiID)
     {
       std::vector<entt::entity> availableAssets;
       int                       selectedAsset = -1;
@@ -94,11 +94,11 @@ namespace Dwarf
 
         for (int i = 0; i < availableAssets.size(); i++)
         {
-          const bool is_selected = (selectedAsset == i);
+          const bool isSelected = (selectedAsset == i);
           if (ImGui::Selectable(
                 view.template get<NameComponent>(availableAssets[i])
                   .Name.c_str(),
-                is_selected,
+                isSelected,
                 0,
                 ImVec2(0, 16 + 10)))
           {
@@ -114,7 +114,7 @@ namespace Dwarf
 
     template<typename T>
     static void
-    AssetInput(std::shared_ptr<IAssetDatabase>                  assetDatabase,
+    AssetInput(const std::shared_ptr<IAssetDatabase>&           assetDatabase,
                std::optional<std::unique_ptr<IAssetReference>>& assetRef,
                const char*                                      imguiID)
     {
@@ -153,11 +153,11 @@ namespace Dwarf
 
         for (int i = 0; i < availableAssets.size(); i++)
         {
-          const bool is_selected = (selectedAsset == i);
+          const bool isSelected = (selectedAsset == i);
           if (ImGui::Selectable(
                 view.template get<NameComponent>(availableAssets[i])
                   .Name.c_str(),
-                is_selected,
+                isSelected,
                 0,
                 ImVec2(0, 16 + 10)))
           {
@@ -173,9 +173,9 @@ namespace Dwarf
 
     template<typename T>
     static void
-    AssetInput(std::shared_ptr<IAssetDatabase> assetDatabase,
-               std::optional<UUID>&            assetRef,
-               const char*                     imguiID)
+    AssetInput(const std::shared_ptr<IAssetDatabase>& assetDatabase,
+               std::optional<UUID>&                   assetRef,
+               const char*                            imguiID)
     {
       std::vector<entt::entity> availableAssets;
       int                       selectedAsset = -1;
@@ -212,11 +212,11 @@ namespace Dwarf
 
         for (int i = 0; i < availableAssets.size(); i++)
         {
-          const bool is_selected = (selectedAsset == i);
+          const bool isSelected = (selectedAsset == i);
           if (ImGui::Selectable(
                 view.template get<NameComponent>(availableAssets[i])
                   .Name.c_str(),
-                is_selected,
+                isSelected,
                 0,
                 ImVec2(0, 16 + 10)))
           {

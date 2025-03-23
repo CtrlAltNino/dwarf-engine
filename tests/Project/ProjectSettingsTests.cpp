@@ -1,13 +1,13 @@
-#include <gtest/gtest.h>
-#include <gmock/gmock.h>
+#include "Core/UUID.h"
+#include "Helper/TempFileHelper.h"
+#include "Logging/IDwarfLogger.h"
 #include "Project/IProjectSettingsIO.h"
 #include "Project/ProjectSettings.h"
-#include "Logging/IDwarfLogger.h"
-#include "Core/UUID.h"
-#include <nlohmann/json.hpp>
-#include <memory>
 #include <filesystem>
-#include "Helper/TempFileHelper.h"
+#include <gmock/gmock.h>
+#include <gtest/gtest.h>
+#include <memory>
+#include <nlohmann/json.hpp>
 
 using namespace Dwarf;
 using namespace testing;
@@ -26,49 +26,61 @@ public:
 class MockFileHandler : public IFileHandler
 {
 public:
-  MOCK_METHOD(std::filesystem::path, GetDocumentsPath, (), (override));
-  MOCK_METHOD(std::filesystem::path, GetEngineSettingsPath, (), (override));
+  MOCK_METHOD(std::filesystem::path, GetDocumentsPath, (), (const, override));
+  MOCK_METHOD(std::filesystem::path,
+              GetEngineSettingsPath,
+              (),
+              (const, override));
   MOCK_METHOD(bool,
               FileExists,
               (const std::filesystem::path& filePath),
-              (override));
+              (const, override));
   MOCK_METHOD(std::string,
               ReadFile,
               (const std::filesystem::path& filePath),
-              (override));
+              (const, override));
   MOCK_METHOD(void,
               WriteToFile,
               (const std::filesystem::path& filePath, std::string_view content),
-              (override));
+              (const, override));
   MOCK_METHOD(bool,
               DirectoryExists,
               (const std::filesystem::path& path),
-              (override));
+              (const, override));
   MOCK_METHOD(void,
               CreateDirectoryAt,
               (const std::filesystem::path& path),
-              (override));
+              (const, override));
   MOCK_METHOD(void,
               OpenPathInFileBrowser,
               (const std::filesystem::path& path),
-              (override));
-  MOCK_METHOD(void, LaunchFile, (std::filesystem::path path), (override));
+              (const, override));
+  MOCK_METHOD(void,
+              LaunchFile,
+              (std::filesystem::path path),
+              (const, override));
   MOCK_METHOD(void,
               Copy,
               (const std::filesystem::path& from,
                const std::filesystem::path& to),
-              (override));
+              (const, override));
   MOCK_METHOD(void,
               Rename,
               (const std::filesystem::path& oldPath,
                const std::filesystem::path& newPath),
-              (override));
-  MOCK_METHOD(void, Duplicate, (const std::filesystem::path& path), (override));
-  MOCK_METHOD(void, Delete, (const std::filesystem::path& path), (override));
+              (const, override));
+  MOCK_METHOD(void,
+              Duplicate,
+              (const std::filesystem::path& path),
+              (const, override));
+  MOCK_METHOD(void,
+              Delete,
+              (const std::filesystem::path& path),
+              (const, override));
   MOCK_METHOD(std::vector<unsigned char>,
               ReadBinaryFileUnbuffered,
               (std::filesystem::path const& path),
-              (override));
+              (const, override));
 };
 
 class MockProjectSettingsIO : public IProjectSettingsIO

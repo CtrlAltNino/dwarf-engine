@@ -2,29 +2,34 @@
 
 #include "Core/Rendering/Texture/ITexture.h"
 #include <imgui.h>
+
 namespace Dwarf
 {
+  /**
+   * @brief Class providing the assets for the project launcher
+   *
+   */
   class ILauncherAssets
   {
   public:
     /// @brief Font loaded into IMGUI for header text
-    virtual std::shared_ptr<ImFont>
-    GetHeaderFont() = 0;
+    virtual auto
+    GetHeaderFont() -> std::shared_ptr<ImFont> = 0;
 
     /// @brief Font loaded into IMGUI for regular text
-    virtual std::shared_ptr<ImFont>
-    GetTextFont() = 0;
+    virtual auto
+    GetTextFont() -> std::shared_ptr<ImFont> = 0;
 
     /// @brief Loaded image for the github icon
-    virtual std::shared_ptr<ITexture>
-    GetGithubIcon() = 0;
+    virtual auto
+    GetGithubIcon() -> std::shared_ptr<ITexture> = 0;
 
     /// @brief Loaded image for the patreon icon
-    virtual std::shared_ptr<ITexture>
-    GetPatreonIcon() = 0;
+    virtual auto
+    GetPatreonIcon() -> std::shared_ptr<ITexture> = 0;
 
     /// @brief Loaded image for the X/Twitter icon
-    virtual std::shared_ptr<ITexture>
-    GetXIcon() = 0;
+    virtual auto
+    GetXIcon() -> std::shared_ptr<ITexture> = 0;
   };
 }

@@ -1,5 +1,4 @@
 #include "OpenGLStateTracker.h"
-#include "IOpenGLStateTracker.h"
 #include "Logging/IDwarfLogger.h"
 #include "OpenGLUtilities.h"
 #include <glad/glad.h>
@@ -7,8 +6,14 @@
 namespace Dwarf
 {
   OpenGLStateTracker::OpenGLStateTracker(std::shared_ptr<IDwarfLogger> logger)
-    : mLogger(logger)
+    : mLogger(std::move(logger))
   {
+    mLogger->LogDebug(Log("OpenGLStateTracker created", "OpenGLStateTracker"));
+  }
+
+  OpenGLStateTracker::~OpenGLStateTracker()
+  {
+    mLogger->LogDebug(Log("OpenGLStateTracker created", "OpenGLStateTracker"));
   }
 
   void
@@ -163,7 +168,7 @@ namespace Dwarf
       glViewport(x, y, width, height);
       OpenGLUtilities::CheckOpenGLError(
         "glViewport", "OpenGLRendererApi", mLogger);
-      mViewportState = { x, y, width, height };
+      mViewportState = { .x = x, .y = y, .width = width, .height = height };
     }
   }
 

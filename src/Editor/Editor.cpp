@@ -1,6 +1,9 @@
+#include <utility>
+
+#include <utility>
+
 #include "Editor/Editor.h"
 
-#include "Core/Asset/Database/AssetComponents.h"
 #include "Core/Asset/Database/IAssetDatabase.h"
 #include "Core/Scene/IScene.h"
 #include "Input/IInputManager.h"
@@ -23,21 +26,21 @@ namespace Dwarf
                  std::shared_ptr<ITextureLoadingWorker> textureLoadingWorker,
                  std::shared_ptr<IDrawCallWorker>       drawCallWorker,
                  std::shared_ptr<IMeshBufferWorker>     meshBufferWorker)
-    : mLogger(logger)
-    , mEditorStats(stats)
-    , mInputManager(inputManager)
-    , mView(view)
-    , mWindow(window)
-    , mSceneIO(sceneIO)
-    , mSceneFactory(sceneFactory)
-    , mProjectSettings(projectSettings)
-    , mLoadedScene(loadedScene)
-    , mAssetDatabase(assetDatabase)
-    , mShaderRecompiler(shaderRecompiler)
-    , mAssetReimporter(assetReimporter)
-    , mTextureLoadingWorker(textureLoadingWorker)
-    , mDrawCallWorker(drawCallWorker)
-    , mMeshBufferWorker(meshBufferWorker)
+    : mLogger(std::move(logger))
+    , mEditorStats(std::move(stats))
+    , mInputManager(std::move(inputManager))
+    , mView(std::move(view))
+    , mWindow(std::move(window))
+    , mSceneIO(std::move(sceneIO))
+    , mSceneFactory(std::move(sceneFactory))
+    , mProjectSettings(std::move(projectSettings))
+    , mLoadedScene(std::move(loadedScene))
+    , mAssetDatabase(std::move(assetDatabase))
+    , mShaderRecompiler(std::move(shaderRecompiler))
+    , mAssetReimporter(std::move(assetReimporter))
+    , mTextureLoadingWorker(std::move(textureLoadingWorker))
+    , mDrawCallWorker(std::move(drawCallWorker))
+    , mMeshBufferWorker(std::move(meshBufferWorker))
   {
     mLogger->LogDebug(Log("Editor created", "Editor"));
   }
@@ -75,23 +78,22 @@ namespace Dwarf
     }
 
     mLogger->LogInfo(Log("Showing window", "Editor"));
-    mWindow->showWindow();
+    mWindow->ShowWindow();
 
     mLogger->LogInfo(Log("Entering editor loop", "Editor"));
     mLogger->LogWarn(
       Log("There is currently no fps cap implemented", "Editor"));
 
     mDrawCallWorker->Invalidate();
+    mEditorStats->SetInitialTimeStamp(TimeUtilities::GetCurrent());
 
-    while (!mWindow->shouldClose() && !mEditorStats->GetCloseSignal())
+    while (!mWindow->ShouldClose() && !mEditorStats->GetCloseSignal())
     {
       //  ===== Time related stuff
       mEditorStats->SetLastTimeStamp(mEditorStats->GetCurrentTimeStamp());
       mEditorStats->SetCurrentTimeStamp(TimeUtilities::GetCurrent());
-      mEditorStats->SetTimeSinceStart(mEditorStats->GetTimeSinceStart() +
-                                      mEditorStats->GetDeltaTime());
 
-      mWindow->newFrame();
+      mWindow->NewFrame();
       mInputManager->OnUpdate();
       mAssetReimporter->ReimportQueuedAssets();
       mShaderRecompiler->Recompile();
@@ -99,7 +101,7 @@ namespace Dwarf
       mMeshBufferWorker->ProcessRequests();
       mView->OnUpdate();
       mView->OnImGuiRender();
-      mWindow->endFrame();
+      mWindow->EndFrame();
 
       /*while (TimeUtilities::GetDifferenceInSeconds(
                TimeUtilities::GetCurrent(),

@@ -5,6 +5,7 @@
 
 namespace Dwarf
 {
+#define GRAPHICS_API_NAME
   /// @brief Enum containing the different API's
   enum class GraphicsApi
   {
@@ -14,31 +15,6 @@ namespace Dwarf
     OpenGL,
     Vulkan
   };
-
-  /// @brief Array containing the API names.
-  // inline constexpr std::array<std::string, 4> graphicsApiNames = {"Direct3D
-  // 12", "Metal", "OpenGL", "Vulkan"};
-
-  // A helper function to create a constexpr string
-  constexpr auto
-  makeConstexprString(const char* str) -> std::string_view
-  {
-    return std::string_view(str);
-  }
-
-  // A helper function to create the graphicsApiNames array
-  constexpr auto
-  makeGraphicsApiNames()
-  {
-    return std::array<std::string_view, 4>{ makeConstexprString("Direct3D 12"),
-                                            makeConstexprString("Metal"),
-                                            makeConstexprString("OpenGL"),
-                                            makeConstexprString("Vulkan") };
-  }
-
-  inline constexpr auto graphicsApiNames = makeGraphicsApiNames();
-
-#define GRAPHICS_API_STRING(api) std::string(graphicsApiNames[(int)(api) - 1])
 
   enum class ShaderParameterType
   {
@@ -52,6 +28,7 @@ namespace Dwarf
     VEC4
   };
 
+  // TODO: Replace by getting the enum names with magic_enum?
   inline const std::array<std::string, 7> parameterTypeNames = {
     "Boolean", "Integer", "Float", "2D Texture", "Vector2", "Vector3", "Vector4"
   };

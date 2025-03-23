@@ -17,7 +17,6 @@
 
 namespace Dwarf
 {
-  /// @brief View part of the editor's MVC structure.
   class EditorView : public IEditorView
   {
   private:
@@ -56,7 +55,7 @@ namespace Dwarf
     /// @brief Removes a IMGUI window that corresponds to a given index.
     /// @param index Index of the window to remove.
     void
-    RemoveWindow(std::shared_ptr<UUID> uuid);
+    RemoveWindow(const std::shared_ptr<UUID>& uuid);
 
     void
     UpdateWindowTitle() const;
@@ -84,11 +83,11 @@ namespace Dwarf
     void
     OnImGuiRender() override;
 
-    void
-    DockWindowToFocused() override;
+    static void
+    DockWindowToFocused();
 
-    nlohmann::json
-    Serialize() override;
+    auto
+    Serialize() -> nlohmann::json override;
 
     void
     Shutdown() override;

@@ -2,6 +2,7 @@
 
 #include "Core/Rendering/Texture/ITexture.h"
 #include "Utilities/ImageUtilities/TextureCommon.h"
+#include <cstdint>
 #include <memory>
 
 namespace Dwarf
@@ -69,7 +70,7 @@ namespace Dwarf
           const TextureFormat&     format,
           const TextureDataType&   dataType,
           const TextureResolution& size,
-          int samples = 1) const -> std::unique_ptr<ITexture> = 0;
+          uint32_t samples = 1) const -> std::unique_ptr<ITexture> = 0;
 
     /**
      * @brief Gets the placeholder texture

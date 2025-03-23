@@ -44,52 +44,124 @@ namespace Dwarf
                         std::shared_ptr<IEditorStats>       editorStats);
     ~SDL3Window() override;
 
+    /**
+     * @brief Running logic for the beginning of a frame
+     *
+     */
     void
-    newFrame() override;
-    void
-    endFrame() override;
+    NewFrame() override;
 
-    auto
-    getWidth() const -> unsigned int override
+    /**
+     * @brief Running logic for the end of a frame
+     *
+     */
+    void
+    EndFrame() override;
+
+    /**
+     * @brief Gets the width of the window
+     *
+     * @return Width in pixels
+     */
+    [[nodiscard]] auto
+    GetWidth() const -> unsigned int override
     {
       return mData.Width;
     }
 
-    auto
-    getHeight() const -> unsigned int override
+    /**
+     * @brief Gets the height of the window
+     *
+     * @return Height in pixels
+     */
+    [[nodiscard]] auto
+    GetHeight() const -> unsigned int override
     {
       return mData.Height;
     }
 
+    /**
+     * @brief Shows the window
+     *
+     */
     void
-    showWindow() override;
-    void
-    hideWindow() override;
+    ShowWindow() override;
 
+    /**
+     * @brief Hides the window
+     *
+     */
     void
-    setVSync(bool enabled) override;
+    HideWindow() override;
+
+    /**
+     * @brief Enables/Disables VSync
+     *
+     * @param enabled Desired VSync state
+     */
+    void
+    SetVSync(bool enabled) override;
+
+    /**
+     * @brief Checks if VSync is enabled window based
+     *
+     * @return true Enable VSync
+     * @return false Disable VSync
+     */
     auto
-    isVSync() -> bool override;
+    IsVSync() -> bool override;
 
+    /**
+     * @brief Checks the close signal of the window (E.g. pressing the close
+     * button in the window title bar)
+     *
+     * @return true Window should close
+     * @return false Window does not have a closing signal
+     */
     auto
-    shouldClose() -> bool override;
+    ShouldClose() -> bool override;
 
+    /**
+     * @brief Sets the title of the window
+     *
+     * @param windowTitle Window title
+     */
     void
-    setWindowTitle(std::string_view windowTitle) override;
+    SetWindowTitle(std::string_view windowTitle) override;
 
+    /**
+     * @brief Gets the underlying SDL window pointer
+     *
+     * @return The raw SDL window pointer
+     */
     [[nodiscard]] auto
-    getNativeWindow() const -> SDL_Window* override
+    GetNativeWindow() const -> SDL_Window* override
     {
       return mWindow;
     }
 
+    /**
+     * @brief Maximizes the window
+     *
+     */
     void
-    maximizeWindow() override;
+    MaximizeWindow() override;
 
+    /**
+     * @brief Checks if the window is in the maximized staet
+     *
+     * @return true If it is maximized
+     * @return false It's not
+     */
     auto
-    isWindowMaximized() -> bool override;
+    IsWindowMaximized() -> bool override;
 
+    /**
+     * @brief Sets if the window should be in maximized state when showing it
+     *
+     * @param maximized Show window in maximized mode if true
+     */
     void
-    setShowWindowMaximized(bool maximized) override;
+    SetShowWindowMaximized(bool maximized) override;
   };
 }
