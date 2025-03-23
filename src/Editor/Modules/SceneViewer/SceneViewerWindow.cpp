@@ -117,6 +117,11 @@ namespace Dwarf
     mFramebuffer =
       mFramebufferFactory->Create(mRenderingPipeline->GetSpecification());
 
+    FramebufferSpecification nonMsaaSpec =
+      mRenderingPipeline->GetSpecification();
+    nonMsaaSpec.Samples = 1;
+    mNonMsaaBuffer = mFramebufferFactory->Create(nonMsaaSpec);
+
     // Setup framebuffer for presentation
     FramebufferSpecification presentationSpec;
     presentationSpec.Attachments = FramebufferAttachmentSpecification{
@@ -190,15 +195,15 @@ namespace Dwarf
       mOutlineBuffer->Unbind();
     }*/
 
-    // mRendererApi->Blit(*mFramebuffer,
-    //                     *mPresentationBuffer,
-    //                     0,
-    //                     0,
-    //                     mFramebuffer->GetSpecification().Width,
-    //                     mFramebuffer->GetSpecification().Height);
+    mRendererApi->Blit(*mFramebuffer,
+                       *mNonMsaaBuffer,
+                       0,
+                       0,
+                       mFramebuffer->GetSpecification().Width,
+                       mFramebuffer->GetSpecification().Height);
 
     mRendererApi->CustomBlit(
-      *mFramebuffer, *mPresentationBuffer, 0, 0, mAgxTonemapShader);
+      *mNonMsaaBuffer, *mPresentationBuffer, 0, 0, mAgxTonemapShader);
   }
 
   void
@@ -564,6 +569,7 @@ namespace Dwarf
         (mFramebuffer->GetSpecification().Height != desiredResolution.y))
     {
       mFramebuffer->Resize(desiredResolution.x, desiredResolution.y);
+      mNonMsaaBuffer->Resize(desiredResolution.x, desiredResolution.y);
       mIdBuffer->Resize(desiredResolution.x, desiredResolution.y);
       // mOutlineBuffer->Resize(desiredResolution.x, desiredResolution.y);
       mPresentationBuffer->Resize(desiredResolution.x, desiredResolution.y);
