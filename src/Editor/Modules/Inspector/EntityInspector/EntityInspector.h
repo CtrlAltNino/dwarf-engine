@@ -3,12 +3,14 @@
 #include "Core/Asset/Database/IAssetDatabase.h"
 #include "Editor/LoadedScene/ILoadedScene.h"
 #include "Editor/Modules/Inspector/EntityInspector/IEntityInspector.h"
+#include "Logging/IDwarfLogger.h"
 
 namespace Dwarf
 {
   class EntityInspector : public IEntityInspector
   {
   private:
+    std::shared_ptr<IDwarfLogger>   mLogger;
     std::shared_ptr<IAssetDatabase> mAssetDatabase;
     std::shared_ptr<ILoadedScene>   mLoadedScene;
 
@@ -28,7 +30,8 @@ namespace Dwarf
     RenderComponent(T& component);
 
   public:
-    EntityInspector(std::shared_ptr<IAssetDatabase> assetDatabase,
+    EntityInspector(std::shared_ptr<IDwarfLogger>   logger,
+                    std::shared_ptr<IAssetDatabase> assetDatabase,
                     std::shared_ptr<ILoadedScene>   loadedScene);
     ~EntityInspector() override = default;
 

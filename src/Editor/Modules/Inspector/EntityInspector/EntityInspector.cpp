@@ -1,8 +1,10 @@
 #include "EntityInspector.h"
-
 #include "UI/DwarfUI.h"
-
 #include <imgui.h>
+
+#include <utility>
+
+#include <utility>
 
 #define COMPONENT_PANEL_PADDING (8.0f)
 #define ADD_BUTTON_WIDTH (40.0f)
@@ -11,10 +13,12 @@
 namespace Dwarf
 {
   EntityInspector::EntityInspector(
+    std::shared_ptr<IDwarfLogger>   logger,
     std::shared_ptr<IAssetDatabase> assetDatabase,
     std::shared_ptr<ILoadedScene>   loadedScene)
-    : mAssetDatabase(assetDatabase)
-    , mLoadedScene(loadedScene)
+    : mLogger(std::move(logger))
+    , mAssetDatabase(std::move(assetDatabase))
+    , mLoadedScene(std::move(loadedScene))
   {
   }
 
@@ -41,14 +45,15 @@ namespace Dwarf
       ImVec2(ImGui::GetWindowPos().x + ImGui::GetCursorPos().x +
                COMPONENT_PANEL_PADDING,
              ImGui::GetWindowPos().y + ImGui::GetCursorPos().y +
-               COMPONENT_PANEL_PADDING / 2.0f);
+               (COMPONENT_PANEL_PADDING / 2.0F));
     auto separatorMax =
       ImVec2(ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMax().x -
                COMPONENT_PANEL_PADDING,
              separatorMin.y + 2);
     ImGui::GetWindowDrawList()->AddRectFilled(
       separatorMin, separatorMax, COL_BG_DIM);
-    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + COMPONENT_PANEL_PADDING * 2);
+    ImGui::SetCursorPosY(ImGui::GetCursorPosY() +
+                         (COMPONENT_PANEL_PADDING * 2));
   }
 
   void
@@ -58,10 +63,11 @@ namespace Dwarf
     ImGui::GetWindowDrawList()->AddRectFilled(
       ImVec2(ImGui::GetItemRectMin().x, ImGui::GetItemRectMin().y),
       ImVec2(ImGui::GetItemRectMin().x + ImGui::GetContentRegionAvail().x,
-             ImGui::GetItemRectMax().y + 2 * COMPONENT_PANEL_PADDING),
+             ImGui::GetItemRectMax().y + (2 * COMPONENT_PANEL_PADDING)),
       IM_COL32(59, 66, 82, 255),
-      5.0f);
-    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3 * COMPONENT_PANEL_PADDING);
+      5.0F);
+    ImGui::SetCursorPosY(ImGui::GetCursorPosY() +
+                         (3 * COMPONENT_PANEL_PADDING));
   }
 
   template<>
@@ -100,7 +106,7 @@ namespace Dwarf
     ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
                          COMPONENT_PANEL_PADDING);
     ImGui::DragFloat3(
-      "##transform_position", &component.GetPosition().x, 0.015f);
+      "##transform_position", &component.GetPosition().x, 0.015F);
     ImGui::PopItemWidth();
 
     ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
@@ -111,7 +117,7 @@ namespace Dwarf
     glm::vec3 rot = component.GetEulerAngles();
     ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
                          COMPONENT_PANEL_PADDING);
-    ImGui::DragFloat3("##transform_rotation", &rot.x, 0.05f);
+    ImGui::DragFloat3("##transform_rotation", &rot.x, 0.05F);
     component.GetEulerAngles() = rot;
     ImGui::PopItemWidth();
 
@@ -122,7 +128,7 @@ namespace Dwarf
 
     ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
                          COMPONENT_PANEL_PADDING);
-    ImGui::DragFloat3("##transform_scale", &component.GetScale().x, 0.015f);
+    ImGui::DragFloat3("##transform_scale", &component.GetScale().x, 0.015F);
     ImGui::PopItemWidth();
   }
 
@@ -132,17 +138,17 @@ namespace Dwarf
   {
     ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
 
-    static int item_current = 0;
+    static int itemCurrent = 0;
     ImGui::TextWrapped("Light type");
     ImGui::SameLine();
     ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
                          COMPONENT_PANEL_PADDING);
     ImGui::Combo("##light_type",
-                 &item_current,
+                 &itemCurrent,
                  LightComponent::LIGHT_TYPE_NAMES.data(),
                  LightComponent::LIGHT_TYPE_NAMES.size());
     ImGui::PopItemWidth();
-    component.GetType() = (LightComponent::LIGHT_TYPE)item_current;
+    component.GetType() = (LightComponent::LIGHT_TYPE)itemCurrent;
 
     ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
 
@@ -161,7 +167,7 @@ namespace Dwarf
     ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
                          COMPONENT_PANEL_PADDING);
     ImGui::DragFloat(
-      "##light_attenuation", &component.GetAttenuation(), 0.015f);
+      "##light_attenuation", &component.GetAttenuation(), 0.015F);
     ImGui::PopItemWidth();
 
     if (component.GetType() == LightComponent::LIGHT_TYPE::POINT_LIGHT)
@@ -171,7 +177,7 @@ namespace Dwarf
       ImGui::SameLine();
       ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
                            COMPONENT_PANEL_PADDING);
-      ImGui::DragFloat("##light_point_radius", &component.GetRadius(), 0.015f);
+      ImGui::DragFloat("##light_point_radius", &component.GetRadius(), 0.015F);
       ImGui::PopItemWidth();
     }
 
@@ -183,7 +189,7 @@ namespace Dwarf
       ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
                            COMPONENT_PANEL_PADDING);
       ImGui::SliderFloat(
-        "##light_spot_angle", &component.GetOpeningAngle(), 0.0f, 180.0f);
+        "##light_spot_angle", &component.GetOpeningAngle(), 0.0F, 180.0F);
       ImGui::PopItemWidth();
     }
   }
@@ -218,19 +224,21 @@ namespace Dwarf
         component.MaterialAssets().clear();
         component.IdMesh() = nullptr;
         for (auto& mesh :
-             ((ModelAsset&)component.GetModelAsset()->GetAsset()).Meshes())
+             (dynamic_cast<ModelAsset&>(component.GetModelAsset()->GetAsset()))
+               .Meshes())
         {
           component.MaterialAssets()[mesh->GetMaterialIndex()] = nullptr;
         }
       }
 
       std::vector<std::unique_ptr<IMesh>>& meshes =
-        ((ModelAsset&)component.GetModelAsset()->GetAsset()).Meshes();
+        (dynamic_cast<ModelAsset&>(component.GetModelAsset()->GetAsset()))
+          .Meshes();
 
       ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
       ImGui::TextWrapped("Materials");
 
-      ImGui::Indent(16.0f);
+      ImGui::Indent(16.0F);
       for (auto& mat : component.MaterialAssets())
       {
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
@@ -254,45 +262,45 @@ namespace Dwarf
   void
   EntityInspector::RenderComponents(entt::entity entity)
   {
-    ImDrawList* draw_list = ImGui::GetWindowDrawList();
-    draw_list->ChannelsSplit(2);
+    ImDrawList* drawList = ImGui::GetWindowDrawList();
+    drawList->ChannelsSplit(2);
     Entity ent(entity, mLoadedScene->GetScene().GetRegistry());
 
     if (ent.HasComponent<NameComponent>())
     {
-      draw_list->ChannelsSetCurrent(1);
+      drawList->ChannelsSetCurrent(1);
       BeginComponent("Name");
       RenderComponent(ent.GetComponent<NameComponent>());
-      draw_list->ChannelsSetCurrent(0);
+      drawList->ChannelsSetCurrent(0);
       EndComponent();
     }
 
     if (ent.HasComponent<TransformComponent>())
     {
-      draw_list->ChannelsSetCurrent(1);
+      drawList->ChannelsSetCurrent(1);
       BeginComponent("Transform");
       RenderComponent(ent.GetComponent<TransformComponent>());
-      draw_list->ChannelsSetCurrent(0);
+      drawList->ChannelsSetCurrent(0);
       EndComponent();
     }
 
     if (ent.HasComponent<LightComponent>())
     {
-      draw_list->ChannelsSetCurrent(1);
+      drawList->ChannelsSetCurrent(1);
       BeginComponent("Light");
       RenderComponent(ent.GetComponent<LightComponent>());
-      draw_list->ChannelsSetCurrent(0);
+      drawList->ChannelsSetCurrent(0);
       EndComponent();
     }
 
     if (ent.HasComponent<MeshRendererComponent>())
     {
-      draw_list->ChannelsSetCurrent(1);
+      drawList->ChannelsSetCurrent(1);
       BeginComponent("Mesh Renderer");
       RenderComponent(ent.GetComponent<MeshRendererComponent>());
-      draw_list->ChannelsSetCurrent(0);
+      drawList->ChannelsSetCurrent(0);
       EndComponent();
     }
-    draw_list->ChannelsMerge();
+    drawList->ChannelsMerge();
   }
 }

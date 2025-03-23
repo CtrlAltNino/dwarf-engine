@@ -1,6 +1,6 @@
 #pragma once
+#include <entt/entt.hpp>
 
-#include "Core/Scene/Entity/Entity.h"
 namespace Dwarf
 {
   class IEntityInspector

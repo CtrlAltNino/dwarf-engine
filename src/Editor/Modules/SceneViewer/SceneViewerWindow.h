@@ -1,16 +1,16 @@
 #pragma once
 #include "Core/Asset/Shader/ShaderSourceCollection/IShaderSourceCollectionFactory.h"
-#include "Core/Rendering/Shader/ShaderRegistry/IShaderRegistry.h"
-#include "pch.h"
-
 #include "Core/Rendering/Framebuffer/IFramebuffer.h"
 #include "Core/Rendering/Framebuffer/IFramebufferFactory.h"
 #include "Core/Rendering/Pipelines/IRenderingPipeline.h"
+#include "Core/Rendering/Pipelines/IRenderingPipelineFactory.h"
 #include "Core/Rendering/RendererApi/IRendererApi.h"
 #include "Core/Rendering/RendererApi/IRendererApiFactory.h"
+#include "Core/Rendering/Shader/ShaderRegistry/IShaderRegistry.h"
 #include "Core/Scene/Camera/ICamera.h"
 #include "Core/Scene/Camera/ICameraFactory.h"
 #include "Editor/LoadedScene/ILoadedScene.h"
+#include "Editor/Modules/IGuiModule.h"
 #include "Editor/Selection/IEditorSelection.h"
 #include "Editor/Stats/IEditorStats.h"
 #include "Input/IInputManager.h"
@@ -18,10 +18,6 @@
 #include <boost/serialization/strong_typedef.hpp>
 #include <glm/vec2.hpp>
 #include <glm/vec3.hpp>
-#include <memory>
-
-#include "Core/Rendering/Pipelines/IRenderingPipelineFactory.h"
-#include "Editor/Modules/IGuiModule.h"
 
 namespace Dwarf
 {
@@ -104,12 +100,12 @@ namespace Dwarf
     /// @param availableResolution Base resolution given.
     /// @param targetAspectRatio Desired aspect ratio.
     /// @return Resolution at the given aspect ratio.
-    glm::ivec2
+    [[nodiscard]] static auto
     CalculateDesiredResolution(glm::ivec2 availableResolution,
-                               float      targetAspectRatio) const;
+                               float      targetAspectRatio) -> glm::ivec2;
 
-    glm::vec3
-    CalculateSelectionCenter() const;
+    [[nodiscard]] auto
+    CalculateSelectionCenter() const -> glm::vec3;
 
     /// @brief Updates the render texture.
     void
@@ -164,11 +160,11 @@ namespace Dwarf
     /// @brief Returns the frame buffer of the scene viewer as an IMGUI texture
     /// ID:
     /// @return The texture ID of the frame buffer.
-    ImTextureID
-    GetFrameBufferForImGui();
+    auto
+    GetFrameBufferForImGui() -> ImTextureID;
 
-    nlohmann::json
-    Serialize() override;
+    auto
+    Serialize() -> nlohmann::json override;
 
     void
     Deserialize(nlohmann::json moduleData);

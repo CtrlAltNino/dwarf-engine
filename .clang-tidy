@@ -7,7 +7,8 @@ Checks: >
   performance-*,
   readability-*,
   misc-unused-using-decls,
-  misc-unused-parameters
+  misc-unused-parameters,
+  -cppcoreguidelines-pro-type-union-access
 
 WarningsAsErrors: ""
 HeaderFilterRegex: ".*" # Apply checks to all files

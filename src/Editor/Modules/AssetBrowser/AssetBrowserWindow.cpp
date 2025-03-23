@@ -1,10 +1,13 @@
 #include "Editor/Modules/AssetBrowser/AssetBrowserWindow.h"
+#include "UI/DwarfUI.h"
 #include "pch.h"
 
 // #include "Core/Scene/SceneUtilities.h"
+#include <algorithm>
 #include <boost/algorithm/string.hpp>
 #include <cstring>
 #include <memory>
+#include <utility>
 
 namespace Dwarf
 {
@@ -25,15 +28,16 @@ namespace Dwarf
                  ModuleID(std::make_shared<UUID>()))
     , mAssetDirectoryPath(assetDirectoryPath)
     , mCurrentDirectory(assetDirectoryPath)
-    , mTextureFactory(textureFactory)
-    , mAssetDatabase(assetDatabase)
-    , mInputManager(inputManager)
-    , mEditorSelection(editorSelection)
-    , mMaterialIO(materialIO)
-    , mMaterialFactory(materialFactory)
-    , mAssetMetadata(assetMetadata)
-    , mMaterialCreator(materialCreator)
-    , mFileHandler(fileHandler)
+    , mTextureFactory(std::move(textureFactory))
+    , mAssetDatabase(std::move(assetDatabase))
+    , mInputManager(std::move(inputManager))
+    , mEditorSelection(std::move(editorSelection))
+    , mMaterialIO(std::move(materialIO))
+    , mMaterialFactory(std::move(materialFactory))
+    , mAssetMetadata(std::move(assetMetadata))
+    , mMaterialCreator(std::move(materialCreator))
+    , mFileHandler(std::move(fileHandler))
+    , mSceneIo(std::move(sceneIO))
   {
     mDirectoryHistory.push_back(mCurrentDirectory);
     LoadIcons();
@@ -58,15 +62,16 @@ namespace Dwarf
                    serializedModule.t["id"].get<std::string>())))
     , mAssetDirectoryPath(assetDirectoryPath)
     , mCurrentDirectory(assetDirectoryPath)
-    , mTextureFactory(textureFactory)
-    , mAssetDatabase(assetDatabase)
-    , mInputManager(inputManager)
-    , mEditorSelection(editorSelection)
-    , mMaterialIO(materialIO)
-    , mMaterialFactory(materialFactory)
-    , mAssetMetadata(assetMetadata)
-    , mMaterialCreator(materialCreator)
-    , mFileHandler(fileHandler)
+    , mTextureFactory(std::move(textureFactory))
+    , mAssetDatabase(std::move(assetDatabase))
+    , mInputManager(std::move(inputManager))
+    , mEditorSelection(std::move(editorSelection))
+    , mMaterialIO(std::move(materialIO))
+    , mMaterialFactory(std::move(materialFactory))
+    , mAssetMetadata(std::move(assetMetadata))
+    , mMaterialCreator(std::move(materialCreator))
+    , mFileHandler(std::move(fileHandler))
+    , mSceneIo(std::move(sceneIO))
   {
     mDirectoryHistory.push_back(mCurrentDirectory);
     LoadIcons();
@@ -74,18 +79,19 @@ namespace Dwarf
   }
 
   void
-  AssetBrowserWindow::SetupDockspace(ImGuiID id)
+  AssetBrowserWindow::SetupDockspace(ImGuiID imguiId)
   {
     ImGui::DockBuilderRemoveNode(
-      id); // Clear any preexisting layouts associated with the ID we just chose
-    ImGui::DockBuilderAddNode(id, ImGuiDockNodeFlags_HiddenTabBar);
+      imguiId); // Clear any preexisting layouts associated with the ID we just
+                // chose
+    ImGui::DockBuilderAddNode(imguiId, ImGuiDockNodeFlags_HiddenTabBar);
 
-    footerID =
-      ImGui::DockBuilderSplitNode(id, ImGuiDir_Down, 0.07f, nullptr, &id);
-    ImGuiID folderStructureID =
-      ImGui::DockBuilderSplitNode(id, ImGuiDir_Left, 0.3f, nullptr, &id);
+    footerID = ImGui::DockBuilderSplitNode(
+      imguiId, ImGuiDir_Down, 0.07F, nullptr, &imguiId);
+    ImGuiID folderStructureID = ImGui::DockBuilderSplitNode(
+      imguiId, ImGuiDir_Left, 0.3F, nullptr, &imguiId);
     ImGuiID folderContent = ImGui::DockBuilderSplitNode(
-      folderStructureID, ImGuiDir_Right, 0.7f, nullptr, &folderStructureID);
+      folderStructureID, ImGuiDir_Right, 0.7F, nullptr, &folderStructureID);
 
     // 6. Add windows to each docking space:
     ImGui::DockBuilderDockWindow("FolderStructure", folderStructureID);
@@ -93,7 +99,7 @@ namespace Dwarf
     ImGui::DockBuilderDockWindow("FolderContent", folderContent);
 
     // 7. We're done setting up our docking configuration:
-    ImGui::DockBuilderFinish(id);
+    ImGui::DockBuilderFinish(imguiId);
   }
 
   void
@@ -166,15 +172,15 @@ namespace Dwarf
     }
     ImGui::PopStyleVar(2);
 
-    ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
-    dockspace_flags |= ImGuiDockNodeFlags_HiddenTabBar;
-    ImGuiID dockspace_id = ImGui::GetID("AssetBrowserDockspace");
-    ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
+    ImGuiDockNodeFlags dockspaceFlags = ImGuiDockNodeFlags_None;
+    dockspaceFlags |= ImGuiDockNodeFlags_HiddenTabBar;
+    ImGuiID dockspaceId = ImGui::GetID("AssetBrowserDockspace");
+    ImGui::DockSpace(dockspaceId, ImVec2(0.0F, 0.0F), dockspaceFlags);
 
     if (firstFrame)
     {
       firstFrame = false;
-      SetupDockspace(dockspace_id);
+      SetupDockspace(dockspaceId);
     }
 
     RenderFolderStructure();
@@ -188,16 +194,17 @@ namespace Dwarf
   AssetBrowserWindow::RenderDirectoryLevel(
     std::filesystem::path const& directory)
   {
-    for (auto& directoryEntry : std::filesystem::directory_iterator(directory))
+    for (const auto& directoryEntry :
+         std::filesystem::directory_iterator(directory))
     {
       if (directoryEntry.is_directory())
       {
         if (ImGui::CollapsingHeader(
               directoryEntry.path().stem().string().c_str()))
         {
-          ImGui::Indent(8.0f);
+          ImGui::Indent(8.0F);
           RenderDirectoryLevel(directoryEntry.path());
-          ImGui::Unindent(8.0f);
+          ImGui::Unindent(8.0F);
         }
 
         if (ImGui::IsItemClicked())
@@ -211,21 +218,21 @@ namespace Dwarf
   void
   AssetBrowserWindow::RenderFolderStructure()
   {
-    ImGuiWindowFlags window_flags = 0;
-    window_flags |= ImGuiWindowFlags_NoTitleBar;
-    window_flags |= ImGuiWindowFlags_NoMove;
+    ImGuiWindowFlags windowFlags = 0;
+    windowFlags |= ImGuiWindowFlags_NoTitleBar;
+    windowFlags |= ImGuiWindowFlags_NoMove;
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(150, 150));
-    ImGui::Begin("FolderStructure", nullptr, window_flags);
+    ImGui::Begin("FolderStructure", nullptr, windowFlags);
     if (ImGui::CollapsingHeader("Assets"))
     {
       if (ImGui::IsItemClicked())
       {
         mCurrentDirectory = mAssetDirectoryPath.t;
       }
-      ImGui::Indent(8.0f);
+      ImGui::Indent(8.0F);
       RenderDirectoryLevel(mAssetDirectoryPath.t);
-      ImGui::Unindent(8.0f);
+      ImGui::Unindent(8.0F);
     }
     ImGui::End();
     ImGui::PopStyleVar();
@@ -234,24 +241,24 @@ namespace Dwarf
   void
   AssetBrowserWindow::RenderFooter()
   {
-    ImGuiWindowFlags window_flags = 0;
-    window_flags |= ImGuiWindowFlags_NoTitleBar;
-    window_flags |= ImGuiWindowFlags_NoMove;
-    window_flags |= ImGuiWindowFlags_NoResize;
+    ImGuiWindowFlags windowFlags = 0;
+    windowFlags |= ImGuiWindowFlags_NoTitleBar;
+    windowFlags |= ImGuiWindowFlags_NoMove;
+    windowFlags |= ImGuiWindowFlags_NoResize;
     ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(500, 500));
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(5.0f, 5.0f));
-    ImGui::Begin("Footer", nullptr, window_flags);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(5.0F, 5.0F));
+    ImGui::Begin("Footer", nullptr, windowFlags);
     if (ImGui::Button("<", ImVec2(20, 20)))
     {
       GoBack();
     }
-    ImGui::SameLine(0.0f, 5.0f);
+    ImGui::SameLine(0.0F, 5.0F);
     if (ImGui::Button(">", ImVec2(20, 20)))
     {
       GoForward();
     }
-    ImGui::SameLine(0.0f, 5.0f);
-    ImGui::SliderFloat("Size", &mIconScale, 1.0f, 2.0f);
+    ImGui::SameLine(0.0F, 5.0F);
+    ImGui::SliderFloat("Size", &mIconScale, 1.0F, 2.0F);
     ImGui::End();
     ImGui::PopStyleVar(2);
   }
@@ -259,11 +266,11 @@ namespace Dwarf
   void
   AssetBrowserWindow::RenderFolderContent()
   {
-    ImGuiWindowFlags window_flags = 0;
-    window_flags |= ImGuiWindowFlags_NoTitleBar;
-    window_flags |= ImGuiWindowFlags_NoMove;
+    ImGuiWindowFlags windowFlags = 0;
+    windowFlags |= ImGuiWindowFlags_NoTitleBar;
+    windowFlags |= ImGuiWindowFlags_NoMove;
 
-    ImGui::Begin("FolderContent", nullptr, window_flags);
+    ImGui::Begin("FolderContent", nullptr, windowFlags);
 
     ImGui::Dummy(ImGui::GetContentRegionAvail());
 
@@ -340,7 +347,7 @@ namespace Dwarf
     std::vector<std::filesystem::directory_entry> files;
 
     // directories.
-    for (auto& directoryEntry :
+    for (const auto& directoryEntry :
          std::filesystem::directory_iterator(mCurrentDirectory))
     {
       if (directoryEntry.is_directory())
@@ -373,9 +380,9 @@ namespace Dwarf
             directoryEntry.path().extension() ==
               IAssetMetadata::METADATA_EXTENSION))
       {
-        float padding = 16.0f * mIconScale;
-        float halfPadding = padding / 2.0f;
-        float cellWidth = 64.0f * mIconScale;
+        float padding = 16.0F * mIconScale;
+        float halfPadding = padding / 2.0F;
+        float cellWidth = 64.0F * mIconScale;
         float textWidth = cellWidth - padding;
         float textHeight =
           ImGui::CalcTextSize(
@@ -383,30 +390,27 @@ namespace Dwarf
             .y;
         float cellHeight = cellWidth + textHeight + halfPadding;
 
-        if (cellHeight > tallestCell)
-        {
-          tallestCell = cellHeight;
-        }
+        tallestCell = std::max(cellHeight, tallestCell);
 
         ImVec2 cellMin = { ImGui::GetWindowContentRegionMin().x +
-                             column * (cellWidth + halfPadding),
+                             (column * (cellWidth + halfPadding)),
                            ImGui::GetWindowContentRegionMin().y + rowOffset };
         ImGui::SetCursorPos(cellMin);
 
-        ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.0f);
+        ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.0F);
         if (mSelectedAsset == path)
         {
           ImGui::PushStyleColor(ImGuiCol_Button,
-                                ImVec4(1.0f, 1.0f, 1.0f, 0.2f));
+                                ImVec4(1.0F, 1.0F, 1.0F, 0.2F));
         }
         else
         {
           ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
         }
         ImGui::PushStyleColor(ImGuiCol_ButtonHovered,
-                              ImVec4(1.0f, 1.0f, 1.0f, 0.2f));
+                              ImVec4(1.0F, 1.0F, 1.0F, 0.2F));
         ImGui::PushStyleColor(ImGuiCol_ButtonActive,
-                              ImVec4(1.0f, 1.0f, 1.0f, 0.4f));
+                              ImVec4(1.0F, 1.0F, 1.0F, 0.4F));
         ImGui::Button("##entry", ImVec2(cellWidth, cellHeight));
         ImGui::PopStyleColor(3);
         ImGui::PopStyleVar();
@@ -594,9 +598,13 @@ namespace Dwarf
     {
       std::filesystem::path old = mRenamePathBuffer;
 
-      ImGui::InputText("##RenameInput", mRenameBuffer, 128);
-      if (ImGui::Button("Rename##RenameButton") &&
-          (std::strlen(mRenameBuffer) > 0))
+      ImGui::InputText("##RenameInput",
+                       mRenameBuffer.data(),
+                       mRenameBuffer.capacity() + 1,
+                       ImGuiInputTextFlags_CallbackResize,
+                       DwarfUI::InputTextCallback,
+                       &mRenameBuffer);
+      if (ImGui::Button("Rename##RenameButton") && (mRenameBuffer.size() > 0))
       {
         std::filesystem::path newPath =
           mRenamePathBuffer.remove_filename().concat(mRenameBuffer);
@@ -719,29 +727,18 @@ namespace Dwarf
     {
       // TODO: test this
 #ifdef _MSC_VER
-      strncpy_s(
-        mRenameBuffer,
-        std::filesystem::path(mRenamePathBuffer).filename().string().c_str(),
-        RENAME_BUFFER_SIZE - 1);
+      mRenameBuffer = mRenamePathBuffer.filename().string();
 #else
-      strncpy(
-        mRenameBuffer,
-        std::filesystem::path(mRenamePathBuffer).filename().string().c_str(),
-        RENAME_BUFFER_SIZE - 1);
+      mRenameBuffer = mRenamePathBuffer.filename().string();
 #endif
     }
     else if (mFileHandler->DirectoryExists(path))
     {
       // TODO: test this
 #ifdef _MSC_VER
-      strncpy_s(
-        mRenameBuffer,
-        std::filesystem::path(mRenamePathBuffer).stem().string().c_str(),
-        RENAME_BUFFER_SIZE - 1);
+      mRenameBuffer = mRenamePathBuffer.filename().string();
 #else
-      strncpy(mRenameBuffer,
-              std::filesystem::path(mRenamePathBuffer).stem().string().c_str(),
-              RENAME_BUFFER_SIZE - 1);
+      mRenameBuffer = mRenamePathBuffer.filename().string();
 #endif
     }
   }

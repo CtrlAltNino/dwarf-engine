@@ -4,6 +4,7 @@
 namespace Dwarf
 {
   InspectorWindow::InspectorWindow(
+    std::shared_ptr<IDwarfLogger>     logger,
     std::shared_ptr<IEditorSelection> selection,
     std::shared_ptr<IAssetDatabase>   assetDatabase,
     std::shared_ptr<IAssetInspector>  assetInspector,
@@ -11,14 +12,16 @@ namespace Dwarf
     : IGuiModule(ModuleLabel("Inspector"),
                  ModuleType(MODULE_TYPE::INSPECTOR),
                  ModuleID(std::make_shared<UUID>()))
-    , mSelection(selection)
-    , mAssetDatabase(assetDatabase)
-    , mAssetInspector(assetInspector)
-    , mEntityInspector(entityInspector)
+    , mLogger(std::move(logger))
+    , mSelection(std::move(selection))
+    , mAssetDatabase(std::move(assetDatabase))
+    , mAssetInspector(std::move(assetInspector))
+    , mEntityInspector(std::move(entityInspector))
   {
   }
 
   InspectorWindow::InspectorWindow(
+    std::shared_ptr<IDwarfLogger>     logger,
     std::shared_ptr<IEditorSelection> selection,
     std::shared_ptr<IAssetDatabase>   assetDatabase,
     std::shared_ptr<IAssetInspector>  assetInspector,
@@ -28,22 +31,23 @@ namespace Dwarf
                  ModuleType(MODULE_TYPE::INSPECTOR),
                  ModuleID(std::make_shared<UUID>(
                    serializedModule.t["id"].get<std::string>())))
-    , mSelection(selection)
-    , mAssetDatabase(assetDatabase)
-    , mAssetInspector(assetInspector)
-    , mEntityInspector(entityInspector)
+    , mLogger(std::move(logger))
+    , mSelection(std::move(selection))
+    , mAssetDatabase(std::move(assetDatabase))
+    , mAssetInspector(std::move(assetInspector))
+    , mEntityInspector(std::move(entityInspector))
   {
   }
 
   void
   InspectorWindow::OnImGuiRender()
   {
-    ImGuiWindowFlags window_flags = 0;
+    ImGuiWindowFlags windowFlags = 0;
 
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(14.0f, 14.0f));
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(200.0f, 0));
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(14.0F, 14.0F));
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(200.0F, 0));
 
-    if (!ImGui::Begin(GetIdentifier().c_str(), &mWindowOpened, window_flags))
+    if (!ImGui::Begin(GetIdentifier().c_str(), &mWindowOpened, windowFlags))
     {
       // Early out if the window is collapsed, as an optimization.
       ImGui::End();
@@ -77,8 +81,8 @@ namespace Dwarf
     // Place Update code here (Before rendering)
   }
 
-  nlohmann::json
-  InspectorWindow::Serialize()
+  auto
+  InspectorWindow::Serialize() -> nlohmann::json
   {
     nlohmann::json serializedModule;
 
