@@ -2,10 +2,7 @@
 #include "pch.h"
 
 #include "Core/Asset/Database/IAssetDatabase.h"
-
-#include "Core/Asset/Database/AssetComponents.h"
 #include "Core/GenericComponents.h"
-#include <cstddef>
 #include <entt/entt.hpp>
 #include <imgui.h>
 
@@ -53,6 +50,9 @@ namespace Dwarf
     InputField();
     static void
     Text();
+
+    static auto
+    InputTextCallback(ImGuiInputTextCallbackData* data) -> int;
 
     template<typename T>
     static void
@@ -229,5 +229,19 @@ namespace Dwarf
         ImGui::EndCombo();
       }
     }
+
+    template<>
+    void
+    AssetInput<VertexShaderAsset>(
+      const std::shared_ptr<IAssetDatabase>&           assetDatabase,
+      std::optional<std::unique_ptr<IAssetReference>>& assetRef,
+      const char*                                      imguiID);
+
+    template<>
+    void
+    AssetInput<FragmentShaderAsset>(
+      const std::shared_ptr<IAssetDatabase>&           assetDatabase,
+      std::optional<std::unique_ptr<IAssetReference>>& assetRef,
+      const char*                                      imguiID);
   };
 }

@@ -4,6 +4,7 @@
 #include "Core/Scene/IO/ISceneIO.h"
 #include "Editor/Modules/AssetBrowser/AssetBrowserWindow.h"
 #include "Editor/Modules/AssetBrowser/IAssetBrowserWindowFactory.h"
+#include "Logging/IDwarfLogger.h"
 #include <boost/di.hpp>
 
 namespace Dwarf
@@ -12,6 +13,7 @@ namespace Dwarf
   {
   private:
     AssetDirectoryPath                mAssetDirectoryPath;
+    std::shared_ptr<IDwarfLogger>     mLogger;
     std::shared_ptr<ITextureFactory>  mTextureFactory;
     std::shared_ptr<IAssetDatabase>   mAssetDatabase;
     std::shared_ptr<IInputManager>    mInputManager;
@@ -24,7 +26,8 @@ namespace Dwarf
     std::shared_ptr<ISceneIO>         mSceneIO;
 
   public:
-    AssetBrowserWindowFactory(AssetDirectoryPath assetDirectoryPath,
+    AssetBrowserWindowFactory(const AssetDirectoryPath&     assetDirectoryPath,
+                              std::shared_ptr<IDwarfLogger> logger,
                               std::shared_ptr<ITextureFactory>  textureFactory,
                               std::shared_ptr<IAssetDatabase>   assetDatabase,
                               std::shared_ptr<IInputManager>    inputManager,
@@ -36,11 +39,24 @@ namespace Dwarf
                               std::shared_ptr<IFileHandler>     fileHandler,
                               std::shared_ptr<ISceneIO>         sceneIO);
 
-    ~AssetBrowserWindowFactory() override = default;
-    std::unique_ptr<AssetBrowserWindow>
-    Create() const override;
+    ~AssetBrowserWindowFactory() override;
 
-    std::unique_ptr<AssetBrowserWindow>
-    Create(SerializedModule serializedModule) const override;
+    /**
+     * @brief Creates a default AssetBrowserWindow instance
+     *
+     * @return Unique pointer to the created instance
+     */
+    [[nodiscard]] auto
+    Create() const -> std::unique_ptr<AssetBrowserWindow> override;
+
+    /**
+     * @brief Creates a AssetBrowserWindow instance based off serialized data
+     *
+     * @param serializedModule Serialized data of a AssetBrowserWindow
+     * @return Unique pointer to the created instance
+     */
+    [[nodiscard]] auto
+    Create(SerializedModule serializedModule) const
+      -> std::unique_ptr<AssetBrowserWindow> override;
   };
 } // namespace Dwarf

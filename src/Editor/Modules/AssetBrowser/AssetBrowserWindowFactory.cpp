@@ -6,7 +6,8 @@
 namespace Dwarf
 {
   AssetBrowserWindowFactory::AssetBrowserWindowFactory(
-    AssetDirectoryPath                assetDirectoryPath,
+    const AssetDirectoryPath&         assetDirectoryPath,
+    std::shared_ptr<IDwarfLogger>     logger,
     std::shared_ptr<ITextureFactory>  textureFactory,
     std::shared_ptr<IAssetDatabase>   assetDatabase,
     std::shared_ptr<IInputManager>    inputManager,
@@ -18,21 +19,31 @@ namespace Dwarf
     std::shared_ptr<IFileHandler>     fileHandler,
     std::shared_ptr<ISceneIO>         sceneIO)
     : mAssetDirectoryPath(assetDirectoryPath)
-    , mTextureFactory(textureFactory)
-    , mAssetDatabase(assetDatabase)
-    , mInputManager(inputManager)
-    , mEditorSelection(editorSelection)
-    , mMaterialIO(materialIO)
-    , mMaterialFactory(materialFactory)
-    , mAssetMetadata(assetMetadata)
-    , mMaterialCreator(materialCreator)
-    , mFileHandler(fileHandler)
-    , mSceneIO(sceneIO)
+    , mLogger(std::move(logger))
+    , mTextureFactory(std::move(textureFactory))
+    , mAssetDatabase(std::move(assetDatabase))
+    , mInputManager(std::move(inputManager))
+    , mEditorSelection(std::move(editorSelection))
+    , mMaterialIO(std::move(materialIO))
+    , mMaterialFactory(std::move(materialFactory))
+    , mAssetMetadata(std::move(assetMetadata))
+    , mMaterialCreator(std::move(materialCreator))
+    , mFileHandler(std::move(fileHandler))
+    , mSceneIO(std::move(sceneIO))
   {
+    mLogger->LogDebug(
+      Log("AssetBrowserWindowFactory created", "AssetBrowserWindowFactory"));
   }
 
-  std::unique_ptr<AssetBrowserWindow>
+  AssetBrowserWindowFactory::~AssetBrowserWindowFactory()
+  {
+    mLogger->LogDebug(
+      Log("AssetBrowserWindowFactory destroyed", "AssetBrowserWindowFactory"));
+  }
+
+  auto
   AssetBrowserWindowFactory::Create() const
+    -> std::unique_ptr<AssetBrowserWindow>
   {
     return std::make_unique<AssetBrowserWindow>(mAssetDirectoryPath,
                                                 mTextureFactory,
@@ -47,8 +58,9 @@ namespace Dwarf
                                                 mSceneIO);
   }
 
-  std::unique_ptr<AssetBrowserWindow>
+  auto
   AssetBrowserWindowFactory::Create(SerializedModule serializedModule) const
+    -> std::unique_ptr<AssetBrowserWindow>
   {
     return std::make_unique<AssetBrowserWindow>(mAssetDirectoryPath,
                                                 mTextureFactory,

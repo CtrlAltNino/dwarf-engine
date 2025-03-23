@@ -11,12 +11,12 @@ namespace Dwarf
     std::shared_ptr<IModelAssetInspector>    modelAssetInspector,
     std::shared_ptr<ITextureAssetInspector>  textureAssetInspector,
     std::shared_ptr<IEditorSelection>        editorSelection)
-    : mAssetDatabase(assetDatabase)
-    , mMaterialAssetInspector(materialAssetInspector)
-    , mSceneAssetInspector(sceneAssetInspector)
-    , mModelAssetInspector(modelAssetInspector)
-    , mTextureAssetInspector(textureAssetInspector)
-    , mEditorSelection(editorSelection)
+    : mAssetDatabase(std::move(assetDatabase))
+    , mMaterialAssetInspector(std::move(materialAssetInspector))
+    , mSceneAssetInspector(std::move(sceneAssetInspector))
+    , mModelAssetInspector(std::move(modelAssetInspector))
+    , mTextureAssetInspector(std::move(textureAssetInspector))
+    , mEditorSelection(std::move(editorSelection))
   {
   }
 

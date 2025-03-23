@@ -1,31 +1,41 @@
 #include "DebugWindow.h"
-// #include "Core/Asset/Database/AssetDatabase.h"
-// #include "Core/Asset/Database/AssetComponents.h"
 #include "Core/Asset/Database/AssetComponents.h"
 #include "Core/GenericComponents.h"
 #include <entt/entity/fwd.hpp>
 #include <memory>
+#include <utility>
 
 namespace Dwarf
 {
 
-  DebugWindow::DebugWindow(std::shared_ptr<IAssetDatabase> assetDatabase)
+  DebugWindow::DebugWindow(std::shared_ptr<IDwarfLogger>   logger,
+                           std::shared_ptr<IAssetDatabase> assetDatabase)
     : IGuiModule(ModuleLabel("Debug"),
                  ModuleType(MODULE_TYPE::DEBUG),
                  ModuleID(std::make_shared<UUID>()))
-    , mAssetDatabase(assetDatabase)
+    , mLogger(std::move(logger))
+    , mAssetDatabase(std::move(assetDatabase))
   {
+    mLogger->LogDebug(Log("DebugWindow created", "DebugWindow"));
   }
 
-  DebugWindow::DebugWindow(std::shared_ptr<IAssetDatabase> assetDatabase,
+  DebugWindow::DebugWindow(std::shared_ptr<IDwarfLogger>   logger,
+                           std::shared_ptr<IAssetDatabase> assetDatabase,
                            SerializedModule                serializedModule)
     : IGuiModule(ModuleLabel("Debug"),
                  ModuleType(MODULE_TYPE::DEBUG),
                  ModuleID(std::make_shared<UUID>(
                    serializedModule.t["id"].get<std::string>())))
-    , mAssetDatabase(assetDatabase)
+    , mLogger(std::move(logger))
+    , mAssetDatabase(std::move(assetDatabase))
   {
     Deserialize(serializedModule.t);
+    mLogger->LogDebug(Log("DebugWindow created", "DebugWindow"));
+  }
+
+  DebugWindow::~DebugWindow()
+  {
+    mLogger->LogDebug(Log("DebugWindow destroyed", "DebugWindow"));
   }
 
   void
@@ -37,9 +47,9 @@ namespace Dwarf
   void
   DebugWindow::OnImGuiRender()
   {
-    ImGuiWindowFlags window_flags = 0;
+    ImGuiWindowFlags windowFlags = 0;
     ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(500, 500));
-    if (!ImGui::Begin(GetIdentifier().c_str(), &mWindowOpened, window_flags))
+    if (!ImGui::Begin(GetIdentifier().c_str(), &mWindowOpened, windowFlags))
     {
       // Early out if the window is collapsed, as an optimization.
       ImGui::End();
@@ -278,13 +288,13 @@ namespace Dwarf
   }
 
   void
-  DebugWindow::Deserialize(nlohmann::json moduleData)
+  DebugWindow::Deserialize(const nlohmann::json& moduleData)
   {
     // Add Deserialization for data
   }
 
-  nlohmann::json
-  DebugWindow::Serialize()
+  auto
+  DebugWindow::Serialize() -> nlohmann::json
   {
     nlohmann::json serializedModule;
 

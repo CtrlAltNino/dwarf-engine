@@ -1,7 +1,7 @@
 #pragma once
 #include "Core/Asset/Database/IAssetDatabase.h"
 #include "Editor/Modules/IGuiModule.h"
-#include "pch.h"
+#include "Logging/IDwarfLogger.h"
 #include <boost/serialization/strong_typedef.hpp>
 
 namespace Dwarf
@@ -10,13 +10,18 @@ namespace Dwarf
   class DebugWindow : public IGuiModule
   {
   private:
+    std::shared_ptr<IDwarfLogger>   mLogger;
     std::shared_ptr<IAssetDatabase> mAssetDatabase;
 
   public:
-    DebugWindow(std::shared_ptr<IAssetDatabase> assetDatabase);
+    DebugWindow(std::shared_ptr<IDwarfLogger>   logger,
+                std::shared_ptr<IAssetDatabase> assetDatabase);
 
-    DebugWindow(std::shared_ptr<IAssetDatabase> assetDatabase,
+    DebugWindow(std::shared_ptr<IDwarfLogger>   logger,
+                std::shared_ptr<IAssetDatabase> assetDatabase,
                 SerializedModule                serializedModule);
+
+    ~DebugWindow() override;
 
     /// @brief Renders the module window.
     void
@@ -26,10 +31,10 @@ namespace Dwarf
     void
     OnUpdate() override;
 
-    nlohmann::json
-    Serialize() override;
+    auto
+    Serialize() -> nlohmann::json override;
 
     void
-    Deserialize(nlohmann::json moduleData);
+    Deserialize(const nlohmann::json& moduleData);
   };
 }

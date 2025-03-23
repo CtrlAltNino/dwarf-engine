@@ -4,6 +4,7 @@
 #include "UI/DwarfUI.h"
 #include <imgui.h>
 #include <stdexcept>
+#include <utility>
 
 namespace Dwarf
 {
@@ -15,11 +16,11 @@ namespace Dwarf
     std::shared_ptr<IInputManager>    inputManager,
     std::shared_ptr<IMaterialIO>      materialIO)
     : mGraphicsApi(graphicsApi)
-    , mAssetDatabase(assetDatabase)
-    , mAssetReimporter(assetReimporter)
-    , mMaterialPreview(materialPreview)
-    , mInputManager(inputManager)
-    , mMaterialIO(materialIO)
+    , mAssetDatabase(std::move(assetDatabase))
+    , mAssetReimporter(std::move(assetReimporter))
+    , mMaterialPreview(std::move(materialPreview))
+    , mInputManager(std::move(inputManager))
+    , mMaterialIO(std::move(materialIO))
   {
     mMaterialPreview->SetMeshType(MaterialPreviewMeshType::Sphere);
   }

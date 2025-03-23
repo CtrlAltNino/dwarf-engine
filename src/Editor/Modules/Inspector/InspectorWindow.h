@@ -1,11 +1,10 @@
 #pragma once
 #include "AssetInspector/IAssetInspector.h"
 #include "Core/Asset/Database/IAssetDatabase.h"
-#include "Editor/IEditor.h"
 #include "Editor/Modules/IGuiModule.h"
 #include "Editor/Selection/IEditorSelection.h"
 #include "EntityInspector/IEntityInspector.h"
-#include "pch.h"
+#include "Logging/IDwarfLogger.h"
 #include <boost/serialization/strong_typedef.hpp>
 
 namespace Dwarf
@@ -16,18 +15,21 @@ namespace Dwarf
   {
   private:
     /// @brief Pointer to the currently opened scene instance.
+    std::shared_ptr<IDwarfLogger>     mLogger;
     std::shared_ptr<IEditorSelection> mSelection;
     std::shared_ptr<IAssetDatabase>   mAssetDatabase;
     std::shared_ptr<IAssetInspector>  mAssetInspector;
     std::shared_ptr<IEntityInspector> mEntityInspector;
 
   public:
-    InspectorWindow(std::shared_ptr<IEditorSelection> selection,
+    InspectorWindow(std::shared_ptr<IDwarfLogger>     logger,
+                    std::shared_ptr<IEditorSelection> selection,
                     std::shared_ptr<IAssetDatabase>   assetDatabase,
                     std::shared_ptr<IAssetInspector>  assetInspector,
                     std::shared_ptr<IEntityInspector> entityInspector);
 
-    InspectorWindow(std::shared_ptr<IEditorSelection> selection,
+    InspectorWindow(std::shared_ptr<IDwarfLogger>     logger,
+                    std::shared_ptr<IEditorSelection> selection,
                     std::shared_ptr<IAssetDatabase>   assetDatabase,
                     std::shared_ptr<IAssetInspector>  assetInspector,
                     std::shared_ptr<IEntityInspector> entityInspector,
@@ -40,7 +42,7 @@ namespace Dwarf
     void
     OnUpdate() override;
 
-    nlohmann::json
-    Serialize() override;
+    auto
+    Serialize() -> nlohmann::json override;
   };
 }

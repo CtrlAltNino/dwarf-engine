@@ -1,9 +1,21 @@
 #include "DwarfUI.h"
 #include "Core/Asset/Database/AssetComponents.h"
-#include "Platform/OpenGL/OpenGLUtilities.h"
 
 namespace Dwarf
 {
+
+  auto
+  DwarfUI::InputTextCallback(ImGuiInputTextCallbackData* data) -> int
+  {
+    if (data->EventFlag == ImGuiInputTextFlags_CallbackResize)
+    {
+      auto* str = static_cast<std::string*>(data->UserData);
+      str->resize(data->BufTextLen);
+      data->Buf = str->data();
+    }
+    return 0;
+  }
+
   template<>
   void
   DwarfUI::AssetInput<VertexShaderAsset>(

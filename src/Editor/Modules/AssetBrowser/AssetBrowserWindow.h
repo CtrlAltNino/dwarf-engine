@@ -13,8 +13,6 @@
 #include "Utilities/FileHandler/IFileHandler.h"
 #include <boost/serialization/strong_typedef.hpp>
 
-#define RENAME_BUFFER_SIZE (128)
-
 namespace Dwarf
 {
   /// @brief GUI Module to display a window for the asset directory structure.
@@ -35,23 +33,54 @@ namespace Dwarf
     std::shared_ptr<ISceneIO>         mSceneIo;
 
     /// @brief Path of the currently navigated directory.
-    std::filesystem::path mCurrentDirectory;
+    std::filesystem::path              mCurrentDirectory;
+    std::filesystem::path              mCopyPathBuffer;
+    std::filesystem::path              mRenamePathBuffer;
+    std::string                        mRenameBuffer;
+    bool                               mOpenRename = false;
+    std::vector<std::filesystem::path> mDirectoryHistory;
+    std::filesystem::path              mSelectedAsset;
+    int                                mHistoryPos = 0;
+    float                              mIconScale = 1.0F;
 
-    std::filesystem::path mCopyPathBuffer;
+    std::unique_ptr<ITexture> mDirectoryIcon;
+    std::unique_ptr<ITexture> mFBXIcon;
+    std::unique_ptr<ITexture> mOBJIcon;
+    std::unique_ptr<ITexture> mJPGIcon;
+    std::unique_ptr<ITexture> mPNGIcon;
+    std::unique_ptr<ITexture> mVertexShaderIcon;
+    std::unique_ptr<ITexture> mTessellationControlShaderIcon;
+    std::unique_ptr<ITexture> mTessellationEvaluationShaderIcon;
+    std::unique_ptr<ITexture> mGeometryShaderIcon;
+    std::unique_ptr<ITexture> mFragmentShaderIcon;
+    std::unique_ptr<ITexture> mComputeShaderIcon;
+    std::unique_ptr<ITexture> mHLSLShaderIcon;
+    std::unique_ptr<ITexture> mSceneIcon;
+    std::unique_ptr<ITexture> mMaterialIcon;
+    std::unique_ptr<ITexture> mUnknownFileIcon;
 
-    std::filesystem::path mRenamePathBuffer;
-
-    char mRenameBuffer[RENAME_BUFFER_SIZE] = "";
-
-    bool mOpenRename;
+    bool    firstFrame = true;
+    ImGuiID dockID = 0;
+    ImGuiID footerID = 0;
 
     void
-    SetRenameBuffer(std::filesystem::path const& path);
+    RenderDirectoryLevel(std::filesystem::path const& directory);
 
-    std::vector<std::filesystem::path> mDirectoryHistory;
+    void
+    SetupDockspace(ImGuiID imguiId);
 
-    std::filesystem::path mSelectedAsset;
-    int                   mHistoryPos = 0;
+    void
+    ClearSelection();
+
+    void
+    RenderFooter();
+
+    void
+    RenderFolderStructure();
+
+    void
+    RenderFolderContent();
+
     void
     OpenPath(std::filesystem::directory_entry const& directoryEntry);
 
@@ -73,53 +102,8 @@ namespace Dwarf
     void
     RenderDirectory(std::filesystem::path const& path);
 
-    float mIconScale = 1.0f;
-
-    std::unique_ptr<ITexture> mDirectoryIcon;
-
-    std::unique_ptr<ITexture> mFBXIcon;
-    std::unique_ptr<ITexture> mOBJIcon;
-
-    std::unique_ptr<ITexture> mJPGIcon;
-    std::unique_ptr<ITexture> mPNGIcon;
-
-    std::unique_ptr<ITexture> mVertexShaderIcon;
-    std::unique_ptr<ITexture> mTessellationControlShaderIcon;
-    std::unique_ptr<ITexture> mTessellationEvaluationShaderIcon;
-    std::unique_ptr<ITexture> mGeometryShaderIcon;
-    std::unique_ptr<ITexture> mFragmentShaderIcon;
-    std::unique_ptr<ITexture> mComputeShaderIcon;
-    std::unique_ptr<ITexture> mHLSLShaderIcon;
-
-    std::unique_ptr<ITexture> mSceneIcon;
-
-    std::unique_ptr<ITexture> mMaterialIcon;
-
-    std::unique_ptr<ITexture> mUnknownFileIcon;
-
-    bool firstFrame = true;
-
-    ImGuiID dockID;
-
-    ImGuiID footerID;
-
     void
-    RenderDirectoryLevel(std::filesystem::path const& directory);
-
-    void
-    SetupDockspace(ImGuiID id);
-
-    void
-    ClearSelection();
-
-    void
-    RenderFooter();
-
-    void
-    RenderFolderStructure();
-
-    void
-    RenderFolderContent();
+    SetRenameBuffer(std::filesystem::path const& path);
 
   public:
     AssetBrowserWindow(AssetDirectoryPath                assetDirectoryPath,
@@ -155,8 +139,8 @@ namespace Dwarf
     void
     OnUpdate() override;
 
-    nlohmann::json
-    Serialize() override;
+    auto
+    Serialize() -> nlohmann::json override;
 
     void
     Deserialize(nlohmann::json moduleData);

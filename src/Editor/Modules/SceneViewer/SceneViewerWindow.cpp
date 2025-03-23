@@ -1,8 +1,13 @@
-#include "Editor/Modules/SceneViewer/SceneViewerWindow.h"
+#include <utility>
+
+#include <utility>
+
+#include <utility>
+
 #include "Core/Rendering/RendererApi/IRendererApiFactory.h"
 #include "Core/Scene/Components/SceneComponents.h"
 #include "Core/Scene/Entity/Entity.h"
-#include <iostream>
+#include "Editor/Modules/SceneViewer/SceneViewerWindow.h"
 
 #define MIN_RESOLUTION_WIDTH 10
 #define MIN_RESOLUTION_HEIGHT 10
@@ -26,16 +31,16 @@ namespace Dwarf
     : IGuiModule(ModuleLabel("Scene Viewer"),
                  ModuleType(MODULE_TYPE::SCENE_VIEWER),
                  ModuleID(std::make_shared<UUID>()))
-    , mCameraFactory(cameraFactory)
-    , mFramebufferFactory(framebufferFactory)
-    , mEditorStats(editorStats)
-    , mInputManager(inputManager)
-    , mLoadedScene(loadedScene)
-    , mEditorSelection(editorSelection)
-    , mRenderingPipelineFactory(renderingPipelineFactory)
-    , mRendererApiFactory(rendererApiFactory)
-    , mShaderRegistry(shaderRegistry)
-    , mShaderSourceCollectionFactory(shaderSourceCollectionFactory)
+    , mCameraFactory(std::move(cameraFactory))
+    , mFramebufferFactory(std::move(framebufferFactory))
+    , mEditorStats(std::move(editorStats))
+    , mInputManager(std::move(inputManager))
+    , mLoadedScene(std::move(loadedScene))
+    , mEditorSelection(std::move(editorSelection))
+    , mRenderingPipelineFactory(std::move(renderingPipelineFactory))
+    , mRendererApiFactory(std::move(rendererApiFactory))
+    , mShaderRegistry(std::move(shaderRegistry))
+    , mShaderSourceCollectionFactory(std::move(shaderSourceCollectionFactory))
   {
     mRendererApi = mRendererApiFactory->Create();
     mSettings.MaxSamples = mRendererApi->GetMaxSamples();
@@ -92,16 +97,16 @@ namespace Dwarf
                  ModuleType(MODULE_TYPE::SCENE_VIEWER),
                  ModuleID(std::make_shared<UUID>(
                    serializedModule.t["id"].get<std::string>())))
-    , mCameraFactory(cameraFactory)
-    , mFramebufferFactory(framebufferFactory)
-    , mEditorStats(editorStats)
-    , mInputManager(inputManager)
-    , mLoadedScene(loadedScene)
-    , mEditorSelection(editorSelection)
-    , mRenderingPipelineFactory(renderingPipelineFactory)
-    , mRendererApiFactory(rendererApiFactory)
-    , mShaderRegistry(shaderRegistry)
-    , mShaderSourceCollectionFactory(shaderSourceCollectionFactory)
+    , mCameraFactory(std::move(cameraFactory))
+    , mFramebufferFactory(std::move(framebufferFactory))
+    , mEditorStats(std::move(editorStats))
+    , mInputManager(std::move(inputManager))
+    , mLoadedScene(std::move(loadedScene))
+    , mEditorSelection(std::move(editorSelection))
+    , mRenderingPipelineFactory(std::move(renderingPipelineFactory))
+    , mRendererApiFactory(std::move(rendererApiFactory))
+    , mShaderRegistry(std::move(shaderRegistry))
+    , mShaderSourceCollectionFactory(std::move(shaderSourceCollectionFactory))
   {
     mRendererApi = mRendererApiFactory->Create();
     mSettings.MaxSamples = mRendererApi->GetMaxSamples();
@@ -209,12 +214,12 @@ namespace Dwarf
   void
   SceneViewerWindow::OnImGuiRender()
   {
-    ImGuiWindowFlags window_flags = 0;
-    window_flags |= ImGuiWindowFlags_NoCollapse;
+    ImGuiWindowFlags windowFlags = 0;
+    windowFlags |= ImGuiWindowFlags_NoCollapse;
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(800, 500));
 
-    ImGui::Begin(GetIdentifier().c_str(), &mWindowOpened, window_flags);
+    ImGui::Begin(GetIdentifier().c_str(), &mWindowOpened, windowFlags);
 
     ImGui::PopStyleVar(2);
     static std::array<std::string, 3> renderingModes = { "Free",
@@ -242,7 +247,10 @@ namespace Dwarf
 
         // Set the initial focus when opening the combo (scrolling + keyboard
         // navigation focus)
-        if (is_selected) ImGui::SetItemDefaultFocus();
+        if (is_selected)
+        {
+          ImGui::SetItemDefaultFocus();
+        }
       }
 
       ImGui::EndCombo();
@@ -298,7 +306,7 @@ namespace Dwarf
       ImGui::Text("Aspect ratio");
 
       ImGui::SameLine(0, 10);
-      ImGui::InputInt("##aspectWidth", &(mSettings.AspectRatio[0]));
+      ImGui::InputInt("##aspectWidth", mSettings.AspectRatio.data());
       ImGui::SameLine(0, 10);
       ImGui::InputInt("##aspectHeight", &(mSettings.AspectRatio[1]));
 
@@ -355,9 +363,9 @@ namespace Dwarf
           mSettings.targetAspectRatio)
       {
         float diff = std::ceil(std::fabs((float)mSettings.ViewportSize.y -
-                                         (float)mSettings.ViewportSize.x /
-                                           mSettings.targetAspectRatio) /
-                               2.0f);
+                                         ((float)mSettings.ViewportSize.x /
+                                          mSettings.targetAspectRatio)) /
+                               2.0F);
         minRect.y += diff;
         maxRect.y -= diff;
       }
@@ -365,9 +373,9 @@ namespace Dwarf
                 (double)mSettings.ViewportSize.y) > mSettings.targetAspectRatio)
       {
         float diff = std::ceil(std::fabs((float)mSettings.ViewportSize.x -
-                                         (float)mSettings.ViewportSize.y *
-                                           mSettings.targetAspectRatio) /
-                               2.0f);
+                                         ((float)mSettings.ViewportSize.y *
+                                          mSettings.targetAspectRatio)) /
+                               2.0F);
         minRect.x += diff;
         maxRect.x -= diff;
       }
@@ -424,8 +432,8 @@ namespace Dwarf
     ImGui::End();
   }
 
-  ImTextureID
-  SceneViewerWindow::GetFrameBufferForImGui()
+  auto
+  SceneViewerWindow::GetFrameBufferForImGui() -> ImTextureID
   {
     return (ImTextureID)mPresentationBuffer->GetColorAttachment()
       .value()
@@ -433,9 +441,10 @@ namespace Dwarf
       .GetTextureID();
   }
 
-  glm::ivec2
+  auto
   SceneViewerWindow::CalculateDesiredResolution(glm::ivec2 availableResolution,
-                                                float targetAspectRatio) const
+                                                float      targetAspectRatio)
+    -> glm::ivec2
   {
     glm::ivec2 desiredResolution = availableResolution;
 
@@ -465,10 +474,10 @@ namespace Dwarf
     ImGuizmo::SetRect(
       minRect.x, minRect.y, maxRect.x - minRect.x, maxRect.y - minRect.y);
 
-    Entity              entity(mEditorSelection->GetSelectedEntities().at(0),
+    Entity    entity(mEditorSelection->GetSelectedEntities().at(0),
                   mLoadedScene->GetScene().GetRegistry());
-    TransformComponent& tc = entity.GetComponent<TransformComponent>();
-    glm::mat4           transform = tc.GetModelMatrix();
+    auto&     transformComponent = entity.GetComponent<TransformComponent>();
+    glm::mat4 transform = transformComponent.GetModelMatrix();
 
     ImGuizmo::Manipulate(glm::value_ptr(mCamera->GetViewMatrix()),
                          glm::value_ptr(mCamera->GetProjectionMatrix()),
@@ -478,10 +487,11 @@ namespace Dwarf
 
     if (ImGuizmo::IsUsing())
     {
-      tc.GetPosition() = glm::vec3(transform[3]);
-      tc.GetScale() = glm::vec3(glm::length(glm::vec3(transform[0])),
-                                glm::length(glm::vec3(transform[1])),
-                                glm::length(glm::vec3(transform[2])));
+      transformComponent.GetPosition() = glm::vec3(transform[3]);
+      transformComponent.GetScale() =
+        glm::vec3(glm::length(glm::vec3(transform[0])),
+                  glm::length(glm::vec3(transform[1])),
+                  glm::length(glm::vec3(transform[2])));
 
       glm::mat3 rotationMatrix =
         glm::mat3(transform); // Remove translation from matrix
@@ -491,7 +501,7 @@ namespace Dwarf
 
       // Convert rotation matrix to Euler angles (in radians)
       glm::quat rotationQuat(rotationMatrix);
-      tc.GetEulerAngles() = glm::degrees(
+      transformComponent.GetEulerAngles() = glm::degrees(
         glm::eulerAngles(rotationQuat)); // Convert to Euler angles in degrees
     }
   }
@@ -518,15 +528,15 @@ namespace Dwarf
     }
   }
 
-  glm::vec3
-  SceneViewerWindow::CalculateSelectionCenter() const
+  auto
+  SceneViewerWindow::CalculateSelectionCenter() const -> glm::vec3
   {
     auto center = glm::vec3(0);
 
-    for (auto entity : mEditorSelection->GetSelectedEntities())
+    for (auto handle : mEditorSelection->GetSelectedEntities())
     {
-      Entity e(entity, mLoadedScene->GetScene().GetRegistry());
-      center += e.GetComponent<TransformComponent>().GetPosition();
+      Entity entity(handle, mLoadedScene->GetScene().GetRegistry());
+      center += entity.GetComponent<TransformComponent>().GetPosition();
     }
 
     return center / (float)mEditorSelection->GetSelectedEntities().size();
@@ -609,8 +619,8 @@ namespace Dwarf
     }
   }
 
-  nlohmann::json
-  SceneViewerWindow::Serialize()
+  auto
+  SceneViewerWindow::Serialize() -> nlohmann::json
   {
     nlohmann::json serializedModule;
 
@@ -649,7 +659,7 @@ namespace Dwarf
 
     if (handle > 0)
     {
-      entt::entity entity = static_cast<entt::entity>(handle);
+      auto entity = static_cast<entt::entity>(handle);
       mEditorSelection->SelectEntity(entity);
     }
     else
