@@ -2,7 +2,6 @@
 #include "Core/Rendering/Texture/ITexture.h"
 #include "Core/Rendering/VramTracker/IVramTracker.h"
 #include "Logging/IDwarfLogger.h"
-#include "pch.h"
 #include <glad/glad.h>
 
 namespace Dwarf
@@ -11,22 +10,33 @@ namespace Dwarf
   {
   private:
     /// @brief The OpenGL texture handle.
-    GLuint                        mId;
+    GLuint                        mId = 0;
     TextureResolution             mSize;
     std::shared_ptr<IDwarfLogger> mLogger;
     std::shared_ptr<IVramTracker> mVramTracker;
     size_t                        mVramMemory;
 
   public:
-    explicit OpenGLTexture(std::shared_ptr<TextureContainer> data,
-                           std::shared_ptr<IDwarfLogger>     logger,
-                           std::shared_ptr<IVramTracker>     vramTracker);
+    explicit OpenGLTexture(const std::shared_ptr<TextureContainer>& data,
+                           std::shared_ptr<IDwarfLogger>            logger,
+                           std::shared_ptr<IVramTracker> vramTracker);
     ~OpenGLTexture() override;
 
-    TextureResolution
-    GetSize() const override;
+    /**
+     * @brief Gets the resolution of the texture. A variadic return type
+     * depending on the dimensions of the texture.
+     *
+     * @return Resolution of the texture
+     */
+    [[nodiscard]] auto
+    GetSize() const -> TextureResolution override;
 
-    uintptr_t
-    GetTextureID() const override;
+    /**
+     * @brief Gets the id of the texture
+     *
+     * @return Id representing the texture on the GPU
+     */
+    [[nodiscard]] auto
+    GetTextureID() const -> uintptr_t override;
   };
 } // namespace Dwarf

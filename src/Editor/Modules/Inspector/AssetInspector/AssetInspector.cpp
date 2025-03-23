@@ -39,7 +39,12 @@ namespace Dwarf
   void
   AssetInspector::Render()
   {
-    IAssetReference& asset = mEditorSelection->GetSelectedAsset();
+    if (mEditorSelection->GetSelectedAsset() == nullptr)
+    {
+      return;
+    }
+
+    IAssetReference& asset = *mEditorSelection->GetSelectedAsset();
     switch (asset.GetType())
     {
       using enum ASSET_TYPE;

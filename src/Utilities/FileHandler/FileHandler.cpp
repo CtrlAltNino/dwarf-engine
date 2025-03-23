@@ -13,6 +13,8 @@
 #include <ShlObj.h>
 #include <objbase.h>
 #include <shlwapi.h>
+
+#include <utility>
 #endif
 
 #ifdef __linux__
@@ -25,7 +27,7 @@
 namespace Dwarf
 {
   FileHandler::FileHandler(std::shared_ptr<IDwarfLogger> logger)
-    : mLogger(logger)
+    : mLogger(std::move(logger))
     , mDocumentsPath(CreateDocumentsFolderPath())
     , mEngineSettingsPath(CreateEngineSettingsPath())
   {
@@ -33,8 +35,8 @@ namespace Dwarf
 
   /// @brief Creates the platform depending path to the documents directory.
   /// @return Absolute path to the documents directory.
-  std::filesystem::path
-  FileHandler::CreateDocumentsFolderPath()
+  auto
+  FileHandler::CreateDocumentsFolderPath() const -> std::filesystem::path
   {
     mLogger->LogDebug(Log("CreateDocumentsFolderPath", "FileHandler"));
     std::filesystem::path defaultProjectPath;
@@ -78,8 +80,8 @@ namespace Dwarf
 
   /// @brief Creates the path to the project settings.
   /// @return Absolute path to where the project settings file is located.
-  std::filesystem::path
-  FileHandler::CreateEngineSettingsPath()
+  auto
+  FileHandler::CreateEngineSettingsPath() const -> std::filesystem::path
   {
     std::filesystem::path path = "";
     std::filesystem::path subpath = "Dwarf Engine/settings";
@@ -94,8 +96,8 @@ namespace Dwarf
 
   /// @brief Returns the path to the document directory.
   /// @return An absolute path.
-  std::filesystem::path
-  FileHandler::GetDocumentsPath()
+  auto
+  FileHandler::GetDocumentsPath() const -> std::filesystem::path
   {
     mLogger->LogDebug(Log("GetDocumentsPath", "FileHandler"));
     return mDocumentsPath;
@@ -103,8 +105,8 @@ namespace Dwarf
 
   /// @brief Returns the path to the project settings file.
   /// @return An absolute path.
-  std::filesystem::path
-  FileHandler::GetEngineSettingsPath()
+  auto
+  FileHandler::GetEngineSettingsPath() const -> std::filesystem::path
   {
     mLogger->LogDebug(Log("GetEngineSettingsPath", "FileHandler"));
     return mEngineSettingsPath;
@@ -113,8 +115,8 @@ namespace Dwarf
   /// @brief Checks if a file is present at a given path.
   /// @param filePath Absolute path to a file.
   /// @return True if file exists, false if not.
-  bool
-  FileHandler::FileExists(std::filesystem::path const& filePath)
+  auto
+  FileHandler::FileExists(std::filesystem::path const& filePath) const -> bool
   {
     mLogger->LogDebug(Log("FileExists", "FileHandler"));
     std::filesystem::path copy = filePath;
@@ -125,8 +127,9 @@ namespace Dwarf
   /// @brief Reads a file and returns the content.
   /// @param filePath Absolute path to a file.
   /// @return The content of the file.
-  std::string
-  FileHandler::ReadFile(std::filesystem::path const& filePath)
+  auto
+  FileHandler::ReadFile(std::filesystem::path const& filePath) const
+    -> std::string
   {
     mLogger->LogDebug(Log("ReadFile", "FileHandler"));
     std::string   content;
@@ -135,11 +138,11 @@ namespace Dwarf
     if (!fileStream.is_open())
     {
       std::cerr << "Could not read file " << filePath
-                << ". File does not exist." << std::endl;
+                << ". File does not exist." << "\n";
       return "";
     }
 
-    std::string line = "";
+    std::string line;
     while (!fileStream.eof())
     {
       std::getline(fileStream, line);
@@ -155,7 +158,7 @@ namespace Dwarf
   /// @param content Content to write.
   void
   FileHandler::WriteToFile(std::filesystem::path const& filePath,
-                           std::string_view             content)
+                           std::string_view             content) const
   {
     // opening a file in writing mode which is default.
     std::ofstream file;
@@ -166,7 +169,7 @@ namespace Dwarf
     // taking in put from user to write to test.dat file
     // string message;
     // cin >> mesage;
-    file << content << std::endl;
+    file << content << "\n";
 
     // We need to close every file which you open.
     file.close();
@@ -175,8 +178,8 @@ namespace Dwarf
   /// @brief Checks if a directory is present on the users disk.
   /// @param path Path to a directory.
   /// @return True if directory is present, false if not.
-  bool
-  FileHandler::DirectoryExists(std::filesystem::path const& path)
+  auto
+  FileHandler::DirectoryExists(std::filesystem::path const& path) const -> bool
   {
     mLogger->LogDebug(Log("DirectoryExists", "FileHandler"));
     return std::filesystem::exists(path);
@@ -185,7 +188,7 @@ namespace Dwarf
   /// @brief Creates a directory at a given path.
   /// @param path Path to a directory.
   void
-  FileHandler::CreateDirectoryAt(std::filesystem::path const& path)
+  FileHandler::CreateDirectoryAt(std::filesystem::path const& path) const
   {
     mLogger->LogDebug(Log("CreateDirectoryAt", "FileHandler"));
     std::filesystem::create_directories(path);
@@ -194,7 +197,7 @@ namespace Dwarf
   /// @brief Opens a path into a file browser.
   /// @param path Path to open.
   void
-  FileHandler::OpenPathInFileBrowser(std::filesystem::path const& path)
+  FileHandler::OpenPathInFileBrowser(std::filesystem::path const& path) const
   {
     mLogger->LogDebug(Log("OpenPathInFileBrowser", "FileHandler"));
 #if _WIN32
@@ -227,7 +230,7 @@ namespace Dwarf
   }
 
   void
-  FileHandler::LaunchFile(std::filesystem::path path)
+  FileHandler::LaunchFile(std::filesystem::path path) const
   {
     mLogger->LogDebug(Log("LaunchFile", "FileHandler"));
     // Start-Process -FilePath "custom.frag"
@@ -264,7 +267,7 @@ namespace Dwarf
 
   void
   FileHandler::Copy(std::filesystem::path const& from,
-                    std::filesystem::path const& to)
+                    std::filesystem::path const& to) const
   {
     mLogger->LogDebug(Log("Copy", "FileHandler"));
     std::filesystem::copy(from, to);
@@ -272,14 +275,14 @@ namespace Dwarf
 
   void
   FileHandler::Rename(std::filesystem::path const& oldPath,
-                      std::filesystem::path const& newPath)
+                      std::filesystem::path const& newPath) const
   {
     mLogger->LogDebug(Log("Rename", "FileHandler"));
     std::filesystem::rename(oldPath, newPath);
   }
 
   void
-  FileHandler::Duplicate(std::filesystem::path const& path)
+  FileHandler::Duplicate(std::filesystem::path const& path) const
   {
     mLogger->LogDebug(Log("Duplicate", "FileHandler"));
     std::filesystem::path from = path;
@@ -292,14 +295,15 @@ namespace Dwarf
   }
 
   void
-  FileHandler::Delete(std::filesystem::path const& path)
+  FileHandler::Delete(std::filesystem::path const& path) const
   {
     mLogger->LogDebug(Log("Delete", "FileHandler"));
     std::filesystem::remove(path);
   }
 
-  std::vector<unsigned char>
-  FileHandler::ReadBinaryFileUnbuffered(std::filesystem::path const& path)
+  auto
+  FileHandler::ReadBinaryFileUnbuffered(std::filesystem::path const& path) const
+    -> std::vector<unsigned char>
   {
 #ifdef _WIN32
     HANDLE hFile =
@@ -314,7 +318,7 @@ namespace Dwarf
     if (hFile == INVALID_HANDLE_VALUE)
     {
       std::cerr << "Error opening file: " << path << " (" << GetLastError()
-                << ")" << std::endl;
+                << ")" << "\n";
       return {};
     }
 
@@ -322,29 +326,29 @@ namespace Dwarf
     LARGE_INTEGER fileSize;
     if (!GetFileSizeEx(hFile, &fileSize))
     {
-      std::cerr << "Error getting file size: " << GetLastError() << std::endl;
+      std::cerr << "Error getting file size: " << GetLastError() << "\n";
       CloseHandle(hFile);
       return {};
     }
 
-    constexpr size_t SECTOR_SIZE = 4096; // Adjust based on system
+    constexpr size_t sectorSize = 4096; // Adjust based on system
     size_t           alignedSize =
-      (fileSize.QuadPart + SECTOR_SIZE - 1) & ~(SECTOR_SIZE - 1);
+      (fileSize.QuadPart + sectorSize - 1) & ~(sectorSize - 1);
 
     // Allocate sector-aligned memory
-    void* rawBuffer = _aligned_malloc(alignedSize, SECTOR_SIZE);
-    if (!rawBuffer)
+    void* rawBuffer = _aligned_malloc(alignedSize, sectorSize);
+    if (rawBuffer == nullptr)
     {
-      std::cerr << "Memory allocation failed" << std::endl;
+      std::cerr << "Memory allocation failed" << "\n";
       CloseHandle(hFile);
       return {};
     }
 
-    DWORD bytesRead;
+    DWORD bytesRead = 0;
     if (!::ReadFile(
           hFile, rawBuffer, static_cast<DWORD>(alignedSize), &bytesRead, NULL))
     {
-      std::cerr << "Error reading file: " << GetLastError() << std::endl;
+      std::cerr << "Error reading file: " << GetLastError() << "\n";
       _aligned_free(rawBuffer);
       CloseHandle(hFile);
       return {};

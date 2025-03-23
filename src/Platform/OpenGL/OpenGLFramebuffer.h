@@ -25,53 +25,120 @@ namespace Dwarf
 
   public:
     explicit OpenGLFramebuffer(std::shared_ptr<IDwarfLogger>    logger,
-                               const FramebufferSpecification&  spec,
+                               FramebufferSpecification         spec,
                                std::shared_ptr<ITextureFactory> textureFactory,
                                std::shared_ptr<IVramTracker>    vramTracker);
     ~OpenGLFramebuffer() override;
 
-    uint32_t
-    GetFramebufferRendererID() const
+    /**
+     * @brief Gets the underlying id of the framebuffer
+     *
+     * @return OpenGL Id of the frame buffer
+     */
+    [[nodiscard]] auto
+    GetFramebufferRendererID() const -> uint32_t
     {
       return mRendererID;
     }
 
+    /**
+     * @brief Invalidates the framebuffer, so it will be rebuild
+     *
+     */
     void
     Invalidate();
 
+    /**
+     * @brief Binds the frame buffer
+     *
+     */
     void
     Bind() override;
 
+    /**
+     * @brief Unbinds the frame buffer
+     *
+     */
     void
     Unbind() override;
 
+    /**
+     * @brief Resizes the frame buffer to a given size
+     *
+     * @param width Pixel width
+     * @param height Pixel height
+     */
     void
     Resize(uint32_t width, uint32_t height) override;
 
+    /**
+     * @brief Updates the MSAA sample count for the frame buffer
+     *
+     * @param samples Amount of samples
+     */
     void
     SetSamples(uint32_t samples) override;
 
-    unsigned int
-    ReadPixel(uint32_t attachmentIndex, int x, int y) override;
+    /**
+     * @brief Reads a pixel back from the framebuffer
+     *
+     * @param attachmentIndex Specifies which attachment to read from
+     * @param xCoord X pixel coordinate
+     * @param yCoord Y pixel coordinate
+     * @return Integer value at the given pixel
+     */
+    auto
+    ReadPixel(uint32_t attachmentIndex, int x, int y) -> unsigned int override;
 
+    /**
+     * @brief Clears an attachment with a given integer value
+     *
+     * @param attachmentIndex Specifies the attachment to clear
+     * @param value Integer value to clear with
+     */
     void
     ClearAttachment(uint32_t attachmentIndex, int value) override;
 
-    const std::optional<std::reference_wrapper<ITexture>>
-    GetColorAttachment(uint32_t index) const override;
+    /**
+     * @brief Gets a color attachment of the frame buffer
+     *
+     * @param index Index of which color attachment to get
+     * @return Returns a reference to the frame buffer if the index is valid
+     */
+    [[nodiscard]] auto
+    GetColorAttachment(uint32_t index) const
+      -> std::optional<const std::reference_wrapper<ITexture>> override;
 
+    /**
+     * @brief Clears the frame buffer
+     *
+     */
     void
     Clear() override;
 
+    /**
+     * @brief Clears the frame buffer with a given color
+     *
+     * @param clearColor 4 component color to clear the frame buffer with
+     */
     void
     Clear(glm::vec4 clearColor) override;
 
-    const FramebufferSpecification&
-    GetSpecification() const override
+    /**
+     * @brief Retrieves the specification the frame buffer is using
+     *
+     * @return The frame buffer specification
+     */
+    [[nodiscard]] auto
+    GetSpecification() const -> const FramebufferSpecification& override
     {
       return mSpecification;
     }
 
+    /**
+     * @brief Deletes the framebuffer
+     *
+     */
     void
     DeleteFramebuffer();
   };

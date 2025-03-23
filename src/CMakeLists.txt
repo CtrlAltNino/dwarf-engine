@@ -83,3 +83,6 @@ target_link_libraries(${libname} PUBLIC xxHash::xxhash)
 
 find_package(Threads REQUIRED)
 target_link_libraries(${libname} PUBLIC Threads::Threads)
+
+find_package(magic_enum CONFIG REQUIRED)
+target_link_libraries(${libname} PRIVATE magic_enum::magic_enum)

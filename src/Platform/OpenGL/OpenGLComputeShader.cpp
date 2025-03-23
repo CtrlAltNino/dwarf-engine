@@ -1,4 +1,5 @@
 #include "OpenGLComputeShader.h"
+
 #include "Core/Asset/Database/AssetComponents.h"
 #include "Core/Base.h"
 #include "Core/Rendering/VramTracker/IVramTracker.h"
@@ -13,8 +14,9 @@ namespace Dwarf
                                   shaderParameterCollectionFactory,
     std::shared_ptr<IVramTracker> vramTracker)
     : mComputeShaderAsset(std::move(computeShaderAsset))
-    , mShaderParameterCollectionFactory(shaderParameterCollectionFactory)
-    , mVramTracker(vramTracker)
+    , mShaderParameterCollectionFactory(
+        std::move(shaderParameterCollectionFactory))
+    , mVramTracker(std::move(vramTracker))
   {
   }
 
@@ -41,25 +43,25 @@ namespace Dwarf
   {
     mSuccessfullyCompiled = false;
 
-    ComputeShaderAsset& computeShaderAsset =
-      (ComputeShaderAsset&)mComputeShaderAsset->GetAsset();
+    auto& computeShaderAsset =
+      dynamic_cast<ComputeShaderAsset&>(mComputeShaderAsset->GetAsset());
 
     if (computeShaderAsset.GetFileContent().length() > 0)
     {
       const char* shadercstr = computeShaderAsset.GetFileContent().c_str();
 
-      GLsizei log_length = 0;
+      GLsizei logLength = 0;
       GLchar  message[1024] = "";
 
       GLuint shader = glCreateShader(GL_COMPUTE_SHADER);
       glShaderSource(shader, 1, &shadercstr, nullptr);
       glCompileShader(shader);
 
-      GLint compiled;
-      glGetShaderInfoLog(shader, 1024, &log_length, message);
+      GLint compiled = 0;
+      glGetShaderInfoLog(shader, 1024, &logLength, message);
       glGetShaderiv(shader, GL_COMPILE_STATUS, &compiled);
 
-      if (log_length > 0)
+      if (logLength > 0)
       {
         mComputeShaderLog = std::string(message);
       }
@@ -88,26 +90,27 @@ namespace Dwarf
     }
   }
 
-  bool
-  OpenGLComputeShader::IsCompiled() const
+  auto
+  OpenGLComputeShader::IsCompiled() const -> bool
   {
     return mSuccessfullyCompiled;
   }
 
-  GLuint
-  OpenGLComputeShader::GetID() const
+  auto
+  OpenGLComputeShader::GetID() const -> GLuint
   {
     return mID;
   }
 
-  const std::string&
-  OpenGLComputeShader::GetLog() const
+  auto
+  OpenGLComputeShader::GetLog() const -> const std::string&
   {
     return mComputeShaderLog;
   }
 
-  std::shared_ptr<IShaderParameterCollection>
+  auto
   OpenGLComputeShader::GetParameters()
+    -> std::shared_ptr<IShaderParameterCollection>
   {
     if (!mSuccessfullyCompiled)
     {
@@ -115,15 +118,15 @@ namespace Dwarf
     }
     std::shared_ptr<IShaderParameterCollection> parameters =
       mShaderParameterCollectionFactory->Create();
-    GLint i;
-    GLint count;
+    GLint i = 0;
+    GLint count = 0;
 
-    GLint  size; // size of the variable
-    GLenum type; // type of the variable (float, vec3 or mat4, etc)
+    GLint  size = 0; // size of the variable
+    GLenum type = 0; // type of the variable (float, vec3 or mat4, etc)
 
     const GLsizei bufSize = 64;  // maximum name length
     GLchar        name[bufSize]; // variable name in GLSL
-    GLsizei       length;        // name length
+    GLsizei       length = 0;    // name length
 
     glGetProgramiv(mID, GL_ACTIVE_UNIFORMS, &count);
 

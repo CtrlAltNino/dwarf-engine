@@ -4,8 +4,19 @@
 
 namespace Dwarf
 {
-  const TimeStamp&
-  EditorStats::GetCurrentTimeStamp() const
+  EditorStats::EditorStats(std::shared_ptr<IDwarfLogger> logger)
+    : mLogger(std::move(logger))
+  {
+    mLogger->LogDebug(Log("EditorStats created.", "EditorStats"));
+  }
+
+  EditorStats::~EditorStats()
+  {
+    mLogger->LogDebug(Log("EditorStats destroyed.", "EditorStats"));
+  }
+
+  auto
+  EditorStats::GetCurrentTimeStamp() const -> const TimeStamp&
   {
     return mCurrentTimeStamp;
   }
@@ -16,8 +27,8 @@ namespace Dwarf
     mCurrentTimeStamp = timeStamp;
   }
 
-  const TimeStamp&
-  EditorStats::GetLastTimeStamp() const
+  auto
+  EditorStats::GetLastTimeStamp() const -> const TimeStamp&
   {
     return mLastTimeStamp;
   }
@@ -28,8 +39,8 @@ namespace Dwarf
     mLastTimeStamp = timeStamp;
   }
 
-  double
-  EditorStats::GetDeltaTime() const
+  auto
+  EditorStats::GetDeltaTime() const -> double
   {
     return TimeUtilities::GetDifferenceInSeconds(mCurrentTimeStamp,
                                                  mLastTimeStamp);
@@ -41,8 +52,8 @@ namespace Dwarf
     mReturnToLauncher = returnToLauncher;
   }
 
-  bool
-  EditorStats::GetReturnToLauncher() const
+  auto
+  EditorStats::GetReturnToLauncher() const -> bool
   {
     return mReturnToLauncher;
   }
@@ -53,8 +64,8 @@ namespace Dwarf
     mCloseSignal = closeSignal;
   }
 
-  bool
-  EditorStats::GetCloseSignal() const
+  auto
+  EditorStats::GetCloseSignal() const -> bool
   {
     return mCloseSignal;
   }
@@ -65,21 +76,22 @@ namespace Dwarf
     mDeviceInfo = deviceInfo;
   }
 
-  const std::string&
-  EditorStats::GetDeviceInfo() const
+  auto
+  EditorStats::GetDeviceInfo() const -> const std::string&
   {
     return mDeviceInfo;
   }
 
   void
-  EditorStats::SetTimeSinceStart(const double& timeStamp)
+  EditorStats::SetInitialTimeStamp(const TimeStamp& timeStamp)
   {
-    mTimeSinceStart = timeStamp;
+    mInitialTimeStamp = timeStamp;
   }
 
-  const double&
-  EditorStats::GetTimeSinceStart() const
+  auto
+  EditorStats::GetTimeSinceStart() const -> double
   {
-    return mTimeSinceStart;
+    return TimeUtilities::GetDifferenceInSeconds(mCurrentTimeStamp,
+                                                 mInitialTimeStamp);
   }
 }

@@ -111,7 +111,7 @@ namespace Dwarf
           const TextureFormat&     format,
           const TextureDataType&   dataType,
           const TextureResolution& size,
-          int samples = 1) const -> std::unique_ptr<ITexture> override;
+          uint32_t samples = 1) const -> std::unique_ptr<ITexture> override;
 
     /**
      * @brief Gets the placeholder texture

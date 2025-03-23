@@ -2,8 +2,6 @@
 #include "Core/Base.h"
 #include <SDL3/SDL.h>
 
-#include <utility>
-
 namespace Dwarf
 {
   // TODO: This struct looks like sh*t
@@ -16,47 +14,124 @@ namespace Dwarf
     bool        Maximized = false;
   };
 
+  /**
+   * @brief Class for abstracting window management
+   *
+   */
   class IWindow
   {
   public:
     virtual ~IWindow() = default;
 
+    /**
+     * @brief Running logic for the beginning of a frame
+     *
+     */
     virtual void
-    newFrame() = 0;
+    NewFrame() = 0;
+
+    /**
+     * @brief Running logic for the end of a frame
+     *
+     */
     virtual void
-    endFrame() = 0;
+    EndFrame() = 0;
 
-    virtual auto
-    getWidth() const -> uint32_t = 0;
-    virtual auto
-    getHeight() const -> uint32_t = 0;
-
-    virtual void
-    setVSync(bool enabled) = 0;
-    virtual auto
-    isVSync() -> bool = 0;
-
+    /**
+     * @brief Gets the width of the window
+     *
+     * @return Width in pixels
+     */
     [[nodiscard]] virtual auto
-    getNativeWindow() const -> SDL_Window* = 0;
+    GetWidth() const -> uint32_t = 0;
 
-    virtual void
-    showWindow() = 0;
-    virtual void
-    hideWindow() = 0;
+    /**
+     * @brief Gets the height of the window
+     *
+     * @return Height in pixels
+     */
+    [[nodiscard]] virtual auto
+    GetHeight() const -> uint32_t = 0;
 
+    /**
+     * @brief Enables/Disables VSync
+     *
+     * @param enabled Desired VSync state
+     */
+    virtual void
+    SetVSync(bool enabled) = 0;
+
+    /**
+     * @brief Checks if VSync is enabled window based
+     *
+     * @return true Enable VSync
+     * @return false Disable VSync
+     */
     virtual auto
-    shouldClose() -> bool = 0;
+    IsVSync() -> bool = 0;
 
+    /**
+     * @brief Gets the underlying SDL window pointer
+     *
+     * @return The raw SDL window pointer
+     */
+    [[nodiscard]] virtual auto
+    GetNativeWindow() const -> SDL_Window* = 0;
+
+    /**
+     * @brief Shows the window
+     *
+     */
     virtual void
-    maximizeWindow() = 0;
+    ShowWindow() = 0;
 
+    /**
+     * @brief Hides the window
+     *
+     */
     virtual void
-    setWindowTitle(std::string_view windowTitle) = 0;
+    HideWindow() = 0;
 
+    /**
+     * @brief Checks the close signal of the window (E.g. pressing the close
+     * button in the window title bar)
+     *
+     * @return true Window should close
+     * @return false Window does not have a closing signal
+     */
     virtual auto
-    isWindowMaximized() -> bool = 0;
+    ShouldClose() -> bool = 0;
 
+    /**
+     * @brief Maximizes the window
+     *
+     */
     virtual void
-    setShowWindowMaximized(bool maximized) = 0;
+    MaximizeWindow() = 0;
+
+    /**
+     * @brief Sets the title of the window
+     *
+     * @param windowTitle Window title
+     */
+    virtual void
+    SetWindowTitle(std::string_view windowTitle) = 0;
+
+    /**
+     * @brief Checks if the window is in the maximized staet
+     *
+     * @return true If it is maximized
+     * @return false It's not
+     */
+    virtual auto
+    IsWindowMaximized() -> bool = 0;
+
+    /**
+     * @brief Sets if the window should be in maximized state when showing it
+     *
+     * @param maximized Show window in maximized mode if true
+     */
+    virtual void
+    SetShowWindowMaximized(bool maximized) = 0;
   };
 }

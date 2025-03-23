@@ -1,27 +1,28 @@
 #pragma once
 // #include <fmt/color.h>
 #include <optional>
+#include <utility>
 
 namespace Dwarf
 {
   struct Log
   {
-    const std::string Message;
-    const std::string Scope;
+    std::string Message;
+    std::string Scope;
     // const std::optional<fmt::color> Color;
 
-    Log(const std::string& message, const std::string& scope
+    Log(std::string message, std::string scope
         //,std::optional<fmt::color> color = std::nullopt
         )
-      : Message(message)
-      , Scope(scope)
+      : Message(std::move(message))
+      , Scope(std::move(scope))
     //, Color(color)
     {
     }
 
     // Comparison operator for testing purposes.
-    bool
-    operator==(const Log& other) const
+    auto
+    operator==(const Log& other) const -> bool
     {
       return Message == other.Message && Scope == other.Scope
         //&&Color == other.Color
@@ -40,27 +41,27 @@ namespace Dwarf
      * @param message Message to log.
      */
     virtual void
-    LogDebug(const Log logMessage) const = 0;
+    LogDebug(Log logMessage) const = 0;
 
     /**
      * @brief Log a message with the info log level.
      * @param message Message to log.
      */
     virtual void
-    LogInfo(const Log logMessage) const = 0;
+    LogInfo(Log logMessage) const = 0;
 
     /**
      * @brief Log a message with the warning log level.
      * @param message Message to log.
      */
     virtual void
-    LogWarn(const Log logMessage) const = 0;
+    LogWarn(Log logMessage) const = 0;
 
     /**
      * @brief Log a message with the error log level.
      * @param message Message to log.
      */
     virtual void
-    LogError(const Log logMessage) const = 0;
+    LogError(Log logMessage) const = 0;
   };
 }

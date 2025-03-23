@@ -1,7 +1,6 @@
 #pragma once
 #include "Input/IInputManager.h"
 #include "Logging/IDwarfLogger.h"
-#include "pch.h"
 
 namespace Dwarf
 {
@@ -25,7 +24,7 @@ namespace Dwarf
     /**
      * Mapping the engine specific key codes to the SDL3 codes
      */
-    static std::map<SDL_Scancode, KEYCODE> s_KeyCodeMap;
+    static std::map<SDL_Scancode, KEYCODE> sKeyCodeMap;
     std::set<KEYCODE>                      mKeysDown;
     std::set<KEYCODE>                      mKeysRepeat;
     std::set<KEYCODE>                      mKeysUp;
@@ -33,7 +32,7 @@ namespace Dwarf
     /**
      * Mapping the engine specific key codes to the SDL3 codes
      */
-    static std::map<MOUSE_BUTTON, int> s_MouseCodeMap;
+    static std::map<MOUSE_BUTTON, int> sMouseCodeMap;
 
   public:
     InputManager(std::shared_ptr<IDwarfLogger> logger);
@@ -41,35 +40,35 @@ namespace Dwarf
     /**
      * Returns true while the specified key is being pressed
      */
-    bool
-    GetKey(KEYCODE key) const override;
+    [[nodiscard]] auto
+    GetKey(KEYCODE key) const -> bool override;
     /**
      * Returns true during the frame the specified key starts being pressed
      */
-    bool
-    GetKeyDown(KEYCODE key) const override;
+    [[nodiscard]] auto
+    GetKeyDown(KEYCODE key) const -> bool override;
     /**
      * Return true during the frame the specified key is being released
      */
-    bool
-    GetKeyUp(KEYCODE key) const override;
+    [[nodiscard]] auto
+    GetKeyUp(KEYCODE key) const -> bool override;
 
     /**
      * Returns true while the specified mouse button is being pressed
      */
-    bool
-    GetMouseButton(MOUSE_BUTTON button) const override;
-    /**
+    [[nodiscard]] auto
+    GetMouseButton(MOUSE_BUTTON button) const -> bool override;
+    /**j
      * Returns true during the frame the specified mouse button starts being
      * pressed
      */
-    bool
-    GetMouseButtonDown(MOUSE_BUTTON button) const override;
-    /**
+    [[nodiscard]] auto
+    GetMouseButtonDown(MOUSE_BUTTON button) const -> bool override;
+    /**j
      * Return true during the frame the specified mouse button is being released
      */
-    bool
-    GetMouseButtonUp(MOUSE_BUTTON button) const override;
+    [[nodiscard]] auto
+    GetMouseButtonUp(MOUSE_BUTTON button) const -> bool override;
 
     /**
      * Toggles the visibility of the cursor
@@ -80,17 +79,17 @@ namespace Dwarf
     /**
      * Returns the current position of the cursor in a vector
      */
-    glm::vec2
-    GetMousePosition() const override;
+    [[nodiscard]] auto
+    GetMousePosition() const -> glm::vec2 override;
 
     // void
     // SetDeltaMousePos(float x, float y);
 
-    glm::vec2
-    GetMouseDelta() const override;
+    [[nodiscard]] auto
+    GetMouseDelta() const -> glm::vec2 override;
 
-    glm::vec2
-    GetMouseScrollDelta() const override;
+    [[nodiscard]] auto
+    GetMouseScrollDelta() const -> glm::vec2 override;
 
     void
     SetDeltaMousePos(float x, float y) override;

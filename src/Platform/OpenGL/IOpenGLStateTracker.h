@@ -4,6 +4,11 @@
 
 namespace Dwarf
 {
+  /**
+   * @brief Class that tracks the OpenGL state on the client side to minimize
+   * state changes
+   *
+   */
   class IOpenGLStateTracker
   {
   public:

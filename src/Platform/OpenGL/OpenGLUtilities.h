@@ -2,8 +2,8 @@
 
 #include "Logging/IDwarfLogger.h"
 #include <filesystem>
-#include <glad/glad.h>
 #include <fmt/format.h>
+#include <glad/glad.h>
 
 namespace Dwarf
 {
@@ -11,11 +11,11 @@ namespace Dwarf
   {
   public:
     static void
-    CheckOpenGLError(const std::string&            functionName,
-                     const std::string&            scope,
-                     std::shared_ptr<IDwarfLogger> logger)
+    CheckOpenGLError(const std::string&                   functionName,
+                     const std::string&                   scope,
+                     const std::shared_ptr<IDwarfLogger>& logger)
     {
-      GLenum errorCode;
+      GLenum errorCode = 0;
       while ((errorCode = glGetError()) != GL_NO_ERROR)
       {
         std::string error;
@@ -36,47 +36,47 @@ namespace Dwarf
       }
     }
 
-    static std::filesystem::path
-    GetDefaultShaderPath()
+    static auto
+    GetDefaultShaderPath() -> std::filesystem::path
     {
       return std::filesystem::path("data/engine/shaders/default/opengl");
     }
 
-    static std::filesystem::path
-    GetErrorShaderPath()
+    static auto
+    GetErrorShaderPath() -> std::filesystem::path
     {
       return std::filesystem::path("data/engine/shaders/error/opengl");
     }
 
-    static std::filesystem::path
-    GetIdShaderPath()
+    static auto
+    GetIdShaderPath() -> std::filesystem::path
     {
       return std::filesystem::path("data/engine/shaders/id/opengl");
     }
 
-    static std::filesystem::path
-    GetGridShaderPath()
+    static auto
+    GetGridShaderPath() -> std::filesystem::path
     {
       return std::filesystem::path("data/engine/shaders/grid/opengl");
     }
 
-    static std::filesystem::path
-    GetFullScreenQuadShaderPath()
+    static auto
+    GetFullScreenQuadShaderPath() -> std::filesystem::path
     {
       return std::filesystem::path(
         "data/engine/shaders/fullscreen_quad/opengl");
     }
 
-    static std::filesystem::path
-    GetAgxTonemapShaderPath()
+    static auto
+    GetAgxTonemapShaderPath() -> std::filesystem::path
     {
       return std::filesystem::path("data/engine/shaders/agx_tonemap/opengl");
     }
 
-    static std::string
-    GetDeviceInfo()
+    static auto
+    GetDeviceInfo() -> std::string
     {
-      std::string deviceInfo = "";
+      std::string deviceInfo;
       deviceInfo +=
         "Vendor: " +
         std::string(reinterpret_cast<const char*>(glGetString(GL_VENDOR))) +

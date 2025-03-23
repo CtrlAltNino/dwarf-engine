@@ -11,8 +11,8 @@
 namespace Dwarf
 {
   OpenGLImGuiLayer::OpenGLImGuiLayer(std::shared_ptr<IDwarfLogger> logger,
-                                     ImGuiIniFilePath              iniFilePath)
-    : mLogger(logger)
+                                     const ImGuiIniFilePath&       iniFilePath)
+    : mLogger(std::move(logger))
     , mIniFilePath((iniFilePath.t / "imgui.ini").string())
   {
     mLogger->LogDebug(Log("Creating OpenGLImGuiLayer", "OpenGLImGuiLayer"));
@@ -21,13 +21,14 @@ namespace Dwarf
   OpenGLImGuiLayer::~OpenGLImGuiLayer()
   {
     mLogger->LogDebug(Log("Destroying OpenGLImGuiLayer", "OpenGLImGuiLayer"));
-    if (mWindow && ImGui::GetCurrentContext())
+    if ((mWindow != nullptr) && (ImGui::GetCurrentContext() != nullptr))
     {
       ImGui_ImplOpenGL3_Shutdown();
       ImGui_ImplSDL3_Shutdown();
       ImGui::DestroyContext();
     }
   }
+
   void
   OpenGLImGuiLayer::OnAttach(SDL_Window* window)
   {
@@ -51,7 +52,7 @@ namespace Dwarf
     io.ConfigWindowsResizeFromEdges = true;
     io.Fonts->AddFontDefault();
     io.FontDefault = io.Fonts->AddFontFromFileTTF(
-      "data/engine/fonts/Roboto-Regular.ttf", 15.0f);
+      "data/engine/fonts/Roboto-Regular.ttf", 15.0F);
 
     // Setup Dear ImGui style
     ImGui::StyleColorsDark();
@@ -59,10 +60,10 @@ namespace Dwarf
     // When viewports are enabled we tweak WindowRounding/WindowBg so platform
     // windows can look identical to regular ones.
     ImGuiStyle& style = ImGui::GetStyle();
-    if (io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+    if ((io.ConfigFlags & ImGuiConfigFlags_ViewportsEnable) != 0)
     {
-      style.WindowRounding = 0.0f;
-      style.Colors[ImGuiCol_WindowBg].w = 1.0f;
+      style.WindowRounding = 0.0F;
+      style.Colors[ImGuiCol_WindowBg].w = 1.0F;
     }
 
     ImGui::StyleColorsDark();
@@ -93,7 +94,7 @@ namespace Dwarf
     const ImGuiIO* io = &ImGui::GetIO();
     ImGui::Render();
     ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-    if (io->ConfigFlags & ImGuiConfigFlags_ViewportsEnable)
+    if ((io->ConfigFlags & ImGuiConfigFlags_ViewportsEnable) != 0)
     {
       ImGui::UpdatePlatformWindows();
       ImGui::RenderPlatformWindowsDefault();

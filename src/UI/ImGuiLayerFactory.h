@@ -16,10 +16,15 @@ namespace Dwarf
   public:
     ImGuiLayerFactory(std::shared_ptr<IDwarfLogger> logger,
                       GraphicsApi                   api,
-                      ImGuiIniFilePath              iniFilePath);
+                      const ImGuiIniFilePath&       iniFilePath);
     ~ImGuiLayerFactory() override;
 
-    std::unique_ptr<IImGuiLayer>
-    Create() const override;
+    /**
+     * @brief Creates an ImGuiLayer instance
+     *
+     * @return Unique pointer to the created imgui layer
+     */
+    [[nodiscard]] auto
+    Create() const -> std::unique_ptr<IImGuiLayer> override;
   };
 } // namespace Dwarf

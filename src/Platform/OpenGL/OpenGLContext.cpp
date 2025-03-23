@@ -4,6 +4,8 @@
 #include <SDL3/SDL_opengl.h>
 #include <glad/glad.h>
 #include <iostream>
+#include <memory>
+#include <utility>
 
 namespace Dwarf
 {
@@ -16,17 +18,17 @@ namespace Dwarf
                 const GLchar* message,
                 const void*   userParam)
   {
-    std::cout << "OpenGL Debug Message:" << std::endl;
-    std::cout << "    Source: " << source << std::endl;
-    std::cout << "    Type: " << type << std::endl;
-    std::cout << "    ID: " << id << std::endl;
-    std::cout << "    Severity: " << severity << std::endl;
-    std::cout << "    Message: " << message << std::endl;
+    std::cout << "OpenGL Debug Message:" << '\n';
+    std::cout << "    Source: " << source << '\n';
+    std::cout << "    Type: " << type << '\n';
+    std::cout << "    ID: " << id << '\n';
+    std::cout << "    Severity: " << severity << '\n';
+    std::cout << "    Message: " << message << '\n';
   }
 
   OpenGLContext::OpenGLContext(std::shared_ptr<IDwarfLogger> logger,
                                SDL_Window*                   windowHandle)
-    : mLogger(logger)
+    : mLogger(std::move(logger))
     , mWindowHandle(windowHandle)
   {
     mLogger->LogDebug(Log("OpenGLContext created.", "OpenGLContext"));
@@ -35,7 +37,10 @@ namespace Dwarf
   OpenGLContext::~OpenGLContext()
   {
     mLogger->LogDebug(Log("OpenGLContext destroyed.", "OpenGLContext"));
-    if (mContext) SDL_GL_DestroyContext(mContext);
+    if (mContext != nullptr)
+    {
+      SDL_GL_DestroyContext(mContext);
+    }
   }
 
   void
@@ -44,9 +49,9 @@ namespace Dwarf
     mContext = SDL_GL_CreateContext(mWindowHandle);
 
     // Check if the OpenGL context was created successfully.
-    if (!mContext)
+    if (mContext == nullptr)
     {
-      std::cerr << "Failed to create OpenGL context." << std::endl;
+      std::cerr << "Failed to create OpenGL context." << '\n';
       return;
     }
 
@@ -58,7 +63,8 @@ namespace Dwarf
     glDebugMessageCallback(debugCallback, nullptr);
     glEnable(GL_MULTISAMPLE);
 
-    GLint maxColorSamples, maxDepthSamples;
+    GLint maxColorSamples = 0;
+    GLint maxDepthSamples = 0;
     glGetIntegerv(GL_MAX_SAMPLES, &maxColorSamples);
     glGetIntegerv(GL_MAX_DEPTH_TEXTURE_SAMPLES, &maxDepthSamples);
     OpenGLUtilities::CheckOpenGLError("Init() End", "OpenGLContext", mLogger);

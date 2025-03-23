@@ -1,17 +1,19 @@
 #include "ProjectSettings.h"
+
 #include "IProjectSettings.h"
+#include <utility>
 
 namespace Dwarf
 {
   ProjectSettings::ProjectSettings(
-    ProjectPath                         path,
+    const ProjectPath&                  path,
     std::shared_ptr<IDwarfLogger>       logger,
     std::shared_ptr<IFileHandler>       fileHandler,
     std::shared_ptr<IProjectSettingsIO> projectSettingsIO)
-    : mLogger(logger)
+    : mLogger(std::move(logger))
     , mProjectPath(path.t)
-    , mFileHandler(fileHandler)
-    , mProjectSettingsIO(projectSettingsIO)
+    , mFileHandler(std::move(fileHandler))
+    , mProjectSettingsIO(std::move(projectSettingsIO))
   {
     std::optional<ProjectSettingsData> projectSettingsData =
       mProjectSettingsIO->LoadProjectSettings(mProjectPath);
@@ -34,8 +36,8 @@ namespace Dwarf
     mData.ProjectName = projectName;
   }
 
-  std::string
-  ProjectSettings::GetProjectName() const
+  auto
+  ProjectSettings::GetProjectName() const -> std::string
   {
     return mData.ProjectName;
   }
@@ -46,20 +48,20 @@ namespace Dwarf
     mData.GraphicsApi = graphicsAPI;
   }
 
-  const GraphicsApi&
-  ProjectSettings::GetGraphicsApi() const
+  auto
+  ProjectSettings::GetGraphicsApi() const -> const GraphicsApi&
   {
     return mData.GraphicsApi;
   }
 
   void
-  ProjectSettings::UpdateLastOpenedScene(const UUID& sceneGUID)
+  ProjectSettings::UpdateLastOpenedScene(const UUID& lastOpenedScene)
   {
-    mData.LastOpenedScene = sceneGUID;
+    mData.LastOpenedScene = lastOpenedScene;
   }
 
-  const std::optional<UUID>&
-  ProjectSettings::GetLastOpenedScene() const
+  auto
+  ProjectSettings::GetLastOpenedScene() const -> const std::optional<UUID>&
   {
     return mData.LastOpenedScene;
   }
@@ -70,8 +72,8 @@ namespace Dwarf
     mData.SerializedView = serializedView;
   }
 
-  nlohmann::json
-  ProjectSettings::GetSerializedView() const
+  auto
+  ProjectSettings::GetSerializedView() const -> nlohmann::json
   {
     return mData.SerializedView;
   }

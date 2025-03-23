@@ -16,21 +16,20 @@ namespace Dwarf
     std::shared_ptr<IDwarfLogger>    logger,
     std::shared_ptr<ITextureFactory> textureFactory,
     std::shared_ptr<IWindow>         window)
-    : mLogger(logger)
-    , mTextureFactory(textureFactory)
-    , mWindow(window)
+    : mLogger(std::move(logger))
+    , mTextureFactory(std::move(textureFactory))
+    , mWindow(std::move(window))
   {
     mLogger->LogDebug(
       Log("Initializing project launcher assets", "LauncherAssets"));
 
     ImGuiIO io = ImGui::GetIO();
     io.Fonts->AddFontDefault();
-    auto no_op_deleter = [](ImFont*) {};
+    auto noOpDeleter = [](ImFont*) {};
     mHeaderFont = std::shared_ptr<ImFont>(
-      io.Fonts->AddFontFromFileTTF(FONT_ROBOTO_LIGHT_PATH, 26), no_op_deleter);
+      io.Fonts->AddFontFromFileTTF(FONT_ROBOTO_LIGHT_PATH, 26), noOpDeleter);
     mTextFont = std::shared_ptr<ImFont>(
-      io.Fonts->AddFontFromFileTTF(FONT_ROBOTO_REGULAR_PATH, 15),
-      no_op_deleter);
+      io.Fonts->AddFontFromFileTTF(FONT_ROBOTO_REGULAR_PATH, 15), noOpDeleter);
     mLogger->LogDebug(Log("Fonts loaded", "LauncherAssets"));
 
     mGithubIcon =
@@ -43,37 +42,38 @@ namespace Dwarf
     mLogger->LogDebug(
       Log("Project launcher assets initialized", "LauncherAssets"));
   }
+
   /// @brief Font loaded into IMGUI for header text
-  std::shared_ptr<ImFont>
-  LauncherAssets::GetHeaderFont()
+  auto
+  LauncherAssets::GetHeaderFont() -> std::shared_ptr<ImFont>
   {
     return mHeaderFont;
   }
 
   /// @brief Font loaded into IMGUI for regular text
-  std::shared_ptr<ImFont>
-  LauncherAssets::GetTextFont()
+  auto
+  LauncherAssets::GetTextFont() -> std::shared_ptr<ImFont>
   {
     return mTextFont;
   }
 
   /// @brief Loaded image for the github icon
-  std::shared_ptr<ITexture>
-  LauncherAssets::GetGithubIcon()
+  auto
+  LauncherAssets::GetGithubIcon() -> std::shared_ptr<ITexture>
   {
     return mGithubIcon;
   }
 
   /// @brief Loaded image for the patreon icon
-  std::shared_ptr<ITexture>
-  LauncherAssets::GetPatreonIcon()
+  auto
+  LauncherAssets::GetPatreonIcon() -> std::shared_ptr<ITexture>
   {
     return mPatreonIcon;
   }
 
   /// @brief Loaded image for the X/Twitter icon
-  std::shared_ptr<ITexture>
-  LauncherAssets::GetXIcon()
+  auto
+  LauncherAssets::GetXIcon() -> std::shared_ptr<ITexture>
   {
     return mXIcon;
   }

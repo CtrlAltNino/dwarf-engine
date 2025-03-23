@@ -2,14 +2,17 @@
 #include "Platform/OpenGL/OpenGLUtilities.h"
 #include "pch.h"
 
+
 namespace Dwarf
 {
   OpenGLMesh::OpenGLMesh(const std::vector<Vertex>&       vertices,
                          const std::vector<unsigned int>& indices,
                          std::shared_ptr<IDwarfLogger>    logger,
                          std::shared_ptr<IVramTracker>    vramTracker)
-    : mLogger(logger)
-    , mVramTracker(vramTracker)
+    : mLogger(std::move(logger))
+    , mVramTracker(std::move(vramTracker))
+    , mVertexCount(vertices.size())
+    , mIndexCount(indices.size())
   {
     mLogger->LogDebug(Log("OpenGLMesh created.", "OpenGLMesh"));
     OpenGLUtilities::CheckOpenGLError(
@@ -105,9 +108,6 @@ namespace Dwarf
 
     mVramTracker->AddBufferMemory(mVramMemory);
     Unbind();
-
-    mVertexCount = vertices.size();
-    mIndexCount = indices.size();
   }
 
   OpenGLMesh::~OpenGLMesh()
@@ -150,14 +150,14 @@ namespace Dwarf
       "glBindBuffer GL_ELEMENT_ARRAY_BUFFER 0", "OpenGLMesh", mLogger);
   }
 
-  uint32_t
-  OpenGLMesh::GetVertexCount()
+  auto
+  OpenGLMesh::GetVertexCount() -> uint32_t
   {
     return mVertexCount;
   }
 
-  uint32_t
-  OpenGLMesh::GetIndexCount()
+  auto
+  OpenGLMesh::GetIndexCount() -> uint32_t
   {
     return mIndexCount;
   }

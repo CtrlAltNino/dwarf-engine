@@ -1,10 +1,6 @@
 #pragma once
-#include "Project/IProjectSettings.h"
-#include "Project/ProjectTypes.h"
 #include "SavedProjects/ISavedProjects.h"
-#include "Utilities/ISerializable.h"
-#include "pch.h"
-#include "Core/Base.h"
+
 namespace Dwarf
 {
 #define GITHUB_PNG_ICON_PATH "data/engine/img/icons/github.png"
@@ -30,12 +26,22 @@ namespace Dwarf
     Cancelled
   };
 
+  /**
+   * @brief Class representing the project launcher
+   *
+   */
   class IProjectLauncher
   {
   public:
     virtual ~IProjectLauncher() = default;
 
-    virtual std::optional<SavedProject>
-    Run() = 0;
+    /**
+     * @brief Runs the project launcher
+     *
+     * @return If the user chose a project, the saved project data will be
+     * returned
+     */
+    virtual auto
+    Run() -> std::optional<SavedProject> = 0;
   };
 }

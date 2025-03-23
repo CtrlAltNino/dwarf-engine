@@ -1,16 +1,20 @@
 #pragma once
-#include "pch.h"
 #include <fmt/format.h>
 
 #ifdef _WIN32
 #include <Windows.h>
+#endif
+
+#ifdef _WIN32
 #include <KnownFolders.h>
 #include <ShlObj.h>
+
 #endif
 
 #ifdef __linux__
-#include <unistd.h>
 #include <sys/wait.h>
+#include <unistd.h>
+
 #endif
 
 namespace Dwarf
@@ -28,12 +32,12 @@ namespace Dwarf
     {
 #if _WIN32
       const size_t cSize = strlen(link.c_str()) + 1;
-      wchar_t*     wc = new wchar_t[cSize];
+      auto*        wideChar = new wchar_t[cSize];
       size_t       convertedChars = 0;
-      mbstowcs_s(&convertedChars, wc, cSize, link.c_str(), cSize);
+      mbstowcs_s(&convertedChars, wideChar, cSize, link.c_str(), cSize);
 
-      ShellExecute(0, 0, wc, 0, 0, SW_SHOW);
-      delete[] (wc);
+      ShellExecute(0, 0, wideChar, 0, 0, SW_SHOW);
+      delete[] (wideChar);
 #endif
 #if __linux__
       pid_t pid = fork();

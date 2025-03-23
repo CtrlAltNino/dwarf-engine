@@ -1,7 +1,6 @@
 #pragma once
 #include "Core/UUID.h"
 #include "Utilities/ISerializable.h"
-#include "pch.h"
 #include <boost/serialization/strong_typedef.hpp>
 #include <imgui.h>
 #include <imgui_internal.h>
@@ -54,47 +53,60 @@ namespace Dwarf
 
     /// @brief Returns the name of the module.
     /// @return Name of the module.
-    std::string
-    GetModuleName() const
+    auto
+    GetModuleName() const -> std::string
     {
       return mLabel;
     }
 
     /// @brief Returns thhe type of the module.
     /// @return Type of the module.
-    MODULE_TYPE
-    GetModuleType() const { return mModuleType; }
+    [[nodiscard]] auto
+    GetModuleType() const -> MODULE_TYPE
+    {
+      return mModuleType;
+    }
 
     /// @brief Returns the global module index.
     /// @return The module index.
-    std::shared_ptr<UUID>
-    GetUuid() const
+    [[nodiscard]] auto
+    GetUuid() const -> std::shared_ptr<UUID>
     {
       return mId;
     }
 
     /// @brief Generates the ImGui window identifier for a module window..
     /// @return The window identifier.
-    std::string
-    GetIdentifier() const
+    [[nodiscard]] auto
+    GetIdentifier() const -> std::string
     {
       return std::format("{}##{}", mLabel, mId->toString());
     }
 
     /// @brief Generates a ImGui ID for the module.
     /// @return The ImGui ID.
-    ImGuiID
-    GetImGuiID()
+    [[nodiscard]] auto
+    GetImGuiID() const -> ImGuiID
     {
       return ImGui::GetID(GetIdentifier().c_str());
     }
 
-    bool
-    GetWindowClose()
+    /**
+     * @brief Returns if the ImGui window is opened or closed
+     *
+     * @return true If the window is opened
+     * @return false If the window is collapsed
+     */
+    [[nodiscard]] auto
+    GetWindowClose() const -> bool
     {
       return !mWindowOpened;
     }
 
+    /**
+     * @brief Runs logic updates of a module (Before rendering)
+     *
+     */
     virtual void
     OnUpdate() = 0;
 

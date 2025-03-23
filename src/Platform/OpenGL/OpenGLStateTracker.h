@@ -14,8 +14,8 @@ namespace Dwarf
     uint32_t width = 0;
     uint32_t height = 0;
 
-    bool
-    operator==(const ViewportState& other) const
+    auto
+    operator==(const ViewportState& other) const -> bool
     {
       return (x == other.x) && (y == other.y) && (width == other.width) &&
              (height == other.height);
@@ -39,7 +39,7 @@ namespace Dwarf
 
   public:
     OpenGLStateTracker(std::shared_ptr<IDwarfLogger> logger);
-    ~OpenGLStateTracker() override = default;
+    ~OpenGLStateTracker() override;
 
     void
     SetShaderProgram(GLuint program) override;

@@ -5,7 +5,6 @@
 #include "Launcher/SavedProjects/ISavedProjects.h"
 #include "Launcher/View/IProjectLauncherView.h"
 #include "Logging/IDwarfLogger.h"
-#include "pch.h"
 
 namespace Dwarf
 {
@@ -25,7 +24,13 @@ namespace Dwarf
 
     ~ProjectLauncher() override;
 
-    std::optional<SavedProject>
-    Run() override;
+    /**
+     * @brief Runs the project launcher
+     *
+     * @return If the user chose a project, the saved project data will be
+     * returned
+     */
+    auto
+    Run() -> std::optional<SavedProject> override;
   };
 }

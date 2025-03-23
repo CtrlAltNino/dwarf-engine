@@ -1,13 +1,11 @@
 #pragma once
 
 #include "Core/Base.h"
-#include "Editor/Modules/IGuiModule.h"
 #include "IProjectSettings.h"
 #include "IProjectSettingsIO.h"
 #include "Logging/IDwarfLogger.h"
 #include "ProjectTypes.h"
 #include "Utilities/FileHandler/IFileHandler.h"
-#include "pch.h"
 #include <boost/di.hpp>
 
 namespace Dwarf
@@ -15,13 +13,10 @@ namespace Dwarf
   class LoadStatus
   {
   public:
-    bool                     success;
+    bool                     success = true;
     std::vector<std::string> missingFields;
 
-    LoadStatus()
-      : success(true)
-    {
-    }
+    LoadStatus() = default;
 
     void
     addMissingField(const std::string& field)
@@ -30,8 +25,8 @@ namespace Dwarf
       missingFields.push_back(field);
     }
 
-    bool
-    isComplete() const
+    [[nodiscard]] auto
+    isComplete() const -> bool
     {
       return success;
     }
@@ -45,42 +40,87 @@ namespace Dwarf
     std::shared_ptr<IFileHandler>       mFileHandler;
     std::shared_ptr<IProjectSettingsIO> mProjectSettingsIO;
     LoadStatus                          mLoadStatus;
-    std::filesystem::path               mProjectPath = "";
+    std::filesystem::path               mProjectPath;
     ProjectSettingsData                 mData;
 
   public:
     BOOST_DI_INJECT(ProjectSettings,
-                    ProjectPath                         path,
+                    const ProjectPath&                  path,
                     std::shared_ptr<IDwarfLogger>       logger,
                     std::shared_ptr<IFileHandler>       fileHandler,
                     std::shared_ptr<IProjectSettingsIO> projectSettingsIO);
     ~ProjectSettings() override = default;
 
+    /**
+     * @brief Saves the project settings to disk
+     *
+     */
     void
     Save() override;
 
+    /**
+     * @brief Updates the project name
+     *
+     * @param projectName Name of the project
+     */
     void
     UpdateProjectName(const std::string& projectName) override;
 
-    std::string
-    GetProjectName() const override;
+    /**
+     * @brief Returns the name of the project
+     *
+     * @return Project name
+     */
+    [[nodiscard]] auto
+    GetProjectName() const -> std::string override;
 
+    /**
+     * @brief Updates the graphics api used in the project
+     *
+     * @param graphicsApi Graphics api to use
+     */
     void
     UpdateGraphicsApi(const GraphicsApi& graphicsApi) override;
 
-    const GraphicsApi&
-    GetGraphicsApi() const override;
+    /**
+     * @brief Returns the graphics api used in the project
+     *
+     * @return Enum value of the graphics api
+     */
+    [[nodiscard]] auto
+    GetGraphicsApi() const -> const GraphicsApi& override;
 
+    /**
+     * @brief Updates the last opened scene
+     *
+     * @param lastOpenedScene UUID of the scene
+     */
     void
     UpdateLastOpenedScene(const UUID& lastOpenedScene) override;
 
-    const std::optional<UUID>&
-    GetLastOpenedScene() const override;
+    /**
+     * @brief Get the UUID of the last opened scene
+     *
+     * @return Returns a reference to the loaded UUID of the last opened scene
+     * (Optional)
+     */
+    [[nodiscard]] auto
+    GetLastOpenedScene() const -> const std::optional<UUID>& override;
 
+    /**
+     * @brief Updates the serialized view
+     *
+     * @param serializedView The serialized view to update to
+     */
     void
     UpdateSerializedView(const nlohmann::json& serializedView) override;
 
-    nlohmann::json
-    GetSerializedView() const override;
+    /**
+     * @brief Gets the stored serialized view json
+     *
+     * @return The serialized json view
+     */
+    [[nodiscard]] auto
+    GetSerializedView() const -> nlohmann::json override;
   };
 }

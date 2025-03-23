@@ -151,12 +151,12 @@ namespace Dwarf
   }
 
   void
-  SDL3Window::showWindow()
+  SDL3Window::ShowWindow()
   {
     mLogger->LogInfo(Log("Showing window", "SDL3Window"));
     if (mData.ShowMaximized)
     {
-      maximizeWindow();
+      MaximizeWindow();
       SDL_ShowWindow(mWindow);
     }
     else
@@ -166,14 +166,14 @@ namespace Dwarf
   }
 
   void
-  SDL3Window::hideWindow()
+  SDL3Window::HideWindow()
   {
     mLogger->LogInfo(Log("Hiding window", "SDL3Window"));
     SDL_HideWindow(mWindow);
   }
 
   void
-  SDL3Window::newFrame()
+  SDL3Window::NewFrame()
   {
     SDL_Event event;
 
@@ -201,14 +201,14 @@ namespace Dwarf
   }
 
   void
-  SDL3Window::endFrame()
+  SDL3Window::EndFrame()
   {
     mImGuiLayer->End();
     mContext->SwapBuffers();
   }
 
   void
-  SDL3Window::setVSync(bool enabled)
+  SDL3Window::SetVSync(bool enabled)
   {
     mLogger->LogInfo(
       Log("Setting VSync to " + std::to_string(static_cast<int>(enabled)),
@@ -226,19 +226,19 @@ namespace Dwarf
   }
 
   auto
-  SDL3Window::isVSync() -> bool
+  SDL3Window::IsVSync() -> bool
   {
     return mData.VSync;
   }
 
   auto
-  SDL3Window::shouldClose() -> bool
+  SDL3Window::ShouldClose() -> bool
   {
     return mData.ShouldClose;
   }
 
   void
-  SDL3Window::setWindowTitle(std::string_view windowTitle)
+  SDL3Window::SetWindowTitle(std::string_view windowTitle)
   {
     mLogger->LogInfo(
       Log("Setting window title to " + std::string(windowTitle), "SDL3Window"));
@@ -246,20 +246,20 @@ namespace Dwarf
   }
 
   void
-  SDL3Window::maximizeWindow()
+  SDL3Window::MaximizeWindow()
   {
     mLogger->LogInfo(Log("Maximizing window", "SDL3Window"));
     SDL_MaximizeWindow(mWindow);
   }
 
   auto
-  SDL3Window::isWindowMaximized() -> bool
+  SDL3Window::IsWindowMaximized() -> bool
   {
     return (SDL_GetWindowFlags(mWindow) & SDL_WINDOW_MAXIMIZED) != 0U;
   }
 
   void
-  SDL3Window::setShowWindowMaximized(bool maximized)
+  SDL3Window::SetShowWindowMaximized(bool maximized)
   {
     mData.ShowMaximized = maximized;
   }

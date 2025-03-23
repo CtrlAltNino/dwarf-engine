@@ -1,15 +1,12 @@
 #pragma once
-#include "Core/Rendering/Shader/ShaderParameterCollection/IShaderParameterCollection.h"
-#include "Core/Rendering/VramTracker/IVramTracker.h"
-#include "pch.h"
-
+#include "Core/Asset/AssetReference/IAssetReference.h"
 #include "Core/Asset/Database/AssetComponents.h"
 #include "Core/Asset/Shader/ShaderSourceCollection/IShaderSourceCollection.h"
-#include "Core/Rendering/Shader/ShaderParameterCollection/IShaderParameterCollectionFactory.h"
-#include "Logging/IDwarfLogger.h"
-
-#include "Core/Asset/AssetReference/IAssetReference.h"
 #include "Core/Rendering/Shader/IShader.h"
+#include "Core/Rendering/Shader/ShaderParameterCollection/IShaderParameterCollection.h"
+#include "Core/Rendering/Shader/ShaderParameterCollection/IShaderParameterCollectionFactory.h"
+#include "Core/Rendering/VramTracker/IVramTracker.h"
+#include "Logging/IDwarfLogger.h"
 #include <boost/di.hpp>
 #include <boost/serialization/strong_typedef.hpp>
 #include <cstdint>
@@ -29,6 +26,39 @@ namespace Dwarf
 
   class OpenGLShader : public IShader
   {
+  private:
+    GLuint     mID = -1;
+    ShaderLogs mShaderLogs;
+    // Flag to determine if the shader has been successfully compiled.
+    bool mSuccessfullyCompiled = false;
+    // Map of parameters that the shader uses.
+    std::shared_ptr<IDwarfLogger> mLogger;
+    std::shared_ptr<IVramTracker> mVramTracker;
+    std::shared_ptr<IShaderParameterCollectionFactory>
+      mShaderParameterCollectionFactory;
+
+    std::map<std::string, GLint> mUniformLocations;
+    std::map<std::string,
+             std::variant<bool,
+                          int,
+                          uint32_t,
+                          float,
+                          glm::vec2,
+                          glm::vec3,
+                          glm::vec4,
+                          glm::mat3,
+                          glm::mat4>>
+      mUniformStates;
+
+    std::map<int, uintptr_t> mTextureStates;
+
+    std::optional<std::unique_ptr<IAssetReference>> mVertexShaderAsset;
+    std::optional<std::unique_ptr<IAssetReference>> mGeometryShaderAsset;
+    std::optional<std::unique_ptr<IAssetReference>>
+      mTessellationControlShaderAsset;
+    std::optional<std::unique_ptr<IAssetReference>>
+      mTessellationEvaluationShaderAsset;
+    std::optional<std::unique_ptr<IAssetReference>> mFragmentShaderAsset;
 
     struct HandleShaderSourceVisitor;
     friend struct HandleShaderSourceVisitor;
@@ -41,35 +71,55 @@ namespace Dwarf
                     std::shared_ptr<IDwarfLogger> logger,
                     std::shared_ptr<IVramTracker> vramTracker);
     ~OpenGLShader() override;
-    GLuint
-    GetID() const;
 
+    [[nodiscard]] auto
+    GetID() const -> GLuint;
+
+    /**
+     * @brief Compiles the shader program
+     *
+     */
     void
     Compile() override;
 
-    bool
-    IsCompiled() const override;
+    /**
+     * @brief Returns the compilation status of the shader.
+     *
+     * @return true if the shader has been compiled, false otherwise.
+     */
+    [[nodiscard]] auto
+    IsCompiled() const -> bool override;
 
-    std::unique_ptr<IShaderParameterCollection>
-    CreateParameters() override;
+    /**
+     * @brief Creates a ShaderParameterCollection that contains all the shader
+     * parameters that the shader uses
+     *
+     * @return Unique pointer to the created ShaderParameterCollection
+     */
+    auto
+    CreateParameters() -> std::unique_ptr<IShaderParameterCollection> override;
 
-    const ShaderLogs&
-    GetShaderLogs() const;
+    [[nodiscard]] auto
+    GetShaderLogs() const -> const ShaderLogs&;
 
-    std::optional<std::unique_ptr<IAssetReference>>&
-    GetVertexShaderAsset();
+    auto
+    GetVertexShaderAsset() -> std::optional<std::unique_ptr<IAssetReference>>&;
 
-    std::optional<std::unique_ptr<IAssetReference>>&
-    GetFragmentShaderAsset();
+    auto
+    GetFragmentShaderAsset()
+      -> std::optional<std::unique_ptr<IAssetReference>>&;
 
-    std::optional<std::unique_ptr<IAssetReference>>&
-    GetGeometryShaderAsset();
+    auto
+    GetGeometryShaderAsset()
+      -> std::optional<std::unique_ptr<IAssetReference>>&;
 
-    std::optional<std::unique_ptr<IAssetReference>>&
-    GetTessellationControlShaderAsset();
+    auto
+    GetTessellationControlShaderAsset()
+      -> std::optional<std::unique_ptr<IAssetReference>>&;
 
-    std::optional<std::unique_ptr<IAssetReference>>&
-    GetTessellationEvaluationShaderAsset();
+    auto
+    GetTessellationEvaluationShaderAsset()
+      -> std::optional<std::unique_ptr<IAssetReference>>&;
 
     void
     SetUniform(std::string uniformName, bool value);
@@ -92,55 +142,21 @@ namespace Dwarf
     void
     SetUniform(std::string uniformName, glm::mat4 value);
 
-    GLuint
-    GetUniformLocation(std::string uniformName);
+    auto
+    GetUniformLocation(std::string uniformName) -> GLint;
 
     static const std::array<std::string, 5> ReservedUniformNames;
 
-    nlohmann::json
-    Serialize() override;
+    auto
+    Serialize() -> nlohmann::json override;
 
-    bool
-    CompareTo(const IShader& other) const;
+    [[nodiscard]] auto
+    CompareTo(const IShader& other) const -> bool;
 
-    bool
-    operator<(const IShader& other) const override
+    auto
+    operator<(const IShader& other) const -> bool override
     {
       return CompareTo(other);
     }
-
-  private:
-    GLuint     mID = -1;
-    ShaderLogs mShaderLogs;
-    // Flag to determine if the shader has been successfully compiled.
-    bool mSuccessfullyCompiled;
-    // Map of parameters that the shader uses.
-    std::shared_ptr<IDwarfLogger> mLogger;
-    std::shared_ptr<IVramTracker> mVramTracker;
-    std::shared_ptr<IShaderParameterCollectionFactory>
-      mShaderParameterCollectionFactory;
-
-    std::map<std::string, GLuint> mUniformLocations;
-    std::map<std::string,
-             std::variant<bool,
-                          int,
-                          uint32_t,
-                          float,
-                          glm::vec2,
-                          glm::vec3,
-                          glm::vec4,
-                          glm::mat3,
-                          glm::mat4>>
-      mUniformStates;
-
-    std::map<int, uintptr_t> mTextureStates;
-
-    std::optional<std::unique_ptr<IAssetReference>> mVertexShaderAsset;
-    std::optional<std::unique_ptr<IAssetReference>> mGeometryShaderAsset;
-    std::optional<std::unique_ptr<IAssetReference>>
-      mTessellationControlShaderAsset;
-    std::optional<std::unique_ptr<IAssetReference>>
-      mTessellationEvaluationShaderAsset;
-    std::optional<std::unique_ptr<IAssetReference>> mFragmentShaderAsset;
   };
 }

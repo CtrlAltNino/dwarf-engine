@@ -1,6 +1,5 @@
 #pragma once
 
-#include "pch.h"
 #include <SDL3/SDL.h>
 
 namespace Dwarf
@@ -16,29 +15,29 @@ namespace Dwarf
   public:
     virtual ~IInputManager() = default;
 
-    virtual bool
-    GetKey(KEYCODE key) const = 0;
-    virtual bool
-    GetKeyDown(KEYCODE key) const = 0;
-    virtual bool
-    GetKeyUp(KEYCODE key) const = 0;
+    [[nodiscard]] virtual auto
+    GetKey(KEYCODE key) const -> bool = 0;
+    [[nodiscard]] virtual auto
+    GetKeyDown(KEYCODE key) const -> bool = 0;
+    [[nodiscard]] virtual auto
+    GetKeyUp(KEYCODE key) const -> bool = 0;
 
-    virtual bool
-    GetMouseButton(MOUSE_BUTTON button) const = 0;
-    virtual bool
-    GetMouseButtonDown(MOUSE_BUTTON button) const = 0;
-    virtual bool
-    GetMouseButtonUp(MOUSE_BUTTON button) const = 0;
+    [[nodiscard]] virtual auto
+    GetMouseButton(MOUSE_BUTTON button) const -> bool = 0;
+    [[nodiscard]] virtual auto
+    GetMouseButtonDown(MOUSE_BUTTON button) const -> bool = 0;
+    [[nodiscard]] virtual auto
+    GetMouseButtonUp(MOUSE_BUTTON button) const -> bool = 0;
 
     virtual void
     SetMouseVisibility(bool visibilityState) = 0;
 
-    virtual glm::vec2
-    GetMousePosition() const = 0;
-    virtual glm::vec2
-    GetMouseDelta() const = 0;
-    virtual glm::vec2
-    GetMouseScrollDelta() const = 0;
+    [[nodiscard]] virtual auto
+    GetMousePosition() const -> glm::vec2 = 0;
+    [[nodiscard]] virtual auto
+    GetMouseDelta() const -> glm::vec2 = 0;
+    [[nodiscard]] virtual auto
+    GetMouseScrollDelta() const -> glm::vec2 = 0;
 
     virtual void
     SetDeltaMousePos(float x, float y) = 0;

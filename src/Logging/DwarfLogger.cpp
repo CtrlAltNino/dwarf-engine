@@ -6,7 +6,7 @@
 
 namespace Dwarf
 {
-  DwarfLogger::DwarfLogger(LogName logName)
+  DwarfLogger::DwarfLogger(const LogName& logName)
     : mLogger(spdlog::stdout_color_mt(logName.t))
   {
     mLogger->set_level(spdlog::level::trace);

@@ -6,10 +6,13 @@
 #include "UI/DwarfUI.h"
 #include "pch.h"
 #include <fmt/format.h>
+#include <magic_enum/magic_enum.hpp>
 #include <memory>
 #include <nfd.h>
 #include <nlohmann/json_fwd.hpp>
+#include <utility>
 
+#define EDITOR_VIEW_SERIALIZATION_INTERVAL_SECONDS (5)
 namespace Dwarf
 {
   EditorView::EditorView(GraphicsApi                        graphicsApi,
@@ -24,16 +27,16 @@ namespace Dwarf
                          std::shared_ptr<IMaterialCreator>  materialCreator,
                          std::shared_ptr<IEditorStats>      editorStats)
     : mGraphicsApi(graphicsApi)
-    , mLogger(logger)
-    , mProjectSettings(projectSettings)
-    , mLoadedScene(loadedScene)
-    , mWindow(window)
-    , mGuiModuleFactory(guiModuleFactory)
-    , mSceneIO(sceneIO)
-    , mSceneFactory(sceneFactory)
-    , mAssetDatabase(assetDatabase)
-    , mMaterialCreator(materialCreator)
-    , mEditorStats(editorStats)
+    , mLogger(std::move(logger))
+    , mProjectSettings(std::move(projectSettings))
+    , mLoadedScene(std::move(loadedScene))
+    , mWindow(std::move(window))
+    , mGuiModuleFactory(std::move(guiModuleFactory))
+    , mSceneIO(std::move(sceneIO))
+    , mSceneFactory(std::move(sceneFactory))
+    , mAssetDatabase(std::move(assetDatabase))
+    , mMaterialCreator(std::move(materialCreator))
+    , mEditorStats(std::move(editorStats))
   {
     mLogger->LogDebug(Log("Creating EditorView", "EditorView"));
 
@@ -44,14 +47,14 @@ namespace Dwarf
 
     if (serializedView.contains("windowMaximized"))
     {
-      mWindow->setShowWindowMaximized(
+      mWindow->SetShowWindowMaximized(
         serializedView["windowMaximized"].get<bool>());
     }
 
     if (serializedView.contains("modules"))
     {
       mLogger->LogDebug(Log("Module key found", "EditorView"));
-      for (auto module : serializedView.at("modules"))
+      for (auto& module : serializedView.at("modules"))
       {
         mLogger->LogDebug(
           Log(fmt::format("Deserializing module:\n{}", module.dump(2)),
@@ -69,10 +72,10 @@ namespace Dwarf
         {
           {
             std::unique_lock<std::mutex> lock(mThreadMutex);
-            mThreadCondition.wait_for(lock,
-                                      std::chrono::seconds(5),
-                                      [this]
-                                      { return !mRunViewSaveThread.load(); });
+            mThreadCondition.wait_for(
+              lock,
+              std::chrono::seconds(EDITOR_VIEW_SERIALIZATION_INTERVAL_SECONDS),
+              [this] { return !mRunViewSaveThread.load(); });
             mProjectSettings->UpdateSerializedView(Serialize());
             mProjectSettings->Save();
           }
@@ -115,13 +118,13 @@ namespace Dwarf
     //     {
     //         ImGui::DockSpaceOverViewport(ImGui::GetMainViewport());
     //     }
-    static bool               p_open = true;
-    static ImGuiDockNodeFlags dockspace_flags = ImGuiDockNodeFlags_None;
+    static bool               pOpen = true;
+    static ImGuiDockNodeFlags dockspaceFlags = ImGuiDockNodeFlags_None;
 
     // We are using the ImGuiWindowFlags_NoDocking flag to make the parent
     // window not dockable into, because it would be confusing to have two
     // docking targets within each others.
-    ImGuiWindowFlags window_flags =
+    ImGuiWindowFlags windowFlags =
       ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking;
     const ImGuiViewport* viewport = ImGui::GetMainViewport();
     ImGui::SetNextWindowPos(viewport->WorkPos);
@@ -129,16 +132,18 @@ namespace Dwarf
     ImGui::SetNextWindowViewport(viewport->ID);
     ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 0.0f);
     ImGui::PushStyleVar(ImGuiStyleVar_WindowBorderSize, 0.0f);
-    window_flags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse |
-                    ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
-    window_flags |=
+    windowFlags |= ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse |
+                   ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove;
+    windowFlags |=
       ImGuiWindowFlags_NoBringToFrontOnFocus | ImGuiWindowFlags_NoNavFocus;
 
     // When using ImGuiDockNodeFlags_PassthruCentralNode, DockSpace() will
     // render our background and handle the pass-thru hole, so we ask Begin() to
     // not render a background.
-    if (dockspace_flags & ImGuiDockNodeFlags_PassthruCentralNode)
-      window_flags |= ImGuiWindowFlags_NoBackground;
+    if ((dockspaceFlags & ImGuiDockNodeFlags_PassthruCentralNode) != 0)
+    {
+      windowFlags |= ImGuiWindowFlags_NoBackground;
+    }
 
     // Important: note that we proceed even if Begin() returns false (aka window
     // is collapsed). This is because we want to keep our DockSpace() active. If
@@ -147,17 +152,17 @@ namespace Dwarf
     // relationship between an active window and an inactive docking, otherwise
     // any change of dockspace/settings would lead to windows being stuck in
     // limbo and never being visible.
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0f, 0.0f));
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0.0F, 0.0F));
 
     ImGui::PushStyleColor(ImGuiCol_MenuBarBg,
-                          ImVec4(23 / 255.0f, 26 / 255.0f, 32 / 255.0f, 1));
-    ImGui::Begin("DockSpace", &p_open, window_flags);
+                          ImVec4(23 / 255.0F, 26 / 255.0F, 32 / 255.0F, 1));
+    ImGui::Begin("DockSpace", &pOpen, windowFlags);
     ImGui::PopStyleVar(3);
     ImGui::PopStyleColor();
 
     // Submit the DockSpace
-    ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
-    ImGui::DockSpace(dockspace_id, ImVec2(0.0f, 0.0f), dockspace_flags);
+    ImGuiID dockspaceId = ImGui::GetID("MyDockSpace");
+    ImGui::DockSpace(dockspaceId, ImVec2(0.0F, 0.0F), dockspaceFlags);
 
     if (ImGui::BeginMenuBar())
     {
@@ -172,24 +177,10 @@ namespace Dwarf
         }
         if (ImGui::MenuItem("Save scene"))
         {
-          // if (SceneUtilities::SaveScene(mModel->GetScene()))
-          // {
-          //   AssetDatabase::Import(mModel->GetScene()->GetPath());
-          //   SceneUtilities::SetLastOpenedScene(mModel->GetScene()->GetPath());
-          //   UpdateWindowTitle();
-          // }
-
           mSceneIO->SaveScene(mLoadedScene->GetScene());
         }
         if (ImGui::MenuItem("Save scene as"))
         {
-          // if (SceneUtilities::SaveSceneDialog(mModel->GetScene()))
-          // {
-          //   AssetDatabase::Import(mModel->GetScene()->GetPath());
-          //   SceneUtilities::SetLastOpenedScene(mModel->GetScene()->GetPath());
-          //   UpdateWindowTitle();
-          // }
-
           mSceneIO->SaveSceneDialog(mLoadedScene->GetScene());
         }
         if (ImGui::MenuItem("Load scene"))
@@ -285,9 +276,9 @@ namespace Dwarf
 
     {
       std::unique_lock<std::mutex> lock(mThreadMutex);
-      for (int i = 0; i < mGuiModules.size(); i++)
+      for (const auto& mGuiModule : mGuiModules)
       {
-        mGuiModules.at(i)->OnUpdate();
+        mGuiModule->OnUpdate();
       }
     }
   }
@@ -322,9 +313,9 @@ namespace Dwarf
     ImGui::PushStyleColor(ImGuiCol_HeaderActive, COL_BUTTON_ACTIVE);
     ImGui::PushStyleColor(ImGuiCol_HeaderHovered, COL_BUTTON_HOVERED);
 
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 5.0f);
-    ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.0f);
-    ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 5.0f);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowRounding, 5.0F);
+    ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.0F);
+    ImGui::PushStyleVar(ImGuiStyleVar_PopupRounding, 5.0F);
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(12, 12));
 
@@ -353,15 +344,15 @@ namespace Dwarf
   void
   EditorView::DockWindowToFocused()
   {
-    ImGuiID dockspace_id = ImGui::GetID("MyDockSpace");
+    ImGuiID dockspaceId = ImGui::GetID("MyDockSpace");
 
-    static ImGuiDockNodeFlags dockspace_flags =
+    static ImGuiDockNodeFlags dockspaceFlags =
       ImGuiDockNodeFlags_PassthruCentralNode;
 
-    ImGui::DockBuilderRemoveNode(dockspace_id); // clear any previous layout
-    ImGui::DockBuilderAddNode(dockspace_id,
-                              dockspace_flags | ImGuiDockNodeFlags_DockSpace);
-    ImGui::DockBuilderFinish(dockspace_id);
+    ImGui::DockBuilderRemoveNode(dockspaceId); // clear any previous layout
+    ImGui::DockBuilderAddNode(dockspaceId,
+                              dockspaceFlags | ImGuiDockNodeFlags_DockSpace);
+    ImGui::DockBuilderFinish(dockspaceId);
   }
 
   void
@@ -379,7 +370,7 @@ namespace Dwarf
   }
 
   void
-  EditorView::RemoveWindow(std::shared_ptr<UUID> uuid)
+  EditorView::RemoveWindow(const std::shared_ptr<UUID>& uuid)
   {
     for (int i = 0; i < mGuiModules.size(); i++)
     {
@@ -400,23 +391,23 @@ namespace Dwarf
     windowTitle.append(" - ");
     windowTitle.append(mLoadedScene->GetScene().GetProperties().GetName());
     windowTitle.append(" <");
-    windowTitle.append(graphicsApiNames[(int)mGraphicsApi]);
+    windowTitle.append(magic_enum::enum_name(mGraphicsApi));
     windowTitle.append(">");
 
-    mWindow->setWindowTitle(windowTitle);
+    mWindow->SetWindowTitle(windowTitle);
   }
 
-  nlohmann::json
-  EditorView::Serialize()
+  auto
+  EditorView::Serialize() -> nlohmann::json
   {
-    nlohmann::json j;
-    j["windowMaximized"] = mWindow->isWindowMaximized();
-    j["modules"] = nlohmann::json::array();
-    for (int i = 0; i < mGuiModules.size(); i++)
+    nlohmann::json serializedViewJson;
+    serializedViewJson["windowMaximized"] = mWindow->IsWindowMaximized();
+    serializedViewJson["modules"] = nlohmann::json::array();
+    for (const auto& mGuiModule : mGuiModules)
     {
-      j["modules"].push_back(mGuiModules.at(i)->Serialize());
+      serializedViewJson["modules"].push_back(mGuiModule->Serialize());
     }
-    return j;
+    return serializedViewJson;
   }
 
   void

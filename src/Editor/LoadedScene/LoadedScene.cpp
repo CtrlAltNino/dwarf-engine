@@ -1,12 +1,16 @@
 #include "Editor/LoadedScene/LoadedScene.h"
 #include <fmt/format.h>
 
+#include <utility>
+
+#include <utility>
+
 namespace Dwarf
 {
   LoadedScene::LoadedScene(std::shared_ptr<IDwarfLogger>     logger,
                            std::shared_ptr<IProjectSettings> projectSettings)
-    : mLogger(logger)
-    , mProjectSettings(projectSettings)
+    : mLogger(std::move(logger))
+    , mProjectSettings(std::move(projectSettings))
   {
     mLogger->LogDebug(Log("LoadedScene created", "LoadedScene"));
   }
@@ -16,8 +20,8 @@ namespace Dwarf
     mLogger->LogDebug(Log("LoadedScene destroyed", "LoadedScene"));
   }
 
-  IScene&
-  LoadedScene::GetScene()
+  auto
+  LoadedScene::GetScene() -> IScene&
   {
     return *mScene;
   }
@@ -41,5 +45,11 @@ namespace Dwarf
     {
       mLogger->LogDebug(Log("Unloading scene", "LoadedScene"));
     }
+  }
+
+  auto
+  LoadedScene::HasLoadedScene() -> bool
+  {
+    return mScene != nullptr;
   }
 }

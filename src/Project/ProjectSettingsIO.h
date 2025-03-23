@@ -19,9 +19,22 @@ namespace Dwarf
                     std::shared_ptr<IFileHandler> fileHandler);
     ~ProjectSettingsIO() override = default;
 
-    std::optional<ProjectSettingsData>
-    LoadProjectSettings(std::filesystem::path projectPath) override;
+    /**
+     * @brief Loads the project settings from a given project path
+     *
+     * @param projectPath Path to a project directory
+     * @return Optional project settings struct if a file was found
+     */
+    auto
+    LoadProjectSettings(std::filesystem::path projectPath)
+      -> std::optional<ProjectSettingsData> override;
 
+    /**
+     * @brief Writes project settings to a path
+     *
+     * @param projectSettingsData Project settings to write
+     * @param projectPath Path to a project directory
+     */
     void
     SaveProjectSettings(ProjectSettingsData   projectSettingsData,
                         std::filesystem::path projectPath) override;

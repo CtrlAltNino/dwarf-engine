@@ -231,7 +231,7 @@ namespace Dwarf
                         const TextureFormat&     format,
                         const TextureDataType&   dataType,
                         const TextureResolution& size,
-                        int samples) const -> std::unique_ptr<ITexture>
+                        uint32_t samples) const -> std::unique_ptr<ITexture>
   {
     mLogger->LogDebug(Log("Creating empty texture", "TextureFactory"));
     TextureParameters parameters;
