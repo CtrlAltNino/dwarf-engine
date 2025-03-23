@@ -78,6 +78,7 @@ namespace Dwarf
 
     /// @brief The render texture for this scene viewer.
     std::shared_ptr<IFramebuffer>       mFramebuffer;
+    std::shared_ptr<IFramebuffer>       mNonMsaaBuffer;
     std::shared_ptr<IFramebuffer>       mIdBuffer;
     std::shared_ptr<IFramebuffer>       mOutlineBuffer;
     std::shared_ptr<IFramebuffer>       mPresentationBuffer;
