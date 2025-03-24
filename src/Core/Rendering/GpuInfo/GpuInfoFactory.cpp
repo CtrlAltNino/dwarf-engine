@@ -1,9 +1,9 @@
-#include "GpuInfoFactory.h"
+#include "pch.h"
+
 #include "Core/Base.h"
+#include "GpuInfoFactory.h"
 #include "Logging/IDwarfLogger.h"
 #include "Platform/OpenGL/OpenGLUtilities.h"
-#include <fmt/format.h>
-#include <utility>
 
 #ifdef _WIN32
 #include "Platform/Amd/AmdGpuInfo.h"

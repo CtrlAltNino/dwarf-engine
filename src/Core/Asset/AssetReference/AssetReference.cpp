@@ -1,7 +1,6 @@
+#include "pch.h"
+
 #include "AssetReference.h"
-
-#include <utility>
-
 #include "Core/Asset/Database/AssetComponents.h"
 #include "Core/Asset/Database/IAssetDatabase.h"
 #include "Core/Asset/Texture/TextureWorker/ITextureLoadingWorker.h"

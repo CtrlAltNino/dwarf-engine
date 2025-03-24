@@ -1,7 +1,6 @@
-#include "Utilities/FileHandler/FileHandler.h"
-
 #include "pch.h"
 
+#include "Utilities/FileHandler/FileHandler.h"
 #include <sago/platform_folders.h>
 
 #ifdef _WIN32
@@ -13,8 +12,6 @@
 #include <ShlObj.h>
 #include <objbase.h>
 #include <shlwapi.h>
-
-#include <utility>
 #endif
 
 #ifdef __linux__

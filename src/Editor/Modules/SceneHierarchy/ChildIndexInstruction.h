@@ -1,7 +1,8 @@
 #pragma once
 
-#include "Core/Scene/Scene.h"
+#include "Core/Scene/IScene.h"
 #include "Editor/Modules/SceneHierarchy/GraphInstruction.h"
+#include <functional>
 
 namespace Dwarf
 {
@@ -11,7 +12,7 @@ namespace Dwarf
   {
   private:
     /// @brief Pointer to the currently opened scene.
-    IScene& mScene;
+    std::reference_wrapper<IScene> mScene;
 
     /// @brief The entities to process.
     std::vector<entt::entity> mSourceEntities;
@@ -20,11 +21,12 @@ namespace Dwarf
     int mIndex;
 
   public:
+    ChildIndexInstruction(IScene&                   scene,
+                          std::vector<entt::entity> sourceEntities,
+                          int                       index);
+
     /// @brief Executes the instruction.
     void
     PerformInstruction() override;
-    ChildIndexInstruction(IScene&                          scene,
-                          std::vector<entt::entity> const& sourceEntities,
-                          int                              index);
   };
 }

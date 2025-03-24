@@ -7,8 +7,6 @@
 #include "Launcher/SavedProjects/Sorter/ISavedProjectsSorter.h"
 #include "Logging/IDwarfLogger.h"
 #include "Project/IProjectSettingsIO.h"
-#include "Utilities/FileHandler/IFileHandler.h"
-#include <memory>
 
 namespace Dwarf
 {
@@ -28,23 +26,54 @@ namespace Dwarf
                   std::shared_ptr<IProjectSettingsIO>   projectSettingsIO);
 
     ~SavedProjects() override;
+
+    /**
+     * @brief Adds a project to the list by path
+     *
+     * @param path Path to a project directory
+     */
     void
     AddProject(const std::filesystem::path& path) override;
 
+    /**
+     * @brief Opens a dialog to find and add a project
+     *
+     */
     void
     OpenAddProjectDialog() override;
 
+    /**
+     * @brief Removes a project from the list
+     *
+     * @param path Path to a project directory
+     */
     void
     RemoveProject(const std::filesystem::path& path) override;
 
+    /**
+     * @brief Changes the graphics api of a project
+     *
+     * @param path Path to the project directory
+     * @param api Api to change the project to
+     */
     void
     ChangeGraphicsApi(const std::filesystem::path& path,
                       GraphicsApi                  api) override;
 
+    /**
+     * @brief Updates the time stamp for the last time a project was opened
+     *
+     * @param path Path to a project directory
+     */
     void
     RegisterProjectOpening(const std::filesystem::path& path) override;
 
-    std::vector<SavedProject>&
-    GetSavedProjects() override;
+    /**
+     * @brief Returns the list of saved projects
+     *
+     * @return List of saved projects
+     */
+    [[nodiscard]] auto
+    GetSavedProjects() -> std::vector<SavedProject>& override;
   };
 }

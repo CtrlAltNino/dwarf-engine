@@ -1,12 +1,12 @@
 #pragma once
 
 #include "Core/Asset/Database/IAssetDatabase.h"
-#include "Editor/IEditor.h"
 #include "Editor/LoadedScene/ILoadedScene.h"
 #include "Editor/Modules/IGuiModule.h"
 #include "Editor/Modules/SceneHierarchy/GraphInstruction.h"
 #include "Editor/Selection/IEditorSelection.h"
 #include "Input/IInputManager.h"
+#include "Logging/IDwarfLogger.h"
 #include <boost/serialization/strong_typedef.hpp>
 
 namespace Dwarf
@@ -15,6 +15,7 @@ namespace Dwarf
   class SceneHierarchyWindow : public IGuiModule
   {
   private:
+    std::shared_ptr<IDwarfLogger>     mLogger;
     std::shared_ptr<ILoadedScene>     mLoadedScene;
     std::shared_ptr<IEditorSelection> mEditorSelection;
     std::shared_ptr<IInputManager>    mInputManager;
@@ -35,16 +36,20 @@ namespace Dwarf
     ProcessInstructions();
 
   public:
-    SceneHierarchyWindow(std::shared_ptr<ILoadedScene>     loadedScene,
+    SceneHierarchyWindow(std::shared_ptr<IDwarfLogger>     logger,
+                         std::shared_ptr<ILoadedScene>     loadedScene,
                          std::shared_ptr<IEditorSelection> editorSelection,
                          std::shared_ptr<IInputManager>    inputManager,
                          std::shared_ptr<IAssetDatabase>   assetDatabase);
 
-    SceneHierarchyWindow(std::shared_ptr<ILoadedScene>     loadedScene,
+    SceneHierarchyWindow(std::shared_ptr<IDwarfLogger>     logger,
+                         std::shared_ptr<ILoadedScene>     loadedScene,
                          std::shared_ptr<IEditorSelection> editorSelection,
                          std::shared_ptr<IInputManager>    inputManager,
                          std::shared_ptr<IAssetDatabase>   assetDatabase,
                          SerializedModule                  serializedModule);
+
+    ~SceneHierarchyWindow() override;
 
     /// @brief Renders the module window.
     void
@@ -53,10 +58,10 @@ namespace Dwarf
     void
     OnUpdate() override;
 
-    nlohmann::json
-    Serialize() override;
+    auto
+    Serialize() -> nlohmann::json override;
 
     void
-    Deserialize(nlohmann::json moduleData);
+    Deserialize(const nlohmann::json& moduleData);
   };
 }

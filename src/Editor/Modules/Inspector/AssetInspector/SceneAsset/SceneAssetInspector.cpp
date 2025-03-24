@@ -1,5 +1,6 @@
+#include "pch.h"
+
 #include "SceneAssetInspector.h"
-#include "Core/Scene/IScene.h"
 #include "UI/DwarfUI.h"
 
 namespace Dwarf
@@ -13,37 +14,37 @@ namespace Dwarf
     std::shared_ptr<ILoadedScene>     loadedScene,
     std::shared_ptr<IFileHandler>     fileHandler)
     : mGraphicsApi(graphicsApi)
-    , mAssetDatabase(assetDatabase)
-    , mAssetReimporter(assetReimporter)
-    , mInputManager(inputManager)
-    , mSceneIO(sceneIO)
-    , mLoadedScene(loadedScene)
-    , mFileHandler(fileHandler)
+    , mAssetDatabase(std::move(assetDatabase))
+    , mAssetReimporter(std::move(assetReimporter))
+    , mInputManager(std::move(inputManager))
+    , mSceneIO(std::move(sceneIO))
+    , mLoadedScene(std::move(loadedScene))
+    , mFileHandler(std::move(fileHandler))
   {
   }
 
   void
   SceneAssetInspector::Render(IAssetReference& asset)
   {
-    ImDrawList* draw_list = ImGui::GetWindowDrawList();
-    draw_list->ChannelsSplit(2);
-    draw_list->ChannelsSetCurrent(1);
+    ImDrawList* drawList = ImGui::GetWindowDrawList();
+    drawList->ChannelsSplit(2);
+    drawList->ChannelsSetCurrent(1);
 
     ImGui::BeginChild("##inspector_child",
                       ImGui::GetContentRegionAvail(),
-                      false,
+                      0,
                       ImGuiWindowFlags_AlwaysUseWindowPadding);
 
     ImGui::TextWrapped("File name: ");
-    ImGui::SameLine(0, 5.0f);
+    ImGui::SameLine(0, 5.0F);
     ImGui::TextWrapped("%s", asset.GetPath().filename().string().c_str());
 
     ImGui::TextWrapped("Path: ");
-    ImGui::SameLine(0, 5.0f);
+    ImGui::SameLine(0, 5.0F);
     ImGui::TextWrapped("%s", asset.GetPath().string().c_str());
 
     ImGui::TextWrapped("Type: ");
-    ImGui::SameLine(0, 5.0f);
+    ImGui::SameLine(0, 5.0F);
     ImGui::TextWrapped("Dwarf Engine Scene");
 
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
@@ -59,7 +60,7 @@ namespace Dwarf
       ImVec2(ImGui::GetWindowPos().x + ImGui::GetCursorPos().x +
                COMPONENT_PANEL_PADDING,
              ImGui::GetWindowPos().y + ImGui::GetCursorPos().y +
-               COMPONENT_PANEL_PADDING / 2.0f);
+               (COMPONENT_PANEL_PADDING / 2.0F));
     auto separatorMax =
       ImVec2(ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMax().x -
                COMPONENT_PANEL_PADDING,
@@ -75,7 +76,7 @@ namespace Dwarf
       mLoadedScene->SetScene(mSceneIO->LoadScene(asset));
     }
 
-    draw_list->ChannelsSetCurrent(0);
+    drawList->ChannelsSetCurrent(0);
 
     float endY = ImGui::GetItemRectMax().y;
     ImGui::EndChild();
@@ -84,8 +85,8 @@ namespace Dwarf
       ImVec2(ImGui::GetItemRectMin().x + ImGui::GetContentRegionAvail().x,
              endY + 2 * COMPONENT_PANEL_PADDING),
       IM_COL32(59, 66, 82, 255),
-      5.0f);
+      5.0F);
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3 * COMPONENT_PANEL_PADDING);
-    draw_list->ChannelsMerge();
+    drawList->ChannelsMerge();
   }
 }

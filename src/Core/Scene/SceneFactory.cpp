@@ -1,8 +1,9 @@
-#include "SceneFactory.h"
+#include "pch.h"
 
 #include "Core/Asset/Database/IAssetDatabase.h"
 #include "Scene.h"
-#include <utility>
+#include "SceneFactory.h"
+
 
 namespace Dwarf
 {

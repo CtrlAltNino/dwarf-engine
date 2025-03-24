@@ -1,5 +1,4 @@
 #pragma once
-#include "pch.h"
 
 #include "Core/Asset/Database/IAssetDatabase.h"
 #include "Core/GenericComponents.h"

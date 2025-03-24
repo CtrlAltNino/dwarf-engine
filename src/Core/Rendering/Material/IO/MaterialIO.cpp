@@ -1,7 +1,6 @@
+#include "pch.h"
+
 #include "MaterialIO.h"
-#include <fmt/format.h>
-#include <string>
-#include <utility>
 
 namespace Dwarf
 {

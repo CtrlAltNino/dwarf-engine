@@ -1,10 +1,9 @@
-#include "MaterialPreview.h"
-
-#include <utility>
+#include "pch.h"
 
 #include "Core/Rendering/Framebuffer/IFramebufferFactory.h"
 #include "Editor/Stats/IEditorStats.h"
-#include <utility>
+#include "MaterialPreview.h"
+
 
 namespace Dwarf
 {

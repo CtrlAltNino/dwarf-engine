@@ -1,13 +1,11 @@
-#include <utility>
-
-#include <utility>
-
-#include "Editor/Editor.h"
+#include "pch.h"
 
 #include "Core/Asset/Database/IAssetDatabase.h"
 #include "Core/Scene/IScene.h"
+#include "Editor/Editor.h"
 #include "Input/IInputManager.h"
 #include "Utilities/TimeUtilities.h"
+
 
 namespace Dwarf
 {

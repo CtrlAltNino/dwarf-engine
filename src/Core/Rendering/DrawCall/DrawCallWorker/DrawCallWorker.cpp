@@ -1,8 +1,6 @@
+#include "pch.h"
+
 #include "DrawCallWorker.h"
-#include <algorithm>
-#include <functional>
-#include <memory>
-#include <utility>
 
 namespace Dwarf
 {

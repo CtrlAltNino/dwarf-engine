@@ -14,6 +14,7 @@
 #include "Editor/Selection/IEditorSelection.h"
 #include "Editor/Stats/IEditorStats.h"
 #include "Input/IInputManager.h"
+#include "Logging/IDwarfLogger.h"
 #include <ImGuizmo.h>
 #include <boost/serialization/strong_typedef.hpp>
 #include <glm/vec2.hpp>
@@ -83,6 +84,7 @@ namespace Dwarf
     std::shared_ptr<IRendererApi>       mRendererApi;
     std::shared_ptr<IShader>            mAgxTonemapShader;
 
+    std::shared_ptr<IDwarfLogger>              mLogger;
     std::shared_ptr<IInputManager>             mInputManager;
     std::shared_ptr<IEditorStats>              mEditorStats;
     std::shared_ptr<ILoadedScene>              mLoadedScene;
@@ -125,6 +127,7 @@ namespace Dwarf
 
   public:
     SceneViewerWindow(
+      std::shared_ptr<IDwarfLogger>              logger,
       std::shared_ptr<ICameraFactory>            cameraFactory,
       std::shared_ptr<IFramebufferFactory>       framebufferFactory,
       std::shared_ptr<IEditorStats>              editorStats,
@@ -139,6 +142,7 @@ namespace Dwarf
 
     SceneViewerWindow(
       SerializedModule                           serializedModule,
+      std::shared_ptr<IDwarfLogger>              logger,
       std::shared_ptr<ICameraFactory>            cameraFactory,
       std::shared_ptr<IFramebufferFactory>       framebufferFactory,
       std::shared_ptr<IEditorStats>              editorStats,
@@ -150,6 +154,8 @@ namespace Dwarf
       std::shared_ptr<IShaderRegistry>           shaderRegistry,
       std::shared_ptr<IShaderSourceCollectionFactory>
         shaderSourceCollectionFactory);
+
+    ~SceneViewerWindow() override;
 
     void
     OnUpdate() override;

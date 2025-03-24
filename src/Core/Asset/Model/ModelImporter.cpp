@@ -1,11 +1,9 @@
+#include "pch.h"
+
 #include "ModelImporter.h"
 #include <assimp/Importer.hpp>
 #include <assimp/postprocess.h>
 #include <assimp/scene.h>
-#include <fmt/format.h>
-#include <span>
-#include <utility>
-
 namespace Dwarf
 {
   auto

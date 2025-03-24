@@ -1,5 +1,7 @@
-#include "ProjectNotFoundModal.h"
+#include "pch.h"
+
 #include "Launcher/LauncherAssets/ILauncherAssets.h"
+#include "ProjectNotFoundModal.h"
 #include <imgui.h>
 
 namespace Dwarf
@@ -11,9 +13,9 @@ namespace Dwarf
     std::shared_ptr<ILauncherData>   data,
     std::shared_ptr<ISavedProjects>  savedProjects,
     std::shared_ptr<ILauncherAssets> launcherAssets)
-    : mData(data)
-    , mSavedProjects(savedProjects)
-    , mLauncherAssets(launcherAssets)
+    : mData(std::move(data))
+    , mSavedProjects(std::move(savedProjects))
+    , mLauncherAssets(std::move(launcherAssets))
   {
   }
 
@@ -83,7 +85,7 @@ namespace Dwarf
 
       // ==================== Remove Button ====================
       if (ImGui::Button("Remove",
-                        ImVec2(ImGui::GetContentRegionAvail().x / 2 - 10, 0)))
+                        ImVec2((ImGui::GetContentRegionAvail().x / 2) - 10, 0)))
       {
         mSavedProjects->RemoveProject(mData->GetSelectedProject().value().Path);
         ImGui::CloseCurrentPopup();

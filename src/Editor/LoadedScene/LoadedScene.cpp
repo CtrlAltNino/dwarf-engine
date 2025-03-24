@@ -1,9 +1,6 @@
+#include "pch.h"
+
 #include "Editor/LoadedScene/LoadedScene.h"
-#include <fmt/format.h>
-
-#include <utility>
-
-#include <utility>
 
 namespace Dwarf
 {

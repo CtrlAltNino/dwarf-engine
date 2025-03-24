@@ -1,7 +1,7 @@
-#include "OpenGLMesh.h"
-#include "Platform/OpenGL/OpenGLUtilities.h"
 #include "pch.h"
 
+#include "OpenGLMesh.h"
+#include "Platform/OpenGL/OpenGLUtilities.h"
 
 namespace Dwarf
 {

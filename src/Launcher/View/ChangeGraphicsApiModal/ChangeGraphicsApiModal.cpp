@@ -1,9 +1,8 @@
+#include "pch.h"
+
 #include "ChangeGraphicsApiModal.h"
 #include "Core/Base.h"
 #include <imgui.h>
-#include <magic_enum/magic_enum.hpp>
-#include <utility>
-
 
 namespace Dwarf
 {
@@ -153,31 +152,34 @@ namespace Dwarf
               {
                 ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
                 draw_list->ChannelsSetCurrent(0);
-                ImVec2 p_min = ImGui::GetItemRectMin();
-                ImVec2 p_max = ImGui::GetItemRectMax();
+                ImVec2 pMin = ImGui::GetItemRectMin();
+                ImVec2 pMax = ImGui::GetItemRectMax();
                 ImU32  rectCol = ImGui::IsMouseDown(ImGuiMouseButton_Left)
                                    ? IM_COL32(76, 86, 106, 255)
                                    : IM_COL32(67, 76, 94, 255);
 
                 ImGui::GetWindowDrawList()->AddRectFilled(
-                  p_min, p_max, rectCol, 5);
+                  pMin, pMax, rectCol, 5);
               }
               else if (is_selected)
               {
                 draw_list->ChannelsSetCurrent(0);
-                ImVec2 p_min = ImGui::GetItemRectMin();
-                ImVec2 p_max = ImGui::GetItemRectMax();
+                ImVec2 pMin = ImGui::GetItemRectMin();
+                ImVec2 pMax = ImGui::GetItemRectMax();
                 ImU32  rectCol = IM_COL32(59, 66, 82, 255);
 
                 ImGui::GetWindowDrawList()->AddRectFilled(
-                  p_min, p_max, rectCol, 5);
+                  pMin, pMax, rectCol, 5);
               }
 
               draw_list->ChannelsMerge();
 
               // Set the initial focus when opening the combo (scrolling +
               // keyboard navigation focus)
-              if (is_selected) ImGui::SetItemDefaultFocus();
+              if (is_selected)
+              {
+                ImGui::SetItemDefaultFocus();
+              }
             }
           }
 
@@ -207,7 +209,7 @@ namespace Dwarf
 
       // ==================== Apply Button ====================
       if (ImGui::Button("Apply",
-                        ImVec2(ImGui::GetContentRegionAvail().x / 2 - 10, 0)))
+                        ImVec2((ImGui::GetContentRegionAvail().x / 2) - 10, 0)))
       {
         mSavedProjects->ChangeGraphicsApi(
           mData->GetSelectedProject().value().Path,

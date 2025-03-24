@@ -1,5 +1,6 @@
+#include "pch.h"
+
 #include "Camera.h"
-#include <utility>
 
 namespace Dwarf
 {

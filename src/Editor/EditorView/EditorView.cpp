@@ -1,16 +1,12 @@
-#include "EditorView.h"
+#include "pch.h"
+
 #include "Core/Asset/Creation/Material/IMaterialCreator.h"
 #include "Core/Base.h"
 #include "Core/Scene/ISceneFactory.h"
 #include "Editor/Modules/IGuiModuleFactory.h"
+#include "EditorView.h"
 #include "UI/DwarfUI.h"
-#include "pch.h"
-#include <fmt/format.h>
-#include <magic_enum/magic_enum.hpp>
-#include <memory>
 #include <nfd.h>
-#include <nlohmann/json_fwd.hpp>
-#include <utility>
 
 #define EDITOR_VIEW_SERIALIZATION_INTERVAL_SECONDS (5)
 namespace Dwarf

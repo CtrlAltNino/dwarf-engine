@@ -1,7 +1,8 @@
+#include "pch.h"
+
 #include "ProjectListView.h"
 #include "Utilities/TimeUtilities.h"
 #include <imgui.h>
-#include <magic_enum/magic_enum.hpp>
 
 namespace Dwarf
 {
@@ -14,11 +15,11 @@ namespace Dwarf
     std::shared_ptr<ISavedProjectsSorter> savedProjectsSorter,
     std::shared_ptr<IFileHandler>         fileHandler,
     std::shared_ptr<ILauncherAssets>      launcherAssets)
-    : mData(data)
-    , mSavedProjects(savedProjects)
-    , mSavedProjectsSorter(savedProjectsSorter)
-    , mFileHandler(fileHandler)
-    , mLauncherAssets(launcherAssets)
+    : mData(std::move(data))
+    , mSavedProjects(std::move(savedProjects))
+    , mSavedProjectsSorter(std::move(savedProjectsSorter))
+    , mFileHandler(std::move(fileHandler))
+    , mLauncherAssets(std::move(launcherAssets))
   {
   }
 
@@ -29,11 +30,11 @@ namespace Dwarf
       mSavedProjects->GetSavedProjects();
     std::vector<std::filesystem::path> projectsToRemove;
 
-    ImGuiWindowFlags window_flags = 0;
-    window_flags |= ImGuiWindowFlags_NoMove;
-    window_flags |= ImGuiWindowFlags_NoResize;
-    window_flags |= ImGuiWindowFlags_NoCollapse;
-    window_flags |= ImGuiWindowFlags_NoTitleBar;
+    ImGuiWindowFlags windowFlags = 0;
+    windowFlags |= ImGuiWindowFlags_NoMove;
+    windowFlags |= ImGuiWindowFlags_NoResize;
+    windowFlags |= ImGuiWindowFlags_NoCollapse;
+    windowFlags |= ImGuiWindowFlags_NoTitleBar;
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(60, 8));
     ImGui::SetNextWindowPos(ImVec2(0, 0));
@@ -42,7 +43,7 @@ namespace Dwarf
     ImGui::PushStyleColor(ImGuiCol_Border, IM_COL32(0, 0, 0, 0));
     ImGui::PushStyleColor(ImGuiCol_WindowBg, IM_COL32(46, 52, 64, 255));
 
-    if (!ImGui::Begin("Project List", NULL, window_flags))
+    if (!ImGui::Begin("Project List", NULL, windowFlags))
     {
       // Early out if the window is collapsed, as an optimization.
       ImGui::End();
@@ -56,16 +57,16 @@ namespace Dwarf
     ImGui::Separator();
     ImGui::PopStyleVar(1);
 
-    const int   COLUMNS_COUNT = 4;
-    const float ROW_HEIGHT = 50;
-    const float HEADER_ROW_HEIGHT = 40;
-    ImVec2      cellPadding = ImVec2(10.0f, 10.0f);
+    const int   columnsCount = 4;
+    const float rowHeight = 50;
+    const float headerRowHeight = 40;
+    ImVec2      cellPadding = ImVec2(10.0F, 10.0F);
     ImGui::PushStyleVar(ImGuiStyleVar_CellPadding, cellPadding);
     ImGui::PushStyleColor(ImGuiCol_TableBorderLight, ImVec4(0, 0, 0, 0));
     ImGui::PushStyleColor(ImGuiCol_TableBorderStrong, ImVec4(0, 0, 0, 0));
     ImGui::PushStyleColor(ImGuiCol_TableHeaderBg, IM_COL32(59, 66, 82, 255));
     if (ImGui::BeginTable("Project entries",
-                          COLUMNS_COUNT,
+                          columnsCount,
                           ImGuiTableFlags_Borders |
                             ImGuiTableFlags_SizingFixedFit |
                             ImGuiTableFlags_PreciseWidths))
@@ -75,44 +76,44 @@ namespace Dwarf
                               ImGuiTableColumnFlags_NoResize |
                                 ImGuiTableColumnFlags_NoReorder |
                                 ImGuiTableColumnFlags_WidthFixed,
-                              initialWidth * 0.2);
+                              initialWidth * 0.2F);
       ImGui::TableSetupColumn("Path",
                               ImGuiTableColumnFlags_NoResize |
                                 ImGuiTableColumnFlags_NoReorder |
                                 ImGuiTableColumnFlags_WidthFixed,
-                              initialWidth * 0.4);
+                              initialWidth * 0.4F);
       ImGui::TableSetupColumn("Last opened",
                               ImGuiTableColumnFlags_NoResize |
                                 ImGuiTableColumnFlags_NoReorder |
                                 ImGuiTableColumnFlags_WidthFixed,
-                              initialWidth * 0.25);
+                              initialWidth * 0.25F);
       ImGui::TableSetupColumn("API",
                               ImGuiTableColumnFlags_NoResize |
                                 ImGuiTableColumnFlags_NoReorder |
                                 ImGuiTableColumnFlags_WidthFixed,
-                              initialWidth * 0.15);
+                              initialWidth * 0.15F);
       // ImGui::Columns(4);
       // ImGui::SetColumnWidth(-1, 50);
 
       // Dummy entire-column selection storage
       // FIXME: It would be nice to actually demonstrate full-featured selection
       // using those checkbox.
-      ImDrawList* draw_list = ImGui::GetWindowDrawList();
+      ImDrawList* drawList = ImGui::GetWindowDrawList();
 
       // Instead of calling TableHeadersRow() we'll submit custom headers
       // ourselves
-      ImGui::TableNextRow(ImGuiTableRowFlags_Headers, HEADER_ROW_HEIGHT);
+      ImGui::TableNextRow(ImGuiTableRowFlags_Headers, headerRowHeight);
       ImGui::PushFont(mLauncherAssets->GetHeaderFont().get());
       ImGui::PushStyleColor(ImGuiCol_HeaderHovered, IM_COL32(76, 86, 106, 255));
       ImGui::PushStyleColor(ImGuiCol_HeaderActive,
                             IM_COL32(129, 161, 193, 255));
-      for (int column = 0; column < COLUMNS_COUNT; column++)
+      for (int column = 0; column < columnsCount; column++)
       {
         ImGui::TableSetColumnIndex(column);
         ImGui::PushID(column);
         ImGui::SetCursorPosY(ImGui::GetCursorPosY() +
-                             (HEADER_ROW_HEIGHT / 2 - cellPadding.y / 2) -
-                             ImGui::GetFontSize() / 2);
+                             (headerRowHeight / 2 - cellPadding.y / 2) -
+                             (ImGui::GetFontSize() / 2));
         ImGui::TableHeader(ImGui::TableGetColumnName(column));
 
         if (ImGui::IsItemHovered())
@@ -133,13 +134,13 @@ namespace Dwarf
       ImGui::PopFont();
 
       ImGui::PushFont(mLauncherAssets->GetTextFont().get());
-      for (auto& project : projectList)
+      for (const auto& project : projectList)
       {
-        ImGui::TableNextRow(ImGuiTableRowFlags_None, ROW_HEIGHT);
-        for (int column = 0; (column < COLUMNS_COUNT); column++)
+        ImGui::TableNextRow(ImGuiTableRowFlags_None, rowHeight);
+        for (int column = 0; (column < columnsCount); column++)
         {
           ImGui::TableSetColumnIndex(column);
-          std::string cellText = "";
+          std::string cellText;
           switch (column)
           {
             case 0: cellText = project.ProjectName; break;
@@ -173,17 +174,17 @@ namespace Dwarf
               cellText.resize(availableCharacters + 3, '.');
             }
 
-            draw_list->ChannelsSplit(2);
+            drawList->ChannelsSplit(2);
 
             ImGui::PushStyleVar(ImGuiStyleVar_SelectableTextAlign,
-                                ImVec2(0, 0.5f));
+                                ImVec2(0, 0.5F));
             ImGui::PushStyleColor(ImGuiCol_HeaderHovered, ImVec4(0, 0, 0, 0));
             ImGui::PushStyleColor(ImGuiCol_HeaderActive, ImVec4(0, 0, 0, 0));
-            draw_list->ChannelsSetCurrent(1);
+            drawList->ChannelsSetCurrent(1);
             ImGui::Selectable(cellText.c_str(),
                               mData->GetSelectedProject() == project,
                               ImGuiSelectableFlags_SpanAllColumns,
-                              ImVec2(0, ROW_HEIGHT));
+                              ImVec2(0, rowHeight));
             ImGui::PopStyleVar(1);
             ImGui::PopStyleColor(2);
 
@@ -231,7 +232,9 @@ namespace Dwarf
                 }
 
                 if (ImGui::IsItemHovered())
+                {
                   ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+                }
 
                 if (ImGui::Button("Remove project from list",
                                   ImVec2(ImGui::GetContentRegionAvail().x, 0)))
@@ -241,7 +244,9 @@ namespace Dwarf
                 }
 
                 if (ImGui::IsItemHovered())
+                {
                   ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+                }
 
                 ImGui::EndPopup();
               }
@@ -268,23 +273,23 @@ namespace Dwarf
             if (ImGui::IsItemHovered())
             {
               ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
-              draw_list->ChannelsSetCurrent(0);
-              ImVec2 p_min = ImGui::GetItemRectMin();
-              ImVec2 p_max = ImGui::GetItemRectMax();
+              drawList->ChannelsSetCurrent(0);
+              ImVec2 pMin = ImGui::GetItemRectMin();
+              ImVec2 pMax = ImGui::GetItemRectMax();
               ImU32  rectCol = ImGui::IsMouseDown(ImGuiMouseButton_Left)
                                  ? IM_COL32(76, 86, 106, 255)
                                  : IM_COL32(67, 76, 94, 255);
 
               ImGui::GetWindowDrawList()->AddRectFilled(
-                p_min, p_max, rectCol, 10);
+                pMin, pMax, rectCol, 10);
             }
 
-            draw_list->ChannelsMerge();
+            drawList->ChannelsMerge();
           }
           else if (column == 1)
           {
-            ImGui::SetCursorPosY(ImGui::GetCursorPosY() + (ROW_HEIGHT / 2) -
-                                 ImGui::GetFontSize() / 2);
+            ImGui::SetCursorPosY(ImGui::GetCursorPosY() + (rowHeight / 2) -
+                                 (ImGui::GetFontSize() / 2));
             float textWidth =
               ImGui::CalcTextSize(cellText.c_str(), nullptr, false).x;
             float columnWidth = ImGui::GetContentRegionAvail().x - 8;
@@ -301,8 +306,8 @@ namespace Dwarf
           }
           else
           {
-            ImGui::SetCursorPosY(ImGui::GetCursorPosY() + (ROW_HEIGHT / 2) -
-                                 ImGui::GetFontSize() / 2);
+            ImGui::SetCursorPosY(ImGui::GetCursorPosY() + (rowHeight / 2) -
+                                 (ImGui::GetFontSize() / 2));
             ImGui::Text("%s", cellText.c_str());
           }
         }

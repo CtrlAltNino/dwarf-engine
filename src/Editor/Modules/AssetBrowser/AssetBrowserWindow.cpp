@@ -1,18 +1,13 @@
-#include "Editor/Modules/AssetBrowser/AssetBrowserWindow.h"
-#include "UI/DwarfUI.h"
 #include "pch.h"
 
-// #include "Core/Scene/SceneUtilities.h"
-#include <algorithm>
-#include <boost/algorithm/string.hpp>
-#include <cstring>
-#include <memory>
-#include <utility>
+#include "Editor/Modules/AssetBrowser/AssetBrowserWindow.h"
+#include "UI/DwarfUI.h"
 
 namespace Dwarf
 {
   AssetBrowserWindow::AssetBrowserWindow(
     AssetDirectoryPath                assetDirectoryPath,
+    std::shared_ptr<IDwarfLogger>     logger,
     std::shared_ptr<ITextureFactory>  textureFactory,
     std::shared_ptr<IAssetDatabase>   assetDatabase,
     std::shared_ptr<IInputManager>    inputManager,
@@ -41,10 +36,12 @@ namespace Dwarf
   {
     mDirectoryHistory.push_back(mCurrentDirectory);
     LoadIcons();
+    mLogger->LogDebug(Log("AssetBrowserWindow created", "AssetBrowserWindow"));
   }
 
   AssetBrowserWindow::AssetBrowserWindow(
     AssetDirectoryPath                assetDirectoryPath,
+    std::shared_ptr<IDwarfLogger>     logger,
     std::shared_ptr<ITextureFactory>  textureFactory,
     std::shared_ptr<IAssetDatabase>   assetDatabase,
     std::shared_ptr<IInputManager>    inputManager,
@@ -61,6 +58,7 @@ namespace Dwarf
                  ModuleID(std::make_shared<UUID>(
                    serializedModule.t["id"].get<std::string>())))
     , mAssetDirectoryPath(assetDirectoryPath)
+    , mLogger(std::move(logger))
     , mCurrentDirectory(assetDirectoryPath)
     , mTextureFactory(std::move(textureFactory))
     , mAssetDatabase(std::move(assetDatabase))
@@ -76,6 +74,13 @@ namespace Dwarf
     mDirectoryHistory.push_back(mCurrentDirectory);
     LoadIcons();
     // Deserialize(serializedModule.t);
+    mLogger->LogDebug(Log("AssetBrowserWindow created", "AssetBrowserWindow"));
+  }
+
+  AssetBrowserWindow::~AssetBrowserWindow()
+  {
+    mLogger->LogDebug(
+      Log("AssetBrowserWindow destroyed", "AssetBrowserWindow"));
   }
 
   void
@@ -707,8 +712,8 @@ namespace Dwarf
       (std::filesystem::path)moduleData["openedPath"].get<std::string>();
   }
 
-  nlohmann::json
-  AssetBrowserWindow::Serialize()
+  auto
+  AssetBrowserWindow::Serialize() -> nlohmann::json
   {
     nlohmann::json serializedModule;
 

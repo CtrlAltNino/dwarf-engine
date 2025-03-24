@@ -1,3 +1,5 @@
+#include "pch.h"
+
 #include "InspectorWindowFactory.h"
 
 namespace Dwarf

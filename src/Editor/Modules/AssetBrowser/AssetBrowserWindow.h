@@ -10,6 +10,7 @@
 #include "Editor/Modules/IGuiModule.h"
 #include "Editor/Selection/IEditorSelection.h"
 #include "Input/IInputManager.h"
+#include "Logging/IDwarfLogger.h"
 #include "Utilities/FileHandler/IFileHandler.h"
 #include <boost/serialization/strong_typedef.hpp>
 
@@ -21,6 +22,7 @@ namespace Dwarf
   private:
     /// @brief Path to the asset directory of the currently opened project.
     AssetDirectoryPath                mAssetDirectoryPath;
+    std::shared_ptr<IDwarfLogger>     mLogger;
     std::shared_ptr<ITextureFactory>  mTextureFactory;
     std::shared_ptr<IAssetDatabase>   mAssetDatabase;
     std::shared_ptr<IInputManager>    mInputManager;
@@ -42,6 +44,9 @@ namespace Dwarf
     std::filesystem::path              mSelectedAsset;
     int                                mHistoryPos = 0;
     float                              mIconScale = 1.0F;
+    bool                               firstFrame = true;
+    ImGuiID                            dockID = 0;
+    ImGuiID                            footerID = 0;
 
     std::unique_ptr<ITexture> mDirectoryIcon;
     std::unique_ptr<ITexture> mFBXIcon;
@@ -58,10 +63,6 @@ namespace Dwarf
     std::unique_ptr<ITexture> mSceneIcon;
     std::unique_ptr<ITexture> mMaterialIcon;
     std::unique_ptr<ITexture> mUnknownFileIcon;
-
-    bool    firstFrame = true;
-    ImGuiID dockID = 0;
-    ImGuiID footerID = 0;
 
     void
     RenderDirectoryLevel(std::filesystem::path const& directory);
@@ -107,6 +108,7 @@ namespace Dwarf
 
   public:
     AssetBrowserWindow(AssetDirectoryPath                assetDirectoryPath,
+                       std::shared_ptr<IDwarfLogger>     logger,
                        std::shared_ptr<ITextureFactory>  textureFactory,
                        std::shared_ptr<IAssetDatabase>   assetDatabase,
                        std::shared_ptr<IInputManager>    inputManager,
@@ -119,6 +121,7 @@ namespace Dwarf
                        std::shared_ptr<ISceneIO>         sceneIO);
 
     AssetBrowserWindow(AssetDirectoryPath                assetDirectoryPath,
+                       std::shared_ptr<IDwarfLogger>     logger,
                        std::shared_ptr<ITextureFactory>  textureFactory,
                        std::shared_ptr<IAssetDatabase>   assetDatabase,
                        std::shared_ptr<IInputManager>    inputManager,
@@ -130,6 +133,8 @@ namespace Dwarf
                        std::shared_ptr<IFileHandler>     fileHandler,
                        std::shared_ptr<ISceneIO>         sceneIO,
                        SerializedModule                  serializedModule);
+
+    ~AssetBrowserWindow() override;
 
     /// @brief Renders the module window.
     void

@@ -19,10 +19,20 @@ namespace Dwarf
 
     ~SavedProjectsIO() override;
 
-    virtual std::vector<SavedProject>
-    LoadSavedProjects() const override;
+    /**
+     * @brief Loads the saved projects list
+     *
+     * @return List of saved projects
+     */
+    [[nodiscard]] auto
+    LoadSavedProjects() const -> std::vector<SavedProject> override;
 
-    virtual void
+    /**
+     * @brief Writes a list of saved projects
+     *
+     * @param savedProjects List to write
+     */
+    void
     SaveSavedProjects(
       const std::vector<SavedProject>& savedProjects) const override;
   };

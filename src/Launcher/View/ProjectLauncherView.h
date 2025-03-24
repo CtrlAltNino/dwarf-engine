@@ -1,5 +1,4 @@
 #pragma once
-#include "pch.h"
 
 #include "ButtonsView/IButtonsView.h"
 #include "ChangeGraphicsApiModal/IChangeGraphicsApiModal.h"

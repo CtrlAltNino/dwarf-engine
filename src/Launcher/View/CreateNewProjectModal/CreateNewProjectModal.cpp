@@ -1,9 +1,8 @@
+#include "pch.h"
+
 #include "CreateNewProjectModal.h"
 #include <imgui.h>
-#include <magic_enum/magic_enum.hpp>
 #include <nfd.h>
-#include <utility>
-
 
 namespace Dwarf
 {

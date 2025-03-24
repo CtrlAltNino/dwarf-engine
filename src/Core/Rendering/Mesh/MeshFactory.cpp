@@ -1,8 +1,9 @@
-#include "MeshFactory.h"
+#include "pch.h"
 
 #include "Logging/IDwarfLogger.h"
 #include "Mesh.h"
-#include <utility>
+#include "MeshFactory.h"
+
 
 namespace Dwarf
 {

@@ -1,13 +1,12 @@
-#include "Platform/OpenGL/OpenGLFramebuffer.h"
+#include "pch.h"
+
 #include "Core/Rendering/Framebuffer/IFramebuffer.h"
 #include "Core/Rendering/VramTracker/IVramTracker.h"
 #include "OpenGLUtilities.h"
+#include "Platform/OpenGL/OpenGLFramebuffer.h"
 #include "Utilities/ImageUtilities/TextureCommon.h"
-#include "pch.h"
-#include <cstdint>
 #include <glad/glad.h>
-#include <memory>
-#include <utility>
+
 
 namespace Dwarf
 {

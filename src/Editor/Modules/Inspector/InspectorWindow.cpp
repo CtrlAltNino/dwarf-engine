@@ -1,5 +1,7 @@
-#include "Editor/Modules/Inspector/InspectorWindow.h"
+#include "pch.h"
+
 #include "Editor/Modules/IGuiModule.h"
+#include "Editor/Modules/Inspector/InspectorWindow.h"
 
 namespace Dwarf
 {
@@ -18,6 +20,7 @@ namespace Dwarf
     , mAssetInspector(std::move(assetInspector))
     , mEntityInspector(std::move(entityInspector))
   {
+    mLogger->LogDebug(Log("InspectorWindow created", "InspectorWindow"));
   }
 
   InspectorWindow::InspectorWindow(
@@ -37,6 +40,12 @@ namespace Dwarf
     , mAssetInspector(std::move(assetInspector))
     , mEntityInspector(std::move(entityInspector))
   {
+    mLogger->LogDebug(Log("InspectorWindow created", "InspectorWindow"));
+  }
+
+  InspectorWindow::~InspectorWindow()
+  {
+    mLogger->LogDebug(Log("InspectorWindow destroyed", "InspectorWindow"));
   }
 
   void

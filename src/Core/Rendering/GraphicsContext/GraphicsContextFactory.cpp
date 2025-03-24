@@ -1,6 +1,6 @@
+#include "pch.h"
+
 #include "GraphicsContextFactory.h"
-#include <stdexcept>
-#include <utility>
 
 #if _WIN32
 #include "Platform/OpenGL/OpenGLContext.h"

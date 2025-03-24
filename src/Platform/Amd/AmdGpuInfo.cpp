@@ -1,6 +1,7 @@
+#include "pch.h"
+
 #include "AmdGpuInfo.h"
 #include "Logging/IDwarfLogger.h"
-#include <fmt/format.h>
 
 namespace Dwarf
 {

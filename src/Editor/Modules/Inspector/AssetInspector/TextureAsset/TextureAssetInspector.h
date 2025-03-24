@@ -4,11 +4,8 @@
 #include "Core/Asset/Database/IAssetDatabase.h"
 #include "Core/Asset/Metadata/IAssetMetadata.h"
 #include "Core/Base.h"
-#include "Core/Rendering/PreviewRenderer/MaterialPreview/IMaterialPreview.h"
 #include "Editor/Modules/Inspector/AssetInspector/TextureAsset/ITextureAssetInspector.h"
 #include "Input/IInputManager.h"
-#include "Utilities/ImageUtilities/TextureCommon.h"
-#include <nlohmann/json_fwd.hpp>
 
 namespace Dwarf
 {
@@ -28,11 +25,15 @@ namespace Dwarf
     TextureAssetInspector(GraphicsApi                       graphicsApi,
                           std::shared_ptr<IAssetDatabase>   assetDatabase,
                           std::shared_ptr<IAssetReimporter> assetReimporter,
-                          std::shared_ptr<IMaterialPreview> materialPreview,
                           std::shared_ptr<IInputManager>    inputManager,
                           std::shared_ptr<IAssetMetadata>   assetMetadata);
     ~TextureAssetInspector() override = default;
 
+    /**
+     * @brief Renders the texture asset inspector
+     *
+     * @param asset
+     */
     void
     Render(IAssetReference& asset) override;
   };

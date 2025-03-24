@@ -1,5 +1,6 @@
-#include "Editor/Modules/SceneHierarchy/DeleteEntityInstruction.h"
 #include "pch.h"
+
+#include "Editor/Modules/SceneHierarchy/DeleteEntityInstruction.h"
 
 namespace Dwarf
 {
@@ -17,8 +18,8 @@ namespace Dwarf
   {
     for (auto& ent : mSourceEntities)
     {
-      Entity entity(ent, mScene.GetRegistry());
-      mScene.DeleteEntity(entity);
+      Entity entity(ent, mScene.get().GetRegistry());
+      mScene.get().DeleteEntity(entity);
     }
   }
 }

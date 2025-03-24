@@ -1,8 +1,7 @@
-#include "MaterialCreator.h"
-#include "Core/Rendering/Material/IO/IMaterialIO.h"
-#include <memory>
-#include <utility>
+#include "pch.h"
 
+#include "Core/Rendering/Material/IO/IMaterialIO.h"
+#include "MaterialCreator.h"
 namespace Dwarf
 {
   MaterialCreator::MaterialCreator(

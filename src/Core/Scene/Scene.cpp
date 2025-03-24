@@ -1,9 +1,9 @@
-#include "Core/Scene/Scene.h"
+#include "pch.h"
+
 #include "Core/Scene/Components/SceneComponents.h"
+#include "Core/Scene/Scene.h"
 #include <Core/Asset/Database/AssetDatabase.h>
-#include <entt/entity/fwd.hpp>
-#include <string>
-#include <utility>
+
 
 namespace Dwarf
 {

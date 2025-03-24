@@ -1,11 +1,9 @@
+#include "pch.h"
+
 #include "Platform/OpenGL/OpenGLContext.h"
 #include "Platform/OpenGL/OpenGLUtilities.h"
-#include "pch.h"
 #include <SDL3/SDL_opengl.h>
 #include <glad/glad.h>
-#include <iostream>
-#include <memory>
-#include <utility>
 
 namespace Dwarf
 {

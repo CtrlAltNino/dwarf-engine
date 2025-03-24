@@ -19,11 +19,11 @@ namespace Dwarf
     void
     RenderComponents(entt::entity entity);
 
-    void
-    BeginComponent(const char* componentHeader) const;
+    static void
+    BeginComponent(const char* componentHeader);
 
-    void
-    EndComponent() const;
+    static void
+    EndComponent();
 
     template<typename T>
     void
@@ -35,7 +35,11 @@ namespace Dwarf
                     std::shared_ptr<ILoadedScene>   loadedScene);
     ~EntityInspector() override = default;
 
+    /**
+     * @brief Renders the scene entity inspector
+     *
+     */
     void
-    Render(std::vector<entt::entity>& entities) override;
+    Render(const std::vector<entt::entity>& entities) override;
   };
 }

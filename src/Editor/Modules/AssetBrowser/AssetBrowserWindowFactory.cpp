@@ -1,7 +1,8 @@
+#include "pch.h"
+
 #include "AssetBrowserWindowFactory.h"
 #include "Core/Asset/Database/IAssetDatabase.h"
 #include "Editor/Modules/AssetBrowser/AssetBrowserWindow.h"
-#include <memory>
 
 namespace Dwarf
 {
@@ -46,6 +47,7 @@ namespace Dwarf
     -> std::unique_ptr<AssetBrowserWindow>
   {
     return std::make_unique<AssetBrowserWindow>(mAssetDirectoryPath,
+                                                mLogger,
                                                 mTextureFactory,
                                                 mAssetDatabase,
                                                 mInputManager,
@@ -63,6 +65,7 @@ namespace Dwarf
     -> std::unique_ptr<AssetBrowserWindow>
   {
     return std::make_unique<AssetBrowserWindow>(mAssetDirectoryPath,
+                                                mLogger,
                                                 mTextureFactory,
                                                 mAssetDatabase,
                                                 mInputManager,

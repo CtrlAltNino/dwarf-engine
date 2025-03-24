@@ -1,8 +1,6 @@
+#include "pch.h"
+
 #include "AssetReimporter.h"
-
-#include <fmt/format.h>
-
-#include <utility>
 
 namespace Dwarf
 {
