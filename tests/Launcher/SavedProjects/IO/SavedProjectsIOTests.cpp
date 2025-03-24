@@ -9,7 +9,6 @@
 #include <memory>
 #include <nlohmann/json.hpp>
 
-
 using namespace Dwarf;
 using namespace testing;
 
@@ -131,7 +130,8 @@ TEST_F(SavedProjectsIOTest, FileDoesNotExist)
     std::make_unique<SavedProjectsIO>(mockLogger, mockFileHandler);
 
   // Directly saving the project settings
-  savedProjectsIO->LoadSavedProjects();
+  std::vector<SavedProject> loadedProjects =
+    savedProjectsIO->LoadSavedProjects();
 }
 
 TEST_F(SavedProjectsIOTest, SaveProjectSettings)
