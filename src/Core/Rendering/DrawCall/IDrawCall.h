@@ -4,6 +4,7 @@
 #include "Core/Rendering/MeshBuffer/IMeshBuffer.h"
 #include "Core/Scene/Components/SceneComponents.h"
 #include <glm/fwd.hpp>
+
 namespace Dwarf
 {
   /**

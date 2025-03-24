@@ -6,7 +6,6 @@
 #include "Platform/OpenGL/OpenGLUtilities.h"
 #include "ShaderSourceCollectionFactory.h"
 
-
 namespace Dwarf
 {
   ShaderSourceCollectionFactory::ShaderSourceCollectionFactory(

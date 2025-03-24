@@ -4,7 +4,6 @@
 #include "Mesh.h"
 #include "MeshFactory.h"
 
-
 namespace Dwarf
 {
   MeshFactory::MeshFactory(std::shared_ptr<IDwarfLogger> logger)

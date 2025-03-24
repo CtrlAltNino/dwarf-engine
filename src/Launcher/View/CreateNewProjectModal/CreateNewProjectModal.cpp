@@ -1,7 +1,6 @@
 #include "pch.h"
 
 #include "CreateNewProjectModal.h"
-#include <imgui.h>
 #include <nfd.h>
 
 namespace Dwarf

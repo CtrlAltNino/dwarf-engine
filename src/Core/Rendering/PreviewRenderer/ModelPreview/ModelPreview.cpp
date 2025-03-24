@@ -4,7 +4,6 @@
 #include "Core/Rendering/MeshBuffer/IMeshBufferFactory.h"
 #include "ModelPreview.h"
 
-
 namespace Dwarf
 {
   ModelPreview::ModelPreview(

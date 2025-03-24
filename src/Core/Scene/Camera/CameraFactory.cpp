@@ -3,7 +3,6 @@
 #include "Camera.h"
 #include "CameraFactory.h"
 
-
 namespace Dwarf
 {
   CameraFactory::CameraFactory(std::shared_ptr<IDwarfLogger>  logger,

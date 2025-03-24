@@ -3,7 +3,6 @@
 #include "ShaderParameterCollection.h"
 #include "ShaderParameterCollectionFactory.h"
 
-
 namespace Dwarf
 {
   ShaderParameterCollectionFactory::ShaderParameterCollectionFactory(

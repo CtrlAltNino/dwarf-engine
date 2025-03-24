@@ -4,7 +4,6 @@
 #include "Scene.h"
 #include "SceneFactory.h"
 
-
 namespace Dwarf
 {
   SceneFactory::SceneFactory(

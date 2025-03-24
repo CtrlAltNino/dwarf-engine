@@ -3,7 +3,6 @@
 #include "Core/Asset/Database/AssetComponents.h"
 #include "ShaderRegistry.h"
 
-
 namespace Dwarf
 {
   ShaderRegistry::ShaderRegistry(std::shared_ptr<IDwarfLogger>   logger,

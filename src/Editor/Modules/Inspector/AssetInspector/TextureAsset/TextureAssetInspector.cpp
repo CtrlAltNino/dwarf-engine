@@ -3,7 +3,6 @@
 #include "TextureAssetInspector.h"
 #include "UI/DwarfUI.h"
 #include "Utilities/ImageUtilities/TextureCommon.h"
-#include <imgui.h>
 
 namespace Dwarf
 {

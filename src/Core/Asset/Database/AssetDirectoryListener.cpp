@@ -1,6 +1,7 @@
 #include "pch.h"
 
 #include "AssetDirectoryListener.h"
+
 namespace Dwarf
 {
   AssetDirectoryListener::AssetDirectoryListener(

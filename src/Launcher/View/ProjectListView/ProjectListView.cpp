@@ -2,7 +2,6 @@
 
 #include "ProjectListView.h"
 #include "Utilities/TimeUtilities.h"
-#include <imgui.h>
 
 namespace Dwarf
 {

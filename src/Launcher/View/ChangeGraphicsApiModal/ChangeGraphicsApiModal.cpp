@@ -2,7 +2,6 @@
 
 #include "ChangeGraphicsApiModal.h"
 #include "Core/Base.h"
-#include <imgui.h>
 
 namespace Dwarf
 {

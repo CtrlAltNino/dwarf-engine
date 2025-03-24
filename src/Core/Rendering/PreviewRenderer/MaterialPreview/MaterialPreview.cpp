@@ -4,7 +4,6 @@
 #include "Editor/Stats/IEditorStats.h"
 #include "MaterialPreview.h"
 
-
 namespace Dwarf
 {
   MaterialPreview::MaterialPreview(

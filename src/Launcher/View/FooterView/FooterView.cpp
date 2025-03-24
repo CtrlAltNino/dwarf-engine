@@ -2,7 +2,6 @@
 
 #include "FooterView.h"
 #include "Utilities/BrowserLinkOpener.h"
-#include <imgui.h>
 
 namespace Dwarf
 {

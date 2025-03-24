@@ -6,7 +6,6 @@
 #include "ProjectLauncherView.h"
 #include "ProjectListView/IProjectListView.h"
 #include "ProjectNotFoundModal/IProjectNotFoundModal.h"
-#include <imgui.h>
 
 namespace Dwarf
 {

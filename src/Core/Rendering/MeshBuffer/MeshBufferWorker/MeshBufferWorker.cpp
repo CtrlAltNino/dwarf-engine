@@ -5,7 +5,6 @@
 #include "Logging/IDwarfLogger.h"
 #include "MeshBufferWorker.h"
 
-
 namespace Dwarf
 {
   MeshBufferWorker::MeshBufferWorker(

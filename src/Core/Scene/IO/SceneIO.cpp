@@ -4,7 +4,6 @@
 #include "SceneIO.h"
 #include <nfd.h>
 
-
 namespace Dwarf
 {
   SceneIO::SceneIO(std::shared_ptr<IDwarfLogger>     logger,

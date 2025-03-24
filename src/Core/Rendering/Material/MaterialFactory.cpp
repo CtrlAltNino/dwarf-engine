@@ -3,7 +3,6 @@
 #include "Material.h"
 #include "MaterialFactory.h"
 
-
 namespace Dwarf
 {
   MaterialFactory::MaterialFactory(

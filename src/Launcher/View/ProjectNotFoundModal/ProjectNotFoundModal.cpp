@@ -2,7 +2,6 @@
 
 #include "Launcher/LauncherAssets/ILauncherAssets.h"
 #include "ProjectNotFoundModal.h"
-#include <imgui.h>
 
 namespace Dwarf
 {

@@ -1,6 +1,7 @@
 #include "pch.h"
 
 #include "AssetMetadata.h"
+
 namespace Dwarf
 {
   AssetMetadata::AssetMetadata(std::shared_ptr<IFileHandler> fileHandler)

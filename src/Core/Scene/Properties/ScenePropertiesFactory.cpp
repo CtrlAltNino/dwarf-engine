@@ -3,7 +3,6 @@
 #include "SceneProperties.h"
 #include "ScenePropertiesFactory.h"
 
-
 namespace Dwarf
 {
   ScenePropertiesFactory::ScenePropertiesFactory(

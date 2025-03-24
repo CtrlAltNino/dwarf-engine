@@ -3,7 +3,6 @@
 #include "Core/Scene/Settings/SceneSettings.h"
 #include "SceneSettingsFactory.h"
 
-
 namespace Dwarf
 {
   SceneSettingsFactory::SceneSettingsFactory(

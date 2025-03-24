@@ -4,7 +4,6 @@
 #include "MaterialAssetInspector.h"
 #include "Platform/OpenGL/OpenGLShader.h"
 #include "UI/DwarfUI.h"
-#include <imgui.h>
 
 namespace Dwarf
 {

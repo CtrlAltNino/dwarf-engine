@@ -4,7 +4,6 @@
 #include "Utilities/ImageUtilities/TextureCommon.h"
 #include "VramTracker.h"
 
-
 namespace Dwarf
 {
   /**

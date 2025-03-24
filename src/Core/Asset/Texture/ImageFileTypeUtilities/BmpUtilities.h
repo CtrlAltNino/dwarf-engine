@@ -1,9 +1,9 @@
 #pragma once
 
 #include "Utilities/ImageUtilities/TextureCommon.h"
+#include <cstddef>
 #include <stb_image.h>
 
-#include <cstddef>
 
 namespace Dwarf
 {

@@ -3,7 +3,6 @@
 #include "Core/Asset/AssetReference/IAssetReference.h"
 #include "Core/Asset/AssetTypes.h"
 #include "Core/UUID.h"
-#include <boost/algorithm/string/case_conv.hpp>
 #include <boost/serialization/strong_typedef.hpp>
 #include <entt/entity/fwd.hpp>
 #include <filesystem>

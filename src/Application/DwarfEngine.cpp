@@ -5,7 +5,6 @@
 #include "DI/ProjectLauncher/ProjectLauncherInjector.h"
 #include "Editor/Editor.h"
 #include "Launcher/ProjectLauncher.h"
-#include <boost/di.hpp>
 
 namespace Dwarf
 {

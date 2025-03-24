@@ -3,7 +3,6 @@
 #include "Core/Rendering/Pipelines/RenderingPipeline.h"
 #include "RenderingPipelineFactory.h"
 
-
 namespace Dwarf
 {
   RenderingPipelineFactory::RenderingPipelineFactory(

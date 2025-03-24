@@ -3,7 +3,6 @@
 #include "Core/Rendering/VramTracker/IVramTracker.h"
 #include "ShaderFactory.h"
 
-
 // Including the shader header files of the graphics API.
 #if _WIN32
 #include "Platform/OpenGL/OpenGLShader.h"

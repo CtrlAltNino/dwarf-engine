@@ -4,7 +4,6 @@
 #include "Core/UUID.h"
 #include "Utilities/ISerializable.h"
 
-#include <fmt/base.h>
 #include <optional>
 #include <variant>
 

@@ -4,7 +4,6 @@
 #include "Core/Scene/Components/SceneComponents.h"
 #include "RenderingPipeline.h"
 
-
 namespace Dwarf
 {
   RenderingPipeline::RenderingPipeline(

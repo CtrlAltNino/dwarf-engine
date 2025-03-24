@@ -2,7 +2,6 @@
 
 #include "EntityInspector.h"
 #include "UI/DwarfUI.h"
-#include <imgui.h>
 
 #define COMPONENT_PANEL_PADDING (8.0f)
 #define ADD_BUTTON_WIDTH (40.0f)

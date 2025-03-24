@@ -4,7 +4,6 @@
 #include "Core/GenericComponents.h"
 #include "DebugWindow.h"
 
-
 namespace Dwarf
 {
 

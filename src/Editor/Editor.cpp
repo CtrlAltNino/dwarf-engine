@@ -6,7 +6,6 @@
 #include "Input/IInputManager.h"
 #include "Utilities/TimeUtilities.h"
 
-
 namespace Dwarf
 {
   Editor::Editor(std::shared_ptr<IDwarfLogger>          logger,

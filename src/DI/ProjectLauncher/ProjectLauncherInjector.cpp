@@ -48,8 +48,6 @@
 #include "Utilities/FileHandler/FileHandler.h"
 #include "Window/IWindow.h"
 #include "Window/SDL3Window.h"
-#include <boost/di.hpp>
-#include <boost/di/extension/scopes/shared.hpp>
 
 namespace Dwarf
 {
