@@ -1,15 +1,12 @@
-#include "Core/Base.h"
-
-#include "ProjectLauncherView.h"
+#include "pch.h"
 
 #include "ButtonsView/IButtonsView.h"
 #include "ChangeGraphicsApiModal/IChangeGraphicsApiModal.h"
 #include "Launcher/IProjectLauncher.h"
+#include "ProjectLauncherView.h"
 #include "ProjectListView/IProjectListView.h"
 #include "ProjectNotFoundModal/IProjectNotFoundModal.h"
-
 #include <imgui.h>
-#include <nfd.h>
 
 namespace Dwarf
 {
@@ -32,20 +29,20 @@ namespace Dwarf
     std::shared_ptr<IChangeGraphicsApiModal> changeGraphicsApiModal,
     std::shared_ptr<IProjectNotFoundModal>   projectNotFoundModal,
     std::shared_ptr<ICreateNewProjectModal>  createNewProjectModal)
-    : mWindow(window)
-    , mData(data)
-    , mSavedProjects(savedProjects)
-    , mSavedProjectsIO(savedProjectsIO)
-    , mSavedProjectsSorter(savedProjectsSorter)
-    , mProjectCreator(projectCreator)
-    , mLogger(logger)
-    , mFileHandler(fileHandler)
-    , mButtonsView(buttonsView)
-    , mFooterView(footerView)
-    , mProjectListView(projectListView)
-    , mChangeGraphicsApiModal(changeGraphicsApiModal)
-    , mProjectNotFoundModal(projectNotFoundModal)
-    , mCreateNewProjectModal(createNewProjectModal)
+    : mWindow(std::move(window))
+    , mData(std::move(data))
+    , mSavedProjects(std::move(savedProjects))
+    , mSavedProjectsIO(std::move(savedProjectsIO))
+    , mSavedProjectsSorter(std::move(savedProjectsSorter))
+    , mProjectCreator(std::move(projectCreator))
+    , mLogger(std::move(logger))
+    , mFileHandler(std::move(fileHandler))
+    , mButtonsView(std::move(buttonsView))
+    , mFooterView(std::move(footerView))
+    , mProjectListView(std::move(projectListView))
+    , mChangeGraphicsApiModal(std::move(changeGraphicsApiModal))
+    , mProjectNotFoundModal(std::move(projectNotFoundModal))
+    , mCreateNewProjectModal(std::move(createNewProjectModal))
   {
     mLogger->LogDebug(
       Log("Initializing project launcher view", "ProjectLauncherView"));

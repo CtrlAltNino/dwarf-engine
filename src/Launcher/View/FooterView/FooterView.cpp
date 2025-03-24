@@ -1,3 +1,5 @@
+#include "pch.h"
+
 #include "FooterView.h"
 #include "Utilities/BrowserLinkOpener.h"
 #include <imgui.h>
@@ -9,20 +11,20 @@ namespace Dwarf
 
   FooterView::FooterView(std::shared_ptr<ILauncherData>   data,
                          std::shared_ptr<ILauncherAssets> launcherAssets)
-    : mData(data)
-    , mLauncherAssets(launcherAssets)
+    : mData(std::move(data))
+    , mLauncherAssets(std::move(launcherAssets))
   {
   }
 
   void
   FooterView::RenderFooter(glm::ivec2 windowSize)
   {
-    ImGuiWindowFlags window_flags = 0;
-    window_flags |= ImGuiWindowFlags_NoMove;
-    window_flags |= ImGuiWindowFlags_NoResize;
-    window_flags |= ImGuiWindowFlags_NoCollapse;
-    window_flags |= ImGuiWindowFlags_NoTitleBar;
-    window_flags |= ImGuiWindowFlags_NoScrollbar;
+    ImGuiWindowFlags windowFlags = 0;
+    windowFlags |= ImGuiWindowFlags_NoMove;
+    windowFlags |= ImGuiWindowFlags_NoResize;
+    windowFlags |= ImGuiWindowFlags_NoCollapse;
+    windowFlags |= ImGuiWindowFlags_NoTitleBar;
+    windowFlags |= ImGuiWindowFlags_NoScrollbar;
 
     ImGui::SetNextWindowPos(
       ImVec2(0, windowSize.y - PROJECT_INFORMATION_HEIGHT));
@@ -33,7 +35,7 @@ namespace Dwarf
                           ImVec4(59 / 255.0, 66 / 255.0, 82 / 255.0, 0));
     ImGui::PushFont(mLauncherAssets->GetTextFont().get());
 
-    if (!ImGui::Begin("Information", NULL, window_flags))
+    if (!ImGui::Begin("Information", NULL, windowFlags))
     {
       // Early out if the window is collapsed, as an optimization.
       ImGui::End();

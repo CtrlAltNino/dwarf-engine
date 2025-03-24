@@ -1,4 +1,4 @@
-#include "ImageFileLoader.h"
+#include "pch.h"
 
 #include "Core/Asset/Texture/ImageFileTypeUtilities/BmpUtilities.h"
 #include "Core/Asset/Texture/ImageFileTypeUtilities/HdrUtilities.h"
@@ -6,8 +6,8 @@
 #include "Core/Asset/Texture/ImageFileTypeUtilities/PngUtilities.h"
 #include "Core/Asset/Texture/ImageFileTypeUtilities/TgaUtilities.h"
 #include "Core/Asset/Texture/ImageFileTypeUtilities/TiffUtilities.h"
+#include "ImageFileLoader.h"
 #include "Utilities/ImageUtilities/TextureCommon.h"
-#include <utility>
 
 namespace Dwarf
 {

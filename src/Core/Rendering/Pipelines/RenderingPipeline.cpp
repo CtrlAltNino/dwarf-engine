@@ -1,9 +1,9 @@
-#include "RenderingPipeline.h"
+#include "pch.h"
+
 #include "Core/Rendering/Material/IMaterial.h"
 #include "Core/Scene/Components/SceneComponents.h"
-#include "pch.h"
-#include <glm/fwd.hpp>
-#include <utility>
+#include "RenderingPipeline.h"
+
 
 namespace Dwarf
 {

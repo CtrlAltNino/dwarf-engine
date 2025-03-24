@@ -1,3 +1,5 @@
+#include "pch.h"
+
 #include "AssetDatabase.h"
 #include "Core/Asset/AssetReference/IAssetReference.h"
 #include "Core/Asset/Database/AssetComponents.h"
@@ -5,9 +7,6 @@
 #include "Core/Base.h"
 #include "Core/GenericComponents.h"
 #include "IAssetDatabase.h"
-#include <algorithm>
-#include <filesystem>
-#include <utility>
 
 namespace Dwarf
 {

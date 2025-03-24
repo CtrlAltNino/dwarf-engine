@@ -1,9 +1,9 @@
-#include "DebugWindow.h"
+#include "pch.h"
+
 #include "Core/Asset/Database/AssetComponents.h"
 #include "Core/GenericComponents.h"
-#include <entt/entity/fwd.hpp>
-#include <memory>
-#include <utility>
+#include "DebugWindow.h"
+
 
 namespace Dwarf
 {
@@ -65,11 +65,8 @@ namespace Dwarf
       auto materialView =
         registry
           .view<MaterialAsset, PathComponent, NameComponent, IDComponent>();
-      /*entt::observer modelObserver{
-        registry,
-        entt::collector
-          .group<ModelAsset, PathComponent, NameComponent, IDComponent>()
-      };*/
+      auto modelView =
+        registry.view<ModelAsset, PathComponent, NameComponent, IDComponent>();
       auto sceneView =
         registry.view<SceneAsset, PathComponent, NameComponent, IDComponent>();
       auto vertexShaderView =
@@ -103,7 +100,7 @@ namespace Dwarf
 
       if (ImGui::TreeNode("Materials##1"))
       {
-        for (auto entity : materialView)
+        for (const auto& entity : materialView)
         {
           auto [pathComp, nameComp, idComp] =
             materialView.get<PathComponent, NameComponent, IDComponent>(entity);
@@ -119,26 +116,26 @@ namespace Dwarf
         ImGui::TreePop();
       }
 
-      /*if (ImGui::TreeNode("Models##1"))
+      if (ImGui::TreeNode("Models##1"))
       {
-        for (auto& entity : modelObserver)
+        for (const auto& entity : modelView)
         {
           auto [pathComp, nameComp, idComp] =
             registry.get<PathComponent, NameComponent, IDComponent>(entity);
           ImGui::Text("Name");
           ImGui::Text("%s", nameComp.Name.c_str());
           ImGui::Text("Path");
-          ImGui::Text("%s", pathComp.GetPath().string().c_str());
+          ImGui::Text("%s", pathComp.getPath().string().c_str());
           ImGui::Text("ID");
-          ImGui::Text("%s", idComp.GetID().ToString().c_str());
+          ImGui::Text("%s", idComp.getId().toString().c_str());
           ImGui::Separator();
         }
         ImGui::TreePop();
-      }*/
+      }
 
       if (ImGui::TreeNode("Scenes##1"))
       {
-        for (auto entity : sceneView)
+        for (const auto& entity : sceneView)
         {
           auto [pathComp, nameComp, idComp] =
             sceneView.get<PathComponent, NameComponent, IDComponent>(entity);
@@ -157,7 +154,7 @@ namespace Dwarf
       {
         if (ImGui::TreeNode("Vertex Shaders##1"))
         {
-          for (auto entity : vertexShaderView)
+          for (const auto& entity : vertexShaderView)
           {
             auto [pathComp, nameComp, idComp] =
               vertexShaderView.get<PathComponent, NameComponent, IDComponent>(
@@ -175,7 +172,7 @@ namespace Dwarf
 
         if (ImGui::TreeNode("Fragment Shaders##1"))
         {
-          for (auto entity : fragmentShaderView)
+          for (const auto& entity : fragmentShaderView)
           {
             auto [pathComp, nameComp, idComp] =
               fragmentShaderView.get<PathComponent, NameComponent, IDComponent>(
@@ -193,7 +190,7 @@ namespace Dwarf
 
         if (ImGui::TreeNode("Geometry Shaders##1"))
         {
-          for (auto entity : geometryShaderView)
+          for (const auto& entity : geometryShaderView)
           {
             auto [pathComp, nameComp, idComp] =
               geometryShaderView.get<PathComponent, NameComponent, IDComponent>(
@@ -211,7 +208,7 @@ namespace Dwarf
 
         if (ImGui::TreeNode("Compute Shaders##1"))
         {
-          for (auto entity : computeShaderView)
+          for (const auto& entity : computeShaderView)
           {
             auto [pathComp, nameComp, idComp] =
               computeShaderView.get<PathComponent, NameComponent, IDComponent>(
@@ -229,7 +226,7 @@ namespace Dwarf
 
         if (ImGui::TreeNode("Tesselation Control Shaders##1"))
         {
-          for (auto entity : tesselationControlShaderView)
+          for (const auto& entity : tesselationControlShaderView)
           {
             auto [pathComp, nameComp, idComp] =
               tesselationControlShaderView
@@ -247,7 +244,7 @@ namespace Dwarf
 
         if (ImGui::TreeNode("Tesselation Evaluation Shaders##1"))
         {
-          for (auto entity : tesselationEvaluationShaderView)
+          for (const auto& entity : tesselationEvaluationShaderView)
           {
             auto [pathComp, nameComp, idComp] =
               tesselationEvaluationShaderView
@@ -267,7 +264,7 @@ namespace Dwarf
 
       if (ImGui::TreeNode("Textures##1"))
       {
-        for (auto entity : textureView)
+        for (const auto& entity : textureView)
         {
           auto [pathComp, nameComp, idComp] =
             textureView.get<PathComponent, NameComponent, IDComponent>(entity);

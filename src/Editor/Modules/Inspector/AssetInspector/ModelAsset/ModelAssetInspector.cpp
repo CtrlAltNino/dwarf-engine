@@ -1,8 +1,8 @@
-#include "ModelAssetInspector.h"
+#include "pch.h"
+
 #include "Core/Asset/AssetReference/IAssetReference.h"
-#include "Core/Asset/Database/AssetComponents.h"
+#include "ModelAssetInspector.h"
 #include "UI/DwarfUI.h"
-#include <iostream>
 
 namespace Dwarf
 {
@@ -25,9 +25,9 @@ namespace Dwarf
   void
   ModelAssetInspector::Render(IAssetReference& asset)
   {
-    ImDrawList* draw_list = ImGui::GetWindowDrawList();
-    draw_list->ChannelsSplit(2);
-    draw_list->ChannelsSetCurrent(1);
+    ImDrawList* drawList = ImGui::GetWindowDrawList();
+    drawList->ChannelsSplit(2);
+    drawList->ChannelsSetCurrent(1);
 
     ImGui::BeginChild("##inspector_child",
                       ImGui::GetContentRegionAvail(),
@@ -94,11 +94,11 @@ namespace Dwarf
       }
 
       float scrollDistance =
-        std::max(0.0f,
-                 std::min(1.0f,
+        std::max(0.0F,
+                 std::min(1.0F,
                           mModelPreview->GetScrollDistance() -
-                            mInputManager->GetMouseScrollDelta().y *
-                              (float)mEditorStats->GetDeltaTime() * 8.0f));
+                            (mInputManager->GetMouseScrollDelta().y *
+                             (float)mEditorStats->GetDeltaTime() * 8.0f)));
 
       mModelPreview->SetScrollDistance(scrollDistance);
     }
@@ -114,9 +114,9 @@ namespace Dwarf
       mModelPreview->UpdateRotation(mInputManager->GetMouseDelta());
     }
 
-    draw_list->AddImage(mModelPreview->GetTextureId(), minRect, maxRect);
+    drawList->AddImage(mModelPreview->GetTextureId(), minRect, maxRect);
 
-    draw_list->ChannelsSetCurrent(0);
+    drawList->ChannelsSetCurrent(0);
 
     float endY = maxRect.y;
     ImGui::EndChild();
@@ -125,9 +125,9 @@ namespace Dwarf
       ImVec2(ImGui::GetItemRectMin().x + ImGui::GetContentRegionAvail().x,
              endY + 2 * COMPONENT_PANEL_PADDING),
       IM_COL32(59, 66, 82, 255),
-      5.0f);
+      5.0F);
     // ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3 *
     // COMPONENT_PANEL_PADDING);
-    draw_list->ChannelsMerge();
+    drawList->ChannelsMerge();
   }
 }

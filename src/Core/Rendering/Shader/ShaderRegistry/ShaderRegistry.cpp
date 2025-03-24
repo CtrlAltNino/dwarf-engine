@@ -1,7 +1,8 @@
-#include "ShaderRegistry.h"
+#include "pch.h"
+
 #include "Core/Asset/Database/AssetComponents.h"
-#include <fmt/format.h>
-#include <utility>
+#include "ShaderRegistry.h"
+
 
 namespace Dwarf
 {

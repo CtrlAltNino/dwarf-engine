@@ -4,7 +4,7 @@
 #include "Core/Rendering/VramTracker/IVramTracker.h"
 #include "Editor/Modules/IGuiModule.h"
 #include "Editor/Stats/IEditorStats.h"
-#include "pch.h"
+#include "Logging/IDwarfLogger.h"
 #include <boost/serialization/strong_typedef.hpp>
 
 namespace Dwarf
@@ -13,22 +13,27 @@ namespace Dwarf
   class PerformanceWindow : public IGuiModule
   {
   private:
+    std::shared_ptr<IDwarfLogger> mLogger;
     std::shared_ptr<IEditorStats> mEditorStats;
     std::shared_ptr<IRendererApi> mRendererApi;
     std::shared_ptr<IVramTracker> mVramTracker;
     std::unique_ptr<IGpuInfo>     mGpuInfo;
 
   public:
-    PerformanceWindow(std::shared_ptr<IEditorStats> editorStats,
+    PerformanceWindow(std::shared_ptr<IDwarfLogger> logger,
+                      std::shared_ptr<IEditorStats> editorStats,
                       std::shared_ptr<IRendererApi> rendererApi,
                       std::shared_ptr<IVramTracker> vramTracker,
                       std::unique_ptr<IGpuInfo>     gpuInfo);
 
     PerformanceWindow(SerializedModule              serializedModule,
+                      std::shared_ptr<IDwarfLogger> logger,
                       std::shared_ptr<IEditorStats> editorStats,
                       std::shared_ptr<IRendererApi> rendererApi,
                       std::shared_ptr<IVramTracker> vramTracker,
                       std::unique_ptr<IGpuInfo>     gpuInfo);
+
+    ~PerformanceWindow() override;
 
     /// @brief Renders the module window.
     void
@@ -37,10 +42,10 @@ namespace Dwarf
     void
     OnUpdate() override;
 
-    nlohmann::json
-    Serialize() override;
+    auto
+    Serialize() -> nlohmann::json override;
 
     void
-    Deserialize(nlohmann::json moduleData);
+    Deserialize(const nlohmann::json& moduleData);
   };
 }

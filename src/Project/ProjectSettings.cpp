@@ -1,7 +1,7 @@
-#include "ProjectSettings.h"
+#include "pch.h"
 
 #include "IProjectSettings.h"
-#include <utility>
+#include "ProjectSettings.h"
 
 namespace Dwarf
 {

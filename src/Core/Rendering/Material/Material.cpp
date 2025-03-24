@@ -1,7 +1,6 @@
-#include "Material.h"
-
 #include "pch.h"
-#include <utility>
+
+#include "Material.h"
 
 namespace Dwarf
 {

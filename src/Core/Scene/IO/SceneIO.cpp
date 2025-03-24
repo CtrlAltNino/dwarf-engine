@@ -1,10 +1,9 @@
-#include "SceneIO.h"
+#include "pch.h"
 
 #include "Core/Asset/AssetReference/IAssetReference.h"
-#include <fmt/format.h>
+#include "SceneIO.h"
 #include <nfd.h>
 
-#include <utility>
 
 namespace Dwarf
 {

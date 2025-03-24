@@ -1,4 +1,5 @@
 #include "pch.h"
+
 #include "Platform/Direct3D12/D3D12RendererApi.h"
 
 namespace Dwarf

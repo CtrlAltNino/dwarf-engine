@@ -1,9 +1,8 @@
-#include "ShaderFactory.h"
+#include "pch.h"
+
 #include "Core/Rendering/VramTracker/IVramTracker.h"
-#include <fmt/format.h>
-#include <memory>
-#include <stdexcept>
-#include <utility>
+#include "ShaderFactory.h"
+
 
 // Including the shader header files of the graphics API.
 #if _WIN32

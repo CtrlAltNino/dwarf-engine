@@ -1,10 +1,8 @@
-#include "RenderingPipelineFactory.h"
-
-#include <utility>
-
-#include <utility>
+#include "pch.h"
 
 #include "Core/Rendering/Pipelines/RenderingPipeline.h"
+#include "RenderingPipelineFactory.h"
+
 
 namespace Dwarf
 {

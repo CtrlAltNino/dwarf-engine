@@ -17,9 +17,19 @@ namespace Dwarf
 
     ~SavedProjectsSorter() override;
 
+    /**
+     * @brief Changes the desired sort order
+     *
+     * @param columnId Selectes the column to sort for
+     */
     void
     UpdateSortOrder(ProjectListColumn columnId) override;
 
+    /**
+     * @brief Sorts a provided list
+     *
+     * @param savedProjects List of saved projects
+     */
     void
     SortSavedProjects(std::vector<SavedProject>& savedProjects) override;
   };

@@ -1,14 +1,10 @@
-#include "TextureLoadingWorker.h"
+#include "pch.h"
+
 #include "Core/Asset/Database/AssetComponents.h"
 #include "Core/Asset/Texture/IImageFileLoader.h"
 #include "Core/Rendering/Texture/ITextureFactory.h"
 #include "ITextureLoadingWorker.h"
-#include <fmt/format.h>
-#include <glm/common.hpp>
-#include <memory>
-#include <mutex>
-#include <thread>
-#include <utility>
+#include "TextureLoadingWorker.h"
 
 namespace Dwarf
 {

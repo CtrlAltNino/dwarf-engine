@@ -1,8 +1,9 @@
-#include "SavedProjects.h"
+#include "pch.h"
+
 #include "IO/ISavedProjectsIO.h"
 #include "ISavedProjects.h"
 #include "Project/IProjectSettings.h"
-#include <fmt/format.h>
+#include "SavedProjects.h"
 #include <nfd.h>
 
 namespace Dwarf
@@ -12,10 +13,10 @@ namespace Dwarf
     std::shared_ptr<ISavedProjectsIO>     savedProjectsIO,
     std::shared_ptr<ISavedProjectsSorter> savedProjectsSorter,
     std::shared_ptr<IProjectSettingsIO>   projectSettingsIO)
-    : mLogger(logger)
-    , mSavedProjectsIO(savedProjectsIO)
-    , mSavedProjectsSorter(savedProjectsSorter)
-    , mProjectSettingsIO(projectSettingsIO)
+    : mLogger(std::move(logger))
+    , mSavedProjectsIO(std::move(savedProjectsIO))
+    , mSavedProjectsSorter(std::move(savedProjectsSorter))
+    , mProjectSettingsIO(std::move(projectSettingsIO))
   {
     mLogger->LogInfo(Log("Loading SavedProjects...", "SavedProjects"));
     mSavedProjects = mSavedProjectsIO->LoadSavedProjects();
@@ -118,7 +119,7 @@ namespace Dwarf
         mLogger->LogWarn(
           Log("Project already present in project list.", "SavedProjects"));
       }
-      free(outPath);
+      NFD_FreePathU8(outPath);
     }
     else if (result == NFD_CANCEL)
     {
@@ -200,8 +201,8 @@ namespace Dwarf
     }
   }
 
-  std::vector<SavedProject>&
-  SavedProjects::GetSavedProjects()
+  auto
+  SavedProjects::GetSavedProjects() -> std::vector<SavedProject>&
   {
     return mSavedProjects;
   }

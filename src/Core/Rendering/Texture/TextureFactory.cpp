@@ -1,8 +1,7 @@
+#include "pch.h"
+
 #include "TextureFactory.h"
 #include "Utilities/ImageUtilities/TextureCommon.h"
-#include <cstdint>
-#include <stdexcept>
-#include <utility>
 
 #if _WIN32
 #include "Platform/OpenGL/OpenGLTexture.h"

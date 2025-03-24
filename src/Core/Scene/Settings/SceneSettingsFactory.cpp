@@ -1,8 +1,8 @@
-#include "SceneSettingsFactory.h"
+#include "pch.h"
 
 #include "Core/Scene/Settings/SceneSettings.h"
-#include <memory>
-#include <utility>
+#include "SceneSettingsFactory.h"
+
 
 namespace Dwarf
 {

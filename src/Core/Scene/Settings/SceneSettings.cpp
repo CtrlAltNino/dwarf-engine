@@ -1,5 +1,6 @@
+#include "pch.h"
+
 #include "SceneSettings.h"
-#include <nlohmann/json.hpp>
 
 namespace Dwarf
 {

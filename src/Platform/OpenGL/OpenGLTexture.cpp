@@ -1,12 +1,12 @@
-#include "OpenGLTexture.h"
+#include "pch.h"
+
 #include "Core/Rendering/VramTracker/IVramTracker.h"
+#include "OpenGLTexture.h"
 #include "Platform/OpenGL/OpenGLTexture.h"
 #include "Platform/OpenGL/OpenGLUtilities.h"
 #include "Utilities/ImageUtilities/TextureCommon.h"
 #include <SDL3/SDL_opengl.h>
-#include <cstdint>
-#include <glm/fwd.hpp>
-#include <utility>
+
 
 namespace Dwarf
 {

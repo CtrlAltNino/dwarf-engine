@@ -7,7 +7,6 @@ namespace Dwarf
   class GraphInstruction
   {
   public:
-    GraphInstruction() = default;
     virtual ~GraphInstruction() = default;
 
     /// @brief Executes the instruction.

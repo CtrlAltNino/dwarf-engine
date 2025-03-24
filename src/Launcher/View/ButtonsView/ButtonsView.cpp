@@ -1,3 +1,5 @@
+#include "pch.h"
+
 #include "ButtonsView.h"
 #include <imgui.h>
 
@@ -9,20 +11,20 @@ namespace Dwarf
   ButtonsView::ButtonsView(std::shared_ptr<ILauncherData>   data,
                            std::shared_ptr<ISavedProjects>  savedProjects,
                            std::shared_ptr<ILauncherAssets> launcherAssets)
-    : mData(data)
-    , mSavedProjects(savedProjects)
-    , mLauncherAssets(launcherAssets)
+    : mData(std::move(data))
+    , mSavedProjects(std::move(savedProjects))
+    , mLauncherAssets(std::move(launcherAssets))
   {
   }
 
   void
   ButtonsView::RenderButtons(glm::ivec2 windowSize)
   {
-    ImGuiWindowFlags window_flags = 0;
-    window_flags |= ImGuiWindowFlags_NoMove;
-    window_flags |= ImGuiWindowFlags_NoResize;
-    window_flags |= ImGuiWindowFlags_NoCollapse;
-    window_flags |= ImGuiWindowFlags_NoTitleBar;
+    ImGuiWindowFlags windowFlags = 0;
+    windowFlags |= ImGuiWindowFlags_NoMove;
+    windowFlags |= ImGuiWindowFlags_NoResize;
+    windowFlags |= ImGuiWindowFlags_NoCollapse;
+    windowFlags |= ImGuiWindowFlags_NoTitleBar;
 
     ImGui::SetNextWindowPos(
       ImVec2(windowSize.x - PROJECT_BUTTON_WINDOW_WIDTH, 0));
@@ -33,7 +35,7 @@ namespace Dwarf
     ImGui::PushStyleColor(ImGuiCol_Border,
                           ImVec4(59 / 255.0, 66 / 255.0, 82 / 255.0, 0));
 
-    if (!ImGui::Begin("Project Buttons", NULL, window_flags))
+    if (!ImGui::Begin("Project Buttons", nullptr, windowFlags))
     {
       ImGui::End();
       return;

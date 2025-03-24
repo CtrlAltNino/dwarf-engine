@@ -1,29 +1,50 @@
 #pragma once
 
 #include "Editor/Modules/SceneHierarchy/ISceneHierarchyWindowFactory.h"
-#include <boost/di.hpp>
+#include "Logging/IDwarfLogger.h"
 
 namespace Dwarf
 {
+  /**
+   * @brief Factory class to create SceneHierarchyWindow instances
+   *
+   */
   class SceneHierarchyWindowFactory : public ISceneHierarchyWindowFactory
   {
   private:
+    std::shared_ptr<IDwarfLogger>     mLogger;
     std::shared_ptr<ILoadedScene>     mLoadedScene;
     std::shared_ptr<IEditorSelection> mEditorSelection;
     std::shared_ptr<IInputManager>    mInputManager;
     std::shared_ptr<IAssetDatabase>   mAssetDatabase;
 
   public:
-    BOOST_DI_INJECT(SceneHierarchyWindowFactory,
-                    std::shared_ptr<ILoadedScene>     loadedScene,
-                    std::shared_ptr<IEditorSelection> editorSelection,
-                    std::shared_ptr<IInputManager>    inputManager,
-                    std::shared_ptr<IAssetDatabase>   assetDatabase);
-    ~SceneHierarchyWindowFactory() override = default;
-    std::unique_ptr<SceneHierarchyWindow>
-    Create() const override;
+    SceneHierarchyWindowFactory(
+      std::shared_ptr<IDwarfLogger>     logger,
+      std::shared_ptr<ILoadedScene>     loadedScene,
+      std::shared_ptr<IEditorSelection> editorSelection,
+      std::shared_ptr<IInputManager>    inputManager,
+      std::shared_ptr<IAssetDatabase>   assetDatabase);
 
-    std::unique_ptr<SceneHierarchyWindow>
-    Create(SerializedModule serializedModule) const override;
+    ~SceneHierarchyWindowFactory() override;
+
+    /**
+     * @brief Creates default SceneHierarchyWindow instances
+     *
+     * @return Unique pointer to the created instance
+     */
+    [[nodiscard]] auto
+    Create() const -> std::unique_ptr<SceneHierarchyWindow> override;
+
+    /**
+     * @brief Creates a SceneHierarchyWindow instance based on a serialized
+     * version
+     *
+     * @param serializedModule Serialized SceneHierarchyWindow data
+     * @return Unique pointer to the created instance
+     */
+    [[nodiscard]] auto
+    Create(SerializedModule serializedModule) const
+      -> std::unique_ptr<SceneHierarchyWindow> override;
   };
 }

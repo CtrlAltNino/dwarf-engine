@@ -1,6 +1,6 @@
-#include "AssetInspector.h"
 #include "pch.h"
-#include <string>
+
+#include "AssetInspector.h"
 
 namespace Dwarf
 {
@@ -24,15 +24,15 @@ namespace Dwarf
   AssetInspector::RenderBasicInspector(IAssetReference& asset)
   {
     ImGui::TextWrapped("File name: ");
-    ImGui::SameLine(0, 5.0f);
+    ImGui::SameLine(0, 5.0F);
     ImGui::TextWrapped("%s", asset.GetPath().filename().string().c_str());
 
     ImGui::TextWrapped("Path: ");
-    ImGui::SameLine(0, 5.0f);
+    ImGui::SameLine(0, 5.0F);
     ImGui::TextWrapped("%s", asset.GetPath().string().c_str());
 
     ImGui::TextWrapped("Type: ");
-    ImGui::SameLine(0, 5.0f);
+    ImGui::SameLine(0, 5.0F);
     ImGui::TextWrapped("Unknown");
   }
 

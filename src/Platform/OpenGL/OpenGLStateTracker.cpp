@@ -1,5 +1,7 @@
-#include "OpenGLStateTracker.h"
+#include "pch.h"
+
 #include "Logging/IDwarfLogger.h"
+#include "OpenGLStateTracker.h"
 #include "OpenGLUtilities.h"
 #include <glad/glad.h>
 

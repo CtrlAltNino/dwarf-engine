@@ -1,5 +1,6 @@
-#include "Editor/Modules/SceneHierarchy/NewParentInstruction.h"
 #include "pch.h"
+
+#include "Editor/Modules/SceneHierarchy/NewParentInstruction.h"
 
 namespace Dwarf
 {
@@ -9,7 +10,7 @@ namespace Dwarf
     std::vector<entt::entity> sourceEntities,
     entt::entity              newParent)
     : mScene(scene)
-    , mSourceEntities(sourceEntities)
+    , mSourceEntities(std::move(sourceEntities))
     , mNewParent(newParent)
   {
   }
@@ -17,11 +18,11 @@ namespace Dwarf
   void
   NewParentInstruction::PerformInstruction()
   {
-    auto p = Entity(mNewParent, mScene.GetRegistry());
+    auto newParentEntity = Entity(mNewParent, mScene.get().GetRegistry());
     for (auto& ent : mSourceEntities)
     {
-      Entity entity(ent, mScene.GetRegistry());
-      if ((p.GetComponent<TransformComponent>().GetParent() !=
+      Entity entity(ent, mScene.get().GetRegistry());
+      if ((newParentEntity.GetComponent<TransformComponent>().GetParent() !=
            entity.GetHandle()) &&
           (entity.GetHandle() != mNewParent))
       {

@@ -1,6 +1,8 @@
 #pragma once
 
+#include <algorithm>
 #include <array>
+#include <boost/algorithm/string.hpp>
 #include <cerrno>
 #include <climits>
 #include <cmath>
@@ -9,8 +11,10 @@
 #include <cstring>
 #include <ctime>
 #include <filesystem>
+#include <fmt/format.h>
 #include <format>
 #include <fstream>
+#include <glm/fwd.hpp>
 #include <glm/glm.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtc/quaternion.hpp>
@@ -20,13 +24,17 @@
 #include <glm/vec4.hpp>
 #include <imgui_internal.h>
 #include <iostream>
+#include <magic_enum/magic_enum.hpp>
 #include <map>
 #include <memory>
+#include <mutex>
 #include <nlohmann/json.hpp>
 #include <numbers>
+#include <optional>
 #include <random>
 #include <regex>
 #include <set>
+#include <span>
 #include <sstream>
 #include <string>
 #include <string_view>
@@ -36,6 +44,7 @@
 
 #define GLM_ENABLE_EXPERIMENTAL
 #include <boost/di.hpp>
+#include <glm/common.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/quaternion.hpp>
 #include <glm/gtx/transform.hpp>

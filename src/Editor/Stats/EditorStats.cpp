@@ -1,6 +1,7 @@
+#include "pch.h"
+
 #include "EditorStats.h"
 #include "Utilities/TimeUtilities.h"
-#include "pch.h"
 
 namespace Dwarf
 {

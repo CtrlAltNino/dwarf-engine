@@ -1,7 +1,8 @@
-#include "MaterialFactory.h"
+#include "pch.h"
+
 #include "Material.h"
-#include <memory>
-#include <utility>
+#include "MaterialFactory.h"
+
 
 namespace Dwarf
 {

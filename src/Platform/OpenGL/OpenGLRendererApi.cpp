@@ -1,14 +1,16 @@
-#include "Platform/OpenGL/OpenGLRendererApi.h"
+#include "pch.h"
+
 #include "Core/Asset/Database/IAssetDatabase.h"
 #include "Core/Rendering/RendererApi/IRendererApi.h"
 #include "OpenGLFramebuffer.h"
 #include "Platform/OpenGL/OpenGLComputeShader.h"
 #include "Platform/OpenGL/OpenGLFramebuffer.h"
 #include "Platform/OpenGL/OpenGLMesh.h"
+#include "Platform/OpenGL/OpenGLRendererApi.h"
 #include "Platform/OpenGL/OpenGLShader.h"
 #include "Platform/OpenGL/OpenGLUtilities.h"
-#include <functional>
 #include <glad/glad.h>
+
 
 namespace Dwarf
 {

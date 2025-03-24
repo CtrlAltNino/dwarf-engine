@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Launcher/IProjectLauncher.h"
 #include "Launcher/SavedProjects/ISavedProjects.h"
 namespace Dwarf
 {
@@ -20,14 +19,28 @@ namespace Dwarf
     ApiReverse
   };
 
+  /**
+   * @brief Class that sorts lists of saved project data
+   *
+   */
   class ISavedProjectsSorter
   {
   public:
     virtual ~ISavedProjectsSorter() = default;
 
+    /**
+     * @brief Changes the desired sort order
+     *
+     * @param columnId Selectes the column to sort for
+     */
     virtual void
     UpdateSortOrder(ProjectListColumn columnId) = 0;
 
+    /**
+     * @brief Sorts a provided list
+     *
+     * @param savedProjects List of saved projects
+     */
     virtual void
     SortSavedProjects(std::vector<SavedProject>& savedProjects) = 0;
   };

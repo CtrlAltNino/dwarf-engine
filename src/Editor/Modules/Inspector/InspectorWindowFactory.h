@@ -3,8 +3,6 @@
 #include "Editor/Modules/IGuiModule.h"
 #include "Editor/Modules/Inspector/IInspectorWindowFactory.h"
 #include "Logging/IDwarfLogger.h"
-#include <boost/di.hpp>
-#include <memory>
 
 namespace Dwarf
 {

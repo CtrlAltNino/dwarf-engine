@@ -1,4 +1,5 @@
-#include "DI/ProjectLauncher/ProjectLauncherInjector.h"
+#include "pch.h"
+
 #include "Core/Asset/Metadata/AssetMetadata.h"
 #include "Core/Asset/Texture/IImageFileLoader.h"
 #include "Core/Asset/Texture/ImageFileLoader.h"
@@ -10,6 +11,7 @@
 #include "Core/Rendering/Texture/TextureFactory.h"
 #include "Core/Rendering/VramTracker/IVramTracker.h"
 #include "Core/Rendering/VramTracker/VramTracker.h"
+#include "DI/ProjectLauncher/ProjectLauncherInjector.h"
 #include "Editor/Stats/EditorStats.h"
 #include "Input/IInputManager.h"
 #include "Input/InputManager.h"

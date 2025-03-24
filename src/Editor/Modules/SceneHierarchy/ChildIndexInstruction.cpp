@@ -1,15 +1,16 @@
-#include "Editor/Modules/SceneHierarchy/ChildIndexInstruction.h"
 #include "pch.h"
+
+#include "Editor/Modules/SceneHierarchy/ChildIndexInstruction.h"
 
 namespace Dwarf
 {
 
   ChildIndexInstruction::ChildIndexInstruction(
-    IScene&                          scene,
-    std::vector<entt::entity> const& sourceEntities,
-    int                              index)
+    IScene&                   scene,
+    std::vector<entt::entity> sourceEntities,
+    int                       index)
     : mScene(scene)
-    , mSourceEntities(sourceEntities)
+    , mSourceEntities(std::move(sourceEntities))
     , mIndex(index)
   {
   }
@@ -20,7 +21,7 @@ namespace Dwarf
     int startIndex = mIndex;
     for (auto& ent : mSourceEntities)
     {
-      Entity entity(ent, mScene.GetRegistry());
+      Entity entity(ent, mScene.get().GetRegistry());
       entity.SetChildIndex(startIndex);
       startIndex++;
     }

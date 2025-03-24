@@ -1,8 +1,7 @@
-#include "MeshBufferFactory.h"
+#include "pch.h"
 
 #include "Core/Rendering/VramTracker/IVramTracker.h"
-#include <utility>
-
+#include "MeshBufferFactory.h"
 
 #if _WIN32
 #include "Platform/OpenGL/OpenGLMesh.h"

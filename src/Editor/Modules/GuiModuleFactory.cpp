@@ -1,8 +1,9 @@
-#include "GuiModuleFactory.h"
+#include "pch.h"
+
 #include "Editor/Modules/IGuiModule.h"
+#include "GuiModuleFactory.h"
 #include <boost/di.hpp>
-#include <memory>
-#include <utility>
+
 
 namespace Dwarf
 {

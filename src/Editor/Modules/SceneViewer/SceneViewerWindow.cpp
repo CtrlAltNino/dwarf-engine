@@ -1,8 +1,4 @@
-#include <utility>
-
-#include <utility>
-
-#include <utility>
+#include "pch.h"
 
 #include "Core/Rendering/RendererApi/IRendererApiFactory.h"
 #include "Core/Scene/Components/SceneComponents.h"
@@ -17,6 +13,7 @@
 namespace Dwarf
 {
   SceneViewerWindow::SceneViewerWindow(
+    std::shared_ptr<IDwarfLogger>              logger,
     std::shared_ptr<ICameraFactory>            cameraFactory,
     std::shared_ptr<IFramebufferFactory>       framebufferFactory,
     std::shared_ptr<IEditorStats>              editorStats,
@@ -31,6 +28,7 @@ namespace Dwarf
     : IGuiModule(ModuleLabel("Scene Viewer"),
                  ModuleType(MODULE_TYPE::SCENE_VIEWER),
                  ModuleID(std::make_shared<UUID>()))
+    , mLogger(std::move(logger))
     , mCameraFactory(std::move(cameraFactory))
     , mFramebufferFactory(std::move(framebufferFactory))
     , mEditorStats(std::move(editorStats))
@@ -78,10 +76,13 @@ namespace Dwarf
 
     // Setup camera
     mCamera = mCameraFactory->Create();
+
+    mLogger->LogDebug(Log("SceneViewerWindow created", "SceneViewerWindow"));
   }
 
   SceneViewerWindow::SceneViewerWindow(
     SerializedModule                           serializedModule,
+    std::shared_ptr<IDwarfLogger>              logger,
     std::shared_ptr<ICameraFactory>            cameraFactory,
     std::shared_ptr<IFramebufferFactory>       framebufferFactory,
     std::shared_ptr<IEditorStats>              editorStats,
@@ -97,6 +98,7 @@ namespace Dwarf
                  ModuleType(MODULE_TYPE::SCENE_VIEWER),
                  ModuleID(std::make_shared<UUID>(
                    serializedModule.t["id"].get<std::string>())))
+    , mLogger(std::move(logger))
     , mCameraFactory(std::move(cameraFactory))
     , mFramebufferFactory(std::move(framebufferFactory))
     , mEditorStats(std::move(editorStats))
@@ -151,6 +153,13 @@ namespace Dwarf
     mCamera = mCameraFactory->Create(serializedModule.t["camera"]);
 
     Deserialize(serializedModule.t);
+
+    mLogger->LogDebug(Log("SceneViewerWindow created", "SceneViewerWindow"));
+  }
+
+  SceneViewerWindow::~SceneViewerWindow()
+  {
+    mLogger->LogDebug(Log("SceneViewerWindow destroyed", "SceneViewerWindow"));
   }
 
   void

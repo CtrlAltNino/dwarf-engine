@@ -1,9 +1,10 @@
-#include "MeshBufferWorker.h"
+#include "pch.h"
 
 #include "Core/Rendering/MeshBuffer/IMeshBufferFactory.h"
 #include "IMeshBufferWorker.h"
 #include "Logging/IDwarfLogger.h"
-#include <utility>
+#include "MeshBufferWorker.h"
+
 
 namespace Dwarf
 {

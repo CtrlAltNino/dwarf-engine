@@ -1,7 +1,8 @@
-#include "CameraFactory.h"
-#include "Camera.h"
+#include "pch.h"
 
-#include <utility>
+#include "Camera.h"
+#include "CameraFactory.h"
+
 
 namespace Dwarf
 {

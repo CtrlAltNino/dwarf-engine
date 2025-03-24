@@ -1,10 +1,8 @@
+#include "pch.h"
+
 #include "EntityInspector.h"
 #include "UI/DwarfUI.h"
 #include <imgui.h>
-
-#include <utility>
-
-#include <utility>
 
 #define COMPONENT_PANEL_PADDING (8.0f)
 #define ADD_BUTTON_WIDTH (40.0f)
@@ -23,7 +21,7 @@ namespace Dwarf
   }
 
   void
-  EntityInspector::Render(std::vector<entt::entity>& entities)
+  EntityInspector::Render(const std::vector<entt::entity>& entities)
   {
     // Render the entities
     if (entities.size() > 0)
@@ -33,12 +31,12 @@ namespace Dwarf
   }
 
   void
-  EntityInspector::BeginComponent(const char* componentHeader) const
+  EntityInspector::BeginComponent(const char* componentHeader)
   {
     ImGui::BeginGroup();
     ImVec2 vec2 = ImGui::CalcTextSize(componentHeader);
     ImGui::SetCursorPos(
-      ImVec2(ImGui::GetContentRegionAvail().x / 2.0f - (vec2.x / 2.0f),
+      ImVec2((ImGui::GetContentRegionAvail().x / 2.0F) - (vec2.x / 2.0F),
              ImGui::GetCursorPosY() + COMPONENT_PANEL_PADDING));
     ImGui::TextWrapped("%s", componentHeader);
     auto separatorMin =
@@ -57,7 +55,7 @@ namespace Dwarf
   }
 
   void
-  EntityInspector::EndComponent() const
+  EntityInspector::EndComponent()
   {
     ImGui::EndGroup();
     ImGui::GetWindowDrawList()->AddRectFilled(

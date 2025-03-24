@@ -2,7 +2,6 @@
 
 #include "Core/Asset/AssetReimporter/IAssetReimporter.h"
 #include "Core/Asset/Database/IAssetDatabase.h"
-#include "Core/Base.h"
 #include "Core/Rendering/Material/IO/IMaterialIO.h"
 #include "Core/Rendering/PreviewRenderer/MaterialPreview/IMaterialPreview.h"
 #include "Editor/Modules/Inspector/AssetInspector/MaterialAsset/IMaterialAssetInspector.h"
@@ -29,6 +28,11 @@ namespace Dwarf
                            std::shared_ptr<IMaterialIO>      materialIO);
     ~MaterialAssetInspector() override = default;
 
+    /**
+     * @brief Renders the inspector for a material asset reference
+     *
+     * @param asset
+     */
     void
     Render(IAssetReference& asset) override;
   };

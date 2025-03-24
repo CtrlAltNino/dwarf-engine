@@ -1,9 +1,9 @@
-#include "ModelPreview.h"
+#include "pch.h"
+
 #include "Core/Rendering/Framebuffer/IFramebufferFactory.h"
 #include "Core/Rendering/MeshBuffer/IMeshBufferFactory.h"
-#include <algorithm>
-#include <entt/entity/fwd.hpp>
-#include <utility>
+#include "ModelPreview.h"
+
 
 namespace Dwarf
 {

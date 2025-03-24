@@ -29,6 +29,11 @@ namespace Dwarf
                         std::shared_ptr<IEditorStats>     editorStats);
     ~ModelAssetInspector() override = default;
 
+    /**
+     * @brief Renders the model asset inspector
+     *
+     * @param asset
+     */
     void
     Render(IAssetReference& asset) override;
   };

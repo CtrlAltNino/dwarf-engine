@@ -1,11 +1,11 @@
 #pragma once
+
 #include "AssetInspector/IAssetInspector.h"
 #include "Core/Asset/Database/IAssetDatabase.h"
 #include "Editor/Modules/IGuiModule.h"
 #include "Editor/Selection/IEditorSelection.h"
 #include "EntityInspector/IEntityInspector.h"
 #include "Logging/IDwarfLogger.h"
-#include <boost/serialization/strong_typedef.hpp>
 
 namespace Dwarf
 {
@@ -34,6 +34,8 @@ namespace Dwarf
                     std::shared_ptr<IAssetInspector>  assetInspector,
                     std::shared_ptr<IEntityInspector> entityInspector,
                     SerializedModule                  serializedModule);
+
+    ~InspectorWindow() override;
 
     /// @brief Renders the module window.
     void

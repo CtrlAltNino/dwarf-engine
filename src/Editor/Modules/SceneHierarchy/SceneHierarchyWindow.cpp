@@ -1,7 +1,7 @@
-#include "Core/Asset/AssetReference/IAssetReference.h"
-#include "Core/Scene/Entity/Entity.h"
 #include "pch.h"
 
+#include "Core/Asset/AssetReference/IAssetReference.h"
+#include "Core/Scene/Entity/Entity.h"
 #include "Editor/Modules/SceneHierarchy/ChildIndexInstruction.h"
 #include "Editor/Modules/SceneHierarchy/DeleteEntityInstruction.h"
 #include "Editor/Modules/SceneHierarchy/NewParentInstruction.h"
@@ -11,6 +11,7 @@ namespace Dwarf
 {
 
   SceneHierarchyWindow::SceneHierarchyWindow(
+    std::shared_ptr<IDwarfLogger>     logger,
     std::shared_ptr<ILoadedScene>     loadedScene,
     std::shared_ptr<IEditorSelection> editorSelection,
     std::shared_ptr<IInputManager>    inputManager,
@@ -18,14 +19,18 @@ namespace Dwarf
     : IGuiModule(ModuleLabel("Scene Hierarchy"),
                  ModuleType(MODULE_TYPE::SCENE_GRAPH),
                  ModuleID(std::make_shared<UUID>()))
-    , mLoadedScene(loadedScene)
-    , mEditorSelection(editorSelection)
-    , mInputManager(inputManager)
-    , mAssetDatabase(assetDatabase)
+    , mLogger(std::move(logger))
+    , mLoadedScene(std::move(loadedScene))
+    , mEditorSelection(std::move(editorSelection))
+    , mInputManager(std::move(inputManager))
+    , mAssetDatabase(std::move(assetDatabase))
   {
+    mLogger->LogDebug(
+      Log("SceneHierarchyWindow created", "SceneHierarchyWindow"));
   }
 
   SceneHierarchyWindow::SceneHierarchyWindow(
+    std::shared_ptr<IDwarfLogger>     logger,
     std::shared_ptr<ILoadedScene>     loadedScene,
     std::shared_ptr<IEditorSelection> editorSelection,
     std::shared_ptr<IInputManager>    inputManager,
@@ -35,12 +40,21 @@ namespace Dwarf
                  ModuleType(MODULE_TYPE::SCENE_GRAPH),
                  ModuleID(std::make_shared<UUID>(
                    serializedModule.t["id"].get<std::string>())))
-    , mLoadedScene(loadedScene)
-    , mEditorSelection(editorSelection)
-    , mInputManager(inputManager)
-    , mAssetDatabase(assetDatabase)
+    , mLogger(std::move(logger))
+    , mLoadedScene(std::move(loadedScene))
+    , mEditorSelection(std::move(editorSelection))
+    , mInputManager(std::move(inputManager))
+    , mAssetDatabase(std::move(assetDatabase))
   {
     Deserialize(serializedModule.t);
+    mLogger->LogDebug(
+      Log("SceneHierarchyWindow created", "SceneHierarchyWindow"));
+  }
+
+  SceneHierarchyWindow::~SceneHierarchyWindow()
+  {
+    mLogger->LogDebug(
+      Log("SceneHierarchyWindow destroyed", "SceneHierarchyWindow"));
   }
 
   void
@@ -50,12 +64,12 @@ namespace Dwarf
     Entity             ent(entity, mLoadedScene->GetScene().GetRegistry());
     ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow;
     std::string        objectLabel = ent.GetComponent<NameComponent>().Name;
-    ImDrawList*        draw_list = ImGui::GetWindowDrawList();
+    ImDrawList*        drawList = ImGui::GetWindowDrawList();
     IScene&            scene = mLoadedScene->GetScene();
 
     // Splitting the channel to draw an extra rect when selected
-    draw_list->ChannelsSplit(2);
-    draw_list->ChannelsSetCurrent(1);
+    drawList->ChannelsSplit(2);
+    drawList->ChannelsSetCurrent(1);
 
     // Bool do indicate if the node, which has children, is folded out
     bool opened = false;
@@ -173,8 +187,9 @@ namespace Dwarf
 
               std::map<int, std::unique_ptr<IAssetReference>> copiedMaterials;
 
-              for (auto& material : source.GetComponent<MeshRendererComponent>()
-                                      .GetMaterialAssets())
+              for (const auto& material :
+                   source.GetComponent<MeshRendererComponent>()
+                     .GetMaterialAssets())
               {
                 copiedMaterials.at(material.first) =
                   mAssetDatabase->Retrieve(material.second->GetUID());
@@ -219,8 +234,9 @@ namespace Dwarf
 
             std::map<int, std::unique_ptr<IAssetReference>> copiedMaterials;
 
-            for (auto& material : source.GetComponent<MeshRendererComponent>()
-                                    .GetMaterialAssets())
+            for (const auto& material :
+                 source.GetComponent<MeshRendererComponent>()
+                   .GetMaterialAssets())
             {
               copiedMaterials.at(material.first) =
                 mAssetDatabase->Retrieve(material.second->GetUID());
@@ -279,33 +295,33 @@ namespace Dwarf
         heightFrac = (ImGui::GetMousePos().y - ImGui::GetItemRectMin().y) /
                      (ImGui::GetItemRectMax().y - ImGui::GetItemRectMin().y);
 
-        if (heightFrac < 0.33f)
+        if (heightFrac < 0.33F)
         {
-          ImVec2 p_min = ImGui::GetItemRectMin();
-          ImVec2 p_max = ImGui::GetItemRectMax();
+          ImVec2 pMin = ImGui::GetItemRectMin();
+          ImVec2 pMax = ImGui::GetItemRectMax();
 
-          auto p1 = ImVec2(p_min.x, p_min.y - 5);
-          auto p2 = ImVec2(p_min.x, p_min.y + 5);
-          auto p3 = ImVec2(p_min.x + 10, p_min.y);
+          auto p1 = ImVec2(pMin.x, pMin.y - 5);
+          auto p2 = ImVec2(pMin.x, pMin.y + 5);
+          auto p3 = ImVec2(pMin.x + 10, pMin.y);
 
-          auto rectMin = ImVec2(p_min.x, p_min.y - 1);
-          auto rectMax = ImVec2(p_max.x, p_min.y + 1);
+          auto rectMin = ImVec2(pMin.x, pMin.y - 1);
+          auto rectMax = ImVec2(pMax.x, pMin.y + 1);
           ImGui::GetForegroundDrawList()->AddTriangleFilled(
             p1, p2, p3, IM_COL32(76, 86, 106, 255));
           ImGui::GetWindowDrawList()->AddRectFilled(
             rectMin, rectMax, IM_COL32(76, 86, 106, 255), 10);
         }
-        else if (heightFrac > 0.66f)
+        else if (heightFrac > 0.66F)
         {
-          ImVec2 p_min = ImGui::GetItemRectMin();
-          ImVec2 p_max = ImGui::GetItemRectMax();
+          ImVec2 pMin = ImGui::GetItemRectMin();
+          ImVec2 pMax = ImGui::GetItemRectMax();
 
-          auto p1 = ImVec2(p_min.x, p_max.y - 5);
-          auto p2 = ImVec2(p_min.x, p_max.y + 5);
-          auto p3 = ImVec2(p_min.x + 10, p_max.y);
+          auto p1 = ImVec2(pMin.x, pMax.y - 5);
+          auto p2 = ImVec2(pMin.x, pMax.y + 5);
+          auto p3 = ImVec2(pMin.x + 10, pMax.y);
 
-          auto rectMin = ImVec2(p_min.x, p_max.y - 1);
-          auto rectMax = ImVec2(p_max.x, p_max.y + 1);
+          auto rectMin = ImVec2(pMin.x, pMax.y - 1);
+          auto rectMax = ImVec2(pMax.x, pMax.y + 1);
           ImGui::GetForegroundDrawList()->AddTriangleFilled(
             p1, p2, p3, IM_COL32(76, 86, 106, 255));
           ImGui::GetWindowDrawList()->AddRectFilled(
@@ -313,11 +329,11 @@ namespace Dwarf
         }
         else
         {
-          draw_list->ChannelsSetCurrent(0);
-          ImVec2 p_min = ImGui::GetItemRectMin();
-          ImVec2 p_max = ImGui::GetItemRectMax();
+          drawList->ChannelsSetCurrent(0);
+          ImVec2 pMin = ImGui::GetItemRectMin();
+          ImVec2 pMax = ImGui::GetItemRectMax();
           ImU32  rectCol = IM_COL32(76, 86, 106, 255);
-          ImGui::GetWindowDrawList()->AddRectFilled(p_min, p_max, rectCol, 10);
+          ImGui::GetWindowDrawList()->AddRectFilled(pMin, pMax, rectCol, 10);
         }
       }
 
@@ -328,31 +344,31 @@ namespace Dwarf
                   (sizeof(mEditorSelection->GetSelectedEntities().at(0)) *
                    mEditorSelection->GetSelectedEntities().size()));
 
-        std::vector<entt::entity> payload_e =
+        std::vector<entt::entity> payloadE =
           *(std::vector<entt::entity>*)acceptedPayload->Data;
 
-        if (heightFrac < 0.33f)
+        if (heightFrac < 0.33F)
         {
           mInstructions.push_back(std::make_shared<NewParentInstruction>(
             mLoadedScene->GetScene(),
-            payload_e,
+            payloadE,
             ent.GetComponent<TransformComponent>().GetParent()));
           mInstructions.push_back(std::make_shared<ChildIndexInstruction>(
-            mLoadedScene->GetScene(), payload_e, ent.GetChildIndex()));
+            mLoadedScene->GetScene(), payloadE, ent.GetChildIndex()));
         }
-        else if (heightFrac > 0.66f)
+        else if (heightFrac > 0.66F)
         {
           mInstructions.push_back(std::make_shared<NewParentInstruction>(
             mLoadedScene->GetScene(),
-            payload_e,
+            payloadE,
             ent.GetComponent<TransformComponent>().GetParent()));
           mInstructions.push_back(std::make_shared<ChildIndexInstruction>(
-            mLoadedScene->GetScene(), payload_e, ent.GetChildIndex() + 1));
+            mLoadedScene->GetScene(), payloadE, ent.GetChildIndex() + 1));
         }
         else
         {
           mInstructions.push_back(std::make_shared<NewParentInstruction>(
-            mLoadedScene->GetScene(), payload_e, entity));
+            mLoadedScene->GetScene(), payloadE, entity));
         }
       }
       ImGui::EndDragDropTarget();
@@ -360,28 +376,28 @@ namespace Dwarf
 
     if (ImGui::IsItemHovered())
     {
-      draw_list->ChannelsSetCurrent(0);
+      drawList->ChannelsSetCurrent(0);
       ImU32 rectCol = IM_COL32(76, 86, 106, 255);
       if (ImGui::IsMouseDown(0))
       {
         rectCol = IM_COL32(86, 95, 114, 255);
       }
-      draw_list->AddRectFilled(
-        ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), rectCol, 5.0f);
+      drawList->AddRectFilled(
+        ImGui::GetItemRectMin(), ImGui::GetItemRectMax(), rectCol, 5.0F);
     }
     else if (mEditorSelection->IsEntitySelected(entity))
     {
-      draw_list->ChannelsSetCurrent(0);
-      draw_list->AddRectFilled(ImGui::GetItemRectMin(),
-                               ImGui::GetItemRectMax(),
-                               IM_COL32(76, 86, 106, 255),
-                               5.0f);
+      drawList->ChannelsSetCurrent(0);
+      drawList->AddRectFilled(ImGui::GetItemRectMin(),
+                              ImGui::GetItemRectMax(),
+                              IM_COL32(76, 86, 106, 255),
+                              5.0F);
     }
 
     ImGui::PopStyleColor();
 
     // Merge channels
-    draw_list->ChannelsMerge();
+    drawList->ChannelsMerge();
     // Draw the child nodes if the node has children and is folded out
     if (opened)
     {
@@ -397,7 +413,7 @@ namespace Dwarf
   void
   SceneHierarchyWindow::ProcessInstructions()
   {
-    for (std::shared_ptr<GraphInstruction> instruction : mInstructions)
+    for (const std::shared_ptr<GraphInstruction>& instruction : mInstructions)
     {
       instruction->PerformInstruction();
     }
@@ -408,11 +424,11 @@ namespace Dwarf
   void
   SceneHierarchyWindow::OnImGuiRender()
   {
-    ImGuiWindowFlags window_flags = 0;
+    ImGuiWindowFlags windowFlags = 0;
 
-    window_flags |= ImGuiWindowFlags_NoCollapse;
+    windowFlags |= ImGuiWindowFlags_NoCollapse;
 
-    if (!ImGui::Begin(GetIdentifier().c_str(), &mWindowOpened, window_flags))
+    if (!ImGui::Begin(GetIdentifier().c_str(), &mWindowOpened, windowFlags))
     {
       // Early out if the window is collapsed, as an optimization.
       ImGui::End();
@@ -496,8 +512,9 @@ namespace Dwarf
 
             std::map<int, std::unique_ptr<IAssetReference>> copiedMaterials;
 
-            for (auto& material : source.GetComponent<MeshRendererComponent>()
-                                    .GetMaterialAssets())
+            for (const auto& material :
+                 source.GetComponent<MeshRendererComponent>()
+                   .GetMaterialAssets())
             {
               copiedMaterials.at(material.first) =
                 mAssetDatabase->Retrieve(material.second->GetUID());
@@ -522,11 +539,11 @@ namespace Dwarf
                   (sizeof(mEditorSelection->GetSelectedEntities().at(0)) *
                    mEditorSelection->GetSelectedEntities().size()));
 
-        std::vector<entt::entity> payload_e =
+        std::vector<entt::entity> payloadE =
           *(const std::vector<entt::entity>*)payload->Data;
         mInstructions.push_back(std::make_shared<NewParentInstruction>(
           mLoadedScene->GetScene(),
-          payload_e,
+          payloadE,
           mLoadedScene->GetScene().GetRootEntity().GetHandle()));
       }
       ImGui::EndDragDropTarget();
@@ -545,13 +562,13 @@ namespace Dwarf
   }
 
   void
-  SceneHierarchyWindow::Deserialize(nlohmann::json moduleData)
+  SceneHierarchyWindow::Deserialize(const nlohmann::json& moduleData)
   {
     // Deserialize saved data
   }
 
-  nlohmann::json
-  SceneHierarchyWindow::Serialize()
+  auto
+  SceneHierarchyWindow::Serialize() -> nlohmann::json
   {
     nlohmann::json serializedModule;
 

@@ -1,4 +1,4 @@
-#include "DI/Editor/EditorInjector.h"
+#include "pch.h"
 
 #include "Core/Asset/AssetReference/AssetReferenceFactory.h"
 #include "Core/Asset/AssetReference/IAssetReferenceFactory.h"
@@ -56,6 +56,7 @@
 #include "Core/Scene/SceneFactory.h"
 #include "Core/Scene/Settings/ISceneSettingsFactory.h"
 #include "Core/Scene/Settings/SceneSettingsFactory.h"
+#include "DI/Editor/EditorInjector.h"
 #include "Editor/Editor.h"
 #include "Editor/EditorView/EditorView.h"
 #include "Editor/EditorView/IEditorView.h"
@@ -102,6 +103,7 @@
 #include "Window/SDL3Window.h"
 #include <boost/di.hpp>
 #include <boost/di/extension/scopes/shared.hpp>
+
 
 namespace Dwarf
 {

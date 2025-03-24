@@ -1,5 +1,8 @@
-#include "ShaderParameterCollectionFactory.h"
+#include "pch.h"
+
 #include "ShaderParameterCollection.h"
+#include "ShaderParameterCollectionFactory.h"
+
 
 namespace Dwarf
 {

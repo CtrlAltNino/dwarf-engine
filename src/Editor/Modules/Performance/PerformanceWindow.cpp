@@ -1,14 +1,13 @@
-#include "Editor/Modules/Performance/PerformanceWindow.h"
+#include "pch.h"
+
 #include "Core/Rendering/RendererApi/IRendererApi.h"
-#include <algorithm>
-#include <cmath>
-#include <fmt/format.h>
-#include <glm/fwd.hpp>
+#include "Editor/Modules/Performance/PerformanceWindow.h"
 
 namespace Dwarf
 {
 
   PerformanceWindow::PerformanceWindow(
+    std::shared_ptr<IDwarfLogger> logger,
     std::shared_ptr<IEditorStats> editorStats,
     std::shared_ptr<IRendererApi> rendererApi,
     std::shared_ptr<IVramTracker> vramTracker,
@@ -16,15 +15,18 @@ namespace Dwarf
     : IGuiModule(ModuleLabel("Performance"),
                  ModuleType(MODULE_TYPE::PERFORMANCE),
                  ModuleID(std::make_shared<UUID>()))
-    , mEditorStats(editorStats)
-    , mRendererApi(rendererApi)
-    , mVramTracker(vramTracker)
+    , mLogger(std::move(logger))
+    , mEditorStats(std::move(editorStats))
+    , mRendererApi(std::move(rendererApi))
+    , mVramTracker(std::move(vramTracker))
     , mGpuInfo(std::move(gpuInfo))
   {
+    mLogger->LogDebug(Log("PerformanceWindow created", "PerformanceWindow"));
   }
 
   PerformanceWindow::PerformanceWindow(
     SerializedModule              serializedModule,
+    std::shared_ptr<IDwarfLogger> logger,
     std::shared_ptr<IEditorStats> editorStats,
     std::shared_ptr<IRendererApi> rendererApi,
     std::shared_ptr<IVramTracker> vramTracker,
@@ -33,12 +35,19 @@ namespace Dwarf
                  ModuleType(MODULE_TYPE::PERFORMANCE),
                  ModuleID(std::make_shared<UUID>(
                    serializedModule.t["id"].get<std::string>())))
-    , mEditorStats(editorStats)
-    , mRendererApi(rendererApi)
-    , mVramTracker(vramTracker)
+    , mLogger(std::move(logger))
+    , mEditorStats(std::move(editorStats))
+    , mRendererApi(std::move(rendererApi))
+    , mVramTracker(std::move(vramTracker))
     , mGpuInfo(std::move(gpuInfo))
   {
     Deserialize(serializedModule.t);
+    mLogger->LogDebug(Log("PerformanceWindow created", "PerformanceWindow"));
+  }
+
+  PerformanceWindow::~PerformanceWindow()
+  {
+    mLogger->LogDebug(Log("PerformanceWindow destroyed", "PerformanceWindow"));
   }
 
   void
@@ -50,11 +59,11 @@ namespace Dwarf
   void
   PerformanceWindow::OnImGuiRender()
   {
-    ImGuiWindowFlags window_flags = 0;
+    ImGuiWindowFlags windowFlags = 0;
 
-    window_flags |= ImGuiWindowFlags_AlwaysAutoResize;
-    window_flags |= ImGuiWindowFlags_NoCollapse;
-    if (!ImGui::Begin(GetIdentifier().c_str(), &mWindowOpened, window_flags))
+    windowFlags |= ImGuiWindowFlags_AlwaysAutoResize;
+    windowFlags |= ImGuiWindowFlags_NoCollapse;
+    if (!ImGui::Begin(GetIdentifier().c_str(), &mWindowOpened, windowFlags))
     {
       // Early out if the window is collapsed, as an optimization.
       ImGui::End();
@@ -75,24 +84,21 @@ namespace Dwarf
       values.erase(values.begin());
     }
 
-    float max = 0.0f;
-    for (int i = 0; i < values.size(); i++)
+    float max = 0.0F;
+    for (float value : values)
     {
-      if (values[i] > max)
-      {
-        max = values[i];
-      }
+      max = std::max(value, max);
     }
 
     std::string overlay =
-      fmt::format("Frame time: {:.3f} ms", values[values.size() - 1] * 1000.0f);
+      fmt::format("Frame time: {:.3f} ms", values[values.size() - 1] * 1000.0F);
 
     ImGui::PlotLines("Frame time",
                      values.data(),
                      values.size(),
                      0,
                      overlay.c_str(),
-                     0.0f,
+                     0.0F,
                      max,
                      ImVec2(0, 80));
 
@@ -100,34 +106,34 @@ namespace Dwarf
 
     VRAMUsageBuffer currentVRAMUsage = mRendererApi->QueryVRAMUsage();
 
-    float progress_saturated =
+    float progressSaturated =
       std::clamp((float)currentVRAMUsage.usedMemoryMb /
                    (float)currentVRAMUsage.totalMemoryMb,
-                 0.0f,
-                 1.0f);
+                 0.0F,
+                 1.0F);
     char buf[64];
     sprintf(buf,
             "%d Mb / %d Mb",
-            (int)(progress_saturated * currentVRAMUsage.totalMemoryMb),
+            (int)(progressSaturated * currentVRAMUsage.totalMemoryMb),
             currentVRAMUsage.totalMemoryMb);
 
-    ImGui::ProgressBar(progress_saturated, ImVec2(0.f, 0.f), buf);
+    ImGui::ProgressBar(progressSaturated, ImVec2(0.f, 0.f), buf);
     ImGui::SameLine();
     ImGui::Text("VRAM Usage");
 
     if (mGpuInfo)
     {
-      float progress_saturated = std::clamp((float)mGpuInfo->GetUsedVramMb() /
-                                              (float)mGpuInfo->GetTotalVramMb(),
-                                            0.0f,
-                                            1.0f);
+      float progressSaturated = std::clamp((float)mGpuInfo->GetUsedVramMb() /
+                                             (float)mGpuInfo->GetTotalVramMb(),
+                                           0.0F,
+                                           1.0F);
       char  buf[64];
       sprintf(buf,
               "%d Mb / %zu Mb",
-              (int)(progress_saturated * mGpuInfo->GetTotalVramMb()),
+              (int)(progressSaturated * mGpuInfo->GetTotalVramMb()),
               mGpuInfo->GetTotalVramMb());
 
-      ImGui::ProgressBar(progress_saturated, ImVec2(0.f, 0.f), buf);
+      ImGui::ProgressBar(progressSaturated, ImVec2(0.f, 0.f), buf);
       ImGui::SameLine();
       ImGui::Text("VRAM Usage AMD");
     }
@@ -163,7 +169,7 @@ namespace Dwarf
   }
 
   void
-  PerformanceWindow::Deserialize(nlohmann::json moduleData)
+  PerformanceWindow::Deserialize(const nlohmann::json& moduleData)
   {
     // Deserialization of saved data
   }

@@ -3,7 +3,6 @@
 #include "Core/Asset/AssetReimporter/IAssetReimporter.h"
 #include "Core/Asset/Database/IAssetDatabase.h"
 #include "Core/Base.h"
-#include "Core/Rendering/PreviewRenderer/MaterialPreview/IMaterialPreview.h"
 #include "Core/Scene/IO/ISceneIO.h"
 #include "Editor/LoadedScene/ILoadedScene.h"
 #include "Editor/Modules/Inspector/AssetInspector/SceneAsset/ISceneAssetInspector.h"
@@ -33,6 +32,11 @@ namespace Dwarf
                         std::shared_ptr<IFileHandler>     fileHandler);
     ~SceneAssetInspector() override = default;
 
+    /**
+     * @brief Renders the scene asset inspector
+     *
+     * @param asset
+     */
     void
     Render(IAssetReference& asset) override;
   };

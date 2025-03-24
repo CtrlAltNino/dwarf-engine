@@ -1,10 +1,9 @@
-#include "TextureAssetInspector.h"
+#include "pch.h"
 
+#include "TextureAssetInspector.h"
 #include "UI/DwarfUI.h"
 #include "Utilities/ImageUtilities/TextureCommon.h"
-#include <functional>
 #include <imgui.h>
-#include <memory>
 
 namespace Dwarf
 {
@@ -12,14 +11,13 @@ namespace Dwarf
     GraphicsApi                       graphicsApi,
     std::shared_ptr<IAssetDatabase>   assetDatabase,
     std::shared_ptr<IAssetReimporter> assetReimporter,
-    std::shared_ptr<IMaterialPreview> materialPreview,
     std::shared_ptr<IInputManager>    inputManager,
     std::shared_ptr<IAssetMetadata>   assetMetadata)
     : mGraphicsApi(graphicsApi)
-    , mAssetDatabase(assetDatabase)
-    , mAssetReimporter(assetReimporter)
-    , mInputManager(inputManager)
-    , mAssetMetadata(assetMetadata)
+    , mAssetDatabase(std::move(assetDatabase))
+    , mAssetReimporter(std::move(assetReimporter))
+    , mInputManager(std::move(inputManager))
+    , mAssetMetadata(std::move(assetMetadata))
   {
   }
 
@@ -45,13 +43,13 @@ namespace Dwarf
       }
     }
 
-    ImDrawList* draw_list = ImGui::GetWindowDrawList();
-    draw_list->ChannelsSplit(2);
-    draw_list->ChannelsSetCurrent(1);
+    ImDrawList* drawList = ImGui::GetWindowDrawList();
+    drawList->ChannelsSplit(2);
+    drawList->ChannelsSetCurrent(1);
 
     ImGui::BeginChild("##inspector_child",
                       ImGui::GetContentRegionAvail(),
-                      false,
+                      0,
                       ImGuiWindowFlags_AlwaysUseWindowPadding);
 
     ImGui::TextWrapped("File name: ");
@@ -85,20 +83,20 @@ namespace Dwarf
 
     {
       static const char* textureTypeItems[] = { "Default", "Normal map" };
-      const char*        combo_preview_value =
+      const char*        comboPreviewValue =
         textureTypeItems[mCurrentImportSettings.mTextureType];
 
-      if (ImGui::BeginCombo("Texture Type", combo_preview_value, 0))
+      if (ImGui::BeginCombo("Texture Type", comboPreviewValue, 0))
       {
         for (int n = 0; n < IM_ARRAYSIZE(textureTypeItems); n++)
         {
-          const bool is_selected = (mCurrentImportSettings.mTextureType == n);
-          if (ImGui::Selectable(textureTypeItems[n], is_selected))
+          const bool isSelected = (mCurrentImportSettings.mTextureType == n);
+          if (ImGui::Selectable(textureTypeItems[n], isSelected))
             mCurrentImportSettings.mTextureType = (TextureFileType)n;
 
           // Set the initial focus when opening the combo (scrolling + keyboard
           // navigation focus)
-          if (is_selected) ImGui::SetItemDefaultFocus();
+          if (isSelected) ImGui::SetItemDefaultFocus();
         }
         ImGui::EndCombo();
       }
@@ -108,20 +106,25 @@ namespace Dwarf
 
     {
       static const char* colorSpaceItems[] = { "Linear", "sRGB" };
-      const char*        combo_preview_value =
+      const char*        comboPreviewValue =
         colorSpaceItems[mCurrentImportSettings.mColorSpace];
 
-      if (ImGui::BeginCombo("Color Space", combo_preview_value, 0))
+      if (ImGui::BeginCombo("Color Space", comboPreviewValue, 0))
       {
         for (int n = 0; n < IM_ARRAYSIZE(colorSpaceItems); n++)
         {
           const bool is_selected = (mCurrentImportSettings.mColorSpace == n);
           if (ImGui::Selectable(colorSpaceItems[n], is_selected))
+          {
             mCurrentImportSettings.mColorSpace = (ColorSpace)n;
+          }
 
           // Set the initial focus when opening the combo (scrolling + keyboard
           // navigation focus)
-          if (is_selected) ImGui::SetItemDefaultFocus();
+          if (is_selected)
+          {
+            ImGui::SetItemDefaultFocus();
+          }
         }
         ImGui::EndCombo();
       }
@@ -148,20 +151,25 @@ namespace Dwarf
 
     {
       static const char* wrapModeItems[] = { "Clamp", "Mirror", "Repeat" };
-      const char*        combo_preview_value =
+      const char*        comboPreviewValue =
         wrapModeItems[mCurrentImportSettings.mWrapMode];
 
-      if (ImGui::BeginCombo("Wrap Mode", combo_preview_value, 0))
+      if (ImGui::BeginCombo("Wrap Mode", comboPreviewValue, 0))
       {
         for (int n = 0; n < IM_ARRAYSIZE(wrapModeItems); n++)
         {
           const bool is_selected = (mCurrentImportSettings.mWrapMode == n);
           if (ImGui::Selectable(wrapModeItems[n], is_selected))
+          {
             mCurrentImportSettings.mWrapMode = (WrapMode)n;
+          }
 
           // Set the initial focus when opening the combo (scrolling + keyboard
           // navigation focus)
-          if (is_selected) ImGui::SetItemDefaultFocus();
+          if (is_selected)
+          {
+            ImGui::SetItemDefaultFocus();
+          }
         }
         ImGui::EndCombo();
       }
@@ -171,20 +179,25 @@ namespace Dwarf
 
     {
       static const char* filterModeItems[] = { "Nearest", "Bilinear" };
-      const char*        combo_preview_value =
+      const char*        comboPreviewValue =
         filterModeItems[mCurrentImportSettings.mFilterMode];
 
-      if (ImGui::BeginCombo("Filter Mode", combo_preview_value, 0))
+      if (ImGui::BeginCombo("Filter Mode", comboPreviewValue, 0))
       {
         for (int n = 0; n < IM_ARRAYSIZE(filterModeItems); n++)
         {
           const bool is_selected = (mCurrentImportSettings.mFilterMode == n);
           if (ImGui::Selectable(filterModeItems[n], is_selected))
+          {
             mCurrentImportSettings.mFilterMode = (FilterMode)n;
+          }
 
           // Set the initial focus when opening the combo (scrolling + keyboard
           // navigation focus)
-          if (is_selected) ImGui::SetItemDefaultFocus();
+          if (is_selected)
+          {
+            ImGui::SetItemDefaultFocus();
+          }
         }
         ImGui::EndCombo();
       }
@@ -196,7 +209,7 @@ namespace Dwarf
       ImVec2(ImGui::GetWindowPos().x + ImGui::GetCursorPos().x +
                COMPONENT_PANEL_PADDING,
              ImGui::GetWindowPos().y + ImGui::GetCursorPos().y +
-               COMPONENT_PANEL_PADDING / 2.0f);
+               (COMPONENT_PANEL_PADDING / 2.0F));
     auto separatorMax =
       ImVec2(ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMax().x -
                COMPONENT_PANEL_PADDING,
@@ -212,17 +225,18 @@ namespace Dwarf
     // std::cout << "Texture ID: " << texID << std::endl;
     ImGui::Image(texID, ImVec2(width, width));
 
-    draw_list->ChannelsSetCurrent(0);
+    drawList->ChannelsSetCurrent(0);
 
     float endY = ImGui::GetItemRectMax().y;
     ImGui::EndChild();
     ImGui::GetWindowDrawList()->AddRectFilled(
       ImGui::GetItemRectMin(),
       ImVec2(ImGui::GetItemRectMin().x + ImGui::GetContentRegionAvail().x,
-             endY + 2 * COMPONENT_PANEL_PADDING),
+             endY + (2 * COMPONENT_PANEL_PADDING)),
       IM_COL32(59, 66, 82, 255),
-      5.0f);
-    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3 * COMPONENT_PANEL_PADDING);
-    draw_list->ChannelsMerge();
+      5.0F);
+    ImGui::SetCursorPosY(ImGui::GetCursorPosY() +
+                         (3 * COMPONENT_PANEL_PADDING));
+    drawList->ChannelsMerge();
   }
 }

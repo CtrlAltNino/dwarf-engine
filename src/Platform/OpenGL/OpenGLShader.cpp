@@ -1,16 +1,15 @@
-#include "OpenGLShader.h"
+#include "pch.h"
+
 #include "Core/Asset/AssetReference/IAssetReference.h"
 #include "Core/Asset/AssetTypes.h"
 #include "Core/Asset/Database/AssetComponents.h"
 #include "Core/Base.h"
 #include "Core/Rendering/Shader/ShaderParameterCollection/IShaderParameterCollection.h"
 #include "Core/Rendering/Shader/ShaderParameterCollection/IShaderParameterCollectionFactory.h"
+#include "OpenGLShader.h"
 #include "OpenGLUtilities.h"
 #include "Platform/OpenGL/OpenGLUtilities.h"
-#include <algorithm>
-#include <fmt/format.h>
-#include <memory>
-#include <utility>
+
 
 #define GL_SHADER_LOG_LENGTH (1024)
 

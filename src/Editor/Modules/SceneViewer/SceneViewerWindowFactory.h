@@ -2,7 +2,7 @@
 
 #include "Editor/Modules/SceneViewer/ISceneViewerWindowFactory.h"
 #include "Editor/Modules/SceneViewer/SceneViewerWindow.h"
-#include "Project/IProjectSettings.h"
+#include "Logging/IDwarfLogger.h"
 #include <boost/di.hpp>
 
 namespace Dwarf
@@ -10,6 +10,7 @@ namespace Dwarf
   class SceneViewerWindowFactory : public ISceneViewerWindowFactory
   {
   private:
+    std::shared_ptr<IDwarfLogger>              mLogger;
     std::shared_ptr<ICameraFactory>            mCameraFactory;
     std::shared_ptr<IFramebufferFactory>       mFramebufferFactory;
     std::shared_ptr<IEditorStats>              mEditorStats;
@@ -23,8 +24,8 @@ namespace Dwarf
       mShaderSourceCollectionFactory;
 
   public:
-    BOOST_DI_INJECT(
-      SceneViewerWindowFactory,
+    SceneViewerWindowFactory(
+      std::shared_ptr<IDwarfLogger>              logger,
       std::shared_ptr<ICameraFactory>            cameraFactory,
       std::shared_ptr<IFramebufferFactory>       framebufferFactory,
       std::shared_ptr<IEditorStats>              editorStats,
@@ -37,12 +38,24 @@ namespace Dwarf
       std::shared_ptr<IShaderSourceCollectionFactory>
         shaderSourceCollectionFactory);
 
-    ~SceneViewerWindowFactory() override = default;
+    ~SceneViewerWindowFactory() override;
 
-    std::unique_ptr<SceneViewerWindow>
-    Create() const override;
+    /**
+     * @brief Creates a default SceneViewerWindow instance
+     *
+     * @return Unique pointer to the created instance
+     */
+    [[nodiscard]] auto
+    Create() const -> std::unique_ptr<SceneViewerWindow> override;
 
-    std::unique_ptr<SceneViewerWindow>
-    Create(SerializedModule serializedModule) const override;
+    /**
+     * @brief Creates a SceneViewerWindow instance based off serialized data
+     *
+     * @param serializedModule Serialized data of a SceneViewerWindow
+     * @return Unique pointer to the created instance
+     */
+    [[nodiscard]] auto
+    Create(SerializedModule serializedModule) const
+      -> std::unique_ptr<SceneViewerWindow> override;
   };
 } // namespace Dwarf

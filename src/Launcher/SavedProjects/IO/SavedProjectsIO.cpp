@@ -1,6 +1,7 @@
-#include "SavedProjectsIO.h"
+#include "pch.h"
+
 #include "Launcher/SavedProjects/ISavedProjects.h"
-#include <fmt/format.h>
+#include "SavedProjectsIO.h"
 
 #define SAVED_PROJECTS_FILE_NAME "savedProjects.json"
 #define SAVED_PROJECTS_KEY "projects"
@@ -13,8 +14,8 @@ namespace Dwarf
 {
   SavedProjectsIO::SavedProjectsIO(std::shared_ptr<IDwarfLogger> logger,
                                    std::shared_ptr<IFileHandler> fileHandler)
-    : mLogger(logger)
-    , mFileHandler(fileHandler)
+    : mLogger(std::move(logger))
+    , mFileHandler(std::move(fileHandler))
   {
     mLogger->LogDebug(Log("SavedProjectsIO created", "SavedProjectsIO"));
   }
@@ -24,8 +25,8 @@ namespace Dwarf
     mLogger->LogDebug(Log("SavedProjectsIO destroyed", "SavedProjectsIO"));
   }
 
-  std::vector<SavedProject>
-  SavedProjectsIO::LoadSavedProjects() const
+  auto
+  SavedProjectsIO::LoadSavedProjects() const -> std::vector<SavedProject>
   {
     std::vector<SavedProject> savedProjects;
     std::filesystem::path     savedProjectsPath =

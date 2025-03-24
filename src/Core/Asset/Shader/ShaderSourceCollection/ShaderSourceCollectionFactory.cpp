@@ -1,11 +1,11 @@
-#include "ShaderSourceCollectionFactory.h"
+#include "pch.h"
+
 #include "Core/Asset/AssetReference/IAssetReference.h"
 #include "Core/Asset/Shader/ShaderSourceCollection/IShaderSourceCollection.h"
 #include "Core/Asset/Shader/ShaderSourceCollection/ShaderSourceCollection.h"
-#include <memory>
-#include <vector>
-
 #include "Platform/OpenGL/OpenGLUtilities.h"
+#include "ShaderSourceCollectionFactory.h"
+
 
 namespace Dwarf
 {
