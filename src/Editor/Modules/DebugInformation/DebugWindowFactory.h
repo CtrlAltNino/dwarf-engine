@@ -12,9 +12,6 @@ namespace Dwarf
   private:
     std::shared_ptr<IDwarfLogger>   mLogger;
     std::shared_ptr<IAssetDatabase> mAssetDatabase;
-    std::function<boost::di::injector<std::unique_ptr<DebugWindow>>(
-      std::shared_ptr<IAssetDatabase>)>
-      mInjectorFactory;
 
   public:
     DebugWindowFactory(std::shared_ptr<IDwarfLogger>   logger,

@@ -14,6 +14,13 @@ namespace Dwarf
     , mAssetInspector(std::move(assetInspector))
     , mEntityInspector(std::move(entityInspector))
   {
+    mLogger->LogDebug(
+      Log("InspectorWindowFactory created", "InspectorWindowFactory"));
+  }
+  InspectorWindowFactory::~InspectorWindowFactory()
+  {
+    mLogger->LogDebug(
+      Log("InspectorWindowFactory destroyed", "InspectorWindowFactory"));
   }
 
   auto

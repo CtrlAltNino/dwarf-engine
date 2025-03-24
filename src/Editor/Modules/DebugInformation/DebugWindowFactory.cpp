@@ -7,12 +7,7 @@ namespace Dwarf
     std::shared_ptr<IAssetDatabase> assetDatabase)
     : mLogger(std::move(logger))
     , mAssetDatabase(std::move(assetDatabase))
-    , mInjectorFactory(
-        [](std::shared_ptr<IAssetDatabase> assetDatabase)
-        {
-          return boost::di::make_injector(
-            boost::di::bind<IAssetDatabase>.to(assetDatabase));
-        })
+
   {
     mLogger->LogDebug(Log("DebugWindowFactory created", "DebugWindowFactory"));
   }
