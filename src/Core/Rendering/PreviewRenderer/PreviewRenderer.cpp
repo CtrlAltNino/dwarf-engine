@@ -34,8 +34,10 @@ namespace Dwarf
     mProperties.ModelRotationTarget = {
       std::max(
         -90.0F,
-        std::min(90.0F, mProperties.ModelRotationTarget.x - deltaMousePos.y)),
-      fmodf(mProperties.ModelRotationTarget.y + deltaMousePos.x, 360.0F),
+        std::min(90.0F,
+                 mProperties.ModelRotationTarget.x + (deltaMousePos.y * 0.3F))),
+      fmodf(mProperties.ModelRotationTarget.y + (deltaMousePos.x * 0.3F),
+            360.0F),
       0
     };
   }

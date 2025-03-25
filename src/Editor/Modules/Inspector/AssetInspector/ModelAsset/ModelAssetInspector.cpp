@@ -114,7 +114,11 @@ namespace Dwarf
       mModelPreview->UpdateRotation(mInputManager->GetMouseDelta());
     }
 
-    drawList->AddImage(mModelPreview->GetTextureId(), minRect, maxRect);
+    drawList->AddImage(mModelPreview->GetTextureId(),
+                       minRect,
+                       maxRect,
+                       ImVec2(0, 1),
+                       ImVec2(1, 0));
 
     drawList->ChannelsSetCurrent(0);
 

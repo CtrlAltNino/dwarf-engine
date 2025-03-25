@@ -23,7 +23,7 @@ namespace Dwarf
      */
     virtual auto
     Create(std::unique_ptr<IMesh>& mesh,
-           IMaterial&              material,
+           MaterialAsset&          material,
            TransformComponent&     transform) -> std::unique_ptr<IDrawCall> = 0;
   };
 }

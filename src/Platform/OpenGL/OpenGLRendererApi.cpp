@@ -11,7 +11,6 @@
 #include "Platform/OpenGL/OpenGLUtilities.h"
 #include <glad/glad.h>
 
-
 namespace Dwarf
 {
   OpenGLRendererApi::OpenGLRendererApi(

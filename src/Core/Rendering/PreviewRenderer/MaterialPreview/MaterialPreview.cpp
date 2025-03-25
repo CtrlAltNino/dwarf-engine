@@ -61,10 +61,7 @@ namespace Dwarf
     mCamera->GetProperties().NearPlane = 0.1F;
     mCamera->GetProperties().FarPlane = 4;
 
-    mProperties.ModelRotation =
-      InterpolateVectors(mProperties.ModelRotation,
-                         mProperties.ModelRotationTarget,
-                         mProperties.RotationSpeed);
+    mProperties.ModelRotation = mProperties.ModelRotationTarget;
     mProperties.ModelRotationQuat =
       glm::rotate(glm::rotate(glm::quat({ 0, 0, 0 }),
                               mProperties.ModelRotation.x * DEG_2_RAD,
@@ -77,7 +74,7 @@ namespace Dwarf
                               0,
                               mRenderFramebuffer->GetSpecification().Width,
                               mRenderFramebuffer->GetSpecification().Height);
-    mRendererApi->SetClearColor({ 59 / 255.0F, 66 / 255.0F, 82 / 255.0F, 1 });
+    mRendererApi->SetClearColor({ 46 / 255.0F, 52 / 255.0F, 64 / 255.0F, 1 });
     mRendererApi->Clear();
 
     mRendererApi->RenderIndexed(*mMeshBuffer,
