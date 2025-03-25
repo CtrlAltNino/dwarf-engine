@@ -209,4 +209,12 @@ namespace Dwarf
 
     return std::make_unique<ShaderSourceCollection>(shaderSources);
   }
+
+  auto
+  ShaderSourceCollectionFactory::CreateShaderSourceCollection(
+    std::vector<std::unique_ptr<IAssetReference>>& shaderSources)
+    -> std::unique_ptr<IShaderSourceCollection>
+  {
+    return std::make_unique<ShaderSourceCollection>(shaderSources);
+  }
 }
