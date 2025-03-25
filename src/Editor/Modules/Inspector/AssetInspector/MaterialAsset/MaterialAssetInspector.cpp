@@ -177,7 +177,7 @@ namespace Dwarf
       // TODO: Fix: Crashes when not returned here
       // mAssetDatabase->Reimport(asset->GetPath());
       mAssetReimporter->QueueReimport(mAssetPath);
-      ImGui::EndChild();
+      // ImGui::EndChild();
       return;
     }
   }
@@ -529,7 +529,7 @@ namespace Dwarf
     {
       // MaterialSerializer::Serialize(*mat, asset->GetPath());
       mMaterialIO->SaveMaterial(material, mAssetPath);
-      ImGui::EndChild();
+      // ImGui::EndChild();
       return;
     }
 
