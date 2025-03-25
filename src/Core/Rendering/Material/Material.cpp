@@ -12,7 +12,6 @@ namespace Dwarf
     , mMaterialProperties(std::move(materialProperties))
     , mShaderParameters(std::move(shaderParameters))
   {
-    mShader->Compile();
   }
 
   auto
