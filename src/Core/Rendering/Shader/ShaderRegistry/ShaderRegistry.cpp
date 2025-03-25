@@ -80,6 +80,7 @@ namespace Dwarf
           "ShaderRegistry"));
 
     mShaders[hash] = mShaderFactory->Create(std::move(shaderSources));
+    mShaders[hash]->Compile();
 
     return mShaders[hash];
   }
