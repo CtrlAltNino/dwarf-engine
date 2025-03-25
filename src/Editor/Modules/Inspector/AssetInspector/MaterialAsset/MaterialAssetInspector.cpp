@@ -14,13 +14,18 @@ namespace Dwarf
     std::shared_ptr<IAssetReimporter> assetReimporter,
     std::shared_ptr<IMaterialPreview> materialPreview,
     std::shared_ptr<IInputManager>    inputManager,
-    std::shared_ptr<IMaterialIO>      materialIO)
+    std::shared_ptr<IMaterialIO>      materialIO,
+    std::shared_ptr<IShaderRegistry>  shaderRegistry,
+    std::shared_ptr<IShaderSourceCollectionFactory>
+      shaderSourceCollectionFactory)
     : mGraphicsApi(graphicsApi)
     , mAssetDatabase(std::move(assetDatabase))
     , mAssetReimporter(std::move(assetReimporter))
     , mMaterialPreview(std::move(materialPreview))
     , mInputManager(std::move(inputManager))
     , mMaterialIO(std::move(materialIO))
+    , mShaderRegistry(std::move(shaderRegistry))
+    , mShaderSourceCollectionFactory(std::move(shaderSourceCollectionFactory))
   {
     mMaterialPreview->SetMeshType(MaterialPreviewMeshType::Sphere);
   }
@@ -175,9 +180,7 @@ namespace Dwarf
     if (ImGui::Button("Reimport"))
     {
       // TODO: Fix: Crashes when not returned here
-      // mAssetDatabase->Reimport(asset->GetPath());
       mAssetReimporter->QueueReimport(mAssetPath);
-      // ImGui::EndChild();
       return;
     }
   }
@@ -366,7 +369,47 @@ namespace Dwarf
 
       if (ImGui::Button("Compile", ImVec2(60, 25)))
       {
-        material.GetShader().Compile();
+        IShader& shader = material.GetShader();
+        auto&    oglShader = dynamic_cast<OpenGLShader&>(shader);
+        std::vector<std::unique_ptr<IAssetReference>> shaderSources;
+
+        if (oglShader.GetVertexShaderAsset().has_value())
+        {
+          shaderSources.emplace_back(mAssetDatabase->Retrieve(
+            oglShader.GetVertexShaderAsset()->get()->GetUID()));
+        }
+
+        if (oglShader.GetTessellationControlShaderAsset().has_value())
+        {
+          shaderSources.emplace_back(mAssetDatabase->Retrieve(
+            oglShader.GetTessellationControlShaderAsset()->get()->GetUID()));
+        }
+
+        if (oglShader.GetTessellationEvaluationShaderAsset().has_value())
+        {
+          shaderSources.emplace_back(mAssetDatabase->Retrieve(
+            oglShader.GetTessellationEvaluationShaderAsset()->get()->GetUID()));
+        }
+
+        if (oglShader.GetGeometryShaderAsset().has_value())
+        {
+          shaderSources.emplace_back(mAssetDatabase->Retrieve(
+            oglShader.GetGeometryShaderAsset()->get()->GetUID()));
+        }
+
+        if (oglShader.GetFragmentShaderAsset().has_value())
+        {
+          shaderSources.emplace_back(mAssetDatabase->Retrieve(
+            oglShader.GetFragmentShaderAsset()->get()->GetUID()));
+        }
+
+        material.SetShader(mShaderRegistry->GetOrCreate(
+          mShaderSourceCollectionFactory->CreateShaderSourceCollection(
+            shaderSources)));
+        if (!material.GetShader().IsCompiled())
+        {
+          material.GetShader().Compile();
+        }
       }
 
       ImGui::SameLine();
@@ -527,9 +570,7 @@ namespace Dwarf
     if (ImGui::Button("Save changes",
                       ImVec2(ImGui::GetContentRegionAvail().x / 2.0F, 50)))
     {
-      // MaterialSerializer::Serialize(*mat, asset->GetPath());
       mMaterialIO->SaveMaterial(material, mAssetPath);
-      // ImGui::EndChild();
       return;
     }
 
@@ -542,7 +583,6 @@ namespace Dwarf
       {
         material.GenerateShaderParameters();
       }
-      // material.GetShader().Compile();
     }
   }
 

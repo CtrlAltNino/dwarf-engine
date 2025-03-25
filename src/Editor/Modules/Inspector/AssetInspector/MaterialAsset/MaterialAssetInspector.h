@@ -3,8 +3,10 @@
 #include "Core/Asset/AssetReimporter/IAssetReimporter.h"
 #include "Core/Asset/Database/AssetComponents.h"
 #include "Core/Asset/Database/IAssetDatabase.h"
+#include "Core/Asset/Shader/ShaderSourceCollection/IShaderSourceCollectionFactory.h"
 #include "Core/Rendering/Material/IO/IMaterialIO.h"
 #include "Core/Rendering/PreviewRenderer/MaterialPreview/IMaterialPreview.h"
+#include "Core/Rendering/Shader/ShaderRegistry/IShaderRegistry.h"
 #include "Editor/Modules/Inspector/AssetInspector/MaterialAsset/IMaterialAssetInspector.h"
 #include "Input/IInputManager.h"
 #include <optional>
@@ -14,12 +16,15 @@ namespace Dwarf
   class MaterialAssetInspector : public IMaterialAssetInspector
   {
   private:
-    GraphicsApi                                          mGraphicsApi;
-    std::shared_ptr<IAssetDatabase>                      mAssetDatabase;
-    std::shared_ptr<IAssetReimporter>                    mAssetReimporter;
-    std::shared_ptr<IMaterialPreview>                    mMaterialPreview;
-    std::shared_ptr<IInputManager>                       mInputManager;
-    std::shared_ptr<IMaterialIO>                         mMaterialIO;
+    GraphicsApi                       mGraphicsApi;
+    std::shared_ptr<IAssetDatabase>   mAssetDatabase;
+    std::shared_ptr<IAssetReimporter> mAssetReimporter;
+    std::shared_ptr<IMaterialPreview> mMaterialPreview;
+    std::shared_ptr<IInputManager>    mInputManager;
+    std::shared_ptr<IMaterialIO>      mMaterialIO;
+    std::shared_ptr<IShaderRegistry>  mShaderRegistry;
+    std::shared_ptr<IShaderSourceCollectionFactory>
+      mShaderSourceCollectionFactory;
     std::optional<std::reference_wrapper<MaterialAsset>> mCurrentAsset =
       std::nullopt;
     std::filesystem::path mAssetPath;
@@ -51,7 +56,10 @@ namespace Dwarf
                            std::shared_ptr<IAssetReimporter> assetReimporter,
                            std::shared_ptr<IMaterialPreview> materialPreview,
                            std::shared_ptr<IInputManager>    inputManager,
-                           std::shared_ptr<IMaterialIO>      materialIO);
+                           std::shared_ptr<IMaterialIO>      materialIO,
+                           std::shared_ptr<IShaderRegistry>  shaderRegistry,
+                           std::shared_ptr<IShaderSourceCollectionFactory>
+                             shaderSourceCollectionFactory);
     ~MaterialAssetInspector() override = default;
 
     /**
