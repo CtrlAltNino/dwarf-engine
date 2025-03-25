@@ -18,11 +18,11 @@ namespace Dwarf
   struct TempDrawCall
   {
     std::reference_wrapper<IMesh>              Mesh;
-    std::reference_wrapper<IMaterial>          Material;
+    std::reference_wrapper<MaterialAsset>      Material;
     std::reference_wrapper<TransformComponent> Transform;
 
     TempDrawCall(IMesh&              mesh,
-                 IMaterial&          material,
+                 MaterialAsset&      material,
                  TransformComponent& transform)
       : Mesh(mesh)
       , Material(material)
@@ -56,10 +56,10 @@ namespace Dwarf
   struct Batch
   {
     std::vector<std::unique_ptr<IMesh>> Meshes;
-    IMaterial&                          Material;
+    MaterialAsset&                      Material;
     TransformComponent&                 Transform;
 
-    Batch(IMaterial& material, TransformComponent& transform)
+    Batch(MaterialAsset& material, TransformComponent& transform)
       : Material(material)
       , Transform(transform)
     {

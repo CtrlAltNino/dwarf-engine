@@ -221,7 +221,6 @@ namespace Dwarf
     ImGui::TextWrapped("Preview:");
 
     auto texID = (ImTextureID)(textureAsset.get().GetTexture().GetTextureID());
-    // std::cout << "Texture ID: " << texID << std::endl;
     ImGui::Image(texID, ImVec2(width, width));
 
     drawList->ChannelsSetCurrent(0);

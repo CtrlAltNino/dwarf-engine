@@ -1,5 +1,7 @@
 #pragma once
 
+#define _USE_MATH_DEFINES
+
 #include <SDL3/SDL.h>
 #include <algorithm>
 #include <array>

@@ -30,7 +30,7 @@ namespace Dwarf
      * @return Reference to the material
      */
     virtual auto
-    GetMaterial() -> IMaterial& = 0;
+    GetMaterialAsset() -> MaterialAsset& = 0;
 
     /**
      * @brief Retrieves the transform of the draw call

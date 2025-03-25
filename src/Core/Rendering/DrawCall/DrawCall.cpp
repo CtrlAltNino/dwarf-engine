@@ -6,7 +6,7 @@
 namespace Dwarf
 {
   DrawCall::DrawCall(std::unique_ptr<IMeshBuffer>&& meshBuffer,
-                     IMaterial&                     material,
+                     MaterialAsset&                 material,
                      TransformComponent&            transform)
     : mMeshBuffer(std::move(meshBuffer))
     , mMaterial(material)
@@ -21,7 +21,7 @@ namespace Dwarf
   }
 
   auto
-  DrawCall::GetMaterial() -> IMaterial&
+  DrawCall::GetMaterialAsset() -> MaterialAsset&
   {
     return mMaterial;
   }

@@ -120,15 +120,13 @@ namespace Dwarf
                     .GetMaterialProperties()
                     .IsTransparent)
               {
-                transparentTemps.emplace_back(*model.Meshes().at(i),
-                                              materialAsset.GetMaterial(),
-                                              transform);
+                transparentTemps.emplace_back(
+                  *model.Meshes().at(i), materialAsset, transform);
               }
               else
               {
-                opagueTemps.emplace_back(*model.Meshes().at(i),
-                                         materialAsset.GetMaterial(),
-                                         transform);
+                opagueTemps.emplace_back(
+                  *model.Meshes().at(i), materialAsset, transform);
               }
             }
           }
@@ -167,7 +165,9 @@ namespace Dwarf
       {
         if ((std::addressof(currentBatch->Material) !=
              std::addressof(tempDrawCall.Material.get())) ||
-            currentBatch->Material.GetMaterialProperties().IsTransparent)
+            currentBatch->Material.GetMaterial()
+              .GetMaterialProperties()
+              .IsTransparent)
         {
           batches.push_back(std::move(currentBatch));
           currentBatch = std::make_unique<Batch>(tempDrawCall.Material,

@@ -76,7 +76,7 @@ namespace Dwarf
         {
           mRendererApi->RenderIndexed(
             *drawCall->GetMeshBuffer(),
-            drawCall->GetMaterial(),
+            drawCall->GetMaterialAsset().GetMaterial(),
             camera,
             drawCall->GetTransform().GetModelMatrix());
         }
