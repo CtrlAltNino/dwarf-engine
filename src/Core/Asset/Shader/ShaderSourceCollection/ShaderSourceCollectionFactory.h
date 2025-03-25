@@ -81,5 +81,16 @@ namespace Dwarf
     CreateShaderSourceCollection(
       const nlohmann::json& serializedShaderSourceCollection)
       -> std::unique_ptr<IShaderSourceCollection> override;
+
+    /**
+     * @brief Create a shader source collection containing the shader sources
+     * provided
+     *
+     * @return Unique pointer to the created shader source collection
+     */
+    auto
+    CreateShaderSourceCollection(
+      std::vector<std::unique_ptr<IAssetReference>>& shaderSources)
+      -> std::unique_ptr<IShaderSourceCollection> override;
   };
 }
