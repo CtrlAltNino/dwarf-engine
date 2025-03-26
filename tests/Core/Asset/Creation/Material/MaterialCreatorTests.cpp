@@ -13,7 +13,7 @@ using namespace testing;
 class MockMaterial : public Dwarf::IMaterial
 {
 public:
-  MOCK_METHOD(Dwarf::IShader&, GetShader, (), (override));
+  MOCK_METHOD(std::shared_ptr<Dwarf::IShader>, GetShader, (), (override));
   MOCK_METHOD(void,
               SetShader,
               (std::shared_ptr<Dwarf::IShader> shader),

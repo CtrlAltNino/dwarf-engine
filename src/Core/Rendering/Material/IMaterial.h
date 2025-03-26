@@ -63,7 +63,7 @@ namespace Dwarf
      * @return The shader for this material.
      */
     virtual auto
-    GetShader() -> IShader& = 0;
+    GetShader() -> std::shared_ptr<IShader> = 0;
 
     /**
      * @brief Set the shader for this material.

@@ -48,7 +48,7 @@ namespace Dwarf
     mCamera->GetProperties().Transform.GetEulerAngles() = { 0, 0, 0 };
 
     mMaterial = materialFactory->CreateDefaultMaterial();
-    mMaterial->GetShader().Compile();
+    mMaterial->GetShader()->Compile();
     mMaterial->GenerateShaderParameters();
     mMaterial->GetShaderParameters()->SetParameter("color",
                                                    glm::vec4(1, 1, 1, 1));

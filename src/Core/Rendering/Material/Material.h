@@ -34,7 +34,7 @@ namespace Dwarf
      * @return The shader for this material.
      */
     auto
-    GetShader() -> IShader& override;
+    GetShader() -> std::shared_ptr<IShader> override;
 
     void
     SetShader(std::shared_ptr<IShader> shader) override;

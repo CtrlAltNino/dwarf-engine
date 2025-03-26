@@ -27,12 +27,12 @@ namespace Dwarf
 
     mIdMaterial = mMaterialFactory->CreateMaterial(mShaderRegistry->GetOrCreate(
       mShaderSourceCollectionFactory->CreateIdShaderSourceCollection()));
-    mIdMaterial->GetShader().Compile();
+    mIdMaterial->GetShader()->Compile();
 
     mGridMaterial =
       mMaterialFactory->CreateMaterial(mShaderRegistry->GetOrCreate(
         mShaderSourceCollectionFactory->CreateGridShaderSourceCollection()));
-    mGridMaterial->GetShader().Compile();
+    mGridMaterial->GetShader()->Compile();
     mGridMaterial->GetMaterialProperties().IsDoubleSided = true;
     mGridMaterial->GetMaterialProperties().IsTransparent = true;
 
