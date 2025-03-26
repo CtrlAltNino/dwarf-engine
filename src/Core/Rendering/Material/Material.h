@@ -1,10 +1,6 @@
 #pragma once
-#include "Core/Base.h"
 #include "Core/Rendering/Shader/IShader.h"
-#include "Core/Rendering/Shader/ShaderParameterCollection/IShaderParameterCollectionFactory.h"
-#include "Core/UUID.h"
 #include "IMaterial.h"
-#include "pch.h"
 #include <boost/serialization/strong_typedef.hpp>
 
 namespace Dwarf

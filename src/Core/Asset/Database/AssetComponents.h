@@ -87,7 +87,7 @@ namespace Dwarf
       return *mMaterial;
     }
 
-    auto
+    [[nodiscard]] auto
     GetMaterial() const -> const IMaterial&
     {
       return *mMaterial;

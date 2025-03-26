@@ -1,7 +1,5 @@
 #pragma once
 
-#include "pch.h"
-
 namespace Dwarf
 {
   /// @brief Structure that stores information of a vertex.

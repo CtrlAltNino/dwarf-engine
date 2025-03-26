@@ -74,7 +74,6 @@ namespace Dwarf
       ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
                            UNIFORM_DELETE_BUTTON_WIDTH - 8.0F);
       ImGui::InputFloat(ImGuiID.c_str(), &parameter);
-      std::cout << parameter << "\n";
       ImGui::PopItemWidth();
     }
 

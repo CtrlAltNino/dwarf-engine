@@ -12,7 +12,6 @@
 #include "Logging/IDwarfLogger.h"
 #include "Project/IProjectSettings.h"
 #include "Window/IWindow.h"
-#include "pch.h"
 #include <condition_variable>
 
 namespace Dwarf

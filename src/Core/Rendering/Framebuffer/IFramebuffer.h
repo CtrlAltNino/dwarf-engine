@@ -1,7 +1,6 @@
 #pragma once
 #include "Core/Base.h"
 #include "Core/Rendering/Texture/ITexture.h"
-#include "pch.h"
 
 namespace Dwarf
 {

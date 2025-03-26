@@ -1,6 +1,5 @@
 #pragma once
 #include "Utilities/ImageUtilities/TextureCommon.h"
-#include "pch.h"
 
 namespace Dwarf
 {

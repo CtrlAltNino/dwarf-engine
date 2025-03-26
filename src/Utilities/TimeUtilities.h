@@ -1,5 +1,4 @@
 #pragma once
-#include "pch.h"
 #include <SDL3/SDL.h>
 
 namespace Dwarf
