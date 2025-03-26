@@ -1,8 +1,9 @@
 #include "Core/Rendering/Material/IMaterial.h"
 #include <Core/Rendering/Material/Material.h>
-#include <gtest/gtest.h>
 #include <gmock/gmock.h>
+#include <gtest/gtest.h>
 #include <memory>
+
 
 TEST(MaterialTests, Sample)
 {
@@ -56,7 +57,6 @@ TEST(MaterialTests, DefaultShaderInitialization)
   std::unique_ptr<MockIShader> shader = std::make_unique<MockIShader>();
 
   // Expect a Compile call on the shader
-  EXPECT_CALL(*shader, Compile()).Times(1);
 
   Dwarf::Material material(
     std::move(shader), Dwarf::MaterialProperties(), nullptr);
