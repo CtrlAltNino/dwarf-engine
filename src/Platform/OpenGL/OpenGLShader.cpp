@@ -10,7 +10,6 @@
 #include "OpenGLUtilities.h"
 #include "Platform/OpenGL/OpenGLUtilities.h"
 
-
 #define GL_SHADER_LOG_LENGTH (1024)
 
 namespace Dwarf
@@ -363,7 +362,7 @@ namespace Dwarf
     return parameters;
   }
 
-  auto
+  /*auto
   OpenGLShader::GetVertexShaderAsset()
     -> std::optional<std::unique_ptr<IAssetReference>>&
   {
@@ -396,7 +395,7 @@ namespace Dwarf
     -> std::optional<std::unique_ptr<IAssetReference>>&
   {
     return mTessellationEvaluationShaderAsset;
-  }
+  }*/
 
   auto
   OpenGLShader::GetShaderLogs() const -> const ShaderLogs&
@@ -578,8 +577,8 @@ namespace Dwarf
     return mUniformLocations[uniformName];
   }
 
-  nlohmann::json
-  OpenGLShader::Serialize()
+  auto
+  OpenGLShader::Serialize() -> nlohmann::json
   {
     nlohmann::json serializedShader;
     serializedShader["VertexShader"] =
@@ -610,10 +609,10 @@ namespace Dwarf
     return serializedShader;
   }
 
-  bool
-  OpenGLShader::CompareTo(const IShader& other) const
+  auto
+  OpenGLShader::CompareTo(const IShader& other) const -> bool
   {
-    const OpenGLShader* otherShader = dynamic_cast<const OpenGLShader*>(&other);
+    const auto* otherShader = dynamic_cast<const OpenGLShader*>(&other);
     return mID < otherShader->GetID();
   }
 }
