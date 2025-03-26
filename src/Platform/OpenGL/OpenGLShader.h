@@ -102,7 +102,7 @@ namespace Dwarf
     [[nodiscard]] auto
     GetShaderLogs() const -> const ShaderLogs&;
 
-    auto
+    /*auto
     GetVertexShaderAsset() -> std::optional<std::unique_ptr<IAssetReference>>&;
 
     auto
@@ -119,7 +119,7 @@ namespace Dwarf
 
     auto
     GetTessellationEvaluationShaderAsset()
-      -> std::optional<std::unique_ptr<IAssetReference>>&;
+      -> std::optional<std::unique_ptr<IAssetReference>>&;*/
 
     void
     SetUniform(std::string uniformName, bool value);
