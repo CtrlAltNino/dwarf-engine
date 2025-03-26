@@ -153,7 +153,7 @@ namespace Dwarf
     OpenGLUtilities::CheckOpenGLError(
       "Before rendering", "OpenGLRendererApi", mLogger);
     auto&         oglMesh = dynamic_cast<OpenGLMesh&>(mesh);
-    IShader&      baseShader = material.GetShader();
+    IShader&      baseShader = *material.GetShader();
     OpenGLShader& shader = baseShader.IsCompiled()
                              ? dynamic_cast<OpenGLShader&>(baseShader)
                              : dynamic_cast<OpenGLShader&>(*mErrorShader);

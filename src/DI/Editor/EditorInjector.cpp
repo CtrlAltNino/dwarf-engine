@@ -71,6 +71,7 @@
 #include "Editor/Modules/Inspector/AssetInspector/IAssetInspector.h"
 #include "Editor/Modules/Inspector/AssetInspector/MaterialAsset/IMaterialAssetInspector.h"
 #include "Editor/Modules/Inspector/AssetInspector/MaterialAsset/MaterialAssetInspector.h"
+#include "Editor/Modules/Inspector/AssetInspector/MaterialAsset/ShaderAssetSelector/ShaderAssetSelectorFactory.h"
 #include "Editor/Modules/Inspector/AssetInspector/ModelAsset/IModelAssetInspector.h"
 #include "Editor/Modules/Inspector/AssetInspector/ModelAsset/ModelAssetInspector.h"
 #include "Editor/Modules/Inspector/AssetInspector/SceneAsset/ISceneAssetInspector.h"
@@ -101,6 +102,7 @@
 #include "Utilities/FileHandler/FileHandler.h"
 #include "Window/IWindow.h"
 #include "Window/SDL3Window.h"
+
 
 namespace Dwarf
 {
@@ -177,6 +179,8 @@ namespace Dwarf
           boost::di::bind<IAssetDirectoryListener>.to<AssetDirectoryListener>().in(boost::di::extension::shared),
           boost::di::bind<IAssetReferenceFactory>.to<AssetReferenceFactory>().in(boost::di::extension::shared),
           boost::di::bind<IAssetDatabase>.to<AssetDatabase>().in(
+          boost::di::extension::shared),
+          boost::di::bind<IShaderAssetSelectorFactory>.to<ShaderAssetSelectorFactory>().in(
           boost::di::extension::shared),
           boost::di::bind<ITextureLoadingWorker>.to<TextureLoadingWorker>().in(
           boost::di::extension::shared),

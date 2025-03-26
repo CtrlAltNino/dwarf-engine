@@ -16,8 +16,8 @@ namespace Dwarf
     std::shared_ptr<IInputManager>    inputManager,
     std::shared_ptr<IMaterialIO>      materialIO,
     std::shared_ptr<IShaderRegistry>  shaderRegistry,
-    std::shared_ptr<IShaderSourceCollectionFactory>
-      shaderSourceCollectionFactory)
+    const std::shared_ptr<IShaderAssetSelectorFactory>&
+      shaderAssetSelectorFactory)
     : mGraphicsApi(graphicsApi)
     , mAssetDatabase(std::move(assetDatabase))
     , mAssetReimporter(std::move(assetReimporter))
@@ -25,7 +25,7 @@ namespace Dwarf
     , mInputManager(std::move(inputManager))
     , mMaterialIO(std::move(materialIO))
     , mShaderRegistry(std::move(shaderRegistry))
-    , mShaderSourceCollectionFactory(std::move(shaderSourceCollectionFactory))
+    , mShaderAssetSelector(shaderAssetSelectorFactory->Create())
   {
     mMaterialPreview->SetMeshType(MaterialPreviewMeshType::Sphere);
   }
@@ -138,6 +138,8 @@ namespace Dwarf
     {
       mCurrentAsset = dynamic_cast<MaterialAsset&>(asset.GetAsset());
       mAssetPath = asset.GetPath();
+      mShaderAssetSelector->SetCurrentShader(
+        mCurrentAsset.value().get().GetMaterial().GetShader());
     }
 
     ImDrawList* drawList = ImGui::GetWindowDrawList();
@@ -239,182 +241,25 @@ namespace Dwarf
     if (ImGui::CollapsingHeader("Shader"))
     {
       ImGui::Indent(15.0F);
-      switch (mGraphicsApi)
-      {
-        using enum GraphicsApi;
-        case None: throw std::runtime_error("No graphics API selected"); break;
-        case D3D12:
-          throw std::runtime_error("D3D12 not implemented yet");
-          break;
-        case Metal:
-          throw std::runtime_error("Metal not implemented yet");
-          break;
-        case OpenGL:
-          {
-            IShader& shader = material.GetShader();
-            auto&    oglShader = dynamic_cast<OpenGLShader&>(shader);
-            ImGui::TextWrapped("Vertex Shader");
-            ImGui::SameLine();
-            ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0f);
-            DwarfUI::AssetInput<VertexShaderAsset>(
-              mAssetDatabase,
-              oglShader.GetVertexShaderAsset(),
-              "##vertexShader");
-            ImGui::PopItemWidth();
 
-            if (!oglShader.GetShaderLogs().mVertexShaderLog.empty())
-            {
-              ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0F);
-              if (ImGui::CollapsingHeader("Vertex Shader Error Log##vert"))
-              {
-                ImGui::TextWrapped(
-                  "%s", oglShader.GetShaderLogs().mVertexShaderLog.c_str());
-              }
-              ImGui::PopItemWidth();
-            }
-
-            ImGui::TextWrapped("Tessellation Control Shader");
-            ImGui::SameLine();
-            ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0F);
-            DwarfUI::AssetInput<TessellationControlShaderAsset>(
-              mAssetDatabase,
-              oglShader.GetTessellationControlShaderAsset(),
-              "##tessellationControlShader");
-            ImGui::PopItemWidth();
-
-            if (!oglShader.GetShaderLogs()
-                   .mTessellationControlShaderLog.empty())
-            {
-              ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0F);
-              if (ImGui::CollapsingHeader(
-                    "Tessellation Control Shader Error Log##tesc"))
-              {
-                ImGui::TextWrapped("%s",
-                                   oglShader.GetShaderLogs()
-                                     .mTessellationControlShaderLog.c_str());
-              }
-              ImGui::PopItemWidth();
-            }
-
-            ImGui::TextWrapped("Tessellation Evaluation Shader");
-            ImGui::SameLine();
-            ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0F);
-            DwarfUI::AssetInput<TessellationEvaluationShaderAsset>(
-              mAssetDatabase,
-              oglShader.GetTessellationEvaluationShaderAsset(),
-              "##tessellationEvaluationShader");
-            ImGui::PopItemWidth();
-
-            if (!oglShader.GetShaderLogs()
-                   .mTessellationEvaluationShaderLog.empty())
-            {
-              ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0F);
-              if (ImGui::CollapsingHeader(
-                    "Tessellation Evaluation Shader Error Log##tese"))
-              {
-                ImGui::TextWrapped("%s",
-                                   oglShader.GetShaderLogs()
-                                     .mTessellationEvaluationShaderLog.c_str());
-              }
-              ImGui::PopItemWidth();
-            }
-
-            ImGui::TextWrapped("Geometry Shader");
-            ImGui::SameLine();
-            ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0F);
-            DwarfUI::AssetInput<GeometryShaderAsset>(
-              mAssetDatabase,
-              oglShader.GetGeometryShaderAsset(),
-              "##geometryShader");
-            ImGui::PopItemWidth();
-
-            if (!oglShader.GetShaderLogs().mGeometryShaderLog.empty())
-            {
-              ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0F);
-              if (ImGui::CollapsingHeader("Geometry Shader Error Log##geom"))
-              {
-                ImGui::TextWrapped(
-                  "%s", oglShader.GetShaderLogs().mGeometryShaderLog.c_str());
-              }
-              ImGui::PopItemWidth();
-            }
-
-            ImGui::TextWrapped("Fragment Shader");
-            ImGui::SameLine();
-            ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0F);
-            DwarfUI::AssetInput<FragmentShaderAsset>(
-              mAssetDatabase,
-              oglShader.GetFragmentShaderAsset(),
-              "##fragmentShader");
-            ImGui::PopItemWidth();
-
-            if (!oglShader.GetShaderLogs().mFragmentShaderLog.empty())
-            {
-              ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x - 15.0F);
-              if (ImGui::CollapsingHeader("Fragment Shader Error Log##frag"))
-              {
-                ImGui::TextWrapped(
-                  "%s", oglShader.GetShaderLogs().mFragmentShaderLog.c_str());
-              }
-              ImGui::PopItemWidth();
-            }
-            break;
-          }
-        case Vulkan:
-          throw std::runtime_error("Vulkan not implemented yet");
-          break;
-      }
+      mShaderAssetSelector->Render();
 
       ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 20);
 
       if (ImGui::Button("Compile", ImVec2(60, 25)))
       {
-        IShader& shader = material.GetShader();
-        auto&    oglShader = dynamic_cast<OpenGLShader&>(shader);
-        std::vector<std::unique_ptr<IAssetReference>> shaderSources;
-
-        if (oglShader.GetVertexShaderAsset().has_value())
-        {
-          shaderSources.emplace_back(mAssetDatabase->Retrieve(
-            oglShader.GetVertexShaderAsset()->get()->GetUID()));
-        }
-
-        if (oglShader.GetTessellationControlShaderAsset().has_value())
-        {
-          shaderSources.emplace_back(mAssetDatabase->Retrieve(
-            oglShader.GetTessellationControlShaderAsset()->get()->GetUID()));
-        }
-
-        if (oglShader.GetTessellationEvaluationShaderAsset().has_value())
-        {
-          shaderSources.emplace_back(mAssetDatabase->Retrieve(
-            oglShader.GetTessellationEvaluationShaderAsset()->get()->GetUID()));
-        }
-
-        if (oglShader.GetGeometryShaderAsset().has_value())
-        {
-          shaderSources.emplace_back(mAssetDatabase->Retrieve(
-            oglShader.GetGeometryShaderAsset()->get()->GetUID()));
-        }
-
-        if (oglShader.GetFragmentShaderAsset().has_value())
-        {
-          shaderSources.emplace_back(mAssetDatabase->Retrieve(
-            oglShader.GetFragmentShaderAsset()->get()->GetUID()));
-        }
-
         material.SetShader(mShaderRegistry->GetOrCreate(
-          mShaderSourceCollectionFactory->CreateShaderSourceCollection(
-            shaderSources)));
-        if (!material.GetShader().IsCompiled())
+          mShaderAssetSelector->GetCurrentSelection()));
+        mShaderAssetSelector->SetCurrentShader(material.GetShader());
+        if (!material.GetShader()->IsCompiled())
         {
-          material.GetShader().Compile();
+          material.GetShader()->Compile();
         }
       }
 
       ImGui::SameLine();
 
-      ImGui::TextWrapped(material.GetShader().IsCompiled()
+      ImGui::TextWrapped(material.GetShader()->IsCompiled()
                            ? "Successfully Compiled"
                            : "Couldn't compile");
       ImGui::Unindent(15.0f);
@@ -579,7 +424,7 @@ namespace Dwarf
     if (ImGui::Button("Generate parameters",
                       ImVec2(ImGui::GetContentRegionAvail().x, 50)))
     {
-      if (material.GetShader().IsCompiled())
+      if (material.GetShader()->IsCompiled())
       {
         material.GenerateShaderParameters();
       }

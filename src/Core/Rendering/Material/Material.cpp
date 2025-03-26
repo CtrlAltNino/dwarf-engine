@@ -15,9 +15,9 @@ namespace Dwarf
   }
 
   auto
-  Material::GetShader() -> IShader&
+  Material::GetShader() -> std::shared_ptr<IShader>
   {
-    return *mShader;
+    return mShader;
   }
 
   void
