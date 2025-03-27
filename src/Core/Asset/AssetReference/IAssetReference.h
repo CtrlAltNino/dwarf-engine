@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Core/Asset/AssetTypes.h"
-#include "Core/Asset/Database/AssetComponents.h"
+#include "Core/Asset/Database/IAssetComponent.h"
 #include "Core/UUID.h"
 #include <entt/entity/fwd.hpp>
 #include <entt/entt.hpp>

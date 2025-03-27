@@ -3,6 +3,8 @@
 #include "Material.h"
 #include "MaterialFactory.h"
 
+#include <utility>
+
 namespace Dwarf
 {
   MaterialFactory::MaterialFactory(
@@ -11,12 +13,16 @@ namespace Dwarf
                                      shaderParameterCollectionFactory,
     std::shared_ptr<IShaderRegistry> shaderRegistry,
     std::shared_ptr<IShaderSourceCollectionFactory>
-      shaderSourceCollectionFactory)
+      shaderSourceCollectionFactory,
+    std::shared_ptr<IShaderAssetSourceContainerFactory>
+      shaderAssetSourceContainerFactory)
     : mLogger(std::move(logger))
     , mShaderParameterCollectionFactory(
         std::move(shaderParameterCollectionFactory))
     , mShaderRegistry(std::move(shaderRegistry))
     , mShaderSourceCollectionFactory(std::move(shaderSourceCollectionFactory))
+    , mShaderAssetSourceContainerFactory(
+        std::move(shaderAssetSourceContainerFactory))
   {
     mLogger->LogDebug(Log("MaterialFactory created", "MaterialFactory"));
   }
@@ -32,21 +38,24 @@ namespace Dwarf
     // TODO: Use default shader
     mLogger->LogDebug(Log("Creating default material", "MaterialFactory"));
     return std::make_unique<Material>(
-      mShaderRegistry->GetOrCreate(
-        mShaderSourceCollectionFactory->CreateDefaultShaderSourceCollection()),
       MaterialProperties(),
-      mShaderParameterCollectionFactory->Create());
+      mShaderParameterCollectionFactory->Create(),
+      mShaderAssetSourceContainerFactory->Create(
+        mShaderSourceCollectionFactory->CreateDefaultShaderSourceCollection()),
+      mShaderRegistry);
   }
 
   auto
-  MaterialFactory::CreateMaterial(std::shared_ptr<IShader> shader) const
+  MaterialFactory::CreateMaterial(
+    std::unique_ptr<IShaderSourceCollection> shaderSources) const
     -> std::unique_ptr<IMaterial>
   {
-    mLogger->LogDebug(Log("Creating material", "MaterialFactory"));
+    mLogger->LogDebug(Log("Creating default material", "MaterialFactory"));
     return std::make_unique<Material>(
-      shader,
       MaterialProperties(),
-      mShaderParameterCollectionFactory->Create());
+      mShaderParameterCollectionFactory->Create(),
+      mShaderAssetSourceContainerFactory->Create(std::move(shaderSources)),
+      mShaderRegistry);
   }
 
   auto
@@ -56,15 +65,15 @@ namespace Dwarf
     mLogger->LogDebug(
       Log("Creating material from serialized data", "MaterialFactory"));
     return std::make_unique<Material>(
-      serializedMaterial.contains("Shader")
-        ? mShaderRegistry->GetOrCreate(
-            mShaderSourceCollectionFactory->CreateShaderSourceCollection(
-              serializedMaterial["Shader"]))
-        : mShaderRegistry->GetOrCreate(
-            mShaderSourceCollectionFactory
-              ->CreateDefaultShaderSourceCollection()),
       serializedMaterial["Properties"],
       mShaderParameterCollectionFactory->FromSerialized(
-        serializedMaterial["ShaderParameters"]));
+        serializedMaterial["ShaderParameters"]),
+      mShaderAssetSourceContainerFactory->Create(
+        serializedMaterial.contains("Shader")
+          ? mShaderSourceCollectionFactory->CreateShaderSourceCollection(
+              serializedMaterial["Shader"])
+          : mShaderSourceCollectionFactory
+              ->CreateDefaultShaderSourceCollection()),
+      mShaderRegistry);
   }
 }

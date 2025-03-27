@@ -30,6 +30,7 @@
 #include "Core/Rendering/GraphicsContext/IGraphicsContextFactory.h"
 #include "Core/Rendering/Material/IO/MaterialIO.h"
 #include "Core/Rendering/Material/MaterialFactory.h"
+#include "Core/Rendering/Material/ShaderAssetSourceContainer/ShaderAssetSourceContainerFactory.h"
 #include "Core/Rendering/Mesh/MeshFactory.h"
 #include "Core/Rendering/MeshBuffer/MeshBufferFactory.h"
 #include "Core/Rendering/MeshBuffer/MeshBufferWorker/MeshBufferWorker.h"
@@ -102,7 +103,6 @@
 #include "Utilities/FileHandler/FileHandler.h"
 #include "Window/IWindow.h"
 #include "Window/SDL3Window.h"
-
 
 namespace Dwarf
 {
@@ -179,6 +179,8 @@ namespace Dwarf
           boost::di::bind<IAssetDirectoryListener>.to<AssetDirectoryListener>().in(boost::di::extension::shared),
           boost::di::bind<IAssetReferenceFactory>.to<AssetReferenceFactory>().in(boost::di::extension::shared),
           boost::di::bind<IAssetDatabase>.to<AssetDatabase>().in(
+          boost::di::extension::shared),
+          boost::di::bind<IShaderAssetSourceContainerFactory>.to<ShaderAssetSourceContainerFactory>().in(
           boost::di::extension::shared),
           boost::di::bind<IShaderAssetSelectorFactory>.to<ShaderAssetSelectorFactory>().in(
           boost::di::extension::shared),

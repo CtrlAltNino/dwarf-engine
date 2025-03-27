@@ -1,9 +1,11 @@
+#include "Core/Asset/Shader/ShaderSourceCollection/IShaderSourceCollection.h"
 #include "Core/Rendering/Material/IMaterial.h"
+#include "Core/Rendering/Material/ShaderAssetSourceContainer/IShaderAssetSourceContainer.h"
+#include "Core/Rendering/Shader/ShaderRegistry/IShaderRegistry.h"
 #include <Core/Rendering/Material/Material.h>
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 #include <memory>
-
 
 TEST(MaterialTests, Sample)
 {
@@ -51,24 +53,55 @@ public:
   }
 };
 
+class MockIShaderRegistry : public Dwarf::IShaderRegistry
+{
+public:
+  MOCK_METHOD(std::shared_ptr<Dwarf::IShader>,
+              GetOrCreate,
+              (std::unique_ptr<Dwarf::IShaderSourceCollection> shaderSources),
+              (override));
+};
+
+class MockIShaderAssetSourceContainer
+  : public Dwarf::IShaderAssetSourceContainer
+{
+public:
+  MOCK_METHOD(std::unique_ptr<Dwarf::IShaderSourceCollection>,
+              GetShaderSources,
+              (),
+              (override));
+};
+
 // Testing if the default shader is initialized correctly
 TEST(MaterialTests, DefaultShaderInitialization)
 {
-  std::unique_ptr<MockIShader> shader = std::make_unique<MockIShader>();
+  std::shared_ptr<MockIShaderRegistry> shaderRegistry =
+    std::make_shared<MockIShaderRegistry>();
+
+  std::unique_ptr<MockIShaderAssetSourceContainer> shaderSourceCollection =
+    std::make_unique<MockIShaderAssetSourceContainer>();
 
   // Expect a Compile call on the shader
 
-  Dwarf::Material material(
-    std::move(shader), Dwarf::MaterialProperties(), nullptr);
+  Dwarf::Material material(Dwarf::MaterialProperties(),
+                           nullptr,
+                           std::move(shaderSourceCollection),
+                           shaderRegistry);
 }
 
 // Testing if the default material properties are initialized correctly
 TEST(MaterialTests, DefaultMaterialProperties)
 {
-  auto            shader = std::make_unique<MockIShader>();
-  Dwarf::Material material(
-    std::move(shader), Dwarf::MaterialProperties(), nullptr);
-  auto properties = material.GetMaterialProperties();
+  std::shared_ptr<MockIShaderRegistry> shaderRegistry =
+    std::make_shared<MockIShaderRegistry>();
+
+  std::unique_ptr<MockIShaderAssetSourceContainer> shaderSourceCollection =
+    std::make_unique<MockIShaderAssetSourceContainer>();
+  Dwarf::Material material(Dwarf::MaterialProperties(),
+                           nullptr,
+                           std::move(shaderSourceCollection),
+                           shaderRegistry);
+  auto            properties = material.GetMaterialProperties();
   ASSERT_FALSE(properties.IsTransparent);
   ASSERT_FALSE(properties.IsDoubleSided);
   ASSERT_FALSE(properties.IsUnlit);
@@ -78,10 +111,17 @@ TEST(MaterialTests, DefaultMaterialProperties)
 // Testing if the custom material properties are initialized correctly
 TEST(MaterialTests, CustomMaterialProperties)
 {
-  auto                      shader = std::make_unique<MockIShader>();
+  std::shared_ptr<MockIShaderRegistry> shaderRegistry =
+    std::make_shared<MockIShaderRegistry>();
+
+  std::unique_ptr<MockIShaderAssetSourceContainer> shaderSourceCollection =
+    std::make_unique<MockIShaderAssetSourceContainer>();
   Dwarf::MaterialProperties sourceProperties(false, true, true, false);
-  Dwarf::Material material(std::move(shader), sourceProperties, nullptr);
-  auto            properties = material.GetMaterialProperties();
+  Dwarf::Material           material(sourceProperties,
+                           nullptr,
+                           std::move(shaderSourceCollection),
+                           shaderRegistry);
+  auto                      properties = material.GetMaterialProperties();
   ASSERT_FALSE(properties.IsTransparent);
   ASSERT_TRUE(properties.IsDoubleSided);
   ASSERT_TRUE(properties.IsUnlit);
@@ -91,11 +131,16 @@ TEST(MaterialTests, CustomMaterialProperties)
 // Testing serialization of the material
 TEST(MaterialTests, MaterialSerialization)
 {
-  auto shader = std::make_unique<MockIShader>();
+  std::shared_ptr<MockIShaderRegistry> shaderRegistry =
+    std::make_shared<MockIShaderRegistry>();
+
+  std::unique_ptr<MockIShaderAssetSourceContainer> shaderSourceCollection =
+    std::make_unique<MockIShaderAssetSourceContainer>();
   auto shaderParameters = std::make_unique<MockIShaderParameterCollection>();
-  Dwarf::Material material(std::move(shader),
-                           Dwarf::MaterialProperties(),
-                           std::move(shaderParameters));
+  Dwarf::Material material(Dwarf::MaterialProperties(),
+                           std::move(shaderParameters),
+                           std::move(shaderSourceCollection),
+                           shaderRegistry);
   auto            serialized = material.Serialize();
   ASSERT_FALSE(serialized.empty());
   ASSERT_TRUE(serialized.contains("Shader"));

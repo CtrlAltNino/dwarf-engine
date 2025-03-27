@@ -2,6 +2,7 @@
 
 #include "Core/Asset/Database/IAssetDatabase.h"
 #include "Core/Asset/Shader/ShaderSourceCollection/IShaderSourceCollectionFactory.h"
+#include "Core/Rendering/Material/ShaderAssetSourceContainer/IShaderAssetSourceContainer.h"
 #include "Editor/Modules/Inspector/AssetInspector/MaterialAsset/ShaderAssetSelector/IShaderAssetSelector.h"
 #include "Logging/IDwarfLogger.h"
 
@@ -10,23 +11,16 @@ namespace Dwarf
   class OpenGLShaderAssetSelector : public IShaderAssetSelector
   {
   private:
-    std::shared_ptr<IDwarfLogger> mLogger;
-    std::shared_ptr<IShaderSourceCollectionFactory>
-                                    mShaderSourceCollectionFactory;
+    std::shared_ptr<IDwarfLogger>   mLogger;
     std::shared_ptr<IAssetDatabase> mAssetDatabase;
 
     std::shared_ptr<IShader> mSelectedShader;
-
-    std::unique_ptr<IAssetReference> mVertexShaderAsset;
-    std::unique_ptr<IAssetReference> mTessellationControlShaderAsset;
-    std::unique_ptr<IAssetReference> mTessellationEvaluationShaderAsset;
-    std::unique_ptr<IAssetReference> mGeometryShaderAsset;
-    std::unique_ptr<IAssetReference> mFragmentShaderAsset;
+    std::optional<
+      std::reference_wrapper<std::unique_ptr<IShaderAssetSourceContainer>>>
+      mSelectedShaderAssetSourceContainer;
 
   public:
-    OpenGLShaderAssetSelector(std::shared_ptr<IDwarfLogger> logger,
-                              std::shared_ptr<IShaderSourceCollectionFactory>
-                                shaderSourceCollectionFactory,
+    OpenGLShaderAssetSelector(std::shared_ptr<IDwarfLogger>   logger,
                               std::shared_ptr<IAssetDatabase> assetDatabase);
     ~OpenGLShaderAssetSelector() override;
 
@@ -36,15 +30,9 @@ namespace Dwarf
      * @param shader Selected shader
      */
     void
-    SetCurrentShader(std::shared_ptr<IShader> shader) override;
-
-    /**
-     * @brief Creates a shader source collection from the current selection
-     *
-     * @return Unique pointer to the created shader source colleciton
-     */
-    auto
-    GetCurrentSelection() -> std::unique_ptr<IShaderSourceCollection> override;
+    SetCurrentShader(std::shared_ptr<IShader> shader,
+                     std::unique_ptr<IShaderAssetSourceContainer>&
+                       selectedShaderAssetSourceContainer) override;
 
     /**
      * @brief Renders the selection UI

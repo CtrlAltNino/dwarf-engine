@@ -67,11 +67,13 @@ namespace Dwarf
                 std::placeholders::_1,
                 std::placeholders::_2,
                 std::placeholders::_3));
+    mLogger->LogDebug(Log("AssetDatabase created", "AssetDatabase"));
   }
 
   AssetDatabase::~AssetDatabase()
   {
     Clear();
+    mLogger->LogDebug(Log("AssetDatabase destroyed", "AssetDatabase"));
   }
 
   void

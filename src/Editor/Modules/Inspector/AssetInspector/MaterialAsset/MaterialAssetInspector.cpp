@@ -5,6 +5,7 @@
 #include "MaterialAssetInspector.h"
 #include "Platform/OpenGL/OpenGLShader.h"
 #include "UI/DwarfUI.h"
+#include <memory>
 
 namespace Dwarf
 {
@@ -133,12 +134,16 @@ namespace Dwarf
       return;
     }
 
-    if (mAssetPath != asset.GetPath())
+    if (mMaterialAssetMemory == nullptr ||
+        mMaterialAssetMemory !=
+          &dynamic_cast<MaterialAsset&>(asset.GetAsset()).GetMaterial())
     {
       mCurrentAsset = dynamic_cast<MaterialAsset&>(asset.GetAsset());
       mAssetPath = asset.GetPath();
+      mMaterialAssetMemory = &mCurrentAsset->get().GetMaterial();
       mShaderAssetSelector->SetCurrentShader(
-        mCurrentAsset.value().get().GetMaterial().GetShader());
+        mCurrentAsset->get().GetMaterial().GetShader(),
+        mCurrentAsset->get().GetMaterial().GetShaderAssetSources());
     }
 
     ImDrawList* drawList = ImGui::GetWindowDrawList();
@@ -247,9 +252,10 @@ namespace Dwarf
 
       if (ImGui::Button("Compile", ImVec2(60, 25)))
       {
-        material.SetShader(mShaderRegistry->GetOrCreate(
-          mShaderAssetSelector->GetCurrentSelection()));
-        mShaderAssetSelector->SetCurrentShader(material.GetShader());
+        // material.SetShader(mShaderRegistry->GetOrCreate(
+        //   mShaderAssetSelector->GetCurrentSelection()));
+        // mShaderAssetSelector->SetCurrentShader(material.GetShader());
+        material.UpdateShader();
         if (!material.GetShader()->IsCompiled())
         {
           material.GetShader()->Compile();

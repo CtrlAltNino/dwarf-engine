@@ -102,6 +102,9 @@ namespace Dwarf
   void
   MaterialPreview::UpdateMesh()
   {
+    mProperties.ModelRotation = { 15, 20, 0 };
+    mProperties.ModelRotationTarget = { 15, 20, 0 };
+    UpdateRotation({ 0, 0 });
     switch (mMeshType)
     {
       case MaterialPreviewMeshType::Sphere:
@@ -118,7 +121,7 @@ namespace Dwarf
         break;
       case MaterialPreviewMeshType::Plane:
         {
-          std::unique_ptr<IMesh> mesh = mMeshFactory->CreateUnitQuad();
+          std::unique_ptr<IMesh> mesh = mMeshFactory->CreatePreviewQuad();
           mMeshBuffer = mMeshBufferFactory->Create(mesh);
         }
         break;

@@ -51,7 +51,15 @@ namespace Dwarf
      * @return Unique pointer to the created unit quad mesh
      */
     [[nodiscard]] virtual auto
-    CreateUnitQuad() const -> std::unique_ptr<IMesh> = 0;
+    CreatePlane() const -> std::unique_ptr<IMesh> = 0;
+
+    /**
+     * @brief Creates a mesh representing a unit quad
+     *
+     * @return Unique pointer to the created unit quad mesh
+     */
+    [[nodiscard]] virtual auto
+    CreatePreviewQuad() const -> std::unique_ptr<IMesh> = 0;
 
     /**
      * @brief Creates a mesh representing a fullscreen quad

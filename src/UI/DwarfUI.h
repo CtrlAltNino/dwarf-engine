@@ -1,9 +1,11 @@
 #pragma once
 
+#include "Core/Asset/Database/AssetComponents.h"
 #include "Core/Asset/Database/IAssetDatabase.h"
 #include "Core/GenericComponents.h"
 #include <entt/entt.hpp>
 #include <imgui.h>
+
 
 #define COL_BLACK IM_COL32(0, 0, 0, 0)
 #define COL_DIM2 IM_COL32(59, 66, 82, 255)

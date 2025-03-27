@@ -1,9 +1,10 @@
 #pragma once
 
-#include "Core/Rendering/Material/IMaterial.h"
+#include "Core/Asset/Database/AssetComponents.h"
 #include "Core/Rendering/MeshBuffer/IMeshBuffer.h"
 #include "Core/Scene/Components/SceneComponents.h"
 #include <glm/fwd.hpp>
+
 
 namespace Dwarf
 {

@@ -38,8 +38,10 @@ namespace Dwarf
     Assimp::Importer importer;
     const aiScene*   scene = importer.ReadFile(
       path.string(),
-      aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace |
-        aiProcess_GenSmoothNormals);
+      aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenNormals |
+        aiProcess_CalcTangentSpace | aiProcess_JoinIdenticalVertices |
+        aiProcess_PreTransformVertices | aiProcess_GlobalScale |
+        aiProcess_MakeLeftHanded | aiProcess_FlipWindingOrder);
 
     if ((scene == nullptr) ||
         ((scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE) != 0U) ||

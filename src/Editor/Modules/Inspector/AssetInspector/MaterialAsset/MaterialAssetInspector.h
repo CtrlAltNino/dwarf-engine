@@ -3,7 +3,6 @@
 #include "Core/Asset/AssetReimporter/IAssetReimporter.h"
 #include "Core/Asset/Database/AssetComponents.h"
 #include "Core/Asset/Database/IAssetDatabase.h"
-#include "Core/Asset/Shader/ShaderSourceCollection/IShaderSourceCollectionFactory.h"
 #include "Core/Rendering/Material/IO/IMaterialIO.h"
 #include "Core/Rendering/PreviewRenderer/MaterialPreview/IMaterialPreview.h"
 #include "Core/Rendering/Shader/ShaderRegistry/IShaderRegistry.h"
@@ -29,6 +28,7 @@ namespace Dwarf
     std::optional<std::reference_wrapper<MaterialAsset>> mCurrentAsset =
       std::nullopt;
     std::filesystem::path mAssetPath;
+    IMaterial*            mMaterialAssetMemory;
 
     void
     RenderAssetInfo();

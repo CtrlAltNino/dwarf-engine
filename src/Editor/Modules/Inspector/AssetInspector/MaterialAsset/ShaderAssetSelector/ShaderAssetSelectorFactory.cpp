@@ -34,8 +34,8 @@ namespace Dwarf
     {
       using enum GraphicsApi;
       case OpenGL:
-        return std::make_unique<OpenGLShaderAssetSelector>(
-          mLogger, mShaderSourceCollectionFactory, mAssetDatabase);
+        return std::make_unique<OpenGLShaderAssetSelector>(mLogger,
+                                                           mAssetDatabase);
       case D3D12: break;
       case Metal: break;
       case Vulkan: break;

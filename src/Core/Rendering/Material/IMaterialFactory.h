@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Asset/Shader/ShaderSourceCollection/IShaderSourceCollection.h"
 #include "IMaterial.h"
 
 namespace Dwarf
@@ -28,7 +29,7 @@ namespace Dwarf
      * @return Unique pointer to the created material
      */
     [[nodiscard]] virtual auto
-    CreateMaterial(std::shared_ptr<IShader> shader) const
+    CreateMaterial(std::unique_ptr<IShaderSourceCollection> shaderSources) const
       -> std::unique_ptr<IMaterial> = 0;
 
     /**

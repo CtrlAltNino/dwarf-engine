@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Asset/Shader/ShaderSourceCollection/IShaderSourceCollection.h"
+#include "Core/Rendering/Material/ShaderAssetSourceContainer/IShaderAssetSourceContainer.h"
 #include "Core/Rendering/Shader/IShader.h"
 
 namespace Dwarf
@@ -20,15 +21,9 @@ namespace Dwarf
      * @param shader Selected shader
      */
     virtual void
-    SetCurrentShader(std::shared_ptr<IShader> shader) = 0;
-
-    /**
-     * @brief Creates a shader source collection from the current selection
-     *
-     * @return Unique pointer to the created shader source colleciton
-     */
-    virtual auto
-    GetCurrentSelection() -> std::unique_ptr<IShaderSourceCollection> = 0;
+    SetCurrentShader(std::shared_ptr<IShader> shader,
+                     std::unique_ptr<IShaderAssetSourceContainer>&
+                       selectedShaderAssetSourceContainer) = 0;
 
     /**
      * @brief Renders the selection UI

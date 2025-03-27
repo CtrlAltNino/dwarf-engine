@@ -1,6 +1,7 @@
 #pragma once
 #include "Core/Rendering/Shader/IShader.h"
 #include "Core/Rendering/Shader/ShaderParameterCollection/IShaderParameterCollection.h"
+#include "ShaderAssetSourceContainer/IShaderAssetSourceContainer.h"
 #include "Utilities/ISerializable.h"
 
 namespace Dwarf
@@ -65,13 +66,8 @@ namespace Dwarf
     virtual auto
     GetShader() -> std::shared_ptr<IShader> = 0;
 
-    /**
-     * @brief Set the shader for this material.
-     *
-     * @param shader The shader to set.
-     */
     virtual void
-    SetShader(std::shared_ptr<IShader> shader) = 0;
+    UpdateShader() = 0;
 
     /**
      * @brief Get the shader parameters for this material.
@@ -96,6 +92,10 @@ namespace Dwarf
      */
     virtual void
     GenerateShaderParameters() = 0;
+
+    [[nodiscard]] virtual auto
+    GetShaderAssetSources()
+      -> std::unique_ptr<IShaderAssetSourceContainer>& = 0;
 
     /**
      * @brief Serialize the material.

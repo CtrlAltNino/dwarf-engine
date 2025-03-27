@@ -6,6 +6,7 @@
 #include "Core/Base.h"
 #include "Editor/Modules/Inspector/AssetInspector/TextureAsset/ITextureAssetInspector.h"
 #include "Input/IInputManager.h"
+#include "Utilities/ImageUtilities/TextureCommon.h"
 
 namespace Dwarf
 {
