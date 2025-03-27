@@ -25,24 +25,21 @@ namespace Dwarf
   {
     mRendererApi->SetClearColor(glm::vec4(0.065F, 0.07F, 0.085F, 1.0F));
 
-    mIdMaterial = mMaterialFactory->CreateMaterial(mShaderRegistry->GetOrCreate(
-      mShaderSourceCollectionFactory->CreateIdShaderSourceCollection()));
+    mIdMaterial = mMaterialFactory->CreateMaterial(
+      mShaderSourceCollectionFactory->CreateIdShaderSourceCollection());
     mIdMaterial->GetShader()->Compile();
 
-    mGridMaterial =
-      mMaterialFactory->CreateMaterial(mShaderRegistry->GetOrCreate(
-        mShaderSourceCollectionFactory->CreateGridShaderSourceCollection()));
+    mGridMaterial = mMaterialFactory->CreateMaterial(
+      mShaderSourceCollectionFactory->CreateGridShaderSourceCollection());
     mGridMaterial->GetShader()->Compile();
     mGridMaterial->GetMaterialProperties().IsDoubleSided = true;
     mGridMaterial->GetMaterialProperties().IsTransparent = true;
 
-    std::unique_ptr<IMesh> gridMesh = mMeshFactory->CreateUnitQuad();
+    std::unique_ptr<IMesh> gridMesh = mMeshFactory->CreatePlane();
     mGridMeshBuffer = std::move(mMeshBufferFactory->Create(gridMesh));
 
     mGridModelMatrix = glm::mat4(1.0F);
     mGridModelMatrix = glm::scale(mGridModelMatrix, glm::vec3(3000.0F));
-    mGridModelMatrix = glm::rotate(
-      mGridModelMatrix, glm::radians(-90.0F), glm::vec3(1.0F, 0.0F, 0.0F));
   }
 
   RenderingPipeline::~RenderingPipeline()

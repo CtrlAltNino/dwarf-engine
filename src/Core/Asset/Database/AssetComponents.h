@@ -1,18 +1,13 @@
 #pragma once
 
-#include <utility>
-
+#include "Core/Asset/Database/IAssetComponent.h"
 #include "Core/Rendering/Material/IMaterial.h"
 #include "Core/Rendering/Mesh/IMesh.h"
 #include "Core/Rendering/Texture/ITexture.h"
 
+
 namespace Dwarf
 {
-  /// @brief Virtual base class for asset components
-  struct IAssetComponent
-  {
-    virtual ~IAssetComponent() = default;
-  };
 
   /// @brief Component containing a model asset.
   struct ModelAsset : public IAssetComponent

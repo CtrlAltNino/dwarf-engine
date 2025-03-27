@@ -1,6 +1,8 @@
 #pragma once
 #include "Core/Rendering/Shader/IShader.h"
+#include "Core/Rendering/Shader/ShaderRegistry/IShaderRegistry.h"
 #include "IMaterial.h"
+#include "ShaderAssetSourceContainer/IShaderAssetSourceContainer.h"
 #include <boost/serialization/strong_typedef.hpp>
 
 namespace Dwarf
@@ -18,10 +20,16 @@ namespace Dwarf
     /// @brief Shader parameters for this material.
     std::unique_ptr<IShaderParameterCollection> mShaderParameters;
 
+    std::unique_ptr<IShaderAssetSourceContainer> mShaderAssetSourceContainer;
+
+    std::weak_ptr<IShaderRegistry> mShaderRegistry;
+
   public:
-    Material(std::shared_ptr<IShader>                    shader,
-             MaterialProperties                          materialProperties,
-             std::unique_ptr<IShaderParameterCollection> shaderParameters);
+    Material(
+      MaterialProperties                           materialProperties,
+      std::unique_ptr<IShaderParameterCollection>  shaderParameters,
+      std::unique_ptr<IShaderAssetSourceContainer> shaderAssetSourceContainer,
+      const std::shared_ptr<IShaderRegistry>&      shaderRegistry);
     ~Material() override = default;
 
     /**
@@ -32,8 +40,12 @@ namespace Dwarf
     auto
     GetShader() -> std::shared_ptr<IShader> override;
 
+    /**
+     * @brief Updates the
+     *
+     */
     void
-    SetShader(std::shared_ptr<IShader> shader) override;
+    UpdateShader() override;
 
     [[nodiscard]] auto
     GetShaderParameters() const
@@ -44,6 +56,10 @@ namespace Dwarf
 
     void
     GenerateShaderParameters() override;
+
+    [[nodiscard]] auto
+    GetShaderAssetSources()
+      -> std::unique_ptr<IShaderAssetSourceContainer>& override;
 
     auto
     Serialize() -> nlohmann::json override;

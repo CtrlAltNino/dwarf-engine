@@ -14,10 +14,6 @@ class MockMaterial : public Dwarf::IMaterial
 {
 public:
   MOCK_METHOD(std::shared_ptr<Dwarf::IShader>, GetShader, (), (override));
-  MOCK_METHOD(void,
-              SetShader,
-              (std::shared_ptr<Dwarf::IShader> shader),
-              (override));
   MOCK_METHOD(const std::unique_ptr<Dwarf::IShaderParameterCollection>&,
               GetShaderParameters,
               (),
@@ -27,6 +23,11 @@ public:
               (),
               (override));
   MOCK_METHOD(void, GenerateShaderParameters, (), (override));
+  MOCK_METHOD(void, UpdateShader, (), (override));
+  MOCK_METHOD(std::unique_ptr<IShaderAssetSourceContainer>&,
+              GetShaderAssetSources,
+              (),
+              (override));
   MOCK_METHOD(nlohmann::json, Serialize, (), (override));
 };
 
@@ -43,7 +44,7 @@ public:
               (const, override));
   MOCK_METHOD(std::unique_ptr<IMaterial>,
               CreateMaterial,
-              (std::shared_ptr<IShader> shader),
+              (std::unique_ptr<IShaderSourceCollection> shaderSources),
               (const, override));
 };
 

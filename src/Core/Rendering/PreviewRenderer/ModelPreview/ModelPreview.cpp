@@ -69,8 +69,8 @@ namespace Dwarf
     {
       FocusModel(dynamic_cast<ModelAsset&>(modelAsset.GetAsset()));
       memory = modelAsset.GetHandle();
-      mProperties.ModelRotation = { -15, 200, 0 };
-      mProperties.ModelRotationTarget = { -15, 200, 0 };
+      mProperties.ModelRotation = { 15, 200, 0 };
+      mProperties.ModelRotationTarget = { 15, 200, 0 };
       UpdateRotation({ 0, 0 });
       mProperties.Distance = 1.0F;
       std::unique_ptr<IMesh> mesh = mMeshFactory->MergeMeshes(

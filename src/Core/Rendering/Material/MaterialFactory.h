@@ -5,6 +5,7 @@
 #include "Core/Rendering/Shader/ShaderRegistry/IShaderRegistry.h"
 #include "IMaterialFactory.h"
 #include "Logging/IDwarfLogger.h"
+#include "ShaderAssetSourceContainer/IShaderAssetSourceContainerFactory.h"
 #include <boost/di.hpp>
 
 namespace Dwarf
@@ -18,6 +19,8 @@ namespace Dwarf
     std::shared_ptr<IShaderRegistry> mShaderRegistry;
     std::shared_ptr<IShaderSourceCollectionFactory>
       mShaderSourceCollectionFactory;
+    std::shared_ptr<IShaderAssetSourceContainerFactory>
+      mShaderAssetSourceContainerFactory;
 
   public:
     // Constructor
@@ -26,7 +29,9 @@ namespace Dwarf
                       shaderParameterCollectionFactory,
                     std::shared_ptr<IShaderRegistry> shaderRegistry,
                     std::shared_ptr<IShaderSourceCollectionFactory>
-                      shaderSourceCollectionFactory);
+                      shaderSourceCollectionFactory,
+                    std::shared_ptr<IShaderAssetSourceContainerFactory>
+                      shaderAssetSourceContainerFactory);
 
     // Destructor
     ~MaterialFactory() override;
@@ -46,7 +51,7 @@ namespace Dwarf
      * @return Unique pointer to the created material
      */
     [[nodiscard]] auto
-    CreateMaterial(std::shared_ptr<IShader> shader) const
+    CreateMaterial(std::unique_ptr<IShaderSourceCollection> shaderSources) const
       -> std::unique_ptr<IMaterial> override;
 
     /**

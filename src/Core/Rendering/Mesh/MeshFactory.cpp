@@ -86,166 +86,209 @@ namespace Dwarf
   auto
   MeshFactory::CreateUnitCube() const -> std::unique_ptr<IMesh>
   {
+    float               half = 0.7F;
     std::vector<Vertex> vertices = {
-      // Positions          // Normals             // UVs
       // Front face
-      Vertex(glm::vec3(-0.5F, -0.5F, 0.5F),
-             glm::vec3(0.0F, 0.0F, 1.0F),
-             glm::vec2(0.0F, 0.0F)),
-      Vertex(glm::vec3(0.5F, -0.5F, 0.5F),
-             glm::vec3(0.0F, 0.0F, 1.0F),
-             glm::vec2(1.0F, 0.0F)),
-      Vertex(glm::vec3(0.5F, 0.5F, 0.5F),
-             glm::vec3(0.0F, 0.0F, 1.0F),
-             glm::vec2(1.0F, 1.0F)),
-      Vertex(glm::vec3(-0.5F, 0.5F, 0.5F),
-             glm::vec3(0.0F, 0.0F, 1.0F),
-             glm::vec2(0.0F, 1.0F)),
+      { { -half, -half, half },
+        { 0, 0, 1 },
+        { 1, 0, 0 },
+        { 0, 1, 0 },
+        { 0, 1 } },
+      { { half, -half, half },
+        { 0, 0, 1 },
+        { 1, 0, 0 },
+        { 0, 1, 0 },
+        { 1, 1 } },
+      { { half, half, half }, { 0, 0, 1 }, { 1, 0, 0 }, { 0, 1, 0 }, { 1, 0 } },
+      { { -half, half, half },
+        { 0, 0, 1 },
+        { 1, 0, 0 },
+        { 0, 1, 0 },
+        { 0, 0 } },
 
       // Back face
-      Vertex(glm::vec3(-0.5F, -0.5F, -0.5F),
-             glm::vec3(0.0F, 0.0F, -1.0F),
-             glm::vec2(1.0F, 0.0F)),
-      Vertex(glm::vec3(0.5F, -0.5F, -0.5F),
-             glm::vec3(0.0F, 0.0F, -1.0F),
-             glm::vec2(0.0F, 0.0F)),
-      Vertex(glm::vec3(0.5F, 0.5F, -0.5F),
-             glm::vec3(0.0F, 0.0F, -1.0F),
-             glm::vec2(0.0F, 1.0F)),
-      Vertex(glm::vec3(-0.5F, 0.5F, -0.5F),
-             glm::vec3(0.0F, 0.0F, -1.0F),
-             glm::vec2(1.0F, 1.0F)),
+      { { half, -half, -half },
+        { 0, 0, -1 },
+        { -1, 0, 0 },
+        { 0, 1, 0 },
+        { 0, 1 } },
+      { { -half, -half, -half },
+        { 0, 0, -1 },
+        { -1, 0, 0 },
+        { 0, 1, 0 },
+        { 1, 1 } },
+      { { -half, half, -half },
+        { 0, 0, -1 },
+        { -1, 0, 0 },
+        { 0, 1, 0 },
+        { 1, 0 } },
+      { { half, half, -half },
+        { 0, 0, -1 },
+        { -1, 0, 0 },
+        { 0, 1, 0 },
+        { 0, 0 } },
 
       // Left face
-      Vertex(glm::vec3(-0.5F, -0.5F, -0.5F),
-             glm::vec3(-1.0F, 0.0F, 0.0F),
-             glm::vec2(0.0F, 0.0F)),
-      Vertex(glm::vec3(-0.5F, -0.5F, 0.5F),
-             glm::vec3(-1.0F, 0.0F, 0.0F),
-             glm::vec2(1.0F, 0.0F)),
-      Vertex(glm::vec3(-0.5F, 0.5F, 0.5F),
-             glm::vec3(-1.0F, 0.0F, 0.0F),
-             glm::vec2(1.0F, 1.0F)),
-      Vertex(glm::vec3(-0.5F, 0.5F, -0.5F),
-             glm::vec3(-1.0F, 0.0F, 0.0F),
-             glm::vec2(0.0F, 1.0F)),
+      { { -half, -half, -half },
+        { -1, 0, 0 },
+        { 0, 0, 1 },
+        { 0, 1, 0 },
+        { 0, 1 } },
+      { { -half, -half, half },
+        { -1, 0, 0 },
+        { 0, 0, 1 },
+        { 0, 1, 0 },
+        { 1, 1 } },
+      { { -half, half, half },
+        { -1, 0, 0 },
+        { 0, 0, 1 },
+        { 0, 1, 0 },
+        { 1, 0 } },
+      { { -half, half, -half },
+        { -1, 0, 0 },
+        { 0, 0, 1 },
+        { 0, 1, 0 },
+        { 0, 0 } },
 
       // Right face
-      Vertex(glm::vec3(0.5F, -0.5F, -0.5F),
-             glm::vec3(1.0F, 0.0F, 0.0F),
-             glm::vec2(0.0F, 0.0F)),
-      Vertex(glm::vec3(0.5F, -0.5F, 0.5F),
-             glm::vec3(1.0F, 0.0F, 0.0F),
-             glm::vec2(1.0F, 0.0F)),
-      Vertex(glm::vec3(0.5F, 0.5F, 0.5F),
-             glm::vec3(1.0F, 0.0F, 0.0F),
-             glm::vec2(1.0F, 1.0F)),
-      Vertex(glm::vec3(0.5F, 0.5F, -0.5F),
-             glm::vec3(1.0F, 0.0F, 0.0F),
-             glm::vec2(0.0F, 1.0F)),
+      { { half, -half, half },
+        { 1, 0, 0 },
+        { 0, 0, -1 },
+        { 0, 1, 0 },
+        { 0, 1 } },
+      { { half, -half, -half },
+        { 1, 0, 0 },
+        { 0, 0, -1 },
+        { 0, 1, 0 },
+        { 1, 1 } },
+      { { half, half, -half },
+        { 1, 0, 0 },
+        { 0, 0, -1 },
+        { 0, 1, 0 },
+        { 1, 0 } },
+      { { half, half, half },
+        { 1, 0, 0 },
+        { 0, 0, -1 },
+        { 0, 1, 0 },
+        { 0, 0 } },
 
       // Top face
-      Vertex(glm::vec3(-0.5F, 0.5F, -0.5F),
-             glm::vec3(0.0F, 1.0F, 0.0F),
-             glm::vec2(0.0F, 0.0F)),
-      Vertex(glm::vec3(0.5F, 0.5F, -0.5F),
-             glm::vec3(0.0F, 1.0F, 0.0F),
-             glm::vec2(1.0F, 0.0F)),
-      Vertex(glm::vec3(0.5F, 0.5F, 0.5F),
-             glm::vec3(0.0F, 1.0F, 0.0F),
-             glm::vec2(1.0F, 1.0F)),
-      Vertex(glm::vec3(-0.5F, 0.5F, 0.5F),
-             glm::vec3(0.0F, 1.0F, 0.0F),
-             glm::vec2(0.0F, 1.0F)),
+      { { -half, half, half },
+        { 0, 1, 0 },
+        { 1, 0, 0 },
+        { 0, 0, -1 },
+        { 0, 1 } },
+      { { half, half, half },
+        { 0, 1, 0 },
+        { 1, 0, 0 },
+        { 0, 0, -1 },
+        { 1, 1 } },
+      { { half, half, -half },
+        { 0, 1, 0 },
+        { 1, 0, 0 },
+        { 0, 0, -1 },
+        { 1, 0 } },
+      { { -half, half, -half },
+        { 0, 1, 0 },
+        { 1, 0, 0 },
+        { 0, 0, -1 },
+        { 0, 0 } },
 
       // Bottom face
-      Vertex(glm::vec3(-0.5F, -0.5F, -0.5F),
-             glm::vec3(0.0F, -1.0F, 0.0F),
-             glm::vec2(1.0F, 0.0F)),
-      Vertex(glm::vec3(0.5F, -0.5F, -0.5F),
-             glm::vec3(0.0F, -1.0F, 0.0F),
-             glm::vec2(0.0F, 0.0F)),
-      Vertex(glm::vec3(0.5F, -0.5F, 0.5F),
-             glm::vec3(0.0F, -1.0F, 0.0F),
-             glm::vec2(0.0F, 1.0F)),
-      Vertex(glm::vec3(-0.5F, -0.5F, 0.5F),
-             glm::vec3(0.0F, -1.0F, 0.0F),
-             glm::vec2(1.0F, 1.0F)),
+      { { -half, -half, -half },
+        { 0, -1, 0 },
+        { 1, 0, 0 },
+        { 0, 0, 1 },
+        { 0, 1 } },
+      { { half, -half, -half },
+        { 0, -1, 0 },
+        { 1, 0, 0 },
+        { 0, 0, 1 },
+        { 1, 1 } },
+      { { half, -half, half },
+        { 0, -1, 0 },
+        { 1, 0, 0 },
+        { 0, 0, 1 },
+        { 1, 0 } },
+      { { -half, -half, half },
+        { 0, -1, 0 },
+        { 1, 0, 0 },
+        { 0, 0, 1 },
+        { 0, 0 } },
     };
 
-    std::vector<unsigned int> indices = { // Front face
-                                          0,
-                                          1,
-                                          2,
-                                          2,
-                                          3,
-                                          0,
-                                          // Back face
-                                          4,
-                                          5,
-                                          6,
-                                          6,
-                                          7,
-                                          4,
-                                          // Left face
-                                          8,
-                                          9,
-                                          10,
-                                          10,
-                                          11,
-                                          8,
-                                          // Right face
-                                          12,
-                                          13,
-                                          14,
-                                          14,
-                                          15,
-                                          12,
-                                          // Top face
-                                          16,
-                                          17,
-                                          18,
-                                          18,
-                                          19,
-                                          16,
-                                          // Bottom face
-                                          20,
-                                          21,
-                                          22,
-                                          22,
-                                          23,
-                                          20
+    std::vector<unsigned int> indices = {
+      0,  1,  2,  2,  3,  0,  // Front
+      4,  5,  6,  6,  7,  4,  // Back
+      8,  9,  10, 10, 11, 8,  // Left
+      12, 13, 14, 14, 15, 12, // Right
+      16, 17, 18, 18, 19, 16, // Top
+      20, 21, 22, 22, 23, 20  // Bottom
     };
+
     return Create(vertices, indices, 0);
   }
 
   auto
-  MeshFactory::CreateUnitQuad() const -> std::unique_ptr<IMesh>
+  MeshFactory::CreatePlane() const -> std::unique_ptr<IMesh>
   {
-    return Create(
-      {
-        { glm::vec3(-1.0F, 1.0F, 0.0F),
-          glm::vec3(0.0F, 0.0F, 1.0F),
-          glm::vec2(0.0F, 1.0F) }, // 0
-        { glm::vec3(-1.0F, -1.0F, 0.0F),
-          glm::vec3(0.0F, 0.0F, 1.0F),
-          glm::vec2(0.0F, 0.0F) }, // 1
-        { glm::vec3(1.0F, -1.0F, 0.0F),
-          glm::vec3(0.0F, 0.0F, 1.0F),
-          glm::vec2(1.0F, 0.0F) }, // 2
-        { glm::vec3(1.0F, 1.0F, 0.0F),
-          glm::vec3(0.0F, 0.0F, 1.0F),
-          glm::vec2(1.0F, 1.0F) } // 3
-      },
-      {
-        0,
-        1,
-        2, // First Triangle
-        0,
-        2,
-        3 // Second Triangle
-      },
-      0);
+    float                     width = 1.0F;
+    float                     depth = 1.0F;
+    float                     halfW = width * 0.5f;
+    float                     halfD = depth * 0.5f;
+    auto                      vertices = std::vector<Vertex>();
+    std::vector<unsigned int> indices = { 0, 1, 2, 2, 3, 0 };
+
+    glm::vec3 normal = glm::vec3(0, 1, 0);
+    glm::vec3 tangent = glm::vec3(1, 0, 0);
+    glm::vec3 bitangent = glm::vec3(0, 0, -1);
+
+    std::vector<glm::vec3> positions = { { -halfW, 0, -halfD },
+                                         { halfW, 0, -halfD },
+                                         { halfW, 0, halfD },
+                                         { -halfW, 0, halfD } };
+
+    std::vector<glm::vec2> uvCoords = {
+      { 0, 0 }, { 1, 0 }, { 1, 1 }, { 0, 1 }
+    };
+
+    for (size_t i = 0; i < 4; ++i)
+    {
+      vertices.emplace_back(
+        positions[i], normal, tangent, bitangent, uvCoords[i]);
+    }
+
+    return Create(vertices, indices, 0);
+  }
+
+  auto
+  MeshFactory::CreatePreviewQuad() const -> std::unique_ptr<IMesh>
+  {
+    float                     halfW = 0.9F;
+    float                     halfD = 0.9F;
+    auto                      vertices = std::vector<Vertex>();
+    std::vector<unsigned int> indices = { 0, 1, 2, 2, 3, 0 };
+
+    glm::vec3 normal = glm::vec3(0, 0, 1);
+    glm::vec3 tangent = glm::vec3(1, 0, 0);
+    glm::vec3 bitangent = glm::vec3(0, 1, 0);
+
+    std::vector<glm::vec3> positions = { { -halfW, -halfD, 0 },
+                                         { halfW, -halfD, 0 },
+                                         { halfW, halfD, 0 },
+                                         { -halfW, halfD, 0 } };
+
+    std::vector<glm::vec2> uvCoords = {
+      { 0, 1 }, { 1, 1 }, { 1, 0 }, { 0, 0 }
+    };
+
+    for (size_t i = 0; i < 4; ++i)
+    {
+      vertices.emplace_back(
+        positions[i], normal, tangent, bitangent, uvCoords[i]);
+    }
+
+    return Create(vertices, indices, 0);
   }
 
   auto
