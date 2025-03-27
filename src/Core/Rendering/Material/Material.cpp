@@ -60,7 +60,7 @@ namespace Dwarf
   Material::Serialize() -> nlohmann::json
   {
     nlohmann::json serializedMaterial;
-    serializedMaterial["Shader"] = mShader->Serialize();
+    serializedMaterial["Shader"] = mShaderAssetSourceContainer->Serialize();
     serializedMaterial["Properties"] = mMaterialProperties.Serialize();
     serializedMaterial["ShaderParameters"] = mShaderParameters->Serialize();
 

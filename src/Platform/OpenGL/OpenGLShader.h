@@ -128,9 +128,6 @@ namespace Dwarf
 
     static const std::array<std::string, 5> ReservedUniformNames;
 
-    auto
-    Serialize() -> nlohmann::json override;
-
     [[nodiscard]] auto
     CompareTo(const IShader& other) const -> bool;
 
