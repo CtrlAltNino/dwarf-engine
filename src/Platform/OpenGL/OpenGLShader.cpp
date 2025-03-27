@@ -543,38 +543,6 @@ namespace Dwarf
   }
 
   auto
-  OpenGLShader::Serialize() -> nlohmann::json
-  {
-    nlohmann::json serializedShader;
-    serializedShader["VertexShader"] =
-      mVertexShaderAsset.has_value()
-        ? mVertexShaderAsset.value()->GetUID().toString()
-        : "";
-
-    serializedShader["FragmentShader"] =
-      mFragmentShaderAsset.has_value()
-        ? mFragmentShaderAsset.value()->GetUID().toString()
-        : "";
-
-    serializedShader["GeometryShader"] =
-      mGeometryShaderAsset.has_value()
-        ? mGeometryShaderAsset.value()->GetUID().toString()
-        : "";
-
-    serializedShader["TessellationControlShader"] =
-      mTessellationControlShaderAsset.has_value()
-        ? mTessellationControlShaderAsset.value()->GetUID().toString()
-        : "";
-
-    serializedShader["TessellationEvaluationShader"] =
-      mTessellationEvaluationShaderAsset.has_value()
-        ? mTessellationEvaluationShaderAsset.value()->GetUID().toString()
-        : "";
-
-    return serializedShader;
-  }
-
-  auto
   OpenGLShader::CompareTo(const IShader& other) const -> bool
   {
     const auto* otherShader = dynamic_cast<const OpenGLShader*>(&other);

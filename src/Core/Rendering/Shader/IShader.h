@@ -12,7 +12,7 @@ namespace Dwarf
    * it.
    *
    */
-  class IShader : public ISerializable
+  class IShader
   {
   public:
     virtual ~IShader() = default;
@@ -40,9 +40,6 @@ namespace Dwarf
      */
     virtual auto
     CreateParameters() -> std::unique_ptr<IShaderParameterCollection> = 0;
-
-    auto
-    Serialize() -> nlohmann::json override = 0;
 
     virtual auto
     operator<(const IShader& other) const -> bool = 0;

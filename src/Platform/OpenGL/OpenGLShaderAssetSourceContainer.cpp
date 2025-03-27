@@ -6,8 +6,8 @@
 namespace Dwarf
 {
   OpenGLShaderAssetSourceContainer::OpenGLShaderAssetSourceContainer(
-    std::shared_ptr<IAssetDatabase> assetDatabase,
-    std::shared_ptr<IShaderSourceCollectionFactory>
+    const std::shared_ptr<IAssetDatabase>& assetDatabase,
+    const std::shared_ptr<IShaderSourceCollectionFactory>&
                                              shaderSourceCollectionFactory,
     std::unique_ptr<IShaderSourceCollection> shaderSources)
     : mAssetDatabase(assetDatabase)
@@ -112,5 +112,37 @@ namespace Dwarf
     -> std::optional<std::unique_ptr<IAssetReference>>&
   {
     return mTessellationEvaluationShaderAsset;
+  }
+
+  auto
+  OpenGLShaderAssetSourceContainer::Serialize() -> nlohmann::json
+  {
+    nlohmann::json serializedShader;
+    serializedShader["VertexShader"] =
+      mVertexShaderAsset.has_value()
+        ? mVertexShaderAsset.value()->GetUID().toString()
+        : "";
+
+    serializedShader["FragmentShader"] =
+      mFragmentShaderAsset.has_value()
+        ? mFragmentShaderAsset.value()->GetUID().toString()
+        : "";
+
+    serializedShader["GeometryShader"] =
+      mGeometryShaderAsset.has_value()
+        ? mGeometryShaderAsset.value()->GetUID().toString()
+        : "";
+
+    serializedShader["TessellationControlShader"] =
+      mTessellationControlShaderAsset.has_value()
+        ? mTessellationControlShaderAsset.value()->GetUID().toString()
+        : "";
+
+    serializedShader["TessellationEvaluationShader"] =
+      mTessellationEvaluationShaderAsset.has_value()
+        ? mTessellationEvaluationShaderAsset.value()->GetUID().toString()
+        : "";
+
+    return serializedShader;
   }
 }

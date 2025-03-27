@@ -1,4 +1,5 @@
 #pragma once
+
 #include "Core/Rendering/Shader/IShader.h"
 #include "Core/Rendering/Shader/ShaderRegistry/IShaderRegistry.h"
 #include "IMaterial.h"
@@ -47,16 +48,35 @@ namespace Dwarf
     void
     UpdateShader() override;
 
+    /**
+     * @brief Gets the ShaderParameterCollection
+     *
+     * @return Reference to the stored ShaderParameterCollection
+     */
     [[nodiscard]] auto
     GetShaderParameters() const
       -> const std::unique_ptr<IShaderParameterCollection>& override;
 
+    /**
+     * @brief Gets the properties of the materials
+     *
+     * @return Reference to the MaterialProperties instance
+     */
     auto
     GetMaterialProperties() -> MaterialProperties& override;
 
+    /**
+     * @brief Clears the shader parameters and pulls them fresh from the shader
+     *
+     */
     void
     GenerateShaderParameters() override;
 
+    /**
+     * @brief Gets the Shader asset sources
+     *
+     * @return Reference to the stored ShaderAssetSourceContainer instance
+     */
     [[nodiscard]] auto
     GetShaderAssetSources()
       -> std::unique_ptr<IShaderAssetSourceContainer>& override;
