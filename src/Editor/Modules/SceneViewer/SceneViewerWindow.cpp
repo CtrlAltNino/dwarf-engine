@@ -1,6 +1,5 @@
 #include "pch.h"
 
-#include "Core/Rendering/RendererApi/IRendererApiFactory.h"
 #include "Core/Scene/Components/SceneComponents.h"
 #include "Core/Scene/Entity/Entity.h"
 #include "Editor/Modules/SceneViewer/SceneViewerWindow.h"
@@ -13,144 +12,57 @@
 namespace Dwarf
 {
   SceneViewerWindow::SceneViewerWindow(
-    std::shared_ptr<IDwarfLogger>              logger,
-    std::shared_ptr<ICameraFactory>            cameraFactory,
-    std::shared_ptr<IFramebufferFactory>       framebufferFactory,
-    std::shared_ptr<IEditorStats>              editorStats,
-    std::shared_ptr<IInputManager>             inputManager,
-    std::shared_ptr<ILoadedScene>              loadedScene,
-    std::shared_ptr<IEditorSelection>          editorSelection,
-    std::shared_ptr<IRenderingPipelineFactory> renderingPipelineFactory,
-    std::shared_ptr<IRendererApiFactory>       rendererApiFactory,
-    std::shared_ptr<IShaderRegistry>           shaderRegistry,
-    std::shared_ptr<IShaderSourceCollectionFactory>
-      shaderSourceCollectionFactory)
+    std::shared_ptr<IDwarfLogger>                     logger,
+    std::shared_ptr<IEditorStats>                     editorStats,
+    std::shared_ptr<IInputManager>                    inputManager,
+    std::shared_ptr<ILoadedScene>                     loadedScene,
+    std::shared_ptr<IEditorSelection>                 editorSelection,
+    const std::shared_ptr<ICameraFactory>&            cameraFactory,
+    const std::shared_ptr<IRenderingPipelineFactory>& renderingPipelineFactory)
     : IGuiModule(ModuleLabel("Scene Viewer"),
                  ModuleType(MODULE_TYPE::SCENE_VIEWER),
                  ModuleID(std::make_shared<UUID>()))
     , mLogger(std::move(logger))
-    , mCameraFactory(std::move(cameraFactory))
-    , mFramebufferFactory(std::move(framebufferFactory))
     , mEditorStats(std::move(editorStats))
     , mInputManager(std::move(inputManager))
     , mLoadedScene(std::move(loadedScene))
     , mEditorSelection(std::move(editorSelection))
-    , mRenderingPipelineFactory(std::move(renderingPipelineFactory))
-    , mRendererApiFactory(std::move(rendererApiFactory))
-    , mShaderRegistry(std::move(shaderRegistry))
-    , mShaderSourceCollectionFactory(std::move(shaderSourceCollectionFactory))
   {
-    mRendererApi = mRendererApiFactory->Create();
-    mSettings.MaxSamples = mRendererApi->GetMaxSamples();
-
     // Create rendering pipeline
-    mRenderingPipeline = mRenderingPipelineFactory->Create();
-
-    mAgxTonemapShader = mShaderRegistry->GetOrCreate(
-      mShaderSourceCollectionFactory->CreateAgxTonemapShaderSourceCollection());
-    mAgxTonemapShader->Compile();
-
-    // Setup rendering framebuffer according to the pipeline specification
-    mFramebuffer =
-      mFramebufferFactory->Create(mRenderingPipeline->GetSpecification());
-
-    // Setup framebuffer for presentation
-    FramebufferSpecification presentationSpec;
-    presentationSpec.Attachments = FramebufferAttachmentSpecification{
-      FramebufferTextureSpecification{ FramebufferTextureFormat::RGBA8 }
-    };
-
-    mPresentationBuffer = mFramebufferFactory->Create(presentationSpec);
-
-    // Setup frame buffer for rendering ids
-    FramebufferSpecification idSpec;
-    idSpec.Attachments = FramebufferAttachmentSpecification{
-      FramebufferTextureSpecification{ FramebufferTextureFormat::RED_INTEGER },
-      FramebufferTextureSpecification{ FramebufferTextureFormat::DEPTH }
-    };
-    idSpec.Width = 512;
-    idSpec.Height = 512;
-    mIdBuffer = mFramebufferFactory->Create(idSpec);
-
-    // Setup outline buffer
+    mRenderingPipeline = renderingPipelineFactory->Create();
+    mSettings.MaxSamples = mRenderingPipeline->GetMaxMsaaSamples();
 
     // Setup camera
-    mCamera = mCameraFactory->Create();
+    mCamera = cameraFactory->Create();
 
     mLogger->LogDebug(Log("SceneViewerWindow created", "SceneViewerWindow"));
   }
 
   SceneViewerWindow::SceneViewerWindow(
-    SerializedModule                           serializedModule,
-    std::shared_ptr<IDwarfLogger>              logger,
-    std::shared_ptr<ICameraFactory>            cameraFactory,
-    std::shared_ptr<IFramebufferFactory>       framebufferFactory,
-    std::shared_ptr<IEditorStats>              editorStats,
-    std::shared_ptr<IInputManager>             inputManager,
-    std::shared_ptr<ILoadedScene>              loadedScene,
-    std::shared_ptr<IEditorSelection>          editorSelection,
-    std::shared_ptr<IRenderingPipelineFactory> renderingPipelineFactory,
-    std::shared_ptr<IRendererApiFactory>       rendererApiFactory,
-    std::shared_ptr<IShaderRegistry>           shaderRegistry,
-    std::shared_ptr<IShaderSourceCollectionFactory>
-      shaderSourceCollectionFactory)
+    SerializedModule                                  serializedModule,
+    std::shared_ptr<IDwarfLogger>                     logger,
+    std::shared_ptr<IEditorStats>                     editorStats,
+    std::shared_ptr<IInputManager>                    inputManager,
+    std::shared_ptr<ILoadedScene>                     loadedScene,
+    std::shared_ptr<IEditorSelection>                 editorSelection,
+    const std::shared_ptr<ICameraFactory>&            cameraFactory,
+    const std::shared_ptr<IRenderingPipelineFactory>& renderingPipelineFactory)
     : IGuiModule(ModuleLabel("Scene Viewer"),
                  ModuleType(MODULE_TYPE::SCENE_VIEWER),
                  ModuleID(std::make_shared<UUID>(
                    serializedModule.t["id"].get<std::string>())))
     , mLogger(std::move(logger))
-    , mCameraFactory(std::move(cameraFactory))
-    , mFramebufferFactory(std::move(framebufferFactory))
     , mEditorStats(std::move(editorStats))
     , mInputManager(std::move(inputManager))
     , mLoadedScene(std::move(loadedScene))
     , mEditorSelection(std::move(editorSelection))
-    , mRenderingPipelineFactory(std::move(renderingPipelineFactory))
-    , mRendererApiFactory(std::move(rendererApiFactory))
-    , mShaderRegistry(std::move(shaderRegistry))
-    , mShaderSourceCollectionFactory(std::move(shaderSourceCollectionFactory))
   {
-    mRendererApi = mRendererApiFactory->Create();
-    mSettings.MaxSamples = mRendererApi->GetMaxSamples();
-
     // Create rendering pipeline
-    mRenderingPipeline = mRenderingPipelineFactory->Create();
-
-    mAgxTonemapShader = mShaderRegistry->GetOrCreate(
-      mShaderSourceCollectionFactory->CreateAgxTonemapShaderSourceCollection());
-    mAgxTonemapShader->Compile();
-
-    // Setup rendering framebuffer according to the pipeline specification
-    mFramebuffer =
-      mFramebufferFactory->Create(mRenderingPipeline->GetSpecification());
-
-    FramebufferSpecification nonMsaaSpec =
-      mRenderingPipeline->GetSpecification();
-    nonMsaaSpec.Samples = 1;
-    mNonMsaaBuffer = mFramebufferFactory->Create(nonMsaaSpec);
-
-    // Setup framebuffer for presentation
-    FramebufferSpecification presentationSpec;
-    presentationSpec.Attachments = FramebufferAttachmentSpecification{
-      FramebufferTextureSpecification{ FramebufferTextureFormat::RGBA8 }
-    };
-
-    mPresentationBuffer = mFramebufferFactory->Create(presentationSpec);
-
-    // Setup frame buffer for rendering ids
-    FramebufferSpecification idSpec;
-    idSpec.Attachments = FramebufferAttachmentSpecification{
-      FramebufferTextureSpecification{ FramebufferTextureFormat::RED_INTEGER },
-      FramebufferTextureSpecification{ FramebufferTextureFormat::DEPTH }
-    };
-    idSpec.Width = 512;
-    idSpec.Height = 512;
-    mIdBuffer = mFramebufferFactory->Create(idSpec);
-
-    // Setup outline buffer
+    mRenderingPipeline = renderingPipelineFactory->Create();
+    mSettings.MaxSamples = mRenderingPipeline->GetMaxMsaaSamples();
 
     // Setup camera
-    mCamera = mCameraFactory->Create(serializedModule.t["camera"]);
+    mCamera = cameraFactory->Create(serializedModule.t["camera"]);
 
     Deserialize(serializedModule.t);
 
@@ -172,52 +84,9 @@ namespace Dwarf
     }
 
     // Render scene to the framebuffer with the camera
-    mFramebuffer->Bind();
-    mRenderingPipeline->RenderScene(*mCamera,
-                                    { mFramebuffer->GetSpecification().Width,
-                                      mFramebuffer->GetSpecification().Height },
-                                    mSettings.RenderGrid);
-    mFramebuffer->Unbind();
+    mRenderingPipeline->RenderScene(*mCamera, mSettings.RenderGrid);
 
-    mIdBuffer->Bind();
-    mIdBuffer->ClearAttachment(0, 0);
-    mRenderingPipeline->RenderIds(mLoadedScene->GetScene(),
-                                  *mCamera,
-                                  { mIdBuffer->GetSpecification().Width,
-                                    mIdBuffer->GetSpecification().Height });
-    mIdBuffer->Unbind();
-
-    /*if (mModel->GetSelection().GetSelectedEntities().size() > 0)
-    {
-      mOutlineBuffer->Clear(glm::vec4(0));
-      mOutlineBuffer->Bind();
-      for (auto entity : mModel->GetSelection().GetSelectedEntities())
-      {
-        Renderer::Get()->RenderEntity(entity,
-                                      mCamera->GetViewMatrix(),
-                                      mCamera->GetProjectionMatrix(),
-                                      Material::s_WhiteMaterial);
-      }
-
-      // Apply propagation shader
-      // ComputeShader::s_PropagationShader->SetParameter("inputTexture",
-      // mOutlineBuffer->GetColorAttachmentRendererID(),
-      // ShaderParameterType::TEXTURE);
-      // Renderer::Get()->GetRendererApi()->ApplyComputeShader(
-      //  ComputeShader::s_PropagationShader, mOutlineBuffer, 0, 1);
-
-      mOutlineBuffer->Unbind();
-    }*/
-
-    mRendererApi->Blit(*mFramebuffer,
-                       *mNonMsaaBuffer,
-                       0,
-                       0,
-                       mFramebuffer->GetSpecification().Width,
-                       mFramebuffer->GetSpecification().Height);
-
-    mRendererApi->CustomBlit(
-      *mNonMsaaBuffer, *mPresentationBuffer, 0, 0, mAgxTonemapShader);
+    mRenderingPipeline->RenderIds(mLoadedScene->GetScene(), *mCamera);
   }
 
   void
@@ -393,7 +262,11 @@ namespace Dwarf
     // Rendering the framebuffer
     ImDrawList* drawList = ImGui::GetWindowDrawList();
     drawList->AddImage(
-      GetFrameBufferForImGui(), minRect, maxRect, ImVec2(0, 1), ImVec2(1, 0));
+      (ImTextureID)mRenderingPipeline->GetPresentationBufferId(),
+      minRect,
+      maxRect,
+      ImVec2(0, 1),
+      ImVec2(1, 0));
 
     // Check if a mesh is clicked
     glm::vec2 mousePos = { ImGui::GetMousePos().x, ImGui::GetMousePos().y };
@@ -404,7 +277,7 @@ namespace Dwarf
         mousePos.x > minRectGlm.x && mousePos.x < maxRectGlm.x &&
         mousePos.y > minRectGlm.y && mousePos.y < maxRectGlm.y)
     {
-      ProcessSceneClick(mousePos - minRectGlm, { maxRectGlm - minRectGlm });
+      ProcessSceneClick(mousePos - minRectGlm);
     }
 
     drawList->ChannelsMerge();
@@ -439,15 +312,6 @@ namespace Dwarf
       RenderGizmos(minRect, maxRect);
     }
     ImGui::End();
-  }
-
-  auto
-  SceneViewerWindow::GetFrameBufferForImGui() -> ImTextureID
-  {
-    return (ImTextureID)mPresentationBuffer->GetColorAttachment()
-      .value()
-      .get()
-      .GetTextureID();
   }
 
   auto
@@ -584,21 +448,16 @@ namespace Dwarf
         break;
     }
 
-    if ((mFramebuffer->GetSpecification().Width != desiredResolution.x) ||
-        (mFramebuffer->GetSpecification().Height != desiredResolution.y))
+    if (mRenderingPipeline->GetResolution() != desiredResolution)
     {
-      mFramebuffer->Resize(desiredResolution.x, desiredResolution.y);
-      mNonMsaaBuffer->Resize(desiredResolution.x, desiredResolution.y);
-      mIdBuffer->Resize(desiredResolution.x, desiredResolution.y);
-      // mOutlineBuffer->Resize(desiredResolution.x, desiredResolution.y);
-      mPresentationBuffer->Resize(desiredResolution.x, desiredResolution.y);
+      mRenderingPipeline->SetResolution(desiredResolution);
       mCamera->GetProperties().AspectRatio =
         (float)desiredResolution.x / (float)desiredResolution.y;
     }
 
-    if (mFramebuffer->GetSpecification().Samples != mSettings.Samples)
+    if (mRenderingPipeline->GetMsaaSamples() != mSettings.Samples)
     {
-      mFramebuffer->SetSamples(mSettings.Samples);
+      mRenderingPipeline->SetMsaaSamples(mSettings.Samples);
     }
   }
 
@@ -660,11 +519,9 @@ namespace Dwarf
   }
 
   void
-  SceneViewerWindow::ProcessSceneClick(glm::vec2 const& mousePosition,
-                                       glm::vec2 const& viewportSize)
+  SceneViewerWindow::ProcessSceneClick(glm::vec2 const& mousePosition)
   {
-    unsigned int handle =
-      mIdBuffer->ReadPixel(0, mousePosition.x, mousePosition.y);
+    uint32_t handle = mRenderingPipeline->ReadPixelId(mousePosition);
 
     if (handle > 0)
     {

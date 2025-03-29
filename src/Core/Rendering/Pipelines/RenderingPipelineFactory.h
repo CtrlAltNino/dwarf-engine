@@ -2,6 +2,7 @@
 
 #include "Core/Asset/Shader/ShaderSourceCollection/IShaderSourceCollectionFactory.h"
 #include "Core/Rendering/DrawCall/DrawCallList/IDrawCallList.h"
+#include "Core/Rendering/Framebuffer/IFramebufferFactory.h"
 #include "Core/Rendering/Material/IMaterialFactory.h"
 #include "Core/Rendering/Mesh/IMeshFactory.h"
 #include "Core/Rendering/MeshBuffer/IMeshBufferFactory.h"
@@ -21,10 +22,11 @@ namespace Dwarf
     std::shared_ptr<IMaterialFactory> mMaterialFactory;
     std::shared_ptr<IShaderRegistry>  mShaderRegistry;
     std::shared_ptr<IShaderSourceCollectionFactory>
-                                        mShaderSourceCollectionFactory;
-    std::shared_ptr<IMeshFactory>       mMeshFactory;
-    std::shared_ptr<IMeshBufferFactory> mMeshBufferFactory;
-    std::shared_ptr<IDrawCallList>      mDrawCallList;
+                                         mShaderSourceCollectionFactory;
+    std::shared_ptr<IMeshFactory>        mMeshFactory;
+    std::shared_ptr<IMeshBufferFactory>  mMeshBufferFactory;
+    std::shared_ptr<IDrawCallList>       mDrawCallList;
+    std::shared_ptr<IFramebufferFactory> mFramebufferFactory;
 
   public:
     RenderingPipelineFactory(
@@ -33,10 +35,11 @@ namespace Dwarf
       std::shared_ptr<IMaterialFactory>           materialFactory,
       std::shared_ptr<IShaderRegistry>            shaderRegistry,
       std::shared_ptr<IShaderSourceCollectionFactory>
-                                          shaderSourceCollectionFactory,
-      std::shared_ptr<IMeshFactory>       meshFactory,
-      std::shared_ptr<IMeshBufferFactory> meshBufferFactory,
-      std::shared_ptr<IDrawCallList>      drawCallList);
+                                           shaderSourceCollectionFactory,
+      std::shared_ptr<IMeshFactory>        meshFactory,
+      std::shared_ptr<IMeshBufferFactory>  meshBufferFactory,
+      std::shared_ptr<IDrawCallList>       drawCallList,
+      std::shared_ptr<IFramebufferFactory> framebufferFactory);
 
     ~RenderingPipelineFactory() override;
 

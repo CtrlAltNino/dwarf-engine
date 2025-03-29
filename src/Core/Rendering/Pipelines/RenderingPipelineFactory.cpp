@@ -11,10 +11,11 @@ namespace Dwarf
     std::shared_ptr<IMaterialFactory>           materialFactory,
     std::shared_ptr<IShaderRegistry>            shaderRegistry,
     std::shared_ptr<IShaderSourceCollectionFactory>
-                                        shaderSourceCollectionFactory,
-    std::shared_ptr<IMeshFactory>       meshFactory,
-    std::shared_ptr<IMeshBufferFactory> meshBufferFactory,
-    std::shared_ptr<IDrawCallList>      drawCallList)
+                                         shaderSourceCollectionFactory,
+    std::shared_ptr<IMeshFactory>        meshFactory,
+    std::shared_ptr<IMeshBufferFactory>  meshBufferFactory,
+    std::shared_ptr<IDrawCallList>       drawCallList,
+    std::shared_ptr<IFramebufferFactory> framebufferFactory)
     : mLogger(std::move(logger))
     , mRendererApi(rendererApiFactory->Create())
     , mMaterialFactory(std::move(materialFactory))
@@ -23,6 +24,7 @@ namespace Dwarf
     , mMeshFactory(std::move(meshFactory))
     , mMeshBufferFactory(std::move(meshBufferFactory))
     , mDrawCallList(std::move(drawCallList))
+    , mFramebufferFactory(std::move(framebufferFactory))
   {
     mLogger->LogDebug(
       Log("RenderingPipelineFactory created", "RenderingPipelineFactory"));
@@ -45,6 +47,7 @@ namespace Dwarf
                                                mShaderSourceCollectionFactory,
                                                mMeshFactory,
                                                mMeshBufferFactory,
-                                               mDrawCallList);
+                                               mDrawCallList,
+                                               mFramebufferFactory);
   }
 } // namespace Dwarf

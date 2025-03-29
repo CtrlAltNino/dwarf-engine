@@ -3,6 +3,7 @@
 #include "Core/Asset/Shader/ShaderSourceCollection/IShaderSourceCollectionFactory.h"
 #include "Core/Rendering/DrawCall/DrawCallList/IDrawCallList.h"
 #include "Core/Rendering/Framebuffer/IFramebuffer.h"
+#include "Core/Rendering/Framebuffer/IFramebufferFactory.h"
 #include "Core/Rendering/Material/IMaterialFactory.h"
 #include "Core/Rendering/Mesh/IMeshFactory.h"
 #include "Core/Rendering/MeshBuffer/IMeshBufferFactory.h"
@@ -16,21 +17,27 @@ namespace Dwarf
   class RenderingPipeline : public IRenderingPipeline
   {
   private:
-    std::unique_ptr<IMaterial>        mIdMaterial;
-    std::unique_ptr<IMaterial>        mGridMaterial;
-    std::unique_ptr<IMeshBuffer>      mGridMeshBuffer;
-    glm::mat4                         mGridModelMatrix{};
-    std::shared_ptr<IRendererApi>     mRendererApi;
-    std::shared_ptr<IMaterialFactory> mMaterialFactory;
-    std::shared_ptr<IShaderRegistry>  mShaderRegistry;
+    std::shared_ptr<IMaterialFactory>    mMaterialFactory;
+    std::shared_ptr<IShaderRegistry>     mShaderRegistry;
+    std::shared_ptr<IFramebufferFactory> mFramebufferFactory;
     std::shared_ptr<IShaderSourceCollectionFactory>
                                         mShaderSourceCollectionFactory;
     std::shared_ptr<IMeshFactory>       mMeshFactory;
     std::shared_ptr<IMeshBufferFactory> mMeshBufferFactory;
-    std::shared_ptr<IDrawCallList>      mDrawCallList;
 
-    void
-    Setup(glm::ivec2 viewportSize);
+    std::unique_ptr<IMaterial>    mIdMaterial;
+    std::unique_ptr<IMaterial>    mGridMaterial;
+    std::unique_ptr<IMeshBuffer>  mGridMeshBuffer;
+    glm::mat4                     mGridModelMatrix{};
+    std::shared_ptr<IFramebuffer> mFramebuffer;
+    std::shared_ptr<IFramebuffer> mNonMsaaBuffer;
+    std::shared_ptr<IFramebuffer> mIdBuffer;
+    std::shared_ptr<IFramebuffer> mOutlineBuffer;
+    std::shared_ptr<IFramebuffer> mPresentationBuffer;
+    std::shared_ptr<IShader>      mAgxTonemapShader;
+
+    std::shared_ptr<IRendererApi>  mRendererApi;
+    std::shared_ptr<IDrawCallList> mDrawCallList;
 
   public:
     RenderingPipeline(std::shared_ptr<IRendererApi>     rendererApi,
@@ -38,9 +45,10 @@ namespace Dwarf
                       std::shared_ptr<IShaderRegistry>  shaderRegistry,
                       std::shared_ptr<IShaderSourceCollectionFactory>
                         shaderSourceCollectionFactory,
-                      std::shared_ptr<IMeshFactory>       meshFactory,
-                      std::shared_ptr<IMeshBufferFactory> meshBufferFactory,
-                      std::shared_ptr<IDrawCallList>      drawCallList);
+                      std::shared_ptr<IMeshFactory>        meshFactory,
+                      std::shared_ptr<IMeshBufferFactory>  meshBufferFactory,
+                      std::shared_ptr<IDrawCallList>       drawCallList,
+                      std::shared_ptr<IFramebufferFactory> framebufferFactory);
     ~RenderingPipeline() override;
 
     /**
@@ -51,9 +59,7 @@ namespace Dwarf
      * @param renderGrid Should the grid be rendered
      */
     void
-    RenderScene(ICamera&   camera,
-                glm::ivec2 viewportSize,
-                bool       renderGrid) override;
+    RenderScene(ICamera& camera, bool renderGrid) override;
 
     /**
      * @brief Returns the specification for the framebuffer
@@ -71,6 +77,27 @@ namespace Dwarf
      * @param viewportSize Viewport to render
      */
     void
-    RenderIds(IScene& scene, ICamera& camera, glm::ivec2 viewportSize) override;
+    RenderIds(IScene& scene, ICamera& camera) override;
+
+    auto
+    GetResolution() -> glm::ivec2 override;
+
+    void
+    SetResolution(glm::ivec2 resolution) override;
+
+    void
+    SetMsaaSamples(int32_t samples) override;
+
+    auto
+    GetMsaaSamples() -> int32_t override;
+
+    auto
+    GetMaxMsaaSamples() -> int32_t override;
+
+    auto
+    ReadPixelId(glm::ivec2 position) -> uint32_t override;
+
+    auto
+    GetPresentationBufferId() -> uintptr_t override;
   };
 }

@@ -7,27 +7,18 @@ namespace Dwarf
   SceneViewerWindowFactory::SceneViewerWindowFactory(
     std::shared_ptr<IDwarfLogger>              logger,
     std::shared_ptr<ICameraFactory>            cameraFactory,
-    std::shared_ptr<IFramebufferFactory>       framebufferFactory,
     std::shared_ptr<IEditorStats>              editorStats,
     std::shared_ptr<IInputManager>             inputManager,
     std::shared_ptr<ILoadedScene>              loadedScene,
     std::shared_ptr<IEditorSelection>          editorSelection,
-    std::shared_ptr<IRenderingPipelineFactory> renderingPipelineFactory,
-    std::shared_ptr<IRendererApiFactory>       rendererApiFactory,
-    std::shared_ptr<IShaderRegistry>           shaderRegistry,
-    std::shared_ptr<IShaderSourceCollectionFactory>
-      shaderSourceCollectionFactory)
+    std::shared_ptr<IRenderingPipelineFactory> renderingPipelineFactory)
     : mLogger(std::move(logger))
     , mCameraFactory(std::move(cameraFactory))
-    , mFramebufferFactory(std::move(framebufferFactory))
     , mEditorStats(std::move(editorStats))
     , mInputManager(std::move(inputManager))
     , mLoadedScene(std::move(loadedScene))
     , mEditorSelection(std::move(editorSelection))
     , mRenderingPipelineFactory(std::move(renderingPipelineFactory))
-    , mRendererApiFactory(std::move(rendererApiFactory))
-    , mShaderRegistry(std::move(shaderRegistry))
-    , mShaderSourceCollectionFactory(std::move(shaderSourceCollectionFactory))
   {
     mLogger->LogDebug(
       Log("SceneViewerWindowFactory created", "SceneViewerWindowFactory"));
@@ -43,16 +34,12 @@ namespace Dwarf
   SceneViewerWindowFactory::Create() const -> std::unique_ptr<SceneViewerWindow>
   {
     return std::make_unique<SceneViewerWindow>(mLogger,
-                                               mCameraFactory,
-                                               mFramebufferFactory,
                                                mEditorStats,
                                                mInputManager,
                                                mLoadedScene,
                                                mEditorSelection,
-                                               mRenderingPipelineFactory,
-                                               mRendererApiFactory,
-                                               mShaderRegistry,
-                                               mShaderSourceCollectionFactory);
+                                               mCameraFactory,
+                                               mRenderingPipelineFactory);
   }
 
   auto
@@ -61,15 +48,11 @@ namespace Dwarf
   {
     return std::make_unique<SceneViewerWindow>(serializedModule,
                                                mLogger,
-                                               mCameraFactory,
-                                               mFramebufferFactory,
                                                mEditorStats,
                                                mInputManager,
                                                mLoadedScene,
                                                mEditorSelection,
-                                               mRenderingPipelineFactory,
-                                               mRendererApiFactory,
-                                               mShaderRegistry,
-                                               mShaderSourceCollectionFactory);
+                                               mCameraFactory,
+                                               mRenderingPipelineFactory);
   }
 } // namespace Dwarf
