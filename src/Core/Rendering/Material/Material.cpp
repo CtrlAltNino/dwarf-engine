@@ -1,6 +1,5 @@
 #include "pch.h"
 
-#include "Core/Asset/Shader/ShaderSourceCollection/IShaderSourceCollection.h"
 #include "Material.h"
 
 namespace Dwarf
