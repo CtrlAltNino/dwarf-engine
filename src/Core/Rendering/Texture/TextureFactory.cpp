@@ -208,7 +208,7 @@ namespace Dwarf
         }
       case TextureDataType::UNSIGNED_INT:
         {
-          std::vector<unsigned int> data;
+          std::vector<uint32_t> data;
           data.resize(dataSize);
           textureData->ImageData = data;
           break;

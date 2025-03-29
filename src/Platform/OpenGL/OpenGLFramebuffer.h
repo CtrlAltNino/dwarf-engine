@@ -88,7 +88,7 @@ namespace Dwarf
      * @return Integer value at the given pixel
      */
     auto
-    ReadPixel(uint32_t attachmentIndex, int x, int y) -> unsigned int override;
+    ReadPixel(uint32_t attachmentIndex, int x, int y) -> uint32_t override;
 
     /**
      * @brief Clears an attachment with a given integer value

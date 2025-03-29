@@ -11,10 +11,9 @@ namespace Dwarf
   {
   }
   auto
-  MeshFactory::Create(const std::vector<Vertex>&       vertices,
-                      const std::vector<unsigned int>& indices,
-                      unsigned int                     materialIndex) const
-    -> std::unique_ptr<IMesh>
+  MeshFactory::Create(const std::vector<Vertex>&   vertices,
+                      const std::vector<uint32_t>& indices,
+                      uint32_t materialIndex) const -> std::unique_ptr<IMesh>
   {
     return std::make_unique<Mesh>(vertices, indices, materialIndex, mLogger);
   }
@@ -24,7 +23,7 @@ namespace Dwarf
     -> std::unique_ptr<IMesh>
   {
     auto vertices = std::vector<Vertex>();
-    auto indices = std::vector<unsigned int>();
+    auto indices = std::vector<uint32_t>();
     for (int i = 0; i <= stacks; ++i)
     {
       float phi =
@@ -217,7 +216,7 @@ namespace Dwarf
         { 0, 0 } },
     };
 
-    std::vector<unsigned int> indices = {
+    std::vector<uint32_t> indices = {
       0,  1,  2,  2,  3,  0,  // Front
       4,  5,  6,  6,  7,  4,  // Back
       8,  9,  10, 10, 11, 8,  // Left
@@ -232,12 +231,12 @@ namespace Dwarf
   auto
   MeshFactory::CreatePlane() const -> std::unique_ptr<IMesh>
   {
-    float                     width = 1.0F;
-    float                     depth = 1.0F;
-    float                     halfW = width * 0.5f;
-    float                     halfD = depth * 0.5f;
-    auto                      vertices = std::vector<Vertex>();
-    std::vector<unsigned int> indices = { 0, 1, 2, 2, 3, 0 };
+    float                 width = 1.0F;
+    float                 depth = 1.0F;
+    float                 halfW = width * 0.5f;
+    float                 halfD = depth * 0.5f;
+    auto                  vertices = std::vector<Vertex>();
+    std::vector<uint32_t> indices = { 0, 1, 2, 2, 3, 0 };
 
     glm::vec3 normal = glm::vec3(0, 1, 0);
     glm::vec3 tangent = glm::vec3(1, 0, 0);
@@ -264,10 +263,10 @@ namespace Dwarf
   auto
   MeshFactory::CreatePreviewQuad() const -> std::unique_ptr<IMesh>
   {
-    float                     halfW = 0.9F;
-    float                     halfD = 0.9F;
-    auto                      vertices = std::vector<Vertex>();
-    std::vector<unsigned int> indices = { 0, 1, 2, 2, 3, 0 };
+    float                 halfW = 0.9F;
+    float                 halfD = 0.9F;
+    auto                  vertices = std::vector<Vertex>();
+    std::vector<uint32_t> indices = { 0, 1, 2, 2, 3, 0 };
 
     glm::vec3 normal = glm::vec3(0, 0, 1);
     glm::vec3 tangent = glm::vec3(1, 0, 0);
@@ -307,8 +306,8 @@ namespace Dwarf
   MeshFactory::MergeMeshes(const std::vector<std::unique_ptr<IMesh>>& meshes)
     const -> std::unique_ptr<IMesh>
   {
-    std::vector<Vertex>       mergedVertices;
-    std::vector<unsigned int> mergedIndices;
+    std::vector<Vertex>   mergedVertices;
+    std::vector<uint32_t> mergedIndices;
     uint32_t indexOffset = 0; // Tracks index shifting due to merged vertices
 
     for (const auto& mesh : meshes)
@@ -337,8 +336,8 @@ namespace Dwarf
     const std::vector<std::reference_wrapper<IMesh>>& meshes) const
     -> std::unique_ptr<IMesh>
   {
-    std::vector<Vertex>       mergedVertices;
-    std::vector<unsigned int> mergedIndices;
+    std::vector<Vertex>   mergedVertices;
+    std::vector<uint32_t> mergedIndices;
     uint32_t indexOffset = 0; // Tracks index shifting due to merged vertices
 
     for (const auto& mesh : meshes)

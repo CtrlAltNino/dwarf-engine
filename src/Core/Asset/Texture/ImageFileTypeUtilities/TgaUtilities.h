@@ -35,9 +35,9 @@ namespace Dwarf
       }
 
       // Get image dimensions and format
-      unsigned int width = FreeImage_GetWidth(bitmap);
-      unsigned int height = FreeImage_GetHeight(bitmap);
-      unsigned int channels = FreeImage_GetBPP(bitmap) / 8;
+      uint32_t width = FreeImage_GetWidth(bitmap);
+      uint32_t height = FreeImage_GetHeight(bitmap);
+      uint32_t channels = FreeImage_GetBPP(bitmap) / 8;
 
       // Convert the image to 32-bit (RGBA) if necessary
       FIBITMAP* convertedBitmap = bitmap;
@@ -74,14 +74,14 @@ namespace Dwarf
       // Swap the channels from BGRA to RGBA
       if (channels == 4)
       {
-        for (unsigned int i = 0; i < width * height * channels; i += channels)
+        for (uint32_t i = 0; i < width * height * channels; i += channels)
         {
           std::swap(imageData[i], imageData[i + 2]); // Swap B and R
         }
       }
       else if (channels == 3)
       {
-        for (unsigned int i = 0; i < width * height * channels; i += channels)
+        for (uint32_t i = 0; i < width * height * channels; i += channels)
         {
           std::swap(imageData[i], imageData[i + 2]); // Swap B and R
         }

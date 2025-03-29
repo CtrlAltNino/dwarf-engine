@@ -57,7 +57,7 @@ namespace Dwarf
     }
 
     void
-    operator()(unsigned int& parameter) const
+    operator()(uint32_t& parameter) const
     {
       ImGui::TextWrapped("%s", ParameterName.c_str());
       ImGui::SameLine();

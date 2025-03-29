@@ -12,7 +12,7 @@ namespace Dwarf
   using Texture2DAssetValue = std::optional<UUID>;
   using ParameterValue = std::variant<bool,
                                       int,
-                                      unsigned int,
+                                      uint32_t,
                                       float,
                                       Texture2DAssetValue,
                                       glm::vec2,

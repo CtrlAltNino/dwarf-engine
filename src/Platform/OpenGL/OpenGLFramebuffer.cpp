@@ -7,7 +7,6 @@
 #include "Utilities/ImageUtilities/TextureCommon.h"
 #include <glad/glad.h>
 
-
 namespace Dwarf
 {
   static const uint32_t s_MaxFramebufferSize = 8192;
@@ -373,7 +372,7 @@ namespace Dwarf
   // @brief: Reads a pixel from the framebuffer
   auto
   OpenGLFramebuffer::ReadPixel(uint32_t attachmentIndex, int x, int y)
-    -> unsigned int
+    -> uint32_t
   {
     Bind();
     glm::ivec2 convertedCoords =

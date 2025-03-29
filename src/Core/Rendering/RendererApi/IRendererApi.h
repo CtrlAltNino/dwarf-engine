@@ -54,7 +54,7 @@ namespace Dwarf
      * @param value Value to clear the buffer with
      */
     virtual void
-    Clear(unsigned int value) = 0;
+    Clear(uint32_t value) = 0;
 
     /**
      * @brief Renders a mesh buffer

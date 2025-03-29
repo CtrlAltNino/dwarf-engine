@@ -18,10 +18,10 @@ namespace Dwarf
     uint32_t                      mIndexCount = 0;
 
   public:
-    OpenGLMesh(const std::vector<Vertex>&       vertices,
-               const std::vector<unsigned int>& indices,
-               std::shared_ptr<IDwarfLogger>    logger,
-               std::shared_ptr<IVramTracker>    vramTracker);
+    OpenGLMesh(const std::vector<Vertex>&    vertices,
+               const std::vector<uint32_t>&  indices,
+               std::shared_ptr<IDwarfLogger> logger,
+               std::shared_ptr<IVramTracker> vramTracker);
     ~OpenGLMesh() override;
 
     /**

@@ -58,7 +58,7 @@ namespace Dwarf
     std::string                          mParameterName;
     std::shared_ptr<IAssetDatabase>      mAssetDatabase;
     std::shared_ptr<IDwarfLogger>        mLogger;
-    std::reference_wrapper<unsigned int> mTextureCount;
+    std::reference_wrapper<uint32_t>     mTextureCount;
 
     void
     operator()(bool& parameter) const
@@ -71,7 +71,7 @@ namespace Dwarf
       mShader.get().SetUniform(mParameterName, parameter);
     }
     void
-    operator()(unsigned int& parameter) const
+    operator()(uint32_t& parameter) const
     {
       mShader.get().SetUniform(mParameterName, parameter);
     }
@@ -132,7 +132,7 @@ namespace Dwarf
   }
 
   void
-  OpenGLRendererApi::Clear(unsigned int value)
+  OpenGLRendererApi::Clear(uint32_t value)
   {
     OpenGLUtilities::CheckOpenGLError(
       "Before clearing", "OpenGLRendererApi", mLogger);
@@ -169,7 +169,7 @@ namespace Dwarf
     mStateTracker->SetCullFace(GL_BACK);
 
     // TODO: Move this to OpenGLShader.cpp
-    unsigned int textureCount = 0;
+    uint32_t textureCount = 0;
     for (auto const& identifier :
          material.GetShaderParameters()->GetParameterIdentifiers())
     {

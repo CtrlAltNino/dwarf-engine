@@ -84,7 +84,7 @@ namespace Dwarf
     std::variant<std::vector<unsigned char>,
                  std::vector<unsigned short>,
                  std::vector<int>,
-                 std::vector<unsigned int>,
+                 std::vector<uint32_t>,
                  std::vector<float>>
              ImageData;
     uint32_t Samples = 1;

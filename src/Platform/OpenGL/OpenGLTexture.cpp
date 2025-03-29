@@ -7,7 +7,6 @@
 #include "Utilities/ImageUtilities/TextureCommon.h"
 #include <SDL3/SDL_opengl.h>
 
-
 namespace Dwarf
 {
   auto
@@ -311,7 +310,7 @@ namespace Dwarf
       case TextureDataType::INT:
         return std::get<std::vector<int>>(data.ImageData).data();
       case TextureDataType::UNSIGNED_INT:
-        return std::get<std::vector<unsigned int>>(data.ImageData).data();
+        return std::get<std::vector<uint32_t>>(data.ImageData).data();
       case TextureDataType::FLOAT:
         return std::get<std::vector<float>>(data.ImageData).data();
     }

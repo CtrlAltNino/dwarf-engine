@@ -4,10 +4,10 @@
 
 namespace Dwarf
 {
-  Mesh::Mesh(const std::vector<Vertex>&       vertices,
-             const std::vector<unsigned int>& indices,
-             unsigned int                     materialIndex,
-             std::shared_ptr<IDwarfLogger>    logger)
+  Mesh::Mesh(const std::vector<Vertex>&    vertices,
+             const std::vector<uint32_t>&  indices,
+             uint32_t                      materialIndex,
+             std::shared_ptr<IDwarfLogger> logger)
     : mVertices(vertices)
     , mIndices(indices)
     , mMaterialIndex(materialIndex)
@@ -22,7 +22,7 @@ namespace Dwarf
   }
 
   auto
-  Mesh::GetMaterialIndex() const -> unsigned int
+  Mesh::GetMaterialIndex() const -> uint32_t
   {
     return mMaterialIndex;
   }
@@ -34,7 +34,7 @@ namespace Dwarf
   }
 
   auto
-  Mesh::GetIndices() const -> const std::vector<unsigned int>&
+  Mesh::GetIndices() const -> const std::vector<uint32_t>&
   {
     return mIndices;
   }
