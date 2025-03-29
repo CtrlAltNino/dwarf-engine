@@ -24,6 +24,7 @@ namespace Dwarf
     std::shared_ptr<IAssetReimporter>        assetReimporter,
     std::shared_ptr<IAssetReferenceFactory>  assetReferenceFactory,
     std::shared_ptr<IFileHandler>            fileHandler,
+    std::shared_ptr<IShaderRegistry>         shaderRegistry,
     std::shared_ptr<IWindow>                 window)
     : mAssetDirectoryPath(assetDirectoryPath)
     , mGraphicsApi(graphicsApi)
@@ -37,6 +38,7 @@ namespace Dwarf
     , mMaterialIO(std::move(materialIO))
     , mAssetReimporter(std::move(assetReimporter))
     , mAssetReferenceFactory(std::move(assetReferenceFactory))
+    , mShaderRegistry(std::move(shaderRegistry))
     , mFileHandler(std::move(fileHandler))
   {
     if (!mFileHandler->DirectoryExists(mAssetDirectoryPath.t))
@@ -176,6 +178,7 @@ namespace Dwarf
           {
             mRegistry.emplace_or_replace<FragmentShaderAsset>(
               asset->GetHandle(), mFileHandler->ReadFile(assetPath));
+            HotReloadShaders(assetPath);
             break;
           }
         case ASSET_TYPE::GEOMETRY_SHADER:
@@ -362,7 +365,7 @@ namespace Dwarf
   {
     mAssetMetadata->Rename(fromPath, toPath);
     auto view = mRegistry.view<PathComponent, NameComponent>();
-    // auto matView = mRegistry->view<MaterialAsset>();
+
     for (auto entity : view)
     {
       if (view.get<PathComponent>(entity).getPath() == fromPath)
@@ -371,13 +374,6 @@ namespace Dwarf
         mRegistry.remove<NameComponent>(entity);
         mRegistry.emplace<PathComponent>(entity, toPath);
         mRegistry.emplace<NameComponent>(entity, toPath.stem().string());
-
-        // if (matView.contains(entity))
-        // {
-        //   matView.get<MaterialAsset>(entity).mMaterial->GetProperties()
-        //   =
-        //     to.stem().string();
-        // }
         break;
       }
     }
@@ -434,68 +430,6 @@ namespace Dwarf
         std::filesystem::is_regular_file(path))
     {
       mAssetReimporter->QueueReimport(path);
-      switch (IAssetDatabase::GetAssetType(path.extension().string()))
-      {
-        using enum ASSET_TYPE;
-        case COMPUTE_SHADER:
-        case FRAGMENT_SHADER:
-        case GEOMETRY_SHADER:
-        case HLSL_SHADER:
-        case TESC_SHADER:
-        case TESE_SHADER:
-        case VERTEX_SHADER:
-          {
-            if (mShaderAssetMap.contains(path))
-            {
-              mLogger->LogInfo(
-                Log("A shader asset has been updated!", "AssetDatabase"));
-              mShaderRecompiler->MarkForRecompilation(mShaderAssetMap[path]);
-              // AssetDatabase::AddShaderToRecompilationQueue(path);
-            }
-            break;
-          }
-        case ASSET_TYPE::MATERIAL:
-          {
-            mLogger->LogInfo(
-              Log("A material asset has been updated!", "AssetDatabase"));
-            // if (AssetDatabase::Exists(path))
-            // {
-            //   MaterialAsset& mat =
-            //     (MaterialAsset&)AssetDatabase::Retrieve(path)->GetAsset();
-            //   mShaderRecompiler->MarkForRecompilation(
-            //     mat.GetMaterial().GetShader());
-            // }
-            break;
-          }
-        case ASSET_TYPE::MODEL:
-          {
-            // TODO: REIMPORT MODEL FILE
-            mLogger->LogInfo(
-              Log("A model asset has been updated!", "AssetDatabase"));
-            break;
-          }
-        case ASSET_TYPE::TEXTURE:
-          {
-            // TODO: REIMPORT TEXTURE
-            mLogger->LogInfo(
-              Log("A texture asset has been updated!", "AssetDatabase"));
-            break;
-          }
-        case ASSET_TYPE::SCENE:
-          {
-            // TODO: IF ITS THE CURRENTLY OPEN SCENE, MODAL TO ASK IF IT
-            // SHOULD BE RELOADED
-            mLogger->LogInfo(
-              Log("A scene asset has been updated!", "AssetDatabase"));
-            break;
-          }
-        case ASSET_TYPE::UNKNOWN:
-          {
-            mLogger->LogInfo(
-              Log("An unsupported asset has been updated!", "AssetDatabase"));
-            break;
-          }
-      }
     }
   }
 
@@ -649,5 +583,26 @@ namespace Dwarf
   void
   AssetDatabase::ImportDefaultModels()
   {
+  }
+
+  void
+  AssetDatabase::HotReloadShaders(const std::filesystem::path& shaderAssetPath)
+  {
+
+    auto view = mRegistry.view<MaterialAsset>();
+    for (auto entity : view)
+    {
+      MaterialAsset& materialAsset = view.get<MaterialAsset>(entity);
+      std::unique_ptr<IShaderSourceCollection> shaderSources =
+        materialAsset.GetMaterial().GetShaderAssetSources()->GetShaderSources();
+      if (std::ranges::any_of(
+            shaderSources->GetShaderSources(),
+            [shaderAssetPath](const std::unique_ptr<IAssetReference>& ref)
+            { return ref->GetPath() == shaderAssetPath; }))
+      {
+        materialAsset.GetMaterial().UpdateShader();
+        return;
+      }
+    }
   }
 }
