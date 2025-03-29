@@ -112,7 +112,7 @@ namespace Dwarf
     }
 
     // Render grid
-    if (renderGrid)
+    if (renderGrid && mGridMeshBuffer && mGridMaterial)
     {
       // TODO: Ignore depth testing for grid
       glm::mat4 translatedGridModelMatrix =
@@ -126,6 +126,16 @@ namespace Dwarf
         *mGridMeshBuffer, *mGridMaterial, camera, translatedGridModelMatrix);
     }
     mFramebuffer->Unbind();
+
+    mRendererApi->Blit(*mFramebuffer,
+                       *mNonMsaaBuffer,
+                       0,
+                       0,
+                       mFramebuffer->GetSpecification().Width,
+                       mFramebuffer->GetSpecification().Height);
+
+    mRendererApi->CustomBlit(
+      *mNonMsaaBuffer, *mPresentationBuffer, 0, 0, mAgxTonemapShader);
   }
 
   auto
@@ -179,16 +189,6 @@ namespace Dwarf
       }
     }
     mIdBuffer->Unbind();
-
-    mRendererApi->Blit(*mFramebuffer,
-                       *mNonMsaaBuffer,
-                       0,
-                       0,
-                       mFramebuffer->GetSpecification().Width,
-                       mFramebuffer->GetSpecification().Height);
-
-    mRendererApi->CustomBlit(
-      *mNonMsaaBuffer, *mPresentationBuffer, 0, 0, mAgxTonemapShader);
   }
 
   auto

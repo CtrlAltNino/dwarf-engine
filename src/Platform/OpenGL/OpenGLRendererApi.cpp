@@ -209,7 +209,7 @@ namespace Dwarf
   {
     std::shared_ptr<OpenGLComputeShader> shader =
       std::dynamic_pointer_cast<OpenGLComputeShader>(computeShader);
-    glUseProgram(shader->GetID());
+    mStateTracker->SetShaderProgram(shader->GetID());
     glBindImageTexture(0,
                        framebuffer->GetColorAttachment(sourceAttachment)
                          .value()
@@ -235,7 +235,6 @@ namespace Dwarf
                       framebuffer->GetSpecification().Height / 16,
                       1);
     glMemoryBarrier(GL_SHADER_IMAGE_ACCESS_BARRIER_BIT);
-    glUseProgram(0);
   }
 
   void
@@ -280,9 +279,6 @@ namespace Dwarf
                                 uint32_t                 destinationAttachment,
                                 std::shared_ptr<IShader> shader)
   {
-    // glBindVertexArray(quadVAO);
-    // glDrawElements(GL_TRIANGLES, 6, GL_UNSIGNED_INT, 0);
-    // glBindVertexArray(0);
     auto& oglMesh = dynamic_cast<OpenGLMesh&>(*mScreenQuad);
 
     source.Bind();
@@ -311,7 +307,7 @@ namespace Dwarf
     OpenGLShader& oglShader = shader->IsCompiled()
                                 ? dynamic_cast<OpenGLShader&>(*shader)
                                 : dynamic_cast<OpenGLShader&>(*mErrorShader);
-    glUseProgram(oglShader.GetID());
+    mStateTracker->SetShaderProgram(oglShader.GetID());
     OpenGLUtilities::CheckOpenGLError(
       "glUseProgram", "OpenGLRendererApi", mLogger);
     glActiveTexture(GL_TEXTURE0);
@@ -324,15 +320,12 @@ namespace Dwarf
     OpenGLUtilities::CheckOpenGLError(
       "glUniform1i", "OpenGLRendererApi", mLogger);
 
-    // glBindVertexArray(quadVAO);
     oglMesh.Bind();
     glDrawElements(GL_TRIANGLES, oglMesh.GetIndexCount(), GL_UNSIGNED_INT, 0);
     OpenGLUtilities::CheckOpenGLError(
       "glDrawElements", "OpenGLRendererApi", mLogger);
     oglMesh.Unbind();
     destination.Unbind();
-
-    // glBindFramebuffer(GL_FRAMEBUFFER, 0); // Back to default
   }
 
   auto

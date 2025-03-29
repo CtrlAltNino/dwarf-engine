@@ -22,6 +22,7 @@ namespace Dwarf
                  ModuleType(MODULE_TYPE::ASSET_BROWSER),
                  ModuleID(std::make_shared<UUID>()))
     , mAssetDirectoryPath(assetDirectoryPath)
+    , mLogger(std::move(logger))
     , mCurrentDirectory(assetDirectoryPath)
     , mTextureFactory(std::move(textureFactory))
     , mAssetDatabase(std::move(assetDatabase))

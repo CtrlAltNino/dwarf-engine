@@ -100,6 +100,8 @@ namespace Dwarf
 
     if (!mLoadedScene->HasLoadedScene())
     {
+      mLogger->LogDebug(
+        Log("No scene loaded to generate draw calls from", "DrawCallWorker"));
       return;
     }
 
