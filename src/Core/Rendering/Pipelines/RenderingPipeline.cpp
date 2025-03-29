@@ -74,6 +74,8 @@ namespace Dwarf
     idSpec.Width = 512;
     idSpec.Height = 512;
     mIdBuffer = mFramebufferFactory->Create(idSpec);
+
+    mDrawCallWorker->Invalidate();
   }
 
   RenderingPipeline::~RenderingPipeline()

@@ -20,8 +20,15 @@ namespace Dwarf
   {
     mLogger->LogDebug(Log("DrawCallWorker created", "DrawCallWorker"));
     mWorkerThread = std::thread([this]() { WorkerThread(); });
-    mLoadedScene->AddSceneLoadCallback([this]() { Invalidate(); });
-    mLoadedScene->AddSceneUnloadCallback([this]() { mDrawCallList->Clear(); });
+    mLoadedScene->AddSceneLoadCallback([this]() { this->Invalidate(); });
+    mLoadedScene->AddSceneUnloadCallback(
+      [this]()
+      {
+        if (this->mDrawCallList)
+        {
+          mDrawCallList->Clear();
+        }
+      });
   }
 
   DrawCallWorker::~DrawCallWorker()
