@@ -93,10 +93,10 @@ namespace Dwarf
     glm::mat4          nodeTransform = AssimpToGlmMatrix(node->mTransformation);
     glm::mat4          globalTransform = parentTransform * nodeTransform;
     std::span<aiMesh*> meshSpan(scene->mMeshes, scene->mNumMeshes);
-    std::span<unsigned int> nodeMeshesSpan(node->mMeshes, node->mNumMeshes);
+    std::span<uint32_t> nodeMeshesSpan(node->mMeshes, node->mNumMeshes);
 
     // process all the node's meshes (if any)
-    for (unsigned int i = 0; i < node->mNumMeshes; i++)
+    for (uint32_t i = 0; i < node->mNumMeshes; i++)
     {
       const aiMesh* mesh = meshSpan[nodeMeshesSpan[i]];
       // meshes.push_back(ProcessMesh(mesh, scene));
@@ -105,7 +105,7 @@ namespace Dwarf
 
     std::span<aiNode*> nodeChildrenSpan(node->mChildren, node->mNumChildren);
     // then do the same for each of its children
-    for (unsigned int i = 0; i < node->mNumChildren; i++)
+    for (uint32_t i = 0; i < node->mNumChildren; i++)
     {
       ProcessNode(nodeChildrenSpan[i], scene, meshes, globalTransform);
     }
@@ -116,9 +116,9 @@ namespace Dwarf
                              std::vector<std::unique_ptr<IMesh>>& meshes,
                              glm::mat4                            transform)
   {
-    std::vector<Vertex>       vertices;
-    std::vector<unsigned int> indices;
-    unsigned int              materialIndex = mesh->mMaterialIndex;
+    std::vector<Vertex>   vertices;
+    std::vector<uint32_t> indices;
+    uint32_t              materialIndex = mesh->mMaterialIndex;
     std::span<aiVector3D> meshVerticesSpan(mesh->mVertices, mesh->mNumVertices);
     std::span<aiVector3D> meshNormalsSpan(mesh->mNormals, mesh->mNumVertices);
     std::span<aiVector3D> meshTangentsSpan(mesh->mTangents, mesh->mNumVertices);
@@ -128,7 +128,7 @@ namespace Dwarf
                       meshTexCoordsSpan(mesh->mTextureCoords);
     std::span<aiFace> meshFacesSpan(mesh->mFaces, mesh->mNumFaces);
 
-    for (unsigned int i = 0; i < meshVerticesSpan.size(); i++)
+    for (uint32_t i = 0; i < meshVerticesSpan.size(); i++)
     {
       Vertex vertex;
 
@@ -186,11 +186,11 @@ namespace Dwarf
       vertices.push_back(vertex);
     }
 
-    for (unsigned int i = 0; i < mesh->mNumFaces; i++)
+    for (uint32_t i = 0; i < mesh->mNumFaces; i++)
     {
-      const aiFace&           face = meshFacesSpan[i];
-      std::span<unsigned int> faceIndicesSpan(face.mIndices, face.mNumIndices);
-      for (unsigned int j = 0; j < face.mNumIndices; j++)
+      const aiFace&       face = meshFacesSpan[i];
+      std::span<uint32_t> faceIndicesSpan(face.mIndices, face.mNumIndices);
+      for (uint32_t j = 0; j < face.mNumIndices; j++)
       {
         indices.push_back(faceIndicesSpan[j]);
       }

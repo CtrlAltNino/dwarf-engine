@@ -23,9 +23,9 @@ namespace Dwarf
      * @return Unique pointer to the created mesh instance
      */
     [[nodiscard]] auto
-    Create(const std::vector<Vertex>&       vertices,
-           const std::vector<unsigned int>& indices,
-           unsigned int materialIndex) const -> std::unique_ptr<IMesh> override;
+    Create(const std::vector<Vertex>&   vertices,
+           const std::vector<uint32_t>& indices,
+           uint32_t materialIndex) const -> std::unique_ptr<IMesh> override;
 
     /**
      * @brief Creates a mesh representing a unit sphere

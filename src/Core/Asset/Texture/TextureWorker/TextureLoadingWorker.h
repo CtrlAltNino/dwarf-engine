@@ -37,7 +37,7 @@ namespace Dwarf
     std::vector<std::thread> mTextureWorkers;
 
     // number of threads
-    unsigned int mNumWorkerThreads = 1;
+    uint32_t mNumWorkerThreads = 1;
 
     // Keeping track of which textures are currently being processed
     std::mutex                                mCurrentlyProcessingMutex;

@@ -20,7 +20,7 @@ namespace Dwarf
     IADLXGPUMetricsPtr                    mGpuMetrics;
     IADLXGPUPtr                           mGpu;
     ADLXHelper                            mAdlxHelper;
-    unsigned int*                         mTotalVram = nullptr;
+    uint32_t*                             mTotalVram = nullptr;
 
   public:
     AmdGpuInfo(std::shared_ptr<IDwarfLogger> logger);

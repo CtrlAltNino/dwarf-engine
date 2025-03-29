@@ -68,7 +68,7 @@ namespace Dwarf
      * @param value Value to clear the buffer with
      */
     void
-    Clear(unsigned int value) override;
+    Clear(uint32_t value) override;
 
     /**
      * @brief Clears the buffer

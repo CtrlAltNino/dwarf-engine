@@ -64,7 +64,7 @@ namespace Dwarf
      * @return Width in pixels
      */
     [[nodiscard]] auto
-    GetWidth() const -> unsigned int override
+    GetWidth() const -> uint32_t override
     {
       return mData.Width;
     }
@@ -75,7 +75,7 @@ namespace Dwarf
      * @return Height in pixels
      */
     [[nodiscard]] auto
-    GetHeight() const -> unsigned int override
+    GetHeight() const -> uint32_t override
     {
       return mData.Height;
     }

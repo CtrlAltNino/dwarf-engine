@@ -5,10 +5,10 @@
 
 namespace Dwarf
 {
-  OpenGLMesh::OpenGLMesh(const std::vector<Vertex>&       vertices,
-                         const std::vector<unsigned int>& indices,
-                         std::shared_ptr<IDwarfLogger>    logger,
-                         std::shared_ptr<IVramTracker>    vramTracker)
+  OpenGLMesh::OpenGLMesh(const std::vector<Vertex>&    vertices,
+                         const std::vector<uint32_t>&  indices,
+                         std::shared_ptr<IDwarfLogger> logger,
+                         std::shared_ptr<IVramTracker> vramTracker)
     : mLogger(std::move(logger))
     , mVramTracker(std::move(vramTracker))
     , mVertexCount(vertices.size())
@@ -46,13 +46,13 @@ namespace Dwarf
     OpenGLUtilities::CheckOpenGLError(
       "glBindBuffer EBO", "OpenGLMesh", mLogger);
     glBufferData(GL_ELEMENT_ARRAY_BUFFER,
-                 indices.size() * sizeof(unsigned int),
+                 indices.size() * sizeof(uint32_t),
                  &(indices[0]),
                  GL_STATIC_DRAW);
     OpenGLUtilities::CheckOpenGLError(
       "glBufferData EBO", "OpenGLMesh", mLogger);
 
-    mVramMemory += indices.size() * sizeof(unsigned int);
+    mVramMemory += indices.size() * sizeof(uint32_t);
 
     // vertex positions
     glEnableVertexAttribArray(0);

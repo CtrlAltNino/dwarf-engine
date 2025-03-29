@@ -18,7 +18,7 @@ namespace Dwarf
      * @return Material index
      */
     [[nodiscard]] virtual auto
-    GetMaterialIndex() const -> unsigned int = 0;
+    GetMaterialIndex() const -> uint32_t = 0;
 
     /**
      * @brief Returns a reference to the stored vertex list
@@ -34,7 +34,7 @@ namespace Dwarf
      * @return Immutable reference to the stored index vector
      */
     [[nodiscard]] virtual auto
-    GetIndices() const -> const std::vector<unsigned int>& = 0;
+    GetIndices() const -> const std::vector<uint32_t>& = 0;
 
     /**
      * @brief Clones the Mesh instance

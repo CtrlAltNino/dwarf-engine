@@ -113,7 +113,7 @@ namespace Dwarf
     void
     SetUniform(std::string   uniformName,
                TextureAsset& value,
-               unsigned int  textureCount);
+               uint32_t      textureCount);
     void
     SetUniform(std::string uniformName, glm::vec2 value);
     void

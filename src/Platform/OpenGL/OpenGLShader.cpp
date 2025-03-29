@@ -431,7 +431,7 @@ namespace Dwarf
   void
   OpenGLShader::SetUniform(std::string   uniformName,
                            TextureAsset& value,
-                           unsigned int  textureCount)
+                           uint32_t      textureCount)
   {
     // if (mTextureStates.contains(textureCount) &&
     //     (mTextureStates[textureCount] == value.GetTexture().GetTextureID()))

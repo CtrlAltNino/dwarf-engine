@@ -10,14 +10,14 @@ namespace Dwarf
   private:
     std::shared_ptr<IDwarfLogger> mLogger;
     std::vector<Vertex>           mVertices;
-    std::vector<unsigned int>     mIndices;
-    unsigned int                  mMaterialIndex = 0;
+    std::vector<uint32_t>         mIndices;
+    uint32_t                      mMaterialIndex = 0;
 
   public:
-    Mesh(const std::vector<Vertex>&       vertices,
-         const std::vector<unsigned int>& indices,
-         unsigned int                     materialIndex,
-         std::shared_ptr<IDwarfLogger>    logger);
+    Mesh(const std::vector<Vertex>&    vertices,
+         const std::vector<uint32_t>&  indices,
+         uint32_t                      materialIndex,
+         std::shared_ptr<IDwarfLogger> logger);
     ~Mesh() override;
 
     /**
@@ -26,7 +26,7 @@ namespace Dwarf
      * @return Material index
      */
     [[nodiscard]] auto
-    GetMaterialIndex() const -> unsigned int override;
+    GetMaterialIndex() const -> uint32_t override;
 
     /**
      * @brief Returns a reference to the stored vertex list
@@ -42,7 +42,7 @@ namespace Dwarf
      * @return Immutable reference to the stored index vector
      */
     [[nodiscard]] auto
-    GetIndices() const -> const std::vector<unsigned int>& override;
+    GetIndices() const -> const std::vector<uint32_t>& override;
 
     /**
      * @brief Clones the Mesh instance

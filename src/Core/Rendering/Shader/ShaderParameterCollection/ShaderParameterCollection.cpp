@@ -69,7 +69,7 @@ namespace Dwarf
             serialized[pair.first]["type"] = "integer";
             serialized[pair.first]["value"] = arg;
           }
-          else if constexpr (std::is_same_v<T, unsigned int>)
+          else if constexpr (std::is_same_v<T, uint32_t>)
           {
             serialized[pair.first]["type"] = "unsigned integer";
             serialized[pair.first]["value"] = arg;
