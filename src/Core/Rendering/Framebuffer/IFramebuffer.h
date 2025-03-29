@@ -47,7 +47,7 @@ namespace Dwarf
     uint32_t                           Width = 512;
     uint32_t                           Height = 512;
     FramebufferAttachmentSpecification Attachments;
-    uint32_t                           Samples = 1;
+    int32_t                            Samples = 1;
     bool                               SwapChainTarget = false;
   };
 
@@ -100,8 +100,7 @@ namespace Dwarf
      * @return Integer value at the given pixel
      */
     virtual auto
-    ReadPixel(uint32_t attachmentIndex, int xCoord, int yCoord)
-      -> unsigned int = 0;
+    ReadPixel(uint32_t attachmentIndex, int xCoord, int yCoord) -> uint32_t = 0;
 
     /**
      * @brief Clears an attachment with a given integer value

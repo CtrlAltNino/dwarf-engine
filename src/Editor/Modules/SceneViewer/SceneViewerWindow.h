@@ -1,12 +1,7 @@
 #pragma once
-#include "Core/Asset/Shader/ShaderSourceCollection/IShaderSourceCollectionFactory.h"
-#include "Core/Rendering/Framebuffer/IFramebuffer.h"
-#include "Core/Rendering/Framebuffer/IFramebufferFactory.h"
+
 #include "Core/Rendering/Pipelines/IRenderingPipeline.h"
 #include "Core/Rendering/Pipelines/IRenderingPipelineFactory.h"
-#include "Core/Rendering/RendererApi/IRendererApi.h"
-#include "Core/Rendering/RendererApi/IRendererApiFactory.h"
-#include "Core/Rendering/Shader/ShaderRegistry/IShaderRegistry.h"
 #include "Core/Scene/Camera/ICamera.h"
 #include "Core/Scene/Camera/ICameraFactory.h"
 #include "Editor/LoadedScene/ILoadedScene.h"
@@ -74,28 +69,13 @@ namespace Dwarf
     // Maintaining important dependencies
 
     /// @brief The render texture for this scene viewer.
-    std::shared_ptr<IFramebuffer>       mFramebuffer;
-    std::shared_ptr<IFramebuffer>       mNonMsaaBuffer;
-    std::shared_ptr<IFramebuffer>       mIdBuffer;
-    std::shared_ptr<IFramebuffer>       mOutlineBuffer;
-    std::shared_ptr<IFramebuffer>       mPresentationBuffer;
-    std::shared_ptr<ICamera>            mCamera;
+    std::shared_ptr<IDwarfLogger>       mLogger;
+    std::unique_ptr<ICamera>            mCamera;
     std::shared_ptr<IRenderingPipeline> mRenderingPipeline;
-    std::shared_ptr<IRendererApi>       mRendererApi;
-    std::shared_ptr<IShader>            mAgxTonemapShader;
-
-    std::shared_ptr<IDwarfLogger>              mLogger;
-    std::shared_ptr<IInputManager>             mInputManager;
-    std::shared_ptr<IEditorStats>              mEditorStats;
-    std::shared_ptr<ILoadedScene>              mLoadedScene;
-    std::shared_ptr<IEditorSelection>          mEditorSelection;
-    std::shared_ptr<IRenderingPipelineFactory> mRenderingPipelineFactory;
-    std::shared_ptr<IFramebufferFactory>       mFramebufferFactory;
-    std::shared_ptr<ICameraFactory>            mCameraFactory;
-    std::shared_ptr<IRendererApiFactory>       mRendererApiFactory;
-    std::shared_ptr<IShaderRegistry>           mShaderRegistry;
-    std::shared_ptr<IShaderSourceCollectionFactory>
-      mShaderSourceCollectionFactory;
+    std::shared_ptr<IInputManager>      mInputManager;
+    std::shared_ptr<IEditorStats>       mEditorStats;
+    std::shared_ptr<ILoadedScene>       mLoadedScene;
+    std::shared_ptr<IEditorSelection>   mEditorSelection;
 
     /// @brief Calculates the cutout of the available resolution based on the
     /// given aspect ratio.
@@ -122,38 +102,27 @@ namespace Dwarf
     UpdateGizmoType();
 
     void
-    ProcessSceneClick(glm::vec2 const& mousePosition,
-                      glm::vec2 const& viewportSize);
+    ProcessSceneClick(glm::vec2 const& mousePosition);
 
   public:
-    SceneViewerWindow(
-      std::shared_ptr<IDwarfLogger>              logger,
-      std::shared_ptr<ICameraFactory>            cameraFactory,
-      std::shared_ptr<IFramebufferFactory>       framebufferFactory,
-      std::shared_ptr<IEditorStats>              editorStats,
-      std::shared_ptr<IInputManager>             inputManager,
-      std::shared_ptr<ILoadedScene>              loadedScene,
-      std::shared_ptr<IEditorSelection>          editorSelection,
-      std::shared_ptr<IRenderingPipelineFactory> renderingPipelineFactory,
-      std::shared_ptr<IRendererApiFactory>       rendererApiFactory,
-      std::shared_ptr<IShaderRegistry>           shaderRegistry,
-      std::shared_ptr<IShaderSourceCollectionFactory>
-        shaderSourceCollectionFactory);
+    SceneViewerWindow(std::shared_ptr<IDwarfLogger>          logger,
+                      std::shared_ptr<IEditorStats>          editorStats,
+                      std::shared_ptr<IInputManager>         inputManager,
+                      std::shared_ptr<ILoadedScene>          loadedScene,
+                      std::shared_ptr<IEditorSelection>      editorSelection,
+                      const std::shared_ptr<ICameraFactory>& cameraFactory,
+                      const std::shared_ptr<IRenderingPipelineFactory>&
+                        renderingPipelineFactory);
 
-    SceneViewerWindow(
-      SerializedModule                           serializedModule,
-      std::shared_ptr<IDwarfLogger>              logger,
-      std::shared_ptr<ICameraFactory>            cameraFactory,
-      std::shared_ptr<IFramebufferFactory>       framebufferFactory,
-      std::shared_ptr<IEditorStats>              editorStats,
-      std::shared_ptr<IInputManager>             inputManager,
-      std::shared_ptr<ILoadedScene>              loadedScene,
-      std::shared_ptr<IEditorSelection>          editorSelection,
-      std::shared_ptr<IRenderingPipelineFactory> renderingPipelineFactory,
-      std::shared_ptr<IRendererApiFactory>       rendererApiFactory,
-      std::shared_ptr<IShaderRegistry>           shaderRegistry,
-      std::shared_ptr<IShaderSourceCollectionFactory>
-        shaderSourceCollectionFactory);
+    SceneViewerWindow(SerializedModule                       serializedModule,
+                      std::shared_ptr<IDwarfLogger>          logger,
+                      std::shared_ptr<IEditorStats>          editorStats,
+                      std::shared_ptr<IInputManager>         inputManager,
+                      std::shared_ptr<ILoadedScene>          loadedScene,
+                      std::shared_ptr<IEditorSelection>      editorSelection,
+                      const std::shared_ptr<ICameraFactory>& cameraFactory,
+                      const std::shared_ptr<IRenderingPipelineFactory>&
+                        renderingPipelineFactory);
 
     ~SceneViewerWindow() override;
 
@@ -162,12 +131,6 @@ namespace Dwarf
     /// @brief Renders the module window.
     void
     OnImGuiRender() override;
-
-    /// @brief Returns the frame buffer of the scene viewer as an IMGUI texture
-    /// ID:
-    /// @return The texture ID of the frame buffer.
-    auto
-    GetFrameBufferForImGui() -> ImTextureID;
 
     auto
     Serialize() -> nlohmann::json override;
