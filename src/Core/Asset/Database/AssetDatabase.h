@@ -11,6 +11,7 @@
 #include "Core/Rendering/Material/IMaterialFactory.h"
 #include "Core/Rendering/Material/IO/IMaterialIO.h"
 #include "Core/Rendering/Shader/IShader.h"
+#include "Core/Rendering/Shader/ShaderRegistry/IShaderRegistry.h"
 #include "Core/Rendering/Texture/ITextureFactory.h"
 #include "Core/UUID.h"
 #include "Logging/IDwarfLogger.h"
@@ -56,6 +57,7 @@ namespace Dwarf
     std::shared_ptr<IAssetReimporter>        mAssetReimporter;
     std::shared_ptr<IAssetReferenceFactory>  mAssetReferenceFactory;
     std::shared_ptr<IFileHandler>            mFileHandler;
+    std::shared_ptr<IShaderRegistry>         mShaderRegistry;
 
   public:
     /**
@@ -75,6 +77,7 @@ namespace Dwarf
       std::shared_ptr<IAssetReimporter>        assetReimporter,
       std::shared_ptr<IAssetReferenceFactory>  assetReferenceFactory,
       std::shared_ptr<IFileHandler>            fileHandler,
+      std::shared_ptr<IShaderRegistry>         shaderRegistry,
       std::shared_ptr<IWindow>                 window);
 
     /**
@@ -267,5 +270,8 @@ namespace Dwarf
      */
     void
     ImportDefaultModels();
+
+    void
+    HotReloadShaders(const std::filesystem::path& shaderAssetPath);
   };
 }
