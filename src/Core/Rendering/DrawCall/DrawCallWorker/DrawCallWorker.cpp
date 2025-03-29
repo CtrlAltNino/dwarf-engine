@@ -8,18 +8,20 @@ namespace Dwarf
     std::shared_ptr<IDwarfLogger>      logger,
     std::shared_ptr<ILoadedScene>      loadedScene,
     std::shared_ptr<IDrawCallFactory>  drawCallFactory,
-    std::shared_ptr<IDrawCallList>     drawCallList,
+    std::unique_ptr<IDrawCallList>&    drawCallList,
     std::shared_ptr<IMeshFactory>      meshFactory,
     std::shared_ptr<IMeshBufferWorker> meshBufferWorker)
     : mLogger(std::move(logger))
     , mLoadedScene(std::move(loadedScene))
     , mDrawCallFactory(std::move(drawCallFactory))
-    , mDrawCallList(std::move(drawCallList))
+    , mDrawCallList(drawCallList)
     , mMeshFactory(std::move(meshFactory))
     , mMeshBufferWorker(std::move(meshBufferWorker))
   {
-    mLogger->LogDebug(Log("DrawCallWorker created!", "DrawCallWorker"));
+    mLogger->LogDebug(Log("DrawCallWorker created", "DrawCallWorker"));
     mWorkerThread = std::thread([this]() { WorkerThread(); });
+    mLoadedScene->AddSceneLoadCallback([this]() { Invalidate(); });
+    mLoadedScene->AddSceneUnloadCallback([this]() { mDrawCallList->Clear(); });
   }
 
   DrawCallWorker::~DrawCallWorker()
@@ -37,6 +39,7 @@ namespace Dwarf
       mWorkerThread.join();
       mLogger->LogDebug(Log("Worker Thread joined", "DrawCallWorker"));
     }
+    mLogger->LogDebug(Log("DrawCallWorker destroyed", "DrawCallWorker"));
   }
 
   void
@@ -88,45 +91,46 @@ namespace Dwarf
     std::vector<TempDrawCall>               transparentTemps;
     std::vector<std::unique_ptr<IDrawCall>> drawCalls;
 
+    if (!mLoadedScene->HasLoadedScene())
+    {
+      return;
+    }
+
     IScene& scene = mLoadedScene->GetScene();
 
     for (auto view = scene.GetRegistry()
                        .view<TransformComponent, MeshRendererComponent>();
-         auto [entity, transform, meshRenderer] : view.each())
+         auto [entityHandle, transform, meshRenderer] : view.each())
     {
       if (meshRenderer.GetModelAsset() && !meshRenderer.IsHidden())
       {
-        Entity e(entity, scene.GetRegistry());
+        Entity entity(entityHandle, scene.GetRegistry());
 
-        auto& transform = e.GetComponent<TransformComponent>();
-        auto& meshRenderer = e.GetComponent<MeshRendererComponent>();
+        auto& transform = entity.GetComponent<TransformComponent>();
+        auto& meshRenderer = entity.GetComponent<MeshRendererComponent>();
         auto& model =
           dynamic_cast<ModelAsset&>(meshRenderer.GetModelAsset()->GetAsset());
 
-        for (int i = 0; i < model.Meshes().size(); i++)
+        for (const auto& mesh : model.Meshes())
         {
-          if (model.Meshes().at(i)->GetMaterialIndex() <=
-              meshRenderer.MaterialAssets().size())
+          if (mesh->GetMaterialIndex() <= meshRenderer.MaterialAssets().size())
           {
-            if (meshRenderer.MaterialAssets().at(
-                  model.Meshes().at(i)->GetMaterialIndex()))
+            if (meshRenderer.MaterialAssets().at(mesh->GetMaterialIndex()))
             {
-              MaterialAsset& materialAsset = dynamic_cast<MaterialAsset&>(
-                meshRenderer.MaterialAssets()
-                  .at(model.Meshes().at(i)->GetMaterialIndex())
-                  ->GetAsset());
+              MaterialAsset& materialAsset =
+                dynamic_cast<MaterialAsset&>(meshRenderer.MaterialAssets()
+                                               .at(mesh->GetMaterialIndex())
+                                               ->GetAsset());
 
               if (materialAsset.GetMaterial()
                     .GetMaterialProperties()
                     .IsTransparent)
               {
-                transparentTemps.emplace_back(
-                  *model.Meshes().at(i), materialAsset, transform);
+                transparentTemps.emplace_back(*mesh, materialAsset, transform);
               }
               else
               {
-                opagueTemps.emplace_back(
-                  *model.Meshes().at(i), materialAsset, transform);
+                opagueTemps.emplace_back(*mesh, materialAsset, transform);
               }
             }
           }

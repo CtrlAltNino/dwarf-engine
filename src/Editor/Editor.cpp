@@ -21,7 +21,6 @@ namespace Dwarf
                  std::shared_ptr<IShaderRecompiler>     shaderRecompiler,
                  std::shared_ptr<IAssetReimporter>      assetReimporter,
                  std::shared_ptr<ITextureLoadingWorker> textureLoadingWorker,
-                 std::shared_ptr<IDrawCallWorker>       drawCallWorker,
                  std::shared_ptr<IMeshBufferWorker>     meshBufferWorker)
     : mLogger(std::move(logger))
     , mEditorStats(std::move(stats))
@@ -36,7 +35,6 @@ namespace Dwarf
     , mShaderRecompiler(std::move(shaderRecompiler))
     , mAssetReimporter(std::move(assetReimporter))
     , mTextureLoadingWorker(std::move(textureLoadingWorker))
-    , mDrawCallWorker(std::move(drawCallWorker))
     , mMeshBufferWorker(std::move(meshBufferWorker))
   {
     mLogger->LogDebug(Log("Editor created", "Editor"));
@@ -81,7 +79,6 @@ namespace Dwarf
     mLogger->LogWarn(
       Log("There is currently no fps cap implemented", "Editor"));
 
-    mDrawCallWorker->Invalidate();
     mEditorStats->SetInitialTimeStamp(TimeUtilities::GetCurrent());
 
     while (!mWindow->ShouldClose() && !mEditorStats->GetCloseSignal())

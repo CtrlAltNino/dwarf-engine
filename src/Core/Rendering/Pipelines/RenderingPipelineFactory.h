@@ -1,7 +1,8 @@
 #pragma once
 
 #include "Core/Asset/Shader/ShaderSourceCollection/IShaderSourceCollectionFactory.h"
-#include "Core/Rendering/DrawCall/DrawCallList/IDrawCallList.h"
+#include "Core/Rendering/DrawCall/DrawCallList/IDrawCallListFactory.h"
+#include "Core/Rendering/DrawCall/DrawCallWorker/IDrawCallWorkerFactory.h"
 #include "Core/Rendering/Framebuffer/IFramebufferFactory.h"
 #include "Core/Rendering/Material/IMaterialFactory.h"
 #include "Core/Rendering/Mesh/IMeshFactory.h"
@@ -22,11 +23,12 @@ namespace Dwarf
     std::shared_ptr<IMaterialFactory> mMaterialFactory;
     std::shared_ptr<IShaderRegistry>  mShaderRegistry;
     std::shared_ptr<IShaderSourceCollectionFactory>
-                                         mShaderSourceCollectionFactory;
-    std::shared_ptr<IMeshFactory>        mMeshFactory;
-    std::shared_ptr<IMeshBufferFactory>  mMeshBufferFactory;
-    std::shared_ptr<IDrawCallList>       mDrawCallList;
-    std::shared_ptr<IFramebufferFactory> mFramebufferFactory;
+                                            mShaderSourceCollectionFactory;
+    std::shared_ptr<IMeshFactory>           mMeshFactory;
+    std::shared_ptr<IMeshBufferFactory>     mMeshBufferFactory;
+    std::shared_ptr<IFramebufferFactory>    mFramebufferFactory;
+    std::shared_ptr<IDrawCallListFactory>   mDrawCallListFactory;
+    std::shared_ptr<IDrawCallWorkerFactory> mDrawCallWorkerFactory;
 
   public:
     RenderingPipelineFactory(
@@ -35,11 +37,12 @@ namespace Dwarf
       std::shared_ptr<IMaterialFactory>           materialFactory,
       std::shared_ptr<IShaderRegistry>            shaderRegistry,
       std::shared_ptr<IShaderSourceCollectionFactory>
-                                           shaderSourceCollectionFactory,
-      std::shared_ptr<IMeshFactory>        meshFactory,
-      std::shared_ptr<IMeshBufferFactory>  meshBufferFactory,
-      std::shared_ptr<IDrawCallList>       drawCallList,
-      std::shared_ptr<IFramebufferFactory> framebufferFactory);
+                                              shaderSourceCollectionFactory,
+      std::shared_ptr<IMeshFactory>           meshFactory,
+      std::shared_ptr<IMeshBufferFactory>     meshBufferFactory,
+      std::shared_ptr<IFramebufferFactory>    framebufferFactory,
+      std::shared_ptr<IDrawCallListFactory>   drawCallListFactory,
+      std::shared_ptr<IDrawCallWorkerFactory> drawCallWorkerFactory);
 
     ~RenderingPipelineFactory() override;
 

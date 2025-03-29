@@ -9,9 +9,11 @@ namespace Dwarf
   class LoadedScene : public ILoadedScene
   {
   private:
-    std::shared_ptr<IDwarfLogger>     mLogger;
-    std::unique_ptr<IScene>           mScene;
-    std::shared_ptr<IProjectSettings> mProjectSettings;
+    std::shared_ptr<IDwarfLogger>      mLogger;
+    std::unique_ptr<IScene>            mScene;
+    std::shared_ptr<IProjectSettings>  mProjectSettings;
+    std::vector<std::function<void()>> mSceneLoadCallback;
+    std::vector<std::function<void()>> mSceneUnloadCallback;
 
   public:
     LoadedScene(std::shared_ptr<IDwarfLogger>     logger,
@@ -42,5 +44,22 @@ namespace Dwarf
      */
     auto
     HasLoadedScene() -> bool override;
+
+    /**
+     * @brief Adds a callback that is called right after a scene has been loaded
+     *
+     * @param callback Callback function
+     */
+    void
+    AddSceneLoadCallback(std::function<void()> callback) override;
+
+    /**
+     * @brief Adds a callback that is called before the current scene is being
+     * unloaded
+     *
+     * @param callback Callback function
+     */
+    void
+    AddSceneUnloadCallback(std::function<void()> callback) override;
   };
 }

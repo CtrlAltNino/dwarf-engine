@@ -73,7 +73,7 @@ namespace Dwarf
     std::shared_ptr<IDwarfLogger>      mLogger;
     std::shared_ptr<ILoadedScene>      mLoadedScene;
     std::shared_ptr<IDrawCallFactory>  mDrawCallFactory;
-    std::shared_ptr<IDrawCallList>     mDrawCallList;
+    std::unique_ptr<IDrawCallList>&    mDrawCallList;
     std::shared_ptr<IMeshFactory>      mMeshFactory;
     std::shared_ptr<IMeshBufferWorker> mMeshBufferWorker;
     std::condition_variable            mCondition;
@@ -85,7 +85,7 @@ namespace Dwarf
     DrawCallWorker(std::shared_ptr<IDwarfLogger>      logger,
                    std::shared_ptr<ILoadedScene>      loadedScene,
                    std::shared_ptr<IDrawCallFactory>  drawCallFactory,
-                   std::shared_ptr<IDrawCallList>     drawCallList,
+                   std::unique_ptr<IDrawCallList>&    drawCallList,
                    std::shared_ptr<IMeshFactory>      meshFactory,
                    std::shared_ptr<IMeshBufferWorker> meshBufferWorker);
 

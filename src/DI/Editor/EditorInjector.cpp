@@ -21,8 +21,8 @@
 #include "Core/Asset/Texture/TextureWorker/TextureLoadingWorker.h"
 #include "Core/Base.h"
 #include "Core/Rendering/DrawCall/DrawCallFactory.h"
-#include "Core/Rendering/DrawCall/DrawCallList/DrawCallList.h"
-#include "Core/Rendering/DrawCall/DrawCallWorker/DrawCallWorker.h"
+#include "Core/Rendering/DrawCall/DrawCallList/DrawCallListFactory.h"
+#include "Core/Rendering/DrawCall/DrawCallWorker/DrawCallWorkerFactory.h"
 #include "Core/Rendering/Framebuffer/FramebufferFactory.h"
 #include "Core/Rendering/GpuInfo/GpuInfoFactory.h"
 #include "Core/Rendering/GpuInfo/IGpuInfoFactory.h"
@@ -127,6 +127,8 @@ namespace Dwarf
           boost::di::extension::shared),
           boost::di::bind<IOpenGLStateTracker>.to<OpenGLStateTracker>().in(
           boost::di::extension::shared),
+          boost::di::bind<IDrawCallListFactory>.to<DrawCallListFactory>().in(
+          boost::di::extension::shared),
           boost::di::bind<IDrawCallFactory>.to<DrawCallFactory>().in(
           boost::di::extension::shared),
           boost::di::bind<IVramTracker>.to<VramTracker>().in(
@@ -142,8 +144,6 @@ namespace Dwarf
           boost::di::bind<IMeshBufferWorker>.to<MeshBufferWorker>().in(
           boost::di::extension::shared),
           boost::di::bind<IMeshFactory>.to<MeshFactory>().in(
-          boost::di::extension::shared),
-          boost::di::bind<IDrawCallWorker>.to<DrawCallWorker>().in(
           boost::di::extension::shared),
           boost::di::bind<IModelImporter>.to<ModelImporter>().in(
           boost::di::extension::shared),
@@ -165,8 +165,6 @@ namespace Dwarf
           boost::di::extension::shared),
           boost::di::bind<ILoadedScene>.to<LoadedScene>().in(
           boost::di::extension::shared),
-          boost::di::bind<IDrawCallList>.to<DrawCallList>().in(
-          boost::di::extension::shared),
           boost::di::bind<IEditorSelection>.to<EditorSelection>().in(
           boost::di::extension::shared),
           boost::di::bind<IFramebufferFactory>.to<FramebufferFactory>().in(boost::di::extension::shared),
@@ -187,6 +185,8 @@ namespace Dwarf
           boost::di::bind<ITextureLoadingWorker>.to<TextureLoadingWorker>().in(
           boost::di::extension::shared),
           boost::di::bind<IAssetReimporter>.to<AssetReimporter>().in(
+          boost::di::extension::shared),
+          boost::di::bind<IDrawCallWorkerFactory>.to<DrawCallWorkerFactory>().in(
           boost::di::extension::shared),
           boost::di::bind<ISceneIO>.to<SceneIO>().in(boost::di::extension::shared),
           boost::di::bind<IMaterialCreator>.to<MaterialCreator>().in(boost::di::extension::shared),

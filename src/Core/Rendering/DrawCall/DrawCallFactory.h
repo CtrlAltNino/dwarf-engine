@@ -15,7 +15,7 @@ namespace Dwarf
   public:
     DrawCallFactory(std::shared_ptr<IDwarfLogger>      logger,
                     std::shared_ptr<IMeshBufferWorker> meshBufferWorker);
-    ~DrawCallFactory() override = default;
+    ~DrawCallFactory() override;
 
     /**
      * @brief Creates a draw call from the needed data.

@@ -26,8 +26,14 @@ namespace Dwarf
   void
   LoadedScene::SetScene(std::unique_ptr<IScene> scene)
   {
+    for (auto& callback : mSceneUnloadCallback)
+    {
+      callback();
+    }
+
     mScene = std::move(scene);
-    if (scene)
+
+    if (mScene)
     {
       mLogger->LogDebug(
         Log(fmt::format("Setting scene: {}", mScene->GetProperties().GetName()),
@@ -36,6 +42,11 @@ namespace Dwarf
       {
         mProjectSettings->UpdateLastOpenedScene(
           mScene->GetProperties().GetAssetID().value());
+      }
+
+      for (auto& callback : mSceneLoadCallback)
+      {
+        callback();
       }
     }
     else
@@ -48,5 +59,17 @@ namespace Dwarf
   LoadedScene::HasLoadedScene() -> bool
   {
     return mScene != nullptr;
+  }
+
+  void
+  LoadedScene::AddSceneLoadCallback(std::function<void()> callback)
+  {
+    mSceneLoadCallback.emplace_back(callback);
+  }
+
+  void
+  LoadedScene::AddSceneUnloadCallback(std::function<void()> callback)
+  {
+    mSceneUnloadCallback.emplace_back(callback);
   }
 }
