@@ -37,5 +37,22 @@ namespace Dwarf
      */
     virtual auto
     HasLoadedScene() -> bool = 0;
+
+    /**
+     * @brief Adds a callback that is called right after a scene has been loaded
+     *
+     * @param callback Callback function
+     */
+    virtual void
+    AddSceneLoadCallback(std::function<void()> callback) = 0;
+
+    /**
+     * @brief Adds a callback that is called before the current scene is being
+     * unloaded
+     *
+     * @param callback Callback function
+     */
+    virtual void
+    AddSceneUnloadCallback(std::function<void()> callback) = 0;
   };
 }

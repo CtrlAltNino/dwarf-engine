@@ -2,6 +2,9 @@
 
 #include "Core/Asset/Shader/ShaderSourceCollection/IShaderSourceCollectionFactory.h"
 #include "Core/Rendering/DrawCall/DrawCallList/IDrawCallList.h"
+#include "Core/Rendering/DrawCall/DrawCallList/IDrawCallListFactory.h"
+#include "Core/Rendering/DrawCall/DrawCallWorker/IDrawCallWorker.h"
+#include "Core/Rendering/DrawCall/DrawCallWorker/IDrawCallWorkerFactory.h"
 #include "Core/Rendering/Framebuffer/IFramebuffer.h"
 #include "Core/Rendering/Framebuffer/IFramebufferFactory.h"
 #include "Core/Rendering/Material/IMaterialFactory.h"
@@ -11,6 +14,7 @@
 #include "Core/Rendering/RendererApi/IRendererApi.h"
 #include "Core/Rendering/Shader/ShaderRegistry/IShaderRegistry.h"
 #include <memory>
+
 
 namespace Dwarf
 {
@@ -36,19 +40,22 @@ namespace Dwarf
     std::shared_ptr<IFramebuffer> mPresentationBuffer;
     std::shared_ptr<IShader>      mAgxTonemapShader;
 
-    std::shared_ptr<IRendererApi>  mRendererApi;
-    std::shared_ptr<IDrawCallList> mDrawCallList;
+    std::shared_ptr<IRendererApi>    mRendererApi;
+    std::unique_ptr<IDrawCallList>   mDrawCallList;
+    std::unique_ptr<IDrawCallWorker> mDrawCallWorker;
 
   public:
-    RenderingPipeline(std::shared_ptr<IRendererApi>     rendererApi,
-                      std::shared_ptr<IMaterialFactory> materialFactory,
-                      std::shared_ptr<IShaderRegistry>  shaderRegistry,
-                      std::shared_ptr<IShaderSourceCollectionFactory>
-                        shaderSourceCollectionFactory,
-                      std::shared_ptr<IMeshFactory>        meshFactory,
-                      std::shared_ptr<IMeshBufferFactory>  meshBufferFactory,
-                      std::shared_ptr<IDrawCallList>       drawCallList,
-                      std::shared_ptr<IFramebufferFactory> framebufferFactory);
+    RenderingPipeline(
+      std::shared_ptr<IRendererApi>     rendererApi,
+      std::shared_ptr<IMaterialFactory> materialFactory,
+      std::shared_ptr<IShaderRegistry>  shaderRegistry,
+      std::shared_ptr<IShaderSourceCollectionFactory>
+                                           shaderSourceCollectionFactory,
+      std::shared_ptr<IMeshFactory>        meshFactory,
+      std::shared_ptr<IMeshBufferFactory>  meshBufferFactory,
+      std::shared_ptr<IFramebufferFactory> framebufferFactory,
+      const std::shared_ptr<IDrawCallListFactory>&   drawCallListFactory,
+      const std::shared_ptr<IDrawCallWorkerFactory>& drawCallWorkerFactory);
     ~RenderingPipeline() override;
 
     /**

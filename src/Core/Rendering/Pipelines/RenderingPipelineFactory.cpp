@@ -11,11 +11,12 @@ namespace Dwarf
     std::shared_ptr<IMaterialFactory>           materialFactory,
     std::shared_ptr<IShaderRegistry>            shaderRegistry,
     std::shared_ptr<IShaderSourceCollectionFactory>
-                                         shaderSourceCollectionFactory,
-    std::shared_ptr<IMeshFactory>        meshFactory,
-    std::shared_ptr<IMeshBufferFactory>  meshBufferFactory,
-    std::shared_ptr<IDrawCallList>       drawCallList,
-    std::shared_ptr<IFramebufferFactory> framebufferFactory)
+                                            shaderSourceCollectionFactory,
+    std::shared_ptr<IMeshFactory>           meshFactory,
+    std::shared_ptr<IMeshBufferFactory>     meshBufferFactory,
+    std::shared_ptr<IFramebufferFactory>    framebufferFactory,
+    std::shared_ptr<IDrawCallListFactory>   drawCallListFactory,
+    std::shared_ptr<IDrawCallWorkerFactory> drawCallWorkerFactory)
     : mLogger(std::move(logger))
     , mRendererApi(rendererApiFactory->Create())
     , mMaterialFactory(std::move(materialFactory))
@@ -23,8 +24,9 @@ namespace Dwarf
     , mShaderSourceCollectionFactory(std::move(shaderSourceCollectionFactory))
     , mMeshFactory(std::move(meshFactory))
     , mMeshBufferFactory(std::move(meshBufferFactory))
-    , mDrawCallList(std::move(drawCallList))
     , mFramebufferFactory(std::move(framebufferFactory))
+    , mDrawCallListFactory(std::move(drawCallListFactory))
+    , mDrawCallWorkerFactory(std::move(drawCallWorkerFactory))
   {
     mLogger->LogDebug(
       Log("RenderingPipelineFactory created", "RenderingPipelineFactory"));
@@ -47,7 +49,8 @@ namespace Dwarf
                                                mShaderSourceCollectionFactory,
                                                mMeshFactory,
                                                mMeshBufferFactory,
-                                               mDrawCallList,
-                                               mFramebufferFactory);
+                                               mFramebufferFactory,
+                                               mDrawCallListFactory,
+                                               mDrawCallWorkerFactory);
   }
 } // namespace Dwarf

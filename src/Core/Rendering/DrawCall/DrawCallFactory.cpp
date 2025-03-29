@@ -12,6 +12,12 @@ namespace Dwarf
     : mLogger(std::move(logger))
     , mMeshBufferWorker(std::move(meshBufferWorker))
   {
+    mLogger->LogDebug(Log("DrawCallFactory created", "DrawCallFactory"));
+  }
+
+  DrawCallFactory::~DrawCallFactory()
+  {
+    mLogger->LogDebug(Log("DrawCallFactory destroyed", "DrawCallFactory"));
   }
 
   auto

@@ -12,19 +12,21 @@ namespace Dwarf
     std::shared_ptr<IMaterialFactory> materialFactory,
     std::shared_ptr<IShaderRegistry>  shaderRegistry,
     std::shared_ptr<IShaderSourceCollectionFactory>
-                                         shaderSourceCollectionFactory,
-    std::shared_ptr<IMeshFactory>        meshFactory,
-    std::shared_ptr<IMeshBufferFactory>  meshBufferFactory,
-    std::shared_ptr<IDrawCallList>       drawCallList,
-    std::shared_ptr<IFramebufferFactory> framebufferFactory)
+                                                 shaderSourceCollectionFactory,
+    std::shared_ptr<IMeshFactory>                meshFactory,
+    std::shared_ptr<IMeshBufferFactory>          meshBufferFactory,
+    std::shared_ptr<IFramebufferFactory>         framebufferFactory,
+    const std::shared_ptr<IDrawCallListFactory>& drawCallListFactory,
+    const std::shared_ptr<IDrawCallWorkerFactory>& drawCallWorkerFactory)
     : mRendererApi(std::move(rendererApi))
     , mMaterialFactory(std::move(materialFactory))
     , mShaderRegistry(std::move(shaderRegistry))
     , mShaderSourceCollectionFactory(std::move(shaderSourceCollectionFactory))
     , mMeshFactory(std::move(meshFactory))
     , mMeshBufferFactory(std::move(meshBufferFactory))
-    , mDrawCallList(std::move(drawCallList))
     , mFramebufferFactory(std::move(framebufferFactory))
+    , mDrawCallList(drawCallListFactory->Create())
+    , mDrawCallWorker(drawCallWorkerFactory->Create(mDrawCallList))
   {
     mRendererApi->SetClearColor(glm::vec4(0.065F, 0.07F, 0.085F, 1.0F));
 

@@ -36,7 +36,6 @@ namespace Dwarf
     std::shared_ptr<IShaderRecompiler>     mShaderRecompiler;
     std::shared_ptr<IAssetReimporter>      mAssetReimporter;
     std::shared_ptr<ITextureLoadingWorker> mTextureLoadingWorker;
-    std::shared_ptr<IDrawCallWorker>       mDrawCallWorker;
     std::shared_ptr<IMeshBufferWorker>     mMeshBufferWorker;
 
   public:
@@ -53,7 +52,6 @@ namespace Dwarf
            std::shared_ptr<IShaderRecompiler>     shaderRecompiler,
            std::shared_ptr<IAssetReimporter>      assetReimporter,
            std::shared_ptr<ITextureLoadingWorker> textureLoadingWorker,
-           std::shared_ptr<IDrawCallWorker>       drawCallWorker,
            std::shared_ptr<IMeshBufferWorker>     meshBufferWorker);
 
     ~Editor() override;
