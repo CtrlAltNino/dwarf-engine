@@ -5,7 +5,6 @@
 #include "Core/Rendering/VramTracker/IVramTracker.h"
 #include "OpenGLComputeShader.h"
 
-
 #define GL_SHADER_LOG_LENGTH (1024)
 
 namespace Dwarf

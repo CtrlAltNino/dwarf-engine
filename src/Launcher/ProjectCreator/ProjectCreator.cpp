@@ -7,7 +7,6 @@
 #include "Project/IProjectSettings.h"
 #include "ProjectCreator.h"
 
-
 namespace Dwarf
 {
   ProjectCreator::ProjectCreator(

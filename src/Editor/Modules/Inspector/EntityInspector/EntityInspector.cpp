@@ -38,17 +38,6 @@ namespace Dwarf
       ImVec2((ImGui::GetContentRegionAvail().x / 2.0F) - (vec2.x / 2.0F),
              ImGui::GetCursorPosY() + COMPONENT_PANEL_PADDING));
     ImGui::TextWrapped("%s", componentHeader);
-    auto separatorMin =
-      ImVec2(ImGui::GetWindowPos().x + ImGui::GetCursorPos().x +
-               COMPONENT_PANEL_PADDING,
-             ImGui::GetWindowPos().y + ImGui::GetCursorPos().y +
-               (COMPONENT_PANEL_PADDING / 2.0F));
-    auto separatorMax =
-      ImVec2(ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMax().x -
-               COMPONENT_PANEL_PADDING,
-             separatorMin.y + 2);
-    ImGui::GetWindowDrawList()->AddRectFilled(
-      separatorMin, separatorMax, COL_BG_DIM);
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() +
                          (COMPONENT_PANEL_PADDING * 2));
   }
