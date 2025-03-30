@@ -6,7 +6,6 @@
 #include <entt/entt.hpp>
 #include <imgui.h>
 
-
 #define COL_BLACK IM_COL32(0, 0, 0, 0)
 #define COL_DIM2 IM_COL32(59, 66, 82, 255)
 #define COL_MID IM_COL32(76, 86, 106, 255)
@@ -56,15 +55,16 @@ namespace Dwarf
     InputTextCallback(ImGuiInputTextCallbackData* data) -> int;
 
     template<typename T>
-    static void
+    static auto
     AssetInput(const std::shared_ptr<IAssetDatabase>& assetDatabase,
                std::unique_ptr<IAssetReference>&      assetRef,
-               const char*                            imguiID)
+               const char*                            imguiID) -> bool
     {
       std::vector<entt::entity> availableAssets;
       int                       selectedAsset = -1;
       const auto&               view =
         assetDatabase->GetRegistry().view<IDComponent, NameComponent, T>();
+      static bool interacted = false;
 
       int count = 0;
       for (auto entity : view)
@@ -84,6 +84,7 @@ namespace Dwarf
           : view.template get<NameComponent>(availableAssets[selectedAsset])
               .Name.c_str();
 
+      interacted = false;
       if (ImGui::BeginCombo(imguiID, preview))
       {
         if (ImGui::Selectable(
@@ -91,6 +92,7 @@ namespace Dwarf
         {
           selectedAsset = -1;
           assetRef = nullptr;
+          interacted = true;
         }
 
         for (int i = 0; i < availableAssets.size(); i++)
@@ -106,23 +108,27 @@ namespace Dwarf
             selectedAsset = i;
             assetRef = assetDatabase->Retrieve(
               view.template get<IDComponent>(availableAssets[i]).getId());
+            interacted = true;
           }
         }
 
         ImGui::EndCombo();
       }
+
+      return interacted;
     }
 
     template<typename T>
-    static void
+    static auto
     AssetInput(const std::shared_ptr<IAssetDatabase>&           assetDatabase,
                std::optional<std::unique_ptr<IAssetReference>>& assetRef,
-               const char*                                      imguiID)
+               const char*                                      imguiID) -> bool
     {
       std::vector<entt::entity> availableAssets;
       int                       selectedAsset = -1;
       const auto&               view =
         assetDatabase->GetRegistry().view<IDComponent, NameComponent, T>();
+      static bool interacted = false;
 
       int count = 0;
       for (auto entity : view)
@@ -143,6 +149,7 @@ namespace Dwarf
           : view.template get<NameComponent>(availableAssets[selectedAsset])
               .Name.c_str();
 
+      interacted = false;
       if (ImGui::BeginCombo(imguiID, preview))
       {
         if (ImGui::Selectable(
@@ -150,6 +157,7 @@ namespace Dwarf
         {
           selectedAsset = -1;
           assetRef = std::nullopt;
+          interacted = true;
         }
 
         for (int i = 0; i < availableAssets.size(); i++)
@@ -165,23 +173,26 @@ namespace Dwarf
             selectedAsset = i;
             assetRef = assetDatabase->Retrieve(
               view.template get<IDComponent>(availableAssets[i]).getId());
+            interacted = true;
           }
         }
 
         ImGui::EndCombo();
       }
+      return interacted;
     }
 
     template<typename T>
-    static void
+    static auto
     AssetInput(const std::shared_ptr<IAssetDatabase>& assetDatabase,
                std::optional<UUID>&                   assetRef,
-               const char*                            imguiID)
+               const char*                            imguiID) -> bool
     {
       std::vector<entt::entity> availableAssets;
       int                       selectedAsset = -1;
       auto                      view =
         assetDatabase->GetRegistry().view<IDComponent, NameComponent, T>();
+      static bool interacted = false;
 
       int count = 0;
       for (auto entity : view)
@@ -202,6 +213,7 @@ namespace Dwarf
           : view.template get<NameComponent>(availableAssets[selectedAsset])
               .Name.c_str();
 
+      interacted = false;
       if (ImGui::BeginCombo(imguiID, preview))
       {
         if (ImGui::Selectable(
@@ -209,6 +221,7 @@ namespace Dwarf
         {
           selectedAsset = -1;
           assetRef = std::nullopt;
+          interacted = true;
         }
 
         for (int i = 0; i < availableAssets.size(); i++)
@@ -224,25 +237,28 @@ namespace Dwarf
             selectedAsset = i;
             assetRef =
               view.template get<IDComponent>(availableAssets[i]).getId();
+            interacted = true;
           }
         }
 
         ImGui::EndCombo();
       }
+
+      return interacted;
     }
 
     template<>
-    void
+    auto
     AssetInput<VertexShaderAsset>(
       const std::shared_ptr<IAssetDatabase>&           assetDatabase,
       std::optional<std::unique_ptr<IAssetReference>>& assetRef,
-      const char*                                      imguiID);
+      const char*                                      imguiID) -> bool;
 
     template<>
-    void
+    auto
     AssetInput<FragmentShaderAsset>(
       const std::shared_ptr<IAssetDatabase>&           assetDatabase,
       std::optional<std::unique_ptr<IAssetReference>>& assetRef,
-      const char*                                      imguiID);
+      const char*                                      imguiID) -> bool;
   };
 }

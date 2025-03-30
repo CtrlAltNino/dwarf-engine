@@ -357,7 +357,6 @@ namespace Dwarf
                          mSettings.GizmoOperation,
                          mSettings.GizmoMode,
                          glm::value_ptr(transform));
-
     if (ImGuizmo::IsUsing())
     {
       transformComponent.GetPosition() = glm::vec3(transform[3]);
@@ -366,7 +365,7 @@ namespace Dwarf
                   glm::length(glm::vec3(transform[1])),
                   glm::length(glm::vec3(transform[2])));
 
-      glm::mat3 rotationMatrix =
+      auto rotationMatrix =
         glm::mat3(transform); // Remove translation from matrix
       rotationMatrix = glm::mat3(glm::normalize(rotationMatrix[0]),
                                  glm::normalize(rotationMatrix[1]),

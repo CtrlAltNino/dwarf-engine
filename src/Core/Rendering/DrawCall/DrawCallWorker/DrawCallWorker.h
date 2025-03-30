@@ -38,8 +38,8 @@ namespace Dwarf
     {
     } // The reference member can't be moved, so just initialize it
 
-    TempDrawCall&
-    operator=(TempDrawCall&& other) noexcept
+    auto
+    operator=(TempDrawCall&& other) noexcept -> TempDrawCall&
     {
       if (this != &other)
       {
