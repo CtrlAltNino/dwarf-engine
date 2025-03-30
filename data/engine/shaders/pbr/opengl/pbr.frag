@@ -72,11 +72,9 @@ void main() {
     float ao = hasAoMap ? texture(aoMap, TexCoords).r : 1.0;
 
     vec3 tangentNormal = texture(normalMap, TexCoords).rgb * 2.0 - 1.0;
-    tangentNormal.y *= -1.0;
-    tangentNormal.xy *= 0.3;
     vec3 N = hasNormalMap ? normalize(TBN * tangentNormal) : TBN[2]; // Use the TBN matrix to transform tangent-space normal to world-space
 
-    vec3 metalRoughness = hasMetalRoughnessMap ? texture(metalRoughnessMap, TexCoords).rgb : vec3(0.0, 0.5, 0.0);
+    vec3 metalRoughness = hasMetalRoughnessMap ? texture(metalRoughnessMap, TexCoords).rgb : vec3(0.0, 0.8, 0.0);
     float metalness = metalRoughness.r;
     float roughness = clamp(metalRoughness.g, 0.05, 1.0); // Prevent 0 roughness for stability
 

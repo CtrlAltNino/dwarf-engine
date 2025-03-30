@@ -72,6 +72,7 @@ namespace Dwarf
     TextureMagFilter MagFilter = TextureMagFilter::LINEAR;
     bool             MipMapped = false;
     bool             IsSRGB = false;
+    bool             FlipY = false;
   };
 
   struct TextureContainer
