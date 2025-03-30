@@ -27,7 +27,8 @@ namespace Dwarf
     ProcessNode(const aiNode*                        node,
                 const aiScene*                       scene,
                 std::vector<std::unique_ptr<IMesh>>& meshes,
-                glm::mat4                            parentTransform);
+                glm::mat4                            parentTransform,
+                bool                                 flipZ);
 
     /**
      * @brief Processes an assimp mesh
@@ -39,7 +40,8 @@ namespace Dwarf
     void
     ProcessMesh(const aiMesh*                        mesh,
                 std::vector<std::unique_ptr<IMesh>>& meshes,
-                glm::mat4                            transform);
+                glm::mat4                            transform,
+                bool                                 flipZ);
 
   public:
     ModelImporter(std::shared_ptr<IDwarfLogger>   logger,

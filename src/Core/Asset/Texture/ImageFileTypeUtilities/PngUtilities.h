@@ -14,8 +14,8 @@ namespace Dwarf
     static auto
     LoadPng(const std::shared_ptr<IDwarfLogger>& logger,
             const std::shared_ptr<IFileHandler>& fileHandler,
-            const std::filesystem::path&         path)
-      -> std::shared_ptr<TextureContainer>
+            const std::filesystem::path&         path,
+            nlohmann::json& metadata) -> std::shared_ptr<TextureContainer>
     {
       spng_ctx* png = spng_ctx_new(0);
       if (png == nullptr)
@@ -51,6 +51,14 @@ namespace Dwarf
       std::vector<unsigned char> imageData(pngSize);
       spng_decode_image(png, imageData.data(), pngSize, SPNG_FMT_RGBA8, 0);
       spng_ctx_free(png);
+
+      if (metadata.contains("FlipY") && metadata["FlipY"].get<bool>())
+      {
+        for (int i = 1; i < imageData.size(); i += 4)
+        {
+          imageData[i] = 254 - imageData[i];
+        }
+      }
 
       std::shared_ptr<TextureContainer> textureData =
         std::make_shared<TextureContainer>();

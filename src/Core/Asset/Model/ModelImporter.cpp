@@ -8,10 +8,61 @@
 namespace Dwarf
 {
   auto
-  AssimpToGlmMatrix(const aiMatrix4x4& mat) -> glm::mat4
+  AssimpToGlmMatrix(const aiMatrix4x4& from) -> glm::mat4
   {
-    return { mat.a1, mat.b1, mat.c1, mat.d1, mat.a2, mat.b2, mat.c2, mat.d2,
-             mat.a3, mat.b3, mat.c3, mat.d3, mat.a4, mat.b4, mat.c4, mat.d4 };
+    glm::mat4 to;
+
+    to[0][0] = from.a1;
+    to[1][0] = from.a2;
+    to[2][0] = from.a3;
+    to[3][0] = from.a4;
+    to[0][1] = from.b1;
+    to[1][1] = from.b2;
+    to[2][1] = from.b3;
+    to[3][1] = from.b4;
+    to[0][2] = from.c1;
+    to[1][2] = from.c2;
+    to[2][2] = from.c3;
+    to[3][2] = from.c4;
+    to[0][3] = from.d1;
+    to[1][3] = from.d2;
+    to[2][3] = from.d3;
+    to[3][3] = from.d4;
+
+    return to;
+  }
+
+  auto
+  GetImportFlags(const std::filesystem::path& path) -> unsigned int
+  {
+    unsigned int flags = aiProcess_Triangulate | aiProcess_GenNormals |
+                         aiProcess_CalcTangentSpace |
+                         aiProcess_JoinIdenticalVertices;
+    std::string ext = path.extension().string();
+
+    if (ext == ".obj")
+    {
+      flags |= aiProcess_FlipUVs; // OBJ is already OpenGL-friendly
+    }
+    else if (ext == ".fbx" || ext == ".gltf" || ext == ".dae")
+    {
+      flags |= aiProcess_FlipUVs; // Ensure face culling works
+    }
+    else if (ext == ".3ds")
+    {
+      flags |= aiProcess_MakeLeftHanded |
+               aiProcess_FlipUVs; // Convert to right-handed OpenGL
+    }
+
+    return flags;
+  }
+
+  auto
+  GetFlipZ(const std::filesystem::path& path) -> bool
+  {
+    std::string ext = path.extension().string();
+
+    return ext == ".fbx" || ext == ".gltf" || ext == ".dae";
   }
 
   ModelImporter::ModelImporter(std::shared_ptr<IDwarfLogger>   logger,
@@ -36,12 +87,8 @@ namespace Dwarf
       Log(fmt::format("Metadata:\n{}", metaData.dump(2)), "ModelImporter"));
 
     Assimp::Importer importer;
-    const aiScene*   scene = importer.ReadFile(
-      path.string(),
-      aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_GenNormals |
-        aiProcess_CalcTangentSpace | aiProcess_JoinIdenticalVertices |
-        aiProcess_PreTransformVertices | aiProcess_GlobalScale |
-        aiProcess_MakeLeftHanded | aiProcess_FlipWindingOrder);
+    const aiScene*   scene =
+      importer.ReadFile(path.string(), GetImportFlags(path));
 
     if ((scene == nullptr) ||
         ((scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE) != 0U) ||
@@ -76,19 +123,17 @@ namespace Dwarf
     std::vector<std::unique_ptr<IMesh>> meshes;
 
     ModelImporter::ProcessNode(
-      scene->mRootNode,
-      scene,
-      meshes,
-      AssimpToGlmMatrix(scene->mRootNode->mTransformation));
+      scene->mRootNode, scene, meshes, glm::mat4(1.0f), GetFlipZ(path));
 
-    return std::move(meshes);
+    return meshes;
   }
 
   void
   ModelImporter::ProcessNode(const aiNode*                        node,
                              const aiScene*                       scene,
                              std::vector<std::unique_ptr<IMesh>>& meshes,
-                             glm::mat4 parentTransform)
+                             glm::mat4 parentTransform,
+                             bool      flipZ)
   {
     glm::mat4          nodeTransform = AssimpToGlmMatrix(node->mTransformation);
     glm::mat4          globalTransform = parentTransform * nodeTransform;
@@ -100,21 +145,22 @@ namespace Dwarf
     {
       const aiMesh* mesh = meshSpan[nodeMeshesSpan[i]];
       // meshes.push_back(ProcessMesh(mesh, scene));
-      ProcessMesh(mesh, meshes, globalTransform);
+      ProcessMesh(mesh, meshes, globalTransform, flipZ);
     }
 
     std::span<aiNode*> nodeChildrenSpan(node->mChildren, node->mNumChildren);
     // then do the same for each of its children
     for (uint32_t i = 0; i < node->mNumChildren; i++)
     {
-      ProcessNode(nodeChildrenSpan[i], scene, meshes, globalTransform);
+      ProcessNode(nodeChildrenSpan[i], scene, meshes, globalTransform, flipZ);
     }
   }
 
   void
   ModelImporter::ProcessMesh(const aiMesh*                        mesh,
                              std::vector<std::unique_ptr<IMesh>>& meshes,
-                             glm::mat4                            transform)
+                             glm::mat4                            transform,
+                             bool                                 flipZ)
   {
     std::vector<Vertex>   vertices;
     std::vector<uint32_t> indices;
@@ -127,6 +173,23 @@ namespace Dwarf
     std::span<aiVector3D* const, AI_MAX_NUMBER_OF_TEXTURECOORDS>
                       meshTexCoordsSpan(mesh->mTextureCoords);
     std::span<aiFace> meshFacesSpan(mesh->mFaces, mesh->mNumFaces);
+
+    glm::mat4 flipZMatrix = glm::mat4(1,
+                                      0,
+                                      0,
+                                      0,
+                                      0,
+                                      1,
+                                      0,
+                                      0,
+                                      0,
+                                      0,
+                                      -1,
+                                      0, // Flip Z
+                                      0,
+                                      0,
+                                      0,
+                                      1);
 
     for (uint32_t i = 0; i < meshVerticesSpan.size(); i++)
     {

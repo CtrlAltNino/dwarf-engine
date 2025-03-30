@@ -2,6 +2,7 @@
 
 #include "Utilities/ImageUtilities/TextureCommon.h"
 #include <FreeImage.h>
+#include <cstddef>
 #include <filesystem>
 #include <iostream>
 #include <memory>
@@ -12,7 +13,7 @@ namespace Dwarf
   {
   public:
     static auto
-    LoadTga(const std::filesystem::path& path)
+    LoadTga(const std::filesystem::path& path, nlohmann::json& metadata)
       -> std::shared_ptr<TextureContainer>
     {
       // Ensure the file exists
@@ -69,7 +70,16 @@ namespace Dwarf
       textureData->DataType = TextureDataType::UNSIGNED_BYTE;
 
       // Copy content from data into textureData->ImageData
-      std::vector<uint8_t> imageData(data, data + (width * height * channels));
+      std::vector<uint8_t> imageData(
+        data, data + (static_cast<size_t>(width * height * channels)));
+
+      if (metadata.contains("FlipY") && metadata["FlipY"].get<bool>())
+      {
+        for (int i = 1; i < imageData.size(); i += channels)
+        {
+          imageData[i] = 254 - imageData[i];
+        }
+      }
 
       // Swap the channels from BGRA to RGBA
       if (channels == 4)

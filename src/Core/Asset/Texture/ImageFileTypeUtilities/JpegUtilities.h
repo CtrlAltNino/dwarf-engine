@@ -84,14 +84,24 @@ namespace Dwarf
 
       tjDestroy(jpegDecompressor);
 
+      auto dataVec = std::vector<unsigned char>(
+        decompressed, decompressed + (width * height * 3));
+
+      if (metadata.contains("FlipY") && metadata["FlipY"].get<bool>())
+      {
+        for (int i = 1; i < dataVec.size(); i += 3)
+        {
+          dataVec[i] = 254 - dataVec[i];
+        }
+      }
+
       std::shared_ptr<TextureContainer> textureData =
         std::make_shared<TextureContainer>();
       textureData->Size = glm::ivec2(width, height);
       textureData->Format = TextureFormat::RGB;
       textureData->Type = TextureType::TEXTURE_2D;
       textureData->DataType = TextureDataType::UNSIGNED_BYTE;
-      textureData->ImageData = std::vector<unsigned char>(
-        decompressed, decompressed + (width * height * 3));
+      textureData->ImageData = dataVec;
 
       file.close();
       return textureData;
