@@ -72,4 +72,19 @@ namespace Dwarf
   {
     mSceneUnloadCallback.emplace_back(callback);
   }
+
+  void
+  LoadedScene::AddSceneChangeCallback(std::function<void()> callback)
+  {
+    mSceneChangeCallback.emplace_back(callback);
+  }
+
+  void
+  LoadedScene::PropagateSceneChange()
+  {
+    for (auto& callback : mSceneChangeCallback)
+    {
+      callback();
+    }
+  }
 }

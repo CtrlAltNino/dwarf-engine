@@ -19,17 +19,18 @@ namespace Dwarf
   }
 
   template<>
-  void
+  auto
   DwarfUI::AssetInput<VertexShaderAsset>(
     const std::shared_ptr<IAssetDatabase>&           assetDatabase,
     std::optional<std::unique_ptr<IAssetReference>>& assetRef,
-    const char*                                      imguiID)
+    const char*                                      imguiID) -> bool
   {
     // TODO: Make more efficient
     std::vector<entt::entity> availableAssets;
     int                       selectedAsset = -1;
     auto                      view = assetDatabase->GetRegistry()
                   .view<IDComponent, NameComponent, VertexShaderAsset>();
+    static bool interacted = false;
 
     int count = 0;
     // Compile list of available assets
@@ -49,6 +50,7 @@ namespace Dwarf
       view.template get<NameComponent>(availableAssets[selectedAsset])
         .Name.c_str();
 
+    interacted = false;
     if (ImGui::BeginCombo(imguiID, preview))
     {
       for (int i = 0; i < availableAssets.size(); i++)
@@ -63,25 +65,29 @@ namespace Dwarf
           selectedAsset = i;
           assetRef = assetDatabase->Retrieve(
             view.template get<IDComponent>(availableAssets[i]).getId());
+          interacted = true;
         }
       }
 
       ImGui::EndCombo();
     }
+
+    return interacted;
   }
 
   template<>
-  void
+  auto
   DwarfUI::AssetInput<FragmentShaderAsset>(
     const std::shared_ptr<IAssetDatabase>&           assetDatabase,
     std::optional<std::unique_ptr<IAssetReference>>& assetRef,
-    const char*                                      imguiID)
+    const char*                                      imguiID) -> bool
   {
     // TODO: Make more efficient
     std::vector<entt::entity> availableAssets;
     int                       selectedAsset = -1;
     auto                      view = assetDatabase->GetRegistry()
                   .view<IDComponent, NameComponent, FragmentShaderAsset>();
+    static bool interacted = false;
 
     int count = 0;
     // Compile list of available assets
@@ -101,6 +107,7 @@ namespace Dwarf
       view.template get<NameComponent>(availableAssets[selectedAsset])
         .Name.c_str();
 
+    interacted = false;
     if (ImGui::BeginCombo(imguiID, preview))
     {
       for (int i = 0; i < availableAssets.size(); i++)
@@ -115,10 +122,13 @@ namespace Dwarf
           selectedAsset = i;
           assetRef = assetDatabase->Retrieve(
             view.template get<IDComponent>(availableAssets[i]).getId());
+          interacted = true;
         }
       }
 
       ImGui::EndCombo();
     }
+
+    return interacted;
   }
 }

@@ -54,5 +54,21 @@ namespace Dwarf
      */
     virtual void
     AddSceneUnloadCallback(std::function<void()> callback) = 0;
+
+    /**
+     * @brief Adds a callback that is called when something in the scene has
+     * changed
+     *
+     * @param callback Callback function
+     */
+    virtual void
+    AddSceneChangeCallback(std::function<void()> callback) = 0;
+
+    /**
+     * @brief Triggers the callbacks for when something in the scene changes
+     *
+     */
+    virtual void
+    PropagateSceneChange() = 0;
   };
 }

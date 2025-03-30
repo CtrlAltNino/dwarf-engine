@@ -20,7 +20,12 @@ namespace Dwarf
   {
     mLogger->LogDebug(Log("DrawCallWorker created", "DrawCallWorker"));
     mWorkerThread = std::thread([this]() { WorkerThread(); });
-    mLoadedScene->AddSceneLoadCallback([this]() { this->Invalidate(); });
+    mLoadedScene->AddSceneLoadCallback(
+      [this]()
+      {
+        mDrawCallList->Clear();
+        this->Invalidate();
+      });
     mLoadedScene->AddSceneUnloadCallback(
       [this]()
       {
@@ -28,6 +33,12 @@ namespace Dwarf
         {
           mDrawCallList->Clear();
         }
+      });
+    mLoadedScene->AddSceneChangeCallback(
+      [this]()
+      {
+        mDrawCallList->Clear();
+        this->Invalidate();
       });
   }
 
@@ -94,7 +105,7 @@ namespace Dwarf
   DrawCallWorker::GenerateDrawCalls()
   {
     mLogger->LogDebug(Log("Generating draw calls", "DrawCallWorker"));
-    std::vector<TempDrawCall>               opagueTemps;
+    std::vector<TempDrawCall>               batchedTemps;
     std::vector<TempDrawCall>               transparentTemps;
     std::vector<std::unique_ptr<IDrawCall>> drawCalls;
 
@@ -139,7 +150,7 @@ namespace Dwarf
               }
               else
               {
-                opagueTemps.emplace_back(*mesh, materialAsset, transform);
+                batchedTemps.emplace_back(*mesh, materialAsset, transform);
               }
             }
           }
@@ -149,7 +160,7 @@ namespace Dwarf
 
     // Sorting the draw calls
     std::ranges::stable_sort(
-      opagueTemps,
+      batchedTemps,
       [](const TempDrawCall& a, const TempDrawCall& b)
       {
         return std::uintptr_t(std::addressof(a.Material.get())) <
@@ -165,40 +176,57 @@ namespace Dwarf
 
     std::vector<std::unique_ptr<Batch>> batches;
     std::unique_ptr<Batch>              currentBatch;
+
     // Batch per Material and upload geometry
-    for (auto& tempDrawCall : opagueTemps)
+    for (auto& currentTempDrawCall : batchedTemps)
     {
+      // No current batch, creating new and adding the current draw call
       if (!currentBatch)
       {
-        currentBatch = std::make_unique<Batch>(tempDrawCall.Material.get(),
-                                               tempDrawCall.Transform.get());
-        currentBatch->Meshes.push_back(tempDrawCall.Mesh.get().Clone());
+        // Create new batch with material
+        currentBatch = std::make_unique<Batch>(
+          currentTempDrawCall.Material.get(), currentTempDrawCall.Transform);
+
+        // Add the geometry of the current temporary draw call
+        currentBatch->Meshes.emplace_back(
+          currentTempDrawCall.Mesh.get().Clone());
       }
       else
       {
+        // If there is a current batch and we encounter a different material or
+        // a different entity
         if ((std::addressof(currentBatch->Material) !=
-             std::addressof(tempDrawCall.Material.get())) ||
-            currentBatch->Material.GetMaterial()
-              .GetMaterialProperties()
-              .IsTransparent)
+             std::addressof(currentTempDrawCall.Material.get())) ||
+            (std::addressof(currentBatch->Transform) !=
+             std::addressof(currentTempDrawCall.Transform.get())))
         {
+          // Push the current batch
           batches.push_back(std::move(currentBatch));
-          currentBatch = std::make_unique<Batch>(tempDrawCall.Material,
-                                                 tempDrawCall.Transform);
-          currentBatch->Meshes.push_back(tempDrawCall.Mesh.get().Clone());
+
+          // Create new batch with material
+          currentBatch = std::make_unique<Batch>(
+            currentTempDrawCall.Material.get(), currentTempDrawCall.Transform);
+
+          // Add the geometry of the current temporary draw call
+          currentBatch->Meshes.emplace_back(
+            currentTempDrawCall.Mesh.get().Clone());
         }
+        // We can still add to the current batch
         else
         {
-          currentBatch->Meshes.push_back(tempDrawCall.Mesh.get().Clone());
+          currentBatch->Meshes.push_back(
+            currentTempDrawCall.Mesh.get().Clone());
         }
       }
     }
 
+    // If we got an unpushed batch dangling
     if (currentBatch)
     {
       batches.push_back(std::move(currentBatch));
     }
 
+    // Generate draw calls from batches
     for (auto& batch : batches)
     {
       std::unique_ptr<IMesh> mergedMesh =
@@ -208,6 +236,7 @@ namespace Dwarf
         mergedMesh, batch->Material, batch->Transform));
     }
 
+    // Generate draw calls for transparent materials
     for (auto& transparentCall : transparentTemps)
     {
       std::unique_ptr<IMesh> mesh = transparentCall.Mesh.get().Clone();

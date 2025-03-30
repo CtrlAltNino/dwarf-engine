@@ -198,7 +198,10 @@ namespace Dwarf
   {
     // TODO: Slot for a mesh asset
     ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
-    ImGui::Checkbox("Hidden", &component.IsHidden());
+    if (ImGui::Checkbox("Hidden", &component.IsHidden()))
+    {
+      mLoadedScene->PropagateSceneChange();
+    }
     ImGui::TextWrapped("Model Asset");
     ImGui::SameLine();
     ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
@@ -206,8 +209,11 @@ namespace Dwarf
 
     static bool wasNull = component.GetModelAsset() == nullptr;
 
-    DwarfUI::AssetInput<ModelAsset>(
-      mAssetDatabase, component.GetModelAsset(), "##modelAsset");
+    if (DwarfUI::AssetInput<ModelAsset>(
+          mAssetDatabase, component.GetModelAsset(), "##modelAsset"))
+    {
+      mLoadedScene->PropagateSceneChange();
+    }
     ImGui::PopItemWidth();
 
     if (component.GetModelAsset() != nullptr)
@@ -243,10 +249,14 @@ namespace Dwarf
         ImGui::SameLine();
         ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
                              COMPONENT_PANEL_PADDING);
-        DwarfUI::AssetInput<MaterialAsset>(
-          mAssetDatabase,
-          mat.second,
-          std::format("##materialAsset{}", std::to_string(mat.first)).c_str());
+        if (DwarfUI::AssetInput<MaterialAsset>(
+              mAssetDatabase,
+              mat.second,
+              std::format("##materialAsset{}", std::to_string(mat.first))
+                .c_str()))
+        {
+          mLoadedScene->PropagateSceneChange();
+        }
         ImGui::PopItemWidth();
       }
     }

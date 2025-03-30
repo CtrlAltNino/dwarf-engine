@@ -15,7 +15,6 @@
 #include "Core/Rendering/Shader/ShaderRegistry/IShaderRegistry.h"
 #include <memory>
 
-
 namespace Dwarf
 {
   class RenderingPipeline : public IRenderingPipeline

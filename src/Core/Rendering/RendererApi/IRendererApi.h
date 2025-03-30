@@ -5,6 +5,7 @@
 #include "Core/Rendering/MeshBuffer/IMeshBuffer.h"
 #include "Core/Rendering/Shader/IComputeShader.h"
 #include "Core/Scene/Camera/ICamera.h"
+
 namespace Dwarf
 {
   struct VRAMUsageBuffer

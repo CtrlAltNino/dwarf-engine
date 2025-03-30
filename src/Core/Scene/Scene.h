@@ -43,7 +43,7 @@ namespace Dwarf
     /// @return 4x4 model matrix composition of a transform and its full parent
     /// chain.
     auto
-    GetFullModelMatrix(TransformComponent& transform) -> glm::mat4;
+    GetFullModelMatrix(TransformComponent& transform) -> glm::mat4 override;
 
     /// @brief Deserializes the scene from a JSON object.
     void

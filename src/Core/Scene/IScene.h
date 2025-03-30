@@ -41,5 +41,12 @@ namespace Dwarf
     /// @param entity Entity to delete.
     virtual void
     DeleteEntity(const Entity& entity) = 0;
+
+    /// @brief Returns the recursive model matrix of a transform.
+    /// @param transform A transform component instance.
+    /// @return 4x4 model matrix composition of a transform and its full parent
+    /// chain.
+    virtual auto
+    GetFullModelMatrix(TransformComponent& transform) -> glm::mat4 = 0;
   };
 }
