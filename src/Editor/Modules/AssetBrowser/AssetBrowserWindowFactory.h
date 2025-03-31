@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Asset/Creation/Shader/IShaderCreator.h"
 #include "Core/Asset/Database/IAssetDatabase.h"
 #include "Core/Scene/IO/ISceneIO.h"
 #include "Editor/Modules/AssetBrowser/AssetBrowserWindow.h"
@@ -22,6 +23,7 @@ namespace Dwarf
     std::shared_ptr<IMaterialFactory> mMaterialFactory;
     std::shared_ptr<IAssetMetadata>   mAssetMetadata;
     std::shared_ptr<IMaterialCreator> mMaterialCreator;
+    std::shared_ptr<IShaderCreator>   mShaderCreator;
     std::shared_ptr<IFileHandler>     mFileHandler;
     std::shared_ptr<ISceneIO>         mSceneIO;
 
@@ -36,6 +38,7 @@ namespace Dwarf
                               std::shared_ptr<IMaterialFactory> materialFactory,
                               std::shared_ptr<IAssetMetadata>   assetMetadata,
                               std::shared_ptr<IMaterialCreator> materialCreator,
+                              std::shared_ptr<IShaderCreator>   shaderCreator,
                               std::shared_ptr<IFileHandler>     fileHandler,
                               std::shared_ptr<ISceneIO>         sceneIO);
 

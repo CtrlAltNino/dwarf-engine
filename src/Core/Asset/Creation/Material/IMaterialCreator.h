@@ -2,6 +2,12 @@
 
 namespace Dwarf
 {
+  enum MaterialType
+  {
+    PbrMaterial,
+    UnlitMaterial
+  };
+
   class IMaterialCreator
   {
   public:
@@ -10,11 +16,12 @@ namespace Dwarf
     /**
      * @brief Create a new Material asset on disk
      *
-     * @param assetPath If a path is supplied, the new asset will be written
+     * @param directory If a path is supplied, the new asset will be written
      * there
      */
     virtual void
     CreateMaterialAsset(
-      std::optional<std::filesystem::path> assetPath = std::nullopt) = 0;
+      MaterialType                         materialType,
+      std::optional<std::filesystem::path> directoryPath = std::nullopt) = 0;
   };
 } // namespace Dwarf

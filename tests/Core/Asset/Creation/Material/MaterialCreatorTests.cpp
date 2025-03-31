@@ -1,4 +1,5 @@
 #include "Core/Asset/Creation/Material/MaterialCreator.h"
+#include "Core/Asset/Shader/ShaderSourceCollection/IShaderSourceCollectionFactory.h"
 #include "Core/Rendering/Material/IMaterialFactory.h"
 #include "Core/Rendering/Material/IO/IMaterialIO.h"
 #include "Utilities/FileHandler/IFileHandler.h"
@@ -121,14 +122,62 @@ public:
               (const, override));
 };
 
+class MockShaderSourceCollectionFactory
+  : public Dwarf::IShaderSourceCollectionFactory
+{
+public:
+  MOCK_METHOD(std::unique_ptr<IShaderSourceCollection>,
+              CreateDefaultShaderSourceCollection,
+              (),
+              (override));
+  MOCK_METHOD(std::unique_ptr<IShaderSourceCollection>,
+              CreateErrorShaderSourceCollection,
+              (),
+              (override));
+  MOCK_METHOD(std::unique_ptr<IShaderSourceCollection>,
+              CreateIdShaderSourceCollection,
+              (),
+              (override));
+  MOCK_METHOD(std::unique_ptr<IShaderSourceCollection>,
+              CreateGridShaderSourceCollection,
+              (),
+              (override));
+  MOCK_METHOD(std::unique_ptr<IShaderSourceCollection>,
+              CreateAgxTonemapShaderSourceCollection,
+              (),
+              (override));
+  MOCK_METHOD(std::unique_ptr<IShaderSourceCollection>,
+              CreatePreviewShaderSourceCollection,
+              (),
+              (override));
+  MOCK_METHOD(std::unique_ptr<IShaderSourceCollection>,
+              CreatePbrShaderSourceCollection,
+              (),
+              (override));
+  MOCK_METHOD(std::unique_ptr<IShaderSourceCollection>,
+              CreateUnlitShaderSourceCollection,
+              (),
+              (override));
+  MOCK_METHOD(std::unique_ptr<IShaderSourceCollection>,
+              CreateShaderSourceCollection,
+              (const nlohmann::json& serializedShaderSourceCollection),
+              (override));
+  MOCK_METHOD(std::unique_ptr<IShaderSourceCollection>,
+              CreateShaderSourceCollection,
+              (std::vector<std::unique_ptr<IAssetReference>> & shaderSources),
+              (override));
+};
+
 class MaterialCreatorTest : public ::testing::Test
 {
 protected:
   std::shared_ptr<MockMaterialFactory> materialFactory;
   std::shared_ptr<MockMaterialIO>      materialIO;
   std::shared_ptr<MockFileHandler>     fileHandler;
-  std::unique_ptr<MaterialCreator>     materialCreator;
-  AssetDirectoryPath                   assetDirectoryPath;
+  std::shared_ptr<MockShaderSourceCollectionFactory>
+                                   shaderSourceCollectionFactory;
+  std::unique_ptr<MaterialCreator> materialCreator;
+  AssetDirectoryPath               assetDirectoryPath;
 
   void
   SetUp() override
@@ -139,15 +188,24 @@ protected:
       di::bind<IMaterialFactory>().to<MockMaterialFactory>().in(di::singleton),
       di::bind<IMaterialIO>().to<MockMaterialIO>().in(di::singleton),
       di::bind<IFileHandler>().to<MockFileHandler>().in(di::singleton),
+      di::bind<IShaderSourceCollectionFactory>()
+        .to<MockShaderSourceCollectionFactory>()
+        .in(di::singleton),
       di::bind<AssetDirectoryPath>().to(
         AssetDirectoryPath{ "default/asset/directory" }));
 
     materialFactory = injector.create<std::shared_ptr<MockMaterialFactory>>();
     materialIO = injector.create<std::shared_ptr<MockMaterialIO>>();
     fileHandler = injector.create<std::shared_ptr<MockFileHandler>>();
+    shaderSourceCollectionFactory =
+      injector.create<std::shared_ptr<MockShaderSourceCollectionFactory>>();
     assetDirectoryPath = injector.create<AssetDirectoryPath>();
-    materialCreator = std::make_unique<MaterialCreator>(
-      assetDirectoryPath, materialFactory, materialIO, fileHandler);
+    materialCreator =
+      std::make_unique<MaterialCreator>(assetDirectoryPath,
+                                        materialFactory,
+                                        materialIO,
+                                        fileHandler,
+                                        shaderSourceCollectionFactory);
   }
 };
 
@@ -162,7 +220,8 @@ TEST_F(MaterialCreatorTest, CreateMaterialAsset_DefaultPath)
     SaveMaterial(
       _, std::filesystem::path("default/asset/directory/New Material.dmat")));
 
-  materialCreator->CreateMaterialAsset(std::nullopt);
+  materialCreator->CreateMaterialAsset(Dwarf::MaterialType::PbrMaterial,
+                                       std::nullopt);
 }
 
 TEST_F(MaterialCreatorTest, CreateMaterialAsset_SpecifiedPath)
@@ -175,7 +234,8 @@ TEST_F(MaterialCreatorTest, CreateMaterialAsset_SpecifiedPath)
     *materialIO,
     SaveMaterial(_, std::filesystem::path("specified/path/New Material.dmat")));
 
-  materialCreator->CreateMaterialAsset("specified/path");
+  materialCreator->CreateMaterialAsset(Dwarf::MaterialType::PbrMaterial,
+                                       "specified/path");
 }
 
 TEST_F(MaterialCreatorTest, CreateMaterialAsset_FileExists)
@@ -196,5 +256,6 @@ TEST_F(MaterialCreatorTest, CreateMaterialAsset_FileExists)
                            std::filesystem::path(
                              "default/asset/directory/New Material (0).dmat")));
 
-  materialCreator->CreateMaterialAsset(std::nullopt);
+  materialCreator->CreateMaterialAsset(Dwarf::MaterialType::PbrMaterial,
+                                       std::nullopt);
 }

@@ -1,3 +1,4 @@
+#include "Core/Asset/Creation/Material/IMaterialCreator.h"
 #include "pch.h"
 
 #include "Editor/Modules/AssetBrowser/AssetBrowserWindow.h"
@@ -16,6 +17,7 @@ namespace Dwarf
     std::shared_ptr<IMaterialFactory> materialFactory,
     std::shared_ptr<IAssetMetadata>   assetMetadata,
     std::shared_ptr<IMaterialCreator> materialCreator,
+    std::shared_ptr<IShaderCreator>   shaderCreator,
     std::shared_ptr<IFileHandler>     fileHandler,
     std::shared_ptr<ISceneIO>         sceneIO)
     : IGuiModule(ModuleLabel("Asset Browser"),
@@ -32,6 +34,7 @@ namespace Dwarf
     , mMaterialFactory(std::move(materialFactory))
     , mAssetMetadata(std::move(assetMetadata))
     , mMaterialCreator(std::move(materialCreator))
+    , mShaderCreator(std::move(shaderCreator))
     , mFileHandler(std::move(fileHandler))
     , mSceneIo(std::move(sceneIO))
   {
@@ -51,6 +54,7 @@ namespace Dwarf
     std::shared_ptr<IMaterialFactory> materialFactory,
     std::shared_ptr<IAssetMetadata>   assetMetadata,
     std::shared_ptr<IMaterialCreator> materialCreator,
+    std::shared_ptr<IShaderCreator>   shaderCreator,
     std::shared_ptr<IFileHandler>     fileHandler,
     std::shared_ptr<ISceneIO>         sceneIO,
     SerializedModule                  serializedModule)
@@ -69,6 +73,7 @@ namespace Dwarf
     , mMaterialFactory(std::move(materialFactory))
     , mAssetMetadata(std::move(assetMetadata))
     , mMaterialCreator(std::move(materialCreator))
+    , mShaderCreator(std::move(shaderCreator))
     , mFileHandler(std::move(fileHandler))
     , mSceneIo(std::move(sceneIO))
   {
@@ -287,31 +292,55 @@ namespace Dwarf
       {
         if (ImGui::BeginMenu("Material"))
         {
-          // TODO: Make this moddable
-          if (ImGui::MenuItem("Default"))
+          if (ImGui::MenuItem("Pbr"))
           {
-            mMaterialCreator->CreateMaterialAsset(mCurrentDirectory);
+            mMaterialCreator->CreateMaterialAsset(MaterialType::PbrMaterial,
+                                                  mCurrentDirectory);
+          }
+          if (ImGui::MenuItem("Unlit"))
+          {
+            mMaterialCreator->CreateMaterialAsset(MaterialType::UnlitMaterial,
+                                                  mCurrentDirectory);
           }
           ImGui::EndMenu();
         }
 
         if (ImGui::BeginMenu("Shader"))
         {
-          if (ImGui::MenuItem("Vertex"))
+          if (ImGui::BeginMenu("Vertex"))
           {
-            // TODO: Reimplement this
-            // FileHandler::Copy(Shader::GetDefaultShaderPath() /
-            // "default.vert",
-            //                   mCurrentDirectory / "New vertex shader.vert");
+            if (ImGui::MenuItem("Pbr"))
+            {
+              mShaderCreator->CreateShaderAsset(ShaderType::VertexType,
+                                                ShaderSource::PbrSource,
+                                                mCurrentDirectory);
+            }
+
+            if (ImGui::MenuItem("Unlit"))
+            {
+              mShaderCreator->CreateShaderAsset(ShaderType::VertexType,
+                                                ShaderSource::UnlitSource,
+                                                mCurrentDirectory);
+            }
+            ImGui::EndMenu();
           }
 
-          if (ImGui::MenuItem("Fragment"))
+          if (ImGui::BeginMenu("Fragment"))
           {
-            // TODO: Reimplement this
-            // FileHandler::Copy(Shader::GetDefaultShaderPath() /
-            // "default.frag",
-            //                   mCurrentDirectory / "New fragment
-            //                   shader.frag");
+            if (ImGui::MenuItem("Pbr"))
+            {
+              mShaderCreator->CreateShaderAsset(ShaderType::FragmentType,
+                                                ShaderSource::PbrSource,
+                                                mCurrentDirectory);
+            }
+
+            if (ImGui::MenuItem("Unlit"))
+            {
+              mShaderCreator->CreateShaderAsset(ShaderType::FragmentType,
+                                                ShaderSource::UnlitSource,
+                                                mCurrentDirectory);
+            }
+            ImGui::EndMenu();
           }
 
           ImGui::EndMenu();
