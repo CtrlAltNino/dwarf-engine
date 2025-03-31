@@ -1,6 +1,6 @@
-#include "Core/Asset/Creation/Material/IMaterialCreator.h"
 #include "pch.h"
 
+#include "Core/Asset/Creation/Material/IMaterialCreator.h"
 #include "Editor/Modules/AssetBrowser/AssetBrowserWindow.h"
 #include "UI/DwarfUI.h"
 

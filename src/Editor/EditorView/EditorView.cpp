@@ -9,6 +9,7 @@
 #include <nfd.h>
 
 #define EDITOR_VIEW_SERIALIZATION_INTERVAL_SECONDS (5)
+
 namespace Dwarf
 {
   EditorView::EditorView(GraphicsApi                        graphicsApi,

@@ -1,9 +1,6 @@
 #pragma once
 
-#include "Core/Asset/Creation/Material/IMaterialCreator.h"
 #include "Core/Asset/Database/IAssetDatabase.h"
-#include "Core/Rendering/Material/IMaterialFactory.h"
-#include "Core/Rendering/Material/IO/IMaterialIO.h"
 #include "IShaderCreator.h"
 #include "Utilities/FileHandler/IFileHandler.h"
 

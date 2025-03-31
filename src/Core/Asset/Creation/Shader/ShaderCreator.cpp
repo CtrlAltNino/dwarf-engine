@@ -1,7 +1,7 @@
-#include "Core/Asset/Database/IAssetDatabase.h"
-#include "Platform/OpenGL/OpenGLUtilities.h"
 #include "pch.h"
 
+#include "Core/Asset/Database/IAssetDatabase.h"
+#include "Platform/OpenGL/OpenGLUtilities.h"
 #include "ShaderCreator.h"
 
 namespace Dwarf

@@ -1,10 +1,8 @@
-#include "IMaterialCreator.h"
 #include "pch.h"
 
 #include "Core/Rendering/Material/IO/IMaterialIO.h"
+#include "IMaterialCreator.h"
 #include "MaterialCreator.h"
-
-#include <utility>
 
 namespace Dwarf
 {
