@@ -148,9 +148,6 @@ namespace Dwarf
     std::shared_ptr<TextureContainer> textureData =
       mImageFileLoader->LoadImageFile(texturePath);
 
-    textureData->Parameters.MinFilter = TextureMinFilter::LINEAR_MIPMAP_LINEAR;
-    textureData->Parameters.MipMapped = true;
-
     return LoadTexture(textureData);
   }
 

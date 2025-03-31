@@ -128,8 +128,17 @@ namespace Dwarf
           textureData->Parameters.MagFilter = TextureMagFilter::NEAREST;
           break;
         case Bilinear:
-          textureData->Parameters.MinFilter = TextureMinFilter::LINEAR;
-          textureData->Parameters.MagFilter = TextureMagFilter::LINEAR;
+          if (textureData->Parameters.MipMapped)
+          {
+            textureData->Parameters.MinFilter =
+              TextureMinFilter::LINEAR_MIPMAP_LINEAR;
+            textureData->Parameters.MagFilter = TextureMagFilter::LINEAR;
+          }
+          else
+          {
+            textureData->Parameters.MinFilter = TextureMinFilter::LINEAR;
+            textureData->Parameters.MagFilter = TextureMagFilter::LINEAR;
+          }
           break;
       }
     }

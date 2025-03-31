@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Utilities/ISerializable.h"
+#include <cmath>
 #include <cstdint>
 #include <glm/fwd.hpp>
 #include <glm/glm.hpp>
@@ -115,6 +116,12 @@ namespace Dwarf
     Mirror,
     Repeat
   };
+
+  inline auto
+  CalculateMipLevels(glm::ivec2 size) -> uint32_t
+  {
+    return 1 + (uint32_t)std::floor(std::log2(std::max(size.x, size.y)));
+  }
 
   struct TextureImportSettings : public ISerializable
   {

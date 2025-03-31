@@ -423,9 +423,7 @@ namespace Dwarf
           else
           {
             int mipLevels =
-              data->Parameters.MipMapped
-                ? std::floor(std::log2(std::max(size.x, size.y))) + 1
-                : 1;
+              data->Parameters.MipMapped ? (int)CalculateMipLevels(size) : 1;
             glTextureStorage2D(mId, mipLevels, internalFormat, size.x, size.y);
             OpenGLUtilities::CheckOpenGLError(
               "glTextureStorage2D", "OpenGLTexture", mLogger);

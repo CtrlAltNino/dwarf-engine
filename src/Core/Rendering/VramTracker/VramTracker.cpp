@@ -136,8 +136,29 @@ namespace Dwarf
   VramTracker::AddTextureMemory(std::shared_ptr<TextureContainer> texture)
     -> size_t
   {
-    size_t memory = CalculateTextureMemory(
-      texture->Format, texture->DataType, texture->Size, texture->Samples);
+    size_t   memory = 0;
+    uint32_t mipLevels =
+      texture->Parameters.MipMapped
+        ? CalculateMipLevels(std::get<glm::ivec2>(texture->Size))
+        : 1;
+
+    if (mipLevels > 1)
+    {
+      glm::ivec2 currentResolution = std::get<glm::ivec2>(texture->Size);
+      for (int i = 0; i < mipLevels; i++)
+      {
+        memory += CalculateTextureMemory(texture->Format,
+                                         texture->DataType,
+                                         currentResolution,
+                                         texture->Samples);
+        currentResolution /= 2;
+      }
+    }
+    else
+    {
+      memory += CalculateTextureMemory(
+        texture->Format, texture->DataType, texture->Size, texture->Samples);
+    }
 
     mTextureMemory += memory;
 
@@ -164,8 +185,29 @@ namespace Dwarf
   void
   VramTracker::RemoveTextureMemory(std::shared_ptr<TextureContainer> texture)
   {
-    size_t memory = CalculateTextureMemory(
-      texture->Format, texture->DataType, texture->Size, texture->Samples);
+    size_t   memory = 0;
+    uint32_t mipLevels =
+      texture->Parameters.MipMapped
+        ? CalculateMipLevels(std::get<glm::ivec2>(texture->Size))
+        : 1;
+
+    if (mipLevels > 1)
+    {
+      glm::ivec2 currentResolution = std::get<glm::ivec2>(texture->Size);
+      for (int i = 0; i < mipLevels; i++)
+      {
+        memory += CalculateTextureMemory(texture->Format,
+                                         texture->DataType,
+                                         currentResolution,
+                                         texture->Samples);
+        currentResolution /= 2;
+      }
+    }
+    else
+    {
+      memory += CalculateTextureMemory(
+        texture->Format, texture->DataType, texture->Size, texture->Samples);
+    }
 
     mTextureMemory -= memory;
   }

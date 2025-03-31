@@ -148,10 +148,6 @@ namespace Dwarf
         }
       }
 
-      job->Container->Parameters.MinFilter =
-        TextureMinFilter::LINEAR_MIPMAP_LINEAR;
-      job->Container->Parameters.MipMapped = true;
-
       mLogger->LogInfo(
         Log("Uploading texture into GPU", "TextureLoadingWorker"));
 
