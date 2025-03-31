@@ -560,6 +560,18 @@ namespace Dwarf
       }
     }
 
+    std::filesystem::path unlitShaderDir = shaderDir / "unlit" / graphicsApiDir;
+
+    for (const auto& directoryEntry :
+         std::filesystem::directory_iterator(unlitShaderDir))
+    {
+      if (directoryEntry.is_regular_file() &&
+          directoryEntry.path().extension() != ".dmeta")
+      {
+        Import(directoryEntry.path());
+      }
+    }
+
     std::filesystem::path fullscreenQuadShaderPath =
       shaderDir / "fullscreen_quad" / graphicsApiDir / "fullscreen_quad.vert";
 

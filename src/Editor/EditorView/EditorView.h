@@ -1,5 +1,6 @@
 #pragma once
 #include "Core/Asset/Creation/Material/IMaterialCreator.h"
+#include "Core/Asset/Creation/Shader/IShaderCreator.h"
 #include "Core/Asset/Database/IAssetDatabase.h"
 #include "Core/Base.h"
 #include "Core/Scene/IO/ISceneIO.h"
@@ -27,6 +28,7 @@ namespace Dwarf
     std::shared_ptr<ISceneFactory>     mSceneFactory;
     std::shared_ptr<IAssetDatabase>    mAssetDatabase;
     std::shared_ptr<IMaterialCreator>  mMaterialCreator;
+    std::shared_ptr<IShaderCreator>    mShaderCreator;
     std::shared_ptr<IProjectSettings>  mProjectSettings;
     std::shared_ptr<ILoadedScene>      mLoadedScene;
     std::shared_ptr<IEditorStats>      mEditorStats;
@@ -70,6 +72,7 @@ namespace Dwarf
                         std::shared_ptr<ISceneFactory>     sceneFactory,
                         std::shared_ptr<IAssetDatabase>    assetDatabase,
                         std::shared_ptr<IMaterialCreator>  materialCreator,
+                        std::shared_ptr<IShaderCreator>    shaderCreator,
                         std::shared_ptr<IEditorStats>      editorStats);
 
     ~EditorView() override;

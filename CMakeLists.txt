@@ -16,7 +16,7 @@ set(testTarget dwarf-test)
 set(CMAKE_PCH_INSTANTIATE_TEMPLATES ON)
 set(VCPKG_MAX_CONCURRENCY 8)
 add_compile_options(-Wno-unused-command-line-argument)
-add_compile_definitions(BOOST_DI_CFG_CTOR_LIMIT_SIZE=15)
+add_compile_definitions(BOOST_DI_CFG_CTOR_LIMIT_SIZE=20)
 
 # Platform dependant settings
 IF(WIN32)

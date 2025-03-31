@@ -6,6 +6,7 @@
 #include "Core/Asset/AssetReimporter/IAssetReimporter.h"
 #include "Core/Asset/Creation/Material/IMaterialCreator.h"
 #include "Core/Asset/Creation/Material/MaterialCreator.h"
+#include "Core/Asset/Creation/Shader/ShaderCreator.h"
 #include "Core/Asset/Database/AssetDatabase.h"
 #include "Core/Asset/Database/AssetDirectoryListener.h"
 #include "Core/Asset/Database/IAssetDatabase.h"
@@ -104,6 +105,7 @@
 #include "Window/IWindow.h"
 #include "Window/SDL3Window.h"
 
+
 namespace Dwarf
 {
   auto
@@ -190,6 +192,7 @@ namespace Dwarf
           boost::di::extension::shared),
           boost::di::bind<ISceneIO>.to<SceneIO>().in(boost::di::extension::shared),
           boost::di::bind<IMaterialCreator>.to<MaterialCreator>().in(boost::di::extension::shared),
+          boost::di::bind<IShaderCreator>.to<ShaderCreator>().in(boost::di::extension::shared),
           boost::di::bind<IRendererApiFactory>.to<RendererApiFactory>().in(boost::di::extension::shared),
           boost::di::bind<IRenderingPipelineFactory>.to<RenderingPipelineFactory>().in(boost::di::extension::shared),
           boost::di::bind<IMaterialPreview>.to<MaterialPreview>().in(boost::di::extension::shared),

@@ -21,6 +21,7 @@ namespace Dwarf
                          std::shared_ptr<ISceneFactory>     sceneFactory,
                          std::shared_ptr<IAssetDatabase>    assetDatabase,
                          std::shared_ptr<IMaterialCreator>  materialCreator,
+                         std::shared_ptr<IShaderCreator>    shaderCreator,
                          std::shared_ptr<IEditorStats>      editorStats)
     : mGraphicsApi(graphicsApi)
     , mLogger(std::move(logger))
@@ -32,6 +33,7 @@ namespace Dwarf
     , mSceneFactory(std::move(sceneFactory))
     , mAssetDatabase(std::move(assetDatabase))
     , mMaterialCreator(std::move(materialCreator))
+    , mShaderCreator(std::move(shaderCreator))
     , mEditorStats(std::move(editorStats))
   {
     mLogger->LogDebug(Log("Creating EditorView", "EditorView"));
@@ -204,9 +206,60 @@ namespace Dwarf
       }
       if (ImGui::BeginMenu("Assets"))
       {
-        if (ImGui::MenuItem("Create new material"))
+        if (ImGui::BeginMenu("New"))
         {
-          mMaterialCreator->CreateMaterialAsset();
+          if (ImGui::BeginMenu("Material"))
+          {
+            if (ImGui::MenuItem("Pbr"))
+            {
+              mMaterialCreator->CreateMaterialAsset(MaterialType::PbrMaterial);
+            }
+            if (ImGui::MenuItem("Unlit"))
+            {
+              mMaterialCreator->CreateMaterialAsset(
+                MaterialType::UnlitMaterial);
+            }
+            ImGui::EndMenu();
+          }
+
+          if (ImGui::BeginMenu("Shader"))
+          {
+            if (ImGui::BeginMenu("Vertex"))
+            {
+              if (ImGui::MenuItem("Pbr"))
+              {
+                mShaderCreator->CreateShaderAsset(ShaderType::VertexType,
+                                                  ShaderSource::PbrSource);
+              }
+
+              if (ImGui::MenuItem("Unlit"))
+              {
+                mShaderCreator->CreateShaderAsset(ShaderType::VertexType,
+                                                  ShaderSource::UnlitSource);
+              }
+              ImGui::EndMenu();
+            }
+
+            if (ImGui::BeginMenu("Fragment"))
+            {
+              if (ImGui::MenuItem("Pbr"))
+              {
+                mShaderCreator->CreateShaderAsset(ShaderType::FragmentType,
+                                                  ShaderSource::PbrSource);
+              }
+
+              if (ImGui::MenuItem("Unlit"))
+              {
+                mShaderCreator->CreateShaderAsset(ShaderType::FragmentType,
+                                                  ShaderSource::UnlitSource);
+              }
+              ImGui::EndMenu();
+            }
+
+            ImGui::EndMenu();
+          }
+
+          ImGui::EndMenu();
         }
         ImGui::MenuItem("Import Assets");
         if (ImGui::MenuItem("Reimport Assets"))

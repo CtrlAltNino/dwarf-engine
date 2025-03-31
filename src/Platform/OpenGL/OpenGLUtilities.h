@@ -79,6 +79,18 @@ namespace Dwarf
     }
 
     static auto
+    GetPbrShaderPath() -> std::filesystem::path
+    {
+      return "data/engine/shaders/pbr/opengl";
+    }
+
+    static auto
+    GetUnlitShaderPath() -> std::filesystem::path
+    {
+      return "data/engine/shaders/unlit/opengl";
+    }
+
+    static auto
     GetDeviceInfo() -> std::string
     {
       std::string deviceInfo;
