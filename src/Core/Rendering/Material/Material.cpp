@@ -46,7 +46,7 @@ namespace Dwarf
   void
   Material::GenerateShaderParameters()
   {
-    mShaderParameters = std::move(mShader->CreateParameters());
+    mShaderParameters->PatchParameters(mShader->CreateParameters());
   }
 
   auto

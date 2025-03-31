@@ -22,14 +22,25 @@ namespace Dwarf
     /**
      * @brief Gets a parameter from the collection.
      */
-    ParameterValue&
-    GetParameter(const std::string& name) override;
+    auto
+    GetParameter(const std::string& name) -> ParameterValue& override;
 
     /**
      * @brief Gets the list of parameter identifiers.
      */
     [[nodiscard]] auto
     GetParameterIdentifiers() const -> const std::vector<std::string> override;
+
+    /**
+     * @brief Patches the current shader parameters with another collection.
+     * Adds parameters that weren't present, and removes the ones that are not
+     * present anymore.
+     *
+     * @param parameters Parameter collection to apply
+     */
+    void
+    PatchParameters(
+      const std::unique_ptr<IShaderParameterCollection>& parameters) override;
 
     /**
      * @brief Removes a parameter

@@ -32,6 +32,32 @@ namespace Dwarf
   }
 
   void
+  ShaderParameterCollection::PatchParameters(
+    const std::unique_ptr<IShaderParameterCollection>& parameters)
+  {
+    auto currentIdentifiers = GetParameterIdentifiers();
+    auto newIdentifiers = parameters->GetParameterIdentifiers();
+
+    // Add new parameters
+    for (const auto& identifier : newIdentifiers)
+    {
+      if (!HasParameter(identifier))
+      {
+        SetParameter(identifier, parameters->GetParameter(identifier));
+      }
+    }
+
+    // Removing parameters that aren't present anymore
+    for (const auto& identifier : currentIdentifiers)
+    {
+      if (!parameters->HasParameter(identifier))
+      {
+        RemoveParameter(identifier);
+      }
+    }
+  }
+
+  void
   ShaderParameterCollection::RemoveParameter(std::string const& name)
   {
     mParameters.erase(name);
