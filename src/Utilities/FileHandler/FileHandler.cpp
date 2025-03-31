@@ -187,7 +187,7 @@ namespace Dwarf
 
     return content;
 #elif __linux__
-    int fd = open(path.string().c_str(), O_RDONLY);
+    int fd = open(filePath.string().c_str(), O_RDONLY);
     if (fd == -1)
     {
       perror("open failed");
@@ -204,7 +204,7 @@ namespace Dwarf
 
     if (bytesRead != fileSize)
     {
-      std::cerr << "Error reading file: " << path << std::endl;
+      std::cerr << "Error reading file: " << filePath << std::endl;
       return {};
     }
 
