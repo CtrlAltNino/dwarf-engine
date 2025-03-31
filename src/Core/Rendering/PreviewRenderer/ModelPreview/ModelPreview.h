@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Asset/AssetReference/IAssetReference.h"
+#include "Core/Asset/Shader/ShaderSourceCollection/IShaderSourceCollectionFactory.h"
 #include "Core/Rendering/Framebuffer/IFramebufferFactory.h"
 #include "Core/Rendering/Material/IMaterial.h"
 #include "Core/Rendering/Material/IMaterialFactory.h"
@@ -22,6 +23,8 @@ namespace Dwarf
     std::shared_ptr<IMeshFactory>       mMeshFactory;
     std::shared_ptr<IMeshBufferFactory> mMeshBufferFactory;
     std::unique_ptr<IMeshBuffer>        mPreviewMeshBuffer;
+    std::shared_ptr<IShaderSourceCollectionFactory>
+      mShaderSourceCollectionFactory;
 
   public:
     ModelPreview(std::shared_ptr<IDwarfLogger>               logger,
@@ -32,7 +35,9 @@ namespace Dwarf
                  std::shared_ptr<IEditorStats>               editorStats,
                  std::shared_ptr<IInputManager>              inputManager,
                  std::shared_ptr<IMeshFactory>               meshFactory,
-                 std::shared_ptr<IMeshBufferFactory>         meshBufferFactory);
+                 std::shared_ptr<IMeshBufferFactory>         meshBufferFactory,
+                 std::shared_ptr<IShaderSourceCollectionFactory>
+                   shaderSourceCollectionFactory);
     ~ModelPreview() override;
 
     void

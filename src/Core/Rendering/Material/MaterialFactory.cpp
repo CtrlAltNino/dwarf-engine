@@ -35,7 +35,6 @@ namespace Dwarf
   auto
   MaterialFactory::CreateDefaultMaterial() const -> std::unique_ptr<IMaterial>
   {
-    // TODO: Use default shader
     mLogger->LogDebug(Log("Creating default material", "MaterialFactory"));
     return std::make_unique<Material>(
       MaterialProperties(),

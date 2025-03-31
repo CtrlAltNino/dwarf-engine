@@ -1,14 +1,22 @@
-#version 330 core
+#version 450 core
+
+layout (location = 0) in vec3 vertex;
+layout (location = 1) in vec3 normal;
+
 uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
-layout (location = 0) in vec3 vertex;
-layout (location = 1) in vec3 normal;
-out vec3 normalWorld;
-out vec3 worldPos;
+
+out vec3 FragPos;
+out vec3 FragNormal;
 
 void main(){
-	gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(vertex.x, vertex.y, vertex.z, 1.0);
-	normalWorld = normalize((transpose(inverse(modelMatrix)) * vec4(normal, 0.0f)).xyz);
-	worldPos = (modelMatrix * vec4(vertex.x, vertex.y, vertex.z, 1.0)).xyz;
+    // Transform vertex position into world space
+    FragPos = vec3(modelMatrix * vec4(vertex, 1.0));
+
+    // Transform normal correctly (normal matrix is the inverse transpose of model)
+    mat3 normalMatrix = transpose(inverse(mat3(modelMatrix)));
+    FragNormal = normalize(normalMatrix * normal);
+
+    gl_Position = projectionMatrix * viewMatrix * modelMatrix * vec4(vertex, 1.0);
 }
