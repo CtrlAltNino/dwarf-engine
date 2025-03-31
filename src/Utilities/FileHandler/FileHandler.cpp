@@ -1,6 +1,7 @@
 #include "pch.h"
 
 #include "Utilities/FileHandler/FileHandler.h"
+#include <filesystem>
 #include <sago/platform_folders.h>
 
 #ifdef _WIN32
@@ -113,12 +114,10 @@ namespace Dwarf
   /// @param filePath Absolute path to a file.
   /// @return True if file exists, false if not.
   auto
-  FileHandler::FileExists(std::filesystem::path const& filePath) const -> bool
+  FileHandler::FileExists(const std::filesystem::path& filePath) const -> bool
   {
     mLogger->LogDebug(Log("FileExists", "FileHandler"));
-    std::filesystem::path copy = filePath;
-    std::ifstream         fileStream(copy.make_preferred(), std::ios::in);
-    return fileStream.is_open();
+    return std::filesystem::exists(filePath);
   }
 
   /// @brief Reads a file and returns the content.
@@ -128,26 +127,89 @@ namespace Dwarf
   FileHandler::ReadFile(std::filesystem::path const& filePath) const
     -> std::string
   {
-    mLogger->LogDebug(Log("ReadFile", "FileHandler"));
-    std::string   content;
-    std::ifstream fileStream(filePath, std::ios::in);
+#ifdef _WIN32
+    HANDLE hFile =
+      CreateFileA(filePath.string().c_str(),
+                  GENERIC_READ,
+                  FILE_SHARE_READ,
+                  NULL,
+                  OPEN_EXISTING,
+                  FILE_FLAG_NO_BUFFERING | FILE_FLAG_SEQUENTIAL_SCAN,
+                  NULL);
 
-    if (!fileStream.is_open())
+    if (hFile == INVALID_HANDLE_VALUE)
     {
-      std::cerr << "Could not read file " << filePath
-                << ". File does not exist." << "\n";
-      return "";
+      std::cerr << "Error opening file: " << filePath << " (" << GetLastError()
+                << ")" << "\n";
+      return {};
     }
 
-    std::string line;
-    while (!fileStream.eof())
+    // Get file size
+    LARGE_INTEGER fileSize;
+    if (!GetFileSizeEx(hFile, &fileSize))
     {
-      std::getline(fileStream, line);
-      content.append(line + "\n");
+      std::cerr << "Error getting file size: " << GetLastError() << "\n";
+      CloseHandle(hFile);
+      return {};
     }
 
-    fileStream.close();
+    constexpr size_t sectorSize = 4096; // Adjust based on system
+    size_t           alignedSize =
+      (fileSize.QuadPart + sectorSize - 1) & ~(sectorSize - 1);
+
+    // Allocate sector-aligned memory
+    void* rawBuffer = _aligned_malloc(alignedSize, sectorSize);
+    if (rawBuffer == nullptr)
+    {
+      std::cerr << "Memory allocation failed" << "\n";
+      CloseHandle(hFile);
+      return {};
+    }
+
+    DWORD bytesRead = 0;
+    if (!::ReadFile(
+          hFile, rawBuffer, static_cast<DWORD>(alignedSize), &bytesRead, NULL))
+    {
+      std::cerr << "Error reading file: " << GetLastError() << "\n";
+      _aligned_free(rawBuffer);
+      CloseHandle(hFile);
+      return {};
+    }
+
+    CloseHandle(hFile);
+
+    // Copy only the actual file size
+    /*std::vector<unsigned char> buffer(static_cast<unsigned char*>(rawBuffer),
+                                      static_cast<unsigned char*>(rawBuffer) +
+                                        fileSize.QuadPart);*/
+    std::string content(static_cast<char*>(rawBuffer), fileSize.QuadPart);
+    _aligned_free(rawBuffer);
+
     return content;
+#elif __linux__
+    int fd = open(path.string().c_str(), O_RDONLY);
+    if (fd == -1)
+    {
+      perror("open failed");
+      return {};
+    }
+
+    // Get file size
+    off_t fileSize = lseek(fd, 0, SEEK_END);
+    lseek(fd, 0, SEEK_SET);
+
+    std::vector<char> buffer(fileSize);
+    ssize_t           bytesRead = read(fd, buffer.data(), fileSize);
+    close(fd);
+
+    if (bytesRead != fileSize)
+    {
+      std::cerr << "Error reading file: " << path << std::endl;
+      return {};
+    }
+
+    return std::string(buffer.data(), fileSize);
+#endif
   }
 
   /// @brief Writes a string to a file at a given path.

@@ -22,7 +22,7 @@ namespace Dwarf
     /// @param filePath Absolute path to a file.
     /// @return True if file exists, false if not.
     [[nodiscard]] virtual auto
-    FileExists(std::filesystem::path const& filePath) const -> bool = 0;
+    FileExists(const std::filesystem::path& filePath) const -> bool = 0;
 
     /// @brief Reads a file and returns the content.
     /// @param filePath Absolute path to a file.
