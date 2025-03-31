@@ -29,8 +29,9 @@ namespace Dwarf
   };
 
   // TODO: Replace by getting the enum names with magic_enum?
-  inline const std::array<std::string, 7> parameterTypeNames = {
-    "Boolean", "Integer", "Float", "2D Texture", "Vector2", "Vector3", "Vector4"
+  inline const std::array<std::string, 8> parameterTypeNames = {
+    "Boolean",    "Integer", "Unsigned Integer", "Float",
+    "2D Texture", "Vector2", "Vector3",          "Vector4"
   };
 
   inline const std::array<std::string, 8> reservedParameterNames = {

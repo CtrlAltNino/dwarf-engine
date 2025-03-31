@@ -350,7 +350,7 @@ namespace Dwarf
       if (ImGui::BeginCombo("##paramType",
                             parameterTypeNames[selectedParameterType].c_str()))
       {
-        for (int i = 0; i < 7; i++)
+        for (int i = 0; i < parameterTypeNames.size(); i++)
         {
           if (ImGui::Selectable(parameterTypeNames[i].c_str(),
                                 i == selectedParameterType))
