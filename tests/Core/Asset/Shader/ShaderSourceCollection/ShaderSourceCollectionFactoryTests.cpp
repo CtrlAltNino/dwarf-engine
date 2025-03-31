@@ -1,11 +1,12 @@
-#include <gtest/gtest.h>
-#include <gmock/gmock.h>
-#include "Core/Asset/Shader/ShaderSourceCollection/ShaderSourceCollectionFactory.h"
 #include "Core/Asset/AssetReference/IAssetReference.h"
-#include "Core/Asset/Shader/ShaderSourceCollection/ShaderSourceCollection.h"
 #include "Core/Asset/Database/IAssetDatabase.h"
+#include "Core/Asset/Shader/ShaderSourceCollection/ShaderSourceCollection.h"
+#include "Core/Asset/Shader/ShaderSourceCollection/ShaderSourceCollectionFactory.h"
+#include <gmock/gmock.h>
+#include <gtest/gtest.h>
 #include <memory>
 #include <nlohmann/json.hpp>
+
 
 using namespace Dwarf;
 using namespace testing;
@@ -15,6 +16,7 @@ class MockAssetDatabase : public IAssetDatabase
 {
 public:
   MOCK_METHOD(UUID, Import, (const std::filesystem::path&), (override));
+  MOCK_METHOD(void, ImportDialog, (), (override));
   MOCK_METHOD(bool, Exists, (const UUID&), (override));
   MOCK_METHOD(bool, Exists, (const std::filesystem::path&), (override));
   MOCK_METHOD(void, Clear, (), (override));

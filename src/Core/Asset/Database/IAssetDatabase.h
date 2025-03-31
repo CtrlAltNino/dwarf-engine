@@ -29,6 +29,12 @@ namespace Dwarf
     Import(std::filesystem::path const& assetPath) -> UUID = 0;
 
     /**
+     * @brief Opens a Dialog to import assets
+     */
+    virtual void
+    ImportDialog() = 0;
+
+    /**
      * @brief Checks if an asset with a given UID exists in the database.
      * @param uid UID of the asset.
      */

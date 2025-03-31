@@ -93,6 +93,12 @@ namespace Dwarf
     Import(const std::filesystem::path& assetPath) -> UUID override;
 
     /**
+     * @brief Opens a Dialog to import assets
+     */
+    void
+    ImportDialog() override;
+
+    /**
      * @brief Checks if an asset with a given UID exists in the database.
      * @param uid UID of the asset.
      */

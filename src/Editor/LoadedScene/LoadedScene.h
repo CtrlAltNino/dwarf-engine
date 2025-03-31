@@ -3,21 +3,33 @@
 #include "Editor/LoadedScene/ILoadedScene.h"
 #include "Logging/IDwarfLogger.h"
 #include "Project/IProjectSettings.h"
+#include "Window/IWindow.h"
 
 namespace Dwarf
 {
   class LoadedScene : public ILoadedScene
   {
   private:
+    GraphicsApi                        mGraphicsApi;
     std::shared_ptr<IDwarfLogger>      mLogger;
     std::unique_ptr<IScene>            mScene;
+    std::shared_ptr<IWindow>           mWindow;
     std::shared_ptr<IProjectSettings>  mProjectSettings;
     std::vector<std::function<void()>> mSceneLoadCallback;
     std::vector<std::function<void()>> mSceneUnloadCallback;
     std::vector<std::function<void()>> mSceneChangeCallback;
 
+    /**
+     * @brief Updates the window title when a scene change occurs
+     *
+     */
+    void
+    UpdateWindowTitle();
+
   public:
-    LoadedScene(std::shared_ptr<IDwarfLogger>     logger,
+    LoadedScene(GraphicsApi                       graphicsApi,
+                std::shared_ptr<IDwarfLogger>     logger,
+                std::shared_ptr<IWindow>          window,
                 std::shared_ptr<IProjectSettings> projectSettings);
     ~LoadedScene() override;
 

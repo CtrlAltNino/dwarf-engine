@@ -16,7 +16,7 @@ namespace Dwarf
 
   EditorSelection::~EditorSelection()
   {
-    mLogger->LogDebug(Log("EditorSelection created.", "EditorSelection"));
+    mLogger->LogDebug(Log("EditorSelection destroyed.", "EditorSelection"));
   }
 
   void

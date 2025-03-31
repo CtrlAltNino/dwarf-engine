@@ -7,6 +7,7 @@
 #include "Core/Base.h"
 #include "Core/GenericComponents.h"
 #include "IAssetDatabase.h"
+#include <nfd.hpp>
 
 namespace Dwarf
 {
@@ -293,6 +294,49 @@ namespace Dwarf
     return mAssetReferenceFactory
       ->CreateNew(mRegistry.create(), mRegistry, newId, assetPath, fileName)
       ->GetUID();
+  }
+
+  void
+  AssetDatabase::ImportDialog()
+  {
+    // initialize NFD
+    NFD::Guard nfdGuard;
+    // auto-freeing memory
+    NFD::UniquePathSet       outPaths;
+    const nfdu8filteritem_t* filterList = nullptr;
+    nfdresult_t result = NFD::OpenDialogMultiple(outPaths, filterList);
+
+    if (result == NFD_OKAY)
+    {
+      std::vector<std::filesystem::path> paths;
+      nfdpathsetsize_t                   count = 0;
+      NFD::PathSet::Count(outPaths, count);
+
+      for (nfdpathsetsize_t i = 0; i < count; ++i)
+      {
+        NFD::UniquePathSetPath path;
+        NFD::PathSet::GetPath(outPaths, i, path);
+        paths.emplace_back(path.get());
+      }
+
+      for (const auto& path : paths)
+      {
+        if (!mFileHandler->FileExists(mAssetDirectoryPath / path.filename()) &&
+            mFileHandler->FileExists(path))
+        {
+          mFileHandler->Copy(path, mAssetDirectoryPath / path.filename());
+        }
+      }
+    }
+    else if (result == NFD_CANCEL)
+    {
+      mLogger->LogInfo(Log("User pressed cancel", "AssetDatabase"));
+    }
+    else
+    {
+      mLogger->LogError(
+        Log(fmt::format("Error: {}\n", NFD_GetError()), "AssetDatabase"));
+    }
   }
 
   auto

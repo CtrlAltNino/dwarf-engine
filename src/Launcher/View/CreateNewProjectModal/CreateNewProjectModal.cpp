@@ -1,7 +1,7 @@
 #include "pch.h"
 
 #include "CreateNewProjectModal.h"
-#include <nfd.h>
+#include <nfd.hpp>
 
 namespace Dwarf
 {
@@ -140,21 +140,16 @@ namespace Dwarf
         ImGui::PushStyleVar(ImGuiStyleVar_FramePadding, ImVec2(0, 0));
         if (ImGui::Button("...", ImVec2(width, 25)))
         {
-          // Directory Dialog
-          // File Dialog um einen Pfad zu kriegen
-          // Im Pfad nach einer projectSettings.dproj suchen
-          // Projectinformation (Name, Pfad, letzte Modifikationszeit)
-
-          nfdu8char_t*          outPath = NULL;
-          nfdpickfolderu8args_t args = { 0 };
-          args.defaultPath = (const nfdu8char_t*)newProjectPath.c_str();
-          // nfdu8
-          nfdresult_t result = NFD_PickFolderU8_With(&outPath, &args);
+          // initialize NFD
+          NFD::Guard nfdGuard;
+          // auto-freeing memory
+          NFD::UniquePath outPath;
+          // show the dialog
+          nfdresult_t result = NFD::PickFolder(outPath);
 
           if (result == NFD_OKAY)
           {
-            newProjectPath = std::string(outPath);
-            free(outPath);
+            newProjectPath = std::string(outPath.get());
           }
           else if (result == NFD_CANCEL)
           {

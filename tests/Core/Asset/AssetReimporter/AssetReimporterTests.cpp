@@ -26,6 +26,7 @@ public:
               Import,
               (std::filesystem::path const& assetPath),
               (override));
+  MOCK_METHOD(void, ImportDialog, (), (override));
   MOCK_METHOD(bool, Exists, (const UUID& uid), (override));
   MOCK_METHOD(bool, Exists, (const std::filesystem::path& path), (override));
   MOCK_METHOD(void, Clear, (), (override));

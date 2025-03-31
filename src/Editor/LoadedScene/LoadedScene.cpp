@@ -4,9 +4,13 @@
 
 namespace Dwarf
 {
-  LoadedScene::LoadedScene(std::shared_ptr<IDwarfLogger>     logger,
+  LoadedScene::LoadedScene(GraphicsApi                       graphicsApi,
+                           std::shared_ptr<IDwarfLogger>     logger,
+                           std::shared_ptr<IWindow>          window,
                            std::shared_ptr<IProjectSettings> projectSettings)
-    : mLogger(std::move(logger))
+    : mGraphicsApi(graphicsApi)
+    , mLogger(std::move(logger))
+    , mWindow(std::move(window))
     , mProjectSettings(std::move(projectSettings))
   {
     mLogger->LogDebug(Log("LoadedScene created", "LoadedScene"));
@@ -38,11 +42,13 @@ namespace Dwarf
       mLogger->LogDebug(
         Log(fmt::format("Setting scene: {}", mScene->GetProperties().GetName()),
             "LoadedScene"));
-      if (mScene->GetProperties().GetAssetID().has_value())
+      if (mScene->GetProperties().GetAssetId().has_value())
       {
         mProjectSettings->UpdateLastOpenedScene(
-          mScene->GetProperties().GetAssetID().value());
+          mScene->GetProperties().GetAssetId().value());
       }
+
+      UpdateWindowTitle();
 
       for (auto& callback : mSceneLoadCallback)
       {
@@ -53,6 +59,20 @@ namespace Dwarf
     {
       mLogger->LogDebug(Log("Unloading scene", "LoadedScene"));
     }
+  }
+
+  void
+  LoadedScene::UpdateWindowTitle()
+  {
+    std::string windowTitle = "Dwarf Engine Editor - ";
+    windowTitle.append(mProjectSettings->GetProjectName());
+    windowTitle.append(" - ");
+    windowTitle.append(GetScene().GetProperties().GetName());
+    windowTitle.append(" <");
+    windowTitle.append(magic_enum::enum_name(mGraphicsApi));
+    windowTitle.append(">");
+
+    mWindow->SetWindowTitle(windowTitle);
   }
 
   auto

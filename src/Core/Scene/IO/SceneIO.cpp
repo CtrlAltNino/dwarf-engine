@@ -2,7 +2,7 @@
 
 #include "Core/Asset/AssetReference/IAssetReference.h"
 #include "SceneIO.h"
-#include <nfd.h>
+#include <nfd.hpp>
 
 namespace Dwarf
 {
@@ -22,14 +22,14 @@ namespace Dwarf
   void
   SceneIO::SaveScene(IScene& scene) const
   {
-    if (scene.GetProperties().GetAssetID() != std::nullopt)
+    if (scene.GetProperties().GetAssetId() != std::nullopt)
     {
       // TODO: Add error handling and logging.
       nlohmann::json sceneJson = scene.Serialize();
-      if (mAssetDatabase->Exists(scene.GetProperties().GetAssetID().value()))
+      if (mAssetDatabase->Exists(scene.GetProperties().GetAssetId().value()))
       {
         std::filesystem::path path =
-          mAssetDatabase->Retrieve(scene.GetProperties().GetAssetID().value())
+          mAssetDatabase->Retrieve(scene.GetProperties().GetAssetId().value())
             ->GetPath();
         mLogger->LogDebug(
           Log(fmt::format("Saving serialized scene:\n{}", sceneJson.dump(2)),
@@ -52,17 +52,21 @@ namespace Dwarf
   void
   SceneIO::SaveSceneDialog(IScene& scene) const
   {
-    nfdu8char_t*                     savePath = nullptr;
-    std::array<nfdu8filteritem_t, 1> filters = { { "Dwarf scene", "dscene" } };
-    nfdsavedialogu8args_t            args = { 0 };
-    std::string                      assetDirectoryPath =
-      mAssetDatabase->GetAssetDirectoryPath().string();
-    args.filterList = filters.data();
-    args.filterCount = 1;
-    args.defaultPath = assetDirectoryPath.c_str();
-
-    nfdresult_t    result = NFD_SaveDialogU8_With(&savePath, &args);
     nlohmann::json sceneJson = scene.Serialize();
+    // initialize NFD
+    NFD::Guard nfdGuard;
+    // auto-freeing memory
+    NFD::UniquePath savePath;
+    // prepare filters for the dialog
+    nfdfilteritem_t filterItem[1] = { { "Dwarf scene", "dscene" } };
+
+    // show the dialog
+    nfdresult_t result =
+      NFD::SaveDialog(savePath,
+                      filterItem,
+                      1,
+                      mAssetDatabase->GetAssetDirectoryPath().string().c_str(),
+                      scene.GetProperties().GetName().c_str());
 
     mLogger->LogDebug(
       Log(fmt::format("Saving serialized scene: {}", sceneJson.dump(2)),
@@ -70,15 +74,18 @@ namespace Dwarf
 
     if (result == NFD_OKAY)
     {
-      std::filesystem::path path(savePath);
+      std::filesystem::path path(savePath.get());
 
       if (!path.has_extension())
       {
         path.concat(".dscene");
       }
 
+      // scene.GetProperties().
       WriteSceneToFile(sceneJson, path);
-      NFD_FreePathU8(savePath);
+      UUID newId = mAssetDatabase->Import(path);
+      scene.GetProperties().SetName(path.stem().string());
+      scene.GetProperties().SetAssetId(newId);
     }
     else if (result == NFD_CANCEL)
     {
@@ -114,20 +121,24 @@ namespace Dwarf
   auto
   SceneIO::LoadSceneDialog() const -> std::unique_ptr<IScene>
   {
-    nfdu8char_t*                     savePath = nullptr;
-    std::array<nfdu8filteritem_t, 1> filters = { { "Dwarf scene", "dscene" } };
-    nfdopendialogu8args_t            args = { 0 };
-    std::string                      assetDirectoryPath =
+    std::string assetDirectoryPath =
       mAssetDatabase->GetAssetDirectoryPath().string();
-    args.filterList = filters.data();
-    args.filterCount = 1;
-    args.defaultPath = assetDirectoryPath.c_str();
 
-    nfdresult_t result = NFD_OpenDialogU8_With(&savePath, &args);
+    // initialize NFD
+    NFD::Guard nfdGuard;
+    // auto-freeing memory
+    NFD::UniquePath loadPath;
+
+    // prepare filters for the dialog
+    nfdfilteritem_t filterItem[1] = { { "Dwarf scene", "dscene" } };
+
+    // show the dialog
+    nfdresult_t result =
+      NFD::OpenDialog(loadPath, filterItem, 1, assetDirectoryPath.c_str());
+
     if (result == NFD_OKAY)
     {
-      std::filesystem::path path(savePath);
-      NFD_FreePathU8(savePath);
+      std::filesystem::path            path(loadPath.get());
       std::unique_ptr<IAssetReference> sceneAsset =
         mAssetDatabase->Retrieve(path);
       return LoadScene(*sceneAsset);
