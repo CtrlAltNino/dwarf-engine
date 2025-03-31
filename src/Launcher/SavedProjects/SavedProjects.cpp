@@ -4,7 +4,7 @@
 #include "ISavedProjects.h"
 #include "Project/IProjectSettings.h"
 #include "SavedProjects.h"
-#include <nfd.h>
+#include <nfd.hpp>
 
 namespace Dwarf
 {
@@ -58,41 +58,37 @@ namespace Dwarf
     // TODO: implement file dialog in another thread to not interrupt
     // TODO: rename "open" button to "add project" or something
     // TODO: focus on the opened dialog when trying to return to the project
-
     mLogger->LogInfo(Log("Opening Add Project Dialog...", "SavedProjects"));
 
-    nfdu8char_t*          outPath = NULL;
-    nfdpickfolderu8args_t args = { 0 };
-    // NFD_GetNativeWindowFromSDLWindow(
-    //   mWindow.lock()->GetNativeWindow() /* SDL_Window* */,
-    //   &args.parentWindow);
-    // args.defaultPath = (const nfdu8char_t*)newProjectPath.c_str();
-    //  nfdu8
-    nfdresult_t result = NFD_PickFolderU8_With(&outPath, &args);
+    NFD::Guard nfdGuard;
+    // auto-freeing memory
+    NFD::UniquePath outPath;
+    // show the dialog
+    nfdresult_t result = NFD::PickFolder(outPath);
 
     if (result == NFD_OKAY)
     {
       mLogger->LogInfo(
-        Log("Selected path: " + std::string(outPath), "SavedProjects"));
+        Log("Selected path: " + std::string(outPath.get()), "SavedProjects"));
       // check if a project with the same path already exists
       bool alreadyPresent = false;
 
       for (int i = 0; (i < mSavedProjects.size()) && !alreadyPresent; i++)
       {
-        alreadyPresent = mSavedProjects[i].Path == outPath;
+        alreadyPresent = mSavedProjects[i].Path == outPath.get();
       }
 
       if (!alreadyPresent)
       {
         std::optional<ProjectSettingsData> newProject =
-          mProjectSettingsIO->LoadProjectSettings(outPath);
+          mProjectSettingsIO->LoadProjectSettings(outPath.get());
         if (newProject)
         {
           SavedProject newSavedProject;
           newSavedProject.ProjectName = newProject->ProjectName;
           newSavedProject.GraphicsApi = newProject->GraphicsApi;
           newSavedProject.LastOpened = 0;
-          newSavedProject.Path = outPath;
+          newSavedProject.Path = outPath.get();
 
           mSavedProjects.push_back(newSavedProject);
           mLogger->LogInfo(
@@ -119,7 +115,6 @@ namespace Dwarf
         mLogger->LogWarn(
           Log("Project already present in project list.", "SavedProjects"));
       }
-      NFD_FreePathU8(outPath);
     }
     else if (result == NFD_CANCEL)
     {

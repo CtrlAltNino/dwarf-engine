@@ -6,7 +6,6 @@
 #include "Editor/Modules/IGuiModuleFactory.h"
 #include "EditorView.h"
 #include "UI/DwarfUI.h"
-#include <nfd.h>
 
 #define EDITOR_VIEW_SERIALIZATION_INTERVAL_SECONDS (5)
 
@@ -188,7 +187,6 @@ namespace Dwarf
           if (loadedScene)
           {
             mLoadedScene->SetScene(std::move(loadedScene));
-            UpdateWindowTitle();
           }
         }
 
@@ -262,7 +260,10 @@ namespace Dwarf
 
           ImGui::EndMenu();
         }
-        ImGui::MenuItem("Import Assets");
+        if (ImGui::MenuItem("Import Assets"))
+        {
+          mAssetDatabase->ImportDialog();
+        }
         if (ImGui::MenuItem("Reimport Assets"))
         {
           mAssetDatabase->ReimportAll();
@@ -431,20 +432,6 @@ namespace Dwarf
     }
     mProjectSettings->UpdateSerializedView(Serialize());
     mProjectSettings->Save();
-  }
-
-  void
-  EditorView::UpdateWindowTitle() const
-  {
-    std::string windowTitle = "Dwarf Engine Editor - ";
-    windowTitle.append(mProjectSettings->GetProjectName());
-    windowTitle.append(" - ");
-    windowTitle.append(mLoadedScene->GetScene().GetProperties().GetName());
-    windowTitle.append(" <");
-    windowTitle.append(magic_enum::enum_name(mGraphicsApi));
-    windowTitle.append(">");
-
-    mWindow->SetWindowTitle(windowTitle);
   }
 
   auto

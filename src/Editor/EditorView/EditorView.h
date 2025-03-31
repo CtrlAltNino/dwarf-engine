@@ -58,9 +58,6 @@ namespace Dwarf
     void
     RemoveWindow(const std::shared_ptr<UUID>& uuid);
 
-    void
-    UpdateWindowTitle() const;
-
   public:
     explicit EditorView(GraphicsApi                        graphicsApi,
                         std::shared_ptr<IDwarfLogger>      logger,
