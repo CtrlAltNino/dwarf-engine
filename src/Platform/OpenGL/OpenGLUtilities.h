@@ -39,38 +39,43 @@ namespace Dwarf
     static auto
     GetDefaultShaderPath() -> std::filesystem::path
     {
-      return std::filesystem::path("data/engine/shaders/default/opengl");
+      return "data/engine/shaders/default/opengl";
     }
 
     static auto
     GetErrorShaderPath() -> std::filesystem::path
     {
-      return std::filesystem::path("data/engine/shaders/error/opengl");
+      return "data/engine/shaders/error/opengl";
     }
 
     static auto
     GetIdShaderPath() -> std::filesystem::path
     {
-      return std::filesystem::path("data/engine/shaders/id/opengl");
+      return "data/engine/shaders/id/opengl";
     }
 
     static auto
     GetGridShaderPath() -> std::filesystem::path
     {
-      return std::filesystem::path("data/engine/shaders/grid/opengl");
+      return "data/engine/shaders/grid/opengl";
     }
 
     static auto
     GetFullScreenQuadShaderPath() -> std::filesystem::path
     {
-      return std::filesystem::path(
-        "data/engine/shaders/fullscreen_quad/opengl");
+      return "data/engine/shaders/fullscreen_quad/opengl";
     }
 
     static auto
     GetAgxTonemapShaderPath() -> std::filesystem::path
     {
-      return std::filesystem::path("data/engine/shaders/agx_tonemap/opengl");
+      return "data/engine/shaders/agx_tonemap/opengl";
+    }
+
+    static auto
+    GetPreviewShaderPath() -> std::filesystem::path
+    {
+      return "data/engine/shaders/preview/opengl";
     }
 
     static auto

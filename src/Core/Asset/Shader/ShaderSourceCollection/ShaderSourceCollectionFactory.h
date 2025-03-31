@@ -73,6 +73,16 @@ namespace Dwarf
 
     /**
      * @brief Create a shader source collection containing the shader sources
+     * for the model preview shader
+     *
+     * @return Unique pointer to the created shader source collection
+     */
+    auto
+    CreatePreviewShaderSourceCollection()
+      -> std::unique_ptr<IShaderSourceCollection> override;
+
+    /**
+     * @brief Create a shader source collection containing the shader sources
      * serialized in a json object
      *
      * @return Unique pointer to the created shader source collection

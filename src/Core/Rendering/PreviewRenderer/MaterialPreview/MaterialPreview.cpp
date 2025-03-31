@@ -23,7 +23,7 @@ namespace Dwarf
     , mMeshBufferFactory(std::move(meshBufferFactory))
   {
     FramebufferSpecification renderSpec = { .Width = 512, .Height = 512 };
-    renderSpec.Samples = 4;
+    renderSpec.Samples = mRendererApi->GetMaxSamples();
     renderSpec.Attachments = FramebufferAttachmentSpecification{
       FramebufferTextureSpecification{ FramebufferTextureFormat::RGBA8 },
       FramebufferTextureSpecification{ FramebufferTextureFormat::DEPTH }

@@ -15,7 +15,9 @@ namespace Dwarf
     std::shared_ptr<IEditorStats>               editorStats,
     std::shared_ptr<IInputManager>              inputManager,
     std::shared_ptr<IMeshFactory>               meshFactory,
-    std::shared_ptr<IMeshBufferFactory>         meshBufferFactory)
+    std::shared_ptr<IMeshBufferFactory>         meshBufferFactory,
+    std::shared_ptr<IShaderSourceCollectionFactory>
+      shaderSourceCollectionFactory)
     : PreviewRenderer(std::move(framebufferFactory),
                       cameraFactory->Create(),
                       rendererApiFactory,
@@ -24,9 +26,10 @@ namespace Dwarf
     , mInputManager(std::move(inputManager))
     , mMeshFactory(std::move(meshFactory))
     , mMeshBufferFactory(std::move(meshBufferFactory))
+    , mShaderSourceCollectionFactory(std::move(shaderSourceCollectionFactory))
   {
     FramebufferSpecification renderSpec = { .Width = 512, .Height = 512 };
-    renderSpec.Samples = 8;
+    renderSpec.Samples = mRendererApi->GetMaxSamples();
     renderSpec.Attachments = FramebufferAttachmentSpecification{
       FramebufferTextureSpecification{ FramebufferTextureFormat::RGBA8 },
       FramebufferTextureSpecification{ FramebufferTextureFormat::DEPTH }
@@ -47,12 +50,10 @@ namespace Dwarf
     mCamera->GetProperties().Transform.GetPosition() = { 0.0F, 0.0F, 0.0F };
     mCamera->GetProperties().Transform.GetEulerAngles() = { 0, 0, 0 };
 
-    mMaterial = materialFactory->CreateDefaultMaterial();
+    mMaterial = materialFactory->CreateMaterial(
+      mShaderSourceCollectionFactory->CreatePreviewShaderSourceCollection());
     mMaterial->GetShader()->Compile();
     mMaterial->GenerateShaderParameters();
-    mMaterial->GetShaderParameters()->SetParameter("color",
-                                                   glm::vec4(1, 1, 1, 1));
-    mMaterial->GetShaderParameters()->SetParameter("shininess", 32.0F);
     mLogger->LogDebug(Log("ModelPreview destroyed", "ModelPreview"));
   }
 
@@ -69,8 +70,8 @@ namespace Dwarf
     {
       FocusModel(dynamic_cast<ModelAsset&>(modelAsset.GetAsset()));
       memory = modelAsset.GetHandle();
-      mProperties.ModelRotation = { 15, 200, 0 };
-      mProperties.ModelRotationTarget = { 15, 200, 0 };
+      mProperties.ModelRotation = { 15, 20, 0 };
+      mProperties.ModelRotationTarget = { 15, 20, 0 };
       UpdateRotation({ 0, 0 });
       mProperties.Distance = 1.0F;
       std::unique_ptr<IMesh> mesh = mMeshFactory->MergeMeshes(

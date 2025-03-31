@@ -57,14 +57,6 @@ namespace Dwarf
     return flags;
   }
 
-  auto
-  GetFlipZ(const std::filesystem::path& path) -> bool
-  {
-    std::string ext = path.extension().string();
-
-    return ext == ".fbx" || ext == ".gltf" || ext == ".dae";
-  }
-
   ModelImporter::ModelImporter(std::shared_ptr<IDwarfLogger>   logger,
                                std::shared_ptr<IAssetMetadata> assetMetadata,
                                std::shared_ptr<IMeshFactory>   meshFactory)
@@ -123,7 +115,7 @@ namespace Dwarf
     std::vector<std::unique_ptr<IMesh>> meshes;
 
     ModelImporter::ProcessNode(
-      scene->mRootNode, scene, meshes, glm::mat4(1.0f), GetFlipZ(path));
+      scene->mRootNode, scene, meshes, glm::mat4(1.0F));
 
     return meshes;
   }
@@ -132,8 +124,7 @@ namespace Dwarf
   ModelImporter::ProcessNode(const aiNode*                        node,
                              const aiScene*                       scene,
                              std::vector<std::unique_ptr<IMesh>>& meshes,
-                             glm::mat4 parentTransform,
-                             bool      flipZ)
+                             glm::mat4 parentTransform)
   {
     glm::mat4          nodeTransform = AssimpToGlmMatrix(node->mTransformation);
     glm::mat4          globalTransform = parentTransform * nodeTransform;
@@ -145,22 +136,21 @@ namespace Dwarf
     {
       const aiMesh* mesh = meshSpan[nodeMeshesSpan[i]];
       // meshes.push_back(ProcessMesh(mesh, scene));
-      ProcessMesh(mesh, meshes, globalTransform, flipZ);
+      ProcessMesh(mesh, meshes, globalTransform);
     }
 
     std::span<aiNode*> nodeChildrenSpan(node->mChildren, node->mNumChildren);
     // then do the same for each of its children
     for (uint32_t i = 0; i < node->mNumChildren; i++)
     {
-      ProcessNode(nodeChildrenSpan[i], scene, meshes, globalTransform, flipZ);
+      ProcessNode(nodeChildrenSpan[i], scene, meshes, globalTransform);
     }
   }
 
   void
   ModelImporter::ProcessMesh(const aiMesh*                        mesh,
                              std::vector<std::unique_ptr<IMesh>>& meshes,
-                             glm::mat4                            transform,
-                             bool                                 flipZ)
+                             glm::mat4                            transform)
   {
     std::vector<Vertex>   vertices;
     std::vector<uint32_t> indices;
@@ -173,23 +163,6 @@ namespace Dwarf
     std::span<aiVector3D* const, AI_MAX_NUMBER_OF_TEXTURECOORDS>
                       meshTexCoordsSpan(mesh->mTextureCoords);
     std::span<aiFace> meshFacesSpan(mesh->mFaces, mesh->mNumFaces);
-
-    glm::mat4 flipZMatrix = glm::mat4(1,
-                                      0,
-                                      0,
-                                      0,
-                                      0,
-                                      1,
-                                      0,
-                                      0,
-                                      0,
-                                      0,
-                                      -1,
-                                      0, // Flip Z
-                                      0,
-                                      0,
-                                      0,
-                                      1);
 
     for (uint32_t i = 0; i < meshVerticesSpan.size(); i++)
     {
