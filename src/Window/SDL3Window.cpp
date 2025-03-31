@@ -38,7 +38,11 @@ namespace Dwarf
     Uint32 windowFlags = 0;
     windowFlags |= SDL_WINDOW_HIDDEN;
     windowFlags |= SDL_WINDOW_MOUSE_CAPTURE;
-    windowFlags |= SDL_WINDOW_RESIZABLE;
+
+    if (props.Resizable)
+    {
+      windowFlags |= SDL_WINDOW_RESIZABLE;
+    }
 
     switch (props.Api)
     {

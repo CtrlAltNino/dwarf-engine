@@ -105,7 +105,6 @@
 #include "Window/IWindow.h"
 #include "Window/SDL3Window.h"
 
-
 namespace Dwarf
 {
   auto
@@ -153,7 +152,7 @@ namespace Dwarf
           boost::di::extension::shared),
           boost::di::bind<IImGuiLayerFactory>.to<ImGuiLayerFactory>().in(boost::di::extension::shared),
           boost::di::bind<WindowProps>.to(WindowProps(
-          "Dwarf Engine", 1100, 600, selectedProject.GraphicsApi)),
+          "Dwarf Engine", 1100, 600, selectedProject.GraphicsApi, true)),
           boost::di::bind<IWindow>.to<SDL3Window>().in(boost::di::extension::shared),
           boost::di::bind<ITextureFactory>.to<TextureFactory>().in(
           boost::di::extension::shared),

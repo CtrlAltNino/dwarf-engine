@@ -73,8 +73,12 @@ namespace Dwarf
         boost::di::extension::shared),
       boost::di::bind<IEditorStats>.to<EditorStats>().in(
         boost::di::extension::shared),
-      boost::di::bind<WindowProps>.to(WindowProps(
-        "Dwarf Engine - Project Launcher", 1100, 600, GraphicsApi::OpenGL)),
+      boost::di::bind<WindowProps>.to(
+        WindowProps("Dwarf Engine - Project Launcher",
+                    1100,
+                    600,
+                    GraphicsApi::OpenGL,
+                    false)),
       boost::di::bind<ILauncherData>.to<LauncherData>().in(
         boost::di::extension::shared),
       boost::di::bind<IWindow>.to<SDL3Window>().in(
