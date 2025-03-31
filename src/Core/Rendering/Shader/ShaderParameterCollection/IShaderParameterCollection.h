@@ -48,6 +48,17 @@ namespace Dwarf
     GetParameterIdentifiers() const -> const std::vector<std::string> = 0;
 
     /**
+     * @brief Patches the current shader parameters with another collection.
+     * Adds parameters that weren't present, and removes the ones that are not
+     * present anymore.
+     *
+     * @param parameters Parameter collection to apply
+     */
+    virtual void
+    PatchParameters(
+      const std::unique_ptr<IShaderParameterCollection>& parameters) = 0;
+
+    /**
      * @brief Removes a parameter
      *
      * @param name Name of the parameters to remove

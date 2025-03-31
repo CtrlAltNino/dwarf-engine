@@ -29,6 +29,10 @@ public:
               GetParameterIdentifiers,
               (),
               (const, override));
+  MOCK_METHOD(void,
+              PatchParameters,
+              (const std::unique_ptr<IShaderParameterCollection>& parameters),
+              (override));
   MOCK_METHOD(void, RemoveParameter, (std::string const& name), (override));
   MOCK_METHOD(bool, HasParameter, (std::string const& name), (const, override));
   MOCK_METHOD(void, ClearParameters, (), (override));
