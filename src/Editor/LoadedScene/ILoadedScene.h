@@ -70,5 +70,12 @@ namespace Dwarf
      */
     virtual void
     PropagateSceneChange() = 0;
+
+    /**
+     * @brief Updates the window title when a scene change occurs
+     *
+     */
+    virtual void
+    UpdateWindowTitle() = 0;
   };
 }

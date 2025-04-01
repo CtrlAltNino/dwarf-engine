@@ -172,14 +172,17 @@ namespace Dwarf
           std::unique_ptr<IScene> newScene =
             mSceneFactory->CreateDefaultScene();
           mLoadedScene->SetScene(std::move(newScene));
+          mLoadedScene->UpdateWindowTitle();
         }
         if (ImGui::MenuItem("Save scene"))
         {
           mSceneIO->SaveScene(mLoadedScene->GetScene());
+          mLoadedScene->UpdateWindowTitle();
         }
         if (ImGui::MenuItem("Save scene as"))
         {
           mSceneIO->SaveSceneDialog(mLoadedScene->GetScene());
+          mLoadedScene->UpdateWindowTitle();
         }
         if (ImGui::MenuItem("Load scene"))
         {

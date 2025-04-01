@@ -40,7 +40,7 @@ namespace Dwarf
   auto
   SceneFactory::CreateDefaultScene() const -> std::unique_ptr<IScene>
   {
-    return std::make_unique<Scene>(
-      mScenePropertiesFactory->Create("Unnamed Scene"), mAssetDatabase);
+    return std::make_unique<Scene>(mScenePropertiesFactory->Create("New Scene"),
+                                   mAssetDatabase);
   }
 } // namespace Dwarf

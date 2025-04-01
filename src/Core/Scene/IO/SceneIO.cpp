@@ -86,6 +86,7 @@ namespace Dwarf
       UUID newId = mAssetDatabase->Import(path);
       scene.GetProperties().SetName(path.stem().string());
       scene.GetProperties().SetAssetId(newId);
+      mProjectSettings->UpdateLastOpenedScene(newId);
     }
     else if (result == NFD_CANCEL)
     {

@@ -19,13 +19,6 @@ namespace Dwarf
     std::vector<std::function<void()>> mSceneUnloadCallback;
     std::vector<std::function<void()>> mSceneChangeCallback;
 
-    /**
-     * @brief Updates the window title when a scene change occurs
-     *
-     */
-    void
-    UpdateWindowTitle();
-
   public:
     LoadedScene(GraphicsApi                       graphicsApi,
                 std::shared_ptr<IDwarfLogger>     logger,
@@ -90,5 +83,12 @@ namespace Dwarf
      */
     void
     PropagateSceneChange() override;
+
+    /**
+     * @brief Updates the window title when a scene change occurs
+     *
+     */
+    void
+    UpdateWindowTitle() override;
   };
 }
