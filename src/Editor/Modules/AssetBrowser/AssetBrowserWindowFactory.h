@@ -13,20 +13,21 @@ namespace Dwarf
   class AssetBrowserWindowFactory : public IAssetBrowserWindowFactory
   {
   private:
-    AssetDirectoryPath                mAssetDirectoryPath;
-    std::shared_ptr<IDwarfLogger>     mLogger;
-    std::shared_ptr<ITextureFactory>  mTextureFactory;
-    std::shared_ptr<IAssetDatabase>   mAssetDatabase;
-    std::shared_ptr<IInputManager>    mInputManager;
-    std::shared_ptr<IEditorSelection> mEditorSelection;
-    std::shared_ptr<IMaterialIO>      mMaterialIO;
-    std::shared_ptr<IMaterialFactory> mMaterialFactory;
-    std::shared_ptr<IAssetMetadata>   mAssetMetadata;
-    std::shared_ptr<IMaterialCreator> mMaterialCreator;
-    std::shared_ptr<IShaderCreator>   mShaderCreator;
-    std::shared_ptr<IFileHandler>     mFileHandler;
-    std::shared_ptr<ISceneIO>         mSceneIO;
-    std::shared_ptr<ILoadedScene>     mLoadedScene;
+    AssetDirectoryPath                            mAssetDirectoryPath;
+    std::shared_ptr<IDwarfLogger>                 mLogger;
+    std::shared_ptr<ITextureFactory>              mTextureFactory;
+    std::shared_ptr<IAssetDatabase>               mAssetDatabase;
+    std::shared_ptr<IInputManager>                mInputManager;
+    std::shared_ptr<IEditorSelection>             mEditorSelection;
+    std::shared_ptr<IMaterialIO>                  mMaterialIO;
+    std::shared_ptr<IMaterialFactory>             mMaterialFactory;
+    std::shared_ptr<IAssetMetadata>               mAssetMetadata;
+    std::shared_ptr<IMaterialCreator>             mMaterialCreator;
+    std::shared_ptr<IShaderCreator>               mShaderCreator;
+    std::shared_ptr<IFileHandler>                 mFileHandler;
+    std::shared_ptr<ISceneIO>                     mSceneIO;
+    std::shared_ptr<ILoadedScene>                 mLoadedScene;
+    std::shared_ptr<IAssetBrowserListenerFactory> mAssetBrowserListenerFactory;
 
   public:
     AssetBrowserWindowFactory(const AssetDirectoryPath&     assetDirectoryPath,
@@ -42,7 +43,9 @@ namespace Dwarf
                               std::shared_ptr<IShaderCreator>   shaderCreator,
                               std::shared_ptr<IFileHandler>     fileHandler,
                               std::shared_ptr<ISceneIO>         sceneIO,
-                              std::shared_ptr<ILoadedScene>     loadedScene);
+                              std::shared_ptr<ILoadedScene>     loadedScene,
+                              std::shared_ptr<IAssetBrowserListenerFactory>
+                                assetBrowserListenerFactory);
 
     ~AssetBrowserWindowFactory() override;
 
