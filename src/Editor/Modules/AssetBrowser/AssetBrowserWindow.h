@@ -53,6 +53,7 @@ namespace Dwarf
     std::vector<std::filesystem::path> DirectoryHistory;
     int                                HistoryPos = 0;
     float                              IconScale = 1.0F;
+    std::string                        SearchBuffer;
   };
 
   /// @brief GUI Module to display a window for the asset directory structure.

@@ -220,6 +220,15 @@ namespace Dwarf
     ImGui::End();
   }
 
+  auto
+  to_lower(const std::string& str) -> std::string
+  {
+    std::string result = str;
+    std::ranges::transform(
+      result, result.begin(), [](unsigned char c) { return std::tolower(c); });
+    return result;
+  }
+
   void
   AssetBrowserWindow::RebuildDirectoryContentCache(
     const std::filesystem::path& directory)
@@ -229,11 +238,15 @@ namespace Dwarf
     for (const auto& directoryEntry :
          std::filesystem::directory_iterator(directory))
     {
-      if (directoryEntry.is_directory() ||
-          (directoryEntry.is_regular_file() &&
-           (directoryEntry.path().has_extension() &&
-            directoryEntry.path().extension() !=
-              IAssetMetadata::METADATA_EXTENSION)))
+      if ((directoryEntry.is_directory() ||
+           (directoryEntry.is_regular_file() &&
+            (directoryEntry.path().has_extension() &&
+             directoryEntry.path().extension() !=
+               IAssetMetadata::METADATA_EXTENSION))) &&
+          (!mData.SearchBuffer.empty()
+             ? (to_lower(directoryEntry.path().filename().string())
+                  .find(to_lower(mData.SearchBuffer)) != std::string::npos)
+             : true))
       {
         DirectoryEntryData data;
         data.Path = directoryEntry.path();
@@ -375,7 +388,19 @@ namespace Dwarf
       GoForward();
     }
     ImGui::SameLine(0.0F, 5.0F);
+    ImGui::PushItemWidth(100);
     ImGui::SliderFloat("Size", &mData.IconScale, 1.0F, 2.0F);
+    ImGui::SameLine(0.0F, 5.0F);
+    if (ImGui::InputText("Search##SearchInput",
+                         mData.SearchBuffer.data(),
+                         mData.SearchBuffer.capacity() + 1,
+                         ImGuiInputTextFlags_CallbackResize,
+                         DwarfUI::InputTextCallback,
+                         &mData.SearchBuffer))
+    {
+      mDirectoryContentCache.Valid = false;
+    }
+    ImGui::PopItemWidth();
     ImGui::End();
     ImGui::PopStyleVar(2);
   }
