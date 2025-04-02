@@ -91,6 +91,7 @@
 #include "Editor/Selection/EditorSelection.h"
 #include "Editor/Selection/IEditorSelection.h"
 #include "Editor/Stats/EditorStats.h"
+#include "Editor\Modules\AssetBrowser\AssetBrowserListener\AssetBrowserListenerFactory.h"
 #include "Input/IInputManager.h"
 #include "Input/InputManager.h"
 #include "Logging/DwarfLogger.h"
@@ -122,6 +123,8 @@ namespace Dwarf
           boost::di::bind<IFileHandler>.to<FileHandler>().in(boost::di::extension::shared),
           boost::di::bind<IProjectSettingsIO>.to<ProjectSettingsIO>().in(boost::di::extension::shared),
           boost::di::bind<IProjectSettings>.to<ProjectSettings>().in(boost::di::extension::shared),
+          boost::di::bind<IAssetBrowserListenerFactory>.to<AssetBrowserListenerFactory>().in(
+          boost::di::extension::shared),
           boost::di::bind<ICameraFactory>.to<CameraFactory>().in(
           boost::di::extension::shared),
           boost::di::bind<IEditorStats>.to<EditorStats>().in(

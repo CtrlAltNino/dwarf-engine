@@ -1,5 +1,6 @@
 #pragma once
 
+#include "AssetBrowserListener/IAssetBrowserListenerFactory.h"
 #include "Core/Asset/Creation/Material/IMaterialCreator.h"
 #include "Core/Asset/Creation/Shader/IShaderCreator.h"
 #include "Core/Asset/Database/IAssetDatabase.h"
@@ -28,6 +29,7 @@ namespace Dwarf
   {
     DirectoryData RootDirectoryData;
     bool          Valid = false;
+    std::mutex    ValidityMutex;
   };
 
   struct DirectoryEntryData
@@ -41,6 +43,7 @@ namespace Dwarf
   {
     std::vector<DirectoryEntryData> Entries;
     bool                            Valid = false;
+    std::mutex                      ValidityMutex;
   };
 
   struct AssetBrowserData
@@ -61,20 +64,21 @@ namespace Dwarf
   {
   private:
     /// @brief Path to the asset directory of the currently opened project.
-    AssetDirectoryPath                mAssetDirectoryPath;
-    std::shared_ptr<IDwarfLogger>     mLogger;
-    std::shared_ptr<ITextureFactory>  mTextureFactory;
-    std::shared_ptr<IAssetDatabase>   mAssetDatabase;
-    std::shared_ptr<IInputManager>    mInputManager;
-    std::shared_ptr<IEditorSelection> mEditorSelection;
-    std::shared_ptr<IMaterialIO>      mMaterialIO;
-    std::shared_ptr<IMaterialFactory> mMaterialFactory;
-    std::shared_ptr<IAssetMetadata>   mAssetMetadata;
-    std::shared_ptr<IMaterialCreator> mMaterialCreator;
-    std::shared_ptr<IShaderCreator>   mShaderCreator;
-    std::shared_ptr<IFileHandler>     mFileHandler;
-    std::shared_ptr<ISceneIO>         mSceneIo;
-    std::shared_ptr<ILoadedScene>     mLoadedScene;
+    AssetDirectoryPath                     mAssetDirectoryPath;
+    std::shared_ptr<IDwarfLogger>          mLogger;
+    std::shared_ptr<ITextureFactory>       mTextureFactory;
+    std::shared_ptr<IAssetDatabase>        mAssetDatabase;
+    std::shared_ptr<IInputManager>         mInputManager;
+    std::shared_ptr<IEditorSelection>      mEditorSelection;
+    std::shared_ptr<IMaterialIO>           mMaterialIO;
+    std::shared_ptr<IMaterialFactory>      mMaterialFactory;
+    std::shared_ptr<IAssetMetadata>        mAssetMetadata;
+    std::shared_ptr<IMaterialCreator>      mMaterialCreator;
+    std::shared_ptr<IShaderCreator>        mShaderCreator;
+    std::shared_ptr<IFileHandler>          mFileHandler;
+    std::shared_ptr<ISceneIO>              mSceneIo;
+    std::shared_ptr<ILoadedScene>          mLoadedScene;
+    std::unique_ptr<IAssetBrowserListener> mAssetBrowserListener;
 
     AssetBrowserData        mData;
     DirectoryStructureCache mDirectoryStructureCache;
@@ -177,23 +181,27 @@ namespace Dwarf
                        std::shared_ptr<IShaderCreator>   shaderCreator,
                        std::shared_ptr<IFileHandler>     fileHandler,
                        std::shared_ptr<ISceneIO>         sceneIO,
-                       std::shared_ptr<ILoadedScene>     loadedScene);
-
-    AssetBrowserWindow(AssetDirectoryPath                assetDirectoryPath,
-                       std::shared_ptr<IDwarfLogger>     logger,
-                       std::shared_ptr<ITextureFactory>  textureFactory,
-                       std::shared_ptr<IAssetDatabase>   assetDatabase,
-                       std::shared_ptr<IInputManager>    inputManager,
-                       std::shared_ptr<IEditorSelection> editorSelection,
-                       std::shared_ptr<IMaterialIO>      materialIO,
-                       std::shared_ptr<IMaterialFactory> materialFactory,
-                       std::shared_ptr<IAssetMetadata>   assetMetadata,
-                       std::shared_ptr<IMaterialCreator> materialCreator,
-                       std::shared_ptr<IShaderCreator>   shaderCreator,
-                       std::shared_ptr<IFileHandler>     fileHandler,
-                       std::shared_ptr<ISceneIO>         sceneIO,
                        std::shared_ptr<ILoadedScene>     loadedScene,
-                       SerializedModule                  serializedModule);
+                       std::shared_ptr<IAssetBrowserListenerFactory>
+                         assetBrowserListenerFactory);
+
+    AssetBrowserWindow(
+      AssetDirectoryPath                            assetDirectoryPath,
+      std::shared_ptr<IDwarfLogger>                 logger,
+      std::shared_ptr<ITextureFactory>              textureFactory,
+      std::shared_ptr<IAssetDatabase>               assetDatabase,
+      std::shared_ptr<IInputManager>                inputManager,
+      std::shared_ptr<IEditorSelection>             editorSelection,
+      std::shared_ptr<IMaterialIO>                  materialIO,
+      std::shared_ptr<IMaterialFactory>             materialFactory,
+      std::shared_ptr<IAssetMetadata>               assetMetadata,
+      std::shared_ptr<IMaterialCreator>             materialCreator,
+      std::shared_ptr<IShaderCreator>               shaderCreator,
+      std::shared_ptr<IFileHandler>                 fileHandler,
+      std::shared_ptr<ISceneIO>                     sceneIO,
+      std::shared_ptr<ILoadedScene>                 loadedScene,
+      std::shared_ptr<IAssetBrowserListenerFactory> assetBrowserListenerFactory,
+      SerializedModule                              serializedModule);
 
     ~AssetBrowserWindow() override;
 

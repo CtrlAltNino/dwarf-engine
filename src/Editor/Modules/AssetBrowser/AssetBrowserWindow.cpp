@@ -11,20 +11,21 @@
 namespace Dwarf
 {
   AssetBrowserWindow::AssetBrowserWindow(
-    AssetDirectoryPath                assetDirectoryPath,
-    std::shared_ptr<IDwarfLogger>     logger,
-    std::shared_ptr<ITextureFactory>  textureFactory,
-    std::shared_ptr<IAssetDatabase>   assetDatabase,
-    std::shared_ptr<IInputManager>    inputManager,
-    std::shared_ptr<IEditorSelection> editorSelection,
-    std::shared_ptr<IMaterialIO>      materialIO,
-    std::shared_ptr<IMaterialFactory> materialFactory,
-    std::shared_ptr<IAssetMetadata>   assetMetadata,
-    std::shared_ptr<IMaterialCreator> materialCreator,
-    std::shared_ptr<IShaderCreator>   shaderCreator,
-    std::shared_ptr<IFileHandler>     fileHandler,
-    std::shared_ptr<ISceneIO>         sceneIO,
-    std::shared_ptr<ILoadedScene>     loadedScene)
+    AssetDirectoryPath                            assetDirectoryPath,
+    std::shared_ptr<IDwarfLogger>                 logger,
+    std::shared_ptr<ITextureFactory>              textureFactory,
+    std::shared_ptr<IAssetDatabase>               assetDatabase,
+    std::shared_ptr<IInputManager>                inputManager,
+    std::shared_ptr<IEditorSelection>             editorSelection,
+    std::shared_ptr<IMaterialIO>                  materialIO,
+    std::shared_ptr<IMaterialFactory>             materialFactory,
+    std::shared_ptr<IAssetMetadata>               assetMetadata,
+    std::shared_ptr<IMaterialCreator>             materialCreator,
+    std::shared_ptr<IShaderCreator>               shaderCreator,
+    std::shared_ptr<IFileHandler>                 fileHandler,
+    std::shared_ptr<ISceneIO>                     sceneIO,
+    std::shared_ptr<ILoadedScene>                 loadedScene,
+    std::shared_ptr<IAssetBrowserListenerFactory> assetBrowserListenerFactory)
     : IGuiModule(ModuleLabel("Asset Browser"),
                  ModuleType(MODULE_TYPE::ASSET_BROWSER),
                  ModuleID(std::make_shared<UUID>()))
@@ -42,6 +43,13 @@ namespace Dwarf
     , mFileHandler(std::move(fileHandler))
     , mSceneIo(std::move(sceneIO))
     , mLoadedScene(std::move(loadedScene))
+    , mAssetBrowserListener(assetBrowserListenerFactory->Create(
+        [this]()
+        {
+          std::unique_lock<std::mutex> lock(
+            mDirectoryStructureCache.ValidityMutex);
+          mDirectoryStructureCache.Valid = false;
+        }))
   {
     mData.CurrentDirectory = mAssetDirectoryPath;
     mData.DirectoryHistory.push_back(mData.CurrentDirectory);
@@ -50,21 +58,22 @@ namespace Dwarf
   }
 
   AssetBrowserWindow::AssetBrowserWindow(
-    AssetDirectoryPath                assetDirectoryPath,
-    std::shared_ptr<IDwarfLogger>     logger,
-    std::shared_ptr<ITextureFactory>  textureFactory,
-    std::shared_ptr<IAssetDatabase>   assetDatabase,
-    std::shared_ptr<IInputManager>    inputManager,
-    std::shared_ptr<IEditorSelection> editorSelection,
-    std::shared_ptr<IMaterialIO>      materialIO,
-    std::shared_ptr<IMaterialFactory> materialFactory,
-    std::shared_ptr<IAssetMetadata>   assetMetadata,
-    std::shared_ptr<IMaterialCreator> materialCreator,
-    std::shared_ptr<IShaderCreator>   shaderCreator,
-    std::shared_ptr<IFileHandler>     fileHandler,
-    std::shared_ptr<ISceneIO>         sceneIO,
-    std::shared_ptr<ILoadedScene>     loadedScene,
-    SerializedModule                  serializedModule)
+    AssetDirectoryPath                            assetDirectoryPath,
+    std::shared_ptr<IDwarfLogger>                 logger,
+    std::shared_ptr<ITextureFactory>              textureFactory,
+    std::shared_ptr<IAssetDatabase>               assetDatabase,
+    std::shared_ptr<IInputManager>                inputManager,
+    std::shared_ptr<IEditorSelection>             editorSelection,
+    std::shared_ptr<IMaterialIO>                  materialIO,
+    std::shared_ptr<IMaterialFactory>             materialFactory,
+    std::shared_ptr<IAssetMetadata>               assetMetadata,
+    std::shared_ptr<IMaterialCreator>             materialCreator,
+    std::shared_ptr<IShaderCreator>               shaderCreator,
+    std::shared_ptr<IFileHandler>                 fileHandler,
+    std::shared_ptr<ISceneIO>                     sceneIO,
+    std::shared_ptr<ILoadedScene>                 loadedScene,
+    std::shared_ptr<IAssetBrowserListenerFactory> assetBrowserListenerFactory,
+    SerializedModule                              serializedModule)
     : IGuiModule(ModuleLabel("Asset Browser"),
                  ModuleType(MODULE_TYPE::ASSET_BROWSER),
                  ModuleID(std::make_shared<UUID>(
@@ -83,6 +92,20 @@ namespace Dwarf
     , mFileHandler(std::move(fileHandler))
     , mSceneIo(std::move(sceneIO))
     , mLoadedScene(std::move(loadedScene))
+    , mAssetBrowserListener(assetBrowserListenerFactory->Create(
+        [this]()
+        {
+          {
+            std::unique_lock<std::mutex> lock(
+              mDirectoryStructureCache.ValidityMutex);
+            mDirectoryStructureCache.Valid = false;
+          }
+          {
+            std::unique_lock<std::mutex> lock(
+              mDirectoryContentCache.ValidityMutex);
+            mDirectoryContentCache.Valid = false;
+          }
+        }))
   {
     mData.CurrentDirectory = mAssetDirectoryPath;
     mData.DirectoryHistory.push_back(mData.CurrentDirectory);
@@ -133,14 +156,20 @@ namespace Dwarf
       GoForward();
     }
 
-    if (!mDirectoryStructureCache.Valid)
     {
-      RebuildDirectoryStructureCache();
-    }
+      std::unique_lock<std::mutex> lock(mDirectoryStructureCache.ValidityMutex);
 
-    if (!mDirectoryContentCache.Valid)
+      if (!mDirectoryStructureCache.Valid)
+      {
+        RebuildDirectoryStructureCache();
+      }
+    }
     {
-      RebuildDirectoryContentCache(mData.CurrentDirectory);
+      std::unique_lock<std::mutex> lock(mDirectoryContentCache.ValidityMutex);
+      if (!mDirectoryContentCache.Valid)
+      {
+        RebuildDirectoryContentCache(mData.CurrentDirectory);
+      }
     }
   }
 
