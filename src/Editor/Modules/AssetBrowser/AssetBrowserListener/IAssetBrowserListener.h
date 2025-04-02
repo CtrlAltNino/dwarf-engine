@@ -5,7 +5,7 @@
 namespace Dwarf
 {
   /// @brief EFSW listener class
-  class IAssetBrowserListener : public efsw::FileWatchListener
+  class IAssetBrowserListener
   {
   public:
     virtual ~IAssetBrowserListener() = default;
