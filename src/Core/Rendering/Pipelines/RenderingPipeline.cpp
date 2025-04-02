@@ -46,10 +46,6 @@ namespace Dwarf
     mGridModelMatrix = glm::mat4(1.0F);
     mGridModelMatrix = glm::scale(mGridModelMatrix, glm::vec3(3000.0F));
 
-    /*mTonemapShader = mShaderRegistry->GetOrCreate(
-      mShaderSourceCollectionFactory->CreateAgxTonemapShaderSourceCollection());
-    mTonemapShader->Compile();*/
-
     mTonemapMaterial = mMaterialFactory->CreateMaterial(
       mShaderSourceCollectionFactory->CreateAgxTonemapShaderSourceCollection());
 
@@ -246,7 +242,7 @@ namespace Dwarf
   }
 
   void
-  RenderingPipeline::SetExposue(float exposure)
+  RenderingPipeline::SetExposure(float exposure)
   {
     mTonemapMaterial->GetShaderParameters()->SetParameter("exposure", exposure);
   }

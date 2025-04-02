@@ -106,6 +106,6 @@ namespace Dwarf
      * @param exposure Exposure value
      */
     virtual void
-    SetExposue(float exposure) = 0;
+    SetExposure(float exposure) = 0;
   };
 }

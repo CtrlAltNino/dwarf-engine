@@ -148,6 +148,6 @@ namespace Dwarf
      * @param exposure Exposure value
      */
     void
-    SetExposue(float exposure) override;
+    SetExposure(float exposure) override;
   };
 }

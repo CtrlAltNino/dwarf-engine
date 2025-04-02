@@ -93,7 +93,7 @@ namespace Dwarf
       mWindow->SetMouseVisibility(true);
     }
 
-    mRenderingPipeline->SetExposue(mSettings.Exposure);
+    mRenderingPipeline->SetExposure(mSettings.Exposure);
 
     // Render scene to the framebuffer with the camera
     mRenderingPipeline->RenderScene(*mCamera, mSettings.RenderGrid);
