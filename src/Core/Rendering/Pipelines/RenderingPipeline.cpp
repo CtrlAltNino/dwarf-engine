@@ -113,7 +113,19 @@ namespace Dwarf
         }
       }
     }
+    mFramebuffer->Unbind();
 
+    mRendererApi->Blit(*mFramebuffer,
+                       *mNonMsaaBuffer,
+                       0,
+                       0,
+                       mFramebuffer->GetSpecification().Width,
+                       mFramebuffer->GetSpecification().Height);
+
+    mRendererApi->CustomBlit(
+      *mNonMsaaBuffer, *mPresentationBuffer, 0, 0, mTonemapMaterial);
+
+    mPresentationBuffer->Bind();
     // Render grid
     if (renderGrid && mGridMeshBuffer && mGridMaterial)
     {
@@ -128,17 +140,7 @@ namespace Dwarf
       mRendererApi->RenderIndexed(
         *mGridMeshBuffer, *mGridMaterial, camera, translatedGridModelMatrix);
     }
-    mFramebuffer->Unbind();
-
-    mRendererApi->Blit(*mFramebuffer,
-                       *mNonMsaaBuffer,
-                       0,
-                       0,
-                       mFramebuffer->GetSpecification().Width,
-                       mFramebuffer->GetSpecification().Height);
-
-    mRendererApi->CustomBlit(
-      *mNonMsaaBuffer, *mPresentationBuffer, 0, 0, mTonemapMaterial);
+    mPresentationBuffer->Unbind();
   }
 
   auto

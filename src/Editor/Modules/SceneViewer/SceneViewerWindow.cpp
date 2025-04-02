@@ -220,7 +220,7 @@ namespace Dwarf
                  std::min(MAX_RESOLUTION_WIDTH, mSettings.Resolution[1]));
     }
 
-    ImGui::SameLine(0, 5);
+    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
 
     ImGui::Checkbox("Render Grid", &mSettings.RenderGrid);
 
@@ -235,7 +235,15 @@ namespace Dwarf
 
     ImGui::SameLine(0, 5);
 
-    ImGui::DragFloat("Exposure", &mSettings.Exposure, 0.0001F, 0, 2);
+    float min = 0.0F;
+    float max = 2.0F;
+    ImGui::DragScalar("Exposure",
+                      ImGuiDataType_Float,
+                      &mSettings.Exposure,
+                      0.0005f,
+                      &min,
+                      &max,
+                      "%f");
 
     ImGui::PopStyleVar();
     ImGui::PopItemWidth();
