@@ -111,7 +111,8 @@ void main() {
 
     // Convert Lux to Radiance
     float radianceFactor = lightIntensity / PI;
-    vec3 radiance = lightColor * radianceFactor * NdotL;
+    //vec3 radiance = lightColor * radianceFactor * NdotL;
+    vec3 radiance = lightColor * NdotL * 20;
 
     // Combine contributions
     vec3 lighting = (diffuse + specular) * radiance;
