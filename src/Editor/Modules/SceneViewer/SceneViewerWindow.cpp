@@ -245,6 +245,9 @@ namespace Dwarf
                       &max,
                       "%f");
 
+    ImGui::SameLine(0, 5);
+    ImGui::DragFloat("FOV", &mCamera->GetProperties().Fov, 0.5f, 45, 110);
+
     ImGui::PopStyleVar();
     ImGui::PopItemWidth();
 
