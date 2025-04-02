@@ -37,7 +37,7 @@ namespace Dwarf
     std::shared_ptr<IFramebuffer> mIdBuffer;
     std::shared_ptr<IFramebuffer> mOutlineBuffer;
     std::shared_ptr<IFramebuffer> mPresentationBuffer;
-    std::shared_ptr<IShader>      mAgxTonemapShader;
+    std::shared_ptr<IMaterial>    mTonemapMaterial;
 
     std::shared_ptr<IRendererApi>    mRendererApi;
     std::unique_ptr<IDrawCallList>   mDrawCallList;
@@ -85,25 +85,69 @@ namespace Dwarf
     void
     RenderIds(IScene& scene, ICamera& camera) override;
 
+    /**
+     * @brief Gets the resolution
+     *
+     * @return glm::ivec2 resolution
+     */
     auto
     GetResolution() -> glm::ivec2 override;
 
+    /**
+     * @brief Sets the resolution
+     *
+     * @param resolution resolution in pixels
+     */
     void
     SetResolution(glm::ivec2 resolution) override;
 
+    /**
+     * @brief Sets the MSAA sample amount
+     *
+     * @param samples Amount of samples per pixels
+     */
     void
     SetMsaaSamples(int32_t samples) override;
 
+    /**
+     * @brief Gets the MSAA sample amount
+     *
+     * @return Amount of samples
+     */
     auto
     GetMsaaSamples() -> int32_t override;
 
+    /**
+     * @brief Gets the maximum amount of MSAA samples supported on the device
+     *
+     * @return Maximum amount of samples
+     */
     auto
     GetMaxMsaaSamples() -> int32_t override;
 
+    /**
+     * @brief Reads the id from the id framebuffer at a given position
+     *
+     * @param position 2d pixel position
+     * @return Stored ID
+     */
     auto
     ReadPixelId(glm::ivec2 position) -> uint32_t override;
 
+    /**
+     * @brief Gets the Texture ID for the presentation buffer
+     *
+     * @return Id to the buffer
+     */
     auto
     GetPresentationBufferId() -> uintptr_t override;
+
+    /**
+     * @brief Sets the exposure value to apply before tone mapping
+     *
+     * @param exposure Exposure value
+     */
+    void
+    SetExposue(float exposure) override;
   };
 }

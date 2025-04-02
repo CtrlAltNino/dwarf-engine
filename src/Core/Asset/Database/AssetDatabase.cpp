@@ -624,6 +624,10 @@ namespace Dwarf
     std::filesystem::path agxShaderPath =
       shaderDir / "agx_tonemap" / graphicsApiDir / "agx_tonemap.frag";
     Import(agxShaderPath);
+
+    std::filesystem::path acesShaderPath =
+      shaderDir / "aces_tonemap" / graphicsApiDir / "aces_tonemap.frag";
+    Import(acesShaderPath);
   }
 
   void

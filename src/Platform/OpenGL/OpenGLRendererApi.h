@@ -139,11 +139,11 @@ namespace Dwarf
      * @param shader Shader to use for blitting
      */
     void
-    CustomBlit(IFramebuffer&            source,
-               IFramebuffer&            destination,
-               uint32_t                 sourceAttachment,
-               uint32_t                 destinationAttachment,
-               std::shared_ptr<IShader> shader) override;
+    CustomBlit(IFramebuffer&              source,
+               IFramebuffer&              destination,
+               uint32_t                   sourceAttachment,
+               uint32_t                   destinationAttachment,
+               std::shared_ptr<IMaterial> material) override;
 
     /**
      * @brief Returns information about the vram usage

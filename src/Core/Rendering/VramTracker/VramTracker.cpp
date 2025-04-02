@@ -91,6 +91,7 @@ namespace Dwarf
         case RGBA16F: bytesPerPixel = 8; break;
         case RED_INTEGER:
         case RGBA8:
+        case SRGBA8:
         case DEPTH:
         case STENCIL:
         case DEPTH24STENCIL8: bytesPerPixel = 4; break;

@@ -10,6 +10,7 @@
 #include "Editor/Stats/IEditorStats.h"
 #include "Input/IInputManager.h"
 #include "Logging/IDwarfLogger.h"
+#include "Window/IWindow.h"
 #include <ImGuizmo.h>
 #include <boost/serialization/strong_typedef.hpp>
 #include <glm/vec2.hpp>
@@ -48,6 +49,8 @@ namespace Dwarf
 
     int32_t Samples = 1;
 
+    float Exposure = 1.0F;
+
     /// @brief Aspect ratio to use for the target.
     float targetAspectRatio;
 
@@ -76,6 +79,7 @@ namespace Dwarf
     std::shared_ptr<IEditorStats>       mEditorStats;
     std::shared_ptr<ILoadedScene>       mLoadedScene;
     std::shared_ptr<IEditorSelection>   mEditorSelection;
+    std::shared_ptr<IWindow>            mWindow;
 
     /// @brief Calculates the cutout of the available resolution based on the
     /// given aspect ratio.
@@ -112,7 +116,8 @@ namespace Dwarf
                       std::shared_ptr<IEditorSelection>      editorSelection,
                       const std::shared_ptr<ICameraFactory>& cameraFactory,
                       const std::shared_ptr<IRenderingPipelineFactory>&
-                        renderingPipelineFactory);
+                                               renderingPipelineFactory,
+                      std::shared_ptr<IWindow> window);
 
     SceneViewerWindow(SerializedModule                       serializedModule,
                       std::shared_ptr<IDwarfLogger>          logger,
@@ -122,7 +127,8 @@ namespace Dwarf
                       std::shared_ptr<IEditorSelection>      editorSelection,
                       const std::shared_ptr<ICameraFactory>& cameraFactory,
                       const std::shared_ptr<IRenderingPipelineFactory>&
-                        renderingPipelineFactory);
+                                               renderingPipelineFactory,
+                      std::shared_ptr<IWindow> window);
 
     ~SceneViewerWindow() override;
 

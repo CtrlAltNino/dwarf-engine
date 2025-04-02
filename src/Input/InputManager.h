@@ -71,12 +71,6 @@ namespace Dwarf
     GetMouseButtonUp(MOUSE_BUTTON button) const -> bool override;
 
     /**
-     * Toggles the visibility of the cursor
-     */
-    void
-    SetMouseVisibility(bool visibilityState) override;
-
-    /**
      * Returns the current position of the cursor in a vector
      */
     [[nodiscard]] auto

@@ -133,5 +133,14 @@ namespace Dwarf
      */
     virtual void
     SetShowWindowMaximized(bool maximized) = 0;
+
+    /**
+     * @brief Sets the mouse visibility. While invisible the mouse will not
+     * move, but the delta mouse position will still be reported.
+     *
+     * @param visibilityState
+     */
+    virtual void
+    SetMouseVisibility(bool visibilityState) = 0;
   };
 }

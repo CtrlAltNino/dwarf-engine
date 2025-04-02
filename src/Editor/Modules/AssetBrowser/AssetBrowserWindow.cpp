@@ -3,6 +3,10 @@
 #include "Core/Asset/Creation/Material/IMaterialCreator.h"
 #include "Editor/Modules/AssetBrowser/AssetBrowserWindow.h"
 #include "UI/DwarfUI.h"
+#include <algorithm>
+#include <filesystem>
+#include <imgui.h>
+#include <imgui_internal.h>
 
 namespace Dwarf
 {
@@ -19,13 +23,13 @@ namespace Dwarf
     std::shared_ptr<IMaterialCreator> materialCreator,
     std::shared_ptr<IShaderCreator>   shaderCreator,
     std::shared_ptr<IFileHandler>     fileHandler,
-    std::shared_ptr<ISceneIO>         sceneIO)
+    std::shared_ptr<ISceneIO>         sceneIO,
+    std::shared_ptr<ILoadedScene>     loadedScene)
     : IGuiModule(ModuleLabel("Asset Browser"),
                  ModuleType(MODULE_TYPE::ASSET_BROWSER),
                  ModuleID(std::make_shared<UUID>()))
     , mAssetDirectoryPath(assetDirectoryPath)
     , mLogger(std::move(logger))
-    , mCurrentDirectory(assetDirectoryPath)
     , mTextureFactory(std::move(textureFactory))
     , mAssetDatabase(std::move(assetDatabase))
     , mInputManager(std::move(inputManager))
@@ -37,8 +41,10 @@ namespace Dwarf
     , mShaderCreator(std::move(shaderCreator))
     , mFileHandler(std::move(fileHandler))
     , mSceneIo(std::move(sceneIO))
+    , mLoadedScene(std::move(loadedScene))
   {
-    mDirectoryHistory.push_back(mCurrentDirectory);
+    mData.CurrentDirectory = mAssetDirectoryPath;
+    mData.DirectoryHistory.push_back(mData.CurrentDirectory);
     LoadIcons();
     mLogger->LogDebug(Log("AssetBrowserWindow created", "AssetBrowserWindow"));
   }
@@ -57,6 +63,7 @@ namespace Dwarf
     std::shared_ptr<IShaderCreator>   shaderCreator,
     std::shared_ptr<IFileHandler>     fileHandler,
     std::shared_ptr<ISceneIO>         sceneIO,
+    std::shared_ptr<ILoadedScene>     loadedScene,
     SerializedModule                  serializedModule)
     : IGuiModule(ModuleLabel("Asset Browser"),
                  ModuleType(MODULE_TYPE::ASSET_BROWSER),
@@ -64,7 +71,6 @@ namespace Dwarf
                    serializedModule.t["id"].get<std::string>())))
     , mAssetDirectoryPath(assetDirectoryPath)
     , mLogger(std::move(logger))
-    , mCurrentDirectory(assetDirectoryPath)
     , mTextureFactory(std::move(textureFactory))
     , mAssetDatabase(std::move(assetDatabase))
     , mInputManager(std::move(inputManager))
@@ -76,8 +82,10 @@ namespace Dwarf
     , mShaderCreator(std::move(shaderCreator))
     , mFileHandler(std::move(fileHandler))
     , mSceneIo(std::move(sceneIO))
+    , mLoadedScene(std::move(loadedScene))
   {
-    mDirectoryHistory.push_back(mCurrentDirectory);
+    mData.CurrentDirectory = mAssetDirectoryPath;
+    mData.DirectoryHistory.push_back(mData.CurrentDirectory);
     LoadIcons();
     // Deserialize(serializedModule.t);
     mLogger->LogDebug(Log("AssetBrowserWindow created", "AssetBrowserWindow"));
@@ -124,6 +132,16 @@ namespace Dwarf
     {
       GoForward();
     }
+
+    if (!mDirectoryStructureCache.Valid)
+    {
+      RebuildDirectoryStructureCache();
+    }
+
+    if (!mDirectoryContentCache.Valid)
+    {
+      RebuildDirectoryContentCache(mData.CurrentDirectory);
+    }
   }
 
   void
@@ -162,9 +180,9 @@ namespace Dwarf
       mTextureFactory->FromPath(iconPath / "unknownFileIcon.png");
   }
 
-  bool
+  auto
   CompareDirectoryEntries(std::filesystem::directory_entry const& d1,
-                          std::filesystem::directory_entry const& d2)
+                          std::filesystem::directory_entry const& d2) -> bool
   {
     return d1.path().stem() < d2.path().stem();
   }
@@ -188,46 +206,142 @@ namespace Dwarf
     ImGuiID dockspaceId = ImGui::GetID("AssetBrowserDockspace");
     ImGui::DockSpace(dockspaceId, ImVec2(0.0F, 0.0F), dockspaceFlags);
 
+    static bool firstFrame = true;
     if (firstFrame)
     {
       firstFrame = false;
       SetupDockspace(dockspaceId);
     }
 
-    RenderFolderStructure();
-    RenderFolderContent();
+    RenderDirectoryStructure();
+    RenderDirectoryContent();
     RenderFooter();
 
     ImGui::End();
   }
 
   void
-  AssetBrowserWindow::RenderDirectoryLevel(
-    std::filesystem::path const& directory)
+  AssetBrowserWindow::RebuildDirectoryContentCache(
+    const std::filesystem::path& directory)
   {
+    mDirectoryContentCache.Entries.clear();
+
+    for (const auto& directoryEntry :
+         std::filesystem::directory_iterator(directory))
+    {
+      if (directoryEntry.is_directory() ||
+          (directoryEntry.is_regular_file() &&
+           (directoryEntry.path().has_extension() &&
+            directoryEntry.path().extension() !=
+              IAssetMetadata::METADATA_EXTENSION)))
+      {
+        DirectoryEntryData data;
+        data.Path = directoryEntry.path();
+        data.Thumbnail = GetTextureIdForDirectoryEntry(directoryEntry);
+        data.IsDirectory = directoryEntry.is_directory();
+        mDirectoryContentCache.Entries.emplace_back(data);
+      }
+    }
+
+    // Sort alphabetically and have directories first
+    std::ranges::sort(
+      mDirectoryContentCache.Entries,
+      [](const DirectoryEntryData& a, const DirectoryEntryData& b)
+      {
+        bool aIsDir = a.IsDirectory;
+        bool bIsDir = b.IsDirectory;
+
+        // First, sort directories before files
+        if (aIsDir != bIsDir)
+        {
+          return aIsDir > bIsDir; // Directories first
+        }
+
+        // Then, sort alphabetically
+        return a.Path.filename().string() < b.Path.filename().string();
+      });
+
+    mDirectoryContentCache.Valid = true;
+  }
+
+  auto
+  AssetBrowserWindow::GenerateDirectoryDataRecursively(
+    const std::filesystem::path& directory) -> DirectoryData
+  {
+    DirectoryData data;
+    data.Path = directory;
     for (const auto& directoryEntry :
          std::filesystem::directory_iterator(directory))
     {
       if (directoryEntry.is_directory())
       {
-        if (ImGui::CollapsingHeader(
-              directoryEntry.path().stem().string().c_str()))
-        {
-          ImGui::Indent(8.0F);
-          RenderDirectoryLevel(directoryEntry.path());
-          ImGui::Unindent(8.0F);
-        }
-
-        if (ImGui::IsItemClicked())
-        {
-          mCurrentDirectory = directoryEntry.path();
-        }
+        data.Subdirectories.emplace_back(
+          GenerateDirectoryDataRecursively(directoryEntry.path()));
       }
+    }
+
+    // Sort directories
+    std::ranges::stable_sort(data.Subdirectories,
+                             [](const DirectoryData& a, const DirectoryData& b)
+                             { return a.Path.stem() < b.Path.stem(); });
+
+    return data;
+  }
+
+  void
+  AssetBrowserWindow::RebuildDirectoryStructureCache()
+  {
+    mDirectoryStructureCache.RootDirectoryData =
+      GenerateDirectoryDataRecursively(mAssetDirectoryPath);
+    mDirectoryStructureCache.Valid = true;
+  }
+
+  void
+  AssetBrowserWindow::RenderDirectoryStructureCacheRecursively(
+    const DirectoryData& data)
+  {
+    ImGuiTreeNodeFlags flags =
+      ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
+    std::string label = data.Path.stem().string();
+    ImGuiID     id = ImGui::GetID(data.Path.string().c_str());
+
+    // Check if this directory is the current directory
+    if (data.Path == mData.CurrentDirectory)
+    {
+      flags |= ImGuiTreeNodeFlags_Selected;
+    }
+
+    // Check if this directory has any subdirectories
+    if (data.Subdirectories.empty())
+    {
+      flags |= ImGuiTreeNodeFlags_Leaf;
+    }
+
+    bool currentlyOpen =
+      ImGui::TreeNodeEx((void*)(intptr_t)id, flags, "%s", label.c_str());
+
+    if (ImGui::IsItemHovered())
+    {
+      ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
+    }
+
+    if (ImGui::IsItemClicked() && !ImGui::IsItemToggledOpen())
+    {
+      EnterDirectory(data.Path);
+    }
+
+    if (currentlyOpen)
+    {
+      for (const auto& subDirectory : data.Subdirectories)
+      {
+        RenderDirectoryStructureCacheRecursively(subDirectory);
+      }
+      ImGui::TreePop();
     }
   }
 
   void
-  AssetBrowserWindow::RenderFolderStructure()
+  AssetBrowserWindow::RenderDirectoryStructure()
   {
     ImGuiWindowFlags windowFlags = 0;
     windowFlags |= ImGuiWindowFlags_NoTitleBar;
@@ -235,16 +349,8 @@ namespace Dwarf
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(150, 150));
     ImGui::Begin("FolderStructure", nullptr, windowFlags);
-    if (ImGui::CollapsingHeader("Assets"))
-    {
-      if (ImGui::IsItemClicked())
-      {
-        mCurrentDirectory = mAssetDirectoryPath.t;
-      }
-      ImGui::Indent(8.0F);
-      RenderDirectoryLevel(mAssetDirectoryPath.t);
-      ImGui::Unindent(8.0F);
-    }
+    RenderDirectoryStructureCacheRecursively(
+      mDirectoryStructureCache.RootDirectoryData);
     ImGui::End();
     ImGui::PopStyleVar();
   }
@@ -269,13 +375,13 @@ namespace Dwarf
       GoForward();
     }
     ImGui::SameLine(0.0F, 5.0F);
-    ImGui::SliderFloat("Size", &mIconScale, 1.0F, 2.0F);
+    ImGui::SliderFloat("Size", &mData.IconScale, 1.0F, 2.0F);
     ImGui::End();
     ImGui::PopStyleVar(2);
   }
 
   void
-  AssetBrowserWindow::RenderFolderContent()
+  AssetBrowserWindow::RenderDirectoryContent()
   {
     ImGuiWindowFlags windowFlags = 0;
     windowFlags |= ImGuiWindowFlags_NoTitleBar;
@@ -283,385 +389,324 @@ namespace Dwarf
 
     ImGui::Begin("FolderContent", nullptr, windowFlags);
 
-    ImGui::Dummy(ImGui::GetContentRegionAvail());
-
-    if (ImGui::BeginPopupContextItem(
-          "Backdrop")) // <-- use last item id as popup id
+    // Rendering the entries
     {
-      if (ImGui::BeginMenu("New"))
+      float column = 0;
+      float tallestCell = 0;
+
+      ImVec2 cellMin = { ImGui::GetWindowContentRegionMin().x,
+                         ImGui::GetWindowContentRegionMin().y };
+      int    colCount = 0;
+
+      for (auto const& directoryEntry : mDirectoryContentCache.Entries)
       {
-        if (ImGui::BeginMenu("Material"))
-        {
-          if (ImGui::MenuItem("Pbr"))
-          {
-            mMaterialCreator->CreateMaterialAsset(MaterialType::PbrMaterial,
-                                                  mCurrentDirectory);
-          }
-          if (ImGui::MenuItem("Unlit"))
-          {
-            mMaterialCreator->CreateMaterialAsset(MaterialType::UnlitMaterial,
-                                                  mCurrentDirectory);
-          }
-          ImGui::EndMenu();
-        }
-
-        if (ImGui::BeginMenu("Shader"))
-        {
-          if (ImGui::BeginMenu("Vertex"))
-          {
-            if (ImGui::MenuItem("Pbr"))
-            {
-              mShaderCreator->CreateShaderAsset(ShaderType::VertexType,
-                                                ShaderSource::PbrSource,
-                                                mCurrentDirectory);
-            }
-
-            if (ImGui::MenuItem("Unlit"))
-            {
-              mShaderCreator->CreateShaderAsset(ShaderType::VertexType,
-                                                ShaderSource::UnlitSource,
-                                                mCurrentDirectory);
-            }
-            ImGui::EndMenu();
-          }
-
-          if (ImGui::BeginMenu("Fragment"))
-          {
-            if (ImGui::MenuItem("Pbr"))
-            {
-              mShaderCreator->CreateShaderAsset(ShaderType::FragmentType,
-                                                ShaderSource::PbrSource,
-                                                mCurrentDirectory);
-            }
-
-            if (ImGui::MenuItem("Unlit"))
-            {
-              mShaderCreator->CreateShaderAsset(ShaderType::FragmentType,
-                                                ShaderSource::UnlitSource,
-                                                mCurrentDirectory);
-            }
-            ImGui::EndMenu();
-          }
-
-          ImGui::EndMenu();
-        }
-
-        if (ImGui::MenuItem("Scene"))
-        {
-          mSceneIo->NewSceneAsset(mCurrentDirectory);
-        }
-
-        ImGui::EndMenu();
-      }
-
-      if (ImGui::MenuItem("Create Folder"))
-      {
-        mFileHandler->CreateDirectoryAt(mCurrentDirectory / "New Folder");
-      }
-
-      if (ImGui::MenuItem("Paste"))
-      {
-        if (std::filesystem::exists(mCopyPathBuffer))
-        {
-          mFileHandler->Copy(mCopyPathBuffer, mCurrentDirectory);
-        }
-      }
-
-      if (ImGui::MenuItem("Open in file browser"))
-      {
-        mFileHandler->OpenPathInFileBrowser(mCurrentDirectory);
-      }
-      ImGui::EndPopup();
-    }
-
-    float column = 0;
-    float rowOffset = 0;
-    float tallestCell = 0;
-
-    std::vector<std::filesystem::directory_entry> directories;
-    std::vector<std::filesystem::directory_entry> files;
-
-    // directories.
-    for (const auto& directoryEntry :
-         std::filesystem::directory_iterator(mCurrentDirectory))
-    {
-      if (directoryEntry.is_directory())
-      {
-        directories.push_back(directoryEntry);
-      }
-      else if (directoryEntry.is_regular_file())
-      {
-        files.push_back(directoryEntry);
-      }
-    }
-
-    std::ranges::sort(
-      directories.begin(), directories.end(), CompareDirectoryEntries);
-    std::ranges::sort(files.begin(), files.end(), CompareDirectoryEntries);
-
-    std::vector<std::filesystem::directory_entry> combinedEntries;
-    combinedEntries.reserve(directories.size() + files.size());
-    combinedEntries.insert(
-      combinedEntries.end(), directories.begin(), directories.end());
-    combinedEntries.insert(combinedEntries.end(), files.begin(), files.end());
-
-    for (auto const& directoryEntry : combinedEntries)
-    {
-      const auto& path = directoryEntry.path();
-      auto        relativePath =
-        std::filesystem::relative(path, mAssetDirectoryPath.t);
-
-      if (!(directoryEntry.path().has_extension() &&
-            directoryEntry.path().extension() ==
-              IAssetMetadata::METADATA_EXTENSION))
-      {
-        float padding = 16.0F * mIconScale;
+        float padding = 16.0F * mData.IconScale;
         float halfPadding = padding / 2.0F;
-        float cellWidth = 64.0F * mIconScale;
+        float cellWidth = 64.0F * mData.IconScale;
         float textWidth = cellWidth - padding;
         float textHeight =
-          ImGui::CalcTextSize(
-            relativePath.stem().string().c_str(), nullptr, false, textWidth)
+          ImGui::CalcTextSize(directoryEntry.Path.stem().string().c_str(),
+                              nullptr,
+                              false,
+                              textWidth)
             .y;
         float cellHeight = cellWidth + textHeight + halfPadding;
 
         tallestCell = std::max(cellHeight, tallestCell);
 
-        ImVec2 cellMin = { ImGui::GetWindowContentRegionMin().x +
-                             (column * (cellWidth + halfPadding)),
-                           ImGui::GetWindowContentRegionMin().y + rowOffset };
-        ImGui::SetCursorPos(cellMin);
-
-        ImGui::PushStyleVar(ImGuiStyleVar_FrameRounding, 5.0F);
-        if (mSelectedAsset == path)
-        {
-          ImGui::PushStyleColor(ImGuiCol_Button,
-                                ImVec4(1.0F, 1.0F, 1.0F, 0.2F));
-        }
-        else
-        {
-          ImGui::PushStyleColor(ImGuiCol_Button, ImVec4(0, 0, 0, 0));
-        }
-        ImGui::PushStyleColor(ImGuiCol_ButtonHovered,
+        ImGui::PushStyleColor(ImGuiCol_Header, ImVec4(1.0F, 1.0F, 1.0F, 0.2F));
+        ImGui::PushStyleColor(ImGuiCol_HeaderHovered,
                               ImVec4(1.0F, 1.0F, 1.0F, 0.2F));
-        ImGui::PushStyleColor(ImGuiCol_ButtonActive,
+        ImGui::PushStyleColor(ImGuiCol_HeaderActive,
                               ImVec4(1.0F, 1.0F, 1.0F, 0.4F));
-        ImGui::Button("##entry", ImVec2(cellWidth, cellHeight));
-        ImGui::PopStyleColor(3);
-        ImGui::PopStyleVar();
+        ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
+
+        ImVec2 startPos = ImGui::GetCursorPos();
+        ImVec2 imagePos = { startPos.x + halfPadding,
+                            startPos.y + halfPadding };
+        ImVec2 textPos = { imagePos.x, imagePos.y + cellWidth - halfPadding };
+        std::string id = std::string("##").append(directoryEntry.Path.string());
+        ImGui::SetCursorPos(imagePos);
+        ImGui::Image(directoryEntry.Thumbnail,
+                     ImVec2(cellWidth - padding, cellWidth - padding));
+
+        ImGui::SetCursorPos(textPos);
+        ImGui::PushTextWrapPos(ImGui::GetCursorPosX() + textWidth);
+        ImGui::TextWrapped("%s", directoryEntry.Path.stem().string().c_str());
+        ImGui::PopTextWrapPos();
+
+        ImGui::SetCursorPos(startPos);
+        ImGui::Selectable(
+          id.c_str(),
+          mEditorSelection->IsAssetSelected(directoryEntry.Path),
+          ImGuiSelectableFlags_AllowDoubleClick,
+          ImVec2(cellWidth, cellHeight));
 
         if (ImGui::IsItemHovered())
         {
           ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
-          if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
+        }
+
+        if (ImGui::IsItemClicked(ImGuiMouseButton_Left) ||
+            ImGui::IsItemClicked(ImGuiMouseButton_Right))
+        {
+          if (!directoryEntry.IsDirectory &&
+              mAssetDatabase->Exists(directoryEntry.Path))
           {
-            OpenPath(directoryEntry);
-          }
-          else if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
-          {
-            if (!directoryEntry.is_directory() && mAssetDatabase->Exists(path))
-            {
-              mEditorSelection->SelectAsset(mAssetDatabase->Retrieve(path));
-            }
+            mEditorSelection->SelectAsset(
+              mAssetDatabase->Retrieve(directoryEntry.Path));
           }
 
-          // TODO: Drag Asset
-        }
-        else
-        {
-          if (mSelectedAsset == directoryEntry.path() &&
-              ImGui::IsWindowHovered() &&
-              ImGui::IsMouseClicked(ImGuiMouseButton_Left))
+          if (ImGui::IsMouseDoubleClicked(ImGuiMouseButton_Left))
           {
-            ClearSelection();
+            if (directoryEntry.IsDirectory)
+            {
+              EnterDirectory(directoryEntry.Path);
+            }
+            else
+            {
+              OpenPath(directoryEntry.Path);
+            }
           }
         }
 
         if (ImGui::BeginPopupContextItem(
-              directoryEntry.path().string().c_str())) // <-- use last item id
-                                                       // as popup id
+              directoryEntry.Path.string().c_str())) // <-- use last item id
+                                                     // as popup id
         {
           if (ImGui::MenuItem("Open"))
           {
-            OpenPath(directoryEntry);
-          }
-          else if (ImGui::MenuItem("Copy"))
-          {
-            mCopyPathBuffer = path;
-          }
-          else if (ImGui::MenuItem("Duplicate"))
-          {
-            mFileHandler->Duplicate(path);
-          }
-          else if (ImGui::MenuItem("Rename"))
-          {
-            mRenamePathBuffer = path;
-            SetRenameBuffer(path);
-            mOpenRename = true;
-          }
-          if (ImGui::MenuItem("Open in file browser"))
-          {
-            if (directoryEntry.is_directory())
+            if (directoryEntry.IsDirectory)
             {
-              mFileHandler->OpenPathInFileBrowser(directoryEntry.path());
+              EnterDirectory(directoryEntry.Path);
             }
             else
             {
-              mFileHandler->OpenPathInFileBrowser(mCurrentDirectory);
+              OpenPath(directoryEntry.Path);
+            }
+          }
+          else if (ImGui::MenuItem("Copy"))
+          {
+            mData.CopyPathBuffer = directoryEntry.Path;
+          }
+          else if (ImGui::MenuItem("Duplicate"))
+          {
+            mFileHandler->Duplicate(directoryEntry.Path);
+          }
+          else if (ImGui::MenuItem("Rename"))
+          {
+            mData.RenamePathBuffer = directoryEntry.Path;
+            SetRenameBuffer(directoryEntry.Path);
+            mData.OpenRename = true;
+          }
+          if (ImGui::MenuItem("Open in file browser"))
+          {
+            if (directoryEntry.IsDirectory)
+            {
+              mFileHandler->OpenPathInFileBrowser(directoryEntry.Path);
+            }
+            else
+            {
+              mFileHandler->OpenPathInFileBrowser(mData.CurrentDirectory);
             }
           }
           else if (ImGui::MenuItem("Delete"))
           {
             // TODO: Confirmation modal
-            if (mAssetDatabase->Exists(path))
+            if (mAssetDatabase->Exists(directoryEntry.Path))
             {
-              mAssetDatabase->Remove(path);
-              mAssetMetadata->RemoveMetadata(path);
+              mAssetDatabase->Remove(directoryEntry.Path);
+              mAssetMetadata->RemoveMetadata(directoryEntry.Path);
             }
-            mFileHandler->Delete(path);
+            mFileHandler->Delete(directoryEntry.Path);
           }
           ImGui::EndPopup();
         }
 
-        ImGui::SetCursorPos(
-          ImVec2(cellMin.x + halfPadding, cellMin.y + halfPadding));
-
-        static ImTextureID texID;
-        if (directoryEntry.is_directory())
+        float contentRegionAvailX = ImGui::GetContentRegionAvail().x;
+        float limitX = (ImGui::GetContentRegionAvail().x - cellWidth);
+        float samelineXPos = ImGui::GetCursorPosX() + (colCount * cellWidth);
+        // std::cout << "Remaining space: " << remainingSpace << std::endl;
+        if ((ImGui::GetCursorPosX() + ((colCount + 1) * cellWidth)) <
+            (ImGui::GetContentRegionAvail().x - (cellWidth - padding)))
         {
-          texID = (ImTextureID)mDirectoryIcon->GetTextureID();
+          ImGui::SameLine();
+          colCount++;
+          float currentXPos = ImGui::GetCursorPosX();
         }
-        else if (directoryEntry.is_regular_file())
+        else
         {
-          if (directoryEntry.path().has_extension())
+          colCount = 0;
+          ImGui::SetCursorPosY(ImGui::GetCursorPosY() +
+                               (tallestCell - cellHeight));
+          tallestCell = 0;
+        }
+        ImGui::PopStyleColor(3);
+        ImGui::PopStyleVar(1);
+      }
+    }
+
+    // Rename popup
+    {
+      if (mData.OpenRename)
+      {
+        ImGui::OpenPopup("rename_popup");
+        mData.OpenRename = false;
+      }
+
+      if (ImGui::BeginPopup("rename_popup"))
+      {
+        std::filesystem::path old = mData.RenamePathBuffer;
+
+        ImGui::InputText("##RenameInput",
+                         mData.RenameBuffer.data(),
+                         mData.RenameBuffer.capacity() + 1,
+                         ImGuiInputTextFlags_CallbackResize,
+                         DwarfUI::InputTextCallback,
+                         &mData.RenameBuffer);
+        if (ImGui::Button("Rename##RenameButton") &&
+            (mData.RenameBuffer.size() > 0))
+        {
+          std::filesystem::path newPath =
+            mData.RenamePathBuffer.remove_filename().concat(mData.RenameBuffer);
+          if (mAssetDatabase->Exists(old))
           {
-            std::string extension = boost::algorithm::to_lower_copy(
-              directoryEntry.path().extension().string());
-            if (extension == ".fbx")
-            {
-              texID = (ImTextureID)mFBXIcon->GetTextureID();
-            }
-            else if (extension == ".obj")
-            {
-              texID = (ImTextureID)mOBJIcon->GetTextureID();
-            }
-            else if (extension == ".jpg")
-            {
-              texID = (ImTextureID)mJPGIcon->GetTextureID();
-            }
-            else if (extension == ".png")
-            {
-              texID = (ImTextureID)mPNGIcon->GetTextureID();
-            }
-            else if (extension == ".vert")
-            {
-              texID = (ImTextureID)mVertexShaderIcon->GetTextureID();
-            }
-            else if (extension == ".tesc")
-            {
-              texID =
-                (ImTextureID)mTessellationControlShaderIcon->GetTextureID();
-            }
-            else if (extension == ".tese")
-            {
-              texID =
-                (ImTextureID)mTessellationEvaluationShaderIcon->GetTextureID();
-            }
-            else if (extension == ".geom")
-            {
-              texID = (ImTextureID)mGeometryShaderIcon->GetTextureID();
-            }
-            else if (extension == ".frag")
-            {
-              texID = (ImTextureID)mFragmentShaderIcon->GetTextureID();
-            }
-            else if (extension == ".comp")
-            {
-              texID = (ImTextureID)mComputeShaderIcon->GetTextureID();
-            }
-            else if (extension == ".hlsl")
-            {
-              texID = (ImTextureID)mHLSLShaderIcon->GetTextureID();
-            }
-            else if (extension == ".dscene")
-            {
-              texID = (ImTextureID)mSceneIcon->GetTextureID();
-            }
-            else if (extension == ".dmat")
-            {
-              texID = (ImTextureID)mMaterialIcon->GetTextureID();
-            }
-            else
-            {
-              texID = (ImTextureID)mUnknownFileIcon->GetTextureID();
-            }
+            mAssetDatabase->Rename(old, newPath);
           }
           else
           {
-            texID = (ImTextureID)mUnknownFileIcon->GetTextureID();
+            mAssetDatabase->RenameDirectory(old, newPath);
+          }
+          mFileHandler->Rename(old, newPath);
+          ImGui::CloseCurrentPopup();
+        }
+
+        ImGui::SameLine();
+
+        if (ImGui::Button("Cancel"))
+        {
+          ImGui::CloseCurrentPopup();
+        }
+        ImGui::EndPopup();
+      }
+    }
+
+    // Dummy Item that clears the selection when clicked
+    /*{
+      ImVec2 padding = ImGui::GetCursorPos();
+      ImGui::SetCursorPos(ImVec2(0, 0));
+      ImVec2 dummySize =
+        ImVec2(ImGui::GetContentRegionAvail().x,
+               ImGui::GetContentRegionAvail().y + ImGui::GetScrollMaxY());
+      ImGui::Dummy(dummySize);
+      if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
+      {
+        mEditorSelection->ClearAssetSelection();
+      }
+    }*/
+
+    // Right Click menu
+    {
+      if (ImGui::IsWindowHovered() && !ImGui::IsAnyItemHovered() &&
+          ImGui::IsMouseClicked(ImGuiMouseButton_Right))
+      {
+        ImGui::OpenPopup("ContextMenu");
+      }
+
+      if (ImGui::BeginPopup("ContextMenu")) // <-- use last item id as popup id
+      {
+        if (ImGui::BeginMenu("New"))
+        {
+          if (ImGui::BeginMenu("Material"))
+          {
+            if (ImGui::MenuItem("Pbr"))
+            {
+              mMaterialCreator->CreateMaterialAsset(MaterialType::PbrMaterial,
+                                                    mData.CurrentDirectory);
+            }
+            if (ImGui::MenuItem("Unlit"))
+            {
+              mMaterialCreator->CreateMaterialAsset(MaterialType::UnlitMaterial,
+                                                    mData.CurrentDirectory);
+            }
+            ImGui::EndMenu();
+          }
+
+          if (ImGui::BeginMenu("Shader"))
+          {
+            if (ImGui::BeginMenu("Vertex"))
+            {
+              if (ImGui::MenuItem("Pbr"))
+              {
+                mShaderCreator->CreateShaderAsset(ShaderType::VertexType,
+                                                  ShaderSource::PbrSource,
+                                                  mData.CurrentDirectory);
+              }
+
+              if (ImGui::MenuItem("Unlit"))
+              {
+                mShaderCreator->CreateShaderAsset(ShaderType::VertexType,
+                                                  ShaderSource::UnlitSource,
+                                                  mData.CurrentDirectory);
+              }
+              ImGui::EndMenu();
+            }
+
+            if (ImGui::BeginMenu("Fragment"))
+            {
+              if (ImGui::MenuItem("Pbr"))
+              {
+                mShaderCreator->CreateShaderAsset(ShaderType::FragmentType,
+                                                  ShaderSource::PbrSource,
+                                                  mData.CurrentDirectory);
+              }
+
+              if (ImGui::MenuItem("Unlit"))
+              {
+                mShaderCreator->CreateShaderAsset(ShaderType::FragmentType,
+                                                  ShaderSource::UnlitSource,
+                                                  mData.CurrentDirectory);
+              }
+              ImGui::EndMenu();
+            }
+
+            ImGui::EndMenu();
+          }
+
+          if (ImGui::MenuItem("Scene"))
+          {
+            mSceneIo->NewSceneAsset(mData.CurrentDirectory);
+          }
+
+          ImGui::EndMenu();
+        }
+
+        if (ImGui::MenuItem("Create Folder"))
+        {
+          mFileHandler->CreateDirectoryAt(mData.CurrentDirectory /
+                                          "New Folder");
+        }
+
+        if (ImGui::MenuItem("Paste"))
+        {
+          if (std::filesystem::exists(mData.CopyPathBuffer))
+          {
+            mFileHandler->Copy(mData.CopyPathBuffer, mData.CurrentDirectory);
           }
         }
-        ImGui::Image(texID, ImVec2(cellWidth - padding, cellWidth - padding));
 
-        ImGui::SetCursorPos(
-          ImVec2(cellMin.x + halfPadding, cellMin.y + cellWidth));
-        ImGui::PushTextWrapPos(ImGui::GetCursorPosX() + textWidth);
-        ImGui::TextWrapped("%s", relativePath.stem().string().c_str());
-        ImGui::PopTextWrapPos();
-
-        if ((ImGui::GetContentRegionAvail().x - cellMin.x - cellWidth) >=
-            cellWidth)
+        if (ImGui::MenuItem("Open in file browser"))
         {
-          column++;
+          mFileHandler->OpenPathInFileBrowser(mData.CurrentDirectory);
         }
-        else
-        {
-          rowOffset += tallestCell + halfPadding;
-          tallestCell = 0;
-          column = 0;
-        }
+        ImGui::EndPopup();
       }
     }
 
-    if (mOpenRename)
+    if (ImGui::IsWindowHovered() && !ImGui::IsAnyItemHovered() &&
+        ImGui::IsMouseClicked(ImGuiMouseButton_Left))
     {
-      ImGui::OpenPopup("rename_popup");
-      mOpenRename = false;
-    }
-
-    if (ImGui::BeginPopup("rename_popup"))
-    {
-      std::filesystem::path old = mRenamePathBuffer;
-
-      ImGui::InputText("##RenameInput",
-                       mRenameBuffer.data(),
-                       mRenameBuffer.capacity() + 1,
-                       ImGuiInputTextFlags_CallbackResize,
-                       DwarfUI::InputTextCallback,
-                       &mRenameBuffer);
-      if (ImGui::Button("Rename##RenameButton") && (mRenameBuffer.size() > 0))
-      {
-        std::filesystem::path newPath =
-          mRenamePathBuffer.remove_filename().concat(mRenameBuffer);
-        if (mAssetDatabase->Exists(old))
-        {
-          mAssetDatabase->Rename(old, newPath);
-        }
-        else
-        {
-          mAssetDatabase->RenameDirectory(old, newPath);
-        }
-        mFileHandler->Rename(old, newPath);
-        ImGui::CloseCurrentPopup();
-      }
-
-      ImGui::SameLine();
-
-      if (ImGui::Button("Cancel"))
-      {
-        ImGui::CloseCurrentPopup();
-      }
-      ImGui::EndPopup();
+      mEditorSelection->ClearAssetSelection();
     }
 
     ImGui::End();
@@ -670,56 +715,71 @@ namespace Dwarf
   void
   AssetBrowserWindow::GoBack()
   {
-    if (mHistoryPos > 0)
+    if (mData.HistoryPos > 0)
     {
-      mHistoryPos--;
-      mCurrentDirectory = mDirectoryHistory[mHistoryPos];
+      mData.HistoryPos--;
+      if (mData.CurrentDirectory != mData.DirectoryHistory[mData.HistoryPos])
+      {
+        mDirectoryContentCache.Valid = false;
+      }
+      mData.CurrentDirectory = mData.DirectoryHistory[mData.HistoryPos];
     }
   }
 
   void
   AssetBrowserWindow::GoForward()
   {
-    if (mHistoryPos < (mDirectoryHistory.size() - 1))
+    if (mData.HistoryPos < (mData.DirectoryHistory.size() - 1))
     {
-      mHistoryPos++;
-      mCurrentDirectory = mDirectoryHistory[mHistoryPos];
+      mData.HistoryPos++;
+      mData.CurrentDirectory = mData.DirectoryHistory[mData.HistoryPos];
     }
   }
 
   void
-  AssetBrowserWindow::OpenPath(
-    std::filesystem::directory_entry const& directoryEntry)
+  AssetBrowserWindow::OpenPath(const std::filesystem::path& path)
   {
-    if (directoryEntry.is_directory())
+    if (path.extension() == ".dscene")
     {
-      EnterDirectory(directoryEntry.path().filename());
-    }
-    else if (directoryEntry.path().extension() == ".dscene")
-    {
-      // mModel->SetScene(SceneUtilities::LoadScene(directoryEntry.path()));
-      // TODO: Use SceneIO
+      if (mAssetDatabase->Exists(path))
+      {
+        auto sceneRef = mAssetDatabase->Retrieve(path);
+        auto loadedScene = mSceneIo->LoadScene(*sceneRef);
+        mLoadedScene->SetScene(std::move(loadedScene));
+      }
     }
     else
     {
-      // TODO:s Open file
-      mFileHandler->LaunchFile(directoryEntry.path());
+      mFileHandler->LaunchFile(path);
     }
+  }
+
+  void
+  AssetBrowserWindow::UnfoldSelectedDirectory()
+  {
   }
 
   void
   AssetBrowserWindow::EnterDirectory(std::filesystem::path const& path)
   {
-    mCurrentDirectory /= path.filename();
-    if (mHistoryPos < (mDirectoryHistory.size() - 1))
+    if (mData.CurrentDirectory == path)
     {
-      for (int i = 0; i < (mDirectoryHistory.size() - mHistoryPos); i++)
+      return;
+    }
+
+    mData.CurrentDirectory = path;
+    mDirectoryContentCache.Valid = false;
+
+    if (mData.HistoryPos < (mData.DirectoryHistory.size() - 1))
+    {
+      for (int i = 0; i < (mData.DirectoryHistory.size() - mData.HistoryPos);
+           i++)
       {
-        mDirectoryHistory.pop_back();
+        mData.DirectoryHistory.pop_back();
       }
     }
-    mDirectoryHistory.push_back(mCurrentDirectory);
-    mHistoryPos = (int)mDirectoryHistory.size() - 1;
+    mData.DirectoryHistory.push_back(mData.CurrentDirectory);
+    mData.HistoryPos = (int)mData.DirectoryHistory.size() - 1;
   }
 
   void
@@ -731,14 +791,13 @@ namespace Dwarf
   void
   AssetBrowserWindow::ClearSelection()
   {
-    mSelectedAsset = "";
     mEditorSelection->ClearAssetSelection();
   }
 
   void
   AssetBrowserWindow::Deserialize(nlohmann::json moduleData)
   {
-    mCurrentDirectory =
+    mData.CurrentDirectory =
       (std::filesystem::path)moduleData["openedPath"].get<std::string>();
   }
 
@@ -747,7 +806,7 @@ namespace Dwarf
   {
     nlohmann::json serializedModule;
 
-    serializedModule["openedPath"] = mCurrentDirectory;
+    serializedModule["openedPath"] = mData.CurrentDirectory;
     serializedModule["id"] = GetUuid()->toString();
     serializedModule["type"] = static_cast<int>(GetModuleType());
     serializedModule["label"] = GetModuleName();
@@ -758,23 +817,81 @@ namespace Dwarf
   void
   AssetBrowserWindow::SetRenameBuffer(std::filesystem::path const& path)
   {
-    if (mFileHandler->FileExists(path))
+    mData.RenameBuffer = mData.RenamePathBuffer.filename().string();
+  }
+
+  auto
+  AssetBrowserWindow::GetTextureIdForDirectoryEntry(
+    const std::filesystem::directory_entry& directoryEntry) -> ImTextureID
+  {
+    auto texID = (ImTextureID)mUnknownFileIcon->GetTextureID();
+
+    if (directoryEntry.is_directory())
     {
-      // TODO: test this
-#ifdef _MSC_VER
-      mRenameBuffer = mRenamePathBuffer.filename().string();
-#else
-      mRenameBuffer = mRenamePathBuffer.filename().string();
-#endif
+      texID = (ImTextureID)mDirectoryIcon->GetTextureID();
     }
-    else if (mFileHandler->DirectoryExists(path))
+    else if (directoryEntry.is_regular_file())
     {
-      // TODO: test this
-#ifdef _MSC_VER
-      mRenameBuffer = mRenamePathBuffer.filename().string();
-#else
-      mRenameBuffer = mRenamePathBuffer.filename().string();
-#endif
+      if (directoryEntry.path().has_extension())
+      {
+        std::string extension = boost::algorithm::to_lower_copy(
+          directoryEntry.path().extension().string());
+        if (extension == ".fbx")
+        {
+          texID = (ImTextureID)mFBXIcon->GetTextureID();
+        }
+        else if (extension == ".obj")
+        {
+          texID = (ImTextureID)mOBJIcon->GetTextureID();
+        }
+        else if (extension == ".jpg")
+        {
+          texID = (ImTextureID)mJPGIcon->GetTextureID();
+        }
+        else if (extension == ".png")
+        {
+          texID = (ImTextureID)mPNGIcon->GetTextureID();
+        }
+        else if (extension == ".vert")
+        {
+          texID = (ImTextureID)mVertexShaderIcon->GetTextureID();
+        }
+        else if (extension == ".tesc")
+        {
+          texID = (ImTextureID)mTessellationControlShaderIcon->GetTextureID();
+        }
+        else if (extension == ".tese")
+        {
+          texID =
+            (ImTextureID)mTessellationEvaluationShaderIcon->GetTextureID();
+        }
+        else if (extension == ".geom")
+        {
+          texID = (ImTextureID)mGeometryShaderIcon->GetTextureID();
+        }
+        else if (extension == ".frag")
+        {
+          texID = (ImTextureID)mFragmentShaderIcon->GetTextureID();
+        }
+        else if (extension == ".comp")
+        {
+          texID = (ImTextureID)mComputeShaderIcon->GetTextureID();
+        }
+        else if (extension == ".hlsl")
+        {
+          texID = (ImTextureID)mHLSLShaderIcon->GetTextureID();
+        }
+        else if (extension == ".dscene")
+        {
+          texID = (ImTextureID)mSceneIcon->GetTextureID();
+        }
+        else if (extension == ".dmat")
+        {
+          texID = (ImTextureID)mMaterialIcon->GetTextureID();
+        }
+      }
     }
+
+    return texID;
   }
 }

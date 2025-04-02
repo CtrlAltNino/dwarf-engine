@@ -29,9 +29,6 @@ namespace Dwarf
     [[nodiscard]] virtual auto
     GetMouseButtonUp(MOUSE_BUTTON button) const -> bool = 0;
 
-    virtual void
-    SetMouseVisibility(bool visibilityState) = 0;
-
     [[nodiscard]] virtual auto
     GetMousePosition() const -> glm::vec2 = 0;
     [[nodiscard]] virtual auto

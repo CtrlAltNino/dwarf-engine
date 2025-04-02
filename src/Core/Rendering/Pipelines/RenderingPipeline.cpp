@@ -46,9 +46,12 @@ namespace Dwarf
     mGridModelMatrix = glm::mat4(1.0F);
     mGridModelMatrix = glm::scale(mGridModelMatrix, glm::vec3(3000.0F));
 
-    mAgxTonemapShader = mShaderRegistry->GetOrCreate(
+    /*mTonemapShader = mShaderRegistry->GetOrCreate(
       mShaderSourceCollectionFactory->CreateAgxTonemapShaderSourceCollection());
-    mAgxTonemapShader->Compile();
+    mTonemapShader->Compile();*/
+
+    mTonemapMaterial = mMaterialFactory->CreateMaterial(
+      mShaderSourceCollectionFactory->CreateAgxTonemapShaderSourceCollection());
 
     // Setup rendering framebuffer according to the pipeline specification
     mFramebuffer = mFramebufferFactory->Create(GetSpecification());
@@ -60,7 +63,7 @@ namespace Dwarf
     // Setup framebuffer for presentation
     FramebufferSpecification presentationSpec;
     presentationSpec.Attachments = FramebufferAttachmentSpecification{
-      FramebufferTextureSpecification{ FramebufferTextureFormat::RGBA8 }
+      FramebufferTextureSpecification{ FramebufferTextureFormat::SRGBA8 }
     };
 
     mPresentationBuffer = mFramebufferFactory->Create(presentationSpec);
@@ -135,7 +138,7 @@ namespace Dwarf
                        mFramebuffer->GetSpecification().Height);
 
     mRendererApi->CustomBlit(
-      *mNonMsaaBuffer, *mPresentationBuffer, 0, 0, mAgxTonemapShader);
+      *mNonMsaaBuffer, *mPresentationBuffer, 0, 0, mTonemapMaterial);
   }
 
   auto
@@ -238,5 +241,11 @@ namespace Dwarf
       .value()
       .get()
       .GetTextureID();
+  }
+
+  void
+  RenderingPipeline::SetExposue(float exposure)
+  {
+    mTonemapMaterial->GetShaderParameters()->SetParameter("exposure", exposure);
   }
 }

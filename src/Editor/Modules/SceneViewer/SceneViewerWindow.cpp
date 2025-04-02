@@ -3,6 +3,7 @@
 #include "Core/Scene/Components/SceneComponents.h"
 #include "Core/Scene/Entity/Entity.h"
 #include "Editor/Modules/SceneViewer/SceneViewerWindow.h"
+#include <imgui.h>
 
 #define MIN_RESOLUTION_WIDTH 10
 #define MIN_RESOLUTION_HEIGHT 10
@@ -18,7 +19,8 @@ namespace Dwarf
     std::shared_ptr<ILoadedScene>                     loadedScene,
     std::shared_ptr<IEditorSelection>                 editorSelection,
     const std::shared_ptr<ICameraFactory>&            cameraFactory,
-    const std::shared_ptr<IRenderingPipelineFactory>& renderingPipelineFactory)
+    const std::shared_ptr<IRenderingPipelineFactory>& renderingPipelineFactory,
+    std::shared_ptr<IWindow>                          window)
     : IGuiModule(ModuleLabel("Scene Viewer"),
                  ModuleType(MODULE_TYPE::SCENE_VIEWER),
                  ModuleID(std::make_shared<UUID>()))
@@ -27,6 +29,7 @@ namespace Dwarf
     , mInputManager(std::move(inputManager))
     , mLoadedScene(std::move(loadedScene))
     , mEditorSelection(std::move(editorSelection))
+    , mWindow(std::move(window))
   {
     // Create rendering pipeline
     mRenderingPipeline = renderingPipelineFactory->Create();
@@ -46,7 +49,8 @@ namespace Dwarf
     std::shared_ptr<ILoadedScene>                     loadedScene,
     std::shared_ptr<IEditorSelection>                 editorSelection,
     const std::shared_ptr<ICameraFactory>&            cameraFactory,
-    const std::shared_ptr<IRenderingPipelineFactory>& renderingPipelineFactory)
+    const std::shared_ptr<IRenderingPipelineFactory>& renderingPipelineFactory,
+    std::shared_ptr<IWindow>                          window)
     : IGuiModule(ModuleLabel("Scene Viewer"),
                  ModuleType(MODULE_TYPE::SCENE_VIEWER),
                  ModuleID(std::make_shared<UUID>(
@@ -56,6 +60,7 @@ namespace Dwarf
     , mInputManager(std::move(inputManager))
     , mLoadedScene(std::move(loadedScene))
     , mEditorSelection(std::move(editorSelection))
+    , mWindow(std::move(window))
   {
     // Create rendering pipeline
     mRenderingPipeline = renderingPipelineFactory->Create();
@@ -80,8 +85,15 @@ namespace Dwarf
     if (mSettings.CameraMovement &&
         mInputManager->GetMouseButton(MOUSE_BUTTON::RIGHT))
     {
+      mWindow->SetMouseVisibility(false);
       mCamera->OnUpdate(mEditorStats->GetDeltaTime());
     }
+    else
+    {
+      mWindow->SetMouseVisibility(true);
+    }
+
+    mRenderingPipeline->SetExposue(mSettings.Exposure);
 
     // Render scene to the framebuffer with the camera
     mRenderingPipeline->RenderScene(*mCamera, mSettings.RenderGrid);
@@ -221,6 +233,10 @@ namespace Dwarf
                      "%d",
                      ImGuiSliderFlags_None);
 
+    ImGui::SameLine(0, 5);
+
+    ImGui::DragFloat("Exposure", &mSettings.Exposure, 0.0001F, 0, 2);
+
     ImGui::PopStyleVar();
     ImGui::PopItemWidth();
 
@@ -259,45 +275,29 @@ namespace Dwarf
       }
     }
 
+    ImGui::SetCursorScreenPos(minRect);
+    ImVec2 size = { maxRect.x - minRect.x, maxRect.y - minRect.y };
+
     // Rendering the framebuffer
-    ImDrawList* drawList = ImGui::GetWindowDrawList();
-    drawList->AddImage(
-      (ImTextureID)mRenderingPipeline->GetPresentationBufferId(),
-      minRect,
-      maxRect,
-      ImVec2(0, 1),
-      ImVec2(1, 0));
+    ImGui::Image((ImTextureID)mRenderingPipeline->GetPresentationBufferId(),
+                 size,
+                 ImVec2(0, 1),
+                 ImVec2(1, 0));
 
     // Check if a mesh is clicked
     glm::vec2 mousePos = { ImGui::GetMousePos().x, ImGui::GetMousePos().y };
     glm::vec2 minRectGlm = { minRect.x, minRect.y };
     glm::vec2 maxRectGlm = { maxRect.x, maxRect.y };
 
-    if (mInputManager->GetMouseButtonDown(MOUSE_BUTTON::LEFT) &&
-        mousePos.x > minRectGlm.x && mousePos.x < maxRectGlm.x &&
-        mousePos.y > minRectGlm.y && mousePos.y < maxRectGlm.y)
+    if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
     {
       ProcessSceneClick(mousePos - minRectGlm);
     }
 
-    drawList->ChannelsMerge();
-
-    auto hoverRectMin =
-      ImVec2(ImGui::GetWindowPos().x + ImGui::GetCursorPos().x,
-             ImGui::GetWindowPos().y + ImGui::GetCursorPos().y);
-
-    auto hoverRectMax =
-      ImVec2(ImGui::GetWindowPos().x + ImGui::GetCursorPos().x +
-               ImGui::GetContentRegionAvail().x,
-             ImGui::GetWindowPos().y + ImGui::GetCursorPos().y +
-               ImGui::GetContentRegionAvail().y);
-
-    // TODO: Add cursor collision with other windows that may block
-
-    if (!mSettings.CameraMovement &&
-        ImGui::IsMouseHoveringRect(hoverRectMin, hoverRectMax) &&
-        mInputManager->GetMouseButton(MOUSE_BUTTON::RIGHT))
+    if (!mSettings.CameraMovement && ImGui::IsItemHovered() &&
+        mInputManager->GetMouseButtonDown(MOUSE_BUTTON::RIGHT))
     {
+      bool isWindowFocused = ImGui::IsWindowFocused();
       mSettings.CameraMovement = true;
       ImGui::FocusWindow(ImGui::GetCurrentWindow());
     }
@@ -479,6 +479,12 @@ namespace Dwarf
     mSettings.RenderGrid = moduleData["settings"]["renderGrid"];
 
     if (moduleData.contains("settings") &&
+        moduleData["settings"].contains("exposure"))
+    {
+      mSettings.Exposure = moduleData["settings"]["exposure"].get<float>();
+    }
+
+    if (moduleData.contains("settings") &&
         moduleData["settings"].contains("samples"))
     {
       mSettings.Samples = std::min(
@@ -509,6 +515,7 @@ namespace Dwarf
     serializedModule["settings"]["renderGrid"] = mSettings.RenderGrid;
 
     serializedModule["settings"]["samples"] = mSettings.Samples;
+    serializedModule["settings"]["exposure"] = mSettings.Exposure;
 
     serializedModule["id"] = GetUuid()->toString();
     serializedModule["type"] = static_cast<int>(GetModuleType());

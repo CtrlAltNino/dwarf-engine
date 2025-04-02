@@ -26,6 +26,7 @@ namespace Dwarf
     std::shared_ptr<IShaderCreator>   mShaderCreator;
     std::shared_ptr<IFileHandler>     mFileHandler;
     std::shared_ptr<ISceneIO>         mSceneIO;
+    std::shared_ptr<ILoadedScene>     mLoadedScene;
 
   public:
     AssetBrowserWindowFactory(const AssetDirectoryPath&     assetDirectoryPath,
@@ -40,7 +41,8 @@ namespace Dwarf
                               std::shared_ptr<IMaterialCreator> materialCreator,
                               std::shared_ptr<IShaderCreator>   shaderCreator,
                               std::shared_ptr<IFileHandler>     fileHandler,
-                              std::shared_ptr<ISceneIO>         sceneIO);
+                              std::shared_ptr<ISceneIO>         sceneIO,
+                              std::shared_ptr<ILoadedScene>     loadedScene);
 
     ~AssetBrowserWindowFactory() override;
 

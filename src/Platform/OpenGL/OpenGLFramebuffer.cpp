@@ -31,6 +31,7 @@ namespace Dwarf
       {
         using enum FramebufferTextureFormat;
         case RGBA8: return "RGBA8";
+        case SRGBA8: return "SRGBA8";
         case RGBA16F: return "RGBA16F";
         case RED_INTEGER: return "RED_INTEGER";
         case DEPTH24STENCIL8: return "DEPTH24STENCIL8";
@@ -53,6 +54,7 @@ namespace Dwarf
         case DEPTH24STENCIL8: return true;
         case RGBA16F:
         case RGBA8:
+        case SRGBA8:
         case RED_INTEGER:
         case STENCIL:
         case None: return false;
@@ -69,6 +71,7 @@ namespace Dwarf
         using enum FramebufferTextureFormat;
         case FramebufferTextureFormat::RED_INTEGER:
         case FramebufferTextureFormat::RGBA8:
+        case FramebufferTextureFormat::SRGBA8:
         case FramebufferTextureFormat::RGBA16F: return GL_COLOR_ATTACHMENT0;
         case FramebufferTextureFormat::DEPTH24STENCIL8:
           return GL_DEPTH_STENCIL_ATTACHMENT;
@@ -89,6 +92,7 @@ namespace Dwarf
       {
         using enum FramebufferTextureFormat;
         case FramebufferTextureFormat::RGBA8: return GL_RGBA8;
+        case FramebufferTextureFormat::SRGBA8: return GL_SRGB8_ALPHA8;
         case FramebufferTextureFormat::RGBA16F: return GL_RGBA16F;
         case FramebufferTextureFormat::RED_INTEGER: return GL_RED_INTEGER;
         case FramebufferTextureFormat::DEPTH24STENCIL8:
@@ -183,7 +187,8 @@ namespace Dwarf
         switch (mColorAttachmentSpecifications[i].TextureFormat)
         {
           using enum FramebufferTextureFormat;
-          case RGBA8: textureData->Format = TextureFormat::RGBA; break;
+          case RGBA8:
+          case SRGBA8: textureData->Format = TextureFormat::RGBA; break;
           case RGBA16F:
             textureData->Format = TextureFormat::RGBA;
             textureData->DataType = TextureDataType::FLOAT;
