@@ -17,6 +17,6 @@ namespace Dwarf
      *
      */
     virtual void
-    Render(const std::vector<entt::entity>& entities) = 0;
+    Render() = 0;
   };
 }

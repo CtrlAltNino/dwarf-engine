@@ -10,22 +10,34 @@
 namespace Dwarf
 {
   EntityInspector::EntityInspector(
-    std::shared_ptr<IDwarfLogger>   logger,
-    std::shared_ptr<IAssetDatabase> assetDatabase,
-    std::shared_ptr<ILoadedScene>   loadedScene)
+    std::shared_ptr<IDwarfLogger>     logger,
+    std::shared_ptr<IAssetDatabase>   assetDatabase,
+    std::shared_ptr<ILoadedScene>     loadedScene,
+    std::shared_ptr<IEditorSelection> editorSelection)
     : mLogger(std::move(logger))
     , mAssetDatabase(std::move(assetDatabase))
     , mLoadedScene(std::move(loadedScene))
+    , mEditorSelection(std::move(editorSelection))
   {
   }
 
   void
-  EntityInspector::Render(const std::vector<entt::entity>& entities)
+  EntityInspector::Render()
   {
-    // Render the entities
-    if (entities.size() > 0)
+    if (mEditorSelection->GetSelectedEntities().empty())
     {
-      RenderComponents(entities.at(0));
+      return;
+    }
+
+    // Render the entities
+    if (mLoadedScene->GetScene().GetRegistry().valid(
+          mEditorSelection->GetSelectedEntities().at(0)))
+    {
+      RenderComponents(mEditorSelection->GetSelectedEntities().at(0));
+    }
+    else
+    {
+      mEditorSelection->ClearEntitySelection();
     }
   }
 

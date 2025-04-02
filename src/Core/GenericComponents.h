@@ -22,6 +22,12 @@ namespace Dwarf
     {
       return Path;
     }
+
+    void
+    setPath(const std::filesystem::path path)
+    {
+      Path = path;
+    }
   };
 
   /// @brief Entity component holding a unique identifier (UID / GUID).
@@ -55,6 +61,12 @@ namespace Dwarf
     explicit NameComponent(std::string name)
       : Name(std::move(name))
     {
+    }
+
+    void
+    setName(const std::string name)
+    {
+      Name = name;
     }
   };
 }

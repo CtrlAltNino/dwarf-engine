@@ -31,7 +31,7 @@ namespace Dwarf
      *
      * @return The uuid
      */
-    virtual auto
+    [[nodiscard]] virtual auto
     GetUID() const -> const UUID& = 0;
 
     /**
@@ -39,7 +39,7 @@ namespace Dwarf
      *
      * @return The asset path
      */
-    virtual auto
+    [[nodiscard]] virtual auto
     GetPath() const -> const std::filesystem::path& = 0;
 
     /**
@@ -55,7 +55,16 @@ namespace Dwarf
      *
      * @return Asset type
      */
-    virtual auto
+    [[nodiscard]] virtual auto
     GetType() const -> ASSET_TYPE = 0;
+
+    /**
+     * @brief Checks if this AssetReference is still valid
+     *
+     * @return true If it's valid
+     * @return false If it's not present in the registry
+     */
+    [[nodiscard]] virtual auto
+    IsValid() const -> bool = 0;
   };
 }

@@ -73,7 +73,7 @@ namespace Dwarf
         }
       case CURRENT_SELECTION_TYPE::ENTITY:
         {
-          mEntityInspector->Render(mSelection->GetSelectedEntities());
+          mEntityInspector->Render();
           break;
         }
       case CURRENT_SELECTION_TYPE::NONE: break;

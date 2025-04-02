@@ -414,10 +414,7 @@ namespace Dwarf
     {
       if (view.get<PathComponent>(entity).getPath() == fromPath)
       {
-        mRegistry.remove<PathComponent>(entity);
-        mRegistry.remove<NameComponent>(entity);
-        mRegistry.emplace<PathComponent>(entity, toPath);
-        mRegistry.emplace<NameComponent>(entity, toPath.stem().string());
+        view.get<NameComponent>(entity).setName(toPath.stem().string());
         break;
       }
     }
@@ -436,8 +433,7 @@ namespace Dwarf
         std::filesystem::path newPath = toPath;
         newPath.concat(view.get<PathComponent>(entity).getPath().string().erase(
           0, fromPath.string().length()));
-        mRegistry.remove<PathComponent>(entity);
-        mRegistry.emplace<PathComponent>(entity, newPath);
+        mRegistry.get<PathComponent>(entity).setPath(newPath);
       }
     }
   }
@@ -483,17 +479,19 @@ namespace Dwarf
                                    const std::string& oldFilename)
   {
     std::filesystem::path path =
-      std::filesystem::path(dir) / std::filesystem::path(filename);
+      std::filesystem::path(dir) / std::filesystem::path(oldFilename);
     // Update PathComponent
-    auto view = mRegistry.view<PathComponent>();
+    auto view = mRegistry.view<PathComponent, NameComponent>();
     for (auto entity : view)
     {
       if (view.get<PathComponent>(entity).getPath() == path)
       {
-        mRegistry.remove<PathComponent>(entity);
-        mRegistry.emplace<PathComponent>(entity,
-                                         std::filesystem::path(dir) /
-                                           std::filesystem::path(oldFilename));
+        std::filesystem::path newPath =
+          std::filesystem::path(dir) / std::filesystem::path(filename);
+        mAssetMetadata->Rename(path, newPath);
+        view.get<PathComponent>(entity).setPath(newPath);
+        view.get<NameComponent>(entity).setName(newPath.stem().string());
+        mAssetReimporter->QueueReimport(newPath);
         break;
       }
     }

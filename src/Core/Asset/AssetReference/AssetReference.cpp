@@ -182,4 +182,10 @@ namespace Dwarf
   {
     return mType;
   }
+
+  [[nodiscard]] auto
+  AssetReference::IsValid() const -> bool
+  {
+    return mRegistry.get().valid(mAssetHandle);
+  }
 }

@@ -3,6 +3,7 @@
 #include "Core/Asset/Database/IAssetDatabase.h"
 #include "Editor/LoadedScene/ILoadedScene.h"
 #include "Editor/Modules/Inspector/EntityInspector/IEntityInspector.h"
+#include "Editor/Selection/IEditorSelection.h"
 #include "Logging/IDwarfLogger.h"
 
 namespace Dwarf
@@ -10,9 +11,10 @@ namespace Dwarf
   class EntityInspector : public IEntityInspector
   {
   private:
-    std::shared_ptr<IDwarfLogger>   mLogger;
-    std::shared_ptr<IAssetDatabase> mAssetDatabase;
-    std::shared_ptr<ILoadedScene>   mLoadedScene;
+    std::shared_ptr<IDwarfLogger>     mLogger;
+    std::shared_ptr<IAssetDatabase>   mAssetDatabase;
+    std::shared_ptr<ILoadedScene>     mLoadedScene;
+    std::shared_ptr<IEditorSelection> mEditorSelection;
 
     /// @brief Renders the components of an entity.
     /// @param entity Entity to render in the inspector.
@@ -30,9 +32,10 @@ namespace Dwarf
     RenderComponent(T& component);
 
   public:
-    EntityInspector(std::shared_ptr<IDwarfLogger>   logger,
-                    std::shared_ptr<IAssetDatabase> assetDatabase,
-                    std::shared_ptr<ILoadedScene>   loadedScene);
+    EntityInspector(std::shared_ptr<IDwarfLogger>     logger,
+                    std::shared_ptr<IAssetDatabase>   assetDatabase,
+                    std::shared_ptr<ILoadedScene>     loadedScene,
+                    std::shared_ptr<IEditorSelection> editorSelection);
     ~EntityInspector() override = default;
 
     /**
@@ -40,6 +43,6 @@ namespace Dwarf
      *
      */
     void
-    Render(const std::vector<entt::entity>& entities) override;
+    Render() override;
   };
 }

@@ -7,7 +7,6 @@
 #include <memory>
 #include <nlohmann/json.hpp>
 
-
 using namespace Dwarf;
 using namespace testing;
 
@@ -53,6 +52,7 @@ public:
   MOCK_METHOD(const std::filesystem::path&, GetPath, (), (const, override));
   MOCK_METHOD(IAssetComponent&, GetAsset, (), (override));
   MOCK_METHOD(ASSET_TYPE, GetType, (), (const, override));
+  MOCK_METHOD(bool, IsValid, (), (const, override));
 };
 
 class ShaderSourceCollectionFactoryTest : public Test

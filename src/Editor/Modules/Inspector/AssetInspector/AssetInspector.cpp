@@ -39,8 +39,13 @@ namespace Dwarf
   void
   AssetInspector::Render()
   {
-    if (mEditorSelection->GetSelectedAsset() == nullptr)
+    if (mEditorSelection->GetSelectedAsset() == nullptr ||
+        !mEditorSelection->GetSelectedAsset()->IsValid() ||
+        ((mEditorSelection->GetSelectedAsset() != nullptr) &&
+         !mAssetDatabase->Exists(
+           mEditorSelection->GetSelectedAsset()->GetUID())))
     {
+      mEditorSelection->ClearAssetSelection();
       return;
     }
 

@@ -57,19 +57,28 @@ namespace Dwarf
       return mAssetHandle == other.mAssetHandle;
     }
 
-    auto
+    [[nodiscard]] auto
     GetHandle() const -> entt::entity override;
 
-    auto
+    [[nodiscard]] auto
     GetUID() const -> const UUID& override;
 
-    auto
+    [[nodiscard]] auto
     GetPath() const -> const std::filesystem::path& override;
 
     auto
     GetAsset() -> IAssetComponent& override;
 
-    auto
+    [[nodiscard]] auto
     GetType() const -> ASSET_TYPE override;
+
+    /**
+     * @brief Checks if this AssetReference is still valid
+     *
+     * @return true If it's valid
+     * @return false If it's not present in the registry
+     */
+    [[nodiscard]] auto
+    IsValid() const -> bool override;
   };
 }

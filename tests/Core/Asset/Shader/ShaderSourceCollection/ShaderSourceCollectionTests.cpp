@@ -1,7 +1,8 @@
-#include <gtest/gtest.h>
-#include <gmock/gmock.h>
-#include "Core/Asset/Shader/ShaderSourceCollection/ShaderSourceCollection.h"
 #include "Core/Asset/AssetReference/IAssetReference.h"
+#include "Core/Asset/Shader/ShaderSourceCollection/ShaderSourceCollection.h"
+#include <gmock/gmock.h>
+#include <gtest/gtest.h>
+
 
 using namespace Dwarf;
 using namespace testing;
@@ -15,6 +16,7 @@ public:
   MOCK_METHOD(const std::filesystem::path&, GetPath, (), (const, override));
   MOCK_METHOD(IAssetComponent&, GetAsset, (), (override));
   MOCK_METHOD(ASSET_TYPE, GetType, (), (const, override));
+  MOCK_METHOD(bool, IsValid, (), (const, override));
 };
 
 class ShaderSourceCollectionTest : public Test

@@ -94,10 +94,12 @@ namespace Dwarf
            mSelectedEntities.end();
   }
 
-  bool
+  auto
   EditorSelection::IsAssetSelected(const std::filesystem::path& assetPath)
+    -> bool
   {
-    return mSelectedAsset && (mSelectedAsset->GetPath() == assetPath);
+    return mSelectedAsset && mSelectedAsset->IsValid() &&
+           (mSelectedAsset->GetPath() == assetPath);
   }
 
   auto

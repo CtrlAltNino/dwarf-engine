@@ -167,6 +167,20 @@ namespace Dwarf
     GetTextureIdForDirectoryEntry(
       const std::filesystem::directory_entry& directoryEntry) -> ImTextureID;
 
+    /**
+     * @brief Thread safely invalidates the directory structure cache
+     *
+     */
+    void
+    InvalidateDirectoryStructureCache();
+
+    /**
+     * @brief Thread safely invalidates the directory content cache
+     *
+     */
+    void
+    InvalidateDirectoryContentCache();
+
   public:
     AssetBrowserWindow(AssetDirectoryPath                assetDirectoryPath,
                        std::shared_ptr<IDwarfLogger>     logger,

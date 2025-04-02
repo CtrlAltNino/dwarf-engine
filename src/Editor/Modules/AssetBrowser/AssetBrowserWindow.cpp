@@ -46,9 +46,8 @@ namespace Dwarf
     , mAssetBrowserListener(assetBrowserListenerFactory->Create(
         [this]()
         {
-          std::unique_lock<std::mutex> lock(
-            mDirectoryStructureCache.ValidityMutex);
-          mDirectoryStructureCache.Valid = false;
+          InvalidateDirectoryStructureCache();
+          InvalidateDirectoryContentCache();
         }))
   {
     mData.CurrentDirectory = mAssetDirectoryPath;
@@ -95,16 +94,8 @@ namespace Dwarf
     , mAssetBrowserListener(assetBrowserListenerFactory->Create(
         [this]()
         {
-          {
-            std::unique_lock<std::mutex> lock(
-              mDirectoryStructureCache.ValidityMutex);
-            mDirectoryStructureCache.Valid = false;
-          }
-          {
-            std::unique_lock<std::mutex> lock(
-              mDirectoryContentCache.ValidityMutex);
-            mDirectoryContentCache.Valid = false;
-          }
+          InvalidateDirectoryStructureCache();
+          InvalidateDirectoryContentCache();
         }))
   {
     mData.CurrentDirectory = mAssetDirectoryPath;
@@ -623,15 +614,9 @@ namespace Dwarf
         {
           std::filesystem::path newPath =
             mData.RenamePathBuffer.remove_filename().concat(mData.RenameBuffer);
-          if (mAssetDatabase->Exists(old))
-          {
-            mAssetDatabase->Rename(old, newPath);
-          }
-          else
-          {
-            mAssetDatabase->RenameDirectory(old, newPath);
-          }
           mFileHandler->Rename(old, newPath);
+          InvalidateDirectoryStructureCache();
+          InvalidateDirectoryContentCache();
           ImGui::CloseCurrentPopup();
         }
 
@@ -947,5 +932,19 @@ namespace Dwarf
     }
 
     return texID;
+  }
+
+  void
+  AssetBrowserWindow::InvalidateDirectoryStructureCache()
+  {
+    std::unique_lock<std::mutex> lock(mDirectoryStructureCache.ValidityMutex);
+    mDirectoryStructureCache.Valid = false;
+  }
+
+  void
+  AssetBrowserWindow::InvalidateDirectoryContentCache()
+  {
+    std::unique_lock<std::mutex> lock(mDirectoryContentCache.ValidityMutex);
+    mDirectoryContentCache.Valid = false;
   }
 }
