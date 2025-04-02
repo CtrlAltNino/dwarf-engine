@@ -2,6 +2,7 @@
 
 #include "Core/Asset/Database/IAssetDatabase.h"
 #include "Core/Rendering/RendererApi/IRendererApi.h"
+#include "Core/Rendering/Shader/ShaderParameterCollection/IShaderParameterCollection.h"
 #include "OpenGLFramebuffer.h"
 #include "Platform/OpenGL/OpenGLComputeShader.h"
 #include "Platform/OpenGL/OpenGLFramebuffer.h"
@@ -245,8 +246,8 @@ namespace Dwarf
                           uint32_t      width,
                           uint32_t      height)
   {
-    OpenGLFramebuffer* sourceFB = (OpenGLFramebuffer*)&source;
-    OpenGLFramebuffer* destinationFB = (OpenGLFramebuffer*)&destination;
+    auto* sourceFB = dynamic_cast<OpenGLFramebuffer*>(&source);
+    auto* destinationFB = dynamic_cast<OpenGLFramebuffer*>(&destination);
     glBindFramebuffer(GL_READ_FRAMEBUFFER,
                       sourceFB->GetFramebufferRendererID());
     OpenGLUtilities::CheckOpenGLError(
@@ -273,11 +274,11 @@ namespace Dwarf
   }
 
   void
-  OpenGLRendererApi::CustomBlit(IFramebuffer&            source,
-                                IFramebuffer&            destination,
-                                uint32_t                 sourceAttachment,
-                                uint32_t                 destinationAttachment,
-                                std::shared_ptr<IShader> shader)
+  OpenGLRendererApi::CustomBlit(IFramebuffer& source,
+                                IFramebuffer& destination,
+                                uint32_t      sourceAttachment,
+                                uint32_t      destinationAttachment,
+                                std::shared_ptr<IMaterial> material)
   {
     auto& oglMesh = dynamic_cast<OpenGLMesh&>(*mScreenQuad);
 
@@ -292,8 +293,10 @@ namespace Dwarf
     OpenGLUtilities::CheckOpenGLError(
       "glGetFramebufferAttachmentParameteriv", "OpenGLRendererApi", mLogger);
 
-    // mStateTracker->SetDepthTest(false);
-    // mStateTracker->SetCullMode(false);
+    IShader&      baseShader = *material->GetShader();
+    OpenGLShader& shader = baseShader.IsCompiled()
+                             ? dynamic_cast<OpenGLShader&>(baseShader)
+                             : dynamic_cast<OpenGLShader&>(*mErrorShader);
 
     destination.Bind();
     mStateTracker->SetViewport(0,
@@ -303,11 +306,24 @@ namespace Dwarf
     glClear(GL_COLOR_BUFFER_BIT);
 
     OpenGLUtilities::CheckOpenGLError("glClear", "OpenGLRendererApi", mLogger);
+    mStateTracker->SetShaderProgram(shader.GetID());
 
-    OpenGLShader& oglShader = shader->IsCompiled()
-                                ? dynamic_cast<OpenGLShader&>(*shader)
-                                : dynamic_cast<OpenGLShader&>(*mErrorShader);
-    mStateTracker->SetShaderProgram(oglShader.GetID());
+    uint32_t textureCount = 0;
+    for (auto const& identifier :
+         material->GetShaderParameters()->GetParameterIdentifiers())
+    {
+      if (material->GetShaderParameters()->HasParameter(identifier))
+      {
+        ParameterValue& shaderParameterValue =
+          material->GetShaderParameters()->GetParameter(identifier);
+        std::visit(SetShaderParameterVisitor{ .mShader = shader,
+                                              .mParameterName = identifier,
+                                              .mAssetDatabase = mAssetDatabase,
+                                              .mLogger = mLogger,
+                                              .mTextureCount = textureCount },
+                   shaderParameterValue);
+      }
+    }
     OpenGLUtilities::CheckOpenGLError(
       "glUseProgram", "OpenGLRendererApi", mLogger);
     glActiveTexture(GL_TEXTURE0);
@@ -316,9 +332,7 @@ namespace Dwarf
     glBindTexture(GL_TEXTURE_2D, static_cast<GLuint>(srcTexture));
     OpenGLUtilities::CheckOpenGLError(
       "glBindTexture", "OpenGLRendererApi", mLogger);
-    glUniform1i(oglShader.GetUniformLocation("hdrTexture"), 0);
-    OpenGLUtilities::CheckOpenGLError(
-      "glUniform1i", "OpenGLRendererApi", mLogger);
+    shader.SetUniform("hdrTexture", 0);
 
     oglMesh.Bind();
     glDrawElements(GL_TRIANGLES, oglMesh.GetIndexCount(), GL_UNSIGNED_INT, 0);

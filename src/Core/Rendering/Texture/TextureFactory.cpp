@@ -23,8 +23,6 @@ namespace Dwarf
     , mVramTracker(std::move(vramTracker))
   {
     mLogger->LogDebug(Log("TextureFactory created.", "TextureFactory"));
-    // mPlaceholderTexture =
-    // FromPath("data/engine/img/textures/placeholder.png");
   }
 
   TextureFactory::~TextureFactory()

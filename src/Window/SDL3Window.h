@@ -21,6 +21,8 @@ namespace Dwarf
       bool        VSync = false;
       bool        ShouldClose = false;
       bool        ShowMaximized = false;
+      bool        IsRelativeMode = false;
+      glm::vec2   SavedMousePos = { -1, -1 };
     };
 
   private:
@@ -163,5 +165,14 @@ namespace Dwarf
      */
     void
     SetShowWindowMaximized(bool maximized) override;
+
+    /**
+     * @brief Sets the mouse visibility. While invisible the mouse will not
+     * move, but the delta mouse position will still be reported.
+     *
+     * @param visibilityState
+     */
+    void
+    SetMouseVisibility(bool visibilityState) override;
   };
 }

@@ -11,7 +11,8 @@ namespace Dwarf
     std::shared_ptr<IInputManager>             inputManager,
     std::shared_ptr<ILoadedScene>              loadedScene,
     std::shared_ptr<IEditorSelection>          editorSelection,
-    std::shared_ptr<IRenderingPipelineFactory> renderingPipelineFactory)
+    std::shared_ptr<IRenderingPipelineFactory> renderingPipelineFactory,
+    std::shared_ptr<IWindow>                   window)
     : mLogger(std::move(logger))
     , mCameraFactory(std::move(cameraFactory))
     , mEditorStats(std::move(editorStats))
@@ -19,6 +20,7 @@ namespace Dwarf
     , mLoadedScene(std::move(loadedScene))
     , mEditorSelection(std::move(editorSelection))
     , mRenderingPipelineFactory(std::move(renderingPipelineFactory))
+    , mWindow(std::move(window))
   {
     mLogger->LogDebug(
       Log("SceneViewerWindowFactory created", "SceneViewerWindowFactory"));
@@ -39,7 +41,8 @@ namespace Dwarf
                                                mLoadedScene,
                                                mEditorSelection,
                                                mCameraFactory,
-                                               mRenderingPipelineFactory);
+                                               mRenderingPipelineFactory,
+                                               mWindow);
   }
 
   auto
@@ -53,6 +56,7 @@ namespace Dwarf
                                                mLoadedScene,
                                                mEditorSelection,
                                                mCameraFactory,
-                                               mRenderingPipelineFactory);
+                                               mRenderingPipelineFactory,
+                                               mWindow);
   }
 } // namespace Dwarf

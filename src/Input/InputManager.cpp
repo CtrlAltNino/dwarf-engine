@@ -85,13 +85,6 @@ namespace Dwarf
     return mMouseButtonStates.at(button) == 0;
   }
 
-  void
-  InputManager::SetMouseVisibility(bool visibilityState)
-  {
-    ImGui::SetMouseCursor(visibilityState ? ImGuiMouseCursor_Arrow
-                                          : ImGuiMouseCursor_None);
-  }
-
   auto
   InputManager::GetMousePosition() const -> glm::vec2
   {

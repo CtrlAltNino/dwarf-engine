@@ -184,6 +184,12 @@ namespace Dwarf
     mInputManager->SetDeltaMousePos(0, 0);
     mInputManager->SetDeltaMouseScroll(0, 0);
 
+    if (mData.IsRelativeMode)
+    {
+      SDL_WarpMouseInWindow(
+        mWindow, mData.SavedMousePos.x, mData.SavedMousePos.y);
+    }
+
     while (SDL_PollEvent(&event))
     {
       mImGuiLayer->HandleSDLEvent(&event);
@@ -266,5 +272,25 @@ namespace Dwarf
   SDL3Window::SetShowWindowMaximized(bool maximized)
   {
     mData.ShowMaximized = maximized;
+  }
+
+  void
+  SDL3Window::SetMouseVisibility(bool visibilityState)
+  {
+    if (!visibilityState != mData.IsRelativeMode)
+    {
+      if (visibilityState)
+      {
+        SDL_WarpMouseInWindow(
+          mWindow, mData.SavedMousePos.x, mData.SavedMousePos.y);
+        SDL_SetWindowRelativeMouseMode(mWindow, !visibilityState);
+      }
+      else
+      {
+        SDL_GetMouseState(&mData.SavedMousePos.x, &mData.SavedMousePos.y);
+        SDL_SetWindowRelativeMouseMode(mWindow, !visibilityState);
+      }
+      mData.IsRelativeMode = !visibilityState;
+    }
   }
 }

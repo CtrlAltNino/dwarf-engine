@@ -61,6 +61,16 @@ namespace Dwarf
 
     /**
      * @brief Create a shader source collection containing the shader sources
+     * for the aces tonemap shader
+     *
+     * @return Unique pointer to the created shader source collection
+     */
+    virtual auto
+    CreateAcesTonemapShaderSourceCollection()
+      -> std::unique_ptr<IShaderSourceCollection> = 0;
+
+    /**
+     * @brief Create a shader source collection containing the shader sources
      * for the model preview shader
      *
      * @return Unique pointer to the created shader source collection

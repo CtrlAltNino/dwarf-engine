@@ -460,6 +460,7 @@ namespace Dwarf
 
     ImGui::Dummy(ImGui::GetContentRegionAvail());
 
+    // FIXME: Window needs to be focused
     if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
     {
       mEditorSelection->ClearEntitySelection();

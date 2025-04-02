@@ -36,7 +36,7 @@ namespace Dwarf
      * @param sceneAsset The scene asset file to load
      * @return Unique pointer to the loaded scene instance
      */
-    virtual auto
+    [[nodiscard]] virtual auto
     LoadScene(IAssetReference& sceneAsset) const -> std::unique_ptr<IScene> = 0;
 
     /**

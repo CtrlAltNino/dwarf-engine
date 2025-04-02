@@ -17,6 +17,7 @@ namespace Dwarf
     std::shared_ptr<ILoadedScene>              mLoadedScene;
     std::shared_ptr<IEditorSelection>          mEditorSelection;
     std::shared_ptr<IRenderingPipelineFactory> mRenderingPipelineFactory;
+    std::shared_ptr<IWindow>                   mWindow;
 
   public:
     SceneViewerWindowFactory(
@@ -26,7 +27,8 @@ namespace Dwarf
       std::shared_ptr<IInputManager>             inputManager,
       std::shared_ptr<ILoadedScene>              loadedScene,
       std::shared_ptr<IEditorSelection>          editorSelection,
-      std::shared_ptr<IRenderingPipelineFactory> renderingPipelineFactory);
+      std::shared_ptr<IRenderingPipelineFactory> renderingPipelineFactory,
+      std::shared_ptr<IWindow>                   window);
 
     ~SceneViewerWindowFactory() override;
 

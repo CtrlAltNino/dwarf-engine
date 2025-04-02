@@ -66,9 +66,9 @@ namespace Dwarf
 
   struct TextureParameters
   {
-    TextureWrap      WrapS = TextureWrap::REPEAT;
-    TextureWrap      WrapT = TextureWrap::REPEAT;
-    TextureWrap      WrapR = TextureWrap::REPEAT;
+    TextureWrap      WrapS = TextureWrap::CLAMP_TO_BORDER;
+    TextureWrap      WrapT = TextureWrap::CLAMP_TO_BORDER;
+    TextureWrap      WrapR = TextureWrap::CLAMP_TO_BORDER;
     TextureMinFilter MinFilter = TextureMinFilter::LINEAR;
     TextureMagFilter MagFilter = TextureMagFilter::LINEAR;
     bool             MipMapped = false;

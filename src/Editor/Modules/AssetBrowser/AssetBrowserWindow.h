@@ -8,6 +8,7 @@
 #include "Core/Rendering/Material/IO/IMaterialIO.h"
 #include "Core/Rendering/Texture/ITextureFactory.h"
 #include "Core/Scene/IO/ISceneIO.h"
+#include "Editor/LoadedScene/ILoadedScene.h"
 #include "Editor/Modules/IGuiModule.h"
 #include "Editor/Selection/IEditorSelection.h"
 #include "Input/IInputManager.h"
@@ -17,6 +18,43 @@
 
 namespace Dwarf
 {
+  struct DirectoryData
+  {
+    std::filesystem::path      Path;
+    std::vector<DirectoryData> Subdirectories;
+  };
+
+  struct DirectoryStructureCache
+  {
+    DirectoryData RootDirectoryData;
+    bool          Valid = false;
+  };
+
+  struct DirectoryEntryData
+  {
+    std::filesystem::path Path;
+    ImTextureID           Thumbnail;
+    bool                  IsDirectory;
+  };
+
+  struct DirectoryContentCache
+  {
+    std::vector<DirectoryEntryData> Entries;
+    bool                            Valid = false;
+  };
+
+  struct AssetBrowserData
+  {
+    std::filesystem::path              CurrentDirectory;
+    std::filesystem::path              CopyPathBuffer;
+    std::filesystem::path              RenamePathBuffer;
+    std::string                        RenameBuffer;
+    bool                               OpenRename = false;
+    std::vector<std::filesystem::path> DirectoryHistory;
+    int                                HistoryPos = 0;
+    float                              IconScale = 1.0F;
+  };
+
   /// @brief GUI Module to display a window for the asset directory structure.
   class AssetBrowserWindow : public IGuiModule
   {
@@ -35,20 +73,15 @@ namespace Dwarf
     std::shared_ptr<IShaderCreator>   mShaderCreator;
     std::shared_ptr<IFileHandler>     mFileHandler;
     std::shared_ptr<ISceneIO>         mSceneIo;
+    std::shared_ptr<ILoadedScene>     mLoadedScene;
 
-    /// @brief Path of the currently navigated directory.
-    std::filesystem::path              mCurrentDirectory;
-    std::filesystem::path              mCopyPathBuffer;
-    std::filesystem::path              mRenamePathBuffer;
-    std::string                        mRenameBuffer;
-    bool                               mOpenRename = false;
-    std::vector<std::filesystem::path> mDirectoryHistory;
-    std::filesystem::path              mSelectedAsset;
-    int                                mHistoryPos = 0;
-    float                              mIconScale = 1.0F;
-    bool                               firstFrame = true;
-    ImGuiID                            dockID = 0;
-    ImGuiID                            footerID = 0;
+    AssetBrowserData        mData;
+    DirectoryStructureCache mDirectoryStructureCache;
+    DirectoryContentCache   mDirectoryContentCache;
+
+    /// @brief IDs.
+    ImGuiID dockID = 0;
+    ImGuiID footerID = 0;
 
     std::unique_ptr<ITexture> mDirectoryIcon;
     std::unique_ptr<ITexture> mFBXIcon;
@@ -67,7 +100,7 @@ namespace Dwarf
     std::unique_ptr<ITexture> mUnknownFileIcon;
 
     void
-    RenderDirectoryLevel(std::filesystem::path const& directory);
+    RenderDirectoryStructureCacheRecursively(const DirectoryData& data);
 
     void
     SetupDockspace(ImGuiID imguiId);
@@ -78,14 +111,31 @@ namespace Dwarf
     void
     RenderFooter();
 
+    /**
+     * @brief Renders the directory structure on the left
+     *
+     */
     void
-    RenderFolderStructure();
+    RenderDirectoryStructure();
 
     void
-    RenderFolderContent();
+    RenderDirectoryContent();
 
     void
-    OpenPath(std::filesystem::directory_entry const& directoryEntry);
+    RebuildDirectoryContentCache(const std::filesystem::path& directory);
+
+    auto
+    GenerateDirectoryDataRecursively(const std::filesystem::path& directory)
+      -> DirectoryData;
+
+    void
+    UnfoldSelectedDirectory();
+
+    void
+    RebuildDirectoryStructureCache();
+
+    void
+    OpenPath(const std::filesystem::path& path);
 
     void
     EnterDirectory(std::filesystem::path const& path);
@@ -108,6 +158,10 @@ namespace Dwarf
     void
     SetRenameBuffer(std::filesystem::path const& path);
 
+    auto
+    GetTextureIdForDirectoryEntry(
+      const std::filesystem::directory_entry& directoryEntry) -> ImTextureID;
+
   public:
     AssetBrowserWindow(AssetDirectoryPath                assetDirectoryPath,
                        std::shared_ptr<IDwarfLogger>     logger,
@@ -121,7 +175,8 @@ namespace Dwarf
                        std::shared_ptr<IMaterialCreator> materialCreator,
                        std::shared_ptr<IShaderCreator>   shaderCreator,
                        std::shared_ptr<IFileHandler>     fileHandler,
-                       std::shared_ptr<ISceneIO>         sceneIO);
+                       std::shared_ptr<ISceneIO>         sceneIO,
+                       std::shared_ptr<ILoadedScene>     loadedScene);
 
     AssetBrowserWindow(AssetDirectoryPath                assetDirectoryPath,
                        std::shared_ptr<IDwarfLogger>     logger,
@@ -136,6 +191,7 @@ namespace Dwarf
                        std::shared_ptr<IShaderCreator>   shaderCreator,
                        std::shared_ptr<IFileHandler>     fileHandler,
                        std::shared_ptr<ISceneIO>         sceneIO,
+                       std::shared_ptr<ILoadedScene>     loadedScene,
                        SerializedModule                  serializedModule);
 
     ~AssetBrowserWindow() override;

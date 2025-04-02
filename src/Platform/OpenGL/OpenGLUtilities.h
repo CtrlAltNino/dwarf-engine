@@ -73,6 +73,12 @@ namespace Dwarf
     }
 
     static auto
+    GetAcesTonemapShaderPath() -> std::filesystem::path
+    {
+      return "data/engine/shaders/aces_tonemap/opengl";
+    }
+
+    static auto
     GetPreviewShaderPath() -> std::filesystem::path
     {
       return "data/engine/shaders/preview/opengl";

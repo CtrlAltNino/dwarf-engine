@@ -19,7 +19,8 @@ namespace Dwarf
     std::shared_ptr<IMaterialCreator> materialCreator,
     std::shared_ptr<IShaderCreator>   shaderCreator,
     std::shared_ptr<IFileHandler>     fileHandler,
-    std::shared_ptr<ISceneIO>         sceneIO)
+    std::shared_ptr<ISceneIO>         sceneIO,
+    std::shared_ptr<ILoadedScene>     loadedScene)
     : mAssetDirectoryPath(assetDirectoryPath)
     , mLogger(std::move(logger))
     , mTextureFactory(std::move(textureFactory))
@@ -33,6 +34,7 @@ namespace Dwarf
     , mShaderCreator(std::move(shaderCreator))
     , mFileHandler(std::move(fileHandler))
     , mSceneIO(std::move(sceneIO))
+    , mLoadedScene(std::move(loadedScene))
   {
     mLogger->LogDebug(
       Log("AssetBrowserWindowFactory created", "AssetBrowserWindowFactory"));
@@ -60,7 +62,8 @@ namespace Dwarf
                                                 mMaterialCreator,
                                                 mShaderCreator,
                                                 mFileHandler,
-                                                mSceneIO);
+                                                mSceneIO,
+                                                mLoadedScene);
   }
 
   auto
@@ -80,6 +83,7 @@ namespace Dwarf
                                                 mShaderCreator,
                                                 mFileHandler,
                                                 mSceneIO,
+                                                mLoadedScene,
                                                 serializedModule);
   }
 } // namespace Dwarf
