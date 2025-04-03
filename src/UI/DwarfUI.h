@@ -3,6 +3,7 @@
 #include "Core/Asset/Database/AssetComponents.h"
 #include "Core/Asset/Database/IAssetDatabase.h"
 #include "Core/GenericComponents.h"
+#include <algorithm>
 #include <entt/entt.hpp>
 #include <imgui.h>
 
@@ -62,7 +63,7 @@ namespace Dwarf
     {
       std::vector<entt::entity> availableAssets;
       int                       selectedAsset = -1;
-      const auto&               view =
+      auto                      view =
         assetDatabase->GetRegistry().view<IDComponent, NameComponent, T>();
       static bool interacted = false;
 
@@ -77,6 +78,14 @@ namespace Dwarf
         }
         count++;
       }
+
+      std::ranges::stable_sort(
+        availableAssets,
+        [view](entt::entity& first, entt::entity& second)
+        {
+          return to_lower(view.template get<NameComponent>(first).Name) <
+                 to_lower(view.template get<NameComponent>(second).Name);
+        });
 
       const char* preview =
         (selectedAsset == -1)
@@ -126,7 +135,7 @@ namespace Dwarf
     {
       std::vector<entt::entity> availableAssets;
       int                       selectedAsset = -1;
-      const auto&               view =
+      auto                      view =
         assetDatabase->GetRegistry().view<IDComponent, NameComponent, T>();
       static bool interacted = false;
 
@@ -142,6 +151,14 @@ namespace Dwarf
         }
         count++;
       }
+
+      std::ranges::stable_sort(
+        availableAssets,
+        [view](entt::entity& first, entt::entity& second)
+        {
+          return to_lower(view.template get<NameComponent>(first).Name) <
+                 to_lower(view.template get<NameComponent>(second).Name);
+        });
 
       const char* preview =
         (selectedAsset == -1)
@@ -206,6 +223,14 @@ namespace Dwarf
         }
         count++;
       }
+
+      std::ranges::stable_sort(
+        availableAssets,
+        [view](entt::entity& first, entt::entity& second)
+        {
+          return to_lower(view.template get<NameComponent>(first).Name) <
+                 to_lower(view.template get<NameComponent>(second).Name);
+        });
 
       const char* preview =
         (selectedAsset == -1)

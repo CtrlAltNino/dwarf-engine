@@ -46,6 +46,14 @@ namespace Dwarf
       count++;
     }
 
+    std::ranges::stable_sort(
+      availableAssets,
+      [view](entt::entity& first, entt::entity& second)
+      {
+        return to_lower(view.template get<NameComponent>(first).Name) <
+               to_lower(view.template get<NameComponent>(second).Name);
+      });
+
     const char* preview =
       view.template get<NameComponent>(availableAssets[selectedAsset])
         .Name.c_str();
@@ -102,6 +110,14 @@ namespace Dwarf
       }
       count++;
     }
+
+    std::ranges::stable_sort(
+      availableAssets,
+      [view](entt::entity& first, entt::entity& second)
+      {
+        return to_lower(view.template get<NameComponent>(first).Name) <
+               to_lower(view.template get<NameComponent>(second).Name);
+      });
 
     const char* preview =
       view.template get<NameComponent>(availableAssets[selectedAsset])
