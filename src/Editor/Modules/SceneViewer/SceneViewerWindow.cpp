@@ -82,6 +82,11 @@ namespace Dwarf
   void
   SceneViewerWindow::OnUpdate()
   {
+    if (!mWindowOpened)
+    {
+      return;
+    }
+
     if (mSettings.CameraMovement &&
         mInputManager->GetMouseButton(MOUSE_BUTTON::RIGHT))
     {
@@ -109,7 +114,13 @@ namespace Dwarf
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(800, 500));
 
-    ImGui::Begin(GetIdentifier().c_str(), &mWindowOpened, windowFlags);
+    if (!ImGui::Begin(GetIdentifier().c_str(), &mWindowOpened, windowFlags))
+    {
+      // Early out if the window is collapsed, as an optimization.
+      ImGui::End();
+      ImGui::PopStyleVar(2);
+      return;
+    }
 
     ImGui::PopStyleVar(2);
     static std::array<std::string, 3> renderingModes = { "Free",
@@ -257,10 +268,32 @@ namespace Dwarf
       ImGui::GetCursorScreenPos().x + ImGui::GetContentRegionAvail().x,
       ImGui::GetCursorScreenPos().y + ImGui::GetContentRegionAvail().y);
 
+    static bool   isResizing = false;
+    static double framebufferUpdatedelay = 0.05;
+    isResizing =
+      ImGui::IsMouseDragging(0, 0) &&
+      mSettings.ViewportSize != glm::ivec2(ImGui::GetContentRegionAvail().x,
+                                           ImGui::GetContentRegionAvail().y);
+
     mSettings.ViewportSize = glm::ivec2(ImGui::GetContentRegionAvail().x,
                                         ImGui::GetContentRegionAvail().y);
 
-    UpdateFramebuffer();
+    if (framebufferUpdatedelay > 0.0)
+    {
+      framebufferUpdatedelay =
+        std::max(framebufferUpdatedelay - mEditorStats->GetDeltaTime(), 0.0);
+    }
+
+    if (isResizing)
+    {
+      framebufferUpdatedelay = 0.05;
+    }
+
+    if (!isResizing && framebufferUpdatedelay == 0.0 &&
+        !ImGui::IsMouseDragging(0, 0))
+    {
+      UpdateFramebuffer();
+    }
 
     if (mSettings.RenderingConstraint != RENDERING_CONSTRAINT::FREE)
     {

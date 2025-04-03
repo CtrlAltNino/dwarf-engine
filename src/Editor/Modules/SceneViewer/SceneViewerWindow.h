@@ -29,7 +29,6 @@ namespace Dwarf
   {
     /// @brief Currently selected object manipulation type.
     ImGuizmo::OPERATION GizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
-
     /// @brief Currently selected object manipulation space.
     ImGuizmo::MODE GizmoMode = ImGuizmo::MODE::LOCAL;
 
@@ -46,10 +45,8 @@ namespace Dwarf
     std::array<int, 2> Resolution = { 1024, 1024 };
 
     int32_t MaxSamples = 1;
-
     int32_t Samples = 1;
-
-    float Exposure = 1.0F;
+    float   Exposure = 1.0F;
 
     /// @brief Aspect ratio to use for the target.
     float targetAspectRatio;
@@ -57,10 +54,8 @@ namespace Dwarf
     /// @brief Currently available resolution for rendering the scene in the
     /// scene viewer window.
     glm::ivec2 ViewportSize;
-
-    bool CameraMovement = false;
-
-    bool RenderGrid = true;
+    bool       CameraMovement = false;
+    bool       RenderGrid = true;
   };
 
   /// @brief Module to render a window that displays the scene and render

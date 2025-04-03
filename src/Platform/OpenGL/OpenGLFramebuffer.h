@@ -23,6 +23,13 @@ namespace Dwarf
     std::shared_ptr<IVramTracker>          mVramTracker;
     size_t                                 mCurrentVramMemory = 0;
 
+    /**
+     * @brief Generates the framebuffer attachments for the framebuffer
+     *
+     */
+    void
+    GenerateAttachments();
+
   public:
     explicit OpenGLFramebuffer(std::shared_ptr<IDwarfLogger>    logger,
                                FramebufferSpecification         spec,
