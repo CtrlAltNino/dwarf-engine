@@ -441,12 +441,8 @@ namespace Dwarf
 
     // Rendering the entries
     {
-      float column = 0;
       float tallestCell = 0;
-
-      ImVec2 cellMin = { ImGui::GetWindowContentRegionMin().x,
-                         ImGui::GetWindowContentRegionMin().y };
-      int    colCount = 0;
+      int   colCount = 0;
 
       for (auto const& directoryEntry : mDirectoryContentCache.Entries)
       {
@@ -573,22 +569,17 @@ namespace Dwarf
           ImGui::EndPopup();
         }
 
-        float contentRegionAvailX = ImGui::GetContentRegionAvail().x;
-        float limitX = (ImGui::GetContentRegionAvail().x - cellWidth);
-        float samelineXPos = ImGui::GetCursorPosX() + (colCount * cellWidth);
-        // std::cout << "Remaining space: " << remainingSpace << std::endl;
-        if ((ImGui::GetCursorPosX() + ((colCount + 1) * cellWidth)) <
-            (ImGui::GetContentRegionAvail().x - (cellWidth - padding)))
+        if ((ImGui::GetCursorPosX() + ((colCount + 1) * (cellWidth + 8.0F))) <
+            (ImGui::GetContentRegionAvail().x - (cellWidth - 8.0F)))
         {
-          ImGui::SameLine();
+          ImGui::SameLine(0, 8.0F);
           colCount++;
-          float currentXPos = ImGui::GetCursorPosX();
         }
         else
         {
           colCount = 0;
           ImGui::SetCursorPosY(ImGui::GetCursorPosY() +
-                               (tallestCell - cellHeight));
+                               (tallestCell - cellHeight) + 8.0F);
           tallestCell = 0;
         }
         ImGui::PopStyleColor(3);

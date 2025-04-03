@@ -67,10 +67,6 @@ namespace Dwarf
       separatorMin, separatorMax, COL_BG_DIM);
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 20);
 
-    ImGui::TextWrapped("TODO here will be settings for model import");
-
-    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
-
     ImGui::Text("Preview:");
 
     mModelPreview->Resize(
