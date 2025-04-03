@@ -288,7 +288,7 @@ namespace Dwarf
         }
         ImGui::EndMenu();
       }
-      if (ImGui::BeginMenu("Window"))
+      if (ImGui::BeginMenu("Add window"))
       {
         using enum MODULE_TYPE;
         if (ImGui::MenuItem("Scene Viewer"))
@@ -315,7 +315,6 @@ namespace Dwarf
         {
           AddWindow(DEBUG);
         }
-        ImGui::MenuItem("Console");
         ImGui::EndMenu();
       }
       ImGui::EndMenuBar();
