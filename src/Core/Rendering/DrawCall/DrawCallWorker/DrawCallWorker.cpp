@@ -124,34 +124,29 @@ namespace Dwarf
     {
       if (meshRenderer.GetModelAsset() && !meshRenderer.IsHidden())
       {
-        Entity entity(entityHandle, scene.GetRegistry());
-
-        auto& transform = entity.GetComponent<TransformComponent>();
-        auto& meshRenderer = entity.GetComponent<MeshRendererComponent>();
         auto& model =
           dynamic_cast<ModelAsset&>(meshRenderer.GetModelAsset()->GetAsset());
 
         for (const auto& mesh : model.Meshes())
         {
-          if (mesh->GetMaterialIndex() <= meshRenderer.MaterialAssets().size())
+          if (meshRenderer.MaterialAssets().contains(
+                mesh->GetMaterialIndex()) &&
+              meshRenderer.MaterialAssets()[mesh->GetMaterialIndex()])
           {
-            if (meshRenderer.MaterialAssets().at(mesh->GetMaterialIndex()))
-            {
-              MaterialAsset& materialAsset =
-                dynamic_cast<MaterialAsset&>(meshRenderer.MaterialAssets()
-                                               .at(mesh->GetMaterialIndex())
-                                               ->GetAsset());
+            MaterialAsset& materialAsset =
+              dynamic_cast<MaterialAsset&>(meshRenderer.MaterialAssets()
+                                             .at(mesh->GetMaterialIndex())
+                                             ->GetAsset());
 
-              if (materialAsset.GetMaterial()
-                    .GetMaterialProperties()
-                    .IsTransparent)
-              {
-                transparentTemps.emplace_back(*mesh, materialAsset, transform);
-              }
-              else
-              {
-                batchedTemps.emplace_back(*mesh, materialAsset, transform);
-              }
+            if (materialAsset.GetMaterial()
+                  .GetMaterialProperties()
+                  .IsTransparent)
+            {
+              transparentTemps.emplace_back(*mesh, materialAsset, transform);
+            }
+            else
+            {
+              batchedTemps.emplace_back(*mesh, materialAsset, transform);
             }
           }
         }
