@@ -7,17 +7,29 @@
 
 namespace Dwarf
 {
+  struct CallbackContainer
+  {
+    UUID                  Id;
+    std::function<void()> Callback;
+
+    CallbackContainer(UUID id, std::function<void()> callback)
+      : Id(std::move(id))
+      , Callback(std::move(callback))
+    {
+    }
+  };
+
   class LoadedScene : public ILoadedScene
   {
   private:
-    GraphicsApi                        mGraphicsApi;
-    std::shared_ptr<IDwarfLogger>      mLogger;
-    std::unique_ptr<IScene>            mScene;
-    std::shared_ptr<IWindow>           mWindow;
-    std::shared_ptr<IProjectSettings>  mProjectSettings;
-    std::vector<std::function<void()>> mSceneLoadCallback;
-    std::vector<std::function<void()>> mSceneUnloadCallback;
-    std::vector<std::function<void()>> mSceneChangeCallback;
+    GraphicsApi                       mGraphicsApi;
+    std::shared_ptr<IDwarfLogger>     mLogger;
+    std::unique_ptr<IScene>           mScene;
+    std::shared_ptr<IWindow>          mWindow;
+    std::shared_ptr<IProjectSettings> mProjectSettings;
+    std::vector<CallbackContainer>    mSceneLoadCallback;
+    std::vector<CallbackContainer>    mSceneUnloadCallback;
+    std::vector<CallbackContainer>    mSceneChangeCallback;
 
   public:
     LoadedScene(GraphicsApi                       graphicsApi,
@@ -56,8 +68,16 @@ namespace Dwarf
      *
      * @param callback Callback function
      */
+    auto
+    AddSceneLoadCallback(std::function<void()> callback) -> UUID override;
+
+    /**
+     * @brief Removes a callback with the given Id
+     *
+     * @param id Uuid returned when emplacing the callback
+     */
     void
-    AddSceneLoadCallback(std::function<void()> callback) override;
+    RemoveSceneLoadCallback(UUID id) override;
 
     /**
      * @brief Adds a callback that is called before the current scene is being
@@ -65,8 +85,16 @@ namespace Dwarf
      *
      * @param callback Callback function
      */
+    auto
+    AddSceneUnloadCallback(std::function<void()> callback) -> UUID override;
+
+    /**
+     * @brief Removes a callback with the given Id
+     *
+     * @param id Uuid returned when emplacing the callback
+     */
     void
-    AddSceneUnloadCallback(std::function<void()> callback) override;
+    RemoveSceneUnloadCallback(UUID id) override;
 
     /**
      * @brief Adds a callback that is called when something in the scene has
@@ -74,8 +102,16 @@ namespace Dwarf
      *
      * @param callback Callback function
      */
+    auto
+    AddSceneChangeCallback(std::function<void()> callback) -> UUID override;
+
+    /**
+     * @brief Removes a callback with the given Id
+     *
+     * @param id Uuid returned when emplacing the callback
+     */
     void
-    AddSceneChangeCallback(std::function<void()> callback) override;
+    RemoveSceneChangeCallback(UUID id) override;
 
     /**
      * @brief Triggers the callbacks for when something in the scene changes

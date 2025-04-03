@@ -32,7 +32,7 @@ namespace Dwarf
   {
     for (auto& callback : mSceneUnloadCallback)
     {
-      callback();
+      callback.Callback();
     }
 
     mScene = std::move(scene);
@@ -52,7 +52,7 @@ namespace Dwarf
 
       for (auto& callback : mSceneLoadCallback)
       {
-        callback();
+        callback.Callback();
       }
     }
     else
@@ -81,22 +81,52 @@ namespace Dwarf
     return mScene != nullptr;
   }
 
-  void
-  LoadedScene::AddSceneLoadCallback(std::function<void()> callback)
+  auto
+  LoadedScene::AddSceneLoadCallback(std::function<void()> callback) -> UUID
   {
-    mSceneLoadCallback.emplace_back(callback);
+    CallbackContainer newCallback(UUID(), callback);
+    mSceneLoadCallback.emplace_back(newCallback);
+    return newCallback.Id;
   }
 
   void
-  LoadedScene::AddSceneUnloadCallback(std::function<void()> callback)
+  LoadedScene::RemoveSceneLoadCallback(UUID id)
   {
-    mSceneUnloadCallback.emplace_back(callback);
+    std::erase_if(mSceneLoadCallback,
+                  [id](CallbackContainer& callback)
+                  { return callback.Id == id; });
+  }
+
+  auto
+  LoadedScene::AddSceneUnloadCallback(std::function<void()> callback) -> UUID
+  {
+    CallbackContainer newCallback(UUID(), callback);
+    mSceneUnloadCallback.emplace_back(newCallback);
+    return newCallback.Id;
   }
 
   void
-  LoadedScene::AddSceneChangeCallback(std::function<void()> callback)
+  LoadedScene::RemoveSceneUnloadCallback(UUID id)
   {
-    mSceneChangeCallback.emplace_back(callback);
+    std::erase_if(mSceneUnloadCallback,
+                  [id](CallbackContainer& callback)
+                  { return callback.Id == id; });
+  }
+
+  auto
+  LoadedScene::AddSceneChangeCallback(std::function<void()> callback) -> UUID
+  {
+    CallbackContainer newCallback(UUID(), callback);
+    mSceneChangeCallback.emplace_back(newCallback);
+    return newCallback.Id;
+  }
+
+  void
+  LoadedScene::RemoveSceneChangeCallback(UUID id)
+  {
+    std::erase_if(mSceneChangeCallback,
+                  [id](CallbackContainer& callback)
+                  { return callback.Id == id; });
   }
 
   void
@@ -104,7 +134,7 @@ namespace Dwarf
   {
     for (auto& callback : mSceneChangeCallback)
     {
-      callback();
+      callback.Callback();
     }
   }
 }

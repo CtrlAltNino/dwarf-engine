@@ -20,13 +20,13 @@ namespace Dwarf
   {
     mLogger->LogDebug(Log("DrawCallWorker created", "DrawCallWorker"));
     mWorkerThread = std::thread([this]() { WorkerThread(); });
-    mLoadedScene->AddSceneLoadCallback(
+    mSceneLoadCallbackId = mLoadedScene->AddSceneLoadCallback(
       [this]()
       {
         mDrawCallList->Clear();
         this->Invalidate();
       });
-    mLoadedScene->AddSceneUnloadCallback(
+    mSceneUnloadCallbackId = mLoadedScene->AddSceneUnloadCallback(
       [this]()
       {
         if (this->mDrawCallList)
@@ -34,7 +34,7 @@ namespace Dwarf
           mDrawCallList->Clear();
         }
       });
-    mLoadedScene->AddSceneChangeCallback(
+    mSceneChangeCallbackId = mLoadedScene->AddSceneChangeCallback(
       [this]()
       {
         mDrawCallList->Clear();
@@ -57,6 +57,10 @@ namespace Dwarf
       mWorkerThread.join();
       mLogger->LogDebug(Log("Worker Thread joined", "DrawCallWorker"));
     }
+
+    mLoadedScene->RemoveSceneLoadCallback(mSceneLoadCallbackId);
+    mLoadedScene->RemoveSceneUnloadCallback(mSceneUnloadCallbackId);
+    mLoadedScene->RemoveSceneChangeCallback(mSceneChangeCallbackId);
     mLogger->LogDebug(Log("DrawCallWorker destroyed", "DrawCallWorker"));
   }
 

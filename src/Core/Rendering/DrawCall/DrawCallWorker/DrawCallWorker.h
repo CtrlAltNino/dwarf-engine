@@ -80,6 +80,9 @@ namespace Dwarf
     std::atomic<bool>                  mStopWorker = false;
     std::atomic<bool>                  mInvalidate = false;
     std::mutex                         mThreadMutex;
+    UUID                               mSceneLoadCallbackId;
+    UUID                               mSceneUnloadCallbackId;
+    UUID                               mSceneChangeCallbackId;
 
   public:
     DrawCallWorker(std::shared_ptr<IDwarfLogger>      logger,

@@ -208,37 +208,36 @@ namespace Dwarf
     ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
                          COMPONENT_PANEL_PADDING);
 
-    static bool wasNull = component.GetModelAsset() == nullptr;
+    bool wasNull = component.GetModelAsset() == nullptr;
 
     if (DwarfUI::AssetInput<ModelAsset>(
           mAssetDatabase, component.GetModelAsset(), "##modelAsset"))
     {
       mLoadedScene->PropagateSceneChange();
+
+      if (component.GetModelAsset() != nullptr)
+      {
+        static UUID memory = component.GetModelAsset()->GetUID();
+
+        if ((component.GetModelAsset()->GetUID() != memory) || wasNull)
+        {
+          // wasNull = false;
+          memory = component.GetModelAsset()->GetUID();
+          component.MaterialAssets().clear();
+          component.IdMesh() = nullptr;
+          for (auto& mesh : (dynamic_cast<ModelAsset&>(
+                               component.GetModelAsset()->GetAsset()))
+                              .Meshes())
+          {
+            component.MaterialAssets()[mesh->GetMaterialIndex()] = nullptr;
+          }
+        }
+      }
     }
     ImGui::PopItemWidth();
 
     if (component.GetModelAsset() != nullptr)
     {
-      static UUID memory = component.GetModelAsset()->GetUID();
-
-      if ((component.GetModelAsset()->GetUID() != memory) || wasNull)
-      {
-        wasNull = false;
-        memory = component.GetModelAsset()->GetUID();
-        component.MaterialAssets().clear();
-        component.IdMesh() = nullptr;
-        for (auto& mesh :
-             (dynamic_cast<ModelAsset&>(component.GetModelAsset()->GetAsset()))
-               .Meshes())
-        {
-          component.MaterialAssets()[mesh->GetMaterialIndex()] = nullptr;
-        }
-      }
-
-      std::vector<std::unique_ptr<IMesh>>& meshes =
-        (dynamic_cast<ModelAsset&>(component.GetModelAsset()->GetAsset()))
-          .Meshes();
-
       ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
       ImGui::TextWrapped("Materials");
 

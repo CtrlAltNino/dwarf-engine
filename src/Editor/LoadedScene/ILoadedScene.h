@@ -43,8 +43,16 @@ namespace Dwarf
      *
      * @param callback Callback function
      */
+    virtual auto
+    AddSceneLoadCallback(std::function<void()> callback) -> UUID = 0;
+
+    /**
+     * @brief Removes a callback with the given Id
+     *
+     * @param id Uuid returned when emplacing the callback
+     */
     virtual void
-    AddSceneLoadCallback(std::function<void()> callback) = 0;
+    RemoveSceneLoadCallback(UUID id) = 0;
 
     /**
      * @brief Adds a callback that is called before the current scene is being
@@ -52,8 +60,16 @@ namespace Dwarf
      *
      * @param callback Callback function
      */
+    virtual auto
+    AddSceneUnloadCallback(std::function<void()> callback) -> UUID = 0;
+
+    /**
+     * @brief Removes a callback with the given Id
+     *
+     * @param id Uuid returned when emplacing the callback
+     */
     virtual void
-    AddSceneUnloadCallback(std::function<void()> callback) = 0;
+    RemoveSceneUnloadCallback(UUID id) = 0;
 
     /**
      * @brief Adds a callback that is called when something in the scene has
@@ -61,8 +77,16 @@ namespace Dwarf
      *
      * @param callback Callback function
      */
+    virtual auto
+    AddSceneChangeCallback(std::function<void()> callback) -> UUID = 0;
+
+    /**
+     * @brief Removes a callback with the given Id
+     *
+     * @param id Uuid returned when emplacing the callback
+     */
     virtual void
-    AddSceneChangeCallback(std::function<void()> callback) = 0;
+    RemoveSceneChangeCallback(UUID id) = 0;
 
     /**
      * @brief Triggers the callbacks for when something in the scene changes
