@@ -379,15 +379,15 @@ namespace Dwarf
     // ImGui::ShowDemoWindow();
 
     // Render modules
-    for (const auto& mGuiModule : mGuiModules)
+    for (int i = 0; i < mGuiModules.size(); i++)
     {
-      if (mGuiModule->GetWindowClose())
+      if (mGuiModules.at(i)->GetWindowClose())
       {
-        RemoveWindow(mGuiModule->GetUuid());
+        RemoveWindow(mGuiModules.at(i)->GetUuid());
       }
       else
       {
-        mGuiModule->OnImGuiRender();
+        mGuiModules.at(i)->OnImGuiRender();
       }
     }
 
