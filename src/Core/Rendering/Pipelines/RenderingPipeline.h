@@ -149,5 +149,29 @@ namespace Dwarf
      */
     void
     SetExposure(float exposure) override;
+
+    /**
+     * @brief Gets the amount of current draw calls
+     *
+     * @return Draw call count
+     */
+    [[nodiscard]] auto
+    GetDrawCallCount() const -> uint32_t override;
+
+    /**
+     * @brief Gets the total amount of vertices over all draw calls
+     *
+     * @return Vertex count
+     */
+    [[nodiscard]] auto
+    GetVertexCount() const -> uint32_t override;
+
+    /**
+     * @brief Gets the total amount of triangles over all draw calls
+     *
+     * @return Triangle count
+     */
+    [[nodiscard]] auto
+    GetTriangleCount() const -> uint32_t override;
   };
 }

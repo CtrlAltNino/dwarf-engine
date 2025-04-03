@@ -103,6 +103,27 @@ namespace Dwarf
     void
     ProcessSceneClick(glm::vec2 const& mousePosition);
 
+    /**
+     * @brief Renders the general scene viewer settings
+     *
+     */
+    void
+    RenderSceneViewerSettings();
+
+    /**
+     * @brief Renderings the rendering settings
+     *
+     */
+    void
+    RenderRenderingSettings();
+
+    /**
+     * @brief Renders the statistics
+     *
+     */
+    void
+    RenderStats();
+
   public:
     SceneViewerWindow(std::shared_ptr<IDwarfLogger>          logger,
                       std::shared_ptr<IEditorStats>          editorStats,

@@ -127,6 +127,119 @@ namespace Dwarf
     }
 
     ImGui::PopStyleVar(2);
+
+    ImGui::SetCursorPos(
+      { ImGui::GetCursorPosX() + 4, ImGui::GetCursorPosY() + 4 });
+
+    RenderSceneViewerSettings();
+
+    ImGui::SameLine(0, 5);
+
+    RenderRenderingSettings();
+
+    ImGui::SameLine(0, 5);
+
+    RenderStats();
+
+    // Calculating the rect size for the framebuffer
+    ImVec2 minRect = ImGui::GetCursorScreenPos();
+    ImVec2 maxRect(
+      ImGui::GetCursorScreenPos().x + ImGui::GetContentRegionAvail().x,
+      ImGui::GetCursorScreenPos().y + ImGui::GetContentRegionAvail().y);
+
+    static bool   isResizing = false;
+    static double framebufferUpdatedelay = 0.05;
+    isResizing =
+      ImGui::IsMouseDragging(0, 0) &&
+      mSettings.ViewportSize != glm::ivec2(ImGui::GetContentRegionAvail().x,
+                                           ImGui::GetContentRegionAvail().y);
+
+    mSettings.ViewportSize = glm::ivec2(ImGui::GetContentRegionAvail().x,
+                                        ImGui::GetContentRegionAvail().y);
+
+    if (framebufferUpdatedelay > 0.0)
+    {
+      framebufferUpdatedelay =
+        std::max(framebufferUpdatedelay - mEditorStats->GetDeltaTime(), 0.0);
+    }
+
+    if (isResizing)
+    {
+      framebufferUpdatedelay = 0.05;
+    }
+
+    if (!isResizing && framebufferUpdatedelay == 0.0 &&
+        !ImGui::IsMouseDragging(0, 0))
+    {
+      UpdateFramebuffer();
+    }
+
+    if (mSettings.RenderingConstraint != RENDERING_CONSTRAINT::FREE)
+    {
+      if (((float)mSettings.ViewportSize.x / (float)mSettings.ViewportSize.y) <
+          mSettings.targetAspectRatio)
+      {
+        float diff = std::ceil(std::fabs((float)mSettings.ViewportSize.y -
+                                         ((float)mSettings.ViewportSize.x /
+                                          mSettings.targetAspectRatio)) /
+                               2.0F);
+        minRect.y += diff;
+        maxRect.y -= diff;
+      }
+      else if (((double)mSettings.ViewportSize.x /
+                (double)mSettings.ViewportSize.y) > mSettings.targetAspectRatio)
+      {
+        float diff = std::ceil(std::fabs((float)mSettings.ViewportSize.x -
+                                         ((float)mSettings.ViewportSize.y *
+                                          mSettings.targetAspectRatio)) /
+                               2.0F);
+        minRect.x += diff;
+        maxRect.x -= diff;
+      }
+    }
+
+    ImGui::SetCursorScreenPos(minRect);
+    ImVec2 size = { maxRect.x - minRect.x, maxRect.y - minRect.y };
+
+    // Rendering the framebuffer
+    ImGui::Image((ImTextureID)mRenderingPipeline->GetPresentationBufferId(),
+                 size,
+                 ImVec2(0, 1),
+                 ImVec2(1, 0));
+
+    // Check if a mesh is clicked
+    glm::vec2 mousePos = { ImGui::GetMousePos().x, ImGui::GetMousePos().y };
+    glm::vec2 minRectGlm = { minRect.x, minRect.y };
+    glm::vec2 maxRectGlm = { maxRect.x, maxRect.y };
+
+    if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
+    {
+      ProcessSceneClick(mousePos - minRectGlm);
+    }
+
+    if (!mSettings.CameraMovement && ImGui::IsItemHovered() &&
+        mInputManager->GetMouseButtonDown(MOUSE_BUTTON::RIGHT))
+    {
+      bool isWindowFocused = ImGui::IsWindowFocused();
+      mSettings.CameraMovement = true;
+      ImGui::FocusWindow(ImGui::GetCurrentWindow());
+    }
+    else if (mSettings.CameraMovement &&
+             !mInputManager->GetMouseButton(MOUSE_BUTTON::RIGHT))
+    {
+      mSettings.CameraMovement = false;
+    }
+
+    if (!mEditorSelection->GetSelectedEntities().empty())
+    {
+      RenderGizmos(minRect, maxRect);
+    }
+    ImGui::End();
+  }
+
+  void
+  SceneViewerWindow::RenderSceneViewerSettings()
+  {
     static std::array<std::string, 3> renderingModes = { "Free",
                                                          "Aspect Ratio",
                                                          "Fixed Resolution" };
@@ -235,131 +348,70 @@ namespace Dwarf
                  std::min(MAX_RESOLUTION_WIDTH, mSettings.Resolution[1]));
     }
 
-    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+    ImGui::SameLine(0, 5);
 
     ImGui::Checkbox("Render Grid", &mSettings.RenderGrid);
-
-    ImGui::SameLine(0, 5);
-
-    ImGui::SliderInt("MSAA Samples",
-                     &mSettings.Samples,
-                     1,
-                     mSettings.MaxSamples,
-                     "%d",
-                     ImGuiSliderFlags_None);
-
-    ImGui::SameLine(0, 5);
-
-    float min = 0.0F;
-    float max = 2.0F;
-    ImGui::DragScalar("Exposure",
-                      ImGuiDataType_Float,
-                      &mSettings.Exposure,
-                      0.0005f,
-                      &min,
-                      &max,
-                      "%f");
-
-    ImGui::SameLine(0, 5);
-    ImGui::DragFloat("FOV", &mCamera->GetProperties().Fov, 0.5f, 45, 110);
-
     ImGui::PopStyleVar();
     ImGui::PopItemWidth();
+  }
 
-    // Calculating the rect size for the framebuffer
-    ImVec2 minRect = ImGui::GetCursorScreenPos();
-    ImVec2 maxRect(
-      ImGui::GetCursorScreenPos().x + ImGui::GetContentRegionAvail().x,
-      ImGui::GetCursorScreenPos().y + ImGui::GetContentRegionAvail().y);
-
-    static bool   isResizing = false;
-    static double framebufferUpdatedelay = 0.05;
-    isResizing =
-      ImGui::IsMouseDragging(0, 0) &&
-      mSettings.ViewportSize != glm::ivec2(ImGui::GetContentRegionAvail().x,
-                                           ImGui::GetContentRegionAvail().y);
-
-    mSettings.ViewportSize = glm::ivec2(ImGui::GetContentRegionAvail().x,
-                                        ImGui::GetContentRegionAvail().y);
-
-    if (framebufferUpdatedelay > 0.0)
+  void
+  SceneViewerWindow::RenderRenderingSettings()
+  {
+    if (ImGui::Button("Render settings"))
     {
-      framebufferUpdatedelay =
-        std::max(framebufferUpdatedelay - mEditorStats->GetDeltaTime(), 0.0);
+      ImGui::OpenPopup("render_settings");
     }
 
-    if (isResizing)
+    if (ImGui::BeginPopup("render_settings"))
     {
-      framebufferUpdatedelay = 0.05;
+      ImGui::SliderInt("MSAA Samples",
+                       &mSettings.Samples,
+                       1,
+                       mSettings.MaxSamples,
+                       "%d",
+                       ImGuiSliderFlags_None);
+
+      float min = 0.0F;
+      float max = 2.0F;
+      ImGui::DragScalar("Exposure",
+                        ImGuiDataType_Float,
+                        &mSettings.Exposure,
+                        0.0005f,
+                        &min,
+                        &max,
+                        "%f");
+
+      ImGui::DragFloat("FOV", &mCamera->GetProperties().Fov, 0.5f, 45, 110);
+      ImGui::EndPopup();
+    }
+  }
+
+  void
+  SceneViewerWindow::RenderStats()
+  {
+    if (ImGui::Button("Stats"))
+    {
+      ImGui::OpenPopup("scene_viewer_statistics");
     }
 
-    if (!isResizing && framebufferUpdatedelay == 0.0 &&
-        !ImGui::IsMouseDragging(0, 0))
+    if (ImGui::BeginPopup("scene_viewer_statistics"))
     {
-      UpdateFramebuffer();
+      std::string formattedDrawCallCount = std::format(
+        std::locale(""), "{:L}", mRenderingPipeline->GetDrawCallCount());
+      std::string formattedVertCount = std::format(
+        std::locale(""), "{:L}", mRenderingPipeline->GetVertexCount());
+      std::string formattedTrisCount = std::format(
+        std::locale(""), "{:L}", mRenderingPipeline->GetTriangleCount());
+
+      ImGui::Text("Draw calls: %s", formattedDrawCallCount.c_str());
+      ImGui::Text("Vertices: %s", formattedVertCount.c_str());
+      ImGui::Text("Triangles: %s", formattedTrisCount.c_str());
+      ImGui::Text("Resolution: %ix%i",
+                  mRenderingPipeline->GetResolution().x,
+                  mRenderingPipeline->GetResolution().y);
+      ImGui::EndPopup();
     }
-
-    if (mSettings.RenderingConstraint != RENDERING_CONSTRAINT::FREE)
-    {
-      if (((float)mSettings.ViewportSize.x / (float)mSettings.ViewportSize.y) <
-          mSettings.targetAspectRatio)
-      {
-        float diff = std::ceil(std::fabs((float)mSettings.ViewportSize.y -
-                                         ((float)mSettings.ViewportSize.x /
-                                          mSettings.targetAspectRatio)) /
-                               2.0F);
-        minRect.y += diff;
-        maxRect.y -= diff;
-      }
-      else if (((double)mSettings.ViewportSize.x /
-                (double)mSettings.ViewportSize.y) > mSettings.targetAspectRatio)
-      {
-        float diff = std::ceil(std::fabs((float)mSettings.ViewportSize.x -
-                                         ((float)mSettings.ViewportSize.y *
-                                          mSettings.targetAspectRatio)) /
-                               2.0F);
-        minRect.x += diff;
-        maxRect.x -= diff;
-      }
-    }
-
-    ImGui::SetCursorScreenPos(minRect);
-    ImVec2 size = { maxRect.x - minRect.x, maxRect.y - minRect.y };
-
-    // Rendering the framebuffer
-    ImGui::Image((ImTextureID)mRenderingPipeline->GetPresentationBufferId(),
-                 size,
-                 ImVec2(0, 1),
-                 ImVec2(1, 0));
-
-    // Check if a mesh is clicked
-    glm::vec2 mousePos = { ImGui::GetMousePos().x, ImGui::GetMousePos().y };
-    glm::vec2 minRectGlm = { minRect.x, minRect.y };
-    glm::vec2 maxRectGlm = { maxRect.x, maxRect.y };
-
-    if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
-    {
-      ProcessSceneClick(mousePos - minRectGlm);
-    }
-
-    if (!mSettings.CameraMovement && ImGui::IsItemHovered() &&
-        mInputManager->GetMouseButtonDown(MOUSE_BUTTON::RIGHT))
-    {
-      bool isWindowFocused = ImGui::IsWindowFocused();
-      mSettings.CameraMovement = true;
-      ImGui::FocusWindow(ImGui::GetCurrentWindow());
-    }
-    else if (mSettings.CameraMovement &&
-             !mInputManager->GetMouseButton(MOUSE_BUTTON::RIGHT))
-    {
-      mSettings.CameraMovement = false;
-    }
-
-    if (!mEditorSelection->GetSelectedEntities().empty())
-    {
-      RenderGizmos(minRect, maxRect);
-    }
-    ImGui::End();
   }
 
   auto

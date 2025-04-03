@@ -4,6 +4,13 @@
 #include <mutex>
 namespace Dwarf
 {
+  struct DrawCallStatistics
+  {
+    std::atomic<uint32_t> DrawCallCount = 0;
+    std::atomic<uint32_t> TriangleCount = 0;
+    std::atomic<uint32_t> VertexCount = 0;
+  };
+
   /**
    * @brief A class that contains a list of draw calls and allows for thread
    * safe access
@@ -44,5 +51,8 @@ namespace Dwarf
      */
     virtual void
     Clear() = 0;
+
+    [[nodiscard]] virtual auto
+    GetStats() -> const DrawCallStatistics& = 0;
   };
 }

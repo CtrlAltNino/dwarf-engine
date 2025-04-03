@@ -11,6 +11,8 @@ namespace Dwarf
   private:
     std::mutex                              mDrawCallMutex;
     std::vector<std::unique_ptr<IDrawCall>> mDrawCalls;
+    DrawCallStatistics                      mStats;
+    std::atomic<bool>                       mAllDrawCallsLoaded = false;
 
   public:
     ~DrawCallList() override;
@@ -45,5 +47,8 @@ namespace Dwarf
      */
     void
     Clear() override;
+
+    auto
+    GetStats() -> const DrawCallStatistics& override;
   };
 }

@@ -246,4 +246,22 @@ namespace Dwarf
   {
     mTonemapMaterial->GetShaderParameters()->SetParameter("exposure", exposure);
   }
+
+  [[nodiscard]] auto
+  RenderingPipeline::GetDrawCallCount() const -> uint32_t
+  {
+    return mDrawCallList->GetStats().DrawCallCount.load();
+  }
+
+  [[nodiscard]] auto
+  RenderingPipeline::GetVertexCount() const -> uint32_t
+  {
+    return mDrawCallList->GetStats().VertexCount.load();
+  }
+
+  [[nodiscard]] auto
+  RenderingPipeline::GetTriangleCount() const -> uint32_t
+  {
+    return mDrawCallList->GetStats().TriangleCount.load();
+  }
 }

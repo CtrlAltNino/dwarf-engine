@@ -107,5 +107,29 @@ namespace Dwarf
      */
     virtual void
     SetExposure(float exposure) = 0;
+
+    /**
+     * @brief Gets the amount of current draw calls
+     *
+     * @return Draw call count
+     */
+    [[nodiscard]] virtual auto
+    GetDrawCallCount() const -> uint32_t = 0;
+
+    /**
+     * @brief Gets the total amount of vertices over all draw calls
+     *
+     * @return Vertex count
+     */
+    [[nodiscard]] virtual auto
+    GetVertexCount() const -> uint32_t = 0;
+
+    /**
+     * @brief Gets the total amount of triangles over all draw calls
+     *
+     * @return Triangle count
+     */
+    [[nodiscard]] virtual auto
+    GetTriangleCount() const -> uint32_t = 0;
   };
 }
