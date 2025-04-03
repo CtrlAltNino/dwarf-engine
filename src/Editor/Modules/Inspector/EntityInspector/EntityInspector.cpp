@@ -1,5 +1,6 @@
 #include "pch.h"
 
+#include "Core/Asset/Database/AssetComponents.h"
 #include "EntityInspector.h"
 #include "UI/DwarfUI.h"
 

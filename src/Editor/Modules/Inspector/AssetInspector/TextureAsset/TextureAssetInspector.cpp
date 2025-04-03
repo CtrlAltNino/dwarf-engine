@@ -1,5 +1,6 @@
 #include "pch.h"
 
+#include "Core/Asset/Database/AssetComponents.h"
 #include "TextureAssetInspector.h"
 #include "UI/DwarfUI.h"
 #include "Utilities/ImageUtilities/TextureCommon.h"
@@ -128,11 +129,6 @@ namespace Dwarf
         ImGui::EndCombo();
       }
     }
-
-    ImGui::Spacing();
-
-    ImGui::Checkbox("Gamma Correction",
-                    &mCurrentImportSettings.mGammaCorrection);
 
     ImGui::Spacing();
 

@@ -3,7 +3,6 @@
 #include "Core/Asset/AssetTypes.h"
 #include "Core/Rendering/PreviewRenderer/MaterialPreview/IMaterialPreview.h"
 #include "MaterialAssetInspector.h"
-#include "Platform/OpenGL/OpenGLShader.h"
 #include "UI/DwarfUI.h"
 #include <memory>
 

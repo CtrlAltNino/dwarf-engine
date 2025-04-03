@@ -127,7 +127,6 @@ namespace Dwarf
   {
     TextureFileType mTextureType = TextureFileType::Default;
     ColorSpace      mColorSpace = ColorSpace::Linear;
-    bool            mGammaCorrection = false;
     bool            mGenerateMipMaps = false;
     bool            mFlipY = false;
     WrapMode        mWrapMode = WrapMode::Clamp;
@@ -145,11 +144,6 @@ namespace Dwarf
       if (serializedData.contains("ColorSpace"))
       {
         mColorSpace = serializedData["ColorSpace"].get<ColorSpace>();
-      }
-
-      if (serializedData.contains("GammaCorrection"))
-      {
-        mGammaCorrection = serializedData["GammaCorrection"].get<bool>();
       }
 
       if (serializedData.contains("GenerateMipMaps"))
@@ -181,8 +175,6 @@ namespace Dwarf
       serializedData["TextureType"] = mTextureType;
 
       serializedData["ColorSpace"] = mColorSpace;
-
-      serializedData["GammaCorrection"] = mGammaCorrection;
 
       serializedData["GenerateMipMaps"] = mGenerateMipMaps;
 

@@ -50,26 +50,30 @@ namespace Dwarf
     ImportDefaultAssets();
 
     mAssetDirectoryListener->registerAddFileCallback(
-      std::bind(&AssetDatabase::AddAssetCallback,
-                this,
-                std::placeholders::_1,
-                std::placeholders::_2));
+      [this](auto&& PH1, auto&& PH2)
+      {
+        AddAssetCallback(std::forward<decltype(PH1)>(PH1),
+                         std::forward<decltype(PH2)>(PH2));
+      });
     mAssetDirectoryListener->registerDeleteFileCallback(
-      std::bind(&AssetDatabase::DeleteAssetCallback,
-                this,
-                std::placeholders::_1,
-                std::placeholders::_2));
+      [this](auto&& PH1, auto&& PH2)
+      {
+        DeleteAssetCallback(std::forward<decltype(PH1)>(PH1),
+                            std::forward<decltype(PH2)>(PH2));
+      });
     mAssetDirectoryListener->registerModifyFileCallback(
-      std::bind(&AssetDatabase::ModifyAssetCallback,
-                this,
-                std::placeholders::_1,
-                std::placeholders::_2));
+      [this](auto&& PH1, auto&& PH2)
+      {
+        ModifyAssetCallback(std::forward<decltype(PH1)>(PH1),
+                            std::forward<decltype(PH2)>(PH2));
+      });
     mAssetDirectoryListener->registerMoveFileCallback(
-      std::bind(&AssetDatabase::MoveAssetCallback,
-                this,
-                std::placeholders::_1,
-                std::placeholders::_2,
-                std::placeholders::_3));
+      [this](auto&& PH1, auto&& PH2, auto&& PH3)
+      {
+        MoveAssetCallback(std::forward<decltype(PH1)>(PH1),
+                          std::forward<decltype(PH2)>(PH2),
+                          std::forward<decltype(PH3)>(PH3));
+      });
     mLogger->LogDebug(Log("AssetDatabase created", "AssetDatabase"));
   }
 

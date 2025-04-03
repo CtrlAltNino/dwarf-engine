@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Core/Asset/Database/AssetComponents.h"
 #include "Core/Asset/Database/IAssetDatabase.h"
 #include "Core/GenericComponents.h"
 #include <algorithm>
@@ -62,22 +61,20 @@ namespace Dwarf
                const char*                            imguiID) -> bool
     {
       std::vector<entt::entity> availableAssets;
-      int                       selectedAsset = -1;
       auto                      view =
         assetDatabase->GetRegistry().view<IDComponent, NameComponent, T>();
       static bool interacted = false;
 
-      int count = 0;
       for (auto entity : view)
       {
         availableAssets.push_back(entity);
-        if (assetRef && (view.template get<IDComponent>(entity).getId() ==
-                         assetRef->GetUID()))
-        {
-          selectedAsset = count;
-        }
-        count++;
       }
+
+      const char* preview =
+        (assetRef == nullptr)
+          ? "None"
+          : view.template get<NameComponent>(assetRef->GetHandle())
+              .Name.c_str();
 
       std::ranges::stable_sort(
         availableAssets,
@@ -87,36 +84,27 @@ namespace Dwarf
                  to_lower(view.template get<NameComponent>(second).Name);
         });
 
-      const char* preview =
-        (selectedAsset == -1)
-          ? "None"
-          : view.template get<NameComponent>(availableAssets[selectedAsset])
-              .Name.c_str();
-
       interacted = false;
       if (ImGui::BeginCombo(imguiID, preview))
       {
         if (ImGui::Selectable(
-              "None", selectedAsset == -1, 0, ImVec2(0, 16 + 10)))
+              "None", assetRef == nullptr, 0, ImVec2(0, 16 + 10)))
         {
-          selectedAsset = -1;
           assetRef = nullptr;
           interacted = true;
         }
 
-        for (int i = 0; i < availableAssets.size(); i++)
+        for (auto& assetHandle : availableAssets)
         {
-          const bool isSelected = (selectedAsset == i);
+          // const bool isSelected = (selectedAsset == i);
           if (ImGui::Selectable(
-                view.template get<NameComponent>(availableAssets[i])
-                  .Name.c_str(),
-                isSelected,
+                view.template get<NameComponent>(assetHandle).Name.c_str(),
+                (assetRef != nullptr) && (assetRef->GetHandle() == assetHandle),
                 0,
                 ImVec2(0, 16 + 10)))
           {
-            selectedAsset = i;
             assetRef = assetDatabase->Retrieve(
-              view.template get<IDComponent>(availableAssets[i]).getId());
+              view.template get<IDComponent>(assetHandle).getId());
             interacted = true;
           }
         }
@@ -134,23 +122,22 @@ namespace Dwarf
                const char*                                      imguiID) -> bool
     {
       std::vector<entt::entity> availableAssets;
-      int                       selectedAsset = -1;
       auto                      view =
         assetDatabase->GetRegistry().view<IDComponent, NameComponent, T>();
       static bool interacted = false;
 
-      int count = 0;
       for (auto entity : view)
       {
         availableAssets.push_back(entity);
-        if (assetRef.has_value() && assetRef.value() != nullptr &&
-            (view.template get<IDComponent>(entity).getId() ==
-             assetRef.value()->GetUID()))
-        {
-          selectedAsset = count;
-        }
-        count++;
       }
+
+      bool hasValue = assetRef.has_value() && (assetRef.value() != nullptr);
+
+      const char* preview =
+        !hasValue
+          ? "None"
+          : view.template get<NameComponent>(assetRef.value()->GetHandle())
+              .Name.c_str();
 
       std::ranges::stable_sort(
         availableAssets,
@@ -160,36 +147,25 @@ namespace Dwarf
                  to_lower(view.template get<NameComponent>(second).Name);
         });
 
-      const char* preview =
-        (selectedAsset == -1)
-          ? "None"
-          : view.template get<NameComponent>(availableAssets[selectedAsset])
-              .Name.c_str();
-
       interacted = false;
       if (ImGui::BeginCombo(imguiID, preview))
       {
-        if (ImGui::Selectable(
-              "None", selectedAsset == -1, 0, ImVec2(0, 16 + 10)))
+        if (ImGui::Selectable("None", !hasValue, 0, ImVec2(0, 16 + 10)))
         {
-          selectedAsset = -1;
           assetRef = std::nullopt;
           interacted = true;
         }
 
-        for (int i = 0; i < availableAssets.size(); i++)
+        for (auto& assetHandle : availableAssets)
         {
-          const bool isSelected = (selectedAsset == i);
           if (ImGui::Selectable(
-                view.template get<NameComponent>(availableAssets[i])
-                  .Name.c_str(),
-                isSelected,
+                view.template get<NameComponent>(assetHandle).Name.c_str(),
+                hasValue && assetRef.value()->GetHandle() == assetHandle,
                 0,
                 ImVec2(0, 16 + 10)))
           {
-            selectedAsset = i;
             assetRef = assetDatabase->Retrieve(
-              view.template get<IDComponent>(availableAssets[i]).getId());
+              view.template get<IDComponent>(assetHandle).getId());
             interacted = true;
           }
         }
@@ -206,23 +182,16 @@ namespace Dwarf
                const char*                            imguiID) -> bool
     {
       std::vector<entt::entity> availableAssets;
-      int                       selectedAsset = -1;
       auto                      view =
         assetDatabase->GetRegistry().view<IDComponent, NameComponent, T>();
       static bool interacted = false;
 
-      int count = 0;
       for (auto entity : view)
       {
         availableAssets.push_back(entity);
-        if (assetRef.has_value() &&
-            (view.template get<IDComponent>(entity).getId() ==
-             assetRef.value()))
-        {
-          selectedAsset = count;
-        }
-        count++;
       }
+
+      bool hasValue = assetRef.has_value();
 
       std::ranges::stable_sort(
         availableAssets,
@@ -232,36 +201,45 @@ namespace Dwarf
                  to_lower(view.template get<NameComponent>(second).Name);
         });
 
+      auto selectedIterator = std::ranges::find_if(
+        availableAssets,
+        [view, assetRef, hasValue](entt::entity& handle)
+        {
+          return hasValue ? view.template get<IDComponent>(handle).getId() ==
+                              assetRef.value()
+                          : false;
+        });
+
       const char* preview =
-        (selectedAsset == -1)
+        (!hasValue || (selectedIterator == availableAssets.end()))
           ? "None"
-          : view.template get<NameComponent>(availableAssets[selectedAsset])
-              .Name.c_str();
+          : view.template get<NameComponent>(*selectedIterator).Name.c_str();
 
       interacted = false;
       if (ImGui::BeginCombo(imguiID, preview))
       {
-        if (ImGui::Selectable(
-              "None", selectedAsset == -1, 0, ImVec2(0, 16 + 10)))
+        if (ImGui::Selectable("None",
+                              (!assetRef.has_value() ||
+                               (selectedIterator == availableAssets.end())),
+                              0,
+                              ImVec2(0, 16 + 10)))
         {
-          selectedAsset = -1;
           assetRef = std::nullopt;
           interacted = true;
         }
 
-        for (int i = 0; i < availableAssets.size(); i++)
+        for (auto& availableAsset : availableAssets)
         {
-          const bool isSelected = (selectedAsset == i);
+          // const bool isSelected = (selectedAsset == i);
           if (ImGui::Selectable(
-                view.template get<NameComponent>(availableAssets[i])
-                  .Name.c_str(),
-                isSelected,
+                view.template get<NameComponent>(availableAsset).Name.c_str(),
+                hasValue &&
+                  (assetRef.value() ==
+                   view.template get<IDComponent>(availableAsset).getId()),
                 0,
                 ImVec2(0, 16 + 10)))
           {
-            selectedAsset = i;
-            assetRef =
-              view.template get<IDComponent>(availableAssets[i]).getId();
+            assetRef = view.template get<IDComponent>(availableAsset).getId();
             interacted = true;
           }
         }
@@ -271,19 +249,5 @@ namespace Dwarf
 
       return interacted;
     }
-
-    template<>
-    auto
-    AssetInput<VertexShaderAsset>(
-      const std::shared_ptr<IAssetDatabase>&           assetDatabase,
-      std::optional<std::unique_ptr<IAssetReference>>& assetRef,
-      const char*                                      imguiID) -> bool;
-
-    template<>
-    auto
-    AssetInput<FragmentShaderAsset>(
-      const std::shared_ptr<IAssetDatabase>&           assetDatabase,
-      std::optional<std::unique_ptr<IAssetReference>>& assetRef,
-      const char*                                      imguiID) -> bool;
   };
 }
