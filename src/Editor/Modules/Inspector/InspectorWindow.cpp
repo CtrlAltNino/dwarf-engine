@@ -88,6 +88,10 @@ namespace Dwarf
   InspectorWindow::OnUpdate()
   {
     // Place Update code here (Before rendering)
+    if (!mWindowOpened)
+    {
+      return;
+    }
   }
 
   auto

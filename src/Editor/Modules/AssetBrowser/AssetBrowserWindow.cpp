@@ -138,6 +138,11 @@ namespace Dwarf
   void
   AssetBrowserWindow::OnUpdate()
   {
+    if (!mWindowOpened)
+    {
+      return;
+    }
+
     if (mInputManager->GetMouseButtonDown(MOUSE_BUTTON::MOUSE_BUTTON_4))
     {
       GoBack();
@@ -432,7 +437,7 @@ namespace Dwarf
     windowFlags |= ImGuiWindowFlags_NoTitleBar;
     windowFlags |= ImGuiWindowFlags_NoMove;
 
-    ImGui::Begin("FolderContent", nullptr, windowFlags);
+    ImGui::Begin("FolderContent", &mWindowOpened, windowFlags);
 
     // Rendering the entries
     {
@@ -629,20 +634,6 @@ namespace Dwarf
         ImGui::EndPopup();
       }
     }
-
-    // Dummy Item that clears the selection when clicked
-    /*{
-      ImVec2 padding = ImGui::GetCursorPos();
-      ImGui::SetCursorPos(ImVec2(0, 0));
-      ImVec2 dummySize =
-        ImVec2(ImGui::GetContentRegionAvail().x,
-               ImGui::GetContentRegionAvail().y + ImGui::GetScrollMaxY());
-      ImGui::Dummy(dummySize);
-      if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
-      {
-        mEditorSelection->ClearAssetSelection();
-      }
-    }*/
 
     // Right Click menu
     {
