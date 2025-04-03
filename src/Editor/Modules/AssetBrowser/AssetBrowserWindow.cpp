@@ -245,15 +245,6 @@ namespace Dwarf
     ImGui::End();
   }
 
-  auto
-  to_lower(const std::string& str) -> std::string
-  {
-    std::string result = str;
-    std::ranges::transform(
-      result, result.begin(), [](unsigned char c) { return std::tolower(c); });
-    return result;
-  }
-
   void
   AssetBrowserWindow::RebuildDirectoryContentCache(
     const std::filesystem::path& directory)
