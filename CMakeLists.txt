@@ -16,7 +16,6 @@ set(testTarget dwarf-test)
 set(CMAKE_PCH_INSTANTIATE_TEMPLATES ON)
 set(VCPKG_MAX_CONCURRENCY 8)
 
-# add_compile_options(-Wno-unused-command-line-argument)
 add_compile_definitions(BOOST_DI_CFG_CTOR_LIMIT_SIZE=20)
 
 # Platform dependant settings
@@ -56,6 +55,10 @@ ELSEIF(UNIX)
 
     add_executable(${targetName} "")
 ENDIF()
+
+if(CMAKE_CXX_COMPILER_ID MATCHES "Clang")
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-unused-command-line-argument")
+endif()
 
 include_directories(src)
 include_directories(include)
