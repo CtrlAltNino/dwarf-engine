@@ -1,5 +1,7 @@
 #pragma once
+
 #include <SDL3/SDL.h>
+#include <fmt/format.h>
 
 namespace Dwarf
 {
@@ -67,7 +69,7 @@ namespace Dwarf
       else if (timeDifference < SECONDS_IN_HOUR)
       {
         timePassed =
-          std::format("{} minutes ago",
+          fmt::format("{} minutes ago",
                       (long long)floor(timeDifference / SECONDS_IN_MINUTE));
       }
       else if (timeDifference < static_cast<time_t>(2) * SECONDS_IN_HOUR)
@@ -76,7 +78,7 @@ namespace Dwarf
       }
       else if (timeDifference < SECONDS_IN_DAY)
       {
-        timePassed = std::format(
+        timePassed = fmt::format(
           "{} hours ago", (long long)floor(timeDifference / SECONDS_IN_HOUR));
       }
       else if (timeDifference < static_cast<time_t>(2) * SECONDS_IN_DAY)
@@ -85,7 +87,7 @@ namespace Dwarf
       }
       else if (timeDifference < SECONDS_IN_WEEK)
       {
-        timePassed = std::format(
+        timePassed = fmt::format(
           "{} days ago", (long long)floor(timeDifference / SECONDS_IN_DAY));
       }
       else if (timeDifference < static_cast<time_t>(2) * SECONDS_IN_WEEK)
@@ -94,7 +96,7 @@ namespace Dwarf
       }
       else if (timeDifference < SECONDS_IN_MONTH)
       {
-        timePassed = std::format(
+        timePassed = fmt::format(
           "{} weeks ago", (long long)floor(timeDifference / SECONDS_IN_WEEK));
       }
       else if (timeDifference < static_cast<time_t>(2) * SECONDS_IN_MONTH)
@@ -103,7 +105,7 @@ namespace Dwarf
       }
       else if (timeDifference < SECONDS_IN_YEAR)
       {
-        timePassed = std::format(
+        timePassed = fmt::format(
           "{} months ago", (long long)floor(timeDifference / SECONDS_IN_MONTH));
       }
       else if (timeDifference < static_cast<time_t>(2) * SECONDS_IN_YEAR)
@@ -112,7 +114,7 @@ namespace Dwarf
       }
       else
       {
-        timePassed = std::format(
+        timePassed = fmt::format(
           "{} years ago", (long long)floor(timeDifference / SECONDS_IN_YEAR));
       }
 

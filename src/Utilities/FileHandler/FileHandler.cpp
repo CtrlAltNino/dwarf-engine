@@ -211,8 +211,9 @@ namespace Dwarf
 
     if (bytesRead != fileSize)
     {
-      mLogger->LogError(Log(
-        fmt::format("Error reading file: {}", GetLastError()), "FileHandler"));
+      mLogger->LogError(
+        Log(fmt::format("Error reading file: {}", filePath.string()),
+            "FileHandler"));
       return {};
     }
 
@@ -456,7 +457,7 @@ namespace Dwarf
     if (bytesRead != fileSize)
     {
       mLogger->LogError(Log(
-        fmt::format("Error reading file: {}", GetLastError()), "FileHandler"));
+        fmt::format("Error reading file: {}", path.string()), "FileHandler"));
       return {};
     }
 
