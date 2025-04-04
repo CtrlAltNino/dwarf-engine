@@ -6,6 +6,12 @@
 
 namespace Dwarf
 {
+  enum TonemapType
+  {
+    Reinhard,
+    Agx,
+    Aces
+  };
   class IRenderingPipeline
   {
     /**
@@ -131,5 +137,13 @@ namespace Dwarf
      */
     [[nodiscard]] virtual auto
     GetTriangleCount() const -> uint32_t = 0;
+
+    /**
+     * @brief Sets the used tonemap
+     *
+     * @param type Reinhard, Agx or Aces
+     */
+    virtual void
+    SetTonemapType(TonemapType type) = 0;
   };
 }

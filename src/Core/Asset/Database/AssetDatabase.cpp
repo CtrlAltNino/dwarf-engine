@@ -623,6 +623,10 @@ namespace Dwarf
 
     Import(fullscreenQuadShaderPath);
 
+    std::filesystem::path reinhardShaderPath =
+      shaderDir / "reinhard_tonemap" / graphicsApiDir / "reinhard_tonemap.frag";
+    Import(reinhardShaderPath);
+
     std::filesystem::path agxShaderPath =
       shaderDir / "agx_tonemap" / graphicsApiDir / "agx_tonemap.frag";
     Import(agxShaderPath);

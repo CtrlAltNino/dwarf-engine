@@ -143,6 +143,10 @@ public:
               (),
               (override));
   MOCK_METHOD(std::unique_ptr<IShaderSourceCollection>,
+              CreateReinhardTonemapShaderSourceCollection,
+              (),
+              (override));
+  MOCK_METHOD(std::unique_ptr<IShaderSourceCollection>,
               CreateAgxTonemapShaderSourceCollection,
               (),
               (override));

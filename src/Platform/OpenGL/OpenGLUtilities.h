@@ -67,6 +67,12 @@ namespace Dwarf
     }
 
     static auto
+    GetReinhardTonemapShaderPath() -> std::filesystem::path
+    {
+      return "data/engine/shaders/reinhard_tonemap/opengl";
+    }
+
+    static auto
     GetAgxTonemapShaderPath() -> std::filesystem::path
     {
       return "data/engine/shaders/agx_tonemap/opengl";

@@ -13,6 +13,7 @@
 #include "Core/Rendering/Pipelines/IRenderingPipeline.h"
 #include "Core/Rendering/RendererApi/IRendererApi.h"
 #include "Core/Rendering/Shader/ShaderRegistry/IShaderRegistry.h"
+#include "IRenderingPipeline.h"
 #include <memory>
 
 namespace Dwarf
@@ -173,5 +174,13 @@ namespace Dwarf
      */
     [[nodiscard]] auto
     GetTriangleCount() const -> uint32_t override;
+
+    /**
+     * @brief Sets the used tonemap
+     *
+     * @param type Reinhard, Agx or Aces
+     */
+    void
+    SetTonemapType(TonemapType type) override;
   };
 }

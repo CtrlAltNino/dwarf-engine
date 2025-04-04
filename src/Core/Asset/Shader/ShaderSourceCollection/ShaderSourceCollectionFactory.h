@@ -63,6 +63,16 @@ namespace Dwarf
 
     /**
      * @brief Create a shader source collection containing the shader sources
+     * for the reinhard tonemap shader
+     *
+     * @return Unique pointer to the created shader source collection
+     */
+    auto
+    CreateReinhardTonemapShaderSourceCollection()
+      -> std::unique_ptr<IShaderSourceCollection> override;
+
+    /**
+     * @brief Create a shader source collection containing the shader sources
      * for the agx tonemap shader
      *
      * @return Unique pointer to the created shader source collection

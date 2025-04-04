@@ -34,6 +34,8 @@ namespace Dwarf
     // Create rendering pipeline
     mRenderingPipeline = renderingPipelineFactory->Create();
     mSettings.MaxSamples = mRenderingPipeline->GetMaxMsaaSamples();
+    mRenderingPipeline->SetTonemapType(mSettings.Tonemap);
+    mRenderingPipeline->SetExposure(mSettings.Exposure);
 
     // Setup camera
     mCamera = cameraFactory->Create();
@@ -72,6 +74,8 @@ namespace Dwarf
     mCamera = cameraFactory->Create(serializedModule.t["camera"]);
 
     Deserialize(serializedModule.t);
+    mRenderingPipeline->SetTonemapType(mSettings.Tonemap);
+    mRenderingPipeline->SetExposure(mSettings.Exposure);
 
     mLoadedScene->PropagateSceneChange();
 
@@ -101,8 +105,6 @@ namespace Dwarf
     {
       mWindow->SetMouseVisibility(true);
     }
-
-    mRenderingPipeline->SetExposure(mSettings.Exposure);
 
     // Render scene to the framebuffer with the camera
     mRenderingPipeline->RenderScene(*mCamera, mSettings.RenderGrid);
@@ -372,15 +374,52 @@ namespace Dwarf
                        "%d",
                        ImGuiSliderFlags_None);
 
+      static std::array<std::string, 3> tonemaps = { "Reinhard",
+                                                     "Agx",
+                                                     "Aces" };
+
+      // Rendering mode combo
+      if (ImGui::BeginCombo("##tonemapType",
+                            tonemaps[(int)mSettings.Tonemap].c_str()))
+      {
+        for (int n = 0; n < tonemaps.size(); n++)
+        {
+          const bool is_selected = ((int)mSettings.Tonemap == n);
+
+          // ==================== Graphics Selectable ====================
+          if (ImGui::Selectable(
+                tonemaps[n].c_str(), is_selected, 0, ImVec2(0, 16 + 10)))
+          {
+            mSettings.Tonemap = (TonemapType)n;
+            mRenderingPipeline->SetTonemapType(mSettings.Tonemap);
+            mRenderingPipeline->SetExposure(mSettings.Exposure);
+          }
+
+          // Set the initial focus when opening the combo (scrolling + keyboard
+          // navigation focus)
+          if (is_selected)
+          {
+            ImGui::SetItemDefaultFocus();
+          }
+        }
+
+        ImGui::EndCombo();
+      }
+
       float min = 0.0F;
       float max = 2.0F;
-      ImGui::DragScalar("Exposure",
-                        ImGuiDataType_Float,
-                        &mSettings.Exposure,
-                        0.0005f,
-                        &min,
-                        &max,
-                        "%f");
+      if (ImGui::DragScalar("Exposure",
+                            ImGuiDataType_Float,
+                            &mSettings.Exposure,
+                            0.0005f,
+                            &min,
+                            &max,
+                            "%f"))
+      {
+        mRenderingPipeline->SetExposure(mSettings.Exposure);
+      }
+
+      // Combo for tonemap
 
       ImGui::DragFloat("FOV", &mCamera->GetProperties().Fov, 0.5f, 45, 110);
       ImGui::EndPopup();
@@ -585,6 +624,12 @@ namespace Dwarf
     }
 
     if (moduleData.contains("settings") &&
+        moduleData["settings"].contains("tonemap"))
+    {
+      mSettings.Tonemap = moduleData["settings"]["tonemap"].get<TonemapType>();
+    }
+
+    if (moduleData.contains("settings") &&
         moduleData["settings"].contains("samples"))
     {
       mSettings.Samples = std::min(
@@ -616,6 +661,7 @@ namespace Dwarf
 
     serializedModule["settings"]["samples"] = mSettings.Samples;
     serializedModule["settings"]["exposure"] = mSettings.Exposure;
+    serializedModule["settings"]["tonemap"] = mSettings.Tonemap;
 
     serializedModule["id"] = GetUuid()->toString();
     serializedModule["type"] = static_cast<int>(GetModuleType());

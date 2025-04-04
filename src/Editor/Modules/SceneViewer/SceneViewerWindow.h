@@ -53,9 +53,10 @@ namespace Dwarf
 
     /// @brief Currently available resolution for rendering the scene in the
     /// scene viewer window.
-    glm::ivec2 ViewportSize;
-    bool       CameraMovement = false;
-    bool       RenderGrid = true;
+    glm::ivec2  ViewportSize;
+    bool        CameraMovement = false;
+    bool        RenderGrid = true;
+    TonemapType Tonemap = TonemapType::Agx;
   };
 
   /// @brief Module to render a window that displays the scene and render

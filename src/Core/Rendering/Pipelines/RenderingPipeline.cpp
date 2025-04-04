@@ -3,6 +3,7 @@
 #include "Core/Rendering/Framebuffer/IFramebuffer.h"
 #include "Core/Rendering/Material/IMaterial.h"
 #include "Core/Scene/Components/SceneComponents.h"
+#include "IRenderingPipeline.h"
 #include "RenderingPipeline.h"
 
 namespace Dwarf
@@ -45,9 +46,6 @@ namespace Dwarf
 
     mGridModelMatrix = glm::mat4(1.0F);
     mGridModelMatrix = glm::scale(mGridModelMatrix, glm::vec3(3000.0F));
-
-    mTonemapMaterial = mMaterialFactory->CreateMaterial(
-      mShaderSourceCollectionFactory->CreateAgxTonemapShaderSourceCollection());
 
     // Setup rendering framebuffer according to the pipeline specification
     mFramebuffer = mFramebufferFactory->Create(GetSpecification());
@@ -118,8 +116,20 @@ namespace Dwarf
                        mFramebuffer->GetSpecification().Width,
                        mFramebuffer->GetSpecification().Height);
 
-    mRendererApi->CustomBlit(
-      *mNonMsaaBuffer, *mPresentationBuffer, 0, 0, mTonemapMaterial);
+    if (mTonemapMaterial)
+    {
+      mRendererApi->CustomBlit(
+        *mNonMsaaBuffer, *mPresentationBuffer, 0, 0, mTonemapMaterial);
+    }
+    else
+    {
+      mRendererApi->Blit(*mNonMsaaBuffer,
+                         *mPresentationBuffer,
+                         0,
+                         0,
+                         mFramebuffer->GetSpecification().Width,
+                         mFramebuffer->GetSpecification().Height);
+    }
 
     mPresentationBuffer->Bind();
     // Render grid
@@ -244,7 +254,11 @@ namespace Dwarf
   void
   RenderingPipeline::SetExposure(float exposure)
   {
-    mTonemapMaterial->GetShaderParameters()->SetParameter("exposure", exposure);
+    if (mTonemapMaterial)
+    {
+      mTonemapMaterial->GetShaderParameters()->SetParameter("exposure",
+                                                            exposure);
+    }
   }
 
   [[nodiscard]] auto
@@ -263,5 +277,35 @@ namespace Dwarf
   RenderingPipeline::GetTriangleCount() const -> uint32_t
   {
     return mDrawCallList->GetStats().TriangleCount.load();
+  }
+
+  void
+  RenderingPipeline::SetTonemapType(TonemapType type)
+  {
+    switch (type)
+    {
+      using enum TonemapType;
+      case Reinhard:
+        {
+          mTonemapMaterial = mMaterialFactory->CreateMaterial(
+            mShaderSourceCollectionFactory
+              ->CreateReinhardTonemapShaderSourceCollection());
+          break;
+        }
+      case Agx:
+        {
+          mTonemapMaterial = mMaterialFactory->CreateMaterial(
+            mShaderSourceCollectionFactory
+              ->CreateAgxTonemapShaderSourceCollection());
+          break;
+        }
+      case Aces:
+        {
+          mTonemapMaterial = mMaterialFactory->CreateMaterial(
+            mShaderSourceCollectionFactory
+              ->CreateAcesTonemapShaderSourceCollection());
+          break;
+        }
+    }
   }
 }
