@@ -25,11 +25,12 @@ uniform bool hasEmissiveMap;
 uniform sampler2D aoMap; // Ambient Occlusion
 uniform bool hasAoMap;
 uniform float normalStrength;
+uniform float emissionStrength;
 
 // Uniforms for lighting
 vec3 lightDir = vec3(-0.8, -0.7, -0.3);  // Normalized light direction
 vec3 lightColor = vec3(1.0, 1.0, 1.0);   // White light
-float lightIntensity = 80000;  // Intensity in LUX (lumens/m²)
+uniform float lightIntensity = 5;  // Intensity in LUX (lumens/m²)
 uniform vec3 viewPosition;
 
 // Constants
@@ -111,8 +112,8 @@ void main() {
 
     // Convert Lux to Radiance
     float radianceFactor = lightIntensity / PI;
-    //vec3 radiance = lightColor * radianceFactor * NdotL;
-    vec3 radiance = lightColor * NdotL * 5;
+    vec3 radiance = lightColor * radianceFactor * NdotL;
+    //vec3 radiance = lightColor * NdotL * 5;
 
     // Combine contributions
     vec3 lighting = (diffuse + specular) * radiance;
@@ -121,7 +122,7 @@ void main() {
     lighting *= ao;
 
     // Add emissive map
-    vec3 color = lighting + emissive;
+    vec3 color = lighting + (emissive * emissionStrength);
 
     // Output final color
     FragColor = vec4(color, albedo.a);
