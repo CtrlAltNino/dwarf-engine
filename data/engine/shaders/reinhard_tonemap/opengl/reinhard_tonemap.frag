@@ -11,10 +11,10 @@ void main() {
     vec3 hdrColor = texture(hdrTexture, TexCoords).rgb;
 
     // Apply exposure control
-    vec3 mappedColor = hdrColor / (hdrColor + vec3(1.0));
+    hdrColor *= exposure;
 
     // Gamma correction (assuming output is sRGB)
-    mappedColor = pow(mappedColor, vec3(1.0 / 2.2));
+    hdrColor = pow(hdrColor, vec3(1.0 / 2.2));
 
-    FragColor = vec4(mappedColor, 1.0);
+    FragColor = vec4(hdrColor, 1.0);
 }
