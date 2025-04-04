@@ -379,7 +379,7 @@ namespace Dwarf
                                                      "Aces" };
 
       // Rendering mode combo
-      if (ImGui::BeginCombo("##tonemapType",
+      if (ImGui::BeginCombo("Tonemapping##tonemapType",
                             tonemaps[(int)mSettings.Tonemap].c_str()))
       {
         for (int n = 0; n < tonemaps.size(); n++)
@@ -407,7 +407,7 @@ namespace Dwarf
       }
 
       float min = 0.0F;
-      float max = 2.0F;
+      float max = 20.0F;
       if (ImGui::DragScalar("Exposure",
                             ImGuiDataType_Float,
                             &mSettings.Exposure,
