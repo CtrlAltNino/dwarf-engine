@@ -15,7 +15,8 @@ set(testTarget dwarf-test)
 
 set(CMAKE_PCH_INSTANTIATE_TEMPLATES ON)
 set(VCPKG_MAX_CONCURRENCY 8)
-add_compile_options(-Wno-unused-command-line-argument)
+
+# add_compile_options(-Wno-unused-command-line-argument)
 add_compile_definitions(BOOST_DI_CFG_CTOR_LIMIT_SIZE=20)
 
 # Platform dependant settings
@@ -23,16 +24,21 @@ IF(WIN32)
     file(READ "$ENV{LOCALAPPDATA}/vcpkg/vcpkg.path.txt" VCPKG_PATH)
     set(CMAKE_TOOLCHAIN_FILE "${VCPKG_PATH}/scripts/buildsystems/vcpkg.cmake")
     set(VCPKG_TARGET_TRIPLET "x64-windows-static")
-
     set(APP_ICON_RESOURCE_WINDOWS "${CMAKE_CURRENT_SOURCE_DIR}/app_icon_windows.rc")
     set(EXECUTABLE_ADDITIONAL_SETTINGS ${APP_ICON_RESOURCE_WINDOWS})
     set(CMAKE_MSVC_RUNTIME_LIBRARY "MultiThreaded$<$<CONFIG:Debug>:Debug>")
 
+    # Project declaration
+    project(Dwarf\ Engine VERSION 0.0.1 LANGUAGES C CXX)
+
+    enable_testing()
+
+    add_executable(${targetName} WIN32 "")
+
     # Hiding the console window in release mode
-    if(CMAKE_CXX_COMPILER_ID STREQUAL "MSVC")
-        # using Visual Studio C++
-        set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup")
-    endif()
+    target_link_options(${targetName} PRIVATE
+        $<$<CONFIG:Debug>:/SUBSYSTEM:CONSOLE>
+        $<$<CONFIG:Release>:/SUBSYSTEM:WINDOWS /ENTRY:mainCRTStartup>)
 
     # Maybe move to windows only, need to test
     ADD_DEFINITIONS(-DUNICODE)
@@ -42,14 +48,15 @@ ELSEIF(UNIX)
     file(READ "$ENV{HOME}/.vcpkg/vcpkg.path.txt" VCPKG_PATH)
     set(CMAKE_TOOLCHAIN_FILE "${VCPKG_PATH}/scripts/buildsystems/vcpkg.cmake")
     set(VCPKG_TARGET_TRIPLET "x64-linux")
+
+    # Project declaration
+    project(Dwarf\ Engine VERSION 0.0.1 LANGUAGES C CXX)
+
+    enable_testing()
+
+    add_executable(${targetName} "")
 ENDIF()
 
-enable_testing()
-
-# Project declaration
-project(Dwarf\ Engine VERSION 0.0.1 LANGUAGES C CXX)
-
-add_executable(${targetName} "")
 include_directories(src)
 include_directories(include)
 include_directories(tests)
