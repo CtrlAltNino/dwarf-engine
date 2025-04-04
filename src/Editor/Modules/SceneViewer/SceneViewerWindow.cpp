@@ -419,7 +419,15 @@ namespace Dwarf
         mRenderingPipeline->SetExposure(mSettings.Exposure);
       }
 
-      // Combo for tonemap
+      ImGui::DragFloatRange2("Clipping Planes",
+                             &mCamera->GetProperties().NearPlane,
+                             &mCamera->GetProperties().FarPlane,
+                             0.25f,
+                             0.0f,
+                             100.0f,
+                             "Near: %.2f",
+                             "Far: %.2f",
+                             ImGuiSliderFlags_AlwaysClamp);
 
       ImGui::DragFloat("FOV", &mCamera->GetProperties().Fov, 0.5f, 45, 110);
       ImGui::EndPopup();
