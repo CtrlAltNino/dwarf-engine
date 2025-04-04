@@ -7,14 +7,11 @@ uniform sampler2D hdrTexture;
 uniform float exposure; // Can be adjusted based on lighting conditions
 
 void main() {
-    // Fetch the HDR color from the texture
-    vec3 hdrColor = texture(hdrTexture, TexCoords).rgb;
+    // Fetch the HDR color from the texture and apply exposure control
+    vec3 hdrColor = exposure * texture(hdrTexture, TexCoords).rgb;
 
-    // Apply exposure control
-    hdrColor *= exposure;
-
-    // Gamma correction (assuming output is sRGB)
-    hdrColor = pow(hdrColor, vec3(1.0 / 2.2));
+    // Apply Reinhard tonemapping
+    hdrColor = hdrColor / (hdrColor + vec3(1.0));
 
     FragColor = vec4(hdrColor, 1.0);
 }

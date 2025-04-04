@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Logging/IDwarfLogger.h"
+#include "Utilities/FileHandler/IFileHandler.h"
 #include "Utilities/ImageUtilities/TextureCommon.h"
 #include <FreeImage.h>
 #include <cstddef>
@@ -13,13 +15,17 @@ namespace Dwarf
   {
   public:
     static auto
-    LoadTga(const std::filesystem::path& path, nlohmann::json& metadata)
-      -> std::shared_ptr<TextureContainer>
+    LoadTga(const std::shared_ptr<IDwarfLogger>& logger,
+            const std::shared_ptr<IFileHandler>& fileHandler,
+            const std::filesystem::path&         path,
+            nlohmann::json& metadata) -> std::shared_ptr<TextureContainer>
     {
       // Ensure the file exists
-      if (!std::filesystem::exists(path))
+      if (!fileHandler->FileExists(path))
       {
-        std::cerr << "File does not exist: " << path << '\n';
+        logger->LogError(
+          Log(fmt::format("File does not exist: {}", path.string()),
+              "TgaUtilities"));
         return nullptr;
       }
 
@@ -30,7 +36,9 @@ namespace Dwarf
       FIBITMAP* bitmap = FreeImage_Load(FIF_TARGA, path.string().c_str());
       if (bitmap == nullptr)
       {
-        std::cerr << "Failed to load TGA file: " << path << '\n';
+        logger->LogError(
+          Log(fmt::format("Failed to load TGA file: {}", path.string()),
+              "TgaUtilities"));
         FreeImage_DeInitialise();
         return nullptr;
       }

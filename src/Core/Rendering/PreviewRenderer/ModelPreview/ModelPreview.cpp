@@ -29,7 +29,7 @@ namespace Dwarf
     , mShaderSourceCollectionFactory(std::move(shaderSourceCollectionFactory))
   {
     FramebufferSpecification renderSpec = { .Width = 512, .Height = 512 };
-    renderSpec.Samples = mRendererApi->GetMaxSamples();
+    renderSpec.Samples = std::max(2, mRendererApi->GetMaxSamples());
     renderSpec.Attachments = FramebufferAttachmentSpecification{
       FramebufferTextureSpecification{ FramebufferTextureFormat::RGBA8 },
       FramebufferTextureSpecification{ FramebufferTextureFormat::DEPTH }

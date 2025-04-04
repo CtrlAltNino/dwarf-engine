@@ -3,14 +3,34 @@
 #include "DwarfLogger.h"
 #include "IDwarfLogger.h"
 #include <spdlog/common.h>
+#include <spdlog/sinks/basic_file_sink.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
+#include <spdlog/spdlog.h>
 
 namespace Dwarf
 {
   DwarfLogger::DwarfLogger(const LogName& logName)
-    : mLogger(spdlog::stdout_color_mt(logName.t))
   {
-    mLogger->set_level(spdlog::level::trace);
+    // Create a console sink (colored output)
+    auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
+
+    // Create a file sink (logs to a file)
+    auto file_sink =
+      std::make_shared<spdlog::sinks::basic_file_sink_mt>(LOG_FILE_NAME, true);
+
+    // Create a logger with multiple sinks
+    mLogger = std::make_shared<spdlog::logger>(
+      "multi_sink", spdlog::sinks_init_list{ console_sink, file_sink });
+
+    if (std::string(LOG_FILE_NAME).find("debug") != std::string::npos)
+    {
+      mLogger->set_level(spdlog::level::debug);
+    }
+    else
+    {
+      mLogger->set_level(spdlog::level::info);
+    }
+
     mLogger->log(spdlog::level::info,
                  fmt::format("[{}] {}", "DwarfLogger", "Logger initialized."));
   }
@@ -57,11 +77,5 @@ namespace Dwarf
   {
     mLogger->log(log_level,
                  fmt::format("[{}] {}", log.Scope.c_str(), log.Message));
-    // mLogger->log(
-    //   log_level,
-    //   log.Color.has_value()
-    //     ? fmt::format(
-    //         fg(fmt::color::red), "[{}] {}", log.Scope.c_str(), log.Message)
-    //     : fmt::format("[{}] {}", log.Scope.c_str(), log.Message));
   }
 }

@@ -2,6 +2,14 @@
 
 add_library(${libname} STATIC "")
 
+if(CMAKE_BUILD_TYPE STREQUAL "Debug")
+    set(LOG_FILE_NAME "dwarf_engine_log_debug.log")
+else()
+    set(LOG_FILE_NAME "dwarf_engine_log_release.log")
+endif()
+
+add_compile_definitions(PUBLIC LOG_FILE_NAME="${LOG_FILE_NAME}")
+
 smtg_add_subdirectories()
 
 target_sources(${targetName}

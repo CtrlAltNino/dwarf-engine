@@ -13,13 +13,17 @@ namespace Dwarf
   AssetMetadata::GetMetadata(const std::filesystem::path& assetPath) const
     -> nlohmann::json
   {
-    std::string fileContent =
-      mFileHandler->ReadFile(IAssetMetadata::CreateMetadataPath(assetPath));
     nlohmann::json jsonObject;
 
-    if (!fileContent.empty())
+    if (mFileHandler->FileExists(IAssetMetadata::CreateMetadataPath(assetPath)))
     {
-      jsonObject = nlohmann::json::parse(fileContent);
+      std::string fileContent =
+        mFileHandler->ReadFile(IAssetMetadata::CreateMetadataPath(assetPath));
+
+      if (!fileContent.empty())
+      {
+        jsonObject = nlohmann::json::parse(fileContent);
+      }
     }
 
     return jsonObject;

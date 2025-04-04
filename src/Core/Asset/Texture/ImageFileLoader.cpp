@@ -44,7 +44,8 @@ namespace Dwarf
     if (ext == ".jpg" || ext == ".jpeg")
     {
       mLogger->LogDebug(Log("Loading jpeg image file", "ImageFileLoader"));
-      textureData = JpegUtilities::LoadJpeg(imagePath, importSettings);
+      textureData = JpegUtilities::LoadJpeg(
+        mLogger, mFileHandler, imagePath, importSettings);
     }
     else if (ext == ".png")
     {
@@ -60,7 +61,8 @@ namespace Dwarf
     else if (ext == ".tga")
     {
       mLogger->LogDebug(Log("Loading tga image file", "ImageFileLoader"));
-      textureData = TgaUtilities::LoadTga(imagePath, importSettings);
+      textureData =
+        TgaUtilities::LoadTga(mLogger, mFileHandler, imagePath, importSettings);
     }
     else if (ext == ".tif" || ext == ".tiff")
     {

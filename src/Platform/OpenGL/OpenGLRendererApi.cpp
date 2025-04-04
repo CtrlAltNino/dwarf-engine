@@ -278,7 +278,8 @@ namespace Dwarf
                                 IFramebuffer& destination,
                                 uint32_t      sourceAttachment,
                                 uint32_t      destinationAttachment,
-                                std::shared_ptr<IMaterial> material)
+                                std::shared_ptr<IMaterial> material,
+                                bool                       srgb)
   {
     auto& oglMesh = dynamic_cast<OpenGLMesh&>(*mScreenQuad);
 
@@ -299,6 +300,10 @@ namespace Dwarf
                              : dynamic_cast<OpenGLShader&>(*mErrorShader);
 
     destination.Bind();
+    if (srgb)
+    {
+      glEnable(GL_FRAMEBUFFER_SRGB);
+    }
     mStateTracker->SetViewport(0,
                                0,
                                destination.GetSpecification().Width,
@@ -338,6 +343,10 @@ namespace Dwarf
     glDrawElements(GL_TRIANGLES, oglMesh.GetIndexCount(), GL_UNSIGNED_INT, 0);
     OpenGLUtilities::CheckOpenGLError(
       "glDrawElements", "OpenGLRendererApi", mLogger);
+    if (srgb)
+    {
+      glDisable(GL_FRAMEBUFFER_SRGB);
+    }
     oglMesh.Unbind();
     destination.Unbind();
   }
@@ -361,7 +370,8 @@ namespace Dwarf
     }
     else
     {
-      // std::cout << "GL_NVX_gpu_memory_info extension not supported.\n";
+      mLogger->LogDebug(Log("GL_NVX_gpu_memory_info extension not supported.",
+                            "OpenGLRendererApi"));
     }
 
     return result;

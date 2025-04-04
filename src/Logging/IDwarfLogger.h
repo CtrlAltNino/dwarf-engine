@@ -1,7 +1,6 @@
 #pragma once
-// #include <fmt/color.h>
-#include <optional>
-#include <utility>
+
+#include <string>
 
 namespace Dwarf
 {
@@ -9,14 +8,10 @@ namespace Dwarf
   {
     std::string Message;
     std::string Scope;
-    // const std::optional<fmt::color> Color;
 
-    Log(std::string message, std::string scope
-        //,std::optional<fmt::color> color = std::nullopt
-        )
+    Log(std::string message, std::string scope)
       : Message(std::move(message))
       , Scope(std::move(scope))
-    //, Color(color)
     {
     }
 
@@ -24,9 +19,7 @@ namespace Dwarf
     auto
     operator==(const Log& other) const -> bool
     {
-      return Message == other.Message && Scope == other.Scope
-        //&&Color == other.Color
-        ;
+      return Message == other.Message && Scope == other.Scope;
     }
   };
 

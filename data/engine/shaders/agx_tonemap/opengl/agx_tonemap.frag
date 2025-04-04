@@ -16,16 +16,27 @@ vec3 agxTonemap(vec3 x) {
     return ((x * (A * x + C * B) + D * E) / (x * (A * x + B) + D * F)) - E / F;
 }
 
-void main() {
-    vec3 hdrColor = texture(hdrTexture, TexCoords).rgb;
+// AGX tonemapping function
+vec3 AGXTonemap2(vec3 color) {
+    // Constants for AGX tonemapping
+    const vec3 A = vec3(0.022, 0.015, 0.005);  // Some example values for A (should be small)
+    const vec3 B = vec3(0.030, 0.030, 0.030);  // Example B (should be similar for all channels)
+    const vec3 C = vec3(0.300, 0.300, 0.300);  // Example C (somewhat larger value for contrast)
 
-    hdrColor *= exposure;
+    // Apply AGX tonemapping curve
+    vec3 numerator = color * (A + color);
+    vec3 denominator = color * (B + color) + C;
+    color = numerator / denominator;
+
+    return color;
+}
+
+void main() {
+    // Fetch the HDR color from the texture and apply exposure control
+    vec3 hdrColor = exposure * texture(hdrTexture, TexCoords).rgb;
 
     // Apply AGX tonemapping
-    vec3 mapped = agxTonemap(hdrColor);
-
-    // Gamma correction
-    mapped = pow(mapped, vec3(1.0 / 2.2));
+    vec3 mapped = AGXTonemap2(hdrColor);
 
     FragColor = vec4(mapped, 1.0);
 }

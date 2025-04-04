@@ -119,7 +119,7 @@ namespace Dwarf
     if (mTonemapMaterial)
     {
       mRendererApi->CustomBlit(
-        *mNonMsaaBuffer, *mPresentationBuffer, 0, 0, mTonemapMaterial);
+        *mNonMsaaBuffer, *mPresentationBuffer, 0, 0, mTonemapMaterial, false);
     }
     else
     {

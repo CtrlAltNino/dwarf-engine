@@ -49,7 +49,8 @@ namespace Dwarf
     // Check if the OpenGL context was created successfully.
     if (mContext == nullptr)
     {
-      std::cerr << "Failed to create OpenGL context." << '\n';
+      mLogger->LogError(
+        Log("Failed to create OpenGL context", "OpenGLContext"));
       return;
     }
 

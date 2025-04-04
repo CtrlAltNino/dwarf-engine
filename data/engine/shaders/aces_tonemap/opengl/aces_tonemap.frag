@@ -17,8 +17,11 @@ vec3 ACESFilm(vec3 color) {
 }
 
 void main() {
-    vec3 hdrColor = texture(hdrTexture, TexCoords).rgb;
-    hdrColor *= exposure;
+    // Fetch the HDR color from the texture and apply exposure control
+    vec3 hdrColor = exposure * texture(hdrTexture, TexCoords).rgb;
+
+    // Apply ACES tonemapping
     vec3 ldrColor = ACESFilm(hdrColor);
+
     FragColor = vec4(ldrColor, 1.0);
 }

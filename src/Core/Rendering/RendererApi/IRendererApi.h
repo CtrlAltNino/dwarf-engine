@@ -123,7 +123,8 @@ namespace Dwarf
                IFramebuffer&              destination,
                uint32_t                   sourceAttachment,
                uint32_t                   destinationAttachment,
-               std::shared_ptr<IMaterial> material) = 0;
+               std::shared_ptr<IMaterial> material,
+               bool                       srgb) = 0;
 
     /**
      * @brief Returns information about the vram usage

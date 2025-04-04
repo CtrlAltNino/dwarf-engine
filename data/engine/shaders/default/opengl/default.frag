@@ -36,7 +36,7 @@ uniform vec3 viewPosition;
 float scrollSpeed = 2;
 vec3 lightDir = vec3(-0.8, -0.7, -0.3);
 vec3 lightColor = vec3(0.9, 0.9, 0.8);
-float lightIntensity = 1;
+float lightIntensity = 2.28;
 float ambientStrength = 0.2f;
 
 float remap(float value, float min1, float max1, float min2, float max2) {

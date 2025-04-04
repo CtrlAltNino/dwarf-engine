@@ -17,10 +17,19 @@ namespace Dwarf
             const std::filesystem::path&         path,
             nlohmann::json& metadata) -> std::shared_ptr<TextureContainer>
     {
+      if (!fileHandler->FileExists(path))
+      {
+        logger->LogError(
+          Log(fmt::format("File does not exist: {}", path.string()),
+              "PngUtilities"));
+      }
+
       spng_ctx* png = spng_ctx_new(0);
       if (png == nullptr)
       {
-        // DWARF_CORE_ERROR("Failed to initialize PNG decoder");
+        spng_ctx_free(png);
+        logger->LogError(
+          Log("Failed to initialize PNG decoder", "PngUtilities"));
         return nullptr;
       }
 

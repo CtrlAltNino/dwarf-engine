@@ -139,8 +139,10 @@ namespace Dwarf
 
     if (hFile == INVALID_HANDLE_VALUE)
     {
-      std::cerr << "Error opening file: " << filePath << " (" << GetLastError()
-                << ")" << "\n";
+      mLogger->LogError(Log(fmt::format("Error opening file: {} ({})",
+                                        filePath.string(),
+                                        GetLastError()),
+                            "FileHandler"));
       return {};
     }
 
@@ -148,7 +150,9 @@ namespace Dwarf
     LARGE_INTEGER fileSize;
     if (!GetFileSizeEx(hFile, &fileSize))
     {
-      std::cerr << "Error getting file size: " << GetLastError() << "\n";
+      mLogger->LogError(
+        Log(fmt::format("Error getting file size: {}", GetLastError()),
+            "FileHandler"));
       CloseHandle(hFile);
       return {};
     }
@@ -161,7 +165,9 @@ namespace Dwarf
     void* rawBuffer = _aligned_malloc(alignedSize, sectorSize);
     if (rawBuffer == nullptr)
     {
-      std::cerr << "Memory allocation failed" << "\n";
+      mLogger->LogError(
+        Log(fmt::format("Memory allocation failed while reading file"),
+            "FileHandler"));
       CloseHandle(hFile);
       return {};
     }
@@ -170,7 +176,8 @@ namespace Dwarf
     if (!::ReadFile(
           hFile, rawBuffer, static_cast<DWORD>(alignedSize), &bytesRead, NULL))
     {
-      std::cerr << "Error reading file: " << GetLastError() << "\n";
+      mLogger->LogError(Log(
+        fmt::format("Error reading file: {}", GetLastError()), "FileHandler"));
       _aligned_free(rawBuffer);
       CloseHandle(hFile);
       return {};
@@ -204,7 +211,8 @@ namespace Dwarf
 
     if (bytesRead != fileSize)
     {
-      std::cerr << "Error reading file: " << filePath << std::endl;
+      mLogger->LogError(Log(
+        fmt::format("Error reading file: {}", GetLastError()), "FileHandler"));
       return {};
     }
 
@@ -376,8 +384,10 @@ namespace Dwarf
 
     if (hFile == INVALID_HANDLE_VALUE)
     {
-      std::cerr << "Error opening file: " << path << " (" << GetLastError()
-                << ")" << "\n";
+      mLogger->LogError(Log(fmt::format("Error opening file: {} ({})",
+                                        path.string(),
+                                        GetLastError()),
+                            "FileHandler"));
       return {};
     }
 
@@ -385,7 +395,9 @@ namespace Dwarf
     LARGE_INTEGER fileSize;
     if (!GetFileSizeEx(hFile, &fileSize))
     {
-      std::cerr << "Error getting file size: " << GetLastError() << "\n";
+      mLogger->LogError(
+        Log(fmt::format("Error getting file size: {}", GetLastError()),
+            "FileHandler"));
       CloseHandle(hFile);
       return {};
     }
@@ -398,7 +410,9 @@ namespace Dwarf
     void* rawBuffer = _aligned_malloc(alignedSize, sectorSize);
     if (rawBuffer == nullptr)
     {
-      std::cerr << "Memory allocation failed" << "\n";
+      mLogger->LogError(
+        Log(fmt::format("Memory allocation failed while reading file"),
+            "FileHandler"));
       CloseHandle(hFile);
       return {};
     }
@@ -407,7 +421,8 @@ namespace Dwarf
     if (!::ReadFile(
           hFile, rawBuffer, static_cast<DWORD>(alignedSize), &bytesRead, NULL))
     {
-      std::cerr << "Error reading file: " << GetLastError() << "\n";
+      mLogger->LogError(Log(
+        fmt::format("Error reading file: {}", GetLastError()), "FileHandler"));
       _aligned_free(rawBuffer);
       CloseHandle(hFile);
       return {};
@@ -440,7 +455,8 @@ namespace Dwarf
 
     if (bytesRead != fileSize)
     {
-      std::cerr << "Error reading file: " << path << std::endl;
+      mLogger->LogError(Log(
+        fmt::format("Error reading file: {}", GetLastError()), "FileHandler"));
       return {};
     }
 
