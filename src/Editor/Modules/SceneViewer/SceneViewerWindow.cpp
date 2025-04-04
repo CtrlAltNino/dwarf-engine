@@ -422,9 +422,9 @@ namespace Dwarf
       ImGui::DragFloatRange2("Clipping Planes",
                              &mCamera->GetProperties().NearPlane,
                              &mCamera->GetProperties().FarPlane,
-                             0.25f,
-                             0.0f,
-                             100.0f,
+                             0.25F,
+                             0.0F,
+                             +FLT_MAX,
                              "Near: %.2f",
                              "Far: %.2f",
                              ImGuiSliderFlags_AlwaysClamp);
