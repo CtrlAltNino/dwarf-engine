@@ -11,27 +11,39 @@ out vec4 FragColor;
 uniform mat4 modelMatrix;
 uniform mat4 viewMatrix;
 uniform mat4 projectionMatrix;
+uniform vec3 viewPosition;
 
 // Uniforms for textures
 uniform vec4 tint;
-uniform sampler2D albedoMap;
+
+// Diffuse color
 uniform bool hasAlbedoMap;
-uniform sampler2D normalMap;
+uniform sampler2D albedoMap;
+
+// Normal map
 uniform bool hasNormalMap;
-uniform sampler2D metalRoughnessMap; // Metalness (R) and Roughness (G)
-uniform bool hasMetalRoughnessMap;
-uniform sampler2D emissiveMap;
-uniform bool hasEmissiveMap;
-uniform sampler2D aoMap; // Ambient Occlusion
-uniform bool hasAoMap;
+uniform sampler2D normalMap;
 uniform float normalStrength;
-uniform float emissionStrength;
+
+uniform bool hasMetalRoughnessMap;
+uniform sampler2D metalRoughnessMap; // Metalness (R) and Roughness (G)
+// Will be used when no metalness/roughness texture is provided
+uniform float metalness;
+uniform float roughness;
+
+// Emission
+uniform bool hasEmissiveMap;
+uniform sampler2D emissiveMap;
+uniform float emissionIntensity;
+
+ // Ambient Occlusion
+uniform bool hasAoMap;
+uniform sampler2D aoMap;
 
 // Uniforms for lighting
 vec3 lightDir = vec3(-0.8, -0.7, -0.3);  // Normalized light direction
 vec3 lightColor = vec3(1.0, 1.0, 1.0);   // White light
 uniform float lightIntensity = 5;  // Intensity in LUX (lumens/m²)
-uniform vec3 viewPosition;
 
 // Constants
 const float PI = 3.14159265359;
@@ -78,7 +90,7 @@ void main() {
     tangentNormal.xy *= clamp(normalStrength, 0.0, 1.0);
     vec3 N = hasNormalMap ? normalize(TBN * tangentNormal) : TBN[2];
 
-    vec3 metalRoughness = hasMetalRoughnessMap ? texture(metalRoughnessMap, TexCoords).rgb : vec3(0.0, 0.8, 0.0);
+    vec3 metalRoughness = hasMetalRoughnessMap ? texture(metalRoughnessMap, TexCoords).rgb : vec3(metalness, roughness, 0.0);
     float metalness = metalRoughness.r;
     float roughness = clamp(metalRoughness.g, MIN_ROUGHNESS, 1.0);
 
@@ -122,7 +134,7 @@ void main() {
     lighting *= ao;
 
     // Add emissive map
-    vec3 color = lighting + (emissive * emissionStrength);
+    vec3 color = lighting + (emissive * emissionIntensity);
 
     // Output final color
     FragColor = vec4(color, albedo.a);
