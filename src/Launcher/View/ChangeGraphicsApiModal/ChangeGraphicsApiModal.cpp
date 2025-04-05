@@ -109,9 +109,9 @@ namespace Dwarf
           ImDrawList* draw_list = ImGui::GetWindowDrawList();
 
           // Looping through all the combo entries
-          for (int n = 0; n < magic_enum::enum_count<GraphicsApi>(); n++)
+          for (int n = 1; n < magic_enum::enum_count<GraphicsApi>(); n++)
           {
-            if (apiAvailability[n])
+            if (apiPlatformSupport[n])
             {
               const bool is_selected = (currentApiIndex == n);
 
@@ -136,8 +136,12 @@ namespace Dwarf
               auto apiName =
                 magic_enum::enum_name(magic_enum::enum_value<GraphicsApi>(n));
               // ==================== Graphics Selectable ====================
-              if (ImGui::Selectable(
-                    apiName.data(), is_selected, 0, ImVec2(0, 16 + 10)))
+              if (ImGui::Selectable(apiName.data(),
+                                    is_selected,
+                                    apiImplementationState[n - 1]
+                                      ? 0
+                                      : ImGuiSelectableFlags_Disabled,
+                                    ImVec2(0, 16 + 10)))
               {
                 currentApiIndex = n;
               }

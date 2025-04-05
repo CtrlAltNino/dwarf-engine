@@ -1,3 +1,4 @@
+#include "Core/Base.h"
 #include "pch.h"
 
 #include "CreateNewProjectModal.h"
@@ -303,7 +304,7 @@ namespace Dwarf
       ImGui::Separator();
       ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
 
-      static int currentApiIndex = 3;
+      static int currentApiIndex = 2;
       // ==================== Graphics API Selection Dropdown
       // ====================
       {
@@ -347,9 +348,9 @@ namespace Dwarf
           ImDrawList* draw_list = ImGui::GetWindowDrawList();
 
           // Looping through all the combo entries
-          for (int n = 1; n < 5; n++)
+          for (int n = 1; n < 4; n++)
           {
-            if (apiAvailability[n - 1])
+            if (apiPlatformSupport[n - 1])
             {
               const bool is_selected = (currentApiIndex == n);
 
@@ -375,8 +376,12 @@ namespace Dwarf
                 magic_enum::enum_name(magic_enum::enum_value<GraphicsApi>(n));
 
               // ==================== Rendering Selectable ====================
-              if (ImGui::Selectable(
-                    apiName.data(), is_selected, 0, ImVec2(0, 16 + 10)))
+              if (ImGui::Selectable(apiName.data(),
+                                    is_selected,
+                                    apiImplementationState[n - 1]
+                                      ? 0
+                                      : ImGuiSelectableFlags_Disabled,
+                                    ImVec2(0, 16 + 10)))
               {
                 currentApiIndex = n;
               }

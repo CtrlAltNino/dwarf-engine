@@ -38,27 +38,23 @@ namespace Dwarf
   };
 
 #ifdef _WIN32
-  constexpr std::array<bool, 5> apiAvailability = {
+  constexpr std::array<bool, 3> apiPlatformSupport = {
     true,
-    false,
     true,
     true,
   };
 #elif __linux__
-  constexpr std::array<bool, 5> apiAvailability = {
-    false,
-    false,
-    true,
-    true,
-  };
-#elif __APPLE__
-  constexpr std::array<bool, 5> apiAvailability = {
+  constexpr std::array<bool, 3> apiPlatformSupport = {
     false,
     true,
-    false,
-    false,
+    true,
   };
 #endif
+  constexpr std::array<bool, 3> apiImplementationState = {
+    false,
+    true,
+    false,
+  };
 
   template<typename T>
   struct TypeIdentity
