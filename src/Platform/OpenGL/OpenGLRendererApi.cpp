@@ -308,7 +308,6 @@ namespace Dwarf
                                0,
                                destination.GetSpecification().Width,
                                destination.GetSpecification().Height);
-    glClear(GL_COLOR_BUFFER_BIT);
 
     OpenGLUtilities::CheckOpenGLError("glClear", "OpenGLRendererApi", mLogger);
     mStateTracker->SetShaderProgram(shader.GetID());

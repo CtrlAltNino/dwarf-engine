@@ -44,6 +44,18 @@ namespace Dwarf
     std::unique_ptr<IDrawCallList>   mDrawCallList;
     std::unique_ptr<IDrawCallWorker> mDrawCallWorker;
 
+    void
+    SetupRenderFramebuffer();
+
+    void
+    SetupNonMsaaFramebuffer();
+
+    void
+    SetupPresentationFramebuffer();
+
+    void
+    SetupIdFramebuffer();
+
   public:
     RenderingPipeline(
       std::shared_ptr<IRendererApi>     rendererApi,
