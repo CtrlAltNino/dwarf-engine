@@ -339,6 +339,11 @@ namespace Dwarf
   void
   OpenGLFramebuffer::SetSamples(uint32_t samples)
   {
+    if (samples == mSpecification.Samples)
+    {
+      return;
+    }
+
     GLint maxSamples = 0;
     glGetIntegerv(GL_MAX_SAMPLES, &maxSamples);
 

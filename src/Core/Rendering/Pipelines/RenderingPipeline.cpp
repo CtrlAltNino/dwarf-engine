@@ -47,30 +47,13 @@ namespace Dwarf
     mGridModelMatrix = glm::mat4(1.0F);
     mGridModelMatrix = glm::scale(mGridModelMatrix, glm::vec3(3000.0F));
 
-    // Setup rendering framebuffer according to the pipeline specification
-    mFramebuffer = mFramebufferFactory->Create(GetSpecification());
+    SetupRenderFramebuffer();
 
-    FramebufferSpecification nonMsaaSpec = GetSpecification();
-    nonMsaaSpec.Samples = 1;
-    mNonMsaaBuffer = mFramebufferFactory->Create(nonMsaaSpec);
+    SetupNonMsaaFramebuffer();
 
-    // Setup framebuffer for presentation
-    FramebufferSpecification presentationSpec;
-    presentationSpec.Attachments = FramebufferAttachmentSpecification{
-      FramebufferTextureSpecification{ FramebufferTextureFormat::SRGBA8 }
-    };
+    SetupPresentationFramebuffer();
 
-    mPresentationBuffer = mFramebufferFactory->Create(presentationSpec);
-
-    // Setup frame buffer for rendering ids
-    FramebufferSpecification idSpec;
-    idSpec.Attachments = FramebufferAttachmentSpecification{
-      FramebufferTextureSpecification{ FramebufferTextureFormat::RED_INTEGER },
-      FramebufferTextureSpecification{ FramebufferTextureFormat::DEPTH }
-    };
-    idSpec.Width = 512;
-    idSpec.Height = 512;
-    mIdBuffer = mFramebufferFactory->Create(idSpec);
+    SetupIdFramebuffer();
 
     mDrawCallWorker->Invalidate();
   }
@@ -81,10 +64,44 @@ namespace Dwarf
   }
 
   void
+  RenderingPipeline::SetupRenderFramebuffer()
+  {
+    mFramebuffer = mFramebufferFactory->Create(GetSpecification());
+  }
+
+  void
+  RenderingPipeline::SetupNonMsaaFramebuffer()
+  {
+    FramebufferSpecification nonMsaaSpec = GetSpecification();
+    nonMsaaSpec.Samples = 1;
+    mNonMsaaBuffer = mFramebufferFactory->Create(nonMsaaSpec);
+  }
+
+  void
+  RenderingPipeline::SetupPresentationFramebuffer()
+  {
+    FramebufferSpecification presentationSpec;
+    presentationSpec.Attachments = FramebufferAttachmentSpecification{
+      FramebufferTextureSpecification{ FramebufferTextureFormat::SRGBA8 }
+    };
+    mPresentationBuffer = mFramebufferFactory->Create(presentationSpec);
+  }
+
+  void
+  RenderingPipeline::SetupIdFramebuffer()
+  {
+    FramebufferSpecification idSpec;
+    idSpec.Attachments = FramebufferAttachmentSpecification{
+      FramebufferTextureSpecification{ FramebufferTextureFormat::RED_INTEGER },
+      FramebufferTextureSpecification{ FramebufferTextureFormat::DEPTH }
+    };
+    mIdBuffer = mFramebufferFactory->Create(idSpec);
+  }
+
+  void
   RenderingPipeline::RenderScene(ICamera& camera, bool renderGrid)
   {
     mFramebuffer->Bind();
-    mRendererApi->SetClearColor(glm::vec4(0.065F, 0.07F, 0.085F, 1.0F));
     mRendererApi->Clear();
     mRendererApi->SetViewport(0,
                               0,
@@ -109,21 +126,32 @@ namespace Dwarf
     }
     mFramebuffer->Unbind();
 
-    mRendererApi->Blit(*mFramebuffer,
-                       *mNonMsaaBuffer,
-                       0,
-                       0,
-                       mFramebuffer->GetSpecification().Width,
-                       mFramebuffer->GetSpecification().Height);
+    if (mFramebuffer->GetSpecification().Samples > 1)
+    {
+      mRendererApi->Blit(*mFramebuffer,
+                         *mNonMsaaBuffer,
+                         0,
+                         0,
+                         mFramebuffer->GetSpecification().Width,
+                         mFramebuffer->GetSpecification().Height);
+    }
 
     if (mTonemapMaterial)
     {
-      mRendererApi->CustomBlit(
-        *mNonMsaaBuffer, *mPresentationBuffer, 0, 0, mTonemapMaterial, false);
+      mRendererApi->CustomBlit((mFramebuffer->GetSpecification().Samples > 1)
+                                 ? *mNonMsaaBuffer
+                                 : *mFramebuffer,
+                               *mPresentationBuffer,
+                               0,
+                               0,
+                               mTonemapMaterial,
+                               false);
     }
     else
     {
-      mRendererApi->Blit(*mNonMsaaBuffer,
+      mRendererApi->Blit((mFramebuffer->GetSpecification().Samples > 1)
+                           ? *mNonMsaaBuffer
+                           : *mFramebuffer,
                          *mPresentationBuffer,
                          0,
                          0,
@@ -168,7 +196,6 @@ namespace Dwarf
   RenderingPipeline::RenderIds(IScene& scene, ICamera& camera)
   {
     mIdBuffer->Bind();
-    mIdBuffer->ClearAttachment(0, 0);
     mRendererApi->Clear(0);
 
     mRendererApi->SetViewport(0,
@@ -228,6 +255,16 @@ namespace Dwarf
   RenderingPipeline::SetMsaaSamples(int32_t samples)
   {
     mFramebuffer->SetSamples(samples);
+    if (samples > 1 && !mNonMsaaBuffer)
+    {
+      FramebufferSpecification spec = mFramebuffer->GetSpecification();
+      spec.Samples = 1;
+      mNonMsaaBuffer = mFramebufferFactory->Create(spec);
+    }
+    else if (samples == 1 && mNonMsaaBuffer)
+    {
+      mNonMsaaBuffer.reset();
+    }
   }
 
   auto
