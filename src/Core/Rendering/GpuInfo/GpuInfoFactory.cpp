@@ -16,19 +16,29 @@ namespace Dwarf
     : mGraphicsApi(graphicsApi)
     , mLogger(std::move(logger))
   {
+    mLogger->LogDebug(Log("GpuInfoFactory created", "GpuInfoFactory"));
   }
 
   auto
   GpuInfoFactory::Create() const -> std::unique_ptr<IGpuInfo>
   {
+    mLogger->LogDebug(Log("Creating GpuInfo", "GpuInfoFactory"));
+
     switch (mGraphicsApi)
     {
       using enum GraphicsApi;
-      case None: throw std::runtime_error("No Graphics API selected."); break;
+      case None:
+        mLogger->LogError(Log("Graphics API is not set", "GpuInfoFactory"));
+        throw std::runtime_error("Graphics API is not set");
+      case Vulkan:
+        mLogger->LogError(
+          Log("Vulkan API has not been implemented yet", "GpuInfoFactory"));
+        throw std::runtime_error("Vulkan API has not been implemented yet");
 #if _WIN32
       case D3D12:
-        throw std::runtime_error("Direct3D12 has not been implemented yet.");
-        break;
+        mLogger->LogError(
+          Log("Direct3D12 has not been implemented yet", "GpuInfoFactory"));
+        throw std::runtime_error("Direct3D12 has not been implemented yet");
       case OpenGL:
         {
           std::string deviceInfo = OpenGLUtilities::GetDeviceInfo();
@@ -39,22 +49,16 @@ namespace Dwarf
           }
           break;
         }
-      case Vulkan:
-        throw std::runtime_error("Vulkan API has not been implemented yet.");
-        break;
 #elif __linux__
       case GraphicsApi::D3D12:
-        std::runtime_error("Direct3D12 has not been implemented yet.");
-        break;
-      case GraphicsApi::OpenGL:
-        {
-          break;
-        }
-      case GraphicsApi::Vulkan:
-        std::runtime_error("Vulkan API has not been implemented yet.");
-        break;
+        mLogger->LogError(
+          Log("Direct3D12 is only supported on Windows", "GpuInfoFactory"));
+        throw std::runtime_error("Direct3D12 is only supported on Windows");
+      case GraphicsApi::OpenGL: break;
 #endif
     }
+
+    mLogger->LogError(Log("Failed to create GpuInfo", "GpuInfoFactory"));
 
     return nullptr;
   }

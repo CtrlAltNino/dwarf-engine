@@ -1,15 +1,8 @@
 #include "pch.h"
 
+#include "Platform/OpenGL/OpenGLTexture.h"
 #include "TextureFactory.h"
 #include "Utilities/ImageUtilities/TextureCommon.h"
-
-#if _WIN32
-#include "Platform/OpenGL/OpenGLTexture.h"
-#elif __linux__
-#include "Platform/OpenGL/OpenGLTexture.h"
-#elif __APPLE__
-// #include "Platform/Metal/MetalShader.h"
-#endif
 
 namespace Dwarf
 {
@@ -83,14 +76,12 @@ namespace Dwarf
     -> std::unique_ptr<ITexture>
   {
     mLogger->LogDebug(Log("Creating texture", "TextureFactory"));
+
     switch (mApi)
     {
       case GraphicsApi::None:
-        throw std::runtime_error("Error: No API selected.");
-        break;
-#if _WIN32
-      case GraphicsApi::D3D12:
-        throw std::runtime_error("D3D12 API has not been implemented yet.");
+        mLogger->LogError(Log("Graphics API is not set.", "TextureFactory"));
+        throw std::runtime_error("Graphics API is not set.");
         break;
       case GraphicsApi::OpenGL:
         {
@@ -99,37 +90,22 @@ namespace Dwarf
             textureData, mLogger, mVramTracker);
           break;
         }
-      case GraphicsApi::Metal:
-        throw std::runtime_error("Metal API has not been implemented yet.");
-        break;
       case GraphicsApi::Vulkan:
+        mLogger->LogError(
+          Log("Vulkan API has not been implemented yet.", "TextureFactory"));
         throw std::runtime_error("Vulkan API has not been implemented yet.");
         break;
-#elif __linux__
       case GraphicsApi::D3D12:
+#if _WIN32
+        mLogger->LogError(
+          Log("D3D12 API has not been implemented yet.", "TextureFactory"));
         throw std::runtime_error("D3D12 API has not been implemented yet.");
-        break;
-      case GraphicsApi::OpenGL:
-        {
-          mLogger->LogDebug(Log("Created OpenGL texture", "TextureFactory"));
-          return std::make_unique<OpenGLTexture>(
-            textureData, mLogger, mVramTracker);
-          break;
-        }
-      case GraphicsApi::Metal:
-        throw std::runtime_error("Metal API has not been implemented yet.");
-        break;
-      case GraphicsApi::Vulkan:
-        throw std::runtime_error("Vulkan API has not been implemented yet.");
-        break;
-#elif __APPLE__
-      case GraphicsApi::D3D12: break;
-      case GraphicsApi::OpenGL: break;
-      case GraphicsApi::Metal:
-        // return std::make_shared<MetalTexture>();
-        break;
-      case GraphicsApi::Vulkan: break;
+#elif __linux__
+        mLogger->LogError(
+          Log("D3D12 API has not been implemented yet.", "TextureFactory"));
+        throw std::runtime_error("D3D12 API has not been implemented yet.");
 #endif
+        break;
     }
 
     mLogger->LogError(Log("Failed to create texture", "TextureFactory"));

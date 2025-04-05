@@ -48,7 +48,8 @@ namespace Dwarf
     {
       using enum GraphicsApi;
       case None:
-      case D3D12: break;
+        mLogger->LogError(Log("Graphics API is not set.", "SDL3Window"));
+        throw std::runtime_error("Graphics API is not set.");
       case OpenGL:
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MAJOR_VERSION, 4);
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_MINOR_VERSION, 6);
@@ -58,10 +59,21 @@ namespace Dwarf
         SDL_GL_SetAttribute(SDL_GL_CONTEXT_FLAGS, SDL_GL_CONTEXT_DEBUG_FLAG);
         windowFlags |= SDL_WINDOW_OPENGL;
         break;
-      case Vulkan: windowFlags |= SDL_WINDOW_VULKAN; break;
-      case Metal:
-        // NOT SUPPORTED
-        break;
+      case Vulkan:
+        windowFlags |= SDL_WINDOW_VULKAN;
+        mLogger->LogError(
+          Log("Vulkan API has not been implemented yet.", "SDL3Window"));
+        throw std::runtime_error("Vulkan API has not been implemented yet.");
+      case GraphicsApi::D3D12:
+#if _WIN32
+        mLogger->LogError(
+          Log("D3D12 API has not been implemented yet.", "SDL3Window"));
+        throw std::runtime_error("D3D12 API has not been implemented yet.");
+#elif __linux__
+        mLogger->LogError(
+          Log("D3D12 API has not been implemented yet.", "SDL3Window"));
+        throw std::runtime_error("D3D12 API has not been implemented yet.");
+#endif
     }
 
     mWindow = SDL_CreateWindow(
@@ -109,8 +121,7 @@ namespace Dwarf
       case OpenGL: deviceInfo = OpenGLUtilities::GetDeviceInfo(); break;
       case None:
       case D3D12:
-      case Vulkan:
-      case Metal: break;
+      case Vulkan: break;
     }
 
     mEditorStats->SetDeviceInfo(deviceInfo);

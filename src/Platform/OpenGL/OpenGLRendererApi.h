@@ -1,4 +1,5 @@
 #pragma once
+
 #include "Core/Asset/Database/IAssetDatabase.h"
 #include "Core/Asset/Shader/ShaderSourceCollection/IShaderSourceCollectionFactory.h"
 #include "Core/Rendering/Mesh/IMeshFactory.h"
