@@ -35,7 +35,7 @@ namespace Dwarf
   auto
   GetImportFlags(const std::filesystem::path& path) -> unsigned int
   {
-    unsigned int flags = aiProcess_Triangulate | aiProcess_GenNormals |
+    unsigned int flags = aiProcess_Triangulate | aiProcess_GenSmoothNormals |
                          aiProcess_CalcTangentSpace |
                          aiProcess_JoinIdenticalVertices;
     std::string ext = path.extension().string();
