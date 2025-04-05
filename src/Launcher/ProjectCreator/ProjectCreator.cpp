@@ -87,7 +87,6 @@ namespace Dwarf
                 "No Graphics API selected for creating a project");
               break;
             case D3D12: templateApiDirectory = "dx12"; break;
-            case Metal: templateApiDirectory = "metal"; break;
             case OpenGL: templateApiDirectory = "opengl"; break;
             case Vulkan: templateApiDirectory = "vulkan"; break;
           }

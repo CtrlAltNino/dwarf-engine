@@ -10,7 +10,6 @@ namespace Dwarf
   {
     None,
     D3D12,
-    Metal,
     OpenGL,
     Vulkan
   };

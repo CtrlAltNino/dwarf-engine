@@ -41,7 +41,6 @@ namespace Dwarf
           mShaderSourceCollectionFactory,
           std::move(shaderSources));
       case Vulkan:
-      case Metal:
       case None:
       case D3D12: break;
     }

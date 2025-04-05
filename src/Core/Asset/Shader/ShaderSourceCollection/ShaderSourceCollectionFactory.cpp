@@ -32,8 +32,6 @@ namespace Dwarf
         break;
       case GraphicsApi::Vulkan:
       case GraphicsApi::D3D12:
-      case GraphicsApi::Metal:
-        throw std::runtime_error("Graphics API not supported yet.");
       default: throw std::runtime_error("Unsupported Graphics API.");
     }
 
@@ -56,8 +54,6 @@ namespace Dwarf
         break;
       case GraphicsApi::Vulkan:
       case GraphicsApi::D3D12:
-      case GraphicsApi::Metal:
-        throw std::runtime_error("Graphics API not supported yet.");
       default: throw std::runtime_error("Unsupported Graphics API.");
     }
 
@@ -80,8 +76,6 @@ namespace Dwarf
         break;
       case GraphicsApi::Vulkan:
       case GraphicsApi::D3D12:
-      case GraphicsApi::Metal:
-        throw std::runtime_error("Graphics API not supported yet.");
       default: throw std::runtime_error("Unsupported Graphics API.");
     }
 
@@ -104,8 +98,6 @@ namespace Dwarf
         break;
       case GraphicsApi::Vulkan:
       case GraphicsApi::D3D12:
-      case GraphicsApi::Metal:
-        throw std::runtime_error("Graphics API not supported yet.");
       default: throw std::runtime_error("Unsupported Graphics API.");
     }
 
@@ -130,8 +122,6 @@ namespace Dwarf
         break;
       case GraphicsApi::Vulkan:
       case GraphicsApi::D3D12:
-      case GraphicsApi::Metal:
-        throw std::runtime_error("Graphics API not supported yet.");
       default: throw std::runtime_error("Unsupported Graphics API.");
     }
 
@@ -155,8 +145,6 @@ namespace Dwarf
         break;
       case GraphicsApi::Vulkan:
       case GraphicsApi::D3D12:
-      case GraphicsApi::Metal:
-        throw std::runtime_error("Graphics API not supported yet.");
       default: throw std::runtime_error("Unsupported Graphics API.");
     }
 
@@ -180,8 +168,6 @@ namespace Dwarf
         break;
       case GraphicsApi::Vulkan:
       case GraphicsApi::D3D12:
-      case GraphicsApi::Metal:
-        throw std::runtime_error("Graphics API not supported yet.");
       default: throw std::runtime_error("Unsupported Graphics API.");
     }
 
@@ -204,8 +190,6 @@ namespace Dwarf
         break;
       case GraphicsApi::Vulkan:
       case GraphicsApi::D3D12:
-      case GraphicsApi::Metal:
-        throw std::runtime_error("Graphics API not supported yet.");
       default: throw std::runtime_error("Unsupported Graphics API.");
     }
 
@@ -228,8 +212,6 @@ namespace Dwarf
         break;
       case GraphicsApi::Vulkan:
       case GraphicsApi::D3D12:
-      case GraphicsApi::Metal:
-        throw std::runtime_error("Graphics API not supported yet.");
       default: throw std::runtime_error("Unsupported Graphics API.");
     }
 
@@ -252,8 +234,6 @@ namespace Dwarf
         break;
       case GraphicsApi::Vulkan:
       case GraphicsApi::D3D12:
-      case GraphicsApi::Metal:
-        throw std::runtime_error("Graphics API not supported yet.");
       default: throw std::runtime_error("Unsupported Graphics API.");
     }
 
