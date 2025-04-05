@@ -4,14 +4,9 @@
 #include "FramebufferFactory.h"
 
 #ifdef _WIN32
-// #include "Platform/Direct3D12/D3D12Framebuffer.h"
 #include "Platform/OpenGL/OpenGLFramebuffer.h"
-// #include "Platform/Vulkan/VulkanFramebuffer.h"
 #elif __linux__
 #include "Platform/OpenGL/OpenGLFramebuffer.h"
-// #include "Platform/Vulkan/VulkanFramebuffer.h"
-#elif __APPLE__
-// #include "Platform/Metal/MetalFramebuffer.h"
 #endif
 
 namespace Dwarf
@@ -40,32 +35,19 @@ namespace Dwarf
       using enum GraphicsApi;
       case None: break;
 #ifdef _WIN32
-      case D3D12:
-        // return std::make_shared<D3D12Framebuffer>(spec);
-        break;
-      case Metal: break;
+      case D3D12: throw std::runtime_error("Unsupported Graphics API."); break;
       case OpenGL:
         return std::make_unique<OpenGLFramebuffer>(
           mLogger, spec, mTextureFactory, mVramTracker);
         break;
-      case Vulkan:
-        // return std::make_shared<VulkanFramebuffer>(spec);
-        break;
+      case Vulkan: throw std::runtime_error("Unsupported Graphics API."); break;
 #elif __linux__
-      case D3D12: break;
-      case Metal: break;
+      case D3D12: break; throw std::runtime_error("Unsupported Graphics API.");
       case OpenGL:
         return std::make_unique<OpenGLFramebuffer>(
           mLogger, spec, mTextureFactory, mVramTracker);
         break;
-      case Vulkan: break;
-#elif __APPLE__
-      case D3D12: break;
-      case Metal:
-        // return std::make_shared<MetalFramebuffer>(spec);
-        break;
-      case OpenGL: break;
-      case Vulkan: break;
+      case Vulkan: throw std::runtime_error("Unsupported Graphics API."); break;
 #endif
     }
     return nullptr;

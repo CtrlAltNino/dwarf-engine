@@ -24,10 +24,11 @@ namespace Dwarf
     switch (mGraphicsApi)
     {
       using enum GraphicsApi;
-      case None: break;
+      case None: throw std::runtime_error("No Graphics API selected."); break;
 #if _WIN32
-      case D3D12: break;
-      case Metal: break;
+      case D3D12:
+        throw std::runtime_error("Direct3D12 has not been implemented yet.");
+        break;
       case OpenGL:
         {
           std::string deviceInfo = OpenGLUtilities::GetDeviceInfo();
@@ -38,13 +39,12 @@ namespace Dwarf
           }
           break;
         }
-      case Vulkan: break;
+      case Vulkan:
+        throw std::runtime_error("Vulkan API has not been implemented yet.");
+        break;
 #elif __linux__
       case GraphicsApi::D3D12:
-        std::runtime_error("Vulkan API has not been implemented yet.");
-        break;
-      case GraphicsApi::Metal:
-        std::runtime_error("Vulkan API has not been implemented yet.");
+        std::runtime_error("Direct3D12 has not been implemented yet.");
         break;
       case GraphicsApi::OpenGL:
         {
@@ -53,11 +53,6 @@ namespace Dwarf
       case GraphicsApi::Vulkan:
         std::runtime_error("Vulkan API has not been implemented yet.");
         break;
-#elif __APPLE__
-      case D3D12: break;
-      case Metal: break;
-      case OpenGL: break;
-      case Vulkan: break;
 #endif
     }
 

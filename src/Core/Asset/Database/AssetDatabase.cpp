@@ -528,7 +528,6 @@ namespace Dwarf
       case GraphicsApi::OpenGL: graphicsApiDir = "opengl"; break;
       case GraphicsApi::Vulkan: graphicsApiDir = "vulkan"; break;
       case GraphicsApi::D3D12: graphicsApiDir = "d3d12"; break;
-      case GraphicsApi::Metal: graphicsApiDir = "metal"; break;
       default: throw std::runtime_error("Unsupported Graphics API.");
     }
 

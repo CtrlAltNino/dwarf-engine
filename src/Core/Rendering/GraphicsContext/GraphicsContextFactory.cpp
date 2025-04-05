@@ -6,8 +6,6 @@
 #include "Platform/OpenGL/OpenGLContext.h"
 #elif __linux__
 #include "Platform/OpenGL/OpenGLContext.h"
-#elif __APPLE__
-// #include "Platform/Metal/MetalContext.h"
 #endif
 
 namespace Dwarf
@@ -37,13 +35,11 @@ namespace Dwarf
     switch (mApi)
     {
       using enum GraphicsApi;
-      case None: break;
+      case None: throw std::runtime_error("No Graphics API selected."); break;
 #if _WIN32
       case D3D12:
-        std::runtime_error("Vulkan API has not been implemented yet.");
-        break;
-      case Metal:
-        std::runtime_error("Vulkan API has not been implemented yet.");
+        throw std::runtime_error(
+          "Direct3D12 API has not been implemented yet.");
         break;
       case OpenGL:
         {
@@ -53,14 +49,11 @@ namespace Dwarf
           break;
         }
       case Vulkan:
-        std::runtime_error("Vulkan API has not been implemented yet.");
+        throw std::runtime_error("Vulkan API has not been implemented yet.");
         break;
 #elif __linux__
       case D3D12:
-        std::runtime_error("Vulkan API has not been implemented yet.");
-        break;
-      case Metal:
-        std::runtime_error("Vulkan API has not been implemented yet.");
+        throw throw std::runtime_error("Unsupported Graphics API selected.");
         break;
       case OpenGL:
         {
@@ -70,17 +63,8 @@ namespace Dwarf
           break;
         }
       case Vulkan:
-        std::runtime_error("Vulkan API has not been implemented yet.");
+        throw std::runtime_error("Vulkan API has not been implemented yet.");
         break;
-#elif __APPLE__
-      case D3D12: break;
-      case Metal:
-        // return
-        // std::make_unique<MetalContext>(static_cast<SDL_Window*>(window)); -
-        // NOT SUPPORTED YET
-        break;
-      case OpenGL: break;
-      case Vulkan: break;
 #endif
     }
 
