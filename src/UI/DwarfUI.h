@@ -76,7 +76,7 @@ namespace Dwarf
           : view.template get<NameComponent>(assetRef->GetHandle())
               .Name.c_str();
 
-      std::ranges::stable_sort(
+      std::ranges::sort(
         availableAssets,
         [view](entt::entity& first, entt::entity& second)
         {
@@ -139,7 +139,7 @@ namespace Dwarf
           : view.template get<NameComponent>(assetRef.value()->GetHandle())
               .Name.c_str();
 
-      std::ranges::stable_sort(
+      std::ranges::sort(
         availableAssets,
         [view](entt::entity& first, entt::entity& second)
         {
@@ -193,7 +193,7 @@ namespace Dwarf
 
       bool hasValue = assetRef.has_value();
 
-      std::ranges::stable_sort(
+      std::ranges::sort(
         availableAssets,
         [view](entt::entity& first, entt::entity& second)
         {
