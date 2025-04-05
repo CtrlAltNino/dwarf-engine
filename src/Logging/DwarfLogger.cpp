@@ -3,7 +3,7 @@
 #include "DwarfLogger.h"
 #include "IDwarfLogger.h"
 #include <spdlog/common.h>
-#include <spdlog/sinks/basic_file_sink.h>
+#include <spdlog/sinks/rotating_file_sink.h>
 #include <spdlog/sinks/stdout_color_sinks.h>
 #include <spdlog/spdlog.h>
 
@@ -15,12 +15,12 @@ namespace Dwarf
     auto console_sink = std::make_shared<spdlog::sinks::stdout_color_sink_mt>();
 
     // Create a file sink (logs to a file)
-    auto file_sink =
-      std::make_shared<spdlog::sinks::basic_file_sink_mt>(LOG_FILE_NAME, true);
+    auto file_sink = std::make_shared<spdlog::sinks::rotating_file_sink_mt>(
+      LOG_FILE_NAME, 1024 * 1024 * 5, 3);
 
     // Create a logger with multiple sinks
     mLogger = std::make_shared<spdlog::logger>(
-      "multi_sink", spdlog::sinks_init_list{ console_sink, file_sink });
+      logName.t, spdlog::sinks_init_list{ console_sink, file_sink });
 
     if (std::string(LOG_FILE_NAME).find("debug") != std::string::npos)
     {
