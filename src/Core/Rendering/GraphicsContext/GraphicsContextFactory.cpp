@@ -1,12 +1,7 @@
 #include "pch.h"
 
 #include "GraphicsContextFactory.h"
-
-#if _WIN32
 #include "Platform/OpenGL/OpenGLContext.h"
-#elif __linux__
-#include "Platform/OpenGL/OpenGLContext.h"
-#endif
 
 namespace Dwarf
 {
@@ -18,58 +13,48 @@ namespace Dwarf
 
   {
     mLogger->LogDebug(
-      Log("GraphicsContextFactory created.", "GraphicsContext"));
+      Log("GraphicsContextFactory created", "GraphicsContextFactory"));
   }
 
   GraphicsContextFactory::~GraphicsContextFactory()
   {
     mLogger->LogDebug(
-      Log("GraphicsContextFactory destroyed.", "GraphicsContext"));
+      Log("GraphicsContextFactory destroyed", "GraphicsContextFactory"));
   }
 
   auto
   GraphicsContextFactory::Create(SDL_Window* window) const
     -> std::unique_ptr<IGraphicsContext>
   {
-    mLogger->LogDebug(Log("Creating GraphicsContext...", "GraphicsContext"));
+    mLogger->LogDebug(
+      Log("Creating GraphicsContext", "GraphicsContextFactory"));
+
     switch (mApi)
     {
       using enum GraphicsApi;
-      case None: throw std::runtime_error("No Graphics API selected."); break;
-#if _WIN32
-      case D3D12:
-        throw std::runtime_error(
-          "Direct3D12 API has not been implemented yet.");
-        break;
-      case OpenGL:
-        {
-          mLogger->LogDebug(
-            Log("Creating OpenGLContext...", "GraphicsContext"));
-          return std::make_unique<OpenGLContext>(mLogger, window);
-          break;
-        }
+      case None:
+        mLogger->LogError(
+          Log("Graphics API is not set", "GraphicsContextFactory"));
+        throw std::runtime_error("Graphics API is not set");
+      case OpenGL: return std::make_unique<OpenGLContext>(mLogger, window);
       case Vulkan:
-        throw std::runtime_error("Vulkan API has not been implemented yet.");
-        break;
+        mLogger->LogError(Log("Vulkan API has not been implemented yet",
+                              "GraphicsContextFactory"));
+        throw std::runtime_error("Vulkan API has not been implemented yet");
+      case D3D12:
+#ifdef _WIN32
+        mLogger->LogError(Log("Direct3D12 API has not been implemented yet",
+                              "GraphicsContextFactory"));
+        throw std::runtime_error("Direct3D12 API has not been implemented yet");
 #elif __linux__
-      case D3D12:
-        throw throw std::runtime_error("Unsupported Graphics API selected.");
-        break;
-      case OpenGL:
-        {
-          mLogger->LogDebug(
-            Log("Creating OpenGLContext...", "GraphicsContext"));
-          return std::make_unique<OpenGLContext>(mLogger, window);
-          break;
-        }
-      case Vulkan:
-        throw std::runtime_error("Vulkan API has not been implemented yet.");
-        break;
+        mLogger->LogError(Log("Direct3D12 is only supported on Windows",
+                              "GraphicsContextFactory"));
+        throw std::runtime_error("Direct3D12 is only supported on Windows");
 #endif
     }
 
     mLogger->LogError(
-      Log("Failed to create GraphicsContext.", "GraphicsContext"));
+      Log("Failed to create GraphicsContext", "GraphicsContext"));
 
     return nullptr;
   }

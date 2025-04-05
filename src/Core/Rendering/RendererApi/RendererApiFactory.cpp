@@ -2,15 +2,7 @@
 
 #include "Core/Base.h"
 #include "Core/Rendering/RendererApi/RendererApiFactory.h"
-
-// Including the shader header files of the graphics API.
-#if _WIN32
 #include "Platform/OpenGL/OpenGLRendererApi.h"
-#elif __linux__
-#include "Platform/OpenGL/OpenGLRendererApi.h"
-#elif __APPLE__
-// #include "Platform/Metal/MetalRendererApi.h"
-#endif
 
 namespace Dwarf
 {
@@ -35,21 +27,26 @@ namespace Dwarf
     , mMeshFactory(std::move(meshFactory))
     , mMeshBufferFactory(std::move(meshBufferFactory))
   {
-    mLogger->LogDebug(Log("RendererApiFactory created.", "RendererApiFactory"));
+    mLogger->LogDebug(Log("RendererApiFactory created", "RendererApiFactory"));
   }
 
   RendererApiFactory::~RendererApiFactory()
   {
-    mLogger->LogDebug(Log("RendererApiFactory created.", "RendererApiFactory"));
+    mLogger->LogDebug(Log("RendererApiFactory created", "RendererApiFactory"));
   }
 
   auto
   RendererApiFactory::Create() const -> std::unique_ptr<IRendererApi>
   {
+    mLogger->LogDebug(Log("Creating RendererApi", "RendererApiFactory"));
+
     switch (mGraphicsApi)
     {
-#if _WIN32
-      case GraphicsApi::OpenGL:
+      using enum GraphicsApi;
+      case None:
+        mLogger->LogError(Log("Graphics API is not set", "RendererApiFactory"));
+        throw std::runtime_error("Graphics API is not set");
+      case OpenGL:
         return std::make_unique<OpenGLRendererApi>(
           mAssetDatabase,
           mShaderRegistry,
@@ -59,39 +56,24 @@ namespace Dwarf
           mShaderSourceCollectionFactory,
           mMeshFactory,
           mMeshBufferFactory);
-        break;
-      case GraphicsApi::D3D12:
-      case GraphicsApi::Metal:
-      case GraphicsApi::Vulkan: break;
+      case Vulkan:
+        mLogger->LogError(
+          Log("Vulkan API has not been implemented yet", "RendererApiFactory"));
+        throw std::runtime_error("Vulkan API has not been implemented yet");
+      case D3D12:
+#ifdef _WIN32
+        mLogger->LogError(Log("Direct3D12 API has not been implemented yet",
+                              "RendererApiFactory"));
+        throw std::runtime_error("Direct3D12 API has not been implemented yet");
 #elif __linux__
-      case GraphicsApi::D3D12: break;
-      case GraphicsApi::OpenGL:
-        return std::make_unique<OpenGLRendererApi>(
-          mAssetDatabase,
-          mShaderRegistry,
-          mLogger,
-          mEditorStats,
-          mStateTracker,
-          mShaderSourceCollectionFactory,
-          mMeshFactory,
-          mMeshBufferFactory);
-        break;
-      case GraphicsApi::Metal: break;
-      case GraphicsApi::Vulkan:
-        // return std::make_shared<VulkanShader>();
-        break;
-#elif __APPLE__
-      case GraphicsApi::D3D12: break;
-      case GraphicsApi::OpenGL: break;
-      case GraphicsApi::Metal:
-        // return std::make_shared<MetalRendererApi>();
-        break;
-      case GraphicsApi::Vulkan: break;
+        mLogger->LogError(
+          Log("Direct3D12 is only supported on Windows", "RendererApiFactory"));
+        throw std::runtime_error("Direct3D12 is only supported on Windows");
 #endif
-      case GraphicsApi::None:
-        throw std::runtime_error("Graphics API not set.");
-        break;
     }
+
+    mLogger->LogError(
+      Log("Failed to create RendererApi", "RendererApiFactory"));
 
     return nullptr;
   }

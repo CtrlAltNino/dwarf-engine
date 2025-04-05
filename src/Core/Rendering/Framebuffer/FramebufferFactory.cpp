@@ -2,12 +2,7 @@
 
 #include "Core/Base.h"
 #include "FramebufferFactory.h"
-
-#ifdef _WIN32
 #include "Platform/OpenGL/OpenGLFramebuffer.h"
-#elif __linux__
-#include "Platform/OpenGL/OpenGLFramebuffer.h"
-#endif
 
 namespace Dwarf
 {
@@ -33,23 +28,31 @@ namespace Dwarf
     switch (mApi)
     {
       using enum GraphicsApi;
-      case None: break;
+      case None:
+        mLogger->LogError(Log("Graphics API is not set", "FramebufferFactory"));
+        throw std::runtime_error("Graphics API is not set");
+      case OpenGL:
+        return std::make_unique<OpenGLFramebuffer>(
+          mLogger, spec, mTextureFactory, mVramTracker);
+      case Vulkan:
+        mLogger->LogError(
+          Log("Vulkan API has not been implemented yet", "FramebufferFactory"));
+        throw std::runtime_error("Vulkan API has not been implemented yet");
+      case D3D12:
 #ifdef _WIN32
-      case D3D12: throw std::runtime_error("Unsupported Graphics API."); break;
-      case OpenGL:
-        return std::make_unique<OpenGLFramebuffer>(
-          mLogger, spec, mTextureFactory, mVramTracker);
-        break;
-      case Vulkan: throw std::runtime_error("Unsupported Graphics API."); break;
+        mLogger->LogError(Log("Direct3D12 API has not been implemented yet",
+                              "FramebufferFactory"));
+        throw std::runtime_error("Direct3D12 API has not been implemented yet");
 #elif __linux__
-      case D3D12: break; throw std::runtime_error("Unsupported Graphics API.");
-      case OpenGL:
-        return std::make_unique<OpenGLFramebuffer>(
-          mLogger, spec, mTextureFactory, mVramTracker);
-        break;
-      case Vulkan: throw std::runtime_error("Unsupported Graphics API."); break;
+        mLogger->LogError(
+          Log("Direct3D12 is only supported on Windows", "FramebufferFactory"));
+        throw std::runtime_error("Direct3D12 is only supported on Windows");
 #endif
     }
+
+    mLogger->LogError(
+      Log("Failed to create Framebuffer", "FramebufferFactory"));
+
     return nullptr;
   }
 } // namespace Dwarf

@@ -83,12 +83,28 @@ namespace Dwarf
           {
             using enum GraphicsApi;
             case None:
-              throw std::runtime_error(
-                "No Graphics API selected for creating a project");
-              break;
-            case D3D12: templateApiDirectory = "dx12"; break;
+              mLogger->LogError(
+                Log("Graphics API is not set", "ShaderAssetSelectorFactory"));
+              throw std::runtime_error("Graphics API is not set");
             case OpenGL: templateApiDirectory = "opengl"; break;
-            case Vulkan: templateApiDirectory = "vulkan"; break;
+            case Vulkan:
+              mLogger->LogError(Log("Vulkan API has not been implemented yet",
+                                    "ShaderAssetSelectorFactory"));
+              throw std::runtime_error(
+                "Vulkan API has not been implemented yet");
+            case D3D12:
+#ifdef _WIN32
+              mLogger->LogError(
+                Log("Direct3D12 API has not been implemented yet",
+                    "ShaderAssetSelectorFactory"));
+              throw std::runtime_error(
+                "Direct3D12 API has not been implemented yet");
+#elif __linux__
+              mLogger->LogError(Log("Direct3D12 is only supported on Windows",
+                                    "ShaderAssetSelectorFactory"));
+              throw std::runtime_error(
+                "Direct3D12 is only supported on Windows");
+#endif
           }
 
           templateProjectDirectory =

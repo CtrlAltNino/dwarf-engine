@@ -31,6 +31,10 @@ namespace Dwarf
       mLogger->set_level(spdlog::level::info);
     }
 
+    spdlog::set_default_logger(mLogger);
+
+    spdlog::flush_every(std::chrono::seconds(3));
+
     mLogger->log(spdlog::level::info,
                  fmt::format("[{}] {}", "DwarfLogger", "Logger initialized."));
   }
@@ -41,10 +45,9 @@ namespace Dwarf
     {
       mLogger->log(spdlog::level::info,
                    fmt::format("[{}] {}", "DwarfLogger", "Logger destroyed."));
-      mLogger->flush();
     }
 
-    spdlog::drop(mLogger->name());
+    spdlog::shutdown();
   }
 
   void
@@ -69,6 +72,7 @@ namespace Dwarf
   DwarfLogger::LogError(const Log logMessage) const
   {
     LogMessage(spdlog::level::err, logMessage);
+    mLogger->flush();
   }
 
   void

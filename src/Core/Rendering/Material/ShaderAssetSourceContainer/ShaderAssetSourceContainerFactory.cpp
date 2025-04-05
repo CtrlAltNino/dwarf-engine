@@ -32,18 +32,39 @@ namespace Dwarf
     std::unique_ptr<IShaderSourceCollection> shaderSources) const
     -> std::unique_ptr<IShaderAssetSourceContainer>
   {
+    mLogger->LogDebug(Log("Creating ShaderAssetSourceContainer",
+                          "ShaderAssetSourceContainerFactory"));
+
     switch (mGraphicsApi)
     {
       using enum GraphicsApi;
+      case None:
+        mLogger->LogError(
+          Log("Graphics API is not set", "ShaderAssetSourceContainerFactory"));
+        throw std::runtime_error("Graphics API is not set");
       case OpenGL:
         return std::make_unique<OpenGLShaderAssetSourceContainer>(
           mAssetDatabase.get(),
           mShaderSourceCollectionFactory,
           std::move(shaderSources));
       case Vulkan:
-      case None:
-      case D3D12: break;
+        mLogger->LogError(Log("Vulkan API has not been implemented yet",
+                              "ShaderAssetSourceContainerFactory"));
+        throw std::runtime_error("Vulkan API has not been implemented yet");
+      case D3D12:
+#ifdef _WIN32
+        mLogger->LogError(Log("Direct3D12 API has not been implemented yet",
+                              "GraphicsContextFactory"));
+        throw std::runtime_error("Direct3D12 API has not been implemented yet");
+#elif __linux__
+        mLogger->LogError(Log("Direct3D12 is only supported on Windows",
+                              "GraphicsContextFactory"));
+        throw std::runtime_error("Direct3D12 is only supported on Windows");
+#endif
     }
+
+    mLogger->LogError(Log("Failed to create ShaderAssetSourceContainer",
+                          "ShaderAssetSourceContainerFactory"));
 
     return nullptr;
   }
