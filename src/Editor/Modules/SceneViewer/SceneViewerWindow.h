@@ -101,6 +101,11 @@ namespace Dwarf
     void
     UpdateGizmoType();
 
+    /**
+     * @brief Processes a scene click at a given position in the id framebuffer.
+     *
+     * @param mousePosition
+     */
     void
     ProcessSceneClick(glm::vec2 const& mousePosition);
 
@@ -110,6 +115,27 @@ namespace Dwarf
      */
     void
     RenderSceneViewerSettings();
+
+    /**
+     * @brief Renders the tool settings
+     *
+     */
+    void
+    RenderToolSettings();
+
+    /**
+     * @brief Renders the grid settings
+     *
+     */
+    void
+    RenderGridSettings();
+
+    /**
+     * @brief Renders the camera settings
+     *
+     */
+    void
+    RenderCameraSettings();
 
     /**
      * @brief Renderings the rendering settings

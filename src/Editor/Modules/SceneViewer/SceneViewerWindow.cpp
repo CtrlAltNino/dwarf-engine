@@ -3,6 +3,7 @@
 #include "Core/Scene/Components/SceneComponents.h"
 #include "Core/Scene/Entity/Entity.h"
 #include "Editor/Modules/SceneViewer/SceneViewerWindow.h"
+#include <ImGuizmo.h>
 #include <imgui.h>
 
 #define MIN_RESOLUTION_WIDTH 10
@@ -137,6 +138,18 @@ namespace Dwarf
 
     ImGui::SameLine(0, 5);
 
+    RenderToolSettings();
+
+    ImGui::SameLine(0, 5);
+
+    RenderGridSettings();
+
+    ImGui::SameLine(0, 5);
+
+    RenderCameraSettings();
+
+    ImGui::SameLine(0, 5);
+
     RenderRenderingSettings();
 
     ImGui::SameLine(0, 5);
@@ -242,119 +255,215 @@ namespace Dwarf
   void
   SceneViewerWindow::RenderSceneViewerSettings()
   {
-    static std::array<std::string, 3> renderingModes = { "Free",
-                                                         "Aspect Ratio",
-                                                         "Fixed Resolution" };
-
-    ImGui::PushItemWidth(150);
-    ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(0, 0));
-
-    // Rendering mode combo
-    if (ImGui::BeginCombo(
-          "##renderingMode",
-          renderingModes[(int)mSettings.RenderingConstraint].c_str()))
+    if (ImGui::Button("View"))
     {
-      for (int n = 0; n < 3; n++)
-      {
-        const bool is_selected = ((int)mSettings.RenderingConstraint == n);
+      ImGui::OpenPopup("view_settings");
+    }
 
-        // ==================== Graphics Selectable ====================
-        if (ImGui::Selectable(
-              renderingModes[n].c_str(), is_selected, 0, ImVec2(0, 16 + 10)))
+    if (ImGui::BeginPopup("view_settings"))
+    {
+      static std::array<std::string, 3> renderingModes = { "Free",
+                                                           "Aspect Ratio",
+                                                           "Fixed Resolution" };
+
+      ImGui::PushItemWidth(125);
+
+      // Rendering mode combo
+      if (ImGui::BeginCombo(
+            "Render constraints##renderingMode",
+            renderingModes[(int)mSettings.RenderingConstraint].c_str()))
+      {
+        for (int n = 0; n < 3; n++)
         {
-          mSettings.RenderingConstraint = (RENDERING_CONSTRAINT)n;
+          const bool is_selected = ((int)mSettings.RenderingConstraint == n);
+
+          // ==================== Graphics Selectable ====================
+          if (ImGui::Selectable(
+                renderingModes[n].c_str(), is_selected, 0, ImVec2(0, 16 + 10)))
+          {
+            mSettings.RenderingConstraint = (RENDERING_CONSTRAINT)n;
+          }
+
+          // Set the initial focus when opening the combo (scrolling + keyboard
+          // navigation focus)
+          if (is_selected)
+          {
+            ImGui::SetItemDefaultFocus();
+          }
         }
 
-        // Set the initial focus when opening the combo (scrolling + keyboard
-        // navigation focus)
-        if (is_selected)
+        ImGui::EndCombo();
+      }
+
+      if (mSettings.RenderingConstraint == RENDERING_CONSTRAINT::ASPECT_RATIO)
+      {
+        ImGui::InputInt("Width##aspectWidth", mSettings.AspectRatio.data());
+        ImGui::InputInt("Height##aspectHeight", &(mSettings.AspectRatio[1]));
+        mSettings.AspectRatio[0] = std::clamp(mSettings.AspectRatio[0], 1, 32);
+        mSettings.AspectRatio[1] = std::clamp(mSettings.AspectRatio[1], 1, 32);
+      }
+      else if (mSettings.RenderingConstraint ==
+               RENDERING_CONSTRAINT::FIXED_RESOLUTION)
+      {
+        ImGui::InputInt2("Resolution##resolution", mSettings.Resolution.data());
+        mSettings.Resolution[0] = std::clamp(
+          mSettings.Resolution[0], MIN_RESOLUTION_WIDTH, MAX_RESOLUTION_WIDTH);
+        mSettings.Resolution[1] = std::clamp(
+          mSettings.Resolution[1], MIN_RESOLUTION_WIDTH, MAX_RESOLUTION_WIDTH);
+      }
+
+      ImGui::PopItemWidth();
+      ImGui::EndPopup();
+    }
+  }
+
+  void
+  SceneViewerWindow::RenderToolSettings()
+  {
+    if (ImGui::Button("Tools"))
+    {
+      ImGui::OpenPopup("tool_settings");
+    }
+
+    if (ImGui::BeginPopup("tool_settings"))
+    {
+      ImGui::PushItemWidth(125);
+
+      {
+        static std::array<std::string, 2> modeNames = { "Local", "World" };
+
+        if (ImGui::BeginCombo("Tool mode##toolMode",
+                              modeNames.at(mSettings.GizmoMode).c_str()))
         {
-          ImGui::SetItemDefaultFocus();
+          for (int n = 0; n < modeNames.size(); n++)
+          {
+            const bool is_selected = ((int)mSettings.GizmoMode == n);
+
+            // ==================== Graphics Selectable ====================
+            if (ImGui::Selectable(
+                  modeNames.at(n).c_str(), is_selected, 0, ImVec2(0, 16 + 10)))
+            {
+              mSettings.GizmoMode = (ImGuizmo::MODE)n;
+            }
+
+            // Set the initial focus when opening the combo (scrolling +
+            // keyboard navigation focus)
+            if (is_selected)
+            {
+              ImGui::SetItemDefaultFocus();
+            }
+          }
+
+          ImGui::EndCombo();
         }
       }
 
-      ImGui::EndCombo();
-    }
-
-    ImGui::SameLine(0, 5);
-
-    // Guizmo model toggle
-    if (mSettings.GizmoMode == ImGuizmo::MODE::LOCAL)
-    {
-      if (ImGui::Button("Local"))
       {
-        mSettings.GizmoMode = ImGuizmo::MODE::WORLD;
+        static std::array<std::string, 3>         toolNames = { "Translate",
+                                                                "Rotate",
+                                                                "Scale" };
+        static std::map<ImGuizmo::OPERATION, int> toolMap = {
+          { ImGuizmo::OPERATION::TRANSLATE, 0 },
+          { ImGuizmo::OPERATION::ROTATE, 1 },
+          { ImGuizmo::OPERATION::SCALE, 2 }
+        };
+
+        static std::map<int, ImGuizmo::OPERATION> toolReverseMap = {
+          { 0, ImGuizmo::OPERATION::TRANSLATE },
+          { 1, ImGuizmo::OPERATION::ROTATE },
+          { 2, ImGuizmo::OPERATION::SCALE }
+        };
+        // static int selectedTool
+
+        if (ImGui::BeginCombo(
+              "Tool##toolSelection",
+              toolNames.at(toolMap.at(mSettings.GizmoOperation)).c_str()))
+        {
+          for (int n = 0; n < toolNames.size(); n++)
+          {
+            const bool is_selected =
+              (toolMap.at(mSettings.GizmoOperation) == n);
+
+            // ==================== Graphics Selectable ====================
+            if (ImGui::Selectable(
+                  toolNames.at(n).c_str(), is_selected, 0, ImVec2(0, 16 + 10)))
+            {
+              mSettings.GizmoOperation = toolReverseMap.at(n);
+            }
+
+            // Set the initial focus when opening the combo (scrolling +
+            // keyboard navigation focus)
+            if (is_selected)
+            {
+              ImGui::SetItemDefaultFocus();
+            }
+          }
+
+          ImGui::EndCombo();
+        }
       }
+
+      ImGui::PopItemWidth();
+
+      ImGui::EndPopup();
     }
-    else
+  }
+
+  void
+  SceneViewerWindow::RenderGridSettings()
+  {
+    if (ImGui::Button("Grid"))
     {
-      if (ImGui::Button("World"))
-      {
-        mSettings.GizmoMode = ImGuizmo::MODE::LOCAL;
-      }
+      ImGui::OpenPopup("grid_settings");
     }
 
-    ImGui::SameLine(0, 5);
-
-    // Guizmo type translate button
-    if (ImGui::Button("Translate"))
+    if (ImGui::BeginPopup("grid_settings"))
     {
-      mSettings.GizmoOperation = ImGuizmo::OPERATION::TRANSLATE;
+      ImGui::PushItemWidth(200);
+
+      ImGui::Checkbox("Render Grid", &mSettings.RenderGrid);
+
+      // Axis
+
+      // Transparency (0.0 - 1.0)
+
+      // Offset?
+      ImGui::PopItemWidth();
+      ImGui::EndPopup();
     }
+  }
 
-    ImGui::SameLine(0, 5);
-
-    // Guizmo type rotate button
-    if (ImGui::Button("Rotate"))
+  void
+  SceneViewerWindow::RenderCameraSettings()
+  {
+    if (ImGui::Button("Camera"))
     {
-      mSettings.GizmoOperation = ImGuizmo::OPERATION::ROTATE;
+      ImGui::OpenPopup("camera_settings");
     }
 
-    ImGui::SameLine(0, 5);
-
-    // Guizmo type scale button
-    if (ImGui::Button("Scale"))
+    if (ImGui::BeginPopup("camera_settings"))
     {
-      mSettings.GizmoOperation = ImGuizmo::OPERATION::SCALE;
+      ImGui::PushItemWidth(175);
+      // Position
+
+      // Rotation
+
+      // Clipping planes
+      ImGui::DragFloatRange2("Clipping Planes",
+                             &mCamera->GetProperties().NearPlane,
+                             &mCamera->GetProperties().FarPlane,
+                             0.25F,
+                             0.0F,
+                             +FLT_MAX,
+                             "Near: %.2f",
+                             "Far: %.2f",
+                             ImGuiSliderFlags_AlwaysClamp);
+
+      // Field of view
+      ImGui::DragFloat("FOV", &mCamera->GetProperties().Fov, 0.5f, 45, 110);
+      ImGui::PopItemWidth();
+      ImGui::EndPopup();
     }
-
-    // Rendering mode specific settings input
-
-    if (mSettings.RenderingConstraint == RENDERING_CONSTRAINT::ASPECT_RATIO)
-    {
-      ImGui::SameLine(0, 10);
-      ImGui::Text("Aspect ratio");
-
-      ImGui::SameLine(0, 10);
-      ImGui::InputInt("##aspectWidth", mSettings.AspectRatio.data());
-      ImGui::SameLine(0, 10);
-      ImGui::InputInt("##aspectHeight", &(mSettings.AspectRatio[1]));
-
-      mSettings.AspectRatio[0] =
-        std::max(1, std::min(MAX_RESOLUTION_WIDTH, mSettings.AspectRatio[0]));
-      mSettings.AspectRatio[1] =
-        std::max(1, std::min(MAX_RESOLUTION_HEIGHT, mSettings.AspectRatio[1]));
-    }
-    else if (mSettings.RenderingConstraint ==
-             RENDERING_CONSTRAINT::FIXED_RESOLUTION)
-    {
-      ImGui::SameLine(0, 10);
-      ImGui::Text("Resolution");
-      ImGui::SameLine(0, 10);
-      ImGui::InputInt2("", mSettings.Resolution.data());
-      mSettings.Resolution[0] =
-        std::max(MIN_RESOLUTION_WIDTH,
-                 std::min(MAX_RESOLUTION_WIDTH, mSettings.Resolution[0]));
-      mSettings.Resolution[1] =
-        std::max(MIN_RESOLUTION_WIDTH,
-                 std::min(MAX_RESOLUTION_WIDTH, mSettings.Resolution[1]));
-    }
-
-    ImGui::SameLine(0, 5);
-
-    ImGui::Checkbox("Render Grid", &mSettings.RenderGrid);
-    ImGui::PopStyleVar();
-    ImGui::PopItemWidth();
   }
 
   void
@@ -367,6 +476,7 @@ namespace Dwarf
 
     if (ImGui::BeginPopup("render_settings"))
     {
+      ImGui::PushItemWidth(150);
       ImGui::SliderInt("MSAA Samples",
                        &mSettings.Samples,
                        1,
@@ -419,17 +529,7 @@ namespace Dwarf
         mRenderingPipeline->SetExposure(mSettings.Exposure);
       }
 
-      ImGui::DragFloatRange2("Clipping Planes",
-                             &mCamera->GetProperties().NearPlane,
-                             &mCamera->GetProperties().FarPlane,
-                             0.25F,
-                             0.0F,
-                             +FLT_MAX,
-                             "Near: %.2f",
-                             "Far: %.2f",
-                             ImGuiSliderFlags_AlwaysClamp);
-
-      ImGui::DragFloat("FOV", &mCamera->GetProperties().Fov, 0.5f, 45, 110);
+      ImGui::PopItemWidth();
       ImGui::EndPopup();
     }
   }
@@ -444,6 +544,7 @@ namespace Dwarf
 
     if (ImGui::BeginPopup("scene_viewer_statistics"))
     {
+      ImGui::PushItemWidth(200);
       std::string formattedDrawCallCount = std::format(
         std::locale(""), "{:L}", mRenderingPipeline->GetDrawCallCount());
       std::string formattedVertCount = std::format(
@@ -457,6 +558,8 @@ namespace Dwarf
       ImGui::Text("Resolution: %ix%i",
                   mRenderingPipeline->GetResolution().x,
                   mRenderingPipeline->GetResolution().y);
+
+      ImGui::PopItemWidth();
       ImGui::EndPopup();
     }
   }

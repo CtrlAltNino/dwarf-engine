@@ -30,12 +30,37 @@ namespace Dwarf
   {
     mProperties.Transform =
       TransformComponent(serializedCameraData["transform"]);
-    mProperties.Fov = serializedCameraData["fov"];
-    mProperties.NearPlane = serializedCameraData["nearPlane"];
-    mProperties.FarPlane = serializedCameraData["farPlane"];
-    mProperties.AspectRatio = serializedCameraData["aspectRatio"];
-    mProperties.Sensitivity = serializedCameraData["sensitivity"];
-    mProperties.MovementSpeed = serializedCameraData["movementSpeed"];
+
+    if (serializedCameraData.contains("fov"))
+    {
+      mProperties.Fov = serializedCameraData["fov"];
+    }
+
+    if (serializedCameraData.contains("nearPlane"))
+    {
+      mProperties.NearPlane = serializedCameraData["nearPlane"];
+    }
+
+    if (serializedCameraData.contains("farPlane"))
+    {
+      mProperties.FarPlane = serializedCameraData["farPlane"];
+    }
+
+    if (serializedCameraData.contains("aspectRatio"))
+    {
+      mProperties.AspectRatio = serializedCameraData["aspectRatio"];
+    }
+
+    if (serializedCameraData.contains("sensitivity"))
+    {
+      mProperties.Sensitivity = serializedCameraData["sensitivity"];
+    }
+
+    if (serializedCameraData.contains("movementSpeed"))
+    {
+      mProperties.MovementSpeed = serializedCameraData["movementSpeed"];
+    }
+
     mLogger->LogDebug(Log("Camera created.", "Camera"));
   }
 
