@@ -228,10 +228,6 @@ namespace Dwarf
     std::string dockspaceStr = "AssetBrowser_" + mId->toString();
     ImGuiID     dockspaceID = ImGui::GetID(dockspaceStr.c_str());
 
-    // std::string windowTitle = "AssetBrowser##" + mId->toString();
-
-    ImGui::PushID(ImGui::GetID(mId->toString().c_str()));
-
     ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(500, 500));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
     if (ImGui::Begin(GetIdentifier().c_str(), &mWindowOpened, 0))
@@ -240,9 +236,6 @@ namespace Dwarf
 
       ImGuiDockNodeFlags dockspaceFlags = ImGuiDockNodeFlags_None;
       dockspaceFlags |= ImGuiDockNodeFlags_HiddenTabBar;
-      /*ImGuiID dockspaceId = ImGui::GetID(
-        fmt::format("{}_{}", "AssetBrowserDockspace",
-        mId->toString()).c_str());*/
 
       ImGui::DockSpace(dockspaceID, ImVec2(0.0F, 0.0F), dockspaceFlags);
       if (!mDockspaceIsSetup)
@@ -257,8 +250,6 @@ namespace Dwarf
       RenderDirectoryContent();
       RenderFooter();
     }
-
-    ImGui::PopID();
   }
 
   void
