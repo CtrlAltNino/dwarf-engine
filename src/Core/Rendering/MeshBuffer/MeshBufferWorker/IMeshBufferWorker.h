@@ -13,6 +13,7 @@ namespace Dwarf
   {
     std::reference_wrapper<std::unique_ptr<IMeshBuffer>> Destination;
     std::unique_ptr<IMesh>                               Mesh;
+    std::mutex                                           RequestMutex;
 
     MeshBufferRequest(std::unique_ptr<IMeshBuffer>& destination,
                       std::unique_ptr<IMesh>&&      mesh)

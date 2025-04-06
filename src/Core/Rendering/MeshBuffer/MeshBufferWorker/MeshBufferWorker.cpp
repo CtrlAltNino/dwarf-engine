@@ -26,10 +26,8 @@ namespace Dwarf
     std::unique_ptr<MeshBufferRequest>&& request)
   {
     mLogger->LogDebug(Log("Adding mesh buffer request", "MeshBufferWorker"));
-    {
-      std::lock_guard<std::mutex> lock(mUploadMutex);
-      mMeshBufferRequestQueue.push(std::move(request));
-    }
+    std::lock_guard<std::mutex> lock(mUploadMutex);
+    mMeshBufferRequestQueue.push(std::move(request));
   }
 
   void
@@ -41,7 +39,15 @@ namespace Dwarf
       std::unique_ptr<MeshBufferRequest>& request =
         mMeshBufferRequestQueue.front();
 
-      request->Destination.get() = mMeshBufferFactory->Create(request->Mesh);
+      if (request != nullptr)
+      {
+        std::unique_lock<std::mutex> requestLock(request->RequestMutex);
+
+        // requestLock.lock();
+        request->Destination.get() = mMeshBufferFactory->Create(request->Mesh);
+        // requestLock.unlock();
+      }
+
       mMeshBufferRequestQueue.pop();
     }
   }
