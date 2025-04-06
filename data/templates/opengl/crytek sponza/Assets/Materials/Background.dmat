@@ -1,0 +1,86 @@
+{
+  "Properties": {
+    "IsDoubleSided": false,
+    "IsTransparent": false,
+    "IsUnlit": false,
+    "IsWireframe": false
+  },
+  "Shader": {
+    "FragmentShader": "f6fcd468-7800-4028-abc0-d66f5cb61008",
+    "GeometryShader": "",
+    "TessellationControlShader": "",
+    "TessellationEvaluationShader": "",
+    "VertexShader": "9ecaff3b-7f94-4f85-b73b-d4e48d081991"
+  },
+  "ShaderParameters": {
+    "albedoMap": {
+      "type": "tex2d",
+      "value": "d8ca4528-5234-455a-af59-1e9cf5fa0f79"
+    },
+    "aoMap": {
+      "type": "tex2d",
+      "value": ""
+    },
+    "emissionIntensity": {
+      "type": "float",
+      "value": 0.0
+    },
+    "emissiveMap": {
+      "type": "tex2d",
+      "value": ""
+    },
+    "hasAlbedoMap": {
+      "type": "boolean",
+      "value": true
+    },
+    "hasAoMap": {
+      "type": "boolean",
+      "value": false
+    },
+    "hasEmissiveMap": {
+      "type": "boolean",
+      "value": false
+    },
+    "hasMetalRoughnessMap": {
+      "type": "boolean",
+      "value": true
+    },
+    "hasNormalMap": {
+      "type": "boolean",
+      "value": true
+    },
+    "lightIntensity": {
+      "type": "float",
+      "value": 500.0
+    },
+    "metalRoughnessMap": {
+      "type": "tex2d",
+      "value": "b914dd5a-e6ca-4d41-91f3-8bd1e12492d4"
+    },
+    "metalness": {
+      "type": "float",
+      "value": 0.0
+    },
+    "normalMap": {
+      "type": "tex2d",
+      "value": "49c37e77-4c37-416e-b1a1-75ad7431f925"
+    },
+    "normalStrength": {
+      "type": "float",
+      "value": 1.0
+    },
+    "roughness": {
+      "type": "float",
+      "value": 0.0
+    },
+    "tint": {
+      "type": "vec4",
+      "value": {
+        "w": 1.0,
+        "x": 1.0,
+        "y": 1.0,
+        "z": 1.0
+      }
+    }
+  }
+}

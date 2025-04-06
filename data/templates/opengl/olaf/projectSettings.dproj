@@ -1,41 +1,26 @@
 {
-  "graphicsApi": 3,
-  "lastOpenedScene": "c14cd4c3-f124-4b46-851a-1b780eb92f65",
-  "projectName": "",
+  "graphicsApi": 2,
+  "lastOpenedScene": "19431bd0-8b75-4c25-8130-590d5a0193e5",
+  "projectName": "Olaf",
   "view": {
     "modules": [
       {
-        "id": "c451d357-acce-4b49-8401-c2f16986e883",
-        "label": "Asset Browser",
-        "type": 4
-      },
-      {
-        "id": "d79f3bb1-d5bc-4f05-9161-ac0d8ed4cfa8",
-        "label": "SceneHierarchy",
-        "type": 1
-      },
-      {
-        "id": "3d78386c-7751-4f0f-ac57-d2c5ddbe0139",
-        "label": "Inspector",
-        "type": 5
-      },
-      {
         "camera": {
-          "aspectRatio": 1.2621564865112305,
+          "aspectRatio": 1.2068229913711548,
           "farPlane": 1000.0,
-          "fov": 90.0,
+          "fov": 45.0,
           "movementSpeed": 4.0,
           "nearPlane": 0.10000000149011612,
           "sensitivity": 0.15000000596046448,
           "transform": {
             "Position": {
-              "x": -5.3717875480651855,
-              "y": 11.72824478149414,
-              "z": 9.525208473205566
+              "x": 7.178058624267578,
+              "y": 5.638707160949707,
+              "z": 12.553520202636719
             },
             "Rotation": {
-              "x": 26.849790573120117,
-              "y": 23.55076789855957,
+              "x": 18.74998664855957,
+              "y": -30.30003547668457,
               "z": 0.0
             },
             "Scale": {
@@ -45,7 +30,7 @@
             }
           }
         },
-        "id": "ff785bda-748d-410e-b674-678b72432587",
+        "id": "a1ed0ed6-d92f-40f5-a9d9-397aff997cf4",
         "label": "Scene Viewer",
         "settings": {
           "aspectRatioConstraint": {
@@ -53,19 +38,39 @@
             "y": 9
           },
           "constraintType": 0,
-          "renderGrid": true,
+          "exposure": 1.399999976158142,
+          "renderGrid": false,
           "resolutionConstraint": {
             "x": 1024,
             "y": 1024
-          }
+          },
+          "samples": 4,
+          "tonemap": 0
         },
         "type": 3
       },
       {
-        "id": "02fbb456-1f17-43bf-bd69-e467d452475c",
+        "id": "04fba9fa-ab41-4589-bfc3-d1d9c6747627",
+        "label": "SceneHierarchy",
+        "type": 1
+      },
+      {
+        "id": "06c90036-0e02-4980-a54a-206f559f988f",
+        "label": "Inspector",
+        "type": 5
+      },
+      {
+        "id": "c79a9e45-c563-46f0-bcf3-c82e8c04f56a",
+        "label": "Asset Browser",
+        "openedPath": "",
+        "type": 4
+      },
+      {
+        "id": "d042ae2a-602c-4334-ba38-23466a51e58e",
         "label": "Performance",
         "type": 0
       }
-    ]
+    ],
+    "windowMaximized": true
   }
 }

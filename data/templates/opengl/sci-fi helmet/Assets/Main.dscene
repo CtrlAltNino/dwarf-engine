@@ -1,0 +1,53 @@
+{
+  "Graph": [
+    {
+      "MeshRendererComponent": {
+        "Hidden": false,
+        "Materials": {
+          "0": "75f702bc-f3e2-49ad-a50a-b9b54f01df45"
+        },
+        "Model": "74e0c6bb-49aa-4eb9-8e05-4572228c42bd"
+      },
+      "TransformComponent": {
+        "Position": {
+          "x": 0.0,
+          "y": 1.0,
+          "z": 0.0
+        },
+        "Rotation": {
+          "x": 0.0,
+          "y": 10.899999618530273,
+          "z": 0.0
+        },
+        "Scale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        }
+      },
+      "guid": "074c6956-8a31-44cc-a1e6-c47ae6e5e0b2",
+      "name": "Battle Damaged Sci-fi Helmet"
+    }
+  ],
+  "Settings": {
+    "FogSettings": {
+      "FogColor": [
+        0.30000001192092896,
+        0.30000001192092896,
+        0.30000001192092896
+      ],
+      "FogEnd": 50.0,
+      "FogStart": 20.0,
+      "FogType": 0
+    },
+    "GlobalLightSettings": {
+      "GlobalLightColor": [
+        0.800000011920929,
+        0.6000000238418579,
+        0.6000000238418579
+      ],
+      "GlobalLightIntensity": 0.20000000298023224
+    },
+    "SkyboxMaterial": ""
+  }
+}

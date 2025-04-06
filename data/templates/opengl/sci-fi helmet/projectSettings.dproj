@@ -1,0 +1,76 @@
+{
+  "graphicsApi": 2,
+  "lastOpenedScene": "cc4d4f7a-d032-4dee-a042-dcebe369e769",
+  "projectName": "Sci-fi Helmet",
+  "view": {
+    "modules": [
+      {
+        "camera": {
+          "aspectRatio": 1.2046908140182495,
+          "farPlane": 1000.0,
+          "fov": 45.0,
+          "movementSpeed": 4.0,
+          "nearPlane": 0.10000000149011612,
+          "sensitivity": 0.15000000596046448,
+          "transform": {
+            "Position": {
+              "x": -1.5601187944412231,
+              "y": 2.9205493927001953,
+              "z": 5.1142144203186035
+            },
+            "Rotation": {
+              "x": 21.60002326965332,
+              "y": 15.899139404296875,
+              "z": 0.0
+            },
+            "Scale": {
+              "x": 1.0,
+              "y": 1.0,
+              "z": 1.0
+            }
+          }
+        },
+        "id": "bca631b9-0793-4647-b651-38984f9858b2",
+        "label": "Scene Viewer",
+        "settings": {
+          "aspectRatioConstraint": {
+            "x": 16,
+            "y": 9
+          },
+          "constraintType": 0,
+          "exposure": 0.10000000149011612,
+          "renderGrid": false,
+          "resolutionConstraint": {
+            "x": 1024,
+            "y": 1024
+          },
+          "samples": 4,
+          "tonemap": 2
+        },
+        "type": 3
+      },
+      {
+        "id": "d82945c9-d65c-4e54-b603-867c5a772ce6",
+        "label": "SceneHierarchy",
+        "type": 1
+      },
+      {
+        "id": "d0987817-484e-403c-b72c-cfb54ac2e849",
+        "label": "Asset Browser",
+        "openedPath": "",
+        "type": 4
+      },
+      {
+        "id": "fa6282ef-9153-463c-8260-51f41cbcd7d6",
+        "label": "Inspector",
+        "type": 5
+      },
+      {
+        "id": "ab1b4af5-8263-4886-95d1-12e46dbcf511",
+        "label": "Performance",
+        "type": 0
+      }
+    ],
+    "windowMaximized": true
+  }
+}

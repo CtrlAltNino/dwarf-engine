@@ -190,7 +190,7 @@ namespace Dwarf
 
         // Setting up combo
         std::vector<std::string> templates = {
-          "Blank", "Olaf", "Sponza", "Damaged Helmet"
+          "Blank", "Olaf", "Crytek Sponza", "Sci-fi Helmet"
         };
 
         ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x);

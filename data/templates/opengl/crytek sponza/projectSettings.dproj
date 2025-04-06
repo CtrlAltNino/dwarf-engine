@@ -1,0 +1,76 @@
+{
+  "graphicsApi": 2,
+  "lastOpenedScene": "c7bb0360-0cce-4b05-902b-5a4b03b58915",
+  "projectName": "Crytek Sponza",
+  "view": {
+    "modules": [
+      {
+        "camera": {
+          "aspectRatio": 0.9498934149742126,
+          "farPlane": 1000.0,
+          "fov": 70.0,
+          "movementSpeed": 4.0,
+          "nearPlane": 0.10000000149011612,
+          "sensitivity": 0.15000000596046448,
+          "transform": {
+            "Position": {
+              "x": 9.154117584228516,
+              "y": 1.2353577613830566,
+              "z": -0.3047935962677002
+            },
+            "Rotation": {
+              "x": -2.99979305267334,
+              "y": -2608.3349609375,
+              "z": 0.0
+            },
+            "Scale": {
+              "x": 1.0,
+              "y": 1.0,
+              "z": 1.0
+            }
+          }
+        },
+        "id": "4369d84e-d3d0-4738-8c81-86d1cb17ffe5",
+        "label": "Scene Viewer",
+        "settings": {
+          "aspectRatioConstraint": {
+            "x": 16,
+            "y": 9
+          },
+          "constraintType": 0,
+          "exposure": 0.11299999803304672,
+          "renderGrid": false,
+          "resolutionConstraint": {
+            "x": 1024,
+            "y": 1024
+          },
+          "samples": 4,
+          "tonemap": 0
+        },
+        "type": 3
+      },
+      {
+        "id": "bbbf9f5c-b51d-46a5-814f-7029a60d92f0",
+        "label": "Performance",
+        "type": 0
+      },
+      {
+        "id": "48fba3e0-8e30-4947-a973-873f27fdb6e9",
+        "label": "Inspector",
+        "type": 5
+      },
+      {
+        "id": "4602cc91-23d4-4ac9-a143-c44fdbcda8b3",
+        "label": "SceneHierarchy",
+        "type": 1
+      },
+      {
+        "id": "5e84928c-73e9-490e-9d2f-68b0494c523f",
+        "label": "Asset Browser",
+        "openedPath": "",
+        "type": 4
+      }
+    ],
+    "windowMaximized": true
+  }
+}

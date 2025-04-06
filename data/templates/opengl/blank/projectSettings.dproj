@@ -1,0 +1,76 @@
+{
+  "graphicsApi": 0,
+  "lastOpenedScene": "",
+  "projectName": "Blank",
+  "view": {
+    "modules": [
+      {
+        "camera": {
+          "aspectRatio": 1.2217483520507813,
+          "farPlane": 1000.0,
+          "fov": 90.0,
+          "movementSpeed": 4.0,
+          "nearPlane": 0.10000000149011612,
+          "sensitivity": 0.15000000596046448,
+          "transform": {
+            "Position": {
+              "x": 0.01554776355624199,
+              "y": 5.546997547149658,
+              "z": 7.346517086029053
+            },
+            "Rotation": {
+              "x": 11.400014877319336,
+              "y": 0.44999992847442627,
+              "z": 0.0
+            },
+            "Scale": {
+              "x": 1.0,
+              "y": 1.0,
+              "z": 1.0
+            }
+          }
+        },
+        "id": "bca631b9-0793-4647-b651-38984f9858b2",
+        "label": "Scene Viewer",
+        "settings": {
+          "aspectRatioConstraint": {
+            "x": 16,
+            "y": 9
+          },
+          "constraintType": 0,
+          "exposure": 1.0,
+          "renderGrid": true,
+          "resolutionConstraint": {
+            "x": 1024,
+            "y": 1024
+          },
+          "samples": 4,
+          "tonemap": 0
+        },
+        "type": 3
+      },
+      {
+        "id": "d82945c9-d65c-4e54-b603-867c5a772ce6",
+        "label": "SceneHierarchy",
+        "type": 1
+      },
+      {
+        "id": "d0987817-484e-403c-b72c-cfb54ac2e849",
+        "label": "Asset Browser",
+        "openedPath": "",
+        "type": 4
+      },
+      {
+        "id": "fa6282ef-9153-463c-8260-51f41cbcd7d6",
+        "label": "Inspector",
+        "type": 5
+      },
+      {
+        "id": "ab1b4af5-8263-4886-95d1-12e46dbcf511",
+        "label": "Performance",
+        "type": 0
+      }
+    ],
+    "windowMaximized": true
+  }
+}

@@ -1,0 +1,77 @@
+{
+  "Graph": [
+    {
+      "MeshRendererComponent": {
+        "Hidden": false,
+        "Materials": {
+          "0": "9d6108f8-f82c-456b-8a6d-fae2d74255e7",
+          "1": "be43ab53-be58-459f-b1be-b2bb265dfcdd",
+          "10": "b60f35b1-8f1d-4fba-b08e-7cdfaaf7b7e2",
+          "11": "ceeefc79-c799-4ef6-849b-d835c0167c6a",
+          "12": "bd355350-77a1-4724-9b3d-293250e7e8ff",
+          "13": "a3b853c1-05f9-4450-a93a-0e62a9cc4739",
+          "14": "c2350fc3-888d-43eb-9e53-d7af0e95207d",
+          "15": "55b2f047-feb8-4357-9ea8-ab44d9e07df7",
+          "16": "eba84424-94d4-4fff-a4e8-a1c14ec2f2f0",
+          "17": "4ebb5cbb-ea6d-4766-b9d0-c9ffa2a8d626",
+          "18": "e95839e8-5742-4efe-a576-8eb2941aafda",
+          "19": "02484180-7695-447f-a266-9cc7fc827321",
+          "2": "a409c1f1-cd9b-429d-be69-8f133618abcc",
+          "20": "a2e0956d-d37e-4483-9e2f-61743b1e6b25",
+          "21": "ea5a362e-abc7-47a6-bd0e-b558de11fd49",
+          "22": "3b89ed83-ec17-47b0-a18c-aeef62a75c4c",
+          "23": "e1df81df-1558-4cbd-9002-4cb2746a0208",
+          "24": "1fa5f8c8-4547-40bf-9c56-0a81babaadf4",
+          "3": "0a005097-5a80-4ae1-bffc-a8a2413727fb",
+          "4": "3315fab5-a5ba-4c1d-9bb6-d5243129ce5d",
+          "5": "6d86a0f2-9a9b-496f-ab88-1aae1f9c5e67",
+          "6": "7983e70a-b738-4878-8fe7-1d8bf9257526",
+          "7": "099492d9-d70a-48c9-bb5c-4d9f66a3b888",
+          "8": "ebcb1e72-05c4-48f5-8d00-4064e4d124b7",
+          "9": "4d512e00-e3f7-4816-99ad-f86aaf4ee7ac"
+        },
+        "Model": "4edf0ae7-2d86-40d4-a8e2-79a5b1326dc9"
+      },
+      "TransformComponent": {
+        "Position": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "Rotation": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "Scale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        }
+      },
+      "guid": "0aaeb7e5-ab5c-4db6-a022-d195bf3b5d93",
+      "name": "Sponza Atrium"
+    }
+  ],
+  "Settings": {
+    "FogSettings": {
+      "FogColor": [
+        0.30000001192092896,
+        0.30000001192092896,
+        0.30000001192092896
+      ],
+      "FogEnd": 50.0,
+      "FogStart": 20.0,
+      "FogType": 0
+    },
+    "GlobalLightSettings": {
+      "GlobalLightColor": [
+        0.800000011920929,
+        0.6000000238418579,
+        0.6000000238418579
+      ],
+      "GlobalLightIntensity": 0.20000000298023224
+    },
+    "SkyboxMaterial": ""
+  }
+}
