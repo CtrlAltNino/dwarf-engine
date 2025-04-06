@@ -153,6 +153,7 @@ namespace Dwarf
         if (ImGui::Selectable("None", !hasValue, 0, ImVec2(0, 16 + 10)))
         {
           assetRef = std::nullopt;
+          hasValue = false;
           interacted = true;
         }
 
@@ -225,6 +226,7 @@ namespace Dwarf
                               ImVec2(0, 16 + 10)))
         {
           assetRef = std::nullopt;
+          hasValue = false;
           interacted = true;
         }
 
