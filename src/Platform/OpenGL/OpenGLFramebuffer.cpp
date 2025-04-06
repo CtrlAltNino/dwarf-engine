@@ -240,6 +240,9 @@ namespace Dwarf
     glBindFramebuffer(GL_FRAMEBUFFER, mRendererID);
     GenerateAttachments();
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    mVramTracker->RemoveFramebufferMemory(mCurrentVramMemory);
+    mCurrentVramMemory = mVramTracker->AddFramebufferMemory(mSpecification);
   }
 
   void
