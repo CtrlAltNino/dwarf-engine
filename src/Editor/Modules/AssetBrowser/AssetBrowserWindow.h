@@ -79,6 +79,7 @@ namespace Dwarf
     std::shared_ptr<ISceneIO>              mSceneIo;
     std::shared_ptr<ILoadedScene>          mLoadedScene;
     std::unique_ptr<IAssetBrowserListener> mAssetBrowserListener;
+    bool                                   mDockspaceIsSetup = false;
 
     AssetBrowserData        mData;
     DirectoryStructureCache mDirectoryStructureCache;

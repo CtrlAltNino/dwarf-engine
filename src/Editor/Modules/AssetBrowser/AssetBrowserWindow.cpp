@@ -120,16 +120,24 @@ namespace Dwarf
     ImGui::DockBuilderAddNode(imguiId, ImGuiDockNodeFlags_HiddenTabBar);
 
     footerID = ImGui::DockBuilderSplitNode(
-      imguiId, ImGuiDir_Down, 0.07F, nullptr, &imguiId);
+      imguiId, ImGuiDir_Down, 0.05F, nullptr, &imguiId);
     ImGuiID folderStructureID = ImGui::DockBuilderSplitNode(
       imguiId, ImGuiDir_Left, 0.3F, nullptr, &imguiId);
     ImGuiID folderContent = ImGui::DockBuilderSplitNode(
       folderStructureID, ImGuiDir_Right, 0.7F, nullptr, &folderStructureID);
 
+    std::string folderStructureWindowName =
+      "FolderStructure##" + std::string(mId->toString());
+    std::string footerWindowName = "Footer##" + std::string(mId->toString());
+    std::string folderContentWindowName =
+      "FolderContent##" + std::string(mId->toString());
+
     // 6. Add windows to each docking space:
-    ImGui::DockBuilderDockWindow("FolderStructure", folderStructureID);
-    ImGui::DockBuilderDockWindow("Footer", footerID);
-    ImGui::DockBuilderDockWindow("FolderContent", folderContent);
+    ImGui::DockBuilderDockWindow(folderStructureWindowName.c_str(),
+                                 folderStructureID);
+    ImGui::DockBuilderDockWindow(footerWindowName.c_str(), footerID);
+    ImGui::DockBuilderDockWindow(folderContentWindowName.c_str(),
+                                 folderContent);
 
     // 7. We're done setting up our docking configuration:
     ImGui::DockBuilderFinish(imguiId);
@@ -143,11 +151,13 @@ namespace Dwarf
       return;
     }
 
-    if (mInputManager->GetMouseButtonDown(MOUSE_BUTTON::MOUSE_BUTTON_4))
+    if (ImGui::IsWindowFocused() &&
+        mInputManager->GetMouseButtonDown(MOUSE_BUTTON::MOUSE_BUTTON_4))
     {
       GoBack();
     }
-    else if (mInputManager->GetMouseButtonDown(MOUSE_BUTTON::MOUSE_BUTTON_5))
+    else if (ImGui::IsWindowFocused() &&
+             mInputManager->GetMouseButtonDown(MOUSE_BUTTON::MOUSE_BUTTON_5))
     {
       GoForward();
     }
@@ -215,34 +225,40 @@ namespace Dwarf
   void
   AssetBrowserWindow::OnImGuiRender()
   {
+    std::string dockspaceStr = "AssetBrowser_" + mId->toString();
+    ImGuiID     dockspaceID = ImGui::GetID(dockspaceStr.c_str());
+
+    // std::string windowTitle = "AssetBrowser##" + mId->toString();
+
+    ImGui::PushID(ImGui::GetID(mId->toString().c_str()));
+
     ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(500, 500));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
-    if (!ImGui::Begin(GetIdentifier().c_str(), &mWindowOpened, 0))
+    if (ImGui::Begin(GetIdentifier().c_str(), &mWindowOpened, 0))
     {
-      // Early out if the window is collapsed, as an optimization.
-      ImGui::End();
       ImGui::PopStyleVar(2);
-      return;
+
+      ImGuiDockNodeFlags dockspaceFlags = ImGuiDockNodeFlags_None;
+      dockspaceFlags |= ImGuiDockNodeFlags_HiddenTabBar;
+      /*ImGuiID dockspaceId = ImGui::GetID(
+        fmt::format("{}_{}", "AssetBrowserDockspace",
+        mId->toString()).c_str());*/
+
+      ImGui::DockSpace(dockspaceID, ImVec2(0.0F, 0.0F), dockspaceFlags);
+      if (!mDockspaceIsSetup)
+      {
+        mDockspaceIsSetup = true;
+        SetupDockspace(dockspaceID);
+      }
+
+      ImGui::End();
+
+      RenderDirectoryStructure();
+      RenderDirectoryContent();
+      RenderFooter();
     }
-    ImGui::PopStyleVar(2);
 
-    ImGuiDockNodeFlags dockspaceFlags = ImGuiDockNodeFlags_None;
-    dockspaceFlags |= ImGuiDockNodeFlags_HiddenTabBar;
-    ImGuiID dockspaceId = ImGui::GetID("AssetBrowserDockspace");
-    ImGui::DockSpace(dockspaceId, ImVec2(0.0F, 0.0F), dockspaceFlags);
-
-    static bool firstFrame = true;
-    if (firstFrame)
-    {
-      firstFrame = false;
-      SetupDockspace(dockspaceId);
-    }
-
-    RenderDirectoryStructure();
-    RenderDirectoryContent();
-    RenderFooter();
-
-    ImGui::End();
+    ImGui::PopID();
   }
 
   void
@@ -375,9 +391,11 @@ namespace Dwarf
     ImGuiWindowFlags windowFlags = 0;
     windowFlags |= ImGuiWindowFlags_NoTitleBar;
     windowFlags |= ImGuiWindowFlags_NoMove;
+    std::string folderStructureWindowName =
+      "FolderStructure##" + std::string(mId->toString());
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(150, 150));
-    ImGui::Begin("FolderStructure", nullptr, windowFlags);
+    ImGui::Begin(folderStructureWindowName.c_str(), nullptr, windowFlags);
     RenderDirectoryStructureCacheRecursively(
       mDirectoryStructureCache.RootDirectoryData);
     ImGui::End();
@@ -387,13 +405,15 @@ namespace Dwarf
   void
   AssetBrowserWindow::RenderFooter()
   {
+    std::string footerWindowName = "Footer##" + std::string(mId->toString());
     ImGuiWindowFlags windowFlags = 0;
     windowFlags |= ImGuiWindowFlags_NoTitleBar;
     windowFlags |= ImGuiWindowFlags_NoMove;
     windowFlags |= ImGuiWindowFlags_NoResize;
+    windowFlags |= ImGuiWindowFlags_NoScrollbar;
     ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(500, 500));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(5.0F, 5.0F));
-    ImGui::Begin("Footer", nullptr, windowFlags);
+    ImGui::Begin(footerWindowName.c_str(), nullptr, windowFlags);
     if (ImGui::Button("<", ImVec2(20, 20)))
     {
       GoBack();
@@ -427,8 +447,10 @@ namespace Dwarf
     ImGuiWindowFlags windowFlags = 0;
     windowFlags |= ImGuiWindowFlags_NoTitleBar;
     windowFlags |= ImGuiWindowFlags_NoMove;
+    std::string folderContentWindowName =
+      "FolderContent##" + std::string(mId->toString());
 
-    ImGui::Begin("FolderContent", &mWindowOpened, windowFlags);
+    ImGui::Begin(folderContentWindowName.c_str(), &mWindowOpened, windowFlags);
 
     // Rendering the entries
     {
