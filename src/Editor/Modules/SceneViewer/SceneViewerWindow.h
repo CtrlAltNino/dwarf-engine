@@ -56,7 +56,7 @@ namespace Dwarf
     glm::ivec2  ViewportSize;
     bool        CameraMovement = false;
     bool        RenderGrid = true;
-    TonemapType Tonemap = TonemapType::Agx;
+    TonemapType Tonemap = TonemapType::Reinhard;
   };
 
   /// @brief Module to render a window that displays the scene and render
