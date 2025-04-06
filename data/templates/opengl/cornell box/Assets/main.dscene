@@ -1,0 +1,60 @@
+{
+  "Graph": [
+    {
+      "MeshRendererComponent": {
+        "Hidden": false,
+        "Materials": {
+          "1": "73defa08-16c9-4506-92d4-348ac64fc18e",
+          "2": "880334fb-85ba-4e99-9def-389dc80b1d81",
+          "3": "f0cf487c-9778-466a-8bed-5fa92c876c9c",
+          "4": "f0cf487c-9778-466a-8bed-5fa92c876c9c",
+          "5": "f0cf487c-9778-466a-8bed-5fa92c876c9c",
+          "6": "71cbff61-2198-4c8e-8cdb-cff90958a1dc",
+          "7": "6aa0e475-0983-4adb-83e9-cc76a5ec449b",
+          "8": "6aa0e475-0983-4adb-83e9-cc76a5ec449b"
+        },
+        "Model": "9897c684-7aec-479b-a10e-e71738765304"
+      },
+      "TransformComponent": {
+        "Position": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "Rotation": {
+          "x": 8.673750357957033e-07,
+          "y": 51.18590545654297,
+          "z": 8.334978360835521e-07
+        },
+        "Scale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        }
+      },
+      "guid": "15fa13e8-1c52-4b25-b517-6bff39557e2a",
+      "name": "Cornell Box"
+    }
+  ],
+  "Settings": {
+    "FogSettings": {
+      "FogColor": [
+        0.30000001192092896,
+        0.30000001192092896,
+        0.30000001192092896
+      ],
+      "FogEnd": 50.0,
+      "FogStart": 20.0,
+      "FogType": 0
+    },
+    "GlobalLightSettings": {
+      "GlobalLightColor": [
+        0.800000011920929,
+        0.6000000238418579,
+        0.6000000238418579
+      ],
+      "GlobalLightIntensity": 0.20000000298023224
+    },
+    "SkyboxMaterial": ""
+  }
+}

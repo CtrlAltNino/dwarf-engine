@@ -1,0 +1,76 @@
+{
+  "graphicsApi": 2,
+  "lastOpenedScene": "2123570e-8fdc-4229-96b0-dd197a87f3c5",
+  "projectName": "Cornell Box",
+  "view": {
+    "modules": [
+      {
+        "camera": {
+          "aspectRatio": 1.10660982131958,
+          "farPlane": 1000.0,
+          "fov": 60.0,
+          "movementSpeed": 4.0,
+          "nearPlane": 0.10000000149011612,
+          "sensitivity": 0.15000000596046448,
+          "transform": {
+            "Position": {
+              "x": 2.080063819885254,
+              "y": 0.7428520321846008,
+              "z": 1.6968300342559814
+            },
+            "Rotation": {
+              "x": -0.7498410940170288,
+              "y": -50.84928512573242,
+              "z": 0.0
+            },
+            "Scale": {
+              "x": 1.0,
+              "y": 1.0,
+              "z": 1.0
+            }
+          }
+        },
+        "id": "983d5fcc-50cf-4dc0-8e6a-af3fb82bc62c",
+        "label": "Scene Viewer",
+        "settings": {
+          "aspectRatioConstraint": {
+            "x": 16,
+            "y": 9
+          },
+          "constraintType": 0,
+          "exposure": 0.10000000149011612,
+          "renderGrid": false,
+          "resolutionConstraint": {
+            "x": 1024,
+            "y": 1024
+          },
+          "samples": 4,
+          "tonemap": 0
+        },
+        "type": 3
+      },
+      {
+        "id": "ff2f3623-3194-452a-86a3-bcac2c2dd28c",
+        "label": "SceneHierarchy",
+        "type": 1
+      },
+      {
+        "id": "6f47aafc-2e10-469f-b2d7-2a87895fb1b4",
+        "label": "Asset Browser",
+        "openedPath": "",
+        "type": 4
+      },
+      {
+        "id": "c8f0a2e2-27a7-4e26-a122-3b2f46995c7b",
+        "label": "Inspector",
+        "type": 5
+      },
+      {
+        "id": "9233cccc-3798-4d65-8326-694b3e3face9",
+        "label": "Performance",
+        "type": 0
+      }
+    ],
+    "windowMaximized": true
+  }
+}

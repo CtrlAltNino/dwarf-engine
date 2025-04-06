@@ -9,7 +9,8 @@ namespace Dwarf
     Blank,
     Olaf,
     CrytekSponza,
-    ScifiHelmet
+    ScifiHelmet,
+    CornellBox
   };
 
   /// @brief Interface for the project creator.
