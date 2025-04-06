@@ -495,7 +495,7 @@ namespace Dwarf
         {
           newProjectName[0] = '\0';
           currentTemplateIndex = 0;
-          currentApiIndex = 0;
+          currentApiIndex = 2;
           ImGui::CloseCurrentPopup();
         }
         ImGui::PopFont();
