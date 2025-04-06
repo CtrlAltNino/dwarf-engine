@@ -107,9 +107,9 @@ namespace Dwarf
 #endif
           }
 
-          templateProjectDirectory =
-            std::filesystem::path("data/demo projects") / templateApiDirectory /
-            templateProjectDirectory;
+          templateProjectDirectory = std::filesystem::path("data/templates") /
+                                     templateApiDirectory /
+                                     templateProjectDirectory;
           std::string copyCommand;
 
 #ifdef _WIN32
