@@ -290,6 +290,11 @@ namespace Dwarf
                                uint32_t      width,
                                uint32_t      height)
   {
+    if (!source.GetDepthAttachment().has_value() ||
+        !destination.GetDepthAttachment().has_value())
+    {
+      return;
+    }
     auto* sourceFB = dynamic_cast<OpenGLFramebuffer*>(&source);
     auto* destinationFB = dynamic_cast<OpenGLFramebuffer*>(&destination);
     glBindFramebuffer(GL_READ_FRAMEBUFFER,
@@ -410,8 +415,8 @@ namespace Dwarf
     mStateTracker->SetViewport(
       0,
       0,
-      buffer.GetReadFramebuffer().GetSpecification().Width,
-      buffer.GetReadFramebuffer().GetSpecification().Height);
+      buffer.GetReadFramebuffer().lock()->GetSpecification().Width,
+      buffer.GetReadFramebuffer().lock()->GetSpecification().Height);
 
     OpenGLUtilities::CheckOpenGLError("glClear", "OpenGLRendererApi", mLogger);
     mStateTracker->SetShaderProgram(shader.GetID());
@@ -435,7 +440,7 @@ namespace Dwarf
       }
     }
 
-    buffer.GetWriteFramebuffer().Bind();
+    buffer.GetWriteFramebuffer().lock()->Bind();
 
     shader.SetUniform(
       "uInverseViewProjection",
@@ -453,7 +458,7 @@ namespace Dwarf
       glDisable(GL_FRAMEBUFFER_SRGB);
     }
     oglMesh.Unbind();
-    buffer.GetWriteFramebuffer().Unbind();
+    buffer.GetWriteFramebuffer().lock()->Unbind();
   }
 
   auto
