@@ -137,13 +137,13 @@ namespace Dwarf
     // ==================== Resolve MSAA ====================
 
     mRendererApi->Blit(*mRenderFramebuffer,
-                       mHdrPingPong->GetWriteFramebuffer(),
+                       *mHdrPingPong->GetWriteFramebuffer().lock(),
                        0,
                        0,
                        mRenderFramebuffer->GetSpecification().Width,
                        mRenderFramebuffer->GetSpecification().Height);
     mRendererApi->BlitDepth(*mRenderFramebuffer,
-                            mHdrPingPong->GetWriteFramebuffer(),
+                            *mHdrPingPong->GetWriteFramebuffer().lock(),
                             mRenderFramebuffer->GetSpecification().Width,
                             mRenderFramebuffer->GetSpecification().Height);
     mHdrPingPong->Swap();
@@ -154,13 +154,17 @@ namespace Dwarf
 
     // ==================== Tonemapping ====================
 
-    mRendererApi->CustomBlit(mHdrPingPong->GetReadFramebuffer(),
-                             mLdrPingPong->GetWriteFramebuffer(),
-                             0,
-                             0,
-                             mTonemapMaterial,
-                             false);
-    mLdrPingPong->Swap();
+    if (mHdrPingPong && mHdrPingPong->GetReadFramebuffer().lock() &&
+        mLdrPingPong && mLdrPingPong->GetWriteFramebuffer().lock())
+    {
+      mRendererApi->CustomBlit(*mHdrPingPong->GetReadFramebuffer().lock(),
+                               *mLdrPingPong->GetWriteFramebuffer().lock(),
+                               0,
+                               0,
+                               mTonemapMaterial,
+                               false);
+      mLdrPingPong->Swap();
+    }
 
     // ==================== LDR Post Processing ====================
 
@@ -168,7 +172,11 @@ namespace Dwarf
     {
       mGridMaterial->GetShaderParameters()->SetParameter(
         "uSceneDepth",
-        mHdrPingPong->GetReadFramebuffer().GetDepthAttachment().value().get());
+        mHdrPingPong->GetReadFramebuffer()
+          .lock()
+          ->GetDepthAttachment()
+          .value()
+          .get());
       mGridMaterial->GetShaderParameters()->SetParameter(
         "uSceneColor", mLdrPingPong->GetReadTexture());
       mGridMaterial->GetShaderParameters()->SetParameter(
@@ -183,7 +191,7 @@ namespace Dwarf
 
     // ==================== Presentation ====================
 
-    mRendererApi->Blit(mLdrPingPong->GetReadFramebuffer(),
+    mRendererApi->Blit(*mLdrPingPong->GetReadFramebuffer().lock(),
                        *mPresentationBuffer,
                        0,
                        0,

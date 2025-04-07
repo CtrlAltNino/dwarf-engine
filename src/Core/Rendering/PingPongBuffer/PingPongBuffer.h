@@ -11,8 +11,8 @@ namespace Dwarf
   private:
     std::shared_ptr<IFramebufferFactory>         mFramebufferFactory;
     FramebufferSpecification                     mSpec;
-    std::array<std::unique_ptr<IFramebuffer>, 2> mBuffers;
-    bool                                         mHorizontal;
+    std::array<std::shared_ptr<IFramebuffer>, 2> mBuffers;
+    bool                                         mHorizontal = false;
 
   public:
     PingPongBuffer(std::shared_ptr<IFramebufferFactory> framebufferFactory,
@@ -40,7 +40,7 @@ namespace Dwarf
      * @return Reference to the read framebuffer
      */
     auto
-    GetReadFramebuffer() -> IFramebuffer& override;
+    GetReadFramebuffer() -> std::weak_ptr<IFramebuffer> override;
 
     /**
      * @brief Returns the framebuffers currently designate to write to
@@ -48,7 +48,7 @@ namespace Dwarf
      * @return Reference to the write framebuffer
      */
     auto
-    GetWriteFramebuffer() -> IFramebuffer& override;
+    GetWriteFramebuffer() -> std::weak_ptr<IFramebuffer> override;
 
     /**
      * @brief Returns the texture of the read framebuffer

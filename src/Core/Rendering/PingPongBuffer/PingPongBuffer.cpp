@@ -28,15 +28,15 @@ namespace Dwarf
   }
 
   auto
-  PingPongBuffer::GetReadFramebuffer() -> IFramebuffer&
+  PingPongBuffer::GetReadFramebuffer() -> std::weak_ptr<IFramebuffer>
   {
-    return *mBuffers[static_cast<int>(!mHorizontal)];
+    return mBuffers[static_cast<int>(!mHorizontal)];
   }
 
   auto
-  PingPongBuffer::GetWriteFramebuffer() -> IFramebuffer&
+  PingPongBuffer::GetWriteFramebuffer() -> std::weak_ptr<IFramebuffer>
   {
-    return *mBuffers[static_cast<int>(mHorizontal)];
+    return mBuffers[static_cast<int>(mHorizontal)];
   }
 
   auto

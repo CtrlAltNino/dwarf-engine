@@ -30,7 +30,7 @@ namespace Dwarf
      * @return Reference to the read framebuffer
      */
     virtual auto
-    GetReadFramebuffer() -> IFramebuffer& = 0;
+    GetReadFramebuffer() -> std::weak_ptr<IFramebuffer> = 0;
 
     /**
      * @brief Returns the framebuffers currently designate to write to
@@ -38,7 +38,7 @@ namespace Dwarf
      * @return Reference to the write framebuffer
      */
     virtual auto
-    GetWriteFramebuffer() -> IFramebuffer& = 0;
+    GetWriteFramebuffer() -> std::weak_ptr<IFramebuffer> = 0;
 
     /**
      * @brief Returns the texture of the read framebuffer
