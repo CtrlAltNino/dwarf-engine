@@ -3,6 +3,7 @@
 #include "Core/Rendering/Framebuffer/IFramebuffer.h"
 #include "Core/Rendering/Material/IMaterial.h"
 #include "Core/Rendering/MeshBuffer/IMeshBuffer.h"
+#include "Core/Rendering/PingPongBuffer/IPingPongBuffer.h"
 #include "Core/Rendering/Shader/IComputeShader.h"
 #include "Core/Scene/Camera/ICamera.h"
 
@@ -107,6 +108,20 @@ namespace Dwarf
          uint32_t      height) = 0;
 
     /**
+     * @brief Blits the depth information of one framebuffer to another
+     *
+     * @param source Source framebuffer
+     * @param destination Destination framebuffer
+     * @param width Width of the framebuffers
+     * @param height Height of the framebuffers
+     */
+    virtual void
+    BlitDepth(IFramebuffer& source,
+              IFramebuffer& destination,
+              uint32_t      width,
+              uint32_t      height) = 0;
+
+    /**
      * @brief Blits the content of one framebuffer to another using a custom
      * shader
      *
@@ -125,6 +140,12 @@ namespace Dwarf
                uint32_t                   destinationAttachment,
                std::shared_ptr<IMaterial> material,
                bool                       srgb) = 0;
+
+    virtual void
+    ApplyPostProcess(IPingPongBuffer& buffer,
+                     ICamera&         camera,
+                     IMaterial&       material,
+                     bool             srgb) = 0;
 
     /**
      * @brief Returns information about the vram usage

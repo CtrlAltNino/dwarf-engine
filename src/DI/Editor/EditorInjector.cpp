@@ -35,6 +35,7 @@
 #include "Core/Rendering/Mesh/MeshFactory.h"
 #include "Core/Rendering/MeshBuffer/MeshBufferFactory.h"
 #include "Core/Rendering/MeshBuffer/MeshBufferWorker/MeshBufferWorker.h"
+#include "Core/Rendering/PingPongBuffer/PingPongBufferFactory.h"
 #include "Core/Rendering/Pipelines/RenderingPipelineFactory.h"
 #include "Core/Rendering/PreviewRenderer/MaterialPreview/IMaterialPreview.h"
 #include "Core/Rendering/PreviewRenderer/MaterialPreview/MaterialPreview.h"
@@ -172,6 +173,7 @@ namespace Dwarf
           boost::di::bind<IEditorSelection>.to<EditorSelection>().in(
           boost::di::extension::shared),
           boost::di::bind<IFramebufferFactory>.to<FramebufferFactory>().in(boost::di::extension::shared),
+          boost::di::bind<IPingPongBufferFactory>.to<PingPongBufferFactory>().in(boost::di::extension::shared),
           boost::di::bind<IShaderParameterCollectionFactory>.to<ShaderParameterCollectionFactory>().in(boost::di::extension::shared),
           boost::di::bind<IShaderSourceCollectionFactory>.to<ShaderSourceCollectionFactory>().in(boost::di::extension::shared),
           boost::di::bind<IShaderFactory>.to<ShaderFactory>().in(boost::di::extension::shared),

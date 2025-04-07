@@ -168,10 +168,12 @@ namespace Dwarf
     if (mColorAttachments.size() > 1)
     {
       // Multiple color-passes
-      std::array<GLenum, 4> buffers = { GL_COLOR_ATTACHMENT0,
-                                        GL_COLOR_ATTACHMENT1,
-                                        GL_COLOR_ATTACHMENT2,
-                                        GL_COLOR_ATTACHMENT3 };
+      std::vector<GLenum> buffers;
+      buffers.reserve(mColorAttachments.size());
+      for (auto& attachment : mColorAttachments)
+      {
+        buffers.push_back(GL_COLOR_ATTACHMENT0 + buffers.size());
+      }
       glDrawBuffers(buffers.size(), buffers.data());
       OpenGLUtilities::CheckOpenGLError(
         "glDrawBuffers", "OpenGLFramebuffer", mLogger);
@@ -243,6 +245,15 @@ namespace Dwarf
 
     mVramTracker->RemoveFramebufferMemory(mCurrentVramMemory);
     mCurrentVramMemory = mVramTracker->AddFramebufferMemory(mSpecification);
+  }
+
+  void
+  OpenGLFramebuffer::SetDrawBuffer(uint32_t index)
+  {
+    if (index < mColorAttachments.size())
+    {
+      glDrawBuffer(GL_COLOR_ATTACHMENT0 + index);
+    }
   }
 
   void
@@ -415,6 +426,21 @@ namespace Dwarf
     return std::nullopt;
   }
 
+  auto
+  OpenGLFramebuffer::GetDepthAttachment() const
+    -> std::optional<const std::reference_wrapper<ITexture>>
+  {
+    if (mDepthAttachment)
+    {
+      // Return the address of the value at the specified index
+      return *mDepthAttachment;
+    }
+
+    // If the index is out of bounds, return nullptr or handle the error
+    // accordingly
+    return std::nullopt;
+  }
+
   // @brief: Clears the framebuffer
   void
   OpenGLFramebuffer::Clear()
@@ -427,12 +453,13 @@ namespace Dwarf
 
   // @brief: Clears the framebuffer with the given color
   void
-  OpenGLFramebuffer::Clear(glm::vec4 clearColor)
+  OpenGLFramebuffer::Clear(uint32_t index, glm::vec4 clearColor)
   {
     Bind();
-    glClearColor(clearColor.r, clearColor.g, clearColor.b, clearColor.a);
-    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-    OpenGLUtilities::CheckOpenGLError("glClear", "OpenGLFramebuffer", mLogger);
+    glClearBufferfv(
+      GL_COLOR, GL_COLOR_ATTACHMENT0 + index, glm::value_ptr(clearColor));
+    OpenGLUtilities::CheckOpenGLError(
+      "glClearBufferfv", "OpenGLFramebuffer", mLogger);
     Unbind();
   }
 

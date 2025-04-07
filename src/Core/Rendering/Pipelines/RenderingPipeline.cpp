@@ -18,7 +18,8 @@ namespace Dwarf
     std::shared_ptr<IMeshBufferFactory>          meshBufferFactory,
     std::shared_ptr<IFramebufferFactory>         framebufferFactory,
     const std::shared_ptr<IDrawCallListFactory>& drawCallListFactory,
-    const std::shared_ptr<IDrawCallWorkerFactory>& drawCallWorkerFactory)
+    const std::shared_ptr<IDrawCallWorkerFactory>& drawCallWorkerFactory,
+    const std::shared_ptr<IPingPongBufferFactory>& pingPongBufferFactory)
     : mRendererApi(std::move(rendererApi))
     , mMaterialFactory(std::move(materialFactory))
     , mShaderRegistry(std::move(shaderRegistry))
@@ -41,15 +42,9 @@ namespace Dwarf
     mGridMaterial->GetMaterialProperties().IsDoubleSided = true;
     mGridMaterial->GetMaterialProperties().IsTransparent = true;
 
-    std::unique_ptr<IMesh> gridMesh = mMeshFactory->CreatePlane();
-    mGridMeshBuffer = std::move(mMeshBufferFactory->Create(gridMesh));
-
-    mGridModelMatrix = glm::mat4(1.0F);
-    mGridModelMatrix = glm::scale(mGridModelMatrix, glm::vec3(3000.0F));
-
     SetupRenderFramebuffer();
 
-    SetupNonMsaaFramebuffer();
+    SetupPingPongBuffers(pingPongBufferFactory);
 
     SetupPresentationFramebuffer();
 
@@ -66,15 +61,25 @@ namespace Dwarf
   void
   RenderingPipeline::SetupRenderFramebuffer()
   {
-    mFramebuffer = mFramebufferFactory->Create(GetSpecification());
+    FramebufferSpecification spec = GetSpecification();
+    mRenderFramebuffer = mFramebufferFactory->Create(spec);
   }
 
   void
-  RenderingPipeline::SetupNonMsaaFramebuffer()
+  RenderingPipeline::SetupPingPongBuffers(
+    const std::shared_ptr<IPingPongBufferFactory>& pingPongBufferFactory)
   {
-    FramebufferSpecification nonMsaaSpec = GetSpecification();
-    nonMsaaSpec.Samples = 1;
-    mNonMsaaBuffer = mFramebufferFactory->Create(nonMsaaSpec);
+    FramebufferSpecification hdrPingPongSpec;
+    FramebufferSpecification ldrPingPongSpec;
+    hdrPingPongSpec.Attachments.Attachments.emplace_back(
+      FramebufferTextureFormat::RGBA16F);
+    hdrPingPongSpec.Attachments.Attachments.emplace_back(
+      FramebufferTextureFormat::DEPTH);
+    ldrPingPongSpec.Attachments.Attachments.emplace_back(
+      FramebufferTextureFormat::SRGBA8);
+
+    mHdrPingPong = pingPongBufferFactory->Create(hdrPingPongSpec);
+    mLdrPingPong = pingPongBufferFactory->Create(ldrPingPongSpec);
   }
 
   void
@@ -99,17 +104,19 @@ namespace Dwarf
   }
 
   void
-  RenderingPipeline::RenderScene(ICamera& camera, bool renderGrid)
+  RenderingPipeline::RenderScene(ICamera& camera, GridSettings gridSettings)
   {
-    mFramebuffer->Bind();
-    mRendererApi->Clear();
+    // ==================== Scene Rendering ====================
+
+    mRenderFramebuffer->Bind();
+    mRenderFramebuffer->SetDrawBuffer(0);
     mRendererApi->SetViewport(0,
                               0,
-                              mFramebuffer->GetSpecification().Width,
-                              mFramebuffer->GetSpecification().Height);
+                              mRenderFramebuffer->GetSpecification().Width,
+                              mRenderFramebuffer->GetSpecification().Height);
+    mRendererApi->Clear();
 
     // TODO: Render skybox
-
     {
       std::lock_guard<std::mutex> lock(mDrawCallList->GetMutex());
       for (auto& drawCall : mDrawCallList->GetDrawCalls())
@@ -124,57 +131,64 @@ namespace Dwarf
         }
       }
     }
-    mFramebuffer->Unbind();
 
-    if (mFramebuffer->GetSpecification().Samples > 1)
+    mRenderFramebuffer->Unbind();
+
+    // ==================== Resolve MSAA ====================
+
+    mRendererApi->Blit(*mRenderFramebuffer,
+                       mHdrPingPong->GetWriteFramebuffer(),
+                       0,
+                       0,
+                       mRenderFramebuffer->GetSpecification().Width,
+                       mRenderFramebuffer->GetSpecification().Height);
+    mRendererApi->BlitDepth(*mRenderFramebuffer,
+                            mHdrPingPong->GetWriteFramebuffer(),
+                            mRenderFramebuffer->GetSpecification().Width,
+                            mRenderFramebuffer->GetSpecification().Height);
+    mHdrPingPong->Swap();
+
+    // ==================== HDR Post Processing ====================
+
+    // TODO
+
+    // ==================== Tonemapping ====================
+
+    mRendererApi->CustomBlit(mHdrPingPong->GetReadFramebuffer(),
+                             mLdrPingPong->GetWriteFramebuffer(),
+                             0,
+                             0,
+                             mTonemapMaterial,
+                             false);
+    mLdrPingPong->Swap();
+
+    // ==================== LDR Post Processing ====================
+
+    if (gridSettings.RenderGrid)
     {
-      mRendererApi->Blit(*mFramebuffer,
-                         *mNonMsaaBuffer,
-                         0,
-                         0,
-                         mFramebuffer->GetSpecification().Width,
-                         mFramebuffer->GetSpecification().Height);
+      mGridMaterial->GetShaderParameters()->SetParameter(
+        "uSceneDepth",
+        mHdrPingPong->GetReadFramebuffer().GetDepthAttachment().value().get());
+      mGridMaterial->GetShaderParameters()->SetParameter(
+        "uSceneColor", mLdrPingPong->GetReadTexture());
+      mGridMaterial->GetShaderParameters()->SetParameter(
+        "uGridHeight", gridSettings.GridYOffset);
+      mGridMaterial->GetShaderParameters()->SetParameter(
+        "uOpacity", gridSettings.GridOpacity);
+
+      mRendererApi->ApplyPostProcess(
+        *mLdrPingPong, camera, *mGridMaterial, true);
+      mLdrPingPong->Swap();
     }
 
-    if (mTonemapMaterial)
-    {
-      mRendererApi->CustomBlit((mFramebuffer->GetSpecification().Samples > 1)
-                                 ? *mNonMsaaBuffer
-                                 : *mFramebuffer,
-                               *mPresentationBuffer,
-                               0,
-                               0,
-                               mTonemapMaterial,
-                               false);
-    }
-    else
-    {
-      mRendererApi->Blit((mFramebuffer->GetSpecification().Samples > 1)
-                           ? *mNonMsaaBuffer
-                           : *mFramebuffer,
-                         *mPresentationBuffer,
-                         0,
-                         0,
-                         mFramebuffer->GetSpecification().Width,
-                         mFramebuffer->GetSpecification().Height);
-    }
+    // ==================== Presentation ====================
 
-    mPresentationBuffer->Bind();
-    // Render grid
-    if (renderGrid && mGridMeshBuffer && mGridMaterial)
-    {
-      // TODO: Ignore depth testing for grid
-      glm::mat4 translatedGridModelMatrix =
-        glm::translate(
-          glm::mat4(1.0F),
-          glm::vec3(camera.GetProperties().Transform.GetPosition().x,
-                    0.0F,
-                    camera.GetProperties().Transform.GetPosition().z)) *
-        mGridModelMatrix;
-      mRendererApi->RenderIndexed(
-        *mGridMeshBuffer, *mGridMaterial, camera, translatedGridModelMatrix);
-    }
-    mPresentationBuffer->Unbind();
+    mRendererApi->Blit(mLdrPingPong->GetReadFramebuffer(),
+                       *mPresentationBuffer,
+                       0,
+                       0,
+                       mRenderFramebuffer->GetSpecification().Width,
+                       mRenderFramebuffer->GetSpecification().Height);
   }
 
   auto
@@ -185,8 +199,6 @@ namespace Dwarf
       FramebufferTextureSpecification{ FramebufferTextureFormat::RGBA16F },
       FramebufferTextureSpecification{ FramebufferTextureFormat::DEPTH }
     };
-    fbSpec.Width = 512;
-    fbSpec.Height = 512;
     fbSpec.Samples = 1;
 
     return fbSpec;
@@ -232,39 +244,30 @@ namespace Dwarf
   auto
   RenderingPipeline::GetResolution() -> glm::ivec2
   {
-    return { mFramebuffer->GetSpecification().Width,
-             mFramebuffer->GetSpecification().Height };
+    return { mRenderFramebuffer->GetSpecification().Width,
+             mRenderFramebuffer->GetSpecification().Height };
   }
 
   void
   RenderingPipeline::SetResolution(glm::ivec2 resolution)
   {
-    mFramebuffer->Resize(resolution.x, resolution.y);
-    mNonMsaaBuffer->Resize(resolution.x, resolution.y);
+    mRenderFramebuffer->Resize(resolution.x, resolution.y);
     mIdBuffer->Resize(resolution.x, resolution.y);
     mPresentationBuffer->Resize(resolution.x, resolution.y);
+    mHdrPingPong->Resize(resolution);
+    mLdrPingPong->Resize(resolution);
   }
 
   auto
   RenderingPipeline::GetMsaaSamples() -> int32_t
   {
-    return mFramebuffer->GetSpecification().Samples;
+    return mRenderFramebuffer->GetSpecification().Samples;
   }
 
   void
   RenderingPipeline::SetMsaaSamples(int32_t samples)
   {
-    mFramebuffer->SetSamples(samples);
-    if (samples > 1 && !mNonMsaaBuffer)
-    {
-      FramebufferSpecification spec = mFramebuffer->GetSpecification();
-      spec.Samples = 1;
-      mNonMsaaBuffer = mFramebufferFactory->Create(spec);
-    }
-    else if (samples == 1 && mNonMsaaBuffer)
-    {
-      mNonMsaaBuffer.reset();
-    }
+    mRenderFramebuffer->SetSamples(samples);
   }
 
   auto

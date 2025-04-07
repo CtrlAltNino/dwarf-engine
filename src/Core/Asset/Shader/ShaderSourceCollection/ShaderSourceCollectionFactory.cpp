@@ -92,9 +92,10 @@ namespace Dwarf
     {
       case GraphicsApi::OpenGL:
         shaderSources.emplace_back(mAssetDatabase.get()->Retrieve(
-          OpenGLUtilities::GetGridShaderPath() / "grid.vert"));
+          OpenGLUtilities::GetFullScreenQuadShaderPath() /
+          "fullscreen_quad.vert"));
         shaderSources.emplace_back(mAssetDatabase.get()->Retrieve(
-          OpenGLUtilities::GetGridShaderPath() / "grid.frag"));
+          OpenGLUtilities::GetGridShaderPath() / "grid_postprocess.frag"));
         break;
       case GraphicsApi::Vulkan:
       case GraphicsApi::D3D12:

@@ -91,6 +91,11 @@ namespace Dwarf
     }
 
     void
+    operator()(std::reference_wrapper<ITexture> parameter) const
+    {
+    }
+
+    void
     operator()(glm::vec2& parameter) const
     {
       ImGui::TextWrapped("%s", ParameterName.c_str());

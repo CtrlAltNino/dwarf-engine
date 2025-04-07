@@ -7,6 +7,7 @@
 #include "Core/Rendering/Shader/ShaderParameterCollection/IShaderParameterCollectionFactory.h"
 #include "Core/Rendering/VramTracker/IVramTracker.h"
 #include "Logging/IDwarfLogger.h"
+#include "Platform/OpenGL/OpenGLTexture.h"
 #include <boost/di.hpp>
 #include <boost/serialization/strong_typedef.hpp>
 #include <cstdint>
@@ -114,6 +115,10 @@ namespace Dwarf
     SetUniform(std::string   uniformName,
                TextureAsset& value,
                uint32_t      textureCount);
+    void
+    SetUniform(std::string    uniformName,
+               OpenGLTexture& value,
+               uint32_t       textureCount);
     void
     SetUniform(std::string uniformName, glm::vec2 value);
     void

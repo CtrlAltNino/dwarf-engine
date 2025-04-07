@@ -108,7 +108,7 @@ namespace Dwarf
     }
 
     // Render scene to the framebuffer with the camera
-    mRenderingPipeline->RenderScene(*mCamera, mSettings.RenderGrid);
+    mRenderingPipeline->RenderScene(*mCamera, mSettings.GridSettings);
 
     mRenderingPipeline->RenderIds(mLoadedScene->GetScene(), *mCamera);
   }
@@ -421,13 +421,25 @@ namespace Dwarf
     {
       ImGui::PushItemWidth(200);
 
-      ImGui::Checkbox("Render Grid", &mSettings.RenderGrid);
+      ImGui::Checkbox("Render Grid", &mSettings.GridSettings.RenderGrid);
 
-      // Axis
+      ImGui::SliderFloat("Opacity",
+                         &mSettings.GridSettings.GridOpacity,
+                         0.0f,
+                         1.0f,
+                         "%.2f",
+                         ImGuiSliderFlags_None);
 
-      // Transparency (0.0 - 1.0)
+      ImGui::DragFloat("Offset",
+                       &mSettings.GridSettings.GridYOffset,
+                       0.05f,
+                       -FLT_MAX,
+                       +FLT_MAX,
+                       "%.3f",
+                       ImGuiSliderFlags_None);
 
-      // Offset?
+      // TODO: Axis
+
       ImGui::PopItemWidth();
       ImGui::EndPopup();
     }
@@ -726,7 +738,12 @@ namespace Dwarf
     mSettings.RenderingConstraint =
       (RENDERING_CONSTRAINT)moduleData["settings"]["constraintType"];
 
-    mSettings.RenderGrid = moduleData["settings"]["renderGrid"];
+    if (moduleData.contains("settings") &&
+        moduleData["settings"].contains("gridSettings"))
+    {
+      mSettings.GridSettings =
+        GridSettings(moduleData["settings"]["gridSettings"]);
+    }
 
     if (moduleData.contains("settings") &&
         moduleData["settings"].contains("exposure"))
@@ -768,7 +785,8 @@ namespace Dwarf
     serializedModule["settings"]["constraintType"] =
       mSettings.RenderingConstraint;
 
-    serializedModule["settings"]["renderGrid"] = mSettings.RenderGrid;
+    serializedModule["settings"]["gridSettings"] =
+      mSettings.GridSettings.Serialize();
 
     serializedModule["settings"]["samples"] = mSettings.Samples;
     serializedModule["settings"]["exposure"] = mSettings.Exposure;

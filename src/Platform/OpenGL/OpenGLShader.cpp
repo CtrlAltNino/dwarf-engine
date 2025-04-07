@@ -433,20 +433,12 @@ namespace Dwarf
                            TextureAsset& value,
                            uint32_t      textureCount)
   {
-    // if (mTextureStates.contains(textureCount) &&
-    //     (mTextureStates[textureCount] == value.GetTexture().GetTextureID()))
-    // {
-    //   // return;
-    // }
-    // else
-    // {
     glActiveTexture(GL_TEXTURE0 + textureCount);
     OpenGLUtilities::CheckOpenGLError(
       "glActiveTexture", "OpenGLRendererApi", mLogger);
     glBindTexture(GL_TEXTURE_2D, value.GetTexture().GetTextureID());
     OpenGLUtilities::CheckOpenGLError("glBindTexture", "OpenGLShader", mLogger);
     mTextureStates[textureCount] = value.GetTexture().GetTextureID();
-    //}
 
     if (mUniformStates.contains(uniformName) &&
         (std::get<int>(mUniformStates[uniformName]) ==
@@ -459,6 +451,28 @@ namespace Dwarf
                 static_cast<GLint>(textureCount));
     OpenGLUtilities::CheckOpenGLError(
       "glUniform1i", "OpenGLRendererApi", mLogger);
+    mUniformStates[uniformName] = static_cast<GLint>(textureCount);
+  }
+
+  void
+  OpenGLShader::SetUniform(std::string    uniformName,
+                           OpenGLTexture& value,
+                           uint32_t       textureCount)
+  {
+    glActiveTexture(GL_TEXTURE0 + textureCount);
+    OpenGLUtilities::CheckOpenGLError(
+      "glActiveTexture", "OpenGLRendererApi", mLogger);
+    glBindTexture(value.GetType(), value.GetTextureID());
+    OpenGLUtilities::CheckOpenGLError("glBindTexture", "OpenGLShader", mLogger);
+    mTextureStates[textureCount] = value.GetTextureID();
+
+    if (mUniformStates.contains(uniformName) &&
+        (std::get<int>(mUniformStates[uniformName]) ==
+         static_cast<GLint>(textureCount)))
+    {
+      return;
+    }
+
     glUniform1i(GetUniformLocation(uniformName),
                 static_cast<GLint>(textureCount));
     OpenGLUtilities::CheckOpenGLError(
