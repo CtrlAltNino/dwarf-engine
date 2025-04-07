@@ -15,6 +15,7 @@ namespace Dwarf
     std::shared_ptr<IDwarfLogger> mLogger;
     std::shared_ptr<IVramTracker> mVramTracker;
     size_t                        mVramMemory;
+    GLuint                        mTextureType;
 
   public:
     explicit OpenGLTexture(const std::shared_ptr<TextureContainer>& data,
@@ -38,5 +39,13 @@ namespace Dwarf
      */
     [[nodiscard]] auto
     GetTextureID() const -> uintptr_t override;
+
+    /**
+     * @brief Gets the underlying texture type
+     *
+     * @return GLuint Type of the texture
+     */
+    [[nodiscard]] auto
+    GetType() const -> GLuint;
   };
 } // namespace Dwarf

@@ -44,9 +44,10 @@ namespace Dwarf
     /// @brief Stored resolution constraint.
     std::array<int, 2> Resolution = { 1024, 1024 };
 
-    int32_t MaxSamples = 1;
-    int32_t Samples = 1;
-    float   Exposure = 1.0F;
+    GridSettings GridSettings;
+    int32_t      MaxSamples = 1;
+    int32_t      Samples = 1;
+    float        Exposure = 1.0F;
 
     /// @brief Aspect ratio to use for the target.
     float targetAspectRatio;
@@ -55,7 +56,6 @@ namespace Dwarf
     /// scene viewer window.
     glm::ivec2  ViewportSize;
     bool        CameraMovement = false;
-    bool        RenderGrid = true;
     TonemapType Tonemap = TonemapType::Reinhard;
   };
 

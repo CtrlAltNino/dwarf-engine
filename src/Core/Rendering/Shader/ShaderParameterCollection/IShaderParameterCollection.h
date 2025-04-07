@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Base.h"
+#include "Core/Rendering/Texture/ITexture.h"
 #include "Core/UUID.h"
 #include "Utilities/ISerializable.h"
 
@@ -15,6 +16,7 @@ namespace Dwarf
                                       uint32_t,
                                       float,
                                       Texture2DAssetValue,
+                                      std::reference_wrapper<ITexture>,
                                       glm::vec2,
                                       glm::vec3,
                                       glm::vec4>;

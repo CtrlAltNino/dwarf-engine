@@ -7,6 +7,7 @@
 #include "Core/Rendering/Material/IMaterialFactory.h"
 #include "Core/Rendering/Mesh/IMeshFactory.h"
 #include "Core/Rendering/MeshBuffer/IMeshBufferFactory.h"
+#include "Core/Rendering/PingPongBuffer/IPingPongBufferFactory.h"
 #include "Core/Rendering/RendererApi/IRendererApi.h"
 #include "Core/Rendering/RendererApi/IRendererApiFactory.h"
 #include "Core/Rendering/Shader/ShaderRegistry/IShaderRegistry.h"
@@ -29,6 +30,7 @@ namespace Dwarf
     std::shared_ptr<IFramebufferFactory>    mFramebufferFactory;
     std::shared_ptr<IDrawCallListFactory>   mDrawCallListFactory;
     std::shared_ptr<IDrawCallWorkerFactory> mDrawCallWorkerFactory;
+    std::shared_ptr<IPingPongBufferFactory> mPingPongBufferFactory;
 
   public:
     RenderingPipelineFactory(
@@ -42,7 +44,8 @@ namespace Dwarf
       std::shared_ptr<IMeshBufferFactory>     meshBufferFactory,
       std::shared_ptr<IFramebufferFactory>    framebufferFactory,
       std::shared_ptr<IDrawCallListFactory>   drawCallListFactory,
-      std::shared_ptr<IDrawCallWorkerFactory> drawCallWorkerFactory);
+      std::shared_ptr<IDrawCallWorkerFactory> drawCallWorkerFactory,
+      std::shared_ptr<IPingPongBufferFactory> pingPongBufferFactory);
 
     ~RenderingPipelineFactory() override;
 

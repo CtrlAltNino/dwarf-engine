@@ -10,6 +10,7 @@
 #include "Core/Rendering/Material/IMaterialFactory.h"
 #include "Core/Rendering/Mesh/IMeshFactory.h"
 #include "Core/Rendering/MeshBuffer/IMeshBufferFactory.h"
+#include "Core/Rendering/PingPongBuffer/IPingPongBufferFactory.h"
 #include "Core/Rendering/Pipelines/IRenderingPipeline.h"
 #include "Core/Rendering/RendererApi/IRendererApi.h"
 #include "Core/Rendering/Shader/ShaderRegistry/IShaderRegistry.h"
@@ -28,17 +29,17 @@ namespace Dwarf
                                         mShaderSourceCollectionFactory;
     std::shared_ptr<IMeshFactory>       mMeshFactory;
     std::shared_ptr<IMeshBufferFactory> mMeshBufferFactory;
+    // std::shared_ptr<IPingPongBufferFactory> mPingPongBufferFactory;
 
-    std::unique_ptr<IMaterial>    mIdMaterial;
-    std::unique_ptr<IMaterial>    mGridMaterial;
-    std::unique_ptr<IMeshBuffer>  mGridMeshBuffer;
-    glm::mat4                     mGridModelMatrix{};
-    std::shared_ptr<IFramebuffer> mFramebuffer;
-    std::shared_ptr<IFramebuffer> mNonMsaaBuffer;
-    std::shared_ptr<IFramebuffer> mIdBuffer;
-    std::shared_ptr<IFramebuffer> mOutlineBuffer;
-    std::shared_ptr<IFramebuffer> mPresentationBuffer;
-    std::shared_ptr<IMaterial>    mTonemapMaterial;
+    std::unique_ptr<IMaterial> mIdMaterial;
+    std::shared_ptr<IMaterial> mGridMaterial;
+    std::shared_ptr<IMaterial> mTonemapMaterial;
+
+    std::shared_ptr<IFramebuffer>    mRenderFramebuffer;
+    std::unique_ptr<IPingPongBuffer> mHdrPingPong;
+    std::unique_ptr<IPingPongBuffer> mLdrPingPong;
+    std::shared_ptr<IFramebuffer>    mPresentationBuffer;
+    std::shared_ptr<IFramebuffer>    mIdBuffer;
 
     std::shared_ptr<IRendererApi>    mRendererApi;
     std::unique_ptr<IDrawCallList>   mDrawCallList;
@@ -49,6 +50,10 @@ namespace Dwarf
 
     void
     SetupNonMsaaFramebuffer();
+
+    void
+    SetupPingPongBuffers(
+      const std::shared_ptr<IPingPongBufferFactory>& pingPongBufferFactory);
 
     void
     SetupPresentationFramebuffer();
@@ -67,7 +72,8 @@ namespace Dwarf
       std::shared_ptr<IMeshBufferFactory>  meshBufferFactory,
       std::shared_ptr<IFramebufferFactory> framebufferFactory,
       const std::shared_ptr<IDrawCallListFactory>&   drawCallListFactory,
-      const std::shared_ptr<IDrawCallWorkerFactory>& drawCallWorkerFactory);
+      const std::shared_ptr<IDrawCallWorkerFactory>& drawCallWorkerFactory,
+      const std::shared_ptr<IPingPongBufferFactory>& pingPongBufferFactory);
     ~RenderingPipeline() override;
 
     /**
@@ -78,7 +84,7 @@ namespace Dwarf
      * @param renderGrid Should the grid be rendered
      */
     void
-    RenderScene(ICamera& camera, bool renderGrid) override;
+    RenderScene(ICamera& camera, GridSettings gridSettings) override;
 
     /**
      * @brief Returns the specification for the framebuffer

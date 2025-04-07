@@ -85,6 +85,14 @@ namespace Dwarf
     Resize(uint32_t width, uint32_t height) = 0;
 
     /**
+     * @brief Sets the index of the buffer to draw to
+     *
+     * @param index Color attachment index
+     */
+    virtual void
+    SetDrawBuffer(uint32_t index) = 0;
+
+    /**
      * @brief Updates the MSAA sample count for the frame buffer
      *
      * @param samples Amount of samples
@@ -113,19 +121,20 @@ namespace Dwarf
     ClearAttachment(uint32_t attachmentIndex, int value) = 0;
 
     /**
-     * @brief Clears the frame buffer
+     * @brief Clears the whole frame buffer
      *
      */
     virtual void
     Clear() = 0;
 
     /**
-     * @brief Clears the frame buffer with a given color
+     * @brief Clears a frame buffer attachment with a given color
      *
+     * @param index Attachment index
      * @param clearColor 4 component color to clear the frame buffer with
      */
     virtual void
-    Clear(glm::vec4 clearColor) = 0;
+    Clear(uint32_t index, glm::vec4 clearColor) = 0;
 
     /**
      * @brief Gets a color attachment of the frame buffer
@@ -135,6 +144,15 @@ namespace Dwarf
      */
     [[nodiscard]] virtual auto
     GetColorAttachment(uint32_t index = 0) const
+      -> std::optional<const std::reference_wrapper<ITexture>> = 0;
+
+    /**
+     * @brief Gets the depth attachment of the framebuffer
+     *
+     * @return Returns a reference to the depth attachment if present
+     */
+    [[nodiscard]] virtual auto
+    GetDepthAttachment() const
       -> std::optional<const std::reference_wrapper<ITexture>> = 0;
 
     /**

@@ -92,6 +92,13 @@ namespace Dwarf
       }
     }
     void
+    operator()(std::reference_wrapper<ITexture> parameter) const
+    {
+      mShader.get().SetUniform(mParameterName,
+                               dynamic_cast<OpenGLTexture&>(parameter.get()),
+                               mTextureCount++);
+    }
+    void
     operator()(glm::vec2& parameter) const
     {
       mShader.get().SetUniform(mParameterName, parameter);
@@ -250,10 +257,14 @@ namespace Dwarf
     auto* destinationFB = dynamic_cast<OpenGLFramebuffer*>(&destination);
     glBindFramebuffer(GL_READ_FRAMEBUFFER,
                       sourceFB->GetFramebufferRendererID());
+    glReadBuffer(GL_COLOR_ATTACHMENT0 +
+                 sourceAttachment); // Select the second attachment for reading
     OpenGLUtilities::CheckOpenGLError(
       "glBindFramebuffer GL_READ_FRAMEBUFFER", "OpenGLRendererApi", mLogger);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER,
                       destinationFB->GetFramebufferRendererID());
+    glDrawBuffer(GL_COLOR_ATTACHMENT0 +
+                 destinationAttachment); // Usually the default for framebufferB
     OpenGLUtilities::CheckOpenGLError(
       "glBindFramebuffer GL_DRAW_FRAMEBUFFER", "OpenGLRendererApi", mLogger);
     glBlitFramebuffer(0,
@@ -274,6 +285,44 @@ namespace Dwarf
   }
 
   void
+  OpenGLRendererApi::BlitDepth(IFramebuffer& source,
+                               IFramebuffer& destination,
+                               uint32_t      width,
+                               uint32_t      height)
+  {
+    auto* sourceFB = dynamic_cast<OpenGLFramebuffer*>(&source);
+    auto* destinationFB = dynamic_cast<OpenGLFramebuffer*>(&destination);
+    glBindFramebuffer(GL_READ_FRAMEBUFFER,
+                      sourceFB->GetFramebufferRendererID());
+    OpenGLUtilities::CheckOpenGLError(
+      "glBindFramebuffer GL_READ_FRAMEBUFFER", "OpenGLRendererApi", mLogger);
+    glReadBuffer(
+      GL_DEPTH_ATTACHMENT); // Select the second attachment for reading
+    OpenGLUtilities::CheckOpenGLError(
+      "glReadBuffer GL_DEPTH_ATTACHMENT", "OpenGLRendererApi", mLogger);
+    glBindFramebuffer(GL_DRAW_FRAMEBUFFER,
+                      destinationFB->GetFramebufferRendererID());
+    glDrawBuffer(GL_DEPTH_ATTACHMENT); // Usually the default for framebufferB
+    OpenGLUtilities::CheckOpenGLError(
+      "glBindFramebuffer GL_DRAW_FRAMEBUFFER", "OpenGLRendererApi", mLogger);
+    glBlitFramebuffer(0,
+                      0,
+                      width,
+                      height,
+                      0,
+                      0,
+                      width,
+                      height,
+                      GL_DEPTH_BUFFER_BIT,
+                      GL_NEAREST);
+    OpenGLUtilities::CheckOpenGLError(
+      "glBlitFramebuffer", "OpenGLRendererApi", mLogger);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    OpenGLUtilities::CheckOpenGLError(
+      "glBindFramebuffer Unbind", "OpenGLRendererApi", mLogger);
+  }
+
+  void
   OpenGLRendererApi::CustomBlit(IFramebuffer& source,
                                 IFramebuffer& destination,
                                 uint32_t      sourceAttachment,
@@ -282,17 +331,6 @@ namespace Dwarf
                                 bool                       srgb)
   {
     auto& oglMesh = dynamic_cast<OpenGLMesh&>(*mScreenQuad);
-
-    source.Bind();
-    GLint srcTexture = 0;
-    glGetFramebufferAttachmentParameteriv(GL_FRAMEBUFFER,
-                                          GL_COLOR_ATTACHMENT0 +
-                                            sourceAttachment,
-                                          GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME,
-                                          &srcTexture);
-
-    OpenGLUtilities::CheckOpenGLError(
-      "glGetFramebufferAttachmentParameteriv", "OpenGLRendererApi", mLogger);
 
     IShader&      baseShader = *material->GetShader();
     OpenGLShader& shader = baseShader.IsCompiled()
@@ -333,7 +371,10 @@ namespace Dwarf
     glActiveTexture(GL_TEXTURE0);
     OpenGLUtilities::CheckOpenGLError(
       "glActiveTexture", "OpenGLRendererApi", mLogger);
-    glBindTexture(GL_TEXTURE_2D, static_cast<GLuint>(srcTexture));
+    glBindTexture(
+      GL_TEXTURE_2D,
+      static_cast<GLuint>(
+        source.GetColorAttachment(sourceAttachment)->get().GetTextureID()));
     OpenGLUtilities::CheckOpenGLError(
       "glBindTexture", "OpenGLRendererApi", mLogger);
     shader.SetUniform("hdrTexture", 0);
@@ -348,6 +389,71 @@ namespace Dwarf
     }
     oglMesh.Unbind();
     destination.Unbind();
+  }
+
+  void
+  OpenGLRendererApi::ApplyPostProcess(IPingPongBuffer& buffer,
+                                      ICamera&         camera,
+                                      IMaterial&       material,
+                                      bool             srgb)
+  {
+    auto&         oglMesh = dynamic_cast<OpenGLMesh&>(*mScreenQuad);
+    IShader&      baseShader = *material.GetShader();
+    OpenGLShader& shader = baseShader.IsCompiled()
+                             ? dynamic_cast<OpenGLShader&>(baseShader)
+                             : dynamic_cast<OpenGLShader&>(*mErrorShader);
+
+    if (srgb)
+    {
+      glEnable(GL_FRAMEBUFFER_SRGB);
+    }
+    mStateTracker->SetViewport(
+      0,
+      0,
+      buffer.GetReadFramebuffer().GetSpecification().Width,
+      buffer.GetReadFramebuffer().GetSpecification().Height);
+
+    OpenGLUtilities::CheckOpenGLError("glClear", "OpenGLRendererApi", mLogger);
+    mStateTracker->SetShaderProgram(shader.GetID());
+
+    uint32_t textureCount = 0;
+    OpenGLUtilities::CheckOpenGLError(
+      "glBindFramebuffer Unbind", "OpenGLRendererApi", mLogger);
+    for (auto const& identifier :
+         material.GetShaderParameters()->GetParameterIdentifiers())
+    {
+      if (material.GetShaderParameters()->HasParameter(identifier))
+      {
+        ParameterValue& shaderParameterValue =
+          material.GetShaderParameters()->GetParameter(identifier);
+        std::visit(SetShaderParameterVisitor{ .mShader = shader,
+                                              .mParameterName = identifier,
+                                              .mAssetDatabase = mAssetDatabase,
+                                              .mLogger = mLogger,
+                                              .mTextureCount = textureCount },
+                   shaderParameterValue);
+      }
+    }
+
+    buffer.GetWriteFramebuffer().Bind();
+
+    shader.SetUniform(
+      "uInverseViewProjection",
+      glm::inverse(camera.GetProjectionMatrix() * camera.GetViewMatrix()));
+    shader.SetUniform("uInverseView", glm::inverse(camera.GetViewMatrix()));
+    shader.SetUniform("uCameraPosition",
+                      camera.GetProperties().Transform.GetPosition());
+
+    oglMesh.Bind();
+    glDrawElements(GL_TRIANGLES, oglMesh.GetIndexCount(), GL_UNSIGNED_INT, 0);
+    OpenGLUtilities::CheckOpenGLError(
+      "glDrawElements", "OpenGLRendererApi", mLogger);
+    if (srgb)
+    {
+      glDisable(GL_FRAMEBUFFER_SRGB);
+    }
+    oglMesh.Unbind();
+    buffer.GetWriteFramebuffer().Unbind();
   }
 
   auto

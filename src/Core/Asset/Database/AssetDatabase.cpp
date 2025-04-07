@@ -556,17 +556,9 @@ namespace Dwarf
       }
     }
 
-    std::filesystem::path gridShaderDir = shaderDir / "grid" / graphicsApiDir;
-
-    for (const auto& directoryEntry :
-         std::filesystem::directory_iterator(gridShaderDir))
-    {
-      if (directoryEntry.is_regular_file() &&
-          directoryEntry.path().extension() != ".dmeta")
-      {
-        Import(directoryEntry.path());
-      }
-    }
+    std::filesystem::path gridShaderPath =
+      shaderDir / "grid" / graphicsApiDir / "grid_postprocess.frag";
+    Import(gridShaderPath);
 
     std::filesystem::path idShaderDir = shaderDir / "id" / graphicsApiDir;
 

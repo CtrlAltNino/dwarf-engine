@@ -326,7 +326,7 @@ namespace Dwarf
     : mLogger(std::move(logger))
     , mVramTracker(std::move(vramTracker))
   {
-    GLuint textureType = GetTextureType(data->Type, data->Samples);
+    mTextureType = GetTextureType(data->Type, data->Samples);
     GLuint textureDataType = GetTextureDataType(data->DataType);
     GLuint textureFormat = GetTextureFormat(data->Format, data->DataType);
     GLuint textureWrapS = GetTextureWrap(data->Parameters.WrapS);
@@ -340,7 +340,7 @@ namespace Dwarf
 
     mLogger->LogDebug(Log("Creating OpenGL texture", "OpenGLTexture"));
     mLogger->LogDebug(
-      Log("Texture type: " + GLenumToString(textureType), "OpenGLTexture"));
+      Log("Texture type: " + GLenumToString(mTextureType), "OpenGLTexture"));
     mLogger->LogDebug(
       Log("Texture data type: " + GLenumToString(textureDataType),
           "OpenGLTexture"));
@@ -351,7 +351,7 @@ namespace Dwarf
 
     OpenGLUtilities::CheckOpenGLError(
       "Before creating texture", "OpenGLTexture", mLogger);
-    glCreateTextures(textureType, 1, &mId);
+    glCreateTextures(mTextureType, 1, &mId);
     OpenGLUtilities::CheckOpenGLError(
       "glCreateTextures", "OpenGLTexture", mLogger);
 
@@ -518,15 +518,21 @@ namespace Dwarf
     mVramTracker->RemoveTextureMemory(mVramMemory);
   }
 
-  uintptr_t
-  OpenGLTexture::GetTextureID() const
+  auto
+  OpenGLTexture::GetTextureID() const -> uintptr_t
   {
     return mId;
   }
 
-  TextureResolution
-  OpenGLTexture::GetSize() const
+  auto
+  OpenGLTexture::GetSize() const -> TextureResolution
   {
     return mSize;
+  }
+
+  auto
+  OpenGLTexture::GetType() const -> GLuint
+  {
+    return mTextureType;
   }
 }

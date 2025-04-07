@@ -128,6 +128,20 @@ namespace Dwarf
          uint32_t      height) override;
 
     /**
+     * @brief Blits the depth information of one framebuffer to another
+     *
+     * @param source Source framebuffer
+     * @param destination Destination framebuffer
+     * @param width Width of the framebuffers
+     * @param height Height of the framebuffers
+     */
+    void
+    BlitDepth(IFramebuffer& source,
+              IFramebuffer& destination,
+              uint32_t      width,
+              uint32_t      height) override;
+
+    /**
      * @brief Blits the content of one framebuffer to another using a custom
      * shader
      *
@@ -146,6 +160,20 @@ namespace Dwarf
                uint32_t                   destinationAttachment,
                std::shared_ptr<IMaterial> material,
                bool                       srgb) override;
+
+    /**
+     * @brief Applies a post process to a ping pong buffer
+     *
+     * @param buffer Ping Pong buffer to use
+     * @param camera
+     * @param material
+     * @param srgb Are the underlying framebuffers SRGB?
+     */
+    void
+    ApplyPostProcess(IPingPongBuffer& buffer,
+                     ICamera&         camera,
+                     IMaterial&       material,
+                     bool             srgb) override;
 
     /**
      * @brief Returns information about the vram usage

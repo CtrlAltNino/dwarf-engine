@@ -3,6 +3,7 @@
 #include "Core/Rendering/Framebuffer/IFramebuffer.h"
 #include "Core/Scene/Camera/ICamera.h"
 #include "Core/Scene/IScene.h"
+#include "Utilities/ISerializable.h"
 
 namespace Dwarf
 {
@@ -11,6 +12,34 @@ namespace Dwarf
     Reinhard,
     Agx,
     Aces
+  };
+
+  struct GridSettings : public ISerializable
+  {
+    bool  RenderGrid = true;
+    float GridOpacity = 1.0F;
+    float GridYOffset = 0.0F;
+
+    GridSettings() = default;
+
+    GridSettings(const nlohmann::json& serializedGridSettings)
+      : RenderGrid(serializedGridSettings["renderGrid"].get<bool>())
+      , GridOpacity(serializedGridSettings["opacity"].get<float>())
+      , GridYOffset(serializedGridSettings["offset"].get<float>())
+    {
+    }
+
+    auto
+    Serialize() -> nlohmann::json override
+    {
+      nlohmann::json serializedGridSettings;
+
+      serializedGridSettings["renderGrid"] = RenderGrid;
+      serializedGridSettings["opacity"] = GridOpacity;
+      serializedGridSettings["offset"] = GridYOffset;
+
+      return serializedGridSettings;
+    }
   };
   class IRenderingPipeline
   {
@@ -29,7 +58,7 @@ namespace Dwarf
      * @param renderGrid Should the grid be rendered
      */
     virtual void
-    RenderScene(ICamera& camera, bool renderGrid) = 0;
+    RenderScene(ICamera& camera, GridSettings gridSettings) = 0;
 
     /**
      * @brief Returns the specification for the framebuffer
