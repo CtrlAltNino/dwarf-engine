@@ -16,7 +16,7 @@ namespace Dwarf
     GLuint      mID = -1;
     std::string mComputeShaderLog;
     // Flag to determine if the shader has been successfully compiled.
-    bool mSuccessfullyCompiled;
+    bool mSuccessfullyCompiled = false;
     std::shared_ptr<IShaderParameterCollectionFactory>
                                      mShaderParameterCollectionFactory;
     std::unique_ptr<IAssetReference> mComputeShaderAsset;
