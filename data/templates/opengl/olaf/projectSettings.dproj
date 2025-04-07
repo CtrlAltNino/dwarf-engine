@@ -39,7 +39,6 @@
           },
           "constraintType": 0,
           "exposure": 1.399999976158142,
-          "renderGrid": false,
           "resolutionConstraint": {
             "x": 1024,
             "y": 1024
