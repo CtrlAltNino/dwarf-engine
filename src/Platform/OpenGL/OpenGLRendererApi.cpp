@@ -295,19 +295,17 @@ namespace Dwarf
     {
       return;
     }
+
     auto* sourceFB = dynamic_cast<OpenGLFramebuffer*>(&source);
     auto* destinationFB = dynamic_cast<OpenGLFramebuffer*>(&destination);
     glBindFramebuffer(GL_READ_FRAMEBUFFER,
                       sourceFB->GetFramebufferRendererID());
     OpenGLUtilities::CheckOpenGLError(
       "glBindFramebuffer GL_READ_FRAMEBUFFER", "OpenGLRendererApi", mLogger);
-    glReadBuffer(
-      GL_DEPTH_ATTACHMENT); // Select the second attachment for reading
     OpenGLUtilities::CheckOpenGLError(
       "glReadBuffer GL_DEPTH_ATTACHMENT", "OpenGLRendererApi", mLogger);
     glBindFramebuffer(GL_DRAW_FRAMEBUFFER,
                       destinationFB->GetFramebufferRendererID());
-    glDrawBuffer(GL_DEPTH_ATTACHMENT); // Usually the default for framebufferB
     OpenGLUtilities::CheckOpenGLError(
       "glBindFramebuffer GL_DRAW_FRAMEBUFFER", "OpenGLRendererApi", mLogger);
     glBlitFramebuffer(0,
