@@ -230,26 +230,28 @@ namespace Dwarf
 
     ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(500, 500));
     ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
-    if (ImGui::Begin(GetIdentifier().c_str(), &mWindowOpened, 0))
+    if (!ImGui::Begin(GetIdentifier().c_str(), &mWindowOpened, 0))
     {
       ImGui::PopStyleVar(2);
-
-      ImGuiDockNodeFlags dockspaceFlags = ImGuiDockNodeFlags_None;
-      dockspaceFlags |= ImGuiDockNodeFlags_HiddenTabBar;
-
-      ImGui::DockSpace(dockspaceID, ImVec2(0.0F, 0.0F), dockspaceFlags);
-      if (!mDockspaceIsSetup)
-      {
-        mDockspaceIsSetup = true;
-        SetupDockspace(dockspaceID);
-      }
-
       ImGui::End();
-
-      RenderDirectoryStructure();
-      RenderDirectoryContent();
-      RenderFooter();
+      return;
     }
+    ImGui::PopStyleVar(2);
+
+    ImGuiDockNodeFlags dockspaceFlags = ImGuiDockNodeFlags_None;
+    dockspaceFlags |= ImGuiDockNodeFlags_HiddenTabBar;
+
+    ImGui::DockSpace(dockspaceID, ImVec2(0.0F, 0.0F), dockspaceFlags);
+    if (!mDockspaceIsSetup)
+    {
+      mDockspaceIsSetup = true;
+      SetupDockspace(dockspaceID);
+    }
+
+    RenderDirectoryStructure();
+    RenderDirectoryContent();
+    RenderFooter();
+    ImGui::End();
   }
 
   void

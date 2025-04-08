@@ -4,6 +4,7 @@
 #include "TextureAssetInspector.h"
 #include "UI/DwarfUI.h"
 #include "Utilities/ImageUtilities/TextureCommon.h"
+#include <imgui.h>
 
 namespace Dwarf
 {
@@ -47,10 +48,14 @@ namespace Dwarf
     drawList->ChannelsSplit(2);
     drawList->ChannelsSetCurrent(1);
 
-    ImGui::BeginChild("##inspector_child",
-                      ImGui::GetContentRegionAvail(),
-                      0,
-                      ImGuiWindowFlags_AlwaysUseWindowPadding);
+    if (!ImGui::BeginChild("##inspector_child",
+                           ImGui::GetContentRegionAvail(),
+                           0,
+                           ImGuiWindowFlags_AlwaysUseWindowPadding))
+    {
+      ImGui::EndChild();
+      return;
+    }
 
     ImGui::TextWrapped("File name: ");
     ImGui::SameLine(0, 5.0f);
@@ -94,8 +99,8 @@ namespace Dwarf
           if (ImGui::Selectable(textureTypeItems[n], isSelected))
             mCurrentImportSettings.mTextureType = (TextureFileType)n;
 
-          // Set the initial focus when opening the combo (scrolling + keyboard
-          // navigation focus)
+          // Set the initial focus when opening the combo (scrolling +
+          // keyboard navigation focus)
           if (isSelected) ImGui::SetItemDefaultFocus();
         }
         ImGui::EndCombo();
@@ -119,8 +124,8 @@ namespace Dwarf
             mCurrentImportSettings.mColorSpace = (ColorSpace)n;
           }
 
-          // Set the initial focus when opening the combo (scrolling + keyboard
-          // navigation focus)
+          // Set the initial focus when opening the combo (scrolling +
+          // keyboard navigation focus)
           if (is_selected)
           {
             ImGui::SetItemDefaultFocus();
@@ -159,8 +164,8 @@ namespace Dwarf
             mCurrentImportSettings.mWrapMode = (WrapMode)n;
           }
 
-          // Set the initial focus when opening the combo (scrolling + keyboard
-          // navigation focus)
+          // Set the initial focus when opening the combo (scrolling +
+          // keyboard navigation focus)
           if (is_selected)
           {
             ImGui::SetItemDefaultFocus();
@@ -187,8 +192,8 @@ namespace Dwarf
             mCurrentImportSettings.mFilterMode = (FilterMode)n;
           }
 
-          // Set the initial focus when opening the combo (scrolling + keyboard
-          // navigation focus)
+          // Set the initial focus when opening the combo (scrolling +
+          // keyboard navigation focus)
           if (is_selected)
           {
             ImGui::SetItemDefaultFocus();
