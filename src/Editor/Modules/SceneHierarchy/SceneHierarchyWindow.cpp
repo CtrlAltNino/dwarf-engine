@@ -350,31 +350,34 @@ namespace Dwarf
                   (sizeof(mEditorSelection->GetSelectedEntities().at(0)) *
                    mEditorSelection->GetSelectedEntities().size()));
 
-        std::vector<entt::entity> payloadE =
-          *(std::vector<entt::entity>*)acceptedPayload->Data;
-
         if (heightFrac < 0.33F)
         {
           mInstructions.push_back(std::make_shared<NewParentInstruction>(
             mLoadedScene->GetScene(),
-            payloadE,
+            mEditorSelection->GetSelectedEntities(),
             ent.GetComponent<TransformComponent>().GetParent()));
           mInstructions.push_back(std::make_shared<ChildIndexInstruction>(
-            mLoadedScene->GetScene(), payloadE, ent.GetChildIndex()));
+            mLoadedScene->GetScene(),
+            mEditorSelection->GetSelectedEntities(),
+            ent.GetChildIndex()));
         }
         else if (heightFrac > 0.66F)
         {
           mInstructions.push_back(std::make_shared<NewParentInstruction>(
             mLoadedScene->GetScene(),
-            payloadE,
+            mEditorSelection->GetSelectedEntities(),
             ent.GetComponent<TransformComponent>().GetParent()));
           mInstructions.push_back(std::make_shared<ChildIndexInstruction>(
-            mLoadedScene->GetScene(), payloadE, ent.GetChildIndex() + 1));
+            mLoadedScene->GetScene(),
+            mEditorSelection->GetSelectedEntities(),
+            ent.GetChildIndex() + 1));
         }
         else
         {
           mInstructions.push_back(std::make_shared<NewParentInstruction>(
-            mLoadedScene->GetScene(), payloadE, entity));
+            mLoadedScene->GetScene(),
+            mEditorSelection->GetSelectedEntities(),
+            entity));
         }
       }
       ImGui::EndDragDropTarget();
@@ -554,11 +557,9 @@ namespace Dwarf
                   (sizeof(mEditorSelection->GetSelectedEntities().at(0)) *
                    mEditorSelection->GetSelectedEntities().size()));
 
-        std::vector<entt::entity> payloadE =
-          *(const std::vector<entt::entity>*)payload->Data;
         mInstructions.push_back(std::make_shared<NewParentInstruction>(
           mLoadedScene->GetScene(),
-          payloadE,
+          mEditorSelection->GetSelectedEntities(),
           mLoadedScene->GetScene().GetRootEntity().GetHandle()));
       }
       ImGui::EndDragDropTarget();
