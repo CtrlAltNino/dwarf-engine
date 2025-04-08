@@ -29,10 +29,14 @@ namespace Dwarf
     drawList->ChannelsSplit(2);
     drawList->ChannelsSetCurrent(1);
 
-    ImGui::BeginChild("##inspector_child",
-                      ImGui::GetContentRegionAvail(),
-                      false,
-                      ImGuiWindowFlags_AlwaysUseWindowPadding);
+    if (!ImGui::BeginChild("##inspector_child",
+                           ImGui::GetContentRegionAvail(),
+                           false,
+                           ImGuiWindowFlags_AlwaysUseWindowPadding))
+    {
+      ImGui::EndChild();
+      return;
+    }
 
     ImGui::TextWrapped("File name: ");
     ImGui::SameLine(0, 5.0f);
@@ -118,8 +122,8 @@ namespace Dwarf
 
     drawList->ChannelsSetCurrent(0);
 
-    float endY = maxRect.y;
     ImGui::EndChild();
+    float endY = maxRect.y;
     ImGui::GetWindowDrawList()->AddRectFilled(
       ImGui::GetItemRectMin(),
       ImVec2(ImGui::GetItemRectMin().x + ImGui::GetContentRegionAvail().x,
