@@ -4,6 +4,7 @@
 #include "Core/Asset/Shader/ShaderSourceCollection/IShaderSourceCollectionFactory.h"
 #include "IShaderAssetSelectorFactory.h"
 #include "Logging/IDwarfLogger.h"
+
 namespace Dwarf
 {
   class ShaderAssetSelectorFactory : public IShaderAssetSelectorFactory

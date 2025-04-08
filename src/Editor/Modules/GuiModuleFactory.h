@@ -9,7 +9,6 @@
 #include "Editor/Modules/SceneHierarchy/ISceneHierarchyWindowFactory.h"
 #include "Editor/Modules/SceneViewer/ISceneViewerWindowFactory.h"
 #include "Logging/IDwarfLogger.h"
-
 #include <boost/di.hpp>
 #include <boost/serialization/strong_typedef.hpp>
 

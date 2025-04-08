@@ -1,4 +1,5 @@
 #pragma once
+
 #include "Core/Rendering/Texture/ITexture.h"
 #include "Core/Rendering/VramTracker/IVramTracker.h"
 #include "Logging/IDwarfLogger.h"

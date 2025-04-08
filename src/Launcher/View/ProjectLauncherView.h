@@ -16,7 +16,6 @@
 #include "ProjectNotFoundModal/IProjectNotFoundModal.h"
 #include "Utilities/FileHandler/IFileHandler.h"
 #include "Window/IWindow.h"
-
 #include <boost/di/extension/injections/lazy.hpp>
 #include <imgui.h>
 

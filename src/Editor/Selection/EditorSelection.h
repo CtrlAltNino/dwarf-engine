@@ -1,4 +1,5 @@
 #pragma once
+
 #include "Core/Asset/AssetReference/IAssetReference.h"
 #include "Editor/LoadedScene/ILoadedScene.h"
 #include "Editor/Selection/IEditorSelection.h"

@@ -1,4 +1,5 @@
 #pragma once
+
 #include "Core/Asset/Metadata/IAssetMetadata.h"
 #include "Core/Asset/Model/IModelImporter.h"
 #include "Core/Rendering/Mesh/IMeshFactory.h"

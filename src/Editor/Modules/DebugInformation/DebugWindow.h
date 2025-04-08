@@ -1,4 +1,5 @@
 #pragma once
+
 #include "Core/Asset/Database/IAssetDatabase.h"
 #include "Editor/Modules/IGuiModule.h"
 #include "Logging/IDwarfLogger.h"

@@ -3,6 +3,7 @@
 #include "Core/Asset/Database/AssetComponents.h"
 #include "Utilities/ImageUtilities/TextureCommon.h"
 #include <entt/entity/fwd.hpp>
+
 namespace Dwarf
 {
   /**

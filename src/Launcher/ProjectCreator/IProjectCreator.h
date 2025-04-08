@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Base.h"
+
 namespace Dwarf
 {
   /// @brief Enum defining the available project templates.

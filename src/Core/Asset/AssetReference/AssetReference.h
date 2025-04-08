@@ -2,7 +2,6 @@
 
 #include "Core/Asset/AssetReference/IAssetReference.h"
 #include "Core/Asset/AssetTypes.h"
-#include "Core/Asset/Database/AssetComponents.h"
 #include "Core/Asset/Model/IModelImporter.h"
 #include "Core/Asset/Texture/TextureWorker/ITextureLoadingWorker.h"
 #include "Core/Rendering/Material/IO/IMaterialIO.h"

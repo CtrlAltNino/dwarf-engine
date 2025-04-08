@@ -4,7 +4,6 @@
 #include <cstddef>
 #include <stb_image.h>
 
-
 namespace Dwarf
 {
   class BmpUtilities

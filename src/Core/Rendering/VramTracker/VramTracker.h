@@ -2,6 +2,7 @@
 
 #include "IVramTracker.h"
 #include "Logging/IDwarfLogger.h"
+
 namespace Dwarf
 {
   class VramTracker : public IVramTracker

@@ -1,4 +1,5 @@
 #pragma once
+
 #include "ICamera.h"
 #include "Input/IInputManager.h"
 #include "Logging/IDwarfLogger.h"

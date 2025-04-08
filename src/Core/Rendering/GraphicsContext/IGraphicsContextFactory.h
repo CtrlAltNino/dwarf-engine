@@ -1,7 +1,5 @@
 #pragma once
 
-#include "SDL3/SDL.h"
-
 #include "IGraphicsContext.h"
 
 namespace Dwarf

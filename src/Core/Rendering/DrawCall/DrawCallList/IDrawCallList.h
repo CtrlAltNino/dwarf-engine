@@ -2,6 +2,7 @@
 
 #include "Core/Rendering/DrawCall/IDrawCall.h"
 #include <mutex>
+
 namespace Dwarf
 {
   struct DrawCallStatistics

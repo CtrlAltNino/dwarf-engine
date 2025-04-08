@@ -1,4 +1,5 @@
 #pragma once
+
 #include "IShaderParameterCollection.h"
 
 namespace Dwarf

@@ -1,4 +1,5 @@
 #pragma once
+
 #include "Utilities/ISerializable.h"
 #include <boost/serialization/strong_typedef.hpp>
 

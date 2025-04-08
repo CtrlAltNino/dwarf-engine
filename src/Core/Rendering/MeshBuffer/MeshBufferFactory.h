@@ -4,7 +4,7 @@
 #include "Core/Rendering/MeshBuffer/IMeshBufferFactory.h"
 #include "Core/Rendering/VramTracker/IVramTracker.h"
 #include "Logging/IDwarfLogger.h"
-#include <cstdint>
+
 namespace Dwarf
 {
   class MeshBufferFactory : public IMeshBufferFactory

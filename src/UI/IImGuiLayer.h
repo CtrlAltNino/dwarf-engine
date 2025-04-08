@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Core/Base.h"
 #include <SDL3/SDL.h>
 #include <boost/serialization/strong_typedef.hpp>
 

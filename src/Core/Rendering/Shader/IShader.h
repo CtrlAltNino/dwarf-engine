@@ -1,8 +1,6 @@
 #pragma once
 
 #include "Core/Rendering/Shader/ShaderParameterCollection/IShaderParameterCollection.h"
-#include "Utilities/ISerializable.h"
-
 #include <memory>
 
 namespace Dwarf
