@@ -1,4 +1,5 @@
 #pragma once
+
 #include "Core/Rendering/Mesh/IMesh.h"
 
 namespace Dwarf

@@ -2,6 +2,7 @@
 
 #include "IAssetMetadata.h"
 #include "Utilities/FileHandler/IFileHandler.h"
+
 namespace Dwarf
 {
 

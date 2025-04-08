@@ -1,4 +1,5 @@
 #pragma once
+
 #include "Core/Asset/AssetReference/IAssetReference.h"
 #include "Core/Asset/Database/AssetComponents.h"
 #include "Core/Asset/Shader/ShaderSourceCollection/IShaderSourceCollection.h"

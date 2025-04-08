@@ -2,6 +2,7 @@
 
 #include "Core/Base.h"
 #include <boost/serialization/strong_typedef.hpp>
+
 namespace Dwarf
 {
   BOOST_STRONG_TYPEDEF(int, ProjectListColumn)

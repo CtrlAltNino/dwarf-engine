@@ -6,7 +6,6 @@
 #include <FreeImage.h>
 #include <cstddef>
 #include <filesystem>
-#include <iostream>
 #include <memory>
 
 namespace Dwarf

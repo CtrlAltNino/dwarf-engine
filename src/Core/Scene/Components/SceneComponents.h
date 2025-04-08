@@ -1,9 +1,9 @@
 #pragma once
+
 #include "Core/Asset/AssetReference/IAssetReference.h"
 #include "Core/Rendering/MeshBuffer/IMeshBuffer.h"
-#include "Utilities/ISerializable.h"
-
 #include "Core/UUID.h"
+#include "Utilities/ISerializable.h"
 #include <entt/entt.hpp>
 #include <memory>
 #include <nlohmann/json_fwd.hpp>
@@ -236,11 +236,13 @@ namespace Dwarf
     LightComponent() = default;
 
     LightComponent(const nlohmann::json& json)
-      : Type(static_cast<LIGHT_TYPE>(json["Type"]))
-      , Color({ json["Color"][0], json["Color"][1], json["Color"][2] })
-      , Attenuation(json["Attenuation"])
-      , Radius(json["Radius"])
-      , OpeningAngle(json["OpeningAngle"])
+      : Type(static_cast<LIGHT_TYPE>(json["Type"].get<LIGHT_TYPE>()))
+      , Color({ json["LightColor"]["r"].get<float>(),
+                json["LightColor"]["g"].get<float>(),
+                json["LightColor"]["b"].get<float>() })
+      , Attenuation(json["Attenuation"].get<float>())
+      , Radius(json["Radius"].get<float>())
+      , OpeningAngle(json["OpeningAngle"].get<float>())
     {
     }
 

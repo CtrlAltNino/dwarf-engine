@@ -1,12 +1,11 @@
 #pragma once
 
-#include "Core/Rendering/Mesh/IMesh.h"
-#include "Core/Rendering/MeshBuffer/IMeshBuffer.h"
 #include "Core/Rendering/MeshBuffer/IMeshBufferFactory.h"
 #include "IMeshBufferWorker.h"
 #include "Logging/IDwarfLogger.h"
 #include <mutex>
 #include <queue>
+
 namespace Dwarf
 {
   class MeshBufferWorker : public IMeshBufferWorker

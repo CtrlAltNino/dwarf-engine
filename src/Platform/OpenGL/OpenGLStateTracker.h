@@ -2,7 +2,6 @@
 
 #include "IOpenGLStateTracker.h"
 #include "Logging/IDwarfLogger.h"
-
 #include <glad/glad.h>
 
 namespace Dwarf

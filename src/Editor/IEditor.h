@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Core/Scene/IScene.h"
 namespace Dwarf
 {
   /// @brief The controller part of the editors MVC structure.

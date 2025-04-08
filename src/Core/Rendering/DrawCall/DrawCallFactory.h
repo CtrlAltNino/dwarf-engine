@@ -4,6 +4,7 @@
 #include "IDrawCall.h"
 #include "IDrawCallFactory.h"
 #include "Logging/IDwarfLogger.h"
+
 namespace Dwarf
 {
   class DrawCallFactory : public IDrawCallFactory

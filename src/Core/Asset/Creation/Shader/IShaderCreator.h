@@ -3,7 +3,6 @@
 #include <filesystem>
 #include <optional>
 
-
 namespace Dwarf
 {
   enum ShaderType

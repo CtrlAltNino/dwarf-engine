@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Launcher/SavedProjects/ISavedProjects.h"
+
 namespace Dwarf
 {
 #define NAME_COLUMN_INDEX (0)

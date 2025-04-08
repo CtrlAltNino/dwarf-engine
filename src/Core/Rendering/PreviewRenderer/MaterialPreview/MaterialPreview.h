@@ -4,7 +4,6 @@
 #include "Core/Rendering/Mesh/IMeshFactory.h"
 #include "Core/Rendering/MeshBuffer/IMeshBufferFactory.h"
 #include "Core/Rendering/PreviewRenderer/MaterialPreview/IMaterialPreview.h"
-#include "Core/Rendering/RendererApi/IRendererApi.h"
 #include "Core/Scene/Camera/ICameraFactory.h"
 #include "Logging/IDwarfLogger.h"
 

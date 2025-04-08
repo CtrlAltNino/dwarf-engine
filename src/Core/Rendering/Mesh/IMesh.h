@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Rendering/Mesh/Vertex.h"
+
 namespace Dwarf
 {
   /**

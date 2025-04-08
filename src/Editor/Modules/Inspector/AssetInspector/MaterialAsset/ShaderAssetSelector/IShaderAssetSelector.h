@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Core/Asset/Shader/ShaderSourceCollection/IShaderSourceCollection.h"
 #include "Core/Rendering/Material/ShaderAssetSourceContainer/IShaderAssetSourceContainer.h"
 #include "Core/Rendering/Shader/IShader.h"
 

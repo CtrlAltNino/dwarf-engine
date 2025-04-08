@@ -162,7 +162,7 @@ namespace Dwarf
                                0,
                                0,
                                mTonemapMaterial,
-                               false);
+                               true);
       mLdrPingPong->Swap();
     }
 

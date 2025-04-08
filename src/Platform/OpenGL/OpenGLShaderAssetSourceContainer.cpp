@@ -16,7 +16,6 @@ namespace Dwarf
     for (std::unique_ptr<IAssetReference>& shaderSource :
          shaderSources->GetShaderSources())
     {
-      // std::visit(HandleShaderSourceVisitor(*this), shaderSource);
       switch (shaderSource->GetType())
       {
         case Dwarf::ASSET_TYPE::VERTEX_SHADER:

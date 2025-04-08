@@ -3,6 +3,7 @@
 #include "Core/Rendering/Framebuffer/IFramebuffer.h"
 #include "Utilities/ImageUtilities/TextureCommon.h"
 #include <cstddef>
+
 namespace Dwarf
 {
   /**

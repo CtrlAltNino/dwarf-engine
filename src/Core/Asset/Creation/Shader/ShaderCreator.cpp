@@ -27,7 +27,6 @@ namespace Dwarf
     std::filesystem::path shaderTargetPath;
     std::string           fileName;
     std::string           fileExtension;
-    std::string           targetFileName;
 
     switch (source)
     {

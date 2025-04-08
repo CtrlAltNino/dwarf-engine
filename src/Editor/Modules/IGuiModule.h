@@ -1,4 +1,5 @@
 #pragma once
+
 #include "Core/UUID.h"
 #include "Utilities/ISerializable.h"
 #include <boost/serialization/strong_typedef.hpp>

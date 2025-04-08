@@ -6,9 +6,7 @@
 
 #ifdef _WIN32
 #include <Windows.h>
-#endif
 
-#ifdef _WIN32
 #include <KnownFolders.h>
 #include <ShlObj.h>
 #include <objbase.h>

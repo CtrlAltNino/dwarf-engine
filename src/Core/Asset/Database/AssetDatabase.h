@@ -17,7 +17,6 @@
 #include "Logging/IDwarfLogger.h"
 #include "Utilities/FileHandler/IFileHandler.h"
 #include "Window/IWindow.h"
-
 #include <entt/entity/fwd.hpp>
 #include <entt/entt.hpp>
 #include <string>

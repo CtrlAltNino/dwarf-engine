@@ -2,6 +2,7 @@
 
 #include "Core/Rendering/Mesh/IMesh.h"
 #include "Core/Rendering/MeshBuffer/IMeshBuffer.h"
+
 namespace Dwarf
 {
   /**

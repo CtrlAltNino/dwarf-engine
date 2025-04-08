@@ -2,6 +2,7 @@
 
 #include "Core/Rendering/PreviewRenderer/PreviewRenderer.h"
 #include <imgui.h>
+
 namespace Dwarf
 {
   /**

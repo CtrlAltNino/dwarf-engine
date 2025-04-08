@@ -5,7 +5,6 @@
 #include "Core/Rendering/Mesh/IMesh.h"
 #include "Core/Rendering/Texture/ITexture.h"
 
-
 namespace Dwarf
 {
 

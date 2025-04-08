@@ -5,15 +5,6 @@
 
 namespace Dwarf
 {
-
-  // glm::ivec2 InputManager::mCurrentMousePos = glm::ivec2(0);
-  // glm::ivec2 InputManager::mLastMousePos = glm::ivec2(0);
-  // glm::ivec2 InputManager::mDeltaMousePos = glm::ivec2(0);
-  // glm::ivec2 InputManager::mDeltaScroll = glm::ivec2(0);
-
-  // std::map<MOUSE_BUTTON, int> InputManager::mMouseButtonStates =
-  //   std::map<MOUSE_BUTTON, int>();
-
   std::map<SDL_Scancode, KEYCODE> InputManager::sKeyCodeMap = {
     { SDL_SCANCODE_W, KEYCODE::W },
     { SDL_SCANCODE_A, KEYCODE::A },
@@ -25,10 +16,6 @@ namespace Dwarf
     { SDL_SCANCODE_LSHIFT, KEYCODE::LEFT_SHIFT },
     { SDL_SCANCODE_LCTRL, KEYCODE::LEFT_CONTROL }
   };
-
-  // std::set<KEYCODE> InputManager::mKeysDown;
-  // std::set<KEYCODE> InputManager::mKeysRepeat;
-  // std::set<KEYCODE> InputManager::mKeysUp;
 
   std::map<MOUSE_BUTTON, int> InputManager::sMouseCodeMap = {
     { MOUSE_BUTTON::LEFT, 1 },

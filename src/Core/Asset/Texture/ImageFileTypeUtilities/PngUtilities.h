@@ -3,9 +3,10 @@
 #include "Logging/IDwarfLogger.h"
 #include "Utilities/FileHandler/IFileHandler.h"
 #include "Utilities/ImageUtilities/TextureCommon.h"
+#include <cstddef>
 #include <spng.h>
 
-#include <cstddef>
+
 namespace Dwarf
 {
   class PngUtilities

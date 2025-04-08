@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Core/Asset/Database/IAssetDatabase.h"
-#include "Core/Asset/Shader/ShaderSourceCollection/IShaderSourceCollectionFactory.h"
 #include "Core/Rendering/Material/ShaderAssetSourceContainer/IShaderAssetSourceContainer.h"
 #include "Editor/Modules/Inspector/AssetInspector/MaterialAsset/ShaderAssetSelector/IShaderAssetSelector.h"
 #include "Logging/IDwarfLogger.h"

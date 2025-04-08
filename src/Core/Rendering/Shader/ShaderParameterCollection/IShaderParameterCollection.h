@@ -4,7 +4,6 @@
 #include "Core/Rendering/Texture/ITexture.h"
 #include "Core/UUID.h"
 #include "Utilities/ISerializable.h"
-
 #include <optional>
 #include <variant>
 

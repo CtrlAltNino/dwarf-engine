@@ -1,5 +1,5 @@
 #pragma once
-#include "Core/Base.h"
+
 #include "Core/Rendering/Texture/ITexture.h"
 
 namespace Dwarf

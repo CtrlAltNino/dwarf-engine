@@ -1,4 +1,5 @@
 #pragma once
+
 #include "Input/IInputManager.h"
 #include "Logging/IDwarfLogger.h"
 

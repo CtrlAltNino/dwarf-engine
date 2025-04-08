@@ -1,10 +1,9 @@
 #pragma once
-#include "Utilities/ISerializable.h"
 
-#include "Core/Base.h"
 #include "Core/GenericComponents.h"
 #include "Core/Scene/Components/SceneComponents.h"
 #include "Core/UUID.h"
+#include "Utilities/ISerializable.h"
 #include <entt/entt.hpp>
 
 namespace Dwarf

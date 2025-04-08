@@ -1,4 +1,5 @@
 #pragma once
+
 #include "Core/Rendering/GpuInfo/IGpuInfo.h"
 #include "Core/Rendering/RendererApi/IRendererApi.h"
 #include "Core/Rendering/VramTracker/IVramTracker.h"
