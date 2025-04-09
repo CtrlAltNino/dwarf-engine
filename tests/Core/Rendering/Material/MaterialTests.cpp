@@ -19,9 +19,10 @@ class MockIShaderParameterCollection : public Dwarf::IShaderParameterCollection
 public:
   MOCK_METHOD(void,
               SetParameter,
-              (std::string_view identifier, Dwarf::ParameterValue parameter),
+              (std::string_view              identifier,
+               Dwarf::MaterialParameterValue parameter),
               (override));
-  MOCK_METHOD(Dwarf::ParameterValue&,
+  MOCK_METHOD(Dwarf::MaterialParameterValue&,
               GetParameter,
               (const std::string& name),
               (override));

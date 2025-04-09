@@ -120,7 +120,7 @@ public:
                const TextureResolution& size,
                uint32_t                 samples),
               (const, override));
-  MOCK_METHOD(ITexture&, GetPlaceholderTexture, (), (override));
+  MOCK_METHOD(std::shared_ptr<ITexture>, GetPlaceholderTexture, (), (override));
 };
 
 class MockMaterialIO : public IMaterialIO

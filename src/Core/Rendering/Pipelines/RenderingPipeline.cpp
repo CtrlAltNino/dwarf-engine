@@ -35,12 +35,6 @@ namespace Dwarf
     mIdMaterial = mMaterialFactory->CreateMaterial(
       mShaderSourceCollectionFactory->CreateIdShaderSourceCollection());
     mIdMaterial->GetShader()->Compile();
-
-    /*mGridMaterial = mMaterialFactory->CreateMaterial(
-      mShaderSourceCollectionFactory->CreateGridShaderSourceCollection());
-    mGridMaterial->GetShader()->Compile();
-    mGridMaterial->GetMaterialProperties().IsDoubleSided = true;
-    mGridMaterial->GetMaterialProperties().IsTransparent = true;*/
     mGridShader = mShaderRegistry->GetOrCreate(
       mShaderSourceCollectionFactory->CreateGridShaderSourceCollection());
 
@@ -160,8 +154,8 @@ namespace Dwarf
     if (mHdrPingPong && mHdrPingPong->GetReadFramebuffer().lock() &&
         mLdrPingPong && mLdrPingPong->GetWriteFramebuffer().lock())
     {
-      mTonemapShader->SetParameter(
-        "hdrTexture", Texture2D(mHdrPingPong->GetReadTexture().GetTextureID()));
+      mTonemapShader->SetParameter("hdrTexture",
+                                   mHdrPingPong->GetReadTexture());
       mRendererApi->CustomBlit(*mHdrPingPong->GetReadFramebuffer().lock(),
                                *mLdrPingPong->GetWriteFramebuffer().lock(),
                                0,
@@ -175,35 +169,23 @@ namespace Dwarf
 
     if (gridSettings.RenderGrid)
     {
-      /*mGridMaterial->GetShaderParameters()->SetParameter(
-        "uSceneDepth",
-        Texture2D(mHdrPingPong->GetReadFramebuffer()
-                    .lock()
-                    ->GetDepthAttachment()
-                    .value()
-                    .get()
-                    .GetTextureID()));
-      mGridMaterial->GetShaderParameters()->SetParameter(
-        "uSceneColor",
-        Texture2D(mLdrPingPong->GetReadTexture().GetTextureID()));
-      mGridMaterial->GetShaderParameters()->SetParameter(
-        "uGridHeight", gridSettings.GridYOffset);
-      mGridMaterial->GetShaderParameters()->SetParameter(
-        "uOpacity", gridSettings.GridOpacity);*/
       mGridShader->SetParameter("uSceneDepth",
-                                Texture2D(mHdrPingPong->GetReadFramebuffer()
-                                            .lock()
-                                            ->GetDepthAttachment()
-                                            .value()
-                                            .get()
-                                            .GetTextureID()));
-      mGridShader->SetParameter(
-        "uSceneColor",
-        Texture2D(mLdrPingPong->GetReadTexture().GetTextureID()));
+                                mHdrPingPong->GetReadFramebuffer()
+                                  .lock()
+                                  ->GetDepthAttachment()
+                                  .value());
+      mGridShader->SetParameter("uSceneColor", mLdrPingPong->GetReadTexture());
       mGridShader->SetParameter("uGridHeight", gridSettings.GridYOffset);
       mGridShader->SetParameter("uOpacity", gridSettings.GridOpacity);
+      mGridShader->SetParameter(
+        "uInverseViewProjection",
+        glm::inverse(camera.GetProjectionMatrix() * camera.GetViewMatrix()));
+      mGridShader->SetParameter("uInverseView",
+                                glm::inverse(camera.GetViewMatrix()));
+      mGridShader->SetParameter("uCameraPosition",
+                                camera.GetProperties().Transform.GetPosition());
 
-      mRendererApi->ApplyPostProcess(*mLdrPingPong, camera, *mGridShader, true);
+      mRendererApi->ApplyPostProcess(*mLdrPingPong, *mGridShader, true);
       mLdrPingPong->Swap();
     }
 
@@ -311,10 +293,7 @@ namespace Dwarf
   auto
   RenderingPipeline::GetPresentationBufferId() -> uintptr_t
   {
-    return mPresentationBuffer->GetColorAttachment()
-      .value()
-      .get()
-      .GetTextureID();
+    return mPresentationBuffer->GetColorAttachment().value()->GetTextureID();
   }
 
   void

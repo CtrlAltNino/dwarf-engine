@@ -1,5 +1,6 @@
 #include "pch.h"
 
+#include "Core/Asset/Database/AssetComponents.h"
 #include "OpenGLShaderAssetSelector.h"
 #include "OpenGLShaderAssetSourceContainer.h"
 #include "Platform/OpenGL/OpenGLShader.h"

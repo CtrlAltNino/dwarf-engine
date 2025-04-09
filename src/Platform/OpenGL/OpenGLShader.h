@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Core/Asset/AssetReference/IAssetReference.h"
-#include "Core/Asset/Database/AssetComponents.h"
 #include "Core/Asset/Shader/ShaderSourceCollection/IShaderSourceCollection.h"
 #include "Core/Rendering/Shader/IShader.h"
 #include "Core/Rendering/Shader/ShaderParameterCollection/IShaderParameterCollection.h"
@@ -39,9 +38,11 @@ namespace Dwarf
     std::shared_ptr<IShaderParameterCollectionFactory>
       mShaderParameterCollectionFactory;
 
-    std::map<std::string, GLint>          mUniformLocations;
-    std::map<std::string, ParameterValue> mUniformStates;
-    std::map<int, uintptr_t>              mTextureStates;
+    std::map<std::string, GLint>                mUniformLocations;
+    std::map<std::string, ShaderParameterValue> mUniformStates;
+    std::map<std::string, ShaderParameterValue> mUniformStatesDraft;
+    std::map<int, uintptr_t>                    mTextureStates;
+    std::map<int, uintptr_t>                    mTextureStatesDraft;
 
     std::optional<std::unique_ptr<IAssetReference>> mVertexShaderAsset;
     std::optional<std::unique_ptr<IAssetReference>> mGeometryShaderAsset;
@@ -70,7 +71,7 @@ namespace Dwarf
     ResetUniformBindings();
 
     void
-    ResetTextureSlots();
+    UploadParameters();
 
     /**
      * @brief Compiles the shader program
@@ -100,7 +101,8 @@ namespace Dwarf
     GetShaderLogs() const -> const ShaderLogs&;
 
     void
-    SetParameter(std::string identifier, ParameterValue parameter) override;
+    SetParameter(std::string          identifier,
+                 ShaderParameterValue parameter) override;
 
     auto
     GetUniformLocation(std::string uniformName) -> GLint;

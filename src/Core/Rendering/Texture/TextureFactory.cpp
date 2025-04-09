@@ -209,7 +209,7 @@ namespace Dwarf
   }
 
   auto
-  TextureFactory::GetPlaceholderTexture() -> ITexture&
+  TextureFactory::GetPlaceholderTexture() -> std::shared_ptr<ITexture>
   {
     if (!mPlaceholderTexture)
     {
@@ -217,6 +217,6 @@ namespace Dwarf
         std::move(FromPath("data/engine/img/textures/placeholder.png"));
     }
 
-    return *mPlaceholderTexture;
+    return mPlaceholderTexture;
   }
 } // namespace Dwarf

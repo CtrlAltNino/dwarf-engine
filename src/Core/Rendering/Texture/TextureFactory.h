@@ -16,7 +16,7 @@ namespace Dwarf
     std::shared_ptr<IImageFileLoader> mImageFileLoader;
     std::shared_ptr<IDwarfLogger>     mLogger;
     std::shared_ptr<IVramTracker>     mVramTracker;
-    std::unique_ptr<ITexture>         mPlaceholderTexture;
+    std::shared_ptr<ITexture>         mPlaceholderTexture;
 
     /**
      * @brief Helper function that calculates the pixel count of a texture
@@ -119,6 +119,6 @@ namespace Dwarf
      * @return Shared pointer to the placeholder texture
      */
     [[nodiscard]] auto
-    GetPlaceholderTexture() -> ITexture& override;
+    GetPlaceholderTexture() -> std::shared_ptr<ITexture> override;
   };
 } // namespace Dwarf

@@ -10,17 +10,18 @@ namespace Dwarf
   class OpenGLFramebuffer : public IFramebuffer
   {
   private:
-    std::shared_ptr<IDwarfLogger>                mLogger;
+    std::shared_ptr<IDwarfLogger>    mLogger;
+    std::shared_ptr<ITextureFactory> mTextureFactory;
+    std::shared_ptr<IVramTracker>    mVramTracker;
+
     uint32_t                                     mRendererID = 0;
     FramebufferSpecification                     mSpecification;
     std::vector<FramebufferTextureSpecification> mColorAttachmentSpecifications;
     FramebufferTextureSpecification              mDepthAttachmentSpecification{
       FramebufferTextureFormat::None
     };
-    std::vector<std::unique_ptr<ITexture>> mColorAttachments;
-    std::unique_ptr<ITexture>              mDepthAttachment = 0;
-    std::shared_ptr<ITextureFactory>       mTextureFactory;
-    std::shared_ptr<IVramTracker>          mVramTracker;
+    std::vector<std::shared_ptr<ITexture>> mColorAttachments;
+    std::shared_ptr<ITexture>              mDepthAttachment = 0;
     size_t                                 mCurrentVramMemory = 0;
 
     /**
@@ -122,7 +123,7 @@ namespace Dwarf
      */
     [[nodiscard]] auto
     GetColorAttachment(uint32_t index) const
-      -> std::optional<const std::reference_wrapper<ITexture>> override;
+      -> std::optional<std::shared_ptr<ITexture>> override;
 
     /**
      * @brief Gets the depth attachment of the framebuffer
@@ -131,7 +132,7 @@ namespace Dwarf
      */
     [[nodiscard]] auto
     GetDepthAttachment() const
-      -> std::optional<const std::reference_wrapper<ITexture>> override;
+      -> std::optional<std::shared_ptr<ITexture>> override;
 
     /**
      * @brief Clears the frame buffer

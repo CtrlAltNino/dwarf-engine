@@ -63,8 +63,7 @@ namespace Dwarf
     {
       textureId = (ImTextureID)mPreviewFramebuffer->GetColorAttachment(0)
                     .value()
-                    .get()
-                    .GetTextureID();
+                    ->GetTextureID();
     }
     return textureId;
   }
