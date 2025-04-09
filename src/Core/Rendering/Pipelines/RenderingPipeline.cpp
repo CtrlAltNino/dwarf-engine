@@ -36,11 +36,13 @@ namespace Dwarf
       mShaderSourceCollectionFactory->CreateIdShaderSourceCollection());
     mIdMaterial->GetShader()->Compile();
 
-    mGridMaterial = mMaterialFactory->CreateMaterial(
+    /*mGridMaterial = mMaterialFactory->CreateMaterial(
       mShaderSourceCollectionFactory->CreateGridShaderSourceCollection());
     mGridMaterial->GetShader()->Compile();
     mGridMaterial->GetMaterialProperties().IsDoubleSided = true;
-    mGridMaterial->GetMaterialProperties().IsTransparent = true;
+    mGridMaterial->GetMaterialProperties().IsTransparent = true;*/
+    mGridShader = mShaderRegistry->GetOrCreate(
+      mShaderSourceCollectionFactory->CreateGridShaderSourceCollection());
 
     SetupRenderFramebuffer();
 
@@ -158,11 +160,13 @@ namespace Dwarf
     if (mHdrPingPong && mHdrPingPong->GetReadFramebuffer().lock() &&
         mLdrPingPong && mLdrPingPong->GetWriteFramebuffer().lock())
     {
+      mTonemapShader->SetParameter(
+        "hdrTexture", Texture2D(mHdrPingPong->GetReadTexture().GetTextureID()));
       mRendererApi->CustomBlit(*mHdrPingPong->GetReadFramebuffer().lock(),
                                *mLdrPingPong->GetWriteFramebuffer().lock(),
                                0,
                                0,
-                               mTonemapMaterial,
+                               *mTonemapShader,
                                true);
       mLdrPingPong->Swap();
     }
@@ -171,22 +175,35 @@ namespace Dwarf
 
     if (gridSettings.RenderGrid)
     {
-      mGridMaterial->GetShaderParameters()->SetParameter(
+      /*mGridMaterial->GetShaderParameters()->SetParameter(
         "uSceneDepth",
-        mHdrPingPong->GetReadFramebuffer()
-          .lock()
-          ->GetDepthAttachment()
-          .value()
-          .get());
+        Texture2D(mHdrPingPong->GetReadFramebuffer()
+                    .lock()
+                    ->GetDepthAttachment()
+                    .value()
+                    .get()
+                    .GetTextureID()));
       mGridMaterial->GetShaderParameters()->SetParameter(
-        "uSceneColor", mLdrPingPong->GetReadTexture());
+        "uSceneColor",
+        Texture2D(mLdrPingPong->GetReadTexture().GetTextureID()));
       mGridMaterial->GetShaderParameters()->SetParameter(
         "uGridHeight", gridSettings.GridYOffset);
       mGridMaterial->GetShaderParameters()->SetParameter(
-        "uOpacity", gridSettings.GridOpacity);
+        "uOpacity", gridSettings.GridOpacity);*/
+      mGridShader->SetParameter("uSceneDepth",
+                                Texture2D(mHdrPingPong->GetReadFramebuffer()
+                                            .lock()
+                                            ->GetDepthAttachment()
+                                            .value()
+                                            .get()
+                                            .GetTextureID()));
+      mGridShader->SetParameter(
+        "uSceneColor",
+        Texture2D(mLdrPingPong->GetReadTexture().GetTextureID()));
+      mGridShader->SetParameter("uGridHeight", gridSettings.GridYOffset);
+      mGridShader->SetParameter("uOpacity", gridSettings.GridOpacity);
 
-      mRendererApi->ApplyPostProcess(
-        *mLdrPingPong, camera, *mGridMaterial, true);
+      mRendererApi->ApplyPostProcess(*mLdrPingPong, camera, *mGridShader, true);
       mLdrPingPong->Swap();
     }
 
@@ -303,10 +320,9 @@ namespace Dwarf
   void
   RenderingPipeline::SetExposure(float exposure)
   {
-    if (mTonemapMaterial)
+    if (mTonemapShader)
     {
-      mTonemapMaterial->GetShaderParameters()->SetParameter("exposure",
-                                                            exposure);
+      mTonemapShader->SetParameter("exposure", exposure);
     }
   }
 
@@ -336,21 +352,21 @@ namespace Dwarf
       using enum TonemapType;
       case Reinhard:
         {
-          mTonemapMaterial = mMaterialFactory->CreateMaterial(
+          mTonemapShader = mShaderRegistry->GetOrCreate(
             mShaderSourceCollectionFactory
               ->CreateReinhardTonemapShaderSourceCollection());
           break;
         }
       case Agx:
         {
-          mTonemapMaterial = mMaterialFactory->CreateMaterial(
+          mTonemapShader = mShaderRegistry->GetOrCreate(
             mShaderSourceCollectionFactory
               ->CreateAgxTonemapShaderSourceCollection());
           break;
         }
       case Aces:
         {
-          mTonemapMaterial = mMaterialFactory->CreateMaterial(
+          mTonemapShader = mShaderRegistry->GetOrCreate(
             mShaderSourceCollectionFactory
               ->CreateAcesTonemapShaderSourceCollection());
           break;

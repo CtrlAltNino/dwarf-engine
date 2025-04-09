@@ -8,7 +8,6 @@
 #include "Core/Rendering/Shader/ShaderParameterCollection/IShaderParameterCollectionFactory.h"
 #include "Core/Rendering/VramTracker/IVramTracker.h"
 #include "Logging/IDwarfLogger.h"
-#include "Platform/OpenGL/OpenGLTexture.h"
 #include <boost/di.hpp>
 #include <boost/serialization/strong_typedef.hpp>
 #include <cstdint>
@@ -30,6 +29,7 @@ namespace Dwarf
   {
   private:
     GLuint     mID = -1;
+    int        mNextTextureSlot = 0;
     ShaderLogs mShaderLogs;
     // Flag to determine if the shader has been successfully compiled.
     bool mSuccessfullyCompiled = false;
@@ -39,20 +39,9 @@ namespace Dwarf
     std::shared_ptr<IShaderParameterCollectionFactory>
       mShaderParameterCollectionFactory;
 
-    std::map<std::string, GLint> mUniformLocations;
-    std::map<std::string,
-             std::variant<bool,
-                          int,
-                          uint32_t,
-                          float,
-                          glm::vec2,
-                          glm::vec3,
-                          glm::vec4,
-                          glm::mat3,
-                          glm::mat4>>
-      mUniformStates;
-
-    std::map<int, uintptr_t> mTextureStates;
+    std::map<std::string, GLint>          mUniformLocations;
+    std::map<std::string, ParameterValue> mUniformStates;
+    std::map<int, uintptr_t>              mTextureStates;
 
     std::optional<std::unique_ptr<IAssetReference>> mVertexShaderAsset;
     std::optional<std::unique_ptr<IAssetReference>> mGeometryShaderAsset;
@@ -76,6 +65,12 @@ namespace Dwarf
 
     [[nodiscard]] auto
     GetID() const -> GLuint;
+
+    void
+    ResetUniformBindings();
+
+    void
+    ResetTextureSlots();
 
     /**
      * @brief Compiles the shader program
@@ -105,29 +100,7 @@ namespace Dwarf
     GetShaderLogs() const -> const ShaderLogs&;
 
     void
-    SetUniform(std::string uniformName, bool value);
-    void
-    SetUniform(std::string uniformName, int value);
-    void
-    SetUniform(std::string uniformName, uint32_t value);
-    void
-    SetUniform(std::string uniformName, float value);
-    void
-    SetUniform(std::string   uniformName,
-               TextureAsset& value,
-               uint32_t      textureCount);
-    void
-    SetUniform(std::string    uniformName,
-               OpenGLTexture& value,
-               uint32_t       textureCount);
-    void
-    SetUniform(std::string uniformName, glm::vec2 value);
-    void
-    SetUniform(std::string uniformName, glm::vec3 value);
-    void
-    SetUniform(std::string uniformName, glm::vec4 value);
-    void
-    SetUniform(std::string uniformName, glm::mat4 value);
+    SetParameter(std::string identifier, ParameterValue parameter) override;
 
     auto
     GetUniformLocation(std::string uniformName) -> GLint;

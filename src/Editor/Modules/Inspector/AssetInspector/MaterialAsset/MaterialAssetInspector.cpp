@@ -4,6 +4,7 @@
 #include "Core/Rendering/PreviewRenderer/MaterialPreview/IMaterialPreview.h"
 #include "MaterialAssetInspector.h"
 #include "UI/DwarfUI.h"
+#include <imgui.h>
 #include <memory>
 
 namespace Dwarf
@@ -78,21 +79,31 @@ namespace Dwarf
     }
 
     void
-    operator()(Texture2DAssetValue& parameter) const
+    operator()(Texture2D& parameter) const
     {
       ImGui::TextWrapped("%s", ParameterName.c_str());
       ImGui::SameLine();
       ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
                            UNIFORM_DELETE_BUTTON_WIDTH - 8.0F);
 
-      DwarfUI::AssetInput<TextureAsset>(
-        AssetDatabase, parameter, ImGuiID.c_str());
-      ImGui::PopItemWidth();
-    }
+      std::visit(
+        [&](auto&& val)
+        {
+          using T = std::decay_t<decltype(val)>;
 
-    void
-    operator()(std::reference_wrapper<ITexture> parameter) const
-    {
+          // GLint uniformLocation = GetUniformLocation(identifier);
+          //  Float parameter
+          if constexpr (std::is_same_v<T, std::optional<UUID>>)
+          {
+            DwarfUI::AssetInput<TextureAsset>(
+              AssetDatabase,
+              static_cast<std::optional<UUID>&>(val),
+              ImGuiID.c_str());
+          }
+        },
+        parameter);
+
+      ImGui::PopItemWidth();
     }
 
     void
@@ -103,6 +114,30 @@ namespace Dwarf
       ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
                            UNIFORM_DELETE_BUTTON_WIDTH - 8.0F);
       ImGui::InputFloat2(ImGuiID.c_str(), &parameter.x);
+      ImGui::PopItemWidth();
+    }
+
+    void
+    operator()(glm::ivec2& parameter) const
+    {
+      ImGui::TextWrapped("%s", ParameterName.c_str());
+      ImGui::SameLine();
+      ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
+                           UNIFORM_DELETE_BUTTON_WIDTH - 8.0F);
+      ImGui::InputInt2(ImGuiID.c_str(), &parameter.x);
+      ImGui::PopItemWidth();
+    }
+
+    void
+    operator()(glm::uvec2& parameter) const
+    {
+      ImGui::TextWrapped("%s", ParameterName.c_str());
+      ImGui::SameLine();
+      ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
+                           UNIFORM_DELETE_BUTTON_WIDTH - 8.0F);
+      // ImGui::InputInt2(ImGuiID.c_str(), &parameter.x);
+      ImGui::InputScalarN(
+        ImGuiID.c_str(), ImGuiDataType_U32, glm::value_ptr(parameter), 2);
       ImGui::PopItemWidth();
     }
 
@@ -118,6 +153,30 @@ namespace Dwarf
     }
 
     void
+    operator()(glm::ivec3& parameter) const
+    {
+      ImGui::TextWrapped("%s", ParameterName.c_str());
+      ImGui::SameLine();
+      ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
+                           UNIFORM_DELETE_BUTTON_WIDTH - 8.0F);
+      ImGui::InputInt3(ImGuiID.c_str(), &parameter.x);
+      ImGui::PopItemWidth();
+    }
+
+    void
+    operator()(glm::uvec3& parameter) const
+    {
+      ImGui::TextWrapped("%s", ParameterName.c_str());
+      ImGui::SameLine();
+      ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
+                           UNIFORM_DELETE_BUTTON_WIDTH - 8.0F);
+      // ImGui::InputInt2(ImGuiID.c_str(), &parameter.x);
+      ImGui::InputScalarN(
+        ImGuiID.c_str(), ImGuiDataType_U32, glm::value_ptr(parameter), 3);
+      ImGui::PopItemWidth();
+    }
+
+    void
     operator()(glm::vec4& parameter) const
     {
       ImGui::TextWrapped("%s", ParameterName.c_str());
@@ -127,6 +186,40 @@ namespace Dwarf
       ImGui::ColorEdit4(
         ImGuiID.c_str(), &parameter.x, ImGuiColorEditFlags_None);
       ImGui::PopItemWidth();
+    }
+
+    void
+    operator()(glm::ivec4& parameter) const
+    {
+      ImGui::TextWrapped("%s", ParameterName.c_str());
+      ImGui::SameLine();
+      ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
+                           UNIFORM_DELETE_BUTTON_WIDTH - 8.0F);
+      ImGui::InputInt4(ImGuiID.c_str(), &parameter.x);
+      ImGui::PopItemWidth();
+    }
+
+    void
+    operator()(glm::uvec4& parameter) const
+    {
+      ImGui::TextWrapped("%s", ParameterName.c_str());
+      ImGui::SameLine();
+      ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
+                           UNIFORM_DELETE_BUTTON_WIDTH - 8.0F);
+      // ImGui::InputInt2(ImGuiID.c_str(), &parameter.x);
+      ImGui::InputScalarN(
+        ImGuiID.c_str(), ImGuiDataType_U32, glm::value_ptr(parameter), 4);
+      ImGui::PopItemWidth();
+    }
+
+    void
+    operator()(glm::mat3& parameter) const
+    {
+    }
+
+    void
+    operator()(glm::mat4& parameter) const
+    {
     }
   };
 
@@ -389,7 +482,7 @@ namespace Dwarf
             break;
           case TEX2D:
             material.GetShaderParameters()->SetParameter(
-              paramName, Texture2DAssetValue(nullptr));
+              paramName, Texture2D(std::nullopt));
             break;
           case VEC2:
             material.GetShaderParameters()->SetParameter(paramName,

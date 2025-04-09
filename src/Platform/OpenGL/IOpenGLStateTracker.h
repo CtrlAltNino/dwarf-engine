@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Platform/OpenGL/OpenGLShader.h"
 #include <glad/glad.h>
 
 namespace Dwarf
@@ -15,7 +16,7 @@ namespace Dwarf
     virtual ~IOpenGLStateTracker() = default;
 
     virtual void
-    SetShaderProgram(GLuint program) = 0;
+    SetShaderProgram(OpenGLShader& program) = 0;
 
     virtual void
     BindFramebuffer(GLuint framebuffer) = 0;

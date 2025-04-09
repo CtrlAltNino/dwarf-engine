@@ -1,3 +1,4 @@
+#include "Core/Asset/Database/IAssetDatabase.h"
 #include "pch.h"
 
 #include "Core/Asset/AssetReference/IAssetReference.h"
@@ -9,6 +10,7 @@
 #include "OpenGLShader.h"
 #include "OpenGLUtilities.h"
 #include "Platform/OpenGL/OpenGLUtilities.h"
+#include <glad/glad.h>
 
 #define GL_SHADER_LOG_LENGTH (1024)
 
@@ -79,7 +81,10 @@ namespace Dwarf
     { GL_FLOAT_VEC2, ShaderParameterType::VEC2 },
     { GL_FLOAT_VEC3, ShaderParameterType::VEC3 },
     { GL_FLOAT_VEC4, ShaderParameterType::VEC4 },
-    { GL_SAMPLER_2D, ShaderParameterType::TEX2D }
+    { GL_SAMPLER_2D, ShaderParameterType::TEX2D },
+    { GL_SAMPLER_2D_MULTISAMPLE, ShaderParameterType::TEX2D },
+    { GL_FLOAT_MAT3, ShaderParameterType::MAT3 },
+    { GL_FLOAT_MAT4, ShaderParameterType::MAT4 }
   };
 
   void
@@ -362,13 +367,215 @@ namespace Dwarf
     return parameters;
   }
 
+  /*struct SetShaderParameterVisitor
+  {
+    std::string mParameterName;
+    // std::shared_ptr<IAssetDatabase>      mAssetDatabase;
+    std::shared_ptr<IDwarfLogger>    mLogger;
+    std::reference_wrapper<uint32_t> mTextureCount;
+
+    void
+    operator()(bool& parameter) const
+    {
+      SetUniform(mParameterName, parameter);
+    }
+    void
+    operator()(int& parameter) const
+    {
+      mShader.get().SetUniform(mParameterName, parameter);
+    }
+    void
+    operator()(uint32_t& parameter) const
+    {
+      mShader.get().SetUniform(mParameterName, parameter);
+    }
+    void
+    operator()(float& parameter) const
+    {
+      mShader.get().SetUniform(mParameterName, parameter);
+    }
+    void
+    operator()(Texture2DAssetValue& parameter) const
+    {
+      if (parameter.has_value() && mAssetDatabase->Exists(parameter.value()))
+      {
+        auto& textureAsset = dynamic_cast<TextureAsset&>(
+          mAssetDatabase->Retrieve(*parameter)->GetAsset());
+        mShader.get().SetUniform(mParameterName, textureAsset, mTextureCount++);
+      }
+    }
+    void
+    operator()(std::reference_wrapper<ITexture> parameter) const
+    {
+      mShader.get().SetUniform(mParameterName,
+                               dynamic_cast<OpenGLTexture&>(parameter.get()),
+                               mTextureCount++);
+    }
+    void
+    operator()(glm::vec2& parameter) const
+    {
+      mShader.get().SetUniform(mParameterName, parameter);
+    }
+    void
+    operator()(glm::vec3& parameter) const
+    {
+      mShader.get().SetUniform(mParameterName, parameter);
+    }
+    void
+    operator()(glm::vec4& parameter) const
+    {
+      mShader.get().SetUniform(mParameterName, parameter);
+    }
+  };*/
+
+  void
+  OpenGLShader::SetParameter(std::string identifier, ParameterValue parameter)
+  {
+    auto it = mUniformStates.find(identifier);
+    if (it != mUniformStates.end() && it->second == parameter) return;
+    mUniformStates[identifier] = parameter;
+
+    std::visit(
+      [&, identifier](auto&& val)
+      {
+        using T = std::decay_t<decltype(val)>;
+
+        GLint uniformLocation = GetUniformLocation(identifier);
+        // Float parameter
+        if constexpr (std::is_same_v<T, float>)
+        {
+          glUniform1f(uniformLocation, static_cast<GLfloat>(val));
+          OpenGLUtilities::CheckOpenGLError(
+            "glUniform1f", "OpenGLRendererApi", mLogger);
+        }
+        // Vec2 parameter
+        if constexpr (std::is_same_v<T, glm::vec2>)
+        {
+          auto param(static_cast<glm::vec2>(val));
+          glUniform2f(uniformLocation, param.x, param.y);
+          OpenGLUtilities::CheckOpenGLError(
+            "glUniform2f", "OpenGLRendererApi", mLogger);
+        }
+        // Vec3 parameter
+        if constexpr (std::is_same_v<T, glm::vec3>)
+        {
+          auto param(static_cast<glm::vec3>(val));
+          glUniform3f(uniformLocation, param.x, param.y, param.z);
+          OpenGLUtilities::CheckOpenGLError(
+            "glUniform3f", "OpenGLRendererApi", mLogger);
+        }
+        // Vec4 parameter
+        if constexpr (std::is_same_v<T, glm::vec4>)
+        {
+          auto param(static_cast<glm::vec4>(val));
+          glUniform4f(uniformLocation, param.x, param.y, param.z, param.w);
+          OpenGLUtilities::CheckOpenGLError(
+            "glUniform4f", "OpenGLRendererApi", mLogger);
+        }
+        // Int parameter
+        if constexpr (std::is_same_v<T, int>)
+        {
+          auto param(static_cast<int>(val));
+          glUniform1i(uniformLocation, param);
+          OpenGLUtilities::CheckOpenGLError(
+            "glUniform1i", "OpenGLRendererApi", mLogger);
+        }
+        // iVec2 parameter
+        if constexpr (std::is_same_v<T, glm::ivec2>)
+        {
+          auto param(static_cast<glm::ivec2>(val));
+          glUniform2i(uniformLocation, param.x, param.y);
+          OpenGLUtilities::CheckOpenGLError(
+            "glUniform2i", "OpenGLRendererApi", mLogger);
+        }
+        // iVec3 parameter
+        if constexpr (std::is_same_v<T, glm::ivec3>)
+        {
+          auto param(static_cast<glm::ivec3>(val));
+          glUniform3i(uniformLocation, param.x, param.y, param.z);
+          OpenGLUtilities::CheckOpenGLError(
+            "glUniform3i", "OpenGLRendererApi", mLogger);
+        }
+        // iVec4 parameter
+        if constexpr (std::is_same_v<T, glm::ivec4>)
+        {
+          auto param(static_cast<glm::ivec4>(val));
+          glUniform4i(uniformLocation, param.x, param.y, param.z, param.w);
+          OpenGLUtilities::CheckOpenGLError(
+            "glUniform4i", "OpenGLRendererApi", mLogger);
+        }
+        // unsigned int parameter
+        if constexpr (std::is_same_v<T, uint32_t>)
+        {
+          auto param(static_cast<uint32_t>(val));
+          glUniform1ui(uniformLocation, param);
+          OpenGLUtilities::CheckOpenGLError(
+            "glUniform1ui", "OpenGLRendererApi", mLogger);
+        }
+        // uvec2 parameter
+        if constexpr (std::is_same_v<T, glm::uvec2>)
+        {
+          auto param(static_cast<glm::uvec2>(val));
+          glUniform2ui(uniformLocation, param.x, param.y);
+          OpenGLUtilities::CheckOpenGLError(
+            "glUniform2ui", "OpenGLRendererApi", mLogger);
+        }
+        // uvec3 parameter
+        if constexpr (std::is_same_v<T, glm::uvec3>)
+        {
+          auto param(static_cast<glm::uvec3>(val));
+          glUniform3ui(uniformLocation, param.x, param.y, param.z);
+          OpenGLUtilities::CheckOpenGLError(
+            "glUniform3ui", "OpenGLRendererApi", mLogger);
+        }
+        // uvec4 parameter
+        if constexpr (std::is_same_v<T, glm::uvec4>)
+        {
+          auto param(static_cast<glm::uvec4>(val));
+          glUniform4ui(uniformLocation, param.x, param.y, param.z, param.w);
+          OpenGLUtilities::CheckOpenGLError(
+            "glUniform4ui", "OpenGLRendererApi", mLogger);
+        }
+        // Bool parameter
+        if constexpr (std::is_same_v<T, bool>)
+        {
+          glUniform1f(uniformLocation, static_cast<GLfloat>(val));
+          OpenGLUtilities::CheckOpenGLError(
+            "glUniform1f", "OpenGLRendererApi", mLogger);
+        }
+        // Mat3 parameter
+        if constexpr (std::is_same_v<T, glm::mat3>)
+        {
+          auto param(static_cast<glm::mat3>(val));
+          glUniformMatrix3fv(
+            uniformLocation, 1, GL_FALSE, glm::value_ptr(param));
+          OpenGLUtilities::CheckOpenGLError(
+            "glUniformMatrix3fv", "OpenGLRendererApi", mLogger);
+        }
+        // Mat4 parameter
+        if constexpr (std::is_same_v<T, glm::mat4>)
+        {
+          auto param(static_cast<glm::mat4>(val));
+          glUniformMatrix4fv(
+            uniformLocation, 1, GL_FALSE, glm::value_ptr(param));
+          OpenGLUtilities::CheckOpenGLError(
+            "glUniformMatrix4fv", "OpenGLRendererApi", mLogger);
+        }
+        // Texture2D parameter
+        if constexpr (std::is_same_v<T, Texture2D>)
+        {
+        }
+      },
+      parameter);
+  }
+
   auto
   OpenGLShader::GetShaderLogs() const -> const ShaderLogs&
   {
     return mShaderLogs;
   }
 
-  void
+  /*void
   OpenGLShader::SetUniform(std::string uniformName, bool value)
   {
     if (mUniformStates.contains(uniformName) &&
@@ -540,10 +747,23 @@ namespace Dwarf
     OpenGLUtilities::CheckOpenGLError(
       "glUniformMatrix4fv", "OpenGLRendererApi", mLogger);
     mUniformStates[uniformName] = value;
+  }*/
+
+  void
+  OpenGLShader::ResetUniformBindings()
+  {
+    mUniformStates.clear();
+    mTextureStates.clear();
   }
 
-  GLint
-  OpenGLShader::GetUniformLocation(std::string uniformName)
+  void
+  OpenGLShader::ResetTextureSlots()
+  {
+    mNextTextureSlot = 0;
+  }
+
+  auto
+  OpenGLShader::GetUniformLocation(std::string uniformName) -> GLint
   {
     if (!mUniformLocations.contains(uniformName))
     {

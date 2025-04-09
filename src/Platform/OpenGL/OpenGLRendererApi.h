@@ -154,12 +154,12 @@ namespace Dwarf
      * @param shader Shader to use for blitting
      */
     void
-    CustomBlit(IFramebuffer&              source,
-               IFramebuffer&              destination,
-               uint32_t                   sourceAttachment,
-               uint32_t                   destinationAttachment,
-               std::shared_ptr<IMaterial> material,
-               bool                       srgb) override;
+    CustomBlit(IFramebuffer& source,
+               IFramebuffer& destination,
+               uint32_t      sourceAttachment,
+               uint32_t      destinationAttachment,
+               IShader&      shader,
+               bool          srgb) override;
 
     /**
      * @brief Applies a post process to a ping pong buffer
@@ -172,7 +172,7 @@ namespace Dwarf
     void
     ApplyPostProcess(IPingPongBuffer& buffer,
                      ICamera&         camera,
-                     IMaterial&       material,
+                     IShader&         shader,
                      bool             srgb) override;
 
     /**
