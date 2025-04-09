@@ -90,6 +90,7 @@ namespace Dwarf
   OpenGLShader::Compile()
   {
     mSuccessfullyCompiled = false;
+    mUniformLocations.clear();
 
     if (!mVertexShaderAsset.has_value() || !mFragmentShaderAsset.has_value())
     {
