@@ -5,15 +5,15 @@
 namespace Dwarf
 {
   void
-  ShaderParameterCollection::SetParameter(std::string_view identifier,
-                                          ParameterValue   parameter)
+  ShaderParameterCollection::SetParameter(std::string_view       identifier,
+                                          MaterialParameterValue parameter)
   {
     mParameters[identifier.data()] = std::move(parameter);
   }
 
   auto
   ShaderParameterCollection::GetParameter(const std::string& name)
-    -> ParameterValue&
+    -> MaterialParameterValue&
   {
     return mParameters.at(name);
   }
@@ -79,7 +79,8 @@ namespace Dwarf
   ShaderParameterCollection::Serialize() -> nlohmann::json
   {
     nlohmann::json serialized = nlohmann::json::object();
-    /*for (const auto& pair : mParameters)
+    // TODO: Fix
+    for (const auto& pair : mParameters)
     {
       std::visit(
         [&serialized, &pair](auto&& arg)
@@ -126,7 +127,7 @@ namespace Dwarf
             serialized[pair.first]["value"]["z"] = arg.z;
             serialized[pair.first]["value"]["w"] = arg.w;
           }
-          else if constexpr (std::is_same_v<T, Texture2DAssetValue>)
+          else if constexpr (std::is_same_v<T, std::optional<UUID>>)
           {
             serialized[pair.first]["type"] = "tex2d";
             serialized[pair.first]["value"] =
@@ -134,7 +135,7 @@ namespace Dwarf
           }
         },
         pair.second);
-    }*/
+    }
     return serialized;
   }
 }

@@ -227,15 +227,15 @@ namespace Dwarf
   {
   private:
     /// @brief Imported texture.
-    std::unique_ptr<ITexture>        mTexture;
-    std::reference_wrapper<ITexture> mPlaceholder;
-    bool                             mIsCurrentlyLoading = false;
+    std::shared_ptr<ITexture> mTexture;
+    std::shared_ptr<ITexture> mPlaceholder;
+    bool                      mIsCurrentlyLoading = false;
 
   public:
-    explicit TextureAsset(std::unique_ptr<ITexture>&& texture,
-                          ITexture&                   placeholder)
+    explicit TextureAsset(std::shared_ptr<ITexture> texture,
+                          std::shared_ptr<ITexture> placeholder)
       : mTexture(std::move(texture))
-      , mPlaceholder(placeholder)
+      , mPlaceholder(std::move(placeholder))
     {
     }
 
@@ -245,7 +245,7 @@ namespace Dwarf
      * @return true If the texture is present on the GPU
      * @return false If the texture is not present on the GPU
      */
-    auto
+    [[nodiscard]] auto
     IsLoaded() const -> bool
     {
       return mTexture != nullptr;
@@ -258,14 +258,14 @@ namespace Dwarf
      * @return Reference to the texture
      */
     auto
-    GetTexture() const -> const ITexture&
+    GetTexture() -> std::shared_ptr<ITexture>
     {
       if (!mTexture)
       {
         return mPlaceholder;
       }
 
-      return *mTexture;
+      return mTexture;
     }
 
     /**

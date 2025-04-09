@@ -7,7 +7,7 @@ namespace Dwarf
   class ShaderParameterCollection : public IShaderParameterCollection
   {
   private:
-    std::map<std::string, ParameterValue> mParameters;
+    std::map<std::string, MaterialParameterValue> mParameters;
 
   public:
     ShaderParameterCollection() = default;
@@ -17,14 +17,14 @@ namespace Dwarf
      * @brief Sets a parameter to a direct Value.
      */
     void
-    SetParameter(std::string_view identifier,
-                 ParameterValue   parameter) override;
+    SetParameter(std::string_view       identifier,
+                 MaterialParameterValue parameter) override;
 
     /**
      * @brief Gets a parameter from the collection.
      */
     auto
-    GetParameter(const std::string& name) -> ParameterValue& override;
+    GetParameter(const std::string& name) -> MaterialParameterValue& override;
 
     /**
      * @brief Gets the list of parameter identifiers.

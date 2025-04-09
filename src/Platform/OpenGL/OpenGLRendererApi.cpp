@@ -1,5 +1,6 @@
 #include "pch.h"
 
+#include "Core/Asset/Database/AssetComponents.h"
 #include "Core/Asset/Database/IAssetDatabase.h"
 #include "Core/Rendering/RendererApi/IRendererApi.h"
 #include "Core/Rendering/Shader/ShaderParameterCollection/IShaderParameterCollection.h"
@@ -114,38 +115,45 @@ namespace Dwarf
     mStateTracker->SetCullMode(!material.GetMaterialProperties().IsDoubleSided);
     mStateTracker->SetCullFace(GL_BACK);
 
-    // TODO: Move this to OpenGLShader.cpp
-    uint32_t textureCount = 0;
     for (auto const& identifier :
          material.GetShaderParameters()->GetParameterIdentifiers())
     {
       if (material.GetShaderParameters()->HasParameter(identifier))
       {
-        /*ParameterValue& shaderParameterValue =
-          material.GetShaderParameters()->GetParameter(identifier);
-        std::visit(SetShaderParameterVisitor{ .mShader = shader,
-                                              .mParameterName = identifier,
-                                              .mAssetDatabase = mAssetDatabase,
-                                              .mLogger = mLogger,
-                                              .mTextureCount = textureCount },
-                   shaderParameterValue);*/
-        shader.SetParameter(
-          identifier, material.GetShaderParameters()->GetParameter(identifier));
+        std::visit(
+          [&shader, identifier, this](auto&& value)
+          {
+            using T = std::decay_t<decltype(value)>;
+            if constexpr (std::is_same_v<T, std::optional<UUID>>)
+            {
+              // std::optional return static_cast<std::optional<UUID>>(value);
+              auto uid = static_cast<std::optional<UUID>>(value);
+
+              if (uid.has_value())
+              {
+                auto& textureAsset = static_cast<TextureAsset&>(
+                  mAssetDatabase->Retrieve(uid.value())->GetAsset());
+                shader.SetParameter(identifier, textureAsset.GetTexture());
+              }
+            }
+            else
+            {
+              // return value;
+              shader.SetParameter(identifier, value);
+            }
+          },
+          material.GetShaderParameters()->GetParameter(identifier));
       }
     }
 
-    /*shader.SetUniform("modelMatrix", modelMatrix);
-    shader.SetUniform("viewMatrix", camera.GetViewMatrix());
-    shader.SetUniform("projectionMatrix", camera.GetProjectionMatrix());
-    shader.SetUniform("_Time", (float)mEditorStats->GetTimeSinceStart());
-    shader.SetUniform("viewPosition",
-                      camera.GetProperties().Transform.GetPosition());*/
     shader.SetParameter("modelMatrix", modelMatrix);
     shader.SetParameter("viewMatrix", camera.GetViewMatrix());
     shader.SetParameter("projectionMatrix", camera.GetProjectionMatrix());
     shader.SetParameter("_Time", (float)mEditorStats->GetTimeSinceStart());
     shader.SetParameter("viewPosition",
                         camera.GetProperties().Transform.GetPosition());
+
+    shader.UploadParameters();
 
     oglMesh.Bind();
 
@@ -300,17 +308,8 @@ namespace Dwarf
 
     OpenGLUtilities::CheckOpenGLError(
       "glUseProgram", "OpenGLRendererApi", mLogger);
-    /*glActiveTexture(GL_TEXTURE0);
-    OpenGLUtilities::CheckOpenGLError(
-      "glActiveTexture", "OpenGLRendererApi", mLogger);
-    glBindTexture(
-      GL_TEXTURE_2D,
-      static_cast<GLuint>(
-        source.GetColorAttachment(sourceAttachment)->get().GetTextureID()));
-    OpenGLUtilities::CheckOpenGLError(
-      "glBindTexture", "OpenGLRendererApi", mLogger);
-    // shader.SetUniform("hdrTexture", 0);
-    shader.SetParameter("hdrTexture", 0);*/
+
+    oglShader.UploadParameters();
 
     oglMesh.Bind();
     glDrawElements(GL_TRIANGLES, oglMesh.GetIndexCount(), GL_UNSIGNED_INT, 0);
@@ -326,7 +325,6 @@ namespace Dwarf
 
   void
   OpenGLRendererApi::ApplyPostProcess(IPingPongBuffer& buffer,
-                                      ICamera&         camera,
                                       IShader&         shader,
                                       bool             srgb)
   {
@@ -338,44 +336,29 @@ namespace Dwarf
     if (srgb)
     {
       glEnable(GL_FRAMEBUFFER_SRGB);
+      OpenGLUtilities::CheckOpenGLError(
+        "glEnable GL_FRAMEBUFFER_SRGB", "OpenGLRendererApi", mLogger);
     }
     mStateTracker->SetViewport(
       0,
       0,
       buffer.GetReadFramebuffer().lock()->GetSpecification().Width,
       buffer.GetReadFramebuffer().lock()->GetSpecification().Height);
-
-    OpenGLUtilities::CheckOpenGLError("glClear", "OpenGLRendererApi", mLogger);
     mStateTracker->SetShaderProgram(oglShader);
-
-    uint32_t textureCount = 0;
-    OpenGLUtilities::CheckOpenGLError(
-      "glBindFramebuffer Unbind", "OpenGLRendererApi", mLogger);
-
+    oglShader.UploadParameters();
     buffer.GetWriteFramebuffer().lock()->Bind();
-
-    /*shader.SetUniform(
-      "uInverseViewProjection",
-      glm::inverse(camera.GetProjectionMatrix() * camera.GetViewMatrix()));
-    shader.SetUniform("uInverseView", glm::inverse(camera.GetViewMatrix()));
-    shader.SetUniform("uCameraPosition",
-                      camera.GetProperties().Transform.GetPosition());*/
-    shader.SetParameter(
-      "uInverseViewProjection",
-      glm::inverse(camera.GetProjectionMatrix() * camera.GetViewMatrix()));
-    shader.SetParameter("uInverseView", glm::inverse(camera.GetViewMatrix()));
-    shader.SetParameter("uCameraPosition",
-                        camera.GetProperties().Transform.GetPosition());
-
     oglMesh.Bind();
     glDrawElements(GL_TRIANGLES, oglMesh.GetIndexCount(), GL_UNSIGNED_INT, 0);
     OpenGLUtilities::CheckOpenGLError(
       "glDrawElements", "OpenGLRendererApi", mLogger);
+    oglMesh.Unbind();
+
     if (srgb)
     {
       glDisable(GL_FRAMEBUFFER_SRGB);
+      OpenGLUtilities::CheckOpenGLError(
+        "glDisable GL_FRAMEBUFFER_SRGB", "OpenGLRendererApi", mLogger);
     }
-    oglMesh.Unbind();
     buffer.GetWriteFramebuffer().lock()->Unbind();
   }
 

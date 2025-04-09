@@ -142,10 +142,7 @@ namespace Dwarf
                bool          srgb) = 0;
 
     virtual void
-    ApplyPostProcess(IPingPongBuffer& buffer,
-                     ICamera&         camera,
-                     IShader&         shader,
-                     bool             srgb) = 0;
+    ApplyPostProcess(IPingPongBuffer& buffer, IShader& shader, bool srgb) = 0;
 
     /**
      * @brief Returns information about the vram usage

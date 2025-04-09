@@ -78,6 +78,6 @@ namespace Dwarf
      * @return Shared pointer to the placeholder texture
      */
     [[nodiscard]] virtual auto
-    GetPlaceholderTexture() -> ITexture& = 0;
+    GetPlaceholderTexture() -> std::shared_ptr<ITexture> = 0;
   };
 } // namespace Dwarf

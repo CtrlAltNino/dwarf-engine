@@ -79,29 +79,15 @@ namespace Dwarf
     }
 
     void
-    operator()(Texture2D& parameter) const
+    operator()(std::optional<UUID>& parameter) const
     {
       ImGui::TextWrapped("%s", ParameterName.c_str());
       ImGui::SameLine();
       ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
                            UNIFORM_DELETE_BUTTON_WIDTH - 8.0F);
 
-      std::visit(
-        [&](auto&& val)
-        {
-          using T = std::decay_t<decltype(val)>;
-
-          // GLint uniformLocation = GetUniformLocation(identifier);
-          //  Float parameter
-          if constexpr (std::is_same_v<T, std::optional<UUID>>)
-          {
-            DwarfUI::AssetInput<TextureAsset>(
-              AssetDatabase,
-              static_cast<std::optional<UUID>&>(val),
-              ImGuiID.c_str());
-          }
-        },
-        parameter);
+      DwarfUI::AssetInput<TextureAsset>(
+        AssetDatabase, parameter, ImGuiID.c_str());
 
       ImGui::PopItemWidth();
     }
@@ -394,8 +380,7 @@ namespace Dwarf
         {
           if (material.GetShaderParameters()->HasParameter(paramIdentifier))
           {
-
-            ParameterValue& parameter =
+            MaterialParameterValue& parameter =
               material.GetShaderParameters()->GetParameter(paramIdentifier);
             std::visit(
               RenderShaderParameterVisitor{
@@ -481,8 +466,8 @@ namespace Dwarf
             material.GetShaderParameters()->SetParameter(paramName, 0.0F);
             break;
           case TEX2D:
-            material.GetShaderParameters()->SetParameter(
-              paramName, Texture2D(std::nullopt));
+            material.GetShaderParameters()->SetParameter(paramName,
+                                                         std::nullopt);
             break;
           case VEC2:
             material.GetShaderParameters()->SetParameter(paramName,

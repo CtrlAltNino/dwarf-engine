@@ -171,7 +171,6 @@ namespace Dwarf
      */
     void
     ApplyPostProcess(IPingPongBuffer& buffer,
-                     ICamera&         camera,
                      IShader&         shader,
                      bool             srgb) override;
 

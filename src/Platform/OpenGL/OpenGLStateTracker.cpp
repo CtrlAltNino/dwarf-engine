@@ -30,8 +30,6 @@ namespace Dwarf
         "glUseProgram", "OpenGLRendererApi", mLogger);
       program.ResetUniformBindings();
     }
-
-    program.ResetTextureSlots();
   }
 
   void

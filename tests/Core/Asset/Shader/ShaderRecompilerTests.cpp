@@ -14,7 +14,7 @@ public:
   MOCK_METHOD(bool, IsCompiled, (), (const, override));
   MOCK_METHOD(void,
               SetParameter,
-              (std::string identifier, ParameterValue parameter),
+              (std::string identifier, Dwarf::ShaderParameterValue parameter),
               (override));
   MOCK_METHOD(std::unique_ptr<IShaderParameterCollection>,
               CreateParameters,

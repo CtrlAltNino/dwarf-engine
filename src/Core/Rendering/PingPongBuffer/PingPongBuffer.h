@@ -56,7 +56,7 @@ namespace Dwarf
      * @return Reference to the color attachment
      */
     [[nodiscard]] auto
-    GetReadTexture() const -> ITexture& override;
+    GetReadTexture() const -> std::shared_ptr<ITexture> override;
 
     /**
      * @brief Returns the texture of the write framebuffer
@@ -64,6 +64,6 @@ namespace Dwarf
      * @return Reference to the color attachment
      */
     [[nodiscard]] auto
-    GetWriteTexture() const -> ITexture& override;
+    GetWriteTexture() const -> std::shared_ptr<ITexture> override;
   };
 }

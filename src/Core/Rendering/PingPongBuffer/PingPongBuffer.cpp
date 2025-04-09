@@ -40,13 +40,13 @@ namespace Dwarf
   }
 
   auto
-  PingPongBuffer::GetReadTexture() const -> ITexture&
+  PingPongBuffer::GetReadTexture() const -> std::shared_ptr<ITexture>
   {
     return *mBuffers[static_cast<int>(!mHorizontal)]->GetColorAttachment(0);
   }
 
   auto
-  PingPongBuffer::GetWriteTexture() const -> ITexture&
+  PingPongBuffer::GetWriteTexture() const -> std::shared_ptr<ITexture>
   {
     return *mBuffers[static_cast<int>(mHorizontal)]->GetColorAttachment(0);
   }

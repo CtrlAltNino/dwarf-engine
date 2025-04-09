@@ -140,11 +140,12 @@ namespace Dwarf
      * @brief Gets a color attachment of the frame buffer
      *
      * @param index Index of which color attachment to get
-     * @return Returns a reference to the frame buffer if the index is valid
+     * @return Returns a shared pointer to the frame buffer if the index is
+     * valid
      */
     [[nodiscard]] virtual auto
     GetColorAttachment(uint32_t index = 0) const
-      -> std::optional<const std::reference_wrapper<ITexture>> = 0;
+      -> std::optional<std::shared_ptr<ITexture>> = 0;
 
     /**
      * @brief Gets the depth attachment of the framebuffer
@@ -152,8 +153,7 @@ namespace Dwarf
      * @return Returns a reference to the depth attachment if present
      */
     [[nodiscard]] virtual auto
-    GetDepthAttachment() const
-      -> std::optional<const std::reference_wrapper<ITexture>> = 0;
+    GetDepthAttachment() const -> std::optional<std::shared_ptr<ITexture>> = 0;
 
     /**
      * @brief Retrieves the specification the frame buffer is using

@@ -5,6 +5,22 @@
 
 namespace Dwarf
 {
+  using ShaderParameterValue = std::variant<float,
+                                            glm::vec2,
+                                            glm::vec3,
+                                            glm::vec4,
+                                            int,
+                                            glm::ivec2,
+                                            glm::ivec3,
+                                            glm::ivec4,
+                                            uint32_t,
+                                            glm::uvec2,
+                                            glm::uvec3,
+                                            glm::uvec4,
+                                            bool,
+                                            glm::mat3,
+                                            glm::mat4,
+                                            std::shared_ptr<ITexture>>;
   /**
    * @brief Class that represents a shader program and provides controls over
    * it.
@@ -31,7 +47,7 @@ namespace Dwarf
     IsCompiled() const -> bool = 0;
 
     virtual void
-    SetParameter(std::string identifier, ParameterValue parameter) = 0;
+    SetParameter(std::string identifier, ShaderParameterValue parameter) = 0;
 
     /**
      * @brief Creates a ShaderParameterCollection that contains all the shader

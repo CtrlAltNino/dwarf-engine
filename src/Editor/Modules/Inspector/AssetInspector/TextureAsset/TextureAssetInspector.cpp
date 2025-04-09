@@ -221,7 +221,7 @@ namespace Dwarf
     float width = ImGui::GetContentRegionAvail().x;
     ImGui::TextWrapped("Preview:");
 
-    auto texID = (ImTextureID)(textureAsset.get().GetTexture().GetTextureID());
+    auto texID = (ImTextureID)(textureAsset.get().GetTexture()->GetTextureID());
     ImGui::Image(texID, ImVec2(width, width));
 
     drawList->ChannelsSetCurrent(0);

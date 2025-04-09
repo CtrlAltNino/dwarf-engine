@@ -9,24 +9,23 @@
 
 namespace Dwarf
 {
-  using TextureId = uintptr_t;
-  using Texture2D = std::variant<std::optional<UUID>, TextureId>;
-  using ParameterValue = std::variant<float,
-                                      glm::vec2,
-                                      glm::vec3,
-                                      glm::vec4,
-                                      int,
-                                      glm::ivec2,
-                                      glm::ivec3,
-                                      glm::ivec4,
-                                      uint32_t,
-                                      glm::uvec2,
-                                      glm::uvec3,
-                                      glm::uvec4,
-                                      bool,
-                                      glm::mat3,
-                                      glm::mat4,
-                                      Texture2D>;
+  using TextureAssetId = std::optional<UUID>;
+  using MaterialParameterValue = std::variant<float,
+                                              glm::vec2,
+                                              glm::vec3,
+                                              glm::vec4,
+                                              int,
+                                              glm::ivec2,
+                                              glm::ivec3,
+                                              glm::ivec4,
+                                              uint32_t,
+                                              glm::uvec2,
+                                              glm::uvec3,
+                                              glm::uvec4,
+                                              bool,
+                                              glm::mat3,
+                                              glm::mat4,
+                                              TextureAssetId>;
 
   /**
    * @brief Class that manages shader parameters and provides controlled access.
@@ -42,13 +41,14 @@ namespace Dwarf
      * @brief Sets a parameter to a direct Value.
      */
     virtual void
-    SetParameter(std::string_view identifier, ParameterValue parameter) = 0;
+    SetParameter(std::string_view       identifier,
+                 MaterialParameterValue parameter) = 0;
 
     /**
      * @brief Gets a parameter from the collection.
      */
     virtual auto
-    GetParameter(const std::string& name) -> ParameterValue& = 0;
+    GetParameter(const std::string& name) -> MaterialParameterValue& = 0;
 
     /**
      * @brief Gets the list of parameter identifiers.

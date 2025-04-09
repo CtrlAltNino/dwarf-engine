@@ -413,12 +413,12 @@ namespace Dwarf
 
   auto
   OpenGLFramebuffer::GetColorAttachment(uint32_t index = 0) const
-    -> std::optional<const std::reference_wrapper<ITexture>>
+    -> std::optional<std::shared_ptr<ITexture>>
   {
     if (index < mColorAttachments.size())
     {
       // Return the address of the value at the specified index
-      return *mColorAttachments[index];
+      return mColorAttachments[index];
     }
 
     // If the index is out of bounds, return nullptr or handle the error
@@ -428,12 +428,12 @@ namespace Dwarf
 
   auto
   OpenGLFramebuffer::GetDepthAttachment() const
-    -> std::optional<const std::reference_wrapper<ITexture>>
+    -> std::optional<std::shared_ptr<ITexture>>
   {
     if (mDepthAttachment)
     {
       // Return the address of the value at the specified index
-      return *mDepthAttachment;
+      return mDepthAttachment;
     }
 
     // If the index is out of bounds, return nullptr or handle the error
