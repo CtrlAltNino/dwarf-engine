@@ -114,6 +114,7 @@ namespace Dwarf
                               0,
                               mRenderFramebuffer->GetSpecification().Width,
                               mRenderFramebuffer->GetSpecification().Height);
+    mRendererApi->SetClearColor(glm::vec4(0.065F, 0.07F, 0.085F, 1.0F));
     mRendererApi->Clear();
 
     // TODO: Render skybox
