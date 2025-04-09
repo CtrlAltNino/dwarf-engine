@@ -23,6 +23,7 @@ namespace Dwarf
   {
     std::filesystem::path      Path;
     std::vector<DirectoryData> Subdirectories;
+    bool                       UnfoldSignal = false;
   };
 
   struct DirectoryStructureCache
@@ -106,7 +107,7 @@ namespace Dwarf
     std::unique_ptr<ITexture> mUnknownFileIcon;
 
     void
-    RenderDirectoryStructureCacheRecursively(const DirectoryData& data);
+    RenderDirectoryStructureCacheRecursively(DirectoryData& data);
 
     void
     SetupDockspace(ImGuiID imguiId);
@@ -133,6 +134,9 @@ namespace Dwarf
     auto
     GenerateDirectoryDataRecursively(const std::filesystem::path& directory)
       -> DirectoryData;
+
+    auto
+    RecursiveSelectedDirectoryFinder(const DirectoryData& current) -> bool;
 
     void
     UnfoldSelectedDirectory();

@@ -336,7 +336,7 @@ namespace Dwarf
 
   void
   AssetBrowserWindow::RenderDirectoryStructureCacheRecursively(
-    const DirectoryData& data)
+    DirectoryData& data)
   {
     ImGuiTreeNodeFlags flags =
       ImGuiTreeNodeFlags_OpenOnArrow | ImGuiTreeNodeFlags_OpenOnDoubleClick;
@@ -355,7 +355,12 @@ namespace Dwarf
       flags |= ImGuiTreeNodeFlags_Leaf;
     }
 
-    bool currentlyOpen =
+    if (data.UnfoldSignal)
+    {
+      ImGui::SetNextItemOpen(true);
+      data.UnfoldSignal = false;
+    }
+    bool currentlyOpened =
       ImGui::TreeNodeEx((void*)(intptr_t)id, flags, "%s", label.c_str());
 
     if (ImGui::IsItemHovered())
@@ -368,9 +373,9 @@ namespace Dwarf
       EnterDirectory(data.Path);
     }
 
-    if (currentlyOpen)
+    if (currentlyOpened)
     {
-      for (const auto& subDirectory : data.Subdirectories)
+      for (auto& subDirectory : data.Subdirectories)
       {
         RenderDirectoryStructureCacheRecursively(subDirectory);
       }
@@ -750,6 +755,7 @@ namespace Dwarf
         mDirectoryContentCache.Valid = false;
       }
       mData.CurrentDirectory = mData.DirectoryHistory[mData.HistoryPos];
+      UnfoldSelectedDirectory();
     }
   }
 
@@ -760,6 +766,7 @@ namespace Dwarf
     {
       mData.HistoryPos++;
       mData.CurrentDirectory = mData.DirectoryHistory[mData.HistoryPos];
+      UnfoldSelectedDirectory();
     }
   }
 
@@ -781,9 +788,27 @@ namespace Dwarf
     }
   }
 
+  auto
+  AssetBrowserWindow::RecursiveSelectedDirectoryFinder(
+    const DirectoryData& current) -> bool
+  {
+    if (current.Path == mData.CurrentDirectory)
+    {
+      return true;
+    }
+
+    return std::ranges::any_of(
+      current.Subdirectories,
+      [this](auto& subdirectory)
+      { return RecursiveSelectedDirectoryFinder(subdirectory); });
+  }
+
   void
   AssetBrowserWindow::UnfoldSelectedDirectory()
   {
+    mDirectoryStructureCache.RootDirectoryData.UnfoldSignal =
+      RecursiveSelectedDirectoryFinder(
+        mDirectoryStructureCache.RootDirectoryData);
   }
 
   void
@@ -807,6 +832,7 @@ namespace Dwarf
     }
     mData.DirectoryHistory.push_back(mData.CurrentDirectory);
     mData.HistoryPos = (int)mData.DirectoryHistory.size() - 1;
+    UnfoldSelectedDirectory();
   }
 
   void
