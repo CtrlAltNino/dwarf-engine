@@ -132,6 +132,7 @@ namespace Dwarf
      * @param destinationAttachmentAttachment index to use for the destination
      * framebuffer
      * @param shader Shader to use for blitting
+     * @param srgb If the buffer is SRGB
      */
     virtual void
     CustomBlit(IFramebuffer& source,
@@ -141,6 +142,13 @@ namespace Dwarf
                IShader&      shader,
                bool          srgb) = 0;
 
+    /**
+     * @brief Applies a post process shader onto a ping pong buffer
+     *
+     * @param buffer Ping pong buffer to use
+     * @param shader Shader to use
+     * @param srgb If the buffer is SRGB
+     */
     virtual void
     ApplyPostProcess(IPingPongBuffer& buffer, IShader& shader, bool srgb) = 0;
 
