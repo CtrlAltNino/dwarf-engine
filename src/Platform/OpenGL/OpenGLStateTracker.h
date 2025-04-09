@@ -41,7 +41,7 @@ namespace Dwarf
     ~OpenGLStateTracker() override;
 
     void
-    SetShaderProgram(GLuint program) override;
+    SetShaderProgram(OpenGLShader& program) override;
 
     void
     BindFramebuffer(GLuint framebuffer) override;

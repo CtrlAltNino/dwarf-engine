@@ -9,16 +9,24 @@
 
 namespace Dwarf
 {
-  using Texture2DAssetValue = std::optional<UUID>;
-  using ParameterValue = std::variant<bool,
-                                      int,
-                                      uint32_t,
-                                      float,
-                                      Texture2DAssetValue,
-                                      std::reference_wrapper<ITexture>,
+  using TextureId = uintptr_t;
+  using Texture2D = std::variant<std::optional<UUID>, TextureId>;
+  using ParameterValue = std::variant<float,
                                       glm::vec2,
                                       glm::vec3,
-                                      glm::vec4>;
+                                      glm::vec4,
+                                      int,
+                                      glm::ivec2,
+                                      glm::ivec3,
+                                      glm::ivec4,
+                                      uint32_t,
+                                      glm::uvec2,
+                                      glm::uvec3,
+                                      glm::uvec4,
+                                      bool,
+                                      glm::mat3,
+                                      glm::mat4,
+                                      Texture2D>;
 
   /**
    * @brief Class that manages shader parameters and provides controlled access.

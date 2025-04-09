@@ -134,17 +134,17 @@ namespace Dwarf
      * @param shader Shader to use for blitting
      */
     virtual void
-    CustomBlit(IFramebuffer&              source,
-               IFramebuffer&              destination,
-               uint32_t                   sourceAttachment,
-               uint32_t                   destinationAttachment,
-               std::shared_ptr<IMaterial> material,
-               bool                       srgb) = 0;
+    CustomBlit(IFramebuffer& source,
+               IFramebuffer& destination,
+               uint32_t      sourceAttachment,
+               uint32_t      destinationAttachment,
+               IShader&      shader,
+               bool          srgb) = 0;
 
     virtual void
     ApplyPostProcess(IPingPongBuffer& buffer,
                      ICamera&         camera,
-                     IMaterial&       material,
+                     IShader&         shader,
                      bool             srgb) = 0;
 
     /**

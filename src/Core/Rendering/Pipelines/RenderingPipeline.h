@@ -32,8 +32,10 @@ namespace Dwarf
     // std::shared_ptr<IPingPongBufferFactory> mPingPongBufferFactory;
 
     std::unique_ptr<IMaterial> mIdMaterial;
-    std::shared_ptr<IMaterial> mGridMaterial;
-    std::shared_ptr<IMaterial> mTonemapMaterial;
+    // std::shared_ptr<IMaterial> mGridMaterial;
+    std::shared_ptr<IShader> mGridShader;
+    // std::shared_ptr<IMaterial> mTonemapMaterial;
+    std::shared_ptr<IShader> mTonemapShader;
 
     std::shared_ptr<IFramebuffer>    mRenderFramebuffer;
     std::unique_ptr<IPingPongBuffer> mHdrPingPong;

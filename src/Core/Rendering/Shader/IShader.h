@@ -30,6 +30,9 @@ namespace Dwarf
     [[nodiscard]] virtual auto
     IsCompiled() const -> bool = 0;
 
+    virtual void
+    SetParameter(std::string identifier, ParameterValue parameter) = 0;
+
     /**
      * @brief Creates a ShaderParameterCollection that contains all the shader
      * parameters that the shader uses

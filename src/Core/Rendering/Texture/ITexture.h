@@ -29,5 +29,17 @@ namespace Dwarf
      */
     [[nodiscard]] virtual auto
     GetTextureID() const -> uintptr_t = 0;
+
+    auto
+    operator==(const ITexture& other) const -> bool
+    {
+      return GetTextureID() == other.GetTextureID();
+    }
+
+    auto
+    operator!=(const ITexture& other) const -> bool
+    {
+      return GetTextureID() != other.GetTextureID();
+    }
   };
 } // namespace Dwarf

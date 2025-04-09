@@ -12,6 +12,10 @@ class MockShader : public IShader
 public:
   MOCK_METHOD(void, Compile, (), (override));
   MOCK_METHOD(bool, IsCompiled, (), (const, override));
+  MOCK_METHOD(void,
+              SetParameter,
+              (std::string identifier, ParameterValue parameter),
+              (override));
   MOCK_METHOD(std::unique_ptr<IShaderParameterCollection>,
               CreateParameters,
               (),

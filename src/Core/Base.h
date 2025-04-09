@@ -24,7 +24,9 @@ namespace Dwarf
     TEX2D,
     VEC2,
     VEC3,
-    VEC4
+    VEC4,
+    MAT3,
+    MAT4
   };
 
   // TODO: Replace by getting the enum names with magic_enum?

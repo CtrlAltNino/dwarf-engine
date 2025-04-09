@@ -19,16 +19,19 @@ namespace Dwarf
   }
 
   void
-  OpenGLStateTracker::SetShaderProgram(GLuint program)
+  OpenGLStateTracker::SetShaderProgram(OpenGLShader& program)
   {
-    if (mCurrentShaderProgram != program)
+    if (mCurrentShaderProgram != program.GetID())
     {
-      glUseProgram(program);
-      mCurrentShaderProgram = program;
+      glUseProgram(program.GetID());
+      mCurrentShaderProgram = program.GetID();
 
       OpenGLUtilities::CheckOpenGLError(
         "glUseProgram", "OpenGLRendererApi", mLogger);
+      program.ResetUniformBindings();
     }
+
+    program.ResetTextureSlots();
   }
 
   void
