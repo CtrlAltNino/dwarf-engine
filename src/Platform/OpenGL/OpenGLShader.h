@@ -27,16 +27,14 @@ namespace Dwarf
   class OpenGLShader : public IShader
   {
   private:
-    GLuint     mID = -1;
-    int        mNextTextureSlot = 0;
-    ShaderLogs mShaderLogs;
-    // Flag to determine if the shader has been successfully compiled.
-    bool mSuccessfullyCompiled = false;
-    // Map of parameters that the shader uses.
     std::shared_ptr<IDwarfLogger> mLogger;
     std::shared_ptr<IVramTracker> mVramTracker;
     std::shared_ptr<IShaderParameterCollectionFactory>
-      mShaderParameterCollectionFactory;
+               mShaderParameterCollectionFactory;
+    GLuint     mID = -1;
+    int        mNextTextureSlot = 0;
+    ShaderLogs mShaderLogs;
+    bool       mSuccessfullyCompiled = false;
 
     std::map<std::string, GLint>                mUniformLocations;
     std::map<std::string, ShaderParameterValue> mUniformStates;

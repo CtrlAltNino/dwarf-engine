@@ -46,6 +46,12 @@ namespace Dwarf
     [[nodiscard]] virtual auto
     IsCompiled() const -> bool = 0;
 
+    /**
+     * @brief Sets parameter in the shader
+     *
+     * @param identifier Identifier of the parameter
+     * @param parameter Value of the parameter
+     */
     virtual void
     SetParameter(std::string identifier, ShaderParameterValue parameter) = 0;
 

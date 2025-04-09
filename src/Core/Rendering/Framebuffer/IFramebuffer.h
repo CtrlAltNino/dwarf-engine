@@ -150,7 +150,7 @@ namespace Dwarf
     /**
      * @brief Gets the depth attachment of the framebuffer
      *
-     * @return Returns a reference to the depth attachment if present
+     * @return Returns a shared pointer to the depth attachment if present
      */
     [[nodiscard]] virtual auto
     GetDepthAttachment() const -> std::optional<std::shared_ptr<ITexture>> = 0;
