@@ -2,6 +2,7 @@
 
 #include "SceneAssetInspector.h"
 #include "UI/DwarfUI.h"
+#include <imgui.h>
 
 namespace Dwarf
 {
@@ -31,7 +32,7 @@ namespace Dwarf
     drawList->ChannelsSetCurrent(1);
 
     if (!ImGui::BeginChild("##inspector_child",
-                           ImGui::GetContentRegionAvail(),
+                           ImVec2(0, 0),
                            0,
                            ImGuiWindowFlags_AlwaysUseWindowPadding))
     {
@@ -54,25 +55,10 @@ namespace Dwarf
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
     if (ImGui::Button("Reimport"))
     {
-      // mAssetDatabase->Reimport(asset->GetPath());
       mAssetReimporter->QueueReimport(asset.GetPath());
     }
 
-    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
-
-    auto separatorMin =
-      ImVec2(ImGui::GetWindowPos().x + ImGui::GetCursorPos().x +
-               COMPONENT_PANEL_PADDING,
-             ImGui::GetWindowPos().y + ImGui::GetCursorPos().y +
-               (COMPONENT_PANEL_PADDING / 2.0F));
-    auto separatorMax =
-      ImVec2(ImGui::GetWindowPos().x + ImGui::GetWindowContentRegionMax().x -
-               COMPONENT_PANEL_PADDING,
-             separatorMin.y + 2);
-    ImGui::GetWindowDrawList()->AddRectFilled(
-      separatorMin, separatorMax, COL_BG_DIM);
-
-    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 20);
+    ImGui::SameLine(0, 5);
 
     if (ImGui::Button("Load scene") &&
         mFileHandler->FileExists(asset.GetPath()))
@@ -83,14 +69,12 @@ namespace Dwarf
     drawList->ChannelsSetCurrent(0);
 
     ImGui::EndChild();
-    float endY = ImGui::GetItemRectMax().y;
     ImGui::GetWindowDrawList()->AddRectFilled(
       ImGui::GetItemRectMin(),
       ImVec2(ImGui::GetItemRectMin().x + ImGui::GetContentRegionAvail().x,
-             endY + 2 * COMPONENT_PANEL_PADDING),
+             ImGui::GetCursorPosY() + 2 * COMPONENT_PANEL_PADDING),
       IM_COL32(59, 66, 82, 255),
       5.0F);
-    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 3 * COMPONENT_PANEL_PADDING);
     drawList->ChannelsMerge();
   }
 }
