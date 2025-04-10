@@ -270,6 +270,7 @@ namespace Dwarf
         if (ImGui::MenuItem("Reimport Assets"))
         {
           mAssetDatabase->ReimportAll();
+          mLoadedScene->PropagateSceneChange();
         }
         ImGui::EndMenu();
       }
