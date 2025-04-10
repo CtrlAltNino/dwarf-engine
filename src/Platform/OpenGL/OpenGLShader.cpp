@@ -267,6 +267,13 @@ namespace Dwarf
       if (programLinked != GL_TRUE)
       {
         mLogger->LogError(Log("Shader program failed to link", "OpenGLShader"));
+        GLint logLength = 0;
+        glGetProgramiv(mID, GL_INFO_LOG_LENGTH, &logLength);
+
+        std::vector<GLchar> infoLog(logLength);
+        glGetProgramInfoLog(mID, logLength, nullptr, infoLog.data());
+
+        mLogger->LogInfo(Log(infoLog.data(), "OpenGLShader"));
         glDeleteShader(vertexShader);
         OpenGLUtilities::CheckOpenGLError(
           "glDeleteShader vertex shader", "OpenGLShader", mLogger);
@@ -283,6 +290,7 @@ namespace Dwarf
         glDeleteProgram(mID);
         OpenGLUtilities::CheckOpenGLError(
           "glDeleteProgram", "OpenGLShader", mLogger);
+        return;
       }
 
       glDeleteShader(vertexShader);
