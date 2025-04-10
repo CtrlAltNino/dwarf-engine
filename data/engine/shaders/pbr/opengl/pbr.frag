@@ -42,7 +42,7 @@ uniform sampler2D aoMap;
 
 // Uniforms for lighting
 vec3 lightDir = vec3(-0.8, -0.7, -0.3);  // Normalized light direction
-vec3 lightColor = vec3(1.0, 0.8, 0.8);   // White light
+vec3 lightColor = vec3(1.0, 1.0, 1.0);   // White light
 uniform float lightIntensity = 5;  // Intensity in LUX (lumens/m²)
 
 // Constants
