@@ -62,8 +62,10 @@ namespace Dwarf
             break;
           case Dwarf::ProjectTemplate::ScifiHelmet:
             templateProjectDirectory = "sci-fi helmet";
+            break;
           case Dwarf::ProjectTemplate::CornellBox:
             templateProjectDirectory = "cornell box";
+            break;
         }
 
         switch (graphicsApi)
