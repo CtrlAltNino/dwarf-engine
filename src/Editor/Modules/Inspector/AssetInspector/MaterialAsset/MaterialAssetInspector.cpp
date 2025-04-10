@@ -426,18 +426,17 @@ namespace Dwarf
                                &paramName);
       ImGui::PopItemWidth();
       ImGui::SameLine();
-      static int selectedParameterType = 0;
+      static std::string selectedParameterType = "Float";
 
       ImGui::PushItemWidth(100.0f);
-      if (ImGui::BeginCombo("##paramType",
-                            parameterTypeNames[selectedParameterType].c_str()))
+      if (ImGui::BeginCombo("##paramType", selectedParameterType.c_str()))
       {
-        for (int i = 0; i < parameterTypeNames.size(); i++)
+        for (const auto& parameterType : parameterChoices)
         {
-          if (ImGui::Selectable(parameterTypeNames[i].c_str(),
-                                i == selectedParameterType))
+          if (ImGui::Selectable(parameterType.first.c_str(),
+                                parameterType.first == selectedParameterType))
           {
-            selectedParameterType = i;
+            selectedParameterType = parameterType.first;
           }
         }
         ImGui::EndCombo();
@@ -450,24 +449,11 @@ namespace Dwarf
           (paramName.length() > 0) &&
           !material.GetShaderParameters()->HasParameter(paramName))
       {
-        switch ((ShaderParameterType)selectedParameterType)
+        switch (parameterChoices.at(selectedParameterType))
         {
           using enum ShaderParameterType;
-          case BOOLEAN:
-            material.GetShaderParameters()->SetParameter(paramName, false);
-            break;
-          case INTEGER:
-            material.GetShaderParameters()->SetParameter(paramName, 0);
-            break;
-          case UNSIGNED_INTEGER:
-            material.GetShaderParameters()->SetParameter(paramName, 0U);
-            break;
           case FLOAT:
             material.GetShaderParameters()->SetParameter(paramName, 0.0F);
-            break;
-          case TEX2D:
-            material.GetShaderParameters()->SetParameter(paramName,
-                                                         std::nullopt);
             break;
           case VEC2:
             material.GetShaderParameters()->SetParameter(paramName,
@@ -480,6 +466,43 @@ namespace Dwarf
           case VEC4:
             material.GetShaderParameters()->SetParameter(
               paramName, glm::vec4(0.0F, 0.0F, 0.0F, 0.0F));
+            break;
+          case INTEGER:
+            material.GetShaderParameters()->SetParameter(paramName, 0);
+            break;
+          case IVEC2:
+            material.GetShaderParameters()->SetParameter(paramName,
+                                                         glm::ivec2(0, 0));
+            break;
+          case IVEC3:
+            material.GetShaderParameters()->SetParameter(paramName,
+                                                         glm::ivec3(0, 0, 0));
+            break;
+          case IVEC4:
+            material.GetShaderParameters()->SetParameter(
+              paramName, glm::ivec4(0, 0, 0, 0));
+            break;
+          case UNSIGNED_INTEGER:
+            material.GetShaderParameters()->SetParameter(paramName, 0U);
+            break;
+          case UVEC2:
+            material.GetShaderParameters()->SetParameter(paramName,
+                                                         glm::uvec2(0U, 0U));
+            break;
+          case UVEC3:
+            material.GetShaderParameters()->SetParameter(
+              paramName, glm::uvec3(0U, 0U, 0U));
+            break;
+          case UVEC4:
+            material.GetShaderParameters()->SetParameter(
+              paramName, glm::uvec4(0U, 0U, 0U, 0U));
+            break;
+          case BOOLEAN:
+            material.GetShaderParameters()->SetParameter(paramName, false);
+            break;
+          case TEX2D:
+            material.GetShaderParameters()->SetParameter(paramName,
+                                                         std::nullopt);
             break;
         }
         paramName[0] = '\0';

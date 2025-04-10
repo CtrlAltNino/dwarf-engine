@@ -73,17 +73,23 @@ namespace Dwarf
   };
 
   const std::map<GLenum, ShaderParameterType> glTypeToDwarfShaderType = {
-    { GL_BOOL, ShaderParameterType::BOOLEAN },
-    { GL_INT, ShaderParameterType::INTEGER },
-    { GL_UNSIGNED_INT, ShaderParameterType::UNSIGNED_INTEGER },
     { GL_FLOAT, ShaderParameterType::FLOAT },
     { GL_FLOAT_VEC2, ShaderParameterType::VEC2 },
     { GL_FLOAT_VEC3, ShaderParameterType::VEC3 },
     { GL_FLOAT_VEC4, ShaderParameterType::VEC4 },
-    { GL_SAMPLER_2D, ShaderParameterType::TEX2D },
-    { GL_SAMPLER_2D_MULTISAMPLE, ShaderParameterType::TEX2D },
+    { GL_INT, ShaderParameterType::INTEGER },
+    { GL_INT_VEC2, ShaderParameterType::IVEC2 },
+    { GL_INT_VEC3, ShaderParameterType::IVEC3 },
+    { GL_INT_VEC4, ShaderParameterType::IVEC4 },
+    { GL_UNSIGNED_INT, ShaderParameterType::UNSIGNED_INTEGER },
+    { GL_UNSIGNED_INT_VEC2, ShaderParameterType::UVEC2 },
+    { GL_UNSIGNED_INT_VEC3, ShaderParameterType::UVEC3 },
+    { GL_UNSIGNED_INT_VEC4, ShaderParameterType::UVEC4 },
+    { GL_BOOL, ShaderParameterType::BOOLEAN },
     { GL_FLOAT_MAT3, ShaderParameterType::MAT3 },
-    { GL_FLOAT_MAT4, ShaderParameterType::MAT4 }
+    { GL_FLOAT_MAT4, ShaderParameterType::MAT4 },
+    { GL_SAMPLER_2D, ShaderParameterType::TEX2D },
+    { GL_SAMPLER_2D_MULTISAMPLE, ShaderParameterType::TEX2D }
   };
 
   void
