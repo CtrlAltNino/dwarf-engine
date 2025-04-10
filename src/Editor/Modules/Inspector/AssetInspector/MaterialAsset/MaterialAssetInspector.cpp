@@ -504,6 +504,10 @@ namespace Dwarf
             material.GetShaderParameters()->SetParameter(paramName,
                                                          std::nullopt);
             break;
+          // Unused
+          case MAT3:
+          case MAT4:
+          default: break;
         }
         paramName[0] = '\0';
       }
