@@ -30,10 +30,10 @@ namespace Dwarf
     drawList->ChannelsSplit(2);
     drawList->ChannelsSetCurrent(1);
 
-    if (ImGui::BeginChild("##inspector_child",
-                          ImGui::GetContentRegionAvail(),
-                          0,
-                          ImGuiWindowFlags_AlwaysUseWindowPadding))
+    if (!ImGui::BeginChild("##inspector_child",
+                           ImGui::GetContentRegionAvail(),
+                           0,
+                           ImGuiWindowFlags_AlwaysUseWindowPadding))
     {
       ImGui::EndChild();
       return;
