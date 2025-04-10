@@ -85,22 +85,8 @@ namespace Dwarf
         [&serialized, &pair](auto&& arg)
         {
           using T = std::decay_t<decltype(arg)>;
-          if constexpr (std::is_same_v<T, bool>)
-          {
-            serialized[pair.first]["type"] = "boolean";
-            serialized[pair.first]["value"] = arg;
-          }
-          else if constexpr (std::is_same_v<T, int>)
-          {
-            serialized[pair.first]["type"] = "integer";
-            serialized[pair.first]["value"] = arg;
-          }
-          else if constexpr (std::is_same_v<T, uint32_t>)
-          {
-            serialized[pair.first]["type"] = "unsigned integer";
-            serialized[pair.first]["value"] = arg;
-          }
-          else if constexpr (std::is_same_v<T, float>)
+
+          if constexpr (std::is_same_v<T, float>)
           {
             serialized[pair.first]["type"] = "float";
             serialized[pair.first]["value"] = arg;
@@ -125,6 +111,63 @@ namespace Dwarf
             serialized[pair.first]["value"]["y"] = arg.y;
             serialized[pair.first]["value"]["z"] = arg.z;
             serialized[pair.first]["value"]["w"] = arg.w;
+          }
+          else if constexpr (std::is_same_v<T, int>)
+          {
+            serialized[pair.first]["type"] = "integer";
+            serialized[pair.first]["value"] = arg;
+          }
+          else if constexpr (std::is_same_v<T, glm::vec2>)
+          {
+            serialized[pair.first]["type"] = "ivec2";
+            serialized[pair.first]["value"]["x"] = arg.x;
+            serialized[pair.first]["value"]["y"] = arg.y;
+          }
+          else if constexpr (std::is_same_v<T, glm::vec3>)
+          {
+            serialized[pair.first]["type"] = "ivec3";
+            serialized[pair.first]["value"]["x"] = arg.x;
+            serialized[pair.first]["value"]["y"] = arg.y;
+            serialized[pair.first]["value"]["z"] = arg.z;
+          }
+          else if constexpr (std::is_same_v<T, glm::vec4>)
+          {
+            serialized[pair.first]["type"] = "ivec4";
+            serialized[pair.first]["value"]["x"] = arg.x;
+            serialized[pair.first]["value"]["y"] = arg.y;
+            serialized[pair.first]["value"]["z"] = arg.z;
+            serialized[pair.first]["value"]["w"] = arg.w;
+          }
+          else if constexpr (std::is_same_v<T, uint32_t>)
+          {
+            serialized[pair.first]["type"] = "unsigned integer";
+            serialized[pair.first]["value"] = arg;
+          }
+          else if constexpr (std::is_same_v<T, glm::vec2>)
+          {
+            serialized[pair.first]["type"] = "uvec2";
+            serialized[pair.first]["value"]["x"] = arg.x;
+            serialized[pair.first]["value"]["y"] = arg.y;
+          }
+          else if constexpr (std::is_same_v<T, glm::vec3>)
+          {
+            serialized[pair.first]["type"] = "uvec3";
+            serialized[pair.first]["value"]["x"] = arg.x;
+            serialized[pair.first]["value"]["y"] = arg.y;
+            serialized[pair.first]["value"]["z"] = arg.z;
+          }
+          else if constexpr (std::is_same_v<T, glm::vec4>)
+          {
+            serialized[pair.first]["type"] = "uvec4";
+            serialized[pair.first]["value"]["x"] = arg.x;
+            serialized[pair.first]["value"]["y"] = arg.y;
+            serialized[pair.first]["value"]["z"] = arg.z;
+            serialized[pair.first]["value"]["w"] = arg.w;
+          }
+          else if constexpr (std::is_same_v<T, bool>)
+          {
+            serialized[pair.first]["type"] = "boolean";
+            serialized[pair.first]["value"] = arg;
           }
           else if constexpr (std::is_same_v<T, std::optional<UUID>>)
           {
