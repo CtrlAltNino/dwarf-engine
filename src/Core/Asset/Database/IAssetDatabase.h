@@ -171,12 +171,21 @@ namespace Dwarf
                                { ".dmat", ASSET_TYPE::MATERIAL },
                                { ".dscene", ASSET_TYPE::SCENE },
 
+                               { ".vertex", ASSET_TYPE::VERTEX_SHADER },
                                { ".vert", ASSET_TYPE::VERTEX_SHADER },
+                               { ".vs", ASSET_TYPE::VERTEX_SHADER },
                                { ".tesc", ASSET_TYPE::TESC_SHADER },
+                               { ".tsc", ASSET_TYPE::TESC_SHADER },
                                { ".tese", ASSET_TYPE::TESE_SHADER },
+                               { ".tes", ASSET_TYPE::TESE_SHADER },
+                               { ".geometry", ASSET_TYPE::GEOMETRY_SHADER },
                                { ".geom", ASSET_TYPE::GEOMETRY_SHADER },
+                               { ".gs", ASSET_TYPE::GEOMETRY_SHADER },
+                               { ".fragment", ASSET_TYPE::FRAGMENT_SHADER },
                                { ".frag", ASSET_TYPE::FRAGMENT_SHADER },
+                               { ".fs", ASSET_TYPE::FRAGMENT_SHADER },
                                { ".comp", ASSET_TYPE::COMPUTE_SHADER },
+                               { ".cs", ASSET_TYPE::COMPUTE_SHADER },
                                { ".hlsl", ASSET_TYPE::HLSL_SHADER } };
   };
 }

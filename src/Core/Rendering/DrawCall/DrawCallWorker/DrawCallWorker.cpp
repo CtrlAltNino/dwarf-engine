@@ -165,6 +165,8 @@ namespace Dwarf
         return std::uintptr_t(std::addressof(a.Material.get())) <
                std::uintptr_t(std::addressof(b.Material.get()));
       });
+
+    // TODO: Add transparency ordering (e.g. back to front)
     std::ranges::stable_sort(
       transparentTemps,
       [](const TempDrawCall& a, const TempDrawCall& b)
