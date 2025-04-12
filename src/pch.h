@@ -60,7 +60,6 @@
 #include <vector>
 
 #define GLM_ENABLE_EXPERIMENTAL
-#include <boost/di.hpp>
 #include <glm/common.hpp>
 #include <glm/gtc/matrix_transform.hpp>
 #include <glm/gtx/quaternion.hpp>
