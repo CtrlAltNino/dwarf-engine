@@ -12,6 +12,7 @@ docs/html
 docs/latex
 Testing/
 .VSCodeCounter/
+docs/
 
 # User-specific files
 *.rsuser
