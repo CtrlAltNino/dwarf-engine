@@ -41,13 +41,12 @@ namespace Dwarf
       return;
     }
 
-    ImGui::Text("An open source project created by CtrlAltNino");
-    std::string versionText = "early development version";
+    ImGui::Text("An open source project created by @CtrlAltNino");
+    std::string versionText = "Release 0.1";
     float       textWidth =
       ImGui::CalcTextSize(versionText.c_str(), nullptr, false).x;
 
-    ImGui::SameLine();
-    ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 20);
+    ImGui::SameLine(0, 15);
     ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(229, 233, 240, 255));
     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(5, 0));
     static ImVec2 iconSize = ImVec2(18, 18);
@@ -78,69 +77,6 @@ namespace Dwarf
       if (ImGui::IsItemClicked())
       {
         BrowserLinkOpener::OpenLink(GITHUB_LINK);
-      }
-    }
-
-    ImGui::SameLine();
-    ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10);
-
-    {
-      ImGui::SetCursorPosY(ImGui::GetCursorPosY() - verticalIconOffset);
-      ImTextureID texID =
-        (ImTextureID)mLauncherAssets->GetPatreonIcon()->GetTextureID();
-      ImGui::Image(texID, iconSize);
-      if (ImGui::IsItemHovered())
-      {
-        ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
-      }
-      if (ImGui::IsItemClicked())
-      {
-        BrowserLinkOpener::OpenLink(PATREON_LINK);
-      }
-
-      ImGui::SameLine();
-
-      ImGui::SetCursorPosY(ImGui::GetCursorPosY() + verticalIconOffset);
-      ImGui::Text("Patreon");
-      if (ImGui::IsItemHovered())
-      {
-        ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
-      }
-      if (ImGui::IsItemClicked())
-      {
-        BrowserLinkOpener::OpenLink(PATREON_LINK);
-      }
-    }
-
-    ImGui::SameLine();
-    ImGui::SetCursorPosX(ImGui::GetCursorPosX() + 10);
-
-    {
-      ImGui::SetCursorPosY(ImGui::GetCursorPosY() - verticalIconOffset);
-      // reinterpret_cast
-      ImTextureID texID =
-        (ImTextureID)mLauncherAssets->GetXIcon()->GetTextureID();
-      ImGui::Image(texID, iconSize);
-      if (ImGui::IsItemHovered())
-      {
-        ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
-      }
-      if (ImGui::IsItemClicked())
-      {
-        BrowserLinkOpener::OpenLink(X_LINK);
-      }
-
-      ImGui::SameLine();
-
-      ImGui::SetCursorPosY(ImGui::GetCursorPosY() + verticalIconOffset);
-      ImGui::Text("X");
-      if (ImGui::IsItemHovered())
-      {
-        ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
-      }
-      if (ImGui::IsItemClicked())
-      {
-        BrowserLinkOpener::OpenLink(X_LINK);
       }
     }
 

@@ -1,4 +1,5 @@
 #include "pch.h"
+#include <imgui.h>
 
 #include "ButtonsView.h"
 
@@ -39,12 +40,6 @@ namespace Dwarf
       ImGui::End();
       return;
     }
-
-    ImGui::PushFont(mLauncherAssets->GetHeaderFont().get());
-    ImGui::Text("Add Project");
-    ImGui::PopFont();
-    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 6);
-    ImGui::Separator();
     ImGui::PushFont(mLauncherAssets->GetTextFont().get());
     ImGui::PushStyleColor(ImGuiCol_Button,
                           ImVec4(76 / 255.0, 86 / 255.0, 106 / 255.0, 1));
@@ -81,7 +76,7 @@ namespace Dwarf
       ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
     }
 
-    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 15);
+    /*ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 15);
 
     ImGui::PushFont(mLauncherAssets->GetHeaderFont().get());
     ImGui::Text("Options");
@@ -89,6 +84,8 @@ namespace Dwarf
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 6);
     ImGui::Separator();
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 5);
+
+    ImGui::BeginDisabled();
 
     if (ImGui::Button("Manage plugins",
                       ImVec2(ImGui::GetContentRegionAvail().x, 75)))
@@ -116,6 +113,8 @@ namespace Dwarf
     {
       ImGui::SetMouseCursor(ImGuiMouseCursor_Hand);
     }
+
+    ImGui::EndDisabled();*/
 
     ImGui::PopStyleVar(1);
     ImGui::PopStyleColor(5);

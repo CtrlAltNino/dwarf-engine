@@ -157,25 +157,19 @@ namespace Dwarf
         std::ranges::sort(savedProjects, ProjectNameComparator);
         break;
       case ProjectSortOrder::NameReverse:
-        std::ranges::sort(savedProjects,
-
-                          ProjectNameReverseComparator);
+        std::ranges::sort(savedProjects, ProjectNameReverseComparator);
         break;
       case ProjectSortOrder::Date:
         std::ranges::sort(savedProjects, ProjectDateComparator);
         break;
       case ProjectSortOrder::DateReverse:
-        std::ranges::sort(savedProjects,
-
-                          ProjectDateReverseComparator);
+        std::ranges::sort(savedProjects, ProjectDateReverseComparator);
         break;
       case ProjectSortOrder::Api:
         std::ranges::sort(savedProjects, ProjectApiComparator);
         break;
       case ProjectSortOrder::ApiReverse:
-        std::ranges::sort(savedProjects,
-
-                          ProjectApiReverseComparator);
+        std::ranges::sort(savedProjects, ProjectApiReverseComparator);
         break;
     }
   }

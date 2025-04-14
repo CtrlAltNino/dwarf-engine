@@ -7,8 +7,6 @@ namespace Dwarf
 {
 
 #define GITHUB_PNG_ICON_PATH "data/engine/img/icons/github.png"
-#define PATREON_PNG_ICON_PATH "data/engine/img/icons/patreon.png"
-#define X_PNG_ICON_PATH "data/engine/img/icons/x.png"
 #define APPLICATION_PNG_ICON_PATH "data/engine/img/icons/icon.png"
 
 #define FONT_ROBOTO_REGULAR_PATH "data/engine/fonts/Roboto-Regular.ttf"
@@ -36,9 +34,6 @@ namespace Dwarf
 
     mGithubIcon =
       mTextureFactory->FromPath(std::filesystem::path(GITHUB_PNG_ICON_PATH));
-    mPatreonIcon =
-      mTextureFactory->FromPath(std::filesystem::path(PATREON_PNG_ICON_PATH));
-    mXIcon = mTextureFactory->FromPath(std::filesystem::path(X_PNG_ICON_PATH));
     mLogger->LogDebug(Log("Icons loaded", "LauncherAssets"));
 
     mLogger->LogDebug(
@@ -64,19 +59,5 @@ namespace Dwarf
   LauncherAssets::GetGithubIcon() -> std::shared_ptr<ITexture>
   {
     return mGithubIcon;
-  }
-
-  /// @brief Loaded image for the patreon icon
-  auto
-  LauncherAssets::GetPatreonIcon() -> std::shared_ptr<ITexture>
-  {
-    return mPatreonIcon;
-  }
-
-  /// @brief Loaded image for the X/Twitter icon
-  auto
-  LauncherAssets::GetXIcon() -> std::shared_ptr<ITexture>
-  {
-    return mXIcon;
   }
 }

@@ -16,6 +16,7 @@
 #ifdef __linux__
 #include <fcntl.h>
 #include <iostream>
+#include <regex>
 #include <sys/wait.h>
 #include <unistd.h>
 #endif

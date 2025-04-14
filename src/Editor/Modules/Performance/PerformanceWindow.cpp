@@ -10,8 +10,7 @@ namespace Dwarf
     std::shared_ptr<IDwarfLogger> logger,
     std::shared_ptr<IEditorStats> editorStats,
     std::shared_ptr<IRendererApi> rendererApi,
-    std::shared_ptr<IVramTracker> vramTracker,
-    std::unique_ptr<IGpuInfo>     gpuInfo)
+    std::shared_ptr<IVramTracker> vramTracker)
     : IGuiModule(ModuleLabel("Performance"),
                  ModuleType(MODULE_TYPE::PERFORMANCE),
                  ModuleID(std::make_shared<UUID>()))
@@ -19,7 +18,6 @@ namespace Dwarf
     , mEditorStats(std::move(editorStats))
     , mRendererApi(std::move(rendererApi))
     , mVramTracker(std::move(vramTracker))
-    , mGpuInfo(std::move(gpuInfo))
   {
     mLogger->LogDebug(Log("PerformanceWindow created", "PerformanceWindow"));
   }
@@ -29,8 +27,7 @@ namespace Dwarf
     std::shared_ptr<IDwarfLogger> logger,
     std::shared_ptr<IEditorStats> editorStats,
     std::shared_ptr<IRendererApi> rendererApi,
-    std::shared_ptr<IVramTracker> vramTracker,
-    std::unique_ptr<IGpuInfo>     gpuInfo)
+    std::shared_ptr<IVramTracker> vramTracker)
     : IGuiModule(ModuleLabel("Performance"),
                  ModuleType(MODULE_TYPE::PERFORMANCE),
                  ModuleID(std::make_shared<UUID>(
@@ -39,7 +36,6 @@ namespace Dwarf
     , mEditorStats(std::move(editorStats))
     , mRendererApi(std::move(rendererApi))
     , mVramTracker(std::move(vramTracker))
-    , mGpuInfo(std::move(gpuInfo))
   {
     Deserialize(serializedModule.t);
     mLogger->LogDebug(Log("PerformanceWindow created", "PerformanceWindow"));
@@ -120,23 +116,6 @@ namespace Dwarf
     ImGui::ProgressBar(progressSaturated, ImVec2(0.f, 0.f), buf);
     ImGui::SameLine();
     ImGui::Text("VRAM Usage");
-
-    if (mGpuInfo)
-    {
-      float progressSaturated = std::clamp((float)mGpuInfo->GetUsedVramMb() /
-                                             (float)mGpuInfo->GetTotalVramMb(),
-                                           0.0F,
-                                           1.0F);
-      char  buf[64];
-      sprintf(buf,
-              "%d Mb / %zu Mb",
-              (int)(progressSaturated * mGpuInfo->GetTotalVramMb()),
-              mGpuInfo->GetTotalVramMb());
-
-      ImGui::ProgressBar(progressSaturated, ImVec2(0.f, 0.f), buf);
-      ImGui::SameLine();
-      ImGui::Text("VRAM Usage AMD");
-    }
 
     std::string textureMemoryString =
       fmt::format("{:.2f} Mb",

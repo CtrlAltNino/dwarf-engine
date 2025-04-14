@@ -51,7 +51,7 @@ namespace Dwarf
 
     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(10, 10));
     ImGui::PushFont(mLauncherAssets->GetHeaderFont().get());
-    ImGui::Text("Your Projects");
+    ImGui::Text("Project List");
     ImGui::PopFont();
     ImGui::Separator();
     ImGui::PopStyleVar(1);

@@ -8,13 +8,11 @@ namespace Dwarf
     std::shared_ptr<IDwarfLogger>        logger,
     std::shared_ptr<IEditorStats>        editorStats,
     std::shared_ptr<IRendererApiFactory> rendererApiFactory,
-    std::shared_ptr<IVramTracker>        vramTracker,
-    std::shared_ptr<IGpuInfoFactory>     gpuInfoFactory)
+    std::shared_ptr<IVramTracker>        vramTracker)
     : mLogger(std::move(logger))
     , mEditorStats(std::move(editorStats))
     , mRendererApiFactory(std::move(rendererApiFactory))
     , mVramTracker(std::move(vramTracker))
-    , mGpuInfoFactory(std::move(gpuInfoFactory))
   {
     mLogger->LogDebug(
       Log("PerformanceWindowFactory created", "PerformanceWindowFactory"));
@@ -28,11 +26,8 @@ namespace Dwarf
   auto
   PerformanceWindowFactory::Create() const -> std::unique_ptr<PerformanceWindow>
   {
-    return std::make_unique<PerformanceWindow>(mLogger,
-                                               mEditorStats,
-                                               mRendererApiFactory->Create(),
-                                               mVramTracker,
-                                               mGpuInfoFactory->Create());
+    return std::make_unique<PerformanceWindow>(
+      mLogger, mEditorStats, mRendererApiFactory->Create(), mVramTracker);
   }
 
   auto
@@ -43,7 +38,6 @@ namespace Dwarf
                                                mLogger,
                                                mEditorStats,
                                                mRendererApiFactory->Create(),
-                                               mVramTracker,
-                                               mGpuInfoFactory->Create());
+                                               mVramTracker);
   }
 } // namespace Dwarf

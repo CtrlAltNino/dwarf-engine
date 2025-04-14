@@ -21,12 +21,6 @@ namespace Dwarf
     /// @brief Loaded image for the github icon
     std::shared_ptr<ITexture> mGithubIcon;
 
-    /// @brief Loaded image for the patreon icon
-    std::shared_ptr<ITexture> mPatreonIcon;
-
-    /// @brief Loaded image for the X/Twitter icon
-    std::shared_ptr<ITexture> mXIcon;
-
     std::shared_ptr<IWindow> mWindow;
 
   public:
@@ -45,13 +39,5 @@ namespace Dwarf
     /// @brief Loaded image for the github icon
     auto
     GetGithubIcon() -> std::shared_ptr<ITexture> override;
-
-    /// @brief Loaded image for the patreon icon
-    auto
-    GetPatreonIcon() -> std::shared_ptr<ITexture> override;
-
-    /// @brief Loaded image for the X/Twitter icon
-    auto
-    GetXIcon() -> std::shared_ptr<ITexture> override;
   };
 }

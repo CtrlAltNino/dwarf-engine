@@ -64,8 +64,6 @@ include_directories(src)
 include_directories(include)
 include_directories(tests)
 add_subdirectory(src)
-add_subdirectory(include/ADLX/SDK/ADLXHelper/Windows/Cpp)
-add_subdirectory(include/ADLX/SDK/Platform/Windows)
 target_sources(${targetName} PRIVATE ${EXECUTABLE_ADDITIONAL_SETTINGS})
 target_link_libraries(${targetName} PRIVATE ${libname})
 

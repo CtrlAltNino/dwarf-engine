@@ -23,13 +23,5 @@ namespace Dwarf
     /// @brief Loaded image for the github icon
     virtual auto
     GetGithubIcon() -> std::shared_ptr<ITexture> = 0;
-
-    /// @brief Loaded image for the patreon icon
-    virtual auto
-    GetPatreonIcon() -> std::shared_ptr<ITexture> = 0;
-
-    /// @brief Loaded image for the X/Twitter icon
-    virtual auto
-    GetXIcon() -> std::shared_ptr<ITexture> = 0;
   };
 }

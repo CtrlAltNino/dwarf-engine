@@ -25,8 +25,6 @@
 #include "Core/Rendering/DrawCall/DrawCallList/DrawCallListFactory.h"
 #include "Core/Rendering/DrawCall/DrawCallWorker/DrawCallWorkerFactory.h"
 #include "Core/Rendering/Framebuffer/FramebufferFactory.h"
-#include "Core/Rendering/GpuInfo/GpuInfoFactory.h"
-#include "Core/Rendering/GpuInfo/IGpuInfoFactory.h"
 #include "Core/Rendering/GraphicsContext/GraphicsContextFactory.h"
 #include "Core/Rendering/GraphicsContext/IGraphicsContextFactory.h"
 #include "Core/Rendering/Material/IO/MaterialIO.h"
@@ -117,7 +115,6 @@ namespace Dwarf
           boost::di::bind<LogName>.to(LogName("Editor")),
           boost::di::bind<IDwarfLogger>.to<DwarfLogger>().in(boost::di::extension::shared),
           boost::di::bind<GraphicsApi>.to(selectedProject.GraphicsApi),
-          boost::di::bind<IGpuInfoFactory>.to<GpuInfoFactory>().in(boost::di::extension::shared),
           boost::di::bind<AssetDirectoryPath>.to(AssetDirectoryPath(selectedProject.Path / "Assets")),
           boost::di::bind<ProjectPath>.to(ProjectPath(selectedProject.Path)),
           boost::di::bind<ImGuiIniFilePath>.to(ImGuiIniFilePath(selectedProject.Path)),
