@@ -1,4 +1,4 @@
-![dwarf-engine-banner](https://github.com/CtrlAltNino/dwarf-engine/blob/main/assets/images/Dwarf%20Engine%20Banner.png)
+![dwarf-engine-banner](assets/images/Dwarf%20Engine%20Banner.png)
 
 # Dwarf Engine
 
@@ -58,10 +58,10 @@ Tested on:
 ## Screenshots
 
 The Crytek Sponza template project
-![screenshot-sponza](https://github.com/CtrlAltNino/dwarf-engine/blob/main/assets/screenshots/screenshot%20crytek%20sponza.png)
+![screenshot-sponza](assets/screenshots/screenshot%20crytek%20sponza.png)
 
 Olaf saying hi!
-![screenshot-olaf](https://github.com/CtrlAltNino/dwarf-engine/blob/main/assets/screenshots/screenshot%20olaf.png)
+![screenshot-olaf](assets/screenshots/screenshot%20olaf.png)
 
 ## Roadmap
 
