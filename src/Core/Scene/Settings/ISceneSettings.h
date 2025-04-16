@@ -20,13 +20,14 @@ namespace Dwarf
   struct FogSettings : public ISerializable
   {
     /// @brief Color of the fog.
-    glm::vec3 fogColor = { 0.3F, 0.3F, 0.3F };
+    glm::vec3 Color = { 0.3F, 0.3F, 0.3F };
     /// @brief Starting distance of the fog.
-    float fogStart = 20.0F;
+    float Start = 20.0F;
     /// @brief Ending distance of the fog (only for linear fog).
-    float fogEnd = 50.0F;
+    float End = 50.0F;
+    float Density = 3.0F;
     /// @brief Type of the fog.
-    FogType type = FogType::LINEAR;
+    FogType Type = FogType::LINEAR;
 
     /// @brief Constructor.
     FogSettings() = default;
@@ -34,13 +35,33 @@ namespace Dwarf
     /// @brief Constructor.
     /// @param serializedSettings The serialized settings.
     FogSettings(nlohmann::json serializedSettings)
-      : fogColor({ serializedSettings["FogColor"][0],
-                   serializedSettings["FogColor"][1],
-                   serializedSettings["FogColor"][2] })
-      , fogStart(serializedSettings["FogStart"])
-      , fogEnd(serializedSettings["FogEnd"])
-      , type(static_cast<FogType>(serializedSettings["FogType"]))
+      : Color(serializedSettings.contains("Color")
+                ? glm::vec3(serializedSettings["Color"][0],
+                            serializedSettings["Color"][1],
+                            serializedSettings["Color"][2])
+                : glm::vec3(0.3F, 0.3F, 0.3F))
+      , Start(serializedSettings.contains("Start")
+                ? serializedSettings["Start"].get<float>()
+                : 20.0F)
+      , End(serializedSettings.contains("End")
+              ? serializedSettings["End"].get<float>()
+              : 50.0F)
+      , Type(serializedSettings.contains("Start")
+               ? serializedSettings["Type"].get<FogType>()
+               : FogType::LINEAR)
     {
+      if (serializedSettings.contains("width"))
+      {
+        serializedSettings.at("width").get_to(width);
+      }
+      if (serializedSettings.contains("height"))
+      {
+        serializedSettings.at("height").get_to(height);
+      }
+      if (serializedSettings.contains("title"))
+      {
+        serializedSettings.at("title").get_to(title);
+      }
     }
 
     /// @copydoc ISerializable::Serialize
@@ -48,32 +69,32 @@ namespace Dwarf
     Serialize() -> nlohmann::json override
     {
       nlohmann::json json;
-      json["FogColor"] = { fogColor.r, fogColor.g, fogColor.b };
-      json["FogStart"] = fogStart;
-      json["FogEnd"] = fogEnd;
-      json["FogType"] = static_cast<int>(type);
+      json["Color"] = { Color.r, Color.g, Color.b };
+      json["Start"] = Start;
+      json["End"] = End;
+      json["Type"] = static_cast<int>(Type);
       return json;
     }
   };
 
-  /// @brief Struct that represents the global light settings of a scene.
-  struct GlobalLightSettings : public ISerializable
+  /// @brief Struct that represents the ambient light settings of a scene.
+  struct AmbientLightSettings : public ISerializable
   {
-    /// @brief Color of the global light.
+    /// @brief Color of the ambient light.
     glm::vec3 color = { 0.8F, 0.6F, 0.6F };
-    /// @brief Intensity of the global light.
+    /// @brief Intensity of the ambient light.
     float intensity = 0.2F;
 
     /// @brief Constructor.
-    GlobalLightSettings() = default;
+    AmbientLightSettings() = default;
 
     /// @brief Constructor.
     /// @param serializedSettings The serialized settings.
-    GlobalLightSettings(nlohmann::json serializedSettings)
-      : color({ serializedSettings["GlobalLightColor"][0],
-                serializedSettings["GlobalLightColor"][1],
-                serializedSettings["GlobalLightColor"][2] })
-      , intensity(serializedSettings["GlobalLightIntensity"])
+    AmbientLightSettings(nlohmann::json serializedSettings)
+      : color({ serializedSettings["LightColor"][0],
+                serializedSettings["LightColor"][1],
+                serializedSettings["LightColor"][2] })
+      , intensity(serializedSettings["LightIntensity"])
     {
     }
 
@@ -82,8 +103,8 @@ namespace Dwarf
     Serialize() -> nlohmann::json override
     {
       nlohmann::json json;
-      json["GlobalLightColor"] = { color.r, color.g, color.b };
-      json["GlobalLightIntensity"] = intensity;
+      json["LightColor"] = { color.r, color.g, color.b };
+      json["LightIntensity"] = intensity;
       return json;
     }
   };
@@ -100,10 +121,10 @@ namespace Dwarf
     virtual auto
     GetFogSettings() -> FogSettings& = 0;
 
-    /// @brief Returns the global light settings of the scene.
-    /// @return The global light settings of the scene.
+    /// @brief Returns the ambient light settings of the scene.
+    /// @return The ambient light settings of the scene.
     virtual auto
-    GetGlobalLightSettings() -> GlobalLightSettings& = 0;
+    GetAmbientLightSettings() -> AmbientLightSettings& = 0;
 
     /// @brief Returns the UID of the skybox material.
     /// @return The UID of the skybox material.

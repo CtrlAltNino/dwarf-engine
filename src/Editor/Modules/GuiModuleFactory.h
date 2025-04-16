@@ -9,6 +9,7 @@
 #include "Editor/Modules/SceneHierarchy/ISceneHierarchyWindowFactory.h"
 #include "Editor/Modules/SceneViewer/ISceneViewerWindowFactory.h"
 #include "Logging/IDwarfLogger.h"
+#include "SceneSettings/ISceneSettingsWindowFactory.h"
 #include <boost/di.hpp>
 #include <boost/serialization/strong_typedef.hpp>
 
@@ -24,6 +25,7 @@ namespace Dwarf
     std::shared_ptr<ISceneHierarchyWindowFactory> mSceneHierarchyWindowFactory;
     std::shared_ptr<ISceneViewerWindowFactory>    mSceneViewerWindowFactory;
     std::shared_ptr<IInspectorWindowFactory>      mInspectorWindowFactory;
+    std::shared_ptr<ISceneSettingsWindowFactory>  mSceneSettingsWindowFactory;
 
   public:
     GuiModuleFactory(
@@ -33,7 +35,8 @@ namespace Dwarf
       std::shared_ptr<IPerformanceWindowFactory>    performanceWindowFactory,
       std::shared_ptr<ISceneHierarchyWindowFactory> sceneHierarchyWindowFactory,
       std::shared_ptr<ISceneViewerWindowFactory>    sceneViewerWindowFactory,
-      std::shared_ptr<IInspectorWindowFactory>      inspectorWindowFactory);
+      std::shared_ptr<IInspectorWindowFactory>      inspectorWindowFactory,
+      std::shared_ptr<ISceneSettingsWindowFactory>  sceneSettingsWindowFactory);
 
     ~GuiModuleFactory() override;
 

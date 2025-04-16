@@ -86,6 +86,7 @@
 #include "Editor/Modules/Performance/PerformanceWindowFactory.h"
 #include "Editor/Modules/SceneHierarchy/ISceneHierarchyWindowFactory.h"
 #include "Editor/Modules/SceneHierarchy/SceneHierarchyWindowFactory.h"
+#include "Editor/Modules/SceneSettings/SceneSettingsWindowFactory.h"
 #include "Editor/Modules/SceneViewer/ISceneViewerWindowFactory.h"
 #include "Editor/Modules/SceneViewer/SceneViewerWindowFactory.h"
 #include "Editor/Selection/EditorSelection.h"
@@ -104,6 +105,7 @@
 #include "Utilities/FileHandler/FileHandler.h"
 #include "Window/IWindow.h"
 #include "Window/SDL3Window.h"
+
 
 namespace Dwarf
 {
@@ -210,6 +212,7 @@ namespace Dwarf
           boost::di::bind<IPerformanceWindowFactory>.to<PerformanceWindowFactory>().in(boost::di::extension::shared),
           boost::di::bind<ISceneHierarchyWindowFactory>.to<SceneHierarchyWindowFactory>().in(boost::di::extension::shared),
           boost::di::bind<ISceneViewerWindowFactory>.to<SceneViewerWindowFactory>().in(boost::di::extension::shared),
+          boost::di::bind<ISceneSettingsWindowFactory>.to<SceneSettingsWindowFactory>().in(boost::di::extension::shared),
           boost::di::bind<IGuiModuleFactory>.to<GuiModuleFactory>().in(boost::di::extension::shared),
           boost::di::bind<IEditorView>.to<EditorView>().in(boost::di::extension::shared)
         );

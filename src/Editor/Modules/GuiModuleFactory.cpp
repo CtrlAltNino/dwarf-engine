@@ -12,7 +12,8 @@ namespace Dwarf
     std::shared_ptr<IPerformanceWindowFactory>    performanceWindowFactory,
     std::shared_ptr<ISceneHierarchyWindowFactory> sceneHierarchyWindowFactory,
     std::shared_ptr<ISceneViewerWindowFactory>    sceneViewerWindowFactory,
-    std::shared_ptr<IInspectorWindowFactory>      inspectorWindowFactory)
+    std::shared_ptr<IInspectorWindowFactory>      inspectorWindowFactory,
+    std::shared_ptr<ISceneSettingsWindowFactory>  sceneSettingsWindowFactory)
     : mLogger(std::move(logger))
     , mAssetBrowserWindowFactory(std::move(assetBrowserWindowFactory))
     , mDebugWindowFactory(std::move(debugWindowFactory))
@@ -20,6 +21,7 @@ namespace Dwarf
     , mSceneHierarchyWindowFactory(std::move(sceneHierarchyWindowFactory))
     , mSceneViewerWindowFactory(std::move(sceneViewerWindowFactory))
     , mInspectorWindowFactory(std::move(inspectorWindowFactory))
+    , mSceneSettingsWindowFactory(std::move(sceneSettingsWindowFactory))
   {
     mLogger->LogDebug(Log("GuiModuleFactory created", "GuiModuleFactory"));
   }
@@ -42,6 +44,7 @@ namespace Dwarf
       case SCENE_GRAPH: return mSceneHierarchyWindowFactory->Create();
       case SCENE_VIEWER: return mSceneViewerWindowFactory->Create();
       case INSPECTOR: return mInspectorWindowFactory->Create();
+      case SCENE_SETTINGS: return mSceneSettingsWindowFactory->Create();
       default: return nullptr;
     }
   }
@@ -65,6 +68,8 @@ namespace Dwarf
       case SCENE_VIEWER:
         return mSceneViewerWindowFactory->Create(serializedModule);
       case INSPECTOR: return mInspectorWindowFactory->Create(serializedModule);
+      case SCENE_SETTINGS:
+        return mSceneSettingsWindowFactory->Create(serializedModule);
       default: return nullptr;
     }
   }

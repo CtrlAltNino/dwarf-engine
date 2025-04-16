@@ -11,9 +11,9 @@ namespace Dwarf
   class SceneSettings : public ISceneSettings
   {
   private:
-    FogSettings         mFogSettings;
-    GlobalLightSettings mGlobalLightSettings;
-    std::optional<UUID> mSkyboxMaterial;
+    FogSettings          mFogSettings;
+    AmbientLightSettings mAmbientLightSettings;
+    std::optional<UUID>  mSkyboxMaterial;
 
   public:
     SceneSettings() = default;
@@ -27,9 +27,9 @@ namespace Dwarf
     auto
     GetFogSettings() -> FogSettings& override;
 
-    /// @copydoc ISceneSettings::GetGlobalLightSettings
+    /// @copydoc ISceneSettings::GetAmbientLightSettings
     auto
-    GetGlobalLightSettings() -> GlobalLightSettings& override;
+    GetAmbientLightSettings() -> AmbientLightSettings& override;
 
     /// @copydoc ISceneSettings::GetSkyboxMaterial
     auto
