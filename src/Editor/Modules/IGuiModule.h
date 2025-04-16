@@ -18,7 +18,8 @@ namespace Dwarf
     SCENE_VIEWER,
     ASSET_BROWSER,
     INSPECTOR,
-    DEBUG
+    DEBUG,
+    SCENE_SETTINGS
   };
 
   BOOST_STRONG_TYPEDEF(std::string, ModuleLabel);

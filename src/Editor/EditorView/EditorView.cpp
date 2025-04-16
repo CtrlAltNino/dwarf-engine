@@ -316,6 +316,10 @@ namespace Dwarf
         {
           AddWindow(DEBUG);
         }
+        if (ImGui::MenuItem("Scene Settings"))
+        {
+          AddWindow(SCENE_SETTINGS);
+        }
         ImGui::EndMenu();
       }
       ImGui::EndMenuBar();

@@ -7,8 +7,8 @@ namespace Dwarf
   SceneSettings::SceneSettings(nlohmann::json serializedSettings)
   {
     mFogSettings = FogSettings(serializedSettings["FogSettings"]);
-    mGlobalLightSettings =
-      GlobalLightSettings(serializedSettings["GlobalLightSettings"]);
+    mAmbientLightSettings =
+      AmbientLightSettings(serializedSettings["AmbientLightSettings"]);
     mSkyboxMaterial =
       serializedSettings.contains("SkyboxMaterial") &&
           serializedSettings.at("SkyboxMaterial") != ""
@@ -22,8 +22,8 @@ namespace Dwarf
   {
     nlohmann::json serializedSettings;
     serializedSettings["FogSettings"] = mFogSettings.Serialize();
-    serializedSettings["GlobalLightSettings"] =
-      mGlobalLightSettings.Serialize();
+    serializedSettings["AmbientLightSettings"] =
+      mAmbientLightSettings.Serialize();
     serializedSettings["SkyboxMaterial"] =
       mSkyboxMaterial.has_value() ? mSkyboxMaterial->toString() : "";
     return serializedSettings;
@@ -36,9 +36,9 @@ namespace Dwarf
   }
 
   auto
-  SceneSettings::GetGlobalLightSettings() -> GlobalLightSettings&
+  SceneSettings::GetAmbientLightSettings() -> AmbientLightSettings&
   {
-    return mGlobalLightSettings;
+    return mAmbientLightSettings;
   }
 
   auto
