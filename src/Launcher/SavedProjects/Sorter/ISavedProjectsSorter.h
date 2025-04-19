@@ -10,7 +10,7 @@ namespace Dwarf
 #define API_COLUMN_INDEX (3)
 
   /// @brief Enum defining different sort orders for projects.
-  enum class ProjectSortOrder
+  enum class ProjectSortOrder : uint8_t
   {
     Name,
     NameReverse,

@@ -5,13 +5,13 @@
 
 namespace Dwarf
 {
-  enum ShaderType
+  enum class ShaderType : uint8_t
   {
     VertexType,
     FragmentType
   };
 
-  enum ShaderSource
+  enum class ShaderSource : uint8_t
   {
     PbrSource,
     UnlitSource

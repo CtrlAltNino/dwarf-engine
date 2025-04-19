@@ -7,8 +7,8 @@ namespace Dwarf
 #define KEYCODE_INITIALIZER { W, A, S, D, E, Q, R, LEFT_SHIFT, LEFT_CONTROL }
 #define MOUSE_BUTTON_INITIALIZER                                               \
   { LEFT, RIGHT, MIDDLE, MOUSE_BUTTON_4, MOUSE_BUTTON_5 }
-  enum class KEYCODE      KEYCODE_INITIALIZER;
-  enum class MOUSE_BUTTON MOUSE_BUTTON_INITIALIZER;
+  enum class KEYCODE : uint8_t      KEYCODE_INITIALIZER;
+  enum class MOUSE_BUTTON : uint8_t MOUSE_BUTTON_INITIALIZER;
 
   class IInputManager
   {

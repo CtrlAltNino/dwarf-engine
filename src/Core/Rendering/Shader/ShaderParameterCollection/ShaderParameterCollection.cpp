@@ -1,6 +1,7 @@
 #include "pch.h"
 
 #include "ShaderParameterCollection.h"
+#include "Utilities/JsonHelper/JsonHelper.h"
 
 namespace Dwarf
 {
@@ -94,23 +95,17 @@ namespace Dwarf
           else if constexpr (std::is_same_v<T, glm::vec2>)
           {
             serialized[pair.first]["type"] = "vec2";
-            serialized[pair.first]["value"]["x"] = arg.x;
-            serialized[pair.first]["value"]["y"] = arg.y;
+            serialized[pair.first]["value"] = arg;
           }
           else if constexpr (std::is_same_v<T, glm::vec3>)
           {
             serialized[pair.first]["type"] = "vec3";
-            serialized[pair.first]["value"]["x"] = arg.x;
-            serialized[pair.first]["value"]["y"] = arg.y;
-            serialized[pair.first]["value"]["z"] = arg.z;
+            serialized[pair.first]["value"] = arg;
           }
           else if constexpr (std::is_same_v<T, glm::vec4>)
           {
             serialized[pair.first]["type"] = "vec4";
-            serialized[pair.first]["value"]["x"] = arg.x;
-            serialized[pair.first]["value"]["y"] = arg.y;
-            serialized[pair.first]["value"]["z"] = arg.z;
-            serialized[pair.first]["value"]["w"] = arg.w;
+            serialized[pair.first]["value"] = arg;
           }
           else if constexpr (std::is_same_v<T, int>)
           {
@@ -120,23 +115,17 @@ namespace Dwarf
           else if constexpr (std::is_same_v<T, glm::vec2>)
           {
             serialized[pair.first]["type"] = "ivec2";
-            serialized[pair.first]["value"]["x"] = arg.x;
-            serialized[pair.first]["value"]["y"] = arg.y;
+            serialized[pair.first]["value"] = arg;
           }
           else if constexpr (std::is_same_v<T, glm::vec3>)
           {
             serialized[pair.first]["type"] = "ivec3";
-            serialized[pair.first]["value"]["x"] = arg.x;
-            serialized[pair.first]["value"]["y"] = arg.y;
-            serialized[pair.first]["value"]["z"] = arg.z;
+            serialized[pair.first]["value"] = arg;
           }
           else if constexpr (std::is_same_v<T, glm::vec4>)
           {
             serialized[pair.first]["type"] = "ivec4";
-            serialized[pair.first]["value"]["x"] = arg.x;
-            serialized[pair.first]["value"]["y"] = arg.y;
-            serialized[pair.first]["value"]["z"] = arg.z;
-            serialized[pair.first]["value"]["w"] = arg.w;
+            serialized[pair.first]["value"] = arg;
           }
           else if constexpr (std::is_same_v<T, uint32_t>)
           {
@@ -146,23 +135,17 @@ namespace Dwarf
           else if constexpr (std::is_same_v<T, glm::vec2>)
           {
             serialized[pair.first]["type"] = "uvec2";
-            serialized[pair.first]["value"]["x"] = arg.x;
-            serialized[pair.first]["value"]["y"] = arg.y;
+            serialized[pair.first]["value"] = arg;
           }
           else if constexpr (std::is_same_v<T, glm::vec3>)
           {
             serialized[pair.first]["type"] = "uvec3";
-            serialized[pair.first]["value"]["x"] = arg.x;
-            serialized[pair.first]["value"]["y"] = arg.y;
-            serialized[pair.first]["value"]["z"] = arg.z;
+            serialized[pair.first]["value"] = arg;
           }
           else if constexpr (std::is_same_v<T, glm::vec4>)
           {
             serialized[pair.first]["type"] = "uvec4";
-            serialized[pair.first]["value"]["x"] = arg.x;
-            serialized[pair.first]["value"]["y"] = arg.y;
-            serialized[pair.first]["value"]["z"] = arg.z;
-            serialized[pair.first]["value"]["w"] = arg.w;
+            serialized[pair.first]["value"] = arg;
           }
           else if constexpr (std::is_same_v<T, bool>)
           {

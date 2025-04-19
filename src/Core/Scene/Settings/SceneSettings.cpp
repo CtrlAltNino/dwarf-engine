@@ -1,31 +1,74 @@
 #include "pch.h"
 
+#include "AmbientSettings.hpp"
 #include "SceneSettings.h"
 
 namespace Dwarf
 {
   SceneSettings::SceneSettings(nlohmann::json serializedSettings)
   {
-    mFogSettings = FogSettings(serializedSettings["FogSettings"]);
-    mAmbientLightSettings =
-      AmbientLightSettings(serializedSettings["AmbientLightSettings"]);
-    mSkyboxMaterial =
-      serializedSettings.contains("SkyboxMaterial") &&
-          serializedSettings.at("SkyboxMaterial") != ""
-        ? std::optional<UUID>(
-            UUID(serializedSettings.at("SkyboxMaterial").get<std::string>()))
-        : std::nullopt;
+    if (serializedSettings.contains("AmbientLightSettings"))
+    {
+      mAmbientLightSettings =
+        AmbientSettings(serializedSettings["AmbientLightSettings"]);
+    }
+
+    if (serializedSettings.contains("AntiAliasingSettings"))
+    {
+      mAntiAliasingSettings =
+        AntiAliasingSettings(serializedSettings["AntiAliasingSettings"]);
+    }
+
+    if (serializedSettings.contains("BloomSettings"))
+    {
+      mBloomSettings = BloomSettings(serializedSettings["BloomSettings"]);
+    }
+
+    if (serializedSettings.contains("ExposureSettings"))
+    {
+      mExposureSettings =
+        ExposureSettings(serializedSettings["ExposureSettings"]);
+    }
+
+    if (serializedSettings.contains("FogSettings"))
+    {
+      mFogSettings = FogSettings(serializedSettings["FogSettings"]);
+    }
+
+    if (serializedSettings.contains("ShadowSettings"))
+    {
+      mShadowSettings = ShadowSettings(serializedSettings["ShadowSettings"]);
+    }
+
+    if (serializedSettings.contains("TonemapType"))
+    {
+      mTonemapType = serializedSettings["TonemapType"].get<TonemapType>();
+    }
   }
 
   auto
   SceneSettings::Serialize() -> nlohmann::json
   {
     nlohmann::json serializedSettings;
-    serializedSettings["FogSettings"] = mFogSettings.Serialize();
+
     serializedSettings["AmbientLightSettings"] =
       mAmbientLightSettings.Serialize();
-    serializedSettings["SkyboxMaterial"] =
-      mSkyboxMaterial.has_value() ? mSkyboxMaterial->toString() : "";
+
+    serializedSettings["AntiAliasingSettings"] =
+      mAntiAliasingSettings.Serialize();
+
+    serializedSettings["BloomSettings"] = mBloomSettings.Serialize();
+
+    serializedSettings["ExposureSettings"] = mExposureSettings.Serialize();
+
+    serializedSettings["FogSettings"] = mFogSettings.Serialize();
+
+    serializedSettings["ShadowSettings"] = mShadowSettings.Serialize();
+
+    serializedSettings["SkyboxSettings"] = mSkyboxSettings.Serialize();
+
+    serializedSettings["TonemapType"] = mTonemapType;
+
     return serializedSettings;
   }
 
@@ -36,14 +79,44 @@ namespace Dwarf
   }
 
   auto
-  SceneSettings::GetAmbientLightSettings() -> AmbientLightSettings&
+  SceneSettings::GetAmbientSettings() -> AmbientSettings&
   {
     return mAmbientLightSettings;
   }
 
   auto
-  SceneSettings::GetSkyboxMaterial() -> std::optional<UUID>&
+  SceneSettings::GetSkyboxSettings() -> SkyboxSettings&
   {
-    return mSkyboxMaterial;
+    return mSkyboxSettings;
+  }
+
+  auto
+  SceneSettings::GetExposureSettings() -> ExposureSettings&
+  {
+    return mExposureSettings;
+  }
+
+  auto
+  SceneSettings::GetToneMapType() -> TonemapType&
+  {
+    return mTonemapType;
+  }
+
+  auto
+  SceneSettings::GetAntiAliasingSettings() -> AntiAliasingSettings&
+  {
+    return mAntiAliasingSettings;
+  }
+
+  auto
+  SceneSettings::GetBloomSettings() -> BloomSettings&
+  {
+    return mBloomSettings;
+  }
+
+  auto
+  SceneSettings::GetShadowSettings() -> ShadowSettings&
+  {
+    return mShadowSettings;
   }
 } // namespace Dwarf

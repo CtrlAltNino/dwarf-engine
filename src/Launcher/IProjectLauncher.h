@@ -17,7 +17,7 @@ namespace Dwarf
 #define X_LINK "https://x.com/CtrlAltNino"
 
   /// @brief Enum defining the states of the project launcher.
-  enum class ProjectChooserState
+  enum class ProjectChooserState : uint8_t
   {
     Choosing,
     Done,

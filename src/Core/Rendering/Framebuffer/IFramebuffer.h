@@ -5,7 +5,7 @@
 namespace Dwarf
 {
   // TODO: Align with TextureCommon.h
-  enum class FramebufferTextureFormat
+  enum class FramebufferTextureFormat : uint8_t
   {
     None = 0,
     // Color

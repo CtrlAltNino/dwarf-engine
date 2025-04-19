@@ -5,7 +5,7 @@
 namespace Dwarf
 {
   /// @brief Enum defining the available project templates.
-  enum class ProjectTemplate
+  enum class ProjectTemplate : uint8_t
   {
     Blank,
     Olaf,

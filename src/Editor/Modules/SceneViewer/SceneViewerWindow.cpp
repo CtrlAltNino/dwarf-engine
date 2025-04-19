@@ -1,9 +1,11 @@
 #include "pch.h"
 
+#include "Core/Rendering/AntiAliasingTypes.hpp"
 #include "Core/Scene/Components/SceneComponents.h"
 #include "Core/Scene/Entity/Entity.h"
 #include "Editor/Modules/SceneViewer/SceneViewerWindow.h"
 #include <ImGuizmo.h>
+#include <glm/gtc/type_ptr.hpp>
 #include <imgui.h>
 
 #define MIN_RESOLUTION_WIDTH 10
@@ -34,9 +36,6 @@ namespace Dwarf
   {
     // Create rendering pipeline
     mRenderingPipeline = renderingPipelineFactory->Create();
-    mSettings.MaxSamples = mRenderingPipeline->GetMaxMsaaSamples();
-    mRenderingPipeline->SetTonemapType(mSettings.Tonemap);
-    mRenderingPipeline->SetExposure(mSettings.Exposure);
 
     // Setup camera
     mCamera = cameraFactory->Create();
@@ -69,14 +68,11 @@ namespace Dwarf
   {
     // Create rendering pipeline
     mRenderingPipeline = renderingPipelineFactory->Create();
-    mSettings.MaxSamples = mRenderingPipeline->GetMaxMsaaSamples();
 
     // Setup camera
     mCamera = cameraFactory->Create(serializedModule.t["camera"]);
 
     Deserialize(serializedModule.t);
-    mRenderingPipeline->SetTonemapType(mSettings.Tonemap);
-    mRenderingPipeline->SetExposure(mSettings.Exposure);
 
     mLoadedScene->PropagateSceneChange();
 
@@ -105,6 +101,21 @@ namespace Dwarf
     else
     {
       mWindow->SetMouseVisibility(true);
+    }
+
+    if (mLoadedScene->HasLoadedScene())
+    {
+      mRenderingPipeline->SetTonemapType(mLoadedScene->GetScene()
+                                           .GetProperties()
+                                           .GetSettings()
+                                           .GetToneMapType());
+      mRenderingPipeline->SetExposure(mLoadedScene->GetScene()
+                                        .GetProperties()
+                                        .GetSettings()
+                                        .GetExposureSettings()
+                                        .Exposure);
+
+      UpdateFramebuffer();
     }
 
     // Render scene to the framebuffer with the camera
@@ -297,19 +308,27 @@ namespace Dwarf
 
       if (mSettings.RenderingConstraint == RENDERING_CONSTRAINT::ASPECT_RATIO)
       {
-        ImGui::InputInt("Width##aspectWidth", mSettings.AspectRatio.data());
-        ImGui::InputInt("Height##aspectHeight", &(mSettings.AspectRatio[1]));
-        mSettings.AspectRatio[0] = std::clamp(mSettings.AspectRatio[0], 1, 32);
-        mSettings.AspectRatio[1] = std::clamp(mSettings.AspectRatio[1], 1, 32);
+        if (ImGui::InputInt("Width##aspectWidth", &mSettings.AspectRatio.x))
+        {
+          mSettings.AspectRatio.x = std::clamp(mSettings.AspectRatio.x, 1, 32);
+        }
+
+        if (ImGui::InputInt("Height##aspectHeight", &mSettings.AspectRatio.y))
+        {
+          mSettings.AspectRatio.y = std::clamp(mSettings.AspectRatio.y, 1, 32);
+        }
       }
       else if (mSettings.RenderingConstraint ==
                RENDERING_CONSTRAINT::FIXED_RESOLUTION)
       {
-        ImGui::InputInt2("Resolution##resolution", mSettings.Resolution.data());
-        mSettings.Resolution[0] = std::clamp(
-          mSettings.Resolution[0], MIN_RESOLUTION_WIDTH, MAX_RESOLUTION_WIDTH);
-        mSettings.Resolution[1] = std::clamp(
-          mSettings.Resolution[1], MIN_RESOLUTION_WIDTH, MAX_RESOLUTION_WIDTH);
+        if (ImGui::InputInt2("Resolution##resolution",
+                             glm::value_ptr(mSettings.Resolution)))
+        {
+          mSettings.Resolution.x = std::clamp(
+            mSettings.Resolution.x, MIN_RESOLUTION_WIDTH, MAX_RESOLUTION_WIDTH);
+          mSettings.Resolution.y = std::clamp(
+            mSettings.Resolution.y, MIN_RESOLUTION_WIDTH, MAX_RESOLUTION_WIDTH);
+        }
       }
 
       ImGui::PopItemWidth();
@@ -481,14 +500,14 @@ namespace Dwarf
   void
   SceneViewerWindow::RenderRenderingSettings()
   {
-    if (ImGui::Button("Render settings"))
+    if (ImGui::Button("Overrides"))
     {
-      ImGui::OpenPopup("render_settings");
+      ImGui::OpenPopup("override_settings");
     }
 
-    if (ImGui::BeginPopup("render_settings"))
+    if (ImGui::BeginPopup("override_settings"))
     {
-      ImGui::PushItemWidth(150);
+      /*ImGui::PushItemWidth(150);
       ImGui::SliderInt("MSAA Samples",
                        &mSettings.Samples,
                        1,
@@ -541,7 +560,7 @@ namespace Dwarf
         mRenderingPipeline->SetExposure(mSettings.Exposure);
       }
 
-      ImGui::PopItemWidth();
+      ImGui::PopItemWidth();*/
       ImGui::EndPopup();
     }
   }
@@ -716,52 +735,51 @@ namespace Dwarf
         (float)desiredResolution.x / (float)desiredResolution.y;
     }
 
-    if (mRenderingPipeline->GetMsaaSamples() != mSettings.Samples)
+    if (mLoadedScene->HasLoadedScene() &&
+        mRenderingPipeline->GetMsaaSamples() !=
+          ((mLoadedScene->GetScene()
+              .GetProperties()
+              .GetSettings()
+              .GetAntiAliasingSettings()
+              .Type == AntiAliasingMethod::MSAA)
+             ? mLoadedScene->GetScene()
+                 .GetProperties()
+                 .GetSettings()
+                 .GetAntiAliasingSettings()
+                 .MsaaSamples
+             : 1))
     {
-      mRenderingPipeline->SetMsaaSamples(mSettings.Samples);
+      mRenderingPipeline->SetMsaaSamples(mLoadedScene->GetScene()
+                                               .GetProperties()
+                                               .GetSettings()
+                                               .GetAntiAliasingSettings()
+                                               .Type == AntiAliasingMethod::MSAA
+                                           ? mLoadedScene->GetScene()
+                                               .GetProperties()
+                                               .GetSettings()
+                                               .GetAntiAliasingSettings()
+                                               .MsaaSamples
+                                           : 1);
     }
   }
 
   void
   SceneViewerWindow::Deserialize(nlohmann::json moduleData)
   {
-    mSettings.AspectRatio[0] =
-      moduleData["settings"]["aspectRatioConstraint"]["x"];
-    mSettings.AspectRatio[1] =
-      moduleData["settings"]["aspectRatioConstraint"]["y"];
+    mSettings.AspectRatio =
+      moduleData["settings"]["aspectRatioConstraint"].get<glm::ivec2>();
 
-    mSettings.Resolution[0] =
-      moduleData["settings"]["resolutionConstraint"]["x"];
-    mSettings.Resolution[1] =
-      moduleData["settings"]["resolutionConstraint"]["y"];
+    mSettings.Resolution =
+      moduleData["settings"]["resolutionConstraint"].get<glm::ivec2>();
 
     mSettings.RenderingConstraint =
-      (RENDERING_CONSTRAINT)moduleData["settings"]["constraintType"];
+      moduleData["settings"]["constraintType"].get<RENDERING_CONSTRAINT>();
 
     if (moduleData.contains("settings") &&
         moduleData["settings"].contains("gridSettings"))
     {
       mSettings.GridSettings =
         GridSettings(moduleData["settings"]["gridSettings"]);
-    }
-
-    if (moduleData.contains("settings") &&
-        moduleData["settings"].contains("exposure"))
-    {
-      mSettings.Exposure = moduleData["settings"]["exposure"].get<float>();
-    }
-
-    if (moduleData.contains("settings") &&
-        moduleData["settings"].contains("tonemap"))
-    {
-      mSettings.Tonemap = moduleData["settings"]["tonemap"].get<TonemapType>();
-    }
-
-    if (moduleData.contains("settings") &&
-        moduleData["settings"].contains("samples"))
-    {
-      mSettings.Samples = std::min(
-        moduleData["settings"]["samples"].get<int32_t>(), mSettings.MaxSamples);
     }
   }
 
@@ -772,25 +790,16 @@ namespace Dwarf
 
     serializedModule["camera"] = mCamera->Serialize();
 
-    serializedModule["settings"]["aspectRatioConstraint"]["x"] =
-      mSettings.AspectRatio[0];
-    serializedModule["settings"]["aspectRatioConstraint"]["y"] =
-      mSettings.AspectRatio[1];
+    serializedModule["settings"]["aspectRatioConstraint"] =
+      mSettings.AspectRatio;
 
-    serializedModule["settings"]["resolutionConstraint"]["x"] =
-      mSettings.Resolution[0];
-    serializedModule["settings"]["resolutionConstraint"]["y"] =
-      mSettings.Resolution[1];
+    serializedModule["settings"]["resolutionConstraint"] = mSettings.Resolution;
 
     serializedModule["settings"]["constraintType"] =
       mSettings.RenderingConstraint;
 
     serializedModule["settings"]["gridSettings"] =
       mSettings.GridSettings.Serialize();
-
-    serializedModule["settings"]["samples"] = mSettings.Samples;
-    serializedModule["settings"]["exposure"] = mSettings.Exposure;
-    serializedModule["settings"]["tonemap"] = mSettings.Tonemap;
 
     serializedModule["id"] = GetUuid()->toString();
     serializedModule["type"] = static_cast<int>(GetModuleType());
