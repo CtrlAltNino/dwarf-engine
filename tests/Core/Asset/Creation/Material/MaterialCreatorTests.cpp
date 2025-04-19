@@ -155,6 +155,10 @@ public:
               (),
               (override));
   MOCK_METHOD(std::unique_ptr<IShaderSourceCollection>,
+              CreateUncharted2TonemapShaderSourceCollection,
+              (),
+              (override));
+  MOCK_METHOD(std::unique_ptr<IShaderSourceCollection>,
               CreatePreviewShaderSourceCollection,
               (),
               (override));
