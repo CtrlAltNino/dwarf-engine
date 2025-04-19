@@ -163,7 +163,7 @@ namespace Dwarf
     /**
      * @brief Sets the used tonemap
      *
-     * @param type Reinhard, Agx or Aces
+     * @param type Reinhard, Agx, Aces, Uncharted 2
      */
     virtual void
     SetTonemapType(TonemapType type) = 0;

@@ -85,6 +85,12 @@ namespace Dwarf
     }
 
     static auto
+    GetUncharted2TonemapShaderPath() -> std::filesystem::path
+    {
+      return "data/engine/shaders/uncharted2_tonemap/opengl";
+    }
+
+    static auto
     GetPreviewShaderPath() -> std::filesystem::path
     {
       return "data/engine/shaders/preview/opengl";
