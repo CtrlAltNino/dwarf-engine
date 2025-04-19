@@ -1,9 +1,9 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "IO/ISavedProjectsIO.h"
-#include "ISavedProjects.h"
-#include "Project/IProjectSettings.h"
-#include "SavedProjects.h"
+#include "IO/ISavedProjectsIO.hpp"
+#include "ISavedProjects.hpp"
+#include "Project/IProjectSettings.hpp"
+#include "SavedProjects.hpp"
 #include <nfd.hpp>
 
 namespace Dwarf

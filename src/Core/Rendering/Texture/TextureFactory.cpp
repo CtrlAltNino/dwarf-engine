@@ -1,8 +1,8 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "Platform/OpenGL/OpenGLTexture.h"
-#include "TextureFactory.h"
-#include "Utilities/ImageUtilities/TextureCommon.h"
+#include "Platform/OpenGL/OpenGLTexture.hpp"
+#include "TextureFactory.hpp"
+#include "Utilities/ImageUtilities/TextureCommon.hpp"
 
 namespace Dwarf
 {
@@ -71,9 +71,8 @@ namespace Dwarf
   }
 
   auto
-  TextureFactory::LoadTexture(
-    const std::shared_ptr<TextureContainer>& textureData) const
-    -> std::unique_ptr<ITexture>
+  TextureFactory::LoadTexture(const std::shared_ptr<TextureContainer>&
+                                textureData) const -> std::unique_ptr<ITexture>
   {
     mLogger->LogDebug(Log("Creating texture", "TextureFactory"));
 

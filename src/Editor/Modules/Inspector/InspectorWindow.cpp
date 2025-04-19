@@ -1,7 +1,7 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "Editor/Modules/IGuiModule.h"
-#include "Editor/Modules/Inspector/InspectorWindow.h"
+#include "Editor/Modules/IGuiModule.hpp"
+#include "Editor/Modules/Inspector/InspectorWindow.hpp"
 
 namespace Dwarf
 {

@@ -1,7 +1,7 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "Launcher/SavedProjects/ISavedProjects.h"
-#include "SavedProjectsIO.h"
+#include "Launcher/SavedProjects/ISavedProjects.hpp"
+#include "SavedProjectsIO.hpp"
 
 #define SAVED_PROJECTS_FILE_NAME "savedProjects.json"
 #define SAVED_PROJECTS_KEY "projects"

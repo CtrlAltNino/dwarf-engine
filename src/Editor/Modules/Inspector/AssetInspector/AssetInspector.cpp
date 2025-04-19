@@ -1,6 +1,6 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "AssetInspector.h"
+#include "AssetInspector.hpp"
 #include <imgui.h>
 
 namespace Dwarf

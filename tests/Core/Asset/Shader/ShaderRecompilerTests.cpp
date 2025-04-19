@@ -1,5 +1,5 @@
-#include "Core/Asset/Shader/ShaderRecompiler.h"
-#include "Core/Rendering/Shader/IShader.h"
+#include "Core/Asset/Shader/ShaderRecompiler.hpp"
+#include "Core/Rendering/Shader/IShader.hpp"
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 

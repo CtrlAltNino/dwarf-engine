@@ -1,9 +1,9 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "Core/Asset/Database/AssetComponents.h"
-#include "Core/Base.h"
-#include "Core/Rendering/VramTracker/IVramTracker.h"
-#include "OpenGLComputeShader.h"
+#include "Core/Asset/Database/AssetComponents.hpp"
+#include "Core/Base.hpp"
+#include "Core/Rendering/VramTracker/IVramTracker.hpp"
+#include "OpenGLComputeShader.hpp"
 
 #define GL_SHADER_LOG_LENGTH (1024)
 

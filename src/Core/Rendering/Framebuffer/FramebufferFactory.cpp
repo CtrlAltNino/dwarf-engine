@@ -1,8 +1,8 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "Core/Base.h"
-#include "FramebufferFactory.h"
-#include "Platform/OpenGL/OpenGLFramebuffer.h"
+#include "Core/Base.hpp"
+#include "FramebufferFactory.hpp"
+#include "Platform/OpenGL/OpenGLFramebuffer.hpp"
 
 namespace Dwarf
 {

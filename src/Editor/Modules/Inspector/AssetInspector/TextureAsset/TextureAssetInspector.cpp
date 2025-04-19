@@ -1,9 +1,9 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "Core/Asset/Database/AssetComponents.h"
-#include "TextureAssetInspector.h"
-#include "UI/DwarfUI.h"
-#include "Utilities/ImageUtilities/TextureCommon.h"
+#include "Core/Asset/Database/AssetComponents.hpp"
+#include "TextureAssetInspector.hpp"
+#include "UI/DwarfUI.hpp"
+#include "Utilities/ImageUtilities/TextureCommon.hpp"
 #include <imgui.h>
 
 namespace Dwarf

@@ -1,8 +1,8 @@
 
-#include "pch.h"
+#include "pch.hpp"
 
-#include "Core/Base.h"
-#include "CreateNewProjectModal.h"
+#include "Core/Base.hpp"
+#include "CreateNewProjectModal.hpp"
 #include <imgui.h>
 #include <nfd.hpp>
 

@@ -1,7 +1,7 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "Platform/OpenGL/OpenGLUtilities.h"
-#include "Window/SDL3Window.h"
+#include "Platform/OpenGL/OpenGLUtilities.hpp"
+#include "Window/SDL3Window.hpp"
 #include <SDL3/SDL_video.h>
 
 namespace Dwarf

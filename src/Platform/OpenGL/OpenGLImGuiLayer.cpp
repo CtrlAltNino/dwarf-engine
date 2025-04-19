@@ -1,6 +1,6 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "Platform/OpenGL/OpenGLImGuiLayer.h"
+#include "Platform/OpenGL/OpenGLImGuiLayer.hpp"
 #include <SDL3/SDL.h>
 #include <SDL3/SDL_opengl.h>
 #include <imgui_impl_opengl3.h>

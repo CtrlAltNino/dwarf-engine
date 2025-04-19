@@ -1,7 +1,7 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "Editor/Modules/IGuiModule.h"
-#include "GuiModuleFactory.h"
+#include "Editor/Modules/IGuiModule.hpp"
+#include "GuiModuleFactory.hpp"
 
 namespace Dwarf
 {

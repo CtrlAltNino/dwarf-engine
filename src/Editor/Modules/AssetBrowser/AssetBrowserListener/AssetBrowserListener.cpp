@@ -1,6 +1,6 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "AssetBrowserListener.h"
+#include "AssetBrowserListener.hpp"
 
 namespace Dwarf
 {

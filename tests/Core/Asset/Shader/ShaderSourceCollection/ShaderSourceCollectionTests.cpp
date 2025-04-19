@@ -1,8 +1,7 @@
-#include "Core/Asset/AssetReference/IAssetReference.h"
-#include "Core/Asset/Shader/ShaderSourceCollection/ShaderSourceCollection.h"
+#include "Core/Asset/AssetReference/IAssetReference.hpp"
+#include "Core/Asset/Shader/ShaderSourceCollection/ShaderSourceCollection.hpp"
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
-
 
 using namespace Dwarf;
 using namespace testing;

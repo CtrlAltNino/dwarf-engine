@@ -1,9 +1,9 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "Core/Asset/AssetTypes.h"
-#include "Core/Rendering/PreviewRenderer/MaterialPreview/IMaterialPreview.h"
-#include "MaterialAssetInspector.h"
-#include "UI/DwarfUI.h"
+#include "Core/Asset/AssetTypes.hpp"
+#include "Core/Rendering/PreviewRenderer/MaterialPreview/IMaterialPreview.hpp"
+#include "MaterialAssetInspector.hpp"
+#include "UI/DwarfUI.hpp"
 #include <imgui.h>
 #include <memory>
 

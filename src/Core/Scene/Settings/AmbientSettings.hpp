@@ -1,9 +1,9 @@
 #pragma once
 
 #include "Core/Rendering/AmbientTypes.hpp"
-#include "Core/UUID.h"
-#include "Utilities/ISerializable.h"
-#include "Utilities/JsonHelper/JsonHelper.h"
+#include "Core/UUID.hpp"
+#include "Utilities/ISerializable.hpp"
+#include "Utilities/JsonHelper/JsonHelper.hpp"
 
 namespace Dwarf
 {

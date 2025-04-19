@@ -1,6 +1,6 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "DebugWindowFactory.h"
+#include "DebugWindowFactory.hpp"
 
 namespace Dwarf
 {

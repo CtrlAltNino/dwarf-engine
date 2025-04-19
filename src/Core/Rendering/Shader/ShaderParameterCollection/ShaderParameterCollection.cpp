@@ -1,7 +1,7 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "ShaderParameterCollection.h"
-#include "Utilities/JsonHelper/JsonHelper.h"
+#include "ShaderParameterCollection.hpp"
+#include "Utilities/JsonHelper/JsonHelper.hpp"
 
 namespace Dwarf
 {

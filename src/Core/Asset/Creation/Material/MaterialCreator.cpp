@@ -1,8 +1,8 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "Core/Rendering/Material/IO/IMaterialIO.h"
-#include "IMaterialCreator.h"
-#include "MaterialCreator.h"
+#include "Core/Rendering/Material/IO/IMaterialIO.hpp"
+#include "IMaterialCreator.hpp"
+#include "MaterialCreator.hpp"
 
 namespace Dwarf
 {

@@ -1,8 +1,8 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "Core/Scene/Components/SceneComponents.h"
-#include "Core/Scene/Scene.h"
-#include "Utilities/JsonHelper/JsonHelper.h"
+#include "Core/Scene/Components/SceneComponents.hpp"
+#include "Core/Scene/Scene.hpp"
+#include "Utilities/JsonHelper/JsonHelper.hpp"
 
 namespace Dwarf
 {

@@ -1,7 +1,7 @@
-#include "pch.h"
+#include "pch.hpp"
 #include <imgui.h>
 
-#include "ButtonsView.h"
+#include "ButtonsView.hpp"
 
 namespace Dwarf
 {

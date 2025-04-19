@@ -17,7 +17,7 @@ target_sources(${targetName}
     EntryPoint.cpp
 )
 
-target_precompile_headers(${libname} PUBLIC pch.h)
+target_precompile_headers(${libname} PUBLIC pch.hpp)
 
 IF(WIN32)
     target_link_libraries(${libname} PUBLIC bcrypt)

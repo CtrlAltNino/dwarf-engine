@@ -1,11 +1,11 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "Core/Asset/AssetReference/IAssetReference.h"
-#include "Core/Scene/Entity/Entity.h"
-#include "Editor/Modules/SceneHierarchy/ChildIndexInstruction.h"
-#include "Editor/Modules/SceneHierarchy/DeleteEntityInstruction.h"
-#include "Editor/Modules/SceneHierarchy/NewParentInstruction.h"
-#include "Editor/Modules/SceneHierarchy/SceneHierarchyWindow.h"
+#include "Core/Asset/AssetReference/IAssetReference.hpp"
+#include "Core/Scene/Entity/Entity.hpp"
+#include "Editor/Modules/SceneHierarchy/ChildIndexInstruction.hpp"
+#include "Editor/Modules/SceneHierarchy/DeleteEntityInstruction.hpp"
+#include "Editor/Modules/SceneHierarchy/NewParentInstruction.hpp"
+#include "Editor/Modules/SceneHierarchy/SceneHierarchyWindow.hpp"
 
 namespace Dwarf
 {

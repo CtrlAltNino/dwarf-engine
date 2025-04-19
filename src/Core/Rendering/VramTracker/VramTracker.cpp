@@ -1,8 +1,8 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "Core/Rendering/Framebuffer/IFramebuffer.h"
-#include "Utilities/ImageUtilities/TextureCommon.h"
-#include "VramTracker.h"
+#include "Core/Rendering/Framebuffer/IFramebuffer.hpp"
+#include "Utilities/ImageUtilities/TextureCommon.hpp"
+#include "VramTracker.hpp"
 
 namespace Dwarf
 {

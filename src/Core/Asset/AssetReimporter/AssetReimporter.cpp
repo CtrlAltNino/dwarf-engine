@@ -1,6 +1,6 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "AssetReimporter.h"
+#include "AssetReimporter.hpp"
 
 namespace Dwarf
 {

@@ -1,8 +1,8 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "Core/Asset/AssetReference/IAssetReference.h"
-#include "Editor/LoadedScene/ILoadedScene.h"
-#include "Editor/Selection/EditorSelection.h"
+#include "Core/Asset/AssetReference/IAssetReference.hpp"
+#include "Editor/LoadedScene/ILoadedScene.hpp"
+#include "Editor/Selection/EditorSelection.hpp"
 
 namespace Dwarf
 {

@@ -1,7 +1,7 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "Core/Asset/Shader/ShaderSourceCollection/IShaderSourceCollectionFactory.h"
-#include "OpenGLShaderAssetSourceContainer.h"
+#include "Core/Asset/Shader/ShaderSourceCollection/IShaderSourceCollectionFactory.hpp"
+#include "OpenGLShaderAssetSourceContainer.hpp"
 
 namespace Dwarf
 {

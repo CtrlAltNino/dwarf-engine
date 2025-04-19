@@ -1,10 +1,10 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "Core/Asset/Database/AssetComponents.h"
-#include "Core/Asset/Texture/IImageFileLoader.h"
-#include "Core/Rendering/Texture/ITextureFactory.h"
-#include "ITextureLoadingWorker.h"
-#include "TextureLoadingWorker.h"
+#include "Core/Asset/Database/AssetComponents.hpp"
+#include "Core/Asset/Texture/IImageFileLoader.hpp"
+#include "Core/Rendering/Texture/ITextureFactory.hpp"
+#include "ITextureLoadingWorker.hpp"
+#include "TextureLoadingWorker.hpp"
 
 namespace Dwarf
 {
@@ -84,10 +84,11 @@ namespace Dwarf
 
       { // Lock the queue and wait for work
         std::unique_lock<std::mutex> lock(mLoadingMutex);
-        queueCondition.wait(
-          lock,
-          [this]
-          { return !mTextureLoadRequestQueue.empty() || stopWorker.load(); });
+        queueCondition.wait(lock,
+                            [this] {
+                              return !mTextureLoadRequestQueue.empty() ||
+                                     stopWorker.load();
+                            });
 
         if (stopWorker.load())
         {

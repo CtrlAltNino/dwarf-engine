@@ -1,7 +1,7 @@
-#include "Core/Asset/AssetReference/AssetReference.h"
-#include "Core/Asset/Database/AssetComponents.h"
-#include "Core/Asset/Database/IAssetDatabase.h"
-#include "Core/UUID.h"
+#include "Core/Asset/AssetReference/AssetReference.hpp"
+#include "Core/Asset/Database/AssetComponents.hpp"
+#include "Core/Asset/Database/IAssetDatabase.hpp"
+#include "Core/UUID.hpp"
 #include <cstdint>
 #include <entt/entt.hpp>
 #include <filesystem>

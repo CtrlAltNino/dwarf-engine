@@ -1,8 +1,8 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "Core/Asset/Database/AssetComponents.h"
-#include "EntityInspector.h"
-#include "UI/DwarfUI.h"
+#include "Core/Asset/Database/AssetComponents.hpp"
+#include "EntityInspector.hpp"
+#include "UI/DwarfUI.hpp"
 
 #define COMPONENT_PANEL_PADDING (8.0f)
 #define ADD_BUTTON_WIDTH (40.0f)

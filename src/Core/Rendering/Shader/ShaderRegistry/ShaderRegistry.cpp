@@ -1,7 +1,7 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "Core/Asset/Database/AssetComponents.h"
-#include "ShaderRegistry.h"
+#include "Core/Asset/Database/AssetComponents.hpp"
+#include "ShaderRegistry.hpp"
 
 namespace Dwarf
 {
@@ -19,9 +19,8 @@ namespace Dwarf
   }
 
   auto
-  ShaderRegistry::GetOrCreate(
-    std::unique_ptr<IShaderSourceCollection> shaderSources)
-    -> std::shared_ptr<IShader>
+  ShaderRegistry::GetOrCreate(std::unique_ptr<IShaderSourceCollection>
+                                shaderSources) -> std::shared_ptr<IShader>
   {
     // Hashing the shader sources
     std::hash<std::string> hasher;

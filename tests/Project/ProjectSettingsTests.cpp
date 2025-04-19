@@ -1,8 +1,8 @@
-#include "Core/UUID.h"
-#include "Helper/TempFileHelper.h"
-#include "Logging/IDwarfLogger.h"
-#include "Project/IProjectSettingsIO.h"
-#include "Project/ProjectSettings.h"
+#include "Core/UUID.hpp"
+#include "Helper/TempFileHelper.hpp"
+#include "Logging/IDwarfLogger.hpp"
+#include "Project/IProjectSettingsIO.hpp"
+#include "Project/ProjectSettings.hpp"
 #include <filesystem>
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>

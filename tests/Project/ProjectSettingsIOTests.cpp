@@ -1,9 +1,9 @@
-#include "Core/UUID.h"
-#include "Logging/IDwarfLogger.h"
-#include "Project/IProjectSettingsIO.h"
-#include "Project/ProjectSettingsIO.h"
-#include "Project/ProjectTypes.h"
-#include "Utilities/FileHandler/IFileHandler.h"
+#include "Core/UUID.hpp"
+#include "Logging/IDwarfLogger.hpp"
+#include "Project/IProjectSettingsIO.hpp"
+#include "Project/ProjectSettingsIO.hpp"
+#include "Project/ProjectTypes.hpp"
+#include "Utilities/FileHandler/IFileHandler.hpp"
 #include <filesystem>
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>

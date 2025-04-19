@@ -1,6 +1,6 @@
-#include "Core/Asset/AssetReimporter/AssetReimporter.h"
-#include "Core/Asset/Database/IAssetDatabase.h"
-#include "Logging/IDwarfLogger.h"
+#include "Core/Asset/AssetReimporter/AssetReimporter.hpp"
+#include "Core/Asset/Database/IAssetDatabase.hpp"
+#include "Logging/IDwarfLogger.hpp"
 #include <boost/di/extension/injections/lazy.hpp>
 #include <filesystem>
 #include <gmock/gmock.h>

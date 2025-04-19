@@ -1,7 +1,7 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "Camera.h"
-#include "CameraFactory.h"
+#include "Camera.hpp"
+#include "CameraFactory.hpp"
 
 namespace Dwarf
 {
@@ -25,8 +25,8 @@ namespace Dwarf
   }
 
   auto
-  CameraFactory::Create(glm::vec3 position, glm::vec3 rotation) const
-    -> std::unique_ptr<ICamera>
+  CameraFactory::Create(glm::vec3 position,
+                        glm::vec3 rotation) const -> std::unique_ptr<ICamera>
   {
     return std::make_unique<Camera>(
       mLogger, mInputManager, CameraProperties({ position, rotation }));

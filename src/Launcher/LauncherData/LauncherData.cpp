@@ -1,6 +1,6 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "LauncherData.h"
+#include "LauncherData.hpp"
 
 namespace Dwarf
 {

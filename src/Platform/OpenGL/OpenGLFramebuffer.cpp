@@ -1,10 +1,10 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "Core/Rendering/Framebuffer/IFramebuffer.h"
-#include "Core/Rendering/VramTracker/IVramTracker.h"
-#include "OpenGLUtilities.h"
-#include "Platform/OpenGL/OpenGLFramebuffer.h"
-#include "Utilities/ImageUtilities/TextureCommon.h"
+#include "Core/Rendering/Framebuffer/IFramebuffer.hpp"
+#include "Core/Rendering/VramTracker/IVramTracker.hpp"
+#include "OpenGLUtilities.hpp"
+#include "Platform/OpenGL/OpenGLFramebuffer.hpp"
+#include "Utilities/ImageUtilities/TextureCommon.hpp"
 #include <glad/glad.h>
 #include <glm/ext/vector_int2.hpp>
 
@@ -372,8 +372,9 @@ namespace Dwarf
 
   // @brief: Reads a pixel from the framebuffer
   auto
-  OpenGLFramebuffer::ReadPixel(uint32_t attachmentIndex, int x, int y)
-    -> uint32_t
+  OpenGLFramebuffer::ReadPixel(uint32_t attachmentIndex,
+                               int      x,
+                               int      y) -> uint32_t
   {
     Bind();
     glm::ivec2 convertedCoords =

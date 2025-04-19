@@ -1,7 +1,7 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "Core/Asset/AssetReference/IAssetReference.h"
-#include "SceneIO.h"
+#include "Core/Asset/AssetReference/IAssetReference.hpp"
+#include "SceneIO.hpp"
 #include <nfd.hpp>
 
 namespace Dwarf

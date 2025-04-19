@@ -1,6 +1,6 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "Utilities/FileHandler/FileHandler.h"
+#include "Utilities/FileHandler/FileHandler.hpp"
 #include <filesystem>
 #include <sago/platform_folders.h>
 

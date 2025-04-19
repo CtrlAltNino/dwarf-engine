@@ -1,7 +1,7 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "ImGuiLayerFactory.h"
-#include "Platform/OpenGL/OpenGLImGuiLayer.h"
+#include "ImGuiLayerFactory.hpp"
+#include "Platform/OpenGL/OpenGLImGuiLayer.hpp"
 
 namespace Dwarf
 {

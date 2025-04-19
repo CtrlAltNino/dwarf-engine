@@ -1,8 +1,8 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "Core/Base.h"
-#include "Core/Rendering/RendererApi/RendererApiFactory.h"
-#include "Platform/OpenGL/OpenGLRendererApi.h"
+#include "Core/Base.hpp"
+#include "Core/Rendering/RendererApi/RendererApiFactory.hpp"
+#include "Platform/OpenGL/OpenGLRendererApi.hpp"
 
 namespace Dwarf
 {

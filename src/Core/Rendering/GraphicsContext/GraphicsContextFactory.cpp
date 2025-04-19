@@ -1,7 +1,7 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "GraphicsContextFactory.h"
-#include "Platform/OpenGL/OpenGLContext.h"
+#include "GraphicsContextFactory.hpp"
+#include "Platform/OpenGL/OpenGLContext.hpp"
 
 namespace Dwarf
 {

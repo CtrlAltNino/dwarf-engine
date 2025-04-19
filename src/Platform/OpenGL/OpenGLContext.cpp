@@ -1,7 +1,7 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "Platform/OpenGL/OpenGLContext.h"
-#include "Platform/OpenGL/OpenGLUtilities.h"
+#include "Platform/OpenGL/OpenGLContext.hpp"
+#include "Platform/OpenGL/OpenGLUtilities.hpp"
 #include <SDL3/SDL_opengl.h>
 #include <glad/glad.h>
 

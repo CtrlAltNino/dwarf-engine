@@ -1,6 +1,6 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "AssetMetadata.h"
+#include "AssetMetadata.hpp"
 
 namespace Dwarf
 {

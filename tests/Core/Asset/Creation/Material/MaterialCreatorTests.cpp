@@ -1,8 +1,8 @@
-#include "Core/Asset/Creation/Material/MaterialCreator.h"
-#include "Core/Asset/Shader/ShaderSourceCollection/IShaderSourceCollectionFactory.h"
-#include "Core/Rendering/Material/IMaterialFactory.h"
-#include "Core/Rendering/Material/IO/IMaterialIO.h"
-#include "Utilities/FileHandler/IFileHandler.h"
+#include "Core/Asset/Creation/Material/MaterialCreator.hpp"
+#include "Core/Asset/Shader/ShaderSourceCollection/IShaderSourceCollectionFactory.hpp"
+#include "Core/Rendering/Material/IMaterialFactory.hpp"
+#include "Core/Rendering/Material/IO/IMaterialIO.hpp"
+#include "Utilities/FileHandler/IFileHandler.hpp"
 #include <filesystem>
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>

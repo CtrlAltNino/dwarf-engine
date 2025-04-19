@@ -1,8 +1,8 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "Core/Asset/Database/IAssetDatabase.h"
-#include "Platform/OpenGL/OpenGLUtilities.h"
-#include "ShaderCreator.h"
+#include "Core/Asset/Database/IAssetDatabase.hpp"
+#include "Platform/OpenGL/OpenGLUtilities.hpp"
+#include "ShaderCreator.hpp"
 
 namespace Dwarf
 {

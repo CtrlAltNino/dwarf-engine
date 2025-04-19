@@ -1,7 +1,7 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "AssetBrowserListener.h"
-#include "AssetBrowserListenerFactory.h"
+#include "AssetBrowserListener.hpp"
+#include "AssetBrowserListenerFactory.hpp"
 
 namespace Dwarf
 {

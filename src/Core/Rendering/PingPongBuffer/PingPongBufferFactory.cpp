@@ -1,7 +1,7 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "Core/Rendering/PingPongBuffer/PingPongBuffer.h"
-#include "PingPongBufferFactory.h"
+#include "Core/Rendering/PingPongBuffer/PingPongBuffer.hpp"
+#include "PingPongBufferFactory.hpp"
 
 namespace Dwarf
 {

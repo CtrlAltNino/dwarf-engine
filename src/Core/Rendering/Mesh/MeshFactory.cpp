@@ -1,8 +1,8 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "Logging/IDwarfLogger.h"
-#include "Mesh.h"
-#include "MeshFactory.h"
+#include "Logging/IDwarfLogger.hpp"
+#include "Mesh.hpp"
+#include "MeshFactory.hpp"
 
 namespace Dwarf
 {
@@ -19,8 +19,8 @@ namespace Dwarf
   }
 
   auto
-  MeshFactory::CreateUnitSphere(int stacks, int slices) const
-    -> std::unique_ptr<IMesh>
+  MeshFactory::CreateUnitSphere(int stacks,
+                                int slices) const -> std::unique_ptr<IMesh>
   {
     auto vertices = std::vector<Vertex>();
     auto indices = std::vector<uint32_t>();
@@ -332,9 +332,8 @@ namespace Dwarf
   }
 
   auto
-  MeshFactory::MergeMeshes(
-    const std::vector<std::reference_wrapper<IMesh>>& meshes) const
-    -> std::unique_ptr<IMesh>
+  MeshFactory::MergeMeshes(const std::vector<std::reference_wrapper<IMesh>>&
+                             meshes) const -> std::unique_ptr<IMesh>
   {
     std::vector<Vertex>   mergedVertices;
     std::vector<uint32_t> mergedIndices;

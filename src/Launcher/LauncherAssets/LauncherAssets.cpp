@@ -1,7 +1,7 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "LauncherAssets.h"
-#include "Window/IWindow.h"
+#include "LauncherAssets.hpp"
+#include "Window/IWindow.hpp"
 
 namespace Dwarf
 {

@@ -1,6 +1,6 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "SceneHierarchyWindowFactory.h"
+#include "SceneHierarchyWindowFactory.hpp"
 
 namespace Dwarf
 {

@@ -1,7 +1,7 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "Core/Rendering/Pipelines/RenderingPipeline.h"
-#include "RenderingPipelineFactory.h"
+#include "Core/Rendering/Pipelines/RenderingPipeline.hpp"
+#include "RenderingPipelineFactory.hpp"
 
 namespace Dwarf
 {

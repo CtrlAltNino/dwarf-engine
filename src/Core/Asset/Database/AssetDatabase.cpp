@@ -1,12 +1,12 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "AssetDatabase.h"
-#include "Core/Asset/AssetReference/IAssetReference.h"
-#include "Core/Asset/Database/AssetComponents.h"
-#include "Core/Asset/Metadata/IAssetMetadata.h"
-#include "Core/Base.h"
-#include "Core/GenericComponents.h"
-#include "IAssetDatabase.h"
+#include "AssetDatabase.hpp"
+#include "Core/Asset/AssetReference/IAssetReference.hpp"
+#include "Core/Asset/Database/AssetComponents.hpp"
+#include "Core/Asset/Metadata/IAssetMetadata.hpp"
+#include "Core/Base.hpp"
+#include "Core/GenericComponents.hpp"
+#include "IAssetDatabase.hpp"
 #include <nfd.hpp>
 
 namespace Dwarf

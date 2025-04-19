@@ -1,6 +1,6 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "Editor/LoadedScene/LoadedScene.h"
+#include "Editor/LoadedScene/LoadedScene.hpp"
 
 namespace Dwarf
 {
