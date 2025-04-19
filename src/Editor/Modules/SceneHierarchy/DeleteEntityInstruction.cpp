@@ -1,6 +1,6 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "Editor/Modules/SceneHierarchy/DeleteEntityInstruction.h"
+#include "Editor/Modules/SceneHierarchy/DeleteEntityInstruction.hpp"
 
 namespace Dwarf
 {

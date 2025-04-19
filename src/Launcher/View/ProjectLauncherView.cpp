@@ -1,11 +1,11 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "ButtonsView/IButtonsView.h"
-#include "ChangeGraphicsApiModal/IChangeGraphicsApiModal.h"
-#include "Launcher/IProjectLauncher.h"
-#include "ProjectLauncherView.h"
-#include "ProjectListView/IProjectListView.h"
-#include "ProjectNotFoundModal/IProjectNotFoundModal.h"
+#include "ButtonsView/IButtonsView.hpp"
+#include "ChangeGraphicsApiModal/IChangeGraphicsApiModal.hpp"
+#include "Launcher/IProjectLauncher.hpp"
+#include "ProjectLauncherView.hpp"
+#include "ProjectListView/IProjectListView.hpp"
+#include "ProjectNotFoundModal/IProjectNotFoundModal.hpp"
 
 namespace Dwarf
 {

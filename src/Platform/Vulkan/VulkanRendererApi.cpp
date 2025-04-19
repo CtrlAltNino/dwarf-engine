@@ -1,6 +1,6 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "Platform/Vulkan/VulkanRendererApi.h"
+#include "Platform/Vulkan/VulkanRendererApi.hpp"
 
 namespace Dwarf
 {

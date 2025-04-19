@@ -1,6 +1,6 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "DrawCallList.h"
+#include "DrawCallList.hpp"
 
 namespace Dwarf
 {

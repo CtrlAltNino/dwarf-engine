@@ -1,14 +1,14 @@
-#include "Core/Asset/Database/AssetComponents.h"
+#include "Core/Asset/Database/AssetComponents.hpp"
 #include "Core/Rendering/AmbientTypes.hpp"
 #include "Core/Rendering/AntiAliasingTypes.hpp"
 #include "Core/Rendering/ShadowMappingTypes.hpp"
 #include "Core/Rendering/SkyboxTypes.hpp"
-#include "pch.h"
+#include "pch.hpp"
 #include <glm/gtc/type_ptr.hpp>
 #include <imgui.h>
 
-#include "SceneSettingsWindow.h"
-#include "UI/DwarfUI.h"
+#include "SceneSettingsWindow.hpp"
+#include "UI/DwarfUI.hpp"
 
 namespace Dwarf
 {

@@ -1,7 +1,7 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "Core/Scene/Components/SceneComponents.h"
-#include "DrawCall.h"
+#include "Core/Scene/Components/SceneComponents.hpp"
+#include "DrawCall.hpp"
 
 namespace Dwarf
 {

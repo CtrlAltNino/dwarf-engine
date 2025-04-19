@@ -1,10 +1,10 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "Core/Asset/Database/IAssetDatabase.h"
-#include "Core/Scene/IScene.h"
-#include "Editor/Editor.h"
-#include "Input/IInputManager.h"
-#include "Utilities/TimeUtilities.h"
+#include "Core/Asset/Database/IAssetDatabase.hpp"
+#include "Core/Scene/IScene.hpp"
+#include "Editor/Editor.hpp"
+#include "Input/IInputManager.hpp"
+#include "Utilities/TimeUtilities.hpp"
 
 namespace Dwarf
 {

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Utilities/ISerializable.h"
+#include "Utilities/ISerializable.hpp"
 
 namespace Dwarf
 {

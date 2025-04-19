@@ -1,7 +1,7 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "Material.h"
-#include "MaterialFactory.h"
+#include "Material.hpp"
+#include "MaterialFactory.hpp"
 
 namespace Dwarf
 {

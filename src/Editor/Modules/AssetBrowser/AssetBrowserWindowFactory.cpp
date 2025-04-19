@@ -1,8 +1,8 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "AssetBrowserWindowFactory.h"
-#include "Core/Asset/Database/IAssetDatabase.h"
-#include "Editor/Modules/AssetBrowser/AssetBrowserWindow.h"
+#include "AssetBrowserWindowFactory.hpp"
+#include "Core/Asset/Database/IAssetDatabase.hpp"
+#include "Editor/Modules/AssetBrowser/AssetBrowserWindow.hpp"
 
 namespace Dwarf
 {

@@ -1,8 +1,8 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "Core/Asset/Database/AssetComponents.h"
-#include "Core/GenericComponents.h"
-#include "DebugWindow.h"
+#include "Core/Asset/Database/AssetComponents.hpp"
+#include "Core/GenericComponents.hpp"
+#include "DebugWindow.hpp"
 
 namespace Dwarf
 {

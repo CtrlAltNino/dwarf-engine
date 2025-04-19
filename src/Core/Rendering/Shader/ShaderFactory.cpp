@@ -1,8 +1,8 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "Core/Rendering/VramTracker/IVramTracker.h"
-#include "Platform/OpenGL/OpenGLShader.h"
-#include "ShaderFactory.h"
+#include "Core/Rendering/VramTracker/IVramTracker.hpp"
+#include "Platform/OpenGL/OpenGLShader.hpp"
+#include "ShaderFactory.hpp"
 
 namespace Dwarf
 {

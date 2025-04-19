@@ -1,7 +1,7 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "SceneProperties.h"
-#include "ScenePropertiesFactory.h"
+#include "SceneProperties.hpp"
+#include "ScenePropertiesFactory.hpp"
 
 namespace Dwarf
 {

@@ -1,11 +1,11 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "Core/Asset/Creation/Material/IMaterialCreator.h"
-#include "Core/Base.h"
-#include "Core/Scene/ISceneFactory.h"
-#include "Editor/Modules/IGuiModuleFactory.h"
-#include "EditorView.h"
-#include "UI/DwarfUI.h"
+#include "Core/Asset/Creation/Material/IMaterialCreator.hpp"
+#include "Core/Base.hpp"
+#include "Core/Scene/ISceneFactory.hpp"
+#include "Editor/Modules/IGuiModuleFactory.hpp"
+#include "EditorView.hpp"
+#include "UI/DwarfUI.hpp"
 
 #define EDITOR_VIEW_SERIALIZATION_INTERVAL_SECONDS (5)
 

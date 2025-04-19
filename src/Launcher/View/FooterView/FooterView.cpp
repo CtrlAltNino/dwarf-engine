@@ -1,7 +1,7 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "FooterView.h"
-#include "Utilities/BrowserLinkOpener.h"
+#include "FooterView.hpp"
+#include "Utilities/BrowserLinkOpener.hpp"
 
 namespace Dwarf
 {

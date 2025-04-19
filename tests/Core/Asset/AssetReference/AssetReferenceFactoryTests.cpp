@@ -1,10 +1,10 @@
-#include "Core/Asset/AssetReference/AssetReference.h"
-#include "Core/Asset/AssetReference/AssetReferenceFactory.h"
-#include "Core/Asset/AssetReference/IAssetReference.h"
-#include "Core/Asset/Database/AssetComponents.h"
-#include "Core/Asset/Database/IAssetDatabase.h"
-#include "Core/UUID.h"
-#include "Logging/IDwarfLogger.h"
+#include "Core/Asset/AssetReference/AssetReference.hpp"
+#include "Core/Asset/AssetReference/AssetReferenceFactory.hpp"
+#include "Core/Asset/AssetReference/IAssetReference.hpp"
+#include "Core/Asset/Database/AssetComponents.hpp"
+#include "Core/Asset/Database/IAssetDatabase.hpp"
+#include "Core/UUID.hpp"
+#include "Logging/IDwarfLogger.hpp"
 #include <entt/entt.hpp>
 #include <filesystem>
 #include <gmock/gmock.h>

@@ -1,7 +1,7 @@
-#include "Core/Asset/AssetReference/IAssetReference.h"
-#include "Core/Asset/Database/IAssetDatabase.h"
-#include "Core/Asset/Shader/ShaderSourceCollection/ShaderSourceCollection.h"
-#include "Core/Asset/Shader/ShaderSourceCollection/ShaderSourceCollectionFactory.h"
+#include "Core/Asset/AssetReference/IAssetReference.hpp"
+#include "Core/Asset/Database/IAssetDatabase.hpp"
+#include "Core/Asset/Shader/ShaderSourceCollection/ShaderSourceCollection.hpp"
+#include "Core/Asset/Shader/ShaderSourceCollection/ShaderSourceCollectionFactory.hpp"
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 #include <memory>

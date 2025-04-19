@@ -1,8 +1,8 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "Core/Base.h"
-#include "Platform/OpenGL/OpenGLShaderAssetSourceContainer.h"
-#include "ShaderAssetSourceContainerFactory.h"
+#include "Core/Base.hpp"
+#include "Platform/OpenGL/OpenGLShaderAssetSourceContainer.hpp"
+#include "ShaderAssetSourceContainerFactory.hpp"
 
 namespace Dwarf
 {

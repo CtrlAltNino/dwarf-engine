@@ -1,10 +1,10 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "Core/Rendering/VramTracker/IVramTracker.h"
-#include "OpenGLTexture.h"
-#include "Platform/OpenGL/OpenGLTexture.h"
-#include "Platform/OpenGL/OpenGLUtilities.h"
-#include "Utilities/ImageUtilities/TextureCommon.h"
+#include "Core/Rendering/VramTracker/IVramTracker.hpp"
+#include "OpenGLTexture.hpp"
+#include "Platform/OpenGL/OpenGLTexture.hpp"
+#include "Platform/OpenGL/OpenGLUtilities.hpp"
+#include "Utilities/ImageUtilities/TextureCommon.hpp"
 #include <SDL3/SDL_opengl.h>
 
 namespace Dwarf
@@ -226,8 +226,9 @@ namespace Dwarf
   }
 
   auto
-  GetInternalFormat(TextureFormat format, TextureDataType dataType, bool srgb)
-    -> GLenum
+  GetInternalFormat(TextureFormat   format,
+                    TextureDataType dataType,
+                    bool            srgb) -> GLenum
   {
     switch (format)
     {

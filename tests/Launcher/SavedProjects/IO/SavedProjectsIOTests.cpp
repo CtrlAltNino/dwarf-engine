@@ -1,8 +1,8 @@
-#include "Launcher/SavedProjects/IO/SavedProjectsIO.h"
-#include "Launcher/SavedProjects/ISavedProjects.h"
-#include "Logging/IDwarfLogger.h"
-#include "Project/ProjectSettingsIO.h"
-#include "Utilities/FileHandler/IFileHandler.h"
+#include "Launcher/SavedProjects/IO/SavedProjectsIO.hpp"
+#include "Launcher/SavedProjects/ISavedProjects.hpp"
+#include "Logging/IDwarfLogger.hpp"
+#include "Project/ProjectSettingsIO.hpp"
+#include "Utilities/FileHandler/IFileHandler.hpp"
 #include <filesystem>
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>

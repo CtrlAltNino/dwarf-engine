@@ -1,6 +1,6 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "ShaderRecompiler.h"
+#include "ShaderRecompiler.hpp"
 
 namespace Dwarf
 {

@@ -1,6 +1,6 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "PingPongBuffer.h"
+#include "PingPongBuffer.hpp"
 
 namespace Dwarf
 {

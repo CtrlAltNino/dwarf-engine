@@ -1,10 +1,10 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "Application/DwarfEngine.h"
-#include "DI/Editor/EditorInjector.h"
-#include "DI/ProjectLauncher/ProjectLauncherInjector.h"
-#include "Editor/Editor.h"
-#include "Launcher/ProjectLauncher.h"
+#include "Application/DwarfEngine.hpp"
+#include "DI/Editor/EditorInjector.hpp"
+#include "DI/ProjectLauncher/ProjectLauncherInjector.hpp"
+#include "Editor/Editor.hpp"
+#include "Launcher/ProjectLauncher.hpp"
 
 namespace Dwarf
 {

@@ -1,7 +1,7 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "DwarfLogger.h"
-#include "IDwarfLogger.h"
+#include "DwarfLogger.hpp"
+#include "IDwarfLogger.hpp"
 #include <spdlog/common.h>
 #include <spdlog/sinks/rotating_file_sink.h>
 #include <spdlog/sinks/stdout_color_sinks.h>

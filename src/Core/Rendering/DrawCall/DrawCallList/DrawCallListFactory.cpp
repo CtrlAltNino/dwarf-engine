@@ -1,7 +1,7 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "Core/Rendering/DrawCall/DrawCallList/DrawCallList.h"
-#include "DrawCallListFactory.h"
+#include "Core/Rendering/DrawCall/DrawCallList/DrawCallList.hpp"
+#include "DrawCallListFactory.hpp"
 
 namespace Dwarf
 {

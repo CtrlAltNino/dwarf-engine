@@ -1,10 +1,10 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "Core/Asset/Database/AssetComponents.h"
-#include "OpenGLShaderAssetSelector.h"
-#include "OpenGLShaderAssetSourceContainer.h"
-#include "Platform/OpenGL/OpenGLShader.h"
-#include "UI/DwarfUI.h"
+#include "Core/Asset/Database/AssetComponents.hpp"
+#include "OpenGLShaderAssetSelector.hpp"
+#include "OpenGLShaderAssetSourceContainer.hpp"
+#include "Platform/OpenGL/OpenGLShader.hpp"
+#include "UI/DwarfUI.hpp"
 
 namespace Dwarf
 {

@@ -1,6 +1,6 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "DwarfUI.h"
+#include "DwarfUI.hpp"
 
 namespace Dwarf
 {

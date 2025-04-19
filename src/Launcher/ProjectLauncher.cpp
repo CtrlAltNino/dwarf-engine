@@ -1,8 +1,8 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "Launcher/ProjectLauncher.h"
-#include "SavedProjects/ISavedProjects.h"
-#include "Utilities/TimeUtilities.h"
+#include "Launcher/ProjectLauncher.hpp"
+#include "SavedProjects/ISavedProjects.hpp"
+#include "Utilities/TimeUtilities.hpp"
 
 namespace Dwarf
 {

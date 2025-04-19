@@ -1,8 +1,8 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "Core/Asset/Creation/Material/IMaterialCreator.h"
-#include "Editor/Modules/AssetBrowser/AssetBrowserWindow.h"
-#include "UI/DwarfUI.h"
+#include "Core/Asset/Creation/Material/IMaterialCreator.hpp"
+#include "Editor/Modules/AssetBrowser/AssetBrowserWindow.hpp"
+#include "UI/DwarfUI.hpp"
 #include <algorithm>
 #include <filesystem>
 #include <imgui.h>

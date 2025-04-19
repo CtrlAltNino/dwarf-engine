@@ -1,16 +1,16 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "Core/Asset/Database/AssetComponents.h"
-#include "Core/Asset/Database/IAssetDatabase.h"
-#include "Core/Rendering/RendererApi/IRendererApi.h"
-#include "Core/Rendering/Shader/ShaderParameterCollection/IShaderParameterCollection.h"
-#include "OpenGLFramebuffer.h"
-#include "Platform/OpenGL/OpenGLComputeShader.h"
-#include "Platform/OpenGL/OpenGLFramebuffer.h"
-#include "Platform/OpenGL/OpenGLMesh.h"
-#include "Platform/OpenGL/OpenGLRendererApi.h"
-#include "Platform/OpenGL/OpenGLShader.h"
-#include "Platform/OpenGL/OpenGLUtilities.h"
+#include "Core/Asset/Database/AssetComponents.hpp"
+#include "Core/Asset/Database/IAssetDatabase.hpp"
+#include "Core/Rendering/RendererApi/IRendererApi.hpp"
+#include "Core/Rendering/Shader/ShaderParameterCollection/IShaderParameterCollection.hpp"
+#include "OpenGLFramebuffer.hpp"
+#include "Platform/OpenGL/OpenGLComputeShader.hpp"
+#include "Platform/OpenGL/OpenGLFramebuffer.hpp"
+#include "Platform/OpenGL/OpenGLMesh.hpp"
+#include "Platform/OpenGL/OpenGLRendererApi.hpp"
+#include "Platform/OpenGL/OpenGLShader.hpp"
+#include "Platform/OpenGL/OpenGLUtilities.hpp"
 #include <glad/glad.h>
 
 namespace Dwarf

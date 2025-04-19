@@ -1,7 +1,7 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "SceneAssetInspector.h"
-#include "UI/DwarfUI.h"
+#include "SceneAssetInspector.hpp"
+#include "UI/DwarfUI.hpp"
 #include <imgui.h>
 
 namespace Dwarf

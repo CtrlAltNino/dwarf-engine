@@ -1,8 +1,8 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "Core/Rendering/MeshBuffer/MeshBufferWorker/IMeshBufferWorker.h"
-#include "DrawCall.h"
-#include "DrawCallFactory.h"
+#include "Core/Rendering/MeshBuffer/MeshBufferWorker/IMeshBufferWorker.hpp"
+#include "DrawCall.hpp"
+#include "DrawCallFactory.hpp"
 
 namespace Dwarf
 {

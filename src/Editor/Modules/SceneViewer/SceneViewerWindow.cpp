@@ -1,9 +1,9 @@
-#include "pch.h"
+#include "pch.hpp"
 
 #include "Core/Rendering/AntiAliasingTypes.hpp"
-#include "Core/Scene/Components/SceneComponents.h"
-#include "Core/Scene/Entity/Entity.h"
-#include "Editor/Modules/SceneViewer/SceneViewerWindow.h"
+#include "Core/Scene/Components/SceneComponents.hpp"
+#include "Core/Scene/Entity/Entity.hpp"
+#include "Editor/Modules/SceneViewer/SceneViewerWindow.hpp"
 #include <ImGuizmo.h>
 #include <glm/gtc/type_ptr.hpp>
 #include <imgui.h>

@@ -1,10 +1,10 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "AssetReference.h"
-#include "Core/Asset/Database/AssetComponents.h"
-#include "Core/Asset/Database/IAssetDatabase.h"
-#include "Core/Asset/Texture/TextureWorker/ITextureLoadingWorker.h"
-#include "Core/GenericComponents.h"
+#include "AssetReference.hpp"
+#include "Core/Asset/Database/AssetComponents.hpp"
+#include "Core/Asset/Database/IAssetDatabase.hpp"
+#include "Core/Asset/Texture/TextureWorker/ITextureLoadingWorker.hpp"
+#include "Core/GenericComponents.hpp"
 
 namespace Dwarf
 {

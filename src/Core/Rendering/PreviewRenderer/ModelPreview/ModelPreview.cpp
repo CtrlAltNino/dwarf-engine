@@ -1,8 +1,8 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "Core/Rendering/Framebuffer/IFramebufferFactory.h"
-#include "Core/Rendering/MeshBuffer/IMeshBufferFactory.h"
-#include "ModelPreview.h"
+#include "Core/Rendering/Framebuffer/IFramebufferFactory.hpp"
+#include "Core/Rendering/MeshBuffer/IMeshBufferFactory.hpp"
+#include "ModelPreview.hpp"
 
 namespace Dwarf
 {

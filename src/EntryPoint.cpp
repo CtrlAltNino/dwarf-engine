@@ -1,6 +1,6 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "Application/DwarfEngine.h"
+#include "Application/DwarfEngine.hpp"
 
 auto
 main() -> int

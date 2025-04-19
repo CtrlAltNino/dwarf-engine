@@ -1,7 +1,7 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "Core/Rendering/RendererApi/IRendererApi.h"
-#include "Editor/Modules/Performance/PerformanceWindow.h"
+#include "Core/Rendering/RendererApi/IRendererApi.hpp"
+#include "Editor/Modules/Performance/PerformanceWindow.hpp"
 
 namespace Dwarf
 {

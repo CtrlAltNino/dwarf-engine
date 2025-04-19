@@ -1,11 +1,12 @@
-#include "Core/Asset/Shader/ShaderSourceCollection/IShaderSourceCollection.h"
-#include "Core/Rendering/Material/IMaterial.h"
-#include "Core/Rendering/Material/ShaderAssetSourceContainer/IShaderAssetSourceContainer.h"
-#include "Core/Rendering/Shader/ShaderRegistry/IShaderRegistry.h"
-#include <Core/Rendering/Material/Material.h>
+#include "Core/Asset/Shader/ShaderSourceCollection/IShaderSourceCollection.hpp"
+#include "Core/Rendering/Material/IMaterial.hpp"
+#include "Core/Rendering/Material/Material.hpp"
+#include "Core/Rendering/Material/ShaderAssetSourceContainer/IShaderAssetSourceContainer.hpp"
+#include "Core/Rendering/Shader/ShaderRegistry/IShaderRegistry.hpp"
 #include <gmock/gmock.h>
 #include <gtest/gtest.h>
 #include <memory>
+
 
 TEST(MaterialTests, Sample)
 {

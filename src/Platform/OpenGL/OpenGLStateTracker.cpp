@@ -1,8 +1,8 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "Logging/IDwarfLogger.h"
-#include "OpenGLStateTracker.h"
-#include "OpenGLUtilities.h"
+#include "Logging/IDwarfLogger.hpp"
+#include "OpenGLStateTracker.hpp"
+#include "OpenGLUtilities.hpp"
 #include <glad/glad.h>
 
 namespace Dwarf

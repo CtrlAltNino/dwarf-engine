@@ -1,8 +1,8 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "Core/Asset/AssetReference/IAssetReference.h"
-#include "ModelAssetInspector.h"
-#include "UI/DwarfUI.h"
+#include "Core/Asset/AssetReference/IAssetReference.hpp"
+#include "ModelAssetInspector.hpp"
+#include "UI/DwarfUI.hpp"
 
 namespace Dwarf
 {

@@ -1,6 +1,6 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "PreviewRenderer.h"
+#include "PreviewRenderer.hpp"
 
 namespace Dwarf
 {

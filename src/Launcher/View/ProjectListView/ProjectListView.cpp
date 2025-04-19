@@ -1,7 +1,7 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "ProjectListView.h"
-#include "Utilities/TimeUtilities.h"
+#include "ProjectListView.hpp"
+#include "Utilities/TimeUtilities.hpp"
 
 namespace Dwarf
 {

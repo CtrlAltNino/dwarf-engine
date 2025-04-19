@@ -1,8 +1,8 @@
 #pragma once
 
 #include "Core/Rendering/FogTypes.hpp"
-#include "Utilities/ISerializable.h"
-#include "Utilities/JsonHelper/JsonHelper.h"
+#include "Utilities/ISerializable.hpp"
+#include "Utilities/JsonHelper/JsonHelper.hpp"
 
 namespace Dwarf
 {

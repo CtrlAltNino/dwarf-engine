@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Core/Rendering/ShadowMappingTypes.hpp"
-#include "Utilities/ISerializable.h"
+#include "Utilities/ISerializable.hpp"
 
 namespace Dwarf
 {

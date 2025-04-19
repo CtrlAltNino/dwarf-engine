@@ -1,11 +1,11 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "Core/Base.h"
-#include "Launcher/ProjectCreator/IProjectCreator.h"
-#include "Launcher/SavedProjects/ISavedProjects.h"
-#include "Logging/IDwarfLogger.h"
-#include "Project/IProjectSettings.h"
-#include "ProjectCreator.h"
+#include "Core/Base.hpp"
+#include "Launcher/ProjectCreator/IProjectCreator.hpp"
+#include "Launcher/SavedProjects/ISavedProjects.hpp"
+#include "Logging/IDwarfLogger.hpp"
+#include "Project/IProjectSettings.hpp"
+#include "ProjectCreator.hpp"
 
 namespace Dwarf
 {

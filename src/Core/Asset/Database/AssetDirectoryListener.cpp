@@ -1,6 +1,6 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "AssetDirectoryListener.h"
+#include "AssetDirectoryListener.hpp"
 
 namespace Dwarf
 {

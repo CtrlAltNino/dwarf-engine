@@ -1,6 +1,6 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "Input/InputManager.h"
+#include "Input/InputManager.hpp"
 #include <imgui_impl_sdl3.h>
 
 namespace Dwarf

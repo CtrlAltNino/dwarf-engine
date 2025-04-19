@@ -1,7 +1,7 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "ChangeGraphicsApiModal.h"
-#include "Core/Base.h"
+#include "ChangeGraphicsApiModal.hpp"
+#include "Core/Base.hpp"
 
 namespace Dwarf
 {

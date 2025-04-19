@@ -1,10 +1,10 @@
 #pragma once
 
 #include "Core/Rendering/SkyboxTypes.hpp"
-#include "Core/Rendering/Texture/ITexture.h"
-#include "Core/UUID.h"
-#include "Utilities/ISerializable.h"
-#include "Utilities/JsonHelper/JsonHelper.h"
+#include "Core/Rendering/Texture/ITexture.hpp"
+#include "Core/UUID.hpp"
+#include "Utilities/ISerializable.hpp"
+#include "Utilities/JsonHelper/JsonHelper.hpp"
 
 namespace Dwarf
 {

@@ -1,8 +1,8 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "ShaderParameterCollection.h"
-#include "ShaderParameterCollectionFactory.h"
-#include "Utilities/JsonHelper/JsonHelper.h"
+#include "ShaderParameterCollection.hpp"
+#include "ShaderParameterCollectionFactory.hpp"
+#include "Utilities/JsonHelper/JsonHelper.hpp"
 #include <glm/ext/vector_float3.hpp>
 
 namespace Dwarf

@@ -1,10 +1,10 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "Core/Rendering/Framebuffer/IFramebuffer.h"
-#include "Core/Rendering/Material/IMaterial.h"
-#include "Core/Scene/Components/SceneComponents.h"
-#include "IRenderingPipeline.h"
-#include "RenderingPipeline.h"
+#include "Core/Rendering/Framebuffer/IFramebuffer.hpp"
+#include "Core/Rendering/Material/IMaterial.hpp"
+#include "Core/Scene/Components/SceneComponents.hpp"
+#include "IRenderingPipeline.hpp"
+#include "RenderingPipeline.hpp"
 
 namespace Dwarf
 {
@@ -151,8 +151,9 @@ namespace Dwarf
 
     // ==================== Tonemapping ====================
 
-    if (mHdrPingPong && mHdrPingPong->GetReadFramebuffer().lock() &&
-        mLdrPingPong && mLdrPingPong->GetWriteFramebuffer().lock())
+    if (mTonemapShader && mRendererApi && mHdrPingPong &&
+        mHdrPingPong->GetReadFramebuffer().lock() && mLdrPingPong &&
+        mLdrPingPong->GetWriteFramebuffer().lock())
     {
       mTonemapShader->SetParameter("hdrTexture",
                                    mHdrPingPong->GetReadTexture());

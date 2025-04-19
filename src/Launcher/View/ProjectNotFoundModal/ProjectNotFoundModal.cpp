@@ -1,7 +1,7 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "Launcher/LauncherAssets/ILauncherAssets.h"
-#include "ProjectNotFoundModal.h"
+#include "Launcher/LauncherAssets/ILauncherAssets.hpp"
+#include "ProjectNotFoundModal.hpp"
 
 namespace Dwarf
 {

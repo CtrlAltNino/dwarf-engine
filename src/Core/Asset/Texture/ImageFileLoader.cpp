@@ -1,13 +1,13 @@
-#include "pch.h"
+#include "pch.hpp"
 
-#include "Core/Asset/Texture/ImageFileTypeUtilities/BmpUtilities.h"
-#include "Core/Asset/Texture/ImageFileTypeUtilities/HdrUtilities.h"
-#include "Core/Asset/Texture/ImageFileTypeUtilities/JpegUtilities.h"
-#include "Core/Asset/Texture/ImageFileTypeUtilities/PngUtilities.h"
-#include "Core/Asset/Texture/ImageFileTypeUtilities/TgaUtilities.h"
-#include "Core/Asset/Texture/ImageFileTypeUtilities/TiffUtilities.h"
-#include "ImageFileLoader.h"
-#include "Utilities/ImageUtilities/TextureCommon.h"
+#include "Core/Asset/Texture/ImageFileTypeUtilities/BmpUtilities.hpp"
+#include "Core/Asset/Texture/ImageFileTypeUtilities/HdrUtilities.hpp"
+#include "Core/Asset/Texture/ImageFileTypeUtilities/JpegUtilities.hpp"
+#include "Core/Asset/Texture/ImageFileTypeUtilities/PngUtilities.hpp"
+#include "Core/Asset/Texture/ImageFileTypeUtilities/TgaUtilities.hpp"
+#include "Core/Asset/Texture/ImageFileTypeUtilities/TiffUtilities.hpp"
+#include "ImageFileLoader.hpp"
+#include "Utilities/ImageUtilities/TextureCommon.hpp"
 
 namespace Dwarf
 {
