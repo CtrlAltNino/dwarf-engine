@@ -2,6 +2,7 @@
 
 #include "Core/Scene/Components/SceneComponents.h"
 #include "Core/Scene/Scene.h"
+#include "Utilities/JsonHelper/JsonHelper.h"
 
 namespace Dwarf
 {
@@ -49,21 +50,12 @@ namespace Dwarf
                           serializedEntity["name"]);
 
     auto& transformComponent = newEntity.GetComponent<TransformComponent>();
-    transformComponent.GetPosition() = {
-      serializedEntity["TransformComponent"]["Position"]["x"],
-      serializedEntity["TransformComponent"]["Position"]["y"],
-      serializedEntity["TransformComponent"]["Position"]["z"]
-    };
-    transformComponent.GetEulerAngles() = {
-      serializedEntity["TransformComponent"]["Rotation"]["x"],
-      serializedEntity["TransformComponent"]["Rotation"]["y"],
-      serializedEntity["TransformComponent"]["Rotation"]["z"]
-    };
-    transformComponent.GetScale() = {
-      serializedEntity["TransformComponent"]["Scale"]["x"],
-      serializedEntity["TransformComponent"]["Scale"]["y"],
-      serializedEntity["TransformComponent"]["Scale"]["z"]
-    };
+    transformComponent.GetPosition() =
+      serializedEntity["TransformComponent"]["Position"].get<glm::vec3>();
+    transformComponent.GetEulerAngles() =
+      serializedEntity["TransformComponent"]["Rotation"].get<glm::vec3>();
+    transformComponent.GetScale() =
+      serializedEntity["TransformComponent"]["Scale"].get<glm::vec3>();
 
     if (serializedEntity.contains("LightComponent"))
     {

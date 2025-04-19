@@ -1,7 +1,10 @@
 #pragma once
 
+#include "BloomSettings.hpp"
+#include "Core/Rendering/TonemapTypes.hpp"
 #include "Core/UUID.h"
 #include "ISceneSettings.h"
+#include "SkyboxSettings.hpp"
 #include <nlohmann/json.hpp>
 #include <optional>
 
@@ -11,9 +14,14 @@ namespace Dwarf
   class SceneSettings : public ISceneSettings
   {
   private:
+    AmbientSettings      mAmbientLightSettings;
+    AntiAliasingSettings mAntiAliasingSettings;
+    BloomSettings        mBloomSettings;
+    ExposureSettings     mExposureSettings;
     FogSettings          mFogSettings;
-    AmbientLightSettings mAmbientLightSettings;
-    std::optional<UUID>  mSkyboxMaterial;
+    ShadowSettings       mShadowSettings;
+    SkyboxSettings       mSkyboxSettings;
+    TonemapType          mTonemapType;
 
   public:
     SceneSettings() = default;
@@ -29,10 +37,25 @@ namespace Dwarf
 
     /// @copydoc ISceneSettings::GetAmbientLightSettings
     auto
-    GetAmbientLightSettings() -> AmbientLightSettings& override;
+    GetAmbientSettings() -> AmbientSettings& override;
 
     /// @copydoc ISceneSettings::GetSkyboxMaterial
     auto
-    GetSkyboxMaterial() -> std::optional<UUID>& override;
+    GetSkyboxSettings() -> SkyboxSettings& override;
+
+    auto
+    GetExposureSettings() -> ExposureSettings& override;
+
+    auto
+    GetToneMapType() -> TonemapType& override;
+
+    auto
+    GetAntiAliasingSettings() -> AntiAliasingSettings& override;
+
+    auto
+    GetBloomSettings() -> BloomSettings& override;
+
+    auto
+    GetShadowSettings() -> ShadowSettings& override;
   };
 } // namespace Dwarf

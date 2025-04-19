@@ -4,6 +4,7 @@
 #include "Core/Rendering/MeshBuffer/IMeshBuffer.h"
 #include "Core/UUID.h"
 #include "Utilities/ISerializable.h"
+#include "Utilities/JsonHelper/JsonHelper.h"
 #include <entt/entt.hpp>
 #include <memory>
 #include <nlohmann/json_fwd.hpp>
@@ -48,13 +49,9 @@ namespace Dwarf
 
     TransformComponent(const nlohmann::json& json)
     {
-      Position = { json["Position"]["x"],
-                   json["Position"]["y"],
-                   json["Position"]["z"] };
-      Rotation = { json["Rotation"]["x"],
-                   json["Rotation"]["y"],
-                   json["Rotation"]["z"] };
-      Scale = { json["Scale"]["x"], json["Scale"]["y"], json["Scale"]["z"] };
+      Position = json["Position"].get<glm::vec3>();
+      Rotation = json["Rotation"].get<glm::vec3>();
+      Scale = json["Scale"].get<glm::vec3>();
       // parent = json["parent"];
       // children = json["children"];
     }
@@ -184,17 +181,11 @@ namespace Dwarf
     Serialize() -> nlohmann::json override
     {
       nlohmann::json serializedTransformComponent;
-      serializedTransformComponent["Position"]["x"] = Position.x;
-      serializedTransformComponent["Position"]["y"] = Position.y;
-      serializedTransformComponent["Position"]["z"] = Position.z;
+      serializedTransformComponent["Position"] = Position;
 
-      serializedTransformComponent["Rotation"]["x"] = Rotation.x;
-      serializedTransformComponent["Rotation"]["y"] = Rotation.y;
-      serializedTransformComponent["Rotation"]["z"] = Rotation.z;
+      serializedTransformComponent["Rotation"] = Rotation;
 
-      serializedTransformComponent["Scale"]["x"] = Scale.x;
-      serializedTransformComponent["Scale"]["y"] = Scale.y;
-      serializedTransformComponent["Scale"]["z"] = Scale.z;
+      serializedTransformComponent["Scale"] = Scale;
       // j["parent"] = parent;
       // j["children"] = children;
       return serializedTransformComponent;
@@ -205,7 +196,7 @@ namespace Dwarf
   struct LightComponent : public ISerializable
   {
     /// @brief Enum representing light types.
-    enum class LIGHT_TYPE
+    enum class LIGHT_TYPE : uint8_t
     {
       DIRECTIONAL,
       POINT_LIGHT,
@@ -237,9 +228,7 @@ namespace Dwarf
 
     LightComponent(const nlohmann::json& json)
       : Type(static_cast<LIGHT_TYPE>(json["Type"].get<LIGHT_TYPE>()))
-      , Color({ json["LightColor"]["r"].get<float>(),
-                json["LightColor"]["g"].get<float>(),
-                json["LightColor"]["b"].get<float>() })
+      , Color(json["LightColor"].get<glm::vec3>())
       , Attenuation(json["Attenuation"].get<float>())
       , Radius(json["Radius"].get<float>())
       , OpeningAngle(json["OpeningAngle"].get<float>())
@@ -292,9 +281,7 @@ namespace Dwarf
       nlohmann::json serializedLightComponent;
       serializedLightComponent["Type"] = (int)Type;
 
-      serializedLightComponent["LightColor"]["r"] = (int)Color.r;
-      serializedLightComponent["LightColor"]["g"] = (int)Color.g;
-      serializedLightComponent["LightColor"]["b"] = (int)Color.b;
+      serializedLightComponent["LightColor"] = Color;
 
       serializedLightComponent["Attenuation"] = (int)Attenuation;
 

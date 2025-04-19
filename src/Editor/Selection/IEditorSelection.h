@@ -9,7 +9,7 @@ namespace Dwarf
    * @brief Enum representing a selection state
    *
    */
-  enum class CURRENT_SELECTION_TYPE
+  enum class CURRENT_SELECTION_TYPE : uint8_t
   {
     NONE,
     ASSET,

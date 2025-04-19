@@ -5,7 +5,7 @@
 
 namespace Dwarf
 {
-  enum MaterialType
+  enum class MaterialType : uint8_t
   {
     PbrMaterial,
     UnlitMaterial

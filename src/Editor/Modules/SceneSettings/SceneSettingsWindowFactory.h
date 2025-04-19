@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Rendering/RendererApi/IRendererApiFactory.h"
 #include "Core/Scene/Settings/SceneSettings.h"
 #include "ISceneSettingsWindowFactory.h"
 #include "SceneSettingsWindow.h"
@@ -9,14 +10,17 @@ namespace Dwarf
   class SceneSettingsWindowFactory : public ISceneSettingsWindowFactory
   {
   private:
-    std::shared_ptr<IDwarfLogger>   mLogger;
-    std::shared_ptr<ILoadedScene>   mLoadedScene;
-    std::shared_ptr<IAssetDatabase> mAssetDatabase;
+    std::shared_ptr<IDwarfLogger>        mLogger;
+    std::shared_ptr<ILoadedScene>        mLoadedScene;
+    std::shared_ptr<IAssetDatabase>      mAssetDatabase;
+    std::shared_ptr<IRendererApiFactory> mRendererApiFactory;
 
   public:
-    SceneSettingsWindowFactory(std::shared_ptr<IDwarfLogger>   logger,
-                               std::shared_ptr<ILoadedScene>   loadedScene,
-                               std::shared_ptr<IAssetDatabase> assetDatabase);
+    SceneSettingsWindowFactory(
+      std::shared_ptr<IDwarfLogger>        logger,
+      std::shared_ptr<ILoadedScene>        loadedScene,
+      std::shared_ptr<IAssetDatabase>      assetDatabase,
+      std::shared_ptr<IRendererApiFactory> rendererApiFactory);
 
     ~SceneSettingsWindowFactory() override;
 

@@ -7,13 +7,6 @@
 
 namespace Dwarf
 {
-  enum TonemapType
-  {
-    Reinhard,
-    Agx,
-    Aces
-  };
-
   struct GridSettings : public ISerializable
   {
     bool  RenderGrid = true;

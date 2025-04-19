@@ -18,7 +18,7 @@
 
 namespace Dwarf
 {
-  enum class RENDERING_CONSTRAINT
+  enum class RENDERING_CONSTRAINT : uint8_t
   {
     FREE,
     ASPECT_RATIO,
@@ -39,24 +39,20 @@ namespace Dwarf
     RENDERING_CONSTRAINT RenderingConstraint = RENDERING_CONSTRAINT::FREE;
 
     /// @brief Stored aspect ratio constraint.
-    std::array<int, 2> AspectRatio = { 16, 9 };
+    glm::ivec2 AspectRatio = { 16, 9 };
 
     /// @brief Stored resolution constraint.
-    std::array<int, 2> Resolution = { 1024, 1024 };
+    glm::ivec2 Resolution = { 1024, 1024 };
 
     GridSettings GridSettings;
-    int32_t      MaxSamples = 1;
-    int32_t      Samples = 1;
-    float        Exposure = 1.0F;
 
     /// @brief Aspect ratio to use for the target.
     float targetAspectRatio;
 
     /// @brief Currently available resolution for rendering the scene in the
     /// scene viewer window.
-    glm::ivec2  ViewportSize;
-    bool        CameraMovement = false;
-    TonemapType Tonemap = TonemapType::Reinhard;
+    glm::ivec2 ViewportSize;
+    bool       CameraMovement = false;
   };
 
   /// @brief Module to render a window that displays the scene and render

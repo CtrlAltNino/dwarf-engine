@@ -6,7 +6,7 @@ namespace Dwarf
   /**
    * @brief Enum class representing the type of an asset.
    */
-  enum class ASSET_TYPE
+  enum class ASSET_TYPE : uint8_t
   {
     UNKNOWN,
     MODEL,

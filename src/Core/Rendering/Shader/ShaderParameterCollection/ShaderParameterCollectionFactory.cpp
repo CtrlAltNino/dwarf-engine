@@ -2,6 +2,8 @@
 
 #include "ShaderParameterCollection.h"
 #include "ShaderParameterCollectionFactory.h"
+#include "Utilities/JsonHelper/JsonHelper.h"
+#include <glm/ext/vector_float3.hpp>
 
 namespace Dwarf
 {
@@ -30,107 +32,80 @@ namespace Dwarf
       if (serializedShaderParameterCollection[parameter.key()]["type"] ==
           "float")
       {
-        parameterCollection->SetParameter(parameter.key(),
-                                          float(parameter.value()["value"]));
+        parameterCollection->SetParameter(
+          parameter.key(), parameter.value()["value"].get<float>());
       }
       else if (serializedShaderParameterCollection[parameter.key()]["type"] ==
                "vec2")
       {
         parameterCollection->SetParameter(
-          parameter.key(),
-          glm::vec2((float)parameter.value()["value"]["x"],
-                    (float)parameter.value()["value"]["y"]));
+          parameter.key(), parameter.value()["value"].get<glm::vec2>());
       }
       else if (serializedShaderParameterCollection[parameter.key()]["type"] ==
                "vec3")
       {
         parameterCollection->SetParameter(
-          parameter.key(),
-          glm::vec3((float)parameter.value()["value"]["x"],
-                    (float)parameter.value()["value"]["y"],
-                    (float)parameter.value()["value"]["z"]));
+          parameter.key(), parameter.value()["value"].get<glm::vec3>());
       }
       else if (serializedShaderParameterCollection[parameter.key()]["type"] ==
                "vec4")
       {
         parameterCollection->SetParameter(
-          parameter.key(),
-          glm::vec4((float)parameter.value()["value"]["x"],
-                    (float)parameter.value()["value"]["y"],
-                    (float)parameter.value()["value"]["z"],
-                    (float)parameter.value()["value"]["w"]));
+          parameter.key(), parameter.value()["value"].get<glm::vec4>());
       }
       else if (serializedShaderParameterCollection[parameter.key()]["type"] ==
                "integer")
       {
-        parameterCollection->SetParameter(parameter.key(),
-                                          int(parameter.value()["value"]));
+        parameterCollection->SetParameter(
+          parameter.key(), parameter.value()["value"].get<int>());
       }
       else if (serializedShaderParameterCollection[parameter.key()]["type"] ==
                "ivec2")
       {
         parameterCollection->SetParameter(
-          parameter.key(),
-          glm::ivec2((int)parameter.value()["value"]["x"],
-                     (int)parameter.value()["value"]["y"]));
+          parameter.key(), parameter.value()["value"].get<glm::ivec2>());
       }
       else if (serializedShaderParameterCollection[parameter.key()]["type"] ==
                "ivec3")
       {
         parameterCollection->SetParameter(
-          parameter.key(),
-          glm::ivec3((int)parameter.value()["value"]["x"],
-                     (int)parameter.value()["value"]["y"],
-                     (int)parameter.value()["value"]["z"]));
+          parameter.key(), parameter.value()["value"].get<glm::ivec3>());
       }
       else if (serializedShaderParameterCollection[parameter.key()]["type"] ==
                "vec4")
       {
         parameterCollection->SetParameter(
-          parameter.key(),
-          glm::ivec4((int)parameter.value()["value"]["x"],
-                     (int)parameter.value()["value"]["y"],
-                     (int)parameter.value()["value"]["z"],
-                     (int)parameter.value()["value"]["w"]));
+          parameter.key(), parameter.value()["value"].get<glm::ivec4>());
       }
       else if (serializedShaderParameterCollection[parameter.key()]["type"] ==
                "unsigned integer")
       {
-        parameterCollection->SetParameter(parameter.key(),
-                                          int(parameter.value()["value"]));
+        parameterCollection->SetParameter(
+          parameter.key(), parameter.value()["value"].get<unsigned int>());
       }
       else if (serializedShaderParameterCollection[parameter.key()]["type"] ==
                "uvec2")
       {
         parameterCollection->SetParameter(
-          parameter.key(),
-          glm::uvec2((uint32_t)parameter.value()["value"]["x"],
-                     (uint32_t)parameter.value()["value"]["y"]));
+          parameter.key(), parameter.value()["value"].get<glm::uvec2>());
       }
       else if (serializedShaderParameterCollection[parameter.key()]["type"] ==
                "uvec3")
       {
         parameterCollection->SetParameter(
-          parameter.key(),
-          glm::uvec3((uint32_t)parameter.value()["value"]["x"],
-                     (uint32_t)parameter.value()["value"]["y"],
-                     (uint32_t)parameter.value()["value"]["z"]));
+          parameter.key(), parameter.value()["value"].get<glm::uvec3>());
       }
       else if (serializedShaderParameterCollection[parameter.key()]["type"] ==
                "uvec4")
       {
         parameterCollection->SetParameter(
-          parameter.key(),
-          glm::uvec4((uint32_t)parameter.value()["value"]["x"],
-                     (uint32_t)parameter.value()["value"]["y"],
-                     (uint32_t)parameter.value()["value"]["z"],
-                     (uint32_t)parameter.value()["value"]["w"]));
+          parameter.key(), parameter.value()["value"].get<glm::uvec4>());
       }
       else if (serializedShaderParameterCollection[parameter.key()]["type"] ==
                "boolean")
       {
-        parameterCollection->SetParameter(parameter.key(),
-                                          bool(parameter.value()["value"]));
+        parameterCollection->SetParameter(
+          parameter.key(), parameter.value()["value"].get<bool>());
       }
       else if (serializedShaderParameterCollection[parameter.key()]["type"] ==
                "tex2d")

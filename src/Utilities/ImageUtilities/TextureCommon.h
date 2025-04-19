@@ -10,7 +10,7 @@
 
 namespace Dwarf
 {
-  enum class TextureFormat
+  enum class TextureFormat : uint8_t
   {
     RED,
     RG,
@@ -21,7 +21,7 @@ namespace Dwarf
     DEPTH_STENCIL
   };
 
-  enum class TextureWrap
+  enum class TextureWrap : uint8_t
   {
     REPEAT,
     MIRRORED_REPEAT,
@@ -29,7 +29,7 @@ namespace Dwarf
     CLAMP_TO_BORDER
   };
 
-  enum class TextureMinFilter
+  enum class TextureMinFilter : uint8_t
   {
     NEAREST,
     LINEAR,
@@ -39,13 +39,13 @@ namespace Dwarf
     LINEAR_MIPMAP_LINEAR
   };
 
-  enum class TextureMagFilter
+  enum class TextureMagFilter : uint8_t
   {
     NEAREST,
     LINEAR
   };
 
-  enum class TextureType
+  enum class TextureType : uint8_t
   {
     TEXTURE_1D,
     TEXTURE_2D,
@@ -53,7 +53,7 @@ namespace Dwarf
     TEXTURE_CUBE_MAP
   };
 
-  enum class TextureDataType
+  enum class TextureDataType : uint8_t
   {
     UNSIGNED_BYTE,
     UNSIGNED_SHORT,
@@ -92,25 +92,25 @@ namespace Dwarf
     uint32_t Samples = 1;
   };
 
-  enum TextureFileType
+  enum TextureFileType : uint8_t
   {
     Default,
     NormalMap
   };
 
-  enum ColorSpace
+  enum ColorSpace : uint8_t
   {
     Linear,
     Srgb
   };
 
-  enum FilterMode
+  enum FilterMode : uint8_t
   {
     Nearest,
     Bilinear
   };
 
-  enum WrapMode
+  enum WrapMode : uint8_t
   {
     Clamp,
     Mirror,

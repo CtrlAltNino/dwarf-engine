@@ -10,7 +10,7 @@ namespace Dwarf
    * to
    *
    */
-  enum class MaterialPreviewMeshType
+  enum class MaterialPreviewMeshType : uint8_t
   {
     Sphere,
     Cube,

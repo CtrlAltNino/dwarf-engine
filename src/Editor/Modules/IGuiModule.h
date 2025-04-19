@@ -10,7 +10,7 @@ namespace Dwarf
 {
 
   /// @brief Enum defining the types of GUI modules.
-  enum class MODULE_TYPE
+  enum class MODULE_TYPE : uint8_t
   {
     PERFORMANCE,
     SCENE_GRAPH,
