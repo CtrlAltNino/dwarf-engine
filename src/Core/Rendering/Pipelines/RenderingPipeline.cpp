@@ -350,6 +350,13 @@ namespace Dwarf
               ->CreateAcesTonemapShaderSourceCollection());
           break;
         }
+      case Uncharted2:
+        {
+          mTonemapShader = mShaderRegistry->GetOrCreate(
+            mShaderSourceCollectionFactory
+              ->CreateUncharted2TonemapShaderSourceCollection());
+          break;
+        }
     }
   }
 }

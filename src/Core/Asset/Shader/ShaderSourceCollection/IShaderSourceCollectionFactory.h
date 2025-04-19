@@ -81,6 +81,16 @@ namespace Dwarf
 
     /**
      * @brief Create a shader source collection containing the shader sources
+     * for the Uncharted 2 tonemap shader
+     *
+     * @return Unique pointer to the created shader source collection
+     */
+    virtual auto
+    CreateUncharted2TonemapShaderSourceCollection()
+      -> std::unique_ptr<IShaderSourceCollection> = 0;
+
+    /**
+     * @brief Create a shader source collection containing the shader sources
      * for the model preview shader
      *
      * @return Unique pointer to the created shader source collection

@@ -6,6 +6,7 @@ namespace Dwarf
   {
     Reinhard,
     Agx,
-    Aces
+    Aces,
+    Uncharted2
   };
 }

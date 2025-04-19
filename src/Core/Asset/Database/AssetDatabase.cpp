@@ -625,6 +625,11 @@ namespace Dwarf
     std::filesystem::path acesShaderPath =
       shaderDir / "aces_tonemap" / graphicsApiDir / "aces_tonemap.frag";
     Import(acesShaderPath);
+
+    std::filesystem::path uncharted2ShaderPath =
+      shaderDir / "uncharted2_tonemap" / graphicsApiDir /
+      "uncharted2_tonemap.frag";
+    Import(uncharted2ShaderPath);
   }
 
   void
