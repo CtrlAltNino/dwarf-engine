@@ -144,7 +144,7 @@ TEST_F(SavedProjectsIOTest, SaveProjectSettings)
 {
     "projects": [
         {
-            "graphicsApi": 3,
+            "graphicsApi": 2,
             "lastOpened": 17923123,
             "name": "TestProject",
             "path": "./"
@@ -178,7 +178,7 @@ TEST_F(SavedProjectsIOTest, LoadProjectSettings)
 {
     "projects": [
         {
-            "graphicsApi": 3,
+            "graphicsApi": 2,
             "lastOpened": 17923123,
             "name": "TestProject",
             "path": "./"
