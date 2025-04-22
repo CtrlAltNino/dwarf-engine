@@ -49,7 +49,8 @@ namespace Dwarf
       {
         UseIBL = serializedSettings["UseIBL"].get<bool>();
       }
-      if (serializedSettings.contains("CubeMap"))
+      if (serializedSettings.contains("CubeMap") &&
+          !serializedSettings.at("CubeMap").get<std::string>().empty())
       {
         CubeMap = UUID(serializedSettings.at("CubeMap").get<std::string>());
       }

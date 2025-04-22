@@ -2,11 +2,9 @@
 
 #include "BloomSettings.hpp"
 #include "Core/Rendering/TonemapTypes.hpp"
-#include "Core/UUID.hpp"
 #include "ISceneSettings.hpp"
 #include "SkyboxSettings.hpp"
 #include <nlohmann/json.hpp>
-#include <optional>
 
 namespace Dwarf
 {
@@ -25,7 +23,8 @@ namespace Dwarf
 
   public:
     SceneSettings() = default;
-    SceneSettings(nlohmann::json serializedSettings);
+    explicit SceneSettings(nlohmann::json serializedSettings);
+    ~SceneSettings() override = default;
 
     /// @copydoc ISerializable::Serialize
     auto
