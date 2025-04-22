@@ -372,14 +372,13 @@ namespace Dwarf
 
   // @brief: Reads a pixel from the framebuffer
   auto
-  OpenGLFramebuffer::ReadPixel(uint32_t attachmentIndex,
-                               int      x,
-                               int      y) -> uint32_t
+  OpenGLFramebuffer::ReadPixel(uint32_t attachmentIndex, int x, int y)
+    -> uint32_t
   {
     Bind();
     glm::ivec2 convertedCoords =
       Utils::ConvertToOpenGLCoords({ x, y }, mSpecification.Height);
-    glReadBuffer(GL_COLOR_ATTACHMENT0);
+    glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentIndex);
     OpenGLUtilities::CheckOpenGLError(
       "glReadBuffer", "OpenGLFramebuffer", mLogger);
 

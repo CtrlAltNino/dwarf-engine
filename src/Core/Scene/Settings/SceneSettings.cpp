@@ -1,6 +1,5 @@
 #include "pch.hpp"
 
-#include "AmbientSettings.hpp"
 #include "SceneSettings.hpp"
 
 namespace Dwarf

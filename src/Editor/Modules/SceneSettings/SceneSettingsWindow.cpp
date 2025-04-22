@@ -1,14 +1,14 @@
+#include "pch.hpp"
+
 #include "Core/Asset/Database/AssetComponents.hpp"
 #include "Core/Rendering/AmbientTypes.hpp"
 #include "Core/Rendering/AntiAliasingTypes.hpp"
 #include "Core/Rendering/ShadowMappingTypes.hpp"
 #include "Core/Rendering/SkyboxTypes.hpp"
-#include "pch.hpp"
-#include <glm/gtc/type_ptr.hpp>
-#include <imgui.h>
-
 #include "SceneSettingsWindow.hpp"
 #include "UI/DwarfUI.hpp"
+#include <glm/gtc/type_ptr.hpp>
+#include <imgui.h>
 
 namespace Dwarf
 {
@@ -59,29 +59,18 @@ namespace Dwarf
 
     ImGuiWindowFlags windowFlags = 0;
     windowFlags |= ImGuiWindowFlags_NoCollapse;
-    // ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowMinSize, ImVec2(800, 500));
 
     if (!ImGui::Begin(GetIdentifier().c_str(), &mWindowOpened, windowFlags))
     {
-      // Early out if the window is collapsed, as an optimization.
       ImGui::End();
-      ImGui::PopStyleVar(1);
       return;
     }
-    ImGui::PopStyleVar(1);
+    // ImGui::PopStyleVar(1);
 
     if (ImGui::CollapsingHeader("Environment & Atmosphere"))
     {
       // Skybox material
       ImGui::SeparatorText("Skybox");
-      // ImGui::Text("Skybox material");
-      /*DwarfUI::AssetInput<MaterialAsset>(mAssetDatabase,
-                                         mLoadedScene->GetScene()
-                                           .GetProperties()
-                                           .GetSettings()
-                                           .GetSkyboxMaterial(),
-                                         "skyboxMaterial");*/
       DwarfUI::ComboEnum("Source##SkyboxSource",
                          mLoadedScene->GetScene()
                            .GetProperties()
@@ -294,6 +283,7 @@ namespace Dwarf
           // TODO: Implement automatic exposure system
           break;
       }
+
       // Tonemapping
       ImGui::SeparatorText("Tonemapping");
       DwarfUI::ComboEnum<TonemapType>("Tonemapping",
@@ -445,6 +435,36 @@ namespace Dwarf
                          .GetSettings()
                          .GetBloomSettings()
                          .Enabled);
+      ImGui::DragFloat("Threshold",
+                       &mLoadedScene->GetScene()
+                          .GetProperties()
+                          .GetSettings()
+                          .GetBloomSettings()
+                          .Threshold,
+                       0.01F,
+                       0.0F,
+                       +FLT_MAX,
+                       "%.2f");
+      ImGui::DragFloat("Intensity",
+                       &mLoadedScene->GetScene()
+                          .GetProperties()
+                          .GetSettings()
+                          .GetBloomSettings()
+                          .Intensity,
+                       0.01F,
+                       0.0F,
+                       +FLT_MAX,
+                       "%.2f");
+      ImGui::DragFloat("Radius",
+                       &mLoadedScene->GetScene()
+                          .GetProperties()
+                          .GetSettings()
+                          .GetBloomSettings()
+                          .Radius,
+                       0.01F,
+                       0.0F,
+                       +FLT_MAX,
+                       "%.2f");
 
       // Depth of Field Settings
       ImGui::SeparatorText("Depth of Field");
