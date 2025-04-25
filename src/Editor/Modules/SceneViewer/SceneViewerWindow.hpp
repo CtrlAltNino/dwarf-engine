@@ -44,7 +44,7 @@ namespace Dwarf
     /// @brief Stored resolution constraint.
     glm::ivec2 Resolution = { 1024, 1024 };
 
-    GridSettings GridSettings;
+    GridSettingsData GridSettings;
 
     /// @brief Aspect ratio to use for the target.
     float targetAspectRatio;

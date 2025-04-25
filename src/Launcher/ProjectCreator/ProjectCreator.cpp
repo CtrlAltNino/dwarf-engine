@@ -123,7 +123,7 @@ namespace Dwarf
         if (projectSettingsData)
         {
           projectSettingsData->ProjectName = projectName;
-          projectSettingsData->GraphicsApi = graphicsApi;
+          projectSettingsData->Api = graphicsApi;
 
           mProjectSettingsIO->SaveProjectSettings(projectSettingsData.value(),
                                                   projectDirectory);

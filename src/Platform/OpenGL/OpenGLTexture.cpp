@@ -6,6 +6,7 @@
 #include "Platform/OpenGL/OpenGLUtilities.hpp"
 #include "Utilities/ImageUtilities/TextureCommon.hpp"
 #include <SDL3/SDL_opengl.h>
+#include <stdexcept>
 
 namespace Dwarf
 {
@@ -141,10 +142,10 @@ namespace Dwarf
       case TextureFormat::DEPTH_STENCIL:
         switch (dataType)
         {
-          case TextureDataType::UNSIGNED_BYTE: return GL_DEPTH_STENCIL;
-          case TextureDataType::UNSIGNED_SHORT: return GL_DEPTH_STENCIL;
-          case TextureDataType::INT: return GL_DEPTH_STENCIL;
-          case TextureDataType::UNSIGNED_INT: return GL_DEPTH_STENCIL;
+          case TextureDataType::UNSIGNED_BYTE:
+          case TextureDataType::UNSIGNED_SHORT:
+          case TextureDataType::INT:
+          case TextureDataType::UNSIGNED_INT:
           case TextureDataType::FLOAT: return GL_DEPTH_STENCIL;
         }
     }
@@ -162,6 +163,7 @@ namespace Dwarf
       case TextureWrap::MIRRORED_REPEAT: return GL_MIRRORED_REPEAT;
       case TextureWrap::CLAMP_TO_EDGE: return GL_CLAMP_TO_EDGE;
       case TextureWrap::CLAMP_TO_BORDER: return GL_CLAMP_TO_BORDER;
+      default: throw std::runtime_error("Unexpected enum value");
     }
   }
 
@@ -180,6 +182,7 @@ namespace Dwarf
         return mipMapped ? GL_NEAREST_MIPMAP_LINEAR : GL_NEAREST;
       case TextureMinFilter::LINEAR_MIPMAP_LINEAR:
         return mipMapped ? GL_LINEAR_MIPMAP_LINEAR : GL_LINEAR;
+      default: throw std::runtime_error("Unexpected enum value");
     }
   }
 
@@ -191,6 +194,7 @@ namespace Dwarf
     {
       case TextureMagFilter::NEAREST: return GL_NEAREST;
       case TextureMagFilter::LINEAR: return GL_LINEAR;
+      default: throw std::runtime_error("Unexpected enum value");
     }
   }
 
@@ -209,6 +213,7 @@ namespace Dwarf
         return GL_TEXTURE_2D;
       case TextureType::TEXTURE_3D: return GL_TEXTURE_3D;
       case TextureType::TEXTURE_CUBE_MAP: return GL_TEXTURE_CUBE_MAP;
+      default: throw std::runtime_error("Unexpected enum value");
     }
   }
 
@@ -222,13 +227,13 @@ namespace Dwarf
       case TextureDataType::INT: return GL_INT;
       case TextureDataType::UNSIGNED_INT: return GL_UNSIGNED_INT;
       case TextureDataType::FLOAT: return GL_FLOAT;
+      default: throw std::runtime_error("Unexpected enum value");
     }
   }
 
   auto
-  GetInternalFormat(TextureFormat   format,
-                    TextureDataType dataType,
-                    bool            srgb) -> GLenum
+  GetInternalFormat(TextureFormat format, TextureDataType dataType, bool srgb)
+    -> GLenum
   {
     switch (format)
     {
@@ -296,6 +301,7 @@ namespace Dwarf
           case TextureDataType::UNSIGNED_INT:
           case TextureDataType::FLOAT: return GL_DEPTH24_STENCIL8;
         }
+      default: throw std::runtime_error("Unexpected enum value");
     }
   }
 

@@ -7,15 +7,15 @@
 
 namespace Dwarf
 {
-  struct GridSettings : public ISerializable
+  struct GridSettingsData : public ISerializable
   {
     bool  RenderGrid = true;
     float GridOpacity = 1.0F;
     float GridYOffset = 0.0F;
 
-    GridSettings() = default;
+    GridSettingsData() = default;
 
-    GridSettings(const nlohmann::json& serializedGridSettings)
+    GridSettingsData(const nlohmann::json& serializedGridSettings)
       : RenderGrid(serializedGridSettings["renderGrid"].get<bool>())
       , GridOpacity(serializedGridSettings["opacity"].get<float>())
       , GridYOffset(serializedGridSettings["offset"].get<float>())
@@ -51,7 +51,7 @@ namespace Dwarf
      * @param renderGrid Should the grid be rendered
      */
     virtual void
-    RenderScene(ICamera& camera, GridSettings gridSettings) = 0;
+    RenderScene(ICamera& camera, GridSettingsData gridSettings) = 0;
 
     /**
      * @brief Returns the specification for the framebuffer

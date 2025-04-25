@@ -779,7 +779,7 @@ namespace Dwarf
         moduleData["settings"].contains("gridSettings"))
     {
       mSettings.GridSettings =
-        GridSettings(moduleData["settings"]["gridSettings"]);
+        GridSettingsData(moduleData["settings"]["gridSettings"]);
     }
   }
 

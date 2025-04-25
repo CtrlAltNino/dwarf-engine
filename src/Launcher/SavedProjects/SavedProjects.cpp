@@ -46,7 +46,7 @@ namespace Dwarf
     info.Path = path;
     info.ProjectName = path.filename().string();
     info.LastOpened = 0;
-    info.GraphicsApi = GraphicsApi::OpenGL;
+    info.Api = GraphicsApi::OpenGL;
     mSavedProjects.push_back(info);
     mSavedProjectsIO->SaveSavedProjects(mSavedProjects);
     mLogger->LogDebug(Log("Project added.", "SavedProjects"));
@@ -86,7 +86,7 @@ namespace Dwarf
         {
           SavedProject newSavedProject;
           newSavedProject.ProjectName = newProject->ProjectName;
-          newSavedProject.GraphicsApi = newProject->GraphicsApi;
+          newSavedProject.Api = newProject->Api;
           newSavedProject.LastOpened = 0;
           newSavedProject.Path = outPath.get();
 
@@ -155,7 +155,7 @@ namespace Dwarf
     {
       if (project.Path == path)
       {
-        project.GraphicsApi = api;
+        project.Api = api;
         mLogger->LogInfo(Log("Graphics API changed.", "SavedProjects"));
         mSavedProjectsSorter->SortSavedProjects(mSavedProjects);
         mSavedProjectsIO->SaveSavedProjects(mSavedProjects);

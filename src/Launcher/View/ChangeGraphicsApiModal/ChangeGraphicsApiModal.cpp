@@ -65,8 +65,7 @@ namespace Dwarf
 
       ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
 
-      static int currentApiIndex =
-        (int)mData->GetSelectedProject()->GraphicsApi;
+      static int currentApiIndex = (int)mData->GetSelectedProject()->Api;
       // ==================== Graphics API Selection Dropdown
       // ====================
       {
