@@ -115,7 +115,7 @@ namespace Dwarf
     return boost::di::make_injector<boost::di::extension::shared_config>(
           boost::di::bind<LogName>.to(LogName("Editor")),
           boost::di::bind<IDwarfLogger>.to<DwarfLogger>().in(boost::di::extension::shared),
-          boost::di::bind<GraphicsApi>.to(selectedProject.GraphicsApi),
+          boost::di::bind<GraphicsApi>.to(selectedProject.Api),
           boost::di::bind<AssetDirectoryPath>.to(AssetDirectoryPath(selectedProject.Path / "Assets")),
           boost::di::bind<ProjectPath>.to(ProjectPath(selectedProject.Path)),
           boost::di::bind<ImGuiIniFilePath>.to(ImGuiIniFilePath(selectedProject.Path)),
@@ -154,7 +154,7 @@ namespace Dwarf
           boost::di::extension::shared),
           boost::di::bind<IImGuiLayerFactory>.to<ImGuiLayerFactory>().in(boost::di::extension::shared),
           boost::di::bind<WindowProps>.to(WindowProps(
-          "Dwarf Engine", 1100, 600, selectedProject.GraphicsApi, true)),
+          "Dwarf Engine", 1100, 600, selectedProject.Api, true)),
           boost::di::bind<IWindow>.to<SDL3Window>().in(boost::di::extension::shared),
           boost::di::bind<ITextureFactory>.to<TextureFactory>().in(
           boost::di::extension::shared),

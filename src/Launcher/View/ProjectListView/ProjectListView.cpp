@@ -154,9 +154,7 @@ namespace Dwarf
                         project.LastOpened);
                 break;
               }
-            case 3:
-              cellText = magic_enum::enum_name(project.GraphicsApi);
-              break;
+            case 3: cellText = magic_enum::enum_name(project.Api); break;
           }
 
           if (column == 0)

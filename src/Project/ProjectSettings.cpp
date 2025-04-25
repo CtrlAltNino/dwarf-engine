@@ -45,13 +45,13 @@ namespace Dwarf
   void
   ProjectSettings::UpdateGraphicsApi(const GraphicsApi& graphicsAPI)
   {
-    mData.GraphicsApi = graphicsAPI;
+    mData.Api = graphicsAPI;
   }
 
   auto
   ProjectSettings::GetGraphicsApi() const -> const GraphicsApi&
   {
-    return mData.GraphicsApi;
+    return mData.Api;
   }
 
   void

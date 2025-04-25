@@ -46,8 +46,8 @@ namespace Dwarf
   /// @param p2 Right project.
   /// @return Comparison result.
   auto
-  ProjectNameReverseComparator(const SavedProject& p1,
-                               const SavedProject& p2) -> bool
+  ProjectNameReverseComparator(const SavedProject& p1, const SavedProject& p2)
+    -> bool
   {
     return ToLowerCase(p1.ProjectName) > ToLowerCase(p2.ProjectName);
   }
@@ -72,8 +72,8 @@ namespace Dwarf
   /// @param p2 Right project.
   /// @return Comparison result.
   auto
-  ProjectDateReverseComparator(const SavedProject& p1,
-                               const SavedProject& p2) -> bool
+  ProjectDateReverseComparator(const SavedProject& p1, const SavedProject& p2)
+    -> bool
   {
     // Accomodating for never opened projects having "-1" as a value
     int a = p1.LastOpened == -1 ? INT_MAX : p1.LastOpened;
@@ -90,7 +90,7 @@ namespace Dwarf
   auto
   ProjectApiComparator(const SavedProject& p1, const SavedProject& p2) -> bool
   {
-    return p1.GraphicsApi > p2.GraphicsApi;
+    return p1.Api > p2.Api;
   }
 
   /// @brief API comparator for reverse API sort order.
@@ -98,10 +98,10 @@ namespace Dwarf
   /// @param p2
   /// @return
   auto
-  ProjectApiReverseComparator(const SavedProject& p1,
-                              const SavedProject& p2) -> bool
+  ProjectApiReverseComparator(const SavedProject& p1, const SavedProject& p2)
+    -> bool
   {
-    return p1.GraphicsApi < p2.GraphicsApi;
+    return p1.Api < p2.Api;
   }
 
   void

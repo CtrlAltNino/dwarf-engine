@@ -128,7 +128,7 @@ TEST_F(ProjectSettingsTest, SaveUnchangedProjectSettings)
   ProjectPath           projectPath(settingsPath);
   ProjectSettingsData   testData;
   testData.ProjectName = "TestProject";
-  testData.GraphicsApi = GraphicsApi::OpenGL;
+  testData.Api = GraphicsApi::OpenGL;
   testData.LastOpenedScene = UUID("123e4567-e89b-12d3-a456-426614174000");
   testData.SerializedView = "";
 

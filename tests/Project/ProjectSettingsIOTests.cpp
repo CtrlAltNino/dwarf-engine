@@ -128,7 +128,7 @@ TEST_F(ProjectSettingsIOTest, SaveProjectSettings)
   std::filesystem::path settingsPath = testPath / "projectSettings.dproj";
   ProjectSettingsData   testData;
   testData.ProjectName = "TestProject";
-  testData.GraphicsApi = GraphicsApi::OpenGL;
+  testData.Api = GraphicsApi::OpenGL;
   testData.LastOpenedScene = UUID("123e4567-e89b-12d3-a456-426614174000");
   testData.SerializedView = "";
 
@@ -152,7 +152,7 @@ TEST_F(ProjectSettingsIOTest, LoadProjectSettings)
   std::filesystem::path settingsPath = testPath / "projectSettings.dproj";
   ProjectSettingsData   testData;
   testData.ProjectName = "TestProject";
-  testData.GraphicsApi = GraphicsApi::OpenGL;
+  testData.Api = GraphicsApi::OpenGL;
   testData.LastOpenedScene = UUID("123e4567-e89b-12d3-a456-426614174000");
   testData.SerializedView = "";
 

@@ -15,7 +15,7 @@ namespace Dwarf
   struct ProjectSettingsData : ISerializable
   {
     std::string         ProjectName;
-    GraphicsApi         GraphicsApi = GraphicsApi::None;
+    GraphicsApi         Api = GraphicsApi::None;
     std::optional<UUID> LastOpenedScene = std::nullopt;
     nlohmann::json      SerializedView;
 
@@ -23,8 +23,7 @@ namespace Dwarf
     auto
     operator==(const ProjectSettingsData& other) const -> bool
     {
-      return ProjectName == other.ProjectName &&
-             GraphicsApi == other.GraphicsApi &&
+      return ProjectName == other.ProjectName && Api == other.Api &&
              LastOpenedScene == other.LastOpenedScene &&
              SerializedView == other.SerializedView;
     }
@@ -34,7 +33,7 @@ namespace Dwarf
     {
       nlohmann::json projectSettings;
       projectSettings[PROJECT_NAME_KEY] = ProjectName;
-      projectSettings[GRAPHICS_API_KEY] = GraphicsApi;
+      projectSettings[GRAPHICS_API_KEY] = Api;
       projectSettings[LAST_OPENED_SCENE_KEY] =
         LastOpenedScene.has_value() ? LastOpenedScene->toString() : "";
       projectSettings[VIEW_KEY] = SerializedView;

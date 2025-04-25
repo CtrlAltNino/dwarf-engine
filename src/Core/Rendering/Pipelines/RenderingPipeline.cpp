@@ -100,7 +100,7 @@ namespace Dwarf
   }
 
   void
-  RenderingPipeline::RenderScene(ICamera& camera, GridSettings gridSettings)
+  RenderingPipeline::RenderScene(ICamera& camera, GridSettingsData gridSettings)
   {
     // ==================== Scene Rendering ====================
 

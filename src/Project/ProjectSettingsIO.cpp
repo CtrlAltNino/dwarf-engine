@@ -50,7 +50,7 @@ namespace Dwarf
 
     if (projectSettings.contains(GRAPHICS_API_KEY))
     {
-      projectSettingsData.GraphicsApi =
+      projectSettingsData.Api =
         projectSettings.at(GRAPHICS_API_KEY).get<GraphicsApi>();
     }
     else

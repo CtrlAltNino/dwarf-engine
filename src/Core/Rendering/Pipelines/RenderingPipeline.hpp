@@ -86,7 +86,7 @@ namespace Dwarf
      * @param renderGrid Should the grid be rendered
      */
     void
-    RenderScene(ICamera& camera, GridSettings gridSettings) override;
+    RenderScene(ICamera& camera, GridSettingsData gridSettings) override;
 
     /**
      * @brief Returns the specification for the framebuffer

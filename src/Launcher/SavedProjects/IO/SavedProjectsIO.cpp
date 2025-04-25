@@ -60,7 +60,7 @@ namespace Dwarf
           projectToAdd.LastOpened =
             project.value(SAVED_PROJECTS_LAST_OPENED_KEY, -1);
 
-          projectToAdd.GraphicsApi =
+          projectToAdd.Api =
             project.value(SAVED_PROJECTS_GRAPHICS_API_KEY, GraphicsApi::None);
 
           savedProjects.push_back({ projectToAdd });
@@ -94,7 +94,7 @@ namespace Dwarf
       jsonObject[SAVED_PROJECTS_KEY][i][SAVED_PROJECTS_LAST_OPENED_KEY] =
         savedProjects[i].LastOpened;
       jsonObject[SAVED_PROJECTS_KEY][i][SAVED_PROJECTS_GRAPHICS_API_KEY] =
-        savedProjects[i].GraphicsApi;
+        savedProjects[i].Api;
     }
 
     std::string           fileContent = jsonObject.dump(4);

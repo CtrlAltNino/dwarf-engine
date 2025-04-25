@@ -9,7 +9,7 @@ namespace Dwarf
 
   struct SavedProject
   {
-    GraphicsApi           GraphicsApi;
+    GraphicsApi           Api;
     time_t                LastOpened;
     std::string           ProjectName;
     std::filesystem::path Path;
@@ -18,7 +18,7 @@ namespace Dwarf
     operator==(const SavedProject& other) const -> bool
     {
       return ProjectName == other.ProjectName && Path == other.Path &&
-             LastOpened == other.LastOpened && GraphicsApi == other.GraphicsApi;
+             LastOpened == other.LastOpened && Api == other.Api;
     }
   };
 
