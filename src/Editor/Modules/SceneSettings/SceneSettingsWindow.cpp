@@ -71,7 +71,7 @@ namespace Dwarf
     {
       // Skybox material
       ImGui::SeparatorText("Skybox");
-      DwarfUI::ComboEnum("Source##SkyboxSource",
+      DwarfUI::ComboEnum("Source##Skybox",
                          mLoadedScene->GetScene()
                            .GetProperties()
                            .GetSettings()
@@ -86,7 +86,7 @@ namespace Dwarf
       {
         using enum SkyboxSource;
         case Color:
-          ImGui::ColorEdit3("Color##SkyboxColor",
+          ImGui::ColorEdit3("Color##Skybox",
                             glm::value_ptr(mLoadedScene->GetScene()
                                              .GetProperties()
                                              .GetSettings()
@@ -100,7 +100,7 @@ namespace Dwarf
                                                .GetSettings()
                                                .GetSkyboxSettings()
                                                .SkyboxMaterial,
-                                             "Material##SkyboxMaterial");
+                                             "Material##Skybox");
           break;
         case HDRI:
           DwarfUI::AssetInput<TextureAsset>(mAssetDatabase,
@@ -109,13 +109,13 @@ namespace Dwarf
                                               .GetSettings()
                                               .GetSkyboxSettings()
                                               .CubeMap,
-                                            "HDRI##SkyboxCubeMap");
+                                            "HDRI##Skybox");
           break;
       }
 
       // Ambient light color / intensity
       ImGui::SeparatorText("Ambient Lighting Settings");
-      DwarfUI::ComboEnum<AmbientSource>("Source##AmbientSource",
+      DwarfUI::ComboEnum<AmbientSource>("Source##Ambient",
                                         mLoadedScene->GetScene()
                                           .GetProperties()
                                           .GetSettings()
@@ -132,13 +132,13 @@ namespace Dwarf
         case None:
         case Skybox: break;
         case Color:
-          ImGui::ColorEdit3("Color##AmbientColor",
+          ImGui::ColorEdit3("Color##Ambient",
                             glm::value_ptr(mLoadedScene->GetScene()
                                              .GetProperties()
                                              .GetSettings()
                                              .GetAmbientSettings()
                                              .Color));
-          ImGui::DragFloat("Intensity",
+          ImGui::DragFloat("Intensity##Ambient",
                            &mLoadedScene->GetScene()
                               .GetProperties()
                               .GetSettings()
@@ -150,25 +150,25 @@ namespace Dwarf
                            "%.3f");
           break;
         case Gradient:
-          ImGui::ColorEdit3("Sky",
+          ImGui::ColorEdit3("Sky##Ambient",
                             glm::value_ptr(mLoadedScene->GetScene()
                                              .GetProperties()
                                              .GetSettings()
                                              .GetAmbientSettings()
                                              .Gradient[0]));
-          ImGui::ColorEdit3("Horizon",
+          ImGui::ColorEdit3("Horizon##Ambient",
                             glm::value_ptr(mLoadedScene->GetScene()
                                              .GetProperties()
                                              .GetSettings()
                                              .GetAmbientSettings()
                                              .Gradient[1]));
-          ImGui::ColorEdit3("Ground",
+          ImGui::ColorEdit3("Ground##Ambient",
                             glm::value_ptr(mLoadedScene->GetScene()
                                              .GetProperties()
                                              .GetSettings()
                                              .GetAmbientSettings()
                                              .Gradient[2]));
-          ImGui::DragFloat("Intensity##AmbientIntensity",
+          ImGui::DragFloat("Intensity##Ambient",
                            &mLoadedScene->GetScene()
                               .GetProperties()
                               .GetSettings()
@@ -185,8 +185,8 @@ namespace Dwarf
                                               .GetSettings()
                                               .GetAmbientSettings()
                                               .CubeMap,
-                                            "HDRI##AmbientCubeMap");
-          ImGui::Checkbox("Use for IBL",
+                                            "HDRI##Ambient");
+          ImGui::Checkbox("Use for IBL##Ambient",
                           &mLoadedScene->GetScene()
                              .GetProperties()
                              .GetSettings()
@@ -197,13 +197,13 @@ namespace Dwarf
 
       // Fog settings
       ImGui::SeparatorText("Fog Settings");
-      DwarfUI::ComboEnum<FogType>("Fog Type",
+      DwarfUI::ComboEnum<FogType>("Fog Type##Fog",
                                   mLoadedScene->GetScene()
                                     .GetProperties()
                                     .GetSettings()
                                     .GetFogSettings()
                                     .Type);
-      ImGui::ColorEdit3("Fog Color",
+      ImGui::ColorEdit3("Color##Fog",
                         glm::value_ptr(mLoadedScene->GetScene()
                                          .GetProperties()
                                          .GetSettings()
@@ -218,7 +218,7 @@ namespace Dwarf
       {
         using enum FogType;
         case Linear:
-          ImGui::DragFloatRange2("Fog Distance",
+          ImGui::DragFloatRange2("Distance##Fog",
                                  &mLoadedScene->GetScene()
                                     .GetProperties()
                                     .GetSettings()
@@ -237,7 +237,7 @@ namespace Dwarf
                                  ImGuiSliderFlags_AlwaysClamp);
           break;
         case Exponential:
-          ImGui::DragFloat("Fog Density",
+          ImGui::DragFloat("Density##Fog",
                            &mLoadedScene->GetScene()
                               .GetProperties()
                               .GetSettings()
@@ -258,7 +258,7 @@ namespace Dwarf
       ImGui::SeparatorText("Shadow Settings");
 
       // Enable/disable shadow mapping
-      ImGui::Checkbox("Enable Shadows",
+      ImGui::Checkbox("Enable##ShadowMapping",
                       &mLoadedScene->GetScene()
                          .GetProperties()
                          .GetSettings()
@@ -266,17 +266,18 @@ namespace Dwarf
                          .Enabled);
 
       // Shadow map resolution
-      DwarfUI::ComboEnum<ShadowMapResolution>("Shadow Map Resolution",
-                                              mLoadedScene->GetScene()
-                                                .GetProperties()
-                                                .GetSettings()
-                                                .GetShadowSettings()
-                                                .Resolution);
+      DwarfUI::ComboEnum<ShadowMapResolution>(
+        "Shadow Map Resolution##ShadowMapping",
+        mLoadedScene->GetScene()
+          .GetProperties()
+          .GetSettings()
+          .GetShadowSettings()
+          .Resolution);
 
       // Number of cascades (clamped between 1–4 typically)
       static uint8_t minCascades = 1U;
       static uint8_t maxCascades = 4U;
-      ImGui::SliderScalar("Cascade Count",
+      ImGui::SliderScalar("Cascade Count##ShadowMapping",
                           ImGuiDataType_U8,
                           &mLoadedScene->GetScene()
                              .GetProperties()
@@ -287,7 +288,7 @@ namespace Dwarf
                           &maxCascades);
 
       // Shadow distance (far plane for cascades)
-      ImGui::DragFloat("Shadow Distance",
+      ImGui::DragFloat("Shadow Distance##ShadowMapping",
                        &mLoadedScene->GetScene()
                           .GetProperties()
                           .GetSettings()
@@ -299,7 +300,7 @@ namespace Dwarf
                        "%.1f m");
 
       // Split scheme factor (lambda between uniform and log split)
-      ImGui::SliderFloat("Cascade Split Lambda",
+      ImGui::SliderFloat("Cascade Split Lambda##ShadowMapping",
                          &mLoadedScene->GetScene()
                             .GetProperties()
                             .GetSettings()
@@ -309,7 +310,7 @@ namespace Dwarf
                          1.0f);
 
       // Bias
-      ImGui::SliderFloat("Depth Bias",
+      ImGui::SliderFloat("Depth Bias##ShadowMapping",
                          &mLoadedScene->GetScene()
                             .GetProperties()
                             .GetSettings()
@@ -318,7 +319,7 @@ namespace Dwarf
                          0.0F,
                          0.01F,
                          "%.5f");
-      ImGui::SliderFloat("Slope Bias",
+      ImGui::SliderFloat("Slope Bias##ShadowMapping",
                          &mLoadedScene->GetScene()
                             .GetProperties()
                             .GetSettings()
@@ -331,7 +332,7 @@ namespace Dwarf
       // Filtering
       static uint8_t minPfcSamples = 1;
       static uint8_t maxPfcSamples = 64;
-      ImGui::SliderScalar("PCF Samples",
+      ImGui::SliderScalar("PCF Samples##ShadowMapping",
                           ImGuiDataType_U8,
                           &mLoadedScene->GetScene()
                              .GetProperties()
@@ -355,8 +356,8 @@ namespace Dwarf
           .GetSettings()
           .GetAntiAliasingSettings()
           .GetAntiAliasingMethod();
-      if (DwarfUI::ComboEnum<AntiAliasingMethod>("Anti-Aliasing Method",
-                                                 antiAliasingMethod))
+      if (DwarfUI::ComboEnum<AntiAliasingMethod>(
+            "Anti-Aliasing Method##AntiAliasing", antiAliasingMethod))
       {
         mLoadedScene->GetScene()
           .GetProperties()
@@ -385,7 +386,7 @@ namespace Dwarf
                                      .GetSamples();
           std::string format = std::format("{}/{}", "%d", max);
 
-          if (ImGui::SliderScalar("MSAA Samples",
+          if (ImGui::SliderScalar("MSAA Samples##AntiAliasing",
                                   ImGuiDataType_U8,
                                   &samples,
                                   &min,
@@ -406,20 +407,21 @@ namespace Dwarf
       ImGui::SeparatorText("Tonemapping");
       static TonemapType type =
         mLoadedScene->GetScene().GetProperties().GetSettings().GetToneMapType();
-      if (DwarfUI::ComboEnum<TonemapType>("Tonemapping", type))
+      if (DwarfUI::ComboEnum<TonemapType>("Tonemapping##Tonemapping", type))
       {
         mLoadedScene->GetScene().GetProperties().GetSettings().SetToneMapType(
           type);
       }
 
       // Global exposure
-      ImGui::SeparatorText("Global Exposure");
+      ImGui::SeparatorText("Global Exposure##Exposure");
       static ExposureType exposureType = mLoadedScene->GetScene()
                                            .GetProperties()
                                            .GetSettings()
                                            .GetExposureSettings()
                                            .GetExposureType();
-      if (DwarfUI::ComboEnum<ExposureType>("Exposure Type", exposureType))
+      if (DwarfUI::ComboEnum<ExposureType>("Exposure Type##Exposure",
+                                           exposureType))
       {
         mLoadedScene->GetScene()
           .GetProperties()
@@ -441,8 +443,12 @@ namespace Dwarf
                                          .GetSettings()
                                          .GetExposureSettings()
                                          .GetExposure();
-          if (ImGui::DragFloat(
-                "Exposure", &exposureValue, 0.0005f, 0.0F, 20.0F, "%f"))
+          if (ImGui::DragFloat("Exposure##Exposure",
+                               &exposureValue,
+                               0.0005f,
+                               0.0F,
+                               20.0F,
+                               "%f"))
           {
             mLoadedScene->GetScene()
               .GetProperties()
@@ -465,7 +471,7 @@ namespace Dwarf
                                    .GetSettings()
                                    .GetBloomSettings()
                                    .GetEnabled();
-      if (ImGui::Checkbox("Enable", &bloomEnabled))
+      if (ImGui::Checkbox("Enable##Bloom", &bloomEnabled))
       {
         mLoadedScene->GetScene()
           .GetProperties()
@@ -481,7 +487,7 @@ namespace Dwarf
                                       .GetBloomSettings()
                                       .GetThreshold();
       if (ImGui::DragFloat(
-            "Threshold", &bloomThreshold, 0.01F, 0.0F, +FLT_MAX, "%.2f"))
+            "Threshold##Bloom", &bloomThreshold, 0.01F, 0.0F, +FLT_MAX, "%.2f"))
       {
         mLoadedScene->GetScene()
           .GetProperties()
@@ -496,7 +502,7 @@ namespace Dwarf
                                       .GetBloomSettings()
                                       .GetIntensity();
       if (ImGui::DragFloat(
-            "Intensity", &bloomIntensity, 0.01F, 0.0F, +FLT_MAX, "%.2f"))
+            "Intensity##Bloom", &bloomIntensity, 0.01F, 0.0F, +FLT_MAX, "%.2f"))
       {
         mLoadedScene->GetScene()
           .GetProperties()
@@ -511,7 +517,7 @@ namespace Dwarf
                                    .GetBloomSettings()
                                    .GetRadius();
       if (ImGui::DragFloat(
-            "Radius", &bloomRadius, 0.01F, 0.0F, +FLT_MAX, "%.2f"))
+            "Radius##Bloom", &bloomRadius, 0.01F, 0.0F, +FLT_MAX, "%.2f"))
       {
         mLoadedScene->GetScene()
           .GetProperties()
