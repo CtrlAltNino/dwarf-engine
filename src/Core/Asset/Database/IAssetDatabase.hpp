@@ -143,14 +143,6 @@ namespace Dwarf
       return ASSET_TYPE::UNKNOWN;
     }
 
-    /**
-     * @brief Returns the path to the projects asset directory
-     *
-     * @return The path of the asset directory
-     */
-    virtual auto
-    GetAssetDirectoryPath() -> std::filesystem::path = 0;
-
   protected:
     static inline const std::unordered_map<std::string, ASSET_TYPE>
       extensionToAssetType = { { ".jpg", ASSET_TYPE::TEXTURE },

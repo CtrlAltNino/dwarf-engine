@@ -6,12 +6,14 @@
 
 namespace Dwarf
 {
-  SceneIO::SceneIO(std::shared_ptr<IDwarfLogger>     logger,
+  SceneIO::SceneIO(const AssetDirectoryPath&         assetDirectoryPath,
+                   std::shared_ptr<IDwarfLogger>     logger,
                    std::shared_ptr<IProjectSettings> projectSettings,
                    std::shared_ptr<ISceneFactory>    sceneFactory,
                    std::shared_ptr<IAssetDatabase>   assetDatabase,
                    std::shared_ptr<IFileHandler>     fileHandler)
-    : mLogger(std::move(logger))
+    : mAssetDirectoryPath(assetDirectoryPath)
+    , mLogger(std::move(logger))
     , mSceneFactory(std::move(sceneFactory))
     , mProjectSettings(std::move(projectSettings))
     , mAssetDatabase(std::move(assetDatabase))
@@ -65,7 +67,7 @@ namespace Dwarf
       NFD::SaveDialog(savePath,
                       filterItem,
                       1,
-                      mAssetDatabase->GetAssetDirectoryPath().string().c_str(),
+                      mAssetDirectoryPath.t.string().c_str(),
                       scene.GetProperties().GetName().c_str());
 
     mLogger->LogDebug(
@@ -122,8 +124,7 @@ namespace Dwarf
   auto
   SceneIO::LoadSceneDialog() const -> std::unique_ptr<IScene>
   {
-    std::string assetDirectoryPath =
-      mAssetDatabase->GetAssetDirectoryPath().string();
+    std::string assetDirectoryPath = mAssetDirectoryPath.t.string();
 
     // initialize NFD
     NFD::Guard nfdGuard;

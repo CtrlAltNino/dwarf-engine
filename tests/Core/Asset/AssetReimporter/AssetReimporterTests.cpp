@@ -56,7 +56,6 @@ public:
               (const std::filesystem::path& from,
                const std::filesystem::path& to),
               (override));
-  MOCK_METHOD(std::filesystem::path, GetAssetDirectoryPath, (), (override));
 };
 
 class AssetReimporterTest : public ::testing::Test

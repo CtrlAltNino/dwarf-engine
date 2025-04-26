@@ -366,12 +366,6 @@ namespace Dwarf
   }
 
   auto
-  AssetDatabase::GetAssetDirectoryPath() -> std::filesystem::path
-  {
-    return mAssetDirectoryPath.t;
-  }
-
-  auto
   AssetDatabase::Retrieve(const UUID& uid) -> std::unique_ptr<IAssetReference>
   {
     auto view = mRegistry.view<IDComponent, PathComponent>();
