@@ -186,14 +186,6 @@ namespace Dwarf
     Retrieve(const std::filesystem::path& assetPath)
       -> std::unique_ptr<IAssetReference> override;
 
-    /**
-     * @brief Returns the path to the projects asset directory
-     *
-     * @return The path of the asset directory
-     */
-    auto
-    GetAssetDirectoryPath() -> std::filesystem::path override;
-
   private:
     /**
      * @brief EFSW Callback for when a file is added to the project

@@ -14,6 +14,7 @@ namespace Dwarf
   class SceneIO : public ISceneIO
   {
   private:
+    AssetDirectoryPath                mAssetDirectoryPath;
     std::shared_ptr<IDwarfLogger>     mLogger;
     std::shared_ptr<ISceneFactory>    mSceneFactory;
     std::shared_ptr<IProjectSettings> mProjectSettings;
@@ -41,7 +42,8 @@ namespace Dwarf
     CreateNewSceneName(const std::filesystem::path& directory) -> std::string;
 
   public:
-    SceneIO(std::shared_ptr<IDwarfLogger>     logger,
+    SceneIO(const AssetDirectoryPath&         assetDirectoryPath,
+            std::shared_ptr<IDwarfLogger>     logger,
             std::shared_ptr<IProjectSettings> projectSettings,
             std::shared_ptr<ISceneFactory>    sceneFactory,
             std::shared_ptr<IAssetDatabase>   assetDatabase,
