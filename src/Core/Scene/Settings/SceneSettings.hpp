@@ -3,6 +3,7 @@
 #include "BloomSettings.hpp"
 #include "Core/Rendering/TonemapTypes.hpp"
 #include "ISceneSettings.hpp"
+#include "ISceneSettingsObserver.hpp"
 #include "SkyboxSettings.hpp"
 #include <nlohmann/json.hpp>
 
@@ -12,23 +13,30 @@ namespace Dwarf
   class SceneSettings : public ISceneSettings
   {
   private:
-    AmbientSettings      mAmbientLightSettings;
-    AntiAliasingSettings mAntiAliasingSettings;
-    BloomSettings        mBloomSettings;
-    ExposureSettings     mExposureSettings;
-    FogSettings          mFogSettings;
-    ShadowSettings       mShadowSettings;
-    SkyboxSettings       mSkyboxSettings;
-    TonemapType          mTonemapType = TonemapType::Reinhard;
+    std::vector<ISceneSettingsObserver*> mObservers;
+    AmbientSettings                      mAmbientLightSettings;
+    AntiAliasingSettings                 mAntiAliasingSettings;
+    BloomSettings                        mBloomSettings;
+    ExposureSettings                     mExposureSettings;
+    FogSettings                          mFogSettings;
+    ShadowSettings                       mShadowSettings;
+    SkyboxSettings                       mSkyboxSettings;
+    TonemapType                          mTonemapType = TonemapType::Reinhard;
 
   public:
-    SceneSettings() = default;
+    SceneSettings();
     explicit SceneSettings(nlohmann::json serializedSettings);
     ~SceneSettings() override = default;
 
     /// @copydoc ISerializable::Serialize
     auto
     Serialize() -> nlohmann::json override;
+
+    void
+    RegisterSceneSettingsObserver(ISceneSettingsObserver* observer) override;
+
+    void
+    UnregisterSceneSettingsObserver(ISceneSettingsObserver* observer) override;
 
     /// @copydoc ISceneSettings::GetFogSettings
     auto
@@ -46,7 +54,10 @@ namespace Dwarf
     GetExposureSettings() -> ExposureSettings& override;
 
     auto
-    GetToneMapType() -> TonemapType& override;
+    GetToneMapType() -> TonemapType override;
+
+    void
+    SetToneMapType(TonemapType type) override;
 
     auto
     GetAntiAliasingSettings() -> AntiAliasingSettings& override;

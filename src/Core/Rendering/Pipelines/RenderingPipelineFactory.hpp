@@ -11,6 +11,7 @@
 #include "Core/Rendering/RendererApi/IRendererApi.hpp"
 #include "Core/Rendering/RendererApi/IRendererApiFactory.hpp"
 #include "Core/Rendering/Shader/ShaderRegistry/IShaderRegistry.hpp"
+#include "Editor/LoadedScene/ILoadedScene.hpp"
 #include "IRenderingPipelineFactory.hpp"
 #include "Logging/IDwarfLogger.hpp"
 
@@ -31,6 +32,7 @@ namespace Dwarf
     std::shared_ptr<IDrawCallListFactory>   mDrawCallListFactory;
     std::shared_ptr<IDrawCallWorkerFactory> mDrawCallWorkerFactory;
     std::shared_ptr<IPingPongBufferFactory> mPingPongBufferFactory;
+    std::shared_ptr<ILoadedScene>           mLoadedScene;
 
   public:
     RenderingPipelineFactory(
@@ -45,7 +47,8 @@ namespace Dwarf
       std::shared_ptr<IFramebufferFactory>    framebufferFactory,
       std::shared_ptr<IDrawCallListFactory>   drawCallListFactory,
       std::shared_ptr<IDrawCallWorkerFactory> drawCallWorkerFactory,
-      std::shared_ptr<IPingPongBufferFactory> pingPongBufferFactory);
+      std::shared_ptr<IPingPongBufferFactory> pingPongBufferFactory,
+      std::shared_ptr<ILoadedScene>           loadedScene);
 
     ~RenderingPipelineFactory() override;
 

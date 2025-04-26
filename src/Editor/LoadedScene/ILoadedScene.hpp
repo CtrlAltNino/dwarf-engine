@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Scene/IScene.hpp"
+#include "ILoadedSceneObserver.h"
 
 namespace Dwarf
 {
@@ -38,62 +39,11 @@ namespace Dwarf
     virtual auto
     HasLoadedScene() -> bool = 0;
 
-    /**
-     * @brief Adds a callback that is called right after a scene has been loaded
-     *
-     * @param callback Callback function
-     */
-    virtual auto
-    AddSceneLoadCallback(std::function<void()> callback) -> UUID = 0;
-
-    /**
-     * @brief Removes a callback with the given Id
-     *
-     * @param id Uuid returned when emplacing the callback
-     */
     virtual void
-    RemoveSceneLoadCallback(UUID id) = 0;
+    RegisterLoadedSceneObserver(ILoadedSceneObserver* observer) = 0;
 
-    /**
-     * @brief Adds a callback that is called before the current scene is being
-     * unloaded
-     *
-     * @param callback Callback function
-     */
-    virtual auto
-    AddSceneUnloadCallback(std::function<void()> callback) -> UUID = 0;
-
-    /**
-     * @brief Removes a callback with the given Id
-     *
-     * @param id Uuid returned when emplacing the callback
-     */
     virtual void
-    RemoveSceneUnloadCallback(UUID id) = 0;
-
-    /**
-     * @brief Adds a callback that is called when something in the scene has
-     * changed
-     *
-     * @param callback Callback function
-     */
-    virtual auto
-    AddSceneChangeCallback(std::function<void()> callback) -> UUID = 0;
-
-    /**
-     * @brief Removes a callback with the given Id
-     *
-     * @param id Uuid returned when emplacing the callback
-     */
-    virtual void
-    RemoveSceneChangeCallback(UUID id) = 0;
-
-    /**
-     * @brief Triggers the callbacks for when something in the scene changes
-     *
-     */
-    virtual void
-    PropagateSceneChange() = 0;
+    UnregisterLoadedSceneObserver(ILoadedSceneObserver* observer) = 0;
 
     /**
      * @brief Updates the window title when a scene change occurs

@@ -1,21 +1,24 @@
 #pragma once
 
 #include "Core/Rendering/ExposureTypes.hpp"
+#include "ISceneSettingsObserver.hpp"
 #include "Utilities/ISerializable.hpp"
 
 namespace Dwarf
 {
   struct ExposureSettings : public ISerializable
   {
+  private:
     ExposureType Type = ExposureType::Manual;
     float        Exposure = 1.5F;
+    std::reference_wrapper<std::vector<ISceneSettingsObserver*>> Observers;
 
-    /// @brief Constructor.
-    ExposureSettings() = default;
-
+  public:
     /// @brief Constructor.
     /// @param serializedSettings The serialized settings.
-    ExposureSettings(nlohmann::json json)
+    ExposureSettings(std::vector<ISceneSettingsObserver*>& observers,
+                     nlohmann::json                        json = "")
+      : Observers(observers)
     {
       if (json.contains("Type"))
       {
@@ -35,6 +38,41 @@ namespace Dwarf
       json["Type"] = Type;
       json["Exposure"] = Exposure;
       return json;
+    }
+
+    void
+    NotifyObservers()
+    {
+      for (auto* observer : Observers.get())
+      {
+        observer->OnExposureSettingsChanged();
+      }
+    }
+
+    [[nodiscard]] auto
+    GetExposureType() const -> ExposureType
+    {
+      return Type;
+    }
+
+    void
+    SetExposureType(ExposureType type)
+    {
+      Type = type;
+      NotifyObservers();
+    }
+
+    [[nodiscard]] auto
+    GetExposure() const -> float
+    {
+      return Exposure;
+    }
+
+    void
+    SetExposure(float exposure)
+    {
+      Exposure = exposure;
+      NotifyObservers();
     }
   };
 }

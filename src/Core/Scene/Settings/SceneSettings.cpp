@@ -4,29 +4,31 @@
 
 namespace Dwarf
 {
+  SceneSettings::SceneSettings()
+    : mExposureSettings(mObservers)
+    , mAntiAliasingSettings(mObservers)
+    , mBloomSettings(mObservers)
+  {
+  }
+
   SceneSettings::SceneSettings(nlohmann::json serializedSettings)
+    : mExposureSettings(mObservers,
+                        serializedSettings.contains("ExposureSettings")
+                          ? serializedSettings["ExposureSettings"]
+                          : nlohmann::json{})
+    , mAntiAliasingSettings(mObservers,
+                            serializedSettings.contains("AntiAliasingSettings")
+                              ? serializedSettings["AntiAliasingSettings"]
+                              : nlohmann::json{})
+    , mBloomSettings(mObservers,
+                     serializedSettings.contains("BloomSettings")
+                       ? serializedSettings["BloomSettings"]
+                       : nlohmann::json{})
   {
     if (serializedSettings.contains("AmbientLightSettings"))
     {
       mAmbientLightSettings =
         AmbientSettings(serializedSettings["AmbientLightSettings"]);
-    }
-
-    if (serializedSettings.contains("AntiAliasingSettings"))
-    {
-      mAntiAliasingSettings =
-        AntiAliasingSettings(serializedSettings["AntiAliasingSettings"]);
-    }
-
-    if (serializedSettings.contains("BloomSettings"))
-    {
-      mBloomSettings = BloomSettings(serializedSettings["BloomSettings"]);
-    }
-
-    if (serializedSettings.contains("ExposureSettings"))
-    {
-      mExposureSettings =
-        ExposureSettings(serializedSettings["ExposureSettings"]);
     }
 
     if (serializedSettings.contains("FogSettings"))
@@ -71,6 +73,19 @@ namespace Dwarf
     return serializedSettings;
   }
 
+  void
+  SceneSettings::RegisterSceneSettingsObserver(ISceneSettingsObserver* observer)
+  {
+    mObservers.push_back(observer);
+  }
+
+  void
+  SceneSettings::UnregisterSceneSettingsObserver(
+    ISceneSettingsObserver* observer)
+  {
+    std::erase(mObservers, observer);
+  }
+
   auto
   SceneSettings::GetFogSettings() -> FogSettings&
   {
@@ -96,9 +111,23 @@ namespace Dwarf
   }
 
   auto
-  SceneSettings::GetToneMapType() -> TonemapType&
+  SceneSettings::GetToneMapType() -> TonemapType
   {
     return mTonemapType;
+  }
+
+  void
+  SceneSettings::SetToneMapType(TonemapType type)
+  {
+    mTonemapType = type;
+
+    for (auto* observer : mObservers)
+    {
+      if (observer != nullptr)
+      {
+        observer->OnTonemapChanged();
+      }
+    }
   }
 
   auto

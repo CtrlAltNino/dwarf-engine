@@ -14,9 +14,9 @@ namespace Dwarf
     /// @brief Color of the ambient light.
     glm::vec3 Color = { 0.2F, 0.2F, 0.2F };
     /// @brief Intensity of the ambient light.
-    float                    Intensity = 0.2F;
+    float                    Intensity = 1.0F;
     std::array<glm::vec3, 3> Gradient = {
-      { { 0.5f, 0.7f, 1.0f }, { 0.6f, 0.6f, 0.6f }, { 0.2f, 0.2f, 0.25f } }
+      { { 0.5F, 0.7F, 1.0F }, { 0.6F, 0.6F, 0.6F }, { 0.2F, 0.2F, 0.25F } }
     };
     bool                UseIBL = false;
     std::optional<UUID> CubeMap = std::nullopt;

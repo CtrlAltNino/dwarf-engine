@@ -114,7 +114,7 @@ namespace Dwarf
       }
 
       // Ambient light color / intensity
-      ImGui::SeparatorText("Ambient Settings");
+      ImGui::SeparatorText("Ambient Lighting Settings");
       DwarfUI::ComboEnum<AmbientSource>("Source##AmbientSource",
                                         mLoadedScene->GetScene()
                                           .GetProperties()
@@ -250,50 +250,6 @@ namespace Dwarf
                            0);
           break;
       }
-
-      // Global exposure
-      ImGui::SeparatorText("Global Exposure");
-      DwarfUI::ComboEnum<ExposureType>("Exposure Type",
-                                       mLoadedScene->GetScene()
-                                         .GetProperties()
-                                         .GetSettings()
-                                         .GetExposureSettings()
-                                         .Type);
-
-      switch (mLoadedScene->GetScene()
-                .GetProperties()
-                .GetSettings()
-                .GetExposureSettings()
-                .Type)
-      {
-        using enum ExposureType;
-        case Manual:
-          ImGui::DragFloat("Exposure",
-                           &mLoadedScene->GetScene()
-                              .GetProperties()
-                              .GetSettings()
-                              .GetExposureSettings()
-                              .Exposure,
-                           0.0005f,
-                           0.0F,
-                           20.0F,
-                           "%f");
-          break;
-        case Automatic:
-          // TODO: Implement automatic exposure system
-          break;
-      }
-
-      // Tonemapping
-      ImGui::SeparatorText("Tonemapping");
-      DwarfUI::ComboEnum<TonemapType>("Tonemapping",
-                                      mLoadedScene->GetScene()
-                                        .GetProperties()
-                                        .GetSettings()
-                                        .GetToneMapType());
-
-      // HDRI for IBL
-      ImGui::SeparatorText("Environment Map");
     }
 
     if (ImGui::CollapsingHeader("Lighting"))
@@ -359,8 +315,8 @@ namespace Dwarf
                             .GetSettings()
                             .GetShadowSettings()
                             .DepthBias,
-                         0.0f,
-                         0.01f,
+                         0.0F,
+                         0.01F,
                          "%.5f");
       ImGui::SliderFloat("Slope Bias",
                          &mLoadedScene->GetScene()
@@ -368,8 +324,8 @@ namespace Dwarf
                             .GetSettings()
                             .GetShadowSettings()
                             .SlopeScaledBias,
-                         0.0f,
-                         5.0f,
+                         0.0F,
+                         5.0F,
                          "%.2f");
 
       // Filtering
@@ -393,18 +349,27 @@ namespace Dwarf
     {
       ImGui::SeparatorText("Anti-Aliasing");
       // Anti-Aliasing Method
-      DwarfUI::ComboEnum<AntiAliasingMethod>("Anti-Aliasing Method",
-                                             mLoadedScene->GetScene()
-                                               .GetProperties()
-                                               .GetSettings()
-                                               .GetAntiAliasingSettings()
-                                               .Type);
+      static AntiAliasingMethod antiAliasingMethod =
+        mLoadedScene->GetScene()
+          .GetProperties()
+          .GetSettings()
+          .GetAntiAliasingSettings()
+          .GetAntiAliasingMethod();
+      if (DwarfUI::ComboEnum<AntiAliasingMethod>("Anti-Aliasing Method",
+                                                 antiAliasingMethod))
+      {
+        mLoadedScene->GetScene()
+          .GetProperties()
+          .GetSettings()
+          .GetAntiAliasingSettings()
+          .SetAntiAliasingMethod(antiAliasingMethod);
+      }
 
       switch (mLoadedScene->GetScene()
                 .GetProperties()
                 .GetSettings()
                 .GetAntiAliasingSettings()
-                .Type)
+                .GetAntiAliasingMethod())
       {
         using enum AntiAliasingMethod;
         case None:
@@ -413,61 +378,150 @@ namespace Dwarf
         case MSAA:
           static uint8_t min = 1U;
           static uint8_t max = mRendererApi->GetMaxSamples();
-          ImGui::SliderScalar("MSAA Samples",
-                              ImGuiDataType_U8,
-                              &mLoadedScene->GetScene()
-                                 .GetProperties()
-                                 .GetSettings()
-                                 .GetAntiAliasingSettings()
-                                 .MsaaSamples,
-                              &min,
-                              &max,
-                              "%d",
-                              ImGuiSliderFlags_None);
+          static uint8_t samples = mLoadedScene->GetScene()
+                                     .GetProperties()
+                                     .GetSettings()
+                                     .GetAntiAliasingSettings()
+                                     .GetSamples();
+          std::string format = std::format("{}/{}", "%d", max);
+
+          if (ImGui::SliderScalar("MSAA Samples",
+                                  ImGuiDataType_U8,
+                                  &samples,
+                                  &min,
+                                  &max,
+                                  format.c_str(),
+                                  ImGuiSliderFlags_None))
+          {
+            mLoadedScene->GetScene()
+              .GetProperties()
+              .GetSettings()
+              .GetAntiAliasingSettings()
+              .SetSamples(samples);
+          }
+          break;
+      }
+
+      // Tonemapping
+      ImGui::SeparatorText("Tonemapping");
+      static TonemapType type =
+        mLoadedScene->GetScene().GetProperties().GetSettings().GetToneMapType();
+      if (DwarfUI::ComboEnum<TonemapType>("Tonemapping", type))
+      {
+        mLoadedScene->GetScene().GetProperties().GetSettings().SetToneMapType(
+          type);
+      }
+
+      // Global exposure
+      ImGui::SeparatorText("Global Exposure");
+      static ExposureType exposureType = mLoadedScene->GetScene()
+                                           .GetProperties()
+                                           .GetSettings()
+                                           .GetExposureSettings()
+                                           .GetExposureType();
+      if (DwarfUI::ComboEnum<ExposureType>("Exposure Type", exposureType))
+      {
+        mLoadedScene->GetScene()
+          .GetProperties()
+          .GetSettings()
+          .GetExposureSettings()
+          .SetExposureType(exposureType);
+      }
+
+      switch (mLoadedScene->GetScene()
+                .GetProperties()
+                .GetSettings()
+                .GetExposureSettings()
+                .GetExposureType())
+      {
+        using enum ExposureType;
+        case Manual:
+          static float exposureValue = mLoadedScene->GetScene()
+                                         .GetProperties()
+                                         .GetSettings()
+                                         .GetExposureSettings()
+                                         .GetExposure();
+          if (ImGui::DragFloat(
+                "Exposure", &exposureValue, 0.0005f, 0.0F, 20.0F, "%f"))
+          {
+            mLoadedScene->GetScene()
+              .GetProperties()
+              .GetSettings()
+              .GetExposureSettings()
+              .SetExposure(exposureValue);
+          }
+          break;
+        case Automatic:
+          // TODO: Implement automatic exposure system
           break;
       }
 
       // Bloom Settings
       ImGui::SeparatorText("Bloom");
-      ImGui::Checkbox("Enable",
-                      &mLoadedScene->GetScene()
-                         .GetProperties()
-                         .GetSettings()
-                         .GetBloomSettings()
-                         .Enabled);
-      ImGui::DragFloat("Threshold",
-                       &mLoadedScene->GetScene()
-                          .GetProperties()
-                          .GetSettings()
-                          .GetBloomSettings()
-                          .Threshold,
-                       0.01F,
-                       0.0F,
-                       +FLT_MAX,
-                       "%.2f");
-      ImGui::DragFloat("Intensity",
-                       &mLoadedScene->GetScene()
-                          .GetProperties()
-                          .GetSettings()
-                          .GetBloomSettings()
-                          .Intensity,
-                       0.01F,
-                       0.0F,
-                       +FLT_MAX,
-                       "%.2f");
-      ImGui::DragFloat("Radius",
-                       &mLoadedScene->GetScene()
-                          .GetProperties()
-                          .GetSettings()
-                          .GetBloomSettings()
-                          .Radius,
-                       0.01F,
-                       0.0F,
-                       +FLT_MAX,
-                       "%.2f");
+
+      // Toggle bloom enabled status
+      static bool bloomEnabled = mLoadedScene->GetScene()
+                                   .GetProperties()
+                                   .GetSettings()
+                                   .GetBloomSettings()
+                                   .GetEnabled();
+      if (ImGui::Checkbox("Enable", &bloomEnabled))
+      {
+        mLoadedScene->GetScene()
+          .GetProperties()
+          .GetSettings()
+          .GetBloomSettings()
+          .SetEnabled(bloomEnabled);
+      }
+
+      // Bloom Threshold
+      static float bloomThreshold = mLoadedScene->GetScene()
+                                      .GetProperties()
+                                      .GetSettings()
+                                      .GetBloomSettings()
+                                      .GetThreshold();
+      if (ImGui::DragFloat(
+            "Threshold", &bloomThreshold, 0.01F, 0.0F, +FLT_MAX, "%.2f"))
+      {
+        mLoadedScene->GetScene()
+          .GetProperties()
+          .GetSettings()
+          .GetBloomSettings()
+          .SetThreshold(bloomThreshold);
+      }
+
+      static float bloomIntensity = mLoadedScene->GetScene()
+                                      .GetProperties()
+                                      .GetSettings()
+                                      .GetBloomSettings()
+                                      .GetIntensity();
+      if (ImGui::DragFloat(
+            "Intensity", &bloomIntensity, 0.01F, 0.0F, +FLT_MAX, "%.2f"))
+      {
+        mLoadedScene->GetScene()
+          .GetProperties()
+          .GetSettings()
+          .GetBloomSettings()
+          .SetIntensity(bloomIntensity);
+      }
+
+      static float bloomRadius = mLoadedScene->GetScene()
+                                   .GetProperties()
+                                   .GetSettings()
+                                   .GetBloomSettings()
+                                   .GetRadius();
+      if (ImGui::DragFloat(
+            "Radius", &bloomRadius, 0.01F, 0.0F, +FLT_MAX, "%.2f"))
+      {
+        mLoadedScene->GetScene()
+          .GetProperties()
+          .GetSettings()
+          .GetBloomSettings()
+          .SetRadius(bloomRadius);
+      }
 
       // Depth of Field Settings
-      ImGui::SeparatorText("Depth of Field");
+      /*ImGui::SeparatorText("Depth of Field");
 
       // Color Grading Settings
       ImGui::SeparatorText("Color Grading");
@@ -476,7 +530,7 @@ namespace Dwarf
       ImGui::SeparatorText("Ambient Occlusion");
 
       // Screen Space Reflections Settings
-      ImGui::SeparatorText("Screen Space Reflections");
+      ImGui::SeparatorText("Screen Space Reflections");*/
     }
 
     ImGui::End();

@@ -6,6 +6,7 @@
 #include "Core/Rendering/TonemapTypes.hpp"
 #include "ExposureSettings.hpp"
 #include "FogSettings.hpp"
+#include "ISceneSettingsObserver.hpp"
 #include "ShadowSettings.hpp"
 #include "SkyboxSettings.hpp"
 #include "Utilities/ISerializable.hpp"
@@ -20,6 +21,12 @@ namespace Dwarf
   public:
     /// @brief Destructor.
     virtual ~ISceneSettings() = default;
+
+    virtual void
+    RegisterSceneSettingsObserver(ISceneSettingsObserver* observer) = 0;
+
+    virtual void
+    UnregisterSceneSettingsObserver(ISceneSettingsObserver* observer) = 0;
 
     /// @brief Returns the fog settings of the scene.
     /// @return The fog settings of the scene.
@@ -40,7 +47,10 @@ namespace Dwarf
     GetExposureSettings() -> ExposureSettings& = 0;
 
     [[nodiscard]] virtual auto
-    GetToneMapType() -> TonemapType& = 0;
+    GetToneMapType() -> TonemapType = 0;
+
+    virtual void
+    SetToneMapType(TonemapType type) = 0;
 
     [[nodiscard]] virtual auto
     GetAntiAliasingSettings() -> AntiAliasingSettings& = 0;

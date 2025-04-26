@@ -130,7 +130,7 @@ namespace Dwarf
           newMesh.AddComponent<MeshRendererComponent>();
           ent.AddChild(newMesh.GetHandle());
           mEditorSelection->SelectEntity(newMesh.GetHandle());
-          mLoadedScene->PropagateSceneChange();
+          // mLoadedScene->PropagateSceneChange();
         }
 
         if (ImGui::MenuItem("Light"))
@@ -139,7 +139,7 @@ namespace Dwarf
           newLight.AddComponent<LightComponent>();
           ent.AddChild(newLight.GetHandle());
           mEditorSelection->SelectEntity(newLight.GetHandle());
-          mLoadedScene->PropagateSceneChange();
+          // mLoadedScene->PropagateSceneChange();
         }
 
         if (ImGui::MenuItem("Group"))
@@ -147,7 +147,7 @@ namespace Dwarf
           Entity newGroup = scene.CreateEntity("New Group");
           ent.AddChild(newGroup.GetHandle());
           mEditorSelection->SelectEntity(newGroup.GetHandle());
-          mLoadedScene->PropagateSceneChange();
+          // mLoadedScene->PropagateSceneChange();
         }
 
         ImGui::EndMenu();
@@ -200,7 +200,7 @@ namespace Dwarf
 
               copy.AddComponent<MeshRendererComponent>(MeshRendererComponent(
                 std::move(copiedMesh), std::move(copiedMaterials)));
-              mLoadedScene->PropagateSceneChange();
+              // mLoadedScene->PropagateSceneChange();
             }
           }
         }
@@ -248,7 +248,7 @@ namespace Dwarf
 
             copy.AddComponent<MeshRendererComponent>(
               std::move(copiedMesh), std::move(copiedMaterials));
-            mLoadedScene->PropagateSceneChange();
+            // mLoadedScene->PropagateSceneChange();
           }
         }
       }
@@ -258,7 +258,7 @@ namespace Dwarf
         mInstructions.push_back(std::make_shared<DeleteEntityInstruction>(
           mLoadedScene->GetScene(), mEditorSelection->GetSelectedEntities()));
         mEditorSelection->ClearEntitySelection();
-        mLoadedScene->PropagateSceneChange();
+        // mLoadedScene->PropagateSceneChange();
       }
 
       ImGui::EndPopup();
@@ -430,7 +430,7 @@ namespace Dwarf
     if (mInstructions.size() > 0)
     {
       mInstructions.clear();
-      mLoadedScene->PropagateSceneChange();
+      // mLoadedScene->PropagateSceneChange();
     }
   }
 
@@ -482,7 +482,7 @@ namespace Dwarf
           Entity newMesh = mLoadedScene->GetScene().CreateEntity("New Mesh");
           newMesh.AddComponent<MeshRendererComponent>();
           mEditorSelection->SelectEntity(newMesh.GetHandle());
-          mLoadedScene->PropagateSceneChange();
+          // mLoadedScene->PropagateSceneChange();
         }
 
         if (ImGui::MenuItem("Light"))
@@ -490,14 +490,14 @@ namespace Dwarf
           Entity newLight = mLoadedScene->GetScene().CreateEntity("New Light");
           newLight.AddComponent<LightComponent>();
           mEditorSelection->SelectEntity(newLight.GetHandle());
-          mLoadedScene->PropagateSceneChange();
+          // mLoadedScene->PropagateSceneChange();
         }
 
         if (ImGui::MenuItem("Group"))
         {
           Entity newGroup = mLoadedScene->GetScene().CreateEntity("New Group");
           mEditorSelection->SelectEntity(newGroup.GetHandle());
-          mLoadedScene->PropagateSceneChange();
+          // mLoadedScene->PropagateSceneChange();
         }
         ImGui::EndPopup();
       }
@@ -539,7 +539,7 @@ namespace Dwarf
 
             copy.AddComponent<MeshRendererComponent>(
               std::move(copiedMesh), std::move(copiedMaterials));
-            mLoadedScene->PropagateSceneChange();
+            // mLoadedScene->PropagateSceneChange();
           }
         }
       }

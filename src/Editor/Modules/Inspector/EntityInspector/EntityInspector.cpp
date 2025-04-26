@@ -202,7 +202,7 @@ namespace Dwarf
     ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
     if (ImGui::Checkbox("Hidden", &component.IsHidden()))
     {
-      mLoadedScene->PropagateSceneChange();
+      // mLoadedScene->PropagateSceneChange();
     }
     ImGui::TextWrapped("Model Asset");
     ImGui::SameLine();
@@ -214,7 +214,7 @@ namespace Dwarf
     if (DwarfUI::AssetInput<ModelAsset>(
           mAssetDatabase, component.GetModelAsset(), "##modelAsset"))
     {
-      mLoadedScene->PropagateSceneChange();
+      // mLoadedScene->PropagateSceneChange();
 
       if (component.GetModelAsset() != nullptr)
       {
@@ -256,7 +256,7 @@ namespace Dwarf
               std::format("##materialAsset{}", std::to_string(mat.first))
                 .c_str()))
         {
-          mLoadedScene->PropagateSceneChange();
+          // mLoadedScene->PropagateSceneChange();
         }
         ImGui::PopItemWidth();
       }

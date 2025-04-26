@@ -1,5 +1,7 @@
 #include "pch.hpp"
 
+#include "Core/Rendering/AntiAliasingTypes.hpp"
+#include "Core/Rendering/ExposureTypes.hpp"
 #include "Core/Rendering/Framebuffer/IFramebuffer.hpp"
 #include "Core/Rendering/Material/IMaterial.hpp"
 #include "Core/Scene/Components/SceneComponents.hpp"
@@ -9,42 +11,43 @@
 namespace Dwarf
 {
   RenderingPipeline::RenderingPipeline(
-    std::shared_ptr<IRendererApi>     rendererApi,
-    std::shared_ptr<IMaterialFactory> materialFactory,
-    std::shared_ptr<IShaderRegistry>  shaderRegistry,
+    std::shared_ptr<IRendererApi>    rendererApi,
+    std::shared_ptr<IShaderRegistry> shaderRegistry,
     std::shared_ptr<IShaderSourceCollectionFactory>
                                                  shaderSourceCollectionFactory,
     std::shared_ptr<IMeshFactory>                meshFactory,
     std::shared_ptr<IMeshBufferFactory>          meshBufferFactory,
-    std::shared_ptr<IFramebufferFactory>         framebufferFactory,
+    std::shared_ptr<ILoadedScene>                loadedScene,
+    const std::shared_ptr<IFramebufferFactory>&  framebufferFactory,
+    const std::shared_ptr<IMaterialFactory>&     materialFactory,
     const std::shared_ptr<IDrawCallListFactory>& drawCallListFactory,
     const std::shared_ptr<IDrawCallWorkerFactory>& drawCallWorkerFactory,
     const std::shared_ptr<IPingPongBufferFactory>& pingPongBufferFactory)
     : mRendererApi(std::move(rendererApi))
-    , mMaterialFactory(std::move(materialFactory))
+    , mLoadedScene(std::move(loadedScene))
     , mShaderRegistry(std::move(shaderRegistry))
     , mShaderSourceCollectionFactory(std::move(shaderSourceCollectionFactory))
     , mMeshFactory(std::move(meshFactory))
     , mMeshBufferFactory(std::move(meshBufferFactory))
-    , mFramebufferFactory(std::move(framebufferFactory))
     , mDrawCallList(drawCallListFactory->Create())
     , mDrawCallWorker(drawCallWorkerFactory->Create(mDrawCallList))
   {
+    mLoadedScene->RegisterLoadedSceneObserver(this);
     mRendererApi->SetClearColor(glm::vec4(0.065F, 0.07F, 0.085F, 1.0F));
 
-    mIdMaterial = mMaterialFactory->CreateMaterial(
+    mIdMaterial = materialFactory->CreateMaterial(
       mShaderSourceCollectionFactory->CreateIdShaderSourceCollection());
     mIdMaterial->GetShader()->Compile();
     mGridShader = mShaderRegistry->GetOrCreate(
       mShaderSourceCollectionFactory->CreateGridShaderSourceCollection());
 
-    SetupRenderFramebuffer();
+    SetupRenderFramebuffer(framebufferFactory);
 
     SetupPingPongBuffers(pingPongBufferFactory);
 
-    SetupPresentationFramebuffer();
+    SetupPresentationFramebuffer(framebufferFactory);
 
-    SetupIdFramebuffer();
+    SetupIdFramebuffer(framebufferFactory);
 
     mDrawCallWorker->Invalidate();
   }
@@ -55,10 +58,11 @@ namespace Dwarf
   }
 
   void
-  RenderingPipeline::SetupRenderFramebuffer()
+  RenderingPipeline::SetupRenderFramebuffer(
+    const std::shared_ptr<IFramebufferFactory>& framebufferFactory)
   {
     FramebufferSpecification spec = GetSpecification();
-    mRenderFramebuffer = mFramebufferFactory->Create(spec);
+    mRenderFramebuffer = framebufferFactory->Create(spec);
   }
 
   void
@@ -79,24 +83,26 @@ namespace Dwarf
   }
 
   void
-  RenderingPipeline::SetupPresentationFramebuffer()
+  RenderingPipeline::SetupPresentationFramebuffer(
+    const std::shared_ptr<IFramebufferFactory>& framebufferFactory)
   {
     FramebufferSpecification presentationSpec;
     presentationSpec.Attachments = FramebufferAttachmentSpecification{
       FramebufferTextureSpecification{ FramebufferTextureFormat::SRGBA8 }
     };
-    mPresentationBuffer = mFramebufferFactory->Create(presentationSpec);
+    mPresentationBuffer = framebufferFactory->Create(presentationSpec);
   }
 
   void
-  RenderingPipeline::SetupIdFramebuffer()
+  RenderingPipeline::SetupIdFramebuffer(
+    const std::shared_ptr<IFramebufferFactory>& framebufferFactory)
   {
     FramebufferSpecification idSpec;
     idSpec.Attachments = FramebufferAttachmentSpecification{
       FramebufferTextureSpecification{ FramebufferTextureFormat::RED_INTEGER },
       FramebufferTextureSpecification{ FramebufferTextureFormat::DEPTH }
     };
-    mIdBuffer = mFramebufferFactory->Create(idSpec);
+    mIdBuffer = framebufferFactory->Create(idSpec);
   }
 
   void
@@ -358,6 +364,87 @@ namespace Dwarf
               ->CreateUncharted2TonemapShaderSourceCollection());
           break;
         }
+    }
+
+    OnExposureSettingsChanged();
+  }
+
+  void
+  RenderingPipeline::OnAntiAliasingSettingsChanged()
+  {
+    switch (mLoadedScene->GetScene()
+              .GetProperties()
+              .GetSettings()
+              .GetAntiAliasingSettings()
+              .GetAntiAliasingMethod())
+    {
+      using enum AntiAliasingMethod;
+      case MSAA:
+        SetMsaaSamples(mLoadedScene->GetScene()
+                         .GetProperties()
+                         .GetSettings()
+                         .GetAntiAliasingSettings()
+                         .GetSamples());
+        break;
+      case FXAA:
+      case TAA:
+      case None: SetMsaaSamples(1); break;
+    }
+  }
+
+  void
+  RenderingPipeline::OnExposureSettingsChanged()
+  {
+    if (mLoadedScene->GetScene()
+          .GetProperties()
+          .GetSettings()
+          .GetExposureSettings()
+          .GetExposureType() == ExposureType::Manual)
+    {
+      SetExposure(mLoadedScene->GetScene()
+                    .GetProperties()
+                    .GetSettings()
+                    .GetExposureSettings()
+                    .GetExposure());
+    }
+  }
+
+  void
+  RenderingPipeline::OnTonemapChanged()
+  {
+    SetTonemapType(
+      mLoadedScene->GetScene().GetProperties().GetSettings().GetToneMapType());
+  }
+
+  void
+  RenderingPipeline::OnBloomSettingsChanged()
+  {
+  }
+
+  void
+  RenderingPipeline::OnSceneLoad()
+  {
+    if (mLoadedScene->HasLoadedScene())
+    {
+      mLoadedScene->GetScene()
+        .GetProperties()
+        .GetSettings()
+        .RegisterSceneSettingsObserver(this);
+      OnTonemapChanged();
+      OnExposureSettingsChanged();
+      OnAntiAliasingSettingsChanged();
+    }
+  }
+
+  void
+  RenderingPipeline::OnSceneUnload()
+  {
+    if (mLoadedScene->HasLoadedScene())
+    {
+      mLoadedScene->GetScene()
+        .GetProperties()
+        .GetSettings()
+        .UnregisterSceneSettingsObserver(this);
     }
   }
 }
