@@ -40,6 +40,14 @@ public:
               RenameDirectory,
               (const std::filesystem::path&, const std::filesystem::path&),
               (override));
+  MOCK_METHOD(void,
+              RegisterAssetDatabaseObserver,
+              (IAssetDatabaseObserver * observer),
+              (override));
+  MOCK_METHOD(void,
+              UnregisterAssetDatabaseObserver,
+              (IAssetDatabaseObserver * observer),
+              (override));
 };
 
 // Mock class for IAssetReference

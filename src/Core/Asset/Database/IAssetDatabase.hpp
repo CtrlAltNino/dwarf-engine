@@ -3,6 +3,7 @@
 #include "Core/Asset/AssetReference/IAssetReference.hpp"
 #include "Core/Asset/AssetTypes.hpp"
 #include "Core/UUID.hpp"
+#include "IAssetDatabaseObserver.hpp"
 #include <boost/serialization/strong_typedef.hpp>
 #include <entt/entity/fwd.hpp>
 #include <filesystem>
@@ -121,6 +122,12 @@ namespace Dwarf
     virtual void
     RenameDirectory(const std::filesystem::path& fromPath,
                     const std::filesystem::path& toPath) = 0;
+
+    virtual void
+    RegisterAssetDatabaseObserver(IAssetDatabaseObserver* observer) = 0;
+
+    virtual void
+    UnregisterAssetDatabaseObserver(IAssetDatabaseObserver* observer) = 0;
 
     /**
      * @brief Retrieves the asset type enum value corresponding to a file

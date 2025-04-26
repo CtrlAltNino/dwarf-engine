@@ -10,17 +10,20 @@ namespace Dwarf
     std::shared_ptr<IDrawCallFactory>  drawCallFactory,
     std::unique_ptr<IDrawCallList>&    drawCallList,
     std::shared_ptr<IMeshFactory>      meshFactory,
-    std::shared_ptr<IMeshBufferWorker> meshBufferWorker)
+    std::shared_ptr<IMeshBufferWorker> meshBufferWorker,
+    std::shared_ptr<IAssetDatabase>    assetDatabase)
     : mLogger(std::move(logger))
     , mLoadedScene(std::move(loadedScene))
     , mDrawCallFactory(std::move(drawCallFactory))
     , mDrawCallList(drawCallList)
     , mMeshFactory(std::move(meshFactory))
     , mMeshBufferWorker(std::move(meshBufferWorker))
+    , mAssetDatabase(std::move(assetDatabase))
   {
     mLogger->LogDebug(Log("DrawCallWorker created", "DrawCallWorker"));
     mWorkerThread = std::thread([this]() { WorkerThread(); });
     mLoadedScene->RegisterLoadedSceneObserver(this);
+    mAssetDatabase->RegisterAssetDatabaseObserver(this);
   }
 
   DrawCallWorker::~DrawCallWorker()
@@ -238,5 +241,12 @@ namespace Dwarf
   DrawCallWorker::OnSceneUnload()
   {
     mDrawCallList->Clear();
+  }
+
+  void
+  DrawCallWorker::OnReimportAll()
+  {
+    mDrawCallList->Clear();
+    this->Invalidate();
   }
 }

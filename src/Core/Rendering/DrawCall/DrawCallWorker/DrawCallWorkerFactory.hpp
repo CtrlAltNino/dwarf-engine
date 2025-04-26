@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Asset/Database/IAssetDatabase.hpp"
 #include "Core/Rendering/DrawCall/IDrawCallFactory.hpp"
 #include "Core/Rendering/Mesh/IMeshFactory.hpp"
 #include "Core/Rendering/MeshBuffer/MeshBufferWorker/IMeshBufferWorker.hpp"
@@ -17,13 +18,15 @@ namespace Dwarf
     std::shared_ptr<IDrawCallFactory>  mDrawCallFactory;
     std::shared_ptr<IMeshFactory>      mMeshFactory;
     std::shared_ptr<IMeshBufferWorker> mMeshBufferWorker;
+    std::shared_ptr<IAssetDatabase>    mAssetDatabase;
 
   public:
     DrawCallWorkerFactory(std::shared_ptr<IDwarfLogger>      logger,
                           std::shared_ptr<ILoadedScene>      loadedScene,
                           std::shared_ptr<IDrawCallFactory>  drawCallFactory,
                           std::shared_ptr<IMeshFactory>      meshFactory,
-                          std::shared_ptr<IMeshBufferWorker> meshBufferWorker);
+                          std::shared_ptr<IMeshBufferWorker> meshBufferWorker,
+                          std::shared_ptr<IAssetDatabase>    assetDatabase);
     ~DrawCallWorkerFactory() override;
 
     [[nodiscard]] auto
