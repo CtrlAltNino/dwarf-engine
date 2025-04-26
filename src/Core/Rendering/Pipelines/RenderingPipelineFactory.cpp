@@ -17,7 +17,8 @@ namespace Dwarf
     std::shared_ptr<IFramebufferFactory>    framebufferFactory,
     std::shared_ptr<IDrawCallListFactory>   drawCallListFactory,
     std::shared_ptr<IDrawCallWorkerFactory> drawCallWorkerFactory,
-    std::shared_ptr<IPingPongBufferFactory> pingPongBufferFactory)
+    std::shared_ptr<IPingPongBufferFactory> pingPongBufferFactory,
+    std::shared_ptr<ILoadedScene>           loadedScene)
     : mLogger(std::move(logger))
     , mRendererApi(rendererApiFactory->Create())
     , mMaterialFactory(std::move(materialFactory))
@@ -29,6 +30,7 @@ namespace Dwarf
     , mDrawCallListFactory(std::move(drawCallListFactory))
     , mDrawCallWorkerFactory(std::move(drawCallWorkerFactory))
     , mPingPongBufferFactory(std::move(pingPongBufferFactory))
+    , mLoadedScene(std::move(loadedScene))
   {
     mLogger->LogDebug(
       Log("RenderingPipelineFactory created", "RenderingPipelineFactory"));
@@ -44,14 +46,14 @@ namespace Dwarf
   RenderingPipelineFactory::Create() const
     -> std::unique_ptr<IRenderingPipeline>
   {
-
     return std::make_unique<RenderingPipeline>(mRendererApi,
-                                               mMaterialFactory,
                                                mShaderRegistry,
                                                mShaderSourceCollectionFactory,
                                                mMeshFactory,
                                                mMeshBufferFactory,
+                                               mLoadedScene,
                                                mFramebufferFactory,
+                                               mMaterialFactory,
                                                mDrawCallListFactory,
                                                mDrawCallWorkerFactory,
                                                mPingPongBufferFactory);

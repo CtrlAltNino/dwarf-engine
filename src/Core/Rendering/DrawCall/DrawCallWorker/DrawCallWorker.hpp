@@ -66,7 +66,9 @@ namespace Dwarf
     }
   };
 
-  class DrawCallWorker : public IDrawCallWorker
+  class DrawCallWorker
+    : public IDrawCallWorker
+    , public ILoadedSceneObserver
   {
   private:
     std::thread                        mWorkerThread;
@@ -80,9 +82,6 @@ namespace Dwarf
     std::atomic<bool>                  mStopWorker = false;
     std::atomic<bool>                  mInvalidate = false;
     std::mutex                         mThreadMutex;
-    UUID                               mSceneLoadCallbackId;
-    UUID                               mSceneUnloadCallbackId;
-    UUID                               mSceneChangeCallbackId;
 
   public:
     DrawCallWorker(std::shared_ptr<IDwarfLogger>      logger,
@@ -114,5 +113,11 @@ namespace Dwarf
      */
     void
     GenerateDrawCalls();
+
+    void
+    OnSceneLoad() override;
+
+    void
+    OnSceneUnload() override;
   };
 }

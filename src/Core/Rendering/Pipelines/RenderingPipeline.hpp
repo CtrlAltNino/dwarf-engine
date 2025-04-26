@@ -14,28 +14,29 @@
 #include "Core/Rendering/Pipelines/IRenderingPipeline.hpp"
 #include "Core/Rendering/RendererApi/IRendererApi.hpp"
 #include "Core/Rendering/Shader/ShaderRegistry/IShaderRegistry.hpp"
+#include "Core/Scene/Settings/ISceneSettingsObserver.hpp"
+#include "Editor/LoadedScene/ILoadedScene.hpp"
 #include "IRenderingPipeline.hpp"
 #include <memory>
 
 namespace Dwarf
 {
-  class RenderingPipeline : public IRenderingPipeline
+  class RenderingPipeline
+    : public IRenderingPipeline
+    , public ISceneSettingsObserver
+    , public ILoadedSceneObserver
   {
   private:
-    std::shared_ptr<IMaterialFactory>    mMaterialFactory;
-    std::shared_ptr<IShaderRegistry>     mShaderRegistry;
-    std::shared_ptr<IFramebufferFactory> mFramebufferFactory;
     std::shared_ptr<IShaderSourceCollectionFactory>
                                         mShaderSourceCollectionFactory;
     std::shared_ptr<IMeshFactory>       mMeshFactory;
     std::shared_ptr<IMeshBufferFactory> mMeshBufferFactory;
-    // std::shared_ptr<IPingPongBufferFactory> mPingPongBufferFactory;
+    std::shared_ptr<IShaderRegistry>    mShaderRegistry;
+    std::shared_ptr<ILoadedScene>       mLoadedScene;
 
     std::unique_ptr<IMaterial> mIdMaterial;
-    // std::shared_ptr<IMaterial> mGridMaterial;
-    std::shared_ptr<IShader> mGridShader;
-    // std::shared_ptr<IMaterial> mTonemapMaterial;
-    std::shared_ptr<IShader> mTonemapShader;
+    std::shared_ptr<IShader>   mGridShader;
+    std::shared_ptr<IShader>   mTonemapShader;
 
     std::shared_ptr<IFramebuffer>    mRenderFramebuffer;
     std::unique_ptr<IPingPongBuffer> mHdrPingPong;
@@ -48,31 +49,36 @@ namespace Dwarf
     std::unique_ptr<IDrawCallWorker> mDrawCallWorker;
 
     void
-    SetupRenderFramebuffer();
+    SetupRenderFramebuffer(
+      const std::shared_ptr<IFramebufferFactory>& framebufferFactory);
 
     void
-    SetupNonMsaaFramebuffer();
+    SetupNonMsaaFramebuffer(
+      const std::shared_ptr<IFramebufferFactory>& framebufferFactory);
 
     void
     SetupPingPongBuffers(
       const std::shared_ptr<IPingPongBufferFactory>& pingPongBufferFactory);
 
     void
-    SetupPresentationFramebuffer();
+    SetupPresentationFramebuffer(
+      const std::shared_ptr<IFramebufferFactory>& framebufferFactory);
 
     void
-    SetupIdFramebuffer();
+    SetupIdFramebuffer(
+      const std::shared_ptr<IFramebufferFactory>& framebufferFactory);
 
   public:
     RenderingPipeline(
-      std::shared_ptr<IRendererApi>     rendererApi,
-      std::shared_ptr<IMaterialFactory> materialFactory,
-      std::shared_ptr<IShaderRegistry>  shaderRegistry,
+      std::shared_ptr<IRendererApi>    rendererApi,
+      std::shared_ptr<IShaderRegistry> shaderRegistry,
       std::shared_ptr<IShaderSourceCollectionFactory>
-                                           shaderSourceCollectionFactory,
-      std::shared_ptr<IMeshFactory>        meshFactory,
-      std::shared_ptr<IMeshBufferFactory>  meshBufferFactory,
-      std::shared_ptr<IFramebufferFactory> framebufferFactory,
+                                                  shaderSourceCollectionFactory,
+      std::shared_ptr<IMeshFactory>               meshFactory,
+      std::shared_ptr<IMeshBufferFactory>         meshBufferFactory,
+      std::shared_ptr<ILoadedScene>               loadedScene,
+      const std::shared_ptr<IFramebufferFactory>& framebufferFactory,
+      const std::shared_ptr<IMaterialFactory>&    materialFactory,
       const std::shared_ptr<IDrawCallListFactory>&   drawCallListFactory,
       const std::shared_ptr<IDrawCallWorkerFactory>& drawCallWorkerFactory,
       const std::shared_ptr<IPingPongBufferFactory>& pingPongBufferFactory);
@@ -202,5 +208,23 @@ namespace Dwarf
      */
     void
     SetTonemapType(TonemapType type) override;
+
+    void
+    OnAntiAliasingSettingsChanged() override;
+
+    void
+    OnExposureSettingsChanged() override;
+
+    void
+    OnTonemapChanged() override;
+
+    void
+    OnBloomSettingsChanged() override;
+
+    void
+    OnSceneLoad() override;
+
+    void
+    OnSceneUnload() override;
   };
 }

@@ -40,7 +40,7 @@ namespace Dwarf
     // Setup camera
     mCamera = cameraFactory->Create();
 
-    mLoadedScene->PropagateSceneChange();
+    // mLoadedScene->PropagateSceneChange();
 
     mLogger->LogDebug(Log("SceneViewerWindow created", "SceneViewerWindow"));
   }
@@ -74,7 +74,7 @@ namespace Dwarf
 
     Deserialize(serializedModule.t);
 
-    mLoadedScene->PropagateSceneChange();
+    // mLoadedScene->PropagateSceneChange();
 
     mLogger->LogDebug(Log("SceneViewerWindow created", "SceneViewerWindow"));
   }
@@ -101,21 +101,6 @@ namespace Dwarf
     else
     {
       mWindow->SetMouseVisibility(true);
-    }
-
-    if (mLoadedScene->HasLoadedScene())
-    {
-      mRenderingPipeline->SetTonemapType(mLoadedScene->GetScene()
-                                           .GetProperties()
-                                           .GetSettings()
-                                           .GetToneMapType());
-      mRenderingPipeline->SetExposure(mLoadedScene->GetScene()
-                                        .GetProperties()
-                                        .GetSettings()
-                                        .GetExposureSettings()
-                                        .Exposure);
-
-      UpdateFramebuffer();
     }
 
     // Render scene to the framebuffer with the camera
@@ -500,6 +485,7 @@ namespace Dwarf
   void
   SceneViewerWindow::RenderRenderingSettings()
   {
+    // TODO: Maybe add overrides for scene based settings?
     if (ImGui::Button("Overrides"))
     {
       ImGui::OpenPopup("override_settings");
@@ -507,60 +493,6 @@ namespace Dwarf
 
     if (ImGui::BeginPopup("override_settings"))
     {
-      /*ImGui::PushItemWidth(150);
-      ImGui::SliderInt("MSAA Samples",
-                       &mSettings.Samples,
-                       1,
-                       mSettings.MaxSamples,
-                       "%d",
-                       ImGuiSliderFlags_None);
-
-      static std::array<std::string, 3> tonemaps = { "Reinhard",
-                                                     "Agx",
-                                                     "Aces" };
-
-      // Rendering mode combo
-      if (ImGui::BeginCombo("Tonemapping##tonemapType",
-                            tonemaps[(int)mSettings.Tonemap].c_str()))
-      {
-        for (int n = 0; n < tonemaps.size(); n++)
-        {
-          const bool is_selected = ((int)mSettings.Tonemap == n);
-
-          // ==================== Graphics Selectable ====================
-          if (ImGui::Selectable(
-                tonemaps[n].c_str(), is_selected, 0, ImVec2(0, 16 + 10)))
-          {
-            mSettings.Tonemap = (TonemapType)n;
-            mRenderingPipeline->SetTonemapType(mSettings.Tonemap);
-            mRenderingPipeline->SetExposure(mSettings.Exposure);
-          }
-
-          // Set the initial focus when opening the combo (scrolling + keyboard
-          // navigation focus)
-          if (is_selected)
-          {
-            ImGui::SetItemDefaultFocus();
-          }
-        }
-
-        ImGui::EndCombo();
-      }
-
-      float min = 0.0F;
-      float max = 20.0F;
-      if (ImGui::DragScalar("Exposure",
-                            ImGuiDataType_Float,
-                            &mSettings.Exposure,
-                            0.0005f,
-                            &min,
-                            &max,
-                            "%f"))
-      {
-        mRenderingPipeline->SetExposure(mSettings.Exposure);
-      }
-
-      ImGui::PopItemWidth();*/
       ImGui::EndPopup();
     }
   }
@@ -733,33 +665,6 @@ namespace Dwarf
       mRenderingPipeline->SetResolution(desiredResolution);
       mCamera->GetProperties().AspectRatio =
         (float)desiredResolution.x / (float)desiredResolution.y;
-    }
-
-    if (mLoadedScene->HasLoadedScene() &&
-        mRenderingPipeline->GetMsaaSamples() !=
-          ((mLoadedScene->GetScene()
-              .GetProperties()
-              .GetSettings()
-              .GetAntiAliasingSettings()
-              .Type == AntiAliasingMethod::MSAA)
-             ? mLoadedScene->GetScene()
-                 .GetProperties()
-                 .GetSettings()
-                 .GetAntiAliasingSettings()
-                 .MsaaSamples
-             : 1))
-    {
-      mRenderingPipeline->SetMsaaSamples(mLoadedScene->GetScene()
-                                               .GetProperties()
-                                               .GetSettings()
-                                               .GetAntiAliasingSettings()
-                                               .Type == AntiAliasingMethod::MSAA
-                                           ? mLoadedScene->GetScene()
-                                               .GetProperties()
-                                               .GetSettings()
-                                               .GetAntiAliasingSettings()
-                                               .MsaaSamples
-                                           : 1);
     }
   }
 
