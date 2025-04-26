@@ -14,6 +14,7 @@
 #include "Core/Rendering/Shader/ShaderRegistry/IShaderRegistry.hpp"
 #include "Core/Rendering/Texture/ITextureFactory.hpp"
 #include "Core/UUID.hpp"
+#include "IAssetDatabaseObserver.hpp"
 #include "Logging/IDwarfLogger.hpp"
 #include "Utilities/FileHandler/IFileHandler.hpp"
 #include "Window/IWindow.hpp"
@@ -43,6 +44,7 @@ namespace Dwarf
     entt::registry mRegistry;
 
     std::map<std::filesystem::path, std::shared_ptr<IShader>> mShaderAssetMap;
+    std::vector<IAssetDatabaseObserver*>                      mObservers;
 
     GraphicsApi                              mGraphicsApi;
     std::shared_ptr<IDwarfLogger>            mLogger;
@@ -185,6 +187,12 @@ namespace Dwarf
     auto
     Retrieve(const std::filesystem::path& assetPath)
       -> std::unique_ptr<IAssetReference> override;
+
+    void
+    RegisterAssetDatabaseObserver(IAssetDatabaseObserver* observer) override;
+
+    void
+    UnregisterAssetDatabaseObserver(IAssetDatabaseObserver* observer) override;
 
   private:
     /**

@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Core/Asset/Database/IAssetDatabase.hpp"
+#include "Core/Asset/Database/IAssetDatabaseObserver.hpp"
 #include "Core/Rendering/DrawCall/DrawCallList/IDrawCallList.hpp"
 #include "Core/Rendering/DrawCall/IDrawCallFactory.hpp"
 #include "Core/Rendering/Mesh/IMeshFactory.hpp"
@@ -69,6 +71,7 @@ namespace Dwarf
   class DrawCallWorker
     : public IDrawCallWorker
     , public ILoadedSceneObserver
+    , public IAssetDatabaseObserver
   {
   private:
     std::thread                        mWorkerThread;
@@ -78,6 +81,7 @@ namespace Dwarf
     std::unique_ptr<IDrawCallList>&    mDrawCallList;
     std::shared_ptr<IMeshFactory>      mMeshFactory;
     std::shared_ptr<IMeshBufferWorker> mMeshBufferWorker;
+    std::shared_ptr<IAssetDatabase>    mAssetDatabase;
     std::condition_variable            mCondition;
     std::atomic<bool>                  mStopWorker = false;
     std::atomic<bool>                  mInvalidate = false;
@@ -89,7 +93,8 @@ namespace Dwarf
                    std::shared_ptr<IDrawCallFactory>  drawCallFactory,
                    std::unique_ptr<IDrawCallList>&    drawCallList,
                    std::shared_ptr<IMeshFactory>      meshFactory,
-                   std::shared_ptr<IMeshBufferWorker> meshBufferWorker);
+                   std::shared_ptr<IMeshBufferWorker> meshBufferWorker,
+                   std::shared_ptr<IAssetDatabase>    assetDatabase);
 
     ~DrawCallWorker() override;
 
@@ -119,5 +124,8 @@ namespace Dwarf
 
     void
     OnSceneUnload() override;
+
+    void
+    OnReimportAll() override;
   };
 }

@@ -229,8 +229,8 @@ namespace Dwarf
                                     .GetSettings()
                                     .GetFogSettings()
                                     .End,
-                                 0.25f,
-                                 0.0f,
+                                 0.25F,
+                                 0.0F,
                                  +FLT_MAX,
                                  "Start: %.1f",
                                  "End: %.1f",
@@ -243,8 +243,8 @@ namespace Dwarf
                               .GetSettings()
                               .GetFogSettings()
                               .Density,
-                           0.005f,
-                           0.0f,
+                           0.005F,
+                           0.0F,
                            +FLT_MAX,
                            "%.3f",
                            0);
@@ -294,8 +294,8 @@ namespace Dwarf
                           .GetSettings()
                           .GetShadowSettings()
                           .Distance,
-                       10.0f,
-                       10.0f,
+                       10.0F,
+                       10.0F,
                        +FLT_MAX,
                        "%.1f m");
 
@@ -306,8 +306,8 @@ namespace Dwarf
                             .GetSettings()
                             .GetShadowSettings()
                             .SplitLambda,
-                         0.0f,
-                         1.0f);
+                         0.0F,
+                         1.0F);
 
       // Bias
       ImGui::SliderFloat("Depth Bias##ShadowMapping",
@@ -445,7 +445,7 @@ namespace Dwarf
                                          .GetExposure();
           if (ImGui::DragFloat("Exposure##Exposure",
                                &exposureValue,
-                               0.0005f,
+                               0.0005F,
                                0.0F,
                                20.0F,
                                "%f"))

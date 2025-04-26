@@ -117,17 +117,8 @@ namespace Dwarf
   void
   AssetDatabase::ReimportAll()
   {
-    // CLearing database
-    // Clear();
-
-    // Reimporting default assets
-    // ImportDefaultAssets();
-
     std::vector<std::filesystem::path> materialPaths = {};
     std::vector<std::filesystem::path> otherPaths = {};
-
-    // Reimporting all assets from the asset directory
-    // RecursiveImport(mAssetDirectoryPath.t);
 
     GatherAssetPaths(mAssetDirectoryPath, materialPaths, otherPaths);
 
@@ -139,6 +130,11 @@ namespace Dwarf
     for (auto& path : materialPaths)
     {
       Import(path);
+    }
+
+    for (auto* observer : mObservers)
+    {
+      observer->OnReimportAll();
     }
   }
 
@@ -159,11 +155,6 @@ namespace Dwarf
           }
         case ASSET_TYPE::TEXTURE:
           {
-            // mRegistry.replace<TextureAsset>(
-            //   asset->GetHandle(),
-            //   mTextureFactory->FromPath(assetPath),
-            //   mTextureFactory->GetPlaceholderTexture());
-
             mRegistry.get<TextureAsset>(asset->GetHandle()).SetTexture(nullptr);
             break;
           }
@@ -660,5 +651,18 @@ namespace Dwarf
         return;
       }
     }
+  }
+
+  void
+  AssetDatabase::RegisterAssetDatabaseObserver(IAssetDatabaseObserver* observer)
+  {
+    mObservers.push_back(observer);
+  }
+
+  void
+  AssetDatabase::UnregisterAssetDatabaseObserver(
+    IAssetDatabaseObserver* observer)
+  {
+    std::erase(mObservers, observer);
   }
 }

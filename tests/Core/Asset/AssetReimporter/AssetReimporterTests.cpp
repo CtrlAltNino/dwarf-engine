@@ -56,6 +56,14 @@ public:
               (const std::filesystem::path& from,
                const std::filesystem::path& to),
               (override));
+  MOCK_METHOD(void,
+              RegisterAssetDatabaseObserver,
+              (IAssetDatabaseObserver * observer),
+              (override));
+  MOCK_METHOD(void,
+              UnregisterAssetDatabaseObserver,
+              (IAssetDatabaseObserver * observer),
+              (override));
 };
 
 class AssetReimporterTest : public ::testing::Test

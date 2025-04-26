@@ -10,12 +10,14 @@ namespace Dwarf
     std::shared_ptr<ILoadedScene>      loadedScene,
     std::shared_ptr<IDrawCallFactory>  drawCallFactory,
     std::shared_ptr<IMeshFactory>      meshFactory,
-    std::shared_ptr<IMeshBufferWorker> meshBufferWorker)
+    std::shared_ptr<IMeshBufferWorker> meshBufferWorker,
+    std::shared_ptr<IAssetDatabase>    assetDatabase)
     : mLogger(std::move(logger))
     , mLoadedScene(std::move(loadedScene))
     , mDrawCallFactory(std::move(drawCallFactory))
     , mMeshFactory(std::move(meshFactory))
     , mMeshBufferWorker(std::move(meshBufferWorker))
+    , mAssetDatabase(std::move(assetDatabase))
   {
     mLogger->LogDebug(
       Log("DrawCallWorkerFactory created", "DrawCallWorkerFactory"));
@@ -36,6 +38,7 @@ namespace Dwarf
                                             mDrawCallFactory,
                                             drawCallList,
                                             mMeshFactory,
-                                            mMeshBufferWorker);
+                                            mMeshBufferWorker,
+                                            mAssetDatabase);
   }
 }
