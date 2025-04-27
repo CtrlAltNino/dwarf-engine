@@ -40,8 +40,6 @@ namespace Dwarf
     // Setup camera
     mCamera = cameraFactory->Create();
 
-    // mLoadedScene->PropagateSceneChange();
-
     mLogger->LogDebug(Log("SceneViewerWindow created", "SceneViewerWindow"));
   }
 
@@ -73,8 +71,6 @@ namespace Dwarf
     mCamera = cameraFactory->Create(serializedModule.t["camera"]);
 
     Deserialize(serializedModule.t);
-
-    // mLoadedScene->PropagateSceneChange();
 
     mLogger->LogDebug(Log("SceneViewerWindow created", "SceneViewerWindow"));
   }
