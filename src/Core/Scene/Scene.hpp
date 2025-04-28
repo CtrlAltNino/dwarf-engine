@@ -17,6 +17,7 @@ namespace Dwarf
   private:
     /// @brief The registry that holds all entities and components.
     entt::registry                  mRegistry;
+    std::vector<ISceneObserver*>    mObservers;
     std::shared_ptr<IAssetDatabase> mAssetDatabase;
 
     /// @brief The root entity in the scene graph.
@@ -62,6 +63,12 @@ namespace Dwarf
           std::shared_ptr<IAssetDatabase>   assetDatabase);
 
     ~Scene() override;
+
+    void
+    RegisterSceneObserver(ISceneObserver* observer) override;
+
+    void
+    UnregisterSceneObserver(ISceneObserver* observer) override;
 
     /// @brief Retrieves the asset reference of the scene.
     /// @return The asset reference.

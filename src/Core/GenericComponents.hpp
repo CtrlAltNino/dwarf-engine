@@ -62,11 +62,5 @@ namespace Dwarf
       : Name(std::move(name))
     {
     }
-
-    void
-    setName(const std::string name)
-    {
-      Name = name;
-    }
   };
 }

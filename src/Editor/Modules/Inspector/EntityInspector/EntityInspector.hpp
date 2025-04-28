@@ -29,7 +29,7 @@ namespace Dwarf
 
     template<typename T>
     void
-    RenderComponent(T& component);
+    RenderComponent(T component);
 
   public:
     EntityInspector(std::shared_ptr<IDwarfLogger>     logger,

@@ -1,3 +1,4 @@
+#include "Core/Scene/Components/MeshRendererComponentHandle.hpp"
 #include "pch.hpp"
 
 #include "Core/Asset/AssetReference/IAssetReference.hpp"
@@ -183,15 +184,15 @@ namespace Dwarf
             if (source.HasComponent<MeshRendererComponent>())
             {
               std::unique_ptr<IAssetReference> copiedMesh =
-                source.GetComponent<MeshRendererComponent>().GetModelAsset() !=
-                    nullptr
+                source.GetComponentHandle<MeshRendererComponentHandle>()
+                      .GetModelAsset() != nullptr
                   ? mAssetDatabase->Retrieve(source.GetUID())
                   : nullptr;
 
               std::map<int, std::unique_ptr<IAssetReference>> copiedMaterials;
 
               for (const auto& material :
-                   source.GetComponent<MeshRendererComponent>()
+                   source.GetComponentHandle<MeshRendererComponentHandle>()
                      .GetMaterialAssets())
               {
                 copiedMaterials[material.first] =
@@ -199,7 +200,12 @@ namespace Dwarf
               }
 
               copy.AddComponent<MeshRendererComponent>(MeshRendererComponent(
-                std::move(copiedMesh), std::move(copiedMaterials)));
+                std::move(copiedMesh),
+                std::move(copiedMaterials),
+                source.GetComponentHandle<MeshRendererComponentHandle>()
+                  .GetIsHidden(),
+                source.GetComponentHandle<MeshRendererComponentHandle>()
+                  .GetCastShadow()));
               // mLoadedScene->PropagateSceneChange();
             }
           }
@@ -231,15 +237,15 @@ namespace Dwarf
           if (source.HasComponent<MeshRendererComponent>())
           {
             std::unique_ptr<IAssetReference> copiedMesh =
-              source.GetComponent<MeshRendererComponent>().GetModelAsset() !=
-                  nullptr
+              source.GetComponentHandle<MeshRendererComponentHandle>()
+                    .GetModelAsset() != nullptr
                 ? mAssetDatabase->Retrieve(source.GetUID())
                 : nullptr;
 
             std::map<int, std::unique_ptr<IAssetReference>> copiedMaterials;
 
             for (const auto& material :
-                 source.GetComponent<MeshRendererComponent>()
+                 source.GetComponentHandle<MeshRendererComponentHandle>()
                    .GetMaterialAssets())
             {
               copiedMaterials.at(material.first) =
@@ -522,15 +528,15 @@ namespace Dwarf
           if (source.HasComponent<MeshRendererComponent>())
           {
             std::unique_ptr<IAssetReference> copiedMesh =
-              source.GetComponent<MeshRendererComponent>().GetModelAsset() !=
-                  nullptr
+              source.GetComponentHandle<MeshRendererComponentHandle>()
+                    .GetModelAsset() != nullptr
                 ? mAssetDatabase->Retrieve(source.GetUID())
                 : nullptr;
 
             std::map<int, std::unique_ptr<IAssetReference>> copiedMaterials;
 
             for (const auto& material :
-                 source.GetComponent<MeshRendererComponent>()
+                 source.GetComponentHandle<MeshRendererComponentHandle>()
                    .GetMaterialAssets())
             {
               copiedMaterials.at(material.first) =
