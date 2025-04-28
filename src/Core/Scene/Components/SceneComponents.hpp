@@ -297,32 +297,31 @@ namespace Dwarf
   /// well as other information on how to render these meshes.
   struct MeshRendererComponent : public ISerializable
   {
-  private:
-    bool isHidden = false;
-    /// @brief ID of the mesh asset.
-    std::unique_ptr<IAssetReference> modelAsset = nullptr;
-    std::unique_ptr<IMeshBuffer>     idMeshBuffer = nullptr;
+    std::unique_ptr<IAssetReference> ModelAsset = nullptr;
+    std::unique_ptr<IMeshBuffer>     IdMeshBuffer = nullptr;
 
     /// @brief The materials with which the model is to be rendered. The list
     /// index of the materials corresponds to the material index of the
     /// submeshes.
-    std::map<int, std::unique_ptr<IAssetReference>> materialAssets;
+    std::map<int, std::unique_ptr<IAssetReference>> MaterialAssets;
 
-    /// @brief Flag that decides if this model should be used in the shadow cast
-    /// pass.
-    bool canCastShadow = true;
+    bool IsHidden = false;
+    bool CastShadow = true;
 
-  public:
     MeshRendererComponent() = default;
     MeshRendererComponent(
       std::unique_ptr<IAssetReference>                modelAsset,
-      std::map<int, std::unique_ptr<IAssetReference>> materials)
-      : modelAsset(std::move(modelAsset))
-      , materialAssets(std::move(materials))
+      std::map<int, std::unique_ptr<IAssetReference>> materials,
+      bool                                            isHidden = false,
+      bool                                            castShadow = true)
+      : ModelAsset(std::move(modelAsset))
+      , MaterialAssets(std::move(materials))
+      , IsHidden(isHidden)
+      , CastShadow(castShadow)
     {
     }
 
-    auto
+    /*auto
     GetModelAsset() -> std::unique_ptr<IAssetReference>&
     {
       return modelAsset;
@@ -347,26 +346,26 @@ namespace Dwarf
       return materialAssets;
     }
 
-    auto
-    IsHidden() -> bool&
+    [[nodiscard]] auto
+    GetIsHidden() const -> bool
     {
-      return isHidden;
+      return IsHidden;
     }
 
     auto
     IdMesh() -> std::unique_ptr<IMeshBuffer>&
     {
       return idMeshBuffer;
-    }
+    }*/
 
     auto
     Serialize() -> nlohmann::json override
     {
       nlohmann::json serializedMeshRendererComponent;
-      if (modelAsset)
+      if (ModelAsset)
       {
         serializedMeshRendererComponent["Model"] =
-          modelAsset->GetUID().toString();
+          ModelAsset->GetUID().toString();
       }
       else
       {
@@ -375,13 +374,13 @@ namespace Dwarf
 
       int materialCount = 0;
 
-      for (const auto& [index, material] : materialAssets)
+      for (const auto& [index, material] : MaterialAssets)
       {
         serializedMeshRendererComponent["Materials"][std::to_string(index)] =
           material ? material->GetUID().toString() : "null";
       }
 
-      serializedMeshRendererComponent["Hidden"] = isHidden;
+      serializedMeshRendererComponent["Hidden"] = IsHidden;
 
       return serializedMeshRendererComponent;
     }

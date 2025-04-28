@@ -1,3 +1,4 @@
+#include "Core/Scene/Components/MeshRendererComponentHandle.hpp"
 #include "pch.hpp"
 
 #include "DrawCallWorker.hpp"
@@ -106,21 +107,23 @@ namespace Dwarf
 
     for (auto view = scene.GetRegistry()
                        .view<TransformComponent, MeshRendererComponent>();
-         auto [entityHandle, transform, meshRenderer] : view.each())
+         auto [entityHandle, transform, component] : view.each())
     {
-      if (meshRenderer.GetModelAsset() && !meshRenderer.IsHidden())
+      MeshRendererComponentHandle meshRenderer(scene.GetRegistry(),
+                                               entityHandle);
+      if (meshRenderer.GetModelAsset() && !meshRenderer.GetIsHidden())
       {
         auto& model =
           dynamic_cast<ModelAsset&>(meshRenderer.GetModelAsset()->GetAsset());
 
         for (const auto& mesh : model.Meshes())
         {
-          if (meshRenderer.MaterialAssets().contains(
+          if (meshRenderer.GetMaterialAssets().contains(
                 mesh->GetMaterialIndex()) &&
-              meshRenderer.MaterialAssets()[mesh->GetMaterialIndex()])
+              meshRenderer.GetMaterialAssets().at(mesh->GetMaterialIndex()))
           {
             MaterialAsset& materialAsset =
-              dynamic_cast<MaterialAsset&>(meshRenderer.MaterialAssets()
+              dynamic_cast<MaterialAsset&>(meshRenderer.GetMaterialAssets()
                                              .at(mesh->GetMaterialIndex())
                                              ->GetAsset());
 

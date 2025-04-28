@@ -1,3 +1,4 @@
+#include "Core/Scene/Components/MeshRendererComponentHandle.hpp"
 #include "pch.hpp"
 
 #include "Core/Rendering/AntiAliasingTypes.hpp"
@@ -232,25 +233,26 @@ namespace Dwarf
 
     for (auto view = scene.GetRegistry()
                        .view<TransformComponent, MeshRendererComponent>();
-         auto [entity, transform, meshRenderer] : view.each())
+         auto [entity, transform, component] : view.each())
     {
-      if (meshRenderer.GetModelAsset() && !meshRenderer.IsHidden())
+      MeshRendererComponentHandle meshRenderer(scene.GetRegistry(), entity);
+      if (meshRenderer.GetModelAsset() && !meshRenderer.GetIsHidden())
       {
-        if (!meshRenderer.IdMesh())
+        if (!meshRenderer.GetIdMeshBuffer())
         {
           auto& model =
             dynamic_cast<ModelAsset&>(meshRenderer.GetModelAsset()->GetAsset());
           std::unique_ptr<IMesh> mergedMesh =
             mMeshFactory->MergeMeshes(model.Meshes());
-          meshRenderer.IdMesh() =
-            std::move(mMeshBufferFactory->Create(mergedMesh));
+          meshRenderer.SetIdMeshBuffer(
+            std::move(mMeshBufferFactory->Create(mergedMesh)));
         }
 
         glm::mat4 modelMatrix = transform.GetModelMatrix();
         auto      entityId = (uint32_t)entity;
         mIdMaterial->GetShaderParameters()->SetParameter("objectId", entityId);
         mRendererApi->RenderIndexed(
-          *meshRenderer.IdMesh(), *mIdMaterial, camera, modelMatrix);
+          *meshRenderer.GetIdMeshBuffer(), *mIdMaterial, camera, modelMatrix);
       }
     }
     mIdBuffer->Unbind();

@@ -59,6 +59,13 @@ namespace Dwarf
       return mRegistry.get().get<T>(mEntityHandle);
     }
 
+    template<typename T>
+    auto
+    GetComponentHandle() -> T
+    {
+      return T(mRegistry, mEntityHandle);
+    }
+
     /// @brief Removes a component from the entity.
     /// @tparam T Type of component to remove.
     template<typename T>

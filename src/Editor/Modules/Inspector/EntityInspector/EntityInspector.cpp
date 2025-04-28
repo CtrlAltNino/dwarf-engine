@@ -1,6 +1,8 @@
 #include "pch.hpp"
 
 #include "Core/Asset/Database/AssetComponents.hpp"
+#include "Core/Scene/Components/MeshRendererComponentHandle.hpp"
+#include "Core/Scene/Components/NameComponentHandle.hpp"
 #include "EntityInspector.hpp"
 #include "UI/DwarfUI.hpp"
 
@@ -71,7 +73,7 @@ namespace Dwarf
 
   template<>
   void
-  EntityInspector::RenderComponent<IDComponent>(IDComponent& component)
+  EntityInspector::RenderComponent<IDComponent>(IDComponent component)
   {
     ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
     ImGui::TextWrapped("%s", component.getId().toString().c_str());
@@ -79,16 +81,19 @@ namespace Dwarf
 
   template<>
   void
-  EntityInspector::RenderComponent<NameComponent>(NameComponent& component)
+  EntityInspector::RenderComponent<NameComponentHandle>(
+    NameComponentHandle component)
   {
     ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
     ImGui::TextWrapped("Name");
     ImGui::SameLine();
-    char* str0 = { (char*)component.Name.c_str() };
+    char* str0 = { (char*)component.GetName().c_str() };
     ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
                          COMPONENT_PANEL_PADDING);
-    ImGui::InputText("##name_input", str0, sizeof(char) * 64);
-    component.Name = std::string(str0);
+    if (ImGui::InputText("##name_input", str0, sizeof(char) * 64))
+    {
+      component.SetName(std::string(str0));
+    }
     ImGui::PopItemWidth();
   }
 
@@ -195,68 +200,82 @@ namespace Dwarf
 
   template<>
   void
-  EntityInspector::RenderComponent<MeshRendererComponent>(
-    MeshRendererComponent& component)
+  EntityInspector::RenderComponent<MeshRendererComponentHandle>(
+    MeshRendererComponentHandle componentHandle)
   {
-    // TODO: Slot for a mesh asset
     ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
-    if (ImGui::Checkbox("Hidden", &component.IsHidden()))
+
+    bool isHidden = componentHandle.GetIsHidden();
+    if (ImGui::Checkbox("Hidden", &isHidden))
     {
-      // mLoadedScene->PropagateSceneChange();
+      componentHandle.SetIsHidden(isHidden);
     }
     ImGui::TextWrapped("Model Asset");
     ImGui::SameLine();
     ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
                          COMPONENT_PANEL_PADDING);
 
-    bool wasNull = component.GetModelAsset() == nullptr;
+    bool                wasNull = componentHandle.GetModelAsset() == nullptr;
+    std::optional<UUID> modelAssetId =
+      componentHandle.GetModelAsset()->GetUID();
 
     if (DwarfUI::AssetInput<ModelAsset>(
-          mAssetDatabase, component.GetModelAsset(), "##modelAsset"))
+          mAssetDatabase, modelAssetId, "##modelAsset"))
     {
-      // mLoadedScene->PropagateSceneChange();
+      componentHandle.SetModelAsset(
+        modelAssetId.has_value()
+          ? mAssetDatabase->Retrieve(modelAssetId.value())
+          : nullptr);
 
-      if (component.GetModelAsset() != nullptr)
+      if (componentHandle.GetModelAsset() != nullptr)
       {
-        static UUID memory = component.GetModelAsset()->GetUID();
+        static UUID memory = componentHandle.GetModelAsset()->GetUID();
 
-        if ((component.GetModelAsset()->GetUID() != memory) || wasNull)
+        if ((componentHandle.GetModelAsset()->GetUID() != memory) || wasNull)
         {
           // wasNull = false;
-          memory = component.GetModelAsset()->GetUID();
-          component.MaterialAssets().clear();
-          component.IdMesh() = nullptr;
+          memory = componentHandle.GetModelAsset()->GetUID();
+          componentHandle.ClearMaterialAssets();
+          componentHandle.SetIdMeshBuffer(nullptr);
+          // component.IdMesh() = nullptr;
           for (auto& mesh : (dynamic_cast<ModelAsset&>(
-                               component.GetModelAsset()->GetAsset()))
+                               componentHandle.GetModelAsset()->GetAsset()))
                               .Meshes())
           {
-            component.MaterialAssets()[mesh->GetMaterialIndex()] = nullptr;
+            componentHandle.SetMaterialAsset(mesh->GetMaterialIndex(), nullptr);
           }
         }
       }
     }
     ImGui::PopItemWidth();
 
-    if (component.GetModelAsset() != nullptr)
+    if (componentHandle.GetModelAsset() != nullptr)
     {
       ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
       ImGui::TextWrapped("Materials");
 
       ImGui::Indent(16.0F);
-      for (auto& mat : component.MaterialAssets())
+      for (const auto& mat : componentHandle.GetMaterialAssets())
       {
         ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
         ImGui::TextWrapped("%s", std::to_string(mat.first).c_str());
         ImGui::SameLine();
         ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
                              COMPONENT_PANEL_PADDING);
+        std::optional<UUID> materialAssetId = mat.second->GetUID();
         if (DwarfUI::AssetInput<MaterialAsset>(
               mAssetDatabase,
-              mat.second,
+              materialAssetId,
               std::format("##materialAsset{}", std::to_string(mat.first))
                 .c_str()))
         {
           // mLoadedScene->PropagateSceneChange();
+
+          componentHandle.SetMaterialAsset(
+            mat.first,
+            materialAssetId.has_value()
+              ? mAssetDatabase->Retrieve(materialAssetId.value())
+              : nullptr);
         }
         ImGui::PopItemWidth();
       }
@@ -278,7 +297,8 @@ namespace Dwarf
     {
       drawList->ChannelsSetCurrent(1);
       BeginComponent("Name");
-      RenderComponent(ent.GetComponent<NameComponent>());
+      auto& comp = ent.GetComponent<NameComponent>();
+      RenderComponent(comp);
       drawList->ChannelsSetCurrent(0);
       EndComponent();
     }
@@ -287,7 +307,7 @@ namespace Dwarf
     {
       drawList->ChannelsSetCurrent(1);
       BeginComponent("Transform");
-      RenderComponent(ent.GetComponent<TransformComponent>());
+      RenderComponent(&ent.GetComponent<TransformComponent>());
       drawList->ChannelsSetCurrent(0);
       EndComponent();
     }
@@ -296,7 +316,7 @@ namespace Dwarf
     {
       drawList->ChannelsSetCurrent(1);
       BeginComponent("Light");
-      RenderComponent(ent.GetComponent<LightComponent>());
+      RenderComponent(&ent.GetComponent<LightComponent>());
       drawList->ChannelsSetCurrent(0);
       EndComponent();
     }
@@ -305,7 +325,7 @@ namespace Dwarf
     {
       drawList->ChannelsSetCurrent(1);
       BeginComponent("Mesh Renderer");
-      RenderComponent(ent.GetComponent<MeshRendererComponent>());
+      RenderComponent(ent.GetComponentHandle<MeshRendererComponentHandle>());
       drawList->ChannelsSetCurrent(0);
       EndComponent();
     }

@@ -2,6 +2,7 @@
 
 #include "Core/Scene/Entity/Entity.hpp"
 #include "Core/Scene/Properties/ISceneProperties.hpp"
+#include "ISceneObserver.hpp"
 #include "Utilities/ISerializable.hpp"
 #include <entt/entity/fwd.hpp>
 
@@ -13,6 +14,12 @@ namespace Dwarf
   public:
     /// @brief Destructor.
     virtual ~IScene() = default;
+
+    virtual void
+    RegisterSceneObserver(ISceneObserver* observer) = 0;
+
+    virtual void
+    UnregisterSceneObserver(ISceneObserver* observer) = 0;
 
     /// @brief Retrieves the registry of the scene. This is the ECS registry
     /// that holds all entities and components.

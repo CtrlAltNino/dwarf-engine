@@ -33,6 +33,18 @@ namespace Dwarf
   }
 
   void
+  Scene::RegisterSceneObserver(ISceneObserver* observer)
+  {
+    mObservers.push_back(observer);
+  }
+
+  void
+  Scene::UnregisterSceneObserver(ISceneObserver* observer)
+  {
+    std::erase(mObservers, observer);
+  }
+
+  void
   Scene::Deserialize(const nlohmann::json& serializedSceneGraph)
   {
     for (auto const& element : serializedSceneGraph)
@@ -99,13 +111,14 @@ namespace Dwarf
         }
       }
 
-      auto& comp = newEntity.AddComponent<MeshRendererComponent>(
-        std::move(modelAsset), std::move(materialAssets));
-
+      bool isHidden = false;
       if (serializedEntity["MeshRendererComponent"].contains("Hidden"))
       {
-        comp.IsHidden() = serializedEntity["MeshRendererComponent"]["Hidden"];
+        isHidden = serializedEntity["MeshRendererComponent"]["Hidden"];
       }
+
+      auto& comp = newEntity.AddComponent<MeshRendererComponent>(
+        std::move(modelAsset), std::move(materialAssets));
     }
 
     if (serializedEntity.contains("Children"))
