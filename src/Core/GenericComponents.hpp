@@ -8,25 +8,11 @@ namespace Dwarf
 {
   struct PathComponent
   {
-  private:
     std::filesystem::path Path;
 
-  public:
     PathComponent(std::filesystem::path path)
       : Path(std::move(path))
     {
-    }
-
-    [[nodiscard]] auto
-    getPath() const -> const std::filesystem::path&
-    {
-      return Path;
-    }
-
-    void
-    setPath(const std::filesystem::path path)
-    {
-      Path = path;
     }
   };
 

@@ -187,13 +187,13 @@ namespace Dwarf
     auto                   parentMat = glm::mat4(1.0F);
     std::vector<glm::mat4> matriceStack;
 
-    matriceStack.push_back(transform.GetModelMatrix());
+    matriceStack.push_back(transform.GetMatrix());
 
     if (entt::entity cursor = transform.GetParent(); cursor != entt::null)
     {
       Entity cur(cursor, mRegistry);
       matriceStack.push_back(
-        cur.GetComponent<TransformComponent>().GetModelMatrix());
+        cur.GetComponent<TransformComponent>().GetMatrix());
     }
 
     for (auto it = matriceStack.rbegin(); it < matriceStack.rend(); it++)

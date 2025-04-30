@@ -111,9 +111,11 @@ namespace Dwarf
 
       rot.x = RAD_2_DEG * atan2f(mat[1][2], mat[2][2]);
 
-      mProperties.Transform.GetEulerAngles().x += rot.x;
-      mProperties.Transform.GetEulerAngles().x = std::min(
-        std::max(mProperties.Transform.GetEulerAngles().x, -90.0F), 90.0F);
+      glm::vec3 updatedEulerAngles = mProperties.Transform.GetEulerAngles();
+
+      updatedEulerAngles.x += rot.x;
+      updatedEulerAngles.x =
+        std::min(std::max(updatedEulerAngles.x, -90.0F), 90.0F);
 
       mat =
         glm::rotate(glm::mat4(1.0F), yAngle * DEG_2_RAD, glm::vec3(0, 1, 0));
@@ -121,7 +123,9 @@ namespace Dwarf
               atan2f(-mat[0][2],
                      sqrtf((mat[1][2] * mat[1][2]) + (mat[2][2] * mat[2][2])));
 
-      mProperties.Transform.GetEulerAngles().y += rot.y;
+      updatedEulerAngles.y += rot.y;
+
+      mProperties.Transform.SetEulerAngles(updatedEulerAngles);
     }
 
     glm::vec3 movementVector = {

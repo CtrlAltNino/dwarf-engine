@@ -1,10 +1,13 @@
 #include "pch.hpp"
 
 #include "Core/Asset/Database/AssetComponents.hpp"
+#include "Core/Scene/Components/LightComponentHandle.hpp"
 #include "Core/Scene/Components/MeshRendererComponentHandle.hpp"
 #include "Core/Scene/Components/NameComponentHandle.hpp"
+#include "Core/Scene/Components/TransformComponentHandle.hpp"
 #include "EntityInspector.hpp"
 #include "UI/DwarfUI.hpp"
+#include <glm/gtc/type_ptr.hpp>
 
 #define COMPONENT_PANEL_PADDING (8.0f)
 #define ADD_BUTTON_WIDTH (40.0f)
@@ -87,6 +90,7 @@ namespace Dwarf
     ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
     ImGui::TextWrapped("Name");
     ImGui::SameLine();
+    // TODO: Needs to be fixed
     char* str0 = { (char*)component.GetName().c_str() };
     ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
                          COMPONENT_PANEL_PADDING);
@@ -99,8 +103,8 @@ namespace Dwarf
 
   template<>
   void
-  EntityInspector::RenderComponent<TransformComponent>(
-    TransformComponent& component)
+  EntityInspector::RenderComponent<TransformComponentHandle>(
+    TransformComponentHandle component)
   {
     ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
 
@@ -109,8 +113,11 @@ namespace Dwarf
 
     ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
                          COMPONENT_PANEL_PADDING);
-    ImGui::DragFloat3(
-      "##transform_position", &component.GetPosition().x, 0.015F);
+    glm::vec3 position = component.GetPosition();
+    if (ImGui::DragFloat3("##transform_position", &position.x, 0.015F))
+    {
+      component.SetPosition(position);
+    }
     ImGui::PopItemWidth();
 
     ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
@@ -118,11 +125,13 @@ namespace Dwarf
     ImGui::TextWrapped("Rotation");
     ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
 
-    glm::vec3 rot = component.GetEulerAngles();
+    glm::vec3 rotation = component.GetEulerAngles();
     ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
                          COMPONENT_PANEL_PADDING);
-    ImGui::DragFloat3("##transform_rotation", &rot.x, 0.05F);
-    component.GetEulerAngles() = rot;
+    if (ImGui::DragFloat3("##transform_rotation", &rotation.x, 0.05F))
+    {
+      component.SetEulerAngles(rotation);
+    }
     ImGui::PopItemWidth();
 
     ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
@@ -132,27 +141,30 @@ namespace Dwarf
 
     ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
                          COMPONENT_PANEL_PADDING);
-    ImGui::DragFloat3("##transform_scale", &component.GetScale().x, 0.015F);
+    glm::vec3 scale = component.GetScale();
+    if (ImGui::DragFloat3("##transform_scale", &scale.x, 0.015F))
+    {
+      component.SetScale(scale);
+    }
     ImGui::PopItemWidth();
   }
 
   template<>
   void
-  EntityInspector::RenderComponent<LightComponent>(LightComponent& component)
+  EntityInspector::RenderComponent<LightComponentHandle>(
+    LightComponentHandle component)
   {
     ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
 
     static int itemCurrent = 0;
-    ImGui::TextWrapped("Light type");
-    ImGui::SameLine();
     ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
                          COMPONENT_PANEL_PADDING);
-    ImGui::Combo("##light_type",
-                 &itemCurrent,
-                 LightComponent::LIGHT_TYPE_NAMES.data(),
-                 LightComponent::LIGHT_TYPE_NAMES.size());
+    LightType lightType = component.GetType();
+    if (DwarfUI::ComboEnum("Light type##light_type", lightType))
+    {
+      component.SetType(lightType);
+    }
     ImGui::PopItemWidth();
-    component.GetType() = (LightComponent::LIGHT_TYPE)itemCurrent;
 
     ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
 
@@ -160,8 +172,12 @@ namespace Dwarf
     ImGui::SameLine();
     ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
                          COMPONENT_PANEL_PADDING);
-    ImGui::ColorEdit3(
-      "##light_color", &component.GetColor().r, ImGuiColorEditFlags_None);
+    glm::vec3 color = component.GetColor();
+    if (ImGui::ColorEdit3(
+          "##light_color", glm::value_ptr(color), ImGuiColorEditFlags_None))
+    {
+      component.SetColor(color);
+    }
     ImGui::PopItemWidth();
 
     ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
@@ -170,30 +186,40 @@ namespace Dwarf
     ImGui::SameLine();
     ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
                          COMPONENT_PANEL_PADDING);
-    ImGui::DragFloat(
-      "##light_attenuation", &component.GetAttenuation(), 0.015F);
+    float attenuation = component.GetAttenuation();
+    if (ImGui::DragFloat("##light_attenuation", &attenuation, 0.015F))
+    {
+      component.SetAttenuation(attenuation);
+    }
     ImGui::PopItemWidth();
 
-    if (component.GetType() == LightComponent::LIGHT_TYPE::POINT_LIGHT)
+    if (component.GetType() == LightType::PointLight)
     {
       ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
       ImGui::TextWrapped("Radius");
       ImGui::SameLine();
       ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
                            COMPONENT_PANEL_PADDING);
-      ImGui::DragFloat("##light_point_radius", &component.GetRadius(), 0.015F);
+      float radius = component.GetRadius();
+      if (ImGui::DragFloat("##light_point_radius", &radius, 0.015F))
+      {
+        component.SetRadius(radius);
+      }
       ImGui::PopItemWidth();
     }
 
-    if (component.GetType() == LightComponent::LIGHT_TYPE::SPOT_LIGHT)
+    if (component.GetType() == LightType::SpotLight)
     {
       ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
       ImGui::TextWrapped("Opening Angle");
       ImGui::SameLine();
       ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
                            COMPONENT_PANEL_PADDING);
-      ImGui::SliderFloat(
-        "##light_spot_angle", &component.GetOpeningAngle(), 0.0F, 180.0F);
+      float openingAngle = component.GetOpeningAngle();
+      if (ImGui::SliderFloat("##light_spot_angle", &openingAngle, 0.0F, 180.0F))
+      {
+        component.SetOpeningAngle(openingAngle);
+      }
       ImGui::PopItemWidth();
     }
   }
@@ -297,8 +323,7 @@ namespace Dwarf
     {
       drawList->ChannelsSetCurrent(1);
       BeginComponent("Name");
-      auto& comp = ent.GetComponent<NameComponent>();
-      RenderComponent(comp);
+      RenderComponent(ent.GetComponentHandle<NameComponentHandle>());
       drawList->ChannelsSetCurrent(0);
       EndComponent();
     }
@@ -307,7 +332,7 @@ namespace Dwarf
     {
       drawList->ChannelsSetCurrent(1);
       BeginComponent("Transform");
-      RenderComponent(&ent.GetComponent<TransformComponent>());
+      RenderComponent(ent.GetComponentHandle<TransformComponentHandle>());
       drawList->ChannelsSetCurrent(0);
       EndComponent();
     }
@@ -316,7 +341,7 @@ namespace Dwarf
     {
       drawList->ChannelsSetCurrent(1);
       BeginComponent("Light");
-      RenderComponent(&ent.GetComponent<LightComponent>());
+      RenderComponent(ent.GetComponentHandle<LightComponentHandle>());
       drawList->ChannelsSetCurrent(0);
       EndComponent();
     }

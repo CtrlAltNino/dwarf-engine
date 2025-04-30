@@ -105,7 +105,7 @@ namespace Dwarf
           ImGui::Text("Name");
           ImGui::Text("%s", nameComp.Name.c_str());
           ImGui::Text("Path");
-          ImGui::Text("%s", pathComp.getPath().string().c_str());
+          ImGui::Text("%s", pathComp.Path.string().c_str());
           ImGui::Text("ID");
           ImGui::Text("%s", idComp.getId().toString().c_str());
           ImGui::Separator();
@@ -123,7 +123,7 @@ namespace Dwarf
           ImGui::Text("Name");
           ImGui::Text("%s", nameComp.Name.c_str());
           ImGui::Text("Path");
-          ImGui::Text("%s", pathComp.getPath().string().c_str());
+          ImGui::Text("%s", pathComp.Path.string().c_str());
           ImGui::Text("ID");
           ImGui::Text("%s", idComp.getId().toString().c_str());
           ImGui::Separator();
@@ -140,7 +140,7 @@ namespace Dwarf
           ImGui::Text("Name");
           ImGui::Text("%s", nameComp.Name.c_str());
           ImGui::Text("Path");
-          ImGui::Text("%s", pathComp.getPath().string().c_str());
+          ImGui::Text("%s", pathComp.Path.string().c_str());
           ImGui::Text("ID");
           ImGui::Text("%s", idComp.getId().toString().c_str());
           ImGui::Separator();
@@ -160,7 +160,7 @@ namespace Dwarf
             ImGui::Text("Name");
             ImGui::Text("%s", nameComp.Name.c_str());
             ImGui::Text("Path");
-            ImGui::Text("%s", pathComp.getPath().string().c_str());
+            ImGui::Text("%s", pathComp.Path.string().c_str());
             ImGui::Text("ID");
             ImGui::Text("%s", idComp.getId().toString().c_str());
             ImGui::Separator();
@@ -178,7 +178,7 @@ namespace Dwarf
             ImGui::Text("Name");
             ImGui::Text("%s", nameComp.Name.c_str());
             ImGui::Text("Path");
-            ImGui::Text("%s", pathComp.getPath().string().c_str());
+            ImGui::Text("%s", pathComp.Path.string().c_str());
             ImGui::Text("ID");
             ImGui::Text("%s", idComp.getId().toString().c_str());
             ImGui::Separator();
@@ -196,7 +196,7 @@ namespace Dwarf
             ImGui::Text("Name");
             ImGui::Text("%s", nameComp.Name.c_str());
             ImGui::Text("Path");
-            ImGui::Text("%s", pathComp.getPath().string().c_str());
+            ImGui::Text("%s", pathComp.Path.string().c_str());
             ImGui::Text("ID");
             ImGui::Text("%s", idComp.getId().toString().c_str());
             ImGui::Separator();
@@ -214,7 +214,7 @@ namespace Dwarf
             ImGui::Text("Name");
             ImGui::Text("%s", nameComp.Name.c_str());
             ImGui::Text("Path");
-            ImGui::Text("%s", pathComp.getPath().string().c_str());
+            ImGui::Text("%s", pathComp.Path.string().c_str());
             ImGui::Text("ID");
             ImGui::Text("%s", idComp.getId().toString().c_str());
             ImGui::Separator();
@@ -232,7 +232,7 @@ namespace Dwarf
             ImGui::Text("Name");
             ImGui::Text("%s", nameComp.Name.c_str());
             ImGui::Text("Path");
-            ImGui::Text("%s", pathComp.getPath().string().c_str());
+            ImGui::Text("%s", pathComp.Path.string().c_str());
             ImGui::Text("ID");
             ImGui::Text("%s", idComp.getId().toString().c_str());
             ImGui::Separator();
@@ -250,7 +250,7 @@ namespace Dwarf
             ImGui::Text("Name");
             ImGui::Text("%s", nameComp.Name.c_str());
             ImGui::Text("Path");
-            ImGui::Text("%s", pathComp.getPath().string().c_str());
+            ImGui::Text("%s", pathComp.Path.string().c_str());
             ImGui::Text("ID");
             ImGui::Text("%s", idComp.getId().toString().c_str());
             ImGui::Separator();
@@ -269,7 +269,7 @@ namespace Dwarf
           ImGui::Text("Name");
           ImGui::Text("%s", nameComp.Name.c_str());
           ImGui::Text("Path");
-          ImGui::Text("%s", pathComp.getPath().string().c_str());
+          ImGui::Text("%s", pathComp.Path.string().c_str());
           ImGui::Text("ID");
           ImGui::Text("%s", idComp.getId().toString().c_str());
           ImGui::Separator();

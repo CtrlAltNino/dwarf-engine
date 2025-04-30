@@ -1,6 +1,6 @@
-#include "Core/Scene/Components/MeshRendererComponentHandle.hpp"
 #include "pch.hpp"
 
+#include "Core/Scene/Components/MeshRendererComponentHandle.hpp"
 #include "DrawCallWorker.hpp"
 
 namespace Dwarf
@@ -131,11 +131,17 @@ namespace Dwarf
                   .GetMaterialProperties()
                   .IsTransparent)
             {
-              transparentTemps.emplace_back(*mesh, materialAsset, transform);
+              transparentTemps.emplace_back(
+                *mesh,
+                materialAsset,
+                TransformComponentHandle(scene.GetRegistry(), entityHandle));
             }
             else
             {
-              batchedTemps.emplace_back(*mesh, materialAsset, transform);
+              batchedTemps.emplace_back(
+                *mesh,
+                materialAsset,
+                TransformComponentHandle(scene.GetRegistry(), entityHandle));
             }
           }
         }
@@ -184,7 +190,7 @@ namespace Dwarf
         if ((std::addressof(currentBatch->Material) !=
              std::addressof(currentTempDrawCall.Material.get())) ||
             (std::addressof(currentBatch->Transform) !=
-             std::addressof(currentTempDrawCall.Transform.get())))
+             std::addressof(currentTempDrawCall.Transform)))
         {
           // Push the current batch
           batches.push_back(std::move(currentBatch));

@@ -27,9 +27,9 @@ namespace Dwarf
      * @return Unique pointer to the created draw call
      */
     auto
-    Create(std::unique_ptr<IMesh>& mesh,
-           MaterialAsset&          material,
-           TransformComponent&     transform)
+    Create(std::unique_ptr<IMesh>&  mesh,
+           MaterialAsset&           material,
+           TransformComponentHandle transform)
       -> std::unique_ptr<IDrawCall> override;
   };
 }

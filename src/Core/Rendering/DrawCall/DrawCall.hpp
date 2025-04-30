@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Core/Asset/Database/AssetComponents.hpp"
-#include "Core/Scene/Components/SceneComponents.hpp"
 #include "IDrawCall.hpp"
 
 namespace Dwarf
@@ -11,12 +10,12 @@ namespace Dwarf
   private:
     std::unique_ptr<IMeshBuffer> mMeshBuffer;
     MaterialAsset&               mMaterial;
-    TransformComponent&          mTransform;
+    TransformComponentHandle&    mTransform;
 
   public:
     DrawCall(std::unique_ptr<IMeshBuffer>&& meshBuffer,
              MaterialAsset&                 material,
-             TransformComponent&            transform);
+             TransformComponentHandle&      transform);
 
     ~DrawCall() override = default;
 
@@ -42,6 +41,6 @@ namespace Dwarf
      * @return Reference to the transform component for the draw call
      */
     auto
-    GetTransform() -> TransformComponent& override;
+    GetTransform() -> TransformComponentHandle override;
   };
 }
