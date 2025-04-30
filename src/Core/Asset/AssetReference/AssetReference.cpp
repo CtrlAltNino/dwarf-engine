@@ -125,7 +125,7 @@ namespace Dwarf
   auto
   AssetReference::GetPath() const -> const std::filesystem::path&
   {
-    return mRegistry.get().get<PathComponent>(mAssetHandle).getPath();
+    return mRegistry.get().get<PathComponent>(mAssetHandle).Path;
   }
 
   /// @brief Retrieves the asset component of the asset, containing the actual
@@ -140,7 +140,7 @@ namespace Dwarf
         {
           TextureAsset& asset = mRegistry.get().get<TextureAsset>(mAssetHandle);
           std::filesystem::path path =
-            mRegistry.get().get<PathComponent>(mAssetHandle).getPath();
+            mRegistry.get().get<PathComponent>(mAssetHandle).Path;
 
           if (!asset.IsLoaded() && !mTextureLoadingWorker->IsRequested(path))
           {

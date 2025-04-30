@@ -25,11 +25,13 @@ namespace Dwarf
   }
 
   auto
-  CameraFactory::Create(glm::vec3 position,
-                        glm::vec3 rotation) const -> std::unique_ptr<ICamera>
+  CameraFactory::Create(glm::vec3 position, glm::vec3 rotation) const
+    -> std::unique_ptr<ICamera>
   {
     return std::make_unique<Camera>(
-      mLogger, mInputManager, CameraProperties({ position, rotation }));
+      mLogger,
+      mInputManager,
+      CameraProperties({ position, rotation, { 1, 1, 1 } }));
   }
 
   auto
@@ -43,8 +45,11 @@ namespace Dwarf
     return std::make_unique<Camera>(
       mLogger,
       nullptr,
-      CameraProperties(
-        { position, rotation }, fov, nearPlane, farPlane, aspectRatio));
+      CameraProperties({ position, rotation, { 1, 1, 1 } },
+                       fov,
+                       nearPlane,
+                       farPlane,
+                       aspectRatio));
   }
 
   auto

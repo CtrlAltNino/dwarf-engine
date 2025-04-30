@@ -1,5 +1,7 @@
 #include "pch.hpp"
 
+#include "Core/Scene/Components/NameComponentHandle.hpp"
+#include "Core/Scene/Components/PathComponentHandle.hpp"
 #include "AssetDatabase.hpp"
 #include "Core/Asset/AssetReference/IAssetReference.hpp"
 #include "Core/Asset/Database/AssetComponents.hpp"
@@ -242,7 +244,8 @@ namespace Dwarf
     auto view = mRegistry.view<PathComponent>();
     for (auto entity : view)
     {
-      if (view.get<PathComponent>(entity).getPath() == path &&
+      auto pathHandle = PathComponentHandle(mRegistry, entity);
+      if (pathHandle.GetPath() == path &&
           mRegistry.valid(entity))
       {
         mRegistry.destroy(entity);
@@ -353,7 +356,7 @@ namespace Dwarf
     return std::ranges::any_of(
       view,
       [view, path](auto entity)
-      { return view.get<PathComponent>(entity).getPath() == path; });
+      { return view.get<PathComponent>(entity).Path == path; });
   }
 
   auto
@@ -364,11 +367,12 @@ namespace Dwarf
     {
       if (view.get<IDComponent>(entity).getId() == uid)
       {
+        auto pathHandle = PathComponentHandle(mRegistry, entity);
         return mAssetReferenceFactory->Create(
           entity,
           mRegistry,
           AssetDatabase::GetAssetType(
-            view.get<PathComponent>(entity).getPath().extension().string()));
+            pathHandle.GetPath().extension().string()));
       }
     }
     return nullptr;
@@ -381,7 +385,8 @@ namespace Dwarf
     auto view = mRegistry.view<PathComponent>();
     for (auto entity : view)
     {
-      if (view.get<PathComponent>(entity).getPath() == path)
+      auto pathHandle = PathComponentHandle(mRegistry, entity);
+      if (pathHandle.GetPath() == path)
       {
         return mAssetReferenceFactory->Create(
           entity,
@@ -401,9 +406,11 @@ namespace Dwarf
 
     for (auto entity : view)
     {
-      if (view.get<PathComponent>(entity).getPath() == fromPath)
+      auto pathHandle = PathComponentHandle(mRegistry, entity);
+      if (pathHandle.GetPath() == fromPath)
       {
-        view.get<NameComponent>(entity).setName(toPath.stem().string());
+        auto nametHandle = NameComponentHandle(mRegistry, entity);
+        nametHandle.SetName(toPath.stem().string());
         break;
       }
     }
@@ -416,13 +423,14 @@ namespace Dwarf
     auto view = mRegistry.view<PathComponent>();
     for (auto entity : view)
     {
-      if (view.get<PathComponent>(entity).getPath().string().find(
+      auto pathHandle = PathComponentHandle(mRegistry, entity);
+      if (pathHandle.GetPath().string().find(
             fromPath.string()) != std::string::npos)
       {
         std::filesystem::path newPath = toPath;
-        newPath.concat(view.get<PathComponent>(entity).getPath().string().erase(
+        newPath.concat(pathHandle.GetPath().string().erase(
           0, fromPath.string().length()));
-        mRegistry.get<PathComponent>(entity).setPath(newPath);
+          pathHandle.SetPath(newPath);
       }
     }
   }
@@ -473,13 +481,15 @@ namespace Dwarf
     auto view = mRegistry.view<PathComponent, NameComponent>();
     for (auto entity : view)
     {
-      if (view.get<PathComponent>(entity).getPath() == path)
+      auto pathHandle = PathComponentHandle(mRegistry, entity);
+      if (pathHandle.GetPath() == path)
       {
+        auto nametHandle = NameComponentHandle(mRegistry, entity);
         std::filesystem::path newPath =
           std::filesystem::path(dir) / std::filesystem::path(filename);
         mAssetMetadata->Rename(path, newPath);
-        view.get<PathComponent>(entity).setPath(newPath);
-        view.get<NameComponent>(entity).setName(newPath.stem().string());
+        pathHandle.SetPath(newPath);
+        nametHandle.SetName(newPath.stem().string());
         mAssetReimporter->QueueReimport(newPath);
         break;
       }

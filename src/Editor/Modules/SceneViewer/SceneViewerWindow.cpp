@@ -559,7 +559,7 @@ namespace Dwarf
     Entity    entity(mEditorSelection->GetSelectedEntities().at(0),
                   mLoadedScene->GetScene().GetRegistry());
     auto&     transformComponent = entity.GetComponent<TransformComponent>();
-    glm::mat4 transform = transformComponent.GetModelMatrix();
+    glm::mat4 transform = transformComponent.GetMatrix();
 
     ImGuizmo::Manipulate(glm::value_ptr(mCamera->GetViewMatrix()),
                          glm::value_ptr(mCamera->GetProjectionMatrix()),

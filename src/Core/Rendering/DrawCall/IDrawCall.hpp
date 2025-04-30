@@ -2,7 +2,7 @@
 
 #include "Core/Asset/Database/AssetComponents.hpp"
 #include "Core/Rendering/MeshBuffer/IMeshBuffer.hpp"
-#include "Core/Scene/Components/SceneComponents.hpp"
+#include "Core/Scene/Components/TransformComponentHandle.hpp"
 #include <glm/fwd.hpp>
 
 namespace Dwarf
@@ -38,6 +38,6 @@ namespace Dwarf
      * @return Reference to the transform component for the draw call
      */
     virtual auto
-    GetTransform() -> TransformComponent& = 0;
+    GetTransform() -> TransformComponentHandle = 0;
   };
 }

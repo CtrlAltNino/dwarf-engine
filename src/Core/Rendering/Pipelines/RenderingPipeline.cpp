@@ -1,4 +1,5 @@
 #include "Core/Scene/Components/MeshRendererComponentHandle.hpp"
+#include "Core/Scene/Components/TransformComponentHandle.hpp"
 #include "pch.hpp"
 
 #include "Core/Rendering/AntiAliasingTypes.hpp"
@@ -131,7 +132,7 @@ namespace Dwarf
             *drawCall->GetMeshBuffer(),
             drawCall->GetMaterialAsset().GetMaterial(),
             camera,
-            drawCall->GetTransform().GetModelMatrix());
+            drawCall->GetTransform().GetMatrix());
         }
       }
     }
@@ -191,7 +192,7 @@ namespace Dwarf
       mGridShader->SetParameter("uInverseView",
                                 glm::inverse(camera.GetViewMatrix()));
       mGridShader->SetParameter("uCameraPosition",
-                                camera.GetProperties().Transform.GetPosition());
+                                camera.GetProperties().Transform.Position);
 
       mRendererApi->ApplyPostProcess(*mLdrPingPong, *mGridShader, true);
       mLdrPingPong->Swap();
@@ -248,8 +249,9 @@ namespace Dwarf
             std::move(mMeshBufferFactory->Create(mergedMesh)));
         }
 
-        glm::mat4 modelMatrix = transform.GetModelMatrix();
-        auto      entityId = (uint32_t)entity;
+        glm::mat4 modelMatrix =
+          TransformComponentHandle(scene.GetRegistry(), entity).GetMatrix();
+        auto entityId = (uint32_t)entity;
         mIdMaterial->GetShaderParameters()->SetParameter("objectId", entityId);
         mRendererApi->RenderIndexed(
           *meshRenderer.GetIdMeshBuffer(), *mIdMaterial, camera, modelMatrix);

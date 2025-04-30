@@ -1,13 +1,12 @@
 #include "pch.hpp"
 
-#include "Core/Scene/Components/SceneComponents.hpp"
 #include "DrawCall.hpp"
 
 namespace Dwarf
 {
   DrawCall::DrawCall(std::unique_ptr<IMeshBuffer>&& meshBuffer,
                      MaterialAsset&                 material,
-                     TransformComponent&            transform)
+                     TransformComponentHandle&      transform)
     : mMeshBuffer(std::move(meshBuffer))
     , mMaterial(material)
     , mTransform(transform)
@@ -27,7 +26,7 @@ namespace Dwarf
   }
 
   auto
-  DrawCall::GetTransform() -> TransformComponent&
+  DrawCall::GetTransform() -> TransformComponentHandle
   {
     return mTransform;
   }

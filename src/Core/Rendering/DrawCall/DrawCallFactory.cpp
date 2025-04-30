@@ -21,9 +21,9 @@ namespace Dwarf
   }
 
   auto
-  DrawCallFactory::Create(std::unique_ptr<IMesh>& mesh,
-                          MaterialAsset&          material,
-                          TransformComponent&     transform)
+  DrawCallFactory::Create(std::unique_ptr<IMesh>&  mesh,
+                          MaterialAsset&           material,
+                          TransformComponentHandle transform)
     -> std::unique_ptr<IDrawCall>
   {
     std::unique_ptr<DrawCall> drawCall =

@@ -78,7 +78,7 @@ namespace Dwarf
     ImGui::PushStyleColor(ImGuiCol_HeaderHovered, IM_COL32(0, 0, 0, 0));
     ImGui::PushStyleColor(ImGuiCol_HeaderActive, IM_COL32(0, 0, 0, 0));
     // Drawing the node, depending on if it has children or not
-    if (!ent.GetComponent<TransformComponent>().GetChildren().empty())
+    if (!ent.GetComponent<TransformComponent>().Children.empty())
     {
       opened = ImGui::TreeNodeEx((void*)(uint64_t)(uint32_t)ent.GetHandle(),
                                  flags,
@@ -416,8 +416,7 @@ namespace Dwarf
     // Draw the child nodes if the node has children and is folded out
     if (opened)
     {
-      for (entt::entity child :
-           ent.GetComponent<TransformComponent>().GetChildren())
+      for (entt::entity child : ent.GetComponent<TransformComponent>().Children)
       {
         DrawNode(child);
       }
@@ -458,7 +457,7 @@ namespace Dwarf
     std::vector<entt::entity>& container = mLoadedScene->GetScene()
                                              .GetRootEntity()
                                              .GetComponent<TransformComponent>()
-                                             .GetChildren();
+                                             .Children;
 
     int it = 0;
     while ((container.begin() + it) != container.end())
