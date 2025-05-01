@@ -6,7 +6,6 @@
 #include "Core/Rendering/DrawCall/IDrawCallFactory.hpp"
 #include "Core/Rendering/Mesh/IMeshFactory.hpp"
 #include "Core/Rendering/MeshBuffer/MeshBufferWorker/IMeshBufferWorker.hpp"
-#include "Core/Scene/Components/SceneComponents.hpp"
 #include "Editor/LoadedScene/ILoadedScene.hpp"
 #include "IDrawCallWorker.hpp"
 #include "Logging/IDwarfLogger.hpp"
@@ -127,5 +126,9 @@ namespace Dwarf
 
     void
     OnReimportAll() override;
+
+    void
+    OnMeshRendererComponentChange(entt::registry& registry,
+                                  entt::entity    entity);
   };
 }

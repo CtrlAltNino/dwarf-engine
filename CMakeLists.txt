@@ -18,6 +18,14 @@ set(VCPKG_MAX_CONCURRENCY 8)
 
 add_compile_definitions(BOOST_DI_CFG_CTOR_LIMIT_SIZE=20)
 
+
+if (MSVC)
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} /Z7")  # MSVC-style debug info
+  set(CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_EXE_LINKER_FLAGS_DEBUG} /DEBUG")
+else()
+  set(CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -g -O0")  # Ensure no optimizations
+endif()
+
 # Platform dependant settings
 IF(WIN32)
     file(READ "$ENV{LOCALAPPDATA}/vcpkg/vcpkg.path.txt" VCPKG_PATH)

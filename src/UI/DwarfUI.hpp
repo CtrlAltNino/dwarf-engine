@@ -54,6 +54,11 @@ namespace Dwarf
     static auto
     InputTextCallback(ImGuiInputTextCallbackData* data) -> int;
 
+    static auto
+    InputTextString(const char*         label,
+                    std::string&        str,
+                    ImGuiInputTextFlags flags = 0) -> bool;
+
     template<typename T>
     static auto
     AssetInput(const std::shared_ptr<IAssetDatabase>& assetDatabase,

@@ -10,12 +10,12 @@ namespace Dwarf
   private:
     std::unique_ptr<IMeshBuffer> mMeshBuffer;
     MaterialAsset&               mMaterial;
-    TransformComponentHandle&    mTransform;
+    TransformComponentHandle     mTransform;
 
   public:
     DrawCall(std::unique_ptr<IMeshBuffer>&& meshBuffer,
              MaterialAsset&                 material,
-             TransformComponentHandle&      transform);
+             TransformComponentHandle       transform);
 
     ~DrawCall() override = default;
 

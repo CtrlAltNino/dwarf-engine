@@ -8,6 +8,7 @@
 #include "EntityInspector.hpp"
 #include "UI/DwarfUI.hpp"
 #include <glm/gtc/type_ptr.hpp>
+#include <optional>
 
 #define COMPONENT_PANEL_PADDING (8.0f)
 #define ADD_BUTTON_WIDTH (40.0f)
@@ -90,13 +91,14 @@ namespace Dwarf
     ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
     ImGui::TextWrapped("Name");
     ImGui::SameLine();
-    // TODO: Needs to be fixed
-    char* str0 = { (char*)component.GetName().c_str() };
+
+    std::string nameBuffer = component.GetName();
+
     ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
                          COMPONENT_PANEL_PADDING);
-    if (ImGui::InputText("##name_input", str0, sizeof(char) * 64))
+    if (DwarfUI::InputTextString("##name_input", nameBuffer))
     {
-      component.SetName(std::string(str0));
+      component.SetName(std::string(nameBuffer));
     }
     ImGui::PopItemWidth();
   }
@@ -241,9 +243,14 @@ namespace Dwarf
     ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
                          COMPONENT_PANEL_PADDING);
 
-    bool                wasNull = componentHandle.GetModelAsset() == nullptr;
-    std::optional<UUID> modelAssetId =
-      componentHandle.GetModelAsset()->GetUID();
+    bool wasNull = componentHandle.GetModelAsset() == nullptr;
+    static std::optional<UUID> modelAssetId;
+
+    if (componentHandle.GetModelAsset() &&
+        componentHandle.GetModelAsset()->IsValid())
+    {
+      modelAssetId = componentHandle.GetModelAsset()->GetUID();
+    }
 
     if (DwarfUI::AssetInput<ModelAsset>(
           mAssetDatabase, modelAssetId, "##modelAsset"))
@@ -288,7 +295,14 @@ namespace Dwarf
         ImGui::SameLine();
         ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
                              COMPONENT_PANEL_PADDING);
-        std::optional<UUID> materialAssetId = mat.second->GetUID();
+
+        static std::optional<UUID> materialAssetId;
+
+        if (mat.second && mat.second->IsValid())
+        {
+          materialAssetId = mat.second->GetUID();
+        }
+
         if (DwarfUI::AssetInput<MaterialAsset>(
               mAssetDatabase,
               materialAssetId,
