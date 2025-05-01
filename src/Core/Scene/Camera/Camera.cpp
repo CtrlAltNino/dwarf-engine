@@ -114,8 +114,6 @@ namespace Dwarf
       glm::vec3 updatedEulerAngles = mProperties.Transform.GetEulerAngles();
 
       updatedEulerAngles.x += rot.x;
-      updatedEulerAngles.x =
-        std::min(std::max(updatedEulerAngles.x, -90.0F), 90.0F);
 
       mat =
         glm::rotate(glm::mat4(1.0F), yAngle * DEG_2_RAD, glm::vec3(0, 1, 0));
