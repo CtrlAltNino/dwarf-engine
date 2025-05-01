@@ -425,12 +425,7 @@ namespace Dwarf
     ImGui::PushItemWidth(100);
     ImGui::SliderFloat("Size", &mData.IconScale, 1.0F, 2.0F);
     ImGui::SameLine(0.0F, 5.0F);
-    if (ImGui::InputText("Search##SearchInput",
-                         mData.SearchBuffer.data(),
-                         mData.SearchBuffer.capacity() + 1,
-                         ImGuiInputTextFlags_CallbackResize,
-                         DwarfUI::InputTextCallback,
-                         &mData.SearchBuffer))
+    if (DwarfUI::InputTextString("Search##SearchInput", mData.SearchBuffer))
     {
       mDirectoryContentCache.Valid = false;
     }
@@ -610,12 +605,7 @@ namespace Dwarf
       {
         std::filesystem::path old = mData.RenamePathBuffer;
 
-        ImGui::InputText("##RenameInput",
-                         mData.RenameBuffer.data(),
-                         mData.RenameBuffer.capacity() + 1,
-                         ImGuiInputTextFlags_CallbackResize,
-                         DwarfUI::InputTextCallback,
-                         &mData.RenameBuffer);
+        DwarfUI::InputTextString("##RenameInput", mData.RenameBuffer);
         if (ImGui::Button("Rename##RenameButton") &&
             (mData.RenameBuffer.size() > 0))
         {

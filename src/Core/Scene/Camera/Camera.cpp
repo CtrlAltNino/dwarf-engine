@@ -150,8 +150,9 @@ namespace Dwarf
         glm::inverse(rotMat) *
         glm::vec4(movementVector.x, movementVector.y, movementVector.z, 1.0F);
 
-      mProperties.Transform.GetPosition() +=
-        glm::vec3(deltaVec4.x, deltaVec4.y, deltaVec4.z);
+      mProperties.Transform.SetPosition(
+        mProperties.Transform.GetPosition() +
+        glm::vec3(deltaVec4.x, deltaVec4.y, deltaVec4.z));
     }
 
     deltaMousePos = glm::vec2(0);

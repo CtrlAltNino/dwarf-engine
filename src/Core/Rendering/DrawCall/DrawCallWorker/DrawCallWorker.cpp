@@ -1,3 +1,4 @@
+#include "Core/Scene/Components/SceneComponents.hpp"
 #include "pch.hpp"
 
 #include "Core/Scene/Components/MeshRendererComponentHandle.hpp"
@@ -111,7 +112,9 @@ namespace Dwarf
     {
       MeshRendererComponentHandle meshRenderer(scene.GetRegistry(),
                                                entityHandle);
-      if (meshRenderer.GetModelAsset() && !meshRenderer.GetIsHidden())
+      if (meshRenderer.GetModelAsset() &&
+          meshRenderer.GetModelAsset()->IsValid() &&
+          !meshRenderer.GetIsHidden())
       {
         auto& model =
           dynamic_cast<ModelAsset&>(meshRenderer.GetModelAsset()->GetAsset());
@@ -120,7 +123,10 @@ namespace Dwarf
         {
           if (meshRenderer.GetMaterialAssets().contains(
                 mesh->GetMaterialIndex()) &&
-              meshRenderer.GetMaterialAssets().at(mesh->GetMaterialIndex()))
+              meshRenderer.GetMaterialAssets().at(mesh->GetMaterialIndex()) &&
+              meshRenderer.GetMaterialAssets()
+                .at(mesh->GetMaterialIndex())
+                ->IsValid())
           {
             MaterialAsset& materialAsset =
               dynamic_cast<MaterialAsset&>(meshRenderer.GetMaterialAssets()
@@ -244,6 +250,19 @@ namespace Dwarf
   {
     mDrawCallList->Clear();
     this->Invalidate();
+
+    mLoadedScene->GetScene()
+      .GetRegistry()
+      .on_construct<MeshRendererComponent>()
+      .connect<&DrawCallWorker::OnMeshRendererComponentChange>(this);
+    mLoadedScene->GetScene()
+      .GetRegistry()
+      .on_update<MeshRendererComponent>()
+      .connect<&DrawCallWorker::OnMeshRendererComponentChange>(this);
+    mLoadedScene->GetScene()
+      .GetRegistry()
+      .on_destroy<MeshRendererComponent>()
+      .connect<&DrawCallWorker::OnMeshRendererComponentChange>(this);
   }
 
   void
@@ -255,6 +274,15 @@ namespace Dwarf
   void
   DrawCallWorker::OnReimportAll()
   {
+    mDrawCallList->Clear();
+    this->Invalidate();
+  }
+
+  void
+  DrawCallWorker::OnMeshRendererComponentChange(entt::registry& registry,
+                                                entt::entity    entity)
+  {
+    mLogger->LogDebug(Log("Updating Draw Calls", "DrawCallWorker"));
     mDrawCallList->Clear();
     this->Invalidate();
   }
