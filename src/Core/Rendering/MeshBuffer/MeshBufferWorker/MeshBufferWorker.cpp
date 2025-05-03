@@ -42,13 +42,18 @@ namespace Dwarf
       if (request != nullptr)
       {
         std::unique_lock<std::mutex> requestLock(request->RequestMutex);
-
-        // requestLock.lock();
-        request->Destination.get() = mMeshBufferFactory->Create(request->Mesh);
-        // requestLock.unlock();
+        request->OnFinish(mMeshBufferFactory->Create(request->Mesh));
+        //*request->Destination = mMeshBufferFactory->Create(request->Mesh);
       }
 
       mMeshBufferRequestQueue.pop();
     }
+  }
+
+  void
+  MeshBufferWorker::ClearRequests()
+  {
+    std::lock_guard<std::mutex> lock(mUploadMutex);
+    mMeshBufferRequestQueue = {};
   }
 }

@@ -126,10 +126,10 @@ namespace Dwarf
       std::lock_guard<std::mutex> lock(mDrawCallList->GetMutex());
       for (auto& drawCall : mDrawCallList->GetDrawCalls())
       {
-        if (drawCall->GetMeshBuffer())
+        if (drawCall->GetMeshBuffer() != nullptr)
         {
           mRendererApi->RenderIndexed(
-            *drawCall->GetMeshBuffer(),
+            drawCall->GetMeshBuffer(),
             drawCall->GetMaterialAsset().GetMaterial(),
             camera,
             drawCall->GetTransform().GetMatrix());
@@ -243,7 +243,7 @@ namespace Dwarf
         {
           auto& model =
             dynamic_cast<ModelAsset&>(meshRenderer.GetModelAsset()->GetAsset());
-          std::unique_ptr<IMesh> mergedMesh =
+          std::shared_ptr<IMesh> mergedMesh =
             mMeshFactory->MergeMeshes(model.Meshes());
           meshRenderer.SetIdMeshBuffer(
             std::move(mMeshBufferFactory->Create(mergedMesh)));
@@ -254,7 +254,7 @@ namespace Dwarf
         auto entityId = (uint32_t)entity;
         mIdMaterial->GetShaderParameters()->SetParameter("objectId", entityId);
         mRendererApi->RenderIndexed(
-          *meshRenderer.GetIdMeshBuffer(), *mIdMaterial, camera, modelMatrix);
+          meshRenderer.GetIdMeshBuffer(), *mIdMaterial, camera, modelMatrix);
       }
     }
     mIdBuffer->Unbind();

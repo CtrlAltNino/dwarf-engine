@@ -2,7 +2,7 @@
 
 #include "Core/Rendering/VramTracker/IVramTracker.hpp"
 #include "MeshBufferFactory.hpp"
-#include "Platform/OpenGL/OpenGLMesh.hpp"
+#include "Platform/OpenGL/OpenGLMeshBuffer.hpp"
 
 namespace Dwarf
 {
@@ -23,7 +23,7 @@ namespace Dwarf
   }
 
   auto
-  MeshBufferFactory::Create(const std::unique_ptr<IMesh>& mesh) const
+  MeshBufferFactory::Create(const std::shared_ptr<IMesh>& mesh) const
     -> std::unique_ptr<IMeshBuffer>
   {
     mLogger->LogDebug(Log("Creating MeshBuffer", "MeshBufferFactory"));
@@ -40,7 +40,7 @@ namespace Dwarf
           Log("Vulkan API has not been implemented yet", "MeshBufferFactory"));
         throw std::runtime_error("Vulkan API has not been implemented yet");
       case OpenGL:
-        return std::make_unique<OpenGLMesh>(
+        return std::make_unique<OpenGLMeshBuffer>(
           mesh->GetVertices(), mesh->GetIndices(), mLogger, mVramTracker);
       case D3D12:
 #ifdef _WIN32

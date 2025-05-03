@@ -87,10 +87,10 @@ namespace Dwarf
      * @param modelMatrix Model matrix of the mesh buffer
      */
     void
-    RenderIndexed(IMeshBuffer& mesh,
-                  IMaterial&   material,
-                  ICamera&     camera,
-                  glm::mat4    modelMatrix) override;
+    RenderIndexed(const IMeshBuffer* mesh,
+                  IMaterial&         material,
+                  ICamera&           camera,
+                  glm::mat4          modelMatrix) override;
 
     /**
      * @brief Applies a compute shader to a frame buffer

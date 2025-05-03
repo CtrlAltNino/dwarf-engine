@@ -12,13 +12,14 @@ namespace Dwarf
    */
   struct MeshBufferRequest
   {
-    std::reference_wrapper<std::unique_ptr<IMeshBuffer>> Destination;
-    std::unique_ptr<IMesh>                               Mesh;
-    std::mutex                                           RequestMutex;
+    std::function<void(std::unique_ptr<IMeshBuffer>&&)> OnFinish;
+    std::shared_ptr<IMesh>                              Mesh;
+    std::mutex                                          RequestMutex;
 
-    MeshBufferRequest(std::unique_ptr<IMeshBuffer>& destination,
-                      std::unique_ptr<IMesh>&&      mesh)
-      : Destination(destination)
+    MeshBufferRequest(
+      std::function<void(std::unique_ptr<IMeshBuffer>&&)> onFinish,
+      std::unique_ptr<IMesh>&&                            mesh)
+      : OnFinish(std::move(onFinish))
       , Mesh(std::move(mesh))
     {
     }
@@ -47,5 +48,8 @@ namespace Dwarf
      */
     virtual void
     ProcessRequests() = 0;
+
+    virtual void
+    ClearRequests() = 0;
   };
 }

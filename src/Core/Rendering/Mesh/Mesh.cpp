@@ -13,12 +13,12 @@ namespace Dwarf
     , mMaterialIndex(materialIndex)
     , mLogger(std::move(logger))
   {
-    mLogger->LogDebug(Log("OpenGLMesh created.", "OpenGLMesh"));
+    mLogger->LogDebug(Log("Mesh created.", "Mesh"));
   }
 
   Mesh::~Mesh()
   {
-    mLogger->LogDebug(Log("Mesh destroyed.", "OpenGLMesh"));
+    mLogger->LogDebug(Log("Mesh destroyed.", "Mesh"));
   }
 
   auto

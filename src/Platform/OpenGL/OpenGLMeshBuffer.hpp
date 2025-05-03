@@ -8,7 +8,7 @@
 
 namespace Dwarf
 {
-  class OpenGLMesh : public IMeshBuffer
+  class OpenGLMeshBuffer : public IMeshBuffer
   {
   private:
     std::shared_ptr<IDwarfLogger> mLogger;
@@ -18,11 +18,11 @@ namespace Dwarf
     uint32_t                      mIndexCount = 0;
 
   public:
-    OpenGLMesh(const std::vector<Vertex>&    vertices,
-               const std::vector<uint32_t>&  indices,
-               std::shared_ptr<IDwarfLogger> logger,
-               std::shared_ptr<IVramTracker> vramTracker);
-    ~OpenGLMesh() override;
+    OpenGLMeshBuffer(const std::vector<Vertex>&    vertices,
+                     const std::vector<uint32_t>&  indices,
+                     std::shared_ptr<IDwarfLogger> logger,
+                     std::shared_ptr<IVramTracker> vramTracker);
+    ~OpenGLMeshBuffer() override;
 
     /**
      * @brief Binds the OpenGL mesh
@@ -43,16 +43,16 @@ namespace Dwarf
      *
      * @return Vertex count
      */
-    auto
-    GetVertexCount() -> uint32_t override;
+    [[nodiscard]] auto
+    GetVertexCount() const -> uint32_t override;
 
     /**
      * @brief Returns the index count of the mesh
      *
      * @return Index count
      */
-    auto
-    GetIndexCount() -> uint32_t override;
+    [[nodiscard]] auto
+    GetIndexCount() const -> uint32_t override;
 
   private:
     GLuint VAO;

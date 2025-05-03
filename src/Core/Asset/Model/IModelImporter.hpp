@@ -14,6 +14,6 @@ namespace Dwarf
     /// @return List of the imported meshes of a model.
     virtual auto
     Import(const std::filesystem::path& path)
-      -> std::vector<std::unique_ptr<IMesh>> = 0;
+      -> std::vector<std::shared_ptr<IMesh>> = 0;
   };
 }

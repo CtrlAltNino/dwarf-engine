@@ -24,7 +24,7 @@ namespace Dwarf
     [[nodiscard]] virtual auto
     Create(const std::vector<Vertex>&   vertices,
            const std::vector<uint32_t>& indices,
-           uint32_t materialIndex) const -> std::unique_ptr<IMesh> = 0;
+           uint32_t materialIndex) const -> std::shared_ptr<IMesh> = 0;
 
     /**
      * @brief Creates a mesh representing a unit sphere
@@ -34,8 +34,8 @@ namespace Dwarf
      * @return Unique pointer to the created unit sphere mesh
      */
     [[nodiscard]] virtual auto
-    CreateUnitSphere(int stacks,
-                     int slices) const -> std::unique_ptr<IMesh> = 0;
+    CreateUnitSphere(int stacks, int slices) const
+      -> std::shared_ptr<IMesh> = 0;
 
     /**
      * @brief Creates a mesh representing a unit cube
@@ -43,7 +43,7 @@ namespace Dwarf
      * @return Unique pointer to the created unit cube mesh
      */
     [[nodiscard]] virtual auto
-    CreateUnitCube() const -> std::unique_ptr<IMesh> = 0;
+    CreateUnitCube() const -> std::shared_ptr<IMesh> = 0;
 
     /**
      * @brief Creates a mesh representing a unit quad
@@ -51,7 +51,7 @@ namespace Dwarf
      * @return Unique pointer to the created unit quad mesh
      */
     [[nodiscard]] virtual auto
-    CreatePlane() const -> std::unique_ptr<IMesh> = 0;
+    CreatePlane() const -> std::shared_ptr<IMesh> = 0;
 
     /**
      * @brief Creates a mesh representing a unit quad
@@ -59,7 +59,7 @@ namespace Dwarf
      * @return Unique pointer to the created unit quad mesh
      */
     [[nodiscard]] virtual auto
-    CreatePreviewQuad() const -> std::unique_ptr<IMesh> = 0;
+    CreatePreviewQuad() const -> std::shared_ptr<IMesh> = 0;
 
     /**
      * @brief Creates a mesh representing a fullscreen quad
@@ -67,7 +67,7 @@ namespace Dwarf
      * @return Unique pointer to the created fullscreen quad mesh
      */
     [[nodiscard]] virtual auto
-    CreateFullscreenQuad() const -> std::unique_ptr<IMesh> = 0;
+    CreateFullscreenQuad() const -> std::shared_ptr<IMesh> = 0;
 
     /**
      * @brief Merges a vector of meshes into one
@@ -76,17 +76,7 @@ namespace Dwarf
      * @return Unique pointer to the merged mesh instance
      */
     [[nodiscard]] virtual auto
-    MergeMeshes(const std::vector<std::unique_ptr<IMesh>>& meshes) const
-      -> std::unique_ptr<IMesh> = 0;
-
-    /**
-     * @brief Merges a vector of mesh references into one
-     *
-     * @param meshes Vector of mesh references to merge
-     * @return Unique pointer to the merged mesh instance
-     */
-    [[nodiscard]] virtual auto
-    MergeMeshes(const std::vector<std::reference_wrapper<IMesh>>& meshes) const
-      -> std::unique_ptr<IMesh> = 0;
+    MergeMeshes(const std::vector<std::shared_ptr<IMesh>>& meshes) const
+      -> std::shared_ptr<IMesh> = 0;
   };
 }

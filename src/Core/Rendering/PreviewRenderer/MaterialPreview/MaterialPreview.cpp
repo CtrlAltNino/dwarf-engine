@@ -56,8 +56,8 @@ namespace Dwarf
   MaterialPreview::RenderMaterialPreview(IMaterial& material)
   {
     // TODO: Reset sphere rotation when rendering a different material
-    mCamera->GetProperties().Transform.GetPosition() = { 0, 0, 3 };
-    mCamera->GetProperties().Transform.GetEulerAngles() = { 0, 0, 0 };
+    mCamera->GetProperties().Transform.SetPosition({ 0, 0, 3 });
+    mCamera->GetProperties().Transform.SetEulerAngles({ 0, 0, 0 });
     mCamera->GetProperties().NearPlane = 0.1F;
     mCamera->GetProperties().FarPlane = 4;
 
@@ -77,7 +77,7 @@ namespace Dwarf
     mRendererApi->SetClearColor({ 46 / 255.0F, 52 / 255.0F, 64 / 255.0F, 1 });
     mRendererApi->Clear();
 
-    mRendererApi->RenderIndexed(*mMeshBuffer,
+    mRendererApi->RenderIndexed(mMeshBuffer.get(),
                                 material,
                                 *mCamera,
                                 glm::toMat4(mProperties.ModelRotationQuat));
@@ -109,19 +109,19 @@ namespace Dwarf
     {
       case MaterialPreviewMeshType::Sphere:
         {
-          std::unique_ptr<IMesh> mesh = mMeshFactory->CreateUnitSphere(50, 50);
+          std::shared_ptr<IMesh> mesh = mMeshFactory->CreateUnitSphere(50, 50);
           mMeshBuffer = mMeshBufferFactory->Create(mesh);
           break;
         }
       case MaterialPreviewMeshType::Cube:
         {
-          std::unique_ptr<IMesh> mesh = mMeshFactory->CreateUnitCube();
+          std::shared_ptr<IMesh> mesh = mMeshFactory->CreateUnitCube();
           mMeshBuffer = mMeshBufferFactory->Create(mesh);
         }
         break;
       case MaterialPreviewMeshType::Plane:
         {
-          std::unique_ptr<IMesh> mesh = mMeshFactory->CreatePreviewQuad();
+          std::shared_ptr<IMesh> mesh = mMeshFactory->CreatePreviewQuad();
           mMeshBuffer = mMeshBufferFactory->Create(mesh);
         }
         break;

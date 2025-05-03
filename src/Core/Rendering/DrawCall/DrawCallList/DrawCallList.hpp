@@ -2,6 +2,8 @@
 
 #include "Core/Rendering/DrawCall/IDrawCall.hpp"
 #include "IDrawCallList.hpp"
+#include "Logging/IDwarfLogger.hpp"
+#include <memory>
 #include <mutex>
 
 namespace Dwarf
@@ -9,12 +11,14 @@ namespace Dwarf
   class DrawCallList : public IDrawCallList
   {
   private:
+    std::shared_ptr<IDwarfLogger>           mLogger;
     std::mutex                              mDrawCallMutex;
-    std::vector<std::unique_ptr<IDrawCall>> mDrawCalls;
+    std::vector<std::shared_ptr<IDrawCall>> mDrawCalls;
     DrawCallStatistics                      mStats;
     std::atomic<bool>                       mAllDrawCallsLoaded = false;
 
   public:
+    DrawCallList(std::shared_ptr<IDwarfLogger> logger);
     ~DrawCallList() override;
 
     /**
@@ -23,7 +27,7 @@ namespace Dwarf
      * @param drawCalls Vector containing a list of draw calls
      */
     void
-    SubmitDrawCalls(std::vector<std::unique_ptr<IDrawCall>> drawCalls) override;
+    SubmitDrawCalls(std::vector<std::shared_ptr<IDrawCall>> drawCalls) override;
 
     /**
      * @brief Retrieves the list of the draw calls
@@ -31,7 +35,7 @@ namespace Dwarf
      * @return Reference to the vector of the draw calls
      */
     auto
-    GetDrawCalls() -> std::vector<std::unique_ptr<IDrawCall>>& override;
+    GetDrawCalls() -> std::vector<std::shared_ptr<IDrawCall>>& override;
 
     /**
      * @brief Retrieves the mutex used for accessing the draw calls

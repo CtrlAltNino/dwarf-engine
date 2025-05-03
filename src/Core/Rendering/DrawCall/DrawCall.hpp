@@ -8,7 +8,7 @@ namespace Dwarf
   class DrawCall : public IDrawCall
   {
   private:
-    std::unique_ptr<IMeshBuffer> mMeshBuffer;
+    std::shared_ptr<IMeshBuffer> mMeshBuffer = nullptr;
     MaterialAsset&               mMaterial;
     TransformComponentHandle     mTransform;
 
@@ -25,7 +25,10 @@ namespace Dwarf
      * @return Reference to the unique pointer to the mesh buffer
      */
     auto
-    GetMeshBuffer() -> std::unique_ptr<IMeshBuffer>& override;
+    GetMeshBuffer() -> const IMeshBuffer* override;
+
+    void
+    SetMeshBuffer(std::unique_ptr<IMeshBuffer>&& meshBuffer) override;
 
     /**
      * @brief Retrieves the material of the draw call

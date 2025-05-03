@@ -30,12 +30,18 @@ namespace Dwarf
   void
   LoadedScene::SetScene(std::unique_ptr<IScene> scene)
   {
-    for (auto* observer : mObservers)
+    mLogger->LogDebug(Log("SetScene Start", "LoadedScene"));
+    mHasLoadedScene = false;
+    if (mScene)
     {
-      observer->OnSceneUnload();
+      for (auto* observer : mObservers)
+      {
+        observer->OnSceneUnload();
+      }
     }
-
+    mLogger->LogDebug(Log("SetScene After OnSceneUnload", "LoadedScene"));
     mScene = std::move(scene);
+    mLogger->LogDebug(Log("SetScene After Assignment", "LoadedScene"));
 
     if (mScene)
     {
@@ -50,15 +56,19 @@ namespace Dwarf
 
       UpdateWindowTitle();
 
+      mHasLoadedScene = true;
+
       for (auto* observer : mObservers)
       {
         observer->OnSceneLoad();
       }
+      mLogger->LogDebug(Log("SetScene After OnSceneLoad", "LoadedScene"));
     }
     else
     {
       mLogger->LogDebug(Log("Unloading scene", "LoadedScene"));
     }
+    mLogger->LogDebug(Log("SetScene End", "LoadedScene"));
   }
 
   void
@@ -78,7 +88,7 @@ namespace Dwarf
   auto
   LoadedScene::HasLoadedScene() -> bool
   {
-    return mScene != nullptr;
+    return mHasLoadedScene;
   }
 
   void
