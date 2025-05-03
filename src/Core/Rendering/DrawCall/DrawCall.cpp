@@ -14,9 +14,15 @@ namespace Dwarf
   }
 
   auto
-  DrawCall::GetMeshBuffer() -> std::unique_ptr<IMeshBuffer>&
+  DrawCall::GetMeshBuffer() -> const IMeshBuffer*
   {
-    return mMeshBuffer;
+    return mMeshBuffer.get();
+  }
+
+  void
+  DrawCall::SetMeshBuffer(std::unique_ptr<IMeshBuffer>&& meshBuffer)
+  {
+    mMeshBuffer = std::move(meshBuffer);
   }
 
   auto

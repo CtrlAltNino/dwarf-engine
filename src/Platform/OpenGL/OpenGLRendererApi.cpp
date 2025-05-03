@@ -7,7 +7,7 @@
 #include "OpenGLFramebuffer.hpp"
 #include "Platform/OpenGL/OpenGLComputeShader.hpp"
 #include "Platform/OpenGL/OpenGLFramebuffer.hpp"
-#include "Platform/OpenGL/OpenGLMesh.hpp"
+#include "Platform/OpenGL/OpenGLMeshBuffer.hpp"
 #include "Platform/OpenGL/OpenGLRendererApi.hpp"
 #include "Platform/OpenGL/OpenGLShader.hpp"
 #include "Platform/OpenGL/OpenGLUtilities.hpp"
@@ -39,7 +39,7 @@ namespace Dwarf
       mShaderSourceCollectionFactory->CreateErrorShaderSourceCollection());
     mErrorShader->Compile();
 
-    std::unique_ptr<IMesh> screenQuad = mMeshFactory->CreateFullscreenQuad();
+    std::shared_ptr<IMesh> screenQuad = mMeshFactory->CreateFullscreenQuad();
     mScreenQuad = mMeshBufferFactory->Create(screenQuad);
 
     mStateTracker->SetDepthTest(true);
@@ -92,14 +92,14 @@ namespace Dwarf
   }
 
   void
-  OpenGLRendererApi::RenderIndexed(IMeshBuffer& mesh,
-                                   IMaterial&   material,
-                                   ICamera&     camera,
-                                   glm::mat4    modelMatrix)
+  OpenGLRendererApi::RenderIndexed(const IMeshBuffer* mesh,
+                                   IMaterial&         material,
+                                   ICamera&           camera,
+                                   glm::mat4          modelMatrix)
   {
     OpenGLUtilities::CheckOpenGLError(
       "Before rendering", "OpenGLRendererApi", mLogger);
-    auto&         oglMesh = dynamic_cast<OpenGLMesh&>(mesh);
+    const auto*   oglMesh = dynamic_cast<const OpenGLMeshBuffer*>(mesh);
     IShader&      baseShader = *material.GetShader();
     OpenGLShader& shader = baseShader.IsCompiled()
                              ? dynamic_cast<OpenGLShader&>(baseShader)
@@ -155,9 +155,9 @@ namespace Dwarf
 
     shader.UploadParameters();
 
-    oglMesh.Bind();
+    oglMesh->Bind();
 
-    glDrawElements(GL_TRIANGLES, oglMesh.GetIndexCount(), GL_UNSIGNED_INT, 0);
+    glDrawElements(GL_TRIANGLES, oglMesh->GetIndexCount(), GL_UNSIGNED_INT, 0);
     OpenGLUtilities::CheckOpenGLError(
       "glDrawElements", "OpenGLRendererApi", mLogger);
   }
@@ -287,7 +287,7 @@ namespace Dwarf
                                 IShader&      shader,
                                 bool          srgb)
   {
-    auto& oglMesh = dynamic_cast<OpenGLMesh&>(*mScreenQuad);
+    auto& oglMesh = dynamic_cast<OpenGLMeshBuffer&>(*mScreenQuad);
 
     OpenGLShader& oglShader = shader.IsCompiled()
                                 ? dynamic_cast<OpenGLShader&>(shader)
@@ -328,7 +328,7 @@ namespace Dwarf
                                       IShader&         shader,
                                       bool             srgb)
   {
-    auto&         oglMesh = dynamic_cast<OpenGLMesh&>(*mScreenQuad);
+    auto&         oglMesh = dynamic_cast<OpenGLMeshBuffer&>(*mScreenQuad);
     OpenGLShader& oglShader = shader.IsCompiled()
                                 ? dynamic_cast<OpenGLShader&>(shader)
                                 : dynamic_cast<OpenGLShader&>(*mErrorShader);

@@ -74,7 +74,7 @@ namespace Dwarf
       mProperties.ModelRotationTarget = { 15, 20, 0 };
       UpdateRotation({ 0, 0 });
       mProperties.Distance = 1.0F;
-      std::unique_ptr<IMesh> mesh = mMeshFactory->MergeMeshes(
+      std::shared_ptr<IMesh> mesh = mMeshFactory->MergeMeshes(
         (dynamic_cast<ModelAsset&>(modelAsset.GetAsset())).Meshes());
       mPreviewMeshBuffer = std::move(mMeshBufferFactory->Create(mesh));
     }
@@ -112,7 +112,7 @@ namespace Dwarf
 
     if (mPreviewMeshBuffer)
     {
-      mRendererApi->RenderIndexed(*mPreviewMeshBuffer,
+      mRendererApi->RenderIndexed(mPreviewMeshBuffer.get(),
                                   *mMaterial,
                                   *mCamera,
                                   glm::toMat4(mProperties.ModelRotationQuat));

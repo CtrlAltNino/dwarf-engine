@@ -28,7 +28,7 @@ namespace Dwarf
      * @param drawCalls Vector containing a list of draw calls
      */
     virtual void
-    SubmitDrawCalls(std::vector<std::unique_ptr<IDrawCall>> drawCalls) = 0;
+    SubmitDrawCalls(std::vector<std::shared_ptr<IDrawCall>> drawCalls) = 0;
 
     /**
      * @brief Retrieves the list of the draw calls
@@ -36,7 +36,7 @@ namespace Dwarf
      * @return Reference to the vector of the draw calls
      */
     virtual auto
-    GetDrawCalls() -> std::vector<std::unique_ptr<IDrawCall>>& = 0;
+    GetDrawCalls() -> std::vector<std::shared_ptr<IDrawCall>>& = 0;
 
     /**
      * @brief Retrieves the mutex used for accessing the draw calls

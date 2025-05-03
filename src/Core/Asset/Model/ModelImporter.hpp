@@ -27,7 +27,7 @@ namespace Dwarf
     void
     ProcessNode(const aiNode*                        node,
                 const aiScene*                       scene,
-                std::vector<std::unique_ptr<IMesh>>& meshes,
+                std::vector<std::shared_ptr<IMesh>>& meshes,
                 glm::mat4                            parentTransform);
 
     /**
@@ -39,7 +39,7 @@ namespace Dwarf
      */
     void
     ProcessMesh(const aiMesh*                        mesh,
-                std::vector<std::unique_ptr<IMesh>>& meshes,
+                std::vector<std::shared_ptr<IMesh>>& meshes,
                 glm::mat4                            transform);
 
   public:
@@ -51,6 +51,6 @@ namespace Dwarf
     /// @return List of the imported meshes of a model.
     auto
     Import(const std::filesystem::path& path)
-      -> std::vector<std::unique_ptr<IMesh>> override;
+      -> std::vector<std::shared_ptr<IMesh>> override;
   };
 }

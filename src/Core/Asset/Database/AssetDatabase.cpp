@@ -1,13 +1,13 @@
 #include "pch.hpp"
 
-#include "Core/Scene/Components/NameComponentHandle.hpp"
-#include "Core/Scene/Components/PathComponentHandle.hpp"
 #include "AssetDatabase.hpp"
 #include "Core/Asset/AssetReference/IAssetReference.hpp"
 #include "Core/Asset/Database/AssetComponents.hpp"
 #include "Core/Asset/Metadata/IAssetMetadata.hpp"
 #include "Core/Base.hpp"
 #include "Core/GenericComponents.hpp"
+#include "Core/Scene/Components/NameComponentHandle.hpp"
+#include "Core/Scene/Components/PathComponentHandle.hpp"
 #include "IAssetDatabase.hpp"
 #include <nfd.hpp>
 
@@ -81,7 +81,6 @@ namespace Dwarf
 
   AssetDatabase::~AssetDatabase()
   {
-    Clear();
     mLogger->LogDebug(Log("AssetDatabase destroyed", "AssetDatabase"));
   }
 
@@ -119,6 +118,7 @@ namespace Dwarf
   void
   AssetDatabase::ReimportAll()
   {
+    mIsReimportingAll = true;
     std::vector<std::filesystem::path> materialPaths = {};
     std::vector<std::filesystem::path> otherPaths = {};
 
@@ -127,12 +127,16 @@ namespace Dwarf
     for (auto& path : otherPaths)
     {
       Import(path);
+      // Reimport(path);
     }
 
     for (auto& path : materialPaths)
     {
       Import(path);
+      // Reimport(path);
     }
+
+    mIsReimportingAll = false;
 
     for (auto* observer : mObservers)
     {
@@ -223,18 +227,37 @@ namespace Dwarf
             break;
           }
       }
+
+      if (!mIsReimportingAll)
+      {
+        for (auto* observer : mObservers)
+        {
+          observer->OnReimportAsset(
+            assetPath, asset->GetType(), asset->GetUID());
+        }
+      }
     }
   }
 
   void
   AssetDatabase::Remove(const UUID& uid)
   {
-    auto view = mRegistry.view<IDComponent>();
+    auto view = mRegistry.view<IDComponent, PathComponent>();
     for (auto entity : view)
     {
-      if (view.get<IDComponent>(entity).getId() == uid)
+      std::unique_ptr<IAssetReference> asset = Retrieve(uid);
+      if (asset->GetUID() == uid)
       {
         mRegistry.destroy(entity);
+
+        if (!mIsReimportingAll)
+        {
+          for (auto* observer : mObservers)
+          {
+            observer->OnReimportAsset(
+              asset->GetPath(), asset->GetType(), asset->GetUID());
+          }
+        }
       }
     }
   }
@@ -244,11 +267,18 @@ namespace Dwarf
     auto view = mRegistry.view<PathComponent>();
     for (auto entity : view)
     {
-      auto pathHandle = PathComponentHandle(mRegistry, entity);
-      if (pathHandle.GetPath() == path &&
-          mRegistry.valid(entity))
+      std::unique_ptr<IAssetReference> asset = Retrieve(path);
+      if (asset && asset->GetPath() == path && mRegistry.valid(entity))
       {
         mRegistry.destroy(entity);
+
+        if (!mIsReimportingAll)
+        {
+          for (auto* observer : mObservers)
+          {
+            observer->OnRemoveAsset(path);
+          }
+        }
       }
     }
   }
@@ -257,6 +287,14 @@ namespace Dwarf
   AssetDatabase::Clear()
   {
     mRegistry.clear();
+
+    for (auto* observer : mObservers)
+    {
+      if (observer != nullptr)
+      {
+        observer->OnAssetDatabaseClear();
+      }
+    }
   }
 
   auto
@@ -289,9 +327,18 @@ namespace Dwarf
     mLogger->LogInfo(
       Log("Importing asset: " + assetPath.string(), "AssetDatabase"));
 
-    return mAssetReferenceFactory
-      ->CreateNew(mRegistry.create(), mRegistry, newId, assetPath, fileName)
-      ->GetUID();
+    std::unique_ptr<IAssetReference> asset = mAssetReferenceFactory->CreateNew(
+      mRegistry.create(), mRegistry, newId, assetPath, fileName);
+
+    if (!mIsReimportingAll)
+    {
+      for (auto* observer : mObservers)
+      {
+        observer->OnImportAsset(assetPath, asset->GetType(), asset->GetUID());
+      }
+    }
+
+    return asset->GetUID();
   }
 
   void
@@ -414,6 +461,11 @@ namespace Dwarf
         break;
       }
     }
+
+    for (auto* observer : mObservers)
+    {
+      observer->OnRename(fromPath, toPath);
+    }
   }
 
   void
@@ -424,13 +476,13 @@ namespace Dwarf
     for (auto entity : view)
     {
       auto pathHandle = PathComponentHandle(mRegistry, entity);
-      if (pathHandle.GetPath().string().find(
-            fromPath.string()) != std::string::npos)
+      if (pathHandle.GetPath().string().find(fromPath.string()) !=
+          std::string::npos)
       {
         std::filesystem::path newPath = toPath;
-        newPath.concat(pathHandle.GetPath().string().erase(
-          0, fromPath.string().length()));
-          pathHandle.SetPath(newPath);
+        newPath.concat(
+          pathHandle.GetPath().string().erase(0, fromPath.string().length()));
+        pathHandle.SetPath(newPath);
       }
     }
   }

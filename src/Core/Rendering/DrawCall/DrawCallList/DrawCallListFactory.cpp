@@ -21,6 +21,6 @@ namespace Dwarf
   [[nodiscard]] auto
   DrawCallListFactory::Create() const -> std::unique_ptr<IDrawCallList>
   {
-    return std::make_unique<DrawCallList>();
+    return std::make_unique<DrawCallList>(mLogger);
   }
 }

@@ -13,12 +13,12 @@ namespace Dwarf
   {
   private:
     /// @brief Vector of submeshes.
-    std::vector<std::unique_ptr<IMesh>> mMeshes;
+    std::vector<std::shared_ptr<IMesh>> mMeshes;
 
   public:
     ModelAsset() = default;
 
-    ModelAsset(std::vector<std::unique_ptr<IMesh>>&& meshes)
+    ModelAsset(std::vector<std::shared_ptr<IMesh>> meshes)
       : mMeshes(std::move(meshes))
     {
     }
@@ -50,13 +50,13 @@ namespace Dwarf
     }
 
     auto
-    Meshes() -> std::vector<std::unique_ptr<IMesh>>&
+    Meshes() -> std::vector<std::shared_ptr<IMesh>>&
     {
       return mMeshes;
     }
 
-    auto
-    Meshes() const -> const std::vector<std::unique_ptr<IMesh>>&
+    [[nodiscard]] auto
+    Meshes() const -> const std::vector<std::shared_ptr<IMesh>>&
     {
       return mMeshes;
     }

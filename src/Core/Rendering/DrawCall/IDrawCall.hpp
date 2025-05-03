@@ -22,7 +22,10 @@ namespace Dwarf
      * @return Reference to the unique pointer to the mesh buffer
      */
     virtual auto
-    GetMeshBuffer() -> std::unique_ptr<IMeshBuffer>& = 0;
+    GetMeshBuffer() -> const IMeshBuffer* = 0;
+
+    virtual void
+    SetMeshBuffer(std::unique_ptr<IMeshBuffer>&& meshBuffer) = 0;
 
     /**
      * @brief Retrieves the material of the draw call

@@ -45,6 +45,7 @@ namespace Dwarf
 
     std::map<std::filesystem::path, std::shared_ptr<IShader>> mShaderAssetMap;
     std::vector<IAssetDatabaseObserver*>                      mObservers;
+    bool mIsReimportingAll = false;
 
     GraphicsApi                              mGraphicsApi;
     std::shared_ptr<IDwarfLogger>            mLogger;

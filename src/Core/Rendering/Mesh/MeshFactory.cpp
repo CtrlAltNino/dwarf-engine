@@ -13,14 +13,14 @@ namespace Dwarf
   auto
   MeshFactory::Create(const std::vector<Vertex>&   vertices,
                       const std::vector<uint32_t>& indices,
-                      uint32_t materialIndex) const -> std::unique_ptr<IMesh>
+                      uint32_t materialIndex) const -> std::shared_ptr<IMesh>
   {
-    return std::make_unique<Mesh>(vertices, indices, materialIndex, mLogger);
+    return std::make_shared<Mesh>(vertices, indices, materialIndex, mLogger);
   }
 
   auto
-  MeshFactory::CreateUnitSphere(int stacks,
-                                int slices) const -> std::unique_ptr<IMesh>
+  MeshFactory::CreateUnitSphere(int stacks, int slices) const
+    -> std::shared_ptr<IMesh>
   {
     auto vertices = std::vector<Vertex>();
     auto indices = std::vector<uint32_t>();
@@ -83,7 +83,7 @@ namespace Dwarf
   }
 
   auto
-  MeshFactory::CreateUnitCube() const -> std::unique_ptr<IMesh>
+  MeshFactory::CreateUnitCube() const -> std::shared_ptr<IMesh>
   {
     float               half = 0.7F;
     std::vector<Vertex> vertices = {
@@ -229,7 +229,7 @@ namespace Dwarf
   }
 
   auto
-  MeshFactory::CreatePlane() const -> std::unique_ptr<IMesh>
+  MeshFactory::CreatePlane() const -> std::shared_ptr<IMesh>
   {
     float                 width = 1.0F;
     float                 depth = 1.0F;
@@ -261,7 +261,7 @@ namespace Dwarf
   }
 
   auto
-  MeshFactory::CreatePreviewQuad() const -> std::unique_ptr<IMesh>
+  MeshFactory::CreatePreviewQuad() const -> std::shared_ptr<IMesh>
   {
     float                 halfW = 0.9F;
     float                 halfD = 0.9F;
@@ -291,7 +291,7 @@ namespace Dwarf
   }
 
   auto
-  MeshFactory::CreateFullscreenQuad() const -> std::unique_ptr<IMesh>
+  MeshFactory::CreateFullscreenQuad() const -> std::shared_ptr<IMesh>
   {
     return Create(
       { { { -1.0F, -1.0F, 0.0F }, { 0.0F, 0.0F, 1.0F }, { 0.0F, 0.0F } },
@@ -303,8 +303,8 @@ namespace Dwarf
   }
 
   auto
-  MeshFactory::MergeMeshes(const std::vector<std::unique_ptr<IMesh>>& meshes)
-    const -> std::unique_ptr<IMesh>
+  MeshFactory::MergeMeshes(const std::vector<std::shared_ptr<IMesh>>& meshes)
+    const -> std::shared_ptr<IMesh>
   {
     std::vector<Vertex>   mergedVertices;
     std::vector<uint32_t> mergedIndices;
@@ -325,38 +325,9 @@ namespace Dwarf
       indexOffset += mesh->GetVertices().size();
     }
 
-    std::unique_ptr<IMesh> mergedMesh =
+    std::shared_ptr<IMesh> mergedMesh =
       Create(mergedVertices, mergedIndices, 0);
 
-    return std::move(mergedMesh);
-  }
-
-  auto
-  MeshFactory::MergeMeshes(const std::vector<std::reference_wrapper<IMesh>>&
-                             meshes) const -> std::unique_ptr<IMesh>
-  {
-    std::vector<Vertex>   mergedVertices;
-    std::vector<uint32_t> mergedIndices;
-    uint32_t indexOffset = 0; // Tracks index shifting due to merged vertices
-
-    for (const auto& mesh : meshes)
-    {
-      for (auto vert : mesh.get().GetVertices())
-      {
-        mergedVertices.push_back(vert);
-      }
-
-      for (auto index : mesh.get().GetIndices())
-      {
-        mergedIndices.push_back(index + indexOffset);
-      }
-
-      indexOffset += mesh.get().GetVertices().size();
-    }
-
-    std::unique_ptr<IMesh> mergedMesh =
-      Create(mergedVertices, mergedIndices, 0);
-
-    return std::move(mergedMesh);
+    return mergedMesh;
   }
 }

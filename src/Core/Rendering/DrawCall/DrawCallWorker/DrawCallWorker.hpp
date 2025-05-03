@@ -13,19 +13,20 @@
 #include <functional>
 #include <mutex>
 #include <thread>
+#include <utility>
 
 namespace Dwarf
 {
   struct TempDrawCall
   {
-    std::reference_wrapper<IMesh>         Mesh;
+    std::shared_ptr<IMesh>                Mesh;
     std::reference_wrapper<MaterialAsset> Material;
     TransformComponentHandle              Transform;
 
-    TempDrawCall(IMesh&                   mesh,
+    TempDrawCall(std::shared_ptr<IMesh>   mesh,
                  MaterialAsset&           material,
                  TransformComponentHandle transform)
-      : Mesh(mesh)
+      : Mesh(std::move(mesh))
       , Material(material)
       , Transform(transform)
     {
@@ -33,7 +34,7 @@ namespace Dwarf
 
     // Move constructor
     TempDrawCall(TempDrawCall&& other) noexcept
-      : Mesh(other.Mesh)
+      : Mesh(std::move(other.Mesh))
       , Material(other.Material)
       , Transform(other.Transform)
     {
@@ -56,7 +57,7 @@ namespace Dwarf
 
   struct Batch
   {
-    std::vector<std::unique_ptr<IMesh>> Meshes;
+    std::vector<std::shared_ptr<IMesh>> Meshes;
     MaterialAsset&                      Material;
     TransformComponentHandle            Transform;
 
@@ -126,6 +127,26 @@ namespace Dwarf
 
     void
     OnReimportAll() override;
+
+    void
+    OnReimportAsset(const std::filesystem::path& assetPath,
+                    ASSET_TYPE                   assetType,
+                    const UUID&                  uid) override;
+
+    void
+    OnImportAsset(const std::filesystem::path& assetPath,
+                  ASSET_TYPE                   assetType,
+                  const UUID&                  uid) override;
+
+    void
+    OnAssetDatabaseClear() override;
+
+    void
+    OnRemoveAsset(const std::filesystem::path& path) override;
+
+    void
+    OnRename(const std::filesystem::path& oldPath,
+             const std::filesystem::path& newPath) override;
 
     void
     OnMeshRendererComponentChange(entt::registry& registry,

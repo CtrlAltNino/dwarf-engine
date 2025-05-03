@@ -17,6 +17,7 @@ namespace Dwarf
     std::shared_ptr<IWindow>           mWindow;
     std::shared_ptr<IProjectSettings>  mProjectSettings;
     std::vector<ILoadedSceneObserver*> mObservers;
+    bool                               mHasLoadedScene = false;
 
   public:
     LoadedScene(GraphicsApi                       graphicsApi,

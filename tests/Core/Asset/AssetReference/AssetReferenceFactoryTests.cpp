@@ -86,7 +86,7 @@ public:
 class MockModelImporter : public IModelImporter
 {
 public:
-  MOCK_METHOD(std::vector<std::unique_ptr<IMesh>>,
+  MOCK_METHOD(std::vector<std::shared_ptr<IMesh>>,
               Import,
               (const std::filesystem::path& path),
               (override));

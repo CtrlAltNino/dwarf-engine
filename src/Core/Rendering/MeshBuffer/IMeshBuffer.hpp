@@ -17,16 +17,16 @@ namespace Dwarf
      *
      * @return Vertex count
      */
-    virtual auto
-    GetVertexCount() -> uint32_t = 0;
+    [[nodiscard]] virtual auto
+    GetVertexCount() const -> uint32_t = 0;
 
     /**
      * @brief Returns the index count of the mesh
      *
      * @return Index count
      */
-    virtual auto
-    GetIndexCount() -> uint32_t = 0;
+    [[nodiscard]] virtual auto
+    GetIndexCount() const -> uint32_t = 0;
 
     IMeshBuffer(const IMeshBuffer&) = delete; // Delete copy constructor
     auto

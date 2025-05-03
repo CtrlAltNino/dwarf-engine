@@ -24,7 +24,7 @@ namespace Dwarf
     }
 
     void
-    SetModelAsset(std::unique_ptr<IAssetReference> modelAsset)
+    SetModelAsset(std::unique_ptr<IAssetReference>&& modelAsset)
     {
       mRegistry.patch<MeshRendererComponent>(
         mEntity,
@@ -34,19 +34,21 @@ namespace Dwarf
     }
 
     [[nodiscard]] auto
-    GetIdMeshBuffer() const -> const std::unique_ptr<IMeshBuffer>&
+    GetIdMeshBuffer() const -> const IMeshBuffer*
     {
-      return mRegistry.get<MeshRendererComponent>(mEntity).IdMeshBuffer;
+      return mRegistry.get<MeshRendererComponent>(mEntity).IdMeshBuffer.get();
     }
 
     void
-    SetIdMeshBuffer(std::unique_ptr<IMeshBuffer> idMeshBuffer)
+    SetIdMeshBuffer(std::unique_ptr<IMeshBuffer>&& idMeshBuffer)
     {
-      mRegistry.patch<MeshRendererComponent>(
-        mEntity,
-        [idMeshBuffer =
-           std::move(idMeshBuffer)](MeshRendererComponent& component) mutable
-        { component.IdMeshBuffer = std::move(idMeshBuffer); });
+      mRegistry.get<MeshRendererComponent>(mEntity).IdMeshBuffer =
+        std::move(idMeshBuffer);
+      // mRegistry.patch<MeshRendererComponent>(
+      //   mEntity,
+      //   [idMeshBuffer =
+      //      std::move(idMeshBuffer)](MeshRendererComponent& component) mutable
+      //   { component.IdMeshBuffer = std::move(idMeshBuffer); });
     }
 
     [[nodiscard]] auto

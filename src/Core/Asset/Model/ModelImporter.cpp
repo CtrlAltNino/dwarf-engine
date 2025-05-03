@@ -69,7 +69,7 @@ namespace Dwarf
 
   auto
   ModelImporter::Import(const std::filesystem::path& path)
-    -> std::vector<std::unique_ptr<IMesh>>
+    -> std::vector<std::shared_ptr<IMesh>>
   {
     mLogger->LogDebug(Log(fmt::format("Importing model from {}", path.string()),
                           "ModelImporter"));
@@ -112,7 +112,7 @@ namespace Dwarf
       // Apply modelTransform to the scene or node’s transform here.
     }
 
-    std::vector<std::unique_ptr<IMesh>> meshes;
+    std::vector<std::shared_ptr<IMesh>> meshes;
 
     ModelImporter::ProcessNode(
       scene->mRootNode, scene, meshes, glm::mat4(1.0F));
@@ -123,7 +123,7 @@ namespace Dwarf
   void
   ModelImporter::ProcessNode(const aiNode*                        node,
                              const aiScene*                       scene,
-                             std::vector<std::unique_ptr<IMesh>>& meshes,
+                             std::vector<std::shared_ptr<IMesh>>& meshes,
                              glm::mat4 parentTransform)
   {
     glm::mat4          nodeTransform = AssimpToGlmMatrix(node->mTransformation);
@@ -149,7 +149,7 @@ namespace Dwarf
 
   void
   ModelImporter::ProcessMesh(const aiMesh*                        mesh,
-                             std::vector<std::unique_ptr<IMesh>>& meshes,
+                             std::vector<std::shared_ptr<IMesh>>& meshes,
                              glm::mat4                            transform)
   {
     std::vector<Vertex>   vertices;
@@ -232,7 +232,6 @@ namespace Dwarf
       }
     }
 
-    meshes.push_back(
-      std::move(mMeshFactory->Create(vertices, indices, materialIndex)));
+    meshes.push_back(mMeshFactory->Create(vertices, indices, materialIndex));
   }
 }

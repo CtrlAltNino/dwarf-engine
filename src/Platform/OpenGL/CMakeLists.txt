@@ -1,7 +1,7 @@
 IF(WIN32 OR(UNIX AND NOT APPLE))
     target_sources(${libname}
         PRIVATE
-        OpenGLMesh.cpp
+        OpenGLMeshBuffer.cpp
         OpenGLContext.cpp
         OpenGLImGuiLayer.cpp
         OpenGLFramebuffer.cpp

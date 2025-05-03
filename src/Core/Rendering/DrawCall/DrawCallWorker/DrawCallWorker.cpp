@@ -1,3 +1,4 @@
+#include "Core/Asset/AssetTypes.hpp"
 #include "Core/Scene/Components/SceneComponents.hpp"
 #include "pch.hpp"
 
@@ -95,7 +96,7 @@ namespace Dwarf
     mLogger->LogDebug(Log("Generating draw calls", "DrawCallWorker"));
     std::vector<TempDrawCall>               batchedTemps;
     std::vector<TempDrawCall>               transparentTemps;
-    std::vector<std::unique_ptr<IDrawCall>> drawCalls;
+    std::vector<std::shared_ptr<IDrawCall>> drawCalls;
 
     if (!mLoadedScene->HasLoadedScene())
     {
@@ -138,14 +139,14 @@ namespace Dwarf
                   .IsTransparent)
             {
               transparentTemps.emplace_back(
-                *mesh,
+                mesh,
                 materialAsset,
                 TransformComponentHandle(scene.GetRegistry(), entityHandle));
             }
             else
             {
               batchedTemps.emplace_back(
-                *mesh,
+                mesh,
                 materialAsset,
                 TransformComponentHandle(scene.GetRegistry(), entityHandle));
             }
@@ -186,8 +187,7 @@ namespace Dwarf
           currentTempDrawCall.Material.get(), currentTempDrawCall.Transform);
 
         // Add the geometry of the current temporary draw call
-        currentBatch->Meshes.emplace_back(
-          currentTempDrawCall.Mesh.get().Clone());
+        currentBatch->Meshes.emplace_back(currentTempDrawCall.Mesh->Clone());
       }
       else
       {
@@ -206,14 +206,12 @@ namespace Dwarf
             currentTempDrawCall.Material.get(), currentTempDrawCall.Transform);
 
           // Add the geometry of the current temporary draw call
-          currentBatch->Meshes.emplace_back(
-            currentTempDrawCall.Mesh.get().Clone());
+          currentBatch->Meshes.emplace_back(currentTempDrawCall.Mesh->Clone());
         }
         // We can still add to the current batch
         else
         {
-          currentBatch->Meshes.push_back(
-            currentTempDrawCall.Mesh.get().Clone());
+          currentBatch->Meshes.push_back(currentTempDrawCall.Mesh->Clone());
         }
       }
     }
@@ -227,7 +225,7 @@ namespace Dwarf
     // Generate draw calls from batches
     for (auto& batch : batches)
     {
-      std::unique_ptr<IMesh> mergedMesh =
+      std::shared_ptr<IMesh> mergedMesh =
         mMeshFactory->MergeMeshes(batch->Meshes);
 
       drawCalls.push_back(mDrawCallFactory->Create(
@@ -237,7 +235,7 @@ namespace Dwarf
     // Generate draw calls for transparent materials
     for (auto& transparentCall : transparentTemps)
     {
-      std::unique_ptr<IMesh> mesh = transparentCall.Mesh.get().Clone();
+      std::shared_ptr<IMesh> mesh = transparentCall.Mesh->Clone();
       drawCalls.push_back(mDrawCallFactory->Create(
         mesh, transparentCall.Material, transparentCall.Transform));
     }
@@ -248,7 +246,6 @@ namespace Dwarf
   void
   DrawCallWorker::OnSceneLoad()
   {
-    mDrawCallList->Clear();
     this->Invalidate();
 
     mLoadedScene->GetScene()
@@ -268,14 +265,70 @@ namespace Dwarf
   void
   DrawCallWorker::OnSceneUnload()
   {
+    mLoadedScene->GetScene()
+      .GetRegistry()
+      .on_construct<MeshRendererComponent>()
+      .disconnect<&DrawCallWorker::OnMeshRendererComponentChange>(this);
+    mLoadedScene->GetScene()
+      .GetRegistry()
+      .on_update<MeshRendererComponent>()
+      .disconnect<&DrawCallWorker::OnMeshRendererComponentChange>(this);
+    mLoadedScene->GetScene()
+      .GetRegistry()
+      .on_destroy<MeshRendererComponent>()
+      .disconnect<&DrawCallWorker::OnMeshRendererComponentChange>(this);
+
     mDrawCallList->Clear();
   }
 
   void
   DrawCallWorker::OnReimportAll()
   {
+    mMeshBufferWorker->ClearRequests();
     mDrawCallList->Clear();
     this->Invalidate();
+  }
+
+  void
+  DrawCallWorker::OnReimportAsset(const std::filesystem::path& assetPath,
+                                  ASSET_TYPE                   assetType,
+                                  const UUID&                  uid)
+  {
+    if (assetType != ASSET_TYPE::SCENE && assetType != ASSET_TYPE::UNKNOWN)
+    {
+      mMeshBufferWorker->ClearRequests();
+      mDrawCallList->Clear();
+      this->Invalidate();
+    }
+  }
+
+  void
+  DrawCallWorker::OnImportAsset(const std::filesystem::path& assetPath,
+                                ASSET_TYPE                   assetType,
+                                const UUID&                  uid)
+  {
+  }
+
+  void
+  DrawCallWorker::OnAssetDatabaseClear()
+  {
+    mMeshBufferWorker->ClearRequests();
+    mDrawCallList->Clear();
+    this->Invalidate();
+  }
+
+  void
+  DrawCallWorker::OnRemoveAsset(const std::filesystem::path& path)
+  {
+    mMeshBufferWorker->ClearRequests();
+    mDrawCallList->Clear();
+    this->Invalidate();
+  }
+
+  void
+  DrawCallWorker::OnRename(const std::filesystem::path& oldPath,
+                           const std::filesystem::path& newPath)
+  {
   }
 
   void
@@ -283,7 +336,14 @@ namespace Dwarf
                                                 entt::entity    entity)
   {
     mLogger->LogDebug(Log("Updating Draw Calls", "DrawCallWorker"));
-    mDrawCallList->Clear();
-    this->Invalidate();
+
+    // We do not want to react to component changes while a scene is being
+    // loaded
+    if (mLoadedScene->HasLoadedScene())
+    {
+      mMeshBufferWorker->ClearRequests();
+      mDrawCallList->Clear();
+      this->Invalidate();
+    }
   }
 }

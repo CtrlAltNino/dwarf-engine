@@ -4,6 +4,11 @@
 
 namespace Dwarf
 {
+  DrawCallList::DrawCallList(std::shared_ptr<IDwarfLogger> logger)
+    : mLogger(std::move(logger))
+  {
+  }
+
   DrawCallList::~DrawCallList()
   {
     std::lock_guard<std::mutex> lock(mDrawCallMutex);
@@ -12,7 +17,7 @@ namespace Dwarf
 
   void
   DrawCallList::SubmitDrawCalls(
-    std::vector<std::unique_ptr<IDrawCall>> drawCalls)
+    std::vector<std::shared_ptr<IDrawCall>> drawCalls)
   {
     std::lock_guard<std::mutex> lock(mDrawCallMutex);
     mDrawCalls = std::move(drawCalls);
@@ -22,7 +27,7 @@ namespace Dwarf
   }
 
   auto
-  DrawCallList::GetDrawCalls() -> std::vector<std::unique_ptr<IDrawCall>>&
+  DrawCallList::GetDrawCalls() -> std::vector<std::shared_ptr<IDrawCall>>&
   {
     return mDrawCalls;
   }
@@ -36,6 +41,7 @@ namespace Dwarf
   void
   DrawCallList::Clear()
   {
+    mLogger->LogDebug(Log("Clearing Draw Calls", "DrawCallList"));
     std::lock_guard<std::mutex> lock(mDrawCallMutex);
     mDrawCalls.clear();
   }
@@ -51,7 +57,7 @@ namespace Dwarf
       uint32_t                    loaded = 0;
       for (const auto& drawCall : mDrawCalls)
       {
-        if (drawCall->GetMeshBuffer())
+        if (drawCall->GetMeshBuffer() != nullptr)
         {
           verts += drawCall->GetMeshBuffer()->GetVertexCount();
           indices += drawCall->GetMeshBuffer()->GetIndexCount();

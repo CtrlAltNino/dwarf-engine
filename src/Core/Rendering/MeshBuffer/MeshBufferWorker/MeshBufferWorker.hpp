@@ -35,5 +35,8 @@ namespace Dwarf
      */
     void
     ProcessRequests() override;
+
+    void
+    ClearRequests() override;
   };
 }
