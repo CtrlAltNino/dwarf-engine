@@ -8,19 +8,19 @@
 namespace Dwarf
 {
   DrawCallWorker::DrawCallWorker(
-    std::shared_ptr<IDwarfLogger>      logger,
-    std::shared_ptr<ILoadedScene>      loadedScene,
-    std::shared_ptr<IDrawCallFactory>  drawCallFactory,
-    std::unique_ptr<IDrawCallList>&    drawCallList,
-    std::shared_ptr<IMeshFactory>      meshFactory,
-    std::shared_ptr<IMeshBufferWorker> meshBufferWorker,
-    std::shared_ptr<IAssetDatabase>    assetDatabase)
+    std::shared_ptr<IDwarfLogger>           logger,
+    std::shared_ptr<ILoadedScene>           loadedScene,
+    std::shared_ptr<IDrawCallFactory>       drawCallFactory,
+    std::unique_ptr<IDrawCallList>&         drawCallList,
+    std::shared_ptr<IMeshFactory>           meshFactory,
+    std::shared_ptr<IMeshBufferRequestList> MeshBufferRequestList,
+    std::shared_ptr<IAssetDatabase>         assetDatabase)
     : mLogger(std::move(logger))
     , mLoadedScene(std::move(loadedScene))
     , mDrawCallFactory(std::move(drawCallFactory))
     , mDrawCallList(drawCallList)
     , mMeshFactory(std::move(meshFactory))
-    , mMeshBufferWorker(std::move(meshBufferWorker))
+    , mMeshBufferRequestList(std::move(MeshBufferRequestList))
     , mAssetDatabase(std::move(assetDatabase))
   {
     mLogger->LogDebug(Log("DrawCallWorker created", "DrawCallWorker"));
@@ -82,6 +82,10 @@ namespace Dwarf
 
       if (!mStopWorker.load())
       {
+        // First clear the mesh buffer requests as they will be outdated
+        // (Assuming this DrawCallWorker is the sole user of it)
+        // mMeshBufferRequestList->ClearRequests();
+
         // Generating the draw calls
         GenerateDrawCalls();
 
@@ -281,14 +285,18 @@ namespace Dwarf
     mDrawCallList->Clear();
   }
 
+  // This should be called from the main thread
   void
   DrawCallWorker::OnReimportAll()
   {
-    mMeshBufferWorker->ClearRequests();
+    mMeshBufferRequestList->ClearRequests();
+    std::unique_lock<std::mutex> meshBufferRequestLock(
+      mMeshBufferRequestList->GetMutex());
     mDrawCallList->Clear();
     this->Invalidate();
   }
 
+  // This should be called from the main thread
   void
   DrawCallWorker::OnReimportAsset(const std::filesystem::path& assetPath,
                                   ASSET_TYPE                   assetType,
@@ -296,12 +304,15 @@ namespace Dwarf
   {
     if (assetType != ASSET_TYPE::SCENE && assetType != ASSET_TYPE::UNKNOWN)
     {
-      mMeshBufferWorker->ClearRequests();
+      mMeshBufferRequestList->ClearRequests();
+      std::unique_lock<std::mutex> meshBufferRequestLock(
+        mMeshBufferRequestList->GetMutex());
       mDrawCallList->Clear();
       this->Invalidate();
     }
   }
 
+  // This should be called from the main thread
   void
   DrawCallWorker::OnImportAsset(const std::filesystem::path& assetPath,
                                 ASSET_TYPE                   assetType,
@@ -309,28 +320,30 @@ namespace Dwarf
   {
   }
 
+  // This should be called from the main thread
   void
   DrawCallWorker::OnAssetDatabaseClear()
   {
-    mMeshBufferWorker->ClearRequests();
     mDrawCallList->Clear();
     this->Invalidate();
   }
 
+  // This needs to called from the main thread
   void
   DrawCallWorker::OnRemoveAsset(const std::filesystem::path& path)
   {
-    mMeshBufferWorker->ClearRequests();
     mDrawCallList->Clear();
     this->Invalidate();
   }
 
+  // This should be called from the main thread
   void
   DrawCallWorker::OnRename(const std::filesystem::path& oldPath,
                            const std::filesystem::path& newPath)
   {
   }
 
+  // This should be called from the main thread
   void
   DrawCallWorker::OnMeshRendererComponentChange(entt::registry& registry,
                                                 entt::entity    entity)
@@ -341,7 +354,6 @@ namespace Dwarf
     // loaded
     if (mLoadedScene->HasLoadedScene())
     {
-      mMeshBufferWorker->ClearRequests();
       mDrawCallList->Clear();
       this->Invalidate();
     }

@@ -5,7 +5,7 @@
 #include "Core/Rendering/DrawCall/DrawCallList/IDrawCallList.hpp"
 #include "Core/Rendering/DrawCall/IDrawCallFactory.hpp"
 #include "Core/Rendering/Mesh/IMeshFactory.hpp"
-#include "Core/Rendering/MeshBuffer/MeshBufferWorker/IMeshBufferWorker.hpp"
+#include "Core/Rendering/MeshBuffer/MeshBufferRequestList/IMeshBufferRequestList.hpp"
 #include "Editor/LoadedScene/ILoadedScene.hpp"
 #include "IDrawCallWorker.hpp"
 #include "Logging/IDwarfLogger.hpp"
@@ -74,27 +74,28 @@ namespace Dwarf
     , public IAssetDatabaseObserver
   {
   private:
-    std::thread                        mWorkerThread;
-    std::shared_ptr<IDwarfLogger>      mLogger;
-    std::shared_ptr<ILoadedScene>      mLoadedScene;
-    std::shared_ptr<IDrawCallFactory>  mDrawCallFactory;
-    std::unique_ptr<IDrawCallList>&    mDrawCallList;
-    std::shared_ptr<IMeshFactory>      mMeshFactory;
-    std::shared_ptr<IMeshBufferWorker> mMeshBufferWorker;
-    std::shared_ptr<IAssetDatabase>    mAssetDatabase;
-    std::condition_variable            mCondition;
-    std::atomic<bool>                  mStopWorker = false;
-    std::atomic<bool>                  mInvalidate = false;
-    std::mutex                         mThreadMutex;
+    std::thread                             mWorkerThread;
+    std::shared_ptr<IDwarfLogger>           mLogger;
+    std::shared_ptr<ILoadedScene>           mLoadedScene;
+    std::shared_ptr<IDrawCallFactory>       mDrawCallFactory;
+    std::unique_ptr<IDrawCallList>&         mDrawCallList;
+    std::shared_ptr<IMeshFactory>           mMeshFactory;
+    std::shared_ptr<IMeshBufferRequestList> mMeshBufferRequestList;
+    std::shared_ptr<IAssetDatabase>         mAssetDatabase;
+    std::condition_variable                 mCondition;
+    std::atomic<bool>                       mStopWorker = false;
+    std::atomic<bool>                       mInvalidate = false;
+    std::mutex                              mThreadMutex;
 
   public:
-    DrawCallWorker(std::shared_ptr<IDwarfLogger>      logger,
-                   std::shared_ptr<ILoadedScene>      loadedScene,
-                   std::shared_ptr<IDrawCallFactory>  drawCallFactory,
-                   std::unique_ptr<IDrawCallList>&    drawCallList,
-                   std::shared_ptr<IMeshFactory>      meshFactory,
-                   std::shared_ptr<IMeshBufferWorker> meshBufferWorker,
-                   std::shared_ptr<IAssetDatabase>    assetDatabase);
+    DrawCallWorker(
+      std::shared_ptr<IDwarfLogger>           logger,
+      std::shared_ptr<ILoadedScene>           loadedScene,
+      std::shared_ptr<IDrawCallFactory>       drawCallFactory,
+      std::unique_ptr<IDrawCallList>&         drawCallList,
+      std::shared_ptr<IMeshFactory>           meshFactory,
+      std::shared_ptr<IMeshBufferRequestList> MeshBufferRequestList,
+      std::shared_ptr<IAssetDatabase>         assetDatabase);
 
     ~DrawCallWorker() override;
 
