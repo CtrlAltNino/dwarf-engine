@@ -8,20 +8,20 @@
 
 namespace Dwarf
 {
-  Editor::Editor(std::shared_ptr<IDwarfLogger>          logger,
-                 std::shared_ptr<IEditorStats>          stats,
-                 std::shared_ptr<IInputManager>         inputManager,
-                 std::shared_ptr<IProjectSettings>      projectSettings,
-                 std::shared_ptr<ILoadedScene>          loadedScene,
-                 std::shared_ptr<IWindow>               window,
-                 std::shared_ptr<ISceneIO>              sceneIO,
-                 std::shared_ptr<ISceneFactory>         sceneFactory,
-                 std::shared_ptr<IEditorView>           view,
-                 std::shared_ptr<IAssetDatabase>        assetDatabase,
-                 std::shared_ptr<IShaderRecompiler>     shaderRecompiler,
-                 std::shared_ptr<IAssetReimporter>      assetReimporter,
-                 std::shared_ptr<ITextureLoadingWorker> textureLoadingWorker,
-                 std::shared_ptr<IMeshBufferWorker>     meshBufferWorker)
+  Editor::Editor(std::shared_ptr<IDwarfLogger>           logger,
+                 std::shared_ptr<IEditorStats>           stats,
+                 std::shared_ptr<IInputManager>          inputManager,
+                 std::shared_ptr<IProjectSettings>       projectSettings,
+                 std::shared_ptr<ILoadedScene>           loadedScene,
+                 std::shared_ptr<IWindow>                window,
+                 std::shared_ptr<ISceneIO>               sceneIO,
+                 std::shared_ptr<ISceneFactory>          sceneFactory,
+                 std::shared_ptr<IEditorView>            view,
+                 std::shared_ptr<IAssetDatabase>         assetDatabase,
+                 std::shared_ptr<IShaderRecompiler>      shaderRecompiler,
+                 std::shared_ptr<IAssetReimporter>       assetReimporter,
+                 std::shared_ptr<ITextureLoadingWorker>  textureLoadingWorker,
+                 std::shared_ptr<IMeshBufferRequestList> MeshBufferRequestList)
     : mLogger(std::move(logger))
     , mEditorStats(std::move(stats))
     , mInputManager(std::move(inputManager))
@@ -35,7 +35,7 @@ namespace Dwarf
     , mShaderRecompiler(std::move(shaderRecompiler))
     , mAssetReimporter(std::move(assetReimporter))
     , mTextureLoadingWorker(std::move(textureLoadingWorker))
-    , mMeshBufferWorker(std::move(meshBufferWorker))
+    , mMeshBufferRequestList(std::move(MeshBufferRequestList))
   {
     mLogger->LogDebug(Log("Editor created", "Editor"));
   }
@@ -92,7 +92,7 @@ namespace Dwarf
       mAssetReimporter->ReimportQueuedAssets();
       mShaderRecompiler->Recompile();
       mTextureLoadingWorker->ProcessTextureJobs();
-      mMeshBufferWorker->ProcessRequests();
+      mMeshBufferRequestList->ProcessRequests();
       mView->OnUpdate();
       mView->OnImGuiRender();
       mWindow->EndFrame();

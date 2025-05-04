@@ -6,17 +6,17 @@
 namespace Dwarf
 {
   DrawCallWorkerFactory::DrawCallWorkerFactory(
-    std::shared_ptr<IDwarfLogger>      logger,
-    std::shared_ptr<ILoadedScene>      loadedScene,
-    std::shared_ptr<IDrawCallFactory>  drawCallFactory,
-    std::shared_ptr<IMeshFactory>      meshFactory,
-    std::shared_ptr<IMeshBufferWorker> meshBufferWorker,
-    std::shared_ptr<IAssetDatabase>    assetDatabase)
+    std::shared_ptr<IDwarfLogger>           logger,
+    std::shared_ptr<ILoadedScene>           loadedScene,
+    std::shared_ptr<IDrawCallFactory>       drawCallFactory,
+    std::shared_ptr<IMeshFactory>           meshFactory,
+    std::shared_ptr<IMeshBufferRequestList> MeshBufferRequestList,
+    std::shared_ptr<IAssetDatabase>         assetDatabase)
     : mLogger(std::move(logger))
     , mLoadedScene(std::move(loadedScene))
     , mDrawCallFactory(std::move(drawCallFactory))
     , mMeshFactory(std::move(meshFactory))
-    , mMeshBufferWorker(std::move(meshBufferWorker))
+    , mMeshBufferRequestList(std::move(MeshBufferRequestList))
     , mAssetDatabase(std::move(assetDatabase))
   {
     mLogger->LogDebug(
@@ -38,7 +38,7 @@ namespace Dwarf
                                             mDrawCallFactory,
                                             drawCallList,
                                             mMeshFactory,
-                                            mMeshBufferWorker,
+                                            mMeshBufferRequestList,
                                             mAssetDatabase);
   }
 }

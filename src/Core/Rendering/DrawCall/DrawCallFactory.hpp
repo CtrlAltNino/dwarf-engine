@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core/Rendering/MeshBuffer/MeshBufferWorker/IMeshBufferWorker.hpp"
+#include "Core/Rendering/MeshBuffer/MeshBufferRequestList/IMeshBufferRequestList.hpp"
 #include "IDrawCall.hpp"
 #include "IDrawCallFactory.hpp"
 #include "Logging/IDwarfLogger.hpp"
@@ -10,12 +10,13 @@ namespace Dwarf
   class DrawCallFactory : public IDrawCallFactory
   {
   private:
-    std::shared_ptr<IDwarfLogger>      mLogger;
-    std::shared_ptr<IMeshBufferWorker> mMeshBufferWorker;
+    std::shared_ptr<IDwarfLogger>           mLogger;
+    std::shared_ptr<IMeshBufferRequestList> mMeshBufferRequestList;
 
   public:
-    DrawCallFactory(std::shared_ptr<IDwarfLogger>      logger,
-                    std::shared_ptr<IMeshBufferWorker> meshBufferWorker);
+    DrawCallFactory(
+      std::shared_ptr<IDwarfLogger>           logger,
+      std::shared_ptr<IMeshBufferRequestList> MeshBufferRequestList);
     ~DrawCallFactory() override;
 
     /**

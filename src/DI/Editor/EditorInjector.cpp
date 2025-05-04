@@ -32,7 +32,7 @@
 #include "Core/Rendering/Material/ShaderAssetSourceContainer/ShaderAssetSourceContainerFactory.hpp"
 #include "Core/Rendering/Mesh/MeshFactory.hpp"
 #include "Core/Rendering/MeshBuffer/MeshBufferFactory.hpp"
-#include "Core/Rendering/MeshBuffer/MeshBufferWorker/MeshBufferWorker.hpp"
+#include "Core/Rendering/MeshBuffer/MeshBufferRequestList/MeshBufferRequestList.hpp"
 #include "Core/Rendering/PingPongBuffer/PingPongBufferFactory.hpp"
 #include "Core/Rendering/Pipelines/RenderingPipelineFactory.hpp"
 #include "Core/Rendering/PreviewRenderer/MaterialPreview/IMaterialPreview.hpp"
@@ -144,7 +144,7 @@ namespace Dwarf
           boost::di::extension::shared),
           boost::di::bind<IMeshBufferFactory>.to<MeshBufferFactory>().in(
           boost::di::extension::shared),
-          boost::di::bind<IMeshBufferWorker>.to<MeshBufferWorker>().in(
+          boost::di::bind<IMeshBufferRequestList>.to<MeshBufferRequestList>().in(
           boost::di::extension::shared),
           boost::di::bind<IMeshFactory>.to<MeshFactory>().in(
           boost::di::extension::shared),

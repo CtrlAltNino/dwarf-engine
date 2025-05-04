@@ -1,39 +1,42 @@
 #include "pch.hpp"
 
 #include "Core/Rendering/MeshBuffer/IMeshBufferFactory.hpp"
-#include "IMeshBufferWorker.hpp"
+#include "IMeshBufferRequestList.hpp"
 #include "Logging/IDwarfLogger.hpp"
-#include "MeshBufferWorker.hpp"
+#include "MeshBufferRequestList.hpp"
 
 namespace Dwarf
 {
-  MeshBufferWorker::MeshBufferWorker(
+  MeshBufferRequestList::MeshBufferRequestList(
     std::shared_ptr<IDwarfLogger>       logger,
     std::shared_ptr<IMeshBufferFactory> meshBufferFactory)
     : mLogger(std::move(logger))
     , mMeshBufferFactory(std::move(meshBufferFactory))
   {
-    mLogger->LogDebug(Log("MeshBufferWorker created.", "MeshBufferWorker"));
+    mLogger->LogDebug(
+      Log("MeshBufferRequestList created.", "MeshBufferRequestList"));
   }
 
-  MeshBufferWorker::~MeshBufferWorker()
+  MeshBufferRequestList::~MeshBufferRequestList()
   {
-    mLogger->LogDebug(Log("MeshBufferWorker destroyed.", "MeshBufferWorker"));
+    mLogger->LogDebug(
+      Log("MeshBufferRequestList destroyed.", "MeshBufferRequestList"));
   }
 
   void
-  MeshBufferWorker::RequestMeshBuffer(
+  MeshBufferRequestList::RequestMeshBuffer(
     std::unique_ptr<MeshBufferRequest>&& request)
   {
-    mLogger->LogDebug(Log("Adding mesh buffer request", "MeshBufferWorker"));
-    std::lock_guard<std::mutex> lock(mUploadMutex);
+    mLogger->LogDebug(
+      Log("Adding mesh buffer request", "MeshBufferRequestList"));
+    std::lock_guard<std::mutex> lock(mMeshBufferRequestMutex);
     mMeshBufferRequestQueue.push(std::move(request));
   }
 
   void
-  MeshBufferWorker::ProcessRequests()
+  MeshBufferRequestList::ProcessRequests()
   {
-    std::lock_guard<std::mutex> lock(mUploadMutex);
+    std::lock_guard<std::mutex> lock(mMeshBufferRequestMutex);
     while (!mMeshBufferRequestQueue.empty())
     {
       std::unique_ptr<MeshBufferRequest>& request =
@@ -50,10 +53,16 @@ namespace Dwarf
     }
   }
 
-  void
-  MeshBufferWorker::ClearRequests()
+  auto
+  MeshBufferRequestList::GetMutex() -> std::mutex&
   {
-    std::lock_guard<std::mutex> lock(mUploadMutex);
+    return mMeshBufferRequestMutex;
+  }
+
+  void
+  MeshBufferRequestList::ClearRequests()
+  {
+    std::lock_guard<std::mutex> lock(mMeshBufferRequestMutex);
     mMeshBufferRequestQueue = {};
   }
 }

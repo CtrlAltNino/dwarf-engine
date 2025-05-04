@@ -29,10 +29,10 @@ namespace Dwarf
    * @brief Class to multi thread the creation of mesh buffers
    *
    */
-  class IMeshBufferWorker
+  class IMeshBufferRequestList
   {
   public:
-    virtual ~IMeshBufferWorker() = default;
+    virtual ~IMeshBufferRequestList() = default;
 
     /**
      * @brief Enqueues a request to create a mesh buffer
@@ -48,6 +48,9 @@ namespace Dwarf
      */
     virtual void
     ProcessRequests() = 0;
+
+    virtual auto
+    GetMutex() -> std::mutex& = 0;
 
     virtual void
     ClearRequests() = 0;
