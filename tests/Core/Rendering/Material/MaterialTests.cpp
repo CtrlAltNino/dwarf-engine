@@ -7,7 +7,6 @@
 #include <gtest/gtest.h>
 #include <memory>
 
-
 TEST(MaterialTests, Sample)
 {
   const auto expected = 1;
