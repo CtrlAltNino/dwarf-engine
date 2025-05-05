@@ -41,6 +41,6 @@ namespace Dwarf
      * @return Reference to the transform component for the draw call
      */
     virtual auto
-    GetTransform() -> TransformComponentHandle = 0;
+    GetTransform() -> TransformComponent& = 0;
   };
 }

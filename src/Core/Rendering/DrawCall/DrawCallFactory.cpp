@@ -22,9 +22,9 @@ namespace Dwarf
   }
 
   auto
-  DrawCallFactory::Create(std::shared_ptr<IMesh>&  mesh,
-                          MaterialAsset&           material,
-                          TransformComponentHandle transform)
+  DrawCallFactory::Create(std::shared_ptr<IMesh>& mesh,
+                          MaterialAsset&          material,
+                          TransformComponent&     transform)
     -> std::shared_ptr<IDrawCall>
   {
     std::shared_ptr<DrawCall> drawCall =
