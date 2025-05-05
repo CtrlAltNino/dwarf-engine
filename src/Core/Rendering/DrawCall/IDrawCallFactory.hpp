@@ -23,9 +23,8 @@ namespace Dwarf
      * @return Unique pointer to the created draw call
      */
     virtual auto
-    Create(std::shared_ptr<IMesh>&  mesh,
-           MaterialAsset&           material,
-           TransformComponentHandle transform)
-      -> std::shared_ptr<IDrawCall> = 0;
+    Create(std::shared_ptr<IMesh>& mesh,
+           MaterialAsset&          material,
+           TransformComponent&     transform) -> std::shared_ptr<IDrawCall> = 0;
   };
 }

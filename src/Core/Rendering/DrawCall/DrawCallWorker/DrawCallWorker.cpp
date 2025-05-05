@@ -142,17 +142,11 @@ namespace Dwarf
                   .GetMaterialProperties()
                   .IsTransparent)
             {
-              transparentTemps.emplace_back(
-                mesh,
-                materialAsset,
-                TransformComponentHandle(scene.GetRegistry(), entityHandle));
+              transparentTemps.emplace_back(mesh, materialAsset, transform);
             }
             else
             {
-              batchedTemps.emplace_back(
-                mesh,
-                materialAsset,
-                TransformComponentHandle(scene.GetRegistry(), entityHandle));
+              batchedTemps.emplace_back(mesh, materialAsset, transform);
             }
           }
         }

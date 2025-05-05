@@ -21,11 +21,11 @@ namespace Dwarf
   {
     std::shared_ptr<IMesh>                Mesh;
     std::reference_wrapper<MaterialAsset> Material;
-    TransformComponentHandle              Transform;
+    TransformComponent&                   Transform;
 
-    TempDrawCall(std::shared_ptr<IMesh>   mesh,
-                 MaterialAsset&           material,
-                 TransformComponentHandle transform)
+    TempDrawCall(std::shared_ptr<IMesh> mesh,
+                 MaterialAsset&         material,
+                 TransformComponent&    transform)
       : Mesh(std::move(mesh))
       , Material(material)
       , Transform(transform)
@@ -59,9 +59,9 @@ namespace Dwarf
   {
     std::vector<std::shared_ptr<IMesh>> Meshes;
     MaterialAsset&                      Material;
-    TransformComponentHandle            Transform;
+    TransformComponent&                 Transform;
 
-    Batch(MaterialAsset& material, TransformComponentHandle transform)
+    Batch(MaterialAsset& material, TransformComponent& transform)
       : Material(material)
       , Transform(transform)
     {
