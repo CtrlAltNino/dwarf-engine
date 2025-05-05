@@ -107,6 +107,15 @@ namespace Dwarf
 
     IScene& scene = mLoadedScene->GetScene();
 
+    // ===== Gathering the scene geometry that should be rendered =====
+    // Go through all entities with MeshRendererComponents
+    // If they are not hidden and have a model asset assigned, loop through the
+    // meshes If the material index of the mesh is connected to a material,
+    // grabe the material From the entities TransformComponent, the Mesh, and
+    // the Material, create a temporary draw call Depending on if the material
+    // is transparent or not, put it in the corresponding vector. That is
+    // because we are rendering transparent geometry after the opague geometry
+
     for (auto view = scene.GetRegistry()
                        .view<TransformComponent, MeshRendererComponent>();
          auto [entityHandle, transform, component] : view.each())
