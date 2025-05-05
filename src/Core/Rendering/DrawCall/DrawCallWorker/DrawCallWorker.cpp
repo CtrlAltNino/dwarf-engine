@@ -82,10 +82,6 @@ namespace Dwarf
 
       if (!mStopWorker.load())
       {
-        // First clear the mesh buffer requests as they will be outdated
-        // (Assuming this DrawCallWorker is the sole user of it)
-        // mMeshBufferRequestList->ClearRequests();
-
         // Generating the draw calls
         GenerateDrawCalls();
 

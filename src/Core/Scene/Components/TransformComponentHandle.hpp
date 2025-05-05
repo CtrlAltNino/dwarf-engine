@@ -101,26 +101,6 @@ namespace Dwarf
         { component.Children = children; });
     }
 
-    /*[[nodiscard]] auto
-    AddChild() const -> std::vector<entt::entity>
-    {
-      return mRegistry.get<TransformComponent>(mEntity).Children;
-    }
-
-    [[nodiscard]] auto
-    RemoveChild() const -> std::vector<entt::entity>
-    {
-      return mRegistry.get<TransformComponent>(mEntity).Children;
-    }*/
-
-    /// @brief Returns the rotation of the entity as a matrix.
-    /// @return The rotations as a 4x4 matrix.
-    /*[[nodiscard]] auto
-    GetRotationMatrix() const -> glm::mat4
-    {
-      return glm::toMat4(glm::quat(DEG_2_RAD * Rotation));
-    }*/
-
     /// @brief Returns the model matrix of the entity. A composite matrix of the
     /// translation, scale and rotation matrices.
     /// @return The model matrix as a 4x4 matrix.

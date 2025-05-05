@@ -118,7 +118,6 @@ namespace Dwarf
   void
   AssetDatabase::ReimportAll()
   {
-    // mIsReimportingAll = true;
     std::vector<std::filesystem::path> materialPaths = {};
     std::vector<std::filesystem::path> otherPaths = {};
 
@@ -147,8 +146,6 @@ namespace Dwarf
         Import(path);
       }
     }
-
-    // mIsReimportingAll = false;
 
     for (auto* observer : mObservers)
     {
@@ -240,13 +237,10 @@ namespace Dwarf
           }
       }
 
-      // if (!mIsReimportingAll)
-      //{
       for (auto* observer : mObservers)
       {
         observer->OnReimportAsset(assetPath, asset->GetType(), asset->GetUID());
       }
-      //}
     }
   }
 
@@ -261,14 +255,11 @@ namespace Dwarf
       {
         mRegistry.destroy(entity);
 
-        // if (!mIsReimportingAll)
-        //{
         for (auto* observer : mObservers)
         {
           observer->OnReimportAsset(
             asset->GetPath(), asset->GetType(), asset->GetUID());
         }
-        //}
       }
     }
   }
@@ -283,13 +274,10 @@ namespace Dwarf
       {
         mRegistry.destroy(entity);
 
-        // if (!mIsReimportingAll)
-        //{
         for (auto* observer : mObservers)
         {
           observer->OnRemoveAsset(path);
         }
-        //}
       }
     }
   }
@@ -341,13 +329,10 @@ namespace Dwarf
     std::unique_ptr<IAssetReference> asset = mAssetReferenceFactory->CreateNew(
       mRegistry.create(), mRegistry, newId, assetPath, fileName);
 
-    // if (!mIsReimportingAll)
-    //{
     for (auto* observer : mObservers)
     {
       observer->OnImportAsset(assetPath, asset->GetType(), asset->GetUID());
     }
-    //}
 
     return asset->GetUID();
   }

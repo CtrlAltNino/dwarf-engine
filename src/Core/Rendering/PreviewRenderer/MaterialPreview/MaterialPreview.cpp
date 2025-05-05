@@ -41,8 +41,8 @@ namespace Dwarf
     mCamera->GetProperties().NearPlane = 0.1F;
     mCamera->GetProperties().FarPlane = 25000.0F;
     mCamera->GetProperties().AspectRatio = 1.0F;
-    mCamera->GetProperties().Transform.GetPosition() = { 0.0F, 0.0F, 0.0F };
-    mCamera->GetProperties().Transform.GetEulerAngles() = { 0, 0, 0 };
+    mCamera->GetProperties().Transform.SetPosition({ 0.0F, 0.0F, 0.0F });
+    mCamera->GetProperties().Transform.SetEulerAngles({ 0, 0, 0 });
 
     mLogger->LogDebug(Log("MaterialPreview created", "MaterialPreview"));
   }

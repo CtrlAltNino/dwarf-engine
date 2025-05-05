@@ -245,43 +245,6 @@ namespace Dwarf
     {
     }
 
-    /*auto
-    GetModelAsset() -> std::unique_ptr<IAssetReference>&
-    {
-      return modelAsset;
-    }
-
-    [[nodiscard]] auto
-    GetModelAsset() const -> const std::unique_ptr<IAssetReference>&
-    {
-      return modelAsset;
-    }
-
-    auto
-    MaterialAssets() -> std::map<int, std::unique_ptr<IAssetReference>>&
-    {
-      return materialAssets;
-    }
-
-    [[nodiscard]] auto
-    GetMaterialAssets() const
-      -> const std::map<int, std::unique_ptr<IAssetReference>>&
-    {
-      return materialAssets;
-    }
-
-    [[nodiscard]] auto
-    GetIsHidden() const -> bool
-    {
-      return IsHidden;
-    }
-
-    auto
-    IdMesh() -> std::unique_ptr<IMeshBuffer>&
-    {
-      return idMeshBuffer;
-    }*/
-
     auto
     Serialize() -> nlohmann::json override
     {
