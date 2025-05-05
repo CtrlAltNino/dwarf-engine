@@ -10,6 +10,7 @@
 #include "Editor/Stats/IEditorStats.hpp"
 #include "Logging/IDwarfLogger.hpp"
 #include "Platform/OpenGL/IOpenGLStateTracker.hpp"
+#include <cstdint>
 
 namespace Dwarf
 {
@@ -190,5 +191,11 @@ namespace Dwarf
      */
     auto
     GetMaxSamples() -> int32_t override;
+
+    auto
+    IsAnisoSupported() -> bool override;
+
+    auto
+    GetMaxAnisoLevel() -> uint8_t override;
   };
 }

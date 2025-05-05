@@ -332,8 +332,8 @@ namespace Dwarf
                                std::shared_ptr<IVramTracker> vramTracker)
     : mLogger(std::move(logger))
     , mVramTracker(std::move(vramTracker))
+    , mTextureType(GetTextureType(data->Type, data->Samples))
   {
-    mTextureType = GetTextureType(data->Type, data->Samples);
     GLuint textureDataType = GetTextureDataType(data->DataType);
     GLuint textureFormat = GetTextureFormat(data->Format, data->DataType);
     GLuint textureWrapS = GetTextureWrap(data->Parameters.WrapS);
@@ -369,21 +369,6 @@ namespace Dwarf
     glTextureParameteri(mId, GL_TEXTURE_MAG_FILTER, textureMagFilter);
     OpenGLUtilities::CheckOpenGLError(
       "glTextureParameteri MAG FILTER", "OpenGLTexture", mLogger);
-
-    if (GLAD_GL_EXT_texture_filter_anisotropic != 0)
-    {
-      GLfloat maxAniso = 0.0f;
-      glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAniso);
-      OpenGLUtilities::CheckOpenGLError(
-        "glGetFloatv GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT",
-        "OpenGLTexture",
-        mLogger);
-      glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, maxAniso);
-      OpenGLUtilities::CheckOpenGLError(
-        "glTexParameterf GL_TEXTURE_MAX_ANISOTROPY_EXT",
-        "OpenGLTexture",
-        mLogger);
-    }
 
     switch (data->Type)
     {
@@ -445,6 +430,16 @@ namespace Dwarf
                               textureFormat,
                               textureDataType,
                               GetPixelPointer(*data));
+
+          if (data->Parameters.MipMapped)
+          {
+            glGenerateTextureMipmap(mId);
+            OpenGLUtilities::CheckOpenGLError(
+              "glGenerateTextureMipmap", "OpenGLTexture", mLogger);
+          }
+
+          SetAnisoLevel(data->Parameters.AnisoLevel);
+
           OpenGLUtilities::CheckOpenGLError(
             "glTextureSubImage2D", "OpenGLTexture", mLogger);
           break;
@@ -500,13 +495,6 @@ namespace Dwarf
         }
     }
 
-    if (data->Parameters.MipMapped)
-    {
-      glGenerateTextureMipmap(mId);
-      OpenGLUtilities::CheckOpenGLError(
-        "glGenerateTextureMipmap", "OpenGLTexture", mLogger);
-    }
-
     mVramMemory = mVramTracker->AddTextureMemory(data);
 
     mLogger->LogDebug(Log("OpenGL texture created", "OpenGLTexture"));
@@ -541,5 +529,13 @@ namespace Dwarf
   OpenGLTexture::GetType() const -> GLuint
   {
     return mTextureType;
+  }
+
+  void
+  OpenGLTexture::SetAnisoLevel(uint8_t anisoLevel)
+  {
+    // TODO: Clamp value
+    glTextureParameterf(
+      mId, GL_TEXTURE_MAX_ANISOTROPY_EXT, static_cast<GLfloat>(anisoLevel));
   }
 }

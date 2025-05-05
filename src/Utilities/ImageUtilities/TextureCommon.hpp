@@ -74,6 +74,7 @@ namespace Dwarf
     bool             MipMapped = false;
     bool             IsSRGB = false;
     bool             FlipY = false;
+    uint8_t          AnisoLevel = 1U;
   };
 
   struct TextureContainer
@@ -131,6 +132,7 @@ namespace Dwarf
     bool            mFlipY = false;
     WrapMode        mWrapMode = WrapMode::Clamp;
     FilterMode      mFilterMode = FilterMode::Bilinear;
+    uint8_t         mAnisoLevel = 1U;
 
     TextureImportSettings() = default;
 
@@ -165,10 +167,15 @@ namespace Dwarf
       {
         mFilterMode = serializedData["FilterMode"].get<FilterMode>();
       }
+
+      if (serializedData.contains("AnisoLevel"))
+      {
+        mAnisoLevel = serializedData["AnisoLevel"].get<uint8_t>();
+      }
     }
 
-    nlohmann::json
-    Serialize() override
+    auto
+    Serialize() -> nlohmann::json override
     {
       nlohmann::json serializedData;
 
@@ -183,6 +190,8 @@ namespace Dwarf
       serializedData["WrapMode"] = mWrapMode;
 
       serializedData["FilterMode"] = mFilterMode;
+
+      serializedData["AnisoLevel"] = mAnisoLevel;
 
       return serializedData;
     }
