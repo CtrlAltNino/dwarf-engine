@@ -30,6 +30,9 @@ namespace Dwarf
     [[nodiscard]] virtual auto
     GetTextureID() const -> uintptr_t = 0;
 
+    virtual void
+    SetAnisoLevel(uint8_t anisoLevel) = 0;
+
     auto
     operator==(const ITexture& other) const -> bool
     {

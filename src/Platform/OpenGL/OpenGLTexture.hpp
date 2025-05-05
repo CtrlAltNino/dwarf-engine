@@ -41,6 +41,9 @@ namespace Dwarf
     [[nodiscard]] auto
     GetTextureID() const -> uintptr_t override;
 
+    void
+    SetAnisoLevel(uint8_t anisoLevel) override;
+
     /**
      * @brief Gets the underlying texture type
      *

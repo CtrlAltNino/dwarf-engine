@@ -396,4 +396,33 @@ namespace Dwarf
 
     return maxSamples;
   }
+
+  auto
+  OpenGLRendererApi::IsAnisoSupported() -> bool
+  {
+    GLint numExtensions = 0;
+    glGetIntegerv(GL_NUM_EXTENSIONS, &numExtensions);
+
+    for (GLint i = 0; i < numExtensions; ++i)
+    {
+      const char* ext =
+        reinterpret_cast<const char*>(glGetStringi(GL_EXTENSIONS, i));
+      if (std::string(ext) == "GL_EXT_texture_filter_anisotropic")
+      {
+        return true;
+      }
+    }
+    return false;
+  }
+
+  auto
+  OpenGLRendererApi::GetMaxAnisoLevel() -> uint8_t
+  {
+    GLfloat maxAniso = 1.0F;
+    if (IsAnisoSupported())
+    {
+      glGetFloatv(GL_MAX_TEXTURE_MAX_ANISOTROPY_EXT, &maxAniso);
+    }
+    return static_cast<uint8_t>(maxAniso);
+  }
 }

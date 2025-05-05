@@ -4,21 +4,24 @@
 #include "TextureAssetInspector.hpp"
 #include "UI/DwarfUI.hpp"
 #include "Utilities/ImageUtilities/TextureCommon.hpp"
+#include <cstdint>
 #include <imgui.h>
 
 namespace Dwarf
 {
   TextureAssetInspector::TextureAssetInspector(
-    GraphicsApi                       graphicsApi,
-    std::shared_ptr<IAssetDatabase>   assetDatabase,
-    std::shared_ptr<IAssetReimporter> assetReimporter,
-    std::shared_ptr<IInputManager>    inputManager,
-    std::shared_ptr<IAssetMetadata>   assetMetadata)
+    GraphicsApi                                 graphicsApi,
+    std::shared_ptr<IAssetDatabase>             assetDatabase,
+    std::shared_ptr<IAssetReimporter>           assetReimporter,
+    std::shared_ptr<IInputManager>              inputManager,
+    std::shared_ptr<IAssetMetadata>             assetMetadata,
+    const std::shared_ptr<IRendererApiFactory>& rendererApiFactory)
     : mGraphicsApi(graphicsApi)
     , mAssetDatabase(std::move(assetDatabase))
     , mAssetReimporter(std::move(assetReimporter))
     , mInputManager(std::move(inputManager))
     , mAssetMetadata(std::move(assetMetadata))
+    , mRendererApi(rendererApiFactory->Create())
   {
   }
 
@@ -72,7 +75,6 @@ namespace Dwarf
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
     if (ImGui::Button("Reimport"))
     {
-      // mAssetDatabase->Reimport(asset->GetPath());
       mAssetReimporter->QueueReimport(asset.GetPath());
     }
 
@@ -201,6 +203,32 @@ namespace Dwarf
         }
         ImGui::EndCombo();
       }
+    }
+
+    ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
+
+    static bool    anisoSupported = mRendererApi->IsAnisoSupported();
+    static uint8_t min = 1U;
+    static auto    max = mRendererApi->GetMaxAnisoLevel();
+    std::string    format = std::format("{}/{}", "%d", max);
+
+    if (anisoSupported)
+    {
+      if (ImGui::SliderScalar("Aniso Level##AnisoLevel",
+                              ImGuiDataType_U8,
+                              &mCurrentImportSettings.mAnisoLevel,
+                              &min,
+                              &max,
+                              format.c_str(),
+                              ImGuiSliderFlags_None))
+      {
+        textureAsset.get().GetTexture()->SetAnisoLevel(
+          mCurrentImportSettings.mAnisoLevel);
+      }
+    }
+    else
+    {
+      ImGui::LabelText("Aniso Level", "Not supported");
     }
 
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);

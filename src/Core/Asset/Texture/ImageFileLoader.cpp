@@ -8,6 +8,7 @@
 #include "Core/Asset/Texture/ImageFileTypeUtilities/TiffUtilities.hpp"
 #include "ImageFileLoader.hpp"
 #include "Utilities/ImageUtilities/TextureCommon.hpp"
+#include <cstdint>
 
 namespace Dwarf
 {
@@ -95,6 +96,12 @@ namespace Dwarf
     {
       textureData->Parameters.MipMapped =
         importSettings["GenerateMipMaps"].get<bool>();
+    }
+
+    if (importSettings.contains("AnisoLevel"))
+    {
+      textureData->Parameters.AnisoLevel =
+        importSettings["AnisoLevel"].get<uint8_t>();
     }
 
     if (importSettings.contains("WrapMode"))

@@ -168,5 +168,11 @@ namespace Dwarf
      */
     virtual auto
     GetMaxSamples() -> int32_t = 0;
+
+    virtual auto
+    IsAnisoSupported() -> bool = 0;
+
+    virtual auto
+    GetMaxAnisoLevel() -> uint8_t = 0;
   };
 }
