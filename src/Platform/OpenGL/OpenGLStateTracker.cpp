@@ -84,6 +84,28 @@ namespace Dwarf
   }
 
   void
+  OpenGLStateTracker::SetDepthWrite(bool enabled)
+  {
+    if (enabled != mDepthWrite)
+    {
+      if (enabled)
+      {
+        glDepthMask(GL_TRUE);
+        OpenGLUtilities::CheckOpenGLError(
+          "glDepthMask GL_TRUE", "OpenGLRendererApi", mLogger);
+      }
+      else
+      {
+        glDepthMask(GL_FALSE);
+        OpenGLUtilities::CheckOpenGLError(
+          "glDepthMask GL_FALSE", "OpenGLRendererApi", mLogger);
+      }
+
+      mDepthWrite = enabled;
+    }
+  }
+
+  void
   OpenGLStateTracker::SetDepthTest(bool enabled)
   {
     if (enabled != mDepthMode)

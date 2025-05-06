@@ -14,6 +14,7 @@
 #include "Core/Rendering/Pipelines/IRenderingPipeline.hpp"
 #include "Core/Rendering/RendererApi/IRendererApi.hpp"
 #include "Core/Rendering/Shader/ShaderRegistry/IShaderRegistry.hpp"
+#include "Core/Rendering/SkyboxRenderer/ISkyboxRenderer.hpp"
 #include "Core/Scene/Settings/ISceneSettingsObserver.hpp"
 #include "Editor/LoadedScene/ILoadedScene.hpp"
 #include "IRenderingPipeline.hpp"
@@ -33,6 +34,7 @@ namespace Dwarf
     std::shared_ptr<IMeshBufferFactory> mMeshBufferFactory;
     std::shared_ptr<IShaderRegistry>    mShaderRegistry;
     std::shared_ptr<ILoadedScene>       mLoadedScene;
+    std::shared_ptr<ISkyboxRenderer>    mSkyboxRenderer;
 
     std::unique_ptr<IMaterial> mIdMaterial;
     std::shared_ptr<IShader>   mGridShader;
@@ -77,6 +79,7 @@ namespace Dwarf
       std::shared_ptr<IMeshFactory>               meshFactory,
       std::shared_ptr<IMeshBufferFactory>         meshBufferFactory,
       std::shared_ptr<ILoadedScene>               loadedScene,
+      std::shared_ptr<ISkyboxRenderer>            skyboxRenderer,
       const std::shared_ptr<IFramebufferFactory>& framebufferFactory,
       const std::shared_ptr<IMaterialFactory>&    materialFactory,
       const std::shared_ptr<IDrawCallListFactory>&   drawCallListFactory,
@@ -220,6 +223,11 @@ namespace Dwarf
 
     void
     OnBloomSettingsChanged() override;
+
+    void
+    OnSkyboxSettingsChanged() override
+    {
+    }
 
     void
     OnSceneLoad() override;

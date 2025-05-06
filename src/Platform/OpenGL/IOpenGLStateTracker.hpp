@@ -34,6 +34,9 @@ namespace Dwarf
     SetBlendFunction(GLenum source, GLenum destination) = 0;
 
     virtual void
+    SetDepthWrite(bool enabled) = 0;
+
+    virtual void
     SetDepthTest(bool enabled) = 0;
 
     virtual void SetDepthFunction(GLenum) = 0;

@@ -18,5 +18,8 @@ namespace Dwarf
 
     virtual void
     OnBloomSettingsChanged() = 0;
+
+    virtual void
+    OnSkyboxSettingsChanged() = 0;
   };
 }

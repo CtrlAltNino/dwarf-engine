@@ -20,6 +20,7 @@ namespace Dwarf
     std::shared_ptr<IMeshFactory>                meshFactory,
     std::shared_ptr<IMeshBufferFactory>          meshBufferFactory,
     std::shared_ptr<ILoadedScene>                loadedScene,
+    std::shared_ptr<ISkyboxRenderer>             skyboxRenderer,
     const std::shared_ptr<IFramebufferFactory>&  framebufferFactory,
     const std::shared_ptr<IMaterialFactory>&     materialFactory,
     const std::shared_ptr<IDrawCallListFactory>& drawCallListFactory,
@@ -31,6 +32,7 @@ namespace Dwarf
     , mShaderSourceCollectionFactory(std::move(shaderSourceCollectionFactory))
     , mMeshFactory(std::move(meshFactory))
     , mMeshBufferFactory(std::move(meshBufferFactory))
+    , mSkyboxRenderer(std::move(skyboxRenderer))
     , mDrawCallList(drawCallListFactory->Create())
     , mDrawCallWorker(drawCallWorkerFactory->Create(mDrawCallList))
   {
@@ -121,7 +123,11 @@ namespace Dwarf
     mRendererApi->SetClearColor(glm::vec4(0.065F, 0.07F, 0.085F, 1.0F));
     mRendererApi->Clear();
 
-    // TODO: Render skybox
+    // Render skybox
+    mSkyboxRenderer->SetCamera(camera);
+    mSkyboxRenderer->Render();
+
+    // Render draw calls
     {
       std::lock_guard<std::mutex> lock(mDrawCallList->GetMutex());
       for (auto& drawCall : mDrawCallList->GetDrawCalls())

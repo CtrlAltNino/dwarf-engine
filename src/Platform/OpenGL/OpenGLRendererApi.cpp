@@ -115,6 +115,10 @@ namespace Dwarf
     mStateTracker->SetCullMode(!material.GetMaterialProperties().IsDoubleSided);
     mStateTracker->SetCullFace(GL_BACK);
 
+    mStateTracker->SetDepthWrite(
+      !material.GetMaterialProperties().IsTransparent);
+    mStateTracker->SetDepthFunction(GL_LESS);
+
     for (auto const& identifier :
          material.GetShaderParameters()->GetParameterIdentifiers())
     {
@@ -154,6 +158,148 @@ namespace Dwarf
                         camera.GetProperties().Transform.GetPosition());
 
     shader.UploadParameters();
+
+    oglMesh->Bind();
+
+    glDrawElements(GL_TRIANGLES, oglMesh->GetIndexCount(), GL_UNSIGNED_INT, 0);
+    OpenGLUtilities::CheckOpenGLError(
+      "glDrawElements", "OpenGLRendererApi", mLogger);
+  }
+
+  void
+  OpenGLRendererApi::RenderSkyboxIndexed(const IMeshBuffer* mesh,
+                                         IMaterial&         material,
+                                         ICamera&           camera)
+  {
+    OpenGLUtilities::CheckOpenGLError(
+      "Before rendering", "OpenGLRendererApi", mLogger);
+    const auto*   oglMesh = dynamic_cast<const OpenGLMeshBuffer*>(mesh);
+    IShader&      baseShader = *material.GetShader();
+    OpenGLShader& oglShader = baseShader.IsCompiled()
+                                ? dynamic_cast<OpenGLShader&>(baseShader)
+                                : dynamic_cast<OpenGLShader&>(*mErrorShader);
+    int           textureInputCounter = 0;
+
+    mStateTracker->SetShaderProgram(oglShader);
+
+    mStateTracker->SetBlendMode(false);
+    mStateTracker->SetCullMode(false);
+
+    mStateTracker->SetDepthWrite(false);
+    mStateTracker->SetDepthFunction(GL_LEQUAL);
+    mStateTracker->SetDepthTest(true);
+
+    for (auto const& identifier :
+         material.GetShaderParameters()->GetParameterIdentifiers())
+    {
+      if (material.GetShaderParameters()->HasParameter(identifier))
+      {
+        std::visit(
+          [&baseShader, identifier, this](auto&& value)
+          {
+            using T = std::decay_t<decltype(value)>;
+            if constexpr (std::is_same_v<T, std::optional<UUID>>)
+            {
+              // std::optional return static_cast<std::optional<UUID>>(value);
+              auto uid = static_cast<std::optional<UUID>>(value);
+
+              if (uid.has_value())
+              {
+                auto& textureAsset = static_cast<TextureAsset&>(
+                  mAssetDatabase->Retrieve(uid.value())->GetAsset());
+                baseShader.SetParameter(identifier, textureAsset.GetTexture());
+              }
+            }
+            else
+            {
+              // return value;
+              baseShader.SetParameter(identifier, value);
+            }
+          },
+          material.GetShaderParameters()->GetParameter(identifier));
+      }
+    }
+
+    // TODO: without translation
+    oglShader.SetParameter("viewMatrix",
+                           glm::mat4(glm::mat3(camera.GetViewMatrix())));
+    oglShader.SetParameter("projectionMatrix", camera.GetProjectionMatrix());
+    oglShader.SetParameter("_Time", (float)mEditorStats->GetTimeSinceStart());
+    // shader.SetParameter("viewPosition",
+    //                     camera.GetProperties().Transform.GetPosition());
+
+    oglShader.UploadParameters();
+
+    oglMesh->Bind();
+
+    glDrawElements(GL_TRIANGLES, oglMesh->GetIndexCount(), GL_UNSIGNED_INT, 0);
+    OpenGLUtilities::CheckOpenGLError(
+      "glDrawElements", "OpenGLRendererApi", mLogger);
+  }
+
+  void
+  OpenGLRendererApi::RenderSkyboxIndexed(const IMeshBuffer* mesh,
+                                         IShader&           shader,
+                                         ICamera&           camera)
+  {
+    OpenGLUtilities::CheckOpenGLError(
+      "Before rendering", "OpenGLRendererApi", mLogger);
+    const auto* oglMesh = dynamic_cast<const OpenGLMeshBuffer*>(mesh);
+    // IShader&      baseShader = *material.GetShader();
+    OpenGLShader& oglShader = shader.IsCompiled()
+                                ? dynamic_cast<OpenGLShader&>(shader)
+                                : dynamic_cast<OpenGLShader&>(*mErrorShader);
+    int           textureInputCounter = 0;
+
+    mStateTracker->SetShaderProgram(oglShader);
+
+    mStateTracker->SetBlendMode(false);
+    mStateTracker->SetCullMode(false);
+
+    mStateTracker->SetDepthWrite(false);
+    mStateTracker->SetDepthFunction(GL_LEQUAL);
+    mStateTracker->SetDepthTest(true);
+
+    /*for (auto const& identifier :
+         material.GetShaderParameters()->GetParameterIdentifiers())
+    {
+      if (material.GetShaderParameters()->HasParameter(identifier))
+      {
+        std::visit(
+          [&shader, identifier, this](auto&& value)
+          {
+            using T = std::decay_t<decltype(value)>;
+            if constexpr (std::is_same_v<T, std::optional<UUID>>)
+            {
+              // std::optional return static_cast<std::optional<UUID>>(value);
+              auto uid = static_cast<std::optional<UUID>>(value);
+
+              if (uid.has_value())
+              {
+                auto& textureAsset = static_cast<TextureAsset&>(
+                  mAssetDatabase->Retrieve(uid.value())->GetAsset());
+                shader.SetParameter(identifier, textureAsset.GetTexture());
+              }
+            }
+            else
+            {
+              // return value;
+              shader.SetParameter(identifier, value);
+            }
+          },
+          material.GetShaderParameters()->GetParameter(identifier));
+      }
+    }*/
+
+    // TODO: without translation
+    oglShader.SetParameter("viewMatrix",
+                           glm::mat4(glm::mat3(camera.GetViewMatrix())));
+    oglShader.SetParameter("projectionMatrix", camera.GetProjectionMatrix());
+    oglShader.SetParameter("_Time", (float)mEditorStats->GetTimeSinceStart());
+    // shader.SetParameter("viewPosition",
+    //                     camera.GetProperties().Transform.GetPosition());
+
+    oglShader.UploadParameters();
 
     oglMesh->Bind();
 

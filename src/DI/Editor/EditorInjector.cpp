@@ -44,6 +44,7 @@
 #include "Core/Rendering/Shader/ShaderParameterCollection/IShaderParameterCollectionFactory.hpp"
 #include "Core/Rendering/Shader/ShaderParameterCollection/ShaderParameterCollectionFactory.hpp"
 #include "Core/Rendering/Shader/ShaderRegistry/ShaderRegistry.hpp"
+#include "Core/Rendering/SkyboxRenderer/SkyboxRenderer.hpp"
 #include "Core/Rendering/Texture/ITextureFactory.hpp"
 #include "Core/Rendering/Texture/TextureFactory.hpp"
 #include "Core/Rendering/VramTracker/IVramTracker.hpp"
@@ -182,6 +183,8 @@ namespace Dwarf
           boost::di::bind<IAssetReferenceFactory>.to<AssetReferenceFactory>().in(boost::di::extension::shared),
           boost::di::bind<IAssetDatabase>.to<AssetDatabase>().in(
           boost::di::extension::shared),
+          boost::di::bind<ISkyboxRenderer>.to<SkyboxRenderer>().in(
+            boost::di::extension::shared),
           boost::di::bind<IShaderAssetSourceContainerFactory>.to<ShaderAssetSourceContainerFactory>().in(
           boost::di::extension::shared),
           boost::di::bind<IShaderAssetSelectorFactory>.to<ShaderAssetSelectorFactory>().in(
