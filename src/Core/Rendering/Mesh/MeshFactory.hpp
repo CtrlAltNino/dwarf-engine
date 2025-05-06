@@ -46,6 +46,9 @@ namespace Dwarf
     [[nodiscard]] auto
     CreateUnitCube() const -> std::shared_ptr<IMesh> override;
 
+    [[nodiscard]] auto
+    CreateSkyboxCube() const -> std::shared_ptr<IMesh> override;
+
     /**
      * @brief Creates a mesh representing a unit quad
      *
