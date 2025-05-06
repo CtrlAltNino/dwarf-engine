@@ -14,13 +14,13 @@
           "sensitivity": 0.15000000596046448,
           "transform": {
             "Position": {
-              "x": 7.178058624267578,
-              "y": 5.638707160949707,
-              "z": 12.553520202636719
+              "x": 15.481451034545898,
+              "y": 9.054556846618652,
+              "z": 17.89082145690918
             },
             "Rotation": {
-              "x": 18.74998664855957,
-              "y": -30.30003547668457,
+              "x": 18.599994659423828,
+              "y": 318.4512023925781,
               "z": 0.0
             },
             "Scale": {
@@ -38,13 +38,15 @@
             "y": 9
           },
           "constraintType": 0,
-          "exposure": 1.399999976158142,
+          "gridSettings": {
+            "offset": -4.050000190734863,
+            "opacity": 1.0,
+            "renderGrid": true
+          },
           "resolutionConstraint": {
             "x": 1024,
             "y": 1024
-          },
-          "samples": 4,
-          "tonemap": 0
+          }
         },
         "type": 3
       },
@@ -68,6 +70,11 @@
         "id": "d042ae2a-602c-4334-ba38-23466a51e58e",
         "label": "Performance",
         "type": 0
+      },
+      {
+        "id": "a78011b9-dcdf-44df-b153-c96e66bd6092",
+        "label": "Scene Settings",
+        "type": 7
       }
     ],
     "windowMaximized": true
