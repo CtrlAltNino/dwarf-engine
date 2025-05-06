@@ -6,21 +6,21 @@
     "modules": [
       {
         "camera": {
-          "aspectRatio": 0.9498934149742126,
+          "aspectRatio": 1.1076759099960327,
           "farPlane": 1000.0,
-          "fov": 70.0,
+          "fov": 75.0,
           "movementSpeed": 4.0,
           "nearPlane": 0.10000000149011612,
           "sensitivity": 0.15000000596046448,
           "transform": {
             "Position": {
-              "x": 9.154117584228516,
-              "y": 1.2353577613830566,
-              "z": -0.3047935962677002
+              "x": 8.03929615020752,
+              "y": 5.307946681976318,
+              "z": 0.810488760471344
             },
             "Rotation": {
-              "x": -2.99979305267334,
-              "y": -2608.3349609375,
+              "x": 7.649135112762451,
+              "y": 278.0119934082031,
               "z": 0.0
             },
             "Scale": {
@@ -30,7 +30,7 @@
             }
           }
         },
-        "id": "4369d84e-d3d0-4738-8c81-86d1cb17ffe5",
+        "id": "51361ffe-450c-497f-9e52-edbcbc6c0e6f",
         "label": "Scene Viewer",
         "settings": {
           "aspectRatioConstraint": {
@@ -38,36 +38,43 @@
             "y": 9
           },
           "constraintType": 0,
-          "exposure": 0.11299999803304672,
-          "resolutionConstraint": {
-            "x": 1024,
-            "y": 1024
+          "gridSettings": {
+            "offset": 0.0,
+            "opacity": 1.0,
+            "renderGrid": false
           },
-          "samples": 4,
-          "tonemap": 0
+          "resolutionConstraint": {
+            "x": 4096,
+            "y": 2160
+          }
         },
         "type": 3
       },
       {
-        "id": "bbbf9f5c-b51d-46a5-814f-7029a60d92f0",
-        "label": "Performance",
-        "type": 0
-      },
-      {
-        "id": "48fba3e0-8e30-4947-a973-873f27fdb6e9",
+        "id": "5dba5cb5-1afb-418f-9d1e-5388c98f7eab",
         "label": "Inspector",
         "type": 5
       },
       {
-        "id": "4602cc91-23d4-4ac9-a143-c44fdbcda8b3",
+        "id": "531cf7dc-1752-4f48-b8c0-52569be9f92d",
+        "label": "Performance",
+        "type": 0
+      },
+      {
+        "id": "925995ca-f609-4610-b5f6-e05b34c79580",
+        "label": "Asset Browser",
+        "openedPath": "",
+        "type": 4
+      },
+      {
+        "id": "19d75deb-6736-4d70-b398-ed6e2f5884a2",
         "label": "SceneHierarchy",
         "type": 1
       },
       {
-        "id": "5e84928c-73e9-490e-9d2f-68b0494c523f",
-        "label": "Asset Browser",
-        "openedPath": "",
-        "type": 4
+        "id": "f1240801-a7dd-44e4-abd5-7d8a52f88b4e",
+        "label": "Scene Settings",
+        "type": 7
       }
     ],
     "windowMaximized": true

@@ -1,5 +1,6 @@
 {
     "ImportSettings": {
+        "AnisoLevel": 16,
         "ColorSpace": 1,
         "FilterMode": 1,
         "FlipY": false,
