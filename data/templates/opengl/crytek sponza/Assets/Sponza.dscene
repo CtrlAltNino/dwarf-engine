@@ -51,27 +51,113 @@
       },
       "guid": "0aaeb7e5-ab5c-4db6-a022-d195bf3b5d93",
       "name": "Sponza Atrium"
+    },
+    {
+      "LightComponent": {
+        "Attenuation": 4,
+        "LightColor": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "OpeningAngle": 33,
+        "Radius": 15,
+        "Type": 0
+      },
+      "TransformComponent": {
+        "Position": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "Rotation": {
+          "x": 0.0,
+          "y": 0.0,
+          "z": 0.0
+        },
+        "Scale": {
+          "x": 1.0,
+          "y": 1.0,
+          "z": 1.0
+        }
+      },
+      "guid": "0f9e3cd8-b563-4bf8-8d13-64068b6bb4e0",
+      "name": "Directional light"
     }
   ],
   "Settings": {
+    "AmbientLightSettings": {
+      "Color": {
+        "x": 0.20000000298023224,
+        "y": 0.20000000298023224,
+        "z": 0.20000000298023224
+      },
+      "CubeMap": "",
+      "Gradient": [
+        {
+          "x": 0.5,
+          "y": 0.699999988079071,
+          "z": 1.0
+        },
+        {
+          "x": 0.6000000238418579,
+          "y": 0.6000000238418579,
+          "z": 0.6000000238418579
+        },
+        {
+          "x": 0.20000000298023224,
+          "y": 0.20000000298023224,
+          "z": 0.25
+        }
+      ],
+      "LightIntensity": 1.0,
+      "Type": 1,
+      "UseIBL": false
+    },
+    "AntiAliasingSettings": {
+      "MsaaSamples": 4,
+      "Type": 3
+    },
+    "BloomSettings": {
+      "Enabled": true,
+      "Intensity": 1.0,
+      "Radius": 1.0,
+      "Threshold": 0.699999988079071
+    },
+    "ExposureSettings": {
+      "Exposure": 0.12200000137090683,
+      "Type": 0
+    },
     "FogSettings": {
-      "FogColor": [
-        0.30000001192092896,
-        0.30000001192092896,
-        0.30000001192092896
-      ],
-      "FogEnd": 50.0,
-      "FogStart": 20.0,
-      "FogType": 0
+      "Color": {
+        "x": 0.30000001192092896,
+        "y": 0.30000001192092896,
+        "z": 0.30000001192092896
+      },
+      "End": 50.0,
+      "Start": 20.0,
+      "Type": 0
     },
-    "GlobalLightSettings": {
-      "GlobalLightColor": [
-        0.800000011920929,
-        0.6000000238418579,
-        0.6000000238418579
-      ],
-      "GlobalLightIntensity": 0.20000000298023224
+    "ShadowSettings": {
+      "CascadeCount": 4,
+      "DepthBias": 0.0010000000474974513,
+      "Distance": 50.0,
+      "Enabled": true,
+      "PcfSamples": 1,
+      "Resolution": 1,
+      "SlopeScaledBias": 1.0,
+      "SplitLambda": 0.0
     },
-    "SkyboxMaterial": ""
+    "SkyboxSettings": {
+      "Color": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "CubeMap": "",
+      "SkyboxMaterial": "",
+      "Type": 0
+    },
+    "TonemapType": 0
   }
 }
