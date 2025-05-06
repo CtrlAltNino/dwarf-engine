@@ -16,7 +16,7 @@
         },
         "Rotation": {
           "x": 0.0,
-          "y": 50.23899841308594,
+          "y": 74.30000305175781,
           "z": 0.0
         },
         "Scale": {
@@ -30,24 +30,78 @@
     }
   ],
   "Settings": {
+    "AmbientLightSettings": {
+      "Color": {
+        "x": 0.20000000298023224,
+        "y": 0.20000000298023224,
+        "z": 0.20000000298023224
+      },
+      "CubeMap": "",
+      "Gradient": [
+        {
+          "x": 0.5,
+          "y": 0.699999988079071,
+          "z": 1.0
+        },
+        {
+          "x": 0.6000000238418579,
+          "y": 0.6000000238418579,
+          "z": 0.6000000238418579
+        },
+        {
+          "x": 0.20000000298023224,
+          "y": 0.20000000298023224,
+          "z": 0.25
+        }
+      ],
+      "LightIntensity": 1.0,
+      "Type": 1,
+      "UseIBL": false
+    },
+    "AntiAliasingSettings": {
+      "MsaaSamples": 32,
+      "Type": 3
+    },
+    "BloomSettings": {
+      "Enabled": true,
+      "Intensity": 1.0,
+      "Radius": 1.0,
+      "Threshold": 0.699999988079071
+    },
+    "ExposureSettings": {
+      "Exposure": 0.07999999821186066,
+      "Type": 0
+    },
     "FogSettings": {
-      "FogColor": [
-        0.30000001192092896,
-        0.30000001192092896,
-        0.30000001192092896
-      ],
-      "FogEnd": 50.0,
-      "FogStart": 20.0,
-      "FogType": 0
+      "Color": {
+        "x": 0.30000001192092896,
+        "y": 0.30000001192092896,
+        "z": 0.30000001192092896
+      },
+      "End": 50.0,
+      "Start": 20.0,
+      "Type": 0
     },
-    "GlobalLightSettings": {
-      "GlobalLightColor": [
-        0.800000011920929,
-        0.6000000238418579,
-        0.6000000238418579
-      ],
-      "GlobalLightIntensity": 0.20000000298023224
+    "ShadowSettings": {
+      "CascadeCount": 4,
+      "DepthBias": 0.0010000000474974513,
+      "Distance": 50.0,
+      "Enabled": true,
+      "PcfSamples": 1,
+      "Resolution": 1,
+      "SlopeScaledBias": 1.0,
+      "SplitLambda": 0.0
     },
-    "SkyboxMaterial": ""
+    "SkyboxSettings": {
+      "Color": {
+        "x": 0.0,
+        "y": 0.0,
+        "z": 0.0
+      },
+      "CubeMap": "",
+      "SkyboxMaterial": "",
+      "Type": 0
+    },
+    "TonemapType": 0
   }
 }
