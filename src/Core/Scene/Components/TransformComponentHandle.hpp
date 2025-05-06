@@ -29,7 +29,7 @@ namespace Dwarf
     [[nodiscard]] auto
     GetPosition() const -> glm::vec3
     {
-      return mRegistry.get().get<TransformComponent>(mEntity).Position;
+      return mRegistry.get().get<TransformComponent>(mEntity).GetPosition();
     }
 
     void
@@ -44,7 +44,7 @@ namespace Dwarf
     [[nodiscard]] auto
     GetEulerAngles() const -> glm::vec3
     {
-      return mRegistry.get().get<TransformComponent>(mEntity).Rotation;
+      return mRegistry.get().get<TransformComponent>(mEntity).GetEulerAngles();
     }
 
     void
@@ -59,7 +59,7 @@ namespace Dwarf
     [[nodiscard]] auto
     GetScale() const -> glm::vec3
     {
-      return mRegistry.get().get<TransformComponent>(mEntity).Scale;
+      return mRegistry.get().get<TransformComponent>(mEntity).GetScale();
     }
 
     void
@@ -74,7 +74,7 @@ namespace Dwarf
     [[nodiscard]] auto
     GetParent() const -> entt::entity
     {
-      return mRegistry.get().get<TransformComponent>(mEntity).Parent;
+      return mRegistry.get().get<TransformComponent>(mEntity).GetParent();
     }
 
     void

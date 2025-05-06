@@ -62,12 +62,12 @@ namespace Dwarf
                           serializedEntity["name"]);
 
     auto& transformComponent = newEntity.GetComponent<TransformComponent>();
-    transformComponent.GetPosition() =
-      serializedEntity["TransformComponent"]["Position"].get<glm::vec3>();
-    transformComponent.GetEulerAngles() =
-      serializedEntity["TransformComponent"]["Rotation"].get<glm::vec3>();
-    transformComponent.GetScale() =
-      serializedEntity["TransformComponent"]["Scale"].get<glm::vec3>();
+    transformComponent.SetPosition(
+      serializedEntity["TransformComponent"]["Position"].get<glm::vec3>());
+    transformComponent.SetEulerAngles(
+      serializedEntity["TransformComponent"]["Rotation"].get<glm::vec3>());
+    transformComponent.SetScale(
+      serializedEntity["TransformComponent"]["Scale"].get<glm::vec3>());
 
     if (serializedEntity.contains("LightComponent"))
     {

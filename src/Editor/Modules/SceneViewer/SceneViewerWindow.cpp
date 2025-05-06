@@ -568,11 +568,12 @@ namespace Dwarf
                          glm::value_ptr(transform));
     if (ImGuizmo::IsUsing())
     {
-      transformComponent.GetPosition() = glm::vec3(transform[3]);
-      transformComponent.GetScale() =
+      // transformComponent.SetMatrix(transform);
+      transformComponent.SetPosition(glm::vec3(transform[3]));
+      transformComponent.SetScale(
         glm::vec3(glm::length(glm::vec3(transform[0])),
                   glm::length(glm::vec3(transform[1])),
-                  glm::length(glm::vec3(transform[2])));
+                  glm::length(glm::vec3(transform[2]))));
 
       auto rotationMatrix =
         glm::mat3(transform); // Remove translation from matrix
@@ -582,8 +583,8 @@ namespace Dwarf
 
       // Convert rotation matrix to Euler angles (in radians)
       glm::quat rotationQuat(rotationMatrix);
-      transformComponent.GetEulerAngles() = glm::degrees(
-        glm::eulerAngles(rotationQuat)); // Convert to Euler angles in degrees
+      transformComponent.SetEulerAngles(glm::degrees(
+        glm::eulerAngles(rotationQuat))); // Convert to Euler angles in degrees
     }
   }
 

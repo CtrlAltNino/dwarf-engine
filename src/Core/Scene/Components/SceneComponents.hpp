@@ -30,7 +30,7 @@ namespace Dwarf
     /// @brief Scale of the entity.
     glm::vec3 Scale = { 1.0F, 1.0F, 1.0F };
 
-    glm::mat4 CachedMatrix;
+    glm::mat4 CachedMatrix = glm::mat4(1.0F);
 
     /// @brief Entity handle of the hierarchical parent entity.
     entt::entity Parent = entt::null;
