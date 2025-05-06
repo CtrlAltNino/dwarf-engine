@@ -79,5 +79,10 @@ namespace Dwarf
      */
     [[nodiscard]] virtual auto
     GetPlaceholderTexture() -> std::shared_ptr<ITexture> = 0;
+
+    [[nodiscard]] virtual auto
+    GenerateCubemapFromEquirectTexture(
+      std::shared_ptr<ITexture> equirectangularTexture)
+      -> std::shared_ptr<ITexture> = 0;
   };
 } // namespace Dwarf

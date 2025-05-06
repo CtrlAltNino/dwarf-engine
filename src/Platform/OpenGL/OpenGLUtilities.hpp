@@ -109,6 +109,12 @@ namespace Dwarf
     }
 
     static auto
+    GetSkyboxShaderPath() -> std::filesystem::path
+    {
+      return "data/engine/shaders/skybox/opengl";
+    }
+
+    static auto
     GetDeviceInfo() -> std::string
     {
       std::string deviceInfo;

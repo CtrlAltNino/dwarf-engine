@@ -35,6 +35,7 @@ namespace Dwarf
     glm::vec4                     mClearColor = { 0, 0, 0, 0 };
     bool                          mDepthMode = false;
     GLenum                        mDepthFunc = 0;
+    bool                          mDepthWrite = true;
 
   public:
     OpenGLStateTracker(std::shared_ptr<IDwarfLogger> logger);
@@ -57,6 +58,9 @@ namespace Dwarf
 
     void
     SetBlendFunction(GLenum source, GLenum destination) override;
+
+    void
+    SetDepthWrite(bool enabled) override;
 
     void
     SetDepthTest(bool enabled) override;

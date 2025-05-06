@@ -8,6 +8,7 @@ namespace Dwarf
     : mExposureSettings(mObservers)
     , mAntiAliasingSettings(mObservers)
     , mBloomSettings(mObservers)
+    , mSkyboxSettings(mObservers)
   {
   }
 
@@ -24,6 +25,10 @@ namespace Dwarf
                      serializedSettings.contains("BloomSettings")
                        ? serializedSettings["BloomSettings"]
                        : nlohmann::json{})
+    , mSkyboxSettings(mObservers,
+                      serializedSettings.contains("SkyboxSettings")
+                        ? serializedSettings["SkyboxSettings"]
+                        : nlohmann::json{})
   {
     if (serializedSettings.contains("AmbientLightSettings"))
     {

@@ -70,46 +70,74 @@ namespace Dwarf
     if (ImGui::CollapsingHeader("Environment & Atmosphere"))
     {
       // Skybox material
+      static SkyboxSource skyboxSource = mLoadedScene->GetScene()
+                                           .GetProperties()
+                                           .GetSettings()
+                                           .GetSkyboxSettings()
+                                           .GetType();
       ImGui::SeparatorText("Skybox");
-      DwarfUI::ComboEnum("Source##Skybox",
-                         mLoadedScene->GetScene()
-                           .GetProperties()
-                           .GetSettings()
-                           .GetSkyboxSettings()
-                           .Type);
+      if (DwarfUI::ComboEnum("Source##Skybox", skyboxSource))
+      {
+        mLoadedScene->GetScene()
+          .GetProperties()
+          .GetSettings()
+          .GetSkyboxSettings()
+          .SetType(skyboxSource);
+      }
 
-      switch (mLoadedScene->GetScene()
-                .GetProperties()
-                .GetSettings()
-                .GetSkyboxSettings()
-                .Type)
+      switch (skyboxSource)
       {
         using enum SkyboxSource;
         case Color:
-          ImGui::ColorEdit3("Color##Skybox",
-                            glm::value_ptr(mLoadedScene->GetScene()
-                                             .GetProperties()
-                                             .GetSettings()
-                                             .GetSkyboxSettings()
-                                             .Color));
+          static glm::vec3 skyboxColor = mLoadedScene->GetScene()
+                                           .GetProperties()
+                                           .GetSettings()
+                                           .GetSkyboxSettings()
+                                           .GetColor();
+          if (ImGui::ColorEdit3("Color##Skybox",
+                                glm::value_ptr(skyboxColor),
+                                ImGuiColorEditFlags_HDR))
+          {
+            mLoadedScene->GetScene()
+              .GetProperties()
+              .GetSettings()
+              .GetSkyboxSettings()
+              .SetColor(skyboxColor);
+          }
           break;
         case Material:
-          DwarfUI::AssetInput<MaterialAsset>(mAssetDatabase,
-                                             mLoadedScene->GetScene()
-                                               .GetProperties()
-                                               .GetSettings()
-                                               .GetSkyboxSettings()
-                                               .SkyboxMaterial,
-                                             "Material##Skybox");
+          static std::optional<UUID> skyboxMaterialAssetId =
+            mLoadedScene->GetScene()
+              .GetProperties()
+              .GetSettings()
+              .GetSkyboxSettings()
+              .GetSkyboxMaterial();
+          if (DwarfUI::AssetInput<MaterialAsset>(
+                mAssetDatabase, skyboxMaterialAssetId, "Material##Skybox"))
+          {
+            mLoadedScene->GetScene()
+              .GetProperties()
+              .GetSettings()
+              .GetSkyboxSettings()
+              .SetSkyboxMaterial(skyboxMaterialAssetId);
+          }
           break;
         case HDRI:
-          DwarfUI::AssetInput<TextureAsset>(mAssetDatabase,
-                                            mLoadedScene->GetScene()
-                                              .GetProperties()
-                                              .GetSettings()
-                                              .GetSkyboxSettings()
-                                              .CubeMap,
-                                            "HDRI##Skybox");
+          static std::optional<UUID> hdriTextureAssetId =
+            mLoadedScene->GetScene()
+              .GetProperties()
+              .GetSettings()
+              .GetSkyboxSettings()
+              .GetSkyboxMaterial();
+          if (DwarfUI::AssetInput<TextureAsset>(
+                mAssetDatabase, hdriTextureAssetId, "HDRI##Skybox"))
+          {
+            mLoadedScene->GetScene()
+              .GetProperties()
+              .GetSettings()
+              .GetSkyboxSettings()
+              .SetSkyboxMaterial(hdriTextureAssetId);
+          }
           break;
       }
 

@@ -72,6 +72,16 @@ namespace Dwarf
                   ICamera&           camera,
                   glm::mat4          modelMatrix) = 0;
 
+    virtual void
+    RenderSkyboxIndexed(const IMeshBuffer* mesh,
+                        IShader&           shader,
+                        ICamera&           camera) = 0;
+
+    virtual void
+    RenderSkyboxIndexed(const IMeshBuffer* mesh,
+                        IMaterial&         material,
+                        ICamera&           camera) = 0;
+
     /**
      * @brief Applies a compute shader to a frame buffer
      * TODO: Revisit this

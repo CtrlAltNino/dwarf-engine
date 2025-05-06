@@ -131,6 +131,14 @@ namespace Dwarf
     CreateUnlitShaderSourceCollection()
       -> std::unique_ptr<IShaderSourceCollection> override;
 
+    auto
+    CreateColorSkyboxShaderSourceCollection()
+      -> std::unique_ptr<IShaderSourceCollection> override;
+
+    auto
+    CreateHdriSkyboxShaderSourceCollection()
+      -> std::unique_ptr<IShaderSourceCollection> override;
+
     /**
      * @brief Create a shader source collection containing the shader sources
      * serialized in a json object
