@@ -229,6 +229,152 @@ namespace Dwarf
   }
 
   auto
+  MeshFactory::CreateSkyboxCube() const -> std::shared_ptr<IMesh>
+  {
+    float               half = 0.7F;
+    std::vector<Vertex> vertices = {
+      // Front face
+      { { -half, -half, half },
+        { 0, 0, 1 },
+        { 1, 0, 0 },
+        { 0, 1, 0 },
+        { 0, 1 } },
+      { { half, -half, half },
+        { 0, 0, 1 },
+        { 1, 0, 0 },
+        { 0, 1, 0 },
+        { 1, 1 } },
+      { { half, half, half }, { 0, 0, 1 }, { 1, 0, 0 }, { 0, 1, 0 }, { 1, 0 } },
+      { { -half, half, half },
+        { 0, 0, 1 },
+        { 1, 0, 0 },
+        { 0, 1, 0 },
+        { 0, 0 } },
+
+      // Back face
+      { { half, -half, -half },
+        { 0, 0, -1 },
+        { -1, 0, 0 },
+        { 0, 1, 0 },
+        { 0, 1 } },
+      { { -half, -half, -half },
+        { 0, 0, -1 },
+        { -1, 0, 0 },
+        { 0, 1, 0 },
+        { 1, 1 } },
+      { { -half, half, -half },
+        { 0, 0, -1 },
+        { -1, 0, 0 },
+        { 0, 1, 0 },
+        { 1, 0 } },
+      { { half, half, -half },
+        { 0, 0, -1 },
+        { -1, 0, 0 },
+        { 0, 1, 0 },
+        { 0, 0 } },
+
+      // Left face
+      { { -half, -half, -half },
+        { -1, 0, 0 },
+        { 0, 0, 1 },
+        { 0, 1, 0 },
+        { 0, 1 } },
+      { { -half, -half, half },
+        { -1, 0, 0 },
+        { 0, 0, 1 },
+        { 0, 1, 0 },
+        { 1, 1 } },
+      { { -half, half, half },
+        { -1, 0, 0 },
+        { 0, 0, 1 },
+        { 0, 1, 0 },
+        { 1, 0 } },
+      { { -half, half, -half },
+        { -1, 0, 0 },
+        { 0, 0, 1 },
+        { 0, 1, 0 },
+        { 0, 0 } },
+
+      // Right face
+      { { half, -half, half },
+        { 1, 0, 0 },
+        { 0, 0, -1 },
+        { 0, 1, 0 },
+        { 0, 1 } },
+      { { half, -half, -half },
+        { 1, 0, 0 },
+        { 0, 0, -1 },
+        { 0, 1, 0 },
+        { 1, 1 } },
+      { { half, half, -half },
+        { 1, 0, 0 },
+        { 0, 0, -1 },
+        { 0, 1, 0 },
+        { 1, 0 } },
+      { { half, half, half },
+        { 1, 0, 0 },
+        { 0, 0, -1 },
+        { 0, 1, 0 },
+        { 0, 0 } },
+
+      // Top face
+      { { -half, half, half },
+        { 0, 1, 0 },
+        { 1, 0, 0 },
+        { 0, 0, -1 },
+        { 0, 1 } },
+      { { half, half, half },
+        { 0, 1, 0 },
+        { 1, 0, 0 },
+        { 0, 0, -1 },
+        { 1, 1 } },
+      { { half, half, -half },
+        { 0, 1, 0 },
+        { 1, 0, 0 },
+        { 0, 0, -1 },
+        { 1, 0 } },
+      { { -half, half, -half },
+        { 0, 1, 0 },
+        { 1, 0, 0 },
+        { 0, 0, -1 },
+        { 0, 0 } },
+
+      // Bottom face
+      { { -half, -half, -half },
+        { 0, -1, 0 },
+        { 1, 0, 0 },
+        { 0, 0, 1 },
+        { 0, 1 } },
+      { { half, -half, -half },
+        { 0, -1, 0 },
+        { 1, 0, 0 },
+        { 0, 0, 1 },
+        { 1, 1 } },
+      { { half, -half, half },
+        { 0, -1, 0 },
+        { 1, 0, 0 },
+        { 0, 0, 1 },
+        { 1, 0 } },
+      { { -half, -half, half },
+        { 0, -1, 0 },
+        { 1, 0, 0 },
+        { 0, 0, 1 },
+        { 0, 0 } },
+    };
+
+    std::vector<uint32_t> indices = {
+      0,  2,  1,  2,  0,  3,  // Front
+      4,  6,  5,  6,  4,  7,  // Back
+      8,  10, 9,  10, 8,  11, // Left
+      12, 14, 13, 14, 12, 15, // Right
+      16, 18, 17, 18, 16, 19, // Top
+      20, 22, 21, 22, 20, 23  // Bottom
+    };
+
+    return Create(vertices, indices, 0);
+  }
+
+  auto
   MeshFactory::CreatePlane() const -> std::shared_ptr<IMesh>
   {
     float                 width = 1.0F;

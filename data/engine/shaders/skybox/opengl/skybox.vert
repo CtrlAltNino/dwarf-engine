@@ -10,6 +10,6 @@ out vec3 vDirection;
 void main()
 {
     vDirection = aPosition;
-    vec4 pos = viewMatrix * projectionMatrix * vec4(aPosition, 1.0);
+    vec4 pos =  projectionMatrix * viewMatrix * vec4(aPosition, 1.0);
     gl_Position = pos.xyww; // Trick to ensure depth = 1.0 (far plane)
 }

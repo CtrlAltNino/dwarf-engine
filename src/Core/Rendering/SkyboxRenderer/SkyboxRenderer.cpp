@@ -30,7 +30,7 @@ namespace Dwarf
     , mTextureFactory(std::move(textureFactory))
   {
     mLoadedScene->RegisterLoadedSceneObserver(this);
-    std::shared_ptr<IMesh> cubeMesh = meshFactory->CreateUnitCube();
+    std::shared_ptr<IMesh> cubeMesh = meshFactory->CreateSkyboxCube();
     mSkyboxCubeMesh = meshBufferFactory->Create(cubeMesh);
   }
 
