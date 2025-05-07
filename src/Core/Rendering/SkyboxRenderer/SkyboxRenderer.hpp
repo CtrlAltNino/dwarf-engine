@@ -52,9 +52,6 @@ namespace Dwarf
     std::mutex  mCubeMapGeneratorMutex;
     std::thread mCubeMapGeneratorThread;
 
-    void
-    CubeMapGenerator();
-
   public:
     SkyboxRenderer(
       std::shared_ptr<IDwarfLogger>    logger,

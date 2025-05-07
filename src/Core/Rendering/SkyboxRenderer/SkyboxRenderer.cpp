@@ -41,11 +41,6 @@ namespace Dwarf
   }
 
   void
-  SkyboxRenderer::CubeMapGenerator()
-  {
-  }
-
-  void
   SkyboxRenderer::Render()
   {
     if (mCamera.has_value())
