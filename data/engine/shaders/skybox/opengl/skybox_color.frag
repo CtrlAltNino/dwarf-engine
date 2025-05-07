@@ -7,5 +7,5 @@ uniform vec3 u_SkyColor;
 
 void main()
 {
-    FragColor = vec4(vDirection, 1.0);
+    FragColor = vec4(u_SkyColor, 1.0);
 }
