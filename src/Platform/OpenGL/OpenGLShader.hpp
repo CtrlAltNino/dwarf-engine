@@ -102,6 +102,9 @@ namespace Dwarf
     SetParameter(std::string          identifier,
                  ShaderParameterValue parameter) override;
 
+    void
+    RemoveParameter(std::string identifier) override;
+
     auto
     GetUniformLocation(std::string uniformName) -> GLint;
 

@@ -310,6 +310,28 @@ namespace Dwarf
   }
 
   auto
+  ShaderSourceCollectionFactory::CreateCubeMapConversionShaderSourceCollection()
+    -> std::unique_ptr<IShaderSourceCollection>
+  {
+    std::vector<std::unique_ptr<IAssetReference>> shaderSources = {};
+
+    switch (mGraphicsApi)
+    {
+      case GraphicsApi::OpenGL:
+        shaderSources.emplace_back(mAssetDatabase.get()->Retrieve(
+          OpenGLUtilities::GetSkyboxShaderPath() / "cubemap_conversion.vert"));
+        shaderSources.emplace_back(mAssetDatabase.get()->Retrieve(
+          OpenGLUtilities::GetSkyboxShaderPath() / "cubemap_conversion.frag"));
+        break;
+      case GraphicsApi::Vulkan:
+      case GraphicsApi::D3D12:
+      default: throw std::runtime_error("Unsupported Graphics API.");
+    }
+
+    return std::make_unique<ShaderSourceCollection>(shaderSources);
+  }
+
+  auto
   ShaderSourceCollectionFactory::CreateShaderSourceCollection(
     const nlohmann::json& serializedShaderSourceCollection)
     -> std::unique_ptr<IShaderSourceCollection>

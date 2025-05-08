@@ -1,16 +1,18 @@
-#include "Core/Asset/Database/IAssetDatabase.hpp"
 #include "pch.hpp"
 
 #include "Core/Asset/AssetReference/IAssetReference.hpp"
 #include "Core/Asset/AssetTypes.hpp"
 #include "Core/Asset/Database/AssetComponents.hpp"
+#include "Core/Asset/Database/IAssetDatabase.hpp"
 #include "Core/Base.hpp"
 #include "Core/Rendering/Shader/ShaderParameterCollection/IShaderParameterCollection.hpp"
 #include "Core/Rendering/Shader/ShaderParameterCollection/IShaderParameterCollectionFactory.hpp"
 #include "OpenGLShader.hpp"
 #include "OpenGLUtilities.hpp"
+#include "Platform/OpenGL/OpenGLTexture.hpp"
 #include "Platform/OpenGL/OpenGLUtilities.hpp"
 #include <glad/glad.h>
+
 
 #define GL_SHADER_LOG_LENGTH (1024)
 
@@ -388,6 +390,13 @@ namespace Dwarf
     mUniformStatesDraft[identifier] = parameter;
   }
 
+  void
+  OpenGLShader::RemoveParameter(std::string identifier)
+  {
+    mUniformStatesDraft.erase(identifier);
+    mUniformStates.erase(identifier);
+  }
+
   auto
   OpenGLShader::GetShaderLogs() const -> const ShaderLogs&
   {
@@ -542,11 +551,12 @@ namespace Dwarf
           // Texture2D parameter
           if constexpr (std::is_same_v<T, std::shared_ptr<ITexture>>)
           {
-            auto param(static_cast<std::shared_ptr<ITexture>>(val));
+            auto param(dynamic_cast<OpenGLTexture*>(
+              static_cast<std::shared_ptr<ITexture>>(val).get()));
             glActiveTexture(GL_TEXTURE0 + textureCount);
             OpenGLUtilities::CheckOpenGLError(
               "glActiveTexture", "OpenGLRendererApi", mLogger);
-            glBindTexture(GL_TEXTURE_2D, param->GetTextureID());
+            glBindTexture(param->GetType(), param->GetTextureID());
             OpenGLUtilities::CheckOpenGLError(
               "glBindTexture", "OpenGLShader", mLogger);
             mTextureStates[textureCount] = param->GetTextureID();

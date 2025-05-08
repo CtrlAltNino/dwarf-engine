@@ -12,5 +12,6 @@ IF(WIN32 OR(UNIX AND NOT APPLE))
         OpenGLStateTracker.cpp
         OpenGLShaderAssetSelector.cpp
         OpenGLShaderAssetSourceContainer.cpp
+        OpenGLCubeMapGenerator.cpp
     )
 ENDIF()

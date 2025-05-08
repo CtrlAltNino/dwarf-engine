@@ -5,7 +5,6 @@
 #include <glm/fwd.hpp>
 #include <stb_image.h>
 
-
 namespace Dwarf
 {
   class HdrUtilities
@@ -69,9 +68,9 @@ namespace Dwarf
         for (int x = 0; x < width; ++x)
         {
           int dstIdx = ((height - 1 - y) * width + x) * 3;
-          dataVec[dstIdx + 0] = scanline[x * 3 + 2]; // R (FreeImage is BGR)
+          dataVec[dstIdx + 0] = scanline[x * 3 + 0]; // R (FreeImage is BGR)
           dataVec[dstIdx + 1] = scanline[x * 3 + 1]; // G
-          dataVec[dstIdx + 2] = scanline[x * 3 + 0]; // B
+          dataVec[dstIdx + 2] = scanline[x * 3 + 2]; // B
         }
       }
 

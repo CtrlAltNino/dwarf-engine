@@ -55,6 +55,9 @@ namespace Dwarf
     virtual void
     SetParameter(std::string identifier, ShaderParameterValue parameter) = 0;
 
+    virtual void
+    RemoveParameter(std::string identifier) = 0;
+
     /**
      * @brief Creates a ShaderParameterCollection that contains all the shader
      * parameters that the shader uses
