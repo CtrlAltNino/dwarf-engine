@@ -3,6 +3,8 @@
 #include "Core/Asset/Database/AssetComponents.hpp"
 #include "Core/Asset/Database/IAssetDatabase.hpp"
 #include "Core/Asset/Shader/ShaderSourceCollection/IShaderSourceCollectionFactory.hpp"
+#include "Core/Rendering/CubeMapGenerator/ICubeMapGenerator.hpp"
+#include "Core/Rendering/CubeMapGenerator/ICubeMapGeneratorFactory.hpp"
 #include "Core/Rendering/Material/IMaterial.hpp"
 #include "Core/Rendering/Material/IMaterialFactory.hpp"
 #include "Core/Rendering/Mesh/MeshFactory.hpp"
@@ -33,8 +35,9 @@ namespace Dwarf
     std::shared_ptr<ILoadedScene>    mLoadedScene;
     std::shared_ptr<IShaderRegistry> mShaderRegistry;
     std::shared_ptr<IShaderSourceCollectionFactory>
-                                     mShaderSourceCollectionFactory;
-    std::shared_ptr<ITextureFactory> mTextureFactory;
+                                       mShaderSourceCollectionFactory;
+    std::shared_ptr<ITextureFactory>   mTextureFactory;
+    std::shared_ptr<ICubeMapGenerator> mCubeMapGenerator;
 
     std::optional<std::reference_wrapper<ICamera>> mCamera;
     std::shared_ptr<IMeshBuffer>                   mSkyboxCubeMesh;
@@ -63,7 +66,8 @@ namespace Dwarf
       std::shared_ptr<ITextureFactory>            textureFactory,
       const std::shared_ptr<IRendererApiFactory>& rendererApiFactory,
       const std::shared_ptr<IMeshFactory>&        meshFactory,
-      const std::shared_ptr<IMeshBufferFactory>&  meshBufferFactory);
+      const std::shared_ptr<IMeshBufferFactory>&  meshBufferFactory,
+      const std::shared_ptr<ICubeMapGeneratorFactory>& cubeMapGeneratorFactory);
     ~SkyboxRenderer() override = default;
 
     void

@@ -136,7 +136,7 @@ namespace Dwarf
               .GetProperties()
               .GetSettings()
               .GetSkyboxSettings()
-              .SetSkyboxMaterial(hdriTextureAssetId);
+              .SetHdri(hdriTextureAssetId);
           }
           break;
       }

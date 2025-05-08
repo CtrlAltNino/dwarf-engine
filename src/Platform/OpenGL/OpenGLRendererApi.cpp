@@ -260,37 +260,6 @@ namespace Dwarf
     mStateTracker->SetDepthFunction(GL_LEQUAL);
     mStateTracker->SetDepthTest(true);
 
-    /*for (auto const& identifier :
-         material.GetShaderParameters()->GetParameterIdentifiers())
-    {
-      if (material.GetShaderParameters()->HasParameter(identifier))
-      {
-        std::visit(
-          [&shader, identifier, this](auto&& value)
-          {
-            using T = std::decay_t<decltype(value)>;
-            if constexpr (std::is_same_v<T, std::optional<UUID>>)
-            {
-              // std::optional return static_cast<std::optional<UUID>>(value);
-              auto uid = static_cast<std::optional<UUID>>(value);
-
-              if (uid.has_value())
-              {
-                auto& textureAsset = static_cast<TextureAsset&>(
-                  mAssetDatabase->Retrieve(uid.value())->GetAsset());
-                shader.SetParameter(identifier, textureAsset.GetTexture());
-              }
-            }
-            else
-            {
-              // return value;
-              shader.SetParameter(identifier, value);
-            }
-          },
-          material.GetShaderParameters()->GetParameter(identifier));
-      }
-    }*/
-
     // TODO: without translation
     oglShader.SetParameter("viewMatrix",
                            glm::mat4(glm::mat3(camera.GetViewMatrix())));

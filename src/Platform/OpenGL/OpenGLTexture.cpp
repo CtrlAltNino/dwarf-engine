@@ -491,6 +491,9 @@ namespace Dwarf
             "glTextureParameteri GL_TEXTURE_WRAP_R", "OpenGLTexture", mLogger);
 
           // TODO: Implement cube map texture
+          glm::ivec2 size = std::get<glm::ivec2>(data->Size);
+          glTextureStorage2D(mId, 1, internalFormat, size.x, size.y);
+
           break;
         }
     }
