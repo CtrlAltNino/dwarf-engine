@@ -10,7 +10,7 @@ namespace Dwarf
     virtual ~ICubeMapGenerator() = default;
 
     [[nodiscard]] virtual auto
-    FromEquirectangular(std::shared_ptr<ITexture> texture)
+    FromEquirectangular(std::shared_ptr<ITexture> texture, uint32_t resolution)
       -> std::shared_ptr<ITexture> = 0;
   };
 }

@@ -171,6 +171,14 @@ public:
               (),
               (override));
   MOCK_METHOD(std::unique_ptr<IShaderSourceCollection>,
+              CreateColorSkyboxShaderSourceCollection,
+              (),
+              (override));
+  MOCK_METHOD(std::unique_ptr<IShaderSourceCollection>,
+              CreateHdriSkyboxShaderSourceCollection,
+              (),
+              (override));
+  MOCK_METHOD(std::unique_ptr<IShaderSourceCollection>,
               CreateShaderSourceCollection,
               (const nlohmann::json& serializedShaderSourceCollection),
               (override));

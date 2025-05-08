@@ -127,6 +127,10 @@ namespace Dwarf
     CreateHdriSkyboxShaderSourceCollection()
       -> std::unique_ptr<IShaderSourceCollection> = 0;
 
+    virtual auto
+    CreateCubeMapConversionShaderSourceCollection()
+      -> std::unique_ptr<IShaderSourceCollection> = 0;
+
     /**
      * @brief Create a shader source collection containing the shader sources
      * serialized in a json object
