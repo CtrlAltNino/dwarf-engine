@@ -3,7 +3,9 @@
 #include "OpenGLCubeMapGenerator.hpp"
 #include "Platform/OpenGL/OpenGLMeshBuffer.hpp"
 #include "Platform/OpenGL/OpenGLShader.hpp"
+#include "Utilities/ImageUtilities/TextureCommon.hpp"
 #include <glad/glad.h>
+
 
 namespace Dwarf
 {
@@ -12,12 +14,14 @@ namespace Dwarf
     std::shared_ptr<ITextureFactory>        textureFactory,
     const std::shared_ptr<IShaderRegistry>& shaderRegistry,
     const std::shared_ptr<IShaderSourceCollectionFactory>&
-                                               shaderSourceCollectionFactory,
-    const std::shared_ptr<IMeshFactory>&       meshFactory,
-    const std::shared_ptr<IMeshBufferFactory>& meshBufferFactory,
-    const std::shared_ptr<IFramebufferFactory> framebufferFactory)
+                                                shaderSourceCollectionFactory,
+    const std::shared_ptr<IMeshFactory>&        meshFactory,
+    const std::shared_ptr<IMeshBufferFactory>&  meshBufferFactory,
+    const std::shared_ptr<IFramebufferFactory>  framebufferFactory,
+    const std::shared_ptr<IRendererApiFactory>& rendererApiFactory)
     : mLogger(std::move(logger))
     , mTextureFactory(std::move(textureFactory))
+    , mRendererApi(rendererApiFactory->Create())
   {
     std::shared_ptr<IMesh> cubeMesh = meshFactory->CreateSkyboxCube();
     mCubeMeshBuffer = meshBufferFactory->Create(cubeMesh);
@@ -32,7 +36,7 @@ namespace Dwarf
     -> std::shared_ptr<ITexture>
   {
     // 1. Create cubemap
-    GLuint cubemap;
+    /*GLuint cubemap;
     glGenTextures(1, &cubemap);
     glBindTexture(GL_TEXTURE_CUBE_MAP, cubemap);
 
@@ -53,7 +57,26 @@ namespace Dwarf
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
     glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);*/
+
+    TextureParameters cubeMapParameters;
+    cubeMapParameters.AnisoLevel = 1;
+    cubeMapParameters.FlipY = false;
+    cubeMapParameters.IsSRGB = true;
+    cubeMapParameters.MinFilter = TextureMinFilter::LINEAR;
+    cubeMapParameters.MagFilter = TextureMagFilter::LINEAR;
+    cubeMapParameters.MipMapped = false;
+    cubeMapParameters.WrapR = TextureWrap::CLAMP_TO_EDGE;
+    cubeMapParameters.WrapS = TextureWrap::CLAMP_TO_EDGE;
+    cubeMapParameters.WrapT = TextureWrap::CLAMP_TO_EDGE;
+
+    std::shared_ptr<ITexture> cubeMap =
+      mTextureFactory->Empty(TextureType::TEXTURE_CUBE_MAP,
+                             TextureFormat::RGB,
+                             TextureDataType::FLOAT,
+                             glm::ivec3(resolution, resolution, resolution),
+                             cubeMapParameters,
+                             1);
 
     // 2. Set up framebuffer
     GLuint captureFBO, captureRBO;
@@ -63,7 +86,7 @@ namespace Dwarf
     glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
     glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
     glRenderbufferStorage(
-      GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, cubemapSize, cubemapSize);
+      GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, resolution, resolution);
     glFramebufferRenderbuffer(
       GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
 
@@ -107,7 +130,7 @@ namespace Dwarf
       glFramebufferTexture2D(GL_FRAMEBUFFER,
                              GL_COLOR_ATTACHMENT0,
                              GL_TEXTURE_CUBE_MAP_POSITIVE_X + i,
-                             cubemap,
+                             cubeMap->GetTextureID(),
                              0);
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
       // glBindVertexArray(cubeVAO);
@@ -116,6 +139,6 @@ namespace Dwarf
     }
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    return cubemap;
+    return cubeMap;
   }
 }
