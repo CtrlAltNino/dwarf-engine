@@ -22,6 +22,7 @@ namespace Dwarf
     std::optional<UUID>   Cubemap = std::nullopt;
     CubemapResolutionEnum CubemapResolution = CubemapResolutionEnum::Medium;
     float                 Exposure = 1;
+    float                 CubemapRotation = 0;
 
   public:
     /// @brief Constructor.
@@ -57,6 +58,10 @@ namespace Dwarf
       {
         Exposure = json.at("Exposure").get<float>();
       }
+      if (json.contains("CubemapRotation"))
+      {
+        CubemapRotation = json.at("CubemapRotation").get<float>();
+      }
     }
 
     /// @copydoc ISerializable::Serialize
@@ -71,6 +76,7 @@ namespace Dwarf
       json["Cubemap"] = Cubemap.has_value() ? Cubemap->Serialize() : "";
       json["CubemapResolution"] = CubemapResolution;
       json["Exposure"] = Exposure;
+      json["CubemapRotation"] = CubemapRotation;
       return json;
     }
 
@@ -158,6 +164,19 @@ namespace Dwarf
     SetExposure(float exposure)
     {
       Exposure = exposure;
+      NotifyObservers();
+    }
+
+    [[nodiscard]] auto
+    GetCubemapRotation() const -> float
+    {
+      return CubemapRotation;
+    }
+
+    void
+    SetCubemapRotation(float rotation)
+    {
+      CubemapRotation = rotation;
       NotifyObservers();
     }
   };

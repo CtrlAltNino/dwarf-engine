@@ -191,13 +191,32 @@ namespace Dwarf
                 .GetCubemapResolution();
 
             if (DwarfUI::ComboEnum<CubemapResolutionEnum>(
-                  "Cubemap Resolution##CubemapResolution", cubemapResolution))
+                  "Resolution##CubemapResolution", cubemapResolution))
             {
               mLoadedScene->GetScene()
                 .GetProperties()
                 .GetSettings()
                 .GetSkyboxSettings()
                 .SetCubemapResolution(cubemapResolution);
+            }
+
+            static float cubemapRotation = mLoadedScene->GetScene()
+                                             .GetProperties()
+                                             .GetSettings()
+                                             .GetSkyboxSettings()
+                                             .GetCubemapRotation();
+
+            if (ImGui::SliderFloat("Rotation##CubemapRotation",
+                                   &cubemapRotation,
+                                   0,
+                                   360,
+                                   "%.2F"))
+            {
+              mLoadedScene->GetScene()
+                .GetProperties()
+                .GetSettings()
+                .GetSkyboxSettings()
+                .SetCubemapRotation(cubemapRotation);
             }
           }
           break;
