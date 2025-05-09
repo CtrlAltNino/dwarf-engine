@@ -1,12 +1,12 @@
 #include "pch.hpp"
 
-#include "CubeMapGeneratorFactory.hpp"
-#include "Platform/OpenGL/OpenGLCubeMapGenerator.hpp"
+#include "CubemapGeneratorFactory.hpp"
+#include "Platform/OpenGL/OpenGLCubemapGenerator.hpp"
 
 namespace Dwarf
 {
 
-  CubeMapGeneratorFactory::CubeMapGeneratorFactory(
+  CubemapGeneratorFactory::CubemapGeneratorFactory(
     std::shared_ptr<IDwarfLogger>    logger,
     GraphicsApi                      graphicsApi,
     std::shared_ptr<ITextureFactory> textureFactory,
@@ -30,20 +30,20 @@ namespace Dwarf
   }
 
   auto
-  CubeMapGeneratorFactory::Create() -> std::shared_ptr<ICubeMapGenerator>
+  CubemapGeneratorFactory::Create() -> std::shared_ptr<ICubemapGenerator>
   {
     mLogger->LogDebug(
-      Log("Creating cubemap generator", "CubeMapGeneratorFactory"));
+      Log("Creating cubemap generator", "CubemapGeneratorFactory"));
 
     switch (mApi)
     {
       using enum GraphicsApi;
       case None:
         mLogger->LogError(
-          Log("Graphics API is not set", "CubeMapGeneratorFactory"));
+          Log("Graphics API is not set", "CubemapGeneratorFactory"));
         throw std::runtime_error("Graphics API is not set");
       case OpenGL:
-        return std::make_unique<OpenGLCubeMapGenerator>(
+        return std::make_unique<OpenGLCubemapGenerator>(
           mLogger,
           mTextureFactory,
           mShaderRegistry,
@@ -54,22 +54,22 @@ namespace Dwarf
           mRendererApiFactory);
       case Vulkan:
         mLogger->LogError(Log("Vulkan API has not been implemented yet",
-                              "CubeMapGeneratorFactory"));
+                              "CubemapGeneratorFactory"));
         throw std::runtime_error("Vulkan API has not been implemented yet");
       case D3D12:
 #ifdef _WIN32
         mLogger->LogError(Log("Direct3D12 API has not been implemented yet",
-                              "CubeMapGeneratorFactory"));
+                              "CubemapGeneratorFactory"));
         throw std::runtime_error("Direct3D12 API has not been implemented yet");
 #elif __linux__
         mLogger->LogError(Log("Direct3D12 is only supported on Windows",
-                              "CubeMapGeneratorFactory"));
+                              "CubemapGeneratorFactory"));
         throw std::runtime_error("Direct3D12 is only supported on Windows");
 #endif
     }
 
     mLogger->LogError(
-      Log("Failed to create cubemap generator", "CubeMapGeneratorFactory"));
+      Log("Failed to create cubemap generator", "CubemapGeneratorFactory"));
 
     return nullptr;
   }

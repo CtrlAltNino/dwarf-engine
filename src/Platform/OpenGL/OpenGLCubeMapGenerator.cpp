@@ -1,6 +1,6 @@
 #include "pch.hpp"
 
-#include "OpenGLCubeMapGenerator.hpp"
+#include "OpenGLCubemapGenerator.hpp"
 #include "OpenGLUtilities.hpp"
 #include "Platform/OpenGL/OpenGLMeshBuffer.hpp"
 #include "Platform/OpenGL/OpenGLShader.hpp"
@@ -9,7 +9,7 @@
 
 namespace Dwarf
 {
-  OpenGLCubeMapGenerator::OpenGLCubeMapGenerator(
+  OpenGLCubemapGenerator::OpenGLCubemapGenerator(
     std::shared_ptr<IDwarfLogger>           logger,
     std::shared_ptr<ITextureFactory>        textureFactory,
     const std::shared_ptr<IShaderRegistry>& shaderRegistry,
@@ -27,11 +27,11 @@ namespace Dwarf
     mCubeMeshBuffer = meshBufferFactory->Create(cubeMesh);
     mConvertShader = shaderRegistry->GetOrCreate(
       shaderSourceCollectionFactory
-        ->CreateCubeMapConversionShaderSourceCollection());
+        ->CreateCubemapConversionShaderSourceCollection());
   }
 
   auto
-  OpenGLCubeMapGenerator::FromEquirectangular(std::shared_ptr<ITexture> texture,
+  OpenGLCubemapGenerator::FromEquirectangular(std::shared_ptr<ITexture> texture,
                                               uint32_t resolution)
     -> std::shared_ptr<ITexture>
   {
@@ -70,43 +70,43 @@ namespace Dwarf
     GLuint fbo, rbo;
     glCreateFramebuffers(1, &fbo);
     OpenGLUtilities::CheckOpenGLError(
-      "glCreateFramebuffers", "OpenGLCubeMapGenerator", mLogger);
+      "glCreateFramebuffers", "OpenGLCubemapGenerator", mLogger);
     glCreateRenderbuffers(1, &rbo);
     OpenGLUtilities::CheckOpenGLError(
-      "glCreateRenderbuffers", "OpenGLCubeMapGenerator", mLogger);
+      "glCreateRenderbuffers", "OpenGLCubemapGenerator", mLogger);
     glNamedRenderbufferStorage(
       rbo, GL_DEPTH_COMPONENT24, resolution, resolution);
     OpenGLUtilities::CheckOpenGLError(
-      "glNamedRenderbufferStorage", "OpenGLCubeMapGenerator", mLogger);
+      "glNamedRenderbufferStorage", "OpenGLCubemapGenerator", mLogger);
     glNamedFramebufferRenderbuffer(
       fbo, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, rbo);
     OpenGLUtilities::CheckOpenGLError(
-      "glNamedFramebufferRenderbuffer", "OpenGLCubeMapGenerator", mLogger);
+      "glNamedFramebufferRenderbuffer", "OpenGLCubemapGenerator", mLogger);
 
     auto* shader = dynamic_cast<OpenGLShader*>(mConvertShader.get());
     glUseProgram(shader->GetID());
     OpenGLUtilities::CheckOpenGLError(
-      "glUseProgram", "OpenGLCubeMapGenerator", mLogger);
+      "glUseProgram", "OpenGLCubemapGenerator", mLogger);
     glUniform1i(glGetUniformLocation(shader->GetID(), "equirectangularMap"), 0);
     OpenGLUtilities::CheckOpenGLError(
-      "glUniform1i", "OpenGLCubeMapGenerator", mLogger);
+      "glUniform1i", "OpenGLCubemapGenerator", mLogger);
     glUniformMatrix4fv(glGetUniformLocation(shader->GetID(), "projection"),
                        1,
                        GL_FALSE,
                        glm::value_ptr(captureProjection));
     OpenGLUtilities::CheckOpenGLError(
-      "glUniformMatrix4fv", "OpenGLCubeMapGenerator", mLogger);
+      "glUniformMatrix4fv", "OpenGLCubemapGenerator", mLogger);
 
     glActiveTexture(GL_TEXTURE0);
     OpenGLUtilities::CheckOpenGLError(
-      "glActiveTexture", "OpenGLCubeMapGenerator", mLogger);
+      "glActiveTexture", "OpenGLCubemapGenerator", mLogger);
     glBindTexture(GL_TEXTURE_2D, texture->GetTextureID());
     OpenGLUtilities::CheckOpenGLError(
-      "glBindTexture", "OpenGLCubeMapGenerator", mLogger);
+      "glBindTexture", "OpenGLCubemapGenerator", mLogger);
 
     glViewport(0, 0, resolution, resolution);
     OpenGLUtilities::CheckOpenGLError(
-      "glViewport", "OpenGLCubeMapGenerator", mLogger);
+      "glViewport", "OpenGLCubemapGenerator", mLogger);
     // glDisable(GL_CULL_FACE);
     // glDisable(GL_DEPTH_TEST); // <- Try this if depth is not needed
 
@@ -117,19 +117,19 @@ namespace Dwarf
                          GL_FALSE,
                          glm::value_ptr(captureViews[i]));
       OpenGLUtilities::CheckOpenGLError(
-        "glUniformMatrix4fv", "OpenGLCubeMapGenerator", mLogger);
+        "glUniformMatrix4fv", "OpenGLCubemapGenerator", mLogger);
 
       // Attach face
       glNamedFramebufferTextureLayer(
         fbo, GL_COLOR_ATTACHMENT0, cubeMap->GetTextureID(), 0, i);
       OpenGLUtilities::CheckOpenGLError(
-        "glNamedFramebufferTextureLayer", "OpenGLCubeMapGenerator", mLogger);
+        "glNamedFramebufferTextureLayer", "OpenGLCubemapGenerator", mLogger);
       glBindFramebuffer(GL_FRAMEBUFFER, fbo);
       OpenGLUtilities::CheckOpenGLError(
-        "glBindFramebuffer", "OpenGLCubeMapGenerator", mLogger);
+        "glBindFramebuffer", "OpenGLCubemapGenerator", mLogger);
       glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
       OpenGLUtilities::CheckOpenGLError(
-        "glClear", "OpenGLCubeMapGenerator", mLogger);
+        "glClear", "OpenGLCubemapGenerator", mLogger);
 
       // Draw cube (assumes cubeVAO is bound to a unit cube with in vec3 aPos)
       auto* oglMesh = dynamic_cast<OpenGLMeshBuffer*>(mCubeMeshBuffer.get());
@@ -137,13 +137,13 @@ namespace Dwarf
       glDrawElements(
         GL_TRIANGLES, oglMesh->GetIndexCount(), GL_UNSIGNED_INT, 0);
       OpenGLUtilities::CheckOpenGLError(
-        "glDrawArrays", "OpenGLCubeMapGenerator", mLogger);
+        "glDrawArrays", "OpenGLCubemapGenerator", mLogger);
       oglMesh->Unbind();
     }
 
     glBindFramebuffer(GL_FRAMEBUFFER, 0);
     OpenGLUtilities::CheckOpenGLError(
-      "glBindFramebuffer Unbind", "OpenGLCubeMapGenerator", mLogger);
+      "glBindFramebuffer Unbind", "OpenGLCubemapGenerator", mLogger);
 
     glDeleteFramebuffers(1, &fbo);
     glDeleteRenderbuffers(1, &rbo);

@@ -2,19 +2,19 @@
 
 #include "Core/Asset/Shader/ShaderSourceCollection/IShaderSourceCollectionFactory.hpp"
 #include "Core/Base.hpp"
-#include "Core/Rendering/CubeMapGenerator/ICubeMapGenerator.hpp"
+#include "Core/Rendering/CubemapGenerator/ICubemapGenerator.hpp"
 #include "Core/Rendering/Framebuffer/IFramebufferFactory.hpp"
 #include "Core/Rendering/Mesh/IMeshFactory.hpp"
 #include "Core/Rendering/MeshBuffer/IMeshBufferFactory.hpp"
 #include "Core/Rendering/RendererApi/IRendererApiFactory.hpp"
 #include "Core/Rendering/Shader/ShaderRegistry/IShaderRegistry.hpp"
 #include "Core/Rendering/Texture/ITextureFactory.hpp"
-#include "ICubeMapGeneratorFactory.hpp"
+#include "ICubemapGeneratorFactory.hpp"
 #include "Logging/IDwarfLogger.hpp"
 
 namespace Dwarf
 {
-  class CubeMapGeneratorFactory : public ICubeMapGeneratorFactory
+  class CubemapGeneratorFactory : public ICubemapGeneratorFactory
   {
   private:
     std::shared_ptr<IDwarfLogger>    mLogger;
@@ -29,7 +29,7 @@ namespace Dwarf
     std::shared_ptr<IRendererApiFactory> mRendererApiFactory;
 
   public:
-    CubeMapGeneratorFactory(
+    CubemapGeneratorFactory(
       std::shared_ptr<IDwarfLogger>    logger,
       GraphicsApi                      graphicsApi,
       std::shared_ptr<ITextureFactory> textureFactory,
@@ -40,9 +40,9 @@ namespace Dwarf
       std::shared_ptr<IMeshBufferFactory>  meshBufferFactory,
       std::shared_ptr<IFramebufferFactory> framebufferFactory,
       std::shared_ptr<IRendererApiFactory> rendererApiFactory);
-    ~CubeMapGeneratorFactory() override = default;
+    ~CubemapGeneratorFactory() override = default;
 
     [[nodiscard]] auto
-    Create() -> std::shared_ptr<ICubeMapGenerator> override;
+    Create() -> std::shared_ptr<ICubemapGenerator> override;
   };
 }

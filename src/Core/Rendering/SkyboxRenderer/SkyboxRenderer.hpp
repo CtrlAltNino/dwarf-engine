@@ -3,8 +3,8 @@
 #include "Core/Asset/Database/AssetComponents.hpp"
 #include "Core/Asset/Database/IAssetDatabase.hpp"
 #include "Core/Asset/Shader/ShaderSourceCollection/IShaderSourceCollectionFactory.hpp"
-#include "Core/Rendering/CubeMapGenerator/ICubeMapGenerator.hpp"
-#include "Core/Rendering/CubeMapGenerator/ICubeMapGeneratorFactory.hpp"
+#include "Core/Rendering/CubemapGenerator/ICubemapGenerator.hpp"
+#include "Core/Rendering/CubemapGenerator/ICubemapGeneratorFactory.hpp"
 #include "Core/Rendering/Material/IMaterial.hpp"
 #include "Core/Rendering/Material/IMaterialFactory.hpp"
 #include "Core/Rendering/Mesh/MeshFactory.hpp"
@@ -13,6 +13,7 @@
 #include "Core/Rendering/RendererApi/IRendererApi.hpp"
 #include "Core/Rendering/RendererApi/IRendererApiFactory.hpp"
 #include "Core/Rendering/Shader/ShaderRegistry/IShaderRegistry.hpp"
+#include "Core/Rendering/SkyboxTypes.hpp"
 #include "Core/Rendering/Texture/ITexture.hpp"
 #include "Core/Rendering/Texture/ITextureFactory.hpp"
 #include "Core/Scene/Settings/ISceneSettingsObserver.hpp"
@@ -20,6 +21,7 @@
 #include "Editor/LoadedScene/ILoadedSceneObserver.h"
 #include "ISkyboxRenderer.hpp"
 #include "Logging/IDwarfLogger.hpp"
+#include <cstdint>
 
 namespace Dwarf
 {
@@ -37,23 +39,26 @@ namespace Dwarf
     std::shared_ptr<IShaderSourceCollectionFactory>
                                        mShaderSourceCollectionFactory;
     std::shared_ptr<ITextureFactory>   mTextureFactory;
-    std::shared_ptr<ICubeMapGenerator> mCubeMapGenerator;
+    std::shared_ptr<ICubemapGenerator> mCubemapGenerator;
 
     std::optional<std::reference_wrapper<ICamera>> mCamera;
     std::shared_ptr<IMeshBuffer>                   mSkyboxCubeMesh;
 
-    SkyboxSource mCachedSourceType = SkyboxSource::Color;
-    // std::shared_ptr<ITexture> mHdriTexture = nullptr;
+    SkyboxSource             mCachedSourceType = SkyboxSource::Color;
     std::shared_ptr<IShader> mSkyboxShader = nullptr;
     std::optional<UUID>      mCachedAssetId = std::nullopt;
     std::optional<std::reference_wrapper<MaterialAsset>> mCachedMaterialAsset =
       std::nullopt;
     std::optional<std::reference_wrapper<TextureAsset>> mCachedTextureAsset =
       std::nullopt;
-    std::shared_ptr<ITexture> mCubeMap;
+    std::shared_ptr<ITexture> mCubemap;
+    CubemapResolutionEnum     mCachedResolution;
 
-    std::mutex  mCubeMapGeneratorMutex;
-    std::thread mCubeMapGeneratorThread;
+    std::mutex  mCubemapGeneratorMutex;
+    std::thread mCubemapGeneratorThread;
+
+    void
+    ResetCubemap();
 
   public:
     SkyboxRenderer(
@@ -67,7 +72,7 @@ namespace Dwarf
       const std::shared_ptr<IRendererApiFactory>& rendererApiFactory,
       const std::shared_ptr<IMeshFactory>&        meshFactory,
       const std::shared_ptr<IMeshBufferFactory>&  meshBufferFactory,
-      const std::shared_ptr<ICubeMapGeneratorFactory>& cubeMapGeneratorFactory);
+      const std::shared_ptr<ICubemapGeneratorFactory>& cubeMapGeneratorFactory);
     ~SkyboxRenderer() override = default;
 
     void

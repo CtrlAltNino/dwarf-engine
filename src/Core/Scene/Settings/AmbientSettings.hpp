@@ -19,7 +19,7 @@ namespace Dwarf
       { { 0.5F, 0.7F, 1.0F }, { 0.6F, 0.6F, 0.6F }, { 0.2F, 0.2F, 0.25F } }
     };
     bool                UseIBL = false;
-    std::optional<UUID> CubeMap = std::nullopt;
+    std::optional<UUID> Cubemap = std::nullopt;
 
     /// @brief Constructor.
     AmbientSettings() = default;
@@ -49,10 +49,10 @@ namespace Dwarf
       {
         UseIBL = serializedSettings["UseIBL"].get<bool>();
       }
-      if (serializedSettings.contains("CubeMap") &&
-          !serializedSettings.at("CubeMap").get<std::string>().empty())
+      if (serializedSettings.contains("Cubemap") &&
+          !serializedSettings.at("Cubemap").get<std::string>().empty())
       {
-        CubeMap = UUID(serializedSettings.at("CubeMap").get<std::string>());
+        Cubemap = UUID(serializedSettings.at("Cubemap").get<std::string>());
       }
     }
 
@@ -66,7 +66,7 @@ namespace Dwarf
       json["LightIntensity"] = Intensity;
       json["Gradient"] = Gradient;
       json["UseIBL"] = UseIBL;
-      json["CubeMap"] = CubeMap.has_value() ? CubeMap->Serialize() : "";
+      json["Cubemap"] = Cubemap.has_value() ? Cubemap->Serialize() : "";
       return json;
     }
   };
