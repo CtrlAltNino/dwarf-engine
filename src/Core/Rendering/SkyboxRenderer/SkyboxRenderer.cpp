@@ -197,6 +197,8 @@ namespace Dwarf
 
           if (mCachedAssetId.has_value())
           {
+            ResetCubemap();
+
             mCachedTextureAsset = dynamic_cast<TextureAsset&>(
               mAssetDatabase->Retrieve(mCachedAssetId.value())->GetAsset());
           }
@@ -209,12 +211,12 @@ namespace Dwarf
                                    .GetCubemapResolution())
         {
           ResetCubemap();
+          mCachedResolution = mLoadedScene->GetScene()
+                                .GetProperties()
+                                .GetSettings()
+                                .GetSkyboxSettings()
+                                .GetCubemapResolution();
         }
-        mCachedResolution = mLoadedScene->GetScene()
-                              .GetProperties()
-                              .GetSettings()
-                              .GetSkyboxSettings()
-                              .GetCubemapResolution();
         break;
     }
 
