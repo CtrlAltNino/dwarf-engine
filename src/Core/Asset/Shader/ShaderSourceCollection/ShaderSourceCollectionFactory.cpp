@@ -106,6 +106,30 @@ namespace Dwarf
   }
 
   auto
+  ShaderSourceCollectionFactory::CreateExposureScalingShaderSourceCollection()
+    -> std::unique_ptr<IShaderSourceCollection>
+  {
+    std::vector<std::unique_ptr<IAssetReference>> shaderSources = {};
+
+    switch (mGraphicsApi)
+    {
+      case GraphicsApi::OpenGL:
+        shaderSources.emplace_back(mAssetDatabase.get()->Retrieve(
+          OpenGLUtilities::GetFullScreenQuadShaderPath() /
+          "fullscreen_quad.vert"));
+        shaderSources.emplace_back(mAssetDatabase.get()->Retrieve(
+          OpenGLUtilities::GetExposureScalingShaderPath() /
+          "exposure_scaling.frag"));
+        break;
+      case GraphicsApi::Vulkan:
+      case GraphicsApi::D3D12:
+      default: throw std::runtime_error("Unsupported Graphics API.");
+    }
+
+    return std::make_unique<ShaderSourceCollection>(shaderSources);
+  }
+
+  auto
   ShaderSourceCollectionFactory::CreateReinhardTonemapShaderSourceCollection()
     -> std::unique_ptr<IShaderSourceCollection>
   {

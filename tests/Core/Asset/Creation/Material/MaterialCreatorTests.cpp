@@ -183,6 +183,10 @@ public:
               (),
               (override));
   MOCK_METHOD(std::unique_ptr<IShaderSourceCollection>,
+              CreateExposureScalingShaderSourceCollection,
+              (),
+              (override));
+  MOCK_METHOD(std::unique_ptr<IShaderSourceCollection>,
               CreateShaderSourceCollection,
               (const nlohmann::json& serializedShaderSourceCollection),
               (override));

@@ -667,8 +667,11 @@ namespace Dwarf
 
     std::filesystem::path fullscreenQuadShaderPath =
       shaderDir / "fullscreen_quad" / graphicsApiDir / "fullscreen_quad.vert";
-
     Import(fullscreenQuadShaderPath);
+
+    std::filesystem::path exposureScalingShaderPath =
+      shaderDir / "exposure_scaling" / graphicsApiDir / "exposure_scaling.frag";
+    Import(exposureScalingShaderPath);
 
     std::filesystem::path reinhardShaderPath =
       shaderDir / "reinhard_tonemap" / graphicsApiDir / "reinhard_tonemap.frag";

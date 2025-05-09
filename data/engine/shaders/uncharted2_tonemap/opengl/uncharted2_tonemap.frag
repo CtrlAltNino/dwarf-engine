@@ -4,7 +4,6 @@ in vec2 TexCoords;
 out vec4 FragColor;
 
 uniform sampler2D hdrTexture;
-uniform float exposure; // Can be adjusted based on lighting conditions
 
 float A = 0.15;
 float B = 0.50;
@@ -18,8 +17,8 @@ vec3 uncharted2ToneMapping(vec3 hdrColor){
 }
 
 void main() {
-    // Fetch the HDR color from the texture and apply exposure control
-    vec3 hdrColor = exposure * texture(hdrTexture, TexCoords).rgb;
+    // Fetch the HDR color from the texture
+    vec3 hdrColor = texture(hdrTexture, TexCoords).rgb;
 
     // Apply Uncharted2 tonemapping
     hdrColor = uncharted2ToneMapping(hdrColor);

@@ -45,6 +45,9 @@ namespace Dwarf
     mIdMaterial->GetMaterialProperties().IsDoubleSided = true;
     mGridShader = mShaderRegistry->GetOrCreate(
       mShaderSourceCollectionFactory->CreateGridShaderSourceCollection());
+    mExposureScalingShader = mShaderRegistry->GetOrCreate(
+      mShaderSourceCollectionFactory
+        ->CreateExposureScalingShaderSourceCollection());
 
     SetupRenderFramebuffer(framebufferFactory);
 
@@ -160,9 +163,34 @@ namespace Dwarf
                             mRenderFramebuffer->GetSpecification().Height);
     mHdrPingPong->Swap();
 
+    // ==================== Exposure Scaling ====================
+
+    if (mExposureScalingShader && mRendererApi && mHdrPingPong &&
+        mHdrPingPong->GetReadFramebuffer().lock() &&
+        mHdrPingPong->GetWriteFramebuffer().lock())
+    {
+      mExposureScalingShader->SetParameter("hdrTexture",
+                                           mHdrPingPong->GetReadTexture());
+      mRendererApi->ApplyPostProcess(
+        *mHdrPingPong, *mExposureScalingShader, false);
+      mRendererApi->BlitDepth(*mHdrPingPong->GetReadFramebuffer().lock(),
+                              *mHdrPingPong->GetWriteFramebuffer().lock(),
+                              mRenderFramebuffer->GetSpecification().Width,
+                              mRenderFramebuffer->GetSpecification().Height);
+      mHdrPingPong->Swap();
+    }
+
     // ==================== HDR Post Processing ====================
 
     // TODO
+
+    // God Rays
+
+    // Volumetric Lighting
+
+    // Bloom
+
+    // DoF
 
     // ==================== Tonemapping ====================
 
@@ -317,9 +345,9 @@ namespace Dwarf
   void
   RenderingPipeline::SetExposure(float exposure)
   {
-    if (mTonemapShader)
+    if (mExposureScalingShader)
     {
-      mTonemapShader->SetParameter("exposure", exposure);
+      mExposureScalingShader->SetParameter("exposure", exposure);
     }
   }
 

@@ -38,6 +38,7 @@ namespace Dwarf
 
     std::unique_ptr<IMaterial> mIdMaterial;
     std::shared_ptr<IShader>   mGridShader;
+    std::shared_ptr<IShader>   mExposureScalingShader;
     std::shared_ptr<IShader>   mTonemapShader;
 
     std::shared_ptr<IFramebuffer>    mRenderFramebuffer;
