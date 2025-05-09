@@ -1,12 +1,8 @@
-#include "Core/Asset/Database/AssetComponents.hpp"
-#include "Core/Rendering/SkyboxTypes.hpp"
 #include "pch.hpp"
 
+#include "Core/Asset/Database/AssetComponents.hpp"
+#include "Core/Rendering/SkyboxTypes.hpp"
 #include "SkyboxRenderer.hpp"
-
-#include <utility>
-
-#include <utility>
 
 namespace Dwarf
 {
@@ -21,7 +17,7 @@ namespace Dwarf
     const std::shared_ptr<IRendererApiFactory>& rendererApiFactory,
     const std::shared_ptr<IMeshFactory>&        meshFactory,
     const std::shared_ptr<IMeshBufferFactory>&  meshBufferFactory,
-    const std::shared_ptr<ICubeMapGeneratorFactory>& cubeMapGeneratorFactory)
+    const std::shared_ptr<ICubemapGeneratorFactory>& cubeMapGeneratorFactory)
     : mLogger(std::move(logger))
     , mRendererApi(rendererApiFactory->Create())
     , mAssetDatabase(std::move(assetDatabase))
@@ -29,7 +25,7 @@ namespace Dwarf
     , mShaderRegistry(std::move(shaderRegistry))
     , mShaderSourceCollectionFactory(std::move(shaderSourceCollectionFactory))
     , mTextureFactory(std::move(textureFactory))
-    , mCubeMapGenerator(cubeMapGeneratorFactory->Create())
+    , mCubemapGenerator(cubeMapGeneratorFactory->Create())
   {
     mLoadedScene->RegisterLoadedSceneObserver(this);
     std::shared_ptr<IMesh> cubeMesh = meshFactory->CreateSkyboxCube();
@@ -43,6 +39,16 @@ namespace Dwarf
   }
 
   void
+  SkyboxRenderer::ResetCubemap()
+  {
+    if (mSkyboxShader)
+    {
+      mSkyboxShader->RemoveParameter("u_Skybox");
+    }
+    mCubemap.reset();
+  }
+
+  void
   SkyboxRenderer::Render()
   {
     if (mCamera.has_value())
@@ -53,6 +59,12 @@ namespace Dwarf
         case Color:
           if (mSkyboxShader != nullptr)
           {
+            mSkyboxShader->SetParameter("u_Exposure",
+                                        mLoadedScene->GetScene()
+                                          .GetProperties()
+                                          .GetSettings()
+                                          .GetSkyboxSettings()
+                                          .GetExposure());
             mRendererApi->RenderSkyboxIndexed(
               mSkyboxCubeMesh.get(), *mSkyboxShader, mCamera->get());
           }
@@ -67,19 +79,23 @@ namespace Dwarf
           }
           break;
         case HDRI:
-          if (mCubeMap)
+          if (mCubemap)
           {
-            mSkyboxShader->SetParameter("u_Skybox", mCubeMap);
+            mSkyboxShader->SetParameter("u_Skybox", mCubemap);
           }
           else
           {
-            // Todo GET TEXTURE IMMEDIATELY
             if (mCachedTextureAsset)
             {
               if (mCachedTextureAsset->get().IsLoaded())
               {
-                mCubeMap = mCubeMapGenerator->FromEquirectangular(
-                  mCachedTextureAsset->get().GetTexture(), 4096);
+                mCubemap = mCubemapGenerator->FromEquirectangular(
+                  mCachedTextureAsset->get().GetTexture(),
+                  GetCubemapResolution(mLoadedScene->GetScene()
+                                         .GetProperties()
+                                         .GetSettings()
+                                         .GetSkyboxSettings()
+                                         .GetCubemapResolution()));
               }
               else
               {
@@ -87,6 +103,12 @@ namespace Dwarf
               }
             }
           }
+          mSkyboxShader->SetParameter("u_Exposure",
+                                      mLoadedScene->GetScene()
+                                        .GetProperties()
+                                        .GetSettings()
+                                        .GetSkyboxSettings()
+                                        .GetExposure());
           mRendererApi->RenderSkyboxIndexed(
             mSkyboxCubeMesh.get(), *mSkyboxShader, mCamera->get());
           break;
@@ -106,13 +128,10 @@ namespace Dwarf
       using enum SkyboxSource;
       case Color:
         // Load simple color material + shader
+        ResetCubemap();
         if ((mSkyboxShader == nullptr) || (mCachedSourceType != Color))
         {
-          if (mSkyboxShader)
-          {
-            mSkyboxShader->RemoveParameter("u_Skybox");
-            mCubeMap.reset();
-          }
+          ResetCubemap();
           mSkyboxShader = mShaderRegistry->GetOrCreate(
             mShaderSourceCollectionFactory
               ->CreateColorSkyboxShaderSourceCollection());
@@ -128,13 +147,7 @@ namespace Dwarf
         break;
       case Material:
         // Load material from asset database
-        if (mSkyboxShader)
-        {
-          mSkyboxShader->RemoveParameter("u_Skybox");
-          mCubeMap.reset();
-        }
-
-        mCubeMap = nullptr;
+        ResetCubemap();
         if (mCachedAssetId != mLoadedScene->GetScene()
                                 .GetProperties()
                                 .GetSettings()
@@ -182,6 +195,20 @@ namespace Dwarf
               mAssetDatabase->Retrieve(mCachedAssetId.value())->GetAsset());
           }
         }
+
+        if (mCachedResolution != mLoadedScene->GetScene()
+                                   .GetProperties()
+                                   .GetSettings()
+                                   .GetSkyboxSettings()
+                                   .GetCubemapResolution())
+        {
+          ResetCubemap();
+        }
+        mCachedResolution = mLoadedScene->GetScene()
+                              .GetProperties()
+                              .GetSettings()
+                              .GetSkyboxSettings()
+                              .GetCubemapResolution();
         break;
     }
 

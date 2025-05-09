@@ -140,7 +140,7 @@ namespace Dwarf
       -> std::unique_ptr<IShaderSourceCollection> override;
 
     auto
-    CreateCubeMapConversionShaderSourceCollection()
+    CreateCubemapConversionShaderSourceCollection()
       -> std::unique_ptr<IShaderSourceCollection> override;
 
     /**

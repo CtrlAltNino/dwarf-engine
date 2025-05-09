@@ -4,10 +4,10 @@
 
 namespace Dwarf
 {
-  class ICubeMapGenerator
+  class ICubemapGenerator
   {
   public:
-    virtual ~ICubeMapGenerator() = default;
+    virtual ~ICubemapGenerator() = default;
 
     [[nodiscard]] virtual auto
     FromEquirectangular(std::shared_ptr<ITexture> texture, uint32_t resolution)

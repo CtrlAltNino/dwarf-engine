@@ -16,10 +16,12 @@ namespace Dwarf
   {
   private:
     std::reference_wrapper<std::vector<ISceneSettingsObserver*>> Observers;
-    SkyboxSource        Type = SkyboxSource::Color;
-    glm::vec3           Color = glm::vec3(0.0F, 0.0F, 0.0F);
-    std::optional<UUID> SkyboxMaterial = std::nullopt;
-    std::optional<UUID> CubeMap = std::nullopt;
+    SkyboxSource          Type = SkyboxSource::Color;
+    glm::vec3             Color = glm::vec3(0.0F, 0.0F, 0.0F);
+    std::optional<UUID>   SkyboxMaterial = std::nullopt;
+    std::optional<UUID>   Cubemap = std::nullopt;
+    CubemapResolutionEnum CubemapResolution = CubemapResolutionEnum::Medium;
+    float                 Exposure = 1;
 
   public:
     /// @brief Constructor.
@@ -41,10 +43,19 @@ namespace Dwarf
       {
         SkyboxMaterial = UUID(json.at("SkyboxMaterial").get<std::string>());
       }
-      if (json.contains("CubeMap") &&
-          !json.at("CubeMap").get<std::string>().empty())
+      if (json.contains("Cubemap") &&
+          !json.at("Cubemap").get<std::string>().empty())
       {
-        CubeMap = UUID(json.at("CubeMap").get<std::string>());
+        Cubemap = UUID(json.at("Cubemap").get<std::string>());
+      }
+      if (json.contains("CubemapResolution"))
+      {
+        CubemapResolution =
+          json.at("CubemapResolution").get<CubemapResolutionEnum>();
+      }
+      if (json.contains("Exposure"))
+      {
+        Exposure = json.at("Exposure").get<float>();
       }
     }
 
@@ -57,7 +68,9 @@ namespace Dwarf
       json["Color"] = Color;
       json["SkyboxMaterial"] =
         SkyboxMaterial.has_value() ? SkyboxMaterial->Serialize() : "";
-      json["CubeMap"] = CubeMap.has_value() ? CubeMap->Serialize() : "";
+      json["Cubemap"] = Cubemap.has_value() ? Cubemap->Serialize() : "";
+      json["CubemapResolution"] = CubemapResolution;
+      json["Exposure"] = Exposure;
       return json;
     }
 
@@ -70,8 +83,8 @@ namespace Dwarf
       }
     }
 
-    auto
-    GetType() -> SkyboxSource
+    [[nodiscard]] auto
+    GetType() const -> SkyboxSource
     {
       return Type;
     }
@@ -83,8 +96,8 @@ namespace Dwarf
       NotifyObservers();
     }
 
-    auto
-    GetColor() -> glm::vec3
+    [[nodiscard]] auto
+    GetColor() const -> glm::vec3
     {
       return Color;
     }
@@ -96,8 +109,8 @@ namespace Dwarf
       NotifyObservers();
     }
 
-    auto
-    GetSkyboxMaterial() -> std::optional<UUID>
+    [[nodiscard]] auto
+    GetSkyboxMaterial() const -> std::optional<UUID>
     {
       return SkyboxMaterial;
     }
@@ -109,16 +122,42 @@ namespace Dwarf
       NotifyObservers();
     }
 
-    auto
-    GetHdri() -> std::optional<UUID>
+    [[nodiscard]] auto
+    GetHdri() const -> std::optional<UUID>
     {
-      return CubeMap;
+      return Cubemap;
     }
 
     auto
     SetHdri(std::optional<UUID> hdri)
     {
-      CubeMap = std::move(hdri);
+      Cubemap = std::move(hdri);
+      NotifyObservers();
+    }
+
+    [[nodiscard]] auto
+    GetCubemapResolution() const -> CubemapResolutionEnum
+    {
+      return CubemapResolution;
+    }
+
+    void
+    SetCubemapResolution(CubemapResolutionEnum cubemapResolution)
+    {
+      CubemapResolution = cubemapResolution;
+      NotifyObservers();
+    }
+
+    [[nodiscard]] auto
+    GetExposure() const -> float
+    {
+      return Exposure;
+    }
+
+    void
+    SetExposure(float exposure)
+    {
+      Exposure = exposure;
       NotifyObservers();
     }
   };

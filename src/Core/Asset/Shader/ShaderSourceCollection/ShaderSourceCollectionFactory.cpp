@@ -310,7 +310,7 @@ namespace Dwarf
   }
 
   auto
-  ShaderSourceCollectionFactory::CreateCubeMapConversionShaderSourceCollection()
+  ShaderSourceCollectionFactory::CreateCubemapConversionShaderSourceCollection()
     -> std::unique_ptr<IShaderSourceCollection>
   {
     std::vector<std::unique_ptr<IAssetReference>> shaderSources = {};

@@ -1,14 +1,15 @@
 #pragma once
 
-#include "Core/Rendering/CubeMapGenerator/ICubeMapGenerator.hpp"
+#include "Core/Rendering/CubemapGenerator/ICubemapGenerator.hpp"
+
 namespace Dwarf
 {
-  class ICubeMapGeneratorFactory
+  class ICubemapGeneratorFactory
   {
   public:
-    virtual ~ICubeMapGeneratorFactory() = default;
+    virtual ~ICubemapGeneratorFactory() = default;
 
     [[nodiscard]] virtual auto
-    Create() -> std::shared_ptr<ICubeMapGenerator> = 0;
+    Create() -> std::shared_ptr<ICubemapGenerator> = 0;
   };
 }

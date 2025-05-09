@@ -128,7 +128,7 @@ namespace Dwarf
       -> std::unique_ptr<IShaderSourceCollection> = 0;
 
     virtual auto
-    CreateCubeMapConversionShaderSourceCollection()
+    CreateCubemapConversionShaderSourceCollection()
       -> std::unique_ptr<IShaderSourceCollection> = 0;
 
     /**

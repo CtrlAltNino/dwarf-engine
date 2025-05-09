@@ -21,7 +21,7 @@
 #include "Core/Asset/Texture/ImageFileLoader.hpp"
 #include "Core/Asset/Texture/TextureWorker/TextureLoadingWorker.hpp"
 #include "Core/Base.hpp"
-#include "Core/Rendering/CubeMapGenerator/CubeMapGeneratorFactory.hpp"
+#include "Core/Rendering/CubemapGenerator/CubemapGeneratorFactory.hpp"
 #include "Core/Rendering/DrawCall/DrawCallFactory.hpp"
 #include "Core/Rendering/DrawCall/DrawCallList/DrawCallListFactory.hpp"
 #include "Core/Rendering/DrawCall/DrawCallWorker/DrawCallWorkerFactory.hpp"
@@ -108,7 +108,6 @@
 #include "Window/IWindow.hpp"
 #include "Window/SDL3Window.hpp"
 
-
 namespace Dwarf
 {
   auto
@@ -191,7 +190,7 @@ namespace Dwarf
           boost::di::extension::shared),
           boost::di::bind<IShaderAssetSelectorFactory>.to<ShaderAssetSelectorFactory>().in(
           boost::di::extension::shared),
-          boost::di::bind<ICubeMapGeneratorFactory>.to<CubeMapGeneratorFactory>().in(
+          boost::di::bind<ICubemapGeneratorFactory>.to<CubemapGeneratorFactory>().in(
           boost::di::extension::shared),
           boost::di::bind<ITextureLoadingWorker>.to<TextureLoadingWorker>().in(
           boost::di::extension::shared),

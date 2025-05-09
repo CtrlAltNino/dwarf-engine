@@ -4,9 +4,10 @@ in vec3 vDirection;
 out vec4 FragColor;
 
 uniform samplerCube u_Skybox;
+uniform float u_Exposure;
 
 void main()
 {
     vec3 color = texture(u_Skybox, normalize(vDirection)).rgb;
-    FragColor = vec4(color * 50, 1.0);
+    FragColor = vec4(color * u_Exposure, 1.0);
 }

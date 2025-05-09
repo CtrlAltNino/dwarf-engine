@@ -89,54 +89,116 @@ namespace Dwarf
       {
         using enum SkyboxSource;
         case Color:
-          static glm::vec3 skyboxColor = mLoadedScene->GetScene()
-                                           .GetProperties()
-                                           .GetSettings()
-                                           .GetSkyboxSettings()
-                                           .GetColor();
-          if (ImGui::ColorEdit3("Color##Skybox",
-                                glm::value_ptr(skyboxColor),
-                                ImGuiColorEditFlags_HDR))
           {
-            mLoadedScene->GetScene()
-              .GetProperties()
-              .GetSettings()
-              .GetSkyboxSettings()
-              .SetColor(skyboxColor);
-          }
-          break;
-        case Material:
-          static std::optional<UUID> skyboxMaterialAssetId =
-            mLoadedScene->GetScene()
-              .GetProperties()
-              .GetSettings()
-              .GetSkyboxSettings()
-              .GetSkyboxMaterial();
-          if (DwarfUI::AssetInput<MaterialAsset>(
-                mAssetDatabase, skyboxMaterialAssetId, "Material##Skybox"))
-          {
-            mLoadedScene->GetScene()
-              .GetProperties()
-              .GetSettings()
-              .GetSkyboxSettings()
-              .SetSkyboxMaterial(skyboxMaterialAssetId);
+            static glm::vec3 skyboxColor = mLoadedScene->GetScene()
+                                             .GetProperties()
+                                             .GetSettings()
+                                             .GetSkyboxSettings()
+                                             .GetColor();
+            if (ImGui::ColorEdit3("Color##Skybox", glm::value_ptr(skyboxColor)))
+            {
+              mLoadedScene->GetScene()
+                .GetProperties()
+                .GetSettings()
+                .GetSkyboxSettings()
+                .SetColor(skyboxColor);
+            }
+
+            static float exposure = mLoadedScene->GetScene()
+                                      .GetProperties()
+                                      .GetSettings()
+                                      .GetSkyboxSettings()
+                                      .GetExposure();
+
+            if (ImGui::DragFloat("Exposure##SkyboxExposure",
+                                 &exposure,
+                                 0.25F,
+                                 0.0F,
+                                 150.0F,
+                                 "%.2F"))
+            {
+              mLoadedScene->GetScene()
+                .GetProperties()
+                .GetSettings()
+                .GetSkyboxSettings()
+                .SetExposure(exposure);
+            }
+            break;
+            case Material:
+              {
+                static std::optional<UUID> skyboxMaterialAssetId =
+                  mLoadedScene->GetScene()
+                    .GetProperties()
+                    .GetSettings()
+                    .GetSkyboxSettings()
+                    .GetSkyboxMaterial();
+                if (DwarfUI::AssetInput<MaterialAsset>(mAssetDatabase,
+                                                       skyboxMaterialAssetId,
+                                                       "Material##Skybox"))
+                {
+                  mLoadedScene->GetScene()
+                    .GetProperties()
+                    .GetSettings()
+                    .GetSkyboxSettings()
+                    .SetSkyboxMaterial(skyboxMaterialAssetId);
+                }
+              }
           }
           break;
         case HDRI:
-          static std::optional<UUID> hdriTextureAssetId =
-            mLoadedScene->GetScene()
-              .GetProperties()
-              .GetSettings()
-              .GetSkyboxSettings()
-              .GetSkyboxMaterial();
-          if (DwarfUI::AssetInput<TextureAsset>(
-                mAssetDatabase, hdriTextureAssetId, "HDRI##Skybox"))
           {
-            mLoadedScene->GetScene()
-              .GetProperties()
-              .GetSettings()
-              .GetSkyboxSettings()
-              .SetHdri(hdriTextureAssetId);
+            static std::optional<UUID> hdriTextureAssetId =
+              mLoadedScene->GetScene()
+                .GetProperties()
+                .GetSettings()
+                .GetSkyboxSettings()
+                .GetHdri();
+            if (DwarfUI::AssetInput<TextureAsset>(
+                  mAssetDatabase, hdriTextureAssetId, "HDRI##Skybox"))
+            {
+              mLoadedScene->GetScene()
+                .GetProperties()
+                .GetSettings()
+                .GetSkyboxSettings()
+                .SetHdri(hdriTextureAssetId);
+            }
+
+            static float exposure = mLoadedScene->GetScene()
+                                      .GetProperties()
+                                      .GetSettings()
+                                      .GetSkyboxSettings()
+                                      .GetExposure();
+
+            if (ImGui::DragFloat("Exposure##SkyboxExposure",
+                                 &exposure,
+                                 0.25F,
+                                 0.0F,
+                                 150.0F,
+                                 "%.2F"))
+            {
+              mLoadedScene->GetScene()
+                .GetProperties()
+                .GetSettings()
+                .GetSkyboxSettings()
+                .SetExposure(exposure);
+            }
+
+            static CubemapResolutionEnum cubemapResolution =
+              mLoadedScene->GetScene()
+                .GetProperties()
+                .GetSettings()
+                .GetSkyboxSettings()
+                .GetCubemapResolution();
+
+            if (DwarfUI::ComboEnum<CubemapResolutionEnum>(
+                  "Cubemap Resolution##CubemapResolution", cubemapResolution))
+            {
+              mLoadedScene->GetScene()
+                .GetProperties()
+                .GetSettings()
+                .GetSkyboxSettings()
+                .SetCubemapResolution(cubemapResolution);
+            }
           }
           break;
       }
@@ -212,7 +274,7 @@ namespace Dwarf
                                               .GetProperties()
                                               .GetSettings()
                                               .GetAmbientSettings()
-                                              .CubeMap,
+                                              .Cubemap,
                                             "HDRI##Ambient");
           ImGui::Checkbox("Use for IBL##Ambient",
                           &mLoadedScene->GetScene()
