@@ -4,7 +4,6 @@ out vec4 FragColor;
 in vec2 TexCoords;
 
 uniform sampler2D hdrTexture;
-uniform float exposure;
 
 vec3 RRTAndODTFit(vec3 v) {
     vec3 a = v * (v + 0.0245786) - 0.000090537;
@@ -17,8 +16,8 @@ vec3 ACESFilm(vec3 color) {
 }
 
 void main() {
-    // Fetch the HDR color from the texture and apply exposure control
-    vec3 hdrColor = exposure * texture(hdrTexture, TexCoords).rgb;
+    // Fetch the HDR color from the texture
+    vec3 hdrColor = texture(hdrTexture, TexCoords).rgb;
 
     // Apply ACES tonemapping
     vec3 ldrColor = ACESFilm(hdrColor);

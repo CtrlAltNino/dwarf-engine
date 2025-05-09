@@ -49,6 +49,10 @@ namespace Dwarf
     CreateGridShaderSourceCollection()
       -> std::unique_ptr<IShaderSourceCollection> = 0;
 
+    virtual auto
+    CreateExposureScalingShaderSourceCollection()
+      -> std::unique_ptr<IShaderSourceCollection> = 0;
+
     /**
      * @brief Create a shader source collection containing the shader sources
      * for the reinhard tonemap shader

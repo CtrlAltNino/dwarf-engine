@@ -115,6 +115,12 @@ namespace Dwarf
     }
 
     static auto
+    GetExposureScalingShaderPath() -> std::filesystem::path
+    {
+      return "data/engine/shaders/exposure_scaling/opengl";
+    }
+
+    static auto
     GetDeviceInfo() -> std::string
     {
       std::string deviceInfo;
