@@ -109,6 +109,12 @@ namespace Dwarf
                                         .GetSettings()
                                         .GetSkyboxSettings()
                                         .GetExposure());
+          mSkyboxShader->SetParameter("u_Rotation",
+                                      mLoadedScene->GetScene()
+                                        .GetProperties()
+                                        .GetSettings()
+                                        .GetSkyboxSettings()
+                                        .GetCubemapRotation());
           mRendererApi->RenderSkyboxIndexed(
             mSkyboxCubeMesh.get(), *mSkyboxShader, mCamera->get());
           break;
