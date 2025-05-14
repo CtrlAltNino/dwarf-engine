@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core/Scene/Components/SceneComponents.hpp"
+#include "Core/Scene/Components/TransformComponent.hpp"
 #include "Utilities/ISerializable.hpp"
 
 namespace Dwarf
@@ -13,7 +13,7 @@ namespace Dwarf
   {
     /// @brief The transform of the camera, representing its position and
     /// rotation.
-    TransformComponent Transform;
+    std::reference_wrapper<TransformComponent> Transform;
     /// @brief The camera's field of view expressed in degrees.
     float Fov = 90.0F;
 
