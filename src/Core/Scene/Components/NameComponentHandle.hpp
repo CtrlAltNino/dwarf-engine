@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Core/GenericComponents.hpp"
-#include "Core/Scene/Components/SceneComponents.hpp"
 
 namespace Dwarf
 {

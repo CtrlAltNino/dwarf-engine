@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Core/GenericComponents.hpp"
-#include "Core/Scene/Components/SceneComponents.hpp"
 
 namespace Dwarf
 {
@@ -12,7 +11,7 @@ namespace Dwarf
     entt::entity    mEntity;
 
   public:
-  PathComponentHandle(entt::registry& reg, entt::entity ent)
+    PathComponentHandle(entt::registry& reg, entt::entity ent)
       : mRegistry(reg)
       , mEntity(ent)
     {

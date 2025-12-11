@@ -1,7 +1,6 @@
-#include "Core/Asset/AssetTypes.hpp"
-#include "Core/Scene/Components/SceneComponents.hpp"
 #include "pch.hpp"
 
+#include "Core/Asset/AssetTypes.hpp"
 #include "Core/Scene/Components/MeshRendererComponentHandle.hpp"
 #include "DrawCallWorker.hpp"
 

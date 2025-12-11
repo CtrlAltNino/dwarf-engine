@@ -5,7 +5,7 @@
 #include "Core/Rendering/Framebuffer/IFramebuffer.hpp"
 #include "Core/Rendering/Material/IMaterial.hpp"
 #include "Core/Scene/Components/MeshRendererComponentHandle.hpp"
-#include "Core/Scene/Components/SceneComponents.hpp"
+#include "Core/Scene/Components/TransformComponent.hpp"
 #include "Core/Scene/Components/TransformComponentHandle.hpp"
 #include "IRenderingPipeline.hpp"
 #include "RenderingPipeline.hpp"

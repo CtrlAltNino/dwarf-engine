@@ -6,6 +6,7 @@
 #include "Core/Rendering/DrawCall/IDrawCallFactory.hpp"
 #include "Core/Rendering/Mesh/IMeshFactory.hpp"
 #include "Core/Rendering/MeshBuffer/MeshBufferRequestList/IMeshBufferRequestList.hpp"
+#include "Core/Scene/Components/TransformComponent.hpp"
 #include "Editor/LoadedScene/ILoadedScene.hpp"
 #include "IDrawCallWorker.hpp"
 #include "Logging/IDwarfLogger.hpp"

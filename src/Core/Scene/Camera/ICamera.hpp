@@ -13,7 +13,7 @@ namespace Dwarf
   {
     /// @brief The transform of the camera, representing its position and
     /// rotation.
-    std::reference_wrapper<TransformComponent> Transform;
+    // std::reference_wrapper<TransformComponent> Transform;
     /// @brief The camera's field of view expressed in degrees.
     float Fov = 90.0F;
 

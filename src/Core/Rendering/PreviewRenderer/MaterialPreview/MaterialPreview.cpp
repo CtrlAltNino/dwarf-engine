@@ -41,8 +41,8 @@ namespace Dwarf
     mCamera->GetProperties().NearPlane = 0.1F;
     mCamera->GetProperties().FarPlane = 25000.0F;
     mCamera->GetProperties().AspectRatio = 1.0F;
-    mCamera->GetProperties().Transform.SetPosition({ 0.0F, 0.0F, 0.0F });
-    mCamera->GetProperties().Transform.SetEulerAngles({ 0, 0, 0 });
+    mCamera->GetProperties().Transform.get().SetPosition({ 0.0F, 0.0F, 0.0F });
+    mCamera->GetProperties().Transform.get().SetEulerAngles({ 0, 0, 0 });
 
     mLogger->LogDebug(Log("MaterialPreview created", "MaterialPreview"));
   }
@@ -56,8 +56,8 @@ namespace Dwarf
   MaterialPreview::RenderMaterialPreview(IMaterial& material)
   {
     // TODO: Reset sphere rotation when rendering a different material
-    mCamera->GetProperties().Transform.SetPosition({ 0, 0, 3 });
-    mCamera->GetProperties().Transform.SetEulerAngles({ 0, 0, 0 });
+    mCamera->GetProperties().Transform.get().SetPosition({ 0, 0, 3 });
+    mCamera->GetProperties().Transform.get().SetEulerAngles({ 0, 0, 0 });
     mCamera->GetProperties().NearPlane = 0.1F;
     mCamera->GetProperties().FarPlane = 4;
 
