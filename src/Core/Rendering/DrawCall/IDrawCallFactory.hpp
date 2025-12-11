@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core/Scene/Components/SceneComponents.hpp"
+#include "Core/Scene/Components/TransformComponent.hpp"
 #include "IDrawCall.hpp"
 
 namespace Dwarf

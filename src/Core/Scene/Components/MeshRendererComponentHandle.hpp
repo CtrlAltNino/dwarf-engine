@@ -1,6 +1,6 @@
 #pragma once
 
-#include "Core/Scene/Components/SceneComponents.hpp"
+#include "Core/Scene/Components/MeshRendererComponent.hpp"
 
 namespace Dwarf
 {

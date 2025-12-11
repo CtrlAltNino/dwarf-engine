@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Core/Asset/Database/IAssetDatabase.hpp"
-#include "Core/Scene/Components/SceneComponents.hpp"
 #include "Core/Scene/Entity/Entity.hpp"
 #include "Core/Scene/IScene.hpp"
 #include "Core/Scene/Properties/ISceneProperties.hpp"

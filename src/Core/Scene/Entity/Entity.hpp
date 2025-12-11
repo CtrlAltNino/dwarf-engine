@@ -1,7 +1,9 @@
 #pragma once
 
 #include "Core/GenericComponents.hpp"
-#include "Core/Scene/Components/SceneComponents.hpp"
+#include "Core/Scene/Components/LightComponent.hpp"
+#include "Core/Scene/Components/MeshRendererComponent.hpp"
+#include "Core/Scene/Components/TransformComponent.hpp"
 #include "Core/UUID.hpp"
 #include "Utilities/ISerializable.hpp"
 #include <entt/entt.hpp>

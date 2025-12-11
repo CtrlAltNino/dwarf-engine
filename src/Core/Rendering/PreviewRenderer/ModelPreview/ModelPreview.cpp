@@ -47,8 +47,8 @@ namespace Dwarf
     mCamera->GetProperties().NearPlane = 0.1F;
     mCamera->GetProperties().FarPlane = 25000.0F;
     mCamera->GetProperties().AspectRatio = 1.0F;
-    mCamera->GetProperties().Transform.SetPosition({ 0.0F, 0.0F, 0.0F });
-    mCamera->GetProperties().Transform.SetEulerAngles({ 0, 0, 0 });
+    mCamera->GetProperties().Transform.get().SetPosition({ 0.0F, 0.0F, 0.0F });
+    mCamera->GetProperties().Transform.get().SetEulerAngles({ 0, 0, 0 });
 
     mMaterial = materialFactory->CreateMaterial(
       mShaderSourceCollectionFactory->CreatePreviewShaderSourceCollection());
@@ -93,8 +93,8 @@ namespace Dwarf
 
     auto& modelAssetRef = dynamic_cast<ModelAsset&>(modelAsset.GetAsset());
 
-    mCamera->GetProperties().Transform.SetPosition(InterpolateVectors(
-      mCamera->GetProperties().Transform.GetPosition(),
+    mCamera->GetProperties().Transform.get().SetPosition(InterpolateVectors(
+      mCamera->GetProperties().Transform.get().GetPosition(),
       { 0, 0, 1.3F * mProperties.MaxDistance * mProperties.Distance },
       mProperties.ScrollSpeed));
 
@@ -144,7 +144,7 @@ namespace Dwarf
 
     mProperties.MaxDistance =
       longestDist / (tanf(0.5F * mCamera->GetProperties().Fov * DEG_2_RAD));
-    mCamera->GetProperties().Transform.SetPosition(
+    mCamera->GetProperties().Transform.get().SetPosition(
       { 0, 0, 1.3F * mProperties.MaxDistance * mProperties.Distance });
     mCamera->GetProperties().NearPlane = 0.1F;
     mCamera->GetProperties().NearPlane =

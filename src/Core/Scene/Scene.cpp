@@ -1,6 +1,5 @@
 #include "pch.hpp"
 
-#include "Core/Scene/Components/SceneComponents.hpp"
 #include "Core/Scene/Scene.hpp"
 #include "Utilities/JsonHelper/JsonHelper.hpp"
 
