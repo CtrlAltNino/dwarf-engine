@@ -7,8 +7,7 @@ namespace Dwarf
 {
   Scene::Scene(std::unique_ptr<ISceneProperties> properties,
                std::shared_ptr<IAssetDatabase>   assetDatabase)
-    : mRegistry(entt::registry())
-    , mProperties(std::move(properties))
+    : mProperties(std::move(properties))
     , mRootEntity(CreateRootEntity())
     , mAssetDatabase(std::move(assetDatabase))
   {
@@ -17,8 +16,7 @@ namespace Dwarf
   Scene::Scene(const SerializedGraph&            serializedScene,
                std::unique_ptr<ISceneProperties> properties,
                std::shared_ptr<IAssetDatabase>   assetDatabase)
-    : mRegistry(entt::registry())
-    , mProperties(std::move(properties))
+    : mProperties(std::move(properties))
     , mRootEntity(CreateRootEntity())
     , mAssetDatabase(std::move(assetDatabase))
   {
@@ -135,7 +133,7 @@ namespace Dwarf
   auto
   Scene::CreateRootEntity() -> Entity
   {
-    Entity mRootEntity(mRegistry.create(), mRegistry);
+    Entity mRootEntity(mRegistry.create(), &mRegistry);
     mRootEntity.AddComponent<IDComponent>(UUID());
     mRootEntity.AddComponent<TransformComponent>();
     mRootEntity.AddComponent<NameComponent>("Root");
@@ -151,7 +149,7 @@ namespace Dwarf
   auto
   Scene::CreateEntityWithUID(const UUID& uid, const std::string& name) -> Entity
   {
-    Entity entity(mRegistry.create(), mRegistry);
+    Entity entity(mRegistry.create(), &mRegistry);
     entity.AddComponent<IDComponent>(uid);
     entity.AddComponent<TransformComponent>();
     auto& nameComp = entity.AddComponent<NameComponent>(name);
@@ -186,13 +184,13 @@ namespace Dwarf
     auto                   parentMat = glm::mat4(1.0F);
     std::vector<glm::mat4> matriceStack;
 
-    matriceStack.push_back(transform.GetMatrix());
+    matriceStack.push_back(transform.GetModelMatrix());
 
     if (entt::entity cursor = transform.GetParent(); cursor != entt::null)
     {
-      Entity cur(cursor, mRegistry);
+      Entity cur(cursor, &mRegistry);
       matriceStack.push_back(
-        cur.GetComponent<TransformComponent>().GetMatrix());
+        cur.GetComponent<TransformComponent>().GetModelMatrix());
     }
 
     for (auto it = matriceStack.rbegin(); it < matriceStack.rend(); it++)
@@ -212,11 +210,11 @@ namespace Dwarf
       {
         for (entt::entity child : entity.GetChildren())
         {
-          DeleteEntity(Entity(child, mRegistry));
+          DeleteEntity(Entity(child, &mRegistry));
         }
       }
 
-      Entity(entity.GetParent(), mRegistry).RemoveChild(entity.GetHandle());
+      Entity(entity.GetParent(), &mRegistry).RemoveChild(entity.GetHandle());
       mRegistry.destroy(entity.GetHandle());
     }
   }
@@ -233,7 +231,7 @@ namespace Dwarf
 
     for (entt::entity entity : mRegistry.view<IDComponent>())
     {
-      Entity e(entity, mRegistry);
+      Entity e(entity, &mRegistry);
       if (e.GetParent() == mRootEntity.GetHandle())
       {
         serializedScene["Graph"].push_back(e.Serialize());

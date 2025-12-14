@@ -89,6 +89,7 @@
 #include "Editor/Modules/SceneHierarchy/ISceneHierarchyWindowFactory.hpp"
 #include "Editor/Modules/SceneHierarchy/SceneHierarchyWindowFactory.hpp"
 #include "Editor/Modules/SceneSettings/SceneSettingsWindowFactory.hpp"
+#include "Editor/Modules/SceneViewer/CameraSystem/CameraSystemFactory.hpp"
 #include "Editor/Modules/SceneViewer/ISceneViewerWindowFactory.hpp"
 #include "Editor/Modules/SceneViewer/SceneViewerWindowFactory.hpp"
 #include "Editor/Selection/EditorSelection.hpp"
@@ -139,6 +140,8 @@ namespace Dwarf
           boost::di::bind<IVramTracker>.to<VramTracker>().in(
           boost::di::extension::shared),
           boost::di::bind<IInputManager>.to<InputManager>().in(
+          boost::di::extension::shared),
+          boost::di::bind<ICameraSystemFactory>.to<CameraSystemFactory>().in(
           boost::di::extension::shared),
           boost::di::bind<IGraphicsContextFactory>.to<GraphicsContextFactory>().in(
           boost::di::extension::shared),

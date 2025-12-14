@@ -94,8 +94,9 @@ namespace Dwarf
   void
   OpenGLRendererApi::RenderIndexed(const IMeshBuffer* mesh,
                                    IMaterial&         material,
-                                   ICamera&           camera,
-                                   glm::mat4          modelMatrix)
+                                   glm::mat4          modelMatrix,
+                                   glm::mat4          viewMatrix,
+                                   glm::mat4          projectionMatrix)
   {
     OpenGLUtilities::CheckOpenGLError(
       "Before rendering", "OpenGLRendererApi", mLogger);
@@ -151,11 +152,10 @@ namespace Dwarf
     }
 
     shader.SetParameter("modelMatrix", modelMatrix);
-    shader.SetParameter("viewMatrix", camera.GetViewMatrix());
-    shader.SetParameter("projectionMatrix", camera.GetProjectionMatrix());
+    shader.SetParameter("viewMatrix", viewMatrix);
+    shader.SetParameter("projectionMatrix", projectionMatrix);
     shader.SetParameter("_Time", (float)mEditorStats->GetTimeSinceStart());
-    shader.SetParameter("viewPosition",
-                        camera.GetProperties().Transform.GetPosition());
+    shader.SetParameter("viewPosition", glm::vec3(glm::inverse(viewMatrix)[3]));
 
     shader.UploadParameters();
 
@@ -169,7 +169,8 @@ namespace Dwarf
   void
   OpenGLRendererApi::RenderSkyboxIndexed(const IMeshBuffer* mesh,
                                          IMaterial&         material,
-                                         ICamera&           camera)
+                                         glm::mat4          viewMatrix,
+                                         glm::mat4          projectionMatrix)
   {
     OpenGLUtilities::CheckOpenGLError(
       "Before rendering", "OpenGLRendererApi", mLogger);
@@ -221,9 +222,8 @@ namespace Dwarf
     }
 
     // TODO: without translation
-    oglShader.SetParameter("viewMatrix",
-                           glm::mat4(glm::mat3(camera.GetViewMatrix())));
-    oglShader.SetParameter("projectionMatrix", camera.GetProjectionMatrix());
+    oglShader.SetParameter("viewMatrix", glm::mat4(glm::mat3(viewMatrix)));
+    oglShader.SetParameter("projectionMatrix", projectionMatrix);
     oglShader.SetParameter("_Time", (float)mEditorStats->GetTimeSinceStart());
     // shader.SetParameter("viewPosition",
     //                     camera.GetProperties().Transform.GetPosition());
@@ -240,7 +240,8 @@ namespace Dwarf
   void
   OpenGLRendererApi::RenderSkyboxIndexed(const IMeshBuffer* mesh,
                                          IShader&           shader,
-                                         ICamera&           camera)
+                                         glm::mat4          viewMatrix,
+                                         glm::mat4          projectionMatrix)
   {
     OpenGLUtilities::CheckOpenGLError(
       "Before rendering", "OpenGLRendererApi", mLogger);
@@ -261,9 +262,8 @@ namespace Dwarf
     mStateTracker->SetDepthTest(true);
 
     // TODO: without translation
-    oglShader.SetParameter("viewMatrix",
-                           glm::mat4(glm::mat3(camera.GetViewMatrix())));
-    oglShader.SetParameter("projectionMatrix", camera.GetProjectionMatrix());
+    oglShader.SetParameter("viewMatrix", glm::mat4(glm::mat3(viewMatrix)));
+    oglShader.SetParameter("projectionMatrix", projectionMatrix);
     oglShader.SetParameter("_Time", (float)mEditorStats->GetTimeSinceStart());
     // shader.SetParameter("viewPosition",
     //                     camera.GetProperties().Transform.GetPosition());

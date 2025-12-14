@@ -5,7 +5,6 @@
 #include "Core/Rendering/MeshBuffer/IMeshBuffer.hpp"
 #include "Core/Rendering/PingPongBuffer/IPingPongBuffer.hpp"
 #include "Core/Rendering/Shader/IComputeShader.hpp"
-#include "Core/Scene/Camera/ICamera.hpp"
 
 namespace Dwarf
 {
@@ -69,18 +68,21 @@ namespace Dwarf
     virtual void
     RenderIndexed(const IMeshBuffer* mesh,
                   IMaterial&         material,
-                  ICamera&           camera,
-                  glm::mat4          modelMatrix) = 0;
+                  glm::mat4          modelMatrix,
+                  glm::mat4          viewMatrix,
+                  glm::mat4          projectionMatrix) = 0;
 
     virtual void
     RenderSkyboxIndexed(const IMeshBuffer* mesh,
                         IShader&           shader,
-                        ICamera&           camera) = 0;
+                        glm::mat4          viewMatrix,
+                        glm::mat4          projectionMatrix) = 0;
 
     virtual void
     RenderSkyboxIndexed(const IMeshBuffer* mesh,
                         IMaterial&         material,
-                        ICamera&           camera) = 0;
+                        glm::mat4          viewMatrix,
+                        glm::mat4          projectionMatrix) = 0;
 
     /**
      * @brief Applies a compute shader to a frame buffer

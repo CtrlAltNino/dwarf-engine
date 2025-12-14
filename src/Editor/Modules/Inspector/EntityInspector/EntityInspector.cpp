@@ -1,6 +1,8 @@
 #include "pch.hpp"
 
 #include "Core/Asset/Database/AssetComponents.hpp"
+#include "Core/Scene/Components/CameraComponent.hpp"
+#include "Core/Scene/Components/CameraComponentHandle.hpp"
 #include "Core/Scene/Components/LightComponentHandle.hpp"
 #include "Core/Scene/Components/MeshRendererComponentHandle.hpp"
 #include "Core/Scene/Components/NameComponentHandle.hpp"
@@ -326,12 +328,45 @@ namespace Dwarf
     }
   }
 
+  template<>
+  void
+  EntityInspector::RenderComponent<CameraComponentHandle>(
+    CameraComponentHandle component)
+  {
+    ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
+
+    static float nearPlane = component.GetProperties().NearPlane;
+    static float farPlane = component.GetProperties().FarPlane;
+    if (ImGui::DragFloatRange2("Clipping Planes",
+                               &nearPlane,
+                               &farPlane,
+                               0.25F,
+                               0.0F,
+                               +FLT_MAX,
+                               "Near: %.2f",
+                               "Far: %.2f",
+                               ImGuiSliderFlags_AlwaysClamp))
+    {
+      component.GetProperties().NearPlane = nearPlane;
+      component.GetProperties().FarPlane = farPlane;
+    }
+
+    ImGui::TextWrapped("FOV");
+    ImGui::SameLine();
+    ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
+                         COMPONENT_PANEL_PADDING);
+    // float attenuation = component.GetProperties().Fov;
+    ImGui::DragFloat(
+      "##camera_fov", &component.GetProperties().Fov, 0.5f, 45, 110);
+    ImGui::PopItemWidth();
+  }
+
   void
   EntityInspector::RenderComponents(entt::entity entity)
   {
     ImDrawList* drawList = ImGui::GetWindowDrawList();
     drawList->ChannelsSplit(2);
-    Entity ent(entity, mLoadedScene->GetScene().GetRegistry());
+    Entity ent(entity, &mLoadedScene->GetScene().GetRegistry());
 
     if (ent.HasComponent<NameComponent>())
     {
@@ -365,6 +400,15 @@ namespace Dwarf
       drawList->ChannelsSetCurrent(1);
       BeginComponent("Mesh Renderer");
       RenderComponent(ent.GetComponentHandle<MeshRendererComponentHandle>());
+      drawList->ChannelsSetCurrent(0);
+      EndComponent();
+    }
+
+    if (ent.HasComponent<CameraComponent>())
+    {
+      drawList->ChannelsSetCurrent(1);
+      BeginComponent("Camera");
+      RenderComponent(ent.GetComponentHandle<CameraComponentHandle>());
       drawList->ChannelsSetCurrent(0);
       EndComponent();
     }

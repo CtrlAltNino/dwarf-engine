@@ -9,12 +9,14 @@ namespace Dwarf
     std::shared_ptr<ILoadedScene>     loadedScene,
     std::shared_ptr<IEditorSelection> editorSelection,
     std::shared_ptr<IInputManager>    inputManager,
-    std::shared_ptr<IAssetDatabase>   assetDatabase)
+    std::shared_ptr<IAssetDatabase>   assetDatabase,
+    std::shared_ptr<ICameraFactory>   cameraFactory)
     : mLogger(std::move(logger))
     , mLoadedScene(std::move(loadedScene))
     , mEditorSelection(std::move(editorSelection))
     , mInputManager(std::move(inputManager))
     , mAssetDatabase(std::move(assetDatabase))
+    , mCameraFactory(std::move(cameraFactory))
   {
     mLogger->LogDebug(Log("SceneHierarchyWindowFactory created",
                           "SceneHierarchyWindowFactory"));
@@ -30,8 +32,12 @@ namespace Dwarf
   SceneHierarchyWindowFactory::Create() const
     -> std::unique_ptr<SceneHierarchyWindow>
   {
-    return std::make_unique<SceneHierarchyWindow>(
-      mLogger, mLoadedScene, mEditorSelection, mInputManager, mAssetDatabase);
+    return std::make_unique<SceneHierarchyWindow>(mLogger,
+                                                  mLoadedScene,
+                                                  mEditorSelection,
+                                                  mInputManager,
+                                                  mAssetDatabase,
+                                                  mCameraFactory);
   }
 
   auto
@@ -43,6 +49,7 @@ namespace Dwarf
                                                   mEditorSelection,
                                                   mInputManager,
                                                   mAssetDatabase,
+                                                  mCameraFactory,
                                                   serializedModule);
   }
 } // namespace Dwarf

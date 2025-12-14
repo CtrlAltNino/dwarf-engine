@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Core/Scene/Components/TransformComponent.hpp"
 #include "Utilities/ISerializable.hpp"
 
 namespace Dwarf
@@ -24,11 +23,11 @@ namespace Dwarf
     float FarPlane = 1000.0F;
 
     /// @brief The aspect ratio of the camera.
-    float AspectRatio = 16.0F / 9.0F;
+    // float AspectRatio = 16.0F / 9.0F;
 
-    float Sensitivity = 0.15F;
+    // float Sensitivity = 0.15F;
 
-    float MovementSpeed = 4.0F;
+    // float MovementSpeed = 4.0F;
   };
 
   /**
@@ -42,13 +41,13 @@ namespace Dwarf
 
     /// @brief Returns the view matrix of the camera.
     /// @return 4x4 view matrix.
-    [[nodiscard]] virtual auto
-    GetViewMatrix() const -> glm::mat4x4 = 0;
+    //[[nodiscard]] virtual auto
+    // GetViewMatrix() const -> glm::mat4x4 = 0;
 
     /// @brief Returns the projection matrix of the camera.
     /// @return 4x4 projection matrix.
     [[nodiscard]] virtual auto
-    GetProjectionMatrix() const -> glm::mat4x4 = 0;
+    GetProjectionMatrix(float aspectRatio) const -> glm::mat4x4 = 0;
 
     /**
      * @brief Gets the properties of the camera instance
@@ -63,8 +62,8 @@ namespace Dwarf
      *
      * @param deltaTime Current delta time
      */
-    virtual void
-    OnUpdate(double deltaTime) = 0;
+    // virtual void
+    // OnUpdate(double deltaTime) = 0;
 
     /**
      * @brief Projects a 2 dimensional screen coordinate on the near plane of
@@ -74,9 +73,9 @@ namespace Dwarf
      * @param viewport Viewport dimensions
      * @return Projected 3d coordinate
      */
-    [[nodiscard]] virtual auto
-    ScreenToWorld(glm::vec2 const& screenPosition,
-                  glm::vec2 const& viewport) const -> glm::vec3 = 0;
+    //[[nodiscard]] virtual auto
+    // ScreenToWorld(glm::vec2 const& screenPosition,
+    //              glm::vec2 const& viewport) const -> glm::vec3 = 0;
 
     auto
     Serialize() -> nlohmann::json override = 0;

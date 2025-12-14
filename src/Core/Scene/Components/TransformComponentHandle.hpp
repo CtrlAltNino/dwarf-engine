@@ -8,11 +8,11 @@ namespace Dwarf
   class TransformComponentHandle
   {
   private:
-    std::reference_wrapper<entt::registry> mRegistry;
-    entt::entity                           mEntity;
+    entt::registry* mRegistry;
+    entt::entity    mEntity;
 
   public:
-    TransformComponentHandle(entt::registry& reg, entt::entity ent)
+    TransformComponentHandle(entt::registry* reg, entt::entity ent)
       : mRegistry(reg)
       , mEntity(ent)
     {
@@ -29,13 +29,13 @@ namespace Dwarf
     [[nodiscard]] auto
     GetPosition() const -> glm::vec3
     {
-      return mRegistry.get().get<TransformComponent>(mEntity).Position;
+      return mRegistry->get<TransformComponent>(mEntity).Position;
     }
 
     void
     SetPosition(glm::vec3 position)
     {
-      mRegistry.get().patch<TransformComponent>(
+      mRegistry->patch<TransformComponent>(
         mEntity,
         [position](TransformComponent& component) mutable
         { component.SetPosition(position); });
@@ -44,13 +44,13 @@ namespace Dwarf
     [[nodiscard]] auto
     GetEulerAngles() const -> glm::vec3
     {
-      return mRegistry.get().get<TransformComponent>(mEntity).Rotation;
+      return mRegistry->get<TransformComponent>(mEntity).Rotation;
     }
 
     void
     SetEulerAngles(glm::vec3 rotation)
     {
-      mRegistry.get().patch<TransformComponent>(
+      mRegistry->patch<TransformComponent>(
         mEntity,
         [rotation](TransformComponent& component) mutable
         { component.SetEulerAngles(rotation); });
@@ -59,13 +59,13 @@ namespace Dwarf
     [[nodiscard]] auto
     GetScale() const -> glm::vec3
     {
-      return mRegistry.get().get<TransformComponent>(mEntity).Scale;
+      return mRegistry->get<TransformComponent>(mEntity).Scale;
     }
 
     void
     SetScale(glm::vec3 scale)
     {
-      mRegistry.get().patch<TransformComponent>(
+      mRegistry->patch<TransformComponent>(
         mEntity,
         [scale](TransformComponent& component) mutable
         { component.SetScale(scale); });
@@ -74,13 +74,13 @@ namespace Dwarf
     [[nodiscard]] auto
     GetParent() const -> entt::entity
     {
-      return mRegistry.get().get<TransformComponent>(mEntity).Parent;
+      return mRegistry->get<TransformComponent>(mEntity).Parent;
     }
 
     void
     SetParent(entt::entity parent)
     {
-      mRegistry.get().patch<TransformComponent>(
+      mRegistry->patch<TransformComponent>(
         mEntity,
         [parent](TransformComponent& component) mutable
         { component.Parent = parent; });
@@ -89,13 +89,13 @@ namespace Dwarf
     [[nodiscard]] auto
     GetChildren() const -> std::vector<entt::entity>
     {
-      return mRegistry.get().get<TransformComponent>(mEntity).Children;
+      return mRegistry->get<TransformComponent>(mEntity).Children;
     }
 
     void
     SetChildren(std::vector<entt::entity> children)
     {
-      mRegistry.get().patch<TransformComponent>(
+      mRegistry->patch<TransformComponent>(
         mEntity,
         [children](TransformComponent& component) mutable
         { component.Children = children; });
@@ -105,15 +105,24 @@ namespace Dwarf
     /// translation, scale and rotation matrices.
     /// @return The model matrix as a 4x4 matrix.
     [[nodiscard]] auto
-    GetMatrix() const -> glm::mat4x4
+    GetModelMatrix() const -> glm::mat4x4
     {
-      return mRegistry.get().get<TransformComponent>(mEntity).GetMatrix();
+      return mRegistry->get<TransformComponent>(mEntity).GetModelMatrix();
+    }
+
+    /// @brief Returns the view matrix of the entity. A composite matrix of the
+    /// translation, scale and rotation matrices.
+    /// @return The view matrix as a 4x4 matrix.
+    [[nodiscard]] auto
+    GetViewMatrix() const -> glm::mat4x4
+    {
+      return mRegistry->get<TransformComponent>(mEntity).GetViewMatrix();
     }
 
     void
     SetMatrix(glm::mat4 matrix)
     {
-      mRegistry.get().patch<TransformComponent>(
+      mRegistry->patch<TransformComponent>(
         mEntity,
         [matrix](TransformComponent& component) mutable
         { component.SetMatrix(matrix); });

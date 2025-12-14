@@ -5,7 +5,7 @@
 namespace Dwarf
 {
 
-  Entity::Entity(const entt::entity handle, entt::registry& registry)
+  Entity::Entity(const entt::entity handle, entt::registry* registry)
     : mEntityHandle(handle)
     , mRegistry(registry)
   {

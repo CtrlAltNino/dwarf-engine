@@ -32,10 +32,22 @@ namespace Dwarf
     mSkyboxCubeMesh = meshBufferFactory->Create(cubeMesh);
   }
 
+  // void
+  // SkyboxRenderer::SetCamera(ICamera& camera)
+  // {
+  //   mCamera = camera;
+  // }
+
   void
-  SkyboxRenderer::SetCamera(ICamera& camera)
+  SkyboxRenderer::SetViewMatrix(glm::mat4 viewMat)
   {
-    mCamera = camera;
+    mViewMatrix = viewMat;
+  }
+
+  void
+  SkyboxRenderer::SetProjectionMatrix(glm::mat4 projectionMat)
+  {
+    mProjectionMatrix = projectionMat;
   }
 
   void
@@ -51,74 +63,76 @@ namespace Dwarf
   void
   SkyboxRenderer::Render()
   {
-    if (mCamera.has_value())
+    switch (mCachedSourceType)
     {
-      switch (mCachedSourceType)
-      {
-        using enum SkyboxSource;
-        case Color:
-          if (mSkyboxShader != nullptr)
-          {
-            mSkyboxShader->SetParameter("u_Exposure",
-                                        mLoadedScene->GetScene()
-                                          .GetProperties()
-                                          .GetSettings()
-                                          .GetSkyboxSettings()
-                                          .GetExposure());
-            mRendererApi->RenderSkyboxIndexed(
-              mSkyboxCubeMesh.get(), *mSkyboxShader, mCamera->get());
-          }
-          break;
-        case Material:
-          if (mCachedMaterialAsset.has_value())
-          {
-            mRendererApi->RenderSkyboxIndexed(
-              mSkyboxCubeMesh.get(),
-              mCachedMaterialAsset->get().GetMaterial(),
-              mCamera->get());
-          }
-          break;
-        case HDRI:
-          if (mCubemap)
-          {
-            mSkyboxShader->SetParameter("u_Skybox", mCubemap);
-          }
-          else
-          {
-            if (mCachedTextureAsset)
-            {
-              if (mCachedTextureAsset->get().IsLoaded())
-              {
-                mCubemap = mCubemapGenerator->FromEquirectangular(
-                  mCachedTextureAsset->get().GetTexture(),
-                  GetCubemapResolution(mLoadedScene->GetScene()
-                                         .GetProperties()
-                                         .GetSettings()
-                                         .GetSkyboxSettings()
-                                         .GetCubemapResolution()));
-              }
-              else
-              {
-                mCachedTextureAsset->get().GetTexture();
-              }
-            }
-          }
+      using enum SkyboxSource;
+      case Color:
+        if (mSkyboxShader != nullptr)
+        {
           mSkyboxShader->SetParameter("u_Exposure",
                                       mLoadedScene->GetScene()
                                         .GetProperties()
                                         .GetSettings()
                                         .GetSkyboxSettings()
                                         .GetExposure());
-          mSkyboxShader->SetParameter("u_Rotation",
-                                      mLoadedScene->GetScene()
-                                        .GetProperties()
-                                        .GetSettings()
-                                        .GetSkyboxSettings()
-                                        .GetCubemapRotation());
+          mRendererApi->RenderSkyboxIndexed(mSkyboxCubeMesh.get(),
+                                            *mSkyboxShader,
+                                            mViewMatrix,
+                                            mProjectionMatrix);
+        }
+        break;
+      case Material:
+        if (mCachedMaterialAsset.has_value())
+        {
           mRendererApi->RenderSkyboxIndexed(
-            mSkyboxCubeMesh.get(), *mSkyboxShader, mCamera->get());
-          break;
-      }
+            mSkyboxCubeMesh.get(),
+            mCachedMaterialAsset->get().GetMaterial(),
+            mViewMatrix,
+            mProjectionMatrix);
+        }
+        break;
+      case HDRI:
+        if (mCubemap)
+        {
+          mSkyboxShader->SetParameter("u_Skybox", mCubemap);
+        }
+        else
+        {
+          if (mCachedTextureAsset)
+          {
+            if (mCachedTextureAsset->get().IsLoaded())
+            {
+              mCubemap = mCubemapGenerator->FromEquirectangular(
+                mCachedTextureAsset->get().GetTexture(),
+                GetCubemapResolution(mLoadedScene->GetScene()
+                                       .GetProperties()
+                                       .GetSettings()
+                                       .GetSkyboxSettings()
+                                       .GetCubemapResolution()));
+            }
+            else
+            {
+              mCachedTextureAsset->get().GetTexture();
+            }
+          }
+        }
+        mSkyboxShader->SetParameter("u_Exposure",
+                                    mLoadedScene->GetScene()
+                                      .GetProperties()
+                                      .GetSettings()
+                                      .GetSkyboxSettings()
+                                      .GetExposure());
+        mSkyboxShader->SetParameter("u_Rotation",
+                                    mLoadedScene->GetScene()
+                                      .GetProperties()
+                                      .GetSettings()
+                                      .GetSkyboxSettings()
+                                      .GetCubemapRotation());
+        mRendererApi->RenderSkyboxIndexed(mSkyboxCubeMesh.get(),
+                                          *mSkyboxShader,
+                                          mViewMatrix,
+                                          mProjectionMatrix);
+        break;
     }
   }
 

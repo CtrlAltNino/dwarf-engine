@@ -40,9 +40,8 @@ namespace Dwarf
     mCamera->GetProperties().Fov = 50.0F;
     mCamera->GetProperties().NearPlane = 0.1F;
     mCamera->GetProperties().FarPlane = 25000.0F;
-    mCamera->GetProperties().AspectRatio = 1.0F;
-    mCamera->GetProperties().Transform.get().SetPosition({ 0.0F, 0.0F, 0.0F });
-    mCamera->GetProperties().Transform.get().SetEulerAngles({ 0, 0, 0 });
+    mTransform.SetPosition({ 0.0F, 0.0F, 0.0F });
+    mTransform.SetEulerAngles({ 0, 0, 0 });
 
     mLogger->LogDebug(Log("MaterialPreview created", "MaterialPreview"));
   }
@@ -56,8 +55,8 @@ namespace Dwarf
   MaterialPreview::RenderMaterialPreview(IMaterial& material)
   {
     // TODO: Reset sphere rotation when rendering a different material
-    mCamera->GetProperties().Transform.get().SetPosition({ 0, 0, 3 });
-    mCamera->GetProperties().Transform.get().SetEulerAngles({ 0, 0, 0 });
+    mTransform.SetPosition({ 0, 0, 3 });
+    mTransform.SetEulerAngles({ 0, 0, 0 });
     mCamera->GetProperties().NearPlane = 0.1F;
     mCamera->GetProperties().FarPlane = 4;
 
@@ -77,10 +76,12 @@ namespace Dwarf
     mRendererApi->SetClearColor({ 46 / 255.0F, 52 / 255.0F, 64 / 255.0F, 1 });
     mRendererApi->Clear();
 
-    mRendererApi->RenderIndexed(mMeshBuffer.get(),
-                                material,
-                                *mCamera,
-                                glm::toMat4(mProperties.ModelRotationQuat));
+    mRendererApi->RenderIndexed(
+      mMeshBuffer.get(),
+      material,
+      glm::toMat4(mProperties.ModelRotationQuat),
+      mTransform.GetViewMatrix(),
+      mCamera->GetProjectionMatrix(mProperties.AspectRatio));
     mRenderFramebuffer->Unbind();
 
     mRendererApi->Blit(*mRenderFramebuffer,

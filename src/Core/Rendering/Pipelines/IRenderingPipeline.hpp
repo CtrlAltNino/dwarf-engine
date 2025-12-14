@@ -1,7 +1,6 @@
 #pragma once
 
 #include "Core/Rendering/Framebuffer/IFramebuffer.hpp"
-#include "Core/Scene/Camera/ICamera.hpp"
 #include "Core/Scene/IScene.hpp"
 #include "Utilities/ISerializable.hpp"
 
@@ -51,7 +50,9 @@ namespace Dwarf
      * @param renderGrid Should the grid be rendered
      */
     virtual void
-    RenderScene(ICamera& camera, GridSettingsData gridSettings) = 0;
+    RenderScene(glm::mat4        viewMatrix,
+                glm::mat4        projectionMatrix,
+                GridSettingsData gridSettings) = 0;
 
     /**
      * @brief Returns the specification for the framebuffer
@@ -69,7 +70,9 @@ namespace Dwarf
      * @param viewportSize Viewport to render
      */
     virtual void
-    RenderIds(IScene& scene, ICamera& camera) = 0;
+    RenderIds(IScene&   scene,
+              glm::mat4 viewMatrix,
+              glm::mat4 projectionMatrix) = 0;
 
     /**
      * @brief Gets the resolution

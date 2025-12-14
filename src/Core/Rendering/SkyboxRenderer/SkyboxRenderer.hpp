@@ -41,8 +41,10 @@ namespace Dwarf
     std::shared_ptr<ITextureFactory>   mTextureFactory;
     std::shared_ptr<ICubemapGenerator> mCubemapGenerator;
 
-    std::optional<std::reference_wrapper<ICamera>> mCamera;
-    std::shared_ptr<IMeshBuffer>                   mSkyboxCubeMesh;
+    // std::optional<std::reference_wrapper<ICamera>> mCamera;
+    glm::mat4                    mViewMatrix;
+    glm::mat4                    mProjectionMatrix;
+    std::shared_ptr<IMeshBuffer> mSkyboxCubeMesh;
 
     SkyboxSource             mCachedSourceType = SkyboxSource::Color;
     std::shared_ptr<IShader> mSkyboxShader = nullptr;
@@ -75,8 +77,14 @@ namespace Dwarf
       const std::shared_ptr<ICubemapGeneratorFactory>& cubeMapGeneratorFactory);
     ~SkyboxRenderer() override = default;
 
+    // void
+    // SetCamera(ICamera& camera) override;
+
     void
-    SetCamera(ICamera& camera) override;
+    SetViewMatrix(glm::mat4 viewMat) override;
+
+    void
+    SetProjectionMatrix(glm::mat4 projectionMat) override;
 
     void
     Render() override;

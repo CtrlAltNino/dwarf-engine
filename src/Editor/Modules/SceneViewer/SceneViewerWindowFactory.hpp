@@ -1,5 +1,6 @@
 #pragma once
 
+#include "CameraSystem/ICameraSystemFactory.hpp"
 #include "Editor/Modules/SceneViewer/ISceneViewerWindowFactory.hpp"
 #include "Editor/Modules/SceneViewer/SceneViewerWindow.hpp"
 #include "Logging/IDwarfLogger.hpp"
@@ -11,7 +12,7 @@ namespace Dwarf
   {
   private:
     std::shared_ptr<IDwarfLogger>              mLogger;
-    std::shared_ptr<ICameraFactory>            mCameraFactory;
+    std::shared_ptr<ICameraSystemFactory>      mCameraSystemFactory;
     std::shared_ptr<IEditorStats>              mEditorStats;
     std::shared_ptr<IInputManager>             mInputManager;
     std::shared_ptr<ILoadedScene>              mLoadedScene;
@@ -22,7 +23,7 @@ namespace Dwarf
   public:
     SceneViewerWindowFactory(
       std::shared_ptr<IDwarfLogger>              logger,
-      std::shared_ptr<ICameraFactory>            cameraFactory,
+      std::shared_ptr<ICameraSystemFactory>      cameraSystemFactory,
       std::shared_ptr<IEditorStats>              editorStats,
       std::shared_ptr<IInputManager>             inputManager,
       std::shared_ptr<ILoadedScene>              loadedScene,

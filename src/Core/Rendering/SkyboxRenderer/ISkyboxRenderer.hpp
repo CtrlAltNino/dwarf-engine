@@ -10,8 +10,14 @@ namespace Dwarf
   public:
     virtual ~ISkyboxRenderer() = default;
 
+    // virtual void
+    // SetCamera(ICamera& camera) = 0;
+
     virtual void
-    SetCamera(ICamera& camera) = 0;
+    SetViewMatrix(glm::mat4 viewMat) = 0;
+
+    virtual void
+    SetProjectionMatrix(glm::mat4 projectionMat) = 0;
 
     virtual void
     Render() = 0;

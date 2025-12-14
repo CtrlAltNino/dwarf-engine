@@ -1,7 +1,7 @@
+#include "Core/Scene/Components/CameraComponent.hpp"
+#include "Core/Scene/Components/CameraComponentHandle.hpp"
 #include "pch.hpp"
 
-#include "Core/Rendering/AntiAliasingTypes.hpp"
-#include "Core/Scene/Components/SceneComponents.hpp"
 #include "Core/Scene/Entity/Entity.hpp"
 #include "Editor/Modules/SceneViewer/SceneViewerWindow.hpp"
 #include <ImGuizmo.h>
@@ -21,9 +21,9 @@ namespace Dwarf
     std::shared_ptr<IInputManager>                    inputManager,
     std::shared_ptr<ILoadedScene>                     loadedScene,
     std::shared_ptr<IEditorSelection>                 editorSelection,
-    const std::shared_ptr<ICameraFactory>&            cameraFactory,
     const std::shared_ptr<IRenderingPipelineFactory>& renderingPipelineFactory,
-    std::shared_ptr<IWindow>                          window)
+    std::shared_ptr<IWindow>                          window,
+    std::shared_ptr<ICameraSystem>                    cameraSystem)
     : IGuiModule(ModuleLabel("Scene Viewer"),
                  ModuleType(MODULE_TYPE::SCENE_VIEWER),
                  ModuleID(std::make_shared<UUID>()))
@@ -33,12 +33,10 @@ namespace Dwarf
     , mLoadedScene(std::move(loadedScene))
     , mEditorSelection(std::move(editorSelection))
     , mWindow(std::move(window))
+    , mCameraSystem(std::move(cameraSystem))
   {
     // Create rendering pipeline
     mRenderingPipeline = renderingPipelineFactory->Create();
-
-    // Setup camera
-    mCamera = cameraFactory->Create();
 
     mLogger->LogDebug(Log("SceneViewerWindow created", "SceneViewerWindow"));
   }
@@ -50,9 +48,9 @@ namespace Dwarf
     std::shared_ptr<IInputManager>                    inputManager,
     std::shared_ptr<ILoadedScene>                     loadedScene,
     std::shared_ptr<IEditorSelection>                 editorSelection,
-    const std::shared_ptr<ICameraFactory>&            cameraFactory,
     const std::shared_ptr<IRenderingPipelineFactory>& renderingPipelineFactory,
-    std::shared_ptr<IWindow>                          window)
+    std::shared_ptr<IWindow>                          window,
+    std::shared_ptr<ICameraSystem>                    cameraSystem)
     : IGuiModule(ModuleLabel("Scene Viewer"),
                  ModuleType(MODULE_TYPE::SCENE_VIEWER),
                  ModuleID(std::make_shared<UUID>(
@@ -63,12 +61,10 @@ namespace Dwarf
     , mLoadedScene(std::move(loadedScene))
     , mEditorSelection(std::move(editorSelection))
     , mWindow(std::move(window))
+    , mCameraSystem(std::move(cameraSystem))
   {
     // Create rendering pipeline
     mRenderingPipeline = renderingPipelineFactory->Create();
-
-    // Setup camera
-    mCamera = cameraFactory->Create(serializedModule.t["camera"]);
 
     Deserialize(serializedModule.t);
 
@@ -92,7 +88,7 @@ namespace Dwarf
         mInputManager->GetMouseButton(MOUSE_BUTTON::RIGHT))
     {
       mWindow->SetMouseVisibility(false);
-      mCamera->OnUpdate(mEditorStats->GetDeltaTime());
+      mCameraSystem->OnUpdate(mEditorStats->GetDeltaTime());
     }
     else
     {
@@ -100,9 +96,19 @@ namespace Dwarf
     }
 
     // Render scene to the framebuffer with the camera
-    mRenderingPipeline->RenderScene(*mCamera, mSettings.GridSettings);
+    if (mCameraSystem->HasCamera())
+    {
 
-    mRenderingPipeline->RenderIds(mLoadedScene->GetScene(), *mCamera);
+      mRenderingPipeline->RenderScene(
+        mCameraSystem->GetViewMatrix(),
+        mCameraSystem->GetProjectionMatrix(mSettings.targetAspectRatio),
+        mSettings.GridSettings);
+
+      mRenderingPipeline->RenderIds(
+        mLoadedScene->GetScene(),
+        mCameraSystem->GetViewMatrix(),
+        mCameraSystem->GetProjectionMatrix(mSettings.targetAspectRatio));
+    }
   }
 
   void
@@ -209,37 +215,44 @@ namespace Dwarf
     ImVec2 size = { maxRect.x - minRect.x, maxRect.y - minRect.y };
 
     // Rendering the framebuffer
-    ImGui::Image((ImTextureID)mRenderingPipeline->GetPresentationBufferId(),
-                 size,
-                 ImVec2(0, 1),
-                 ImVec2(1, 0));
-
-    // Check if a mesh is clicked
-    glm::vec2 mousePos = { ImGui::GetMousePos().x, ImGui::GetMousePos().y };
-    glm::vec2 minRectGlm = { minRect.x, minRect.y };
-    glm::vec2 maxRectGlm = { maxRect.x, maxRect.y };
-
-    if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
+    if (mCameraSystem->HasCamera())
     {
-      ProcessSceneClick(mousePos - minRectGlm);
+      ImGui::Image((ImTextureID)mRenderingPipeline->GetPresentationBufferId(),
+                   size,
+                   ImVec2(0, 1),
+                   ImVec2(1, 0));
+
+      // Check if a mesh is clicked
+      glm::vec2 mousePos = { ImGui::GetMousePos().x, ImGui::GetMousePos().y };
+      glm::vec2 minRectGlm = { minRect.x, minRect.y };
+      glm::vec2 maxRectGlm = { maxRect.x, maxRect.y };
+
+      if (ImGui::IsItemClicked(ImGuiMouseButton_Left))
+      {
+        ProcessSceneClick(mousePos - minRectGlm);
+      }
+
+      if (!mSettings.CameraMovement && ImGui::IsItemHovered() &&
+          mInputManager->GetMouseButtonDown(MOUSE_BUTTON::RIGHT))
+      {
+        bool isWindowFocused = ImGui::IsWindowFocused();
+        mSettings.CameraMovement = true;
+        ImGui::FocusWindow(ImGui::GetCurrentWindow());
+      }
+      else if (mSettings.CameraMovement &&
+               !mInputManager->GetMouseButton(MOUSE_BUTTON::RIGHT))
+      {
+        mSettings.CameraMovement = false;
+      }
+
+      if (!mEditorSelection->GetSelectedEntities().empty())
+      {
+        RenderGizmos(minRect, maxRect);
+      }
     }
-
-    if (!mSettings.CameraMovement && ImGui::IsItemHovered() &&
-        mInputManager->GetMouseButtonDown(MOUSE_BUTTON::RIGHT))
+    else
     {
-      bool isWindowFocused = ImGui::IsWindowFocused();
-      mSettings.CameraMovement = true;
-      ImGui::FocusWindow(ImGui::GetCurrentWindow());
-    }
-    else if (mSettings.CameraMovement &&
-             !mInputManager->GetMouseButton(MOUSE_BUTTON::RIGHT))
-    {
-      mSettings.CameraMovement = false;
-    }
-
-    if (!mEditorSelection->GetSelectedEntities().empty())
-    {
-      RenderGizmos(minRect, maxRect);
+      ImGui::Text("No camera selected!");
     }
     ImGui::End();
   }
@@ -448,7 +461,50 @@ namespace Dwarf
   void
   SceneViewerWindow::RenderCameraSettings()
   {
-    if (ImGui::Button("Camera"))
+    // View
+    auto cameraView = mLoadedScene->GetScene()
+                        .GetRegistry()
+                        .view<NameComponent, CameraComponent>();
+
+    const char* preview =
+      (!mCameraSystem->HasCamera())
+        ? "None"
+        : cameraView
+            .template get<NameComponent>(mCameraSystem->GetCamera().GetHandle())
+            .Name.c_str();
+
+    if (ImGui::BeginCombo("Camera##camera", preview))
+    {
+      /*if (ImGui::Selectable("None", assetRef == nullptr, 0, ImVec2(0, 16 +
+      10)))
+      {
+        assetRef = nullptr;
+        interacted = true;
+      }*/
+
+      for (auto entity : cameraView)
+      {
+        // const bool isSelected = (selectedAsset == i);
+        if (ImGui::Selectable(
+              cameraView.template get<NameComponent>(entity).Name.c_str(),
+              (mCameraSystem->HasCamera()) &&
+                (mCameraSystem->GetCamera().GetHandle() == entity),
+              0,
+              ImVec2(0, 16 + 10)))
+        {
+          // assetRef = assetDatabase->Retrieve(
+          //   view.template get<IDComponent>(assetHandle).getId());
+          // interacted = true;
+          Entity ent = Entity(entity, &mLoadedScene->GetScene().GetRegistry());
+
+          mCameraSystem->SetCamera(
+            ent.GetComponentHandle<CameraComponentHandle>());
+        }
+      }
+
+      ImGui::EndCombo();
+    }
+    /*if (ImGui::Button("Camera"))
     {
       ImGui::OpenPopup("camera_settings");
     }
@@ -461,21 +517,31 @@ namespace Dwarf
       // Rotation
 
       // Clipping planes
-      ImGui::DragFloatRange2("Clipping Planes",
-                             &mCamera->GetProperties().NearPlane,
-                             &mCamera->GetProperties().FarPlane,
-                             0.25F,
-                             0.0F,
-                             +FLT_MAX,
-                             "Near: %.2f",
-                             "Far: %.2f",
-                             ImGuiSliderFlags_AlwaysClamp);
+      static float nearPlane = mCameraSystem->GetNearplane();
+      static float farPlane = mCameraSystem->GetFarplane();
+      if (ImGui::DragFloatRange2("Clipping Planes",
+                                 &nearPlane,
+                                 &farPlane,
+                                 0.25F,
+                                 0.0F,
+                                 +FLT_MAX,
+                                 "Near: %.2f",
+                                 "Far: %.2f",
+                                 ImGuiSliderFlags_AlwaysClamp))
+      {
+        mCameraSystem->SetNearplane(nearPlane);
+        mCameraSystem->SetFarplane(farPlane);
+      }
 
       // Field of view
-      ImGui::DragFloat("FOV", &mCamera->GetProperties().Fov, 0.5f, 45, 110);
+      static float fov = mCameraSystem->GetFov();
+      if (ImGui::DragFloat("FOV", &fov, 0.5f, 45, 110))
+      {
+        mCameraSystem->SetFov(fov);
+      }
       ImGui::PopItemWidth();
       ImGui::EndPopup();
-    }
+    }*/
   }
 
   void
@@ -557,12 +623,13 @@ namespace Dwarf
       minRect.x, minRect.y, maxRect.x - minRect.x, maxRect.y - minRect.y);
 
     Entity    entity(mEditorSelection->GetSelectedEntities().at(0),
-                  mLoadedScene->GetScene().GetRegistry());
+                  &mLoadedScene->GetScene().GetRegistry());
     auto&     transformComponent = entity.GetComponent<TransformComponent>();
-    glm::mat4 transform = transformComponent.GetMatrix();
+    glm::mat4 transform = transformComponent.GetModelMatrix();
 
-    ImGuizmo::Manipulate(glm::value_ptr(mCamera->GetViewMatrix()),
-                         glm::value_ptr(mCamera->GetProjectionMatrix()),
+    ImGuizmo::Manipulate(glm::value_ptr(mCameraSystem->GetViewMatrix()),
+                         glm::value_ptr(mCameraSystem->GetProjectionMatrix(
+                           mSettings.targetAspectRatio)),
                          mSettings.GizmoOperation,
                          mSettings.GizmoMode,
                          glm::value_ptr(transform));
@@ -617,7 +684,7 @@ namespace Dwarf
 
     for (auto handle : mEditorSelection->GetSelectedEntities())
     {
-      Entity entity(handle, mLoadedScene->GetScene().GetRegistry());
+      Entity entity(handle, &mLoadedScene->GetScene().GetRegistry());
       center += entity.GetComponent<TransformComponent>().GetPosition();
     }
 
@@ -660,8 +727,6 @@ namespace Dwarf
     if (mRenderingPipeline->GetResolution() != desiredResolution)
     {
       mRenderingPipeline->SetResolution(desiredResolution);
-      mCamera->GetProperties().AspectRatio =
-        (float)desiredResolution.x / (float)desiredResolution.y;
     }
   }
 
@@ -690,7 +755,7 @@ namespace Dwarf
   {
     nlohmann::json serializedModule;
 
-    serializedModule["camera"] = mCamera->Serialize();
+    serializedModule["cameraSystem"] = mCameraSystem->Serialize();
 
     serializedModule["settings"]["aspectRatioConstraint"] =
       mSettings.AspectRatio;

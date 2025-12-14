@@ -21,7 +21,7 @@ namespace Dwarf
     int startIndex = mIndex;
     for (auto& ent : mSourceEntities)
     {
-      Entity entity(ent, mScene.get().GetRegistry());
+      Entity entity(ent, &mScene.get().GetRegistry());
       entity.SetChildIndex(startIndex);
       startIndex++;
     }

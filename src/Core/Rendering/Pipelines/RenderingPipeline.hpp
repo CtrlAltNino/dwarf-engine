@@ -96,7 +96,9 @@ namespace Dwarf
      * @param renderGrid Should the grid be rendered
      */
     void
-    RenderScene(ICamera& camera, GridSettingsData gridSettings) override;
+    RenderScene(glm::mat4        viewMatrix,
+                glm::mat4        projectionMatrix,
+                GridSettingsData gridSettings) override;
 
     /**
      * @brief Returns the specification for the framebuffer
@@ -114,7 +116,9 @@ namespace Dwarf
      * @param viewportSize Viewport to render
      */
     void
-    RenderIds(IScene& scene, ICamera& camera) override;
+    RenderIds(IScene&   scene,
+              glm::mat4 viewMatrix,
+              glm::mat4 projectionMatrix) override;
 
     /**
      * @brief Gets the resolution

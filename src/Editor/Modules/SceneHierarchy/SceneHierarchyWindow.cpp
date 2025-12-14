@@ -1,7 +1,8 @@
-#include "Core/Scene/Components/MeshRendererComponentHandle.hpp"
 #include "pch.hpp"
 
 #include "Core/Asset/AssetReference/IAssetReference.hpp"
+#include "Core/Scene/Components/CameraComponent.hpp"
+#include "Core/Scene/Components/MeshRendererComponentHandle.hpp"
 #include "Core/Scene/Entity/Entity.hpp"
 #include "Editor/Modules/SceneHierarchy/ChildIndexInstruction.hpp"
 #include "Editor/Modules/SceneHierarchy/DeleteEntityInstruction.hpp"
@@ -16,7 +17,8 @@ namespace Dwarf
     std::shared_ptr<ILoadedScene>     loadedScene,
     std::shared_ptr<IEditorSelection> editorSelection,
     std::shared_ptr<IInputManager>    inputManager,
-    std::shared_ptr<IAssetDatabase>   assetDatabase)
+    std::shared_ptr<IAssetDatabase>   assetDatabase,
+    std::shared_ptr<ICameraFactory>   cameraFactory)
     : IGuiModule(ModuleLabel("Scene Hierarchy"),
                  ModuleType(MODULE_TYPE::SCENE_GRAPH),
                  ModuleID(std::make_shared<UUID>()))
@@ -25,6 +27,7 @@ namespace Dwarf
     , mEditorSelection(std::move(editorSelection))
     , mInputManager(std::move(inputManager))
     , mAssetDatabase(std::move(assetDatabase))
+    , mCameraFactory(std::move(cameraFactory))
   {
     mLogger->LogDebug(
       Log("SceneHierarchyWindow created", "SceneHierarchyWindow"));
@@ -36,6 +39,7 @@ namespace Dwarf
     std::shared_ptr<IEditorSelection> editorSelection,
     std::shared_ptr<IInputManager>    inputManager,
     std::shared_ptr<IAssetDatabase>   assetDatabase,
+    std::shared_ptr<ICameraFactory>   cameraFactory,
     SerializedModule                  serializedModule)
     : IGuiModule(ModuleLabel("SceneHierarchy"),
                  ModuleType(MODULE_TYPE::SCENE_GRAPH),
@@ -46,6 +50,7 @@ namespace Dwarf
     , mEditorSelection(std::move(editorSelection))
     , mInputManager(std::move(inputManager))
     , mAssetDatabase(std::move(assetDatabase))
+    , mCameraFactory(std::move(cameraFactory))
   {
     Deserialize(serializedModule.t);
     mLogger->LogDebug(
@@ -62,7 +67,7 @@ namespace Dwarf
   SceneHierarchyWindow::DrawNode(entt::entity entity)
   {
     // Building the Entity
-    Entity             ent(entity, mLoadedScene->GetScene().GetRegistry());
+    Entity             ent(entity, &mLoadedScene->GetScene().GetRegistry());
     ImGuiTreeNodeFlags flags = ImGuiTreeNodeFlags_OpenOnArrow;
     std::string        objectLabel = ent.GetComponent<NameComponent>().Name;
     ImDrawList*        drawList = ImGui::GetWindowDrawList();
@@ -151,6 +156,15 @@ namespace Dwarf
           // mLoadedScene->PropagateSceneChange();
         }
 
+        if (ImGui::MenuItem("Camera"))
+        {
+          Entity newCamera = scene.CreateEntity("New Camera");
+          newCamera.AddComponent<CameraComponent>(mCameraFactory->Create());
+          ent.AddChild(newCamera.GetHandle());
+          mEditorSelection->SelectEntity(newCamera.GetHandle());
+          // mLoadedScene->PropagateSceneChange();
+        }
+
         ImGui::EndMenu();
       }
 
@@ -164,12 +178,12 @@ namespace Dwarf
         {
           Entity entity(mEditorSelection->GetSelectedEntities().at(
                           mEditorSelection->GetSelectedEntities().size() - 1),
-                        scene.GetRegistry());
+                        &scene.GetRegistry());
           int    index = entity.GetChildIndex() + 1;
           for (entt::entity selectedEntity :
                mEditorSelection->GetSelectedEntities())
           {
-            Entity source = Entity(selectedEntity, scene.GetRegistry());
+            Entity source = Entity(selectedEntity, &scene.GetRegistry());
             Entity copy = scene.CreateEntity(
               source.GetComponent<NameComponent>().Name + " Copy");
             copy.SetParent(source.GetParent());
@@ -179,6 +193,12 @@ namespace Dwarf
             {
               copy.AddComponent<LightComponent>(
                 source.GetComponent<LightComponent>());
+            }
+
+            if (source.HasComponent<CameraComponent>())
+            {
+              copy.AddComponent<CameraComponent>(
+                source.GetComponent<CameraComponent>());
             }
 
             if (source.HasComponent<MeshRendererComponent>())
@@ -223,7 +243,7 @@ namespace Dwarf
         // TODO: Implement pasting of deleted entities
         for (entt::entity selectedEntity : mCopyBuffer)
         {
-          Entity source = Entity(selectedEntity, scene.GetRegistry());
+          Entity source = Entity(selectedEntity, &scene.GetRegistry());
           Entity copy = scene.CreateEntity(
             source.GetComponent<NameComponent>().Name + " Copy");
           copy.SetParent(entity);
@@ -232,6 +252,12 @@ namespace Dwarf
           {
             copy.AddComponent<LightComponent>(
               source.GetComponent<LightComponent>());
+          }
+
+          if (source.HasComponent<CameraComponent>())
+          {
+            copy.AddComponent<CameraComponent>(
+              source.GetComponent<CameraComponent>());
           }
 
           if (source.HasComponent<MeshRendererComponent>())
@@ -498,6 +524,15 @@ namespace Dwarf
           // mLoadedScene->PropagateSceneChange();
         }
 
+        if (ImGui::MenuItem("Camera"))
+        {
+          Entity newCamera =
+            mLoadedScene->GetScene().CreateEntity("New Camera");
+          newCamera.AddComponent<CameraComponent>(mCameraFactory->Create());
+          mEditorSelection->SelectEntity(newCamera.GetHandle());
+          // mLoadedScene->PropagateSceneChange();
+        }
+
         if (ImGui::MenuItem("Group"))
         {
           Entity newGroup = mLoadedScene->GetScene().CreateEntity("New Group");
@@ -514,7 +549,7 @@ namespace Dwarf
         for (entt::entity selectedEntity : mCopyBuffer)
         {
           Entity source =
-            Entity(selectedEntity, mLoadedScene->GetScene().GetRegistry());
+            Entity(selectedEntity, &mLoadedScene->GetScene().GetRegistry());
           Entity copy = mLoadedScene->GetScene().CreateEntity(
             source.GetComponent<NameComponent>().Name + " Copy");
 
@@ -522,6 +557,12 @@ namespace Dwarf
           {
             copy.AddComponent<LightComponent>(
               source.GetComponent<LightComponent>());
+          }
+
+          if (source.HasComponent<CameraComponent>())
+          {
+            copy.AddComponent<CameraComponent>(
+              source.GetComponent<CameraComponent>());
           }
 
           if (source.HasComponent<MeshRendererComponent>())

@@ -119,7 +119,7 @@ namespace Dwarf
                        .view<TransformComponent, MeshRendererComponent>();
          auto [entityHandle, transform, component] : view.each())
     {
-      MeshRendererComponentHandle meshRenderer(scene.GetRegistry(),
+      MeshRendererComponentHandle meshRenderer(&scene.GetRegistry(),
                                                entityHandle);
       if (meshRenderer.GetModelAsset() &&
           meshRenderer.GetModelAsset()->IsValid() &&
