@@ -18,7 +18,7 @@ namespace Dwarf
   {
     for (auto& ent : mSourceEntities)
     {
-      Entity entity(ent, mScene.get().GetRegistry());
+      Entity entity(ent, &mScene.get().GetRegistry());
       mScene.get().DeleteEntity(entity);
     }
   }

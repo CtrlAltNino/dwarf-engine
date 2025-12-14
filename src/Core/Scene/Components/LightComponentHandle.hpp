@@ -8,11 +8,11 @@ namespace Dwarf
   class LightComponentHandle
   {
   private:
-    entt::registry& mRegistry;
+    entt::registry* mRegistry;
     entt::entity    mEntity;
 
   public:
-    LightComponentHandle(entt::registry& reg, entt::entity ent)
+    LightComponentHandle(entt::registry* reg, entt::entity ent)
       : mRegistry(reg)
       , mEntity(ent)
     {
@@ -23,13 +23,13 @@ namespace Dwarf
     [[nodiscard]] auto
     GetType() const -> LightType
     {
-      return mRegistry.get<LightComponent>(mEntity).Type;
+      return mRegistry->get<LightComponent>(mEntity).Type;
     }
 
     void
     SetType(LightType lightType)
     {
-      mRegistry.patch<LightComponent>(
+      mRegistry->patch<LightComponent>(
         mEntity,
         [lightType](LightComponent& component) mutable
         { component.Type = lightType; });
@@ -40,13 +40,13 @@ namespace Dwarf
     auto
     GetColor() -> glm::vec3
     {
-      return mRegistry.get<LightComponent>(mEntity).Color;
+      return mRegistry->get<LightComponent>(mEntity).Color;
     }
 
     void
     SetColor(glm::vec3 lightColor)
     {
-      mRegistry.patch<LightComponent>(
+      mRegistry->patch<LightComponent>(
         mEntity,
         [lightColor](LightComponent& component) mutable
         { component.Color = lightColor; });
@@ -57,13 +57,13 @@ namespace Dwarf
     auto
     GetAttenuation() -> float
     {
-      return mRegistry.get<LightComponent>(mEntity).Attenuation;
+      return mRegistry->get<LightComponent>(mEntity).Attenuation;
     }
 
     void
     SetAttenuation(float attenuation)
     {
-      mRegistry.patch<LightComponent>(
+      mRegistry->patch<LightComponent>(
         mEntity,
         [attenuation](LightComponent& component) mutable
         { component.Attenuation = attenuation; });
@@ -74,13 +74,13 @@ namespace Dwarf
     auto
     GetRadius() -> float
     {
-      return mRegistry.get<LightComponent>(mEntity).Radius;
+      return mRegistry->get<LightComponent>(mEntity).Radius;
     }
 
     void
     SetRadius(float radius)
     {
-      mRegistry.patch<LightComponent>(
+      mRegistry->patch<LightComponent>(
         mEntity,
         [radius](LightComponent& component) mutable
         { component.Radius = radius; });
@@ -91,13 +91,13 @@ namespace Dwarf
     auto
     GetOpeningAngle() -> float&
     {
-      return mRegistry.get<LightComponent>(mEntity).OpeningAngle;
+      return mRegistry->get<LightComponent>(mEntity).OpeningAngle;
     }
 
     void
     SetOpeningAngle(float openingAngle)
     {
-      mRegistry.patch<LightComponent>(
+      mRegistry->patch<LightComponent>(
         mEntity,
         [openingAngle](LightComponent& component) mutable
         { component.OpeningAngle = openingAngle; });

@@ -20,21 +20,21 @@ namespace Dwarf
     entt::entity mEntityHandle{ entt::null };
 
     /// @brief Pointer to a holder of an ECS registry.
-    std::reference_wrapper<entt::registry> mRegistry;
+    entt::registry* mRegistry;
 
   public:
-    Entity(entt::entity handle, entt::registry& registry);
+    Entity(entt::entity handle, entt::registry* registry);
     // Copy constructor
     Entity(const Entity& other) = default;
 
     // Move operator
-    auto
+    /*auto
     operator=(Entity&& other) noexcept -> Entity&
     {
       mEntityHandle = other.mEntityHandle;
-      mRegistry.get() = std::move(other.mRegistry.get());
+      //mRegistry.get() = std::move(other.mRegistry.get());
       return *this;
-    }
+    }*/
 
     /// @brief Adds a component to the entity.
     /// @tparam T Type of component.
@@ -46,8 +46,7 @@ namespace Dwarf
     AddComponent(Args&&... args) -> T&
     {
       // TODO: Check component requirements
-      return mRegistry.get().emplace<T>(mEntityHandle,
-                                        std::forward<Args>(args)...);
+      return mRegistry->emplace<T>(mEntityHandle, std::forward<Args>(args)...);
     }
 
     /// @brief Retrieves a component of the Entity if present.
@@ -58,7 +57,7 @@ namespace Dwarf
     GetComponent() -> T&
     {
       // TODO: Check if component present
-      return mRegistry.get().get<T>(mEntityHandle);
+      return mRegistry->get<T>(mEntityHandle);
     }
 
     template<typename T>
@@ -77,7 +76,7 @@ namespace Dwarf
       // TODO: Check if component is present
       if (HasComponent<T>())
       {
-        mRegistry.get().remove<T>(mEntityHandle);
+        mRegistry->remove<T>(mEntityHandle);
       }
     }
 
@@ -88,7 +87,7 @@ namespace Dwarf
     [[nodiscard]] auto
     HasComponent() const -> bool
     {
-      return mRegistry.get().try_get<T>(mEntityHandle) != nullptr;
+      return mRegistry->try_get<T>(mEntityHandle) != nullptr;
     }
 
     /// @brief Retrieves the UID of the entity.
@@ -96,7 +95,7 @@ namespace Dwarf
     [[nodiscard]] auto
     GetUID() const -> const UUID&
     {
-      return mRegistry.get().get<IDComponent>(mEntityHandle).getId();
+      return mRegistry->get<IDComponent>(mEntityHandle).getId();
     }
 
     operator bool() const { return (std::uint32_t)mEntityHandle != 0; }
@@ -112,16 +111,16 @@ namespace Dwarf
     SetParent(entt::entity entity)
     {
       auto& transform = GetComponent<TransformComponent>();
-      auto  newParent = Entity(entity, mRegistry.get());
+      auto  newParent = Entity(entity, mRegistry);
 
       if (transform.GetParent() != entt::null)
       {
-        auto oldParent = Entity(transform.GetParent(), mRegistry.get());
+        auto oldParent = Entity(transform.GetParent(), mRegistry);
         oldParent.RemoveChild(mEntityHandle);
       }
 
       transform.Parent = entity;
-      if (mRegistry.get().valid(entity))
+      if (mRegistry->valid(entity))
       {
         newParent.AddChild(mEntityHandle);
       }
@@ -167,7 +166,7 @@ namespace Dwarf
       auto& transform = GetComponent<TransformComponent>();
 
       std::vector<entt::entity>* siblings =
-        &Entity(transform.GetParent(), mRegistry.get())
+        &Entity(transform.GetParent(), mRegistry)
            .GetComponent<TransformComponent>()
            .Children;
       auto iterator =
@@ -196,7 +195,7 @@ namespace Dwarf
       int index = -1;
 
       std::vector<entt::entity> siblings =
-        Entity(transform.GetParent(), mRegistry.get())
+        Entity(transform.GetParent(), mRegistry)
           .GetComponent<TransformComponent>()
           .Children;
 
@@ -216,7 +215,7 @@ namespace Dwarf
     [[nodiscard]] auto
     GetParent() const -> entt::entity
     {
-      return mRegistry.get().get<TransformComponent>(mEntityHandle).GetParent();
+      return mRegistry->get<TransformComponent>(mEntityHandle).GetParent();
     }
 
     /// @brief Returns the list of this entity's children.
@@ -224,7 +223,7 @@ namespace Dwarf
     [[nodiscard]] auto
     GetChildren() const -> std::vector<entt::entity>
     {
-      return mRegistry.get().get<TransformComponent>(mEntityHandle).Children;
+      return mRegistry->get<TransformComponent>(mEntityHandle).Children;
     }
 
     [[nodiscard]] auto
@@ -261,7 +260,7 @@ namespace Dwarf
       for (const auto& child : GetChildren())
       {
         serializedEntity["children"][childCount] =
-          Entity(child, mRegistry.get()).Serialize();
+          Entity(child, mRegistry).Serialize();
         childCount++;
       }
 

@@ -90,18 +90,21 @@ namespace Dwarf
     void
     RenderIndexed(const IMeshBuffer* mesh,
                   IMaterial&         material,
-                  ICamera&           camera,
-                  glm::mat4          modelMatrix) override;
+                  glm::mat4          modelMatrix,
+                  glm::mat4          viewMatrix,
+                  glm::mat4          projectionMatrix) override;
 
     void
     RenderSkyboxIndexed(const IMeshBuffer* mesh,
                         IShader&           shader,
-                        ICamera&           camera) override;
+                        glm::mat4          viewMatrix,
+                        glm::mat4          projectionMatrix) override;
 
     void
     RenderSkyboxIndexed(const IMeshBuffer* mesh,
                         IMaterial&         material,
-                        ICamera&           camera) override;
+                        glm::mat4          viewMatrix,
+                        glm::mat4          projectionMatrix) override;
 
     /**
      * @brief Applies a compute shader to a frame buffer

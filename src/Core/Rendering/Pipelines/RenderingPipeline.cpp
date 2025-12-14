@@ -114,7 +114,9 @@ namespace Dwarf
   }
 
   void
-  RenderingPipeline::RenderScene(ICamera& camera, GridSettingsData gridSettings)
+  RenderingPipeline::RenderScene(glm::mat4        viewMatrix,
+                                 glm::mat4        projectionMatrix,
+                                 GridSettingsData gridSettings)
   {
     // ==================== Scene Rendering ====================
 
@@ -128,7 +130,8 @@ namespace Dwarf
     mRendererApi->Clear();
 
     // Render skybox
-    mSkyboxRenderer->SetCamera(camera);
+    mSkyboxRenderer->SetViewMatrix(viewMatrix);
+    mSkyboxRenderer->SetProjectionMatrix(projectionMatrix);
     mSkyboxRenderer->Render();
 
     // Render draw calls
@@ -141,8 +144,9 @@ namespace Dwarf
           mRendererApi->RenderIndexed(
             drawCall->GetMeshBuffer(),
             drawCall->GetMaterialAsset().GetMaterial(),
-            camera,
-            drawCall->GetTransform().GetMatrix());
+            drawCall->GetTransform().GetModelMatrix(),
+            viewMatrix,
+            projectionMatrix);
         }
       }
     }
@@ -221,13 +225,11 @@ namespace Dwarf
       mGridShader->SetParameter("uSceneColor", mLdrPingPong->GetReadTexture());
       mGridShader->SetParameter("uGridHeight", gridSettings.GridYOffset);
       mGridShader->SetParameter("uOpacity", gridSettings.GridOpacity);
-      mGridShader->SetParameter(
-        "uInverseViewProjection",
-        glm::inverse(camera.GetProjectionMatrix() * camera.GetViewMatrix()));
-      mGridShader->SetParameter("uInverseView",
-                                glm::inverse(camera.GetViewMatrix()));
+      mGridShader->SetParameter("uInverseViewProjection",
+                                glm::inverse(projectionMatrix * viewMatrix));
+      mGridShader->SetParameter("uInverseView", glm::inverse(viewMatrix));
       mGridShader->SetParameter("uCameraPosition",
-                                camera.GetProperties().Transform.Position);
+                                glm::vec3(glm::inverse(viewMatrix)[3]));
 
       mRendererApi->ApplyPostProcess(*mLdrPingPong, *mGridShader, true);
       mLdrPingPong->Swap();
@@ -257,7 +259,9 @@ namespace Dwarf
   }
 
   void
-  RenderingPipeline::RenderIds(IScene& scene, ICamera& camera)
+  RenderingPipeline::RenderIds(IScene&   scene,
+                               glm::mat4 viewMatrix,
+                               glm::mat4 projectionMatrix)
   {
     mIdBuffer->Bind();
     mRendererApi->Clear(0);
@@ -271,7 +275,7 @@ namespace Dwarf
                        .view<TransformComponent, MeshRendererComponent>();
          auto [entity, transform, component] : view.each())
     {
-      MeshRendererComponentHandle meshRenderer(scene.GetRegistry(), entity);
+      MeshRendererComponentHandle meshRenderer(&scene.GetRegistry(), entity);
       if (meshRenderer.GetModelAsset() && !meshRenderer.GetIsHidden())
       {
         if (!meshRenderer.GetIdMeshBuffer())
@@ -285,11 +289,15 @@ namespace Dwarf
         }
 
         glm::mat4 modelMatrix =
-          TransformComponentHandle(scene.GetRegistry(), entity).GetMatrix();
+          TransformComponentHandle(&scene.GetRegistry(), entity)
+            .GetModelMatrix();
         auto entityId = (uint32_t)entity;
         mIdMaterial->GetShaderParameters()->SetParameter("objectId", entityId);
-        mRendererApi->RenderIndexed(
-          meshRenderer.GetIdMeshBuffer(), *mIdMaterial, camera, modelMatrix);
+        mRendererApi->RenderIndexed(meshRenderer.GetIdMeshBuffer(),
+                                    *mIdMaterial,
+                                    modelMatrix,
+                                    viewMatrix,
+                                    projectionMatrix);
       }
     }
     mIdBuffer->Unbind();

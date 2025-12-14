@@ -5,6 +5,7 @@
 #include "Core/Rendering/RendererApi/IRendererApi.hpp"
 #include "Core/Rendering/RendererApi/IRendererApiFactory.hpp"
 #include "Core/Scene/Camera/ICamera.hpp"
+#include "Core/Scene/Components/TransformComponent.hpp"
 #include "Editor/Stats/IEditorStats.hpp"
 #include <imgui.h>
 
@@ -23,6 +24,7 @@ namespace Dwarf
     float     ScrollSpeed = 0.3F;
     float     MaxDistance = 0.0F;
     float     Distance = 1.0F;
+    float     AspectRatio = 1.0F;
   };
 
   /**
@@ -40,6 +42,7 @@ namespace Dwarf
     std::shared_ptr<ICamera>             mCamera;
     std::shared_ptr<IRendererApi>        mRendererApi;
     std::shared_ptr<IEditorStats>        mEditorStats;
+    TransformComponent                   mTransform;
 
     /**
      * @brief Helper easing function

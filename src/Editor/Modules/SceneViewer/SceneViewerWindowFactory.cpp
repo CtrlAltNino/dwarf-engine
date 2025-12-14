@@ -6,7 +6,7 @@ namespace Dwarf
 {
   SceneViewerWindowFactory::SceneViewerWindowFactory(
     std::shared_ptr<IDwarfLogger>              logger,
-    std::shared_ptr<ICameraFactory>            cameraFactory,
+    std::shared_ptr<ICameraSystemFactory>      cameraSystemFactory,
     std::shared_ptr<IEditorStats>              editorStats,
     std::shared_ptr<IInputManager>             inputManager,
     std::shared_ptr<ILoadedScene>              loadedScene,
@@ -14,7 +14,7 @@ namespace Dwarf
     std::shared_ptr<IRenderingPipelineFactory> renderingPipelineFactory,
     std::shared_ptr<IWindow>                   window)
     : mLogger(std::move(logger))
-    , mCameraFactory(std::move(cameraFactory))
+    , mCameraSystemFactory(std::move(cameraSystemFactory))
     , mEditorStats(std::move(editorStats))
     , mInputManager(std::move(inputManager))
     , mLoadedScene(std::move(loadedScene))
@@ -40,9 +40,9 @@ namespace Dwarf
                                                mInputManager,
                                                mLoadedScene,
                                                mEditorSelection,
-                                               mCameraFactory,
                                                mRenderingPipelineFactory,
-                                               mWindow);
+                                               mWindow,
+                                               mCameraSystemFactory->Create());
   }
 
   auto
@@ -55,8 +55,8 @@ namespace Dwarf
                                                mInputManager,
                                                mLoadedScene,
                                                mEditorSelection,
-                                               mCameraFactory,
                                                mRenderingPipelineFactory,
-                                               mWindow);
+                                               mWindow,
+                                               mCameraSystemFactory->Create());
   }
 } // namespace Dwarf

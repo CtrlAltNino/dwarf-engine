@@ -46,9 +46,8 @@ namespace Dwarf
     mCamera->GetProperties().Fov = 50.0F;
     mCamera->GetProperties().NearPlane = 0.1F;
     mCamera->GetProperties().FarPlane = 25000.0F;
-    mCamera->GetProperties().AspectRatio = 1.0F;
-    mCamera->GetProperties().Transform.get().SetPosition({ 0.0F, 0.0F, 0.0F });
-    mCamera->GetProperties().Transform.get().SetEulerAngles({ 0, 0, 0 });
+    mTransform.SetPosition({ 0.0F, 0.0F, 0.0F });
+    mTransform.SetEulerAngles({ 0, 0, 0 });
 
     mMaterial = materialFactory->CreateMaterial(
       mShaderSourceCollectionFactory->CreatePreviewShaderSourceCollection());
@@ -93,8 +92,8 @@ namespace Dwarf
 
     auto& modelAssetRef = dynamic_cast<ModelAsset&>(modelAsset.GetAsset());
 
-    mCamera->GetProperties().Transform.get().SetPosition(InterpolateVectors(
-      mCamera->GetProperties().Transform.get().GetPosition(),
+    mTransform.SetPosition(InterpolateVectors(
+      mTransform.GetPosition(),
       { 0, 0, 1.3F * mProperties.MaxDistance * mProperties.Distance },
       mProperties.ScrollSpeed));
 
@@ -112,10 +111,12 @@ namespace Dwarf
 
     if (mPreviewMeshBuffer)
     {
-      mRendererApi->RenderIndexed(mPreviewMeshBuffer.get(),
-                                  *mMaterial,
-                                  *mCamera,
-                                  glm::toMat4(mProperties.ModelRotationQuat));
+      mRendererApi->RenderIndexed(
+        mPreviewMeshBuffer.get(),
+        *mMaterial,
+        glm::toMat4(mProperties.ModelRotationQuat),
+        mTransform.GetViewMatrix(),
+        mCamera->GetProjectionMatrix(mProperties.AspectRatio));
     }
 
     mRenderFramebuffer->Unbind();
@@ -144,7 +145,7 @@ namespace Dwarf
 
     mProperties.MaxDistance =
       longestDist / (tanf(0.5F * mCamera->GetProperties().Fov * DEG_2_RAD));
-    mCamera->GetProperties().Transform.get().SetPosition(
+    mTransform.SetPosition(
       { 0, 0, 1.3F * mProperties.MaxDistance * mProperties.Distance });
     mCamera->GetProperties().NearPlane = 0.1F;
     mCamera->GetProperties().NearPlane =

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Asset/Database/IAssetDatabase.hpp"
+#include "Core/Scene/Camera/ICameraFactory.hpp"
 #include "Editor/LoadedScene/ILoadedScene.hpp"
 #include "Editor/Modules/IGuiModule.hpp"
 #include "Editor/Modules/SceneHierarchy/GraphInstruction.hpp"
@@ -20,6 +21,7 @@ namespace Dwarf
     std::shared_ptr<IEditorSelection> mEditorSelection;
     std::shared_ptr<IInputManager>    mInputManager;
     std::shared_ptr<IAssetDatabase>   mAssetDatabase;
+    std::shared_ptr<ICameraFactory>   mCameraFactory;
     /// @brief List of graph instruction. Used as a buffer, executed at the end
     /// of a frame.
     std::vector<std::shared_ptr<GraphInstruction>> mInstructions;
@@ -40,13 +42,15 @@ namespace Dwarf
                          std::shared_ptr<ILoadedScene>     loadedScene,
                          std::shared_ptr<IEditorSelection> editorSelection,
                          std::shared_ptr<IInputManager>    inputManager,
-                         std::shared_ptr<IAssetDatabase>   assetDatabase);
+                         std::shared_ptr<IAssetDatabase>   assetDatabase,
+                         std::shared_ptr<ICameraFactory>   cameraFactory);
 
     SceneHierarchyWindow(std::shared_ptr<IDwarfLogger>     logger,
                          std::shared_ptr<ILoadedScene>     loadedScene,
                          std::shared_ptr<IEditorSelection> editorSelection,
                          std::shared_ptr<IInputManager>    inputManager,
                          std::shared_ptr<IAssetDatabase>   assetDatabase,
+                         std::shared_ptr<ICameraFactory>   cameraFactory,
                          SerializedModule                  serializedModule);
 
     ~SceneHierarchyWindow() override;

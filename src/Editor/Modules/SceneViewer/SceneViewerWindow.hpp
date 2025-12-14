@@ -1,9 +1,8 @@
 #pragma once
 
+#include "CameraSystem/ICameraSystem.hpp"
 #include "Core/Rendering/Pipelines/IRenderingPipeline.hpp"
 #include "Core/Rendering/Pipelines/IRenderingPipelineFactory.hpp"
-#include "Core/Scene/Camera/ICamera.hpp"
-#include "Core/Scene/Camera/ICameraFactory.hpp"
 #include "Editor/LoadedScene/ILoadedScene.hpp"
 #include "Editor/Modules/IGuiModule.hpp"
 #include "Editor/Selection/IEditorSelection.hpp"
@@ -65,13 +64,13 @@ namespace Dwarf
 
     /// @brief The render texture for this scene viewer.
     std::shared_ptr<IDwarfLogger>       mLogger;
-    std::unique_ptr<ICamera>            mCamera;
     std::shared_ptr<IRenderingPipeline> mRenderingPipeline;
     std::shared_ptr<IInputManager>      mInputManager;
     std::shared_ptr<IEditorStats>       mEditorStats;
     std::shared_ptr<ILoadedScene>       mLoadedScene;
     std::shared_ptr<IEditorSelection>   mEditorSelection;
     std::shared_ptr<IWindow>            mWindow;
+    std::shared_ptr<ICameraSystem>      mCameraSystem;
 
     /// @brief Calculates the cutout of the available resolution based on the
     /// given aspect ratio.
@@ -148,26 +147,26 @@ namespace Dwarf
     RenderStats();
 
   public:
-    SceneViewerWindow(std::shared_ptr<IDwarfLogger>          logger,
-                      std::shared_ptr<IEditorStats>          editorStats,
-                      std::shared_ptr<IInputManager>         inputManager,
-                      std::shared_ptr<ILoadedScene>          loadedScene,
-                      std::shared_ptr<IEditorSelection>      editorSelection,
-                      const std::shared_ptr<ICameraFactory>& cameraFactory,
+    SceneViewerWindow(std::shared_ptr<IDwarfLogger>     logger,
+                      std::shared_ptr<IEditorStats>     editorStats,
+                      std::shared_ptr<IInputManager>    inputManager,
+                      std::shared_ptr<ILoadedScene>     loadedScene,
+                      std::shared_ptr<IEditorSelection> editorSelection,
                       const std::shared_ptr<IRenderingPipelineFactory>&
-                                               renderingPipelineFactory,
-                      std::shared_ptr<IWindow> window);
+                                                     renderingPipelineFactory,
+                      std::shared_ptr<IWindow>       window,
+                      std::shared_ptr<ICameraSystem> cameraSystem);
 
-    SceneViewerWindow(SerializedModule                       serializedModule,
-                      std::shared_ptr<IDwarfLogger>          logger,
-                      std::shared_ptr<IEditorStats>          editorStats,
-                      std::shared_ptr<IInputManager>         inputManager,
-                      std::shared_ptr<ILoadedScene>          loadedScene,
-                      std::shared_ptr<IEditorSelection>      editorSelection,
-                      const std::shared_ptr<ICameraFactory>& cameraFactory,
+    SceneViewerWindow(SerializedModule                  serializedModule,
+                      std::shared_ptr<IDwarfLogger>     logger,
+                      std::shared_ptr<IEditorStats>     editorStats,
+                      std::shared_ptr<IInputManager>    inputManager,
+                      std::shared_ptr<ILoadedScene>     loadedScene,
+                      std::shared_ptr<IEditorSelection> editorSelection,
                       const std::shared_ptr<IRenderingPipelineFactory>&
-                                               renderingPipelineFactory,
-                      std::shared_ptr<IWindow> window);
+                                                     renderingPipelineFactory,
+                      std::shared_ptr<IWindow>       window,
+                      std::shared_ptr<ICameraSystem> cameraSystem);
 
     ~SceneViewerWindow() override;
 

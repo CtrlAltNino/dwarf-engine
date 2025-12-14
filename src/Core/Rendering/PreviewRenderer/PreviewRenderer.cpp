@@ -22,7 +22,7 @@ namespace Dwarf
     if ((mRenderFramebuffer->GetSpecification().Width != size.x) &&
         (mRenderFramebuffer->GetSpecification().Height != size.y))
     {
-      mCamera->GetProperties().AspectRatio = (float)size.y / (float)size.x;
+      mProperties.AspectRatio = (float)size.y / (float)size.x;
       mRenderFramebuffer->Resize(size.x, size.y);
       mPreviewFramebuffer->Resize(size.x, size.y);
     }

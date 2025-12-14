@@ -15,7 +15,7 @@ namespace Dwarf
   {
   private:
     /// @brief The registry that holds all entities and components.
-    entt::registry                  mRegistry;
+    entt::registry                  mRegistry = entt::registry();
     std::vector<ISceneObserver*>    mObservers;
     std::shared_ptr<IAssetDatabase> mAssetDatabase;
 

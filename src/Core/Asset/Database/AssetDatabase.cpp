@@ -410,7 +410,7 @@ namespace Dwarf
     {
       if (view.get<IDComponent>(entity).getId() == uid)
       {
-        auto pathHandle = PathComponentHandle(mRegistry, entity);
+        auto pathHandle = PathComponentHandle(&mRegistry, entity);
         return mAssetReferenceFactory->Create(
           entity,
           mRegistry,
@@ -428,7 +428,7 @@ namespace Dwarf
     auto view = mRegistry.view<PathComponent>();
     for (auto entity : view)
     {
-      auto pathHandle = PathComponentHandle(mRegistry, entity);
+      auto pathHandle = PathComponentHandle(&mRegistry, entity);
       if (pathHandle.GetPath() == path)
       {
         return mAssetReferenceFactory->Create(
@@ -449,10 +449,10 @@ namespace Dwarf
 
     for (auto entity : view)
     {
-      auto pathHandle = PathComponentHandle(mRegistry, entity);
+      auto pathHandle = PathComponentHandle(&mRegistry, entity);
       if (pathHandle.GetPath() == fromPath)
       {
-        auto nametHandle = NameComponentHandle(mRegistry, entity);
+        auto nametHandle = NameComponentHandle(&mRegistry, entity);
         nametHandle.SetName(toPath.stem().string());
         break;
       }
@@ -471,7 +471,7 @@ namespace Dwarf
     auto view = mRegistry.view<PathComponent>();
     for (auto entity : view)
     {
-      auto pathHandle = PathComponentHandle(mRegistry, entity);
+      auto pathHandle = PathComponentHandle(&mRegistry, entity);
       if (pathHandle.GetPath().string().find(fromPath.string()) !=
           std::string::npos)
       {
@@ -529,10 +529,10 @@ namespace Dwarf
     auto view = mRegistry.view<PathComponent, NameComponent>();
     for (auto entity : view)
     {
-      auto pathHandle = PathComponentHandle(mRegistry, entity);
+      auto pathHandle = PathComponentHandle(&mRegistry, entity);
       if (pathHandle.GetPath() == path)
       {
-        auto nametHandle = NameComponentHandle(mRegistry, entity);
+        auto nametHandle = NameComponentHandle(&mRegistry, entity);
         std::filesystem::path newPath =
           std::filesystem::path(dir) / std::filesystem::path(filename);
         mAssetMetadata->Rename(path, newPath);

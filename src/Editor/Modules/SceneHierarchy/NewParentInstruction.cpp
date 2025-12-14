@@ -18,10 +18,10 @@ namespace Dwarf
   void
   NewParentInstruction::PerformInstruction()
   {
-    auto newParentEntity = Entity(mNewParent, mScene.get().GetRegistry());
+    auto newParentEntity = Entity(mNewParent, &mScene.get().GetRegistry());
     for (auto& ent : mSourceEntities)
     {
-      Entity entity(ent, mScene.get().GetRegistry());
+      Entity entity(ent, &mScene.get().GetRegistry());
       if ((newParentEntity.GetComponent<TransformComponent>().GetParent() !=
            entity.GetHandle()) &&
           (entity.GetHandle() != mNewParent))

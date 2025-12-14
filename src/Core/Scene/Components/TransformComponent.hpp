@@ -9,7 +9,6 @@
 #include <nlohmann/json_fwd.hpp>
 #include <string>
 
-
 namespace Dwarf
 {
   /// @brief A component holding a transform.
@@ -27,7 +26,9 @@ namespace Dwarf
     /// @brief Scale of the entity.
     glm::vec3 Scale = { 1.0F, 1.0F, 1.0F };
 
-    glm::mat4 CachedMatrix = glm::mat4(1.0F);
+    glm::mat4 CachedModelMatrix = glm::mat4(1.0F);
+
+    glm::mat4 CachedViewMatrix = glm::mat4(1.0F);
 
     /// @brief Entity handle of the hierarchical parent entity.
     entt::entity Parent = entt::null;
@@ -35,7 +36,9 @@ namespace Dwarf
     /// @brief List of entity handles that are child entities.
     std::vector<entt::entity> Children;
 
-    bool DirtyFlag = true;
+    bool DirtyFlagModelMatrix = true;
+
+    bool DirtyFlagViewMatrix = true;
 
     TransformComponent() = default;
 
@@ -63,18 +66,32 @@ namespace Dwarf
     }
 
     void
-    UpdateMatrix()
+    UpdateModelMatrix()
     {
       glm::mat4 rot = glm::yawPitchRoll(glm::radians(Rotation.y),
                                         glm::radians(Rotation.x),
                                         glm::radians(Rotation.z));
 
-      CachedMatrix = glm::translate(glm::mat4(1.0F), Position) * rot *
-                     glm::scale(glm::mat4(1.0F), Scale);
+      CachedModelMatrix = glm::translate(glm::mat4(1.0F), Position) * rot *
+                          glm::scale(glm::mat4(1.0F), Scale);
 
-      DirtyFlag = false;
+      DirtyFlagModelMatrix = false;
     }
 
+    void
+    UpdateViewMatrix()
+    {
+      glm::mat4 rot = glm::rotate(glm::mat4(1.0F),
+                                  GetEulerAngles().x * DEG_2_RAD,
+                                  glm::vec3(1.0F, 0.0F, 0.0F)) *
+                      glm::rotate(glm::mat4(1.0F),
+                                  GetEulerAngles().y * DEG_2_RAD,
+                                  glm::vec3(0.0F, 1.0F, 0.0F));
+
+      CachedViewMatrix = rot * glm::translate(glm::mat4(1.0F), -GetPosition());
+
+      DirtyFlagViewMatrix = false;
+    }
     // ========== Getters ==========
 
     [[nodiscard]] auto
@@ -87,7 +104,8 @@ namespace Dwarf
     SetPosition(glm::vec3 position)
     {
       Position = position;
-      DirtyFlag = true;
+      DirtyFlagModelMatrix = true;
+      DirtyFlagViewMatrix = true;
     }
 
     [[nodiscard]] auto
@@ -100,7 +118,8 @@ namespace Dwarf
     SetEulerAngles(glm::vec3 rotation)
     {
       Rotation = WrapEuler(rotation);
-      DirtyFlag = true;
+      DirtyFlagModelMatrix = true;
+      DirtyFlagViewMatrix = true;
     }
 
     [[nodiscard]] auto
@@ -113,7 +132,8 @@ namespace Dwarf
     SetScale(glm::vec3 scale)
     {
       Scale = scale;
-      DirtyFlag = true;
+      DirtyFlagModelMatrix = true;
+      DirtyFlagViewMatrix = true;
     }
 
     [[nodiscard]] auto
@@ -126,14 +146,28 @@ namespace Dwarf
     /// translation, scale and rotation matrices.
     /// @return The model matrix as a 4x4 matrix.
     [[nodiscard]] auto
-    GetMatrix() -> glm::mat4x4
+    GetModelMatrix() -> glm::mat4x4
     {
-      if (DirtyFlag)
+      if (DirtyFlagModelMatrix)
       {
-        UpdateMatrix();
+        UpdateModelMatrix();
       }
 
-      return CachedMatrix;
+      return CachedModelMatrix;
+    }
+
+    /// @brief Returns the view matrix of the entity. A composite matrix of the
+    /// translation, scale and rotation matrices.
+    /// @return The model matrix as a 4x4 matrix.
+    [[nodiscard]] auto
+    GetViewMatrix() -> glm::mat4x4
+    {
+      if (DirtyFlagViewMatrix)
+      {
+        UpdateViewMatrix();
+      }
+
+      return CachedViewMatrix;
     }
 
     void
@@ -151,7 +185,8 @@ namespace Dwarf
       Position = trans;
       Rotation = rotation;
       Scale = scale;
-      DirtyFlag = true;
+      DirtyFlagModelMatrix = true;
+      DirtyFlagViewMatrix = true;
     }
 
     auto

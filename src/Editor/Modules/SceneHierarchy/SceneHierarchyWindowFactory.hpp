@@ -17,6 +17,7 @@ namespace Dwarf
     std::shared_ptr<IEditorSelection> mEditorSelection;
     std::shared_ptr<IInputManager>    mInputManager;
     std::shared_ptr<IAssetDatabase>   mAssetDatabase;
+    std::shared_ptr<ICameraFactory>   mCameraFactory;
 
   public:
     SceneHierarchyWindowFactory(
@@ -24,7 +25,8 @@ namespace Dwarf
       std::shared_ptr<ILoadedScene>     loadedScene,
       std::shared_ptr<IEditorSelection> editorSelection,
       std::shared_ptr<IInputManager>    inputManager,
-      std::shared_ptr<IAssetDatabase>   assetDatabase);
+      std::shared_ptr<IAssetDatabase>   assetDatabase,
+      std::shared_ptr<ICameraFactory>   cameraFactory);
 
     ~SceneHierarchyWindowFactory() override;
 
