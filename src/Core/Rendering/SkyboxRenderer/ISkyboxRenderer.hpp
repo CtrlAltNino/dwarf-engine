@@ -1,24 +1,36 @@
 #pragma once
 
-#include "Core/Rendering/Material/IMaterial.hpp"
-#include "Core/Rendering/Texture/ITexture.hpp"
-#include "Core/Scene/Camera/ICamera.hpp"
 namespace Dwarf
 {
+  /**
+   * @brief Interface class representing the renderer for skyboxes
+   *
+   */
   class ISkyboxRenderer
   {
   public:
     virtual ~ISkyboxRenderer() = default;
 
-    // virtual void
-    // SetCamera(ICamera& camera) = 0;
-
+    /**
+     * @brief Sets the view matrix to use for the skybox rendering
+     *
+     * @param viewMat
+     */
     virtual void
     SetViewMatrix(glm::mat4 viewMat) = 0;
 
+    /**
+     * @brief Sets the projection matrix to use for the skybox rendering
+     *
+     * @param projectionMat
+     */
     virtual void
     SetProjectionMatrix(glm::mat4 projectionMat) = 0;
 
+    /**
+     * @brief Renders the skybox
+     *
+     */
     virtual void
     Render() = 0;
   };

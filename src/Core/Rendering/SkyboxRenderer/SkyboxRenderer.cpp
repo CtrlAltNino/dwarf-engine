@@ -32,12 +32,6 @@ namespace Dwarf
     mSkyboxCubeMesh = meshBufferFactory->Create(cubeMesh);
   }
 
-  // void
-  // SkyboxRenderer::SetCamera(ICamera& camera)
-  // {
-  //   mCamera = camera;
-  // }
-
   void
   SkyboxRenderer::SetViewMatrix(glm::mat4 viewMat)
   {
