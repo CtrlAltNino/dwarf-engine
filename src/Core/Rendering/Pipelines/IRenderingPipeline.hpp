@@ -45,7 +45,8 @@ namespace Dwarf
     /**
      * @brief Renders the current draw calls of the scene
      *
-     * @param camera Camera to use for rendering
+     * @param viewMatrix View matrix to use for rendering
+     * @param projectionMatrix Projection matrix to use for rendering
      * @param viewportSize Viewport to render
      * @param renderGrid Should the grid be rendered
      */
@@ -66,7 +67,8 @@ namespace Dwarf
      * @brief Renders the scene to the ID buffer for mouse picking
      *
      * @param scene Scene to render
-     * @param camera Camera to use for rendering
+     * @param viewMatrix View matrix to use for rendering
+     * @param projectionMatrix Projection matrix to use for rendering
      * @param viewportSize Viewport to render
      */
     virtual void

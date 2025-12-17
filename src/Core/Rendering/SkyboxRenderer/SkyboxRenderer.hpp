@@ -5,9 +5,7 @@
 #include "Core/Asset/Shader/ShaderSourceCollection/IShaderSourceCollectionFactory.hpp"
 #include "Core/Rendering/CubemapGenerator/ICubemapGenerator.hpp"
 #include "Core/Rendering/CubemapGenerator/ICubemapGeneratorFactory.hpp"
-#include "Core/Rendering/Material/IMaterial.hpp"
-#include "Core/Rendering/Material/IMaterialFactory.hpp"
-#include "Core/Rendering/Mesh/MeshFactory.hpp"
+#include "Core/Rendering/Mesh/IMeshFactory.hpp"
 #include "Core/Rendering/MeshBuffer/IMeshBuffer.hpp"
 #include "Core/Rendering/MeshBuffer/IMeshBufferFactory.hpp"
 #include "Core/Rendering/RendererApi/IRendererApi.hpp"
@@ -21,10 +19,13 @@
 #include "Editor/LoadedScene/ILoadedSceneObserver.h"
 #include "ISkyboxRenderer.hpp"
 #include "Logging/IDwarfLogger.hpp"
-#include <cstdint>
 
 namespace Dwarf
 {
+  /**
+   * @brief Implementation of a skybox renderer
+   *
+   */
   class SkyboxRenderer
     : public ISkyboxRenderer
     , public ISceneSettingsObserver
@@ -40,25 +41,25 @@ namespace Dwarf
                                        mShaderSourceCollectionFactory;
     std::shared_ptr<ITextureFactory>   mTextureFactory;
     std::shared_ptr<ICubemapGenerator> mCubemapGenerator;
-
-    // std::optional<std::reference_wrapper<ICamera>> mCamera;
-    glm::mat4                    mViewMatrix;
-    glm::mat4                    mProjectionMatrix;
-    std::shared_ptr<IMeshBuffer> mSkyboxCubeMesh;
-
-    SkyboxSource             mCachedSourceType = SkyboxSource::Color;
-    std::shared_ptr<IShader> mSkyboxShader = nullptr;
-    std::optional<UUID>      mCachedAssetId = std::nullopt;
+    glm::mat4                          mViewMatrix;
+    glm::mat4                          mProjectionMatrix;
+    std::shared_ptr<IMeshBuffer>       mSkyboxCubeMesh;
+    SkyboxSource                       mCachedSourceType = SkyboxSource::Color;
+    std::shared_ptr<IShader>           mSkyboxShader = nullptr;
+    std::optional<UUID>                mCachedAssetId = std::nullopt;
     std::optional<std::reference_wrapper<MaterialAsset>> mCachedMaterialAsset =
       std::nullopt;
     std::optional<std::reference_wrapper<TextureAsset>> mCachedTextureAsset =
       std::nullopt;
     std::shared_ptr<ITexture> mCubemap;
     CubemapResolutionEnum     mCachedResolution;
+    std::mutex                mCubemapGeneratorMutex;
+    std::thread               mCubemapGeneratorThread;
 
-    std::mutex  mCubemapGeneratorMutex;
-    std::thread mCubemapGeneratorThread;
-
+    /**
+     * @brief Resets the cubemap data and the shader parameter
+     *
+     */
     void
     ResetCubemap();
 
@@ -77,44 +78,83 @@ namespace Dwarf
       const std::shared_ptr<ICubemapGeneratorFactory>& cubeMapGeneratorFactory);
     ~SkyboxRenderer() override = default;
 
-    // void
-    // SetCamera(ICamera& camera) override;
-
+    /**
+     * @brief Sets the view matrix to use for the skybox rendering
+     *
+     * @param viewMat
+     */
     void
     SetViewMatrix(glm::mat4 viewMat) override;
 
+    /**
+     * @brief Sets the projection matrix to use for the skybox rendering
+     *
+     * @param projectionMat
+     */
     void
     SetProjectionMatrix(glm::mat4 projectionMat) override;
 
+    /**
+     * @brief Renders the skybox
+     *
+     */
     void
     Render() override;
 
+    /**
+     * @brief Observer callback for when the skybox settings change
+     *
+     */
     void
     OnSkyboxSettingsChanged() override;
 
+    /**
+     * @brief Observer callback for when the anti aliasing settings change
+     *
+     */
     void
     OnAntiAliasingSettingsChanged() override
     {
     }
 
+    /**
+     * @brief Observer callback for when the exposure settings change
+     *
+     */
     void
     OnExposureSettingsChanged() override
     {
     }
 
+    /**
+     * @brief Observer callback for when the tonemap settings change
+     *
+     */
     void
     OnTonemapChanged() override
     {
     }
 
+    /**
+     * @brief Observer callback for when the tonemap settings change
+     *
+     */
     void
     OnBloomSettingsChanged() override
     {
     }
 
+    /**
+     * @brief Observer callback for when a scene has been loaded
+     *
+     */
     void
     OnSceneLoad() override;
 
+    /**
+     * @brief Observer callback for when a scene has been unloaded
+     *
+     */
     void
     OnSceneUnload() override;
   };

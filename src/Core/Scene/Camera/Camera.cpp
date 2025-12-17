@@ -24,9 +24,6 @@ namespace Dwarf
     : mLogger(std::move(logger))
     , mProperties(CameraProperties())
   {
-    // mProperties.Transform =
-    //   TransformComponent(serializedCameraData["transform"]);
-
     if (serializedCameraData.contains("fov"))
     {
       mProperties.Fov = serializedCameraData["fov"];
@@ -41,21 +38,6 @@ namespace Dwarf
     {
       mProperties.FarPlane = serializedCameraData["farPlane"];
     }
-
-    // if (serializedCameraData.contains("aspectRatio"))
-    // {
-    //   mProperties.AspectRatio = serializedCameraData["aspectRatio"];
-    // }
-
-    // if (serializedCameraData.contains("sensitivity"))
-    // {
-    //   mProperties.Sensitivity = serializedCameraData["sensitivity"];
-    // }
-
-    // if (serializedCameraData.contains("movementSpeed"))
-    // {
-    //   mProperties.MovementSpeed = serializedCameraData["movementSpeed"];
-    // }
 
     mLogger->LogDebug(Log("Camera created.", "Camera"));
   }
@@ -84,13 +66,9 @@ namespace Dwarf
   Camera::Serialize() -> nlohmann::json
   {
     nlohmann::json j;
-    // j["transform"] = mProperties.Transform.Serialize();
     j["fov"] = mProperties.Fov;
     j["nearPlane"] = mProperties.NearPlane;
     j["farPlane"] = mProperties.FarPlane;
-    // j["aspectRatio"] = mProperties.AspectRatio;
-    //  j["sensitivity"] = mProperties.Sensitivity;
-    //  j["movementSpeed"] = mProperties.MovementSpeed;
     return j;
   }
 }

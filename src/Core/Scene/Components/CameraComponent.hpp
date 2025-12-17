@@ -10,6 +10,10 @@
 
 namespace Dwarf
 {
+  /**
+   * @brief ECS component holding a simple camera instance
+   *
+   */
   struct CameraComponent : public ISerializable
   {
     std::shared_ptr<ICamera> Camera;
