@@ -62,8 +62,9 @@ namespace Dwarf
      *
      * @param mesh Mesh buffer to render
      * @param material Material to render with
-     * @param camera Camera to use
      * @param modelMatrix Model matrix of the mesh buffer
+     * @param viewMatrix View matrix to use
+     * @param projectionMatrix Projection matrix to use
      */
     virtual void
     RenderIndexed(const IMeshBuffer* mesh,
@@ -72,12 +73,28 @@ namespace Dwarf
                   glm::mat4          viewMatrix,
                   glm::mat4          projectionMatrix) = 0;
 
+    /**
+     * @brief Renders a skybox using the provided shader
+     *
+     * @param mesh Mesh to use as a skybox
+     * @param shader Shader to use for rendering
+     * @param viewMatrix View matrix to use
+     * @param projectionMatrix Projection matrix to use
+     */
     virtual void
     RenderSkyboxIndexed(const IMeshBuffer* mesh,
                         IShader&           shader,
                         glm::mat4          viewMatrix,
                         glm::mat4          projectionMatrix) = 0;
 
+    /**
+     * @brief Renders a skybox using the provided material
+     *
+     * @param mesh Mesh to use as a skybox
+     * @param material Material to use for rendering
+     * @param viewMatrix View matrix to use
+     * @param projectionMatrix Projection matrix to use
+     */
     virtual void
     RenderSkyboxIndexed(const IMeshBuffer* mesh,
                         IMaterial&         material,
@@ -181,9 +198,20 @@ namespace Dwarf
     virtual auto
     GetMaxSamples() -> int32_t = 0;
 
+    /**
+     * @brief Checks if the graphics device supports anisotropic filtering
+     *
+     * @return true Supported
+     * @return false Not supported
+     */
     virtual auto
     IsAnisoSupported() -> bool = 0;
 
+    /**
+     * @brief Returns the maximum supported anisotropic filtering level
+     *
+     * @return uint8_t Maximum supported anisotropic filtering level
+     */
     virtual auto
     GetMaxAnisoLevel() -> uint8_t = 0;
   };
