@@ -168,15 +168,24 @@ namespace Dwarf
   CameraSystem::ScreenToWorld(glm::vec2 const& screenPos,
                               glm::vec2 const& viewport) const -> glm::vec3
   {
+    // Converting the screen coordinates to normalized device coordinates
     float     x = ((2.0F * screenPos.x) / viewport.x) - 1.0F;
     float     y = 1.0F - ((2.0F * screenPos.y) / viewport.y);
     float     z = 1.0F;
     glm::vec3 rayNds = glm::vec3(x, y, z);
+
+    // NDC to clip space
     glm::vec4 rayClip = glm::vec4(rayNds.x, rayNds.y, -1.0, 1.0);
+
+    // Clip space to Eye (View) space
     glm::vec4 rayEye =
       glm::inverse(GetProjectionMatrix(viewport.x / viewport.y)) * rayClip;
     rayEye = glm::vec4(rayEye.x, rayEye.y, -1.0, 0.0);
+
+    // Eye space to world space
     glm::vec3 rayWor = glm::vec3(glm::inverse(GetViewMatrix()) * rayEye);
+
+    // Normalization
     rayWor = glm::normalize(rayWor);
     return rayWor;
   }
