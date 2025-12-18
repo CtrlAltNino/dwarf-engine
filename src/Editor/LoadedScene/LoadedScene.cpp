@@ -18,6 +18,8 @@ namespace Dwarf
 
   LoadedScene::~LoadedScene()
   {
+    mObservers.clear();
+    mScene.reset();
     mLogger->LogDebug(Log("LoadedScene destroyed", "LoadedScene"));
   }
 

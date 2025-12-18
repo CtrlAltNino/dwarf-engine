@@ -26,6 +26,11 @@ namespace Dwarf
     mWorkerThread = std::thread([this]() { WorkerThread(); });
     mLoadedScene->RegisterLoadedSceneObserver(this);
     mAssetDatabase->RegisterAssetDatabaseObserver(this);
+
+    if (mLoadedScene->HasLoadedScene())
+    {
+      OnSceneLoad();
+    }
   }
 
   DrawCallWorker::~DrawCallWorker()

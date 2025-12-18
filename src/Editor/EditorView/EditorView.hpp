@@ -75,6 +75,9 @@ namespace Dwarf
 
     ~EditorView() override;
 
+    void
+    Initialize() override;
+
     /// @brief Executes all pre frame tasks.
     void
     OnUpdate() override;

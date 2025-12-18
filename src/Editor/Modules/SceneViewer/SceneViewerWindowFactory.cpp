@@ -42,7 +42,7 @@ namespace Dwarf
                                                mEditorSelection,
                                                mRenderingPipelineFactory,
                                                mWindow,
-                                               mCameraSystemFactory->Create());
+                                               mCameraSystemFactory);
   }
 
   auto
@@ -57,6 +57,6 @@ namespace Dwarf
                                                mEditorSelection,
                                                mRenderingPipelineFactory,
                                                mWindow,
-                                               mCameraSystemFactory->Create());
+                                               mCameraSystemFactory);
   }
 } // namespace Dwarf

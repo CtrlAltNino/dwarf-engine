@@ -1,14 +1,59 @@
 #include "pch.hpp"
 
 #include "CameraSystem.hpp"
+#include "Core/Scene/Components/CameraComponentHandle.hpp"
 
 namespace Dwarf
 {
   CameraSystem::CameraSystem(std::shared_ptr<IDwarfLogger>  logger,
-                             std::shared_ptr<IInputManager> inputManager)
+                             std::shared_ptr<IInputManager> inputManager,
+                             std::shared_ptr<ILoadedScene>  loadedScene)
     : mLogger(std::move(logger))
     , mInputManager(std::move(inputManager))
+    , mLoadedScene(std::move(loadedScene))
   {
+  }
+
+  CameraSystem::CameraSystem(nlohmann::json                 serializedData,
+                             std::shared_ptr<IDwarfLogger>  logger,
+                             std::shared_ptr<IInputManager> inputManager,
+                             std::shared_ptr<ILoadedScene>  loadedScene)
+    : mLogger(std::move(logger))
+    , mInputManager(std::move(inputManager))
+    , mLoadedScene(std::move(loadedScene))
+  {
+    if (serializedData.contains("Properties"))
+    {
+      if (serializedData["Properties"].contains("MovementSpeed"))
+      {
+        mProperties.MovementSpeed =
+          serializedData["Properties"]["MovementSpeed"].get<float>();
+      }
+
+      if (serializedData["Properties"].contains("Sensitivity"))
+      {
+        mProperties.Sensitivity =
+          serializedData["Properties"]["Sensitivity"].get<float>();
+      }
+    }
+
+    if (serializedData.contains("Camera"))
+    {
+      UUID camera(serializedData["Camera"].get<std::string>());
+
+      auto cameraView = mLoadedScene->GetScene()
+                          .GetRegistry()
+                          .view<NameComponent, IDComponent, CameraComponent>();
+
+      for (auto entity : cameraView)
+      {
+        if (camera == cameraView.get<IDComponent>(entity).getId())
+        {
+          mCamera = CameraComponentHandle(
+            &mLoadedScene->GetScene().GetRegistry(), entity);
+        }
+      }
+    }
   }
 
   CameraSystem::~CameraSystem() {}
@@ -193,8 +238,21 @@ namespace Dwarf
   auto
   CameraSystem::Serialize() -> nlohmann::json
   {
-    nlohmann::json j;
-    // TODO
-    return j;
+    nlohmann::json serializedData;
+
+    serializedData["Properties"]["MovementSpeed"] = mProperties.MovementSpeed;
+    serializedData["Properties"]["Sensitivity"] = mProperties.Sensitivity;
+
+    if (mCamera)
+    {
+      auto cameraView = mLoadedScene->GetScene()
+                          .GetRegistry()
+                          .view<NameComponent, IDComponent, CameraComponent>();
+
+      serializedData["Camera"] =
+        cameraView.get<IDComponent>(mCamera->GetHandle()).getId().toString();
+    }
+
+    return serializedData;
   }
 }

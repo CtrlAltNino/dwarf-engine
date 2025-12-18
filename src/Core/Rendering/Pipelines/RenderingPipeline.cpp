@@ -37,6 +37,7 @@ namespace Dwarf
     , mDrawCallWorker(drawCallWorkerFactory->Create(mDrawCallList))
   {
     mLoadedScene->RegisterLoadedSceneObserver(this);
+
     mRendererApi->SetClearColor(glm::vec4(0.065F, 0.07F, 0.085F, 1.0F));
 
     mIdMaterial = materialFactory->CreateMaterial(
@@ -58,10 +59,16 @@ namespace Dwarf
     SetupIdFramebuffer(framebufferFactory);
 
     mDrawCallWorker->Invalidate();
+
+    if (mLoadedScene->HasLoadedScene())
+    {
+      OnSceneLoad();
+    }
   }
 
   RenderingPipeline::~RenderingPipeline()
   {
+    mLoadedScene->UnregisterLoadedSceneObserver(this);
     mDrawCallList->Clear();
   }
 

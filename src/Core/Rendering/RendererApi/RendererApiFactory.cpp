@@ -32,7 +32,8 @@ namespace Dwarf
 
   RendererApiFactory::~RendererApiFactory()
   {
-    mLogger->LogDebug(Log("RendererApiFactory created", "RendererApiFactory"));
+    mLogger->LogDebug(
+      Log("RendererApiFactory destroyed", "RendererApiFactory"));
   }
 
   auto

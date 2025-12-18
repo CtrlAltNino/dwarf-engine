@@ -1,5 +1,6 @@
 #include "pch.hpp"
 
+#include "Core/GenericComponents.hpp"
 #include "Core/Scene/Components/CameraComponent.hpp"
 #include "Core/Scene/Components/CameraComponentHandle.hpp"
 #include "Core/Scene/Entity/Entity.hpp"
@@ -23,7 +24,7 @@ namespace Dwarf
     std::shared_ptr<IEditorSelection>                 editorSelection,
     const std::shared_ptr<IRenderingPipelineFactory>& renderingPipelineFactory,
     std::shared_ptr<IWindow>                          window,
-    std::shared_ptr<ICameraSystem>                    cameraSystem)
+    const std::shared_ptr<ICameraSystemFactory>&      cameraSystemFactory)
     : IGuiModule(ModuleLabel("Scene Viewer"),
                  ModuleType(MODULE_TYPE::SCENE_VIEWER),
                  ModuleID(std::make_shared<UUID>()))
@@ -33,11 +34,9 @@ namespace Dwarf
     , mLoadedScene(std::move(loadedScene))
     , mEditorSelection(std::move(editorSelection))
     , mWindow(std::move(window))
-    , mCameraSystem(std::move(cameraSystem))
+    , mCameraSystem(cameraSystemFactory->Create())
+    , mRenderingPipeline(renderingPipelineFactory->Create())
   {
-    // Create rendering pipeline
-    mRenderingPipeline = renderingPipelineFactory->Create();
-
     mLogger->LogDebug(Log("SceneViewerWindow created", "SceneViewerWindow"));
   }
 
@@ -50,7 +49,7 @@ namespace Dwarf
     std::shared_ptr<IEditorSelection>                 editorSelection,
     const std::shared_ptr<IRenderingPipelineFactory>& renderingPipelineFactory,
     std::shared_ptr<IWindow>                          window,
-    std::shared_ptr<ICameraSystem>                    cameraSystem)
+    const std::shared_ptr<ICameraSystemFactory>&      cameraSystemFactory)
     : IGuiModule(ModuleLabel("Scene Viewer"),
                  ModuleType(MODULE_TYPE::SCENE_VIEWER),
                  ModuleID(std::make_shared<UUID>(
@@ -61,11 +60,10 @@ namespace Dwarf
     , mLoadedScene(std::move(loadedScene))
     , mEditorSelection(std::move(editorSelection))
     , mWindow(std::move(window))
-    , mCameraSystem(std::move(cameraSystem))
+    , mCameraSystem(
+        cameraSystemFactory->Create(serializedModule.t["cameraSystem"]))
+    , mRenderingPipeline(renderingPipelineFactory->Create())
   {
-    // Create rendering pipeline
-    mRenderingPipeline = renderingPipelineFactory->Create();
-
     Deserialize(serializedModule.t);
 
     mLogger->LogDebug(Log("SceneViewerWindow created", "SceneViewerWindow"));
@@ -464,7 +462,7 @@ namespace Dwarf
     // View
     auto cameraView = mLoadedScene->GetScene()
                         .GetRegistry()
-                        .view<NameComponent, CameraComponent>();
+                        .view<NameComponent, IDComponent, CameraComponent>();
 
     const char* preview =
       (!mCameraSystem->HasCamera())
@@ -475,16 +473,8 @@ namespace Dwarf
 
     if (ImGui::BeginCombo("Camera##camera", preview))
     {
-      /*if (ImGui::Selectable("None", assetRef == nullptr, 0, ImVec2(0, 16 +
-      10)))
-      {
-        assetRef = nullptr;
-        interacted = true;
-      }*/
-
       for (auto entity : cameraView)
       {
-        // const bool isSelected = (selectedAsset == i);
         if (ImGui::Selectable(
               cameraView.template get<NameComponent>(entity).Name.c_str(),
               (mCameraSystem->HasCamera()) &&
@@ -492,9 +482,6 @@ namespace Dwarf
               0,
               ImVec2(0, 16 + 10)))
         {
-          // assetRef = assetDatabase->Retrieve(
-          //   view.template get<IDComponent>(assetHandle).getId());
-          // interacted = true;
           Entity ent = Entity(entity, &mLoadedScene->GetScene().GetRegistry());
 
           mCameraSystem->SetCamera(

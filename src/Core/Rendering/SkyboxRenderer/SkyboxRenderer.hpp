@@ -76,7 +76,7 @@ namespace Dwarf
       const std::shared_ptr<IMeshFactory>&        meshFactory,
       const std::shared_ptr<IMeshBufferFactory>&  meshBufferFactory,
       const std::shared_ptr<ICubemapGeneratorFactory>& cubeMapGeneratorFactory);
-    ~SkyboxRenderer() override = default;
+    ~SkyboxRenderer() override;
 
     /**
      * @brief Sets the view matrix to use for the skybox rendering

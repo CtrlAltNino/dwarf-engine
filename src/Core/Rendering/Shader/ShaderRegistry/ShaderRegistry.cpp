@@ -6,21 +6,28 @@
 namespace Dwarf
 {
   ShaderRegistry::ShaderRegistry(std::shared_ptr<IDwarfLogger>   logger,
-                                 std::shared_ptr<IShaderFactory> shaderFactory)
+                                 std::shared_ptr<IShaderFactory> shaderFactory,
+                                 std::shared_ptr<IWindow>        window)
     : mLogger(std::move(logger))
     , mShaderFactory(std::move(shaderFactory))
+    , mWindow(std::move(window))
   {
     mLogger->LogDebug(Log("ShaderRegistry created", "ShaderRegistry"));
   }
 
   ShaderRegistry::~ShaderRegistry()
   {
+    for (auto shader : mShaders)
+    {
+      shader.second.reset();
+    }
     mLogger->LogDebug(Log("ShaderRegistry destroyed", "ShaderRegistry"));
   }
 
   auto
-  ShaderRegistry::GetOrCreate(std::unique_ptr<IShaderSourceCollection>
-                                shaderSources) -> std::shared_ptr<IShader>
+  ShaderRegistry::GetOrCreate(
+    std::unique_ptr<IShaderSourceCollection> shaderSources)
+    -> std::shared_ptr<IShader>
   {
     // Hashing the shader sources
     std::hash<std::string> hasher;

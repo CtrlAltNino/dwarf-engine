@@ -11,6 +11,9 @@ namespace Dwarf
   public:
     virtual ~IEditorView() = default;
 
+    virtual void
+    Initialize() = 0;
+
     /// @brief Executes all pre frame tasks.
     virtual void
     OnUpdate() = 0;

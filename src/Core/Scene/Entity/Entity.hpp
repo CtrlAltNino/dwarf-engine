@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/GenericComponents.hpp"
+#include "Core/Scene/Components/CameraComponent.hpp"
 #include "Core/Scene/Components/LightComponent.hpp"
 #include "Core/Scene/Components/MeshRendererComponent.hpp"
 #include "Core/Scene/Components/TransformComponent.hpp"
@@ -253,6 +254,12 @@ namespace Dwarf
       {
         serializedEntity["MeshRendererComponent"] =
           GetComponent<MeshRendererComponent>().Serialize();
+      }
+
+      if (HasComponent<CameraComponent>())
+      {
+        serializedEntity["CameraComponent"] =
+          GetComponent<CameraComponent>().Serialize();
       }
 
       int childCount = 0;
