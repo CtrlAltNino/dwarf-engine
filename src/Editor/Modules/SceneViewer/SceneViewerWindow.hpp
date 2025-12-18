@@ -5,6 +5,7 @@
 #include "Core/Rendering/Pipelines/IRenderingPipelineFactory.hpp"
 #include "Editor/LoadedScene/ILoadedScene.hpp"
 #include "Editor/Modules/IGuiModule.hpp"
+#include "Editor/Modules/SceneViewer/CameraSystem/ICameraSystemFactory.hpp"
 #include "Editor/Selection/IEditorSelection.hpp"
 #include "Editor/Stats/IEditorStats.hpp"
 #include "Input/IInputManager.hpp"
@@ -147,26 +148,28 @@ namespace Dwarf
     RenderStats();
 
   public:
-    SceneViewerWindow(std::shared_ptr<IDwarfLogger>     logger,
-                      std::shared_ptr<IEditorStats>     editorStats,
-                      std::shared_ptr<IInputManager>    inputManager,
-                      std::shared_ptr<ILoadedScene>     loadedScene,
-                      std::shared_ptr<IEditorSelection> editorSelection,
-                      const std::shared_ptr<IRenderingPipelineFactory>&
-                                                     renderingPipelineFactory,
-                      std::shared_ptr<IWindow>       window,
-                      std::shared_ptr<ICameraSystem> cameraSystem);
+    SceneViewerWindow(
+      std::shared_ptr<IDwarfLogger>     logger,
+      std::shared_ptr<IEditorStats>     editorStats,
+      std::shared_ptr<IInputManager>    inputManager,
+      std::shared_ptr<ILoadedScene>     loadedScene,
+      std::shared_ptr<IEditorSelection> editorSelection,
+      const std::shared_ptr<IRenderingPipelineFactory>&
+                                                   renderingPipelineFactory,
+      std::shared_ptr<IWindow>                     window,
+      const std::shared_ptr<ICameraSystemFactory>& cameraSystemFactory);
 
-    SceneViewerWindow(SerializedModule                  serializedModule,
-                      std::shared_ptr<IDwarfLogger>     logger,
-                      std::shared_ptr<IEditorStats>     editorStats,
-                      std::shared_ptr<IInputManager>    inputManager,
-                      std::shared_ptr<ILoadedScene>     loadedScene,
-                      std::shared_ptr<IEditorSelection> editorSelection,
-                      const std::shared_ptr<IRenderingPipelineFactory>&
-                                                     renderingPipelineFactory,
-                      std::shared_ptr<IWindow>       window,
-                      std::shared_ptr<ICameraSystem> cameraSystem);
+    SceneViewerWindow(
+      SerializedModule                  serializedModule,
+      std::shared_ptr<IDwarfLogger>     logger,
+      std::shared_ptr<IEditorStats>     editorStats,
+      std::shared_ptr<IInputManager>    inputManager,
+      std::shared_ptr<ILoadedScene>     loadedScene,
+      std::shared_ptr<IEditorSelection> editorSelection,
+      const std::shared_ptr<IRenderingPipelineFactory>&
+                                                   renderingPipelineFactory,
+      std::shared_ptr<IWindow>                     window,
+      const std::shared_ptr<ICameraSystemFactory>& cameraSystemFactory);
 
     ~SceneViewerWindow() override;
 

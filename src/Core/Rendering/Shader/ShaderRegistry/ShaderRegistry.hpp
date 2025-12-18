@@ -3,6 +3,7 @@
 #include "Core/Rendering/Shader/IShaderFactory.hpp"
 #include "IShaderRegistry.hpp"
 #include "Logging/IDwarfLogger.hpp"
+#include "Window/IWindow.hpp"
 
 namespace Dwarf
 {
@@ -11,11 +12,13 @@ namespace Dwarf
   private:
     std::shared_ptr<IDwarfLogger>                        mLogger;
     std::shared_ptr<IShaderFactory>                      mShaderFactory;
+    std::shared_ptr<IWindow>                             mWindow;
     std::unordered_map<size_t, std::shared_ptr<IShader>> mShaders;
 
   public:
     ShaderRegistry(std::shared_ptr<IDwarfLogger>   logger,
-                   std::shared_ptr<IShaderFactory> shaderFactory);
+                   std::shared_ptr<IShaderFactory> shaderFactory,
+                   std::shared_ptr<IWindow>        window);
 
     ~ShaderRegistry() override;
 

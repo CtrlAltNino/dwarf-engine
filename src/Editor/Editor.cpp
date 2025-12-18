@@ -73,6 +73,7 @@ namespace Dwarf
     }
 
     mLogger->LogInfo(Log("Showing window", "Editor"));
+    mView->Initialize();
     mWindow->ShowWindow();
 
     mLogger->LogInfo(Log("Entering editor loop", "Editor"));

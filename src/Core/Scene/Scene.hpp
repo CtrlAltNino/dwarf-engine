@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Asset/Database/IAssetDatabase.hpp"
+#include "Core/Scene/Camera/ICameraFactory.hpp"
 #include "Core/Scene/Entity/Entity.hpp"
 #include "Core/Scene/IScene.hpp"
 #include "Core/Scene/Properties/ISceneProperties.hpp"
@@ -18,6 +19,7 @@ namespace Dwarf
     entt::registry                  mRegistry = entt::registry();
     std::vector<ISceneObserver*>    mObservers;
     std::shared_ptr<IAssetDatabase> mAssetDatabase;
+    std::shared_ptr<ICameraFactory> mCameraFactory;
 
     /// @brief The root entity in the scene graph.
     Entity mRootEntity;
@@ -55,11 +57,13 @@ namespace Dwarf
 
   public:
     Scene(std::unique_ptr<ISceneProperties> properties,
-          std::shared_ptr<IAssetDatabase>   assetDatabase);
+          std::shared_ptr<IAssetDatabase>   assetDatabase,
+          std::shared_ptr<ICameraFactory>   cameraFactory);
 
     Scene(const SerializedGraph&            serializedScene,
           std::unique_ptr<ISceneProperties> properties,
-          std::shared_ptr<IAssetDatabase>   assetDatabase);
+          std::shared_ptr<IAssetDatabase>   assetDatabase,
+          std::shared_ptr<ICameraFactory>   cameraFactory);
 
     ~Scene() override;
 

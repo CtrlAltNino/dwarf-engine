@@ -37,7 +37,28 @@ namespace Dwarf
     , mEditorStats(std::move(editorStats))
   {
     mLogger->LogDebug(Log("Creating EditorView", "EditorView"));
+  }
 
+  EditorView::~EditorView()
+  {
+    mLogger->LogDebug(Log("Destroying EditorView", "EditorView"));
+
+    if (mRunViewSaveThread)
+    {
+      {
+        std::lock_guard<std::mutex> lock(mThreadMutex);
+        mRunViewSaveThread.store(false);
+      }
+      mThreadCondition.notify_one();
+      mViewSaveThread.join();
+    }
+
+    mLogger->LogDebug(Log("EditorView destroyed", "EditorView"));
+  }
+
+  void
+  EditorView::Initialize()
+  {
     nlohmann::json serializedView = mProjectSettings->GetSerializedView();
     mLogger->LogDebug(
       Log(fmt::format("Deserializing EditorView:\n{}", serializedView.dump(2)),
@@ -79,23 +100,6 @@ namespace Dwarf
           }
         }
       });
-  }
-
-  EditorView::~EditorView()
-  {
-    mLogger->LogDebug(Log("Destroying EditorView", "EditorView"));
-
-    if (mRunViewSaveThread)
-    {
-      {
-        std::lock_guard<std::mutex> lock(mThreadMutex);
-        mRunViewSaveThread.store(false);
-      }
-      mThreadCondition.notify_one();
-      mViewSaveThread.join();
-    }
-
-    mLogger->LogDebug(Log("EditorView destroyed", "EditorView"));
   }
 
   void

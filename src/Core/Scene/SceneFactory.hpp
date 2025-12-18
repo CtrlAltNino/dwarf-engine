@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Asset/Database/IAssetDatabase.hpp"
+#include "Core/Scene/Camera/ICameraFactory.hpp"
 #include "Core/Scene/Properties/IScenePropertiesFactory.hpp"
 #include "ISceneFactory.hpp"
 #include "Logging/IDwarfLogger.hpp"
@@ -16,13 +17,15 @@ namespace Dwarf
     std::shared_ptr<IScenePropertiesFactory> mScenePropertiesFactory;
     std::shared_ptr<IAssetDatabase>          mAssetDatabase;
     std::shared_ptr<IFileHandler>            mFileHandler;
+    std::shared_ptr<ICameraFactory>          mCameraFactory;
 
   public:
     SceneFactory(
       std::shared_ptr<IDwarfLogger>            logger,
       std::shared_ptr<IScenePropertiesFactory> scenePropertiesFactory,
       std::shared_ptr<IAssetDatabase>          assetDatabase,
-      std::shared_ptr<IFileHandler>            fileHandler);
+      std::shared_ptr<IFileHandler>            fileHandler,
+      std::shared_ptr<ICameraFactory>          cameraFactory);
     virtual ~SceneFactory() override;
 
     [[nodiscard]] auto

@@ -10,11 +10,13 @@ namespace Dwarf
     std::shared_ptr<IDwarfLogger>            logger,
     std::shared_ptr<IScenePropertiesFactory> scenePropertiesFactory,
     std::shared_ptr<IAssetDatabase>          assetDatabase,
-    std::shared_ptr<IFileHandler>            fileHandler)
+    std::shared_ptr<IFileHandler>            fileHandler,
+    std::shared_ptr<ICameraFactory>          cameraFactory)
     : mLogger(std::move(logger))
     , mScenePropertiesFactory(std::move(scenePropertiesFactory))
     , mAssetDatabase(std::move(assetDatabase))
     , mFileHandler(std::move(fileHandler))
+    , mCameraFactory(std::move(cameraFactory))
   {
     mLogger->LogDebug(Log("SceneFactory created.", "SceneFactory"));
   }
@@ -33,7 +35,8 @@ namespace Dwarf
     return std::make_unique<Scene>(
       SerializedGraph(serializedScene["Graph"]),
       mScenePropertiesFactory->Create(sceneAsset, serializedScene["Settings"]),
-      mAssetDatabase);
+      mAssetDatabase,
+      mCameraFactory);
   }
 
   // TODO: Create default scene here
@@ -41,6 +44,7 @@ namespace Dwarf
   SceneFactory::CreateDefaultScene() const -> std::unique_ptr<IScene>
   {
     return std::make_unique<Scene>(mScenePropertiesFactory->Create("New Scene"),
-                                   mAssetDatabase);
+                                   mAssetDatabase,
+                                   mCameraFactory);
   }
 } // namespace Dwarf

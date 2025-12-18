@@ -28,8 +28,19 @@ namespace Dwarf
     , mCubemapGenerator(cubeMapGeneratorFactory->Create())
   {
     mLoadedScene->RegisterLoadedSceneObserver(this);
+
     std::shared_ptr<IMesh> cubeMesh = meshFactory->CreateSkyboxCube();
     mSkyboxCubeMesh = meshBufferFactory->Create(cubeMesh);
+
+    if (mLoadedScene->HasLoadedScene())
+    {
+      OnSceneLoad();
+    }
+  }
+
+  SkyboxRenderer::~SkyboxRenderer()
+  {
+    mLoadedScene->UnregisterLoadedSceneObserver(this);
   }
 
   void

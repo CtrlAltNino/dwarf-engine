@@ -6,19 +6,23 @@
 namespace Dwarf
 {
   Scene::Scene(std::unique_ptr<ISceneProperties> properties,
-               std::shared_ptr<IAssetDatabase>   assetDatabase)
+               std::shared_ptr<IAssetDatabase>   assetDatabase,
+               std::shared_ptr<ICameraFactory>   cameraFactory)
     : mProperties(std::move(properties))
     , mRootEntity(CreateRootEntity())
     , mAssetDatabase(std::move(assetDatabase))
+    , mCameraFactory(std::move(cameraFactory))
   {
   }
 
   Scene::Scene(const SerializedGraph&            serializedScene,
                std::unique_ptr<ISceneProperties> properties,
-               std::shared_ptr<IAssetDatabase>   assetDatabase)
+               std::shared_ptr<IAssetDatabase>   assetDatabase,
+               std::shared_ptr<ICameraFactory>   cameraFactory)
     : mProperties(std::move(properties))
     , mRootEntity(CreateRootEntity())
     , mAssetDatabase(std::move(assetDatabase))
+    , mCameraFactory(std::move(cameraFactory))
   {
     Deserialize(serializedScene.t);
   }
@@ -70,6 +74,12 @@ namespace Dwarf
     {
       newEntity.AddComponent<LightComponent>(
         serializedEntity["LightComponent"]);
+    }
+
+    if (serializedEntity.contains("CameraComponent"))
+    {
+      newEntity.AddComponent<CameraComponent>(
+        mCameraFactory->Create(serializedEntity["CameraComponent"]["Camera"]));
     }
 
     if (serializedEntity.contains("MeshRendererComponent"))

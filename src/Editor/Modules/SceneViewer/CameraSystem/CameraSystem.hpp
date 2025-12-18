@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Scene/Components/CameraComponentHandle.hpp"
+#include "Editor/LoadedScene/ILoadedScene.hpp"
 #include "ICameraSystem.hpp"
 #include "Input/IInputManager.hpp"
 #include "Logging/IDwarfLogger.hpp"
@@ -13,6 +14,7 @@ namespace Dwarf
   private:
     std::shared_ptr<IDwarfLogger>        mLogger;
     std::shared_ptr<IInputManager>       mInputManager;
+    std::shared_ptr<ILoadedScene>        mLoadedScene;
     CameraSystemProperties               mProperties;
     std::optional<CameraComponentHandle> mCamera;
     glm::mat4                            mCachedViewMat = glm::mat4(0);
@@ -21,7 +23,13 @@ namespace Dwarf
 
   public:
     CameraSystem(std::shared_ptr<IDwarfLogger>  logger,
-                 std::shared_ptr<IInputManager> inputManager);
+                 std::shared_ptr<IInputManager> inputManager,
+                 std::shared_ptr<ILoadedScene>  loadedScene);
+
+    CameraSystem(nlohmann::json                 serializedData,
+                 std::shared_ptr<IDwarfLogger>  logger,
+                 std::shared_ptr<IInputManager> inputManager,
+                 std::shared_ptr<ILoadedScene>  loadedScene);
     ~CameraSystem() override;
 
     void
