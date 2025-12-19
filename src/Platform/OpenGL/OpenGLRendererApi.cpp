@@ -222,7 +222,7 @@ namespace Dwarf
     }
 
     // TODO: without translation
-    oglShader.SetParameter("viewMatrix", glm::mat4(glm::mat3(viewMatrix)));
+    oglShader.SetParameter("viewMatrix", viewMatrix);
     oglShader.SetParameter("projectionMatrix", projectionMatrix);
     oglShader.SetParameter("_Time", (float)mEditorStats->GetTimeSinceStart());
     // shader.SetParameter("viewPosition",
@@ -235,6 +235,8 @@ namespace Dwarf
     glDrawElements(GL_TRIANGLES, oglMesh->GetIndexCount(), GL_UNSIGNED_INT, 0);
     OpenGLUtilities::CheckOpenGLError(
       "glDrawElements", "OpenGLRendererApi", mLogger);
+
+    oglMesh->Unbind();
   }
 
   void
