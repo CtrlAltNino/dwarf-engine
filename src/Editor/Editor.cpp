@@ -89,14 +89,16 @@ namespace Dwarf
       mEditorStats->SetCurrentTimeStamp(TimeUtilities::GetCurrent());
 
       mWindow->NewFrame();
+
       mInputManager->OnUpdate();
+      mView->OnUpdate();
+      mView->OnImGuiRender();
+      mWindow->EndFrame();
+
       mAssetReimporter->ReimportQueuedAssets();
       mShaderRecompiler->Recompile();
       mTextureLoadingWorker->ProcessTextureJobs();
       mMeshBufferRequestList->ProcessRequests();
-      mView->OnUpdate();
-      mView->OnImGuiRender();
-      mWindow->EndFrame();
 
       /*while (TimeUtilities::GetDifferenceInSeconds(
                TimeUtilities::GetCurrent(),
