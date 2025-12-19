@@ -27,6 +27,6 @@ CheckOptions:
   - key: readability-identifier-naming.VariableCase
     value: lower_case
   - key: readability-identifier-naming.FunctionCase
-    value: CamelBack
+    value: camelBack
   - key: readability-identifier-naming.LocalVariableCase
     value: camelBack
