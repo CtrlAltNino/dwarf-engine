@@ -130,6 +130,10 @@ namespace Dwarf
     ImGui::SetCursorPos(
       { ImGui::GetCursorPosX() + 4, ImGui::GetCursorPosY() + 4 });
 
+    RenderCameraSettings();
+
+    ImGui::SameLine(0, 5);
+
     RenderSceneViewerSettings();
 
     ImGui::SameLine(0, 5);
@@ -139,10 +143,6 @@ namespace Dwarf
     ImGui::SameLine(0, 5);
 
     RenderGridSettings();
-
-    ImGui::SameLine(0, 5);
-
-    RenderCameraSettings();
 
     ImGui::SameLine(0, 5);
 
@@ -471,7 +471,9 @@ namespace Dwarf
             .template get<NameComponent>(mCameraSystem->GetCamera().GetHandle())
             .Name.c_str();
 
-    if (ImGui::BeginCombo("Camera##camera", preview))
+    ImGui::PushItemWidth(200);
+
+    if (ImGui::BeginCombo("##camera", preview))
     {
       for (auto entity : cameraView)
       {
@@ -491,6 +493,9 @@ namespace Dwarf
 
       ImGui::EndCombo();
     }
+
+    ImGui::PopItemWidth();
+
     /*if (ImGui::Button("Camera"))
     {
       ImGui::OpenPopup("camera_settings");
