@@ -235,8 +235,6 @@ namespace Dwarf
     glDrawElements(GL_TRIANGLES, oglMesh->GetIndexCount(), GL_UNSIGNED_INT, 0);
     OpenGLUtilities::CheckOpenGLError(
       "glDrawElements", "OpenGLRendererApi", mLogger);
-
-    oglMesh->Unbind();
   }
 
   void
