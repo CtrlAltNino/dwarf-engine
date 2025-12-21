@@ -162,11 +162,11 @@ namespace Dwarf
 
     ImGui::TextWrapped("Light type");
     // ImGui::SameLine();
-    ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
-                         COMPONENT_PANEL_PADDING);
     LightType lightType = component.GetType();
 
     ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
+    ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
+                         COMPONENT_PANEL_PADDING);
     if (DwarfUI::ComboEnum("##light_type", lightType))
     {
       component.SetType(lightType);
@@ -177,10 +177,10 @@ namespace Dwarf
 
     ImGui::TextWrapped("Color");
     // ImGui::SameLine();
-    ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
-                         COMPONENT_PANEL_PADDING);
     glm::vec3 color = component.GetColor();
     ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
+    ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
+                         COMPONENT_PANEL_PADDING);
     if (ImGui::ColorEdit3(
           "##light_color", glm::value_ptr(color), ImGuiColorEditFlags_None))
     {
@@ -192,10 +192,10 @@ namespace Dwarf
 
     ImGui::TextWrapped("Attenuation");
     // ImGui::SameLine();
-    ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
-                         COMPONENT_PANEL_PADDING);
     float attenuation = component.GetAttenuation();
     ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
+    ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
+                         COMPONENT_PANEL_PADDING);
     if (ImGui::DragFloat("##light_attenuation", &attenuation, 0.015F))
     {
       component.SetAttenuation(attenuation);
@@ -207,10 +207,10 @@ namespace Dwarf
       ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
       ImGui::TextWrapped("Radius");
       ImGui::SameLine();
-      ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
-                           COMPONENT_PANEL_PADDING);
       float radius = component.GetRadius();
       ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
+      ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
+                           COMPONENT_PANEL_PADDING);
       if (ImGui::DragFloat("##light_point_radius", &radius, 0.015F))
       {
         component.SetRadius(radius);
@@ -223,10 +223,10 @@ namespace Dwarf
       ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
       ImGui::TextWrapped("Opening Angle");
       ImGui::SameLine();
-      ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
-                           COMPONENT_PANEL_PADDING);
       float openingAngle = component.GetOpeningAngle();
       ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
+      ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
+                           COMPONENT_PANEL_PADDING);
       if (ImGui::SliderFloat("##light_spot_angle", &openingAngle, 0.0F, 180.0F))
       {
         component.SetOpeningAngle(openingAngle);
@@ -250,8 +250,6 @@ namespace Dwarf
     ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
     ImGui::TextWrapped("Model Asset");
     // ImGui::SameLine();
-    ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
-                         COMPONENT_PANEL_PADDING);
 
     bool wasNull = componentHandle.GetModelAsset() == nullptr;
     // TODO: Fix static
@@ -264,6 +262,8 @@ namespace Dwarf
     }
 
     ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
+    ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
+                         COMPONENT_PANEL_PADDING);
     if (DwarfUI::AssetInput<ModelAsset>(
           mAssetDatabase, modelAssetId, "##modelAsset"))
     {
@@ -371,10 +371,10 @@ namespace Dwarf
     ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
     ImGui::TextWrapped("FOV");
     // ImGui::SameLine();
-    ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
-                         COMPONENT_PANEL_PADDING);
     // float attenuation = component.GetProperties().Fov;
     ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
+    ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
+                         COMPONENT_PANEL_PADDING);
     ImGui::DragFloat(
       "##camera_fov", &component.GetProperties().Fov, 0.5f, 45, 110);
     ImGui::PopItemWidth();
