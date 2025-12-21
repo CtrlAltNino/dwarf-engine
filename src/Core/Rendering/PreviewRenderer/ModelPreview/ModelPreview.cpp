@@ -64,6 +64,7 @@ namespace Dwarf
   void
   ModelPreview::RenderModelPreview(IAssetReference& modelAsset)
   {
+    // TODO: Fix static
     if (static entt::entity memory = entt::null;
         memory != modelAsset.GetHandle())
     {

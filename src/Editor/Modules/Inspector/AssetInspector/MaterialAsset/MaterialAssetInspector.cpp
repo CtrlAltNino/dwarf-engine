@@ -412,6 +412,7 @@ namespace Dwarf
 
       ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 20);
 
+      // TODO: Fix static
       // Adding new parameter
       static std::string paramName;
       ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
@@ -426,6 +427,8 @@ namespace Dwarf
                                &paramName);
       ImGui::PopItemWidth();
       ImGui::SameLine();
+
+      // TODO: Fix static
       static std::string selectedParameterType = "Float";
 
       ImGui::PushItemWidth(100.0f);
@@ -582,6 +585,7 @@ namespace Dwarf
       ImGui::EndCombo();
     }
 
+    // TODO: Fix static
     static bool isRotating = false;
     if (mInputManager->GetMouseButtonDown(Dwarf::MOUSE_BUTTON::LEFT) &&
         ImGui::IsMouseHoveringRect(

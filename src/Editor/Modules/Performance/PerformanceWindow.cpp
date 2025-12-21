@@ -71,6 +71,7 @@ namespace Dwarf
     // ImGui::PopFont();
 
     // Get delta time, add to array, and plot imgui lines
+    // TODO: Fix static
     static std::vector<float> values = { 0 };
     // static int    values_offset = 0;
     values.push_back((float)mEditorStats->GetDeltaTime());

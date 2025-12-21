@@ -49,6 +49,7 @@ namespace Dwarf
     ImGui::SameLine(0, 15);
     ImGui::PushStyleColor(ImGuiCol_Text, IM_COL32(229, 233, 240, 255));
     ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(5, 0));
+    // TODO: Fix static
     static ImVec2 iconSize = ImVec2(18, 18);
     static float  verticalIconOffset = 2;
 

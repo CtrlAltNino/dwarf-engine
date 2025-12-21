@@ -50,6 +50,7 @@ namespace Dwarf
     {
       ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(4, 8));
 
+      // TODO: Fix static
       static std::array<char, 128> newProjectName;
       // ==================== Name Input ====================
       {
@@ -83,6 +84,7 @@ namespace Dwarf
       ImGui::Separator();
       ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
 
+      // TODO: Fix static
       static std::filesystem::path newProjectPath =
         mProjectCreator->GetDefaultProjectPath();
       // ==================== Project Path Selector ====================
@@ -177,6 +179,7 @@ namespace Dwarf
       ImGui::Separator();
       ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
 
+      // TODO: Fix static
       static int currentTemplateIndex = 0;
       // ==================== Project Template Selector ====================
       {
@@ -305,6 +308,7 @@ namespace Dwarf
       ImGui::Separator();
       ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
 
+      // TODO: Fix static
       static int currentApiIndex = 2;
       // ==================== Graphics API Selection Dropdown
       // ====================

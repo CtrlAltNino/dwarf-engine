@@ -158,6 +158,7 @@ namespace Dwarf
       ImGui::GetCursorScreenPos().x + ImGui::GetContentRegionAvail().x,
       ImGui::GetCursorScreenPos().y + ImGui::GetContentRegionAvail().y);
 
+    // TODO: Fix static
     static bool   isResizing = false;
     static double framebufferUpdatedelay = 0.05;
     isResizing =
@@ -495,45 +496,6 @@ namespace Dwarf
     }
 
     ImGui::PopItemWidth();
-
-    /*if (ImGui::Button("Camera"))
-    {
-      ImGui::OpenPopup("camera_settings");
-    }
-
-    if (ImGui::BeginPopup("camera_settings"))
-    {
-      ImGui::PushItemWidth(175);
-      // Position
-
-      // Rotation
-
-      // Clipping planes
-      static float nearPlane = mCameraSystem->GetNearplane();
-      static float farPlane = mCameraSystem->GetFarplane();
-      if (ImGui::DragFloatRange2("Clipping Planes",
-                                 &nearPlane,
-                                 &farPlane,
-                                 0.25F,
-                                 0.0F,
-                                 +FLT_MAX,
-                                 "Near: %.2f",
-                                 "Far: %.2f",
-                                 ImGuiSliderFlags_AlwaysClamp))
-      {
-        mCameraSystem->SetNearplane(nearPlane);
-        mCameraSystem->SetFarplane(farPlane);
-      }
-
-      // Field of view
-      static float fov = mCameraSystem->GetFov();
-      if (ImGui::DragFloat("FOV", &fov, 0.5f, 45, 110))
-      {
-        mCameraSystem->SetFov(fov);
-      }
-      ImGui::PopItemWidth();
-      ImGui::EndPopup();
-    }*/
   }
 
   void

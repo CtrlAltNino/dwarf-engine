@@ -68,6 +68,7 @@ namespace Dwarf
       std::vector<entt::entity> availableAssets;
       auto                      view =
         assetDatabase->GetRegistry().view<IDComponent, NameComponent, T>();
+      // TODO: Fix static
       static bool interacted = false;
 
       for (auto entity : view)
@@ -129,6 +130,7 @@ namespace Dwarf
       std::vector<entt::entity> availableAssets;
       auto                      view =
         assetDatabase->GetRegistry().view<IDComponent, NameComponent, T>();
+      // TODO: Fix static
       static bool interacted = false;
 
       for (auto entity : view)
@@ -190,6 +192,7 @@ namespace Dwarf
       std::vector<entt::entity> availableAssets;
       auto                      view =
         assetDatabase->GetRegistry().view<IDComponent, NameComponent, T>();
+      // TODO: Fix static
       static bool interacted = false;
 
       for (auto entity : view)

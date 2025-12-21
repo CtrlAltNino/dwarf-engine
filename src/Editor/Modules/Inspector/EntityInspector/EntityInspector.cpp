@@ -160,8 +160,6 @@ namespace Dwarf
   {
     ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
 
-    static int itemCurrent = 0;
-
     ImGui::TextWrapped("Light type");
     // ImGui::SameLine();
     ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
@@ -256,6 +254,7 @@ namespace Dwarf
                          COMPONENT_PANEL_PADDING);
 
     bool wasNull = componentHandle.GetModelAsset() == nullptr;
+    // TODO: Fix static
     static std::optional<UUID> modelAssetId;
 
     if (componentHandle.GetModelAsset() &&
@@ -275,6 +274,7 @@ namespace Dwarf
 
       if (componentHandle.GetModelAsset() != nullptr)
       {
+        // TODO: Fix static
         static UUID memory = componentHandle.GetModelAsset()->GetUID();
 
         if ((componentHandle.GetModelAsset()->GetUID() != memory) || wasNull)
@@ -309,6 +309,7 @@ namespace Dwarf
         ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
                              COMPONENT_PANEL_PADDING);
 
+        // TODO: Fix static
         static std::optional<UUID> materialAssetId;
 
         if (mat.second && mat.second->IsValid())
@@ -347,6 +348,7 @@ namespace Dwarf
     ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
     ImGui::TextWrapped("Clipping Planes");
 
+    // TODO: Fix static
     static float nearPlane = component.GetProperties().NearPlane;
     static float farPlane = component.GetProperties().FarPlane;
     ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);

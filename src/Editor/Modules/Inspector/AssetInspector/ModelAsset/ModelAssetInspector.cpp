@@ -82,6 +82,7 @@ namespace Dwarf
       ImGui::GetCursorScreenPos().x + ImGui::GetContentRegionAvail().x,
       ImGui::GetCursorScreenPos().y + ImGui::GetContentRegionAvail().x);
 
+    // TODO: Fix static
     static bool isRotating = false;
     if (ImGui::IsMouseHoveringRect(
           { ImGui::GetCursorScreenPos().x, ImGui::GetCursorScreenPos().y },

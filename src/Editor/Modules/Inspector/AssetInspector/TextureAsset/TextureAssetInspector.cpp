@@ -28,6 +28,7 @@ namespace Dwarf
   void
   TextureAssetInspector::Render(IAssetReference& asset)
   {
+    // TODO: Fix static
     static std::reference_wrapper<TextureAsset> textureAsset =
       dynamic_cast<TextureAsset&>(asset.GetAsset());
 
@@ -207,6 +208,7 @@ namespace Dwarf
 
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() + 10);
 
+    // TODO: Fix static
     static bool    anisoSupported = mRendererApi->IsAnisoSupported();
     static uint8_t min = 1U;
     static auto    max = mRendererApi->GetMaxAnisoLevel();
