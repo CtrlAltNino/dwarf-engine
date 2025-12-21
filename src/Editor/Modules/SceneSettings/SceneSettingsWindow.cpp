@@ -25,6 +25,9 @@ namespace Dwarf
     , mAssetDatabase(std::move(assetDatabase))
     , mRendererApi(std::move(rendererApi))
   {
+    mLoadedScene->RegisterLoadedSceneObserver(this);
+
+    OnSceneLoad();
   }
 
   SceneSettingsWindow::SceneSettingsWindow(
@@ -42,6 +45,14 @@ namespace Dwarf
     , mAssetDatabase(std::move(assetDatabase))
     , mRendererApi(std::move(rendererApi))
   {
+    mLoadedScene->RegisterLoadedSceneObserver(this);
+
+    OnSceneLoad();
+  }
+
+  SceneSettingsWindow::~SceneSettingsWindow()
+  {
+    mLoadedScene->UnregisterLoadedSceneObserver(this);
   }
 
   void
@@ -67,51 +78,50 @@ namespace Dwarf
     }
     // ImGui::PopStyleVar(1);
 
+    RenderEnvironmentSettings();
+
+    RenderLightingSettings();
+
+    RenderRenderingSettings();
+
+    ImGui::End();
+  }
+
+  void
+  SceneSettingsWindow::RenderEnvironmentSettings()
+  {
     if (ImGui::CollapsingHeader("Environment & Atmosphere"))
     {
       // Skybox material
-      static SkyboxSource skyboxSource = mLoadedScene->GetScene()
-                                           .GetProperties()
-                                           .GetSettings()
-                                           .GetSkyboxSettings()
-                                           .GetType();
       ImGui::SeparatorText("Skybox");
-      if (DwarfUI::ComboEnum("Source##Skybox", skyboxSource))
+      if (DwarfUI::ComboEnum("Source##Skybox",
+                             mState.SkyboxSettings.SkyboxSource))
       {
         mLoadedScene->GetScene()
           .GetProperties()
           .GetSettings()
           .GetSkyboxSettings()
-          .SetType(skyboxSource);
+          .SetType(mState.SkyboxSettings.SkyboxSource);
       }
 
-      switch (skyboxSource)
+      switch (mState.SkyboxSettings.SkyboxSource)
       {
         using enum SkyboxSource;
         case Color:
           {
-            static glm::vec3 skyboxColor = mLoadedScene->GetScene()
-                                             .GetProperties()
-                                             .GetSettings()
-                                             .GetSkyboxSettings()
-                                             .GetColor();
-            if (ImGui::ColorEdit3("Color##Skybox", glm::value_ptr(skyboxColor)))
+            if (ImGui::ColorEdit3(
+                  "Color##Skybox",
+                  glm::value_ptr(mState.SkyboxSettings.SkyboxColor)))
             {
               mLoadedScene->GetScene()
                 .GetProperties()
                 .GetSettings()
                 .GetSkyboxSettings()
-                .SetColor(skyboxColor);
+                .SetColor(mState.SkyboxSettings.SkyboxColor);
             }
 
-            static float exposure = mLoadedScene->GetScene()
-                                      .GetProperties()
-                                      .GetSettings()
-                                      .GetSkyboxSettings()
-                                      .GetExposure();
-
-            if (ImGui::DragFloat("Exposure##SkyboxExposure",
-                                 &exposure,
+            if (ImGui::DragFloat("Exposure##ColorExposure",
+                                 &mState.SkyboxSettings.ColorExposure,
                                  0.25F,
                                  0.0F,
                                  150.0F,
@@ -121,56 +131,41 @@ namespace Dwarf
                 .GetProperties()
                 .GetSettings()
                 .GetSkyboxSettings()
-                .SetExposure(exposure);
+                .SetExposure(mState.SkyboxSettings.ColorExposure);
             }
             break;
-            case Material:
-              {
-                static std::optional<UUID> skyboxMaterialAssetId =
-                  mLoadedScene->GetScene()
-                    .GetProperties()
-                    .GetSettings()
-                    .GetSkyboxSettings()
-                    .GetSkyboxMaterial();
-                if (DwarfUI::AssetInput<MaterialAsset>(mAssetDatabase,
-                                                       skyboxMaterialAssetId,
-                                                       "Material##Skybox"))
-                {
-                  mLoadedScene->GetScene()
-                    .GetProperties()
-                    .GetSettings()
-                    .GetSkyboxSettings()
-                    .SetSkyboxMaterial(skyboxMaterialAssetId);
-                }
-              }
+          }
+        case Material:
+          {
+            if (DwarfUI::AssetInput<MaterialAsset>(
+                  mAssetDatabase,
+                  mState.SkyboxSettings.SkyboxMaterialAssetId,
+                  "Material##Skybox"))
+            {
+              mLoadedScene->GetScene()
+                .GetProperties()
+                .GetSettings()
+                .GetSkyboxSettings()
+                .SetSkyboxMaterial(mState.SkyboxSettings.SkyboxMaterialAssetId);
+            }
           }
           break;
         case HDRI:
           {
-            static std::optional<UUID> hdriTextureAssetId =
-              mLoadedScene->GetScene()
-                .GetProperties()
-                .GetSettings()
-                .GetSkyboxSettings()
-                .GetHdri();
             if (DwarfUI::AssetInput<TextureAsset>(
-                  mAssetDatabase, hdriTextureAssetId, "HDRI##Skybox"))
+                  mAssetDatabase,
+                  mState.SkyboxSettings.HdriTextureAssetId,
+                  "HDRI##Skybox"))
             {
               mLoadedScene->GetScene()
                 .GetProperties()
                 .GetSettings()
                 .GetSkyboxSettings()
-                .SetHdri(hdriTextureAssetId);
+                .SetHdri(mState.SkyboxSettings.HdriTextureAssetId);
             }
 
-            static float exposure = mLoadedScene->GetScene()
-                                      .GetProperties()
-                                      .GetSettings()
-                                      .GetSkyboxSettings()
-                                      .GetExposure();
-
             if (ImGui::DragFloat("Exposure##SkyboxExposure",
-                                 &exposure,
+                                 &mState.SkyboxSettings.HdriExposure,
                                  0.25F,
                                  0.0F,
                                  150.0F,
@@ -180,34 +175,22 @@ namespace Dwarf
                 .GetProperties()
                 .GetSettings()
                 .GetSkyboxSettings()
-                .SetExposure(exposure);
+                .SetExposure(mState.SkyboxSettings.HdriExposure);
             }
 
-            static CubemapResolutionEnum cubemapResolution =
-              mLoadedScene->GetScene()
-                .GetProperties()
-                .GetSettings()
-                .GetSkyboxSettings()
-                .GetCubemapResolution();
-
             if (DwarfUI::ComboEnum<CubemapResolutionEnum>(
-                  "Resolution##CubemapResolution", cubemapResolution))
+                  "Resolution##CubemapResolution",
+                  mState.SkyboxSettings.CubemapResolution))
             {
               mLoadedScene->GetScene()
                 .GetProperties()
                 .GetSettings()
                 .GetSkyboxSettings()
-                .SetCubemapResolution(cubemapResolution);
+                .SetCubemapResolution(mState.SkyboxSettings.CubemapResolution);
             }
 
-            static float cubemapRotation = mLoadedScene->GetScene()
-                                             .GetProperties()
-                                             .GetSettings()
-                                             .GetSkyboxSettings()
-                                             .GetCubemapRotation();
-
             if (ImGui::SliderFloat("Rotation##CubemapRotation",
-                                   &cubemapRotation,
+                                   &mState.SkyboxSettings.CubemapRotation,
                                    0,
                                    360,
                                    "%.2F"))
@@ -216,7 +199,7 @@ namespace Dwarf
                 .GetProperties()
                 .GetSettings()
                 .GetSkyboxSettings()
-                .SetCubemapRotation(cubemapRotation);
+                .SetCubemapRotation(mState.SkyboxSettings.CubemapRotation);
             }
           }
           break;
@@ -225,254 +208,313 @@ namespace Dwarf
       // Ambient light color / intensity
       ImGui::SeparatorText("Ambient Lighting Settings");
       DwarfUI::ComboEnum<AmbientSource>("Source##Ambient",
-                                        mLoadedScene->GetScene()
-                                          .GetProperties()
-                                          .GetSettings()
-                                          .GetAmbientSettings()
-                                          .Type);
+                                        mState.AmbientSettings.Type);
 
-      switch (mLoadedScene->GetScene()
-                .GetProperties()
-                .GetSettings()
-                .GetAmbientSettings()
-                .Type)
+      switch (mState.AmbientSettings.Type)
       {
         using enum AmbientSource;
         case None:
         case Skybox: break;
         case Color:
-          ImGui::ColorEdit3("Color##Ambient",
-                            glm::value_ptr(mLoadedScene->GetScene()
-                                             .GetProperties()
-                                             .GetSettings()
-                                             .GetAmbientSettings()
-                                             .Color));
-          ImGui::DragFloat("Intensity##Ambient",
-                           &mLoadedScene->GetScene()
-                              .GetProperties()
-                              .GetSettings()
-                              .GetAmbientSettings()
-                              .Intensity,
-                           0.2F,
-                           0.0F,
-                           +FLT_MAX,
-                           "%.3f");
+          if (ImGui::ColorEdit3("Color##Ambient",
+                                glm::value_ptr(mState.AmbientSettings.Color)))
+          {
+            mLoadedScene->GetScene()
+              .GetProperties()
+              .GetSettings()
+              .GetAmbientSettings()
+              .SetAmbientLightColor(mState.AmbientSettings.Color);
+          }
+
+          if (ImGui::DragFloat("Intensity##Ambient",
+                               &mState.AmbientSettings.Intensity,
+                               0.2F,
+                               0.0F,
+                               +FLT_MAX,
+                               "%.3f"))
+          {
+            mLoadedScene->GetScene()
+              .GetProperties()
+              .GetSettings()
+              .GetAmbientSettings()
+              .SetAmbientIntensity(mState.AmbientSettings.Intensity);
+          }
           break;
         case Gradient:
-          ImGui::ColorEdit3("Sky##Ambient",
-                            glm::value_ptr(mLoadedScene->GetScene()
-                                             .GetProperties()
-                                             .GetSettings()
-                                             .GetAmbientSettings()
-                                             .Gradient[0]));
-          ImGui::ColorEdit3("Horizon##Ambient",
-                            glm::value_ptr(mLoadedScene->GetScene()
-                                             .GetProperties()
-                                             .GetSettings()
-                                             .GetAmbientSettings()
-                                             .Gradient[1]));
-          ImGui::ColorEdit3("Ground##Ambient",
-                            glm::value_ptr(mLoadedScene->GetScene()
-                                             .GetProperties()
-                                             .GetSettings()
-                                             .GetAmbientSettings()
-                                             .Gradient[2]));
-          ImGui::DragFloat("Intensity##Ambient",
-                           &mLoadedScene->GetScene()
-                              .GetProperties()
-                              .GetSettings()
-                              .GetAmbientSettings()
-                              .Intensity,
-                           0.2F,
-                           0.0F,
-                           10.0F);
+          if (ImGui::ColorEdit3(
+                "Sky##Ambient",
+                glm::value_ptr(mState.AmbientSettings.Gradient[0])))
+          {
+            mLoadedScene->GetScene()
+              .GetProperties()
+              .GetSettings()
+              .GetAmbientSettings()
+              .SetGradient(mState.AmbientSettings.Gradient);
+          }
+          if (ImGui::ColorEdit3(
+                "Horizon##Ambient",
+                glm::value_ptr(mState.AmbientSettings.Gradient[1])))
+          {
+            mLoadedScene->GetScene()
+              .GetProperties()
+              .GetSettings()
+              .GetAmbientSettings()
+              .SetGradient(mState.AmbientSettings.Gradient);
+          }
+          if (ImGui::ColorEdit3(
+                "Ground##Ambient",
+                glm::value_ptr(mState.AmbientSettings.Gradient[2])))
+          {
+            mLoadedScene->GetScene()
+              .GetProperties()
+              .GetSettings()
+              .GetAmbientSettings()
+              .SetGradient(mState.AmbientSettings.Gradient);
+          }
+          if (ImGui::DragFloat("Intensity##Ambient",
+                               &mState.AmbientSettings.Intensity,
+                               0.2F,
+                               0.0F,
+                               +FLT_MAX,
+                               "%.3f"))
+          {
+            mLoadedScene->GetScene()
+              .GetProperties()
+              .GetSettings()
+              .GetAmbientSettings()
+              .SetAmbientIntensity(mState.AmbientSettings.Intensity);
+          }
           break;
         case HDRI:
-          DwarfUI::AssetInput<TextureAsset>(mAssetDatabase,
-                                            mLoadedScene->GetScene()
-                                              .GetProperties()
-                                              .GetSettings()
-                                              .GetAmbientSettings()
-                                              .Cubemap,
-                                            "HDRI##Ambient");
-          ImGui::Checkbox("Use for IBL##Ambient",
-                          &mLoadedScene->GetScene()
-                             .GetProperties()
-                             .GetSettings()
-                             .GetAmbientSettings()
-                             .UseIBL);
+          if (DwarfUI::AssetInput<TextureAsset>(mAssetDatabase,
+                                                mState.AmbientSettings.Cubemap,
+                                                "HDRI##Ambient"))
+          {
+            mLoadedScene->GetScene()
+              .GetProperties()
+              .GetSettings()
+              .GetAmbientSettings()
+              .SetCubeMap(mState.AmbientSettings.Cubemap);
+          }
+
+          if (ImGui::Checkbox("Use for IBL##Ambient",
+                              &mState.AmbientSettings.UseIBL))
+          {
+            mLoadedScene->GetScene()
+              .GetProperties()
+              .GetSettings()
+              .GetAmbientSettings()
+              .SetUseIBL(mState.AmbientSettings.UseIBL);
+          }
           break;
       }
 
       // Fog settings
       ImGui::SeparatorText("Fog Settings");
-      DwarfUI::ComboEnum<FogType>("Fog Type##Fog",
-                                  mLoadedScene->GetScene()
-                                    .GetProperties()
-                                    .GetSettings()
-                                    .GetFogSettings()
-                                    .Type);
-      ImGui::ColorEdit3("Color##Fog",
-                        glm::value_ptr(mLoadedScene->GetScene()
-                                         .GetProperties()
-                                         .GetSettings()
-                                         .GetFogSettings()
-                                         .Color));
+      if (DwarfUI::ComboEnum<FogType>("Fog Type##Fog", mState.FogSettings.Type))
+      {
+        mLoadedScene->GetScene()
+          .GetProperties()
+          .GetSettings()
+          .GetFogSettings()
+          .SetFogType(mState.FogSettings.Type);
+      }
 
-      switch (mLoadedScene->GetScene()
-                .GetProperties()
-                .GetSettings()
-                .GetFogSettings()
-                .Type)
+      if (ImGui::ColorEdit3("Color##Fog",
+                            glm::value_ptr(mState.FogSettings.Color)))
+      {
+        mLoadedScene->GetScene()
+          .GetProperties()
+          .GetSettings()
+          .GetFogSettings()
+          .SetColor(mState.FogSettings.Color);
+      }
+
+      switch (mState.FogSettings.Type)
       {
         using enum FogType;
         case Linear:
-          ImGui::DragFloatRange2("Distance##Fog",
-                                 &mLoadedScene->GetScene()
-                                    .GetProperties()
-                                    .GetSettings()
-                                    .GetFogSettings()
-                                    .Start,
-                                 &mLoadedScene->GetScene()
-                                    .GetProperties()
-                                    .GetSettings()
-                                    .GetFogSettings()
-                                    .End,
-                                 0.25F,
-                                 0.0F,
-                                 +FLT_MAX,
-                                 "Start: %.1f",
-                                 "End: %.1f",
-                                 ImGuiSliderFlags_AlwaysClamp);
+          if (ImGui::DragFloatRange2("Distance##Fog",
+                                     &mState.FogSettings.Start,
+                                     &mState.FogSettings.End,
+                                     0.25F,
+                                     0.0F,
+                                     +FLT_MAX,
+                                     "Start: %.1f",
+                                     "End: %.1f",
+                                     ImGuiSliderFlags_AlwaysClamp))
+          {
+            mLoadedScene->GetScene()
+              .GetProperties()
+              .GetSettings()
+              .GetFogSettings()
+              .SetStart(mState.FogSettings.Start);
+            mLoadedScene->GetScene()
+              .GetProperties()
+              .GetSettings()
+              .GetFogSettings()
+              .SetEnd(mState.FogSettings.End);
+          }
           break;
         case Exponential:
-          ImGui::DragFloat("Density##Fog",
-                           &mLoadedScene->GetScene()
-                              .GetProperties()
-                              .GetSettings()
-                              .GetFogSettings()
-                              .Density,
-                           0.005F,
-                           0.0F,
-                           +FLT_MAX,
-                           "%.3f",
-                           0);
+          if (ImGui::DragFloat("Density##Fog",
+                               &mState.FogSettings.Density,
+                               0.005F,
+                               0.0F,
+                               +FLT_MAX,
+                               "%.3f",
+                               0))
+          {
+            mLoadedScene->GetScene()
+              .GetProperties()
+              .GetSettings()
+              .GetFogSettings()
+              .SetDensity(mState.FogSettings.Density);
+          }
           break;
       }
     }
+  }
 
+  void
+  SceneSettingsWindow::RenderLightingSettings()
+  {
     if (ImGui::CollapsingHeader("Lighting"))
     {
       // Global shadow settings
       ImGui::SeparatorText("Shadow Settings");
 
       // Enable/disable shadow mapping
-      ImGui::Checkbox("Enable##ShadowMapping",
-                      &mLoadedScene->GetScene()
-                         .GetProperties()
-                         .GetSettings()
-                         .GetShadowSettings()
-                         .Enabled);
-
-      // Shadow map resolution
-      DwarfUI::ComboEnum<ShadowMapResolution>(
-        "Shadow Map Resolution##ShadowMapping",
+      if (ImGui::Checkbox("Enable##ShadowMapping",
+                          &mState.ShadowSettings.Enabled))
+      {
         mLoadedScene->GetScene()
           .GetProperties()
           .GetSettings()
           .GetShadowSettings()
-          .Resolution);
+          .SetEnabled(mState.ShadowSettings.Enabled);
+      }
+
+      // Shadow map resolution
+      if (DwarfUI::ComboEnum<ShadowMapResolution>(
+            "Shadow Map Resolution##ShadowMapping",
+            mState.ShadowSettings.Resolution))
+      {
+        mLoadedScene->GetScene()
+          .GetProperties()
+          .GetSettings()
+          .GetShadowSettings()
+          .SetResolution(mState.ShadowSettings.Resolution);
+      }
 
       // Number of cascades (clamped between 1–4 typically)
       static uint8_t minCascades = 1U;
       static uint8_t maxCascades = 4U;
-      ImGui::SliderScalar("Cascade Count##ShadowMapping",
-                          ImGuiDataType_U8,
-                          &mLoadedScene->GetScene()
-                             .GetProperties()
-                             .GetSettings()
-                             .GetShadowSettings()
-                             .CascadeCount,
-                          &minCascades,
-                          &maxCascades);
+      if (ImGui::SliderScalar("Cascade Count##ShadowMapping",
+                              ImGuiDataType_U8,
+                              &mState.ShadowSettings.CascadeCount,
+                              &minCascades,
+                              &maxCascades))
+      {
+        mLoadedScene->GetScene()
+          .GetProperties()
+          .GetSettings()
+          .GetShadowSettings()
+          .SetCascadeCount(mState.ShadowSettings.CascadeCount);
+      }
 
       // Shadow distance (far plane for cascades)
-      ImGui::DragFloat("Shadow Distance##ShadowMapping",
-                       &mLoadedScene->GetScene()
-                          .GetProperties()
-                          .GetSettings()
-                          .GetShadowSettings()
-                          .Distance,
-                       10.0F,
-                       10.0F,
-                       +FLT_MAX,
-                       "%.1f m");
+      if (ImGui::DragFloat("Shadow Distance##ShadowMapping",
+                           &mState.ShadowSettings.Distance,
+                           10.0F,
+                           10.0F,
+                           +FLT_MAX,
+                           "%.1f m"))
+      {
+        mLoadedScene->GetScene()
+          .GetProperties()
+          .GetSettings()
+          .GetShadowSettings()
+          .SetDistance(mState.ShadowSettings.Distance);
+      }
 
       // Split scheme factor (lambda between uniform and log split)
-      ImGui::SliderFloat("Cascade Split Lambda##ShadowMapping",
-                         &mLoadedScene->GetScene()
-                            .GetProperties()
-                            .GetSettings()
-                            .GetShadowSettings()
-                            .SplitLambda,
-                         0.0F,
-                         1.0F);
+      if (ImGui::SliderFloat("Cascade Split Lambda##ShadowMapping",
+                             &mState.ShadowSettings.SplitLambda,
+                             0.0F,
+                             1.0F))
+      {
+        mLoadedScene->GetScene()
+          .GetProperties()
+          .GetSettings()
+          .GetShadowSettings()
+          .SetSplitLambda(mState.ShadowSettings.SplitLambda);
+      }
 
       // Bias
-      ImGui::SliderFloat("Depth Bias##ShadowMapping",
-                         &mLoadedScene->GetScene()
-                            .GetProperties()
-                            .GetSettings()
-                            .GetShadowSettings()
-                            .DepthBias,
-                         0.0F,
-                         0.01F,
-                         "%.5f");
-      ImGui::SliderFloat("Slope Bias##ShadowMapping",
-                         &mLoadedScene->GetScene()
-                            .GetProperties()
-                            .GetSettings()
-                            .GetShadowSettings()
-                            .SlopeScaledBias,
-                         0.0F,
-                         5.0F,
-                         "%.2f");
+      if (ImGui::SliderFloat("Depth Bias##ShadowMapping",
+                             &mState.ShadowSettings.DepthBias,
+                             0.0F,
+                             0.01F,
+                             "%.5f"))
+      {
+        mLoadedScene->GetScene()
+          .GetProperties()
+          .GetSettings()
+          .GetShadowSettings()
+          .SetDepthBias(mState.ShadowSettings.DepthBias);
+      }
+
+      if (ImGui::SliderFloat("Slope Bias##ShadowMapping",
+                             &mState.ShadowSettings.SlopeScaledBias,
+                             0.0F,
+                             5.0F,
+                             "%.2f"))
+      {
+        mLoadedScene->GetScene()
+          .GetProperties()
+          .GetSettings()
+          .GetShadowSettings()
+          .SetSlopeScaledBias(mState.ShadowSettings.SlopeScaledBias);
+      }
 
       // Filtering
       static uint8_t minPfcSamples = 1;
       static uint8_t maxPfcSamples = 64;
-      ImGui::SliderScalar("PCF Samples##ShadowMapping",
-                          ImGuiDataType_U8,
-                          &mLoadedScene->GetScene()
-                             .GetProperties()
-                             .GetSettings()
-                             .GetShadowSettings()
-                             .PcfSamples,
-                          &minPfcSamples,
-                          &maxPfcSamples);
+      if (ImGui::SliderScalar("PCF Samples##ShadowMapping",
+                              ImGuiDataType_U8,
+                              &mState.ShadowSettings.PcfSamples,
+                              &minPfcSamples,
+                              &maxPfcSamples))
+      {
+        mLoadedScene->GetScene()
+          .GetProperties()
+          .GetSettings()
+          .GetShadowSettings()
+          .SetPcfSamples(mState.ShadowSettings.PcfSamples);
+      }
 
       // Visual debug toggle
       // ImGui::Checkbox("Visualize Cascades", &settings.visualizeCascades);
     }
+  }
 
+  void
+  SceneSettingsWindow::RenderRenderingSettings()
+  {
     if (ImGui::CollapsingHeader("Rendering & Post-Processing"))
     {
       ImGui::SeparatorText("Anti-Aliasing");
       // Anti-Aliasing Method
-      static AntiAliasingMethod antiAliasingMethod =
-        mLoadedScene->GetScene()
-          .GetProperties()
-          .GetSettings()
-          .GetAntiAliasingSettings()
-          .GetAntiAliasingMethod();
       if (DwarfUI::ComboEnum<AntiAliasingMethod>(
-            "Anti-Aliasing Method##AntiAliasing", antiAliasingMethod))
+            "Anti-Aliasing Method##AntiAliasing",
+            mState.AntiAliasingSettings.Type))
       {
         mLoadedScene->GetScene()
           .GetProperties()
           .GetSettings()
           .GetAntiAliasingSettings()
-          .SetAntiAliasingMethod(antiAliasingMethod);
+          .SetAntiAliasingMethod(mState.AntiAliasingSettings.Type);
       }
 
       switch (mLoadedScene->GetScene()
@@ -488,16 +530,11 @@ namespace Dwarf
         case MSAA:
           static uint8_t min = 1U;
           static uint8_t max = mRendererApi->GetMaxSamples();
-          static uint8_t samples = mLoadedScene->GetScene()
-                                     .GetProperties()
-                                     .GetSettings()
-                                     .GetAntiAliasingSettings()
-                                     .GetSamples();
-          std::string format = std::format("{}/{}", "%d", max);
+          std::string    format = std::format("{}/{}", "%d", max);
 
           if (ImGui::SliderScalar("MSAA Samples##AntiAliasing",
                                   ImGuiDataType_U8,
-                                  &samples,
+                                  &mState.AntiAliasingSettings.MsaaSamples,
                                   &min,
                                   &max,
                                   format.c_str(),
@@ -507,36 +544,30 @@ namespace Dwarf
               .GetProperties()
               .GetSettings()
               .GetAntiAliasingSettings()
-              .SetSamples(samples);
+              .SetSamples(mState.AntiAliasingSettings.MsaaSamples);
           }
           break;
       }
 
       // Tonemapping
       ImGui::SeparatorText("Tonemapping");
-      static TonemapType type =
-        mLoadedScene->GetScene().GetProperties().GetSettings().GetToneMapType();
-      if (DwarfUI::ComboEnum<TonemapType>("Tonemapping##Tonemapping", type))
+      if (DwarfUI::ComboEnum<TonemapType>("Tonemapping##Tonemapping",
+                                          mState.TonemapType))
       {
         mLoadedScene->GetScene().GetProperties().GetSettings().SetToneMapType(
-          type);
+          mState.TonemapType);
       }
 
       // Global exposure
       ImGui::SeparatorText("Global Exposure##Exposure");
-      static ExposureType exposureType = mLoadedScene->GetScene()
-                                           .GetProperties()
-                                           .GetSettings()
-                                           .GetExposureSettings()
-                                           .GetExposureType();
       if (DwarfUI::ComboEnum<ExposureType>("Exposure Type##Exposure",
-                                           exposureType))
+                                           mState.ExposureSettings.Type))
       {
         mLoadedScene->GetScene()
           .GetProperties()
           .GetSettings()
           .GetExposureSettings()
-          .SetExposureType(exposureType);
+          .SetExposureType(mState.ExposureSettings.Type);
       }
 
       switch (mLoadedScene->GetScene()
@@ -547,13 +578,8 @@ namespace Dwarf
       {
         using enum ExposureType;
         case Manual:
-          static float exposureValue = mLoadedScene->GetScene()
-                                         .GetProperties()
-                                         .GetSettings()
-                                         .GetExposureSettings()
-                                         .GetExposure();
           if (ImGui::DragFloat("Exposure##Exposure",
-                               &exposureValue,
+                               &mState.ExposureSettings.Exposure,
                                0.0005F,
                                0.0F,
                                20.0F,
@@ -563,7 +589,7 @@ namespace Dwarf
               .GetProperties()
               .GetSettings()
               .GetExposureSettings()
-              .SetExposure(exposureValue);
+              .SetExposure(mState.ExposureSettings.Exposure);
           }
           break;
         case Automatic:
@@ -575,64 +601,55 @@ namespace Dwarf
       ImGui::SeparatorText("Bloom");
 
       // Toggle bloom enabled status
-      static bool bloomEnabled = mLoadedScene->GetScene()
-                                   .GetProperties()
-                                   .GetSettings()
-                                   .GetBloomSettings()
-                                   .GetEnabled();
-      if (ImGui::Checkbox("Enable##Bloom", &bloomEnabled))
+      if (ImGui::Checkbox("Enable##Bloom", &mState.BloomSettings.Enabled))
       {
         mLoadedScene->GetScene()
           .GetProperties()
           .GetSettings()
           .GetBloomSettings()
-          .SetEnabled(bloomEnabled);
+          .SetEnabled(mState.BloomSettings.Enabled);
       }
 
       // Bloom Threshold
-      static float bloomThreshold = mLoadedScene->GetScene()
-                                      .GetProperties()
-                                      .GetSettings()
-                                      .GetBloomSettings()
-                                      .GetThreshold();
-      if (ImGui::DragFloat(
-            "Threshold##Bloom", &bloomThreshold, 0.01F, 0.0F, +FLT_MAX, "%.2f"))
+      if (ImGui::DragFloat("Threshold##Bloom",
+                           &mState.BloomSettings.Threshold,
+                           0.01F,
+                           0.0F,
+                           +FLT_MAX,
+                           "%.2f"))
       {
         mLoadedScene->GetScene()
           .GetProperties()
           .GetSettings()
           .GetBloomSettings()
-          .SetThreshold(bloomThreshold);
+          .SetThreshold(mState.BloomSettings.Threshold);
       }
 
-      static float bloomIntensity = mLoadedScene->GetScene()
-                                      .GetProperties()
-                                      .GetSettings()
-                                      .GetBloomSettings()
-                                      .GetIntensity();
-      if (ImGui::DragFloat(
-            "Intensity##Bloom", &bloomIntensity, 0.01F, 0.0F, +FLT_MAX, "%.2f"))
+      if (ImGui::DragFloat("Intensity##Bloom",
+                           &mState.BloomSettings.Intensity,
+                           0.01F,
+                           0.0F,
+                           +FLT_MAX,
+                           "%.2f"))
       {
         mLoadedScene->GetScene()
           .GetProperties()
           .GetSettings()
           .GetBloomSettings()
-          .SetIntensity(bloomIntensity);
+          .SetIntensity(mState.BloomSettings.Intensity);
       }
-
-      static float bloomRadius = mLoadedScene->GetScene()
-                                   .GetProperties()
-                                   .GetSettings()
-                                   .GetBloomSettings()
-                                   .GetRadius();
-      if (ImGui::DragFloat(
-            "Radius##Bloom", &bloomRadius, 0.01F, 0.0F, +FLT_MAX, "%.2f"))
+      if (ImGui::DragFloat("Radius##Bloom",
+                           &mState.BloomSettings.Radius,
+                           0.01F,
+                           0.0F,
+                           +FLT_MAX,
+                           "%.2f"))
       {
         mLoadedScene->GetScene()
           .GetProperties()
           .GetSettings()
           .GetBloomSettings()
-          .SetRadius(bloomRadius);
+          .SetRadius(mState.BloomSettings.Radius);
       }
 
       // Depth of Field Settings
@@ -647,8 +664,197 @@ namespace Dwarf
       // Screen Space Reflections Settings
       ImGui::SeparatorText("Screen Space Reflections");*/
     }
+  }
 
-    ImGui::End();
+  void
+  SceneSettingsWindow::OnSceneLoad()
+  {
+    // Copy Scene Settings into state
+    if (mLoadedScene->HasLoadedScene())
+    {
+      mState.SkyboxSettings.SkyboxSource = mLoadedScene->GetScene()
+                                             .GetProperties()
+                                             .GetSettings()
+                                             .GetSkyboxSettings()
+                                             .GetType();
+      mState.SkyboxSettings.SkyboxColor = mLoadedScene->GetScene()
+                                            .GetProperties()
+                                            .GetSettings()
+                                            .GetSkyboxSettings()
+                                            .GetColor();
+      mState.SkyboxSettings.ColorExposure = mLoadedScene->GetScene()
+                                              .GetProperties()
+                                              .GetSettings()
+                                              .GetSkyboxSettings()
+                                              .GetExposure();
+      mState.SkyboxSettings.SkyboxMaterialAssetId = mLoadedScene->GetScene()
+                                                      .GetProperties()
+                                                      .GetSettings()
+                                                      .GetSkyboxSettings()
+                                                      .GetSkyboxMaterial();
+      mState.SkyboxSettings.HdriTextureAssetId = mLoadedScene->GetScene()
+                                                   .GetProperties()
+                                                   .GetSettings()
+                                                   .GetSkyboxSettings()
+                                                   .GetHdri();
+      mState.SkyboxSettings.HdriExposure = mLoadedScene->GetScene()
+                                             .GetProperties()
+                                             .GetSettings()
+                                             .GetSkyboxSettings()
+                                             .GetExposure();
+      mState.SkyboxSettings.CubemapResolution = mLoadedScene->GetScene()
+                                                  .GetProperties()
+                                                  .GetSettings()
+                                                  .GetSkyboxSettings()
+                                                  .GetCubemapResolution();
+      mState.SkyboxSettings.CubemapRotation = mLoadedScene->GetScene()
+                                                .GetProperties()
+                                                .GetSettings()
+                                                .GetSkyboxSettings()
+                                                .GetCubemapRotation();
+      mState.AmbientSettings.Type = mLoadedScene->GetScene()
+                                      .GetProperties()
+                                      .GetSettings()
+                                      .GetAmbientSettings()
+                                      .GetAmbientSource();
+      mState.AmbientSettings.Color = mLoadedScene->GetScene()
+                                       .GetProperties()
+                                       .GetSettings()
+                                       .GetAmbientSettings()
+                                       .GetAmbientLightColor();
+      mState.AmbientSettings.Intensity = mLoadedScene->GetScene()
+                                           .GetProperties()
+                                           .GetSettings()
+                                           .GetAmbientSettings()
+                                           .GetAmbientIntensity();
+      mState.AmbientSettings.Gradient = mLoadedScene->GetScene()
+                                          .GetProperties()
+                                          .GetSettings()
+                                          .GetAmbientSettings()
+                                          .GetGradient();
+      mState.AmbientSettings.Cubemap = mLoadedScene->GetScene()
+                                         .GetProperties()
+                                         .GetSettings()
+                                         .GetAmbientSettings()
+                                         .GetCubeMap();
+      mState.AmbientSettings.UseIBL = mLoadedScene->GetScene()
+                                        .GetProperties()
+                                        .GetSettings()
+                                        .GetAmbientSettings()
+                                        .GetUseIBL();
+      mState.FogSettings.Type = mLoadedScene->GetScene()
+                                  .GetProperties()
+                                  .GetSettings()
+                                  .GetFogSettings()
+                                  .GetFogType();
+      mState.FogSettings.Color = mLoadedScene->GetScene()
+                                   .GetProperties()
+                                   .GetSettings()
+                                   .GetFogSettings()
+                                   .GetColor();
+      mState.FogSettings.Start = mLoadedScene->GetScene()
+                                   .GetProperties()
+                                   .GetSettings()
+                                   .GetFogSettings()
+                                   .GetStart();
+      mState.FogSettings.End = mLoadedScene->GetScene()
+                                 .GetProperties()
+                                 .GetSettings()
+                                 .GetFogSettings()
+                                 .GetEnd();
+      mState.FogSettings.Density = mLoadedScene->GetScene()
+                                     .GetProperties()
+                                     .GetSettings()
+                                     .GetFogSettings()
+                                     .GetDensity();
+      mState.ShadowSettings.Enabled = mLoadedScene->GetScene()
+                                        .GetProperties()
+                                        .GetSettings()
+                                        .GetShadowSettings()
+                                        .GetEnabled();
+      mState.ShadowSettings.Resolution = mLoadedScene->GetScene()
+                                           .GetProperties()
+                                           .GetSettings()
+                                           .GetShadowSettings()
+                                           .GetResolution();
+      mState.ShadowSettings.CascadeCount = mLoadedScene->GetScene()
+                                             .GetProperties()
+                                             .GetSettings()
+                                             .GetShadowSettings()
+                                             .GetCascadeCount();
+      mState.ShadowSettings.Distance = mLoadedScene->GetScene()
+                                         .GetProperties()
+                                         .GetSettings()
+                                         .GetShadowSettings()
+                                         .GetDistance();
+      mState.ShadowSettings.SplitLambda = mLoadedScene->GetScene()
+                                            .GetProperties()
+                                            .GetSettings()
+                                            .GetShadowSettings()
+                                            .GetSplitLambda();
+      mState.ShadowSettings.DepthBias = mLoadedScene->GetScene()
+                                          .GetProperties()
+                                          .GetSettings()
+                                          .GetShadowSettings()
+                                          .GetDepthBias();
+      mState.ShadowSettings.SlopeScaledBias = mLoadedScene->GetScene()
+                                                .GetProperties()
+                                                .GetSettings()
+                                                .GetShadowSettings()
+                                                .GetSlopeScaledBias();
+      mState.ShadowSettings.PcfSamples = mLoadedScene->GetScene()
+                                           .GetProperties()
+                                           .GetSettings()
+                                           .GetShadowSettings()
+                                           .GetPcfSamples();
+      mState.AntiAliasingSettings.Type = mLoadedScene->GetScene()
+                                           .GetProperties()
+                                           .GetSettings()
+                                           .GetAntiAliasingSettings()
+                                           .GetAntiAliasingMethod();
+      mState.AntiAliasingSettings.MsaaSamples = mLoadedScene->GetScene()
+                                                  .GetProperties()
+                                                  .GetSettings()
+                                                  .GetAntiAliasingSettings()
+                                                  .GetSamples();
+      mState.TonemapType =
+        mLoadedScene->GetScene().GetProperties().GetSettings().GetToneMapType();
+      mState.ExposureSettings.Type = mLoadedScene->GetScene()
+                                       .GetProperties()
+                                       .GetSettings()
+                                       .GetExposureSettings()
+                                       .GetExposureType();
+      mState.ExposureSettings.Exposure = mLoadedScene->GetScene()
+                                           .GetProperties()
+                                           .GetSettings()
+                                           .GetExposureSettings()
+                                           .GetExposure();
+      mState.BloomSettings.Enabled = mLoadedScene->GetScene()
+                                       .GetProperties()
+                                       .GetSettings()
+                                       .GetBloomSettings()
+                                       .GetEnabled();
+      mState.BloomSettings.Threshold = mLoadedScene->GetScene()
+                                         .GetProperties()
+                                         .GetSettings()
+                                         .GetBloomSettings()
+                                         .GetThreshold();
+      mState.BloomSettings.Intensity = mLoadedScene->GetScene()
+                                         .GetProperties()
+                                         .GetSettings()
+                                         .GetBloomSettings()
+                                         .GetIntensity();
+      mState.BloomSettings.Radius = mLoadedScene->GetScene()
+                                      .GetProperties()
+                                      .GetSettings()
+                                      .GetBloomSettings()
+                                      .GetRadius();
+    }
+  }
+
+  void
+  SceneSettingsWindow::OnSceneUnload()
+  {
   }
 
   void

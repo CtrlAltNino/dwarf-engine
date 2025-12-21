@@ -476,6 +476,21 @@ namespace Dwarf
   }
 
   void
+  RenderingPipeline::OnFogSettingsChanged()
+  {
+  }
+
+  void
+  RenderingPipeline::OnShadowSettingsChanged()
+  {
+  }
+
+  void
+  RenderingPipeline::OnAmbientSettingsChanged()
+  {
+  }
+
+  void
   RenderingPipeline::OnSceneLoad()
   {
     if (mLoadedScene->HasLoadedScene())

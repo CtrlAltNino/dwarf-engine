@@ -144,6 +144,21 @@ namespace Dwarf
     {
     }
 
+    void
+    OnFogSettingsChanged() override
+    {
+    }
+
+    void
+    OnShadowSettingsChanged() override
+    {
+    }
+
+    void
+    OnAmbientSettingsChanged() override
+    {
+    }
+
     /**
      * @brief Observer callback for when a scene has been loaded
      *

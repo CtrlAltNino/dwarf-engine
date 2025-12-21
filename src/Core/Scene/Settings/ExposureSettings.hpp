@@ -9,9 +9,9 @@ namespace Dwarf
   struct ExposureSettings : public ISerializable
   {
   private:
+    std::reference_wrapper<std::vector<ISceneSettingsObserver*>> Observers;
     ExposureType Type = ExposureType::Manual;
     float        Exposure = 1.5F;
-    std::reference_wrapper<std::vector<ISceneSettingsObserver*>> Observers;
 
   public:
     /// @brief Constructor.

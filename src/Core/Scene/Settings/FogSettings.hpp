@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Core/Rendering/FogTypes.hpp"
+#include "Core/Scene/Settings/ISceneSettingsObserver.hpp"
 #include "Utilities/ISerializable.hpp"
 #include "Utilities/JsonHelper/JsonHelper.hpp"
 
@@ -9,6 +10,8 @@ namespace Dwarf
   /// @brief Struct that represents the fog settings of a scene.
   struct FogSettings : public ISerializable
   {
+  private:
+    std::reference_wrapper<std::vector<ISceneSettingsObserver*>> Observers;
     /// @brief Type of the fog.
     FogType Type = FogType::Linear;
     /// @brief Color of the fog.
@@ -19,12 +22,12 @@ namespace Dwarf
     float End = 50.0F;
     float Density = 3.0F;
 
-    /// @brief Constructor.
-    FogSettings() = default;
-
+  public:
     /// @brief Constructor.
     /// @param serializedSettings The serialized settings.
-    FogSettings(nlohmann::json serializedSettings)
+    FogSettings(std::vector<ISceneSettingsObserver*>& observers,
+                nlohmann::json                        serializedSettings = "")
+      : Observers(observers)
     {
       if (serializedSettings.contains("Color"))
       {
@@ -54,6 +57,80 @@ namespace Dwarf
       json["End"] = End;
       json["Type"] = static_cast<int>(Type);
       return json;
+    }
+
+    void
+    NotifyObservers()
+    {
+      for (auto* observer : Observers.get())
+      {
+        observer->OnFogSettingsChanged();
+      }
+    }
+
+    [[nodiscard]] auto
+    GetFogType() const -> FogType
+    {
+      return Type;
+    }
+
+    void
+    SetFogType(FogType type)
+    {
+      Type = type;
+      NotifyObservers();
+    }
+
+    [[nodiscard]] auto
+    GetColor() const -> glm::vec3
+    {
+      return Color;
+    }
+
+    void
+    SetColor(glm::vec3 color)
+    {
+      Color = color;
+      NotifyObservers();
+    }
+
+    [[nodiscard]] auto
+    GetStart() const -> float
+    {
+      return Start;
+    }
+
+    void
+    SetStart(float start)
+    {
+      Start = start;
+      NotifyObservers();
+    }
+
+    [[nodiscard]] auto
+    GetEnd() const -> float
+    {
+      return End;
+    }
+
+    void
+    SetEnd(float end)
+    {
+      End = end;
+      NotifyObservers();
+    }
+
+    [[nodiscard]] auto
+    GetDensity() const -> float
+    {
+      return Density;
+    }
+
+    void
+    SetDensity(float density)
+    {
+      Density = density;
+      NotifyObservers();
     }
   };
 }

@@ -32,10 +32,7 @@ namespace Dwarf
     std::shared_ptr<IMesh> cubeMesh = meshFactory->CreateSkyboxCube();
     mSkyboxCubeMesh = meshBufferFactory->Create(cubeMesh);
 
-    if (mLoadedScene->HasLoadedScene())
-    {
-      OnSceneLoad();
-    }
+    OnSceneLoad();
   }
 
   SkyboxRenderer::~SkyboxRenderer()

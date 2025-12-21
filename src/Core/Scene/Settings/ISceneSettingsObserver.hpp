@@ -21,5 +21,14 @@ namespace Dwarf
 
     virtual void
     OnSkyboxSettingsChanged() = 0;
+
+    virtual void
+    OnAmbientSettingsChanged() = 0;
+
+    virtual void
+    OnFogSettingsChanged() = 0;
+
+    virtual void
+    OnShadowSettingsChanged() = 0;
   };
 }

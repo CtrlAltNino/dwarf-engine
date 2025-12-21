@@ -9,6 +9,9 @@ namespace Dwarf
     , mAntiAliasingSettings(mObservers)
     , mBloomSettings(mObservers)
     , mSkyboxSettings(mObservers)
+    , mAmbientLightSettings(mObservers)
+    , mShadowSettings(mObservers)
+    , mFogSettings(mObservers)
   {
   }
 
@@ -29,23 +32,19 @@ namespace Dwarf
                       serializedSettings.contains("SkyboxSettings")
                         ? serializedSettings["SkyboxSettings"]
                         : nlohmann::json{})
+    , mAmbientLightSettings(mObservers,
+                            serializedSettings.contains("AmbientLightSettings")
+                              ? serializedSettings["AmbientLightSettings"]
+                              : nlohmann::json{})
+    , mShadowSettings(mObservers,
+                      serializedSettings.contains("ShadowSettings")
+                        ? serializedSettings["ShadowSettings"]
+                        : nlohmann::json{})
+    , mFogSettings(mObservers,
+                   serializedSettings.contains("FogSettings")
+                     ? serializedSettings["FogSettings"]
+                     : nlohmann::json{})
   {
-    if (serializedSettings.contains("AmbientLightSettings"))
-    {
-      mAmbientLightSettings =
-        AmbientSettings(serializedSettings["AmbientLightSettings"]);
-    }
-
-    if (serializedSettings.contains("FogSettings"))
-    {
-      mFogSettings = FogSettings(serializedSettings["FogSettings"]);
-    }
-
-    if (serializedSettings.contains("ShadowSettings"))
-    {
-      mShadowSettings = ShadowSettings(serializedSettings["ShadowSettings"]);
-    }
-
     if (serializedSettings.contains("TonemapType"))
     {
       mTonemapType = serializedSettings["TonemapType"].get<TonemapType>();
