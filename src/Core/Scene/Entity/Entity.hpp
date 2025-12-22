@@ -266,7 +266,7 @@ namespace Dwarf
 
       for (const auto& child : GetChildren())
       {
-        serializedEntity["children"][childCount] =
+        serializedEntity["Children"][childCount] =
           Entity(child, mRegistry).Serialize();
         childCount++;
       }

@@ -28,6 +28,7 @@
 #include "Core/Rendering/Framebuffer/FramebufferFactory.hpp"
 #include "Core/Rendering/GraphicsContext/GraphicsContextFactory.hpp"
 #include "Core/Rendering/GraphicsContext/IGraphicsContextFactory.hpp"
+#include "Core/Rendering/LightSystem/LightSystemFactory.hpp"
 #include "Core/Rendering/Material/IO/MaterialIO.hpp"
 #include "Core/Rendering/Material/MaterialFactory.hpp"
 #include "Core/Rendering/Material/ShaderAssetSourceContainer/ShaderAssetSourceContainerFactory.hpp"
@@ -45,6 +46,7 @@
 #include "Core/Rendering/Shader/ShaderParameterCollection/IShaderParameterCollectionFactory.hpp"
 #include "Core/Rendering/Shader/ShaderParameterCollection/ShaderParameterCollectionFactory.hpp"
 #include "Core/Rendering/Shader/ShaderRegistry/ShaderRegistry.hpp"
+#include "Core/Rendering/ShadowMapper/ShadowMapperFactory.hpp"
 #include "Core/Rendering/SkyboxRenderer/SkyboxRenderer.hpp"
 #include "Core/Rendering/Texture/ITextureFactory.hpp"
 #include "Core/Rendering/Texture/TextureFactory.hpp"
@@ -109,6 +111,7 @@
 #include "Window/IWindow.hpp"
 #include "Window/SDL3Window.hpp"
 
+
 namespace Dwarf
 {
   auto
@@ -172,6 +175,10 @@ namespace Dwarf
           boost::di::bind<ISceneFactory>.to<SceneFactory>().in(
           boost::di::extension::shared),
           boost::di::bind<ILoadedScene>.to<LoadedScene>().in(
+          boost::di::extension::shared),
+          boost::di::bind<ILightSystemFactory>.to<LightSystemFactory>().in(
+          boost::di::extension::shared),
+          boost::di::bind<IShadowMapperFactory>.to<ShadowMapperFactory>().in(
           boost::di::extension::shared),
           boost::di::bind<IEditorSelection>.to<EditorSelection>().in(
           boost::di::extension::shared),

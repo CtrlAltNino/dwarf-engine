@@ -28,15 +28,50 @@ namespace Dwarf
     /// @brief The angle at which the spot light shines.
     float OpeningAngle = 33.0F;
 
+    bool CastsShadows = true;
+
+    int ShadowIndex = 0;
+
+    bool Enabled = true;
+
     LightComponent() = default;
 
     LightComponent(const nlohmann::json& json)
-      : Type(json["Type"].get<LightType>())
-      , Color(json["LightColor"].get<glm::vec3>())
-      , Attenuation(json["Attenuation"].get<float>())
-      , Radius(json["Radius"].get<float>())
-      , OpeningAngle(json["OpeningAngle"].get<float>())
     {
+      if (json.contains("Type"))
+      {
+        Type = json["Type"].get<LightType>();
+      }
+
+      if (json.contains("LightColor"))
+      {
+        Color = json["LightColor"].get<glm::vec3>();
+      }
+
+      if (json.contains("Attenuation"))
+      {
+        Attenuation = json["Attenuation"].get<float>();
+      }
+
+      if (json.contains("Radius"))
+      {
+        Radius = json["Radius"].get<float>();
+      }
+
+      if (json.contains("OpeningAngle"))
+      {
+        OpeningAngle = json["OpeningAngle"].get<float>();
+      }
+
+      if (json.contains("CastsShadows"))
+      {
+        CastsShadows = json["CastsShadows"].get<bool>();
+      }
+
+      if (json.contains("Enabled"))
+      {
+        Enabled = json["Enabled"].get<bool>();
+      }
     }
 
     auto
@@ -47,11 +82,15 @@ namespace Dwarf
 
       serializedLightComponent["LightColor"] = Color;
 
-      serializedLightComponent["Attenuation"] = (int)Attenuation;
+      serializedLightComponent["Attenuation"] = Attenuation;
 
-      serializedLightComponent["Radius"] = (int)Radius;
+      serializedLightComponent["Radius"] = Radius;
 
-      serializedLightComponent["OpeningAngle"] = (int)OpeningAngle;
+      serializedLightComponent["OpeningAngle"] = OpeningAngle;
+
+      serializedLightComponent["CastsShadows"] = CastsShadows;
+
+      serializedLightComponent["Enabled"] = Enabled;
 
       return serializedLightComponent;
     }

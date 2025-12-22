@@ -21,6 +21,23 @@ namespace Dwarf
     /// @brief Returns the type of light this component represents.
     /// @return The light type.
     [[nodiscard]] auto
+    GetEnabled() const -> bool
+    {
+      return mRegistry->get<LightComponent>(mEntity).Enabled;
+    }
+
+    void
+    SetEnabled(bool enabled)
+    {
+      mRegistry->patch<LightComponent>(
+        mEntity,
+        [enabled](LightComponent& component) mutable
+        { component.Enabled = enabled; });
+    }
+
+    /// @brief Returns the type of light this component represents.
+    /// @return The light type.
+    [[nodiscard]] auto
     GetType() const -> LightType
     {
       return mRegistry->get<LightComponent>(mEntity).Type;

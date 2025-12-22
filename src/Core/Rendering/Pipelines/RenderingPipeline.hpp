@@ -7,6 +7,7 @@
 #include "Core/Rendering/DrawCall/DrawCallWorker/IDrawCallWorkerFactory.hpp"
 #include "Core/Rendering/Framebuffer/IFramebuffer.hpp"
 #include "Core/Rendering/Framebuffer/IFramebufferFactory.hpp"
+#include "Core/Rendering/LightSystem/ILightSystemFactory.hpp"
 #include "Core/Rendering/Material/IMaterialFactory.hpp"
 #include "Core/Rendering/Mesh/IMeshFactory.hpp"
 #include "Core/Rendering/MeshBuffer/IMeshBufferFactory.hpp"
@@ -14,6 +15,7 @@
 #include "Core/Rendering/Pipelines/IRenderingPipeline.hpp"
 #include "Core/Rendering/RendererApi/IRendererApi.hpp"
 #include "Core/Rendering/Shader/ShaderRegistry/IShaderRegistry.hpp"
+#include "Core/Rendering/ShadowMapper/IShadowMapperFactory.hpp"
 #include "Core/Rendering/SkyboxRenderer/ISkyboxRenderer.hpp"
 #include "Core/Scene/Settings/ISceneSettingsObserver.hpp"
 #include "Editor/LoadedScene/ILoadedScene.hpp"
@@ -51,6 +53,9 @@ namespace Dwarf
     std::unique_ptr<IDrawCallList>   mDrawCallList;
     std::unique_ptr<IDrawCallWorker> mDrawCallWorker;
 
+    std::unique_ptr<IShadowMapper> mShadowMapper;
+    std::unique_ptr<ILightSystem>  mLightSystem;
+
     void
     SetupRenderFramebuffer(
       const std::shared_ptr<IFramebufferFactory>& framebufferFactory);
@@ -85,7 +90,9 @@ namespace Dwarf
       const std::shared_ptr<IMaterialFactory>&    materialFactory,
       const std::shared_ptr<IDrawCallListFactory>&   drawCallListFactory,
       const std::shared_ptr<IDrawCallWorkerFactory>& drawCallWorkerFactory,
-      const std::shared_ptr<IPingPongBufferFactory>& pingPongBufferFactory);
+      const std::shared_ptr<IPingPongBufferFactory>& pingPongBufferFactory,
+      const std::shared_ptr<IShadowMapperFactory>&   shadowMapperFactory,
+      const std::shared_ptr<ILightSystemFactory>&    lightSystemFactory);
     ~RenderingPipeline() override;
 
     /**

@@ -25,7 +25,9 @@ namespace Dwarf
     const std::shared_ptr<IMaterialFactory>&     materialFactory,
     const std::shared_ptr<IDrawCallListFactory>& drawCallListFactory,
     const std::shared_ptr<IDrawCallWorkerFactory>& drawCallWorkerFactory,
-    const std::shared_ptr<IPingPongBufferFactory>& pingPongBufferFactory)
+    const std::shared_ptr<IPingPongBufferFactory>& pingPongBufferFactory,
+    const std::shared_ptr<IShadowMapperFactory>&   shadowMapperFactory,
+    const std::shared_ptr<ILightSystemFactory>&    lightSystemFactory)
     : mRendererApi(std::move(rendererApi))
     , mLoadedScene(std::move(loadedScene))
     , mShaderRegistry(std::move(shaderRegistry))
@@ -35,6 +37,8 @@ namespace Dwarf
     , mSkyboxRenderer(std::move(skyboxRenderer))
     , mDrawCallList(drawCallListFactory->Create())
     , mDrawCallWorker(drawCallWorkerFactory->Create(mDrawCallList))
+    , mShadowMapper(shadowMapperFactory->Create())
+    , mLightSystem(lightSystemFactory->Create())
   {
     mLoadedScene->RegisterLoadedSceneObserver(this);
 
@@ -141,6 +145,15 @@ namespace Dwarf
     mSkyboxRenderer->SetProjectionMatrix(projectionMatrix);
     mSkyboxRenderer->Render();
 
+    // Update shadow data
+    mShadowMapper->Update();
+    mLightSystem->Update();
+
+    // TODO: Set shadow data
+
+    // TODO: Set light data
+    mLightSystem->Bind();
+
     // Render draw calls
     {
       std::lock_guard<std::mutex> lock(mDrawCallList->GetMutex());
@@ -148,6 +161,19 @@ namespace Dwarf
       {
         if (drawCall->GetMeshBuffer() != nullptr)
         {
+          drawCall->GetMaterialAsset()
+            .GetMaterial()
+            .GetShaderParameters()
+            ->SetParameter(
+              "u_DirectionalLightCount",
+              (int)mLightSystem->GetLightData().DirectionalLights.size());
+          drawCall->GetMaterialAsset()
+            .GetMaterial()
+            .GetShaderParameters()
+            ->SetParameter(
+              "u_PointLightCount",
+              (int)mLightSystem->GetLightData().PointLights.size());
+
           mRendererApi->RenderIndexed(
             drawCall->GetMeshBuffer(),
             drawCall->GetMaterialAsset().GetMaterial(),
