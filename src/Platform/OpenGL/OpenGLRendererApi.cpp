@@ -116,6 +116,7 @@ namespace Dwarf
     mStateTracker->SetCullMode(!material.GetMaterialProperties().IsDoubleSided);
     mStateTracker->SetCullFace(GL_BACK);
 
+    mStateTracker->SetDepthTest(true);
     mStateTracker->SetDepthWrite(
       !material.GetMaterialProperties().IsTransparent);
     mStateTracker->SetDepthFunction(GL_LESS);
@@ -448,6 +449,7 @@ namespace Dwarf
                                 ? dynamic_cast<OpenGLShader&>(shader)
                                 : dynamic_cast<OpenGLShader&>(*mErrorShader);
 
+    mStateTracker->SetDepthTest(false);
     if (srgb)
     {
       glEnable(GL_FRAMEBUFFER_SRGB);
