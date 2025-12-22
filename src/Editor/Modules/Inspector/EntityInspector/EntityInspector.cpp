@@ -10,6 +10,7 @@
 #include "EntityInspector.hpp"
 #include "UI/DwarfUI.hpp"
 #include <glm/gtc/type_ptr.hpp>
+#include <imgui.h>
 #include <optional>
 
 #define COMPONENT_PANEL_PADDING (8.0f)
@@ -160,6 +161,19 @@ namespace Dwarf
     LightComponentHandle component)
   {
     ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
+
+    bool enabled = component.GetEnabled();
+
+    ImGui::TextWrapped("Enabled");
+    ImGui::SameLine();
+    if (ImGui::Checkbox("##lightEnabled", &enabled))
+    {
+      component.SetEnabled(enabled);
+    }
+
+    ImGui::SetCursorPosX(ImGui::GetCursorPosX() + COMPONENT_PANEL_PADDING);
+    ImGui::PushItemWidth(ImGui::GetContentRegionAvail().x -
+                         COMPONENT_PANEL_PADDING);
 
     ImGui::TextWrapped("Light type");
     // ImGui::SameLine();

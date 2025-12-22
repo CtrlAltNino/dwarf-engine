@@ -4,6 +4,7 @@
 #include "Core/Rendering/DrawCall/DrawCallList/IDrawCallListFactory.hpp"
 #include "Core/Rendering/DrawCall/DrawCallWorker/IDrawCallWorkerFactory.hpp"
 #include "Core/Rendering/Framebuffer/IFramebufferFactory.hpp"
+#include "Core/Rendering/LightSystem/ILightSystemFactory.hpp"
 #include "Core/Rendering/Material/IMaterialFactory.hpp"
 #include "Core/Rendering/Mesh/IMeshFactory.hpp"
 #include "Core/Rendering/MeshBuffer/IMeshBufferFactory.hpp"
@@ -11,6 +12,7 @@
 #include "Core/Rendering/RendererApi/IRendererApi.hpp"
 #include "Core/Rendering/RendererApi/IRendererApiFactory.hpp"
 #include "Core/Rendering/Shader/ShaderRegistry/IShaderRegistry.hpp"
+#include "Core/Rendering/ShadowMapper/IShadowMapperFactory.hpp"
 #include "Core/Rendering/SkyboxRenderer/ISkyboxRenderer.hpp"
 #include "Editor/LoadedScene/ILoadedScene.hpp"
 #include "IRenderingPipelineFactory.hpp"
@@ -35,6 +37,8 @@ namespace Dwarf
     std::shared_ptr<IPingPongBufferFactory> mPingPongBufferFactory;
     std::shared_ptr<ILoadedScene>           mLoadedScene;
     std::shared_ptr<ISkyboxRenderer>        mSkyboxRenderer;
+    std::shared_ptr<IShadowMapperFactory>   mShadowMapperFactory;
+    std::shared_ptr<ILightSystemFactory>    mLightSystemFactory;
 
   public:
     RenderingPipelineFactory(
@@ -51,7 +55,9 @@ namespace Dwarf
       std::shared_ptr<IDrawCallWorkerFactory> drawCallWorkerFactory,
       std::shared_ptr<IPingPongBufferFactory> pingPongBufferFactory,
       std::shared_ptr<ILoadedScene>           loadedScene,
-      std::shared_ptr<ISkyboxRenderer>        skyboxRenderer);
+      std::shared_ptr<ISkyboxRenderer>        skyboxRenderer,
+      std::shared_ptr<IShadowMapperFactory>   shadowMapperFactory,
+      std::shared_ptr<ILightSystemFactory>    lightSystemFactory);
 
     ~RenderingPipelineFactory() override;
 

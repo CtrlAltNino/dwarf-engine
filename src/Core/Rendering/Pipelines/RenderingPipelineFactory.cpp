@@ -19,7 +19,9 @@ namespace Dwarf
     std::shared_ptr<IDrawCallWorkerFactory> drawCallWorkerFactory,
     std::shared_ptr<IPingPongBufferFactory> pingPongBufferFactory,
     std::shared_ptr<ILoadedScene>           loadedScene,
-    std::shared_ptr<ISkyboxRenderer>        skyboxRenderer)
+    std::shared_ptr<ISkyboxRenderer>        skyboxRenderer,
+    std::shared_ptr<IShadowMapperFactory>   shadowMapperFactory,
+    std::shared_ptr<ILightSystemFactory>    lightSystemFactory)
     : mLogger(std::move(logger))
     , mRendererApi(rendererApiFactory->Create())
     , mMaterialFactory(std::move(materialFactory))
@@ -33,6 +35,8 @@ namespace Dwarf
     , mPingPongBufferFactory(std::move(pingPongBufferFactory))
     , mLoadedScene(std::move(loadedScene))
     , mSkyboxRenderer(std::move(skyboxRenderer))
+    , mShadowMapperFactory(std::move(shadowMapperFactory))
+    , mLightSystemFactory(std::move(lightSystemFactory))
   {
     mLogger->LogDebug(
       Log("RenderingPipelineFactory created", "RenderingPipelineFactory"));
@@ -59,6 +63,8 @@ namespace Dwarf
                                                mMaterialFactory,
                                                mDrawCallListFactory,
                                                mDrawCallWorkerFactory,
-                                               mPingPongBufferFactory);
+                                               mPingPongBufferFactory,
+                                               mShadowMapperFactory,
+                                               mLightSystemFactory);
   }
 } // namespace Dwarf
