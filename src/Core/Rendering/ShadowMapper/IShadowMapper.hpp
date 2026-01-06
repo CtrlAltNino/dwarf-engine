@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Rendering/LightSystem/ILightSystem.hpp"
 #include "Core/Rendering/Texture/ITexture.hpp"
 #include "Core/Scene/Components/LightComponentHandle.hpp"
 namespace Dwarf
@@ -30,8 +31,8 @@ namespace Dwarf
 
   struct ShadowFrameData
   {
-    std::optional<DirectionalShadow> DirectionalShadow;
-    std::vector<PointLightShadow>    PointLightShadows;
+    std::vector<DirectionalShadow> DirectionalShadows;
+    std::vector<PointLightShadow>  PointLightShadows;
   };
 
   class IShadowMapper
@@ -40,9 +41,12 @@ namespace Dwarf
     virtual ~IShadowMapper() = default;
 
     virtual void
-    Update() = 0;
+    Update(LightData& lightData) = 0;
 
     [[nodiscard]] virtual auto
     GetFrameData() const -> const ShadowFrameData = 0;
+
+    virtual void
+    Bind() const = 0;
   };
 }
