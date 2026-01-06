@@ -146,8 +146,8 @@ namespace Dwarf
     mSkyboxRenderer->Render();
 
     // Update shadow data
-    mShadowMapper->Update();
     mLightSystem->Update();
+    mShadowMapper->Update(mLightSystem->GetLightData());
 
     // TODO: Set shadow data
 
