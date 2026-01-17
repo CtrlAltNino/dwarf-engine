@@ -65,7 +65,7 @@ namespace Dwarf
     Update() = 0;
 
     [[nodiscard]] virtual auto
-    GetLightData() const -> const LightData = 0;
+    GetLightData() -> LightData& = 0;
 
     virtual void
     Bind() const = 0;
