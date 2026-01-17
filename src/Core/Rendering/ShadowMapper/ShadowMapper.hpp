@@ -23,9 +23,8 @@ namespace Dwarf
 
     std::shared_ptr<ILoadedScene>        mLoadedScene;
     std::shared_ptr<IFramebufferFactory> mFramebufferFactory;
-
-    std::shared_ptr<IFramebuffer>    mFramebuffer;
-    std::shared_ptr<IShaderRegistry> mShaderRegistry;
+    std::shared_ptr<IShaderRegistry>     mShaderRegistry;
+    std::shared_ptr<IFramebuffer>        mFramebuffer;
 
     auto
     BuildDirectionalLightVP(const glm::vec3& direction) -> glm::mat4;

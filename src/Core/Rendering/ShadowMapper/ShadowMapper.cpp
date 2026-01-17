@@ -46,10 +46,10 @@ namespace Dwarf
         directionalLight.ShadowIndex = nextShadowIndex++;
 
         // Create shadow data
-        DirectionalShadow shadow{};
+        // DirectionalShadow shadow{};
         // BuildDirectionalShadow(directionalLight, shadow);
 
-        mShadowFrameData.DirectionalShadows.push_back(std::move(shadow));
+        // mShadowFrameData.DirectionalShadows.push_back(std::move(shadow));
       }
     }
 
@@ -94,6 +94,12 @@ namespace Dwarf
 
   [[nodiscard]] auto
   ShadowMapper::GetFrameData() const -> const ShadowFrameData
+  {
+    return mShadowFrameData;
+  }
+
+  void
+  ShadowMapper::Bind() const
   {
   }
 
