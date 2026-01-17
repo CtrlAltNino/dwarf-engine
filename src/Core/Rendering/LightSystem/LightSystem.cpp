@@ -111,7 +111,7 @@ namespace Dwarf
   }
 
   auto
-  LightSystem::GetLightData() const -> const LightData
+  LightSystem::GetLightData() -> LightData&
   {
     return mLightData;
   }

@@ -2,9 +2,11 @@
 
 #include "Core/Rendering/Framebuffer/IFramebuffer.hpp"
 #include "Core/Rendering/Framebuffer/IFramebufferFactory.hpp"
+#include "Core/Rendering/Shader/ShaderRegistry/IShaderRegistry.hpp"
 #include "Core/Scene/ISceneObserver.hpp"
 #include "Core/Scene/Settings/ISceneSettingsObserver.hpp"
 #include "Editor/LoadedScene/ILoadedScene.hpp"
+#include "Editor/LoadedScene/ILoadedSceneObserver.h"
 #include "IShadowMapper.hpp"
 
 namespace Dwarf
@@ -13,7 +15,7 @@ namespace Dwarf
 
   class ShadowMapper
     : public IShadowMapper
-    , public ISceneObserver
+    , public ILoadedSceneObserver
     , public ISceneSettingsObserver
   {
   private:
@@ -22,11 +24,16 @@ namespace Dwarf
     std::shared_ptr<ILoadedScene>        mLoadedScene;
     std::shared_ptr<IFramebufferFactory> mFramebufferFactory;
 
-    std::shared_ptr<IFramebuffer> mFramebuffer;
+    std::shared_ptr<IFramebuffer>    mFramebuffer;
+    std::shared_ptr<IShaderRegistry> mShaderRegistry;
+
+    auto
+    BuildDirectionalLightVP(const glm::vec3& direction) -> glm::mat4;
 
   public:
     ShadowMapper(std::shared_ptr<ILoadedScene>        loadedScene,
-                 std::shared_ptr<IFramebufferFactory> framebufferFactory);
+                 std::shared_ptr<IFramebufferFactory> framebufferFactory,
+                 std::shared_ptr<IShaderRegistry>     shaderRegistry);
 
     void
     Update(LightData& lightData) override;
@@ -38,10 +45,10 @@ namespace Dwarf
     Bind() const override;
 
     void
-    OnEntityCreated() override {};
+    OnSceneLoad() override;
 
     void
-    OnEntityDeleted() override {};
+    OnSceneUnload() override;
 
     void
     OnAntiAliasingSettingsChanged() override {};

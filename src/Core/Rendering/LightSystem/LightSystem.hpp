@@ -33,7 +33,7 @@ namespace Dwarf
     Update() override;
 
     [[nodiscard]] auto
-    GetLightData() const -> const LightData override;
+    GetLightData() -> LightData& override;
 
     void
     Bind() const override;
