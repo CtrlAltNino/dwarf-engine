@@ -129,32 +129,38 @@ namespace Dwarf
                                  glm::mat4        projectionMatrix,
                                  GridSettingsData gridSettings)
   {
-    // ==================== Scene Rendering ====================
+    // ==================== Preparations ====================
 
-    mRenderFramebuffer->Bind();
-    mRenderFramebuffer->SetDrawBuffer(0);
-    mRendererApi->SetViewport(0,
-                              0,
-                              mRenderFramebuffer->GetSpecification().Width,
-                              mRenderFramebuffer->GetSpecification().Height);
-    mRendererApi->SetClearColor(glm::vec4(0.065F, 0.07F, 0.085F, 1.0F));
-    mRendererApi->Clear();
+    {
+      mRenderFramebuffer->Bind();
+      mRenderFramebuffer->SetDrawBuffer(0);
+      mRendererApi->SetViewport(0,
+                                0,
+                                mRenderFramebuffer->GetSpecification().Width,
+                                mRenderFramebuffer->GetSpecification().Height);
+      mRendererApi->SetClearColor(glm::vec4(0.065F, 0.07F, 0.085F, 1.0F));
+      mRendererApi->Clear();
+    }
 
-    // Render skybox
-    mSkyboxRenderer->SetViewMatrix(viewMatrix);
-    mSkyboxRenderer->SetProjectionMatrix(projectionMatrix);
-    mSkyboxRenderer->Render();
+    // ==================== Skybox Rendering ====================
 
-    // Update shadow data
-    mLightSystem->Update();
-    mShadowMapper->Update(mLightSystem->GetLightData());
+    {
+      mSkyboxRenderer->SetViewMatrix(viewMatrix);
+      mSkyboxRenderer->SetProjectionMatrix(projectionMatrix);
+      mSkyboxRenderer->Render();
+    }
 
-    // TODO: Set shadow data
+    // ==================== Update light and shadow data ====================
 
-    // TODO: Set light data
-    mLightSystem->Bind();
+    {
+      mLightSystem->Update();
+      mShadowMapper->Update(mLightSystem->GetLightData());
+      mShadowMapper->Bind();
+      mLightSystem->Bind();
+    }
 
-    // Render draw calls
+    // ==================== Render scene draw calls ====================
+
     {
       std::lock_guard<std::mutex> lock(mDrawCallList->GetMutex());
       for (auto& drawCall : mDrawCallList->GetDrawCalls())
@@ -187,18 +193,19 @@ namespace Dwarf
     mRenderFramebuffer->Unbind();
 
     // ==================== Resolve MSAA ====================
-
-    mRendererApi->Blit(*mRenderFramebuffer,
-                       *mHdrPingPong->GetWriteFramebuffer().lock(),
-                       0,
-                       0,
-                       mRenderFramebuffer->GetSpecification().Width,
-                       mRenderFramebuffer->GetSpecification().Height);
-    mRendererApi->BlitDepth(*mRenderFramebuffer,
-                            *mHdrPingPong->GetWriteFramebuffer().lock(),
-                            mRenderFramebuffer->GetSpecification().Width,
-                            mRenderFramebuffer->GetSpecification().Height);
-    mHdrPingPong->Swap();
+    {
+      mRendererApi->Blit(*mRenderFramebuffer,
+                         *mHdrPingPong->GetWriteFramebuffer().lock(),
+                         0,
+                         0,
+                         mRenderFramebuffer->GetSpecification().Width,
+                         mRenderFramebuffer->GetSpecification().Height);
+      mRendererApi->BlitDepth(*mRenderFramebuffer,
+                              *mHdrPingPong->GetWriteFramebuffer().lock(),
+                              mRenderFramebuffer->GetSpecification().Width,
+                              mRenderFramebuffer->GetSpecification().Height);
+      mHdrPingPong->Swap();
+    }
 
     // ==================== Exposure Scaling ====================
 
@@ -219,7 +226,7 @@ namespace Dwarf
 
     // ==================== HDR Post Processing ====================
 
-    // TODO
+    // TODO Use a Post Processing Stack here
 
     // God Rays
 

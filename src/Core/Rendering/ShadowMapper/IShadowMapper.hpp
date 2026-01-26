@@ -2,51 +2,42 @@
 
 #include "Core/Rendering/LightSystem/ILightSystem.hpp"
 #include "Core/Rendering/Texture/ITexture.hpp"
-#include "Core/Scene/Components/LightComponentHandle.hpp"
+#include "Core/UUID.hpp"
+
 namespace Dwarf
 {
-  struct PointLightShadow
+  struct PointShadow
   {
-    LightComponentHandle lightEntity;
-
-    // ShadowMap shadowMap;
-    std::shared_ptr<ITexture> ShadowMap;
-
-    glm::mat4 lightSpaceMatrix;
-
-    bool dirty = true;
+    std::shared_ptr<ITexture> ShadowTexture;
+    glm::mat4                 LightSpaceMatrix;
   };
 
   struct DirectionalShadow
   {
-    LightComponentHandle lightEntity;
-
-    // ShadowMap shadowMap;
-    std::shared_ptr<ITexture> ShadowMap;
-
-    glm::mat4 lightSpaceMatrix;
-
-    bool dirty = true;
+    std::shared_ptr<ITexture> ShadowTexture;
+    glm::mat4                 LightSpaceMatrix;
   };
 
   struct ShadowFrameData
   {
     std::vector<DirectionalShadow> DirectionalShadows;
     std::vector<PointLightShadow>  PointLightShadows;
-  };
+    >
+  }
+};
 
-  class IShadowMapper
-  {
-  public:
-    virtual ~IShadowMapper() = default;
+class IShadowMapper
+{
+public:
+  virtual ~IShadowMapper() = default;
 
-    virtual void
-    Update(LightData& lightData) = 0;
+  virtual void
+  Update(LightData& lightData) = 0;
 
-    [[nodiscard]] virtual auto
-    GetFrameData() const -> const ShadowFrameData = 0;
+  [[nodiscard]] virtual auto
+  GetFrameData() const -> const ShadowFrameData = 0;
 
-    virtual void
-    Bind() const = 0;
-  };
+  virtual void
+  Bind() const = 0;
+};
 }

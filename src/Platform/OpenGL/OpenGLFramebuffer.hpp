@@ -160,6 +160,13 @@ namespace Dwarf
       return mSpecification;
     }
 
+    void
+    AttachColorTexture(std::shared_ptr<ITexture> texture,
+                       size_t                    index) override;
+
+    void
+    AttachDepthTexture(std::shared_ptr<ITexture> texture) override;
+
     /**
      * @brief Deletes the framebuffer
      *
