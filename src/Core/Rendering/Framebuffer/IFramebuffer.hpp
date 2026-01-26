@@ -162,5 +162,11 @@ namespace Dwarf
      */
     [[nodiscard]] virtual auto
     GetSpecification() const -> const FramebufferSpecification& = 0;
+
+    virtual void
+    AttachColorTexture(std::shared_ptr<ITexture> texture, size_t index) = 0;
+
+    virtual void
+    AttachDepthTexture(std::shared_ptr<ITexture> texture) = 0;
   };
 }

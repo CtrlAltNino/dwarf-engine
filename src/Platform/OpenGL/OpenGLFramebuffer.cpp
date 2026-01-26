@@ -1,3 +1,4 @@
+#include "Platform/OpenGL/OpenGLTexture.hpp"
 #include "pch.hpp"
 
 #include "Core/Rendering/Framebuffer/IFramebuffer.hpp"
@@ -187,7 +188,7 @@ namespace Dwarf
     // Check if framebuffer is complete
     if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
     {
-      mLogger->LogError(
+      mLogger->LogWarn(
         Log("Framebuffer is not complete!", "OpenGLFramebuffer"));
     }
     else
@@ -473,5 +474,32 @@ namespace Dwarf
     mColorAttachments.clear();
     mDepthAttachment = nullptr;
     mVramTracker->RemoveFramebufferMemory(mCurrentVramMemory);
+  }
+
+  void
+  OpenGLFramebuffer::AttachColorTexture(std::shared_ptr<ITexture> texture,
+                                        size_t                    index)
+  {
+  }
+
+  void
+  OpenGLFramebuffer::AttachDepthTexture(std::shared_ptr<ITexture> texture)
+  {
+    GLenum textarget =
+      mSpecification.Samples > 1 ? GL_TEXTURE_2D_MULTISAMPLE : GL_TEXTURE_2D;
+
+    // auto* oglTex = dynamic_cast<OpenGLTexture*>(texture.get());
+
+    // if (oglTex->GetType() ==)
+
+    glFramebufferTexture2D(
+      GL_FRAMEBUFFER,
+      Utils::GetFramebufferAttachment(FramebufferTextureFormat::DEPTH),
+      textarget,
+      texture->GetTextureID(),
+      0);
+
+    OpenGLUtilities::CheckOpenGLError(
+      "glFramebufferTexture2D depth attachment", "OpenGLFramebuffer", mLogger);
   }
 }
