@@ -22,7 +22,7 @@ namespace Dwarf
 
     // Shader registry
     std::unordered_map<UUID, DirectionalShadow> mDirectionalShadows;
-    std::unordered_map<UUID, PointLightShadow>  mPointShadows;
+    std::unordered_map<UUID, PointShadow>       mPointShadows;
 
     std::shared_ptr<ILoadedScene>        mLoadedScene;
     std::shared_ptr<IFramebufferFactory> mFramebufferFactory;
@@ -50,7 +50,7 @@ namespace Dwarf
                  std::shared_ptr<IShaderRegistry>     shaderRegistry);
 
     void
-    Update(LightData& lightData) override;
+    Update(std::unordered_map<UUID, LightInfo>& lightRegistry) override;
 
     [[nodiscard]] auto
     GetFrameData() const -> const ShadowFrameData override;

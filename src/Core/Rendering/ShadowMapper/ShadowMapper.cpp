@@ -1,3 +1,4 @@
+#include "Core/Rendering/LightTypes.hpp"
 #include "pch.hpp"
 
 #include "Core/Rendering/Framebuffer/IFramebuffer.hpp"
@@ -36,7 +37,7 @@ namespace Dwarf
    */
 
   void
-  ShadowMapper::Update(LightData& lightData)
+  ShadowMapper::Update(std::unordered_map<UUID, LightInfo>& lightRegistry)
   {
     // Reset per-frame shadow data
     // mShadowFrameData.DirectionalShadows.clear();
@@ -52,25 +53,37 @@ namespace Dwarf
       return;
     }
 
-    // Iterate over directional lights
-    int nextShadowIndex = 0;
-    for (auto& directionalLight : lightData.DirectionalLights)
+    // Iterate over light registry
+
+    for (auto& light : lightRegistry)
     {
-      if (!directionalLight.CastsShadows)
+      switch (light.second.Handle.GetType())
       {
-        directionalLight.ShadowIndex = -1;
-        continue;
+        using enum LightType;
+        case Directional: break;
+        case PointLight: break;
       }
-
-      // Assign shadow index
-      directionalLight.ShadowIndex = nextShadowIndex++;
-
-      // Create shadow data
-      DirectionalShadow shadow = ProcessDirectionalLight(directionalLight);
-
-      // Add it
-      mShadowFrameData.DirectionalShadows.push_back(std::move(shadow));
     }
+
+    // Iterate over directional lights
+    // int nextShadowIndex = 0;
+    // for (auto& directionalLight : lightData.DirectionalLights)
+    // {
+    //   if (!directionalLight.CastsShadows)
+    //   {
+    //     directionalLight.ShadowIndex = -1;
+    //     continue;
+    //   }
+
+    //   // Assign shadow index
+    //   directionalLight.ShadowIndex = nextShadowIndex++;
+
+    //   // Create shadow data
+    //   DirectionalShadow shadow = ProcessDirectionalLight(directionalLight);
+
+    //   // Add it
+    //   mShadowFrameData.DirectionalShadows.push_back(std::move(shadow));
+    // }
 
     // for (auto& pointLight : lightData.PointLights)
     // {
@@ -139,31 +152,31 @@ namespace Dwarf
   ShadowMapper::OnShadowSettingsChanged()
   {
     // TODO: React to shadow settings being changed
-    if (!mDepthTexture || mDepthTexture->GetSpecification().Height !=
-                            ToResolution(mLoadedScene->GetScene()
-                                           .GetProperties()
-                                           .GetSettings()
-                                           .GetShadowSettings()
-                                           .GetResolution()))
-    {
-      FramebufferSpecification fbSpec;
-      fbSpec.Height = ToResolution(mLoadedScene->GetScene()
-                                     .GetProperties()
-                                     .GetSettings()
-                                     .GetShadowSettings()
-                                     .GetResolution());
-      fbSpec.Width = ToResolution(mLoadedScene->GetScene()
-                                    .GetProperties()
-                                    .GetSettings()
-                                    .GetShadowSettings()
-                                    .GetResolution());
-      fbSpec.Samples = 1;
+    // if (!mDepthTexture || mDepthTexture->GetSpecification().Height !=
+    //                         ToResolution(mLoadedScene->GetScene()
+    //                                        .GetProperties()
+    //                                        .GetSettings()
+    //                                        .GetShadowSettings()
+    //                                        .GetResolution()))
+    // {
+    //   FramebufferSpecification fbSpec;
+    //   fbSpec.Height = ToResolution(mLoadedScene->GetScene()
+    //                                  .GetProperties()
+    //                                  .GetSettings()
+    //                                  .GetShadowSettings()
+    //                                  .GetResolution());
+    //   fbSpec.Width = ToResolution(mLoadedScene->GetScene()
+    //                                 .GetProperties()
+    //                                 .GetSettings()
+    //                                 .GetShadowSettings()
+    //                                 .GetResolution());
+    //   fbSpec.Samples = 1;
 
-      FramebufferTextureSpecification depthSpec;
-      depthSpec.TextureFormat = FramebufferTextureFormat::DEPTH;
-      spec.Attachments.Attachments.push_back(depthSpec);
-      mDepthTexture = mFramebufferFactory->Create(spec);
-    }
+    //   FramebufferTextureSpecification depthSpec;
+    //   depthSpec.TextureFormat = FramebufferTextureFormat::DEPTH;
+    //   spec.Attachments.Attachments.push_back(depthSpec);
+    //   mDepthTexture = mFramebufferFactory->Create(spec);
+    //}
   }
 
   void

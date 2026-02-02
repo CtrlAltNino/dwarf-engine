@@ -1,12 +1,15 @@
+#include "pch.hpp"
+
+#include "LightSystem.hpp"
+
+#include "Core/GenericComponents.hpp"
 #include "Core/Rendering/LightTypes.hpp"
 #include "Core/Scene/Components/LightComponent.hpp"
+#include "Core/Scene/Components/LightComponentHandle.hpp"
 #include "Core/Scene/Components/TransformComponent.hpp"
 #include "Core/Scene/Components/TransformComponentHandle.hpp"
 #include "ILightSystem.hpp"
-#include "pch.hpp"
 #include <glm/ext/vector_float3.hpp>
-
-#include "LightSystem.hpp"
 
 namespace Dwarf
 {
@@ -16,8 +19,8 @@ namespace Dwarf
     , mLoadedScene(std::move(loadedScene))
   {
     mLoadedScene->RegisterLoadedSceneObserver(this);
-    glGenBuffers(1, &directionalLightSSBO);
-    glGenBuffers(1, &pointLightSSBO);
+    glGenBuffers(1, &mDirectionalLightSSBO);
+    glGenBuffers(1, &mPointLightSSBO);
   }
 
   LightSystem::~LightSystem()
@@ -44,13 +47,14 @@ namespace Dwarf
   }
 
   void
-  LightSystem::Update()
+  LightSystem::UpdateRegistry()
   {
+    mLightRegistry.clear();
+
     // LightComponent view
     if (mLoadedScene->HasLoadedScene())
     {
-
-      mTempLightData = LightData();
+      mLightData = LightData();
       auto view = mLoadedScene->GetScene()
                     .GetRegistry()
                     .view<IDComponent, LightComponent, TransformComponent>();
@@ -58,56 +62,70 @@ namespace Dwarf
       {
         auto& light = view.get<LightComponent>(entity);
         auto& transform = view.get<TransformComponent>(entity);
+        auto& id = view.get<IDComponent>(entity);
 
         if (!light.Enabled)
         {
           continue;
         }
 
-        switch (light.Type)
-        {
-          using enum LightType;
-          case Directional:
-            {
-              DirectionalLightData lightData{};
-              lightData.CastsShadows = light.CastsShadows;
-              lightData.Color = light.Color;
-              auto fullMatrix =
-                mLoadedScene->GetScene().GetFullModelMatrix(transform);
-              auto      rotation = glm::mat3(fullMatrix);
-              glm::vec3 direction = rotation * glm::vec3(0.0f, 0.0f, -1.0f);
-
-              lightData.Direction = glm::normalize(direction);
-              lightData.Intensity = light.Attenuation;
-
-              mTempLightData.DirectionalLights.push_back(lightData);
-              break;
-            }
-          case PointLight:
-            {
-              PointLightData lightData{};
-              lightData.CastsShadows = light.CastsShadows;
-              lightData.Color = light.Color;
-              auto fullMatrix =
-                mLoadedScene->GetScene().GetFullModelMatrix(transform);
-              lightData.Position = glm::vec3(fullMatrix[3]);
-              lightData.Intensity = light.Attenuation;
-              lightData.Radius = light.Radius;
-
-              mTempLightData.PointLights.push_back(lightData);
-            }
-            break;
-          case SpotLight: break;
-        }
-      }
-
-      if (mTempLightData != mLightData)
-      {
-        mLightData = mTempLightData;
-
-        Upload();
+        mLightRegistry.try_emplace(
+          id.getId(),
+          LightComponentHandle(&mLoadedScene->GetScene().GetRegistry(), entity),
+          TransformComponentHandle(&mLoadedScene->GetScene().GetRegistry(),
+                                   entity),
+          0);
       }
     }
+  }
+
+  void
+  LightSystem::UpdateLightData()
+  {
+    for (auto& lightInfo : mLightRegistry)
+    {
+      switch (lightInfo.second.Handle.GetType())
+      {
+        using enum LightType;
+        case Directional:
+          {
+            DirectionalLightData lightData{};
+            lightData.CastsShadows =
+              static_cast<int>(lightInfo.second.Handle.GetCastsShadows());
+            lightData.Color = lightInfo.second.Handle.GetColor();
+            auto fullMatrix = mLoadedScene->GetScene().GetFullModelMatrix(
+              mLoadedScene->GetScene().GetRegistry().get<TransformComponent>(
+                lightInfo.second.Transform.GetHandle()));
+            auto      rotation = glm::mat3(fullMatrix);
+            glm::vec3 direction = rotation * glm::vec3(0.0F, 0.0F, -1.0F);
+
+            lightData.Direction = glm::normalize(direction);
+            lightData.Intensity = lightInfo.second.Handle.GetAttenuation();
+
+            mLightData.DirectionalLights.push_back(lightData);
+            break;
+          }
+        case PointLight:
+          {
+            PointLightData lightData{};
+            lightData.CastsShadows =
+              static_cast<int>(lightInfo.second.Handle.GetCastsShadows());
+            lightData.Color = lightInfo.second.Handle.GetColor();
+            auto fullMatrix = mLoadedScene->GetScene().GetFullModelMatrix(
+              mLoadedScene->GetScene().GetRegistry().get<TransformComponent>(
+                lightInfo.second.Transform.GetHandle()));
+            lightData.Position = glm::vec3(fullMatrix[3]);
+            lightData.Intensity = lightInfo.second.Handle.GetAttenuation();
+            lightData.Radius = lightInfo.second.Handle.GetRadius();
+
+            mLightData.PointLights.push_back(lightData);
+          }
+          break;
+        case SpotLight: break;
+      }
+    }
+
+    Upload();
   }
 
   auto
@@ -116,17 +134,23 @@ namespace Dwarf
     return mLightData;
   }
 
+  auto
+  LightSystem::GetLightRegistry() -> std::unordered_map<UUID, LightInfo>&
+  {
+    return mLightRegistry;
+  }
+
   void
   LightSystem::Upload()
   {
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, directionalLightSSBO);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, mDirectionalLightSSBO);
     glBufferData(GL_SHADER_STORAGE_BUFFER,
                  mLightData.DirectionalLights.size() *
                    sizeof(DirectionalLightData),
                  mLightData.DirectionalLights.data(),
                  GL_DYNAMIC_DRAW);
 
-    glBindBuffer(GL_SHADER_STORAGE_BUFFER, pointLightSSBO);
+    glBindBuffer(GL_SHADER_STORAGE_BUFFER, mPointLightSSBO);
     glBufferData(GL_SHADER_STORAGE_BUFFER,
                  mLightData.PointLights.size() * sizeof(PointLightData),
                  mLightData.PointLights.data(),
@@ -140,10 +164,10 @@ namespace Dwarf
     constexpr GLuint pointLightBinding = 4;
 
     glBindBufferBase(
-      GL_SHADER_STORAGE_BUFFER, directionalLightBinding, directionalLightSSBO);
+      GL_SHADER_STORAGE_BUFFER, directionalLightBinding, mDirectionalLightSSBO);
 
     glBindBufferBase(
-      GL_SHADER_STORAGE_BUFFER, pointLightBinding, pointLightSSBO);
+      GL_SHADER_STORAGE_BUFFER, pointLightBinding, mPointLightSSBO);
   }
 
   void

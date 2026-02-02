@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Core/Scene/Components/LightComponentHandle.hpp"
 #include "Core/Scene/ISceneObserver.hpp"
 #include "Editor/LoadedScene/ILoadedScene.hpp"
 #include "ILightSystem.hpp"
@@ -15,11 +16,12 @@ namespace Dwarf
   private:
     std::shared_ptr<IDwarfLogger> mLogger;
     std::shared_ptr<ILoadedScene> mLoadedScene;
-    GLuint                        directionalLightSSBO;
-    GLuint                        pointLightSSBO;
+    GLuint                        mDirectionalLightSSBO;
+    GLuint                        mPointLightSSBO;
+
+    std::unordered_map<UUID, LightInfo> mLightRegistry;
 
     LightData mLightData;
-    LightData mTempLightData;
 
     void
     Upload();
@@ -30,10 +32,16 @@ namespace Dwarf
     ~LightSystem() override;
 
     void
-    Update() override;
+    UpdateRegistry() override;
+
+    void
+    UpdateLightData() override;
 
     [[nodiscard]] auto
     GetLightData() -> LightData& override;
+
+    [[nodiscard]] auto
+    GetLightRegistry() -> std::unordered_map<UUID, LightInfo>& override;
 
     void
     Bind() const override;

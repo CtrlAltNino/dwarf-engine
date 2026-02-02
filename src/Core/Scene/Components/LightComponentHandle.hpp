@@ -35,6 +35,21 @@ namespace Dwarf
         { component.Enabled = enabled; });
     }
 
+    [[nodiscard]] auto
+    GetCastsShadows() const -> bool
+    {
+      return mRegistry->get<LightComponent>(mEntity).CastsShadows;
+    }
+
+    void
+    SetCastsShadows(bool castsShadows)
+    {
+      mRegistry->patch<LightComponent>(
+        mEntity,
+        [castsShadows](LightComponent& component) mutable
+        { component.CastsShadows = castsShadows; });
+    }
+
     /// @brief Returns the type of light this component represents.
     /// @return The light type.
     [[nodiscard]] auto

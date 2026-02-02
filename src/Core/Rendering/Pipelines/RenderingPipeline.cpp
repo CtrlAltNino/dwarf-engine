@@ -153,9 +153,20 @@ namespace Dwarf
     // ==================== Update light and shadow data ====================
 
     {
-      mLightSystem->Update();
-      mShadowMapper->Update(mLightSystem->GetLightData());
+      // Prepares the light registry
+      mLightSystem->UpdateRegistry();
+
+      // Uses the shadow casting lights to render their shadow maps, and assign
+      // their shadow map indices
+      mShadowMapper->Update(mLightSystem->GetLightRegistry());
+
+      // Updating the light data
+      mLightSystem->UpdateLightData();
+
+      // Binds the shadow maps
       mShadowMapper->Bind();
+
+      // Binds the light data
       mLightSystem->Bind();
     }
 
