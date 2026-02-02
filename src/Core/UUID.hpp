@@ -8,7 +8,6 @@
 
 namespace Dwarf
 {
-
   class UUID : public ISerializable
   {
   private:
@@ -22,6 +21,8 @@ namespace Dwarf
     }
 
     UUID(const std::string& serializedUUID) { deserialize(serializedUUID); }
+
+    UUID(const UUID& other) { deserialize(other.toString()); }
 
     [[nodiscard]] auto
     toString() const -> std::string
@@ -57,6 +58,21 @@ namespace Dwarf
     deserialize(const std::string& data)
     {
       mUuid = boost::uuids::string_generator()(data);
+    }
+  };
+}
+
+namespace std
+{
+  template<>
+  struct hash<Dwarf::UUID>
+  {
+    size_t
+    operator()(const Dwarf::UUID& uuid) const
+    {
+      // Replace this with your actual hashing logic
+      // If UUID has a 'std::string value' inside:
+      return std::hash<std::string>{}(uuid.toString());
     }
   };
 }

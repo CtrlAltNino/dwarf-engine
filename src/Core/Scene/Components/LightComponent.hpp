@@ -30,8 +30,6 @@ namespace Dwarf
 
     bool CastsShadows = true;
 
-    int ShadowIndex = 0;
-
     bool Enabled = true;
 
     LightComponent() = default;

@@ -21,23 +21,21 @@ namespace Dwarf
   struct ShadowFrameData
   {
     std::vector<DirectionalShadow> DirectionalShadows;
-    std::vector<PointLightShadow>  PointLightShadows;
-    >
-  }
-};
+    std::vector<PointShadow>       PointLightShadows;
+  };
 
-class IShadowMapper
-{
-public:
-  virtual ~IShadowMapper() = default;
+  class IShadowMapper
+  {
+  public:
+    virtual ~IShadowMapper() = default;
 
-  virtual void
-  Update(LightData& lightData) = 0;
+    virtual void
+    Update(std::unordered_map<UUID, LightInfo>& lightRegistry) = 0;
 
-  [[nodiscard]] virtual auto
-  GetFrameData() const -> const ShadowFrameData = 0;
+    [[nodiscard]] virtual auto
+    GetFrameData() const -> const ShadowFrameData = 0;
 
-  virtual void
-  Bind() const = 0;
-};
+    virtual void
+    Bind() const = 0;
+  };
 }

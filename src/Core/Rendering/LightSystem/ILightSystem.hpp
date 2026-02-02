@@ -1,5 +1,7 @@
 #pragma once
 
+#include "Core/Scene/Components/LightComponentHandle.hpp"
+#include "Core/Scene/Components/TransformComponentHandle.hpp"
 namespace Dwarf
 {
   struct DirectionalLightData
@@ -56,16 +58,29 @@ namespace Dwarf
     }
   };
 
+  struct LightInfo
+  {
+    LightComponentHandle     Handle;
+    TransformComponentHandle Transform;
+    size_t                   ShadowIndex;
+  };
+
   class ILightSystem
   {
   public:
     virtual ~ILightSystem() = default;
 
     virtual void
-    Update() = 0;
+    UpdateRegistry() = 0;
+
+    virtual void
+    UpdateLightData() = 0;
 
     [[nodiscard]] virtual auto
     GetLightData() -> LightData& = 0;
+
+    [[nodiscard]] virtual auto
+    GetLightRegistry() -> std::unordered_map<UUID, LightInfo>& = 0;
 
     virtual void
     Bind() const = 0;
