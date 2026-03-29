@@ -34,7 +34,7 @@ namespace Dwarf
     if (!ImGui::BeginChild("##inspector_child",
                            ImVec2(0, 0),
                            0,
-                           ImGuiWindowFlags_AlwaysUseWindowPadding))
+                           ImGuiChildFlags_AlwaysUseWindowPadding))
     {
       ImGui::EndChild();
       return;
