@@ -11,6 +11,7 @@
 #include <cstdlib>
 #include <cstring>
 #include <ctime>
+#include <span>
 
 // STL and C++
 #include <algorithm>

@@ -54,6 +54,9 @@ target_link_libraries(${libname} PUBLIC glm::glm)
 find_package(fmt CONFIG REQUIRED)
 target_link_libraries(${libname} PRIVATE fmt::fmt)
 
+find_path(OPENGL_REGISTRY_INCLUDE_DIRS "GL/glcorearb.h")
+target_include_directories(${libname} PRIVATE ${OPENGL_REGISTRY_INCLUDE_DIRS})
+
 find_package(SDL3 REQUIRED CONFIG REQUIRED COMPONENTS SDL3)
 target_link_libraries(${libname} PRIVATE SDL3::SDL3)
 

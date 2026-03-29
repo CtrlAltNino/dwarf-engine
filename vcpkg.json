@@ -43,9 +43,18 @@
       ]
     },
     "efsw",
+    "opengl",
     "imguizmo",
     "entt",
-    "sdl3",
+    "opengl-registry",
+    {
+      "name": "sdl3",
+      "features": [
+        "wayland",
+        "x11"
+      ],
+      "default-features": false
+    },
     "xxhash",
     "platform-folders",
     "tiff",
@@ -131,5 +140,5 @@
       "version": "0.9.7#1"
     }
   ],
-  "builtin-baseline": "275a29dcdb864aa9ce57042eadf95f4a28482280"
+  "builtin-baseline": "b472291f295551b7127359ea38fdd2ca092f6f1b"
 }

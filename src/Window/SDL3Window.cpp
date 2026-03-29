@@ -82,6 +82,7 @@ namespace Dwarf
     if (mWindow == nullptr)
     {
       mLogger->LogError(Log("Failed to create window", "SDL3Window"));
+      mLogger->LogError(Log(SDL_GetError(), "SDL3Window"));
       SDL_Quit();
       return;
     }
