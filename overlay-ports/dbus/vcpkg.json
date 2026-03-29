@@ -1,0 +1,5 @@
+{
+    "name": "dbus",
+    "version": "1.14.0",
+    "description": "System dbus stub"
+}
