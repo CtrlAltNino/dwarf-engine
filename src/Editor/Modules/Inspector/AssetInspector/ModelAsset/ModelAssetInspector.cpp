@@ -32,7 +32,7 @@ namespace Dwarf
     if (!ImGui::BeginChild("##inspector_child",
                            ImGui::GetContentRegionAvail(),
                            false,
-                           ImGuiWindowFlags_AlwaysUseWindowPadding))
+                           ImGuiChildFlags_AlwaysUseWindowPadding))
     {
       ImGui::EndChild();
       return;

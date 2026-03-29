@@ -1,15 +1,6 @@
 # Set the minimum required CMake Version
 cmake_minimum_required(VERSION 3.22)
 
-# Force CMake to ignore the vcpkg-provided DBus library files
-set(CMAKE_IGNORE_PATH
-    "${CMAKE_BINARY_DIR}/vcpkg_installed/x64-linux/debug/lib/libdbus-1.so.3"
-    "${CMAKE_BINARY_DIR}/vcpkg_installed/x64-linux/lib/libdbus-1.so.3"
-)
-
-# Tell CMake to prefer the system's pkg-config over vcpkg's for DBus
-set(DBus1_SOURCE SYSTEM)
-
 # Helper functions
 include(${CMAKE_SOURCE_DIR}/helper.cmake)
 set(DNFD_PORTAL ON CACHE BOOL "Use portal for NFD")
@@ -53,8 +44,10 @@ IF(WIN32)
     ADD_DEFINITIONS(-D_UNICODE)
 ELSEIF(UNIX)
     set(VCPKG_OVERLAY_PORTS "${CMAKE_CURRENT_SOURCE_DIR}/overlay-ports")
+
     set(CMAKE_TOOLCHAIN_FILE "$ENV{VCPKG_ROOT}/scripts/buildsystems/vcpkg.cmake")
     set(VCPKG_TARGET_TRIPLET "x64-linux")
+
 
     # Project declaration
     project(Dwarf\ Engine VERSION 0.0.1 LANGUAGES C CXX)

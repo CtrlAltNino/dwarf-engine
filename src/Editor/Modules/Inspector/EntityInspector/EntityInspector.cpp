@@ -74,7 +74,8 @@ namespace Dwarf
       IM_COL32(59, 66, 82, 255),
       5.0F);
     ImGui::SetCursorPosY(ImGui::GetCursorPosY() +
-                         (3 * COMPONENT_PANEL_PADDING));
+                         (2 * COMPONENT_PANEL_PADDING));
+    ImGui::Dummy({ 0, 0 });
   }
 
   template<>

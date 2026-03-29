@@ -26,5 +26,7 @@ sudo dnf install -y \
         libXrandr-devel libXScrnSaver-devel libXxf86vm-devel \
         wayland-devel libxkbcommon-devel dbus-devel \
         pipewire-devel pulseaudio-libs-devel \
-        git curl zip unzip tar pkgconfig
+        git curl zip unzip tar pkgconfig \
+        autoconf autoconf-archive automake libtool \
+        perl-open perl-core libXtst-devel
 "

@@ -43,18 +43,10 @@
       ]
     },
     "efsw",
-    "opengl",
     "imguizmo",
     "entt",
     "opengl-registry",
-    {
-      "name": "sdl3",
-      "features": [
-        "wayland",
-        "x11"
-      ],
-      "default-features": false
-    },
+    "sdl3",
     "xxhash",
     "platform-folders",
     "tiff",
@@ -77,15 +69,15 @@
     },
     {
       "name": "glm",
-      "version": "1.0.1#3"
+      "version": "1.0.3"
     },
     {
       "name": "imgui",
-      "version": "1.91.8#4"
+      "version": "1.92.6#0"
     },
     {
       "name": "assimp",
-      "version": "5.4.3"
+      "version": "6.0.4"
     },
     {
       "name": "stb",
@@ -93,31 +85,31 @@
     },
     {
       "name": "nlohmann-json",
-      "version": "3.11.3#1"
+      "version": "3.12.0#2"
     },
     {
       "name": "nativefiledialog-extended",
-      "version": "1.2.1"
+      "version": "1.3.0"
     },
     {
       "name": "bext-di",
-      "version": "1.3.0#1"
+      "version": "1.3.2"
     },
     {
       "name": "efsw",
-      "version": "1.4.1"
+      "version": "1.5.1"
     },
     {
       "name": "imguizmo",
-      "version": "2024-05-29#1"
+      "version": "2024-05-29#2"
     },
     {
       "name": "entt",
-      "version": "3.14.0"
+      "version": "3.16.0"
     },
     {
       "name": "sdl3",
-      "version": "3.2.6"
+      "version": "3.4.2"
     },
     {
       "name": "tiff",
@@ -140,5 +132,5 @@
       "version": "0.9.7#1"
     }
   ],
-  "builtin-baseline": "b472291f295551b7127359ea38fdd2ca092f6f1b"
+  "builtin-baseline": "b5d1a94fb7f88fd835e360fd23a45a09ceedbf48"
 }
