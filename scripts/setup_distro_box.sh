@@ -15,7 +15,7 @@ fi
 # We use 'distrobox enter' with '--' to execute these inside the container
 echo "Installing dependencies and building engine inside $CONTAINER_NAME..."
 
-distrobox enter "$CONTAINER_NAME" --bash -c "
+distrobox enter "$CONTAINER_NAME" -- bash -c "
     # Install the 'Missing Link' headers and tools
 sudo dnf install -y \
         cmake ninja-build gcc-c++ \
