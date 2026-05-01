@@ -586,6 +586,7 @@ namespace Dwarf
           colCount = 0;
           ImGui::SetCursorPosY(ImGui::GetCursorPosY() +
                                (tallestCell - cellHeight) + 8.0F);
+          ImGui::Dummy({ 0, 0 });
           tallestCell = 0;
         }
         ImGui::PopStyleColor(3);
